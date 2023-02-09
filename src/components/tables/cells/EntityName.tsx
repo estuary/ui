@@ -1,6 +1,5 @@
 import { Link, Stack, TableCell, useMediaQuery, useTheme } from '@mui/material';
 import EntityStatus from 'components/tables/cells/EntityStatus';
-import { tableBorderSx } from 'context/Theme';
 import { NavLink } from 'react-router-dom';
 
 interface Props {
@@ -16,7 +15,6 @@ function EntityName({ name, detailsLink, showEntityStatus }: Props) {
     return (
         <TableCell
             sx={{
-                ...tableBorderSx,
                 minWidth: 250,
                 maxWidth: 'min-content',
             }}

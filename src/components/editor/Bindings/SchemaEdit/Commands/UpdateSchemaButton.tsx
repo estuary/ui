@@ -36,7 +36,7 @@ function UpdateSchemaButton() {
 
     return (
         <Box sx={{ mt: 5, display: 'flex', justifyContent: 'flex-end' }}>
-            <Button onClick={updateCollectionSchema}>
+            <Button variant="outlined" onClick={updateCollectionSchema}>
                 <FormattedMessage id="workflows.collectionSelector.schemaEdit.cta.syncSchema" />
             </Button>
         </Box>

@@ -18,9 +18,12 @@ describe('When there is user metadata', () => {
 
     describe('the menu displays', () => {
         test('full name', async () => {
-            const { user } = await customRender(<UserMenu iconSx={{}} />, {
-                username,
-            });
+            const { user } = await customRender(
+                <UserMenu iconColor="black" />,
+                {
+                    username,
+                }
+            );
 
             await act(async () => {
                 await openMenu(user);
@@ -34,9 +37,12 @@ describe('When there is user metadata', () => {
         });
 
         test('email', async () => {
-            const { user } = await customRender(<UserMenu iconSx={{}} />, {
-                username,
-            });
+            const { user } = await customRender(
+                <UserMenu iconColor="black" />,
+                {
+                    username,
+                }
+            );
 
             await act(async () => {
                 await openMenu(user);

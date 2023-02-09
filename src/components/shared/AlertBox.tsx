@@ -1,15 +1,17 @@
-import DangerousOutlinedIcon from '@mui/icons-material/DangerousOutlined';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
-import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import {
     Alert,
     AlertColor,
     AlertTitle,
-    Theme,
     Typography,
+    useTheme,
 } from '@mui/material';
 import { alertBackground, alertTextPrimary } from 'context/Theme';
+import {
+    CheckCircle,
+    DeleteCircle,
+    InfoEmpty,
+    WarningCircle,
+} from 'iconoir-react';
 import { forwardRef, ReactNode, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
@@ -23,7 +25,7 @@ interface Props extends BaseComponentProps {
 }
 
 const SHARED_STYLING = {
-    borderRadius: 4,
+    borderRadius: 2,
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
 };
@@ -39,18 +41,19 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
     { short, severity, hideIcon, title, children, onClose },
     ref
 ) {
+    const theme = useTheme();
+
     const iconComponentStyling = useMemo(
         () =>
             !short
                 ? {
-                      color: (theme: Theme) =>
-                          alertTextPrimary[theme.palette.mode],
-                      fontSize: '2em',
+                      color: alertTextPrimary[theme.palette.mode],
+                      fontSize: '1em',
                       marginLeft: 'auto',
                       marginRight: 'auto',
                   }
                 : undefined,
-        [short]
+        [short, theme.palette.mode]
     );
 
     const header = useMemo(
@@ -76,20 +79,16 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
             variant="outlined"
             icon={hideIcon ?? undefined}
             iconMapping={{
-                error: <DangerousOutlinedIcon sx={iconComponentStyling} />,
-                warning: (
-                    <ReportProblemOutlinedIcon sx={iconComponentStyling} />
-                ),
-                info: <InfoOutlinedIcon sx={iconComponentStyling} />,
-                success: <TaskAltOutlinedIcon sx={iconComponentStyling} />,
+                error: <DeleteCircle style={iconComponentStyling} />,
+                warning: <WarningCircle style={iconComponentStyling} />,
+                info: <InfoEmpty style={iconComponentStyling} />,
+                success: <CheckCircle style={iconComponentStyling} />,
             }}
             onClose={onClose}
             sx={{
-                'backgroundColor': (theme) =>
-                    alertBackground[theme.palette.mode],
-                'color': (theme) => alertTextPrimary[theme.palette.mode],
-                'borderColor': (theme) =>
-                    theme.palette[severity][theme.palette.mode],
+                'backgroundColor': alertBackground[theme.palette.mode],
+                'color': alertTextPrimary[theme.palette.mode],
+                'borderColor': theme.palette[severity][theme.palette.mode],
                 'padding': 0,
                 '& > .MuiAlert-message': {
                     p: 1,
@@ -108,10 +107,9 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
                 '& > .MuiAlert-icon': short
                     ? {
                           ...SHARED_STYLING,
-                          borderLeftColor: (theme) =>
+                          borderLeftColor:
                               theme.palette[severity][theme.palette.mode],
-                          color: (theme) =>
-                              theme.palette[severity][theme.palette.mode],
+                          color: theme.palette[severity][theme.palette.mode],
                           mr: 0,
                           px: 1,
                           borderLeftStyle: 'solid',
@@ -119,7 +117,7 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
                       }
                     : {
                           ...SHARED_STYLING,
-                          background: (theme) =>
+                          background:
                               theme.palette[severity][theme.palette.mode],
                           px: 3,
                           pt: 2,

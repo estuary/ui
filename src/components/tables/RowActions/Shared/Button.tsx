@@ -6,7 +6,6 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import { glassBkgWithoutBlur } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
 import { ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -95,17 +94,7 @@ function RowActionButton({
                 <FormattedMessage id={messageID} />
             </Button>
 
-            <Dialog
-                open={showProgress}
-                maxWidth="md"
-                sx={{
-                    '& .MuiPaper-root.MuiDialog-paper': {
-                        backgroundColor: (themes) =>
-                            glassBkgWithoutBlur[themes.palette.mode],
-                        borderRadius: 5,
-                    },
-                }}
-            >
+            <Dialog open={showProgress} maxWidth="md">
                 {targets.length > 0 ? (
                     <ProgressDialog
                         selectedEntities={targets}

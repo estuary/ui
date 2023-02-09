@@ -6,11 +6,10 @@ interface Props {
     columns: TableColumns[];
 }
 
-const emptyRowHeight = 80;
+const styling = { height: 45 };
 
 function TableLoadingRows({ columns }: Props) {
     const loadingRows = useMemo(() => {
-        const styling = { height: emptyRowHeight };
         const loadingRow = columns.map((column, index) => {
             return (
                 <TableCell key={`loading-${column.field}-${index}`}>
@@ -22,12 +21,15 @@ function TableLoadingRows({ columns }: Props) {
         return (
             <>
                 <TableRow sx={styling}>{loadingRow}</TableRow>
+
                 <TableRow sx={{ ...styling, opacity: '75%' }}>
                     {loadingRow}
                 </TableRow>
+
                 <TableRow sx={{ ...styling, opacity: '50%' }}>
                     {loadingRow}
                 </TableRow>
+
                 <TableRow
                     sx={{
                         ...styling,

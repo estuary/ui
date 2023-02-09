@@ -1,9 +1,10 @@
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { Typography, useTheme } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import BindingsMultiEditor from 'components/editor/Bindings';
 import AlertBox from 'components/shared/AlertBox';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { WarningCircle } from 'iconoir-react';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
@@ -16,14 +17,18 @@ import {
 interface Props {
     draftSpecs: DraftSpecQuery[];
     readOnly?: boolean;
+    hideBorder?: boolean;
     RediscoverButton?: ReactNode;
 }
 
 function CollectionConfig({
     draftSpecs,
     readOnly = false,
+    hideBorder,
     RediscoverButton,
 }: Props) {
+    const theme = useTheme();
+
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
 
@@ -43,15 +48,24 @@ function CollectionConfig({
 
     return (
         <WrapperWithHeader
+            hideBorder={hideBorder}
             header={
                 <>
                     {hasErrors ? (
-                        <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
+                        <WarningCircle
+                            style={{
+                                marginRight: 4,
+                                fontSize: 12,
+                                color: theme.palette.error.main,
+                            }}
+                        />
                     ) : null}
 
-                    <FormattedMessage
-                        id={`${messagePrefix}.collections.heading`}
-                    />
+                    <Typography variant="subtitle1">
+                        <FormattedMessage
+                            id={`${messagePrefix}.collections.heading`}
+                        />
+                    </Typography>
                 </>
             }
         >

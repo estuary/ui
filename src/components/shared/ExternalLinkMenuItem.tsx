@@ -1,5 +1,5 @@
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Link, MenuItem } from '@mui/material';
+import { OpenNewWindow } from 'iconoir-react';
 import { ReactNode } from 'react';
 
 interface Props {
@@ -11,7 +11,7 @@ export const externalLinkStyling = {
     bgcolor: 'none',
     color: 'text.primary',
     fontSize: 14,
-    fontWeight: 700,
+    fontWeight: 500,
     px: 3,
     py: 1.5,
     textTransform: 'uppercase',
@@ -28,7 +28,8 @@ function ExternalLinkMenuItem({ children, link }: Props) {
             sx={externalLinkStyling}
         >
             <span>{children}</span>
-            <OpenInNewIcon sx={{ height: 20, width: 36 }} />
+
+            <OpenNewWindow style={{ height: 20, width: 36 }} />
         </MenuItem>
     );
 }

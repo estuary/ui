@@ -31,7 +31,6 @@ import {
 } from '@jsonforms/core';
 import { MuiInputText } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import EventIcon from '@mui/icons-material/Event';
 import { Box, Hidden, IconButton, Popover, Stack } from '@mui/material';
 import {
     LocalizationProvider,
@@ -39,6 +38,7 @@ import {
 } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { formatRFC3339 } from 'date-fns';
+import { Calendar } from 'iconoir-react';
 import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
 import { useIntl } from 'react-intl';
 import { CustomMaterialInputControl } from './MaterialInputControl';
@@ -140,7 +140,7 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
                         ref={buttonRef}
                         {...bindFocus(state)}
                     >
-                        <EventIcon />
+                        <Calendar />
                     </IconButton>
                 </Box>
 

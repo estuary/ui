@@ -1,4 +1,5 @@
-import CloudDoneIcon from '@mui/icons-material/CloudDone';
+import { Typography } from '@mui/material';
+import { DbCheck } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -8,8 +9,11 @@ interface Props {
 function Saved({ iconSize }: Props) {
     return (
         <>
-            <FormattedMessage id="common.saved" />
-            <CloudDoneIcon sx={{ fontSize: iconSize }} />
+            <Typography>
+                <FormattedMessage id="common.saved" />
+            </Typography>
+
+            <DbCheck style={{ fontSize: iconSize }} />
         </>
     );
 }

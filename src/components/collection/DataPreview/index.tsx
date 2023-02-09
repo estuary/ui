@@ -1,10 +1,10 @@
-import RefreshIcon from '@mui/icons-material/Refresh';
 import { LoadingButton } from '@mui/lab';
 import { AlertTitle, Box, Grid, Stack, Typography } from '@mui/material';
 import ListView from 'components/collection/DataPreview/ListView';
 import AlertBox from 'components/shared/AlertBox';
 import { useJournalData, useJournalsForCollection } from 'hooks/useJournalData';
 import { LiveSpecsQuery_spec, useLiveSpecs_spec } from 'hooks/useLiveSpecs';
+import { Refresh } from 'iconoir-react';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
@@ -51,13 +51,14 @@ export function DataPreview({ collectionName }: Props) {
                 justifyContent="space-between"
                 direction="row"
                 spacing={2}
-                sx={{ mb: 1 }}
+                sx={{ mb: 2 }}
             >
                 <Stack
                     direction="row"
                     spacing={2}
                     sx={{ alignItems: 'center' }}
                 >
+                    {/*<Typography variant="subtitle1" sx={{ fontWeight: 500 }}>*/}
                     <Typography
                         component="span"
                         variant="h6"
@@ -70,7 +71,7 @@ export function DataPreview({ collectionName }: Props) {
 
                     <LoadingButton
                         variant="text"
-                        startIcon={<RefreshIcon />}
+                        startIcon={<Refresh style={{ fontSize: 12 }} />}
                         onClick={journalData.refresh}
                         disabled={!hasLength(journalData.data?.documents)}
                         loading={isLoading}

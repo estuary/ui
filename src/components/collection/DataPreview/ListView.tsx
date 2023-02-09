@@ -63,6 +63,7 @@ function ListView({
                 <Error error={error} />
             ) : (
                 <ListAndDetails
+                    codeEditorDetails
                     list={
                         <DataGrid
                             columns={[

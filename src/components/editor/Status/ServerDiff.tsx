@@ -1,5 +1,5 @@
-import ErrorIcon from '@mui/icons-material/Error';
-import { Button } from '@mui/material';
+import { Button, Typography, useTheme } from '@mui/material';
+import { DbError } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -8,10 +8,18 @@ interface Props {
 }
 
 function ServerDiff({ iconSize, onMerge }: Props) {
+    const theme = useTheme();
+
     return (
         <>
-            <FormattedMessage id="monacoEditor.serverDiff" />
-            <ErrorIcon sx={{ fontSize: iconSize }} color="error" />
+            <Typography>
+                <FormattedMessage id="monacoEditor.serverDiff" />
+            </Typography>
+
+            <DbError
+                style={{ fontSize: iconSize, color: theme.palette.error.main }}
+            />
+
             <Button onClick={() => onMerge()} disabled>
                 <FormattedMessage id="monacoEditor.serverDiffCTA" />
             </Button>

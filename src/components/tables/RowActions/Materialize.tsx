@@ -50,7 +50,11 @@ function Materialize({ selectableTableStoreName }: Props) {
     };
 
     return (
-        <Button disabled={!hasSelections} onClick={handlers.materialize}>
+        <Button
+            variant="outlined"
+            disabled={!hasSelections}
+            onClick={handlers.materialize}
+        >
             <FormattedMessage id="cta.materialize" />
         </Button>
     );

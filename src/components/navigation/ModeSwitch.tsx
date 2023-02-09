@@ -1,14 +1,15 @@
-import ModeNightIcon from '@mui/icons-material/ModeNight';
-import WbSunnyIcon from '@mui/icons-material/WbSunny';
-import { Button, IconButton, Tooltip, useTheme } from '@mui/material';
+import {
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Tooltip,
+    useTheme,
+} from '@mui/material';
 import { useColorMode } from 'context/Theme';
+import { HalfMoon, SunLight } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-interface Props {
-    hideText: boolean;
-}
-
-function ModeSwitch({ hideText }: Props) {
+function ModeSwitch() {
     const intl = useIntl();
     const theme = useTheme();
     const colorMode = useColorMode();
@@ -20,33 +21,28 @@ function ModeSwitch({ hideText }: Props) {
             })}
             placement="right-end"
         >
-            {hideText ? (
-                <IconButton color="inherit" onClick={colorMode.toggleColorMode}>
-                    {theme.palette.mode === 'dark' ? (
-                        <ModeNightIcon />
-                    ) : (
-                        <WbSunnyIcon />
-                    )}
-                </IconButton>
-            ) : (
-                <Button
-                    color="inherit"
-                    variant="text"
-                    onClick={colorMode.toggleColorMode}
-                    startIcon={
-                        theme.palette.mode === 'dark' ? (
-                            <ModeNightIcon />
-                        ) : (
-                            <WbSunnyIcon />
-                        )
-                    }
-                    sx={{
-                        whiteSpace: 'nowrap',
-                    }}
+            <ListItemButton
+                component="a"
+                onClick={colorMode.toggleColorMode}
+                sx={{
+                    whiteSpace: 'nowrap',
+                    px: 1.5,
+                }}
+            >
+                <ListItemIcon
+                    sx={{ minWidth: 36, color: theme.palette.text.primary }}
                 >
+                    {theme.palette.mode === 'dark' ? (
+                        <HalfMoon />
+                    ) : (
+                        <SunLight />
+                    )}
+                </ListItemIcon>
+
+                <ListItemText>
                     <FormattedMessage id="modeSwitch.label" />
-                </Button>
-            )}
+                </ListItemText>
+            </ListItemButton>
         </Tooltip>
     );
 }

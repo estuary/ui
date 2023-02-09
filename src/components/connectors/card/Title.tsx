@@ -6,7 +6,12 @@ interface Props {
 
 function ConnectorCardTitle({ title }: Props) {
     return (
-        <Typography component="div" variant="h5" marginBottom={1}>
+        <Typography
+            component="div"
+            marginBottom={1}
+            fontSize={18}
+            fontWeight="400"
+        >
             {title}
         </Typography>
     );

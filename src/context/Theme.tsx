@@ -14,52 +14,58 @@ import { useLocalStorage } from 'react-use';
 import { BaseComponentProps } from 'types';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 
-// Navigation width
+// The code block commented out directly below is how the typography variants can be extended
+// or existing variants disabled.
+//
+// declare module '@mui/material/styles' {
+//     interface TypographyVariants {
+//         sampleProp: React.CSSProperties;
+//     }
+
+//     // allow configuration using `createTheme`
+//     interface TypographyVariantsOptions {
+//         sampleProp?: React.CSSProperties;
+//     }
+// }
+
+// // Update the Typography's variant prop options
+// declare module '@mui/material/Typography' {
+//     interface TypographyPropsVariantOverrides {
+//         sampleProp: true;
+//     }
+// }
+
+// Navigation Width
 export enum NavWidths {
     MOBILE = 0,
-    RAIL = 57,
-    FULL = 225,
+    RAIL = 48,
+    FULL = 200,
 }
 
 // Colors
-export const teal = {
-    25: '#E6FFFF',
-    50: '#CDFBFB',
-    100: '#ABEDEE',
-    200: '#8BE1E2',
-    300: '#6DD4D5',
-    400: '#4DBABC',
-    500: '#32A0A3',
-    600: '#1C8789',
-    700: '#0C6E70',
-    800: '#015556',
+export const sample_blue = {
+    100: '#DCE6FE',
+    200: '#BACDFD',
+    300: '#96B0F9',
+    400: '#7A97F3',
+    500: '#5072EB',
+    600: '#3A56CA',
+    700: '#283EA9',
+    800: '#192A88',
+    900: '#0F1B70',
 };
 
-export const indigo = {
-    50: '#D6DFFF',
-    100: '#B8C6F9',
-    200: '#97AAEC',
-    300: '#798FDF',
-    400: '#5072EB',
-    500: '#3F59B8',
-    600: '#27419F',
-    700: '#132C85',
-    800: '#051B6C',
-};
+export const sample_grey = {
+    100: '#F7F9FC',
+    200: '#F0F4F9',
+    300: '#E1E9F4',
+    400: '#D3DEEE',
+    500: '#C4D3E9',
 
-export const slate = {
-    15: '#F6FAFF',
-    25: '#EEF8FF',
-    50: '#D8E9F5',
-    '50_a': 'rgba(216, 233, 245, 1)',
-    100: '#ACC7DC',
-    200: '#85A7C2',
-    300: '#638AA9',
-    400: '#466F8F',
-    500: '#2E5676',
-    600: '#1B3F5C',
-    700: '#0D2B43',
-    800: '#04192A',
+    600: '#1C2E4A',
+    700: '#16253B',
+    800: '#111C2C',
+    900: '#0B131E',
 };
 
 // Status Colors
@@ -73,10 +79,6 @@ export const infoMain: SemanticColor = '#4FD6FF';
 // Color modifiers
 const contrastThreshold = 5;
 const tonalOffset = 0.1;
-
-// Borders
-// const borderWidth = 2;
-// const borderColor = "rgba(0, 0, 0, 0.13)";
 
 export const logoColors = {
     purple: '#5974ea',
@@ -94,7 +96,7 @@ const xs = 0;
 // TODO: Balance the light mode color palette.
 const lightMode: PaletteOptions = {
     background: {
-        default: '#F5F6FA',
+        default: sample_grey[100],
     },
     contrastThreshold,
     error: {
@@ -105,18 +107,17 @@ const lightMode: PaletteOptions = {
     },
     mode: 'light',
     primary: {
-        main: indigo[400],
-        dark: indigo[500],
+        main: sample_blue[600],
     },
     secondary: {
-        main: indigo[600],
+        main: sample_blue[800],
     },
     success: {
         main: successMain,
     },
     text: {
-        primary: slate[800],
-        secondary: indigo[800],
+        primary: sample_grey[900],
+        secondary: sample_blue[800],
     },
     tonalOffset,
     warning: {
@@ -126,20 +127,19 @@ const lightMode: PaletteOptions = {
 
 const darkMode: PaletteOptions = {
     background: {
-        default: slate[800],
+        default: sample_grey[900],
     },
     contrastThreshold,
     mode: 'dark',
     primary: {
-        main: teal[300],
-        dark: teal[500],
+        main: sample_blue[200],
     },
     secondary: {
-        main: teal[100],
+        main: sample_blue[400],
     },
     text: {
-        primary: slate[15],
-        secondary: slate[100],
+        primary: sample_grey[300],
+        secondary: sample_grey[500],
     },
     tonalOffset,
 };
@@ -161,30 +161,20 @@ const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
 // JSONForms accordion is hardcoded to 20 so making this "1 higher"
 const accordionButton = zIndexIncrement * 5;
 
-// Styles
+// Borders
 
-// TODO (optimization): Store the outline style as a detached configuration that
-//   can be applied to the assortment of CSS border properties.
-export const tableBorderSx: SxProps<Theme> = {
-    borderBottom: `1px solid ${slate[200]}`,
+// Light is an RGB translation of #0B131E; Dark is an RGB translation of #F7F9FC.
+export const defaultOutline = {
+    light: `1px solid rgba(11, 19, 30, 0.12)`,
+    dark: `1px solid rgba(247, 249, 252, 0.12)`,
 };
+
+// Styles
 
 export const tableAlternateRowsSx: SxProps<Theme> = {
     '& tr:nth-of-type(even)': {
         backgroundColor: (theme) => theme.palette.action.hover,
     },
-};
-
-export const defaultOutline = {
-    light: '1px solid rgba(0, 0, 0, 0.12)',
-    dark: '1px solid rgba(255, 255, 255, 0.12)',
-};
-
-// TODO (optimization): Replace instances of outlineSx with slateOutline.
-export const slateOutline = `1px solid ${slate[200]}`;
-
-export const outlineSx: SxProps<Theme> = {
-    border: `1px solid ${slate[200]}`,
 };
 
 export const typographyTruncation: TypographyProps = {
@@ -196,49 +186,50 @@ export const typographyTruncation: TypographyProps = {
 
 // TODO (Colors) need to follow a pattern where all colors are in the theme file.
 //      this is one way to handle the light/dark mode:
-export const glassBkgWithBlur = {
-    light: {
-        background: 'white',
-    },
-    dark: {
-        background: 'rgb(13, 43, 67)',
-    },
+
+export const paperBackground = {
+    light: 'white',
+    dark: sample_grey[800],
 };
 
-export const glassBkgWithoutBlur = {
-    light: {
-        background: 'white',
-        borderRadius: 5,
-    },
-    dark: {
-        background: 'rgb(13, 43, 67)',
-        borderRadius: 5,
-    },
+export const paperBackgroundImage = {
+    light: 'none',
+    dark: 'linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))',
 };
 
+// RGB translation of #F7F9FC.
 export const semiTransparentBackground = {
-    light: 'rgba(216, 233, 245, 0.75)',
-    dark: 'rgba(172, 199, 220, 0.12)',
+    light: 'white',
+    dark: 'rgba(247, 249, 252, 0.05)',
 };
 
+// Light is an RGB translation of #0B131E; Dark is an RGB translation of #F7F9FC.
 export const semiTransparentBackgroundIntensified = {
-    light: 'rgba(216, 233, 245, 1)',
-    dark: 'rgba(172, 199, 220, 0.18)',
+    light: 'rgba(11, 19, 30, 0.02)',
+    dark: 'rgba(247, 249, 252, 0.08)',
 };
 
 export const jsonFormsGroupHeaders = {
-    light: slate[25],
+    light: 'white',
     dark: 'transparent',
 };
 
-export const reflexSplitterBackground = {
-    light: slate[25],
-    dark: slate[200],
+export const getReflexSplitterBackground = (
+    theme: Theme,
+    codeEditorPresent: boolean
+) => {
+    if (theme.palette.mode === 'light') {
+        return 'white';
+    } else {
+        // RGB translation of #F7F9FC.
+        return codeEditorPresent ? '#0A0A0A' : 'rgba(247, 249, 252, 0.30)';
+    }
 };
 
+// RGB translation of #F7F9FC.
 export const alternativeReflexContainerBackground = {
     light: 'white',
-    dark: 'rgba(172, 199, 220, 0.05)',
+    dark: 'rgba(247, 249, 252, 0.05)',
 };
 
 export const alternativeDataGridHeader = {
@@ -254,7 +245,6 @@ export const alertBackground = {
     light: 'white',
     dark: semiTransparentBackgroundIntensified.dark,
 };
-export const connectorCardLogoBackground = 'rgba(172, 199, 220, 0.30)';
 
 export const monacoEditorHeaderBackground = {
     light: 'white',
@@ -271,29 +261,15 @@ export const monacoEditorComponentBackground = {
     dark: 'vs-dark',
 };
 
+// RGB translation of #F7F9FC.
 export const codeBackground = {
-    light: slate[50],
-    dark: 'rgba(172, 199, 220, 0.12)',
-};
-
-export const logDialogBackground = {
-    light: slate[25],
-    dark: slate[800],
-};
-
-export const secondaryButtonBackground = {
-    light: slate[100],
-    dark: slate[50],
-};
-
-export const secondaryButtonHoverBackground = {
-    light: slate[200],
-    dark: slate[100],
+    light: sample_grey[200],
+    dark: 'rgba(247, 249, 252, 0.05)',
 };
 
 const expandedRowBgColor = {
-    light: slate[50],
-    dark: slate[800],
+    light: sample_grey[100],
+    dark: 'rgba(247, 249, 252, 0.05)',
 };
 export const getEntityTableRowSx = (
     theme: Theme,
@@ -305,6 +281,12 @@ export const getEntityTableRowSx = (
             : null,
         cursor: 'pointer',
     };
+};
+
+// Light is an RGB translation of #E1E9F4.
+export const detailsPanelBgColor = {
+    light: 'rgba(225, 233, 244, 0.70)',
+    dark: sample_grey[900],
 };
 
 export const truncateTextSx: SxProps<Theme> = {
@@ -328,19 +310,24 @@ export const jsonFormsPadding: SxProps<Theme> = {
 };
 
 // Used to make buttons look like a normal(ish) link
-export const LINK_BUTTON_STYLING: SxProps<Theme> = {
+export const linkButtonSx: SxProps<Theme> = {
     'px': 1,
     'py': 0,
     'fontWeight': 500,
     'zIndex': headerLinkIndex,
     'textDecoration': 'underline',
     '&:hover, &:focus': {
-        fontWeight: 700,
         textDecoration: 'underline',
     },
 };
 
-export const connectorImageBackgroundRadius = 5;
+// Light is an RGB translation of #E1E9F4; Light is an RGB translation of #F7F9FC.
+export const connectorCardLogoBackground = {
+    light: 'rgba(225, 233, 244, 0.30)',
+    dark: 'rgba(247, 249, 252, 0.08)',
+};
+
+export const connectorImageBackgroundRadius = 3;
 export const connectorImageBackgroundSx: SxProps<Theme> = {
     width: '100%',
     height: 125,
@@ -349,7 +336,7 @@ export const connectorImageBackgroundSx: SxProps<Theme> = {
     alignItems: 'center',
     marginBottom: 2,
     borderRadius: connectorImageBackgroundRadius,
-    background: connectorCardLogoBackground,
+    background: (theme) => connectorCardLogoBackground[theme.palette.mode],
 };
 
 const themeSettings = createTheme({
@@ -366,7 +353,7 @@ const themeSettings = createTheme({
         MuiAlert: {
             styleOverrides: {
                 root: {
-                    borderRadius: 10,
+                    borderRadius: 6,
                 },
             },
         },
@@ -388,6 +375,7 @@ const themeSettings = createTheme({
                 //   https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/defaultTheme.ts
                 disableRipple: true,
                 sx: {
+                    'fontSize': 14,
                     '&.Mui-focusVisible::after, &:hover::after': {
                         backgroundColor: 'currentColor',
                         borderRadius: 'inherit',
@@ -414,18 +402,8 @@ const themeSettings = createTheme({
             },
             styleOverrides: {
                 root: {
-                    borderRadius: 10,
-                },
-            },
-        },
-        MuiTableCell: {
-            defaultProps: {
-                sx: tableBorderSx,
-            },
-            styleOverrides: {
-                root: {
-                    paddingLeft: 8,
-                    paddingRight: 8,
+                    fontSize: 14,
+                    borderRadius: 4,
                 },
             },
         },
@@ -454,6 +432,12 @@ const themeSettings = createTheme({
             '"Segoe UI Emoji"',
             '"Segoe UI Symbol"',
         ].join(','),
+        body1: {
+            fontSize: 14,
+        },
+        button: {
+            fontSize: 14,
+        },
     },
 } as ThemeOptions);
 
@@ -501,7 +485,7 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                             backgroundColor:
                                 palette.mode === 'dark'
                                     ? 'transparent'
-                                    : 'rgba(255, 255, 255, 0.6)',
+                                    : 'white',
                             boxShadow: 'none',
                             overflow: 'hidden',
                         },
@@ -510,12 +494,36 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                 MuiAppBar: {
                     styleOverrides: {
                         root: {
-                            backgroundColor:
+                            background:
                                 palette.mode === 'dark'
-                                    ? slate[800]
-                                    : slate[50],
+                                    ? sample_grey[800]
+                                    : 'white',
                             boxShadow: 'none',
                             color: palette.text?.primary,
+                        },
+                    },
+                },
+                MuiDialog: {
+                    styleOverrides: {
+                        paper: {
+                            background:
+                                paperBackground[
+                                    palette.mode === 'dark' ? 'dark' : 'light'
+                                ],
+                            borderRadius: 6,
+                        },
+                    },
+                },
+                MuiTableCell: {
+                    styleOverrides: {
+                        root: {
+                            paddingLeft: 8,
+                            paddingRight: 8,
+                            fontSize: 14,
+                            borderBottom:
+                                defaultOutline[
+                                    palette.mode === 'dark' ? 'dark' : 'light'
+                                ],
                         },
                     },
                 },

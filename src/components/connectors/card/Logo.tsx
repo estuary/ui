@@ -1,4 +1,4 @@
-import { Cable } from '@mui/icons-material';
+import { NetworkLeft } from 'iconoir-react';
 
 interface Props {
     imageSrc: string | null | undefined;
@@ -19,7 +19,7 @@ function ConnectorCardLogo({ imageSrc }: Props) {
             />
         );
     } else {
-        return <Cable sx={{ fontSize: '4rem' }} />;
+        return <NetworkLeft style={{ fontSize: '3rem' }} />;
     }
 }
 

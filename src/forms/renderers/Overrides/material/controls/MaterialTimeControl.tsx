@@ -31,11 +31,11 @@ import {
 } from '@jsonforms/core';
 import { MuiInputText } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import ScheduleIcon from '@mui/icons-material/Schedule';
 import { Box, Hidden, IconButton, Popover, Stack } from '@mui/material';
 import { LocalizationProvider, StaticTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { format } from 'date-fns';
+import { Clock } from 'iconoir-react';
 import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -133,7 +133,7 @@ export const Custom_MaterialTimeControl = (props: ControlProps) => {
                         ref={buttonRef}
                         {...bindFocus(state)}
                     >
-                        <ScheduleIcon />
+                        <Clock />
                     </IconButton>
                 </Box>
 

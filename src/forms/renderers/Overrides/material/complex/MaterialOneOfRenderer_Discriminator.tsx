@@ -211,19 +211,23 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                 <DialogTitle id="alert-dialog-title">
                     {'Clear form?'}
                 </DialogTitle>
+
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
                         Your data will be cleared if you navigate away from this
                         tab. Do you want to proceed?
                     </DialogContentText>
                 </DialogContent>
+
                 <DialogActions>
-                    <Button onClick={cancel} color="primary">
+                    <Button variant="text" onClick={cancel} color="primary">
                         No
                     </Button>
+
                     <Button
                         onClick={confirm}
                         color="primary"
+                        variant="outlined"
                         autoFocus
                         id={`oneOf-${id}-confirm-yes`}
                     >

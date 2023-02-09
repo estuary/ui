@@ -10,6 +10,8 @@ import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
+import { Square } from 'iconoir-react';
+import CheckSquare from 'icons/CheckSquare';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { jobStatusPoller } from 'services/supabase';
@@ -98,7 +100,7 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                     alignItems: 'center',
                 }}
             >
-                <Typography variant="h6" align="center" sx={{ mb: 1.5 }}>
+                <Typography variant="h5" align="center" sx={{ mb: 1.5 }}>
                     <FormattedMessage
                         id={
                             !outdated
@@ -163,7 +165,14 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                 <FormControl error={showErrors} sx={{ mb: 3, mx: 0 }}>
                     <FormControlLabel
                         control={
-                            <Checkbox value={acknowledgedDocuments} required />
+                            <Checkbox
+                                value={acknowledgedDocuments}
+                                required
+                                icon={<Square style={{ fontSize: 14 }} />}
+                                checkedIcon={
+                                    <CheckSquare style={{ fontSize: 14 }} />
+                                }
+                            />
                         }
                         onChange={handlers.update}
                         label={

@@ -1,11 +1,18 @@
-import { Check, ContentCopy, ErrorOutline } from '@mui/icons-material';
-import { Box, Button, Tooltip, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Theme,
+    Tooltip,
+    Typography,
+    useTheme,
+} from '@mui/material';
 import { codeBackground } from 'context/Theme';
+import { Check, Copy, WarningCircle } from 'iconoir-react';
 import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 interface Props {
-    formattedMessage: string;
+    value: string;
     subsequentCommandExists?: boolean;
 }
 
@@ -13,25 +20,31 @@ type TransientButtonState = 'success' | 'error' | undefined;
 
 const borderRadius = 3;
 
-const getButtonIcon = (buttonState: TransientButtonState): ReactNode => {
+const getButtonIcon = (
+    theme: Theme,
+    buttonState: TransientButtonState
+): ReactNode => {
     switch (buttonState) {
         case 'success':
-            return <Check />;
+            return <Check style={{ color: theme.palette.success.main }} />;
         case 'error':
-            return <ErrorOutline />;
+            return (
+                <WarningCircle style={{ color: theme.palette.error.main }} />
+            );
         default:
-            return <ContentCopy />;
+            return <Copy style={{ color: theme.palette.primary.main }} />;
     }
 };
 
-function SingleLineCode({ formattedMessage, subsequentCommandExists }: Props) {
+function SingleLineCode({ value, subsequentCommandExists }: Props) {
     const intl = useIntl();
+    const theme = useTheme();
 
     const [transientButtonState, setTransientButtonState] =
         useState<TransientButtonState>(undefined);
 
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(formattedMessage).then(
+        navigator.clipboard.writeText(value).then(
             () => {
                 setTransientButtonState('success');
 
@@ -48,9 +61,10 @@ function SingleLineCode({ formattedMessage, subsequentCommandExists }: Props) {
     return (
         <Box
             sx={{
+                maxWidth: 1000,
                 mb: subsequentCommandExists ? 1 : undefined,
                 display: 'flex',
-                bgcolor: (theme) => codeBackground[theme.palette.mode],
+                bgcolor: codeBackground[theme.palette.mode],
                 borderRadius,
             }}
         >
@@ -63,7 +77,7 @@ function SingleLineCode({ formattedMessage, subsequentCommandExists }: Props) {
                     textOverflow: 'unset',
                 }}
             >
-                {formattedMessage}
+                {value}
             </Typography>
 
             <Tooltip
@@ -92,7 +106,7 @@ function SingleLineCode({ formattedMessage, subsequentCommandExists }: Props) {
                         borderBottomRightRadius: borderRadius,
                     }}
                 >
-                    {getButtonIcon(transientButtonState)}
+                    {getButtonIcon(theme, transientButtonState)}
                 </Button>
             </Tooltip>
         </Box>

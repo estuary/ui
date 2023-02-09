@@ -1,5 +1,5 @@
-import { ExpandMore } from '@mui/icons-material';
-import { Collapse, Divider, IconButton, Paper } from '@mui/material';
+import { Collapse, Divider, IconButton, Paper, useTheme } from '@mui/material';
+import { NavArrowDown } from 'iconoir-react';
 import React, { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -11,6 +11,7 @@ interface Props {
 
 function ErrorFallback({ error }: { error: Error }): JSX.Element {
     const intl = useIntl();
+    const theme = useTheme();
 
     const [expanded, setExpanded] = React.useState(false);
 
@@ -42,8 +43,11 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
                     transition: 'all 250ms ease-in-out',
                 }}
             >
-                <ExpandMore />
+                <NavArrowDown
+                    style={{ fontSize: 14, color: theme.palette.text.primary }}
+                />
             </IconButton>
+
             <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <Paper variant="outlined" square>
                     {error.stack}

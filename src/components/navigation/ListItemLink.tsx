@@ -47,12 +47,26 @@ const ListItemLink = ({
                         component={typeof link === 'string' ? RouterLink : 'a'}
                         to={typeof link === 'string' ? link : undefined}
                         onClick={typeof link === 'function' ? link : undefined}
+                        disableGutters
                         sx={{
                             whiteSpace: 'nowrap',
+                            px: 1.5,
                         }}
                     >
-                        {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
+                        {icon ? (
+                            <ListItemIcon
+                                sx={{
+                                    minWidth: 36,
+                                    color: (theme) =>
+                                        theme.palette.text.primary,
+                                }}
+                            >
+                                {icon}
+                            </ListItemIcon>
+                        ) : null}
+
                         <ListItemText primary={translatedTitle} />
+
                         <Badge badgeContent={badgeContent} />
                     </ListItemButton>
                 ) : (
@@ -60,17 +74,26 @@ const ListItemLink = ({
                         component={typeof link === 'string' ? RouterLink : 'a'}
                         to={typeof link === 'string' ? link : undefined}
                         onClick={typeof link === 'function' ? link : undefined}
+                        disableGutters
                         sx={{
                             whiteSpace: 'nowrap',
+                            px: 1.5,
                         }}
                     >
                         {icon ? (
-                            <ListItemIcon>
+                            <ListItemIcon
+                                sx={{
+                                    minWidth: 36,
+                                    color: (theme) =>
+                                        theme.palette.text.primary,
+                                }}
+                            >
                                 <Badge badgeContent={badgeContent}>
                                     {icon}
                                 </Badge>
                             </ListItemIcon>
                         ) : null}
+
                         <ListItemText primary={translatedTitle} />
                     </ListItemButton>
                 )}
