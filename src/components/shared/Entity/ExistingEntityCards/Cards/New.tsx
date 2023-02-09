@@ -15,8 +15,17 @@ import LogRocket from 'logrocket';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { DEFAULT_FILTER } from 'services/supabase';
+import { EntityWithCreateWorkflow } from 'types';
 
-const trackEvent = (logEvent: CustomEvents, connectorId?: string) => {
+const trackEvent = (
+    entityType: EntityWithCreateWorkflow,
+    connectorId?: string
+) => {
+    const logEvent: CustomEvents =
+        entityType === 'capture'
+            ? CustomEvents.CAPTURE_CREATE_CONFIG_CREATE
+            : CustomEvents.MATERIALIZATION_CREATE_CONFIG_CREATE;
+
     LogRocket.track(logEvent, {
         connector_tag_id: connectorId ?? DEFAULT_FILTER,
     });
@@ -34,12 +43,7 @@ function NewEntityCard() {
 
     const createNewTask = () => {
         if (entityType === 'capture' || entityType === 'materialization') {
-            const logEvent =
-                entityType === 'capture'
-                    ? CustomEvents.CAPTURE_CREATE_CONFIG_CREATE
-                    : CustomEvents.MATERIALIZATION_CREATE_CONFIG_CREATE;
-
-            trackEvent(logEvent, connectorId);
+            trackEvent(entityType, connectorId);
 
             navigateToCreate(entityType, connectorId, false, true);
         }
