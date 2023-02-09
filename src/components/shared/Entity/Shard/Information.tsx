@@ -107,8 +107,7 @@ function ShardInformation({ entityType }: Props) {
                 >
                     <MessageWithLink messageID="error.message" />
                 </AlertBox>
-            ) : null}
-            {taskShards.length > 0 ? (
+            ) : taskShards.length > 0 ? (
                 <>
                     <ShardErrors shards={taskShards} />
 
