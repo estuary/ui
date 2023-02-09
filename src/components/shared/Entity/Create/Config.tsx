@@ -23,9 +23,7 @@ interface Props {
 function EntityCreateConfig({ title, entityType }: Props) {
     useBrowserTitle(title);
 
-    const [connectorId] = useGlobalSearchParams([
-        GlobalSearchParams.CONNECTOR_ID,
-    ]);
+    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const navigateToCreate = useEntityCreateNavigate();
 
