@@ -1,6 +1,6 @@
 import { debounce, Grid, Toolbar } from '@mui/material';
+import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import SearchField from 'components/shared/toolbar/SearchField';
-import SortByField from 'components/shared/toolbar/SortByField';
 import {
     ChangeEvent,
     Dispatch,
@@ -92,7 +92,7 @@ function ExistingEntityCardToolbar({
                 </Grid>
 
                 <Grid item xs={4} md={2}>
-                    <SortByField
+                    <AutocompletedField
                         label={intl.formatMessage({
                             id: 'existingEntityCheck.toolbar.label.sortDirection',
                         })}

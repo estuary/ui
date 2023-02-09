@@ -19,7 +19,7 @@ interface Props {
     id?: string;
 }
 
-function SearchField({
+function AutocompletedField({
     label,
     options,
     defaultValue,
@@ -52,4 +52,4 @@ function SearchField({
     );
 }
 
-export default SearchField;
+export default AutocompletedField;

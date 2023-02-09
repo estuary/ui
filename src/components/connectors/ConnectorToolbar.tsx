@@ -1,16 +1,6 @@
-import {
-    Autocomplete,
-    AutocompleteRenderInputParams,
-    FilledInputProps,
-    Grid,
-    SxProps,
-    TextField,
-    Theme,
-    Toolbar,
-} from '@mui/material';
+import { Grid, Toolbar } from '@mui/material';
+import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import SearchField from 'components/shared/toolbar/SearchField';
-import SortByField from 'components/shared/toolbar/SortByField';
-import { semiTransparentBackgroundIntensified } from 'context/Theme';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { debounce } from 'lodash';
 import {
@@ -41,15 +31,6 @@ interface ProtocolOption {
     protocol: Entity | null;
     message: string;
 }
-
-const inputProps: Partial<FilledInputProps> = { sx: { borderRadius: 3 } };
-
-const toolbarSectionSx: SxProps<Theme> = {
-    '& .MuiFilledInput-root:hover, .MuiFilledInput-root.Mui-focused': {
-        backgroundColor: (theme) =>
-            semiTransparentBackgroundIntensified[theme.palette.mode],
-    },
-};
 
 function ConnectorToolbar({
     belowMd,
@@ -182,36 +163,20 @@ function ConnectorToolbar({
                 </Grid>
 
                 <Grid item xs={hideProtocol ? 6 : 4} md={2}>
-                    <Autocomplete
+                    <AutocompletedField
+                        label={intl.formatMessage({
+                            id: 'connectorTable.label.sortBy',
+                        })}
                         options={sortByOptions.map(({ message }) => message)}
-                        renderInput={({
-                            InputProps,
-                            ...params
-                        }: AutocompleteRenderInputParams) => (
-                            <TextField
-                                {...params}
-                                InputProps={{
-                                    ...InputProps,
-                                    ...inputProps,
-                                }}
-                                label={intl.formatMessage({
-                                    id: 'connectorTable.label.sortBy',
-                                })}
-                                variant="outlined"
-                                size="small"
-                            />
-                        )}
                         defaultValue={intl.formatMessage({
                             id: 'connectorTable.data.title',
                         })}
-                        disableClearable
-                        onChange={handlers.setSortBy}
-                        sx={toolbarSectionSx}
+                        changeHandler={handlers.setSortBy}
                     />
                 </Grid>
 
                 <Grid item xs={hideProtocol ? 6 : 4} md={2}>
-                    <SortByField
+                    <AutocompletedField
                         label={intl.formatMessage({
                             id: 'connectorTable.label.sortDirection',
                         })}
@@ -227,33 +192,17 @@ function ConnectorToolbar({
 
                 {hideProtocol ? null : (
                     <Grid item xs={4} md={2}>
-                        <Autocomplete
+                        <AutocompletedField
+                            label={intl.formatMessage({
+                                id: 'connectorTable.data.protocol',
+                            })}
                             options={protocolOptions.map(
                                 ({ message }) => message
-                            )}
-                            renderInput={({
-                                InputProps,
-                                ...params
-                            }: AutocompleteRenderInputParams) => (
-                                <TextField
-                                    {...params}
-                                    InputProps={{
-                                        ...InputProps,
-                                        ...inputProps,
-                                    }}
-                                    label={intl.formatMessage({
-                                        id: 'connectorTable.data.protocol',
-                                    })}
-                                    variant="outlined"
-                                    size="small"
-                                />
                             )}
                             defaultValue={intl.formatMessage({
                                 id: 'common.optionsAll',
                             })}
-                            disableClearable
-                            onChange={handlers.setProtocol}
-                            sx={toolbarSectionSx}
+                            changeHandler={handlers.setProtocol}
                         />
                     </Grid>
                 )}
