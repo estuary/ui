@@ -28,7 +28,6 @@ import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
 import { CustomEvents } from 'services/logrocket';
 import { stringifyJSON } from 'services/stringify';
-import { Entity } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 
 interface Props {
@@ -38,11 +37,10 @@ interface Props {
 const EDITOR_HEIGHT = 396;
 
 const trackEvent = (
-    entityType: Entity,
     data: CaptureQueryWithSpec | MaterializationQueryWithSpec
 ) => {
     const logEvent: CustomEvents =
-        entityType === 'capture'
+        data.spec_type === 'capture'
             ? CustomEvents.CAPTURE_CREATE_CONFIG_EDIT
             : CustomEvents.MATERIALIZATION_CREATE_CONFIG_EDIT;
 
@@ -63,7 +61,7 @@ function ExistingEntityCard({ queryData }: Props) {
     const handlers = {
         editTask: () => {
             if (!isEmpty(queryData)) {
-                trackEvent(queryData.spec_type, queryData);
+                trackEvent(queryData);
 
                 const baseURL =
                     queryData.spec_type === 'capture'
