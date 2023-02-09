@@ -106,7 +106,7 @@ export function DataPreview({ collectionName }: Props) {
                 </ToggleButtonGroup>*/}
             </Stack>
 
-            {!hasLength(journalsData?.journals) ? (
+            {journalsData && !hasLength(journalsData.journals) ? (
                 <Box sx={{ mb: 3 }}>
                     <AlertBox severity="warning">
                         <AlertTitle>
