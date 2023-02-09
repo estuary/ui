@@ -8,6 +8,8 @@ import {
     Theme,
     Toolbar,
 } from '@mui/material';
+import SearchField from 'components/shared/toolbar/SearchField';
+import SortByField from 'components/shared/toolbar/SortByField';
 import { semiTransparentBackgroundIntensified } from 'context/Theme';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { debounce } from 'lodash';
@@ -170,20 +172,12 @@ function ConnectorToolbar({
                 }}
             >
                 <Grid item xs={12} md={hideProtocol ? 6 : 4}>
-                    <TextField
-                        autoFocus
+                    <SearchField
                         label={intl.formatMessage({
                             id: 'connectorTable.filterLabel',
                         })}
-                        variant="outlined"
-                        size="small"
-                        InputProps={inputProps}
-                        onChange={handlers.filterTiles}
-                        sx={{
-                            width: '100%',
-                            borderRadius: 5,
-                            ...toolbarSectionSx,
-                        }}
+                        changeHandler={handlers.filterTiles}
+                        autoFocus={true}
                     />
                 </Grid>
 
@@ -217,33 +211,17 @@ function ConnectorToolbar({
                 </Grid>
 
                 <Grid item xs={hideProtocol ? 6 : 4} md={2}>
-                    <Autocomplete
+                    <SortByField
+                        label={intl.formatMessage({
+                            id: 'connectorTable.label.sortDirection',
+                        })}
                         options={sortDirectionOptions.map(
                             ({ message }) => message
-                        )}
-                        renderInput={({
-                            InputProps,
-                            ...params
-                        }: AutocompleteRenderInputParams) => (
-                            <TextField
-                                {...params}
-                                InputProps={{
-                                    ...InputProps,
-                                    ...inputProps,
-                                }}
-                                label={intl.formatMessage({
-                                    id: 'connectorTable.label.sortDirection',
-                                })}
-                                variant="outlined"
-                                size="small"
-                            />
                         )}
                         defaultValue={intl.formatMessage({
                             id: 'sortDirection.ascending',
                         })}
-                        disableClearable
-                        onChange={handlers.switchSortDirection}
-                        sx={toolbarSectionSx}
+                        changeHandler={handlers.switchSortDirection}
                     />
                 </Grid>
 

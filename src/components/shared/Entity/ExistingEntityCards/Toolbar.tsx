@@ -1,18 +1,6 @@
-import {
-    Autocomplete,
-    AutocompleteRenderInputParams,
-    debounce,
-    FilledInputProps,
-    Grid,
-    SxProps,
-    TextField,
-    Theme,
-    Toolbar,
-} from '@mui/material';
-import {
-    semiTransparentBackground,
-    semiTransparentBackgroundIntensified,
-} from 'context/Theme';
+import { debounce, Grid, Toolbar } from '@mui/material';
+import SearchField from 'components/shared/toolbar/SearchField';
+import SortByField from 'components/shared/toolbar/SortByField';
 import {
     ChangeEvent,
     Dispatch,
@@ -30,28 +18,6 @@ interface Props {
     setSearchQuery: Dispatch<SetStateAction<string | null>>;
     setSortDirection: Dispatch<SetStateAction<SortDirection>>;
 }
-
-const inputProps: Partial<FilledInputProps> = {
-    disableUnderline: true,
-    sx: {
-        borderRadius: 5,
-        backgroundColor: (theme) =>
-            semiTransparentBackground[theme.palette.mode],
-    },
-};
-
-const toolbarSectionSx: SxProps<Theme> = {
-    '& .MuiInputLabel-root.Mui-focused': {
-        color: (theme) =>
-            theme.palette.mode === 'dark'
-                ? 'primary'
-                : theme.palette.text.secondary,
-    },
-    '& .MuiFilledInput-root:hover, .MuiFilledInput-root.Mui-focused': {
-        backgroundColor: (theme) =>
-            semiTransparentBackgroundIntensified[theme.palette.mode],
-    },
-};
 
 function ExistingEntityCardToolbar({
     belowMd,
@@ -116,49 +82,27 @@ function ExistingEntityCardToolbar({
                 }}
             >
                 <Grid item xs={8} md={4}>
-                    <TextField
-                        autoFocus
+                    <SearchField
                         label={intl.formatMessage({
                             id: 'existingEntityCheck.toolbar.label.filter',
                         })}
-                        variant="filled"
-                        InputProps={inputProps}
-                        onChange={handlers.filterCards}
-                        sx={{
-                            width: '100%',
-                            borderRadius: 5,
-                            ...toolbarSectionSx,
-                        }}
+                        changeHandler={handlers.filterCards}
+                        autoFocus={true}
                     />
                 </Grid>
 
                 <Grid item xs={4} md={2}>
-                    <Autocomplete
+                    <SortByField
+                        label={intl.formatMessage({
+                            id: 'existingEntityCheck.toolbar.label.sortDirection',
+                        })}
                         options={sortDirectionOptions.map(
                             ({ message }) => message
-                        )}
-                        renderInput={({
-                            InputProps,
-                            ...params
-                        }: AutocompleteRenderInputParams) => (
-                            <TextField
-                                {...params}
-                                InputProps={{
-                                    ...InputProps,
-                                    ...inputProps,
-                                }}
-                                label={intl.formatMessage({
-                                    id: 'existingEntityCheck.toolbar.label.sortDirection',
-                                })}
-                                variant="filled"
-                            />
                         )}
                         defaultValue={intl.formatMessage({
                             id: 'sortDirection.ascending',
                         })}
-                        disableClearable
-                        onChange={handlers.switchSortDirection}
-                        sx={toolbarSectionSx}
+                        changeHandler={handlers.switchSortDirection}
                     />
                 </Grid>
             </Grid>
