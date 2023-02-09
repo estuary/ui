@@ -10,7 +10,7 @@ import {
     useTheme,
 } from '@mui/material';
 import ConnectorCard from 'components/connectors/card';
-import ConnectorToolbar from 'components/ConnectorToolbar';
+import ConnectorToolbar from 'components/connectors/ConnectorToolbar';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import {
     semiTransparentBackground,
@@ -40,10 +40,10 @@ import {
 } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
-import ConnectorCardCTA from './connectors/card/CTA';
-import ConnectorCardDetails from './connectors/card/Details';
-import ConnectorLogo from './connectors/card/Logo';
-import ConnectorCardTitle from './connectors/card/Title';
+import ConnectorCardCTA from './card/CTA';
+import ConnectorCardDetails from './card/Details';
+import ConnectorLogo from './card/Logo';
+import ConnectorCardTitle from './card/Title';
 
 interface ConnectorTilesProps {
     protocolPreset?: EntityWithCreateWorkflow;

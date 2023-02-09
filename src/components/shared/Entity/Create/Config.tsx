@@ -1,5 +1,5 @@
 import { Box, CircularProgress, Collapse, Typography } from '@mui/material';
-import ConnectorTiles from 'components/ConnectorTiles';
+import ConnectorTiles from 'components/connectors/ConnectorTiles';
 import ExistingEntityCards from 'components/shared/Entity/ExistingEntityCards';
 import {
     useExistingEntity_connectorName,

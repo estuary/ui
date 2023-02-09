@@ -1,5 +1,5 @@
 import { Stack } from '@mui/material';
-import ConnectorIcon from 'components/ConnectorIcon';
+import ConnectorIcon from 'components/connectors/ConnectorIcon';
 import useConstant from 'use-constant';
 
 interface Props {

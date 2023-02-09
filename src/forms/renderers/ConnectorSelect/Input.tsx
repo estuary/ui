@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Input from '@mui/material/Input';
-import ConnectorIcon from 'components/ConnectorIcon';
+import ConnectorIcon from 'components/connectors/ConnectorIcon';
 
 interface Props {
     inputProps: any;

@@ -1,5 +1,5 @@
 import { Box, Button, TableCell, TableRow } from '@mui/material';
-import ConnectorName from 'components/ConnectorName';
+import ConnectorName from 'components/connectors/ConnectorName';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import Link from 'components/tables/Link';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
