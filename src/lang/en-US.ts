@@ -729,7 +729,8 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
 const ExistingEntityCheck: ResolvedIntlConfig['messages'] = {
     'existingEntityCheck.heading': `One more thing...`,
     'existingEntityCheck.instructions': `We found at least one {connectorName} {entityType} in the system.`,
-    'existingEntityCheck.instructions2': `Editing an existing {entityType} can help reduce configuration time and cut cost. Select one of the {entityType}s from the list to edit it. If you would still like to create one from scratch, select the New {connectorName} {entityType} option below.`,
+
+    'existingEntityCheck.instructions2': `Adding to an existing {entityType} can help save time and cut cost. Choose a {entityType} from the list to edit it. If you'd still prefer to start from scratch, select the New {connectorName} {entityType} option below.`,
 
     'existingEntityCheck.toolbar.label.filter': `Search existing tasks`,
     'existingEntityCheck.toolbar.label.sortDirection': `Sort Direction`,
