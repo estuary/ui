@@ -47,7 +47,8 @@ function ExistingEntityHydrator({ children }: BaseComponentProps) {
         hydrated,
     ]);
 
-    return <div>{children}</div>;
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <>{children}</>;
 }
 
 export default ExistingEntityHydrator;
