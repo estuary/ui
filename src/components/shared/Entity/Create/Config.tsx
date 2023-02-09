@@ -11,7 +11,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { EntityWithCreateWorkflow } from 'types';
 
@@ -32,17 +32,9 @@ function EntityCreateConfig({ title, entityType }: Props) {
     const createNewTask = useExistingEntity_createNewTask();
     const connectorName = useExistingEntity_connectorName();
 
-    const [showConnectorTiles, setShowConnectorTiles] = useState<
-        boolean | null
-    >(null);
-
-    useEffect(() => {
-        if (typeof connectorId === 'string') {
-            setShowConnectorTiles(false);
-        } else {
-            setShowConnectorTiles(true);
-        }
-    }, [connectorId]);
+    const showExistingEntityCheck: boolean = useMemo(() => {
+        return (connectorId && !createNewTask) as boolean;
+    }, [connectorId, createNewTask]);
 
     useEffect(() => {
         if (existingEntityStoreHydrated && connectorId && createNewTask) {
@@ -56,10 +48,9 @@ function EntityCreateConfig({ title, entityType }: Props) {
         existingEntityStoreHydrated,
     ]);
 
-    if (showConnectorTiles === null) return null;
     return (
         <>
-            <Collapse in={showConnectorTiles} unmountOnExit>
+            <Collapse in={!connectorId} unmountOnExit>
                 <Typography sx={{ mb: 2 }}>
                     <FormattedMessage id="entityCreate.instructions" />
                 </Typography>
@@ -67,7 +58,7 @@ function EntityCreateConfig({ title, entityType }: Props) {
                 <ConnectorTiles protocolPreset={entityType} replaceOnNavigate />
             </Collapse>
 
-            <Collapse in={!showConnectorTiles} unmountOnExit>
+            <Collapse in={showExistingEntityCheck} unmountOnExit>
                 {existingEntityStoreHydrated ? (
                     <>
                         <Typography sx={{ mb: 2 }}>
@@ -90,11 +81,11 @@ function EntityCreateConfig({ title, entityType }: Props) {
                     <Box
                         sx={{
                             height: 500,
-                            borderRadius: 5,
+                            padding: 1,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            padding: 1,
+                            borderRadius: 5,
                         }}
                     >
                         <CircularProgress />
