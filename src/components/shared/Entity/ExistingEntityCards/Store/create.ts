@@ -66,9 +66,7 @@ const getInitialState = (
                 if (error) {
                     setHydrationErrorsExist(true);
                     setCreateNewTask(true);
-                }
-
-                if (data && data.length > 0) {
+                } else if (data && data.length > 0) {
                     const { setQueryData, setConnectorName } = get();
 
                     setQueryData(data);
