@@ -1,7 +1,10 @@
 import { useEntityType } from 'context/EntityContext';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect } from 'react';
-import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
+import {
+    useShardDetail_setError,
+    useShardDetail_setShards,
+} from 'stores/ShardDetail/hooks';
 import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
@@ -12,7 +15,7 @@ interface Props extends BaseComponentProps {
 function ShardHydrator({ catalogName, children, lastPubId }: Props) {
     const entityType = useEntityType();
 
-    const { data: shardsData } = useShardsList([
+    const { data, error } = useShardsList([
         {
             catalog_name: catalogName,
             id: lastPubId,
@@ -21,12 +24,18 @@ function ShardHydrator({ catalogName, children, lastPubId }: Props) {
     ]);
 
     const setShards = useShardDetail_setShards();
+    const setError = useShardDetail_setError();
 
     useEffect(() => {
-        if (shardsData && shardsData.shards.length > 0) {
-            setShards(shardsData.shards);
+        if (data) {
+            if (data.error || error) {
+                setError(data.error || error);
+            }
+            if (data.shards.length > 0) {
+                setShards(data.shards);
+            }
         }
-    }, [setShards, shardsData]);
+    }, [data, error, setError, setShards]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;

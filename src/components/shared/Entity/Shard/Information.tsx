@@ -15,7 +15,9 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+import MessageWithLink from 'components/content/MessageWithLink';
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
+import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
 import { slate } from 'context/Theme';
 import { Shard } from 'data-plane-gateway/types/shard_client';
@@ -23,6 +25,7 @@ import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
+    useShardDetail_error,
     useShardDetail_getTaskShards,
     useShardDetail_shards,
 } from 'stores/ShardDetail/hooks';
@@ -36,32 +39,31 @@ interface Props {
 
 const rowsPerPage = 3;
 
+const columns: TableColumns[] = [
+    {
+        field: 'status',
+        headerIntlKey: 'detailsPanel.shardDetails.status.label',
+    },
+    {
+        field: 'id',
+        headerIntlKey: 'detailsPanel.shardDetails.id.label',
+    },
+];
+
 function ShardInformation({ entityType }: Props) {
     const theme = useTheme();
     const intl = useIntl();
 
     const [page, setPage] = useState(0);
-
     const [taskShards, setTaskShards] = useState<Shard[]>([]);
 
     const shards = useShardDetail_shards();
-
+    const error = useShardDetail_error();
     const getTaskShards = useShardDetail_getTaskShards();
 
     const specs = useEditorStore_specs<LiveSpecsQuery_spec>({
         localScope: true,
     });
-
-    const columns: TableColumns[] = [
-        {
-            field: 'status',
-            headerIntlKey: 'detailsPanel.shardDetails.status.label',
-        },
-        {
-            field: 'id',
-            headerIntlKey: 'detailsPanel.shardDetails.id.label',
-        },
-    ];
 
     useEffect(() => {
         if (specs && specs.length > 0) {
@@ -95,6 +97,17 @@ function ShardInformation({ entityType }: Props) {
             >
                 <FormattedMessage id="detailsPanel.status.header" />
             </Typography>
+            {error ? (
+                <AlertBox
+                    severity="error"
+                    short
+                    title={
+                        <FormattedMessage id="detailsPanel.shardDetails.fetchError" />
+                    }
+                >
+                    <MessageWithLink messageID="error.message" />
+                </AlertBox>
+            ) : null}
             {taskShards.length > 0 ? (
                 <>
                     <ShardErrors shards={taskShards} />

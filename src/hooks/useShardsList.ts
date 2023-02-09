@@ -70,6 +70,7 @@ const useShardsList = <T extends LiveSpecsExtBareMinimum>(specs: T[]) => {
             : null,
         fetcher,
         {
+            errorRetryCount: 3,
             errorRetryInterval: INTERVAL / 2,
             refreshInterval: INTERVAL,
             revalidateOnFocus: false, // We're already refreshing and these status do not change often
