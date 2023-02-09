@@ -6,11 +6,6 @@ import {
     DialogContent,
     DialogTitle,
 } from '@mui/material';
-import {
-    glassBkgWithoutBlur,
-    secondaryButtonBackground,
-    secondaryButtonHoverBackground,
-} from 'context/Theme';
 import { createContext, ReactNode, useContext, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
@@ -86,13 +81,6 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                 onClose={handlers.dismiss}
                 aria-labelledby={LABEL_ID}
                 aria-describedby={DESCRIPTION_ID}
-                sx={{
-                    '& .MuiPaper-root.MuiDialog-paper': {
-                        backgroundColor: (theme) =>
-                            glassBkgWithoutBlur[theme.palette.mode],
-                        borderRadius: 5,
-                    },
-                }}
             >
                 <DialogTitle id={LABEL_ID}>
                     <FormattedMessage id={settings.title} />
@@ -109,23 +97,15 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                 </DialogContent>
 
                 <DialogActions sx={{ p: '16px 24px' }}>
-                    <Button
-                        onClick={handlers.dismiss}
-                        sx={{
-                            'backgroundColor': (theme) =>
-                                secondaryButtonBackground[theme.palette.mode],
-                            '&:hover': {
-                                backgroundColor: (theme) =>
-                                    secondaryButtonHoverBackground[
-                                        theme.palette.mode
-                                    ],
-                            },
-                        }}
-                    >
+                    <Button variant="text" onClick={handlers.dismiss}>
                         <FormattedMessage id={settings.cancelText} />
                     </Button>
 
-                    <Button onClick={handlers.confirm} autoFocus>
+                    <Button
+                        variant="outlined"
+                        onClick={handlers.confirm}
+                        autoFocus
+                    >
                         <FormattedMessage id={settings.confirmText} />
                     </Button>
                 </DialogActions>

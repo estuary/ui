@@ -145,12 +145,6 @@ function BindingsMultiEditor({
 
     return (
         <>
-            <Typography variant="h5" sx={{ mb: 1 }}>
-                <FormattedMessage
-                    id={`${messagePrefix}.collectionSelector.heading`}
-                />
-            </Typography>
-
             <Typography sx={{ mb: 2 }}>
                 <FormattedMessage
                     id={`${messagePrefix}.collectionSelector.instructions`}

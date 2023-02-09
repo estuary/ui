@@ -4,7 +4,7 @@ import Tile from 'components/shared/Tile';
 import {
     connectorImageBackgroundRadius,
     connectorImageBackgroundSx,
-    teal,
+    sample_grey,
 } from 'context/Theme';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -27,7 +27,7 @@ function ConnectorCard({
     recommended,
 }: Props) {
     return (
-        <Grid item xs={2} md={4} lg={3} xl={2} sx={{ maxWidth: 275 }}>
+        <Grid item xs={2} md={4} lg={2} xl={2} sx={{ maxWidth: 275 }}>
             <Tile>
                 <Stack
                     sx={{
@@ -73,8 +73,9 @@ function ConnectorCard({
                             {recommended ? (
                                 <Box
                                     sx={{
-                                        bgcolor: teal[700],
-                                        color: 'white',
+                                        bgcolor: sample_grey[400],
+                                        color: 'black',
+                                        fontWeight: 500,
                                         borderBottomLeftRadius:
                                             connectorImageBackgroundRadius,
                                         borderBottomRightRadius:

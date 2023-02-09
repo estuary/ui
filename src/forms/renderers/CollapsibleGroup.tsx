@@ -4,15 +4,16 @@ import {
     MaterialLayoutRendererProps,
 } from '@jsonforms/material-renderers';
 import { withJsonFormsLayoutProps } from '@jsonforms/react';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
     Hidden,
     Typography,
+    useTheme,
 } from '@mui/material';
-import { jsonFormsGroupHeaders } from 'context/Theme';
+import { defaultOutline, jsonFormsGroupHeaders } from 'context/Theme';
+import { NavArrowDown } from 'iconoir-react';
 import { ADVANCED, CONTAINS_REQUIRED_FIELDS } from 'services/jsonforms/shared';
 
 export const CollapsibleGroupType = 'CollapsibleGroup';
@@ -31,6 +32,8 @@ const CollapsibleGroupRenderer = ({
     visible,
     renderers,
 }: any) => {
+    const theme = useTheme();
+
     const layoutProps = {
         elements: uischema.elements,
         schema,
@@ -49,15 +52,28 @@ const CollapsibleGroupRenderer = ({
 
     return (
         <Hidden xsUp={!visible}>
-            <Accordion defaultExpanded={expand}>
+            <Accordion
+                defaultExpanded={expand}
+                sx={{
+                    borderBottom: expand
+                        ? 'none'
+                        : defaultOutline[theme.palette.mode],
+                }}
+            >
                 <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
+                    expandIcon={
+                        <NavArrowDown
+                            style={{ color: theme.palette.text.primary }}
+                        />
+                    }
                     sx={{
-                        backgroundColor: (theme) =>
+                        backgroundColor:
                             jsonFormsGroupHeaders[theme.palette.mode],
                     }}
                 >
-                    <Typography>{uischema.label}</Typography>
+                    <Typography sx={{ fontWeight: 500 }}>
+                        {uischema.label}
+                    </Typography>
                 </AccordionSummary>
 
                 <AccordionDetails>

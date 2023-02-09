@@ -3,15 +3,18 @@ import { FormattedMessage } from 'react-intl';
 
 interface Props {
     header: string;
+    marginBottom?: number;
 }
 
-function Title({ header }: Props) {
+function Title({ header, marginBottom }: Props) {
     return (
         <Typography
             component="span"
-            variant="h6"
             sx={{
+                mb: marginBottom,
                 alignItems: 'center',
+                fontSize: 18,
+                fontWeight: '400',
             }}
         >
             <FormattedMessage id={header} />

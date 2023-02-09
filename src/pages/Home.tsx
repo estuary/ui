@@ -13,13 +13,8 @@ const Home = () => {
         <PageContainer
             pageTitleProps={{ header: authenticatedRoutes.home.title }}
         >
-            <Toolbar
-                sx={{
-                    justifyContent: 'center',
-                    mb: 4,
-                }}
-            >
-                <Typography variant="h2">
+            <Toolbar sx={{ justifyContent: 'center', mb: 3 }}>
+                <Typography variant="h4">
                     <FormattedMessage id="home.main.header" />
                 </Typography>
             </Toolbar>

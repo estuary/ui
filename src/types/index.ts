@@ -66,6 +66,11 @@ export interface JobStatus {
     type: string;
 }
 
+export interface MuiTabProps<T> {
+    label: string;
+    value: T;
+}
+
 export interface AppliedDirective<T> {
     created_at: Date;
     detail: null;

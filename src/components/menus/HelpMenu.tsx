@@ -1,20 +1,15 @@
-import HelpIcon from '@mui/icons-material/Help';
-import { SxProps, Theme } from '@mui/material';
 import ExternalLinkMenuItem from 'components/shared/ExternalLinkMenuItem';
+import { HelpCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import IconMenu from './IconMenu';
 
-interface Props {
-    iconSx: SxProps<Theme>;
-}
-
-function HelpMenu({ iconSx }: Props) {
+function HelpMenu() {
     const intl = useIntl();
 
     return (
         <IconMenu
             ariaLabel={intl.formatMessage({ id: 'helpMenu.ariaLabel' })}
-            icon={<HelpIcon sx={iconSx} />}
+            icon={<HelpCircle />}
             identifier="help-menu"
             tooltip={intl.formatMessage({ id: 'helpMenu.tooltip' })}
         >

@@ -1,4 +1,3 @@
-import SearchIcon from '@mui/icons-material/Search';
 import {
     Box,
     Skeleton,
@@ -15,7 +14,10 @@ import {
     TextField,
     Toolbar,
     Typography,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material';
+import TablePaginationActions from 'components/tables/PaginationActions';
 import RowSelector from 'components/tables/RowActions/RowSelector';
 import {
     SelectableTableStore,
@@ -23,6 +25,7 @@ import {
 } from 'components/tables/Store';
 import Title from 'components/tables/Title';
 import { useZustandStore } from 'context/Zustand/provider';
+import { ArrowDown } from 'iconoir-react';
 import { debounce } from 'lodash';
 import {
     ChangeEvent,
@@ -80,7 +83,7 @@ export const getPagination = (currPage: number, size: number) => {
     return { from, to };
 };
 
-const emptyRowHeight = 80;
+const emptyRowHeight = 45;
 const rowsPerPageOptions = [10, 25, 50];
 
 // TODO (tables) I think we should switch this to React Table soon
@@ -106,6 +109,9 @@ function EntityTable({
     const isFiltering = useRef(false);
 
     const intl = useIntl();
+
+    const theme = useTheme();
+    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
     const isValidating = useZustandStore<
         SelectableTableStore,
@@ -242,12 +248,15 @@ function EntityTable({
         return (
             <>
                 <TableRow sx={styling}>{loadingRow}</TableRow>
+
                 <TableRow sx={{ ...styling, opacity: '75%' }}>
                     {loadingRow}
                 </TableRow>
+
                 <TableRow sx={{ ...styling, opacity: '50%' }}>
                     {loadingRow}
                 </TableRow>
+
                 <TableRow
                     sx={{
                         ...styling,
@@ -275,14 +284,17 @@ function EntityTable({
         <Box data-public>
             <Box sx={{ mx: 2 }}>
                 <Stack direction="row" spacing={1}>
-                    {enableSelection ? <Title header={header} /> : null}
+                    {enableSelection ? (
+                        <Title header={header} marginBottom={2} />
+                    ) : null}
                 </Stack>
+
                 <Toolbar
                     disableGutters
                     sx={{
                         display: 'flex',
                         justifyContent: 'space-between',
-                        alignItems: 'baseline',
+                        alignItems: 'start',
                     }}
                 >
                     {enableSelection ? (
@@ -291,29 +303,26 @@ function EntityTable({
                         <Title header={header} />
                     )}
 
-                    <Box
+                    <TextField
+                        id="capture-search-box"
+                        label={intl.formatMessage({
+                            id: filterLabel,
+                        })}
+                        variant="outlined"
+                        size="small"
+                        onChange={handlers.filterTable}
                         sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            m: 0,
+                            'width': belowMd ? 'auto' : 350,
+                            '& .MuiInputBase-root': { borderRadius: 3 },
                         }}
-                    >
-                        <SearchIcon sx={{ mb: 0.9, mr: 0.5, fontSize: 18 }} />
-                        <TextField
-                            id="capture-search-box"
-                            label={intl.formatMessage({
-                                id: filterLabel,
-                            })}
-                            variant="standard"
-                            onChange={handlers.filterTable}
-                        />
-                    </Box>
+                    />
                 </Toolbar>
             </Box>
 
             <Box sx={{ mb: 2, mx: 2 }}>
                 <TableContainer component={Box}>
                     <Table
+                        size="small"
                         sx={{ minWidth: 350 }}
                         aria-label={intl.formatMessage({
                             id: 'entityTable.title',
@@ -322,7 +331,7 @@ function EntityTable({
                         <TableHead>
                             <TableRow
                                 sx={{
-                                    background: (theme) =>
+                                    background:
                                         theme.palette.background.default,
                                 }}
                             >
@@ -345,6 +354,7 @@ function EntityTable({
                                         >
                                             {selectData && column.field ? (
                                                 <TableSortLabel
+                                                    IconComponent={ArrowDown}
                                                     active={
                                                         columnToSort ===
                                                         column.field
@@ -358,6 +368,12 @@ function EntityTable({
                                                     onClick={handlers.sort(
                                                         column.field
                                                     )}
+                                                    sx={{
+                                                        '& .MuiTableSortLabel-icon':
+                                                            {
+                                                                fontSize: 14,
+                                                            },
+                                                    }}
                                                 >
                                                     {column.headerIntlKey ? (
                                                         <FormattedMessage
@@ -389,15 +405,16 @@ function EntityTable({
                                     <TableCell colSpan={columns.length}>
                                         <Box
                                             sx={{
+                                                p: 2,
                                                 display: 'flex',
                                                 justifyContent: 'center',
                                             }}
                                         >
                                             <Box width={450}>
                                                 <Typography
-                                                    variant="h6"
+                                                    variant="subtitle2"
                                                     align="center"
-                                                    sx={{ mb: 2 }}
+                                                    sx={{ mb: 1 }}
                                                 >
                                                     <FormattedMessage
                                                         id={getEmptyTableHeader(
@@ -406,6 +423,7 @@ function EntityTable({
                                                         )}
                                                     />
                                                 </Typography>
+
                                                 <Typography component="div">
                                                     {getEmptyTableMessage(
                                                         tableState.status,
@@ -423,6 +441,9 @@ function EntityTable({
                             <TableFooter>
                                 <TableRow>
                                     <TablePagination
+                                        ActionsComponent={
+                                            TablePaginationActions
+                                        }
                                         rowsPerPageOptions={rowsPerPageOptions}
                                         count={selectDataCount}
                                         rowsPerPage={rowsPerPage}

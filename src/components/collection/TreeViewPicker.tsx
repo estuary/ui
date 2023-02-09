@@ -1,9 +1,9 @@
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import TreeItem from '@mui/lab/TreeItem';
 import TreeView from '@mui/lab/TreeView';
+import { useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import { NavArrowDown, NavArrowRight } from 'iconoir-react';
 import { SyntheticEvent, useMemo, useState } from 'react';
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 //    to focus on other stuff. Right now it seems kinda slow. Not sure if that is
 //      due to something MUI did. It is in their "lab" so not really made for prod.
 //  What's needed:
-//      maintain selected list, display items differen if they're select, support selecting
+//      maintain selected list, display items different if they're select, support selecting
 //      entire "folder", enable removal of item, add ctas (probably should have an add/remove button)
 
 // This chunk was how we were calculating the "tree" in src/components/collection/Picker.tsx
@@ -29,6 +29,8 @@ interface Props {
 // }, [collectionData]);
 
 export default function TreeViewPicker({ items, onChange, selected }: Props) {
+    const theme = useTheme();
+
     const [expanded, setExpanded] = useState<string[]>([]);
 
     const handleToggle = (event: SyntheticEvent, nodeIds: string[]) => {
@@ -96,8 +98,20 @@ export default function TreeViewPicker({ items, onChange, selected }: Props) {
             </Box>
             <TreeView
                 aria-label="controlled"
-                defaultCollapseIcon={<ExpandMoreIcon />}
-                defaultExpandIcon={<ChevronRightIcon />}
+                defaultCollapseIcon={
+                    <NavArrowDown
+                        style={{
+                            color: theme.palette.text.primary,
+                        }}
+                    />
+                }
+                defaultExpandIcon={
+                    <NavArrowRight
+                        style={{
+                            color: theme.palette.text.primary,
+                        }}
+                    />
+                }
                 expanded={expanded}
                 selected={selected}
                 onNodeToggle={handleToggle}

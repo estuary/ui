@@ -6,6 +6,7 @@ import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { fireGtmEvent } from 'services/gtm';
 import { jobStatusPoller } from 'services/supabase';
 import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 import { jobStatusQuery, trackEvent } from './shared';
@@ -60,6 +61,9 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                 jobStatusPoller(
                     jobStatusQuery(data),
                     async () => {
+                        fireGtmEvent('Register', {
+                            tenant: requestedTenant,
+                        });
                         trackEvent(`${directiveName}:Complete`, directive);
                         void mutate();
                     },

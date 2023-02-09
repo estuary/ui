@@ -1,4 +1,3 @@
-import FilterListIcon from '@mui/icons-material/FilterList';
 import {
     Button,
     CircularProgress,
@@ -8,8 +7,9 @@ import {
     Typography,
 } from '@mui/material';
 import { StatsFilter } from 'api/stats';
-import { LINK_BUTTON_STYLING } from 'context/Theme';
+import { linkButtonSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
+import { Filter } from 'iconoir-react';
 import React, { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
@@ -53,9 +53,13 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
 
     return (
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Typography sx={{ whiteSpace: 'nowrap' }}>
+            <Typography
+                component="span"
+                sx={{ mt: 0.5, fontWeight: 500, whiteSpace: 'nowrap' }}
+            >
                 <FormattedMessage id={header} />
             </Typography>
+
             <Button
                 id="stat-filter-selector-button"
                 aria-controls={open ? 'stat-filter-selector-menu' : undefined}
@@ -68,14 +72,15 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
                     !disabled && stats === null ? (
                         <CircularProgress size={15} />
                     ) : (
-                        <FilterListIcon />
+                        <Filter style={{ fontSize: 13 }} />
                     )
                 }
                 disabled={disabled}
-                sx={{ ...LINK_BUTTON_STYLING }}
+                sx={{ ...linkButtonSx }}
             >
                 <FormattedMessage id={`filter.time.${currentOption}`} />
             </Button>
+
             <Menu
                 id="stat-filter-selector-menu"
                 anchorEl={anchorEl}

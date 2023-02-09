@@ -1,8 +1,5 @@
 import { Box, TableCell, Tooltip, Typography } from '@mui/material';
-import {
-    semiTransparentBackgroundIntensified,
-    tableBorderSx,
-} from 'context/Theme';
+import { semiTransparentBackgroundIntensified } from 'context/Theme';
 import prettyBytes from 'pretty-bytes';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -29,7 +26,6 @@ const Bytes = ({ read, val }: Props) => {
     return (
         <TableCell
             sx={{
-                ...tableBorderSx,
                 minWidth: 'min-content',
                 maxWidth: 'min-content',
             }}

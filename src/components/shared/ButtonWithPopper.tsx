@@ -8,6 +8,7 @@ interface Props {
     popper: ReactNode;
     disabled?: boolean;
     startIcon?: ReactNode;
+    variant?: 'text' | 'outlined' | 'contained';
     buttonSx?: SxProps<Theme>;
 }
 
@@ -16,6 +17,7 @@ function ButtonWithPopper({
     popper,
     disabled,
     startIcon,
+    variant,
     buttonSx,
 }: Props) {
     const [open, setOpen] = useState<boolean>(false);
@@ -29,6 +31,7 @@ function ButtonWithPopper({
     return (
         <>
             <Button
+                variant={variant}
                 disabled={disabled}
                 startIcon={startIcon}
                 onClick={togglePopper}

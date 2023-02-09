@@ -1,14 +1,15 @@
 import { Box, Button, Tab, Tabs } from '@mui/material';
-import { MuiTabProps } from 'components/editor/Bindings/types';
+import { TabOptions } from 'components/editor/Bindings/types';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { MuiTabProps } from 'types';
 
 interface BindingTabsProps {
     selectedTab: number;
     setSelectedTab: Dispatch<SetStateAction<number>>;
 }
 
-export const tabProps: MuiTabProps[] = [
+export const tabProps: MuiTabProps<TabOptions>[] = [
     {
         label: 'workflows.collectionSelector.tab.resourceConfig',
         value: 'config',

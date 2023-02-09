@@ -1,10 +1,4 @@
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 //TODO (UI / UX) - These icons are not final
-import HomeIcon from '@mui/icons-material/Home';
-import InputIcon from '@mui/icons-material/Input';
-import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
-import StorageIcon from '@mui/icons-material/Storage';
 import {
     Box,
     List,
@@ -12,8 +6,6 @@ import {
     ListItemIcon,
     ListItemText,
     Stack,
-    SxProps,
-    Theme,
     Toolbar,
     Tooltip,
     useTheme,
@@ -21,7 +13,15 @@ import {
 import MuiDrawer from '@mui/material/Drawer';
 import { authenticatedRoutes } from 'app/routes';
 import ModeSwitch from 'components/navigation/ModeSwitch';
-import { glassBkgWithBlur } from 'context/Theme';
+import { paperBackground } from 'context/Theme';
+import {
+    CloudDownload,
+    CloudUpload,
+    DatabaseScript,
+    FastArrowLeft,
+    HomeSimple,
+    Settings,
+} from 'iconoir-react';
 import { useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
 
@@ -33,11 +33,7 @@ interface NavigationProps {
 
 const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
     const intl = useIntl();
-
     const theme = useTheme();
-    const iconSx: SxProps<Theme> = {
-        color: theme.palette.text.primary,
-    };
 
     const openNavigation = () => {
         onNavigationToggle(true);
@@ -46,8 +42,6 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
     const closeNavigation = () => {
         onNavigationToggle(false);
     };
-
-    const paperBackground = glassBkgWithBlur[theme.palette.mode];
 
     return (
         <MuiDrawer
@@ -63,7 +57,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         `${paperTheme.transitions.duration.shortest}ms`,
                     width,
                     border: 0,
-                    ...paperBackground,
+                    background: paperBackground[theme.palette.mode],
                 },
                 'transition': (drawerTheme) =>
                     `${drawerTheme.transitions.duration.shortest}ms`,
@@ -71,6 +65,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
             }}
         >
             <Toolbar />
+
             <Stack
                 sx={{
                     height: '100%',
@@ -85,27 +80,27 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         })}
                     >
                         <ListItemLink
-                            icon={<HomeIcon sx={iconSx} />}
+                            icon={<HomeSimple />}
                             title={authenticatedRoutes.home.title}
                             link={authenticatedRoutes.home.path}
                         />
                         <ListItemLink
-                            icon={<InputIcon sx={iconSx} />}
+                            icon={<CloudUpload />}
                             title={authenticatedRoutes.captures.title}
                             link={authenticatedRoutes.captures.path}
                         />
                         <ListItemLink
-                            icon={<FormatListNumberedIcon sx={iconSx} />}
+                            icon={<DatabaseScript />}
                             title={authenticatedRoutes.collections.title}
                             link={authenticatedRoutes.collections.path}
                         />
                         <ListItemLink
-                            icon={<StorageIcon sx={iconSx} />}
+                            icon={<CloudDownload />}
                             title={authenticatedRoutes.materializations.title}
                             link={authenticatedRoutes.materializations.path}
                         />
                         <ListItemLink
-                            icon={<AdminPanelSettingsIcon sx={iconSx} />}
+                            icon={<Settings />}
                             title={authenticatedRoutes.admin.title}
                             link={authenticatedRoutes.admin.path}
                         />
@@ -113,23 +108,16 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                 </Box>
 
                 <Box>
-                    <Box
-                        sx={{
-                            pb: 1,
-                            pl: open ? 2 : 1,
-                        }}
-                    >
-                        <ModeSwitch hideText={!open} />
-                    </Box>
-
                     <List
                         aria-label={intl.formatMessage({
                             id: 'navigation.toggle.ariaLabel',
                         })}
                         sx={{
-                            py: 0,
+                            py: 1,
                         }}
                     >
+                        <ModeSwitch />
+
                         <Tooltip
                             title={intl.formatMessage({
                                 id: 'navigation.toggle.ariaLabel',
@@ -141,15 +129,14 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                 component="a"
                                 onClick={openNavigation}
                                 sx={{
+                                    minHeight: 45,
+                                    px: 1.5,
                                     whiteSpace: 'nowrap',
-                                    minHeight: 60,
-                                    maxHeight: 60,
                                 }}
                             >
-                                <ListItemIcon sx={{}}>
-                                    <KeyboardDoubleArrowLeftIcon
-                                        sx={{
-                                            ...iconSx,
+                                <ListItemIcon sx={{ minWidth: 36 }}>
+                                    <FastArrowLeft
+                                        style={{
                                             transform: open
                                                 ? 'scaleX(1)'
                                                 : 'scaleX(-1)',
@@ -157,6 +144,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                         }}
                                     />
                                 </ListItemIcon>
+
                                 <ListItemText
                                     primary={intl.formatMessage({
                                         id: 'navigation.collapse',

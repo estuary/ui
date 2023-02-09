@@ -1,13 +1,8 @@
-import {
-    Box,
-    SxProps,
-    TextareaAutosize,
-    Theme,
-    Typography,
-} from '@mui/material';
+import { Box, SxProps, Theme, Typography } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
+import SingleLineCode from 'components/content/SingleLineCode';
 import PageContainer from 'components/shared/PageContainer';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
@@ -31,6 +26,7 @@ function AdminApi() {
             }}
         >
             <AdminTabs />
+
             <Box sx={boxStyling}>
                 <Typography variant="h6" sx={{ mb: 0.5 }}>
                     <FormattedMessage id="admin.accessToken" />
@@ -40,12 +36,8 @@ function AdminApi() {
                     <FormattedMessage id="admin.accessToken.message" />
                 </Typography>
 
-                <TextareaAutosize
-                    minRows={4}
-                    cols={50}
-                    value={session?.access_token}
-                    id="accessTokenValue"
-                />
+                {/* TODO (defect): Display an error in the event the access token does not exist. */}
+                <SingleLineCode value={session?.access_token ?? ''} />
             </Box>
         </PageContainer>
     );
