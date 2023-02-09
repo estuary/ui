@@ -84,7 +84,7 @@ const Authenticated = () => {
                         />
 
                         <Route
-                            path={authenticatedRoutes.captures.createNew.path}
+                            path={authenticatedRoutes.captures.create.new.path}
                             element={
                                 <EntityContextProvider value="capture">
                                     <WorkflowContextProvider value="capture_create">
@@ -133,7 +133,7 @@ const Authenticated = () => {
 
                         <Route
                             path={
-                                authenticatedRoutes.materializations.createNew
+                                authenticatedRoutes.materializations.create.new
                                     .path
                             }
                             element={

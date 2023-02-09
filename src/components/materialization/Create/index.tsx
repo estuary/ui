@@ -122,7 +122,7 @@ function MaterializationCreate() {
     return (
         <PageContainer
             pageTitleProps={{
-                header: authenticatedRoutes.materializations.createNew.title,
+                header: authenticatedRoutes.materializations.create.new.title,
                 headerLink:
                     'https://docs.estuary.dev/guides/create-dataflow/#create-a-materialization',
             }}

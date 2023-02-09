@@ -143,7 +143,7 @@ function CaptureCreate() {
     return (
         <PageContainer
             pageTitleProps={{
-                header: authenticatedRoutes.captures.createNew.title,
+                header: authenticatedRoutes.captures.create.new.title,
                 headerLink:
                     'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
             }}

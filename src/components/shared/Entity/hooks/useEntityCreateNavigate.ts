@@ -29,11 +29,11 @@ export default function useEntityCreateNavigate() {
             let newPath: string | null = null;
             if (entity === 'capture') {
                 newPath = advanceToForm
-                    ? authenticatedRoutes.captures.createNew.fullPath
+                    ? authenticatedRoutes.captures.create.new.fullPath
                     : authenticatedRoutes.captures.create.fullPath;
             } else {
                 newPath = advanceToForm
-                    ? authenticatedRoutes.materializations.createNew.fullPath
+                    ? authenticatedRoutes.materializations.create.new.fullPath
                     : authenticatedRoutes.materializations.create.fullPath;
             }
 
