@@ -19,7 +19,7 @@ import MessageWithLink from 'components/content/MessageWithLink';
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
-import { slate } from 'context/Theme';
+import { sample_grey } from 'context/Theme';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { MouseEvent, useEffect, useState } from 'react';
@@ -186,7 +186,7 @@ function ShardInformation({ entityType }: Props) {
                                                         theme.palette.mode ===
                                                         'dark'
                                                             ? '#252526'
-                                                            : slate[15],
+                                                            : sample_grey[100],
                                                 }} // This is the hex code for the monaco editor background in dark mode.
                                             >
                                                 <StatusIndicatorAndLabel
