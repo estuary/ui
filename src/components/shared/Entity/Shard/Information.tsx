@@ -87,14 +87,16 @@ function ShardInformation({ entityType }: Props) {
 
     return (
         <Stack direction="column" spacing={2} sx={{ m: 2 }}>
-            <Typography
-                component="span"
-                variant="h6"
-                sx={{
-                    alignItems: 'center',
-                }}
-            >
-                <FormattedMessage id="detailsPanel.shardDetails.title" />
+            <Stack direction="row" spacing={1}>
+                <Typography
+                    component="span"
+                    variant="h6"
+                    sx={{
+                        alignItems: 'center',
+                    }}
+                >
+                    <FormattedMessage id="detailsPanel.shardDetails.title" />
+                </Typography>
                 <ExternalLink
                     link={intl.formatMessage({
                         id: 'detailsPanel.shardDetails.docPath',
@@ -102,7 +104,7 @@ function ShardInformation({ entityType }: Props) {
                 >
                     <FormattedMessage id="terms.documentation" />
                 </ExternalLink>
-            </Typography>
+            </Stack>
 
             {error ? (
                 <AlertBox
