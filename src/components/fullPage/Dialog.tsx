@@ -29,6 +29,9 @@ function FullPageDialog({ children }: Props) {
                     justifyContent: 'center',
                     p: 3,
                     background: (theme) => paperBackground[theme.palette.mode],
+                    boxShadow:
+                        'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px',
+                    borderRadius: 3,
                 }}
             >
                 <CompanyLogo />

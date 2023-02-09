@@ -48,6 +48,10 @@ function PageContainer({ children, hideBackground, pageTitleProps }: Props) {
         ? 'none'
         : paperBackground[theme.palette.mode];
 
+    const boxShadowMixin = hideBackground
+        ? 'none'
+        : 'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px';
+
     return (
         <Container
             maxWidth={false}
@@ -80,8 +84,7 @@ function PageContainer({ children, hideBackground, pageTitleProps }: Props) {
                 sx={{
                     p: 2,
                     width: '100%',
-                    boxShadow:
-                        'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px',
+                    boxShadow: boxShadowMixin,
                     borderRadius: 3,
                     background: backgroundMixin,
                 }}
