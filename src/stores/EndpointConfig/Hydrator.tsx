@@ -40,5 +40,6 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
         }
     });
 
-    return <div>{children}</div>;
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <>{children}</>;
 };
