@@ -1,5 +1,4 @@
 import {
-    Box,
     Grid,
     Stack,
     SxProps,
@@ -95,8 +94,16 @@ function ShardInformation({ entityType }: Props) {
                     alignItems: 'center',
                 }}
             >
-                <FormattedMessage id="detailsPanel.status.header" />
+                <FormattedMessage id="detailsPanel.shardDetails.title" />
+                <ExternalLink
+                    link={intl.formatMessage({
+                        id: 'detailsPanel.shardDetails.docPath',
+                    })}
+                >
+                    <FormattedMessage id="terms.documentation" />
+                </ExternalLink>
             </Typography>
+
             {error ? (
                 <AlertBox
                     severity="error"
@@ -115,44 +122,6 @@ function ShardInformation({ entityType }: Props) {
                         <TableContainer>
                             <Table>
                                 <TableHead>
-                                    <TableRow sx={{ ...tableHeaderFooterSx }}>
-                                        <TableCell colSpan={columns.length}>
-                                            <Box
-                                                sx={{
-                                                    width: '100%',
-                                                    display: 'flex',
-                                                    justifyContent:
-                                                        'space-between',
-                                                }}
-                                            >
-                                                <Typography
-                                                    component="span"
-                                                    align="center"
-                                                    sx={{ width: '100%' }}
-                                                >
-                                                    <FormattedMessage id="detailsPanel.shardDetails.title" />
-                                                </Typography>
-
-                                                <Box
-                                                    sx={{
-                                                        minWidth: 'max-content',
-                                                        position: 'sticky',
-                                                        right: 0,
-                                                    }}
-                                                >
-                                                    <ExternalLink
-                                                        link={intl.formatMessage(
-                                                            {
-                                                                id: 'detailsPanel.shardDetails.docPath',
-                                                            }
-                                                        )}
-                                                    >
-                                                        <FormattedMessage id="detailsPanel.shardDetails.docLink" />
-                                                    </ExternalLink>
-                                                </Box>
-                                            </Box>
-                                        </TableCell>
-                                    </TableRow>
                                     <TableRow sx={{ ...tableHeaderFooterSx }}>
                                         {columns.map((column, index) => (
                                             <TableCell

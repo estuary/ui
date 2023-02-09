@@ -651,12 +651,10 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.shardDetails.status.label': `Status`,
     'detailsPanel.shardDetails.id.label': `ID`,
     'detailsPanel.shardDetails.errorTitle': `Shard Replica Processing Errors`,
-    'detailsPanel.shardDetails.docLink': `Shard Help`,
     'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
     'detailsPanel.dataPreview.header': `Data Preview`,
     'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
     'detailsPanel.specification.header': `Specification`,
-    'detailsPanel.status.header': `Status`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
