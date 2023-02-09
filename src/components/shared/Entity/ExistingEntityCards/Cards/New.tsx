@@ -1,16 +1,13 @@
-import { Add } from '@mui/icons-material';
-import { Box, ButtonBase, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import EntityCardWrapper from 'components/shared/Entity/ExistingEntityCards/Cards/Wrapper';
 import { useExistingEntity_connectorName } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import { useEntityType } from 'context/EntityContext';
-import {
-    alternateConnectorImageBackgroundSx,
-    semiTransparentBackground,
-    semiTransparentBackgroundIntensified,
-} from 'context/Theme';
+import { alternateConnectorImageBackgroundSx } from 'context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
+import { Plus } from 'iconoir-react';
 import LogRocket from 'logrocket';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
@@ -50,48 +47,25 @@ function NewEntityCard() {
     };
 
     return (
-        <ButtonBase
-            onClick={createNewTask}
-            sx={{
-                'width': '100%',
-                'borderRadius': 5,
-                'background': (theme) =>
-                    semiTransparentBackground[theme.palette.mode],
-                'padding': 1,
-                '&:hover': {
-                    background: (theme) =>
-                        semiTransparentBackgroundIntensified[
-                            theme.palette.mode
-                        ],
-                },
-            }}
-        >
+        <EntityCardWrapper clickHandler={createNewTask}>
             <Box
                 sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexGrow: 1,
+                    ...alternateConnectorImageBackgroundSx,
+                    width: 51,
                 }}
             >
-                <Box
-                    sx={{
-                        ...alternateConnectorImageBackgroundSx,
-                        width: 51,
-                    }}
-                >
-                    <Add />
-                </Box>
-
-                <Box sx={{ ml: 2 }}>
-                    <Typography sx={{ width: 'max-content' }}>
-                        <FormattedMessage
-                            id="existingEntityCheck.newCard.label"
-                            values={{ connectorName, entityType }}
-                        />
-                    </Typography>
-                </Box>
+                <Plus style={{ fontSize: 24 }} />
             </Box>
-        </ButtonBase>
+
+            <Box sx={{ ml: 2 }}>
+                <Typography sx={{ width: 'max-content' }}>
+                    <FormattedMessage
+                        id="existingEntityCheck.newCard.label"
+                        values={{ connectorName, entityType }}
+                    />
+                </Typography>
+            </Box>
+        </EntityCardWrapper>
     );
 }
 

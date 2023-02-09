@@ -1,12 +1,5 @@
 import Editor from '@monaco-editor/react';
-import {
-    Box,
-    ButtonBase,
-    Collapse,
-    Paper,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { Box, Collapse, Paper, Typography, useTheme } from '@mui/material';
 import {
     CaptureQueryWithSpec,
     MaterializationQueryWithSpec,
@@ -14,11 +7,11 @@ import {
 import { authenticatedRoutes } from 'app/routes';
 import ConnectorLogo from 'components/connectors/card/Logo';
 import CustomWidthTooltip from 'components/shared/CustomWidthTooltip';
+import EntityCardWrapper from 'components/shared/Entity/ExistingEntityCards/Cards/Wrapper';
 import {
     alternateConnectorImageBackgroundSx,
     monacoEditorComponentBackground,
     semiTransparentBackground,
-    semiTransparentBackgroundIntensified,
 } from 'context/Theme';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { isEmpty } from 'lodash';
@@ -86,26 +79,7 @@ function ExistingEntityCard({ queryData }: Props) {
     } else {
         return (
             <>
-                <ButtonBase
-                    onClick={handlers.editTask}
-                    sx={{
-                        'width': '100%',
-                        'padding': 1,
-                        'justifyContent': 'flex-start',
-                        'background': detailsExpanded
-                            ? semiTransparentBackgroundIntensified[
-                                  theme.palette.mode
-                              ]
-                            : semiTransparentBackground[theme.palette.mode],
-                        '&:hover': {
-                            background:
-                                semiTransparentBackgroundIntensified[
-                                    theme.palette.mode
-                                ],
-                        },
-                        'borderRadius': 5,
-                    }}
-                >
+                <EntityCardWrapper clickHandler={handlers.editTask}>
                     <Box sx={alternateConnectorImageBackgroundSx}>
                         <ConnectorLogo
                             imageSrc={queryData.image}
@@ -148,7 +122,7 @@ function ExistingEntityCard({ queryData }: Props) {
                             )}
                         </Typography>
                     </Box>
-                </ButtonBase>
+                </EntityCardWrapper>
 
                 <Collapse in={detailsExpanded}>
                     <Paper

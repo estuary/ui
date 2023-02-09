@@ -345,7 +345,7 @@ export const alternateConnectorImageBackgroundSx: SxProps<Theme> = {
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: connectorImageBackgroundRadius,
-    background: connectorCardLogoBackground,
+    background: (theme) => connectorCardLogoBackground[theme.palette.mode],
 };
 
 const themeSettings = createTheme({
