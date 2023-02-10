@@ -71,7 +71,9 @@ function AccessGrantsTable({ showUser }: Props) {
                     renderTableRows={(data) => (
                         <Rows data={data} showUser={showUser} />
                     )}
+                    pagination={pagination}
                     setPagination={setPagination}
+                    searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                     sortDirection={sortDirection}
                     setSortDirection={setSortDirection}

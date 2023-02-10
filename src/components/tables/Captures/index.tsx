@@ -53,7 +53,9 @@ function CapturesTable() {
                                 showEntityStatus={showEntityStatus}
                             />
                         )}
+                        pagination={pagination}
                         setPagination={setPagination}
+                        searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
                         sortDirection={sortDirection}
                         setSortDirection={setSortDirection}

@@ -44,7 +44,9 @@ function StorageMappingsTable() {
                     }}
                     columns={tableColumns}
                     renderTableRows={(data) => <Rows data={data} />}
+                    pagination={pagination}
                     setPagination={setPagination}
+                    searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                     sortDirection={sortDirection}
                     setSortDirection={setSortDirection}

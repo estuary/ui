@@ -37,6 +37,7 @@ import {
 } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useEffectOnce } from 'react-use';
+import { Pagination } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SortDirection,
@@ -59,7 +60,9 @@ export interface ColumnProps extends TableColumns {
 interface Props {
     columns: ColumnProps[];
     renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
+    pagination: Pagination;
     setPagination: (data: any) => void;
+    searchQuery: String | null;
     setSearchQuery: (data: any) => void;
     sortDirection: SortDirection;
     setSortDirection: (data: any) => void;
@@ -77,9 +80,13 @@ interface Props {
 export const getPagination = (currPage: number, size: number) => {
     const limit = size;
     const from = currPage ? currPage * limit : 0;
-    const to = currPage ? from + size : size - 1;
+    const to = (currPage ? from + size : size) - 1;
 
     return { from, to };
+};
+
+const getStartingPage = (val: Pagination, size: number) => {
+    return val.from / size;
 };
 
 const rowsPerPageOptions = [10, 25, 50];
@@ -90,6 +97,8 @@ function EntityTable({
     columns,
     noExistingDataContentIds,
     renderTableRows,
+    searchQuery,
+    pagination,
     setPagination,
     setSearchQuery,
     sortDirection,
@@ -103,7 +112,6 @@ function EntityTable({
     showEntityStatus = false,
     selectableTableStoreName,
 }: Props) {
-    const [page, setPage] = useState(0);
     const isFiltering = useRef(false);
 
     const intl = useIntl();
@@ -158,6 +166,8 @@ function EntityTable({
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
+    const [page, setPage] = useState(0);
+    useEffectOnce(() => setPage(getStartingPage(pagination, rowsPerPage)));
 
     useEffect(() => {
         if (selectData && selectData.length > 0) {
@@ -271,6 +281,7 @@ function EntityTable({
                         })}
                         variant="outlined"
                         size="small"
+                        value={searchQuery}
                         onChange={handlers.filterTable}
                         sx={{
                             'width': belowMd ? 'auto' : 350,
