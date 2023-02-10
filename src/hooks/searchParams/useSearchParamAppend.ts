@@ -6,6 +6,7 @@ export default function useSearchParamAppend() {
 
     const appendParam = useCallback(
         (obj: { [k: string]: any }) => {
+            console.log('append', obj);
             const sp = createSearchParams(searchParams);
             Object.entries(obj).forEach(([key, val]) => {
                 if (Array.isArray(val)) {

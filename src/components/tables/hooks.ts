@@ -1,26 +1,58 @@
-import { useState } from 'react';
+import { useCallback } from 'react';
 import { SortDirection } from 'types';
+import {
+    JsonParam,
+    StringParam,
+    useQueryParams,
+    withDefault,
+} from 'use-query-params';
 import { getPagination } from './EntityTable';
 
 function useTableState(defaultSortCol: any, defaultSortDir?: SortDirection) {
     const rowsPerPage = 10;
-    const [pagination, setPagination] = useState<{ from: number; to: number }>(
-        getPagination(0, rowsPerPage)
+    const [query, setQuery] = useQueryParams({
+        sortColumn: withDefault(StringParam, defaultSortCol),
+        sortDirection: withDefault(StringParam, defaultSortDir ?? 'asc'),
+        searchQuery: withDefault(StringParam, null),
+        pagination: withDefault(JsonParam, getPagination(0, rowsPerPage)),
+    });
+
+    const setPagination = useCallback(
+        (val: any) => {
+            setQuery({ pagination: val });
+        },
+        [setQuery]
     );
-    const [searchQuery, setSearchQuery] = useState<string | null>(null);
-    const [sortDirection, setSortDirection] = useState<SortDirection>(
-        defaultSortDir ?? 'asc'
+
+    const setSearchQuery = useCallback(
+        (val: any) => {
+            setQuery({ searchQuery: val });
+        },
+        [setQuery]
     );
-    const [columnToSort, setColumnToSort] = useState<any>(defaultSortCol);
+
+    const setSortDirection = useCallback(
+        (val: any) => {
+            setQuery({ sortDirection: val });
+        },
+        [setQuery]
+    );
+
+    const setColumnToSort = useCallback(
+        (val: any) => {
+            setQuery({ sortColumn: val });
+        },
+        [setQuery]
+    );
 
     return {
-        pagination,
+        pagination: query.pagination,
         setPagination,
-        searchQuery,
+        searchQuery: query.searchQuery,
         setSearchQuery,
-        sortDirection,
+        sortDirection: query.sortDirection as SortDirection,
         setSortDirection,
-        columnToSort,
+        columnToSort: query.sortColumn,
         setColumnToSort,
     };
 }

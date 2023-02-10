@@ -39,8 +39,6 @@ export const formatDateToString = (date: Date, includeHour?: boolean) => {
         `yyyy-MM-dd' ${includeHour ? "'HH'" : '00'}:00:00+00'`
     );
 
-    console.log(`${date} has become ${formattedDate}`);
-
     return formattedDate;
 };
 
