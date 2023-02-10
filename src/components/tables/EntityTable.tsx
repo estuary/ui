@@ -62,7 +62,7 @@ interface Props {
     renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
     pagination: Pagination;
     setPagination: (data: any) => void;
-    searchQuery: String | null;
+    searchQuery: string | null;
     setSearchQuery: (data: any) => void;
     sortDirection: SortDirection;
     setSortDirection: (data: any) => void;
@@ -112,7 +112,14 @@ function EntityTable({
     showEntityStatus = false,
     selectableTableStoreName,
 }: Props) {
+    console.log('entityTable', {
+        searchQuery,
+        pagination,
+        sortDirection,
+        columnToSort,
+    });
     const isFiltering = useRef(Boolean(searchQuery));
+    const searchTextField = useRef<HTMLInputElement>(null);
 
     const intl = useIntl();
 
@@ -167,7 +174,6 @@ function EntityTable({
         status: TableStatuses.LOADING,
     });
     const [page, setPage] = useState(0);
-    useEffectOnce(() => setPage(getStartingPage(pagination, rowsPerPage)));
 
     useEffect(() => {
         if (selectData && selectData.length > 0) {
@@ -195,6 +201,8 @@ function EntityTable({
     };
 
     useEffectOnce(() => {
+        setPage(getStartingPage(pagination, rowsPerPage));
+
         return () => {
             return resetSelection();
         };
@@ -275,6 +283,7 @@ function EntityTable({
                     )}
 
                     <TextField
+                        inputRef={searchTextField}
                         id="capture-search-box"
                         label={intl.formatMessage({
                             id: filterLabel,
