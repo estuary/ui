@@ -85,7 +85,7 @@ function EntityCreateConfig({ title, entityType }: Props) {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            borderRadius: 5,
+                            borderRadius: 3,
                         }}
                     >
                         <CircularProgress />

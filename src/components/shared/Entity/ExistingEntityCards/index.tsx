@@ -156,7 +156,7 @@ function ExistingEntityCards() {
                             elevation={0}
                             sx={{
                                 height: 230,
-                                borderRadius: 5,
+                                borderRadius: 3,
                                 display: 'flex',
                                 flexDirection: 'column',
                                 justifyContent: 'center',
