@@ -112,7 +112,7 @@ function EntityTable({
     showEntityStatus = false,
     selectableTableStoreName,
 }: Props) {
-    const isFiltering = useRef(false);
+    const isFiltering = useRef(Boolean(searchQuery));
 
     const intl = useIntl();
 
@@ -209,9 +209,9 @@ function EntityTable({
                 isFiltering.current = hasQuery;
 
                 resetSelection();
-                setSearchQuery(hasQuery ? filterQuery : null);
                 setPagination(getPagination(0, rowsPerPage));
                 setPage(0);
+                setSearchQuery(hasQuery ? filterQuery : null);
             },
             750
         ),
@@ -281,7 +281,7 @@ function EntityTable({
                         })}
                         variant="outlined"
                         size="small"
-                        value={searchQuery}
+                        defaultValue={searchQuery}
                         onChange={handlers.filterTable}
                         sx={{
                             'width': belowMd ? 'auto' : 350,
