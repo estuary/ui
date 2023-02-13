@@ -1,5 +1,5 @@
 import IconoirProvider from 'context/Iconoir';
-import Notifications from 'context/Notifications';
+import NotificationProvider from 'context/Notifications';
 import SwrConfigProvider from 'context/SWR';
 import { BaseComponentProps } from 'types';
 import ClientProvider from './Client';
@@ -13,11 +13,11 @@ const AppProviders = ({ children }: BaseComponentProps) => {
             <ThemeProvider>
                 <IconoirProvider>
                     <ClientProvider>
-                        <Notifications>
+                        <NotificationProvider>
                             <SwrConfigProvider>
                                 <UserProvider>{children}</UserProvider>
                             </SwrConfigProvider>
-                        </Notifications>
+                        </NotificationProvider>
                     </ClientProvider>
                 </IconoirProvider>
             </ThemeProvider>
