@@ -151,7 +151,8 @@ function ConnectorTiles({
         navigateToCreate(
             row.connector_tags[0].protocol,
             row.connector_tags[0].id,
-            replaceOnNavigate
+            replaceOnNavigate,
+            row.connector_tags[0].protocol === 'capture'
         );
     };
 
