@@ -1,10 +1,10 @@
 import { BaseComponentProps } from 'types';
-import { QueryParamProvider } from 'use-query-params';
+import { QueryParamProvider as UseQueryParamsHookProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
-function QueryParam({ children }: BaseComponentProps) {
+function QueryParamProvider({ children }: BaseComponentProps) {
     return (
-        <QueryParamProvider
+        <UseQueryParamsHookProvider
             adapter={ReactRouter6Adapter}
             options={{
                 enableBatching: true,
@@ -12,8 +12,8 @@ function QueryParam({ children }: BaseComponentProps) {
             }}
         >
             {children}
-        </QueryParamProvider>
+        </UseQueryParamsHookProvider>
     );
 }
 
-export default QueryParam;
+export default QueryParamProvider;

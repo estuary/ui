@@ -10,6 +10,7 @@ import { BaseComponentProps } from 'types';
 import { getOsanoSettings } from 'utils/env-utils';
 import AuthEvents from './AuthEvents';
 import PreFetchDataProvider from './fetcher';
+import QueryParamProvider from './QueryParam';
 
 const { bodyClass } = getOsanoSettings();
 
@@ -45,19 +46,21 @@ export function AuthenticatedOnlyContext({ children }: BaseComponentProps) {
 
     return (
         <RequireAuth>
-            <AppGuards>
-                <React.Suspense fallback={<FullPageSpinner />}>
-                    <AuthEvents>
-                        <PreFetchDataProvider>
-                            <ZustandProvider>
-                                <ConfirmationModalContextProvider>
-                                    {children}
-                                </ConfirmationModalContextProvider>
-                            </ZustandProvider>
-                        </PreFetchDataProvider>
-                    </AuthEvents>
-                </React.Suspense>
-            </AppGuards>
+            <QueryParamProvider>
+                <AppGuards>
+                    <React.Suspense fallback={<FullPageSpinner />}>
+                        <AuthEvents>
+                            <PreFetchDataProvider>
+                                <ZustandProvider>
+                                    <ConfirmationModalContextProvider>
+                                        {children}
+                                    </ConfirmationModalContextProvider>
+                                </ZustandProvider>
+                            </PreFetchDataProvider>
+                        </AuthEvents>
+                    </React.Suspense>
+                </AppGuards>
+            </QueryParamProvider>
         </RequireAuth>
     );
 }
