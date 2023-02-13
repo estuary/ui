@@ -2,7 +2,7 @@ export const REDIRECT_TO_PARAM_NAME = 'redirect_to';
 
 const admin = {
     title: 'routeTitle.admin',
-    path: '/admin',
+    path: 'admin',
     accessGrants: {
         title: 'routeTitle.admin.accessGrants',
         path: 'accessGrants',
@@ -32,7 +32,7 @@ const admin = {
 
 const captures = {
     title: 'routeTitle.captures',
-    path: '/captures',
+    path: 'captures',
     create: {
         title: 'routeTitle.captureCreate',
         path: `create`,
@@ -67,7 +67,7 @@ const captures = {
 
 const collections = {
     title: 'routeTitle.collections',
-    path: '/collections',
+    path: 'collections',
     details: {
         title: 'routeTitle.collectionDetails',
         path: 'details',
@@ -92,12 +92,12 @@ const collections = {
 
 const home = {
     title: 'routeTitle.home',
-    path: '/',
+    path: '',
 };
 
 const materializations = {
     title: 'routeTitle.materializations',
-    path: '/materializations',
+    path: 'materializations',
     create: {
         title: 'routeTitle.materializationCreate',
         path: 'create',
@@ -131,7 +131,7 @@ const materializations = {
 };
 
 const oauth = {
-    path: '/oauth',
+    path: 'oauth',
 };
 
 const pageNotFound = {
@@ -141,7 +141,7 @@ const pageNotFound = {
 
 const user = {
     title: 'routeTitle.user',
-    path: '/user',
+    path: 'user',
     registration: {
         title: 'routeTitle.registration',
         path: 'register',

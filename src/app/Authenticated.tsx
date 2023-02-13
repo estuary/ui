@@ -13,7 +13,7 @@ import MaterializationCreate from 'components/materialization/Create';
 import MaterializationDetails from 'components/materialization/Details';
 import MaterializationEdit from 'components/materialization/Edit';
 import { DetailsPageContextProvider } from 'components/shared/Entity/Details/context';
-import AuthenticatedOnlyContext from 'context/Authenticated';
+import { AuthenticatedOnlyContext } from 'context/Authenticated';
 import { EntityContextProvider } from 'context/EntityContext';
 import { WorkflowContextProvider } from 'context/Workflow';
 import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';

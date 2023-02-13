@@ -1,13 +1,10 @@
-import { usePrompt } from 'hooks/useBlocker';
-import { useLocation } from 'react-router-dom';
+import { unstable_usePrompt } from 'react-router-dom';
 import { useUnmount } from 'react-use';
 
 export default function useUnsavedChangesPrompt(
     when: boolean,
     callback: Function
 ) {
-    const { pathname } = useLocation();
-
-    usePrompt('confirm.loseData', pathname, when);
+    unstable_usePrompt({ when, message: 'You will lose changes' });
     useUnmount(() => callback());
 }
