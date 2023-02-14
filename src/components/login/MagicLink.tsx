@@ -4,6 +4,7 @@ import MagicLinkInputs from 'components/login/MagicLinkInputs';
 import { useClient } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useLocation } from 'react-router-dom';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import useConstant from 'use-constant';
 import { getLoginSettings } from 'utils/env-utils';
@@ -72,8 +73,10 @@ const MagicLink = () => {
 
     custom_generateDefaultUISchema;
 
+    const location = useLocation();
+    const from = location.state?.from?.pathname || `/welcome`;
     const redirectTo = `${redirectToBase}?${REDIRECT_TO_PARAM_NAME}=${encodeURIComponent(
-        `${window.location.pathname}${window.location.search}`
+        from
     )}`;
 
     return (
@@ -81,7 +84,7 @@ const MagicLink = () => {
             {showTokenValidation ? (
                 <MagicLinkInputs
                     onSubmit={(formData: { email: string; token: string }) => {
-                        return supabaseClient.auth.verifyOTP(
+                        const response = supabaseClient.auth.verifyOTP(
                             {
                                 email: formData.email,
                                 token: formData.token,
@@ -91,6 +94,8 @@ const MagicLink = () => {
                                 redirectTo,
                             }
                         );
+                        console.log('response', response);
+                        return response;
                     }}
                     schema={verifySchema}
                     uiSchema={verifyUiSchema}
