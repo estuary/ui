@@ -13,7 +13,9 @@ import {
     monacoEditorComponentBackground,
     semiTransparentBackground,
 } from 'context/Theme';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { useState } from 'react';
@@ -44,6 +46,10 @@ const trackEvent = (
 };
 
 function ExistingEntityCard({ queryData }: Props) {
+    const prefillPubIds = useGlobalSearchParams(
+        GlobalSearchParams.PREFILL_PUB_ID,
+        true
+    );
     const navigate = useNavigate();
 
     const theme = useTheme();
@@ -61,13 +67,24 @@ function ExistingEntityCard({ queryData }: Props) {
                         ? authenticatedRoutes.captures.edit.fullPath
                         : authenticatedRoutes.materializations.edit.fullPath;
 
+                const baseParams = {
+                    [GlobalSearchParams.CONNECTOR_ID]: queryData.connector_id,
+                    [GlobalSearchParams.LIVE_SPEC_ID]: queryData.id,
+                    [GlobalSearchParams.LAST_PUB_ID]: queryData.last_pub_id,
+                };
+
                 navigate(
-                    getPathWithParams(baseURL, {
-                        [GlobalSearchParams.CONNECTOR_ID]:
-                            queryData.connector_id,
-                        [GlobalSearchParams.LIVE_SPEC_ID]: queryData.id,
-                        [GlobalSearchParams.LAST_PUB_ID]: queryData.last_pub_id,
-                    })
+                    getPathWithParams(
+                        baseURL,
+                        prefillPubIds.length > 0
+                            ? {
+                                  ...baseParams,
+                                  [GlobalSearchParams.PREFILL_PUB_ID]:
+                                      prefillPubIds,
+                              }
+                            : baseParams
+                    ),
+                    { replace: false }
                 );
             }
         },
