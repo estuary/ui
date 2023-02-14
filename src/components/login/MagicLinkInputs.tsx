@@ -8,6 +8,7 @@ import { isEmpty } from 'lodash';
 import { useSnackbar, VariantType } from 'notistack';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useNavigate } from 'react-router-dom';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import {
     defaultOptions,
@@ -24,6 +25,7 @@ interface Props {
 const MagicLinkInputs = ({ onSubmit, schema, uiSchema }: Props) => {
     const hasToken = schema.properties?.token;
 
+    const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const intl = useIntl();
 
@@ -88,6 +90,8 @@ const MagicLinkInputs = ({ onSubmit, schema, uiSchema }: Props) => {
 
             if (!hasToken) {
                 displayNotification('login.magicLink', 'success');
+            } else {
+                navigate('/welcome', { replace: true });
             }
         },
     };
