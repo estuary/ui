@@ -1,18 +1,13 @@
 import { Auth } from '@supabase/ui';
 import AppGuards from 'app/guards';
-import FullPageSpinner from 'components/fullPage/Spinner';
 import ConfirmationModalContextProvider from 'context/Confirmation';
 import { ZustandProvider } from 'context/Zustand/provider';
-import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useMount, useUnmount } from 'react-use';
 import { BaseComponentProps } from 'types';
-import { getOsanoSettings } from 'utils/env-utils';
 import AuthEvents from './AuthEvents';
 import PreFetchDataProvider from './fetcher';
+import Osano from './Osano';
 import QueryParamProvider from './QueryParam';
-
-const { bodyClass } = getOsanoSettings();
 
 interface Props extends BaseComponentProps {
     firstLoad?: boolean;
@@ -36,19 +31,11 @@ export function RequireAuth({ children, firstLoad }: Props) {
 
 // This is for contexts that should only be added to the app after the user has authenticated
 export function AuthenticatedOnlyContext({ children }: BaseComponentProps) {
-    useMount(() => {
-        document.body.classList.add(bodyClass);
-    });
-
-    useUnmount(() => {
-        document.body.classList.remove(bodyClass);
-    });
-
     return (
         <RequireAuth>
-            <QueryParamProvider>
-                <AppGuards>
-                    <React.Suspense fallback={<FullPageSpinner />}>
+            <Osano>
+                <QueryParamProvider>
+                    <AppGuards>
                         <AuthEvents>
                             <PreFetchDataProvider>
                                 <ZustandProvider>
@@ -58,9 +45,9 @@ export function AuthenticatedOnlyContext({ children }: BaseComponentProps) {
                                 </ZustandProvider>
                             </PreFetchDataProvider>
                         </AuthEvents>
-                    </React.Suspense>
-                </AppGuards>
-            </QueryParamProvider>
+                    </AppGuards>
+                </QueryParamProvider>
+            </Osano>
         </RequireAuth>
     );
 }
