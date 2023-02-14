@@ -50,6 +50,15 @@ const router = createBrowserRouter(
                 }
             />
 
+            <Route
+                path="/login"
+                element={
+                    <RequireAuth firstLoad>
+                        <Login />
+                    </RequireAuth>
+                }
+            />
+
             <Route path={unauthenticatedRoutes.auth.path} element={<Auth />} />
             <Route
                 path={unauthenticatedRoutes.magicLink.path}
@@ -346,8 +355,6 @@ const router = createBrowserRouter(
                     />
                 </Route>
             </Route>
-
-            <Route path="/login" element={<Login />} />
         </Route>
     )
 );

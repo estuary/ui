@@ -17,11 +17,15 @@ export function RequireAuth({ children, firstLoad }: Props) {
     const { user } = Auth.useUser();
     const location = useLocation();
 
+    console.log('require auth', user);
+
+    if (user && firstLoad) {
+        // Redirect to the welcome page if landed on the login page while logged in
+        return <Navigate to="/welcome" replace />;
+    }
+
     if (!user && !firstLoad) {
-        // Redirect them to the /login page, but save the current location they were
-        // trying to go to when they were redirected. This allows us to send them
-        // along to that page after they login, which is a nicer user experience
-        // than dropping them off on the home page.
+        // Redirect to login with the current URL requested if no user
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
