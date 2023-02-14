@@ -40,8 +40,7 @@ function Materialize({ selectableTableStoreName }: Props) {
                     getPathWithParams(
                         authenticatedRoutes.materializations.create.fullPath,
                         {
-                            [GlobalSearchParams.LIVE_SPEC_ID]:
-                                selectedRowsArray,
+                            [GlobalSearchParams.LAST_PUB_ID]: selectedRowsArray,
                         }
                     )
                 );

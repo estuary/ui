@@ -116,7 +116,7 @@ export const getInitialState = (
                     if (isSelected) {
                         const { rows } = get();
 
-                        rows.forEach((value, key) => {
+                        rows.forEach((_value, key) => {
                             selected.set(key, null);
                         });
                     } else {
@@ -132,7 +132,7 @@ export const getInitialState = (
             set(
                 produce(({ rows }) => {
                     val.forEach((el) => {
-                        rows.set(el.id, el);
+                        rows.set(el.last_pub_id, el);
                     });
                 }),
                 false,

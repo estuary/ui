@@ -108,21 +108,24 @@ const getInitialState = (
     preFillEmptyCollections: (value) => {
         set(
             produce((state: ResourceConfigState) => {
-                const { resourceSchema } = get();
+                const { resourceSchema, collections } = get();
 
-                const collections: string[] = [];
+                const emptyCollections: string[] = [];
                 const resourceConfig = {};
 
                 value.forEach((capture) => {
                     capture.writes_to.forEach((collection) => {
-                        collections.push(collection);
+                        emptyCollections.push(collection);
                         resourceConfig[collection] =
                             createJSONFormDefaults(resourceSchema);
                     });
                 });
 
-                state.collections = collections;
-                state.currentCollection = collections[0];
+                state.collections = collections
+                    ? [...collections, ...emptyCollections]
+                    : emptyCollections;
+
+                state.currentCollection = state.collections[0];
 
                 state.resourceConfig = resourceConfig;
 
@@ -493,7 +496,7 @@ const getInitialState = (
     hydrateState: async (editWorkflow, entityType) => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
-        const lastPubId = searchParams.get(GlobalSearchParams.LAST_PUB_ID);
+        const lastPubIds = searchParams.getAll(GlobalSearchParams.LAST_PUB_ID);
         const liveSpecIds = searchParams.getAll(
             GlobalSearchParams.LIVE_SPEC_ID
         );
@@ -517,28 +520,11 @@ const getInitialState = (
         }
 
         if (!editWorkflow) {
-            if (lastPubId) {
+            if (lastPubIds.length > 0) {
                 // Prefills collections in the materialization create workflow when the Materialize CTA
-                // on the Captures page is clicked.
+                // on the Captures page or the capture publication log dialog is clicked.
                 const { data, error } = await getLiveSpecsByLastPubId(
-                    lastPubId,
-                    'capture'
-                );
-
-                if (error) {
-                    setHydrationErrorsExist(true);
-                }
-
-                if (data && data.length > 0) {
-                    const { preFillEmptyCollections } = get();
-
-                    preFillEmptyCollections(data);
-                }
-            } else if (liveSpecIds.length > 0) {
-                // Prefills collections in the materialization create workflow when the Materialize CTA
-                // on the capture pubilication log dialog is clicked.
-                const { data, error } = await getLiveSpecsByLiveSpecId(
-                    liveSpecIds,
+                    lastPubIds,
                     'capture'
                 );
 
