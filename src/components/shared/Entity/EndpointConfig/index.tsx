@@ -6,9 +6,6 @@ import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import { useEntityWorkflow } from 'context/Workflow';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
@@ -38,12 +35,11 @@ function EndpointConfig({
 }: Props) {
     const intl = useIntl();
 
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
-
     const workflow = useEntityWorkflow();
     const editWorkflow =
         workflow === 'capture_edit' || workflow === 'materialization_edit';
 
+    // The useConnectorTag hook can accept a connector ID or a connector tag ID.
     const { connectorTag, error } = useConnectorTag(connectorImage);
 
     // Draft Editor Store
@@ -63,10 +59,7 @@ function EndpointConfig({
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
 
     useEffect(() => {
-        if (
-            connectorId !== connectorTag?.connector_id &&
-            connectorTag?.endpoint_spec_schema
-        ) {
+        if (connectorTag?.endpoint_spec_schema) {
             const schema =
                 connectorTag.endpoint_spec_schema as unknown as Schema;
 
@@ -81,7 +74,6 @@ function EndpointConfig({
         setEndpointConfig,
         setEndpointSchema,
         setPreviousEndpointConfig,
-        connectorId,
         connectorTag?.connector_id,
         connectorTag?.endpoint_spec_schema,
     ]);

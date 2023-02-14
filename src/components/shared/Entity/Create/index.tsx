@@ -138,8 +138,10 @@ function EntityCreate({
 
     const displayResourceConfig =
         entityType === 'materialization'
-            ? hasLength(imageTag.id)
-            : hasLength(imageTag.id) && !entityNameChanged && persistedDraftId;
+            ? hasLength(imageTag.connectorId)
+            : hasLength(imageTag.connectorId) &&
+              !entityNameChanged &&
+              persistedDraftId;
 
     return (
         <>
@@ -180,7 +182,7 @@ function EntityCreate({
                         </ErrorBoundryWrapper>
                     ) : null}
 
-                    {imageTag.id ? (
+                    {imageTag.connectorId ? (
                         <ErrorBoundryWrapper>
                             <EndpointConfig connectorImage={imageTag.id} />
                         </ErrorBoundryWrapper>

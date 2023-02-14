@@ -42,7 +42,8 @@ function NewEntityCard() {
         if (entityType === 'capture' || entityType === 'materialization') {
             trackEvent(entityType, connectorId);
 
-            navigateToCreate(entityType, connectorId, false, true);
+            // TODO (routes): Allow the user to return to the existing entity check page on browser back.
+            navigateToCreate(entityType, connectorId, true, true);
         }
     };
 

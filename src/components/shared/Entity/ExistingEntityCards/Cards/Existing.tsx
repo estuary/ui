@@ -73,6 +73,7 @@ function ExistingEntityCard({ queryData }: Props) {
                     [GlobalSearchParams.LAST_PUB_ID]: queryData.last_pub_id,
                 };
 
+                // TODO (routes): Allow the user to return to the existing entity check page on browser back.
                 navigate(
                     getPathWithParams(
                         baseURL,
@@ -83,8 +84,7 @@ function ExistingEntityCard({ queryData }: Props) {
                                       prefillPubIds,
                               }
                             : baseParams
-                    ),
-                    { replace: false }
+                    )
                 );
             }
         },
