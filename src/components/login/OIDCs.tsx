@@ -5,6 +5,7 @@ import { useClient } from 'hooks/supabase-swr';
 import { useSnackbar } from 'notistack';
 import GoogleButton from 'react-google-button';
 import { useIntl } from 'react-intl';
+import { useLocation } from 'react-router-dom';
 import GithubButton from './GithubButton';
 
 // TODO (routes) This is hardcoded because unauthenticated routes... (same as MagicLink)
@@ -20,8 +21,10 @@ function OIDCs({ isRegister }: Props) {
 
     const { enqueueSnackbar } = useSnackbar();
 
+    const location = useLocation();
+    const from = location.state?.from?.pathname || `/welcome`;
     const redirectTo = `${redirectToBase}?${REDIRECT_TO_PARAM_NAME}=${encodeURIComponent(
-        `${window.location.pathname}${window.location.search}`
+        from
     )}`;
 
     const loginFailed = (key: Provider) => {
