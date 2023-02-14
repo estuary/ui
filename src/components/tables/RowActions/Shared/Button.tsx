@@ -9,7 +9,7 @@ import { useConfirmationModalContext } from 'context/Confirmation';
 import { useZustandStore } from 'context/Zustand/provider';
 import { ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useBlocker } from 'react-router/dist/lib/hooks';
+import { unstable_useBlocker as useBlocker } from 'react-router-dom';
 import { SelectTableStoreNames } from 'stores/names';
 
 interface Props {

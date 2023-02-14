@@ -1,6 +1,6 @@
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useCallback, useEffect } from 'react';
-import { useBlocker } from 'react-router/dist/lib/hooks';
+import { unstable_useBlocker as useBlocker } from 'react-router-dom';
 
 // Taken from https://github.com/remix-run/react-router/issues/8139#issuecomment-1023105785
 
