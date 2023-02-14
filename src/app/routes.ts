@@ -131,7 +131,7 @@ const materializations = {
 };
 
 const oauth = {
-    path: 'oauth',
+    path: '/oauth',
 };
 
 const pageNotFound = {

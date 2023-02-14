@@ -60,6 +60,16 @@ const router = createBrowserRouter(
                 element={<Login showRegistration />}
             />
 
+            {/* This is not in the route below so that it does not include the applayout*/}
+            <Route
+                path={authenticatedRoutes.oauth.path}
+                element={
+                    <AuthenticatedOnlyContext>
+                        <OAuthPopup />
+                    </AuthenticatedOnlyContext>
+                }
+            />
+
             <Route
                 path="/"
                 element={
@@ -68,10 +78,6 @@ const router = createBrowserRouter(
                     </AuthenticatedOnlyContext>
                 }
             >
-                <Route
-                    path={authenticatedRoutes.oauth.path}
-                    element={<OAuthPopup />}
-                />
                 <Route>
                     <Route
                         path={authenticatedRoutes.home.path}
