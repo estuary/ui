@@ -1,10 +1,10 @@
-import { unstable_usePrompt } from 'react-router-dom';
+import { usePrompt } from 'hooks/useBlocker';
 import { useUnmount } from 'react-use';
 
 export default function useUnsavedChangesPrompt(
     when: boolean,
     callback: Function
 ) {
-    unstable_usePrompt({ when, message: 'You will lose changes' });
+    usePrompt('You will lose changes', when);
     useUnmount(() => callback());
 }
