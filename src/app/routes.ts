@@ -92,7 +92,7 @@ const collections = {
 
 const home = {
     title: 'routeTitle.home',
-    path: '',
+    path: '/welcome',
 };
 
 const materializations = {
