@@ -11,13 +11,10 @@ function UserGuard({ children }: BaseComponentProps) {
     const { user } = Auth.useUser();
 
     useEffect(() => {
-        console.log('UserGuard- user', user);
         if (user) {
             identifyUser(user);
         }
     }, [user]);
-
-    console.log('UserGuard');
 
     return (
         <React.Suspense fallback={<FullPageSpinner />}>
