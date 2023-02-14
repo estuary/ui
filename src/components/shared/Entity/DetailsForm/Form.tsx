@@ -73,7 +73,8 @@ function DetailsFormForm({
     useEffect(() => {
         if (connectorId && hasLength(connectorTags)) {
             connectorTags.find((connector) => {
-                const response = connector.connector_tags[0].id === connectorId;
+                const response =
+                    connector.connector_tags[0].connector_id === connectorId;
                 if (response) {
                     setDetails_connector(getConnectorImageDetails(connector));
                 }

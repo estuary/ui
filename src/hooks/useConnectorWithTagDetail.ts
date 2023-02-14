@@ -13,6 +13,7 @@ export interface ConnectorWithTagDetailQuery {
         image_tag: string;
         image_name: string;
         id: string;
+        connector_id: string;
         title: string;
     }[];
     id: string;
@@ -41,6 +42,7 @@ export const CONNECTOR_WITH_TAG_QUERY = `
         protocol,
         image_tag,
         id,
+        connector_id,
         endpoint_spec_schema->>title
     )
 `;

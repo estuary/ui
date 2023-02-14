@@ -150,7 +150,7 @@ function ConnectorTiles({
     const primaryCtaClick = (row: ConnectorWithTagDetailQuery) => {
         navigateToCreate(
             row.connector_tags[0].protocol,
-            row.connector_tags[0].id,
+            row.connector_tags[0].connector_id,
             replaceOnNavigate,
             row.connector_tags[0].protocol === 'capture'
         );

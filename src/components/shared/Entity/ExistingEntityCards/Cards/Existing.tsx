@@ -41,7 +41,7 @@ const trackEvent = (
 
     LogRocket.track(logEvent, {
         id: data.id,
-        connector_tag_id: data.connector_id,
+        connector_id: data.connector_id,
     });
 };
 

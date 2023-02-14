@@ -135,7 +135,7 @@ const getLiveSpecs_collections = (
 
 const getLiveSpecs_existingTasks = (
     specType: Entity,
-    connectorTagId: string,
+    connectorId: string,
     searchQuery: string | null,
     sorting: SortingProps<any>[]
 ) => {
@@ -144,14 +144,14 @@ const getLiveSpecs_existingTasks = (
             ? captureColumnsWithSpec
             : materializationsColumnsWithSpec;
 
-    const columns = taskColumns.concat(',connector_tag_id');
+    const columns = taskColumns.concat(',connector_id');
 
     let queryBuilder = supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
         .select(columns, {
             count: 'exact',
         })
-        .eq('connector_tag_id', connectorTagId);
+        .eq('connector_id', connectorId);
 
     queryBuilder = distributedTableFilter<
         CaptureQueryWithSpec | MaterializationQueryWithSpec
@@ -227,19 +227,19 @@ const getLiveSpecsByCatalogNames = async (
 
 const getLiveSpecsByConnectorId = async (
     specType: EntityWithCreateWorkflow,
-    connectorTagId: string
+    connectorId: string
 ) => {
     const taskColumns: string =
         specType === 'capture'
             ? captureColumnsWithSpec
             : materializationsColumnsWithSpec;
 
-    const columns = taskColumns.concat(',connector_tag_id');
+    const columns = taskColumns.concat(',connector_id');
 
     const data = await supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
         .select(columns)
-        .eq('connector_tag_id', connectorTagId)
+        .eq('connector_id', connectorId)
         .eq('spec_type', specType)
         .then(
             handleSuccess<

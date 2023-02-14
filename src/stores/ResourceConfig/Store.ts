@@ -116,6 +116,7 @@ const getInitialState = (
                 value.forEach((capture) => {
                     capture.writes_to.forEach((collection) => {
                         emptyCollections.push(collection);
+
                         resourceConfig[collection] =
                             createJSONFormDefaults(resourceSchema);
                     });

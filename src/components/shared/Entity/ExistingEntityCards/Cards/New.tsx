@@ -24,7 +24,7 @@ const trackEvent = (
             : CustomEvents.MATERIALIZATION_CREATE_CONFIG_CREATE;
 
     LogRocket.track(logEvent, {
-        connector_tag_id: connectorId ?? DEFAULT_FILTER,
+        connector_id: connectorId ?? DEFAULT_FILTER,
     });
 };
 
