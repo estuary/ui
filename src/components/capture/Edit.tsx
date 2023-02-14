@@ -8,7 +8,6 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_pubId,
     useEditorStore_resetState,
-    useEditorStore_setId,
 } from 'components/editor/Store/hooks';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
@@ -22,11 +21,9 @@ import useGlobalSearchParams, {
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
-    useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm';
@@ -58,13 +55,11 @@ function CaptureEdit() {
     const resetBindingsEditorStore = useBindingsEditorStore_resetState();
 
     // Details Form Store
-    const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
     const resetDetailsForm = useDetailsForm_resetState();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
-    const setDraftId = useEditorStore_setId();
 
     const persistedDraftId = useEditorStore_persistedDraftId();
 
@@ -87,11 +82,6 @@ function CaptureEdit() {
         persistedDraftId,
         lastPubId
     );
-
-    // Reset the catalog if the connector changes
-    useEffect(() => {
-        setDraftId(null);
-    }, [imageTag, setDraftId]);
 
     const resetState = () => {
         resetDetailsForm();
