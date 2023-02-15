@@ -108,16 +108,16 @@ const getInitialState = (
     preFillEmptyCollections: (value) => {
         set(
             produce((state: ResourceConfigState) => {
-                const { resourceSchema, collections } = get();
+                const { resourceConfig, resourceSchema, collections } = get();
 
                 const emptyCollections: string[] = [];
-                const resourceConfig = {};
+                const modifiedResourceConfig = resourceConfig;
 
                 value.forEach((capture) => {
                     capture.writes_to.forEach((collection) => {
                         emptyCollections.push(collection);
 
-                        resourceConfig[collection] =
+                        modifiedResourceConfig[collection] =
                             createJSONFormDefaults(resourceSchema);
                     });
                 });
@@ -134,9 +134,9 @@ const getInitialState = (
 
                 state.currentCollection = state.collections[0];
 
-                state.resourceConfig = resourceConfig;
+                state.resourceConfig = modifiedResourceConfig;
 
-                populateResourceConfigErrors(resourceConfig, state);
+                populateResourceConfigErrors(state.resourceConfig, state);
 
                 state.collectionErrorsExist = isEmpty(collections);
             }),
