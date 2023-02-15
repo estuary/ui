@@ -14,6 +14,7 @@ import { useUpdateEffect } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_previousEndpointConfig_data,
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
@@ -54,12 +55,20 @@ function EndpointConfig({
     const setPreviousEndpointConfig =
         useEndpointConfigStore_setPreviousEndpointConfig();
 
+    const endpointSchema = useEndpointConfigStore_endpointSchema();
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
 
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
 
+    const endpointSchemaChanged = useMemo(
+        () =>
+            connectorTag?.endpoint_spec_schema &&
+            !isEqual(connectorTag.endpoint_spec_schema, endpointSchema),
+        [connectorTag?.endpoint_spec_schema, endpointSchema]
+    );
+
     useEffect(() => {
-        if (connectorTag?.endpoint_spec_schema) {
+        if (connectorTag?.endpoint_spec_schema && endpointSchemaChanged) {
             const schema =
                 connectorTag.endpoint_spec_schema as unknown as Schema;
 
@@ -74,8 +83,8 @@ function EndpointConfig({
         setEndpointConfig,
         setEndpointSchema,
         setPreviousEndpointConfig,
-        connectorTag?.connector_id,
         connectorTag?.endpoint_spec_schema,
+        endpointSchemaChanged,
     ]);
 
     const endpointConfigUpdated = useMemo(() => {
