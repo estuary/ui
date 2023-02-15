@@ -9,7 +9,6 @@ import { useConfirmationModalContext } from 'context/Confirmation';
 import { useZustandStore } from 'context/Zustand/provider';
 import { ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { unstable_useBlocker as useBlocker } from 'react-router-dom';
 import { SelectTableStoreNames } from 'stores/names';
 
 interface Props {
@@ -53,8 +52,6 @@ function RowActionButton({
 
     const hasSelections = selectedRows.size > 0;
 
-    const blocker = useBlocker(true);
-
     const handlers = {
         action: () => {
             if (hasSelections) {
@@ -66,14 +63,22 @@ function RowActionButton({
                     selectedSpecs.push(rows.get(key));
                 });
 
-                confirmationModalContext?.showConfirmation(blocker, {
-                    message: (
-                        <RowActionConfirmation
-                            selected={selectedNames}
-                            message={confirmationMessage}
-                        />
-                    ),
-                });
+                confirmationModalContext
+                    ?.showConfirmation({
+                        message: (
+                            <RowActionConfirmation
+                                selected={selectedNames}
+                                message={confirmationMessage}
+                            />
+                        ),
+                    })
+                    .then(async (confirmed: any) => {
+                        if (confirmed) {
+                            setShowProgress(true);
+                            setTargets(selectedSpecs);
+                        }
+                    })
+                    .catch(() => {});
             }
         },
         finished: () => {

@@ -6,9 +6,8 @@ import {
     DialogContent,
     DialogTitle,
 } from '@mui/material';
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { unstable_Blocker as Blocker } from 'react-router';
 import { BaseComponentProps } from 'types';
 
 export interface IConfirmationModalOptions {
@@ -19,10 +18,12 @@ export interface IConfirmationModalOptions {
 }
 
 interface IConfirmationModalContext {
-    showConfirmation: (
-        blocker: Blocker,
-        { title, message, confirmText, cancelText }: IConfirmationModalOptions
-    ) => void;
+    showConfirmation: ({
+        title,
+        message,
+        confirmText,
+        cancelText,
+    }: IConfirmationModalOptions) => Promise<any>;
 }
 
 const LABEL_ID = 'alert-dialog-title';
@@ -45,25 +46,27 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
         getDefaultSettings()
     );
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-
-    const [localBlocker, setLocalBlocker] = useState<Blocker | null>(null);
+    const resolver = useRef<any>();
 
     const handlers = {
         confirm: () => {
-            localBlocker?.proceed?.();
+            resolver.current?.(true);
             setShowConfirmationModal(false);
         },
         dismiss: () => {
-            localBlocker?.reset?.();
+            resolver.current?.(false);
             setShowConfirmationModal(false);
         },
-        show: (blocker: Blocker, userSettings: IConfirmationModalOptions) => {
-            setLocalBlocker(blocker);
+        show: (userSettings: IConfirmationModalOptions) => {
             setSettings({
                 ...getDefaultSettings(),
                 ...userSettings,
             });
             setShowConfirmationModal(true);
+
+            return new Promise((resolve) => {
+                resolver.current = resolve;
+            });
         },
     };
 
