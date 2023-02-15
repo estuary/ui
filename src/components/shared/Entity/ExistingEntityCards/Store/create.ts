@@ -60,7 +60,8 @@ const getInitialState = (
 
                 const { data, error } = await getLiveSpecsByConnectorId(
                     entityType,
-                    connectorId
+                    connectorId,
+                    'ops'
                 );
 
                 if (error) {

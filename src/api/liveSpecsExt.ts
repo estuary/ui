@@ -151,7 +151,8 @@ const getLiveSpecs_existingTasks = (
         .select(columns, {
             count: 'exact',
         })
-        .eq('connector_id', connectorId);
+        .eq('connector_id', connectorId)
+        .not('catalog_name', 'ilike', 'ops/%');
 
     queryBuilder = distributedTableFilter<
         CaptureQueryWithSpec | MaterializationQueryWithSpec
@@ -227,7 +228,8 @@ const getLiveSpecsByCatalogNames = async (
 
 const getLiveSpecsByConnectorId = async (
     specType: EntityWithCreateWorkflow,
-    connectorId: string
+    connectorId: string,
+    prefixFilter?: string
 ) => {
     const taskColumns: string =
         specType === 'capture'
@@ -236,17 +238,24 @@ const getLiveSpecsByConnectorId = async (
 
     const columns = taskColumns.concat(',connector_id');
 
-    const data = await supabaseClient
+    let queryBuilder = supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
         .select(columns)
         .eq('connector_id', connectorId)
-        .eq('spec_type', specType)
-        .then(
-            handleSuccess<
-                CaptureQueryWithSpec[] | MaterializationQueryWithSpec[]
-            >,
-            handleFailure
+        .eq('spec_type', specType);
+
+    if (prefixFilter) {
+        queryBuilder = queryBuilder.not(
+            'catalog_name',
+            'ilike',
+            `${prefixFilter}/%`
         );
+    }
+
+    const data = await queryBuilder.then(
+        handleSuccess<CaptureQueryWithSpec[] | MaterializationQueryWithSpec[]>,
+        handleFailure
+    );
 
     return data;
 };
