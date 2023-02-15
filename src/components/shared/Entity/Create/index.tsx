@@ -184,7 +184,10 @@ function EntityCreate({
 
                     {imageTag.connectorId ? (
                         <ErrorBoundryWrapper>
-                            <EndpointConfig connectorImage={imageTag.id} />
+                            <EndpointConfig
+                                connectorImage={imageTag.id}
+                                hideBorder={!displayResourceConfig}
+                            />
                         </ErrorBoundryWrapper>
                     ) : null}
 
@@ -193,6 +196,7 @@ function EntityCreate({
                             <CollectionConfig
                                 draftSpecs={taskDraftSpec}
                                 RediscoverButton={RediscoverButton}
+                                hideBorder={!draftId}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
