@@ -132,7 +132,7 @@ function CaptureCreate() {
                     ? getPathWithParams(
                           authenticatedRoutes.materializations.create.fullPath,
                           {
-                              [GlobalSearchParams.LAST_PUB_ID]: pubId,
+                              [GlobalSearchParams.PREFILL_PUB_ID]: pubId,
                           }
                       )
                     : authenticatedRoutes.materializations.create.fullPath
