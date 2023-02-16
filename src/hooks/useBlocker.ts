@@ -64,18 +64,21 @@ export function usePrompt(message: string, when = true) {
     const confirmationModalContext = useConfirmationModalContext();
     const blocker = useBlocker(when);
 
-    const modal = useCallback(
-        (blockerVal) => {
-            confirmationModalContext?.showConfirmation(blockerVal, {
-                message,
-            });
-        },
-        [confirmationModalContext, message]
-    );
+    const modal = useCallback(async () => {
+        await confirmationModalContext?.showConfirmation({
+            message,
+        });
+    }, [confirmationModalContext, message]);
 
     useEffect(() => {
         if (blocker.state === 'blocked') {
-            modal(blocker);
+            modal()
+                .then(async (confirmed: any) => {
+                    if (confirmed) {
+                        blocker.proceed();
+                    }
+                })
+                .catch(() => {});
         }
 
         return () => {
