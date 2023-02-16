@@ -125,6 +125,14 @@ function ExistingEntityCards() {
                     />
                 </Grid>
 
+                <Grid item xs={12}>
+                    <NewEntityCard />
+                </Grid>
+
+                <Grid item xs={12} sx={{ my: 2 }}>
+                    <Divider flexItem />
+                </Grid>
+
                 {queryData && queryData.length > 0 ? (
                     queryData.map((data, index) => (
                         <Grid
@@ -189,14 +197,6 @@ function ExistingEntityCards() {
                         </Paper>
                     </Grid>
                 )}
-
-                <Grid item xs={12} sx={{ my: 2 }}>
-                    <Divider flexItem />
-                </Grid>
-
-                <Grid item xs={12}>
-                    <NewEntityCard />
-                </Grid>
             </Grid>
         </Box>
     );
