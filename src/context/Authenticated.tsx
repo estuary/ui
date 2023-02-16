@@ -17,8 +17,6 @@ export function RequireAuth({ children, firstLoad }: Props) {
     const { user } = Auth.useUser();
     const location = useLocation();
 
-    console.log('require auth', user);
-
     if (user && firstLoad) {
         // Redirect to the welcome page if landed on the login page while logged in
         return <Navigate to="/welcome" replace />;
