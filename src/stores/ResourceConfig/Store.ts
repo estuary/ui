@@ -108,25 +108,35 @@ const getInitialState = (
     preFillEmptyCollections: (value) => {
         set(
             produce((state: ResourceConfigState) => {
-                const { resourceSchema } = get();
+                const { resourceConfig, resourceSchema, collections } = get();
 
-                const collections: string[] = [];
-                const resourceConfig = {};
+                const emptyCollections: string[] = [];
+                const modifiedResourceConfig = resourceConfig;
 
                 value.forEach((capture) => {
                     capture.writes_to.forEach((collection) => {
-                        collections.push(collection);
-                        resourceConfig[collection] =
+                        emptyCollections.push(collection);
+
+                        modifiedResourceConfig[collection] =
                             createJSONFormDefaults(resourceSchema);
                     });
                 });
 
-                state.collections = collections;
-                state.currentCollection = collections[0];
+                state.collections = collections
+                    ? [
+                          ...collections.filter(
+                              (collection) =>
+                                  !emptyCollections.includes(collection)
+                          ),
+                          ...emptyCollections,
+                      ]
+                    : emptyCollections;
 
-                state.resourceConfig = resourceConfig;
+                state.currentCollection = state.collections[0];
 
-                populateResourceConfigErrors(resourceConfig, state);
+                state.resourceConfig = modifiedResourceConfig;
+
+                populateResourceConfigErrors(state.resourceConfig, state);
 
                 state.collectionErrorsExist = isEmpty(collections);
             }),
@@ -493,7 +503,9 @@ const getInitialState = (
     hydrateState: async (editWorkflow, entityType) => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
-        const lastPubId = searchParams.get(GlobalSearchParams.LAST_PUB_ID);
+        const prefillPubIds = searchParams.getAll(
+            GlobalSearchParams.PREFILL_PUB_ID
+        );
         const liveSpecIds = searchParams.getAll(
             GlobalSearchParams.LIVE_SPEC_ID
         );
@@ -516,43 +528,7 @@ const getInitialState = (
             }
         }
 
-        if (!editWorkflow) {
-            if (lastPubId) {
-                // Prefills collections in the materialization create workflow when the Materialize CTA
-                // on the Captures page is clicked.
-                const { data, error } = await getLiveSpecsByLastPubId(
-                    lastPubId,
-                    'capture'
-                );
-
-                if (error) {
-                    setHydrationErrorsExist(true);
-                }
-
-                if (data && data.length > 0) {
-                    const { preFillEmptyCollections } = get();
-
-                    preFillEmptyCollections(data);
-                }
-            } else if (liveSpecIds.length > 0) {
-                // Prefills collections in the materialization create workflow when the Materialize CTA
-                // on the capture pubilication log dialog is clicked.
-                const { data, error } = await getLiveSpecsByLiveSpecId(
-                    liveSpecIds,
-                    'capture'
-                );
-
-                if (error) {
-                    setHydrationErrorsExist(true);
-                }
-
-                if (data && data.length > 0) {
-                    const { preFillEmptyCollections } = get();
-
-                    preFillEmptyCollections(data);
-                }
-            }
-        } else if (liveSpecIds.length > 0) {
+        if (editWorkflow && liveSpecIds.length > 0) {
             const { data, error } = await getLiveSpecsByLiveSpecId(
                 liveSpecIds[0],
                 entityType
@@ -580,6 +556,25 @@ const getInitialState = (
                 );
 
                 preFillCollections(data, entityType);
+            }
+        }
+
+        if (prefillPubIds.length > 0) {
+            // Prefills collections in the materialization create workflow when the Materialize CTA
+            // on the Captures page or the capture publication log dialog is clicked.
+            const { data, error } = await getLiveSpecsByLastPubId(
+                prefillPubIds,
+                'capture'
+            );
+
+            if (error) {
+                setHydrationErrorsExist(true);
+            }
+
+            if (data && data.length > 0) {
+                const { preFillEmptyCollections } = get();
+
+                preFillEmptyCollections(data);
             }
         }
     },

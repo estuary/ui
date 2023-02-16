@@ -1,27 +1,8 @@
-import {
-    Box,
-    CircularProgress,
-    Stack,
-    styled,
-    Tooltip,
-    tooltipClasses,
-    TooltipProps,
-    Typography,
-} from '@mui/material';
+import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 import { useBindingsEditorStore_loadingInferredSchema } from 'components/editor/Bindings/Store/hooks';
+import CustomWidthTooltip from 'components/shared/CustomWidthTooltip';
 import { defaultOutline, monacoEditorHeaderBackground } from 'context/Theme';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
-
-const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-))({
-    [`& .${tooltipClasses.tooltip}`]: {
-        maxWidth: 400,
-    },
-    [`& .${tooltipClasses.popper}`]: {
-        overflowWrap: 'break-word',
-    },
-});
 
 function InferenceDiffEditorHeader() {
     // Bindings Editor Store

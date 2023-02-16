@@ -12,7 +12,7 @@ import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_setEndpointConfig,
-} from 'stores/EndpointConfig';
+} from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,

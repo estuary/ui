@@ -726,6 +726,22 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.testNotification.desc': `Your materialization succeeded in a dry run and can be saved.`,
 };
 
+const ExistingEntityCheck: ResolvedIntlConfig['messages'] = {
+    'existingEntityCheck.heading': `One more thing...`,
+    'existingEntityCheck.instructions': `We found at least one {connectorName} {entityType} in the system.`,
+
+    'existingEntityCheck.instructions2': `Adding to an existing {entityType} can help save time and cut cost. Choose a {entityType} from the list to edit it. If you'd still prefer to start from scratch, select the New {connectorName} {entityType} option below.`,
+
+    'existingEntityCheck.toolbar.label.filter': `Search existing tasks`,
+    'existingEntityCheck.toolbar.label.sortDirection': `Sort Direction`,
+
+    'existingEntityCheck.existingCard.label.lastPublished': `Last published on {date}`,
+    'existingEntityCheck.filter.unmatched.header': `No results found.`,
+    'existingEntityCheck.filter.unmatched.message': `We couldn't find any data matching your search. Please try a different filter.`,
+
+    'existingEntityCheck.newCard.label': `New {connectorName} {entityType}`,
+};
+
 // TODO (optimization): Consolidate duplicate create and edit messages.
 const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
@@ -879,6 +895,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CustomRenderers,
     ...StorageMappings,
     ...EntityNotFound,
+    ...ExistingEntityCheck,
 };
 
 export default enUSMessages;

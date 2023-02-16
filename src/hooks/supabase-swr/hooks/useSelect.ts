@@ -1,5 +1,8 @@
 import { PostgrestError } from '@supabase/postgrest-js';
-import { SuccessResponse } from 'hooks/supabase-swr/types';
+import {
+    SuccessResponse,
+    ToDistributedSuccessResponse,
+} from 'hooks/supabase-swr/types';
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
 import { Query } from '../query';
 import useFetcher, { FetcherType } from './useFetcher';
@@ -16,6 +19,17 @@ export const useSelectNew = <Data>(
     fetcher: any,
     swrConfig?: Omit<SWRConfiguration, 'fetcher'>
 ): SWRResponse<SuccessResponse<Data>, PostgrestError> => {
+    return useSWR(
+        fetcher ? fetcher.url.href : null,
+        () => fetcher.throwOnError(),
+        swrConfig
+    );
+};
+
+export const useDistributedSelectNew = <Data>(
+    fetcher: any,
+    swrConfig?: Omit<SWRConfiguration, 'fetcher'>
+): SWRResponse<ToDistributedSuccessResponse<Data>, PostgrestError> => {
     return useSWR(
         fetcher ? fetcher.url.href : null,
         () => fetcher.throwOnError(),

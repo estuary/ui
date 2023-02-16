@@ -17,6 +17,10 @@ export enum EndpointConfigStoreNames {
     GENERAL = 'general-endpoint-config',
 }
 
+export enum ExistingEntityStoreNames {
+    GENERAL = 'general-existing-entity',
+}
+
 export enum FormStateStoreNames {
     CAPTURE_CREATE = 'Capture-Create-Form-State',
     CAPTURE_EDIT = 'Capture-Edit-Form-State',
@@ -53,6 +57,7 @@ export type StoreName =
     | DetailsFormStoreNames
     | EditorStoreNames
     | EndpointConfigStoreNames
+    | ExistingEntityStoreNames
     | FormStateStoreNames
     | ResourceConfigStoreNames
     | SelectTableStoreNames

@@ -10,6 +10,7 @@ export interface LiveSpecsExtQuery {
     reads_from: string[];
     writes_to: string[];
     spec_type: string;
+    last_pub_id: string;
 }
 
 // TODO (typing) don't just copy the settings from SWR/Supabase and just pick/extend 'em
@@ -27,7 +28,14 @@ export interface LiveSpecsExtQueryWithSpec extends LiveSpecsExtQuery {
 }
 
 const defaultResponse: LiveSpecsExtQuery[] = [];
-const queryColumns = ['id', 'spec', 'writes_to', 'reads_from', 'spec_type'];
+const queryColumns = [
+    'id',
+    'spec',
+    'writes_to',
+    'reads_from',
+    'spec_type',
+    'last_pub_id',
+];
 const queryColumnsWithSpec = queryColumns.concat([
     'spec',
     'catalog_name',

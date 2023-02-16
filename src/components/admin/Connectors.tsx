@@ -1,7 +1,7 @@
 import { Stack, Toolbar, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
-import ConnectorTiles from 'components/ConnectorTiles';
+import ConnectorTiles from 'components/connectors/ConnectorTiles';
 import PageContainer from 'components/shared/PageContainer';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';

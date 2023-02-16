@@ -73,7 +73,8 @@ function DetailsFormForm({
     useEffect(() => {
         if (connectorId && hasLength(connectorTags)) {
             connectorTags.find((connector) => {
-                const response = connector.connector_tags[0].id === connectorId;
+                const response =
+                    connector.connector_tags[0].connector_id === connectorId;
                 if (response) {
                     setDetails_connector(getConnectorImageDetails(connector));
                 }
@@ -181,11 +182,12 @@ function DetailsFormForm({
     const updateDetails = (details: Details) => {
         if (
             // TODO (Validators) we need to build out validators for specific types of data
-            details.data.connectorImage.id &&
-            details.data.connectorImage.id.length === 23 &&
-            details.data.connectorImage.id !== originalConnectorImage.id
+            details.data.connectorImage.connectorId &&
+            details.data.connectorImage.connectorId.length === 23 &&
+            details.data.connectorImage.connectorId !==
+                originalConnectorImage.connectorId
         ) {
-            if (details.data.connectorImage.id === connectorId) {
+            if (details.data.connectorImage.connectorId === connectorId) {
                 setDetails_connector(details.data.connectorImage);
             } else {
                 // Set the details before navigating to reduce "flicker"
@@ -194,7 +196,8 @@ function DetailsFormForm({
 
                 navigateToCreate(
                     entityType,
-                    details.data.connectorImage.id,
+                    details.data.connectorImage.connectorId,
+                    true,
                     true
                 );
             }
