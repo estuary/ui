@@ -118,7 +118,7 @@ const getInitialState = (
                         emptyCollections.push(collection);
 
                         modifiedResourceConfig[collection] =
-                            createJSONFormDefaults(resourceSchema);
+                            createJSONFormDefaults(resourceSchema, collection);
                     });
                 });
 
