@@ -108,7 +108,7 @@ export function DataPreview({ collectionName }: Props) {
 
             {journalsData && !hasLength(journalsData.journals) ? (
                 <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning">
+                    <AlertBox severity="warning" short>
                         <AlertTitle>
                             <FormattedMessage id="collectionsPreview.notFound.title" />
                         </AlertTitle>
@@ -118,7 +118,7 @@ export function DataPreview({ collectionName }: Props) {
             ) : journalData.data?.tooManyBytes &&
               journalData.data.documents.length === 0 ? (
                 <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning">
+                    <AlertBox severity="warning" short>
                         <AlertTitle>
                             <FormattedMessage id="collectionsPreview.tooManyBytesAndNoDocuments.title" />
                         </AlertTitle>
@@ -127,7 +127,7 @@ export function DataPreview({ collectionName }: Props) {
                 </Box>
             ) : journalData.data?.tooFewDocuments ? (
                 <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning">
+                    <AlertBox severity="warning" short>
                         <AlertTitle>
                             <FormattedMessage id="collectionsPreview.tooFewDocuments.title" />
                         </AlertTitle>
@@ -136,7 +136,7 @@ export function DataPreview({ collectionName }: Props) {
                 </Box>
             ) : journalData.data?.tooManyBytes ? (
                 <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning">
+                    <AlertBox severity="warning" short>
                         <AlertTitle>
                             <FormattedMessage id="collectionsPreview.tooManyBytes.title" />
                         </AlertTitle>
