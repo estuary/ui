@@ -3,7 +3,6 @@ import {
     Stack,
     SxProps,
     Table,
-    TableBody,
     TableCell,
     TableContainer,
     TableFooter,
@@ -18,7 +17,6 @@ import MessageWithLink from 'components/content/MessageWithLink';
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
-import { sample_grey } from 'context/Theme';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { MouseEvent, useEffect, useState } from 'react';
@@ -30,7 +28,7 @@ import {
 } from 'stores/ShardDetail/hooks';
 import { Entity, TableColumns } from 'types';
 import ShardErrors from './Errors';
-import StatusIndicatorAndLabel from './StatusIndicatorAndLabel';
+import InformationTableBody from './TableBody';
 
 interface Props {
     entityType?: Entity;
@@ -54,7 +52,7 @@ function ShardInformation({ entityType }: Props) {
     const intl = useIntl();
 
     const [page, setPage] = useState(0);
-    const [taskShards, setTaskShards] = useState<Shard[]>([]);
+    const [taskShards, setTaskShards] = useState<Shard[] | null>(null);
 
     const shards = useShardDetail_shards();
     const error = useShardDetail_error();
@@ -116,13 +114,13 @@ function ShardInformation({ entityType }: Props) {
                 >
                     <MessageWithLink messageID="error.message" />
                 </AlertBox>
-            ) : taskShards.length > 0 ? (
+            ) : (
                 <>
                     <ShardErrors shards={taskShards} />
 
                     <Grid item xs={12}>
                         <TableContainer>
-                            <Table>
+                            <Table size="small">
                                 <TableHead>
                                     <TableRow sx={{ ...tableHeaderFooterSx }}>
                                         {columns.map((column, index) => (
@@ -143,52 +141,33 @@ function ShardInformation({ entityType }: Props) {
                                     </TableRow>
                                 </TableHead>
 
-                                <TableBody>
-                                    {taskShards
-                                        .slice(
-                                            page * rowsPerPage,
-                                            page * rowsPerPage + rowsPerPage
-                                        )
-                                        .map((shard) => (
-                                            <TableRow
-                                                key={shard.spec.id}
-                                                sx={{
-                                                    background:
-                                                        theme.palette.mode ===
-                                                        'dark'
-                                                            ? '#252526'
-                                                            : sample_grey[100],
-                                                }} // This is the hex code for the monaco editor background in dark mode.
-                                            >
-                                                <StatusIndicatorAndLabel
-                                                    shard={shard}
-                                                />
-
-                                                <TableCell>
-                                                    <Typography>
-                                                        {shard.spec.id}
-                                                    </Typography>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                </TableBody>
+                                <InformationTableBody
+                                    shards={taskShards}
+                                    page={page}
+                                    rowsPerPage={rowsPerPage}
+                                    columns={columns}
+                                />
 
                                 <TableFooter>
                                     <TableRow sx={{ ...tableHeaderFooterSx }}>
-                                        <TablePagination
-                                            count={taskShards.length}
-                                            rowsPerPageOptions={[rowsPerPage]}
-                                            rowsPerPage={rowsPerPage}
-                                            page={page}
-                                            onPageChange={changePage}
-                                        />
+                                        {taskShards && taskShards.length > 0 ? (
+                                            <TablePagination
+                                                count={taskShards.length}
+                                                rowsPerPageOptions={[
+                                                    rowsPerPage,
+                                                ]}
+                                                rowsPerPage={rowsPerPage}
+                                                page={page}
+                                                onPageChange={changePage}
+                                            />
+                                        ) : null}
                                     </TableRow>
                                 </TableFooter>
                             </Table>
                         </TableContainer>
                     </Grid>
                 </>
-            ) : null}
+            )}
         </Stack>
     );
 }
