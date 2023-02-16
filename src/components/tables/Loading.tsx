@@ -4,11 +4,12 @@ import { TableColumns } from 'types';
 
 interface Props {
     columns: TableColumns[];
+    singleRow?: boolean;
 }
 
 const styling = { height: 45 };
 
-function TableLoadingRows({ columns }: Props) {
+function TableLoadingRows({ columns, singleRow }: Props) {
     const loadingRows = useMemo(() => {
         const loadingRow = columns.map((column, index) => {
             return (
@@ -17,6 +18,10 @@ function TableLoadingRows({ columns }: Props) {
                 </TableCell>
             );
         });
+
+        if (singleRow) {
+            return <TableRow sx={styling}>{loadingRow}</TableRow>;
+        }
 
         return (
             <>
@@ -43,7 +48,7 @@ function TableLoadingRows({ columns }: Props) {
                 </TableRow>
             </>
         );
-    }, [columns]);
+    }, [columns, singleRow]);
 
     return loadingRows;
 }
