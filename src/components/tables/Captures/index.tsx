@@ -19,7 +19,7 @@ function CapturesTable() {
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState('updated_at', 'desc');
+    } = useTableState('cap', 'updated_at', 'desc');
     const tableColumns = useCaptureColumns();
 
     const query = useMemo(() => {

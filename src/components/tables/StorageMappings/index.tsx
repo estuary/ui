@@ -17,7 +17,7 @@ function StorageMappingsTable() {
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState('catalog_prefix');
+    } = useTableState('sm', 'catalog_prefix');
 
     const query = useMemo(() => {
         return getStorageMappings(pagination, searchQuery, [

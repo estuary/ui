@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { SortDirection } from 'types';
 import {
     JsonParam,
@@ -8,51 +8,70 @@ import {
 } from 'use-query-params';
 import { getPagination } from './EntityTable';
 
-function useTableState(defaultSortCol: any, defaultSortDir?: SortDirection) {
+export type TablePrefix =
+    | 'ag' // access grants
+    | 'pr' // prefixes
+    | 'sm' // storage mappings
+    | 'cap' // captures
+    | 'mat' // materializations
+    | 'col' // collections
+    | 'con'; // connectors
+
+function useTableState(
+    keyPrefix: TablePrefix,
+    defaultSortCol: any,
+    defaultSortDir?: SortDirection
+) {
     const rowsPerPage = 10;
+
+    const paginationKey = useMemo(() => `${keyPrefix}-p`, [keyPrefix]);
+    const searchQueryKey = useMemo(() => `${keyPrefix}-sq`, [keyPrefix]);
+    const sortDirectionKey = useMemo(() => `${keyPrefix}-sdir`, [keyPrefix]);
+    const sortColumnKey = useMemo(() => `${keyPrefix}-scol`, [keyPrefix]);
+
     const [query, setQuery] = useQueryParams({
-        sortColumn: withDefault(StringParam, defaultSortCol),
-        sortDirection: withDefault(StringParam, defaultSortDir ?? 'asc'),
-        searchQuery: withDefault(StringParam, null),
-        pagination: withDefault(JsonParam, getPagination(0, rowsPerPage)),
+        [sortColumnKey]: withDefault(StringParam, defaultSortCol),
+        [sortDirectionKey]: withDefault(StringParam, defaultSortDir ?? 'asc'),
+        [searchQueryKey]: withDefault(StringParam, null),
+        [paginationKey]: withDefault(JsonParam, getPagination(0, rowsPerPage)),
     });
 
     const setPagination = useCallback(
         (val: any) => {
-            setQuery({ pagination: val });
+            setQuery({ [paginationKey]: val });
         },
-        [setQuery]
+        [paginationKey, setQuery]
     );
 
     const setSearchQuery = useCallback(
         (val: any) => {
-            setQuery({ searchQuery: val });
+            setQuery({ [searchQueryKey]: val });
         },
-        [setQuery]
+        [searchQueryKey, setQuery]
     );
 
     const setSortDirection = useCallback(
         (val: any) => {
-            setQuery({ sortDirection: val });
+            setQuery({ [sortDirectionKey]: val });
         },
-        [setQuery]
+        [sortDirectionKey, setQuery]
     );
 
     const setColumnToSort = useCallback(
         (val: any) => {
-            setQuery({ sortColumn: val });
+            setQuery({ [sortColumnKey]: val });
         },
-        [setQuery]
+        [sortColumnKey, setQuery]
     );
 
     return {
-        pagination: query.pagination,
+        pagination: query[paginationKey],
         setPagination,
-        searchQuery: query.searchQuery,
+        searchQuery: query[searchQueryKey],
         setSearchQuery,
-        sortDirection: query.sortDirection as SortDirection,
+        sortDirection: query[sortDirectionKey] as SortDirection,
         setSortDirection,
-        columnToSort: query.sortColumn,
+        columnToSort: query[sortColumnKey],
         setColumnToSort,
     };
 }
