@@ -11,6 +11,7 @@ import { isEmpty } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
+import { Annotations } from 'types/jsonforms';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -79,6 +80,7 @@ const getInitialStateData = (): Pick<
     | 'inferredSchemaApplicationErrored'
     | 'inferredSpec'
     | 'loadingInferredSchema'
+    | 'schemaInferenceDisabled'
     | 'schemaUpdateErrored'
     | 'schemaUpdated'
 > => ({
@@ -87,6 +89,7 @@ const getInitialStateData = (): Pick<
     inferredSchemaApplicationErrored: false,
     inferredSpec: null,
     loadingInferredSchema: false,
+    schemaInferenceDisabled: false,
     schemaUpdateErrored: false,
     schemaUpdated: true,
 });
@@ -98,12 +101,18 @@ const getInitialState = (
     ...getInitialStateData(),
 
     initializeCollectionData: (currentCollection, persistedDraftId) => {
-        const { setCollectionData } = get();
+        const { setCollectionData, setSchemaInferenceDisabled } = get();
 
         if (currentCollection) {
             evaluateCollectionData(persistedDraftId, currentCollection).then(
-                (response) => setCollectionData(response),
-                () => setCollectionData(undefined)
+                (response) => {
+                    setCollectionData(response);
+                    setSchemaInferenceDisabled(response);
+                },
+                () => {
+                    setCollectionData(undefined);
+                    setSchemaInferenceDisabled(undefined);
+                }
             );
         } else {
             setCollectionData(null);
@@ -117,6 +126,28 @@ const getInitialState = (
             }),
             false,
             'Collection Data Set'
+        );
+    },
+
+    setSchemaInferenceDisabled: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                if (value) {
+                    const writeSchemaKey = value.spec.hasOwnProperty(
+                        'writeSchema'
+                    )
+                        ? 'writeSchema'
+                        : 'schema';
+
+                    state.schemaInferenceDisabled = !value.spec[
+                        writeSchemaKey
+                    ].hasOwnProperty(Annotations.inferSchema);
+                } else {
+                    state.schemaInferenceDisabled = false;
+                }
+            }),
+            false,
+            'Schema Inference Disabled Set'
         );
     },
 

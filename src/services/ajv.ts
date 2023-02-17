@@ -40,6 +40,7 @@ export const addKeywords = (ajv: Ajv) => {
     ajv.addKeyword('x-oauth2-provider'); // Used to display OAuth
     ajv.addKeyword('x-collection-name'); // Used to default name in resource configs
     ajv.addKeyword('discriminator'); // Used to know what field in a complex oneOf should be unique (ex: parser)
+    ajv.addKeyword('x-infer-schema'); // Indicates that schema inference should be enabled in the UI
     return ajv;
 };
 
