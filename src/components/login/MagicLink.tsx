@@ -84,7 +84,7 @@ const MagicLink = () => {
             {showTokenValidation ? (
                 <MagicLinkInputs
                     onSubmit={(formData: { email: string; token: string }) => {
-                        const response = supabaseClient.auth.verifyOTP(
+                        return supabaseClient.auth.verifyOTP(
                             {
                                 email: formData.email,
                                 token: formData.token,
@@ -94,8 +94,6 @@ const MagicLink = () => {
                                 redirectTo,
                             }
                         );
-                        console.log('response', response);
-                        return response;
                     }}
                     schema={verifySchema}
                     uiSchema={verifyUiSchema}
