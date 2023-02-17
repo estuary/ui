@@ -81,7 +81,7 @@ const router = createBrowserRouter(
             />
 
             <Route
-                path="/"
+                path={authenticatedRoutes.path}
                 element={
                     <AuthenticatedOnlyContext>
                         <AppLayout />

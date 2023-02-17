@@ -168,6 +168,7 @@ const user = {
 };
 
 export const authenticatedRoutes = {
+    path: '/',
     oauth,
     admin,
     captures,
