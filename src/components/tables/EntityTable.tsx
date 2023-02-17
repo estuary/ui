@@ -36,7 +36,7 @@ import {
     useState,
 } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useEffectOnce, useUnmount } from 'react-use';
+import { useEffectOnce } from 'react-use';
 import { Pagination } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import {
@@ -263,12 +263,6 @@ function EntityTable({
                 : null,
         [renderTableRows, selectData, showEntityStatus]
     );
-
-    useUnmount(() => {
-        if (searchTextField.current) {
-            searchTextField.current.value = '';
-        }
-    });
 
     return (
         <Box data-public>
