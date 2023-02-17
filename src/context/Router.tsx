@@ -34,7 +34,6 @@ import {
     Route,
     RouterProvider,
 } from 'react-router-dom';
-import { EndpointConfigProvider } from 'stores/EndpointConfig';
 import { isProduction } from 'utils/env-utils';
 import { RequireAuth } from './Authenticated';
 
@@ -164,9 +163,7 @@ const router = createBrowserRouter(
                             element={
                                 <EntityContextProvider value="capture">
                                     <WorkflowContextProvider value="capture_create">
-                                        <EndpointConfigProvider>
-                                            <CaptureCreate />
-                                        </EndpointConfigProvider>
+                                        <CaptureCreate />
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
                             }
@@ -188,11 +185,9 @@ const router = createBrowserRouter(
                             element={
                                 <EntityContextProvider value="capture">
                                     <WorkflowContextProvider value="capture_edit">
-                                        <EndpointConfigProvider>
-                                            <EntityExistenceGuard>
-                                                <CaptureEdit />
-                                            </EntityExistenceGuard>
-                                        </EndpointConfigProvider>
+                                        <EntityExistenceGuard>
+                                            <CaptureEdit />
+                                        </EntityExistenceGuard>
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
                             }
@@ -254,9 +249,7 @@ const router = createBrowserRouter(
                             element={
                                 <EntityContextProvider value="materialization">
                                     <WorkflowContextProvider value="materialization_create">
-                                        <EndpointConfigProvider>
-                                            <MaterializationCreate />
-                                        </EndpointConfigProvider>
+                                        <MaterializationCreate />
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
                             }
@@ -283,11 +276,9 @@ const router = createBrowserRouter(
                             element={
                                 <EntityContextProvider value="materialization">
                                     <WorkflowContextProvider value="materialization_edit">
-                                        <EndpointConfigProvider>
-                                            <EntityExistenceGuard>
-                                                <MaterializationEdit />
-                                            </EntityExistenceGuard>
-                                        </EndpointConfigProvider>
+                                        <EntityExistenceGuard>
+                                            <MaterializationEdit />
+                                        </EntityExistenceGuard>
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
                             }
