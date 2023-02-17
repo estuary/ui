@@ -251,7 +251,7 @@ function CollectionPicker({ readOnly = false }: Props) {
                 renderTags={() => null}
                 renderOption={(props, option, { selected }) => {
                     return (
-                        <li {...props} style={{ width: '100%' }}>
+                        <li {...props}>
                             <Box
                                 sx={{
                                     ml: -2,
