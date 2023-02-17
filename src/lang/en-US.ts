@@ -394,11 +394,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. You'll find a message describing the issue at the top of the page.`,
     'entityTable.moreEntities': `{count} more`,
 
-    'optionMenu.ariaLabel': `Open Option Menu`,
-    'optionMenu.tooltip': `Options`,
-    'optionMenu.option.detailsPanel.display': `View details`,
-    'optionMenu.option.detailsPanel.hide': `Hide details`,
-    'optionMenu.option.edit': `Edit specification`,
+    'entityTable.detailsLink': `View details`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
