@@ -1,5 +1,6 @@
-import { Divider, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
+import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -11,16 +12,22 @@ function Overview() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const isCollection = entityType === 'collection';
 
+    const currentCatalog = useEditorStore_currentCatalog({
+        localScope: true,
+    });
+    const catalogSpec = currentCatalog?.spec ?? null;
+    const isDerivation = Boolean(catalogSpec?.derivation);
+
     return (
         <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <ShardInformation entityType={entityType} />
-            </Grid>
+            {!isCollection || isDerivation ? (
+                <Grid item xs={12}>
+                    <ShardInformation entityType={entityType} />
+                </Grid>
+            ) : null}
 
             {catalogName && isCollection ? (
                 <Grid item xs={12}>
-                    <Divider />
-
                     <DataPreview collectionName={catalogName} />
                 </Grid>
             ) : null}
