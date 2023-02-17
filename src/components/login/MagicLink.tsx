@@ -1,5 +1,5 @@
 import { Button, Stack } from '@mui/material';
-import { REDIRECT_TO_PARAM_NAME } from 'app/routes';
+import { authenticatedRoutes, REDIRECT_TO_PARAM_NAME } from 'app/routes';
 import MagicLinkInputs from 'components/login/MagicLinkInputs';
 import { useClient } from 'hooks/supabase-swr';
 import { useState } from 'react';
@@ -74,7 +74,8 @@ const MagicLink = () => {
     custom_generateDefaultUISchema;
 
     const location = useLocation();
-    const from = location.state?.from?.pathname || `/welcome`;
+    const from =
+        location.state?.from?.pathname || authenticatedRoutes.home.path;
     const redirectTo = `${redirectToBase}?${REDIRECT_TO_PARAM_NAME}=${encodeURIComponent(
         from
     )}`;
