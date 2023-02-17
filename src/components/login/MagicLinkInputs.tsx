@@ -3,6 +3,7 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Box, Button, Typography } from '@mui/material';
 import { ApiError } from '@supabase/supabase-js';
+import { authenticatedRoutes } from 'app/routes';
 import AlertBox from 'components/shared/AlertBox';
 import { isEmpty } from 'lodash';
 import { useSnackbar, VariantType } from 'notistack';
@@ -91,7 +92,7 @@ const MagicLinkInputs = ({ onSubmit, schema, uiSchema }: Props) => {
             if (!hasToken) {
                 displayNotification('login.magicLink', 'success');
             } else {
-                navigate('/welcome', { replace: true });
+                navigate(authenticatedRoutes.home.path, { replace: true });
             }
         },
     };
