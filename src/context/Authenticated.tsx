@@ -42,7 +42,8 @@ export function RequireAuth({ children, firstLoad }: Props) {
     return <>{children}</>;
 }
 
-// This is for contexts that should only be added to the app after the user has authenticated
+// This includes some Guards as well as the contexts we only ever want
+//      loaded when a user is logged in.
 export function AuthenticatedOnlyContext({ children }: BaseComponentProps) {
     return (
         <RequireAuth>
