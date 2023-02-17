@@ -1,4 +1,5 @@
 import { Auth } from '@supabase/ui';
+import { unauthenticatedRoutes } from 'app/routes';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import * as React from 'react';
 import { useEffect } from 'react';
@@ -18,7 +19,11 @@ function UserGuard({ children }: BaseComponentProps) {
 
     return (
         <React.Suspense fallback={<FullPageSpinner />}>
-            {user ? children : <Navigate to="/login" replace />}
+            {user ? (
+                children
+            ) : (
+                <Navigate to={unauthenticatedRoutes.login.path} replace />
+            )}
         </React.Suspense>
     );
 }
