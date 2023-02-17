@@ -24,3 +24,15 @@ export type SuccessResponseSingle<T> = Pick<
 export type Filter<Data> = (
     query: PostgrestFilterBuilder<Data>
 ) => PostgrestFilterBuilder<Data>;
+
+export type ToDistributedSuccessResponse<T> = T extends any
+    ? SuccessResponse<T>
+    : never;
+
+export type ToPostgrestFilterBuilder<T> = T extends any
+    ? PostgrestFilterBuilder<T>
+    : never;
+
+export type DistributedFilter<Data> = (
+    query: ToPostgrestFilterBuilder<Data>
+) => ToPostgrestFilterBuilder<Data>;

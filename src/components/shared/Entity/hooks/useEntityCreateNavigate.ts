@@ -10,11 +10,14 @@ export default function useEntityCreateNavigate() {
     const navigate = useNavigate();
     const appendSearchParams = useSearchParamAppend();
 
+    // TODO (optimization): Consider bundling the boolean input parameters in an "options" object
+    //   to enhance code readability when they are passed in.
     return useCallback(
         (
             entity: EntityWithCreateWorkflow,
             id?: string | null | undefined,
-            replace?: boolean
+            replace?: boolean,
+            advanceToForm?: boolean
         ) => {
             let newSearchParams: URLSearchParams | null = null;
             if (hasLength(id)) {
@@ -25,9 +28,13 @@ export default function useEntityCreateNavigate() {
 
             let newPath: string | null = null;
             if (entity === 'capture') {
-                newPath = authenticatedRoutes.captures.create.fullPath;
+                newPath = advanceToForm
+                    ? authenticatedRoutes.captures.create.new.fullPath
+                    : authenticatedRoutes.captures.create.fullPath;
             } else {
-                newPath = authenticatedRoutes.materializations.create.fullPath;
+                newPath = advanceToForm
+                    ? authenticatedRoutes.materializations.create.new.fullPath
+                    : authenticatedRoutes.materializations.create.fullPath;
             }
 
             navigate(

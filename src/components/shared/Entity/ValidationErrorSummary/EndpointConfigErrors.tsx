@@ -3,7 +3,7 @@ import {
     useEndpointConfigStore_endpointConfigErrors,
     useEndpointConfigStore_endpointCustomErrors,
     useEndpointConfigStore_endpointSchema,
-} from 'stores/EndpointConfig';
+} from 'stores/EndpointConfig/hooks';
 
 function EndpointConfigErrors() {
     const endpointCustomErrors = useEndpointConfigStore_endpointCustomErrors();

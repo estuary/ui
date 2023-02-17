@@ -49,7 +49,7 @@ import {
     useEndpointConfigStore_changed,
     useEndpointConfig_hydrated,
     useEndpointConfig_serverUpdateRequired,
-} from 'stores/EndpointConfig';
+} from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
@@ -425,17 +425,17 @@ function EntityEdit({
                         </ErrorBoundryWrapper>
                     ) : null}
 
-                    {imageTag.id ? (
+                    {imageTag.connectorId ? (
                         <ErrorBoundryWrapper>
                             <EndpointConfig
                                 connectorImage={imageTag.id}
                                 readOnly={readOnly.endpointConfigForm}
-                                hideBorder={!hasLength(imageTag.id)}
+                                hideBorder={!hasLength(imageTag.connectorId)}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
 
-                    {hasLength(imageTag.id) ? (
+                    {hasLength(imageTag.connectorId) ? (
                         <ErrorBoundryWrapper>
                             <CollectionConfig
                                 draftSpecs={taskDraftSpec}

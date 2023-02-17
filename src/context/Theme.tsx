@@ -345,6 +345,15 @@ export const shardTableRow = {
     dark: '#252526',
 };
 
+export const alternateConnectorImageBackgroundSx: SxProps<Theme> = {
+    height: 50,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: connectorImageBackgroundRadius,
+    background: (theme) => connectorCardLogoBackground[theme.palette.mode],
+};
+
 const themeSettings = createTheme({
     breakpoints: {
         values: {

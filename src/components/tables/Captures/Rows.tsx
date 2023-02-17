@@ -48,16 +48,6 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const tenantDetails = useTenantDetails();
 
     const handlers = {
-        clickMaterialize: () => {
-            navigate(
-                getPathWithParams(
-                    authenticatedRoutes.materializations.create.fullPath,
-                    {
-                        [GlobalSearchParams.LIVE_SPEC_ID]: row.id,
-                    }
-                )
-            );
-        },
         clickRow: (rowId: string) => {
             setRow(rowId, !isSelected);
         },
@@ -76,7 +66,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     return (
         <TableRow
             hover
-            onClick={() => handlers.clickRow(row.id)}
+            onClick={() => handlers.clickRow(row.last_pub_id)}
             selected={isSelected}
             sx={getEntityTableRowSx(theme, false)}
         >
@@ -171,8 +161,8 @@ function Rows({ data, showEntityStatus }: RowsProps) {
                 <Row
                     stats={stats}
                     row={row}
-                    key={row.id}
-                    isSelected={selected.has(row.id)}
+                    key={row.last_pub_id}
+                    isSelected={selected.has(row.last_pub_id)}
                     setRow={setRow}
                     showEntityStatus={showEntityStatus}
                 />

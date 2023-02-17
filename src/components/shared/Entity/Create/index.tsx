@@ -1,6 +1,5 @@
-import { Box, Collapse, Typography } from '@mui/material';
+import { Box, Collapse } from '@mui/material';
 import CollectionConfig from 'components/collection/Config';
-import ConnectorTiles from 'components/ConnectorTiles';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
@@ -13,14 +12,11 @@ import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_changed,
@@ -30,7 +26,7 @@ import {
 import {
     useEndpointConfigStore_changed,
     useEndpointConfig_serverUpdateRequired,
-} from 'stores/EndpointConfig';
+} from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
@@ -40,7 +36,7 @@ import {
 import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/hooks';
 import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
-import AlertBox from '../AlertBox';
+import AlertBox from '../../AlertBox';
 
 interface Props {
     title: string;
@@ -70,15 +66,6 @@ function EntityCreate({
     const { combinedGrants } = useCombinedGrantsExt({
         adminOnly: true,
     });
-
-    // Check for properties being passed in
-    const [connectorID] = useGlobalSearchParams([
-        GlobalSearchParams.CONNECTOR_ID,
-    ]);
-
-    const [showConnectorTiles, setShowConnectorTiles] = useState<
-        boolean | null
-    >(null);
 
     const {
         connectorTags,
@@ -129,14 +116,6 @@ function EntityCreate({
     }, [imageTag, setDraftId]);
 
     useEffect(() => {
-        if (typeof connectorID === 'string') {
-            setShowConnectorTiles(false);
-        } else {
-            setShowConnectorTiles(true);
-        }
-    }, [connectorID]);
-
-    useEffect(() => {
         const resetDraftIdFlag =
             entityNameChanged ||
             endpointConfigServerUpdateRequired ||
@@ -152,93 +131,83 @@ function EntityCreate({
     ]);
 
     // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.
+    // TODO (defect): Prevent prompt data loss dialog from appearing when transitioning to edit workflow.
     const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
 
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
     const displayResourceConfig =
         entityType === 'materialization'
-            ? hasLength(imageTag.id)
-            : ((hasLength(imageTag.id) &&
-                  !entityNameChanged &&
-                  persistedDraftId) as boolean);
+            ? hasLength(imageTag.connectorId)
+            : hasLength(imageTag.connectorId) &&
+              !entityNameChanged &&
+              persistedDraftId;
 
-    if (showConnectorTiles === null) return null;
     return (
         <>
             <Box sx={{ maxHeight: 200, overflowY: 'auto', mb: 2 }}>
                 {errorSummary}
             </Box>
 
-            <Collapse in={showConnectorTiles} unmountOnExit>
-                <Typography sx={{ mb: 2 }}>
-                    <FormattedMessage id="entityCreate.instructions" />
-                </Typography>
+            {connectorTagsError ? (
+                <Error error={connectorTagsError} />
+            ) : (
+                <>
+                    {toolbar}
 
-                <ConnectorTiles protocolPreset={entityType} replaceOnNavigate />
-            </Collapse>
-
-            <Collapse in={!showConnectorTiles} unmountOnExit>
-                {connectorTagsError ? (
-                    <Error error={connectorTagsError} />
-                ) : (
-                    <>
-                        {toolbar}
-
-                        <Collapse in={formSubmitError !== null} unmountOnExit>
-                            {formSubmitError ? (
-                                <EntityError
-                                    title={formSubmitError.title}
-                                    error={formSubmitError.error}
-                                    logToken={logToken}
-                                    draftId={draftId}
-                                />
-                            ) : null}
-                        </Collapse>
-
-                        {!isValidating && connectorTags.length === 0 ? (
-                            <AlertBox severity="warning">
-                                <FormattedMessage
-                                    id={`${messagePrefix}.missingConnectors`}
-                                />
-                            </AlertBox>
-                        ) : connectorTags.length > 0 ? (
-                            <ErrorBoundryWrapper>
-                                <DetailsForm
-                                    connectorTags={connectorTags}
-                                    accessGrants={combinedGrants}
-                                    entityType={entityType}
-                                />
-                            </ErrorBoundryWrapper>
+                    <Collapse in={formSubmitError !== null} unmountOnExit>
+                        {formSubmitError ? (
+                            <EntityError
+                                title={formSubmitError.title}
+                                error={formSubmitError.error}
+                                logToken={logToken}
+                                draftId={draftId}
+                            />
                         ) : null}
+                    </Collapse>
 
-                        {imageTag.id ? (
-                            <ErrorBoundryWrapper>
-                                <EndpointConfig
-                                    connectorImage={imageTag.id}
-                                    hideBorder={!displayResourceConfig}
-                                />
-                            </ErrorBoundryWrapper>
-                        ) : null}
-
-                        {displayResourceConfig ? (
-                            <ErrorBoundryWrapper>
-                                <CollectionConfig
-                                    draftSpecs={taskDraftSpec}
-                                    RediscoverButton={RediscoverButton}
-                                    hideBorder={!draftId}
-                                />
-                            </ErrorBoundryWrapper>
-                        ) : null}
-
+                    {!isValidating && connectorTags.length === 0 ? (
+                        <AlertBox severity="warning">
+                            <FormattedMessage
+                                id={`${messagePrefix}.missingConnectors`}
+                            />
+                        </AlertBox>
+                    ) : connectorTags.length > 0 ? (
                         <ErrorBoundryWrapper>
-                            <CatalogEditor
-                                messageId={`${messagePrefix}.finalReview.instructions`}
+                            <DetailsForm
+                                connectorTags={connectorTags}
+                                accessGrants={combinedGrants}
+                                entityType={entityType}
                             />
                         </ErrorBoundryWrapper>
-                    </>
-                )}
-            </Collapse>
+                    ) : null}
+
+                    {imageTag.connectorId ? (
+                        <ErrorBoundryWrapper>
+                            <EndpointConfig
+                                connectorImage={imageTag.id}
+                                hideBorder={!displayResourceConfig}
+                            />
+                        </ErrorBoundryWrapper>
+                    ) : null}
+
+                    {displayResourceConfig ? (
+                        <ErrorBoundryWrapper>
+                            <CollectionConfig
+                                draftSpecs={taskDraftSpec}
+                                RediscoverButton={RediscoverButton}
+                                hideBorder={!draftId}
+                            />
+                        </ErrorBoundryWrapper>
+                    ) : null}
+
+                    <ErrorBoundryWrapper>
+                        <CatalogEditor
+                            messageId={`${messagePrefix}.finalReview.instructions`}
+                        />
+                    </ErrorBoundryWrapper>
+                </>
+            )}
         </>
     );
 }

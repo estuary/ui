@@ -69,7 +69,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     return (
         <TableRow
             hover
-            onClick={() => handlers.clickRow(row.id)}
+            onClick={() => handlers.clickRow(row.last_pub_id)}
             selected={isSelected}
             sx={getEntityTableRowSx(theme, false)}
         >
@@ -166,8 +166,8 @@ function Rows({ data, showEntityStatus }: RowsProps) {
                 <Row
                     stats={stats}
                     row={row}
-                    key={row.id}
-                    isSelected={selected.has(row.id)}
+                    key={row.last_pub_id}
+                    isSelected={selected.has(row.last_pub_id)}
                     setRow={setRow}
                     showEntityStatus={showEntityStatus}
                 />

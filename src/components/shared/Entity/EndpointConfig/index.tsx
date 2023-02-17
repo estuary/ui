@@ -6,9 +6,6 @@ import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import { useEntityWorkflow } from 'context/Workflow';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
@@ -17,12 +14,13 @@ import { useUpdateEffect } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_previousEndpointConfig_data,
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
     useEndpointConfigStore_setPreviousEndpointConfig,
     useEndpointConfig_setServerUpdateRequired,
-} from 'stores/EndpointConfig';
+} from 'stores/EndpointConfig/hooks';
 import { Schema } from 'types';
 
 interface Props {
@@ -38,12 +36,11 @@ function EndpointConfig({
 }: Props) {
     const intl = useIntl();
 
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
-
     const workflow = useEntityWorkflow();
     const editWorkflow =
         workflow === 'capture_edit' || workflow === 'materialization_edit';
 
+    // The useConnectorTag hook can accept a connector ID or a connector tag ID.
     const { connectorTag, error } = useConnectorTag(connectorImage);
 
     // Draft Editor Store
@@ -58,15 +55,20 @@ function EndpointConfig({
     const setPreviousEndpointConfig =
         useEndpointConfigStore_setPreviousEndpointConfig();
 
+    const endpointSchema = useEndpointConfigStore_endpointSchema();
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
 
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
 
+    const endpointSchemaChanged = useMemo(
+        () =>
+            connectorTag?.endpoint_spec_schema &&
+            !isEqual(connectorTag.endpoint_spec_schema, endpointSchema),
+        [connectorTag?.endpoint_spec_schema, endpointSchema]
+    );
+
     useEffect(() => {
-        if (
-            connectorId !== connectorTag?.connector_id &&
-            connectorTag?.endpoint_spec_schema
-        ) {
+        if (connectorTag?.endpoint_spec_schema && endpointSchemaChanged) {
             const schema =
                 connectorTag.endpoint_spec_schema as unknown as Schema;
 
@@ -81,9 +83,8 @@ function EndpointConfig({
         setEndpointConfig,
         setEndpointSchema,
         setPreviousEndpointConfig,
-        connectorId,
-        connectorTag?.connector_id,
         connectorTag?.endpoint_spec_schema,
+        endpointSchemaChanged,
     ]);
 
     const endpointConfigUpdated = useMemo(() => {
