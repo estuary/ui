@@ -1,12 +1,11 @@
 import { Box, Stack } from '@mui/material';
 import { Provider } from '@supabase/supabase-js';
-import { REDIRECT_TO_PARAM_NAME } from 'app/routes';
 import { useClient } from 'hooks/supabase-swr';
 import { useSnackbar } from 'notistack';
 import GoogleButton from 'react-google-button';
 import { useIntl } from 'react-intl';
-import { useLocation } from 'react-router-dom';
 import GithubButton from './GithubButton';
+import useLoginRedirectPath from './useLoginRedirectPath';
 
 // TODO (routes) This is hardcoded because unauthenticated routes... (same as MagicLink)
 const redirectToBase = `${window.location.origin}/auth`;
@@ -20,12 +19,7 @@ function OIDCs({ isRegister }: Props) {
     const intl = useIntl();
 
     const { enqueueSnackbar } = useSnackbar();
-
-    const location = useLocation();
-    const from = location.state?.from?.pathname || `/welcome`;
-    const redirectTo = `${redirectToBase}?${REDIRECT_TO_PARAM_NAME}=${encodeURIComponent(
-        from
-    )}`;
+    const redirectTo = useLoginRedirectPath(redirectToBase);
 
     const loginFailed = (key: Provider) => {
         enqueueSnackbar(

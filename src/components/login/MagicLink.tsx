@@ -1,13 +1,12 @@
 import { Button, Stack } from '@mui/material';
-import { authenticatedRoutes, REDIRECT_TO_PARAM_NAME } from 'app/routes';
 import MagicLinkInputs from 'components/login/MagicLinkInputs';
 import { useClient } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useLocation } from 'react-router-dom';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import useConstant from 'use-constant';
 import { getLoginSettings } from 'utils/env-utils';
+import useLoginRedirectPath from './useLoginRedirectPath';
 
 // TODO (routes) This is hardcoded because unauthenticated routes is not yet invoked
 //   need to move the routes to a single location. Also... just need to make the route
@@ -21,6 +20,7 @@ const MagicLink = () => {
 
     const supabaseClient = useClient();
     const intl = useIntl();
+    const redirectTo = useLoginRedirectPath(redirectToBase);
 
     const email = {
         schema: {
@@ -70,15 +70,7 @@ const MagicLink = () => {
     const requestUiSchema = useConstant(() =>
         custom_generateDefaultUISchema(requestSchema)
     );
-
     custom_generateDefaultUISchema;
-
-    const location = useLocation();
-    const from =
-        location.state?.from?.pathname || authenticatedRoutes.home.path;
-    const redirectTo = `${redirectToBase}?${REDIRECT_TO_PARAM_NAME}=${encodeURIComponent(
-        from
-    )}`;
 
     return (
         <Stack direction="column" spacing={1}>
