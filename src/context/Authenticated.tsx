@@ -23,12 +23,12 @@ export function RequireAuth({ children, firstLoad }: Props) {
     const redirectTo = useLoginRedirectPath();
 
     if (user && firstLoad) {
-        // Redirect to the welcome page if landed on the login page while logged in
+        // When first load we want to redirect where we need to go
         return <Navigate to={redirectTo} replace />;
     }
 
     if (!user && !firstLoad) {
-        // Redirect to login with the current URL requested if no user
+        // When not firstLoad and no user go to login with the location where the user wants to go
         return (
             <Navigate
                 to={unauthenticatedRoutes.login.path}
