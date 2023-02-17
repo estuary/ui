@@ -1,6 +1,14 @@
-import { Link, Stack, TableCell, useMediaQuery, useTheme } from '@mui/material';
+import {
+    Link,
+    Stack,
+    TableCell,
+    Tooltip,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
 import EntityStatus from 'components/tables/cells/EntityStatus';
-import { NavLink } from 'react-router-dom';
+import { useIntl } from 'react-intl';
+import { NavLink, useLocation } from 'react-router-dom';
 
 interface Props {
     name: string;
@@ -9,6 +17,9 @@ interface Props {
 }
 
 function EntityName({ name, detailsLink, showEntityStatus }: Props) {
+    const intl = useIntl();
+    const location = useLocation();
+
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -27,20 +38,27 @@ function EntityName({ name, detailsLink, showEntityStatus }: Props) {
             >
                 {showEntityStatus ? <EntityStatus name={name} /> : null}
 
-                <Link
-                    component={NavLink}
-                    to={detailsLink}
-                    sx={
-                        belowMd
-                            ? {
-                                  overflowWrap: 'break-word',
-                                  wordBreak: 'break-all',
-                              }
-                            : undefined
-                    }
+                <Tooltip
+                    title={intl.formatMessage({
+                        id: 'entityTable.detailsLink',
+                    })}
                 >
-                    {name}
-                </Link>
+                    <Link
+                        component={NavLink}
+                        to={detailsLink}
+                        state={{ backButtonUrl: location }}
+                        sx={
+                            belowMd
+                                ? {
+                                      overflowWrap: 'break-word',
+                                      wordBreak: 'break-all',
+                                  }
+                                : undefined
+                        }
+                    >
+                        {name}
+                    </Link>
+                </Tooltip>
             </Stack>
         </TableCell>
     );
