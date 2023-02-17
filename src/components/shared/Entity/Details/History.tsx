@@ -58,8 +58,6 @@ function History() {
         return <CircularProgress />;
     }
 
-    console.log('convertedData', convertedData);
-
     return (
         <Box>
             <Grid container spacing={2}>
