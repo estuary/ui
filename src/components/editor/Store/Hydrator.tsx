@@ -39,6 +39,9 @@ function Hydrator({
         }
     }, [publicationSpecs, setSpecs]);
 
+    // TODO (details) make this error handling better
+    // 1. Store this in the store
+    // 2. Show the error but leave the proper header displaying
     if (pubSpecsError) {
         return <Error error={pubSpecsError} />;
     }
