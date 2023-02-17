@@ -1,9 +1,7 @@
 import { TableRow, useTheme } from '@mui/material';
 import { CollectionQueryWithStats } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
-import Actions from 'components/tables/cells/Actions';
 import EntityName from 'components/tables/cells/EntityName';
-import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
@@ -37,7 +35,7 @@ interface RowsProps {
 }
 
 function Row({ row, stats, showEntityStatus }: RowProps) {
-    const { generatePath, navigateToPath } = useDetailsNavigator(
+    const { generatePath } = useDetailsNavigator(
         authenticatedRoutes.collections.details.overview.fullPath
     );
     const theme = useTheme();
@@ -85,15 +83,6 @@ function Row({ row, stats, showEntityStatus }: RowProps) {
             ) : null}
 
             <TimeStamp time={row.updated_at} />
-
-            <Actions>
-                <ExpandDetails
-                    onClick={() => {
-                        navigateToPath(row);
-                    }}
-                    expanded={false}
-                />
-            </Actions>
         </TableRow>
     );
 }
