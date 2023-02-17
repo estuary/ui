@@ -52,7 +52,7 @@ const router = createBrowserRouter(
             />
 
             <Route
-                path="/login"
+                path={unauthenticatedRoutes.login.path}
                 element={
                     <RequireAuth firstLoad>
                         <Login />
