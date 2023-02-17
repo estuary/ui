@@ -265,7 +265,6 @@ function EntityTable({
     );
 
     useUnmount(() => {
-        console.log('bye bye');
         if (searchTextField.current) {
             searchTextField.current.value = '';
         }
