@@ -26,7 +26,7 @@ function Overview() {
                 </Grid>
             ) : null}
 
-            {catalogName && isCollection ? (
+            {isCollection && catalogName ? (
                 <Grid item xs={12}>
                     <DataPreview collectionName={catalogName} />
                 </Grid>
