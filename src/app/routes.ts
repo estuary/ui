@@ -1,5 +1,13 @@
 export const REDIRECT_TO_PARAM_NAME = 'redirect_to';
 
+// TODO (routing)
+//  Broke up the large objects and then exported then as one. This was to reduce the scope of
+//      changes. Eventually I think we should just import in `admin` or `capture` and not `authenticated`.
+//
+//  We need to move our routes from the component approach to the JSON approach. I am hoping
+//      that it will allow us to not have to "duplicate" the routing efforts and we can just
+//      reference the route JSON object when needed.
+
 const admin = {
     title: 'routeTitle.admin',
     path: 'admin',
