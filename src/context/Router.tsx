@@ -7,10 +7,12 @@ import AdminConnectors from 'components/admin/Connectors';
 import AdminCookies from 'components/admin/Cookies';
 import StorageMappings from 'components/admin/StorageMappings';
 import CaptureCreate from 'components/capture/Create';
+import CaptureCreateConfig from 'components/capture/Create/Config';
 import CaptureDetails from 'components/capture/Details';
 import CaptureEdit from 'components/capture/Edit';
 import CollectionDetails from 'components/collection/Details';
 import MaterializationCreate from 'components/materialization/Create';
+import MaterializationCreateConfig from 'components/materialization/Create/Config';
 import MaterializationDetails from 'components/materialization/Details';
 import MaterializationEdit from 'components/materialization/Edit';
 import { DetailsPageContextProvider } from 'components/shared/Entity/Details/context';
@@ -163,7 +165,7 @@ const router = createBrowserRouter(
                             element={
                                 <EntityContextProvider value="capture">
                                     <WorkflowContextProvider value="capture_create">
-                                        <CaptureCreate />
+                                        <CaptureCreateConfig />
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
                             }
@@ -249,7 +251,7 @@ const router = createBrowserRouter(
                             element={
                                 <EntityContextProvider value="materialization">
                                     <WorkflowContextProvider value="materialization_create">
-                                        <MaterializationCreate />
+                                        <MaterializationCreateConfig />
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
                             }
