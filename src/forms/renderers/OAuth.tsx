@@ -16,7 +16,7 @@ import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_setEndpointCustomErrors,
-} from 'stores/EndpointConfig';
+} from 'stores/EndpointConfig/hooks';
 import { Options } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
 import {

@@ -40,7 +40,7 @@ function Materialize({ selectableTableStoreName }: Props) {
                     getPathWithParams(
                         authenticatedRoutes.materializations.create.fullPath,
                         {
-                            [GlobalSearchParams.LIVE_SPEC_ID]:
+                            [GlobalSearchParams.PREFILL_PUB_ID]:
                                 selectedRowsArray,
                         }
                     )
@@ -50,7 +50,11 @@ function Materialize({ selectableTableStoreName }: Props) {
     };
 
     return (
-        <Button disabled={!hasSelections} onClick={handlers.materialize}>
+        <Button
+            variant="outlined"
+            disabled={!hasSelections}
+            onClick={handlers.materialize}
+        >
             <FormattedMessage id="cta.materialize" />
         </Button>
     );

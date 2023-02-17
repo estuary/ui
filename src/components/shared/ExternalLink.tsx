@@ -1,6 +1,6 @@
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Button } from '@mui/material';
-import { LINK_BUTTON_STYLING } from 'context/Theme';
+import { linkButtonSx } from 'context/Theme';
+import { OpenNewWindow } from 'iconoir-react';
 import { ReactNode } from 'react';
 
 interface Props {
@@ -18,13 +18,15 @@ const ExternalLink = ({ children, link, hideIcon }: Props) => {
     return (
         <Button
             variant="text"
-            endIcon={!hideIcon ? <OpenInNewIcon /> : null}
+            endIcon={
+                !hideIcon ? <OpenNewWindow style={{ fontSize: 12 }} /> : null
+            }
             href={link}
             target="_blank"
             rel="noopener"
             color="secondary"
             onClick={onClick}
-            sx={LINK_BUTTON_STYLING}
+            sx={linkButtonSx}
         >
             {children}
         </Button>

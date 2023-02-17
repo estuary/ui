@@ -4,6 +4,7 @@ import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 import CollectionConfig from 'components/collection/Config';
 import {
+    useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
@@ -48,7 +49,7 @@ import {
     useEndpointConfigStore_changed,
     useEndpointConfig_hydrated,
     useEndpointConfig_serverUpdateRequired,
-} from 'stores/EndpointConfig';
+} from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
@@ -276,6 +277,7 @@ function EntityEdit({
     const detailsFormChanged = useDetailsForm_changed();
 
     // Draft Editor Store
+    const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
     const persistedDraftId = useEditorStore_persistedDraftId();
@@ -423,20 +425,22 @@ function EntityEdit({
                         </ErrorBoundryWrapper>
                     ) : null}
 
-                    {imageTag.id ? (
+                    {imageTag.connectorId ? (
                         <ErrorBoundryWrapper>
                             <EndpointConfig
                                 connectorImage={imageTag.id}
                                 readOnly={readOnly.endpointConfigForm}
+                                hideBorder={!hasLength(imageTag.connectorId)}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
 
-                    {hasLength(imageTag.id) ? (
+                    {hasLength(imageTag.connectorId) ? (
                         <ErrorBoundryWrapper>
                             <CollectionConfig
                                 draftSpecs={taskDraftSpec}
                                 readOnly={readOnly.resourceConfigForm}
+                                hideBorder={!draftId}
                                 RediscoverButton={RediscoverButton}
                             />
                         </ErrorBoundryWrapper>

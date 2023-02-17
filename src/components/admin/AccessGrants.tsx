@@ -30,11 +30,14 @@ function AccessGrants() {
                 >
                     <FormattedMessage id="terms.permissions" />
                 </Typography>
+
                 <MessageWithLink messageID="admin.roles.message" />
+
                 <Divider />
             </Stack>
 
             <AccessGrantsTable showUser />
+
             <AccessGrantsTable />
         </PageContainer>
     );

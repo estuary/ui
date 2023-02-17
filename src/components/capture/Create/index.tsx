@@ -26,7 +26,8 @@ import {
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm';
-import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
+import { useEndpointConfigStore_reset } from 'stores/EndpointConfig/hooks';
+import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
 import {
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_resetState,
@@ -131,7 +132,7 @@ function CaptureCreate() {
                     ? getPathWithParams(
                           authenticatedRoutes.materializations.create.fullPath,
                           {
-                              [GlobalSearchParams.LAST_PUB_ID]: pubId,
+                              [GlobalSearchParams.PREFILL_PUB_ID]: pubId,
                           }
                       )
                     : authenticatedRoutes.materializations.create.fullPath
@@ -142,67 +143,69 @@ function CaptureCreate() {
     return (
         <PageContainer
             pageTitleProps={{
-                header: authenticatedRoutes.captures.create.title,
+                header: authenticatedRoutes.captures.create.new.title,
                 headerLink:
                     'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
             }}
         >
-            <ResourceConfigHydrator>
-                <EntityCreate
-                    title="browserTitle.captureCreate"
-                    entityType={entityType}
-                    draftSpecMetadata={draftSpecsMetadata}
-                    resetState={resetState}
-                    errorSummary={
-                        <ValidationErrorSummary
-                            errorsExist={detailsFormErrorsExist}
-                        />
-                    }
-                    toolbar={
-                        <EntityToolbar
-                            GenerateButton={
-                                <CaptureGenerateButton
-                                    entityType={entityType}
-                                    disabled={!hasConnectors}
-                                    callFailed={helpers.callFailed}
-                                    postGenerateMutate={mutateDraftSpecs}
-                                    createWorkflowMetadata={{
-                                        initiateDiscovery,
-                                        setInitiateDiscovery,
-                                    }}
-                                />
-                            }
-                            TestButton={
-                                <EntityTestButton
-                                    closeLogs={handlers.closeLogs}
-                                    callFailed={helpers.callFailed}
-                                    disabled={!hasConnectors}
-                                    logEvent={CustomEvents.CAPTURE_TEST}
-                                />
-                            }
-                            SaveButton={
-                                <EntitySaveButton
-                                    closeLogs={handlers.closeLogs}
-                                    callFailed={helpers.callFailed}
-                                    disabled={!draftId}
-                                    materialize={
-                                        handlers.materializeCollections
-                                    }
-                                    logEvent={CustomEvents.CAPTURE_CREATE}
-                                />
-                            }
-                        />
-                    }
-                    RediscoverButton={
-                        <RediscoverButton
-                            entityType={entityType}
-                            disabled={!hasConnectors}
-                            callFailed={helpers.callFailed}
-                            postGenerateMutate={mutateDraftSpecs}
-                        />
-                    }
-                />
-            </ResourceConfigHydrator>
+            <EndpointConfigHydrator>
+                <ResourceConfigHydrator>
+                    <EntityCreate
+                        title="browserTitle.captureCreate"
+                        entityType={entityType}
+                        draftSpecMetadata={draftSpecsMetadata}
+                        resetState={resetState}
+                        errorSummary={
+                            <ValidationErrorSummary
+                                errorsExist={detailsFormErrorsExist}
+                            />
+                        }
+                        toolbar={
+                            <EntityToolbar
+                                GenerateButton={
+                                    <CaptureGenerateButton
+                                        entityType={entityType}
+                                        disabled={!hasConnectors}
+                                        callFailed={helpers.callFailed}
+                                        postGenerateMutate={mutateDraftSpecs}
+                                        createWorkflowMetadata={{
+                                            initiateDiscovery,
+                                            setInitiateDiscovery,
+                                        }}
+                                    />
+                                }
+                                TestButton={
+                                    <EntityTestButton
+                                        closeLogs={handlers.closeLogs}
+                                        callFailed={helpers.callFailed}
+                                        disabled={!hasConnectors}
+                                        logEvent={CustomEvents.CAPTURE_TEST}
+                                    />
+                                }
+                                SaveButton={
+                                    <EntitySaveButton
+                                        closeLogs={handlers.closeLogs}
+                                        callFailed={helpers.callFailed}
+                                        disabled={!draftId}
+                                        materialize={
+                                            handlers.materializeCollections
+                                        }
+                                        logEvent={CustomEvents.CAPTURE_CREATE}
+                                    />
+                                }
+                            />
+                        }
+                        RediscoverButton={
+                            <RediscoverButton
+                                entityType={entityType}
+                                disabled={!hasConnectors}
+                                callFailed={helpers.callFailed}
+                                postGenerateMutate={mutateDraftSpecs}
+                            />
+                        }
+                    />
+                </ResourceConfigHydrator>
+            </EndpointConfigHydrator>
         </PageContainer>
     );
 }

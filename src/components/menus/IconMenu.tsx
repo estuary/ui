@@ -9,7 +9,11 @@ import {
     Theme,
     Tooltip,
 } from '@mui/material';
-import { indigo } from 'context/Theme';
+import {
+    defaultOutline,
+    paperBackground,
+    paperBackgroundImage,
+} from 'context/Theme';
 import React, { ReactNode } from 'react';
 
 interface CustomPopoverPosition {
@@ -55,10 +59,9 @@ const IconMenu = ({
         ? {}
         : {
               '&:before': {
-                  bgcolor: (theme) =>
-                      theme.palette.mode === 'dark'
-                          ? 'primary.dark'
-                          : indigo[200],
+                  bgcolor: (theme) => paperBackground[theme.palette.mode],
+                  backgroundImage: (theme) =>
+                      paperBackgroundImage[theme.palette.mode],
                   content: '""',
                   display: 'block',
                   height: 10,
@@ -68,6 +71,8 @@ const IconMenu = ({
                   transform: 'translateY(-50%) rotate(45deg)',
                   width: 10,
                   zIndex: 0,
+                  borderTop: (theme) => defaultOutline[theme.palette.mode],
+                  borderLeft: (theme) => defaultOutline[theme.palette.mode],
               },
           };
 
@@ -91,6 +96,7 @@ const IconMenu = ({
                         aria-haspopup="true"
                         aria-expanded={open ? 'true' : undefined}
                         onClick={handlers.click}
+                        sx={{ color: (theme) => theme.palette.text.primary }}
                     >
                         {icon}
                     </IconButton>
@@ -117,7 +123,6 @@ const IconMenu = ({
                     }
                 }
                 PaperProps={{
-                    elevation: 0,
                     sx: {
                         ...arrowSx,
                         '& .MuiAvatar-root': {
@@ -126,14 +131,16 @@ const IconMenu = ({
                             mr: 1,
                             width: 32,
                         },
-                        'filter': 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                        'filter':
+                            'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px',
                         'mt': 1.5,
                         'overflow': 'visible',
                         'bgcolor': (theme) =>
-                            theme.palette.mode === 'dark'
-                                ? 'primary.dark'
-                                : indigo[200],
-                        'borderRadius': '10px',
+                            paperBackground[theme.palette.mode],
+                        'backgroundImage': (theme) =>
+                            paperBackgroundImage[theme.palette.mode],
+                        'border': (theme) => defaultOutline[theme.palette.mode],
+                        'borderRadius': 3,
                     },
                 }}
             >

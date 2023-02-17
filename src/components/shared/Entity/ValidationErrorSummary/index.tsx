@@ -11,7 +11,7 @@ import { FormattedMessage } from 'react-intl';
 import {
     useEndpointConfigStore_errorsExist,
     useEndpointConfig_hydrationErrorsExist,
-} from 'stores/EndpointConfig';
+} from 'stores/EndpointConfig/hooks';
 import { useFormStateStore_displayValidation } from 'stores/FormState/hooks';
 import {
     useResourceConfig_hydrationErrorsExist,

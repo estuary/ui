@@ -53,6 +53,11 @@ export const authenticatedRoutes = {
             title: 'routeTitle.captureCreate',
             path: `create`,
             fullPath: '/captures/create',
+            new: {
+                title: 'routeTitle.captureCreate',
+                path: `create/new`,
+                fullPath: '/captures/create/new',
+            },
         },
         edit: {
             title: 'routeTitle.captureEdit',
@@ -75,6 +80,11 @@ export const authenticatedRoutes = {
             title: 'routeTitle.materializationCreate',
             path: 'create',
             fullPath: '/materializations/create',
+            new: {
+                title: 'routeTitle.materializationCreate',
+                path: 'create/new',
+                fullPath: '/materializations/create/new',
+            },
         },
         edit: {
             title: 'routeTitle.materializationEdit',

@@ -1,12 +1,9 @@
-import { Box, Paper, useTheme } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
-import { glassBkgWithoutBlur } from 'context/Theme';
+import { paperBackground } from 'context/Theme';
 import { BaseComponentProps } from 'types';
 
 const FullPageWrapper = ({ children }: BaseComponentProps) => {
-    const theme = useTheme();
-    const dialogBackground = glassBkgWithoutBlur[theme.palette.mode];
-
     return (
         <PageContainer hideBackground>
             <Box
@@ -20,7 +17,11 @@ const FullPageWrapper = ({ children }: BaseComponentProps) => {
                     sx={{
                         maxWidth: 500,
                         padding: 2,
-                        ...dialogBackground,
+                        background: (theme) =>
+                            paperBackground[theme.palette.mode],
+                        boxShadow:
+                            'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px',
+                        borderRadius: 3,
                     }}
                 >
                     {children}

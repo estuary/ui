@@ -1,17 +1,6 @@
-import {
-    Autocomplete,
-    AutocompleteRenderInputParams,
-    FilledInputProps,
-    Grid,
-    SxProps,
-    TextField,
-    Theme,
-    Toolbar,
-} from '@mui/material';
-import {
-    semiTransparentBackground,
-    semiTransparentBackgroundIntensified,
-} from 'context/Theme';
+import { Grid, Toolbar } from '@mui/material';
+import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
+import SearchField from 'components/shared/toolbar/SearchField';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { debounce } from 'lodash';
 import {
@@ -42,28 +31,6 @@ interface ProtocolOption {
     protocol: Entity | null;
     message: string;
 }
-
-const inputProps: Partial<FilledInputProps> = {
-    disableUnderline: true,
-    sx: {
-        borderRadius: 5,
-        backgroundColor: (theme) =>
-            semiTransparentBackgroundIntensified[theme.palette.mode],
-    },
-};
-
-const toolbarSectionSx: SxProps<Theme> = {
-    '& .MuiInputLabel-root.Mui-focused': {
-        color: (theme) =>
-            theme.palette.mode === 'dark'
-                ? 'primary'
-                : theme.palette.text.secondary,
-    },
-    '& .MuiFilledInput-root:hover, .MuiFilledInput-root.Mui-focused': {
-        backgroundColor: (theme) =>
-            semiTransparentBackground[theme.palette.mode],
-    },
-};
 
 function ConnectorToolbar({
     belowMd,
@@ -186,108 +153,56 @@ function ConnectorToolbar({
                 }}
             >
                 <Grid item xs={12} md={hideProtocol ? 6 : 4}>
-                    <TextField
-                        autoFocus
+                    <SearchField
                         label={intl.formatMessage({
                             id: 'connectorTable.filterLabel',
                         })}
-                        variant="filled"
-                        InputProps={inputProps}
-                        onChange={handlers.filterTiles}
-                        sx={{
-                            width: '100%',
-                            borderRadius: 5,
-                            ...toolbarSectionSx,
-                        }}
+                        changeHandler={handlers.filterTiles}
+                        autoFocus={true}
                     />
                 </Grid>
 
                 <Grid item xs={hideProtocol ? 6 : 4} md={2}>
-                    <Autocomplete
+                    <AutocompletedField
+                        label={intl.formatMessage({
+                            id: 'connectorTable.label.sortBy',
+                        })}
                         options={sortByOptions.map(({ message }) => message)}
-                        renderInput={({
-                            InputProps,
-                            ...params
-                        }: AutocompleteRenderInputParams) => (
-                            <TextField
-                                {...params}
-                                InputProps={{
-                                    ...InputProps,
-                                    ...inputProps,
-                                }}
-                                label={intl.formatMessage({
-                                    id: 'connectorTable.label.sortBy',
-                                })}
-                                variant="filled"
-                            />
-                        )}
                         defaultValue={intl.formatMessage({
                             id: 'connectorTable.data.title',
                         })}
-                        disableClearable
-                        onChange={handlers.setSortBy}
-                        sx={toolbarSectionSx}
+                        changeHandler={handlers.setSortBy}
                     />
                 </Grid>
 
                 <Grid item xs={hideProtocol ? 6 : 4} md={2}>
-                    <Autocomplete
+                    <AutocompletedField
+                        label={intl.formatMessage({
+                            id: 'connectorTable.label.sortDirection',
+                        })}
                         options={sortDirectionOptions.map(
                             ({ message }) => message
-                        )}
-                        renderInput={({
-                            InputProps,
-                            ...params
-                        }: AutocompleteRenderInputParams) => (
-                            <TextField
-                                {...params}
-                                InputProps={{
-                                    ...InputProps,
-                                    ...inputProps,
-                                }}
-                                label={intl.formatMessage({
-                                    id: 'connectorTable.label.sortDirection',
-                                })}
-                                variant="filled"
-                            />
                         )}
                         defaultValue={intl.formatMessage({
                             id: 'sortDirection.ascending',
                         })}
-                        disableClearable
-                        onChange={handlers.switchSortDirection}
-                        sx={toolbarSectionSx}
+                        changeHandler={handlers.switchSortDirection}
                     />
                 </Grid>
 
                 {hideProtocol ? null : (
                     <Grid item xs={4} md={2}>
-                        <Autocomplete
+                        <AutocompletedField
+                            label={intl.formatMessage({
+                                id: 'connectorTable.data.protocol',
+                            })}
                             options={protocolOptions.map(
                                 ({ message }) => message
-                            )}
-                            renderInput={({
-                                InputProps,
-                                ...params
-                            }: AutocompleteRenderInputParams) => (
-                                <TextField
-                                    {...params}
-                                    InputProps={{
-                                        ...InputProps,
-                                        ...inputProps,
-                                    }}
-                                    label={intl.formatMessage({
-                                        id: 'connectorTable.data.protocol',
-                                    })}
-                                    variant="filled"
-                                />
                             )}
                             defaultValue={intl.formatMessage({
                                 id: 'common.optionsAll',
                             })}
-                            disableClearable
-                            onChange={handlers.setProtocol}
-                            sx={toolbarSectionSx}
+                            changeHandler={handlers.setProtocol}
                         />
                     </Grid>
                 )}

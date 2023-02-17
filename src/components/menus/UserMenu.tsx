@@ -1,20 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import EmailIcon from '@mui/icons-material/Email';
-import Logout from '@mui/icons-material/Logout';
-import { Stack, SxProps, Theme, Typography } from '@mui/material';
+import { Stack, SxProps, Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
 import { Auth } from '@supabase/ui';
 import UserAvatar from 'components/shared/UserAvatar';
 import { useClient } from 'hooks/supabase-swr';
+import { LogOut, Mail, ProfileCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { getUserDetails } from 'services/supabase';
 import IconMenu from './IconMenu';
 
 interface Props {
-    iconSx: SxProps<Theme>;
+    iconColor: string;
 }
 
 const nonInteractiveMenuStyling: SxProps = {
@@ -23,7 +21,7 @@ const nonInteractiveMenuStyling: SxProps = {
     },
 };
 
-const UserMenu = ({ iconSx }: Props) => {
+const UserMenu = ({ iconColor }: Props) => {
     const intl = useIntl();
     const supabaseClient = useClient();
 
@@ -52,14 +50,14 @@ const UserMenu = ({ iconSx }: Props) => {
             >
                 <MenuItem sx={nonInteractiveMenuStyling}>
                     <ListItemIcon>
-                        <AccountCircleIcon fontSize="small" sx={iconSx} />
+                        <ProfileCircle style={{ color: iconColor }} />
                     </ListItemIcon>
                     {userName}
                 </MenuItem>
 
                 <MenuItem sx={nonInteractiveMenuStyling}>
                     <ListItemIcon>
-                        <EmailIcon fontSize="small" sx={iconSx} />
+                        <Mail style={{ color: iconColor }} />
                     </ListItemIcon>
 
                     <Stack spacing={0}>
@@ -81,7 +79,7 @@ const UserMenu = ({ iconSx }: Props) => {
                     }}
                 >
                     <ListItemIcon>
-                        <Logout fontSize="small" sx={iconSx} />
+                        <LogOut style={{ color: iconColor }} />
                     </ListItemIcon>
 
                     <FormattedMessage id="cta.logout" />

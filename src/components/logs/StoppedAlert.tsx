@@ -1,6 +1,6 @@
 import { Button, Collapse } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
-import { LINK_BUTTON_STYLING } from 'context/Theme';
+import { linkButtonSx } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
 import { useLogsContext } from './Context';
 
@@ -23,7 +23,7 @@ function StoppedAlert() {
                         restartCTA: (
                             <Button
                                 variant="text"
-                                sx={LINK_BUTTON_STYLING}
+                                sx={linkButtonSx}
                                 onClick={reset}
                             >
                                 <FormattedMessage id="logs.restartLink" />

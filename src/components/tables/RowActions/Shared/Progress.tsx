@@ -1,8 +1,13 @@
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { Box, CircularProgress, ListItemText, Stack } from '@mui/material';
+import {
+    Box,
+    CircularProgress,
+    ListItemText,
+    Stack,
+    useTheme,
+} from '@mui/material';
 import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import Error from 'components/shared/Error';
+import { CheckCircle, WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 export enum ProgressStates {
@@ -34,6 +39,8 @@ function SharedProgress({
     successMessageID,
     runningMessageID,
 }: SharedProgressProps) {
+    const theme = useTheme();
+
     return (
         <Box
             sx={{
@@ -42,9 +49,13 @@ function SharedProgress({
         >
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
                 {state === ProgressStates.FAILED ? (
-                    <ErrorOutlineIcon color="error" />
+                    <WarningCircle
+                        style={{ color: theme.palette.error.main }}
+                    />
                 ) : state === ProgressStates.SUCCESS ? (
-                    <CheckCircleOutlineIcon color="success" />
+                    <CheckCircle
+                        style={{ color: theme.palette.success.main }}
+                    />
                 ) : (
                     <CircularProgress color="info" size={18} />
                 )}

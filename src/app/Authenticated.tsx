@@ -6,8 +6,10 @@ import AdminConnectors from 'components/admin/Connectors';
 import AdminCookies from 'components/admin/Cookies';
 import StorageMappings from 'components/admin/StorageMappings';
 import CaptureCreate from 'components/capture/Create';
+import CaptureCreateConfig from 'components/capture/Create/Config';
 import CaptureEdit from 'components/capture/Edit';
 import MaterializationCreate from 'components/materialization/Create';
+import MaterializationCreateConfig from 'components/materialization/Create/Config';
 import MaterializationEdit from 'components/materialization/Edit';
 import AuthenticatedOnlyContext from 'context/Authenticated';
 import { EntityContextProvider } from 'context/EntityContext';
@@ -22,7 +24,6 @@ import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
 import { Route, Routes } from 'react-router';
-import { EndpointConfigProvider } from 'stores/EndpointConfig';
 import { isProduction } from 'utils/env-utils';
 import { authenticatedRoutes, unauthenticatedRoutes } from './routes';
 
@@ -76,9 +77,18 @@ const Authenticated = () => {
                             element={
                                 <EntityContextProvider value="capture">
                                     <WorkflowContextProvider value="capture_create">
-                                        <EndpointConfigProvider>
-                                            <CaptureCreate />
-                                        </EndpointConfigProvider>
+                                        <CaptureCreateConfig />
+                                    </WorkflowContextProvider>
+                                </EntityContextProvider>
+                            }
+                        />
+
+                        <Route
+                            path={authenticatedRoutes.captures.create.new.path}
+                            element={
+                                <EntityContextProvider value="capture">
+                                    <WorkflowContextProvider value="capture_create">
+                                        <CaptureCreate />
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
                             }
@@ -89,11 +99,9 @@ const Authenticated = () => {
                             element={
                                 <EntityContextProvider value="capture">
                                     <WorkflowContextProvider value="capture_edit">
-                                        <EndpointConfigProvider>
-                                            <EntityExistenceGuard>
-                                                <CaptureEdit />
-                                            </EntityExistenceGuard>
-                                        </EndpointConfigProvider>
+                                        <EntityExistenceGuard>
+                                            <CaptureEdit />
+                                        </EntityExistenceGuard>
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
                             }
@@ -117,9 +125,21 @@ const Authenticated = () => {
                             element={
                                 <EntityContextProvider value="materialization">
                                     <WorkflowContextProvider value="materialization_create">
-                                        <EndpointConfigProvider>
-                                            <MaterializationCreate />
-                                        </EndpointConfigProvider>
+                                        <MaterializationCreateConfig />
+                                    </WorkflowContextProvider>
+                                </EntityContextProvider>
+                            }
+                        />
+
+                        <Route
+                            path={
+                                authenticatedRoutes.materializations.create.new
+                                    .path
+                            }
+                            element={
+                                <EntityContextProvider value="materialization">
+                                    <WorkflowContextProvider value="materialization_create">
+                                        <MaterializationCreate />
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
                             }
@@ -132,11 +152,9 @@ const Authenticated = () => {
                             element={
                                 <EntityContextProvider value="materialization">
                                     <WorkflowContextProvider value="materialization_edit">
-                                        <EndpointConfigProvider>
-                                            <EntityExistenceGuard>
-                                                <MaterializationEdit />
-                                            </EntityExistenceGuard>
-                                        </EndpointConfigProvider>
+                                        <EntityExistenceGuard>
+                                            <MaterializationEdit />
+                                        </EntityExistenceGuard>
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
                             }

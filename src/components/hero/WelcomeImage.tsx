@@ -1,6 +1,4 @@
 import { useTheme } from '@mui/material';
-import darkWelcome from 'images/welcome_dark.png';
-import lightWelcome from 'images/welcome_light.png';
 import { useIntl } from 'react-intl';
 
 function WelcomeImage() {
@@ -9,9 +7,9 @@ function WelcomeImage() {
 
     return (
         <img
-            src={theme.palette.mode === 'dark' ? darkWelcome : lightWelcome}
+            src={`https://www.estuary.dev/wp-content/uploads/2023/02/welcome_${theme.palette.mode}.png`}
             style={{ marginBottom: 16 }}
-            width="100%"
+            width="75%"
             alt={intl.formatMessage({ id: 'welcome.image.alt' })}
         />
     );

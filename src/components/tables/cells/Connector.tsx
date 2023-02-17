@@ -1,6 +1,5 @@
 import { Box, TableCell, Tooltip } from '@mui/material';
-import ConnectorIcon from 'components/ConnectorIcon';
-import { tableBorderSx } from 'context/Theme';
+import ConnectorIcon from 'components/connectors/ConnectorIcon';
 
 interface Props {
     connectorName: string | null;
@@ -14,7 +13,6 @@ function Connector({ connectorImage, connectorName, imageTag }: Props) {
     return (
         <TableCell
             sx={{
-                ...tableBorderSx,
                 minWidth: iconSize,
                 maxWidth: 'min-content',
             }}

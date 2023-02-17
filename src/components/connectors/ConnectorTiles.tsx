@@ -1,4 +1,3 @@
-import { AddBox, OpenInNew } from '@mui/icons-material';
 import {
     Box,
     Button,
@@ -11,7 +10,7 @@ import {
     useTheme,
 } from '@mui/material';
 import ConnectorCard from 'components/connectors/card';
-import ConnectorToolbar from 'components/ConnectorToolbar';
+import ConnectorToolbar from 'components/connectors/ConnectorToolbar';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import {
     semiTransparentBackground,
@@ -22,6 +21,7 @@ import {
     ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
 } from 'hooks/useConnectorWithTagDetail';
+import { AddSquare, OpenNewWindow } from 'iconoir-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
@@ -40,10 +40,10 @@ import {
 } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
-import ConnectorCardCTA from './connectors/card/CTA';
-import ConnectorCardDetails from './connectors/card/Details';
-import ConnectorCardLogo from './connectors/card/Logo';
-import ConnectorCardTitle from './connectors/card/Title';
+import ConnectorCardCTA from './card/CTA';
+import ConnectorCardDetails from './card/Details';
+import ConnectorLogo from './card/Logo';
+import ConnectorCardTitle from './card/Title';
 
 interface ConnectorTilesProps {
     protocolPreset?: EntityWithCreateWorkflow;
@@ -65,13 +65,17 @@ function Tile({ children }: TileProps) {
             elevation={0}
             sx={{
                 'height': '100%',
-                'borderRadius': 5,
-                'background': (theme) =>
-                    semiTransparentBackgroundIntensified[theme.palette.mode],
                 'padding': 1,
+                'background': (theme) =>
+                    semiTransparentBackground[theme.palette.mode],
+                'boxShadow':
+                    'rgb(50 50 93 / 7%) 0px 2px 5px -1px, rgb(0 0 0 / 10%) 0px 1px 3px -1px',
+                'borderRadius': 3,
                 '&:hover': {
                     background: (theme) =>
-                        semiTransparentBackground[theme.palette.mode],
+                        semiTransparentBackgroundIntensified[
+                            theme.palette.mode
+                        ],
                 },
             }}
         >
@@ -146,8 +150,9 @@ function ConnectorTiles({
     const primaryCtaClick = (row: ConnectorWithTagDetailQuery) => {
         navigateToCreate(
             row.connector_tags[0].protocol,
-            row.connector_tags[0].id,
-            replaceOnNavigate
+            row.connector_tags[0].connector_id,
+            replaceOnNavigate,
+            row.connector_tags[0].protocol === 'capture'
         );
     };
 
@@ -187,7 +192,7 @@ function ConnectorTiles({
                         <ConnectorCard
                             key={`connector-tile-${index}`}
                             docsUrl={row.connector_tags[0].documentation_url}
-                            logo={<ConnectorCardLogo imageSrc={row.image} />}
+                            logo={<ConnectorLogo imageSrc={row.image} />}
                             title={<ConnectorCardTitle title={row.title} />}
                             details={
                                 <ConnectorCardDetails
@@ -207,9 +212,16 @@ function ConnectorTiles({
                     .concat(
                         <ConnectorCard
                             key="connector-request-tile"
-                            logo={<AddBox sx={{ fontSize: '4rem' }} />}
+                            logo={
+                                <AddSquare
+                                    style={{
+                                        fontSize: '3rem',
+                                        color: theme.palette.text.primary,
+                                    }}
+                                />
+                            }
                             details={
-                                <Typography component="p" sx={{ px: 1 }}>
+                                <Typography component="p">
                                     <FormattedMessage id="connectors.main.message2.alt" />
                                 </Typography>
                             }
@@ -220,7 +232,11 @@ function ConnectorTiles({
                                     })}
                                     target="_blank"
                                     rel="noopener"
-                                    endIcon={<OpenInNew />}
+                                    endIcon={
+                                        <OpenNewWindow
+                                            style={{ fontSize: 14 }}
+                                        />
+                                    }
                                 >
                                     <FormattedMessage id="connectorTable.actionsCta.connectorRequest" />
                                 </Button>
@@ -265,7 +281,9 @@ function ConnectorTiles({
                             item
                             xs={2}
                             md={4}
-                            lg={3}
+                            lg={2}
+                            xl={2}
+                            sx={{ maxWidth: 275 }}
                         >
                             {skeleton}
                         </Grid>

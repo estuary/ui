@@ -35,13 +35,13 @@ function DiscoveredSchemaCommands() {
                 <FormattedMessage id="workflows.collectionSelector.schemaEdit.message1" />
             </Typography>
 
-            <SingleLineCode formattedMessage={pullDraftCommand} />
+            <SingleLineCode value={pullDraftCommand} />
 
             <Typography sx={{ mt: 3, mb: 1 }}>
                 <FormattedMessage id="workflows.collectionSelector.schemaEdit.message2" />
             </Typography>
 
-            <SingleLineCode formattedMessage={pushLocalEditsCommand} />
+            <SingleLineCode value={pushLocalEditsCommand} />
         </>
     );
 }

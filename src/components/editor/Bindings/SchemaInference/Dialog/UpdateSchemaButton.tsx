@@ -54,7 +54,11 @@ function UpdateSchemaButton({ setOpen }: Props) {
     };
 
     return (
-        <Button disabled={disableUpdate} onClick={updateServer}>
+        <Button
+            variant="outlined"
+            disabled={disableUpdate}
+            onClick={updateServer}
+        >
             <FormattedMessage id="workflows.collectionSelector.schemaInference.cta.continue" />
         </Button>
     );

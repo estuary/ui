@@ -1,5 +1,5 @@
-import { CloudOff } from '@mui/icons-material';
 import { Typography } from '@mui/material';
+import { DbWarning } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -13,7 +13,7 @@ function OutOfSync({ iconSize }: Props) {
                 <FormattedMessage id="common.outOfSync" />
             </Typography>
 
-            <CloudOff sx={{ fontSize: iconSize }} />
+            <DbWarning style={{ fontSize: iconSize }} />
         </>
     );
 }

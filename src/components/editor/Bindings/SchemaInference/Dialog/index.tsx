@@ -1,4 +1,3 @@
-import { DataObject } from '@mui/icons-material';
 import {
     Dialog,
     DialogActions,
@@ -12,7 +11,7 @@ import SchemaApplicationErroredAlert from 'components/editor/Bindings/SchemaInfe
 import CancelButton from 'components/editor/Bindings/SchemaInference/Dialog/CancelButton';
 import InferenceDiffEditor from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor';
 import UpdateSchemaButton from 'components/editor/Bindings/SchemaInference/Dialog/UpdateSchemaButton';
-import { glassBkgWithoutBlur } from 'context/Theme';
+import { CodeBrackets } from 'iconoir-react';
 import { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
@@ -30,23 +29,12 @@ function SchemaInferenceDialog({ open, setOpen, height }: Props) {
     const currentCollection = useResourceConfig_currentCollection();
 
     return currentCollection ? (
-        <Dialog
-            open={open}
-            maxWidth="lg"
-            aria-labelledby={TITLE_ID}
-            sx={{
-                '& .MuiPaper-root.MuiDialog-paper': {
-                    backgroundColor: (theme) =>
-                        glassBkgWithoutBlur[theme.palette.mode],
-                    borderRadius: 5,
-                },
-            }}
-        >
+        <Dialog open={open} maxWidth="lg" aria-labelledby={TITLE_ID}>
             <DialogTitle
                 component="div"
                 sx={{ display: 'flex', alignItems: 'center' }}
             >
-                <DataObject />
+                <CodeBrackets />
 
                 <Typography variant="h6" sx={{ ml: 1 }}>
                     <FormattedMessage id="workflows.collectionSelector.schemaInference.header" />

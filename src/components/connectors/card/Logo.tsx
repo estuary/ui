@@ -1,10 +1,12 @@
-import { Cable } from '@mui/icons-material';
+import { NetworkLeft } from 'iconoir-react';
 
 interface Props {
     imageSrc: string | null | undefined;
+    maxHeight?: number;
+    padding?: string | number;
 }
 
-function ConnectorCardLogo({ imageSrc }: Props) {
+function ConnectorLogo({ imageSrc, maxHeight, padding }: Props) {
     if (imageSrc) {
         return (
             <img
@@ -13,14 +15,14 @@ function ConnectorCardLogo({ imageSrc }: Props) {
                 alt=""
                 style={{
                     width: 'auto',
-                    maxHeight: 75,
-                    padding: '0 1rem',
+                    maxHeight: maxHeight ?? 75,
+                    padding: padding ?? '0 1rem',
                 }}
             />
         );
     } else {
-        return <Cable sx={{ fontSize: '4rem' }} />;
+        return <NetworkLeft style={{ fontSize: '3rem' }} />;
     }
 }
 
-export default ConnectorCardLogo;
+export default ConnectorLogo;

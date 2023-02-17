@@ -1,11 +1,11 @@
 import { Stack } from '@mui/material';
-import ConnectorIcon from 'components/ConnectorIcon';
+import ConnectorIcon from 'components/connectors/ConnectorIcon';
 import useConstant from 'use-constant';
 
 interface Props {
+    title: string | null;
     iconPath?: string | null;
     iconSize?: number;
-    title: string | null;
 }
 
 function ConnectorName({ title, iconPath, iconSize }: Props) {

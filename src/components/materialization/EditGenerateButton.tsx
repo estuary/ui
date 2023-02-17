@@ -24,7 +24,7 @@ import {
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setPreviousEndpointConfig,
     useEndpointConfig_serverUpdateRequired,
-} from 'stores/EndpointConfig';
+} from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,

@@ -4,6 +4,7 @@ import {
     CONNECTOR_IMAGE,
     CONNECTOR_TITLE,
     defaultTableFilter,
+    distributedTableFilter,
     handleFailure,
     handleSuccess,
     QUERY_PARAM_CONNECTOR_TITLE,
@@ -11,7 +12,12 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { CatalogStats, Entity, LiveSpecsExtBaseQuery } from 'types';
+import {
+    CatalogStats,
+    Entity,
+    EntityWithCreateWorkflow,
+    LiveSpecsExtBaseQuery,
+} from 'types';
 
 const baseColumns = [
     'catalog_name',
@@ -27,17 +33,22 @@ const commonColumns = baseColumns.concat([
     'connector_image_tag',
     CONNECTOR_IMAGE,
     CONNECTOR_TITLE,
-    'writes_to',
 ]);
 
 export interface CaptureQuery extends LiveSpecsExtBaseQuery {
     writes_to: string[];
+}
+export interface CaptureQueryWithSpec extends CaptureQuery {
+    spec: any;
 }
 export interface CaptureQueryWithStats extends CaptureQuery {
     stats?: CatalogStats;
 }
 export interface MaterializationQuery extends LiveSpecsExtBaseQuery {
     reads_from: string[];
+}
+export interface MaterializationQueryWithSpec extends MaterializationQuery {
+    spec: any;
 }
 export interface MaterializationQueryWithStats extends MaterializationQuery {
     stats?: CatalogStats;
@@ -47,13 +58,13 @@ export interface CollectionQueryWithStats extends CollectionQuery {
     stats?: CatalogStats;
 }
 
-const captureColumns = commonColumns
-    .concat(['connector_image_name', 'writes_to'])
-    .join(',');
+const captureColumns = commonColumns.concat(['writes_to']).join(',');
+const captureColumnsWithSpec = captureColumns.concat(',spec');
 
 const materializationsColumns = commonColumns.concat(['reads_from']).join(',');
+const materializationsColumnsWithSpec = materializationsColumns.concat(',spec');
 
-const collectionColums = baseColumns.join(',');
+const collectionColumns = baseColumns.join(',');
 
 // Entity table-specific queries
 const getLiveSpecs_captures = (
@@ -107,7 +118,7 @@ const getLiveSpecs_collections = (
 ) => {
     let queryBuilder = supabaseClient
         .from<CollectionQuery>(TABLES.LIVE_SPECS_EXT)
-        .select(collectionColums, {
+        .select(collectionColumns, {
             count: 'exact',
         });
 
@@ -118,6 +129,37 @@ const getLiveSpecs_collections = (
         sorting,
         pagination
     ).eq('spec_type', 'collection');
+
+    return queryBuilder;
+};
+
+const getLiveSpecs_existingTasks = (
+    specType: Entity,
+    connectorId: string,
+    searchQuery: string | null,
+    sorting: SortingProps<any>[]
+) => {
+    const taskColumns: string =
+        specType === 'capture'
+            ? captureColumnsWithSpec
+            : materializationsColumnsWithSpec;
+
+    const columns = taskColumns.concat(',connector_id');
+
+    let queryBuilder = supabaseClient
+        .from(TABLES.LIVE_SPECS_EXT)
+        .select(columns, {
+            count: 'exact',
+        })
+        .eq('connector_id', connectorId)
+        .not('catalog_name', 'ilike', 'ops/%');
+
+    queryBuilder = distributedTableFilter<
+        CaptureQueryWithSpec | MaterializationQueryWithSpec
+    >(queryBuilder, ['catalog_name'], searchQuery, sorting).eq(
+        'spec_type',
+        specType
+    );
 
     return queryBuilder;
 };
@@ -184,10 +226,46 @@ const getLiveSpecsByCatalogNames = async (
     return errors[0] ?? res[0];
 };
 
+const getLiveSpecsByConnectorId = async (
+    specType: EntityWithCreateWorkflow,
+    connectorId: string,
+    prefixFilter?: string
+) => {
+    const taskColumns: string =
+        specType === 'capture'
+            ? captureColumnsWithSpec
+            : materializationsColumnsWithSpec;
+
+    const columns = taskColumns.concat(',connector_id');
+
+    let queryBuilder = supabaseClient
+        .from(TABLES.LIVE_SPECS_EXT)
+        .select(columns)
+        .eq('connector_id', connectorId)
+        .eq('spec_type', specType);
+
+    if (prefixFilter) {
+        queryBuilder = queryBuilder.not(
+            'catalog_name',
+            'ilike',
+            `${prefixFilter}/%`
+        );
+    }
+
+    const data = await queryBuilder.then(
+        handleSuccess<CaptureQueryWithSpec[] | MaterializationQueryWithSpec[]>,
+        handleFailure
+    );
+
+    return data;
+};
+
 export {
     getLiveSpecs_captures,
     getLiveSpecs_collections,
+    getLiveSpecs_existingTasks,
     getLiveSpecs_materializations,
     getLiveSpecsByCatalogName,
     getLiveSpecsByCatalogNames,
+    getLiveSpecsByConnectorId,
 };
