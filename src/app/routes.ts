@@ -183,6 +183,9 @@ export const unauthenticatedRoutes = {
     auth: {
         path: '/auth',
     },
+    login: {
+        path: '/login',
+    },
     register: {
         path: '/register',
     },
