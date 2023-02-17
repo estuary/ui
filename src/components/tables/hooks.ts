@@ -24,10 +24,15 @@ function useTableState(
 ) {
     const rowsPerPage = 10;
 
-    const paginationKey = useMemo(() => `${keyPrefix}-p`, [keyPrefix]);
-    const searchQueryKey = useMemo(() => `${keyPrefix}-sq`, [keyPrefix]);
-    const sortDirectionKey = useMemo(() => `${keyPrefix}-sdir`, [keyPrefix]);
-    const sortColumnKey = useMemo(() => `${keyPrefix}-scol`, [keyPrefix]);
+    const { paginationKey, searchQueryKey, sortDirectionKey, sortColumnKey } =
+        useMemo(() => {
+            return {
+                paginationKey: `${keyPrefix}-p`,
+                searchQueryKey: `${keyPrefix}-sq`,
+                sortDirectionKey: `${keyPrefix}-sdir`,
+                sortColumnKey: `${keyPrefix}-scol`,
+            };
+        }, [keyPrefix]);
 
     const [query, setQuery] = useQueryParams({
         [sortColumnKey]: withDefault(StringParam, defaultSortCol),
