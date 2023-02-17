@@ -265,10 +265,7 @@ const useJournalData = (
         data,
         error,
         loading,
-        refresh: () => {
-            console.log('refresh');
-            setRefreshing(true);
-        },
+        refresh: () => setRefreshing(true),
     };
 };
 
