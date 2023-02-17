@@ -2,6 +2,7 @@ import { Box, Divider, IconButton, Stack, Typography } from '@mui/material';
 import { createEditorStore } from 'components/editor/Store/create';
 import EditorHydrator from 'components/editor/Store/Hydrator';
 import { LocalZustandProvider } from 'context/LocalZustand';
+import { truncateTextSx } from 'context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -72,10 +73,8 @@ function EntityDetails() {
                                     component="span"
                                     variant="h6"
                                     sx={{
+                                        ...truncateTextSx,
                                         alignItems: 'center',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
                                     }}
                                 >
                                     {catalogName}
