@@ -24,12 +24,10 @@ export function usePrompt(message: string, when = true) {
                         reset();
                     }
                 })
-                .catch(() => {});
+                .catch(() => {
+                    reset();
+                });
         }
-
-        // return () => {
-        //     blocker.reset?.();
-        // };
 
         // We only really care to run this when the state value changes
         // eslint-disable-next-line react-hooks/exhaustive-deps
