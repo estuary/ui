@@ -9,8 +9,6 @@ export function usePrompt(message: string, when = true) {
     const confirmationModalContext = useConfirmationModalContext();
     const { proceed, state, reset } = useBlocker(when);
 
-    console.log('usePrompt', { blocker: { proceed, state, reset }, when });
-
     useEffect(() => {
         if (state === 'blocked') {
             confirmationModalContext
