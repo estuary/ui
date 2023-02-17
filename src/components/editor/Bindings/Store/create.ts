@@ -107,11 +107,26 @@ const getInitialState = (
             evaluateCollectionData(persistedDraftId, currentCollection).then(
                 (response) => {
                     setCollectionData(response);
-                    setSchemaInferenceDisabled(response);
+
+                    if (response) {
+                        const writeSchemaKey = response.spec.hasOwnProperty(
+                            'writeSchema'
+                        )
+                            ? 'writeSchema'
+                            : 'schema';
+
+                        const inferenceAnnotationExists = !response.spec[
+                            writeSchemaKey
+                        ].hasOwnProperty(Annotations.inferSchema);
+
+                        setSchemaInferenceDisabled(inferenceAnnotationExists);
+                    } else {
+                        setSchemaInferenceDisabled(false);
+                    }
                 },
                 () => {
                     setCollectionData(undefined);
-                    setSchemaInferenceDisabled(undefined);
+                    setSchemaInferenceDisabled(false);
                 }
             );
         } else {
@@ -132,19 +147,7 @@ const getInitialState = (
     setSchemaInferenceDisabled: (value) => {
         set(
             produce((state: BindingsEditorState) => {
-                if (value) {
-                    const writeSchemaKey = value.spec.hasOwnProperty(
-                        'writeSchema'
-                    )
-                        ? 'writeSchema'
-                        : 'schema';
-
-                    state.schemaInferenceDisabled = !value.spec[
-                        writeSchemaKey
-                    ].hasOwnProperty(Annotations.inferSchema);
-                } else {
-                    state.schemaInferenceDisabled = false;
-                }
+                state.schemaInferenceDisabled = value;
             }),
             false,
             'Schema Inference Disabled Set'
