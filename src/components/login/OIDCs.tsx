@@ -1,11 +1,11 @@
 import { Box, Stack } from '@mui/material';
 import { Provider } from '@supabase/supabase-js';
 import { useClient } from 'hooks/supabase-swr';
+import useLoginRedirectPath from 'hooks/useLoginRedirectPath';
 import { useSnackbar } from 'notistack';
 import GoogleButton from 'react-google-button';
 import { useIntl } from 'react-intl';
 import GithubButton from './GithubButton';
-import useLoginRedirectPath from './useLoginRedirectPath';
 
 // TODO (routes) This is hardcoded because unauthenticated routes... (same as MagicLink)
 const redirectToBase = `${window.location.origin}/auth`;

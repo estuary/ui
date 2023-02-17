@@ -1,9 +1,9 @@
 import { Auth } from '@supabase/ui';
 import AppGuards from 'app/guards';
 import { unauthenticatedRoutes } from 'app/routes';
-import useLoginRedirectPath from 'components/login/useLoginRedirectPath';
 import ConfirmationModalContextProvider from 'context/Confirmation';
 import { ZustandProvider } from 'context/Zustand/provider';
+import useLoginRedirectPath from 'hooks/useLoginRedirectPath';
 import { Navigate, useLocation } from 'react-router-dom';
 import { BaseComponentProps } from 'types';
 import AuthEvents from './AuthEvents';

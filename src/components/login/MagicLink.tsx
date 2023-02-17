@@ -1,12 +1,12 @@
 import { Button, Stack } from '@mui/material';
 import MagicLinkInputs from 'components/login/MagicLinkInputs';
 import { useClient } from 'hooks/supabase-swr';
+import useLoginRedirectPath from 'hooks/useLoginRedirectPath';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import useConstant from 'use-constant';
 import { getLoginSettings } from 'utils/env-utils';
-import useLoginRedirectPath from './useLoginRedirectPath';
 
 // TODO (routes) This is hardcoded because unauthenticated routes is not yet invoked
 //   need to move the routes to a single location. Also... just need to make the route
