@@ -173,6 +173,17 @@ const router = createBrowserRouter(
                         />
 
                         <Route
+                            path={authenticatedRoutes.captures.create.new.path}
+                            element={
+                                <EntityContextProvider value="capture">
+                                    <WorkflowContextProvider value="capture_create">
+                                        <CaptureCreate />
+                                    </WorkflowContextProvider>
+                                </EntityContextProvider>
+                            }
+                        />
+
+                        <Route
                             path={authenticatedRoutes.captures.edit.path}
                             element={
                                 <EntityContextProvider value="capture">
@@ -246,6 +257,20 @@ const router = createBrowserRouter(
                                         <EndpointConfigProvider>
                                             <MaterializationCreate />
                                         </EndpointConfigProvider>
+                                    </WorkflowContextProvider>
+                                </EntityContextProvider>
+                            }
+                        />
+
+                        <Route
+                            path={
+                                authenticatedRoutes.materializations.create.new
+                                    .path
+                            }
+                            element={
+                                <EntityContextProvider value="materialization">
+                                    <WorkflowContextProvider value="materialization_create">
+                                        <MaterializationCreate />
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
                             }
