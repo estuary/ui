@@ -36,7 +36,7 @@ import {
     useState,
 } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useEffectOnce } from 'react-use';
+import { useEffectOnce, useUnmount } from 'react-use';
 import { Pagination } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import {
@@ -194,6 +194,17 @@ function EntityTable({
         }
     };
 
+    // Weird way but works for clear out the input. This is really only needed when
+    //  a user enters text into the input on a page and then clicks the left nav of
+    //  the page they are already on
+    useEffect(() => {
+        if (searchQuery === null) {
+            if (searchTextField.current) {
+                searchTextField.current.value = '';
+            }
+        }
+    }, [searchQuery]);
+
     useEffectOnce(() => {
         setPage(getStartingPage(pagination, rowsPerPage));
 
@@ -252,6 +263,13 @@ function EntityTable({
                 : null,
         [renderTableRows, selectData, showEntityStatus]
     );
+
+    useUnmount(() => {
+        console.log('bye bye');
+        if (searchTextField.current) {
+            searchTextField.current.value = '';
+        }
+    });
 
     return (
         <Box data-public>
