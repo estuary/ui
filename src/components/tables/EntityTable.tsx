@@ -112,12 +112,6 @@ function EntityTable({
     showEntityStatus = false,
     selectableTableStoreName,
 }: Props) {
-    console.log('entityTable', {
-        searchQuery,
-        pagination,
-        sortDirection,
-        columnToSort,
-    });
     const isFiltering = useRef(Boolean(searchQuery));
     const searchTextField = useRef<HTMLInputElement>(null);
 
