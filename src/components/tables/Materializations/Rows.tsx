@@ -113,11 +113,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
 
             <TimeStamp time={row.updated_at} />
 
-            <OptionsMenu
-                detailsExpanded={false}
-                toggleDetailsPanel={() => {}}
-                editTask={handlers.editTask}
-            />
+            <OptionsMenu editTask={handlers.editTask} />
         </TableRow>
     );
 }

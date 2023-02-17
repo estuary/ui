@@ -2,8 +2,6 @@ import { Button, TableCell, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-    detailsExpanded: boolean;
-    toggleDetailsPanel: () => void;
     editTask: () => void;
 }
 
