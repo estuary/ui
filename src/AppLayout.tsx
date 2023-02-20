@@ -1,4 +1,5 @@
 import { Box } from '@mui/material';
+import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { NavWidths } from 'context/Theme';
 import { Outlet } from 'react-router';
 import { useLocalStorage } from 'react-use';
@@ -31,7 +32,9 @@ function AppLayout() {
             </Box>
 
             <Box sx={{ ml: `${navigationWidth}px` }}>
-                <Outlet />
+                <ErrorBoundryWrapper>
+                    <Outlet />
+                </ErrorBoundryWrapper>
             </Box>
         </Box>
     );

@@ -36,9 +36,9 @@ function AccessGrants() {
                 <Divider />
             </Stack>
 
-            <AccessGrantsTable showUser />
+            <AccessGrantsTable tablePrefix="ag" showUser />
 
-            <AccessGrantsTable />
+            <AccessGrantsTable tablePrefix="pr" />
         </PageContainer>
     );
 }

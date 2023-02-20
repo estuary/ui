@@ -1,15 +1,12 @@
 import { Auth } from '@supabase/ui';
-import { unauthenticatedRoutes } from 'app/routes';
 import { useClient } from 'hooks/supabase-swr';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
-import { useNavigate } from 'react-router';
 import { useEffectOnce } from 'react-use';
 import { BaseComponentProps } from 'types';
 
 export const UserProvider = ({ children }: BaseComponentProps) => {
     const supabaseClient = useClient();
-    const navigate = useNavigate();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
@@ -28,8 +25,6 @@ export const UserProvider = ({ children }: BaseComponentProps) => {
                         variant: 'info',
                     }
                 );
-            } else if (event === 'SIGNED_OUT') {
-                navigate(unauthenticatedRoutes.path, { replace: true });
             }
         });
     });
