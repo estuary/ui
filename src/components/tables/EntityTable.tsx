@@ -1,6 +1,5 @@
 import {
     Box,
-    Skeleton,
     Stack,
     Table,
     TableBody,
@@ -38,19 +37,20 @@ import {
 } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useEffectOnce } from 'react-use';
+import { Pagination } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SortDirection,
+    TableColumns,
     TableIntlConfig,
     TableState,
     TableStatuses,
 } from 'types';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
+import TableLoadingRows from './Loading';
 import { RowSelectorProps } from './RowActions/types';
 
-export interface ColumnProps {
-    field: string | null;
-    headerIntlKey?: string | null;
+export interface ColumnProps extends TableColumns {
     renderHeader?: (
         index: number,
         storeName: SelectTableStoreNames
@@ -60,7 +60,9 @@ export interface ColumnProps {
 interface Props {
     columns: ColumnProps[];
     renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
+    pagination: Pagination;
     setPagination: (data: any) => void;
+    searchQuery: string | null;
     setSearchQuery: (data: any) => void;
     sortDirection: SortDirection;
     setSortDirection: (data: any) => void;
@@ -78,12 +80,15 @@ interface Props {
 export const getPagination = (currPage: number, size: number) => {
     const limit = size;
     const from = currPage ? currPage * limit : 0;
-    const to = currPage ? from + size : size - 1;
+    const to = (currPage ? from + size : size) - 1;
 
     return { from, to };
 };
 
-const emptyRowHeight = 45;
+const getStartingPage = (val: Pagination, size: number) => {
+    return val.from / size;
+};
+
 const rowsPerPageOptions = [10, 25, 50];
 
 // TODO (tables) I think we should switch this to React Table soon
@@ -92,6 +97,8 @@ function EntityTable({
     columns,
     noExistingDataContentIds,
     renderTableRows,
+    searchQuery,
+    pagination,
     setPagination,
     setSearchQuery,
     sortDirection,
@@ -105,8 +112,8 @@ function EntityTable({
     showEntityStatus = false,
     selectableTableStoreName,
 }: Props) {
-    const [page, setPage] = useState(0);
-    const isFiltering = useRef(false);
+    const isFiltering = useRef(Boolean(searchQuery));
+    const searchTextField = useRef<HTMLInputElement>(null);
 
     const intl = useIntl();
 
@@ -160,6 +167,7 @@ function EntityTable({
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
+    const [page, setPage] = useState(0);
 
     useEffect(() => {
         if (selectData && selectData.length > 0) {
@@ -186,7 +194,20 @@ function EntityTable({
         }
     };
 
+    // Weird way but works for clear out the input. This is really only needed when
+    //  a user enters text into the input on a page and then clicks the left nav of
+    //  the page they are already on
+    useEffect(() => {
+        if (searchQuery === null) {
+            if (searchTextField.current) {
+                searchTextField.current.value = '';
+            }
+        }
+    }, [searchQuery]);
+
     useEffectOnce(() => {
+        setPage(getStartingPage(pagination, rowsPerPage));
+
         return () => {
             return resetSelection();
         };
@@ -201,9 +222,9 @@ function EntityTable({
                 isFiltering.current = hasQuery;
 
                 resetSelection();
-                setSearchQuery(hasQuery ? filterQuery : null);
                 setPagination(getPagination(0, rowsPerPage));
                 setPage(0);
+                setSearchQuery(hasQuery ? filterQuery : null);
             },
             750
         ),
@@ -234,43 +255,6 @@ function EntityTable({
             setPage(0);
         },
     };
-
-    const loadingRows = useMemo(() => {
-        const styling = { height: emptyRowHeight };
-        const loadingRow = columns.map((column, index) => {
-            return (
-                <TableCell key={`loading-${column.field}-${index}`}>
-                    <Skeleton variant="rectangular" />
-                </TableCell>
-            );
-        });
-
-        return (
-            <>
-                <TableRow sx={styling}>{loadingRow}</TableRow>
-
-                <TableRow sx={{ ...styling, opacity: '75%' }}>
-                    {loadingRow}
-                </TableRow>
-
-                <TableRow sx={{ ...styling, opacity: '50%' }}>
-                    {loadingRow}
-                </TableRow>
-
-                <TableRow
-                    sx={{
-                        ...styling,
-                        'opacity': '25%',
-                        '& .MuiTableCell-root': {
-                            borderBottom: 'transparent',
-                        },
-                    }}
-                >
-                    {loadingRow}
-                </TableRow>
-            </>
-        );
-    }, [columns]);
 
     const dataRows = useMemo(
         () =>
@@ -304,12 +288,14 @@ function EntityTable({
                     )}
 
                     <TextField
+                        inputRef={searchTextField}
                         id="capture-search-box"
                         label={intl.formatMessage({
                             id: filterLabel,
                         })}
                         variant="outlined"
                         size="small"
+                        defaultValue={searchQuery}
                         onChange={handlers.filterTable}
                         sx={{
                             'width': belowMd ? 'auto' : 350,
@@ -399,7 +385,7 @@ function EntityTable({
                                 dataRows
                             ) : isValidating ||
                               tableState.status === TableStatuses.LOADING ? (
-                                loadingRows
+                                <TableLoadingRows columns={columns} />
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={columns.length}>

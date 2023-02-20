@@ -137,6 +137,7 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.updated_at': `Updated`,
     'data.email': `Email`,
     'data.display_name': `Username`,
+    'data.published_at': `Published At`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
@@ -183,10 +184,13 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin.cookies': `Cookie Preferences`,
     'routeTitle.admin.storageMappings': `${CommonMessages['terms.storageMapping']}`,
     'routeTitle.captureCreate': `Create Capture`,
+    'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
+    'routeTitle.collectionDetails': `Collection Details`,
     'routeTitle.directives': `Directives`,
+    'routeTitle.details': `Details`,
     'routeTitle.error.entityNotFound': `Entity Not Found`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
@@ -194,6 +198,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.noGrants': `Signed Up`,
     'routeTitle.legal': `Legal`,
     'routeTitle.materializationCreate': `Create Materialization`,
+    'routeTitle.materializationDetails': `Materialization Details`,
     'routeTitle.materializationEdit': `Edit Materialization`,
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,
@@ -213,6 +218,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
     'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
+    'browserTitle.details': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.details']}`,
     'browserTitle.error.entityNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.entityNotFound']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
     'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
@@ -388,11 +394,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. You'll find a message describing the issue at the top of the page.`,
     'entityTable.moreEntities': `{count} more`,
 
-    'optionMenu.ariaLabel': `Open Option Menu`,
-    'optionMenu.tooltip': `Options`,
-    'optionMenu.option.detailsPanel.display': `View details`,
-    'optionMenu.option.detailsPanel.hide': `Hide details`,
-    'optionMenu.option.edit': `Edit specification`,
+    'entityTable.detailsLink': `View details`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
@@ -640,16 +642,16 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
 const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.logs.title': `Logs`,
     'detailsPanel.logs.notFound': `Logs for this build cannot be found. This is likely a permissions issue. You don't have permissions to view other users' logs by default.`,
+    'detailsPanel.shardDetails.fetchError': `Unable to fetch shard status`,
     'detailsPanel.shardDetails.title': `Shard Information`,
     'detailsPanel.shardDetails.status.label': `Status`,
     'detailsPanel.shardDetails.id.label': `ID`,
     'detailsPanel.shardDetails.errorTitle': `Shard Replica Processing Errors`,
-    'detailsPanel.shardDetails.docLink': `Shard Help`,
+    'detailsPanel.shardDetails.noStatusFound': `No shard status to report`,
     'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
     'detailsPanel.dataPreview.header': `Data Preview`,
     'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
     'detailsPanel.specification.header': `Specification`,
-    'detailsPanel.status.header': `Status`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
@@ -844,6 +846,13 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
 };
 
+const Details: ResolvedIntlConfig['messages'] = {
+    'details.tabs.overview': `Overview`,
+    'details.tabs.spec': `Spec`,
+    'details.tabs.shardStatus': `Status`,
+    'details.tabs.history': `History`,
+};
+
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
@@ -895,6 +904,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CustomRenderers,
     ...StorageMappings,
     ...EntityNotFound,
+    ...Details,
     ...ExistingEntityCheck,
 };
 

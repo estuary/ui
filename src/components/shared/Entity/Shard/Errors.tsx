@@ -18,15 +18,18 @@ import { ShardDetails } from 'stores/ShardDetail/types';
 import { unescapeString } from 'utils/misc-utils';
 
 interface Props {
-    shards: Shard[];
+    shards: Shard[] | null;
 }
 
 const NEW_LINE = '\r\n';
 
 function ShardErrors({ shards }: Props) {
     const theme = useTheme();
-
     const getShardDetails = useShardDetail_getShardDetails();
+
+    if (shards === null) {
+        return null;
+    }
 
     return getShardDetails(shards).filter(
         ({ errors }: ShardDetails) => !!errors
@@ -51,7 +54,7 @@ function ShardErrors({ shards }: Props) {
                     (shardDetails: ShardDetails) =>
                         shardDetails.id &&
                         shardDetails.errors && (
-                            <Accordion key={shardDetails.id}>
+                            <Accordion key={shardDetails.id} defaultExpanded>
                                 <AccordionSummary
                                     expandIcon={
                                         <NavArrowDown

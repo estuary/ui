@@ -109,7 +109,7 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
                           ...SHARED_STYLING,
                           borderLeftColor:
                               theme.palette[severity][theme.palette.mode],
-                          color: theme.palette[severity][theme.palette.mode],
+                          color: alertTextPrimary[theme.palette.mode],
                           mr: 0,
                           px: 1,
                           borderLeftStyle: 'solid',
