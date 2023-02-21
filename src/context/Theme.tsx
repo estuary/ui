@@ -90,7 +90,7 @@ const xl = 1600;
 const lg = 1440;
 const md = 900;
 const sm = 650;
-const xs = 350;
+const xs = 0;
 
 // Color Palettes
 // TODO: Balance the light mode color palette.
@@ -368,7 +368,10 @@ const themeSettings = createTheme({
         },
         MuiCssBaseline: {
             styleOverrides: {
-                body: {
+                'body': {
+                    minWidth: sm,
+                },
+                'body.loginPage': {
                     minWidth: xs,
                 },
             },
