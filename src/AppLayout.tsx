@@ -72,7 +72,7 @@ function AppLayout() {
                             <Toolbar />
                             <iframe
                                 style={{ height: '100%' }}
-                                src="https://docs.estuary.dev/"
+                                src="http://localhost:3001/"
                                 sandbox={[
                                     'allow-scripts',
                                     'allow-same-origin',
