@@ -1,8 +1,8 @@
 import { SnackbarProvider } from 'notistack';
 import { BaseComponentProps } from 'types';
 
-const NotificationProvider = ({ children }: BaseComponentProps) => {
+const Notifications = ({ children }: BaseComponentProps) => {
     return <SnackbarProvider maxSnack={5}>{children}</SnackbarProvider>;
 };
 
-export default NotificationProvider;
+export default Notifications;

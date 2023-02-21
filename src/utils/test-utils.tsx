@@ -7,6 +7,7 @@ import { AuthSession } from '@supabase/ui/dist/cjs/components/Auth/UserContext';
 import { render as rtlRender, RenderOptions } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AppContent from 'context/Content';
+import AppRouter from 'context/Router';
 import ThemeProvider from 'context/Theme';
 import { SwrSupabaseContext } from 'hooks/supabase-swr';
 import produce from 'immer';
@@ -73,8 +74,7 @@ const customRender = async (
         <AppContent>
             <MockProviders username={username}>
                 <ThemeProvider>
-                    {ui}
-                    {/*<AppRouter>{ui}</AppRouter>*/}
+                    <AppRouter>{ui}</AppRouter>
                 </ThemeProvider>
             </MockProviders>
         </AppContent>,

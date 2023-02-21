@@ -2,7 +2,6 @@ import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 export enum GlobalSearchParams {
-    CATALOG_NAME = 'catalogName',
     CONNECTOR_ID = 'connectorId',
     LIVE_SPEC_ID = 'liveSpecId',
     LAST_PUB_ID = 'lastPubId',

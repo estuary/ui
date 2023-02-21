@@ -339,12 +339,6 @@ export const connectorImageBackgroundSx: SxProps<Theme> = {
     background: (theme) => connectorCardLogoBackground[theme.palette.mode],
 };
 
-// This is the hex code for the monaco editor background in dark mode.
-export const shardTableRow = {
-    light: sample_grey[100],
-    dark: '#252526',
-};
-
 export const alternateConnectorImageBackgroundSx: SxProps<Theme> = {
     height: 50,
     display: 'flex',

@@ -1,14 +1,15 @@
 import { TableRow, useTheme } from '@mui/material';
 import { CollectionQueryWithStats } from 'api/liveSpecsExt';
-import { authenticatedRoutes } from 'app/routes';
+import Actions from 'components/tables/cells/Actions';
 import EntityName from 'components/tables/cells/EntityName';
+import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
+import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
-import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import useShardsList from 'hooks/useShardsList';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     useShardDetail_setError,
@@ -22,6 +23,7 @@ import {
     selectableTableStoreSelectors,
     StatsResponse,
 } from '../Store';
+import useCollectionColumns from './useCollectionColumns';
 
 interface RowProps {
     stats?: StatsResponse;
@@ -35,11 +37,11 @@ interface RowsProps {
 }
 
 function Row({ row, stats, showEntityStatus }: RowProps) {
-    const { generatePath } = useDetailsNavigator(
-        authenticatedRoutes.collections.details.overview.fullPath
-    );
     const theme = useTheme();
     const tenantDetails = useTenantDetails();
+    const tableColumns = useCollectionColumns();
+
+    const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     const calculatedBytes = useMemo(() => {
         if (stats) {
@@ -64,26 +66,45 @@ function Row({ row, stats, showEntityStatus }: RowProps) {
     }, [row.catalog_name, stats]);
 
     return (
-        <TableRow
-            key={`Entity-${row.id}`}
-            sx={getEntityTableRowSx(theme, false)}
-        >
-            <EntityName
-                name={row.catalog_name}
-                showEntityStatus={showEntityStatus}
-                detailsLink={generatePath(row)}
+        <>
+            <TableRow
+                key={`Entity-${row.id}`}
+                sx={getEntityTableRowSx(theme, detailsExpanded)}
+            >
+                <EntityName
+                    name={row.catalog_name}
+                    showEntityStatus={showEntityStatus}
+                />
+
+                {hasLength(tenantDetails) ? (
+                    <>
+                        <Bytes val={stats ? calculatedBytes : null} />
+
+                        <Docs val={stats ? calculatedDocs : null} />
+                    </>
+                ) : null}
+
+                <TimeStamp time={row.updated_at} />
+
+                <Actions>
+                    <ExpandDetails
+                        onClick={() => {
+                            setDetailsExpanded(!detailsExpanded);
+                        }}
+                        expanded={detailsExpanded}
+                    />
+                </Actions>
+            </TableRow>
+
+            <DetailsPanel
+                detailsExpanded={detailsExpanded}
+                lastPubId={row.last_pub_id}
+                colSpan={tableColumns.length + 1}
+                entityType="collection"
+                entityName={row.catalog_name}
+                disableLogs
             />
-
-            {hasLength(tenantDetails) ? (
-                <>
-                    <Bytes val={stats ? calculatedBytes : null} />
-
-                    <Docs val={stats ? calculatedDocs : null} />
-                </>
-            ) : null}
-
-            <TimeStamp time={row.updated_at} />
-        </TableRow>
+        </>
     );
 }
 
