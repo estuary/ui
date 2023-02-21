@@ -221,7 +221,7 @@ const useJournalData = (
         }
     }, [gatewayConfig, journalName]);
 
-    const [refreshing, setRefreshing] = useState(false);
+    const [refreshCount, setRefresh] = useState(0);
 
     const [data, setData] =
         useState<Awaited<ReturnType<typeof loadDocuments>>>();
@@ -230,10 +230,7 @@ const useJournalData = (
 
     useEffect(() => {
         void (async () => {
-            if (
-                (journalName && journalClient && !loading && !data) ||
-                refreshing
-            ) {
+            if (journalName && journalClient && !loading && !data) {
                 try {
                     setLoading(true);
                     const docs = await loadDocuments({
@@ -247,7 +244,6 @@ const useJournalData = (
                     setError(e);
                 } finally {
                     setLoading(false);
-                    setRefreshing(false);
                 }
             }
         })();
@@ -256,7 +252,7 @@ const useJournalData = (
         journalClient,
         journalName,
         maxBytes,
-        refreshing,
+        refreshCount,
         loading,
         data,
     ]);
@@ -265,7 +261,7 @@ const useJournalData = (
         data,
         error,
         loading,
-        refresh: () => setRefreshing(true),
+        refresh: () => setRefresh((r) => r + 1),
     };
 };
 

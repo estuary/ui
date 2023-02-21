@@ -18,7 +18,7 @@ function ConnectorsTable() {
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState('con', CONNECTOR_NAME);
+    } = useTableState(CONNECTOR_NAME);
 
     const query = useMemo(() => {
         return getConnectors(pagination, searchQuery, [
@@ -42,9 +42,7 @@ function ConnectorsTable() {
                     }}
                     columns={tableColumns}
                     renderTableRows={(data) => <Rows data={data} />}
-                    pagination={pagination}
                     setPagination={setPagination}
-                    searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                     sortDirection={sortDirection}
                     setSortDirection={setSortDirection}

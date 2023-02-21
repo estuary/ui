@@ -176,15 +176,13 @@ function BindingSelector({
                 if (currentConfig.errors.length > 0) {
                     return (
                         <>
-                            <Box>
-                                <WarningCircle
-                                    style={{
-                                        marginRight: 4,
-                                        fontSize: 12,
-                                        color: theme.palette.error.main,
-                                    }}
-                                />
-                            </Box>
+                            <WarningCircle
+                                style={{
+                                    marginRight: 4,
+                                    fontSize: 12,
+                                    color: theme.palette.error.main,
+                                }}
+                            />
 
                             <Row
                                 collection={params.row}

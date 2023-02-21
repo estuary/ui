@@ -1,11 +1,5 @@
-import {
-    AlertTitle,
-    Box,
-    Button,
-    Grid,
-    Stack,
-    Typography,
-} from '@mui/material';
+import { LoadingButton } from '@mui/lab';
+import { AlertTitle, Box, Stack, Typography } from '@mui/material';
 import ListView from 'components/collection/DataPreview/ListView';
 import AlertBox from 'components/shared/AlertBox';
 import { useJournalData, useJournalsForCollection } from 'hooks/useJournalData';
@@ -52,7 +46,7 @@ export function DataPreview({ collectionName }: Props) {
     const isLoading = journalsLoading || journalData.loading;
 
     return (
-        <Grid item xs={12} sx={{ m: 2 }}>
+        <>
             <Stack
                 justifyContent="space-between"
                 direction="row"
@@ -64,29 +58,22 @@ export function DataPreview({ collectionName }: Props) {
                     spacing={2}
                     sx={{ alignItems: 'center' }}
                 >
-                    <Typography
-                        component="span"
-                        variant="h6"
-                        sx={{
-                            alignItems: 'center',
-                        }}
-                    >
+                    <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
                         <FormattedMessage id="detailsPanel.dataPreview.header" />
                     </Typography>
 
-                    <Button
+                    <LoadingButton
                         variant="text"
                         startIcon={<Refresh style={{ fontSize: 12 }} />}
                         onClick={journalData.refresh}
-                        disabled={
-                            isLoading || !hasLength(journalData.data?.documents)
-                        }
+                        disabled={!hasLength(journalData.data?.documents)}
+                        loading={isLoading}
                         sx={{
                             height: 'auto',
                         }}
                     >
                         <FormattedMessage id="cta.refresh" />
-                    </Button>
+                    </LoadingButton>
                 </Stack>
 
                 {/*                <ToggleButtonGroup
@@ -106,9 +93,9 @@ export function DataPreview({ collectionName }: Props) {
                 </ToggleButtonGroup>*/}
             </Stack>
 
-            {journalsData && !hasLength(journalsData.journals) ? (
+            {!hasLength(journalsData?.journals) ? (
                 <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning" short>
+                    <AlertBox severity="warning">
                         <AlertTitle>
                             <FormattedMessage id="collectionsPreview.notFound.title" />
                         </AlertTitle>
@@ -118,7 +105,7 @@ export function DataPreview({ collectionName }: Props) {
             ) : journalData.data?.tooManyBytes &&
               journalData.data.documents.length === 0 ? (
                 <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning" short>
+                    <AlertBox severity="warning">
                         <AlertTitle>
                             <FormattedMessage id="collectionsPreview.tooManyBytesAndNoDocuments.title" />
                         </AlertTitle>
@@ -127,7 +114,7 @@ export function DataPreview({ collectionName }: Props) {
                 </Box>
             ) : journalData.data?.tooFewDocuments ? (
                 <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning" short>
+                    <AlertBox severity="warning">
                         <AlertTitle>
                             <FormattedMessage id="collectionsPreview.tooFewDocuments.title" />
                         </AlertTitle>
@@ -136,7 +123,7 @@ export function DataPreview({ collectionName }: Props) {
                 </Box>
             ) : journalData.data?.tooManyBytes ? (
                 <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning" short>
+                    <AlertBox severity="warning">
                         <AlertTitle>
                             <FormattedMessage id="collectionsPreview.tooManyBytes.title" />
                         </AlertTitle>
@@ -150,6 +137,6 @@ export function DataPreview({ collectionName }: Props) {
             {/*             : (
                 <TableView journalData={journalData} spec={spec} />
             )}*/}
-        </Grid>
+        </>
     );
 }

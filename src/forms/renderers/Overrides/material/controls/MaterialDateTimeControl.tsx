@@ -29,7 +29,10 @@ import {
     RankedTester,
     rankWith,
 } from '@jsonforms/core';
-import { MuiInputText } from '@jsonforms/material-renderers';
+import {
+    MaterialInputControl,
+    MuiInputText,
+} from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Box, Hidden, IconButton, Popover, Stack } from '@mui/material';
 import {
@@ -39,10 +42,12 @@ import {
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { formatRFC3339 } from 'date-fns';
 import { Calendar } from 'iconoir-react';
-import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
+import {
+    bindPopover,
+    bindTrigger,
+    usePopupState,
+} from 'material-ui-popup-state/hooks';
 import { useIntl } from 'react-intl';
-import { CustomMaterialInputControl } from './MaterialInputControl';
-import useDatePickerState from './useDatePickerState';
 
 const INVALID_DATE = 'Invalid Date';
 const TIMEZONE_OFFSET = new RegExp('([+-][0-9]{2}:[0-9]{2})$');
@@ -73,9 +78,10 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
     const { data, id, visible, enabled, path, handleChange, label } = props;
 
     const intl = useIntl();
-    const { state, buttonRef, events } = useDatePickerState(
-        `date-time-picker-${id}`
-    );
+    const popupState = usePopupState({
+        variant: 'popover',
+        popupId: `date-time-picker-${id}`,
+    });
 
     // We have a special handler that formats the date so that
     //  it can handle if there was an error formatting, always
@@ -121,11 +127,7 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
                 }}
                 direction="row"
             >
-                <CustomMaterialInputControl
-                    inputEvents={events}
-                    input={MuiInputText}
-                    {...props}
-                />
+                <MaterialInputControl input={MuiInputText} {...props} />
                 <Box sx={{ paddingTop: 2 }}>
                     <IconButton
                         aria-label={intl.formatMessage(
@@ -137,15 +139,14 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
                             }
                         )}
                         disabled={!enabled}
-                        ref={buttonRef}
-                        {...bindFocus(state)}
+                        {...bindTrigger(popupState)}
                     >
                         <Calendar />
                     </IconButton>
                 </Box>
 
                 <Popover
-                    {...bindPopover(state)}
+                    {...bindPopover(popupState)}
                     anchorOrigin={{
                         vertical: 'center',
                         horizontal: 'left',
@@ -165,7 +166,7 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
                             disabled={!enabled}
                             value={dateTimePickerValue}
                             onChange={onChange}
-                            onAccept={state.close}
+                            onAccept={popupState.close}
                             closeOnSelect={true}
                             // We don't need an input
                             // eslint-disable-next-line react/jsx-no-useless-fragment
