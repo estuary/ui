@@ -34,7 +34,6 @@ function EntityToolbar({ GenerateButton, TestButton, SaveButton }: Props) {
                     sx={{
                         'ml': 'auto',
                         '& > button': {
-                            // TODO (theme) make this use truncateTextSx
                             textOverflow: 'ellipsis',
                             overflow: 'hidden',
                             whiteSpace: 'nowrap',

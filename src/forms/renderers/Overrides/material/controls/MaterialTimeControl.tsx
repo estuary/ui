@@ -29,20 +29,25 @@ import {
     RankedTester,
     rankWith,
 } from '@jsonforms/core';
-import { MuiInputText } from '@jsonforms/material-renderers';
+import {
+    MaterialInputControl,
+    MuiInputText,
+} from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Box, Hidden, IconButton, Popover, Stack } from '@mui/material';
 import { LocalizationProvider, StaticTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { format } from 'date-fns';
 import { Clock } from 'iconoir-react';
-import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
+import {
+    bindPopover,
+    bindTrigger,
+    usePopupState,
+} from 'material-ui-popup-state/hooks';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Patterns } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
-import { CustomMaterialInputControl } from './MaterialInputControl';
-import useDatePickerState from './useDatePickerState';
 
 const INVALID_TIME = 'Invalid Time';
 
@@ -53,9 +58,10 @@ export const Custom_MaterialTimeControl = (props: ControlProps) => {
     const { data, id, visible, enabled, path, handleChange, label } = props;
 
     const intl = useIntl();
-    const { state, buttonRef, events } = useDatePickerState(
-        `time-picker-${id}`
-    );
+    const popupState = usePopupState({
+        variant: 'popover',
+        popupId: `time-picker-${id}`,
+    });
 
     // Need to set the default time for both create and edit
     //  This attempts to parse the current value and use it
@@ -114,11 +120,7 @@ export const Custom_MaterialTimeControl = (props: ControlProps) => {
                 }}
                 direction="row"
             >
-                <CustomMaterialInputControl
-                    inputEvents={events}
-                    input={MuiInputText}
-                    {...props}
-                />
+                <MaterialInputControl input={MuiInputText} {...props} />
                 <Box sx={{ paddingTop: 2 }}>
                     <IconButton
                         aria-label={intl.formatMessage(
@@ -130,15 +132,14 @@ export const Custom_MaterialTimeControl = (props: ControlProps) => {
                             }
                         )}
                         disabled={!enabled}
-                        ref={buttonRef}
-                        {...bindFocus(state)}
+                        {...bindTrigger(popupState)}
                     >
                         <Clock />
                     </IconButton>
                 </Box>
 
                 <Popover
-                    {...bindPopover(state)}
+                    {...bindPopover(popupState)}
                     anchorOrigin={{
                         vertical: 'center',
                         horizontal: 'left',
@@ -155,7 +156,7 @@ export const Custom_MaterialTimeControl = (props: ControlProps) => {
                             disabled={!enabled}
                             value={timePickerValue}
                             onChange={onChange}
-                            onAccept={state.close}
+                            onAccept={popupState.close}
                             closeOnSelect={true}
                             // We don't need an input
                             // eslint-disable-next-line react/jsx-no-useless-fragment

@@ -17,7 +17,7 @@ function StorageMappingsTable() {
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState('sm', 'catalog_prefix');
+    } = useTableState('catalog_prefix');
 
     const query = useMemo(() => {
         return getStorageMappings(pagination, searchQuery, [
@@ -44,9 +44,7 @@ function StorageMappingsTable() {
                     }}
                     columns={tableColumns}
                     renderTableRows={(data) => <Rows data={data} />}
-                    pagination={pagination}
                     setPagination={setPagination}
-                    searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                     sortDirection={sortDirection}
                     setSortDirection={setSortDirection}

@@ -1,25 +1,18 @@
 import {
-    Link,
     Stack,
     TableCell,
-    Tooltip,
+    Typography,
     useMediaQuery,
     useTheme,
 } from '@mui/material';
 import EntityStatus from 'components/tables/cells/EntityStatus';
-import { useIntl } from 'react-intl';
-import { NavLink, useLocation } from 'react-router-dom';
 
 interface Props {
     name: string;
     showEntityStatus: boolean;
-    detailsLink: string;
 }
 
-function EntityName({ name, detailsLink, showEntityStatus }: Props) {
-    const intl = useIntl();
-    const location = useLocation();
-
+function EntityName({ name, showEntityStatus }: Props) {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -38,27 +31,18 @@ function EntityName({ name, detailsLink, showEntityStatus }: Props) {
             >
                 {showEntityStatus ? <EntityStatus name={name} /> : null}
 
-                <Tooltip
-                    title={intl.formatMessage({
-                        id: 'entityTable.detailsLink',
-                    })}
+                <Typography
+                    sx={
+                        belowMd
+                            ? {
+                                  overflowWrap: 'break-word',
+                                  wordBreak: 'break-all',
+                              }
+                            : undefined
+                    }
                 >
-                    <Link
-                        component={NavLink}
-                        to={detailsLink}
-                        state={{ backButtonUrl: location }}
-                        sx={
-                            belowMd
-                                ? {
-                                      overflowWrap: 'break-word',
-                                      wordBreak: 'break-all',
-                                  }
-                                : undefined
-                        }
-                    >
-                        {name}
-                    </Link>
-                </Tooltip>
+                    {name}
+                </Typography>
             </Stack>
         </TableCell>
     );

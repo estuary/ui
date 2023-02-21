@@ -1,12 +1,12 @@
 import { Auth } from '@supabase/ui';
-import { unauthenticatedRoutes } from 'app/routes';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import * as React from 'react';
 import { useEffect } from 'react';
 import 'react-reflex/styles.css';
-import { Navigate } from 'react-router';
 import { identifyUser } from 'services/logrocket';
 import { BaseComponentProps } from 'types';
+
+const UnauthenticatedApp = React.lazy(() => import('../Unauthenticated'));
 
 function UserGuard({ children }: BaseComponentProps) {
     const { user } = Auth.useUser();
@@ -19,11 +19,7 @@ function UserGuard({ children }: BaseComponentProps) {
 
     return (
         <React.Suspense fallback={<FullPageSpinner />}>
-            {user ? (
-                children
-            ) : (
-                <Navigate to={unauthenticatedRoutes.login.path} replace />
-            )}
+            {user ? children : <UnauthenticatedApp />}
         </React.Suspense>
     );
 }

@@ -19,7 +19,7 @@ function CollectionsTable() {
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState('col', 'updated_at', 'desc');
+    } = useTableState('updated_at', 'desc');
     const tableColumns = useCollectionColumns();
 
     const query = useMemo(() => {
@@ -52,9 +52,7 @@ function CollectionsTable() {
                                 showEntityStatus={showEntityStatus}
                             />
                         )}
-                        pagination={pagination}
                         setPagination={setPagination}
-                        searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
                         sortDirection={sortDirection}
                         setSortDirection={setSortDirection}

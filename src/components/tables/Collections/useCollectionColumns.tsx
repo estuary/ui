@@ -13,6 +13,10 @@ const defaultColumns: ColumnProps[] = [
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastPublished',
     },
+    {
+        field: null,
+        headerIntlKey: null,
+    },
 ];
 
 const statsHeader: ColumnProps = {
