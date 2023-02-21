@@ -3,12 +3,15 @@ import {
     AutocompleteChangeReason,
     Box,
     TextField,
+    Typography,
 } from '@mui/material';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
+import { truncateTextSx } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import useLiveSpecs from 'hooks/useLiveSpecs';
+import { Check } from 'iconoir-react';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -232,7 +235,6 @@ function CollectionPicker({ readOnly = false }: Props) {
                 value={collectionValues}
                 inputValue={inputValue}
                 size="small"
-                filterSelectedOptions
                 fullWidth
                 onChange={handlers.updateCollections}
                 onInputChange={(_event, newInputValue, reason) => {
@@ -257,6 +259,34 @@ function CollectionPicker({ readOnly = false }: Props) {
                         onBlur={handlers.validateSelection}
                     />
                 )}
+                renderOption={(props, option, { selected }) => {
+                    return (
+                        <li {...props}>
+                            <Box
+                                sx={{
+                                    ml: -2,
+                                    mr: 0.5,
+                                }}
+                            >
+                                <Check
+                                    aria-checked={selected}
+                                    style={{
+                                        visibility: selected
+                                            ? 'visible'
+                                            : 'hidden',
+                                    }}
+                                />
+                            </Box>
+                            <Typography
+                                sx={{
+                                    ...truncateTextSx,
+                                }}
+                            >
+                                {option.name}
+                            </Typography>
+                        </li>
+                    );
+                }}
             />
         </Box>
     ) : null;
