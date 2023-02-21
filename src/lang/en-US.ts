@@ -313,7 +313,7 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.tabs.login': `Sign In`,
     'login.tabs.register': `Register`,
     'login.login.message': `Sign in to continue to ${CommonMessages.productName}.`,
-    'login.register.message': `Please use a provider below to regisiter for a free trial of ${CommonMessages.productName}.`,
+    'login.register.message': `Please login with a provider to use ${CommonMessages.productName} for free.`,
 
     'login.passwordReset': 'You should not need to reset your password.',
 
