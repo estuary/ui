@@ -236,6 +236,7 @@ function CollectionPicker({ readOnly = false }: Props) {
                 inputValue={inputValue}
                 size="small"
                 fullWidth
+                open={true}
                 onChange={handlers.updateCollections}
                 onInputChange={(_event, newInputValue, reason) => {
                     const inputBeingReset =
@@ -261,7 +262,10 @@ function CollectionPicker({ readOnly = false }: Props) {
                 )}
                 renderOption={(props, option, { selected }) => {
                     return (
-                        <li {...props}>
+                        // TODO (styling) weirdly the paddingLeft was getting overwritten
+                        //  for dark mode and caused the icon to be too close to the edge
+                        //  so hardcoding the padding here for now
+                        <li {...props} style={{ paddingLeft: 24 }}>
                             <Box
                                 sx={{
                                     ml: -2,
