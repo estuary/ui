@@ -374,8 +374,11 @@ const themeSettings = createTheme({
         },
         MuiCssBaseline: {
             styleOverrides: {
-                body: {
+                'body': {
                     minWidth: sm,
+                },
+                'body.loginPage': {
+                    minWidth: xs,
                 },
             },
         },

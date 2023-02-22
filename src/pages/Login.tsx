@@ -5,7 +5,12 @@ import OIDCs from 'components/login/OIDCs';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useEffectOnce, useLocalStorage } from 'react-use';
+import {
+    useEffectOnce,
+    useLocalStorage,
+    useMount,
+    useUnmount,
+} from 'react-use';
 import { getLoginSettings } from 'utils/env-utils';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 
@@ -14,6 +19,9 @@ const loginSettings = getLoginSettings();
 interface Props {
     showRegistration?: boolean;
 }
+
+// This is to allow this page to have a smaller min width
+const bodyClass = 'loginPage';
 
 const Login = ({ showRegistration }: Props) => {
     useBrowserTitle('browserTitle.login');
@@ -28,6 +36,14 @@ const Login = ({ showRegistration }: Props) => {
     };
 
     const isRegister = tabIndex === 1;
+
+    useMount(() => {
+        document.body.classList.add(bodyClass);
+    });
+
+    useUnmount(() => {
+        document.body.classList.remove(bodyClass);
+    });
 
     return (
         <FullPageDialog>
