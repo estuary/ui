@@ -1,4 +1,4 @@
-import { Collapse } from '@mui/material';
+import { Box, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, updateDraftSpec } from 'api/draftSpecs';
@@ -391,7 +391,7 @@ function EntityEdit({
         <>
             {toolbar}
 
-            {errorSummary}
+            <Box sx={{ mb: 4 }}>{errorSummary}</Box>
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
