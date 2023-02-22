@@ -1,11 +1,11 @@
 import 'polyfills/transformStream';
 
+import ApplicationRouter from 'context/Router';
 import { enableMapSet, setAutoFreeze } from 'immer';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { initGoogleTagManager } from 'services/gtm';
 import { initLogRocket } from 'services/logrocket';
-import App from './app';
 import AppProviders from './context';
 
 // export const profilerCallback = (
@@ -32,7 +32,7 @@ setAutoFreeze(false);
 ReactDOM.render(
     <React.StrictMode>
         <AppProviders>
-            <App />
+            <ApplicationRouter />
         </AppProviders>
     </React.StrictMode>,
     document.querySelector('#root')

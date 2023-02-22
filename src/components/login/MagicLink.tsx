@@ -1,7 +1,7 @@
 import { Button, Stack } from '@mui/material';
-import { REDIRECT_TO_PARAM_NAME } from 'app/routes';
 import MagicLinkInputs from 'components/login/MagicLinkInputs';
 import { useClient } from 'hooks/supabase-swr';
+import useLoginRedirectPath from 'hooks/useLoginRedirectPath';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
@@ -20,6 +20,7 @@ const MagicLink = () => {
 
     const supabaseClient = useClient();
     const intl = useIntl();
+    const redirectTo = useLoginRedirectPath(redirectToBase);
 
     const email = {
         schema: {
@@ -69,12 +70,7 @@ const MagicLink = () => {
     const requestUiSchema = useConstant(() =>
         custom_generateDefaultUISchema(requestSchema)
     );
-
     custom_generateDefaultUISchema;
-
-    const redirectTo = `${redirectToBase}?${REDIRECT_TO_PARAM_NAME}=${encodeURIComponent(
-        `${window.location.pathname}${window.location.search}`
-    )}`;
 
     return (
         <Stack direction="column" spacing={1}>

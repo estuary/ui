@@ -19,7 +19,7 @@ function MaterializationsTable() {
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState('updated_at', 'desc');
+    } = useTableState('mat', 'updated_at', 'desc');
     const tableColumns = useMaterializationColumns();
 
     const query = useMemo(() => {
@@ -55,7 +55,9 @@ function MaterializationsTable() {
                                 showEntityStatus={showEntityStatus}
                             />
                         )}
+                        pagination={pagination}
                         setPagination={setPagination}
+                        searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
                         sortDirection={sortDirection}
                         setSortDirection={setSortDirection}
