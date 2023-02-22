@@ -1,4 +1,5 @@
 import { createAjv } from '@jsonforms/core';
+import { isEmpty } from 'lodash';
 import { Annotations } from 'types/jsonforms';
 import { stripPathing } from 'utils/misc-utils';
 
@@ -70,10 +71,18 @@ function defaultResourceSchema(resourceSchema: any, collection: string) {
 
     if (collectionNameFieldKey) {
         // Add a default property set to the stripped collection name
-        const modifiedSchema = resourceSchema;
+        let modifiedSchema = {};
 
-        modifiedSchema.properties[collectionNameFieldKey].default =
-            stripPathing(collection);
+        modifiedSchema = {
+            ...resourceSchema,
+            properties: {
+                ...resourceSchema.properties,
+                [collectionNameFieldKey]: {
+                    ...resourceSchema.properties[collectionNameFieldKey],
+                    default: stripPathing(collection),
+                },
+            },
+        };
 
         return modifiedSchema;
     } else {
@@ -94,7 +103,7 @@ export function createJSONFormDefaults(
     const data = {};
 
     const processedSchema =
-        collection && jsonSchema.properties
+        collection && !isEmpty(jsonSchema.properties)
             ? defaultResourceSchema(jsonSchema, collection)
             : jsonSchema;
 

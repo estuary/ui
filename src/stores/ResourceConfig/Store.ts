@@ -141,7 +141,7 @@ const getInitialState = (
                 state.collectionErrorsExist = isEmpty(collections);
             }),
             false,
-            'Collections Pre-filled'
+            'Empty Collections Pre-filled'
         );
     },
 
