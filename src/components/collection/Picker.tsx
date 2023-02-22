@@ -236,7 +236,6 @@ function CollectionPicker({ readOnly = false }: Props) {
                 inputValue={inputValue}
                 size="small"
                 fullWidth
-                open={true}
                 onChange={handlers.updateCollections}
                 onInputChange={(_event, newInputValue, reason) => {
                     const inputBeingReset =
