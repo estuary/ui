@@ -118,7 +118,7 @@ const getInitialState = (
                         emptyCollections.push(collection);
 
                         modifiedResourceConfig[collection] =
-                            createJSONFormDefaults(resourceSchema);
+                            createJSONFormDefaults(resourceSchema, collection);
                     });
                 });
 
@@ -141,7 +141,7 @@ const getInitialState = (
                 state.collectionErrorsExist = isEmpty(collections);
             }),
             false,
-            'Collections Pre-filled'
+            'Empty Collections Pre-filled'
         );
     },
 

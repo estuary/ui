@@ -1,4 +1,7 @@
 import { createAjv } from '@jsonforms/core';
+import { isEmpty } from 'lodash';
+import { Annotations } from 'types/jsonforms';
+import { stripPathing } from 'utils/misc-utils';
 
 type Ajv = ReturnType<typeof createAjv>;
 
@@ -38,6 +41,7 @@ export const addKeywords = (ajv: Ajv) => {
     ajv.addKeyword('x-oauth2-provider'); // Used to display OAuth
     ajv.addKeyword('x-collection-name'); // Used to default name in resource configs
     ajv.addKeyword('discriminator'); // Used to know what field in a complex oneOf should be unique (ex: parser)
+    ajv.addKeyword('x-infer-schema'); // Indicates that schema inference should be enabled in the UI
     return ajv;
 };
 
@@ -49,11 +53,45 @@ export const setDefaultsValidator = (function () {
 
 function setJSONFormDefaults(jsonSchema: any, formData: any) {
     const hydrateAndValidate = setDefaultsValidator.compile(jsonSchema);
+
     hydrateAndValidate(formData);
+
     return hydrateAndValidate;
 }
 
-export function createJSONFormDefaults(jsonSchema: any): {
+function defaultResourceSchema(resourceSchema: any, collection: string) {
+    // Find the field with the collection name annotation
+    const collectionNameField =
+        Object.entries(resourceSchema.properties).find(([_, value]) =>
+            value?.hasOwnProperty(Annotations.defaultResourceConfigName)
+        ) ?? [];
+
+    // Try to fetch the key
+    const collectionNameFieldKey = collectionNameField[0];
+
+    if (collectionNameFieldKey) {
+        // Add a default property set to the stripped collection name
+        const modifiedSchema = {
+            ...resourceSchema,
+            properties: {
+                ...resourceSchema.properties,
+                [collectionNameFieldKey]: {
+                    ...resourceSchema.properties[collectionNameFieldKey],
+                    default: stripPathing(collection),
+                },
+            },
+        };
+
+        return modifiedSchema;
+    } else {
+        return resourceSchema;
+    }
+}
+
+export function createJSONFormDefaults(
+    jsonSchema: any,
+    collection?: string
+): {
     data: any;
     errors: any[];
 } {
@@ -61,10 +99,18 @@ export function createJSONFormDefaults(jsonSchema: any): {
     // Note that this requires all parent properties to also specify a `default` in the json
     // schema.
     const data = {};
-    const ajvResponse = setJSONFormDefaults(jsonSchema, data);
+
+    const processedSchema =
+        collection && !isEmpty(jsonSchema.properties)
+            ? defaultResourceSchema(jsonSchema, collection)
+            : jsonSchema;
+
+    const ajvResponse = setJSONFormDefaults(processedSchema, data);
+
     const errors =
         ajvResponse.errors && ajvResponse.errors.length > 0
             ? ajvResponse.errors
             : [];
+
     return { data, errors };
 }
