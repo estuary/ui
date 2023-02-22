@@ -51,7 +51,7 @@ function ShardErrors({ shards }: Props) {
                     (shardDetails: ShardDetails) =>
                         shardDetails.id &&
                         shardDetails.errors && (
-                            <Accordion key={shardDetails.id}>
+                            <Accordion key={shardDetails.id} defaultExpanded>
                                 <AccordionSummary
                                     expandIcon={
                                         <NavArrowDown
