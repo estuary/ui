@@ -115,16 +115,10 @@ const getInitialState = (
                             ? 'writeSchema'
                             : 'schema';
 
-                        const inferenceAnnotationValue = !(
-                            response.spec[writeSchemaKey].hasOwnProperty(
+                        const inferenceAnnotationValue =
+                            !response.spec[writeSchemaKey][
                                 Annotations.inferSchema
-                            ) &&
-                            response.spec[writeSchemaKey][
-                                Annotations.inferSchema
-                            ]
-                        );
-
-                        console.log(inferenceAnnotationValue);
+                            ];
 
                         setSchemaInferenceDisabled(inferenceAnnotationValue);
                     } else {
