@@ -71,9 +71,7 @@ function defaultResourceSchema(resourceSchema: any, collection: string) {
 
     if (collectionNameFieldKey) {
         // Add a default property set to the stripped collection name
-        let modifiedSchema = {};
-
-        modifiedSchema = {
+        const modifiedSchema = {
             ...resourceSchema,
             properties: {
                 ...resourceSchema.properties,
