@@ -2,6 +2,7 @@ import { Button, Skeleton } from '@mui/material';
 import SchemaInferenceDialog from 'components/editor/Bindings/SchemaInference/Dialog';
 import {
     useBindingsEditorStore_collectionData,
+    useBindingsEditorStore_schemaInferenceDisabled,
     useBindingsEditorStore_setDocumentsRead,
     useBindingsEditorStore_setInferredSpec,
     useBindingsEditorStore_setLoadingInferredSchema,
@@ -20,6 +21,9 @@ function SchemaInferenceButton() {
 
     // Bindings Editor Store
     const collectionData = useBindingsEditorStore_collectionData();
+
+    const schemaInferenceDisabled =
+        useBindingsEditorStore_schemaInferenceDisabled();
 
     const setInferredSpec = useBindingsEditorStore_setInferredSpec();
 
@@ -96,7 +100,7 @@ function SchemaInferenceButton() {
         setOpen(true);
     };
 
-    if (workflow === 'capture_create') {
+    if (workflow === 'capture_create' || schemaInferenceDisabled) {
         return null;
     } else {
         return collectionData ? (

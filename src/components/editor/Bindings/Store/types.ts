@@ -25,6 +25,11 @@ export interface BindingsEditorState {
     ) => void;
 
     // Schema Inference
+    schemaInferenceDisabled: boolean;
+    setSchemaInferenceDisabled: (
+        value: BindingsEditorState['schemaInferenceDisabled']
+    ) => void;
+
     inferredSpec: Schema | null | undefined;
     setInferredSpec: (value: BindingsEditorState['inferredSpec']) => void;
 

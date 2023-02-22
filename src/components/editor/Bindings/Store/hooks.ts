@@ -40,6 +40,15 @@ export const useBindingsEditorStore_initializeCollectionData = () => {
     >(getStoreName(entityType), (state) => state.initializeCollectionData);
 };
 
+export const useBindingsEditorStore_schemaInferenceDisabled = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['schemaInferenceDisabled']
+    >(getStoreName(entityType), (state) => state.schemaInferenceDisabled);
+};
+
 export const useBindingsEditorStore_inferredSpec = () => {
     const entityType = useEntityType();
 

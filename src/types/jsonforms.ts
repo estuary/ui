@@ -34,4 +34,5 @@ export enum Annotations {
     order = 'order',
     secret = 'secret',
     defaultResourceConfigName = 'x-collection-name',
+    inferSchema = 'x-infer-schema',
 }
