@@ -101,7 +101,7 @@ function CaptureCreate() {
         },
         exit: () => {
             resetState();
-            navigate(authenticatedRoutes.captures.fullPath, { replace: true });
+            navigate(authenticatedRoutes.captures.fullPath);
         },
         jobFailed: (errorTitle: string) => {
             setFormState({
