@@ -3,11 +3,13 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Box, Button, Typography } from '@mui/material';
 import { ApiError } from '@supabase/supabase-js';
+import { authenticatedRoutes } from 'app/routes';
 import AlertBox from 'components/shared/AlertBox';
 import { isEmpty } from 'lodash';
 import { useSnackbar, VariantType } from 'notistack';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useNavigate } from 'react-router-dom';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import {
     defaultOptions,
@@ -24,6 +26,7 @@ interface Props {
 const MagicLinkInputs = ({ onSubmit, schema, uiSchema }: Props) => {
     const hasToken = schema.properties?.token;
 
+    const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const intl = useIntl();
 
@@ -88,6 +91,8 @@ const MagicLinkInputs = ({ onSubmit, schema, uiSchema }: Props) => {
             if (!hasToken) {
                 setLoading(false);
                 displayNotification('login.magicLink', 'success');
+            } else {
+                navigate(authenticatedRoutes.home.path, { replace: true });
             }
         },
     };
