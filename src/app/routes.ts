@@ -41,6 +41,7 @@ const admin = {
 const captures = {
     title: 'routeTitle.captures',
     path: 'captures',
+    fullPath: '/captures',
     create: {
         title: 'routeTitle.captureCreate',
         path: `create`,
