@@ -1,7 +1,7 @@
 export const REDIRECT_TO_PARAM_NAME = 'redirect_to';
 
 // TODO (routing)
-//  Broke up the large objects and then exported then as one. This was to reduce the scope of
+//  Broke up the large objects and then exported them as one. This was to reduce the scope of
 //      changes. Eventually I think we should just import in `admin` or `capture` and not `authenticated`.
 //
 //  We need to move our routes from the component approach to the JSON approach. I am hoping
@@ -41,6 +41,7 @@ const admin = {
 const captures = {
     title: 'routeTitle.captures',
     path: 'captures',
+    fullPath: '/captures',
     create: {
         title: 'routeTitle.captureCreate',
         path: `create`,
@@ -111,6 +112,7 @@ const home = {
 const materializations = {
     title: 'routeTitle.materializations',
     path: 'materializations',
+    fullPath: '/materializations',
     create: {
         title: 'routeTitle.materializationCreate',
         path: 'create',

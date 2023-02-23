@@ -287,6 +287,37 @@ function CollectionPicker({ readOnly = false }: Props) {
                         onBlur={handlers.validateSelection}
                     />
                 )}
+                renderOption={(props, option, { selected }) => {
+                    return (
+                        // TODO (styling) weirdly the paddingLeft was getting overwritten
+                        //  for dark mode and caused the icon to be too close to the edge
+                        //  so hardcoding the padding here for now
+                        <li {...props} style={{ paddingLeft: 24 }}>
+                            <Box
+                                sx={{
+                                    ml: -2,
+                                    mr: 0.5,
+                                }}
+                            >
+                                <Check
+                                    aria-checked={selected}
+                                    style={{
+                                        visibility: selected
+                                            ? 'visible'
+                                            : 'hidden',
+                                    }}
+                                />
+                            </Box>
+                            <Typography
+                                sx={{
+                                    ...truncateTextSx,
+                                }}
+                            >
+                                {option.name}
+                            </Typography>
+                        </li>
+                    );
+                }}
             />
         </Box>
     ) : null;

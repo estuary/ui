@@ -109,7 +109,9 @@ function MaterializationEdit() {
         exit: () => {
             resetState();
 
-            navigate(authenticatedRoutes.materializations.path);
+            navigate(authenticatedRoutes.materializations.fullPath, {
+                replace: true,
+            });
         },
         jobFailed: (errorTitle: string) => {
             setFormState({

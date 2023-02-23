@@ -94,11 +94,6 @@ const router = createBrowserRouter(
                         element={<Home />}
                     />
 
-                    <Route
-                        path={authenticatedRoutes.home.path}
-                        element={<Home />}
-                    />
-
                     <Route path={authenticatedRoutes.collections.path}>
                         <Route
                             path=""
