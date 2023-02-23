@@ -249,34 +249,6 @@ function CollectionPicker({ readOnly = false }: Props) {
                 disableCloseOnSelect
                 disableClearable
                 renderTags={() => null}
-                renderOption={(props, option, { selected }) => {
-                    return (
-                        <li {...props}>
-                            <Box
-                                sx={{
-                                    ml: -2,
-                                    mr: 0.5,
-                                }}
-                            >
-                                <Check
-                                    aria-checked={selected}
-                                    style={{
-                                        visibility: selected
-                                            ? 'visible'
-                                            : 'hidden',
-                                    }}
-                                />
-                            </Box>
-                            <Typography
-                                sx={{
-                                    ...truncateTextSx,
-                                }}
-                            >
-                                {option.name}
-                            </Typography>
-                        </li>
-                    );
-                }}
                 renderInput={(params) => (
                     <TextField
                         {...params}
