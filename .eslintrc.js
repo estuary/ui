@@ -33,6 +33,7 @@ module.exports = {
 
         // Design decision we made for how we like code
         'react/destructuring-assignment': 'error',
+        'no-tabs': 'error',
 
         // We're using a new React so I think this is safe
         'react/react-in-jsx-scope': 'off',

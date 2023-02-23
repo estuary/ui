@@ -1,13 +1,12 @@
 import { usePrompt } from 'hooks/useBlocker';
-import { useLocation } from 'react-router-dom';
+import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 
 export default function useUnsavedChangesPrompt(
     when: boolean,
     callback: Function
 ) {
-    const { pathname } = useLocation();
-
-    usePrompt('confirm.loseData', pathname, when);
+    const intl = useIntl();
+    usePrompt(intl.formatMessage({ id: 'confirm.loseData' }), when);
     useUnmount(() => callback());
 }
