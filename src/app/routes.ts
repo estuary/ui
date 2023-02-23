@@ -112,6 +112,7 @@ const home = {
 const materializations = {
     title: 'routeTitle.materializations',
     path: 'materializations',
+    fullPath: '/materializations',
     create: {
         title: 'routeTitle.materializationCreate',
         path: 'create',
