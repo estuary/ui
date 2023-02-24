@@ -1,4 +1,3 @@
-import Editor from '@monaco-editor/react';
 import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import ResourceConfig from 'components/collection/ResourceConfig';
@@ -12,6 +11,7 @@ import {
     useBindingsEditorStore_schemaUpdateErrored,
 } from 'components/editor/Bindings/Store/hooks';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
+import DraftSpecEditor from 'components/editor/DraftSpec';
 import OutOfSync from 'components/editor/Status/OutOfSync';
 import Synchronized from 'components/editor/Status/Synchronized';
 import Synchronizing from 'components/editor/Status/Synchronizing';
@@ -19,13 +19,11 @@ import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import {
     defaultOutline,
-    monacoEditorComponentBackground,
     monacoEditorHeaderBackground,
     monacoEditorWidgetBackground,
 } from 'context/Theme';
 import { ReactNode, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { stringifyJSON } from 'services/stringify';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 
 interface Props {
@@ -159,7 +157,11 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                             }
                                         </Stack>
 
-                                        <Editor
+                                        <DraftSpecEditor
+                                            localZustandScope={true}
+                                        />
+
+                                        {/* <Editor
                                             height={EDITOR_HEIGHT}
                                             value={stringifyJSON(
                                                 collectionData.spec
@@ -173,7 +175,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                             saveViewState={false}
                                             path={currentCollection}
                                             options={{ readOnly: true }}
-                                        />
+                                        /> */}
                                     </>
                                 ) : (
                                     <>

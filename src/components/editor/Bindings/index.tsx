@@ -6,7 +6,9 @@ import {
 import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
+import { createEditorStore } from 'components/editor/Store/create';
 import { useEntityType } from 'context/EntityContext';
+import { LocalZustandProvider } from 'context/LocalZustand';
 import { alternativeReflexContainerBackground } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
 import useGlobalSearchParams, {
@@ -24,6 +26,7 @@ import {
     useDetailsForm_details_entityName,
 } from 'stores/DetailsForm';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
+import { EditorStoreNames } from 'stores/names';
 import {
     useResourceConfig_discoveredCollections,
     useResourceConfig_resetResourceConfigAndCollections,
@@ -144,7 +147,9 @@ function BindingsMultiEditor({
             : draftSpecs.length === 0;
 
     return (
-        <>
+        <LocalZustandProvider
+            createStore={createEditorStore(EditorStoreNames.GENERAL)}
+        >
             <Typography sx={{ mb: 2 }}>
                 <FormattedMessage
                     id={`${messagePrefix}.collectionSelector.instructions`}
@@ -173,7 +178,7 @@ function BindingsMultiEditor({
                 displayBorder={true}
                 height={550}
             />
-        </>
+        </LocalZustandProvider>
     );
 }
 

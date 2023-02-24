@@ -8,26 +8,39 @@ import {
 import { useEntityType } from 'context/EntityContext';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
-import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
+import {
+    useResourceConfig_collections,
+    useResourceConfig_currentCollection,
+} from 'stores/ResourceConfig/hooks';
 
 export interface Props {
     disabled?: boolean;
+    localZustandScope?: boolean;
 }
 
-function DraftSpecEditor({ disabled }: Props) {
+function DraftSpecEditor({ disabled, localZustandScope = false }: Props) {
     const entityType = useEntityType();
 
     // Draft Editor Store
-    const currentCatalog = useEditorStore_currentCatalog();
+    const currentCatalog = useEditorStore_currentCatalog({
+        localScope: localZustandScope,
+    });
 
-    const setSpecs = useEditorStore_setSpecs();
+    const setSpecs = useEditorStore_setSpecs({
+        localScope: localZustandScope,
+    });
 
     const draftId = useEditorStore_id();
 
     // Resource Config Store
+    const currentCollection = useResourceConfig_currentCollection();
     const collections = useResourceConfig_collections();
 
-    const { draftSpecs, mutate } = useDraftSpecs(draftId, null, entityType);
+    const { draftSpecs, mutate } = useDraftSpecs(
+        draftId,
+        null,
+        localZustandScope ? 'collection' : entityType
+    );
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
 
     const handlers = {
@@ -51,8 +64,16 @@ function DraftSpecEditor({ disabled }: Props) {
     };
 
     useEffect(() => {
-        if (draftSpecs.length > 0) {
+        if (!localZustandScope && draftSpecs.length > 0) {
             setSpecs(draftSpecs);
+        } else if (localZustandScope && draftSpecs.length > 0) {
+            const currentCollectionSpec = draftSpecs.filter(
+                (query) => query.catalog_name !== currentCollection
+            );
+
+            if (currentCollectionSpec.length > 0) {
+                setSpecs(currentCollectionSpec);
+            }
         }
     }, [setSpecs, collections, draftSpecs, entityType]);
 
@@ -90,7 +111,7 @@ function DraftSpecEditor({ disabled }: Props) {
         return (
             <MonacoEditor
                 disabled={disabled}
-                localZustandScope={false}
+                localZustandScope={localZustandScope}
                 onChange={handlers.change}
             />
         );
