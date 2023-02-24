@@ -1,18 +1,15 @@
 import { Box, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import { createEntityDraft } from 'api/drafts';
-import { createDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 import CollectionConfig from 'components/collection/Config';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
-    useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
-import { EditorStoreState } from 'components/editor/Store/types';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import { getConnectorImageDetails } from 'components/shared/Entity/DetailsForm/Form';
+import DraftInitializationGuard from 'components/shared/Entity/Edit/DraftInitializationGuard';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
@@ -24,21 +21,11 @@ import useGlobalSearchParams, {
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
-import useDraft, { DraftQuery } from 'hooks/useDraft';
-import { DraftSpecQuery, DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
-import {
-    LiveSpecsExtQueryWithSpec,
-    useLiveSpecsExtWithSpec,
-} from 'hooks/useLiveSpecsExt';
+import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
+import { useLiveSpecsExtWithSpec } from 'hooks/useLiveSpecsExt';
 import { isEmpty } from 'lodash';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import {
-    handleFailure,
-    handleSuccess,
-    supabaseClient,
-    TABLES,
-} from 'services/supabase';
 import {
     Details,
     useDetailsForm_changed,
@@ -55,17 +42,14 @@ import {
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
-    useFormStateStore_setFormState,
-    useFormStateStore_status,
 } from 'stores/FormState/hooks';
-import { FormState, FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_hydrated,
     useResourceConfig_serverUpdateRequired,
 } from 'stores/ResourceConfig/hooks';
-import { Entity, EntityWithCreateWorkflow } from 'types';
+import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
-import AlertBox from '../AlertBox';
+import AlertBox from '../../AlertBox';
 
 interface Props {
     title: string;
@@ -86,146 +70,146 @@ interface Props {
     RediscoverButton?: ReactNode;
 }
 
-interface DiscoveryData {
-    draft_id: string;
-}
+// interface DiscoveryData {
+//     draft_id: string;
+// }
 
-interface InitializationHelpers {
-    setDraftId: (id: EditorStoreState<DraftSpecQuery>['id']) => void;
-    setFormState: (data: Partial<FormState>) => void;
-    setPersistedDraftId: (
-        id: EditorStoreState<DraftSpecQuery>['persistedDraftId']
-    ) => void;
-    callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
-}
+// interface InitializationHelpers {
+//     setDraftId: (id: EditorStoreState<DraftSpecQuery>['id']) => void;
+//     setFormState: (data: Partial<FormState>) => void;
+//     setPersistedDraftId: (
+//         id: EditorStoreState<DraftSpecQuery>['persistedDraftId']
+//     ) => void;
+//     callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
+// }
 
-const createDraftToEdit = async (
-    catalogName: string,
-    spec: any,
-    entityType: Entity,
-    lastPubId: string | null,
-    errorTitle: string,
-    {
-        setDraftId,
-        setFormState,
-        setPersistedDraftId,
-        callFailed,
-    }: InitializationHelpers
-) => {
-    const draftsResponse = await createEntityDraft(catalogName);
+// const createDraftToEdit = async (
+//     catalogName: string,
+//     spec: any,
+//     entityType: Entity,
+//     lastPubId: string | null,
+//     errorTitle: string,
+//     {
+//         setDraftId,
+//         setFormState,
+//         setPersistedDraftId,
+//         callFailed,
+//     }: InitializationHelpers
+// ) => {
+//     const draftsResponse = await createEntityDraft(catalogName);
 
-    if (draftsResponse.error) {
-        return callFailed({
-            error: {
-                title: errorTitle,
-                error: draftsResponse.error,
-            },
-        });
-    }
+//     if (draftsResponse.error) {
+//         return callFailed({
+//             error: {
+//                 title: errorTitle,
+//                 error: draftsResponse.error,
+//             },
+//         });
+//     }
 
-    const newDraftId = draftsResponse.data[0].id;
+//     const newDraftId = draftsResponse.data[0].id;
 
-    const draftSpecResponse = await createDraftSpec(
-        newDraftId,
-        catalogName,
-        spec,
-        entityType,
-        lastPubId
-    );
+//     const draftSpecResponse = await createDraftSpec(
+//         newDraftId,
+//         catalogName,
+//         spec,
+//         entityType,
+//         lastPubId
+//     );
 
-    if (draftSpecResponse.error) {
-        return callFailed({
-            error: {
-                title: errorTitle,
-                error: draftSpecResponse.error,
-            },
-        });
-    }
+//     if (draftSpecResponse.error) {
+//         return callFailed({
+//             error: {
+//                 title: errorTitle,
+//                 error: draftSpecResponse.error,
+//             },
+//         });
+//     }
 
-    setDraftId(newDraftId);
-    setPersistedDraftId(newDraftId);
+//     setDraftId(newDraftId);
+//     setPersistedDraftId(newDraftId);
 
-    setFormState({ status: FormStatus.GENERATED });
-};
+//     setFormState({ status: FormStatus.GENERATED });
+// };
 
-const initDraftToEdit = async (
-    { catalog_name, spec }: LiveSpecsExtQueryWithSpec,
-    entityType: Entity,
-    drafts: DraftQuery[],
-    draftSpecs: DraftSpecQuery[],
-    lastPubId: string | null,
-    {
-        setDraftId,
-        setFormState,
-        setPersistedDraftId,
-        callFailed,
-    }: InitializationHelpers
-) => {
-    setFormState({ status: FormStatus.GENERATING });
+// const initDraftToEdit = async (
+//     { catalog_name, spec }: LiveSpecsExtQueryWithSpec,
+//     entityType: Entity,
+//     drafts: DraftQuery[],
+//     draftSpecs: DraftSpecQuery[],
+//     lastPubId: string | null,
+//     {
+//         setDraftId,
+//         setFormState,
+//         setPersistedDraftId,
+//         callFailed,
+//     }: InitializationHelpers
+// ) => {
+//     setFormState({ status: FormStatus.GENERATING });
 
-    const errorTitle =
-        entityType === 'materialization'
-            ? 'materializationEdit.generate.failure.errorTitle'
-            : 'captureEdit.generate.failedErrorTitle';
+//     const errorTitle =
+//         entityType === 'materialization'
+//             ? 'materializationEdit.generate.failure.errorTitle'
+//             : 'captureEdit.generate.failedErrorTitle';
 
-    // TODO (defect): Correct this initialization logic so that a new draft
-    //   is not created when the browser is refreshed.
+//     // TODO (defect): Correct this initialization logic so that a new draft
+//     //   is not created when the browser is refreshed.
 
-    if (
-        drafts.length === 0 ||
-        draftSpecs.length === 0 ||
-        lastPubId !== draftSpecs[0].expect_pub_id
-    ) {
-        void createDraftToEdit(
-            catalog_name,
-            spec,
-            entityType,
-            lastPubId,
-            errorTitle,
-            { setDraftId, setFormState, setPersistedDraftId, callFailed }
-        );
-    } else {
-        const existingDraftId = drafts[0].id;
+//     if (
+//         drafts.length === 0 ||
+//         draftSpecs.length === 0 ||
+//         lastPubId !== draftSpecs[0].expect_pub_id
+//     ) {
+//         void createDraftToEdit(
+//             catalog_name,
+//             spec,
+//             entityType,
+//             lastPubId,
+//             errorTitle,
+//             { setDraftId, setFormState, setPersistedDraftId, callFailed }
+//         );
+//     } else {
+//         const existingDraftId = drafts[0].id;
 
-        const discoveryResponse = await supabaseClient
-            .from(TABLES.DISCOVERS)
-            .select(`draft_id`)
-            .match({
-                draft_id: existingDraftId,
-            })
-            .then(handleSuccess<DiscoveryData[]>, handleFailure);
+//         const discoveryResponse = await supabaseClient
+//             .from(TABLES.DISCOVERS)
+//             .select(`draft_id`)
+//             .match({
+//                 draft_id: existingDraftId,
+//             })
+//             .then(handleSuccess<DiscoveryData[]>, handleFailure);
 
-        if (discoveryResponse.data && discoveryResponse.data.length > 0) {
-            const draftSpecResponse = await updateDraftSpec(
-                existingDraftId,
-                catalog_name,
-                spec,
-                lastPubId
-            );
+//         if (discoveryResponse.data && discoveryResponse.data.length > 0) {
+//             const draftSpecResponse = await updateDraftSpec(
+//                 existingDraftId,
+//                 catalog_name,
+//                 spec,
+//                 lastPubId
+//             );
 
-            if (draftSpecResponse.error) {
-                return callFailed({
-                    error: {
-                        title: errorTitle,
-                        error: draftSpecResponse.error,
-                    },
-                });
-            }
+//             if (draftSpecResponse.error) {
+//                 return callFailed({
+//                     error: {
+//                         title: errorTitle,
+//                         error: draftSpecResponse.error,
+//                     },
+//                 });
+//             }
 
-            setDraftId(existingDraftId);
-            setPersistedDraftId(existingDraftId);
-        } else {
-            void createDraftToEdit(
-                catalog_name,
-                spec,
-                entityType,
-                lastPubId,
-                errorTitle,
-                { setDraftId, setFormState, setPersistedDraftId, callFailed }
-            );
-        }
-    }
-};
+//             setDraftId(existingDraftId);
+//             setPersistedDraftId(existingDraftId);
+//         } else {
+//             void createDraftToEdit(
+//                 catalog_name,
+//                 spec,
+//                 entityType,
+//                 lastPubId,
+//                 errorTitle,
+//                 { setDraftId, setFormState, setPersistedDraftId, callFailed }
+//             );
+//         }
+//     }
+// };
 
 // eslint-disable-next-line complexity
 function EntityEdit({
@@ -233,7 +217,6 @@ function EntityEdit({
     entityType,
     readOnly,
     draftSpecMetadata,
-    callFailed,
     resetState,
     errorSummary,
     toolbar,
@@ -247,10 +230,9 @@ function EntityEdit({
     });
 
     // Check for properties being passed in
-    const [connectorId, liveSpecId, lastPubId] = useGlobalSearchParams([
+    const [connectorId, liveSpecId] = useGlobalSearchParams([
         GlobalSearchParams.CONNECTOR_ID,
         GlobalSearchParams.LIVE_SPEC_ID,
-        GlobalSearchParams.LAST_PUB_ID,
     ]);
 
     const {
@@ -267,9 +249,9 @@ function EntityEdit({
         liveSpecs: [initialSpec],
     } = useLiveSpecsExtWithSpec(liveSpecId, entityType);
 
-    const { drafts, isValidating: isValidatingDrafts } = useDraft(
-        isEmpty(initialSpec) ? null : initialSpec.catalog_name
-    );
+    // const { drafts, isValidating: isValidatingDrafts } = useDraft(
+    //     isEmpty(initialSpec) ? null : initialSpec.catalog_name
+    // );
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
@@ -281,7 +263,7 @@ function EntityEdit({
     const setDraftId = useEditorStore_setId();
 
     const persistedDraftId = useEditorStore_persistedDraftId();
-    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
+    // const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     // Endpoint Config Store
     const endpointConfigStoreHydrated = useEndpointConfig_hydrated();
@@ -292,7 +274,7 @@ function EntityEdit({
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
 
-    const formStatus = useFormStateStore_status();
+    // const formStatus = useFormStateStore_status();
 
     const logToken = useFormStateStore_logToken();
 
@@ -300,56 +282,55 @@ function EntityEdit({
 
     const formSubmitError = useFormStateStore_error();
 
-    const setFormState = useFormStateStore_setFormState();
+    // const setFormState = useFormStateStore_setFormState();
 
     // Resource Config Store
     const resourceConfigStoreHydrated = useResourceConfig_hydrated();
     const resourceConfigServerUpdateRequired =
         useResourceConfig_serverUpdateRequired();
 
-    const { draftSpecs, isValidating: isValidatingDraftSpecs } =
-        draftSpecMetadata;
+    const { draftSpecs } = draftSpecMetadata;
 
     const taskDraftSpec = useMemo(
         () => draftSpecs.filter(({ spec_type }) => spec_type === entityType),
         [draftSpecs, entityType]
     );
 
-    useEffect(() => {
-        if (
-            !isEmpty(initialSpec) &&
-            !isValidatingDrafts &&
-            !isValidatingDraftSpecs &&
-            formStatus === FormStatus.INIT
-        ) {
-            void initDraftToEdit(
-                initialSpec,
-                entityType,
-                drafts,
-                taskDraftSpec,
-                lastPubId,
-                {
-                    setDraftId,
-                    setFormState,
-                    setPersistedDraftId,
-                    callFailed,
-                }
-            );
-        }
-    }, [
-        setDraftId,
-        setFormState,
-        setPersistedDraftId,
-        callFailed,
-        drafts,
-        taskDraftSpec,
-        entityType,
-        formStatus,
-        initialSpec,
-        isValidatingDrafts,
-        isValidatingDraftSpecs,
-        lastPubId,
-    ]);
+    // useEffect(() => {
+    //     if (
+    //         !isEmpty(initialSpec) &&
+    //         !isValidatingDrafts &&
+    //         !isValidatingDraftSpecs &&
+    //         formStatus === FormStatus.INIT
+    //     ) {
+    //         void initDraftToEdit(
+    //             initialSpec,
+    //             entityType,
+    //             drafts,
+    //             taskDraftSpec,
+    //             lastPubId,
+    //             {
+    //                 setDraftId,
+    //                 setFormState,
+    //                 setPersistedDraftId,
+    //                 callFailed,
+    //             }
+    //         );
+    //     }
+    // }, [
+    //     setDraftId,
+    //     setFormState,
+    //     setPersistedDraftId,
+    //     callFailed,
+    //     drafts,
+    //     taskDraftSpec,
+    //     entityType,
+    //     formStatus,
+    //     initialSpec,
+    //     isValidatingDrafts,
+    //     isValidatingDraftSpecs,
+    //     lastPubId,
+    // ]);
 
     useEffect(() => {
         if (!isEmpty(initialSpec) && !isEmpty(initialConnectorTag)) {
@@ -388,7 +369,7 @@ function EntityEdit({
         !endpointConfigStoreHydrated || !resourceConfigStoreHydrated;
 
     return (
-        <>
+        <DraftInitializationGuard>
             {toolbar}
 
             <Box sx={{ mb: 4 }}>{errorSummary}</Box>
@@ -453,7 +434,7 @@ function EntityEdit({
                     </ErrorBoundryWrapper>
                 </>
             )}
-        </>
+        </DraftInitializationGuard>
     );
 }
 

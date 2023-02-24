@@ -260,6 +260,28 @@ const getLiveSpecsByConnectorId = async (
     return data;
 };
 
+export interface LiveSpecsExtQuery_ByLiveSpecId {
+    catalog_name: string;
+    id: string;
+    spec_type: Entity;
+    last_pub_id: string;
+    spec: any;
+}
+
+const getLiveSpecsByLiveSpecId = async (
+    liveSpecId: string,
+    specType: Entity
+) => {
+    const data = await supabaseClient
+        .from(TABLES.LIVE_SPECS_EXT)
+        .select('catalog_name,id,spec_type,last_pub_id,spec')
+        .eq('id', liveSpecId)
+        .eq('spec_type', specType)
+        .then(handleSuccess<LiveSpecsExtQuery_ByLiveSpecId[]>, handleFailure);
+
+    return data;
+};
+
 export {
     getLiveSpecs_captures,
     getLiveSpecs_collections,
@@ -268,4 +290,5 @@ export {
     getLiveSpecsByCatalogName,
     getLiveSpecsByCatalogNames,
     getLiveSpecsByConnectorId,
+    getLiveSpecsByLiveSpecId,
 };
