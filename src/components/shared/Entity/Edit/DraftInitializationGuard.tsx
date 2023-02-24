@@ -121,8 +121,6 @@ function DraftInitializationGuard({ children }: BaseComponentProps) {
 
             await getTaskDraftSpecs(evaluatedDraftId, task);
 
-            console.log('evaluatedDraftId', evaluatedDraftId);
-
             setDraftId(evaluatedDraftId);
             setPersistedDraftId(evaluatedDraftId);
 
@@ -138,9 +136,6 @@ function DraftInitializationGuard({ children }: BaseComponentProps) {
 
     useEffect(() => {
         if (formStatus === FormStatus.INIT) {
-            console.log('Hey');
-            console.log('last pub', lastPubId);
-
             void initializeDraftToEdit();
         }
     }, [initializeDraftToEdit, formStatus, lastPubId]);
