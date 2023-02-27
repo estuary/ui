@@ -1,4 +1,5 @@
 import { Box, Toolbar } from '@mui/material';
+import SidePanelConnectorDocs from 'components/docs';
 import { NavWidths } from 'context/Theme';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
@@ -60,6 +61,7 @@ function AppLayout() {
                         className="right-pane"
                         size={25}
                         minSize={25}
+                        maxSize={700}
                     >
                         <div
                             className="pane-content"
@@ -69,16 +71,7 @@ function AppLayout() {
                                 flexDirection: 'column',
                             }}
                         >
-                            <Toolbar />
-                            <iframe
-                                style={{ height: '100%' }}
-                                src="http://localhost:3001/"
-                                sandbox={[
-                                    'allow-scripts',
-                                    'allow-same-origin',
-                                ].join(' ')}
-                                title="Docs"
-                            />
+                            <SidePanelConnectorDocs />
                         </div>
                     </ReflexElement>
                 </ReflexContainer>

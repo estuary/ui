@@ -1,14 +1,9 @@
-import { Divider, Typography, useTheme } from '@mui/material';
-import ExternalLink from 'components/shared/ExternalLink';
+import { Typography, useTheme } from '@mui/material';
 import { WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { useEndpointConfigStore_errorsExist } from 'stores/EndpointConfig/hooks';
 
-interface Props {
-    docsPath?: string;
-}
-
-function EndpointConfigHeader({ docsPath }: Props) {
+function EndpointConfigHeader() {
     const theme = useTheme();
 
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
@@ -28,16 +23,6 @@ function EndpointConfigHeader({ docsPath }: Props) {
             <Typography variant="subtitle1">
                 <FormattedMessage id="entityCreate.endpointConfig.heading" />
             </Typography>
-
-            {docsPath && docsPath.length > 0 ? (
-                <>
-                    <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
-
-                    <ExternalLink link={docsPath}>
-                        <FormattedMessage id="entityCreate.ctas.docs" />
-                    </ExternalLink>
-                </>
-            ) : null}
         </>
     );
 }

@@ -844,6 +844,10 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
 };
 
+const Docs: ResolvedIntlConfig['messages'] = {
+    'docs.iframe.title': `{connector} Documentation`,
+};
+
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
@@ -896,6 +900,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...StorageMappings,
     ...EntityNotFound,
     ...ExistingEntityCheck,
+    ...Docs,
 };
 
 export default enUSMessages;

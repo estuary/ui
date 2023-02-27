@@ -5,6 +5,7 @@ import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
 import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
+import { useDocs } from 'context/Docs';
 import { useEntityWorkflow } from 'context/Workflow';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { isEqual } from 'lodash';
@@ -35,6 +36,7 @@ function EndpointConfig({
     hideBorder,
 }: Props) {
     const intl = useIntl();
+    const { setDocsURL } = useDocs();
 
     const workflow = useEntityWorkflow();
     const editWorkflow =
@@ -100,17 +102,15 @@ function EndpointConfig({
     if (error) {
         return <Error error={error} />;
     } else if (connectorTag) {
+        setDocsURL(connectorTag.documentation_url);
+
         return (
             <WrapperWithHeader
                 mountClosed={editWorkflow}
                 forceClose={forceClose}
                 readOnly={readOnly}
                 hideBorder={hideBorder}
-                header={
-                    <EndpointConfigHeader
-                        docsPath={connectorTag.documentation_url}
-                    />
-                }
+                header={<EndpointConfigHeader />}
             >
                 {readOnly ? (
                     <Box sx={{ mb: 3 }}>
