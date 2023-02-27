@@ -1,5 +1,5 @@
-import { createEntityDraft } from 'api/drafts';
-import { createDraftSpec } from 'api/draftSpecs';
+import { createEntityDraft, getDraftsByCatalogName } from 'api/drafts';
+import { createDraftSpec, getDraftSpecsByCatalogName } from 'api/draftSpecs';
 import {
     getLiveSpecsByLiveSpecId,
     LiveSpecsExtQuery_ByLiveSpecId,
@@ -19,28 +19,6 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { BaseComponentProps } from 'types';
-
-const getTaskDraft = async ({
-    catalog_name,
-}: LiveSpecsExtQuery_ByLiveSpecId): Promise<string | null> => {
-    // TODO (defect): Correct this initialization logic so that a new draft
-    //   is not created when the browser is refreshed; evaluate whether a recent
-    //   draft already exists and pull it if it does exist.
-
-    const draftsResponse = await createEntityDraft(catalog_name);
-
-    if (draftsResponse.error) {
-        console.log('getTaskDraft | drafts', draftsResponse.error);
-
-        return null;
-    } else if (draftsResponse.data && draftsResponse.data.length > 0) {
-        return draftsResponse.data[0].id;
-    } else {
-        console.log('getTaskDraft | drafts | fall through');
-
-        return null;
-    }
-};
 
 function DraftInitializationGuard({ children }: BaseComponentProps) {
     const [liveSpecId, lastPubId] = useGlobalSearchParams([
@@ -87,6 +65,60 @@ function DraftInitializationGuard({ children }: BaseComponentProps) {
                 return null;
             }
         }, [liveSpecId, taskSpecType]);
+
+    const getTaskDraft = useCallback(
+        async ({
+            catalog_name,
+        }: LiveSpecsExtQuery_ByLiveSpecId): Promise<string | null> => {
+            // TODO (defect): Correct this initialization logic so that a new draft
+            //   is not created when the browser is refreshed; evaluate whether a recent
+            //   draft already exists and pull it if it does exist.
+
+            // Try to find a draft with the given catalog name. If draft exists, check to see
+            // if expected pub id for the task is valid. If draft does not exist, create new draft.
+            const existingDraftsResponse = await getDraftsByCatalogName(
+                catalog_name,
+                true
+            );
+
+            if (
+                existingDraftsResponse.data &&
+                existingDraftsResponse.data.length > 0
+            ) {
+                // Evaluate existing pub ID for the existing task draft.
+                const existingDraftId = existingDraftsResponse.data[0].id;
+
+                const existingDraftSpecsResponse =
+                    await getDraftSpecsByCatalogName(
+                        existingDraftId,
+                        catalog_name,
+                        taskSpecType
+                    );
+
+                console.log(existingDraftSpecsResponse);
+            }
+
+            // If a draft exists and the expected pub id is not valid... what should be done. The
+            // simplest path would be to create a new draft, but the user would lose all data. The
+            // ideal path would be to keep existing draft but update all task info (and update
+            // associated collections as needed, likely pruning if necessary).
+
+            const draftsResponse = await createEntityDraft(catalog_name);
+
+            if (draftsResponse.error) {
+                console.log('getTaskDraft | drafts', draftsResponse.error);
+
+                return null;
+            } else if (draftsResponse.data && draftsResponse.data.length > 0) {
+                return draftsResponse.data[0].id;
+            } else {
+                console.log('getTaskDraft | drafts | fall through');
+
+                return null;
+            }
+        },
+        [taskSpecType]
+    );
 
     const getTaskDraftSpecs = useCallback(
         async (
