@@ -9,6 +9,7 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
+import useEntityEditNavigate from 'components/shared/Entity/hooks/useEntityEditNavigate';
 import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -38,10 +39,12 @@ const createTaskDraft = async (catalogName: string): Promise<string | null> => {
 };
 
 function DraftInitializationGuard({ children }: BaseComponentProps) {
-    const [liveSpecId, lastPubId] = useGlobalSearchParams([
+    const [connectorId, liveSpecId, lastPubId] = useGlobalSearchParams([
+        GlobalSearchParams.CONNECTOR_ID,
         GlobalSearchParams.LIVE_SPEC_ID,
         GlobalSearchParams.LAST_PUB_ID,
     ]);
+    const navigateToEdit = useEntityEditNavigate();
 
     const taskSpecType = useEntityType();
 
@@ -185,21 +188,19 @@ function DraftInitializationGuard({ children }: BaseComponentProps) {
             evaluatedDraftId: string | null,
             { catalog_name, spec }: LiveSpecsExtQuery_ByLiveSpecId
         ) => {
-            if (evaluatedDraftId) {
-                const draftSpecResponse = await createDraftSpec(
-                    evaluatedDraftId,
-                    catalog_name,
-                    spec,
-                    taskSpecType,
-                    lastPubId
-                );
+            const draftSpecResponse = await createDraftSpec(
+                evaluatedDraftId,
+                catalog_name,
+                spec,
+                taskSpecType,
+                lastPubId
+            );
 
-                if (draftSpecResponse.error) {
-                    console.log(
-                        'getTaskDraftSpecs | draft specs | error',
-                        draftSpecResponse.error
-                    );
-                }
+            if (draftSpecResponse.error) {
+                console.log(
+                    'getTaskDraftSpecs | draft specs | error',
+                    draftSpecResponse.error
+                );
             }
         },
         [lastPubId, taskSpecType]
@@ -213,22 +214,40 @@ function DraftInitializationGuard({ children }: BaseComponentProps) {
                 task
             );
 
-            if (draftSpecsMissing) {
-                await getTaskDraftSpecs(evaluatedDraftId, task);
+            if (evaluatedDraftId) {
+                if (draftSpecsMissing) {
+                    await getTaskDraftSpecs(evaluatedDraftId, task);
+                }
+
+                setDraftId(evaluatedDraftId);
+                setPersistedDraftId(evaluatedDraftId);
+
+                setFormState({ status: FormStatus.GENERATED });
+
+                navigateToEdit(
+                    taskSpecType,
+                    {
+                        [GlobalSearchParams.CONNECTOR_ID]: connectorId,
+                        [GlobalSearchParams.LIVE_SPEC_ID]: liveSpecId,
+                        [GlobalSearchParams.LAST_PUB_ID]: lastPubId,
+                    },
+                    { [GlobalSearchParams.DRAFT_ID]: evaluatedDraftId },
+                    true
+                );
             }
-
-            setDraftId(evaluatedDraftId);
-            setPersistedDraftId(evaluatedDraftId);
-
-            setFormState({ status: FormStatus.GENERATED });
         }
     }, [
         getTask,
         getTaskDraft,
         getTaskDraftSpecs,
+        navigateToEdit,
         setDraftId,
         setFormState,
         setPersistedDraftId,
+        connectorId,
+        lastPubId,
+        liveSpecId,
+        taskSpecType,
     ]);
 
     useEffect(() => {
