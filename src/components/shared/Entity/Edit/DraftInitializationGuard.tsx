@@ -1,6 +1,7 @@
 import { createEntityDraft, getDraftsByCatalogName } from 'api/drafts';
 import { createDraftSpec, getDraftSpecsByCatalogName } from 'api/draftSpecs';
 import {
+    getLiveSpecsByCatalogName,
     getLiveSpecsByLiveSpecId,
     LiveSpecsExtQuery_ByLiveSpecId,
 } from 'api/liveSpecsExt';
@@ -19,6 +20,22 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { BaseComponentProps } from 'types';
+
+const createTaskDraft = async (catalogName: string): Promise<string | null> => {
+    const draftsResponse = await createEntityDraft(catalogName);
+
+    if (draftsResponse.error) {
+        console.log('createTaskDraft | drafts', draftsResponse.error);
+
+        return null;
+    } else if (draftsResponse.data && draftsResponse.data.length > 0) {
+        return draftsResponse.data[0].id;
+    } else {
+        console.log('createTaskDraft | drafts | fall through');
+
+        return null;
+    }
+};
 
 function DraftInitializationGuard({ children }: BaseComponentProps) {
     const [liveSpecId, lastPubId] = useGlobalSearchParams([
@@ -69,13 +86,21 @@ function DraftInitializationGuard({ children }: BaseComponentProps) {
     const getTaskDraft = useCallback(
         async ({
             catalog_name,
-        }: LiveSpecsExtQuery_ByLiveSpecId): Promise<string | null> => {
+        }: LiveSpecsExtQuery_ByLiveSpecId): Promise<{
+            evaluatedDraftId: string | null;
+            draftSpecsMissing: boolean;
+        }> => {
             // TODO (defect): Correct this initialization logic so that a new draft
             //   is not created when the browser is refreshed; evaluate whether a recent
             //   draft already exists and pull it if it does exist.
 
             // Try to find a draft with the given catalog name. If draft exists, check to see
             // if expected pub id for the task is valid. If draft does not exist, create new draft.
+
+            // If a draft exists and the expected pub id is not valid... what should be done. The
+            // simplest path would be to create a new draft, but the user would lose all data. The
+            // ideal path would be to keep existing draft but update all task info (and update
+            // associated collections as needed, likely pruning if necessary).
             const existingDraftsResponse = await getDraftsByCatalogName(
                 catalog_name,
                 true
@@ -95,26 +120,61 @@ function DraftInitializationGuard({ children }: BaseComponentProps) {
                         taskSpecType
                     );
 
-                console.log(existingDraftSpecsResponse);
-            }
+                if (
+                    existingDraftSpecsResponse.data &&
+                    existingDraftSpecsResponse.data.length > 0
+                ) {
+                    const expectedPubId =
+                        existingDraftSpecsResponse.data[0].expect_pub_id;
 
-            // If a draft exists and the expected pub id is not valid... what should be done. The
-            // simplest path would be to create a new draft, but the user would lose all data. The
-            // ideal path would be to keep existing draft but update all task info (and update
-            // associated collections as needed, likely pruning if necessary).
+                    const liveSpecResponse = await getLiveSpecsByCatalogName(
+                        catalog_name,
+                        taskSpecType
+                    );
 
-            const draftsResponse = await createEntityDraft(catalog_name);
+                    if (
+                        liveSpecResponse.data &&
+                        liveSpecResponse.data.length > 0 &&
+                        expectedPubId === liveSpecResponse.data[0].last_pub_id
+                    ) {
+                        // Set local draft ID and persistent draft ID to be propagated.
+                        console.log('Use existing draft');
+                        console.log(existingDraftId);
 
-            if (draftsResponse.error) {
-                console.log('getTaskDraft | drafts', draftsResponse.error);
+                        return {
+                            evaluatedDraftId: existingDraftId,
+                            draftSpecsMissing: false,
+                        };
+                    } else {
+                        // Create new draft and draft specs.
+                        console.log('Create a new draft');
 
-                return null;
-            } else if (draftsResponse.data && draftsResponse.data.length > 0) {
-                return draftsResponse.data[0].id;
+                        const newDraftId = await createTaskDraft(catalog_name);
+
+                        return {
+                            evaluatedDraftId: newDraftId,
+                            draftSpecsMissing: true,
+                        };
+                    }
+                } else {
+                    // Create new draft specs.
+                    console.log('Existing draft spec response empty');
+
+                    return {
+                        evaluatedDraftId: existingDraftId,
+                        draftSpecsMissing: true,
+                    };
+                }
             } else {
-                console.log('getTaskDraft | drafts | fall through');
+                // Create a new draft and draft specs.
+                console.log('Existing draft response empty');
 
-                return null;
+                const newDraftId = await createTaskDraft(catalog_name);
+
+                return {
+                    evaluatedDraftId: newDraftId,
+                    draftSpecsMissing: true,
+                };
             }
         },
         [taskSpecType]
@@ -149,9 +209,13 @@ function DraftInitializationGuard({ children }: BaseComponentProps) {
         const task = await getTask();
 
         if (task) {
-            const evaluatedDraftId = await getTaskDraft(task);
+            const { evaluatedDraftId, draftSpecsMissing } = await getTaskDraft(
+                task
+            );
 
-            await getTaskDraftSpecs(evaluatedDraftId, task);
+            if (draftSpecsMissing) {
+                await getTaskDraftSpecs(evaluatedDraftId, task);
+            }
 
             setDraftId(evaluatedDraftId);
             setPersistedDraftId(evaluatedDraftId);
@@ -160,6 +224,7 @@ function DraftInitializationGuard({ children }: BaseComponentProps) {
         }
     }, [
         getTask,
+        getTaskDraft,
         getTaskDraftSpecs,
         setDraftId,
         setFormState,

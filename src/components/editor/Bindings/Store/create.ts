@@ -59,7 +59,7 @@ const evaluateCollectionData = async (
         );
     }
 
-    if (draftSpecResponse && !isEmpty(draftSpecResponse.data)) {
+    if (draftSpecResponse?.data && !isEmpty(draftSpecResponse.data)) {
         return { spec: draftSpecResponse.data[0].spec, belongsToDraft: true };
     } else {
         const liveSpecResponse = await getLiveSpecsByCatalogName(
@@ -67,7 +67,7 @@ const evaluateCollectionData = async (
             'collection'
         );
 
-        return isEmpty(liveSpecResponse.data)
+        return !liveSpecResponse.data || isEmpty(liveSpecResponse.data)
             ? null
             : { spec: liveSpecResponse.data[0].spec, belongsToDraft: false };
     }

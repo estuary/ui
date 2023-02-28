@@ -181,7 +181,7 @@ const getLiveSpecsByCatalogName = async (
         .select(`catalog_name,spec_type,spec,last_pub_id`)
         .eq('catalog_name', catalogName)
         .eq('spec_type', specType)
-        .then(handleSuccess<LiveSpecsExtQuery_ByCatalogName>, handleFailure);
+        .then(handleSuccess<LiveSpecsExtQuery_ByCatalogName[]>, handleFailure);
 
     return data;
 };

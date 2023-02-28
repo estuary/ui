@@ -193,6 +193,7 @@ interface DraftSpecsExtQuery_ByCatalogName {
     catalog_name: string;
     spec_type: string;
     spec: any;
+    expect_pub_id: string;
 }
 
 export const getDraftSpecsByCatalogName = async (
@@ -202,11 +203,11 @@ export const getDraftSpecsByCatalogName = async (
 ) => {
     const data = await supabaseClient
         .from(TABLES.DRAFT_SPECS_EXT)
-        .select(`draft_id,catalog_name,spec_type,spec`)
+        .select(`draft_id,catalog_name,spec_type,spec,expect_pub_id`)
         .eq('draft_id', draftId)
         .eq('catalog_name', catalogName)
         .eq('spec_type', specType)
-        .then(handleSuccess<DraftSpecsExtQuery_ByCatalogName>, handleFailure);
+        .then(handleSuccess<DraftSpecsExtQuery_ByCatalogName[]>, handleFailure);
 
     return data;
 };
