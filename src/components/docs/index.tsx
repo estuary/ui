@@ -5,8 +5,13 @@ import { useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { getDocsSettings } from 'utils/env-utils';
 
-const sandbox = ['allow-scripts', 'allow-same-origin'].join(' ');
 const { origin } = getDocsSettings();
+
+// Need to allow the iframe to run stuff. Should be safe as we'll only run Estuary doc links
+const sandbox = ['allow-scripts', 'allow-same-origin'].join(' ');
+
+// This must be kept in sync with the docs site in flow/site
+const messageType = 'estuary.colorMode';
 
 function SidePanelConnectorDocs() {
     const intl = useIntl();
@@ -17,7 +22,7 @@ function SidePanelConnectorDocs() {
     useEffect(() => {
         if (iframeRef.current?.contentWindow) {
             iframeRef.current.contentWindow.postMessage(
-                { type: 'estuary.colorMode', mode: colorMode.colorMode },
+                { type: messageType, mode: colorMode.colorMode },
                 origin
             );
         }
