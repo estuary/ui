@@ -1,6 +1,8 @@
 import { Box, Toolbar } from '@mui/material';
 import SidePanelConnectorDocs from 'components/docs';
+import { useDocs } from 'context/Docs';
 import { NavWidths } from 'context/Theme';
+import { useEffect, useState } from 'react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
 import { useLocalStorage } from 'react-use';
@@ -13,7 +15,6 @@ function AppLayout() {
         { open: true }
     );
 
-    // const theme = useTheme();
     const navigationOpen = navigationConfig?.open ?? true;
     const navigationWidth: NavWidths = navigationConfig?.open
         ? NavWidths.FULL
@@ -22,6 +23,20 @@ function AppLayout() {
     const toggleNavigationDrawer = () => {
         setNavigationConfig({ open: !navigationOpen });
     };
+
+    // Splitter for the side panel docs
+    const [leftPaneFlex, setLeftPaneFlex] = useState<any>(0.0);
+    const [rightPaneFlex, setRightPaneFlex] = useState<any>(0.0);
+    const { docsURL } = useDocs();
+    const showDocs = docsURL !== null;
+
+    // We want to control the flex and not size as it seems to work better
+    //  when showing/hiding and also allows a sort of percentage view instead
+    //  of hardcoded size values
+    useEffect(() => {
+        setLeftPaneFlex(showDocs ? 0.7 : 1.0);
+        setRightPaneFlex(showDocs ? 0.3 : 0.0);
+    }, [showDocs]);
 
     return (
         <Box sx={{ height: '100vh' }}>
@@ -40,7 +55,11 @@ function AppLayout() {
                 }}
             >
                 <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" minSize={250}>
+                    <ReflexElement
+                        className="left-pane"
+                        minSize={200}
+                        flex={leftPaneFlex}
+                    >
                         <div className="pane-content">
                             <Toolbar />
                             <Outlet />
@@ -50,8 +69,8 @@ function AppLayout() {
                     <ReflexSplitter
                         style={{
                             height: 'auto',
-                            width: 5,
-                            display: 'flex',
+                            width: showDocs ? 5 : 0,
+                            display: showDocs ? 'flex' : 'none',
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}
@@ -59,9 +78,9 @@ function AppLayout() {
 
                     <ReflexElement
                         className="right-pane"
-                        size={25}
-                        minSize={25}
-                        maxSize={700}
+                        minSize={showDocs ? 50 : 0}
+                        maxSize={showDocs ? 700 : 0}
+                        flex={rightPaneFlex}
                     >
                         <div
                             className="pane-content"

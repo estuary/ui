@@ -3,7 +3,7 @@ import { BaseComponentProps } from 'types';
 
 interface Provider {
     docsURL: string | null;
-    setDocsURL: (val: string) => void;
+    setDocsURL: (val: string | null) => void;
 }
 
 const DocsContext = createContext<Provider | null>(null);

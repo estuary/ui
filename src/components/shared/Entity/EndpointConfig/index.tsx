@@ -11,7 +11,7 @@ import useConnectorTag from 'hooks/useConnectorTag';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useUpdateEffect } from 'react-use';
+import { useUnmount, useUpdateEffect } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     useEndpointConfigStore_endpointConfig_data,
@@ -99,12 +99,17 @@ function EndpointConfig({
 
     const forceClose = !editWorkflow && draftId !== null;
 
+    useUnmount(() => {
+        console.log('cleaning up');
+        setDocsURL(null);
+    });
+
     if (error) {
         return <Error error={error} />;
     } else if (connectorTag) {
-        //connectorTag.documentation_url
         setDocsURL(
-            'http://localhost:3001/reference/Connectors/capture-connectors/google-sheets/'
+            connectorTag.documentation_url
+            // 'http://localhost:3001/reference/Connectors/capture-connectors/google-sheets/'
         );
 
         return (
