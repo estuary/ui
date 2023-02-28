@@ -1,4 +1,4 @@
-import { Box, Toolbar } from '@mui/material';
+import { Box, Toolbar, useTheme } from '@mui/material';
 import SidePanelConnectorDocs from 'components/docs';
 import { useDocs } from 'context/Docs';
 import { NavWidths } from 'context/Theme';
@@ -10,6 +10,7 @@ import { LocalStorageKeys } from 'utils/localStorage-utils';
 import Navigation from './components/navigation/Navigation';
 
 function AppLayout() {
+    const theme = useTheme();
     const [navigationConfig, setNavigationConfig] = useLocalStorage(
         LocalStorageKeys.NAVIGATION_SETTINGS,
         { open: true }
@@ -57,7 +58,7 @@ function AppLayout() {
                 <ReflexContainer orientation="vertical">
                     <ReflexElement
                         className="left-pane"
-                        minSize={200}
+                        minSize={theme.breakpoints.values.sm / 2}
                         flex={leftPaneFlex}
                     >
                         <div className="pane-content">
