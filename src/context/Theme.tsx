@@ -450,8 +450,12 @@ const themeSettings = createTheme({
     },
 } as ThemeOptions);
 
-const ColorModeContext = React.createContext({
+const ColorModeContext = React.createContext<{
+    toggleColorMode: () => void;
+    colorMode: string | undefined;
+}>({
     toggleColorMode: () => {},
+    colorMode: undefined,
 });
 
 // TODO: Enable color mode toggling once light mode colors are refined.
@@ -541,7 +545,9 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
     }, [setPalette, palette, mode]);
 
     return (
-        <ColorModeContext.Provider value={{ toggleColorMode: toggler }}>
+        <ColorModeContext.Provider
+            value={{ toggleColorMode: toggler, colorMode: mode }}
+        >
             <MUIThemeProvider theme={generatedTheme}>
                 <CssBaseline />
                 {children}
