@@ -215,9 +215,6 @@ export const getInitialState = (
     stateChanged: () => {
         const { details, previousDetails } = get();
 
-        console.log('details', details);
-        console.log('prev details', previousDetails);
-
         return !isEqual(details.data, previousDetails.data);
     },
 
