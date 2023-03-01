@@ -1,4 +1,4 @@
-import { Box, Toolbar, useTheme } from '@mui/material';
+import { Box, Drawer, Toolbar, useTheme } from '@mui/material';
 import SidePanelConnectorDocs from 'components/docs';
 import { useDocs } from 'context/Docs';
 import { NavWidths } from 'context/Theme';
@@ -61,10 +61,10 @@ function AppLayout() {
                         minSize={theme.breakpoints.values.sm / 2}
                         flex={leftPaneFlex}
                     >
-                        <div className="pane-content">
+                        <Box className="pane-content">
                             <Toolbar />
                             <Outlet />
-                        </div>
+                        </Box>
                     </ReflexElement>
 
                     <ReflexSplitter
@@ -83,16 +83,23 @@ function AppLayout() {
                         maxSize={showDocs ? 700 : 0}
                         flex={rightPaneFlex}
                     >
-                        <div
+                        <Drawer
+                            anchor="right"
+                            variant="persistent"
                             className="pane-content"
-                            style={{
-                                height: '100%',
-                                display: 'flex',
-                                flexDirection: 'column',
+                            sx={{
+                                'display': { xs: 'none', sm: 'block' },
+                                'width': '100%',
+                                '& .MuiDrawer-paper': {
+                                    width: '100%',
+                                    boxSizing: 'border-box',
+                                    position: 'absolute',
+                                },
                             }}
+                            open={showDocs}
                         >
                             <SidePanelConnectorDocs />
-                        </div>
+                        </Drawer>
                     </ReflexElement>
                 </ReflexContainer>
             </Box>
