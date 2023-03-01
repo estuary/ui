@@ -135,6 +135,59 @@ export const useDetailsForm_setEntityNameChanged = () => {
     >(getStoreName(entityType), (state) => state.setEntityNameChanged);
 };
 
+export const useDetailsForm_setPreviousDetails = () => {
+    const entityType = useEntityType();
+    return useZustandStore<
+        DetailsFormState,
+        DetailsFormState['setPreviousDetails']
+    >(getStoreName(entityType), (state) => state.setPreviousDetails);
+};
+
+export const useDetailsForm_hydrated = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<DetailsFormState, DetailsFormState['hydrated']>(
+        getStoreName(entityType),
+        (state) => state.hydrated
+    );
+};
+
+export const useDetailsForm_setHydrated = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<DetailsFormState, DetailsFormState['setHydrated']>(
+        getStoreName(entityType),
+        (state) => state.setHydrated
+    );
+};
+
+export const useDetailsForm_hydrationErrorsExist = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        DetailsFormState,
+        DetailsFormState['hydrationErrorsExist']
+    >(getStoreName(entityType), (state) => state.hydrationErrorsExist);
+};
+
+export const useDetailsForm_setHydrationErrorsExist = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        DetailsFormState,
+        DetailsFormState['setHydrationErrorsExist']
+    >(getStoreName(entityType), (state) => state.setHydrationErrorsExist);
+};
+
+export const useDetailsForm_hydrateState = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<DetailsFormState, DetailsFormState['hydrateState']>(
+        getStoreName(entityType),
+        (state) => state.hydrateState
+    );
+};
+
 export const useDetailsForm_changed = () => {
     const entityType = useEntityType();
     return useZustandStore<DetailsFormState, DetailsFormState['stateChanged']>(

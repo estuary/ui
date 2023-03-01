@@ -1,4 +1,6 @@
 import { JsonFormsCore } from '@jsonforms/core';
+import { StoreWithHydration } from 'stores/Hydration';
+import { EntityWithCreateWorkflow, EntityWorkflow } from 'types';
 
 export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
@@ -13,7 +15,7 @@ export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     };
 }
 
-export interface DetailsFormState {
+export interface DetailsFormState extends StoreWithHydration {
     // Form Data
     details: Details;
     setDetails: (details: Details) => void;
@@ -35,6 +37,14 @@ export interface DetailsFormState {
 
     entityNameChanged: boolean;
     setEntityNameChanged: (value: string) => void;
+
+    previousDetails: Details;
+    setPreviousDetails: (value: DetailsFormState['previousDetails']) => void;
+
+    hydrateState: (
+        entityType: EntityWithCreateWorkflow,
+        workflow: EntityWorkflow | null
+    ) => Promise<void>;
 
     stateChanged: () => boolean;
     resetState: () => void;

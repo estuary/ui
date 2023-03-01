@@ -164,6 +164,45 @@ const getLiveSpecs_existingTasks = (
     return queryBuilder;
 };
 
+// Hydration-specific queries
+export interface LiveSpecsExtQuery_DetailsForm {
+    catalog_name: string;
+    id: string;
+    spec_type: Entity;
+    spec: any;
+    detail: string | null;
+    connector_tag_id: string;
+    connector_image_name: string;
+    connector_image_tag: string;
+    connector_logo_url: string;
+}
+
+const DETAILS_FORM_QUERY = `
+    catalog_name,
+    id,
+    spec_type,
+    spec,
+    detail,
+    connector_tag_id,
+    connector_image_name,
+    connector_image_tag,
+    connector_logo_url:connector_logo_url->>en-US::text
+`;
+
+const getLiveSpecs_detailsForm = async (
+    liveSpecId: string,
+    specType: Entity
+) => {
+    const data = await supabaseClient
+        .from(TABLES.LIVE_SPECS_EXT)
+        .select(DETAILS_FORM_QUERY)
+        .eq('id', liveSpecId)
+        .eq('spec_type', specType)
+        .then(handleSuccess<LiveSpecsExtQuery_DetailsForm[]>, handleFailure);
+
+    return data;
+};
+
 // Multipurpose queries
 export interface LiveSpecsExtQuery_ByCatalogName {
     catalog_name: string;
@@ -287,6 +326,7 @@ export {
     getLiveSpecs_collections,
     getLiveSpecs_existingTasks,
     getLiveSpecs_materializations,
+    getLiveSpecs_detailsForm,
     getLiveSpecsByCatalogName,
     getLiveSpecsByCatalogNames,
     getLiveSpecsByConnectorId,

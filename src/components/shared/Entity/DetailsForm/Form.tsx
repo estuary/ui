@@ -75,13 +75,14 @@ function DetailsFormForm({
             connectorTags.find((connector) => {
                 const response =
                     connector.connector_tags[0].connector_id === connectorId;
+
                 if (response) {
                     setDetails_connector(getConnectorImageDetails(connector));
                 }
                 return response;
             });
         }
-    }, [connectorId, connectorTags, setDetails_connector]);
+    }, [setDetails_connector, connectorId, connectorTags]);
 
     const accessGrantsOneOf = useMemo(() => {
         const response = [] as string[];

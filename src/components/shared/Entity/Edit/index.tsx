@@ -8,30 +8,23 @@ import {
 } from 'components/editor/Store/hooks';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
-import { getConnectorImageDetails } from 'components/shared/Entity/DetailsForm/Form';
 import DraftInitializer from 'components/shared/Entity/Edit/DraftInitializer';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
-import { useLiveSpecsExtWithSpec } from 'hooks/useLiveSpecsExt';
-import { isEmpty } from 'lodash';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
-    useDetailsForm_setDetails,
+    useDetailsForm_hydrated,
 } from 'stores/DetailsForm/hooks';
-import { Details } from 'stores/DetailsForm/types';
 import {
     useEndpointConfigStore_changed,
     useEndpointConfig_hydrated,
@@ -229,33 +222,19 @@ function EntityEdit({
         adminOnly: true,
     });
 
-    // Check for properties being passed in
-    const [connectorId, liveSpecId] = useGlobalSearchParams([
-        GlobalSearchParams.CONNECTOR_ID,
-        GlobalSearchParams.LIVE_SPEC_ID,
-    ]);
-
     const {
         connectorTags,
         error: connectorTagsError,
         isValidating,
     } = useConnectorWithTagDetail(entityType);
 
-    const {
-        connectorTags: [initialConnectorTag],
-    } = useConnectorWithTagDetail(entityType, connectorId);
-
-    const {
-        liveSpecs: [initialSpec],
-    } = useLiveSpecsExtWithSpec(liveSpecId, entityType);
-
     // const { drafts, isValidating: isValidatingDrafts } = useDraft(
     //     isEmpty(initialSpec) ? null : initialSpec.catalog_name
     // );
 
     // Details Form Store
+    const detailsFormStoreHydrated = useDetailsForm_hydrated();
     const imageTag = useDetailsForm_connectorImage();
-    const setDetails = useDetailsForm_setDetails();
     const detailsFormChanged = useDetailsForm_changed();
 
     // Draft Editor Store
@@ -333,21 +312,6 @@ function EntityEdit({
     // ]);
 
     useEffect(() => {
-        if (!isEmpty(initialSpec) && !isEmpty(initialConnectorTag)) {
-            const details: Details = {
-                data: {
-                    entityName: initialSpec.catalog_name,
-                    connectorImage:
-                        getConnectorImageDetails(initialConnectorTag),
-                    description: initialSpec.detail || '',
-                },
-            };
-
-            setDetails(details);
-        }
-    }, [setDetails, initialSpec, initialConnectorTag]);
-
-    useEffect(() => {
         const resetDraftIdFlag =
             endpointConfigServerUpdateRequired ||
             resourceConfigServerUpdateRequired;
@@ -369,7 +333,9 @@ function EntityEdit({
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
     const storeHydrationIncomplete =
-        !endpointConfigStoreHydrated || !resourceConfigStoreHydrated;
+        !detailsFormStoreHydrated ||
+        !endpointConfigStoreHydrated ||
+        !resourceConfigStoreHydrated;
 
     return (
         <DraftInitializer>

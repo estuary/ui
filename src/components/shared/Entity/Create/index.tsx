@@ -134,6 +134,9 @@ function EntityCreate({
     // TODO (defect): Prevent prompt data loss dialog from appearing when transitioning to edit workflow.
     const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
 
+    console.log('end', endpointConfigChanged());
+    console.log('det', detailsFormChanged());
+
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
     const displayResourceConfig =
