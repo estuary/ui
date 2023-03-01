@@ -18,7 +18,7 @@ import {
     JOB_STATUS_COLUMNS,
     TABLES,
 } from 'services/supabase';
-import { useDetailsForm_details_description } from 'stores/DetailsForm';
+import { useDetailsForm_details_description } from 'stores/DetailsForm/hooks';
 import {
     useFormStateStore_isActive,
     useFormStateStore_messagePrefix,

@@ -29,7 +29,7 @@ import {
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
     useDetailsForm_setDraftedEntityName,
-} from 'stores/DetailsForm';
+} from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,

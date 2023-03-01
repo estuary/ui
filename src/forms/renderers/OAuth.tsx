@@ -12,7 +12,7 @@ import { useEffect, useMemo, useState } from 'react';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
-import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm';
+import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_setEndpointCustomErrors,

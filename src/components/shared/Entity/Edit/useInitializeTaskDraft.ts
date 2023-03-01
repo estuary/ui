@@ -14,7 +14,7 @@ import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { useCallback } from 'react';
+import { Dispatch, SetStateAction, useCallback } from 'react';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 
@@ -188,49 +188,55 @@ function useInitializeTaskDraft() {
         [lastPubId, taskSpecType]
     );
 
-    return useCallback(async (): Promise<void> => {
-        const task = await getTask();
+    return useCallback(
+        async (
+            setLoading: Dispatch<SetStateAction<boolean>>
+        ): Promise<void> => {
+            const task = await getTask();
 
-        if (task) {
-            const { evaluatedDraftId, draftSpecsMissing } = await getTaskDraft(
-                task
-            );
+            if (task) {
+                const { evaluatedDraftId, draftSpecsMissing } =
+                    await getTaskDraft(task);
 
-            if (evaluatedDraftId) {
-                if (draftSpecsMissing) {
-                    await getTaskDraftSpecs(evaluatedDraftId, task);
+                if (evaluatedDraftId) {
+                    if (draftSpecsMissing) {
+                        await getTaskDraftSpecs(evaluatedDraftId, task);
+                    }
+
+                    setDraftId(evaluatedDraftId);
+                    setPersistedDraftId(evaluatedDraftId);
+
+                    setFormState({ status: FormStatus.GENERATED });
+
+                    setLoading(false);
+
+                    navigateToEdit(
+                        taskSpecType,
+                        {
+                            [GlobalSearchParams.CONNECTOR_ID]: connectorId,
+                            [GlobalSearchParams.LIVE_SPEC_ID]: liveSpecId,
+                            [GlobalSearchParams.LAST_PUB_ID]: lastPubId,
+                        },
+                        { [GlobalSearchParams.DRAFT_ID]: evaluatedDraftId },
+                        true
+                    );
                 }
-
-                setDraftId(evaluatedDraftId);
-                setPersistedDraftId(evaluatedDraftId);
-
-                setFormState({ status: FormStatus.GENERATED });
-
-                navigateToEdit(
-                    taskSpecType,
-                    {
-                        [GlobalSearchParams.CONNECTOR_ID]: connectorId,
-                        [GlobalSearchParams.LIVE_SPEC_ID]: liveSpecId,
-                        [GlobalSearchParams.LAST_PUB_ID]: lastPubId,
-                    },
-                    { [GlobalSearchParams.DRAFT_ID]: evaluatedDraftId },
-                    true
-                );
             }
-        }
-    }, [
-        getTask,
-        getTaskDraft,
-        getTaskDraftSpecs,
-        navigateToEdit,
-        setDraftId,
-        setFormState,
-        setPersistedDraftId,
-        connectorId,
-        lastPubId,
-        liveSpecId,
-        taskSpecType,
-    ]);
+        },
+        [
+            getTask,
+            getTaskDraft,
+            getTaskDraftSpecs,
+            navigateToEdit,
+            setDraftId,
+            setFormState,
+            setPersistedDraftId,
+            connectorId,
+            lastPubId,
+            liveSpecId,
+            taskSpecType,
+        ]
+    );
 }
 
 export default useInitializeTaskDraft;

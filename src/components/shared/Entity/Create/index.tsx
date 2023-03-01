@@ -22,7 +22,7 @@ import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_entityNameChanged,
-} from 'stores/DetailsForm';
+} from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_changed,
     useEndpointConfig_serverUpdateRequired,

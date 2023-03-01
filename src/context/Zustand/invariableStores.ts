@@ -2,11 +2,13 @@ import { createBindingsEditorStore } from 'components/editor/Bindings/Store/crea
 import { createEditorStore } from 'components/editor/Store/create';
 import { createExistingEntityStore } from 'components/shared/Entity/ExistingEntityCards/Store/create';
 import { createSelectableTableStore } from 'components/tables/Store';
+import { createDetailsFormStore } from 'stores/DetailsForm/Store';
 import { createEndpointConfigStore } from 'stores/EndpointConfig/Store';
 import { createFormStateStore } from 'stores/FormState/Store';
 import {
     AdminStoreNames,
     BindingsEditorStoreNames,
+    DetailsFormStoreNames,
     EditorStoreNames,
     EndpointConfigStoreNames,
     ExistingEntityStoreNames,
@@ -24,6 +26,14 @@ const invariableStores = {
     // Bindings Editor Store
     [BindingsEditorStoreNames.GENERAL]: createBindingsEditorStore(
         BindingsEditorStoreNames.GENERAL
+    ),
+
+    // Details Form Store
+    [DetailsFormStoreNames.CAPTURE]: createDetailsFormStore(
+        DetailsFormStoreNames.CAPTURE
+    ),
+    [DetailsFormStoreNames.MATERIALIZATION]: createDetailsFormStore(
+        DetailsFormStoreNames.MATERIALIZATION
     ),
 
     // Specification Editor Store

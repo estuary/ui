@@ -24,7 +24,7 @@ import { useUpdateEffect } from 'react-use';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_details_entityName,
-} from 'stores/DetailsForm';
+} from 'stores/DetailsForm/hooks';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 import { EditorStoreNames } from 'stores/names';
 import {

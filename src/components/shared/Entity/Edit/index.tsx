@@ -27,11 +27,11 @@ import { isEmpty } from 'lodash';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
-    Details,
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_setDetails,
-} from 'stores/DetailsForm';
+} from 'stores/DetailsForm/hooks';
+import { Details } from 'stores/DetailsForm/types';
 import {
     useEndpointConfigStore_changed,
     useEndpointConfig_hydrated,
@@ -362,6 +362,9 @@ function EntityEdit({
 
     // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.
     const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
+
+    console.log('end', endpointConfigChanged());
+    console.log('det', detailsFormChanged());
 
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 

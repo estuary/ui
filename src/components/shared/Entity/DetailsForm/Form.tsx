@@ -16,12 +16,12 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import {
-    Details,
     useDetailsForm_details,
     useDetailsForm_setDetails,
     useDetailsForm_setDetails_connector,
     useDetailsForm_setEntityNameChanged,
-} from 'stores/DetailsForm';
+} from 'stores/DetailsForm/hooks';
+import { Details } from 'stores/DetailsForm/types';
 import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,

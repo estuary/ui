@@ -28,7 +28,7 @@ import { Cancel, WarningCircle } from 'iconoir-react';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
-import { useDetailsForm_details_entityName } from 'stores/DetailsForm';
+import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
     useResourceConfig_currentCollection,
