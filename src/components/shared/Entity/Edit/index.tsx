@@ -327,9 +327,6 @@ function EntityEdit({
     // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.
     const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
 
-    console.log('end', endpointConfigChanged());
-    console.log('det', detailsFormChanged());
-
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
     const storeHydrationIncomplete =
