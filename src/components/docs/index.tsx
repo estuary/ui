@@ -1,4 +1,3 @@
-import { Toolbar } from '@mui/material';
 import { useDocs } from 'context/Docs';
 import { useColorMode } from 'context/Theme';
 import { useEffect, useRef } from 'react';
@@ -31,16 +30,13 @@ function SidePanelConnectorDocs() {
     if (!docsURL) return null;
 
     return (
-        <>
-            <Toolbar />
-            <iframe
-                ref={iframeRef}
-                style={{ border: 'none', height: '100%' }}
-                src={docsURL}
-                sandbox={sandbox}
-                title={intl.formatMessage({ id: 'docs.iframe.title' })}
-            />
-        </>
+        <iframe
+            ref={iframeRef}
+            style={{ border: 'none', height: '100%' }}
+            src={docsURL}
+            sandbox={sandbox}
+            title={intl.formatMessage({ id: 'docs.iframe.title' })}
+        />
     );
 }
 

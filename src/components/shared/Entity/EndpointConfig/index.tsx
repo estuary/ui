@@ -108,8 +108,8 @@ function EndpointConfig({
         return <Error error={error} />;
     } else if (connectorTag) {
         setDocsURL(
-            connectorTag.documentation_url
-            // 'http://localhost:3001/reference/Connectors/capture-connectors/google-sheets/'
+            // connectorTag.documentation_url
+            'http://localhost:3001/reference/Connectors/capture-connectors/google-sheets/'
         );
 
         return (

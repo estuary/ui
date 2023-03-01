@@ -1,7 +1,8 @@
-import { Box, Drawer, Toolbar, useTheme } from '@mui/material';
+import { Box, Drawer, IconButton, Toolbar, useTheme } from '@mui/material';
 import SidePanelConnectorDocs from 'components/docs';
 import { useDocs } from 'context/Docs';
 import { NavWidths } from 'context/Theme';
+import { Cancel } from 'iconoir-react';
 import { useEffect, useState } from 'react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
@@ -79,7 +80,7 @@ function AppLayout() {
 
                     <ReflexElement
                         className="right-pane"
-                        minSize={showDocs ? 50 : 0}
+                        minSize={showDocs ? 350 : 0}
                         maxSize={showDocs ? 700 : 0}
                         flex={rightPaneFlex}
                     >
@@ -98,6 +99,25 @@ function AppLayout() {
                             }}
                             open={showDocs}
                         >
+                            <Toolbar />
+
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'flex-end',
+                                    p: 1,
+                                }}
+                            >
+                                <IconButton
+                                    size="small"
+                                    onClick={() => {
+                                        setRightPaneFlex(0.0);
+                                    }}
+                                    sx={{ color: theme.palette.text.primary }}
+                                >
+                                    <Cancel />
+                                </IconButton>{' '}
+                            </Box>
                             <SidePanelConnectorDocs />
                         </Drawer>
                     </ReflexElement>

@@ -52,6 +52,10 @@ export enum AdminStoreNames {
     STORAGE_MAPPINGS = 'Storage-Mappings',
 }
 
+export enum GlobalStoreNames {
+    SIDE_PANEL_HELP = 'Side-Panel-Help',
+}
+
 export type StoreName =
     | BindingsEditorStoreNames
     | DetailsFormStoreNames
@@ -62,4 +66,5 @@ export type StoreName =
     | ResourceConfigStoreNames
     | SelectTableStoreNames
     | ShardDetailStoreNames
-    | AdminStoreNames;
+    | AdminStoreNames
+    | GlobalStoreNames;
