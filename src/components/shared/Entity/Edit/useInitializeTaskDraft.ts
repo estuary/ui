@@ -14,13 +14,9 @@ import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { useCallback, useEffect } from 'react';
-import {
-    useFormStateStore_setFormState,
-    useFormStateStore_status,
-} from 'stores/FormState/hooks';
+import { useCallback } from 'react';
+import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { BaseComponentProps } from 'types';
 
 const createTaskDraft = async (catalogName: string): Promise<string | null> => {
     const draftsResponse = await createEntityDraft(catalogName);
@@ -38,7 +34,7 @@ const createTaskDraft = async (catalogName: string): Promise<string | null> => {
     }
 };
 
-function DraftInitializationGuard({ children }: BaseComponentProps) {
+function useInitializeTaskDraft() {
     const [connectorId, liveSpecId, lastPubId] = useGlobalSearchParams([
         GlobalSearchParams.CONNECTOR_ID,
         GlobalSearchParams.LIVE_SPEC_ID,
@@ -56,7 +52,6 @@ function DraftInitializationGuard({ children }: BaseComponentProps) {
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     // Form State Store
-    const formStatus = useFormStateStore_status();
     const setFormState = useFormStateStore_setFormState();
 
     // Get catalog name and task spec from live specs
@@ -93,17 +88,6 @@ function DraftInitializationGuard({ children }: BaseComponentProps) {
             evaluatedDraftId: string | null;
             draftSpecsMissing: boolean;
         }> => {
-            // TODO (defect): Correct this initialization logic so that a new draft
-            //   is not created when the browser is refreshed; evaluate whether a recent
-            //   draft already exists and pull it if it does exist.
-
-            // Try to find a draft with the given catalog name. If draft exists, check to see
-            // if expected pub id for the task is valid. If draft does not exist, create new draft.
-
-            // If a draft exists and the expected pub id is not valid... what should be done. The
-            // simplest path would be to create a new draft, but the user would lose all data. The
-            // ideal path would be to keep existing draft but update all task info (and update
-            // associated collections as needed, likely pruning if necessary).
             const existingDraftsResponse = await getDraftsByCatalogName(
                 catalog_name,
                 true
@@ -113,7 +97,6 @@ function DraftInitializationGuard({ children }: BaseComponentProps) {
                 existingDraftsResponse.data &&
                 existingDraftsResponse.data.length > 0
             ) {
-                // Evaluate existing pub ID for the existing task draft.
                 const existingDraftId = existingDraftsResponse.data[0].id;
 
                 const existingDraftSpecsResponse =
@@ -140,7 +123,6 @@ function DraftInitializationGuard({ children }: BaseComponentProps) {
                         liveSpecResponse.data.length > 0 &&
                         expectedPubId === liveSpecResponse.data[0].last_pub_id
                     ) {
-                        // Set local draft ID and persistent draft ID to be propagated.
                         console.log('Use existing draft');
                         console.log(existingDraftId);
 
@@ -206,7 +188,7 @@ function DraftInitializationGuard({ children }: BaseComponentProps) {
         [lastPubId, taskSpecType]
     );
 
-    const initializeDraftToEdit = useCallback(async (): Promise<void> => {
+    return useCallback(async (): Promise<void> => {
         const task = await getTask();
 
         if (task) {
@@ -249,15 +231,6 @@ function DraftInitializationGuard({ children }: BaseComponentProps) {
         liveSpecId,
         taskSpecType,
     ]);
-
-    useEffect(() => {
-        if (formStatus === FormStatus.INIT) {
-            void initializeDraftToEdit();
-        }
-    }, [initializeDraftToEdit, formStatus, lastPubId]);
-
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    return <>{children}</>;
 }
 
-export default DraftInitializationGuard;
+export default useInitializeTaskDraft;

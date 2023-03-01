@@ -9,7 +9,7 @@ import {
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import { getConnectorImageDetails } from 'components/shared/Entity/DetailsForm/Form';
-import DraftInitializationGuard from 'components/shared/Entity/Edit/DraftInitializationGuard';
+import DraftInitializer from 'components/shared/Entity/Edit/DraftInitializer';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
@@ -369,7 +369,7 @@ function EntityEdit({
         !endpointConfigStoreHydrated || !resourceConfigStoreHydrated;
 
     return (
-        <DraftInitializationGuard>
+        <DraftInitializer>
             {toolbar}
 
             <Box sx={{ mb: 4 }}>{errorSummary}</Box>
@@ -434,7 +434,7 @@ function EntityEdit({
                     </ErrorBoundryWrapper>
                 </>
             )}
-        </DraftInitializationGuard>
+        </DraftInitializer>
     );
 }
 
