@@ -54,6 +54,7 @@ import {
 import { forIn, keys } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import { useCallback, useState } from 'react';
+import { useMount } from 'react-use';
 import CombinatorProperties from './CombinatorProperties';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {
@@ -172,6 +173,12 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         },
         [setOpen, setSelectedIndex, data]
     );
+
+    useMount(() => {
+        if (selectedIndex === 0) {
+            openNewTab(selectedIndex);
+        }
+    });
 
     return (
         <Hidden xsUp={!visible}>
