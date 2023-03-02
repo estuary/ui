@@ -2,7 +2,7 @@ import { updateDraftSpec } from 'api/draftSpecs';
 import MonacoEditor from 'components/editor/MonacoEditor';
 import {
     useEditorStore_currentCatalog,
-    useEditorStore_id,
+    useEditorStore_persistedDraftId,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
@@ -35,7 +35,7 @@ function DraftSpecEditor({
         localScope: localZustandScope,
     });
 
-    const draftId = useEditorStore_id();
+    const draftId = useEditorStore_persistedDraftId();
 
     // Resource Config Store
     const currentCollection = useResourceConfig_currentCollection();
