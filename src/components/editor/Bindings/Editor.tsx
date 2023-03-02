@@ -7,14 +7,10 @@ import SchemaInferenceButton from 'components/editor/Bindings/SchemaInference/Bu
 import {
     useBindingsEditorStore_collectionData,
     useBindingsEditorStore_initializeCollectionData,
-    useBindingsEditorStore_schemaUpdated,
     useBindingsEditorStore_schemaUpdateErrored,
 } from 'components/editor/Bindings/Store/hooks';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
 import DraftSpecEditor from 'components/editor/DraftSpec';
-import OutOfSync from 'components/editor/Status/OutOfSync';
-import Synchronized from 'components/editor/Status/Synchronized';
-import Synchronizing from 'components/editor/Status/Synchronizing';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import useInitializeCollectionDraft from 'components/shared/Entity/Edit/useInitializeCollectionDraft';
@@ -33,8 +29,8 @@ interface Props {
     readOnly?: boolean;
 }
 
-const ICON_SIZE = 14;
-const EDITOR_HEIGHT = 396;
+// const ICON_SIZE = 14;
+const EDITOR_HEIGHT = 404;
 const EDITOR_TOOLBAR_HEIGHT = 34;
 const EDITOR_TOTAL_HEIGHT = EDITOR_TOOLBAR_HEIGHT + EDITOR_HEIGHT + 2;
 
@@ -48,7 +44,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const initializeCollectionData =
         useBindingsEditorStore_initializeCollectionData();
 
-    const schemaUpdated = useBindingsEditorStore_schemaUpdated();
+    // const schemaUpdated = useBindingsEditorStore_schemaUpdated();
     const schemaUpdateErrored = useBindingsEditorStore_schemaUpdateErrored();
 
     // Draft Editor Store
@@ -117,108 +113,48 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 </Typography>
                             )}
 
-                            <Box
-                                sx={{
-                                    height: EDITOR_TOTAL_HEIGHT,
-                                    border: defaultOutline[theme.palette.mode],
-                                }}
-                            >
-                                {collectionData ? (
-                                    <>
-                                        <Stack
-                                            spacing={1}
-                                            direction="row"
-                                            sx={{
-                                                minHeight:
-                                                    EDITOR_TOOLBAR_HEIGHT,
-                                                py: 0.5,
-                                                px: 1,
-                                                alignItems: 'center',
-                                                justifyContent: 'end',
-                                                backgroundColor:
-                                                    monacoEditorHeaderBackground[
-                                                        theme.palette.mode
-                                                    ],
-                                                borderBottom:
-                                                    defaultOutline[
-                                                        theme.palette.mode
-                                                    ],
-                                            }}
-                                        >
-                                            {
-                                                /* TODO (optimization): Determine a better placement for this loading indicator.
-                                                    It serves as a progress indicator for the async call to fetch the schema of
-                                                    a collection edited on the CLI. */
-
-                                                schemaUpdateErrored ? (
-                                                    <OutOfSync
-                                                        iconSize={ICON_SIZE}
-                                                    />
-                                                ) : schemaUpdated ? (
-                                                    <Synchronized
-                                                        iconSize={ICON_SIZE}
-                                                    />
-                                                ) : (
-                                                    <Synchronizing
-                                                        iconSize={ICON_SIZE}
-                                                    />
-                                                )
-                                            }
-                                        </Stack>
-
-                                        <DraftSpecEditor
-                                            localZustandScope={true}
-                                            editorHeight={EDITOR_HEIGHT}
-                                        />
-
-                                        {/* <Editor
-                                            height={EDITOR_HEIGHT}
-                                            value={stringifyJSON(
-                                                collectionData.spec
-                                            )}
-                                            defaultLanguage="json"
-                                            theme={
-                                                monacoEditorComponentBackground[
+                            {collectionData ? (
+                                <DraftSpecEditor
+                                    localZustandScope={true}
+                                    editorHeight={EDITOR_HEIGHT}
+                                />
+                            ) : (
+                                <Box
+                                    sx={{
+                                        height: EDITOR_TOTAL_HEIGHT,
+                                        border: defaultOutline[
+                                            theme.palette.mode
+                                        ],
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            minHeight: EDITOR_TOOLBAR_HEIGHT,
+                                            backgroundColor:
+                                                monacoEditorHeaderBackground[
                                                     theme.palette.mode
-                                                ]
-                                            }
-                                            saveViewState={false}
-                                            path={currentCollection}
-                                            options={{ readOnly: true }}
-                                        /> */}
-                                    </>
-                                ) : (
-                                    <>
-                                        <Box
-                                            sx={{
-                                                minHeight:
-                                                    EDITOR_TOOLBAR_HEIGHT,
-                                                backgroundColor:
-                                                    monacoEditorHeaderBackground[
-                                                        theme.palette.mode
-                                                    ],
-                                                borderBottom:
-                                                    defaultOutline[
-                                                        theme.palette.mode
-                                                    ],
-                                            }}
-                                        />
+                                                ],
+                                            borderBottom:
+                                                defaultOutline[
+                                                    theme.palette.mode
+                                                ],
+                                        }}
+                                    />
 
-                                        <Box
-                                            sx={{
-                                                height: EDITOR_HEIGHT,
-                                                p: 1,
-                                                backgroundColor:
-                                                    monacoEditorWidgetBackground[
-                                                        theme.palette.mode
-                                                    ],
-                                            }}
-                                        >
-                                            <BindingsEditorSchemaSkeleton />
-                                        </Box>
-                                    </>
-                                )}
-                            </Box>
+                                    <Box
+                                        sx={{
+                                            height: EDITOR_HEIGHT,
+                                            p: 1,
+                                            backgroundColor:
+                                                monacoEditorWidgetBackground[
+                                                    theme.palette.mode
+                                                ],
+                                        }}
+                                    >
+                                        <BindingsEditorSchemaSkeleton />
+                                    </Box>
+                                </Box>
+                            )}
                         </Stack>
                     ) : (
                         <AlertBox
