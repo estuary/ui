@@ -16,9 +16,14 @@ import {
 export interface Props {
     disabled?: boolean;
     localZustandScope?: boolean;
+    editorHeight?: number;
 }
 
-function DraftSpecEditor({ disabled, localZustandScope = false }: Props) {
+function DraftSpecEditor({
+    disabled,
+    localZustandScope = false,
+    editorHeight,
+}: Props) {
     const entityType = useEntityType();
 
     // Draft Editor Store
@@ -68,14 +73,14 @@ function DraftSpecEditor({ disabled, localZustandScope = false }: Props) {
             setSpecs(draftSpecs);
         } else if (localZustandScope && draftSpecs.length > 0) {
             const currentCollectionSpec = draftSpecs.filter(
-                (query) => query.catalog_name !== currentCollection
+                (query) => query.catalog_name === currentCollection
             );
 
             if (currentCollectionSpec.length > 0) {
                 setSpecs(currentCollectionSpec);
             }
         }
-    }, [setSpecs, collections, draftSpecs, entityType]);
+    }, [setSpecs, collections, currentCollection, draftSpecs, entityType]);
 
     useEffect(() => {
         if (currentCatalog) {
@@ -112,6 +117,7 @@ function DraftSpecEditor({ disabled, localZustandScope = false }: Props) {
             <MonacoEditor
                 disabled={disabled}
                 localZustandScope={localZustandScope}
+                height={editorHeight}
                 onChange={handlers.change}
             />
         );

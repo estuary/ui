@@ -17,6 +17,7 @@ import Synchronized from 'components/editor/Status/Synchronized';
 import Synchronizing from 'components/editor/Status/Synchronizing';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
+import useInitializeCollectionDraft from 'components/shared/Entity/Edit/useInitializeCollectionDraft';
 import {
     defaultOutline,
     monacoEditorHeaderBackground,
@@ -40,6 +41,8 @@ const EDITOR_TOTAL_HEIGHT = EDITOR_TOOLBAR_HEIGHT + EDITOR_HEIGHT + 2;
 function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const theme = useTheme();
 
+    const initializeCollectionDraft = useInitializeCollectionDraft();
+
     // Bindings Editor Store
     const collectionData = useBindingsEditorStore_collectionData();
     const initializeCollectionData =
@@ -55,6 +58,12 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const currentCollection = useResourceConfig_currentCollection();
 
     const [activeTab, setActiveTab] = useState<number>(0);
+
+    useEffect(() => {
+        if (tabProps[activeTab].value === 'schema') {
+            void initializeCollectionDraft();
+        }
+    }, [initializeCollectionDraft, activeTab]);
 
     useEffect(() => {
         initializeCollectionData(currentCollection, persistedDraftId);
@@ -159,6 +168,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
 
                                         <DraftSpecEditor
                                             localZustandScope={true}
+                                            editorHeight={EDITOR_HEIGHT}
                                         />
 
                                         {/* <Editor
