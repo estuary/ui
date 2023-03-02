@@ -4,7 +4,10 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
 import { Details, DetailsFormState } from 'stores/DetailsForm/types';
-import { getStoreWithHydrationSettings } from 'stores/Hydration';
+import {
+    getInitialHydrationData,
+    getStoreWithHydrationSettings,
+} from 'stores/Hydration';
 import { DetailsFormStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
 import { createStore, StoreApi } from 'zustand';
@@ -219,7 +222,11 @@ export const getInitialState = (
     },
 
     resetState: () => {
-        set(getInitialStateData(), false, 'Details Form State Reset');
+        set(
+            { ...getInitialStateData(), ...getInitialHydrationData() },
+            false,
+            'Details Form State Reset'
+        );
     },
 });
 
