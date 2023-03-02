@@ -13,7 +13,10 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
-import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
+import {
+    ConnectorWithTagDetailQuery,
+    CONNECTOR_WITH_TAG_QUERY,
+} from 'hooks/useConnectorWithTagDetail';
 import LogRocket from 'logrocket';
 import { useCallback, useMemo } from 'react';
 import { CustomEvents } from 'services/logrocket';
@@ -57,6 +60,7 @@ import {
 } from 'stores/ResourceConfig/hooks';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity } from 'types';
+import { stripPathing } from 'utils/misc-utils';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import {
     modifyDiscoveredDraftSpec,
@@ -102,22 +106,12 @@ function useDiscoverCapture(
     const messagePrefix = useFormStateStore_messagePrefix();
 
     // Details Form Store
-    const formEntityName = useDetailsForm_details_entityName();
+    const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
     const imagePath = useDetailsForm_connectorImage_imagePath();
     const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
-
-    const connectorDetails = useConnectorWithTagDetail(null, imageConnectorId);
-    const tagDetails = connectorDetails.connectorTags.find(
-        (tag) => tag.id === imageConnectorTagId
-    );
-
-    const entityName =
-        workflow === 'capture_create' && tagDetails
-            ? `${formEntityName}/${tagDetails.image_name.split('/').at(-1)}`
-            : formEntityName;
 
     // Endpoint Config Store
     const setEncryptedEndpointConfig =
@@ -337,7 +331,21 @@ function useDiscoverCapture(
                     options?.initiateRediscovery ||
                     options?.initiateDiscovery
                 ) {
-                    const draftsResponse = await createEntityDraft(entityName);
+                    const tags_res = await supabaseClient
+                        .from<ConnectorWithTagDetailQuery>(TABLES.CONNECTORS)
+                        .select(CONNECTOR_WITH_TAG_QUERY)
+                        .filter('id', 'eq', imageConnectorId);
+
+                    const imageName =
+                        tags_res.data?.[0].image_name ?? 'capture';
+
+                    const processedEntityName = `${entityName}/${stripPathing(
+                        imageName
+                    )}`;
+
+                    const draftsResponse = await createEntityDraft(
+                        processedEntityName
+                    );
                     if (draftsResponse.error) {
                         return callFailed({
                             error: {
@@ -350,7 +358,7 @@ function useDiscoverCapture(
                     const draftId = draftsResponse.data[0].id;
 
                     const discoverResponse = await discover(
-                        entityName,
+                        processedEntityName,
                         encryptedEndpointConfig.data,
                         imageConnectorTagId,
                         draftId
@@ -413,30 +421,31 @@ function useDiscoverCapture(
             }
         },
         [
-            callFailed,
-            createDiscoversSubscription,
-            postGenerateMutate,
-            resetEditorState,
-            setEncryptedEndpointConfig,
-            setFormState,
-            setPreviousEndpointConfig,
-            setDraftId,
             updateFormStatus,
             detailsFormsHasErrors,
-            endpointConfigData,
             endpointConfigErrorsExist,
+            resourceConfigHasErrors,
+            setFormState,
+            resetEditorState,
+            serverUpdateRequired,
+            endpointConfigData,
+            serverEndpointConfigData,
             endpointSchema,
-            entityName,
             imageConnectorId,
             imageConnectorTagId,
-            imagePath,
-            options?.initiateDiscovery,
+            callFailed,
             options?.initiateRediscovery,
+            options?.initiateDiscovery,
             persistedDraftId,
+            supabaseClient,
+            entityName,
+            createDiscoversSubscription,
             resourceConfig,
-            resourceConfigHasErrors,
-            serverEndpointConfigData,
-            serverUpdateRequired,
+            imagePath,
+            setEncryptedEndpointConfig,
+            setPreviousEndpointConfig,
+            setDraftId,
+            postGenerateMutate,
         ]
     );
 
