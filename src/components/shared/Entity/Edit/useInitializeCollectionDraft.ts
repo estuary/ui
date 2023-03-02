@@ -7,11 +7,16 @@ import {
     getLiveSpecsByCatalogName,
     LiveSpecsExtQuery_ByCatalogName,
 } from 'api/liveSpecsExt';
+import {
+    useBindingsEditorStore_setCollectionData,
+    useBindingsEditorStore_setCollectionInitializationError,
+    useBindingsEditorStore_setSchemaInferenceDisabled,
+} from 'components/editor/Bindings/Store/hooks';
+import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useCallback } from 'react';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
-
-type EvaluatedError = any | null;
+import { Annotations } from 'types/jsonforms';
 
 type SupabaseResponse<T> =
     | { data: T; error?: undefined }
@@ -44,18 +49,46 @@ const getCollection = async (
 };
 
 function useInitializeCollectionDraft() {
+    // Bindings Editor Store
+    const setCollectionData = useBindingsEditorStore_setCollectionData();
+    const setCollectionInitializationError =
+        useBindingsEditorStore_setCollectionInitializationError();
+
+    const setSchemaInferenceDisabled =
+        useBindingsEditorStore_setSchemaInferenceDisabled();
+
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
 
     // Resource Config Store
     const currentCollection = useResourceConfig_currentCollection();
 
+    const updateBindingsEditorState = useCallback(
+        (data: BindingsEditorState['collectionData']): void => {
+            setCollectionData(data);
+
+            if (data) {
+                const writeSchemaKey = data.spec.hasOwnProperty('writeSchema')
+                    ? 'writeSchema'
+                    : 'schema';
+
+                const inferenceAnnotationValue =
+                    !data.spec[writeSchemaKey][Annotations.inferSchema];
+
+                setSchemaInferenceDisabled(inferenceAnnotationValue);
+            } else {
+                setSchemaInferenceDisabled(false);
+            }
+        },
+        [setCollectionData, setSchemaInferenceDisabled]
+    );
+
     const getCollectionDraftSpecs = useCallback(
         async ({
             catalog_name,
             spec,
             last_pub_id,
-        }: LiveSpecsExtQuery_ByCatalogName): Promise<EvaluatedError> => {
+        }: LiveSpecsExtQuery_ByCatalogName): Promise<void> => {
             if (draftId) {
                 const draftSpecResponse = await getDraftSpecsByCatalogName(
                     draftId,
@@ -69,7 +102,12 @@ function useInitializeCollectionDraft() {
                         draftSpecResponse.error
                     );
 
-                    return draftSpecResponse.error;
+                    updateBindingsEditorState(undefined);
+
+                    setCollectionInitializationError({
+                        severity: 'error',
+                        error: draftSpecResponse.error,
+                    });
                 } else if (
                     draftSpecResponse.data &&
                     draftSpecResponse.data.length > 0
@@ -83,7 +121,7 @@ function useInitializeCollectionDraft() {
                         const updatedDraftSpecResponse = await updateDraftSpec(
                             draftId,
                             catalog_name,
-                            spec
+                            draftSpecResponse.data[0].spec
                         );
 
                         if (updatedDraftSpecResponse.error) {
@@ -92,12 +130,39 @@ function useInitializeCollectionDraft() {
                                 updatedDraftSpecResponse.error
                             );
 
-                            return updatedDraftSpecResponse.error;
+                            updateBindingsEditorState({
+                                spec: draftSpecResponse.data[0].spec,
+                                belongsToDraft: true,
+                            });
+
+                            setCollectionInitializationError({
+                                severity: 'error',
+                                error: updatedDraftSpecResponse.error,
+                            });
+                        } else if (
+                            updatedDraftSpecResponse.data &&
+                            updatedDraftSpecResponse.data.length > 0
+                        ) {
+                            updateBindingsEditorState({
+                                spec: updatedDraftSpecResponse.data[0].spec,
+                                belongsToDraft: true,
+                            });
                         } else {
-                            return null;
+                            updateBindingsEditorState({
+                                spec: draftSpecResponse.data[0].spec,
+                                belongsToDraft: true,
+                            });
+
+                            setCollectionInitializationError({
+                                severity: 'warning',
+                                error: 'Error updating existing draft to edit. The latest drafted record of the collection can be found in the editor.',
+                            });
                         }
                     } else {
-                        return null;
+                        updateBindingsEditorState({
+                            spec: draftSpecResponse.data[0].spec,
+                            belongsToDraft: true,
+                        });
                     }
                 } else {
                     console.log('Create new draft spec entry');
@@ -116,19 +181,43 @@ function useInitializeCollectionDraft() {
                             newDraftSpecResponse.error
                         );
 
-                        return newDraftSpecResponse.error;
+                        updateBindingsEditorState({
+                            spec,
+                            belongsToDraft: false,
+                        });
+
+                        setCollectionInitializationError({
+                            severity: 'warning',
+                            error: newDraftSpecResponse.error,
+                        });
+                    } else if (
+                        newDraftSpecResponse.data &&
+                        newDraftSpecResponse.data.length > 0
+                    ) {
+                        updateBindingsEditorState({
+                            spec: newDraftSpecResponse.data[0].spec,
+                            belongsToDraft: true,
+                        });
                     } else {
-                        return null;
+                        updateBindingsEditorState({
+                            spec,
+                            belongsToDraft: false,
+                        });
+
+                        setCollectionInitializationError({
+                            severity: 'warning',
+                            error: 'Error creating new draft to edit. The latest published record of the collection can be found in the editor. It is read-only',
+                        });
                     }
                 }
-            } else {
-                return null;
             }
         },
-        [draftId]
+        [setCollectionInitializationError, updateBindingsEditorState, draftId]
     );
 
-    return useCallback(async (): Promise<EvaluatedError> => {
+    return useCallback(async (): Promise<void> => {
+        setCollectionInitializationError(null);
+
         if (currentCollection) {
             const { data: publishedCollection, error: liveSpecError } =
                 await getCollection(currentCollection);
@@ -142,12 +231,16 @@ function useInitializeCollectionDraft() {
 
                 return draftSpecError;
             } else {
-                return 'Technical difficulties with collection draft initialization.';
+                console.log(
+                    'Technical difficulties with collection draft initialization.'
+                );
             }
-        } else {
-            return 'Technical difficulties with collection draft initialization.';
         }
-    }, [getCollectionDraftSpecs, currentCollection]);
+    }, [
+        getCollectionDraftSpecs,
+        setCollectionInitializationError,
+        currentCollection,
+    ]);
 }
 
 export default useInitializeCollectionDraft;
