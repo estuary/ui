@@ -96,19 +96,7 @@ function useInitializeCollectionDraft() {
                     specType
                 );
 
-                if (draftSpecResponse.error) {
-                    console.log(
-                        'getCollectionDraft | draft specs',
-                        draftSpecResponse.error
-                    );
-
-                    updateBindingsEditorState(undefined);
-
-                    setCollectionInitializationError({
-                        severity: 'error',
-                        error: draftSpecResponse.error,
-                    });
-                } else if (
+                if (
                     draftSpecResponse.data &&
                     draftSpecResponse.data.length > 0
                 ) {
@@ -140,7 +128,8 @@ function useInitializeCollectionDraft() {
 
                             setCollectionInitializationError({
                                 severity: 'warning',
-                                error: 'Changes to this collection were published. The latest drafted record of the collection can be found in the editor.',
+                                messageId:
+                                    'workflows.collectionSelector.error.message.invalidPubId',
                             });
                         }
                     } else {
@@ -176,7 +165,8 @@ function useInitializeCollectionDraft() {
 
                         setCollectionInitializationError({
                             severity: 'warning',
-                            error: 'There was an issue creating a new draft to edit. The latest published record of the collection can be found in the editor. It is read-only.',
+                            messageId:
+                                'workflows.collectionSelector.error.message.draftCreationFailed',
                         });
                     }
                 }

@@ -91,16 +91,14 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                         collectionInitializationError.severity
                                     }
                                     title={
-                                        <span>
-                                            Editor Initialization Failed
-                                        </span>
+                                        <FormattedMessage id="workflows.collectionSelector.error.title.editorInitialization" />
                                     }
                                 >
-                                    {typeof collectionInitializationError.error ===
-                                    'string'
-                                        ? collectionInitializationError.error
-                                        : collectionInitializationError.error
-                                              .message}
+                                    <FormattedMessage
+                                        id={
+                                            collectionInitializationError.messageId
+                                        }
+                                    />
                                 </AlertBox>
                             ) : null}
 

@@ -1,5 +1,4 @@
 import { AlertColor } from '@mui/material';
-import { PostgrestError } from '@supabase/postgrest-js';
 import { CollectionData } from 'components/editor/Bindings/types';
 import { Dispatch, SetStateAction } from 'react';
 import { Schema } from 'types';
@@ -10,7 +9,7 @@ export interface BindingsEditorState {
 
     collectionInitializationError: null | {
         severity: AlertColor;
-        error: string | PostgrestError;
+        messageId: string;
     };
     setCollectionInitializationError: (
         value: BindingsEditorState['collectionInitializationError']
