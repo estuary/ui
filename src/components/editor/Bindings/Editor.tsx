@@ -1,32 +1,27 @@
-import Editor from '@monaco-editor/react';
 import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';
+import ControlledEditor from 'components/editor/Bindings/ControlledEditor';
 import SchemaEditButton from 'components/editor/Bindings/SchemaEdit/Button';
 import SchemaInferenceButton from 'components/editor/Bindings/SchemaInference/Button';
 import {
     useBindingsEditorStore_collectionData,
     useBindingsEditorStore_collectionInitializationError,
-    useBindingsEditorStore_schemaUpdated,
     useBindingsEditorStore_schemaUpdateErrored,
 } from 'components/editor/Bindings/Store/hooks';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
 import DraftSpecEditor from 'components/editor/DraftSpec';
-import OutOfSync from 'components/editor/Status/OutOfSync';
-import Synchronizing from 'components/editor/Status/Synchronizing';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import useInitializeCollectionDraft from 'components/shared/Entity/Edit/useInitializeCollectionDraft';
 import {
     defaultOutline,
-    monacoEditorComponentBackground,
     monacoEditorHeaderBackground,
     monacoEditorWidgetBackground,
 } from 'context/Theme';
 import { ReactNode, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { stringifyJSON } from 'services/stringify';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 
 interface Props {
@@ -35,7 +30,6 @@ interface Props {
     readOnly?: boolean;
 }
 
-const ICON_SIZE = 14;
 const EDITOR_HEIGHT = 404;
 const EDITOR_TOOLBAR_HEIGHT = 29;
 const EDITOR_TOTAL_HEIGHT = EDITOR_TOOLBAR_HEIGHT + EDITOR_HEIGHT + 2;
@@ -50,7 +44,6 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const collectionInitializationError =
         useBindingsEditorStore_collectionInitializationError();
 
-    const schemaUpdated = useBindingsEditorStore_schemaUpdated();
     const schemaUpdateErrored = useBindingsEditorStore_schemaUpdateErrored();
 
     // Draft Editor Store
@@ -142,66 +135,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                         editorHeight={EDITOR_HEIGHT}
                                     />
                                 ) : (
-                                    <Box
-                                        sx={{
-                                            height: EDITOR_TOTAL_HEIGHT,
-                                            border: defaultOutline[
-                                                theme.palette.mode
-                                            ],
-                                        }}
-                                    >
-                                        <Stack
-                                            spacing={1}
-                                            direction="row"
-                                            sx={{
-                                                minHeight:
-                                                    schemaUpdateErrored ||
-                                                    !schemaUpdated
-                                                        ? EDITOR_TOOLBAR_HEIGHT
-                                                        : 20,
-                                                py: 0.5,
-                                                px: 1,
-                                                alignItems: 'center',
-                                                justifyContent: 'end',
-                                                backgroundColor:
-                                                    monacoEditorHeaderBackground[
-                                                        theme.palette.mode
-                                                    ],
-                                                borderBottom:
-                                                    defaultOutline[
-                                                        theme.palette.mode
-                                                    ],
-                                            }}
-                                        >
-                                            {schemaUpdateErrored ? (
-                                                <OutOfSync
-                                                    iconSize={ICON_SIZE}
-                                                />
-                                            ) : null}
-
-                                            {schemaUpdated ? null : (
-                                                <Synchronizing
-                                                    iconSize={ICON_SIZE}
-                                                />
-                                            )}
-                                        </Stack>
-
-                                        <Editor
-                                            height={396}
-                                            value={stringifyJSON(
-                                                collectionData.spec
-                                            )}
-                                            defaultLanguage="json"
-                                            theme={
-                                                monacoEditorComponentBackground[
-                                                    theme.palette.mode
-                                                ]
-                                            }
-                                            saveViewState={false}
-                                            path={currentCollection}
-                                            options={{ readOnly: true }}
-                                        />
-                                    </Box>
+                                    <ControlledEditor />
                                 )
                             ) : (
                                 <Box
