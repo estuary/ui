@@ -38,6 +38,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.synchronizing': `Synchronizing`,
     'common.synchronized': `Synchronized`,
     'common.outOfSync': `Out of Sync`,
+    'common.readOnly': `Read-Only`,
 
     // Aria
     'aria.openExpand': `show more`,

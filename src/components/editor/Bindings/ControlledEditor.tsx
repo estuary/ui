@@ -6,6 +6,7 @@ import {
     useBindingsEditorStore_schemaUpdateErrored,
 } from 'components/editor/Bindings/Store/hooks';
 import OutOfSync from 'components/editor/Status/OutOfSync';
+import ReadOnly from 'components/editor/Status/ReadOnly';
 import Synchronizing from 'components/editor/Status/Synchronizing';
 import {
     defaultOutline,
@@ -59,9 +60,9 @@ function ControlledEditor() {
                 >
                     {schemaUpdateErrored ? (
                         <OutOfSync iconSize={ICON_SIZE} />
-                    ) : null}
-
-                    {schemaUpdated ? null : (
+                    ) : schemaUpdated ? (
+                        <ReadOnly iconSize={ICON_SIZE} />
+                    ) : (
                         <Synchronizing iconSize={ICON_SIZE} />
                     )}
                 </Stack>
