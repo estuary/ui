@@ -109,10 +109,7 @@ function EndpointConfig({
 
     useEffect(() => {
         if (connectorTag) {
-            setDocsURL(
-                connectorTag.documentation_url
-                //'http://localhost:3001/reference/Connectors/capture-connectors/google-sheets/'
-            );
+            setDocsURL(connectorTag.documentation_url);
         }
     }, [connectorTag, setDocsURL]);
 
