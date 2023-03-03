@@ -124,22 +124,7 @@ function useInitializeCollectionDraft() {
                             draftSpecResponse.data[0].spec
                         );
 
-                        if (updatedDraftSpecResponse.error) {
-                            console.log(
-                                'getCollectionDraftSpecs | draft specs | updated | error',
-                                updatedDraftSpecResponse.error
-                            );
-
-                            updateBindingsEditorState({
-                                spec: draftSpecResponse.data[0].spec,
-                                belongsToDraft: true,
-                            });
-
-                            setCollectionInitializationError({
-                                severity: 'error',
-                                error: updatedDraftSpecResponse.error,
-                            });
-                        } else if (
+                        if (
                             updatedDraftSpecResponse.data &&
                             updatedDraftSpecResponse.data.length > 0
                         ) {
@@ -155,7 +140,7 @@ function useInitializeCollectionDraft() {
 
                             setCollectionInitializationError({
                                 severity: 'warning',
-                                error: 'Error updating existing draft to edit. The latest drafted record of the collection can be found in the editor.',
+                                error: 'Changes to this collection were published. The latest drafted record of the collection can be found in the editor.',
                             });
                         }
                     } else {
@@ -175,22 +160,7 @@ function useInitializeCollectionDraft() {
                         last_pub_id
                     );
 
-                    if (newDraftSpecResponse.error) {
-                        console.log(
-                            'getCollectionDraftSpecs | draft specs | new | error',
-                            newDraftSpecResponse.error
-                        );
-
-                        updateBindingsEditorState({
-                            spec,
-                            belongsToDraft: false,
-                        });
-
-                        setCollectionInitializationError({
-                            severity: 'warning',
-                            error: newDraftSpecResponse.error,
-                        });
-                    } else if (
+                    if (
                         newDraftSpecResponse.data &&
                         newDraftSpecResponse.data.length > 0
                     ) {
@@ -206,7 +176,7 @@ function useInitializeCollectionDraft() {
 
                         setCollectionInitializationError({
                             severity: 'warning',
-                            error: 'Error creating new draft to edit. The latest published record of the collection can be found in the editor. It is read-only',
+                            error: 'There was an issue creating a new draft to edit. The latest published record of the collection can be found in the editor. It is read-only.',
                         });
                     }
                 }
