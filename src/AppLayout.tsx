@@ -1,8 +1,16 @@
-import { Box, Drawer, IconButton, Toolbar, useTheme } from '@mui/material';
+import {
+    Box,
+    Drawer,
+    IconButton,
+    Toolbar,
+    Typography,
+    useTheme,
+} from '@mui/material';
 import SidePanelConnectorDocs from 'components/docs';
 import { NavWidths } from 'context/Theme';
 import { Cancel } from 'iconoir-react';
 import { useEffect, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
 import { useLocalStorage } from 'react-use';
@@ -104,13 +112,17 @@ function AppLayout() {
                         >
                             <Toolbar />
 
-                            <Box
+                            <Toolbar
                                 sx={{
                                     display: 'flex',
-                                    justifyContent: 'flex-end',
+                                    justifyContent: 'space-between',
                                     p: 1,
                                 }}
                             >
+                                <Typography variant="h5" component="span">
+                                    <FormattedMessage id="entityCreate.docs.header" />
+                                </Typography>
+
                                 <IconButton
                                     size="small"
                                     onClick={() => {
@@ -120,7 +132,7 @@ function AppLayout() {
                                 >
                                     <Cancel />
                                 </IconButton>
-                            </Box>
+                            </Toolbar>
                             <SidePanelConnectorDocs />
                         </Drawer>
                     </ReflexElement>
