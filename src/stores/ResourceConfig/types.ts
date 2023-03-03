@@ -2,6 +2,10 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import { CallSupabaseResponse } from 'services/supabase';
 import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
+import {
+    CaptureBinding,
+    MaterializationBinding,
+} from '../../../flow_deps/flow';
 
 export interface ResourceConfig {
     [key: string]: JsonFormsData | any[];
@@ -19,7 +23,7 @@ export interface ResourceConfigState {
     collections: string[] | null;
     preFillEmptyCollections: (collections: LiveSpecsExtQuery[]) => void;
     preFillCollections: (
-        liveSpecsData: LiveSpecsExtQuery[],
+        bindings: CaptureBinding[] | MaterializationBinding[],
         entityType: Entity
     ) => void;
     addCollections: (value: string[]) => void;

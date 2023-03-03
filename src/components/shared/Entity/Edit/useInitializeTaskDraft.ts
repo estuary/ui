@@ -35,11 +35,13 @@ const createTaskDraft = async (catalogName: string): Promise<string | null> => {
 };
 
 function useInitializeTaskDraft() {
-    const [connectorId, liveSpecId, lastPubId] = useGlobalSearchParams([
-        GlobalSearchParams.CONNECTOR_ID,
-        GlobalSearchParams.LIVE_SPEC_ID,
-        GlobalSearchParams.LAST_PUB_ID,
-    ]);
+    const [connectorId, liveSpecId, lastPubId, draftIdInURL] =
+        useGlobalSearchParams([
+            GlobalSearchParams.CONNECTOR_ID,
+            GlobalSearchParams.LIVE_SPEC_ID,
+            GlobalSearchParams.LAST_PUB_ID,
+            GlobalSearchParams.DRAFT_ID,
+        ]);
     const navigateToEdit = useEntityEditNavigate();
 
     const taskSpecType = useEntityType();
@@ -93,7 +95,10 @@ function useInitializeTaskDraft() {
                 true
             );
 
+            // Checking for the existence of the draft ID in the URL is the key to forcing
+            // the regeneration of a draft when a workflow is entered.
             if (
+                draftIdInURL &&
                 existingDraftsResponse.data &&
                 existingDraftsResponse.data.length > 0
             ) {
@@ -145,8 +150,10 @@ function useInitializeTaskDraft() {
                     // Create new draft specs.
                     console.log('Existing draft spec response empty');
 
+                    const newDraftId = await createTaskDraft(catalog_name);
+
                     return {
-                        evaluatedDraftId: existingDraftId,
+                        evaluatedDraftId: newDraftId,
                         draftSpecsMissing: true,
                     };
                 }
@@ -162,7 +169,7 @@ function useInitializeTaskDraft() {
                 };
             }
         },
-        [taskSpecType]
+        [draftIdInURL, taskSpecType]
     );
 
     const getTaskDraftSpecs = useCallback(

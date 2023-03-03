@@ -10,6 +10,7 @@ import MaterializeGenerateButton from 'components/materialization/EditGenerateBu
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
+import DraftInitializer from 'components/shared/Entity/Edit/DraftInitializer';
 import EntityToolbar from 'components/shared/Entity/Header';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import PageContainer from 'components/shared/PageContainer';
@@ -143,56 +144,60 @@ function MaterializationEdit() {
                 header: authenticatedRoutes.materializations.edit.title,
             }}
         >
-            <DetailsFormHydrator>
-                <EndpointConfigHydrator>
-                    <ResourceConfigHydrator>
-                        <EntityEdit
-                            title="browserTitle.materializationEdit"
-                            entityType={entityType}
-                            readOnly={{ detailsForm: true }}
-                            draftSpecMetadata={draftSpecsMetadata}
-                            callFailed={helpers.callFailed}
-                            resetState={resetState}
-                            errorSummary={
-                                <ValidationErrorSummary
-                                    errorsExist={detailsFormErrorsExist}
-                                />
-                            }
-                            toolbar={
-                                <EntityToolbar
-                                    GenerateButton={
-                                        <MaterializeGenerateButton
-                                            disabled={!hasConnectors}
-                                            callFailed={helpers.callFailed}
-                                            mutateDraftSpecs={mutateDraftSpecs}
-                                        />
-                                    }
-                                    TestButton={
-                                        <EntityTestButton
-                                            disabled={!hasConnectors}
-                                            callFailed={helpers.callFailed}
-                                            closeLogs={handlers.closeLogs}
-                                            logEvent={
-                                                CustomEvents.MATERIALIZATION_TEST
-                                            }
-                                        />
-                                    }
-                                    SaveButton={
-                                        <EntitySaveButton
-                                            disabled={!draftId}
-                                            callFailed={helpers.callFailed}
-                                            closeLogs={handlers.closeLogs}
-                                            logEvent={
-                                                CustomEvents.MATERIALIZATION_EDIT
-                                            }
-                                        />
-                                    }
-                                />
-                            }
-                        />
-                    </ResourceConfigHydrator>
-                </EndpointConfigHydrator>
-            </DetailsFormHydrator>
+            <DraftInitializer>
+                <DetailsFormHydrator>
+                    <EndpointConfigHydrator>
+                        <ResourceConfigHydrator>
+                            <EntityEdit
+                                title="browserTitle.materializationEdit"
+                                entityType={entityType}
+                                readOnly={{ detailsForm: true }}
+                                draftSpecMetadata={draftSpecsMetadata}
+                                callFailed={helpers.callFailed}
+                                resetState={resetState}
+                                errorSummary={
+                                    <ValidationErrorSummary
+                                        errorsExist={detailsFormErrorsExist}
+                                    />
+                                }
+                                toolbar={
+                                    <EntityToolbar
+                                        GenerateButton={
+                                            <MaterializeGenerateButton
+                                                disabled={!hasConnectors}
+                                                callFailed={helpers.callFailed}
+                                                mutateDraftSpecs={
+                                                    mutateDraftSpecs
+                                                }
+                                            />
+                                        }
+                                        TestButton={
+                                            <EntityTestButton
+                                                disabled={!hasConnectors}
+                                                callFailed={helpers.callFailed}
+                                                closeLogs={handlers.closeLogs}
+                                                logEvent={
+                                                    CustomEvents.MATERIALIZATION_TEST
+                                                }
+                                            />
+                                        }
+                                        SaveButton={
+                                            <EntitySaveButton
+                                                disabled={!draftId}
+                                                callFailed={helpers.callFailed}
+                                                closeLogs={handlers.closeLogs}
+                                                logEvent={
+                                                    CustomEvents.MATERIALIZATION_EDIT
+                                                }
+                                            />
+                                        }
+                                    />
+                                }
+                            />
+                        </ResourceConfigHydrator>
+                    </EndpointConfigHydrator>
+                </DetailsFormHydrator>
+            </DraftInitializer>
         </PageContainer>
     );
 }
