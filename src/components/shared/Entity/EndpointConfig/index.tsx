@@ -5,7 +5,6 @@ import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
 import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
-import { useDocs } from 'context/Docs';
 import { useEntityWorkflow } from 'context/Workflow';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { isEqual } from 'lodash';
@@ -22,6 +21,10 @@ import {
     useEndpointConfigStore_setPreviousEndpointConfig,
     useEndpointConfig_setServerUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
+import {
+    useSidePanelDocsStore_resetState,
+    useSidePanelDocsStore_setUrl,
+} from 'stores/SidePanelDocs/hooks';
 import { Schema } from 'types';
 
 interface Props {
@@ -36,7 +39,8 @@ function EndpointConfig({
     hideBorder,
 }: Props) {
     const intl = useIntl();
-    const { setDocsURL } = useDocs();
+    const setDocsURL = useSidePanelDocsStore_setUrl();
+    const resetState = useSidePanelDocsStore_resetState();
 
     const workflow = useEntityWorkflow();
     const editWorkflow =
@@ -101,17 +105,21 @@ function EndpointConfig({
 
     useUnmount(() => {
         console.log('cleaning up');
-        setDocsURL(null);
+        resetState();
     });
+
+    useEffect(() => {
+        if (connectorTag) {
+            setDocsURL(
+                connectorTag.documentation_url
+                //'http://localhost:3001/reference/Connectors/capture-connectors/google-sheets/'
+            );
+        }
+    }, [connectorTag, setDocsURL]);
 
     if (error) {
         return <Error error={error} />;
     } else if (connectorTag) {
-        setDocsURL(
-            // connectorTag.documentation_url
-            'http://localhost:3001/reference/Connectors/capture-connectors/google-sheets/'
-        );
-
         return (
             <WrapperWithHeader
                 mountClosed={editWorkflow}

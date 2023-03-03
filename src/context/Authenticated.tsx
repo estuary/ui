@@ -3,7 +3,6 @@ import { ZustandProvider } from 'context/Zustand/provider';
 import { useMount, useUnmount } from 'react-use';
 import { BaseComponentProps } from 'types';
 import { getOsanoSettings } from 'utils/env-utils';
-import { DocsContextProvider } from './Docs';
 import PreFetchDataProvider from './fetcher';
 
 const { bodyClass } = getOsanoSettings();
@@ -21,11 +20,9 @@ function AuthenticatedOnlyContext({ children }: BaseComponentProps) {
     return (
         <PreFetchDataProvider>
             <ZustandProvider>
-                <DocsContextProvider>
-                    <ConfirmationModalContextProvider>
-                        {children}
-                    </ConfirmationModalContextProvider>
-                </DocsContextProvider>
+                <ConfirmationModalContextProvider>
+                    {children}
+                </ConfirmationModalContextProvider>
             </ZustandProvider>
         </PreFetchDataProvider>
     );

@@ -53,7 +53,7 @@ export enum AdminStoreNames {
 }
 
 export enum GlobalStoreNames {
-    SIDE_PANEL_HELP = 'Side-Panel-Help',
+    SIDE_PANEL_DOCS = 'Side-Panel-Docs',
 }
 
 export type StoreName =

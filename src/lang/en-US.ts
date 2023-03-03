@@ -526,7 +526,7 @@ const Collections: ResolvedIntlConfig['messages'] = {
 const endpointConfigHeader = `Endpoint Config`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.catalogEditor.heading': `Specification Editor`,
-    'entityCreate.ctas.docs': `Connector Help`,
+    'entityCreate.docs.header': `Connector Help`,
     'entityCreate.errors.collapseTitle': `View logs`,
     'entityCreate.errors.collapseTitleOpen': `Hide logs`,
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,

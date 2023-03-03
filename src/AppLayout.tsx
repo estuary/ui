@@ -1,12 +1,15 @@
 import { Box, Drawer, IconButton, Toolbar, useTheme } from '@mui/material';
 import SidePanelConnectorDocs from 'components/docs';
-import { useDocs } from 'context/Docs';
 import { NavWidths } from 'context/Theme';
 import { Cancel } from 'iconoir-react';
 import { useEffect, useState } from 'react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
 import { useLocalStorage } from 'react-use';
+import {
+    useSidePanelDocsStore_setShow,
+    useSidePanelDocsStore_show,
+} from 'stores/SidePanelDocs/hooks';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 import Navigation from './components/navigation/Navigation';
 
@@ -29,8 +32,10 @@ function AppLayout() {
     // Splitter for the side panel docs
     const [leftPaneFlex, setLeftPaneFlex] = useState<any>(0.0);
     const [rightPaneFlex, setRightPaneFlex] = useState<any>(0.0);
-    const { docsURL } = useDocs();
-    const showDocs = docsURL !== null;
+    const showDocs = useSidePanelDocsStore_show();
+    const setShowDocs = useSidePanelDocsStore_setShow();
+
+    console.log('showDocs', showDocs);
 
     // We want to control the flex and not size as it seems to work better
     //  when showing/hiding and also allows a sort of percentage view instead
@@ -111,12 +116,12 @@ function AppLayout() {
                                 <IconButton
                                     size="small"
                                     onClick={() => {
-                                        setRightPaneFlex(0.0);
+                                        setShowDocs(false);
                                     }}
                                     sx={{ color: theme.palette.text.primary }}
                                 >
                                     <Cancel />
-                                </IconButton>{' '}
+                                </IconButton>
                             </Box>
                             <SidePanelConnectorDocs />
                         </Drawer>

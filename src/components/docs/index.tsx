@@ -1,7 +1,7 @@
-import { useDocs } from 'context/Docs';
 import { useColorMode } from 'context/Theme';
 import { useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
+import { useSidePanelDocsStore_url } from 'stores/SidePanelDocs/hooks';
 import { getDocsSettings } from 'utils/env-utils';
 
 const { origin } = getDocsSettings();
@@ -15,7 +15,7 @@ const messageType = 'estuary.colorMode';
 function SidePanelConnectorDocs() {
     const intl = useIntl();
     const iframeRef = useRef<HTMLIFrameElement>(null);
-    const { docsURL } = useDocs();
+    const docsURL = useSidePanelDocsStore_url();
     const colorMode = useColorMode();
 
     useEffect(() => {
