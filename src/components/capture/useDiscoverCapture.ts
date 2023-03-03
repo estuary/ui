@@ -13,10 +13,6 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
-import {
-    ConnectorWithTagDetailQuery,
-    CONNECTOR_WITH_TAG_QUERY,
-} from 'hooks/useConnectorWithTagDetail';
 import LogRocket from 'logrocket';
 import { useCallback, useMemo } from 'react';
 import { CustomEvents } from 'services/logrocket';
@@ -29,6 +25,7 @@ import {
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
+    useDetailsForm_connectorImage_imageName,
     useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
@@ -111,6 +108,7 @@ function useDiscoverCapture(
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
     const imagePath = useDetailsForm_connectorImage_imagePath();
+    const imageName = useDetailsForm_connectorImage_imageName();
     const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
 
     // Endpoint Config Store
@@ -331,17 +329,9 @@ function useDiscoverCapture(
                     options?.initiateRediscovery ||
                     options?.initiateDiscovery
                 ) {
-                    const tags_res = await supabaseClient
-                        .from<ConnectorWithTagDetailQuery>(TABLES.CONNECTORS)
-                        .select(CONNECTOR_WITH_TAG_QUERY)
-                        .filter('id', 'eq', imageConnectorId);
-
-                    const imageName =
-                        tags_res.data?.[0].image_name ?? 'capture';
-
-                    const processedEntityName = `${entityName}/${stripPathing(
-                        imageName
-                    )}`;
+                    const processedEntityName = options.initiateDiscovery
+                        ? `${entityName}/${stripPathing(imageName)}`
+                        : entityName;
 
                     const draftsResponse = await createEntityDraft(
                         processedEntityName
@@ -437,8 +427,8 @@ function useDiscoverCapture(
             options?.initiateRediscovery,
             options?.initiateDiscovery,
             persistedDraftId,
-            supabaseClient,
             entityName,
+            imageName,
             createDiscoversSubscription,
             resourceConfig,
             imagePath,
