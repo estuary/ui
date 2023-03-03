@@ -28,6 +28,7 @@ import {
     useDetailsForm_connectorImage_imageName,
     useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
+    useDetailsForm_draftedEntityName,
     useDetailsForm_errorsExist,
     useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm';
@@ -57,7 +58,7 @@ import {
 } from 'stores/ResourceConfig/hooks';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity } from 'types';
-import { stripPathing } from 'utils/misc-utils';
+import { hasLength, stripPathing } from 'utils/misc-utils';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import {
     modifyDiscoveredDraftSpec,
@@ -110,6 +111,7 @@ function useDiscoverCapture(
     const imagePath = useDetailsForm_connectorImage_imagePath();
     const imageName = useDetailsForm_connectorImage_imageName();
     const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
+    const draftedEntityName = useDetailsForm_draftedEntityName();
 
     // Endpoint Config Store
     const setEncryptedEndpointConfig =
@@ -329,8 +331,16 @@ function useDiscoverCapture(
                     options?.initiateRediscovery ||
                     options?.initiateDiscovery
                 ) {
+                    // If we are doing an initial discovery add the name name to the name
+                    // If not we are either refreshing collections during create OR during edit
+                    //  Refreshing during:
+                    //    create requires draftedEntityName because it has the connector image added to it
+                    //    edit   requires entityName        because it is the name already in the system and
+                    //                                        we do not have a draftedEntityName yet
                     const processedEntityName = options.initiateDiscovery
                         ? `${entityName}/${stripPathing(imageName)}`
+                        : hasLength(draftedEntityName)
+                        ? draftedEntityName
                         : entityName;
 
                     const draftsResponse = await createEntityDraft(
@@ -436,6 +446,7 @@ function useDiscoverCapture(
             setPreviousEndpointConfig,
             setDraftId,
             postGenerateMutate,
+            draftedEntityName,
         ]
     );
 

@@ -282,6 +282,15 @@ export const useDetailsForm_errorsExist = () => {
     >(storeName(entityType), errorsExistSelector);
 };
 
+export const useDetailsForm_draftedEntityName = () => {
+    const entityType = useEntityType();
+
+    return useZustandStoreMap<
+        DetailsFormState,
+        DetailsFormState['draftedEntityName']
+    >(storeName(entityType), (state) => state.draftedEntityName);
+};
+
 export const useDetailsForm_setDraftedEntityName = () => {
     const entityType = useEntityType();
 
