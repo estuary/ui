@@ -84,15 +84,15 @@ function useInitializeCollectionDraft() {
     );
 
     const getCollectionDraftSpecs = useCallback(
-        async ({
-            catalog_name,
-            spec,
-            last_pub_id,
-        }: LiveSpecsExtQuery_ByCatalogName): Promise<void> => {
+        async (
+            collectionName: string,
+            lastPubId?: string,
+            spec?: any
+        ): Promise<void> => {
             if (draftId) {
                 const draftSpecResponse = await getDraftSpecsByCatalogName(
                     draftId,
-                    catalog_name,
+                    collectionName,
                     specType
                 );
 
@@ -103,12 +103,12 @@ function useInitializeCollectionDraft() {
                     const expectedPubId =
                         draftSpecResponse.data[0].expect_pub_id;
 
-                    if (expectedPubId !== last_pub_id) {
+                    if (lastPubId && expectedPubId !== lastPubId) {
                         console.log('Update existing draft spec entry');
 
                         const updatedDraftSpecResponse = await updateDraftSpec(
                             draftId,
-                            catalog_name,
+                            collectionName,
                             draftSpecResponse.data[0].spec
                         );
 
@@ -138,15 +138,15 @@ function useInitializeCollectionDraft() {
                             belongsToDraft: true,
                         });
                     }
-                } else {
+                } else if (spec) {
                     console.log('Create new draft spec entry');
 
                     const newDraftSpecResponse = await createDraftSpec(
                         draftId,
-                        catalog_name,
+                        collectionName,
                         spec,
                         specType,
-                        last_pub_id
+                        lastPubId
                     );
 
                     if (
@@ -169,6 +169,8 @@ function useInitializeCollectionDraft() {
                                 'workflows.collectionSelector.error.message.draftCreationFailed',
                         });
                     }
+                } else {
+                    // The draft of a collection that has never been published could not be found.
                 }
             }
         },
@@ -184,16 +186,14 @@ function useInitializeCollectionDraft() {
 
             if (liveSpecError) {
                 return liveSpecError;
-            } else if (publishedCollection) {
+            } else {
                 const draftSpecError = await getCollectionDraftSpecs(
-                    publishedCollection
+                    currentCollection,
+                    publishedCollection?.last_pub_id,
+                    publishedCollection?.spec
                 );
 
                 return draftSpecError;
-            } else {
-                console.log(
-                    'Technical difficulties with collection draft initialization.'
-                );
             }
         }
     }, [
