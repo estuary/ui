@@ -35,8 +35,6 @@ function AppLayout() {
     const showDocs = useSidePanelDocsStore_show();
     const setShowDocs = useSidePanelDocsStore_setShow();
 
-    console.log('showDocs', showDocs);
-
     // We want to control the flex and not size as it seems to work better
     //  when showing/hiding and also allows a sort of percentage view instead
     //  of hardcoded size values

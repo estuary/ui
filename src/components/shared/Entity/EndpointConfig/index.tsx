@@ -104,7 +104,6 @@ function EndpointConfig({
     const forceClose = !editWorkflow && draftId !== null;
 
     useUnmount(() => {
-        console.log('cleaning up');
         resetState();
     });
 

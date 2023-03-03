@@ -22,8 +22,6 @@ const getInitialState = (
     setShow: (val) => {
         set(
             produce((state: SidePanelDocsState) => {
-                console.log('3', val);
-
                 state.show = val;
             }),
             false,
@@ -35,12 +33,11 @@ const getInitialState = (
         set(
             produce((state: SidePanelDocsState) => {
                 const { resetState } = get();
-                console.log('1', val);
+
                 if (val.includes(iframeStringInclude)) {
                     state.url = val;
                     state.show = true;
                 } else {
-                    console.log('2');
                     resetState();
                 }
             }),
