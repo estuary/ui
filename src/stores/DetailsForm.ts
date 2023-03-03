@@ -28,6 +28,7 @@ export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
         connectorImage: {
             id: string;
             iconPath: string;
+            imageName: string;
             imagePath: string;
             connectorId: string;
         };
@@ -75,6 +76,7 @@ const getInitialStateData = (): Pick<
                 connectorId: '',
                 id: '',
                 iconPath: '',
+                imageName: '',
                 imagePath: '',
             },
             entityName: '',
@@ -216,6 +218,17 @@ export const useDetailsForm_connectorImage_imagePath = () => {
     >(
         storeName(entityType),
         (state) => state.details.data.connectorImage.imagePath
+    );
+};
+
+export const useDetailsForm_connectorImage_imageName = () => {
+    const entityType = useEntityType();
+    return useZustandStoreMap<
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']['imageName']
+    >(
+        storeName(entityType),
+        (state) => state.details.data.connectorImage.imageName
     );
 };
 
