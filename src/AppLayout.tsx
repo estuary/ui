@@ -4,6 +4,7 @@ import {
     IconButton,
     Toolbar,
     Typography,
+    useMediaQuery,
     useTheme,
 } from '@mui/material';
 import SidePanelConnectorDocs from 'components/docs';
@@ -23,6 +24,8 @@ import Navigation from './components/navigation/Navigation';
 
 function AppLayout() {
     const theme = useTheme();
+    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
+
     const [navigationConfig, setNavigationConfig] = useLocalStorage(
         LocalStorageKeys.NAVIGATION_SETTINGS,
         { open: true }
@@ -43,13 +46,15 @@ function AppLayout() {
     const showDocs = useSidePanelDocsStore_show();
     const setShowDocs = useSidePanelDocsStore_setShow();
 
+    const displaySidePanel = showDocs && !belowMd;
+
     // We want to control the flex and not size as it seems to work better
     //  when showing/hiding and also allows a sort of percentage view instead
     //  of hardcoded size values
     useEffect(() => {
-        setLeftPaneFlex(showDocs ? 0.7 : 1.0);
-        setRightPaneFlex(showDocs ? 0.3 : 0.0);
-    }, [showDocs]);
+        setLeftPaneFlex(displaySidePanel ? 0.7 : 1.0);
+        setRightPaneFlex(displaySidePanel ? 0.3 : 0.0);
+    }, [displaySidePanel]);
 
     return (
         <Box sx={{ height: '100vh' }}>
@@ -82,8 +87,8 @@ function AppLayout() {
                     <ReflexSplitter
                         style={{
                             height: 'auto',
-                            width: showDocs ? 5 : 0,
-                            display: showDocs ? 'flex' : 'none',
+                            width: displaySidePanel ? 5 : 0,
+                            display: displaySidePanel ? 'flex' : 'none',
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}
@@ -91,16 +96,15 @@ function AppLayout() {
 
                     <ReflexElement
                         className="right-pane"
-                        minSize={showDocs ? 350 : 0}
-                        maxSize={showDocs ? 700 : 0}
+                        minSize={displaySidePanel ? 350 : 0}
+                        maxSize={displaySidePanel ? 825 : 0}
                         flex={rightPaneFlex}
                     >
                         <Drawer
                             anchor="right"
-                            variant="persistent"
+                            variant="permanent"
                             className="pane-content"
                             sx={{
-                                'display': { xs: 'none', sm: 'block' },
                                 'width': '100%',
                                 '& .MuiDrawer-paper': {
                                     width: '100%',
@@ -108,7 +112,7 @@ function AppLayout() {
                                     position: 'absolute',
                                 },
                             }}
-                            open={showDocs}
+                            open={displaySidePanel}
                         >
                             <Toolbar />
 
