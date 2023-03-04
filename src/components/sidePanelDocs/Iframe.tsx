@@ -21,7 +21,7 @@ const colorModeMessage = 'estuary.colorMode';
 // This must be kept in sync with the docs site in flow/site
 const hideNavBarMessage = 'estuary.docs.hideNavBar';
 
-function SidePanelConnectorDocs() {
+function SidePanelIframe() {
     const intl = useIntl();
     const docsURL = useSidePanelDocsStore_url();
     const disabled = useSidePanelDocsStore_disabled();
@@ -86,4 +86,4 @@ function SidePanelConnectorDocs() {
     );
 }
 
-export default SidePanelConnectorDocs;
+export default SidePanelIframe;

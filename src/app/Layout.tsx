@@ -1,6 +1,6 @@
 import { Box, Toolbar, useMediaQuery, useTheme } from '@mui/material';
-import DocsSidePanel from 'components/docs/SidePanel';
 import Navigation from 'components/navigation/Navigation';
+import DocsSidePanel from 'components/sidePanelDocs/SidePanel';
 import { NavWidths } from 'context/Theme';
 import { useEffect, useState } from 'react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';

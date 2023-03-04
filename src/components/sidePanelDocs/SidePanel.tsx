@@ -1,8 +1,8 @@
 import { Drawer, IconButton, Toolbar, Typography } from '@mui/material';
-import SidePanelConnectorDocs from 'components/docs';
 import { Cancel } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { useSidePanelDocsStore_setShow } from 'stores/SidePanelDocs/hooks';
+import SidePanelIframe from './Iframe';
 
 interface Props {
     show: boolean;
@@ -49,7 +49,7 @@ function DocsSidePanel({ show }: Props) {
                     <Cancel />
                 </IconButton>
             </Toolbar>
-            <SidePanelConnectorDocs />
+            <SidePanelIframe />
         </Drawer>
     );
 }
