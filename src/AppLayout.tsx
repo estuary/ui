@@ -56,6 +56,18 @@ function AppLayout() {
         setRightPaneFlex(displaySidePanel ? 0.3 : 0.0);
     }, [displaySidePanel]);
 
+    // So the transition does not mess with a user resizing the elements
+    //  and during initial load of the app
+    const [resizeTransition, setResizeTransition] = useState(false);
+    const resizeHandlers = {
+        start: () => {
+            setResizeTransition(false);
+        },
+        stop: () => {
+            setResizeTransition(true);
+        },
+    };
+
     return (
         <Box sx={{ height: '100vh' }}>
             <Box>
@@ -78,7 +90,9 @@ function AppLayout() {
                         minSize={theme.breakpoints.values.sm / 2}
                         flex={leftPaneFlex}
                         style={{
-                            transition: 'all 300ms ease-in-out',
+                            transitionDuration: resizeTransition
+                                ? `${theme.transitions.duration.shortest}ms`
+                                : undefined,
                         }}
                     >
                         <Box className="pane-content">
@@ -88,6 +102,8 @@ function AppLayout() {
                     </ReflexElement>
 
                     <ReflexSplitter
+                        onStartResize={resizeHandlers.start}
+                        onStopResize={resizeHandlers.stop}
                         style={{
                             height: 'auto',
                             width: displaySidePanel ? 5 : 0,
@@ -103,7 +119,9 @@ function AppLayout() {
                         maxSize={displaySidePanel ? 825 : 0}
                         flex={rightPaneFlex}
                         style={{
-                            transition: 'all 300ms ease-in-out',
+                            transitionDuration: resizeTransition
+                                ? `${theme.transitions.duration.shortest}ms`
+                                : undefined,
                         }}
                     >
                         <Drawer
