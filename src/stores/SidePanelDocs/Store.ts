@@ -10,8 +10,9 @@ const { iframeStringInclude } = getDocsSettings();
 
 const getInitialStateData = (): Pick<
     SidePanelDocsState,
-    'disabled' | 'url' | 'show'
+    'animateOpening' | 'disabled' | 'url' | 'show'
 > => ({
+    animateOpening: false,
     disabled: false,
     show: false,
     url: '',
@@ -22,6 +23,16 @@ const getInitialState = (
     // get: StoreApi<SidePanelDocsState>['getState']
 ): SidePanelDocsState => ({
     ...getInitialStateData(),
+
+    setAnimateOpening: (val) => {
+        set(
+            produce((state: SidePanelDocsState) => {
+                state.animateOpening = val;
+            }),
+            false,
+            'Side Panel Docs Animate Opening Updated'
+        );
+    },
 
     setShow: (val) => {
         set(

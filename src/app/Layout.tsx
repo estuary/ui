@@ -6,7 +6,11 @@ import { useEffect, useState } from 'react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
 import { useLocalStorage } from 'react-use';
-import { useSidePanelDocsStore_show } from 'stores/SidePanelDocs/hooks';
+import {
+    useSidePanelDocsStore_animateOpening,
+    useSidePanelDocsStore_setAnimateOpening,
+    useSidePanelDocsStore_show,
+} from 'stores/SidePanelDocs/hooks';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 
 function AppLayout() {
@@ -43,13 +47,14 @@ function AppLayout() {
 
     // So the transition does not mess with a user resizing the elements
     //  and during initial load of the app
-    const [resizeTransition, setResizeTransition] = useState(false);
+    const animateOpening = useSidePanelDocsStore_animateOpening();
+    const setAnimateOpening = useSidePanelDocsStore_setAnimateOpening();
     const resizeHandlers = {
         start: () => {
-            setResizeTransition(false);
+            setAnimateOpening(false);
         },
         stop: () => {
-            setResizeTransition(true);
+            setAnimateOpening(true);
         },
     };
 
@@ -75,7 +80,7 @@ function AppLayout() {
                         minSize={theme.breakpoints.values.sm / 2}
                         flex={leftPaneFlex}
                         style={{
-                            transitionDuration: resizeTransition
+                            transitionDuration: animateOpening
                                 ? `${theme.transitions.duration.shortest}ms`
                                 : undefined,
                         }}
@@ -104,7 +109,7 @@ function AppLayout() {
                         maxSize={displaySidePanel ? 825 : 0}
                         flex={rightPaneFlex}
                         style={{
-                            transitionDuration: resizeTransition
+                            transitionDuration: animateOpening
                                 ? `${theme.transitions.duration.shortest}ms`
                                 : undefined,
                         }}

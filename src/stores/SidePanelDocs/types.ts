@@ -10,5 +10,9 @@ export interface SidePanelDocsState {
     url: string;
     setUrl: (val: SidePanelDocsState['url']) => void;
 
+    // Control if we want to "animate" the resize
+    animateOpening: boolean;
+    setAnimateOpening: (val: SidePanelDocsState['animateOpening']) => void;
+
     resetState: () => void;
 }

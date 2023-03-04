@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useSidePanelDocsStore_disabled,
+    useSidePanelDocsStore_setAnimateOpening,
     useSidePanelDocsStore_url,
 } from 'stores/SidePanelDocs/hooks';
 import { getDocsSettings } from 'utils/env-utils';
@@ -25,6 +26,7 @@ function SidePanelIframe() {
     const intl = useIntl();
     const docsURL = useSidePanelDocsStore_url();
     const disabled = useSidePanelDocsStore_disabled();
+    const setAnimateOpening = useSidePanelDocsStore_setAnimateOpening();
     const colorMode = useColorMode();
     const [loading, setLoading] = useState(true);
     const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -32,7 +34,6 @@ function SidePanelIframe() {
 
     useEffect(() => {
         // When a connector is changed and the side panel is open make sure we show loading
-
         setLoading(true);
     }, [docsURL]);
 
@@ -57,14 +58,17 @@ function SidePanelIframe() {
 
             // Waiting a little bit to give the docs time to hide stuff we don't want showing
             //  also makes sure the loading has a little bit of time to show
-            setTimeout(() => setLoading(false), 100);
+            setTimeout(() => {
+                setAnimateOpening(true);
+                setLoading(false);
+            }, 100);
         };
         iframeCurrent?.addEventListener('load', hideNavBar);
 
         return () => {
             iframeCurrent?.removeEventListener('load', hideNavBar);
         };
-    }, [iframeCurrent]);
+    }, [iframeCurrent, setAnimateOpening]);
 
     if (disabled) return null;
 
