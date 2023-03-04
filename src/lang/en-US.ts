@@ -847,6 +847,8 @@ const Tenant: ResolvedIntlConfig['messages'] = {
 
 const Docs: ResolvedIntlConfig['messages'] = {
     'docs.iframe.title': `{connector} Documentation`,
+    'docs.cta.expand': `Expand Docs`,
+    'docs.cta.expand.disabled': `Open 3rd party docs in new window`,
 };
 
 const CustomRenderers: ResolvedIntlConfig['messages'] = {

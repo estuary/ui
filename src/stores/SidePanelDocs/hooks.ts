@@ -2,6 +2,13 @@ import { useZustandStore } from 'context/Zustand/provider';
 import { GlobalStoreNames } from 'stores/names';
 import { SidePanelDocsState } from './types';
 
+export const useSidePanelDocsStore_disabled = () => {
+    return useZustandStore<SidePanelDocsState, SidePanelDocsState['disabled']>(
+        GlobalStoreNames.SIDE_PANEL_DOCS,
+        (state) => state.disabled
+    );
+};
+
 export const useSidePanelDocsStore_show = () => {
     return useZustandStore<SidePanelDocsState, SidePanelDocsState['show']>(
         GlobalStoreNames.SIDE_PANEL_DOCS,

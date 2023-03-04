@@ -1,21 +1,25 @@
 import produce from 'immer';
 import { getDocsSettings } from 'utils/env-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
+import { create } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { GlobalStoreNames } from '../names';
 import { SidePanelDocsState } from './types';
 
 const { iframeStringInclude } = getDocsSettings();
 
-const getInitialStateData = (): Pick<SidePanelDocsState, 'url' | 'show'> => ({
+const getInitialStateData = (): Pick<
+    SidePanelDocsState,
+    'disabled' | 'url' | 'show'
+> => ({
+    disabled: false,
     show: false,
     url: '',
 });
 
 const getInitialState = (
-    set: NamedSet<SidePanelDocsState>,
-    get: StoreApi<SidePanelDocsState>['getState']
+    set: NamedSet<SidePanelDocsState>
+    // get: StoreApi<SidePanelDocsState>['getState']
 ): SidePanelDocsState => ({
     ...getInitialStateData(),
 
@@ -32,14 +36,11 @@ const getInitialState = (
     setUrl: (val) => {
         set(
             produce((state: SidePanelDocsState) => {
-                const { resetState } = get();
+                const urlIsFromEstuary = val.includes(iframeStringInclude);
 
-                if (val.includes(iframeStringInclude)) {
-                    state.url = val;
-                    state.show = true;
-                } else {
-                    resetState();
-                }
+                state.url = val;
+                state.show = urlIsFromEstuary;
+                state.disabled = !urlIsFromEstuary;
             }),
             false,
             'Side Panel Docs URL Updated'
@@ -53,6 +54,6 @@ const getInitialState = (
 
 export const createSidePanelDocsStore = (key: GlobalStoreNames) => {
     return create<SidePanelDocsState>()(
-        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
+        devtools((set, _get) => getInitialState(set), devtoolsOptions(key))
     );
 };
