@@ -2,9 +2,11 @@ import { LinearProgress } from '@mui/material';
 import { useColorMode } from 'context/Theme';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useSidePanelDocsStore_url } from 'stores/SidePanelDocs/hooks';
+import {
+    useSidePanelDocsStore_disabled,
+    useSidePanelDocsStore_url,
+} from 'stores/SidePanelDocs/hooks';
 import { getDocsSettings } from 'utils/env-utils';
-import { hasLength } from 'utils/misc-utils';
 
 const { origin } = getDocsSettings();
 
@@ -22,18 +24,21 @@ const hideNavBarMessage = 'estuary.docs.hideNavBar';
 function SidePanelConnectorDocs() {
     const intl = useIntl();
     const docsURL = useSidePanelDocsStore_url();
+    const disabled = useSidePanelDocsStore_disabled();
     const colorMode = useColorMode();
     const [loading, setLoading] = useState(true);
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const iframeCurrent = iframeRef.current;
 
-    // When a connector is changed and the side panel is open make sure we show loading
     useEffect(() => {
+        // When a connector is changed and the side panel is open make sure we show loading
+
         setLoading(true);
     }, [docsURL]);
 
-    // Keep the docs inline with the color mode of the application
     useEffect(() => {
+        // Keep the docs inline with the color mode of the application
+
         if (iframeCurrent?.contentWindow) {
             iframeCurrent.contentWindow.postMessage(
                 { type: colorModeMessage, mode: colorMode.colorMode },
@@ -42,8 +47,8 @@ function SidePanelConnectorDocs() {
         }
     }, [colorMode, iframeCurrent]);
 
-    // When the iframe loads fire message to hide the navbar and breadcrumbs
     useEffect(() => {
+        // When the iframe loads fire message to hide the navbar and breadcrumbs
         const hideNavBar = () => {
             iframeCurrent?.contentWindow?.postMessage(
                 { type: hideNavBarMessage },
@@ -61,7 +66,7 @@ function SidePanelConnectorDocs() {
         };
     }, [iframeCurrent]);
 
-    if (!hasLength(docsURL)) return null;
+    if (disabled) return null;
 
     return (
         <>
