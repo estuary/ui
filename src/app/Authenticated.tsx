@@ -1,5 +1,4 @@
 import EntityExistenceGuard from 'app/guards/EntityExistenceGuard';
-import AppLayout from 'AppLayout';
 import AccessGrants from 'components/admin/AccessGrants';
 import AdminApi from 'components/admin/Api';
 import AdminConnectors from 'components/admin/Connectors';
@@ -25,6 +24,7 @@ import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
 import { Route, Routes } from 'react-router';
 import { isProduction } from 'utils/env-utils';
+import AppLayout from './Layout';
 import { authenticatedRoutes, unauthenticatedRoutes } from './routes';
 
 const Authenticated = () => {

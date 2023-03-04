@@ -1,26 +1,13 @@
-import {
-    Box,
-    Drawer,
-    IconButton,
-    Toolbar,
-    Typography,
-    useMediaQuery,
-    useTheme,
-} from '@mui/material';
-import SidePanelConnectorDocs from 'components/docs';
+import { Box, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+import DocsSidePanel from 'components/docs/SidePanel';
+import Navigation from 'components/navigation/Navigation';
 import { NavWidths } from 'context/Theme';
-import { Cancel } from 'iconoir-react';
 import { useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
 import { useLocalStorage } from 'react-use';
-import {
-    useSidePanelDocsStore_setShow,
-    useSidePanelDocsStore_show,
-} from 'stores/SidePanelDocs/hooks';
+import { useSidePanelDocsStore_show } from 'stores/SidePanelDocs/hooks';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
-import Navigation from './components/navigation/Navigation';
 
 function AppLayout() {
     const theme = useTheme();
@@ -44,8 +31,6 @@ function AppLayout() {
     const [leftPaneFlex, setLeftPaneFlex] = useState<any>(0.0);
     const [rightPaneFlex, setRightPaneFlex] = useState<any>(0.0);
     const showDocs = useSidePanelDocsStore_show();
-    const setShowDocs = useSidePanelDocsStore_setShow();
-
     const displaySidePanel = showDocs && !belowMd;
 
     // We want to control the flex and not size as it seems to work better
@@ -124,45 +109,7 @@ function AppLayout() {
                                 : undefined,
                         }}
                     >
-                        <Drawer
-                            anchor="right"
-                            variant="permanent"
-                            className="pane-content"
-                            sx={{
-                                'width': '100%',
-                                '& .MuiDrawer-paper': {
-                                    width: '100%',
-                                    boxSizing: 'border-box',
-                                    position: 'absolute',
-                                },
-                            }}
-                            open={displaySidePanel}
-                        >
-                            <Toolbar />
-
-                            <Toolbar
-                                sx={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    p: 1,
-                                }}
-                            >
-                                <Typography variant="h5" component="span">
-                                    <FormattedMessage id="entityCreate.docs.header" />
-                                </Typography>
-
-                                <IconButton
-                                    size="small"
-                                    onClick={() => {
-                                        setShowDocs(false);
-                                    }}
-                                    sx={{ color: theme.palette.text.primary }}
-                                >
-                                    <Cancel />
-                                </IconButton>
-                            </Toolbar>
-                            <SidePanelConnectorDocs />
-                        </Drawer>
+                        <DocsSidePanel show={displaySidePanel} />
                     </ReflexElement>
                 </ReflexContainer>
             </Box>
