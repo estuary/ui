@@ -77,6 +77,9 @@ function AppLayout() {
                         className="left-pane"
                         minSize={theme.breakpoints.values.sm / 2}
                         flex={leftPaneFlex}
+                        style={{
+                            transition: 'all 300ms ease-in-out',
+                        }}
                     >
                         <Box className="pane-content">
                             <Toolbar />
@@ -99,6 +102,9 @@ function AppLayout() {
                         minSize={displaySidePanel ? 350 : 0}
                         maxSize={displaySidePanel ? 825 : 0}
                         flex={rightPaneFlex}
+                        style={{
+                            transition: 'all 300ms ease-in-out',
+                        }}
                     >
                         <Drawer
                             anchor="right"
