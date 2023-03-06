@@ -7,11 +7,9 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import ExternalLink from 'components/shared/ExternalLink';
 import { SidebarCollapse } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import {
-    useSidePanelDocsStore_disabled,
     useSidePanelDocsStore_setShow,
     useSidePanelDocsStore_show,
     useSidePanelDocsStore_url,
@@ -25,7 +23,6 @@ function SidePanelDocsOpenButton() {
     const docsURL = useSidePanelDocsStore_url();
     const showDocs = useSidePanelDocsStore_show();
     const setShowDocs = useSidePanelDocsStore_setShow();
-    const disabled = useSidePanelDocsStore_disabled();
     const showButton = !showDocs && !belowMd && hasLength(docsURL);
 
     return (
@@ -37,39 +34,27 @@ function SidePanelDocsOpenButton() {
                     sx={{ ml: 1, mr: 2 }}
                 />
 
-                {disabled ? (
-                    <Tooltip
-                        title={
-                            <FormattedMessage id="docs.cta.expand.disabled" />
+                <Tooltip
+                    arrow
+                    title={<FormattedMessage id="docs.cta.expand.tooltip" />}
+                >
+                    <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => {
+                            setShowDocs(true);
+                        }}
+                        endIcon={
+                            <SidebarCollapse
+                                style={{
+                                    fontSize: 13,
+                                }}
+                            />
                         }
                     >
-                        <ExternalLink link={docsURL}>
-                            <FormattedMessage id="terms.documentation" />
-                        </ExternalLink>
-                    </Tooltip>
-                ) : (
-                    <Tooltip
-                        arrow
-                        title={<FormattedMessage id="docs.cta.expand" />}
-                    >
-                        <Button
-                            size="small"
-                            variant="outlined"
-                            onClick={() => {
-                                setShowDocs(true);
-                            }}
-                            endIcon={
-                                <SidebarCollapse
-                                    style={{
-                                        fontSize: 13,
-                                    }}
-                                />
-                            }
-                        >
-                            <FormattedMessage id="terms.documentation" />
-                        </Button>
-                    </Tooltip>
-                )}
+                        <FormattedMessage id="docs.cta.expand" />
+                    </Button>
+                </Tooltip>
             </Box>
         </Collapse>
     );
