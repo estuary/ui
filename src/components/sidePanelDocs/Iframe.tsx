@@ -1,13 +1,16 @@
-import { LinearProgress } from '@mui/material';
+import { Box, LinearProgress } from '@mui/material';
+import MessageWithLink from 'components/content/MessageWithLink';
+import AlertBox from 'components/shared/AlertBox';
 import { useColorMode } from 'context/Theme';
 import { useEffect, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useSidePanelDocsStore_disabled,
     useSidePanelDocsStore_setAnimateOpening,
     useSidePanelDocsStore_url,
 } from 'stores/SidePanelDocs/hooks';
 import { getDocsSettings } from 'utils/env-utils';
+import { hasLength } from 'utils/misc-utils';
 
 const { origin } = getDocsSettings();
 
@@ -34,8 +37,9 @@ function SidePanelIframe() {
 
     useEffect(() => {
         // When a connector is changed and the side panel is open make sure we show loading
-        setLoading(true);
-    }, [docsURL]);
+        //  if we will be displaying an iFrame
+        setLoading(!disabled);
+    }, [disabled, docsURL]);
 
     useEffect(() => {
         // Keep the docs inline with the color mode of the application
@@ -70,7 +74,30 @@ function SidePanelIframe() {
         };
     }, [iframeCurrent, setAnimateOpening]);
 
-    if (disabled) return null;
+    if (disabled) {
+        if (!hasLength(docsURL)) {
+            return null;
+        }
+
+        return (
+            <Box
+                sx={{
+                    p: 4,
+                }}
+            >
+                <AlertBox
+                    short
+                    severity="info"
+                    title={<FormattedMessage id="docs.iframe.disabled.title" />}
+                >
+                    <MessageWithLink
+                        messageID="docs.iframe.disabled.message"
+                        link={docsURL}
+                    />
+                </AlertBox>
+            </Box>
+        );
+    }
 
     return (
         <>
@@ -80,7 +107,8 @@ function SidePanelIframe() {
                 style={{
                     border: 'none',
                     height: '100%',
-                    visibility: loading ? 'hidden' : 'visible',
+                    // visibility: loading ? 'hidden' : 'visible',
+                    opacity: loading ? 0.25 : 1,
                 }}
                 src={docsURL}
                 sandbox={sandbox}
