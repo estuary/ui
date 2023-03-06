@@ -19,6 +19,7 @@ const getInitialStateData = () => {
         isEditing: false,
         status: EditorStatus.IDLE,
         serverUpdate: null,
+        draftInitializationError: null,
     };
 };
 
@@ -103,6 +104,16 @@ const getInitialState = <T>(
                 }),
                 false,
                 'Setting status'
+            );
+        },
+
+        setDraftInitializationError: (value) => {
+            set(
+                produce((state) => {
+                    state.draftInitializationError = value;
+                }),
+                false,
+                'Draft Initialization Error Set'
             );
         },
 

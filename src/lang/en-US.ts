@@ -292,7 +292,7 @@ const PasswordReset: ResolvedIntlConfig['messages'] = {
     'passwordReset.main': `Enter your new password below.`,
     'email.description': `The email address associated with your ${CommonMessages.productName} Account`,
     'email.label': `Email`,
-    'password.description': `Pleasae provide a safe and secure password`,
+    'password.description': `Please provide a safe and secure password`,
     'password.label': `Password`,
     'confirmPassword.label': `Confirm Password`,
 };
@@ -748,6 +748,12 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
+
+    'workflows.initTask.alert.title.initFailed': `Form Initialization Error`,
+    'workflows.initTask.alert.message.initFailed': `An issue was encountered initializing the form. Try refreshing the page and if the issue persists {docLink}`,
+    'workflows.initTask.alert.message.initFailed.docLink': `contact support`,
+    'workflows.initTask.alert.message.initFailed.docPath': `mailto:support@estuary.dev`,
+    'workflows.initTask.alert.message.patchedSpec': `An issue was encountered recovering your changes. The latest published record of the task was used to initialize the form.`,
 
     'workflows.collectionSelector.cta.delete': `Remove All`,
     'workflows.collectionSelector.cta.rediscover': `Refresh`,

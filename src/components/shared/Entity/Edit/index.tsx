@@ -2,6 +2,7 @@ import { Box, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import CollectionConfig from 'components/collection/Config';
 import {
+    useEditorStore_draftInitializationError,
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
@@ -97,6 +98,8 @@ function EntityEdit({
 
     const persistedDraftId = useEditorStore_persistedDraftId();
 
+    const draftInitializationError = useEditorStore_draftInitializationError();
+
     // Endpoint Config Store
     const endpointConfigStoreHydrated = useEndpointConfig_hydrated();
     const endpointConfigChanged = useEndpointConfigStore_changed();
@@ -167,6 +170,18 @@ function EntityEdit({
                             />
                         ) : null}
                     </Collapse>
+
+                    {draftInitializationError ? (
+                        <Box sx={{ mb: 2 }}>
+                            <AlertBox
+                                severity={draftInitializationError.severity}
+                            >
+                                <FormattedMessage
+                                    id={draftInitializationError.messageId}
+                                />
+                            </AlertBox>
+                        </Box>
+                    ) : null}
 
                     {!isValidating && connectorTags.length === 0 ? (
                         <AlertBox severity="warning" short>
