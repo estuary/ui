@@ -10,7 +10,7 @@ import useConnectorTag from 'hooks/useConnectorTag';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useUpdateEffect } from 'react-use';
+import { useUnmount, useUpdateEffect } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     useEndpointConfigStore_endpointConfig_data,
@@ -103,15 +103,15 @@ function EndpointConfig({
 
     const forceClose = !editWorkflow && draftId !== null;
 
+    useUnmount(() => {
+        resetState();
+    });
+
     useEffect(() => {
         if (connectorTag) {
             setDocsURL(connectorTag.documentation_url);
         }
-
-        return () => {
-            resetState();
-        };
-    }, [connectorTag, resetState, setDocsURL]);
+    }, [connectorTag, setDocsURL]);
 
     if (error) {
         return <Error error={error} />;
