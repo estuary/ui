@@ -86,7 +86,7 @@ function DraftSpecEditor({
         if (currentCatalog) {
             setDraftSpec(currentCatalog);
         }
-    }, [currentCatalog]);
+    }, [currentCatalog, localZustandScope]);
 
     // TODO (sync editing) : turning off as right now this will show lots of "Out of sync" errors
     //    because we are comparing two JSON objects that are being stringified and that means the order
