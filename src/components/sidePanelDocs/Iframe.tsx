@@ -107,8 +107,7 @@ function SidePanelIframe() {
                 style={{
                     border: 'none',
                     height: '100%',
-                    // visibility: loading ? 'hidden' : 'visible',
-                    opacity: loading ? 0.25 : 1,
+                    visibility: loading ? 'hidden' : 'visible',
                 }}
                 src={docsURL}
                 sandbox={sandbox}
