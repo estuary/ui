@@ -143,71 +143,65 @@ function EntityCreate({
               !entityNameChanged &&
               persistedDraftId;
 
-    return (
+    return connectorTagsError ? (
+        <Error error={connectorTagsError} />
+    ) : (
         <>
-            <Box sx={{ maxHeight: 200, overflowY: 'auto', mb: 2 }}>
-                {errorSummary}
-            </Box>
+            {toolbar}
 
-            {connectorTagsError ? (
-                <Error error={connectorTagsError} />
-            ) : (
-                <>
-                    {toolbar}
+            <Box sx={{ mb: 4 }}>{errorSummary}</Box>
 
-                    <Collapse in={formSubmitError !== null} unmountOnExit>
-                        {formSubmitError ? (
-                            <EntityError
-                                title={formSubmitError.title}
-                                error={formSubmitError.error}
-                                logToken={logToken}
-                                draftId={draftId}
-                            />
-                        ) : null}
-                    </Collapse>
+            <Collapse in={formSubmitError !== null} unmountOnExit>
+                {formSubmitError ? (
+                    <EntityError
+                        title={formSubmitError.title}
+                        error={formSubmitError.error}
+                        logToken={logToken}
+                        draftId={draftId}
+                    />
+                ) : null}
+            </Collapse>
 
-                    {!isValidating && connectorTags.length === 0 ? (
-                        <AlertBox severity="warning">
-                            <FormattedMessage
-                                id={`${messagePrefix}.missingConnectors`}
-                            />
-                        </AlertBox>
-                    ) : connectorTags.length > 0 ? (
-                        <ErrorBoundryWrapper>
-                            <DetailsForm
-                                connectorTags={connectorTags}
-                                accessGrants={combinedGrants}
-                                entityType={entityType}
-                            />
-                        </ErrorBoundryWrapper>
-                    ) : null}
+            {!isValidating && connectorTags.length === 0 ? (
+                <AlertBox severity="warning">
+                    <FormattedMessage
+                        id={`${messagePrefix}.missingConnectors`}
+                    />
+                </AlertBox>
+            ) : connectorTags.length > 0 ? (
+                <ErrorBoundryWrapper>
+                    <DetailsForm
+                        connectorTags={connectorTags}
+                        accessGrants={combinedGrants}
+                        entityType={entityType}
+                    />
+                </ErrorBoundryWrapper>
+            ) : null}
 
-                    {imageTag.connectorId ? (
-                        <ErrorBoundryWrapper>
-                            <EndpointConfig
-                                connectorImage={imageTag.id}
-                                hideBorder={!displayResourceConfig}
-                            />
-                        </ErrorBoundryWrapper>
-                    ) : null}
+            {imageTag.connectorId ? (
+                <ErrorBoundryWrapper>
+                    <EndpointConfig
+                        connectorImage={imageTag.id}
+                        hideBorder={!displayResourceConfig}
+                    />
+                </ErrorBoundryWrapper>
+            ) : null}
 
-                    {displayResourceConfig ? (
-                        <ErrorBoundryWrapper>
-                            <CollectionConfig
-                                draftSpecs={taskDraftSpec}
-                                RediscoverButton={RediscoverButton}
-                                hideBorder={!draftId}
-                            />
-                        </ErrorBoundryWrapper>
-                    ) : null}
+            {displayResourceConfig ? (
+                <ErrorBoundryWrapper>
+                    <CollectionConfig
+                        draftSpecs={taskDraftSpec}
+                        RediscoverButton={RediscoverButton}
+                        hideBorder={!draftId}
+                    />
+                </ErrorBoundryWrapper>
+            ) : null}
 
-                    <ErrorBoundryWrapper>
-                        <CatalogEditor
-                            messageId={`${messagePrefix}.finalReview.instructions`}
-                        />
-                    </ErrorBoundryWrapper>
-                </>
-            )}
+            <ErrorBoundryWrapper>
+                <CatalogEditor
+                    messageId={`${messagePrefix}.finalReview.instructions`}
+                />
+            </ErrorBoundryWrapper>
         </>
     );
 }

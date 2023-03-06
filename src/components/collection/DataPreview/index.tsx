@@ -1,5 +1,4 @@
-import { LoadingButton } from '@mui/lab';
-import { AlertTitle, Box, Stack, Typography } from '@mui/material';
+import { AlertTitle, Box, Button, Stack, Typography } from '@mui/material';
 import ListView from 'components/collection/DataPreview/ListView';
 import AlertBox from 'components/shared/AlertBox';
 import { useJournalData, useJournalsForCollection } from 'hooks/useJournalData';
@@ -58,22 +57,29 @@ export function DataPreview({ collectionName }: Props) {
                     spacing={2}
                     sx={{ alignItems: 'center' }}
                 >
-                    <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
+                    <Typography
+                        component="span"
+                        variant="h6"
+                        sx={{
+                            alignItems: 'center',
+                        }}
+                    >
                         <FormattedMessage id="detailsPanel.dataPreview.header" />
                     </Typography>
 
-                    <LoadingButton
+                    <Button
                         variant="text"
                         startIcon={<Refresh style={{ fontSize: 12 }} />}
                         onClick={journalData.refresh}
-                        disabled={!hasLength(journalData.data?.documents)}
-                        loading={isLoading}
+                        disabled={
+                            isLoading || !hasLength(journalData.data?.documents)
+                        }
                         sx={{
                             height: 'auto',
                         }}
                     >
                         <FormattedMessage id="cta.refresh" />
-                    </LoadingButton>
+                    </Button>
                 </Stack>
 
                 {/*                <ToggleButtonGroup
@@ -93,9 +99,9 @@ export function DataPreview({ collectionName }: Props) {
                 </ToggleButtonGroup>*/}
             </Stack>
 
-            {!hasLength(journalsData?.journals) ? (
+            {journalsData && !hasLength(journalsData.journals) ? (
                 <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning">
+                    <AlertBox severity="warning" short>
                         <AlertTitle>
                             <FormattedMessage id="collectionsPreview.notFound.title" />
                         </AlertTitle>
@@ -105,7 +111,7 @@ export function DataPreview({ collectionName }: Props) {
             ) : journalData.data?.tooManyBytes &&
               journalData.data.documents.length === 0 ? (
                 <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning">
+                    <AlertBox severity="warning" short>
                         <AlertTitle>
                             <FormattedMessage id="collectionsPreview.tooManyBytesAndNoDocuments.title" />
                         </AlertTitle>
@@ -114,7 +120,7 @@ export function DataPreview({ collectionName }: Props) {
                 </Box>
             ) : journalData.data?.tooFewDocuments ? (
                 <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning">
+                    <AlertBox severity="warning" short>
                         <AlertTitle>
                             <FormattedMessage id="collectionsPreview.tooFewDocuments.title" />
                         </AlertTitle>
@@ -123,7 +129,7 @@ export function DataPreview({ collectionName }: Props) {
                 </Box>
             ) : journalData.data?.tooManyBytes ? (
                 <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning">
+                    <AlertBox severity="warning" short>
                         <AlertTitle>
                             <FormattedMessage id="collectionsPreview.tooManyBytes.title" />
                         </AlertTitle>

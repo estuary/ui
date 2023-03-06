@@ -8,13 +8,14 @@ import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import TableHydrator from 'stores/Tables/Hydrator';
-import useTableState from '../hooks';
+import useTableState, { TablePrefix } from '../hooks';
 
 interface Props {
+    tablePrefix: TablePrefix;
     showUser?: boolean;
 }
 
-function AccessGrantsTable({ showUser }: Props) {
+function AccessGrantsTable({ tablePrefix, showUser }: Props) {
     const {
         pagination,
         setPagination,
@@ -24,7 +25,10 @@ function AccessGrantsTable({ showUser }: Props) {
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState(showUser ? 'user_full_name' : 'subject_role');
+    } = useTableState(
+        tablePrefix,
+        showUser ? 'user_full_name' : 'subject_role'
+    );
 
     const query = useMemo(() => {
         if (showUser) {
@@ -71,7 +75,9 @@ function AccessGrantsTable({ showUser }: Props) {
                     renderTableRows={(data) => (
                         <Rows data={data} showUser={showUser} />
                     )}
+                    pagination={pagination}
                     setPagination={setPagination}
+                    searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                     sortDirection={sortDirection}
                     setSortDirection={setSortDirection}
