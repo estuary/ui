@@ -1,5 +1,6 @@
 import { useDebugValue } from 'react';
 import { TABLES } from 'services/supabase';
+import { Entity } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { useQuery, useSelect } from './supabase-swr/';
 
@@ -14,7 +15,7 @@ const queryColumns = ['catalog_name', 'spec_type'];
 
 const defaultResponse: LiveSpecsQuery[] = [];
 
-function useLiveSpecs(specType: string) {
+function useLiveSpecs(specType: Entity) {
     const draftSpecQuery = useQuery<LiveSpecsQuery>(
         TABLES.LIVE_SPECS_EXT,
         {

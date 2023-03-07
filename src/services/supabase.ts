@@ -65,6 +65,7 @@ export enum TABLES {
 export enum RPCS {
     EXCHANGE_DIRECTIVES = 'exchange_directive_token',
     VIEW_LOGS = 'view_logs',
+    CREATE_REFRESH_TOKEN = 'create_refresh_token',
 }
 
 export enum FUNCTIONS {
