@@ -268,14 +268,17 @@ const Home: ResolvedIntlConfig['messages'] = {
     'home.hero.1.title': `Wikipedia Data`,
     'home.hero.1.message': `Flow {emphasis} about 100 events per second from the Wikipedia’s API.`,
     'home.hero.1.message.emphasis': `captures`,
+    'home.hero.1.button': `See the Capture`,
 
     'home.hero.2.title': `Transformation`,
     'home.hero.2.message': `We use a {emphasis} to aggregate the raw data.`,
     'home.hero.2.message.emphasis': CommonMessages['terms.derivation'],
+    'home.hero.2.button': `See the Collection`,
 
     'home.hero.3.title': `Google Sheets`,
     'home.hero.3.message': `Flow {emphasis} a fact table with real-time updates.`,
     'home.hero.3.message.emphasis': `materializes`,
+    'home.hero.3.button': `See the Materialization`,
 };
 
 const PageNotFound: ResolvedIntlConfig['messages'] = {
