@@ -1,39 +1,22 @@
 import { Button, Tab, Tabs } from '@mui/material';
-import { Dispatch, SetStateAction, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { MuiTabProps } from 'types';
+import { useHeroTabs } from './hooks';
 
-export type TabOptions = 'overview' | 'details';
-
-interface HeroTabsProps {
-    selectedTab: number;
-    setSelectedTab: Dispatch<SetStateAction<number>>;
-}
-
-export const tabProps: MuiTabProps<TabOptions>[] = [
-    {
-        label: 'home.hero.tab.companyOverview',
-        value: 'overview',
-    },
-    {
-        label: 'home.hero.tab.companyDetails',
-        value: 'details',
-    },
-];
-
-function HeroTabs({ selectedTab, setSelectedTab }: HeroTabsProps) {
+function HeroTabs() {
     const intl = useIntl();
+    const { activeTab, setActiveTab, tabs } = useHeroTabs();
 
-    const tabs = useMemo(
+    const renderedTabs = useMemo(
         () =>
-            tabProps.map((tabProp, index) => (
+            tabs.map((tabProp, index) => (
                 <Tab
-                    key={`welcome-card-tabs-${tabProp.label}`}
+                    key={`welcome-card-tabs-${index}`}
                     label={intl.formatMessage({
                         id: tabProp.label,
                     })}
                     component={Button}
-                    onClick={() => setSelectedTab(index)}
+                    onClick={() => setActiveTab(index)}
                     sx={{
                         '&:hover': {
                             backgroundColor: 'transparent',
@@ -41,12 +24,16 @@ function HeroTabs({ selectedTab, setSelectedTab }: HeroTabsProps) {
                     }}
                 />
             )),
-        [setSelectedTab, intl]
+        [intl, setActiveTab, tabs]
     );
 
     return (
-        <Tabs centered value={selectedTab} aria-label="welcome card tabs">
-            {tabs}
+        <Tabs
+            centered
+            value={activeTab}
+            aria-label={intl.formatMessage({ id: 'home.hero.tab.ariaLabel' })}
+        >
+            {renderedTabs}
         </Tabs>
     );
 }

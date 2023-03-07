@@ -252,8 +252,10 @@ const Home: ResolvedIntlConfig['messages'] = {
     'home.main.header': `Welcome to Flow!`,
     'home.main.description': `Click the Captures icon on the menu bar to get started.`,
 
+    'home.hero.tab.ariaLabel': `Welcome Image Tabs`,
     'home.hero.tab.companyOverview': `What we do`,
     'home.hero.tab.companyDetails': `How it works`,
+    'home.hero.tab.demo': `Live Demo`,
 
     'home.hero.companyOverview.cta': `How it works`,
     'home.hero.companyOverview.description': `<b>${CommonMessages.productName}</b> helps you sync your data between the sources that produce it and destinations that consume it in real-time.`,
