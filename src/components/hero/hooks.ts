@@ -1,5 +1,5 @@
 import { MuiTabProps } from 'types';
-import { NumberParam, useQueryParam } from 'use-query-params';
+import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 import { TabOptions } from './types';
 
 export const TABS: MuiTabProps<TabOptions>[] = [
@@ -18,7 +18,17 @@ export const TABS: MuiTabProps<TabOptions>[] = [
 ];
 
 export function useHeroTabs() {
-    const [activeTab, setActiveTab] = useQueryParam('activeTab', NumberParam);
+    const [activeTab, setActiveTab] = useQueryParam(
+        'activeTab',
+        withDefault(StringParam, TABS[0].value)
+    );
 
-    return { activeTab: activeTab ?? 0, setActiveTab, tabs: TABS };
+    return {
+        activeTab,
+        setActiveTab,
+        openDetails: () => {
+            setActiveTab('details');
+        },
+        tabs: TABS,
+    };
 }

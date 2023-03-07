@@ -6,7 +6,7 @@ import { useHeroTabs } from './hooks';
 import HeroOverview from './Overview';
 
 function HeroImageAndDescription() {
-    const { activeTab, tabs } = useHeroTabs();
+    const { activeTab } = useHeroTabs();
 
     return (
         <Box sx={{ mx: 'auto', pb: 3, maxWidth: 1000 }}>
@@ -29,7 +29,7 @@ function HeroImageAndDescription() {
             </Grid>
 
             <Grid container spacing={2} sx={{ mt: 2 }}>
-                {tabs[activeTab].value === 'overview' ? (
+                {activeTab === 'overview' ? (
                     <HeroOverview />
                 ) : (
                     <HeroExplanation />

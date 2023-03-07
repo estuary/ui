@@ -16,7 +16,8 @@ function HeroTabs() {
                         id: tabProp.label,
                     })}
                     component={Button}
-                    onClick={() => setActiveTab(index)}
+                    onClick={() => setActiveTab(tabProp.value)}
+                    value={tabProp.value}
                     sx={{
                         '&:hover': {
                             backgroundColor: 'transparent',

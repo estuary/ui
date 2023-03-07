@@ -4,11 +4,7 @@ import { FormattedMessage } from 'react-intl';
 import { useHeroTabs } from './hooks';
 
 function HeroOverview() {
-    const { setActiveTab } = useHeroTabs();
-
-    const switchToDetailsTab = () => {
-        setActiveTab(1);
-    };
+    const { openDetails } = useHeroTabs();
 
     return (
         <>
@@ -33,7 +29,7 @@ function HeroOverview() {
             >
                 <Button
                     endIcon={<NavArrowRight style={{ fontSize: 14 }} />}
-                    onClick={switchToDetailsTab}
+                    onClick={openDetails}
                     sx={{ minWidth: 160 }}
                 >
                     <FormattedMessage id="home.hero.companyOverview.cta" />
