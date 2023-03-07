@@ -40,7 +40,7 @@ export const getSchema_Resource = async (connectorId: string | null) => {
     return resourceSchema;
 };
 
-const liveSpecColumns = `id,spec_type,spec,writes_to,reads_from,last_pub_id`;
+const liveSpecColumns = `id,spec_type,spec,writes_to,reads_from,last_pub_id,updated_at`;
 
 export const getLiveSpecsByLiveSpecId = async (
     liveSpecId: string | string[],
@@ -54,6 +54,7 @@ export const getLiveSpecsByLiveSpecId = async (
         .select(liveSpecColumns)
         .eq('spec_type', specType)
         .or(`id.in.(${draftArray})`)
+        .order('updated_at', { ascending: false })
         .then(handleSuccess<LiveSpecsExtQuery[]>, handleFailure);
 
     return data;
@@ -71,6 +72,7 @@ export const getLiveSpecsByLastPubId = async (
         .select(liveSpecColumns)
         .eq('spec_type', specType)
         .or(`last_pub_id.in.(${draftArray})`)
+        .order('updated_at', { ascending: false })
         .then(handleSuccess<LiveSpecsExtQuery[]>, handleFailure);
 
     return data;

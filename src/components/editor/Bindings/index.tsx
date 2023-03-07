@@ -20,7 +20,6 @@ import useLiveSpecs from 'hooks/useLiveSpecs';
 import { isEqual } from 'lodash';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useUpdateEffect } from 'react-use';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_details_entityName,
@@ -112,7 +111,7 @@ function BindingsMultiEditor({
             : false;
     }, [draftSpecs, entityType, resourceConfig]);
 
-    useUpdateEffect(() => {
+    useEffect(() => {
         setServerUpdateRequired(resourceConfigUpdated);
     }, [setServerUpdateRequired, resourceConfigUpdated]);
 

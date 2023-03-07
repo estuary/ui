@@ -1,3 +1,4 @@
+import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import { getLiveSpecsByLiveSpecId, getSchema_Endpoint } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
@@ -193,6 +194,7 @@ const getInitialState = (
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
+        const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
 
         if (
             workflow === 'capture_create' ||
@@ -222,10 +224,9 @@ const getInitialState = (
         }
 
         if (liveSpecId) {
-            const { data, error } = await getLiveSpecsByLiveSpecId(
-                liveSpecId,
-                entityType
-            );
+            const { data, error } = draftId
+                ? await getDraftSpecsByDraftId(draftId, entityType)
+                : await getLiveSpecsByLiveSpecId(liveSpecId, entityType);
 
             if (error) {
                 const { setHydrationErrorsExist } = get();
