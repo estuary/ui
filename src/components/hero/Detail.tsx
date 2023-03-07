@@ -1,15 +1,17 @@
 import { Button, Grid } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
-import Step from 'components/hero/Step';
 import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { NavLink } from 'react-router-dom';
+import HeroStep from './Step';
 
-function HeroExplanation() {
+function HeroDetail() {
     return (
         <>
             <Grid item xs={4}>
-                <Step stepNumber={1} entityType="capture" />
+                <HeroStep stepNumber={1} title="terms.capture">
+                    <FormattedMessage id="home.hero.companyDetails.step1" />
+                </HeroStep>
             </Grid>
 
             <Grid
@@ -35,10 +37,12 @@ function HeroExplanation() {
             </Grid>
 
             <Grid item xs={4}>
-                <Step stepNumber={2} entityType="materialization" />
+                <HeroStep stepNumber={2} title="terms.materialization">
+                    <FormattedMessage id="home.hero.companyDetails.step2" />
+                </HeroStep>
             </Grid>
         </>
     );
 }
 
-export default HeroExplanation;
+export default HeroDetail;

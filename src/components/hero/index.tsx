@@ -1,7 +1,8 @@
 import { Box, Grid } from '@mui/material';
 import HeroTabs from 'components/hero/Tabs';
 import WelcomeImage from 'components/hero/WelcomeImage';
-import HeroExplanation from './Explanation';
+import HeroDemo from './Demo';
+import HeroDetail from './Detail';
 import { useHeroTabs } from './hooks';
 import HeroOverview from './Overview';
 
@@ -29,10 +30,12 @@ function HeroImageAndDescription() {
             </Grid>
 
             <Grid container spacing={2} sx={{ mt: 2 }}>
-                {activeTab === 'overview' ? (
-                    <HeroOverview />
+                {activeTab === 'demo' ? (
+                    <HeroDemo />
+                ) : activeTab === 'details' ? (
+                    <HeroDetail />
                 ) : (
-                    <HeroExplanation />
+                    <HeroOverview />
                 )}
             </Grid>
         </Box>

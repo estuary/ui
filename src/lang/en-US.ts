@@ -49,6 +49,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.permissions': `Access Grants`,
     'terms.materialization': `Materialization`,
     'terms.capture': `Capture`,
+    'terms.derivation': `Derivation`,
     'terms.documentation': `Docs`,
     'terms.storageMapping': `Storage Mappings`,
 
@@ -264,17 +265,17 @@ const Home: ResolvedIntlConfig['messages'] = {
     'home.hero.companyDetails.step1': `Set up real-time data ingestion from your sources. Click “New Capture” to get started.`,
     'home.hero.companyDetails.step2': `Keep destination systems up to date with Materializations: low latency views of your data.`,
 
-    'home.hero.one.title': `Step 1`,
-    'home.hero.one.message': `Start at the {emphasis} page to setup real-time data ingestion from your sources.`,
-    'home.hero.one.emphasis': RouteTitles['routeTitle.captures'],
+    'home.hero.1.title': `Wikipedia Data`,
+    'home.hero.1.message': `Flow {emphasis} about 100 events per second from the Wikipedia’s API.`,
+    'home.hero.1.message.emphasis': `captures`,
 
-    'home.hero.two.title': `Step 2`,
-    'home.hero.two.message': `Flow automatically lands your data in {emphasis} within your cloud storage. `,
-    'home.hero.two.emphasis': RouteTitles['routeTitle.collections'],
+    'home.hero.2.title': `Transformation`,
+    'home.hero.2.message': `We use a {emphasis} to aggregate the raw data.`,
+    'home.hero.2.message.emphasis': CommonMessages['terms.derivation'],
 
-    'home.hero.three.title': `Step 3`,
-    'home.hero.three.message': `Connect to your target systems and keep them up to date with low-latency views of collection data, known as {emphasis}.`,
-    'home.hero.three.emphasis': RouteTitles['routeTitle.materializations'],
+    'home.hero.3.title': `Google Sheets`,
+    'home.hero.3.message': `Flow {emphasis} a fact table with real-time updates.`,
+    'home.hero.3.message.emphasis': `materializes`,
 };
 
 const PageNotFound: ResolvedIntlConfig['messages'] = {
