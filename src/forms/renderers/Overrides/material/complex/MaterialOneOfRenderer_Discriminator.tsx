@@ -175,8 +175,8 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
     );
 
     useMount(() => {
-        if (selectedIndex === 0) {
-            openNewTab(selectedIndex);
+        if (!indexOfFittingSchema) {
+            openNewTab(0);
         }
     });
 
