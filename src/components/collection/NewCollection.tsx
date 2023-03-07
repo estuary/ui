@@ -261,6 +261,14 @@ function NewCollection() {
         () => async () => {
             try {
                 setUrlLoading(true);
+
+                // This is really just here to make Typescript happy,
+                // we know that computedEntityName will exist because
+                // generateDraftWithSpecs() checks it and throws otherwise
+                if (!computedEntityName) {
+                    throw new Error('Missing entity name');
+                }
+
                 const [token, draftId] = await Promise.all([
                     createRefreshToken(false, '1 day'),
                     generateDraftWithSpecs(),
@@ -272,7 +280,9 @@ function NewCollection() {
                     Buffer.from(JSON.stringify(token.body)).toString('base64')
                 )},FLOW_TEMPLATE_TYPE=${derivationLanguage},FLOW_TEMPLATE_MODE=${
                     selectedSpecNames.length > 1 ? 'multi' : 'single'
-                }/${GIT_REPO}`;
+                },FLOW_COLLECTION_NAME=${encodeURIComponent(
+                    computedEntityName
+                )}/${GIT_REPO}`;
                 return url;
             } catch (e: unknown) {
                 displayError(`${e}`);
