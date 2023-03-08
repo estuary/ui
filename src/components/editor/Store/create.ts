@@ -117,14 +117,14 @@ const getInitialState = <T>(
             );
         },
 
-        // This is a hacky, temporary solution to preserve the edit draft ID
-        // when the discovery operation is run in the capture edit workflow.
-        resetState: (excludeEditDraftId) => {
+        // This is a hacky, temporary solution to preserve the persisted draft ID
+        // when the generate button is clicked in all workflows.
+        resetState: (excludePersistedDraftId) => {
             set(
                 () => {
                     const { persistedDraftId, ...rest } = getInitialStateData();
 
-                    return excludeEditDraftId
+                    return excludePersistedDraftId
                         ? rest
                         : { persistedDraftId, ...rest };
                 },

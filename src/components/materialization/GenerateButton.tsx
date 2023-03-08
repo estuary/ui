@@ -1,8 +1,13 @@
 import { Button } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
-import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
+import {
+    createDraftSpec,
+    generateDraftSpec,
+    modifyDraftSpec,
+} from 'api/draftSpecs';
 import {
     useEditorStore_isSaving,
+    useEditorStore_persistedDraftId,
     useEditorStore_resetState,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
@@ -42,11 +47,16 @@ import { encryptEndpointConfig } from 'utils/sops-utils';
 interface Props {
     disabled: boolean;
     callFailed: Function;
+    mutateDraftSpecs: Function;
 }
 
 // TODO (optimization): Combine the generate button logic for materialization creation and edit.
 
-function MaterializeGenerateButton({ disabled, callFailed }: Props) {
+function MaterializeGenerateButton({
+    disabled,
+    callFailed,
+    mutateDraftSpecs,
+}: Props) {
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
@@ -62,6 +72,8 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
     const resetEditorState = useEditorStore_resetState();
 
     const setDraftId = useEditorStore_setId();
+
+    const persistedDraftId = useEditorStore_persistedDraftId();
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     // Endpoint Config Store
@@ -111,18 +123,7 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
                 displayValidation: true,
             });
         } else {
-            resetEditorState();
-            setDraftId(null);
-
-            const draftsResponse = await createEntityDraft(entityName);
-            if (draftsResponse.error) {
-                return callFailed({
-                    error: {
-                        title: 'materializationCreate.generate.failure.errorTitle',
-                        error: draftsResponse.error,
-                    },
-                });
-            }
+            resetEditorState(true);
 
             const encryptedEndpointConfig = await encryptEndpointConfig(
                 serverUpdateRequired
@@ -136,19 +137,41 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
                 { overrideJsonFormDefaults: true }
             );
 
-            const newDraftId = draftsResponse.data[0].id;
+            let evaluatedDraftId = persistedDraftId;
+
+            if (!persistedDraftId) {
+                const draftsResponse = await createEntityDraft(entityName);
+
+                if (draftsResponse.error) {
+                    return callFailed({
+                        error: {
+                            title: 'materializationCreate.generate.failure.errorTitle',
+                            error: draftsResponse.error,
+                        },
+                    });
+                }
+
+                evaluatedDraftId = draftsResponse.data[0].id;
+            }
+
             const draftSpec = generateDraftSpec(
                 encryptedEndpointConfig.data,
                 imagePath,
                 resourceConfig
             );
 
-            const draftSpecsResponse = await createDraftSpec(
-                newDraftId,
-                entityName,
-                draftSpec,
-                'materialization'
-            );
+            const draftSpecsResponse = persistedDraftId
+                ? await modifyDraftSpec(draftSpec, {
+                      draft_id: evaluatedDraftId,
+                      catalog_name: entityName,
+                  })
+                : await createDraftSpec(
+                      evaluatedDraftId,
+                      entityName,
+                      draftSpec,
+                      'materialization'
+                  );
+
             if (draftSpecsResponse.error) {
                 return callFailed({
                     error: {
@@ -164,14 +187,16 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
 
             setPreviousEndpointConfig({ data: endpointConfigData });
 
-            setDraftId(newDraftId);
-            setPersistedDraftId(newDraftId);
+            setDraftId(evaluatedDraftId);
+            setPersistedDraftId(evaluatedDraftId);
 
             setDraftedEntityName(draftSpecsResponse.data[0].catalog_name);
 
             setFormState({
-                status: FormStatus.INIT,
+                status: FormStatus.GENERATED,
             });
+
+            return mutateDraftSpecs();
         }
     };
 

@@ -3,6 +3,7 @@ import { useBindingsEditorStore_resetState } from 'components/editor/Bindings/St
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
+    useEditorStore_resetState,
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
 import MaterializeGenerateButton from 'components/materialization/GenerateButton';
@@ -56,6 +57,7 @@ function MaterializationCreate() {
     const setDraftId = useEditorStore_setId();
 
     const persistedDraftId = useEditorStore_persistedDraftId();
+    const resetEditorStore = useEditorStore_resetState();
 
     // Endpoint Config Store
     const resetEndpointConfigState = useEndpointConfigStore_reset();
@@ -81,6 +83,7 @@ function MaterializationCreate() {
         resetDetailsForm();
         resetFormState();
         resetResourceConfigState();
+        resetEditorStore();
         resetBindingsEditorStore();
     };
 
@@ -147,6 +150,7 @@ function MaterializationCreate() {
                                         <MaterializeGenerateButton
                                             disabled={!hasConnectors}
                                             callFailed={helpers.callFailed}
+                                            mutateDraftSpecs={mutateDraftSpecs}
                                         />
                                     }
                                     TestButton={
