@@ -185,7 +185,6 @@ function useInitializeCollectionDraft() {
     }, [
         getCollectionDraftSpecs,
         setCollectionInitializationError,
-        updateBindingsEditorState,
         currentCollection,
     ]);
 }
