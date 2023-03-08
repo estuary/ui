@@ -19,6 +19,7 @@ const initialDetails: Details = {
             connectorId: '',
             id: '',
             iconPath: '',
+            imageName: '',
             imagePath: '',
         },
         entityName: '',
@@ -155,6 +156,7 @@ export const getInitialState = (
                     const connectorImage: Details['data']['connectorImage'] = {
                         connectorId,
                         id: connector_tags[0].id,
+                        imageName: image_name,
                         imagePath: `${image_name}${connector_tags[0].image_tag}`,
                         iconPath: logo_url,
                     };
@@ -197,6 +199,7 @@ export const getInitialState = (
                             connectorImage: {
                                 connectorId,
                                 id: connector_tag_id,
+                                imageName: connector_image_name,
                                 imagePath: `${connector_image_name}${connector_image_tag}`,
                                 iconPath: connector_logo_url,
                             },

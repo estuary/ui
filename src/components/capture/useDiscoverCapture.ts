@@ -25,8 +25,10 @@ import {
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
+    useDetailsForm_connectorImage_imageName,
     useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
+    useDetailsForm_draftedEntityName,
     useDetailsForm_errorsExist,
     useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm/hooks';
@@ -55,6 +57,7 @@ import {
     useResourceConfig_setDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
 import { Entity } from 'types';
+import { hasLength, stripPathing } from 'utils/misc-utils';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import {
     modifyDiscoveredDraftSpec,
@@ -105,7 +108,9 @@ function useDiscoverCapture(
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
     const imagePath = useDetailsForm_connectorImage_imagePath();
+    const imageName = useDetailsForm_connectorImage_imageName();
     const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
+    const draftedEntityName = useDetailsForm_draftedEntityName();
 
     // Endpoint Config Store
     const setEncryptedEndpointConfig =
@@ -313,7 +318,21 @@ function useDiscoverCapture(
                     options?.initiateRediscovery ||
                     options?.initiateDiscovery
                 ) {
-                    const draftsResponse = await createEntityDraft(entityName);
+                    // If we are doing an initial discovery add the name name to the name
+                    // If not we are either refreshing collections during create OR during edit
+                    //  Refreshing during:
+                    //    create requires draftedEntityName because it has the connector image added to it
+                    //    edit   requires entityName        because it is the name already in the system and
+                    //                                        we do not have a draftedEntityName yet
+                    const processedEntityName = options.initiateDiscovery
+                        ? `${entityName}/${stripPathing(imageName)}`
+                        : hasLength(draftedEntityName)
+                        ? draftedEntityName
+                        : entityName;
+
+                    const draftsResponse = await createEntityDraft(
+                        processedEntityName
+                    );
                     if (draftsResponse.error) {
                         return callFailed({
                             error: {
@@ -326,7 +345,7 @@ function useDiscoverCapture(
                     const draftId = draftsResponse.data[0].id;
 
                     const discoverResponse = await discover(
-                        entityName,
+                        processedEntityName,
                         encryptedEndpointConfig.data,
                         imageConnectorTagId,
                         draftId
@@ -389,21 +408,23 @@ function useDiscoverCapture(
             createDiscoversSubscription,
             postGenerateMutate,
             resetEditorState,
+            setDraftId,
             setEncryptedEndpointConfig,
             setFormState,
             setPreviousEndpointConfig,
-            setDraftId,
             updateFormStatus,
             detailsFormsHasErrors,
+            draftedEntityName,
             endpointConfigData,
             endpointConfigErrorsExist,
             endpointSchema,
             entityName,
             imageConnectorId,
             imageConnectorTagId,
+            imageName,
             imagePath,
-            options?.initiateDiscovery,
             options?.initiateRediscovery,
+            options?.initiateDiscovery,
             persistedDraftId,
             resourceConfig,
             resourceConfigHasErrors,

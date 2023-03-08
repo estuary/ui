@@ -47,6 +47,17 @@ export const useDetailsForm_connectorImage_id = () => {
     );
 };
 
+export const useDetailsForm_connectorImage_imageName = () => {
+    const entityType = useEntityType();
+    return useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']['imageName']
+    >(
+        getStoreName(entityType),
+        (state) => state.details.data.connectorImage.imageName
+    );
+};
+
 export const useDetailsForm_connectorImage_imagePath = () => {
     const entityType = useEntityType();
     return useZustandStore<
@@ -80,6 +91,15 @@ export const useDetailsForm_details_entityName = () => {
         DetailsFormState,
         DetailsFormState['details']['data']['entityName']
     >(getStoreName(entityType), (state) => state.details.data.entityName);
+};
+
+export const useDetailsForm_draftedEntityName = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        DetailsFormState,
+        DetailsFormState['draftedEntityName']
+    >(getStoreName(entityType), (state) => state.draftedEntityName);
 };
 
 export const useDetailsForm_setDetails = () => {
