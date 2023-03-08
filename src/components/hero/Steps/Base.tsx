@@ -1,4 +1,5 @@
 import { Avatar, Stack, Typography } from '@mui/material';
+import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
@@ -16,6 +17,7 @@ function HeroBaseStep({ children, stepNumber, title }: Props) {
                     mb: 1.5,
                     alignItems: 'center',
                     justifyContent: 'center',
+                    minWidth: 'max-content',
                 }}
             >
                 <Avatar
@@ -30,7 +32,9 @@ function HeroBaseStep({ children, stepNumber, title }: Props) {
                     {stepNumber}
                 </Avatar>
 
-                <Typography variant="h6">{title}</Typography>
+                <Typography variant="h6">
+                    <FormattedMessage id={title} />
+                </Typography>
             </Stack>
 
             <Typography variant="subtitle1">{children}</Typography>

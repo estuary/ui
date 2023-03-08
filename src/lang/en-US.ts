@@ -279,6 +279,8 @@ const Home: ResolvedIntlConfig['messages'] = {
     'home.hero.3.message': `Flow {emphasis} a fact table with real-time updates.`,
     'home.hero.3.message.emphasis': `materializes`,
     'home.hero.3.button': `See the Materialization`,
+
+    'home.hero.button': `See The Demo`,
 };
 
 const PageNotFound: ResolvedIntlConfig['messages'] = {

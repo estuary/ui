@@ -2,6 +2,7 @@ import { Box, Grid } from '@mui/material';
 import HeroTabs from 'components/hero/Tabs';
 import WelcomeImage from 'components/hero/WelcomeImage';
 import HeroDemo from './Demo';
+import DemoImage from './DemoImage';
 import HeroDetail from './Detail';
 import { useHeroTabs } from './hooks';
 import HeroOverview from './Overview';
@@ -25,7 +26,7 @@ function HeroImageAndDescription() {
                         justifyContent: 'center',
                     }}
                 >
-                    <WelcomeImage />
+                    {activeTab === 'demo' ? <DemoImage /> : <WelcomeImage />}
                 </Grid>
             </Grid>
 

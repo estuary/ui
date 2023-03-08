@@ -1,110 +1,67 @@
-import { Box, Button, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
-import MessageWithEmphasis from 'components/content/MessageWithEmphasis';
+import ExternalLink from 'components/shared/ExternalLink';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
 import { getPathWithParams } from 'utils/misc-utils';
-import HeroStep from './Step';
+import DemoButton from './DemoButton';
+import DemoStep from './Steps/Demo';
 
 function HeroDemo() {
     const navigate = useNavigate();
 
     return (
         <>
-            <Grid item xs={4}>
-                <HeroStep stepNumber={1} title="home.hero.1.title">
-                    <Box
-                        sx={{
-                            textAlign: 'center',
-                        }}
-                    >
-                        <MessageWithEmphasis messageID="home.hero.1.message" />
-
-                        <Button
-                            onClick={() => {
-                                //estuary/wikipedia
-                                navigate(
-                                    getPathWithParams(
-                                        authenticatedRoutes.captures.fullPath,
-                                        {
-                                            'cap-sq': 'estuary/wikipedia',
-                                        }
-                                    )
-                                );
-                            }}
-                            sx={{
-                                mt: 2,
-                            }}
-                        >
-                            <FormattedMessage id="home.hero.1.button" />
-                        </Button>
-                    </Box>
-                </HeroStep>
+            <Grid container>
+                <DemoStep step={1} />
+                <DemoStep step={2} />
+                <DemoStep step={3} />
             </Grid>
+            <Grid container>
+                <DemoButton
+                    step={1}
+                    onClick={() => {
+                        //estuary/wikipedia
+                        navigate(
+                            getPathWithParams(
+                                authenticatedRoutes.captures.fullPath,
+                                {
+                                    'cap-sq': 'estuary/wikipedia',
+                                }
+                            )
+                        );
+                    }}
+                />
 
-            <Grid item xs={4}>
-                <HeroStep stepNumber={2} title="home.hero.2.title">
-                    <Box
-                        sx={{
-                            textAlign: 'center',
-                        }}
-                    >
-                        <MessageWithEmphasis messageID="home.hero.2.message" />
+                <DemoButton
+                    step={2}
+                    onClick={() => {
+                        navigate(
+                            getPathWithParams(
+                                authenticatedRoutes.collections.fullPath,
+                                {
+                                    'col-sq':
+                                        'estuary/wikipedia/derivation-data-change',
+                                }
+                            )
+                        );
+                    }}
+                />
 
-                        <Button
-                            onClick={() => {
-                                navigate(
-                                    getPathWithParams(
-                                        authenticatedRoutes.collections
-                                            .fullPath,
-                                        {
-                                            'col-sq':
-                                                'estuary/wikipedia/derivation-data-change',
-                                        }
-                                    )
-                                );
-                            }}
-                            sx={{
-                                mt: 2,
-                            }}
-                        >
-                            <FormattedMessage id="home.hero.2.button" />
-                        </Button>
-                    </Box>
-                </HeroStep>
+                <DemoButton
+                    step={3}
+                    onClick={() => {
+                        navigate(
+                            getPathWithParams(
+                                authenticatedRoutes.materializations.fullPath,
+                                {
+                                    'mat-sq': 'estuary/dave-wiki-lines',
+                                }
+                            )
+                        );
+                    }}
+                />
             </Grid>
-
-            <Grid item xs={4}>
-                <HeroStep stepNumber={3} title="home.hero.3.title">
-                    <Box
-                        sx={{
-                            textAlign: 'center',
-                        }}
-                    >
-                        <MessageWithEmphasis messageID="home.hero.3.message" />
-
-                        <Button
-                            onClick={() => {
-                                navigate(
-                                    getPathWithParams(
-                                        authenticatedRoutes.materializations
-                                            .fullPath,
-                                        {
-                                            'mat-sq': 'estuary/dave-wiki-lines',
-                                        }
-                                    )
-                                );
-                            }}
-                            sx={{
-                                mt: 2,
-                            }}
-                        >
-                            <FormattedMessage id="home.hero.3.button" />
-                        </Button>
-                    </Box>
-                </HeroStep>
-            </Grid>
-
             <Grid
                 item
                 xs={12}
@@ -115,7 +72,17 @@ function HeroDemo() {
                     mt: 3,
                 }}
             >
-                <Button>See the demo</Button>
+                <ExternalLink
+                    color="primary"
+                    sx={{
+                        py: 2,
+                        px: 4,
+                    }}
+                    variant="contained"
+                    link="https://docs.google.com/spreadsheets/d/1Cd_afDejaVXKeGxSTCupKaTtrb3a7ZHBghTemDNKE5I/edit#gid=0"
+                >
+                    <FormattedMessage id="home.hero.button" />
+                </ExternalLink>
             </Grid>
         </>
     );
