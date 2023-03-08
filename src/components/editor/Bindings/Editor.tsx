@@ -55,10 +55,10 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const [activeTab, setActiveTab] = useState<number>(0);
 
     useEffect(() => {
-        if (tabProps[activeTab].value === 'schema') {
-            void initializeCollectionDraft();
+        if (tabProps[activeTab].value === 'schema' && currentCollection) {
+            void initializeCollectionDraft(currentCollection);
         }
-    }, [initializeCollectionDraft, activeTab]);
+    }, [initializeCollectionDraft, activeTab, currentCollection]);
 
     if (currentCollection) {
         return loading ? (

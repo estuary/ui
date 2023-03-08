@@ -11,7 +11,6 @@ import {
 import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useCallback } from 'react';
-import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 import { Annotations } from 'types/jsonforms';
 
 const specType = 'collection';
@@ -42,9 +41,6 @@ function useInitializeCollectionDraft() {
 
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
-
-    // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
 
     const updateBindingsEditorState = useCallback(
         (data: BindingsEditorState['collectionData']): void => {
@@ -169,23 +165,22 @@ function useInitializeCollectionDraft() {
         [setCollectionInitializationAlert, updateBindingsEditorState, draftId]
     );
 
-    return useCallback(async (): Promise<void> => {
-        setCollectionInitializationAlert(null);
+    return useCallback(
+        async (collection: string): Promise<void> => {
+            setCollectionInitializationAlert(null);
 
-        if (currentCollection) {
-            const publishedCollection = await getCollection(currentCollection);
+            if (collection) {
+                const publishedCollection = await getCollection(collection);
 
-            await getCollectionDraftSpecs(
-                currentCollection,
-                publishedCollection?.last_pub_id,
-                publishedCollection?.spec
-            );
-        }
-    }, [
-        getCollectionDraftSpecs,
-        setCollectionInitializationAlert,
-        currentCollection,
-    ]);
+                await getCollectionDraftSpecs(
+                    collection,
+                    publishedCollection?.last_pub_id,
+                    publishedCollection?.spec
+                );
+            }
+        },
+        [getCollectionDraftSpecs, setCollectionInitializationAlert]
+    );
 }
 
 export default useInitializeCollectionDraft;
