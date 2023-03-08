@@ -13,7 +13,14 @@ function HeroImageAndDescription() {
     return (
         <Box sx={{ mx: 'auto', pb: 3, maxWidth: 1000 }}>
             <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid
+                    item
+                    xs={12}
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                    }}
+                >
                     <HeroTabs />
                 </Grid>
 

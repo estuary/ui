@@ -30,7 +30,6 @@ function HeroTabs() {
 
     return (
         <Tabs
-            centered
             value={activeTab}
             aria-label={intl.formatMessage({ id: 'home.hero.tab.ariaLabel' })}
         >
