@@ -428,7 +428,8 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
-    'welcome.image.alt': `content needed`,
+    'welcome.image.alt': `A diagram explaining Flow with endpoints coming into and out of ${CommonMessages.productName}.`,
+    'welcome.demo.alt': `A diagram of Wikipedia endpoint coming into ${CommonMessages.productName} and then Google Sheets coming out of ${CommonMessages.productName}`,
 };
 
 const AccessGrants: ResolvedIntlConfig['messages'] = {

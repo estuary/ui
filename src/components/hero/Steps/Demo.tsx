@@ -12,6 +12,7 @@ function DemoStep({ step }: Props) {
             <HeroBaseStep stepNumber={step} title={`home.hero.${step}.title`}>
                 <Box
                     sx={{
+                        px: 2,
                         textAlign: 'center',
                     }}
                 >
