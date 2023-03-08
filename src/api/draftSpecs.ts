@@ -56,33 +56,6 @@ export const createDraftSpec = (
     return insertSupabase(TABLES.DRAFT_SPECS, matchData);
 };
 
-export const updateDraftSpec = (
-    draftId: string | null,
-    catalogName: string,
-    draftSpec: any,
-    lastPubId?: string | null
-) => {
-    let matchData: UpdateMatchData = {
-        draft_id: draftId,
-        catalog_name: catalogName,
-    };
-
-    if (lastPubId) {
-        matchData = { ...matchData, expect_pub_id: lastPubId };
-    }
-
-    return updateSupabase(
-        TABLES.DRAFT_SPECS,
-        {
-            spec: draftSpec,
-        },
-        matchData
-    );
-};
-
-// TODO (optimization): Determine whether to replace all instances of updateDraftSpec
-//   with this modified and extendible version of that function. If that is desired,
-//   rename the function below to updateDraftSpec and remove the existing function.
 export const modifyDraftSpec = (
     draftSpec: any,
     matchData: UpdateMatchData,

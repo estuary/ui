@@ -109,10 +109,9 @@ function useInitializeCollectionDraft() {
                     //         belongsToDraft: true,
                     //     });
                     // } else {
-                    //     const updatedDraftSpecResponse = await updateDraftSpec(
-                    //         draftId,
-                    //         collectionName,
-                    //         draftSpecResponse.data[0].spec
+                    //     const updatedDraftSpecResponse = await modifyDraftSpec(
+                    //         draftSpecResponse.data[0].spec,
+                    //         { draft_id: draftId, catalog_name: collectionName }
                     //     );
 
                     //     if (

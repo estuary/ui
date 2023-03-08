@@ -3,7 +3,7 @@ import { createEntityDraft, getDraftsByCatalogName } from 'api/drafts';
 import {
     createDraftSpec,
     getDraftSpecsByCatalogName,
-    updateDraftSpec,
+    modifyDraftSpec,
 } from 'api/draftSpecs';
 import {
     getLiveSpecsByLiveSpecId,
@@ -182,11 +182,10 @@ function useInitializeTaskDraft() {
                           taskSpecType,
                           last_pub_id
                       )
-                    : await updateDraftSpec(
-                          evaluatedDraftId,
+                    : await modifyDraftSpec(draftSpecsRequestConfig.spec, {
+                          draft_id: evaluatedDraftId,
                           catalog_name,
-                          draftSpecsRequestConfig.spec
-                      );
+                      });
 
                 return draftSpecResponse.error ?? null;
             } else {

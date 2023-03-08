@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { generateDraftSpec, updateDraftSpec } from 'api/draftSpecs';
+import { generateDraftSpec, modifyDraftSpec } from 'api/draftSpecs';
 import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
@@ -133,11 +133,10 @@ function MaterializeGenerateButton({
                 resourceConfig
             );
 
-            const draftSpecsResponse = await updateDraftSpec(
-                persistedDraftId,
-                entityName,
-                draftSpec
-            );
+            const draftSpecsResponse = await modifyDraftSpec(draftSpec, {
+                draft_id: persistedDraftId,
+                catalog_name: entityName,
+            });
             if (draftSpecsResponse.error) {
                 return callFailed({
                     error: {

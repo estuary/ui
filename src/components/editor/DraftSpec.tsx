@@ -1,4 +1,4 @@
-import { updateDraftSpec } from 'api/draftSpecs';
+import { modifyDraftSpec } from 'api/draftSpecs';
 import MonacoEditor from 'components/editor/MonacoEditor';
 import {
     useEditorStore_currentCatalog,
@@ -51,11 +51,10 @@ function DraftSpecEditor({
     const handlers = {
         change: async (newVal: any, catalogName: string) => {
             if (draftSpec) {
-                const updateResponse = await updateDraftSpec(
-                    draftId,
-                    catalogName,
-                    newVal
-                );
+                const updateResponse = await modifyDraftSpec(newVal, {
+                    draft_id: draftId,
+                    catalog_name: catalogName,
+                });
 
                 if (updateResponse.error) {
                     return Promise.reject();
