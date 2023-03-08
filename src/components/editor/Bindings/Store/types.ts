@@ -7,12 +7,12 @@ export interface BindingsEditorState {
     collectionData: CollectionData | null | undefined;
     setCollectionData: (value: BindingsEditorState['collectionData']) => void;
 
-    collectionInitializationError: null | {
+    collectionInitializationAlert: null | {
         severity: AlertColor;
         messageId: string;
     };
-    setCollectionInitializationError: (
-        value: BindingsEditorState['collectionInitializationError']
+    setCollectionInitializationAlert: (
+        value: BindingsEditorState['collectionInitializationAlert']
     ) => void;
 
     // CLI Collection Schema Synchronization

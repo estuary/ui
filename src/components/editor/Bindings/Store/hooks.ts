@@ -31,24 +31,24 @@ export const useBindingsEditorStore_setCollectionData = () => {
     >(getStoreName(entityType), (state) => state.setCollectionData);
 };
 
-export const useBindingsEditorStore_collectionInitializationError = () => {
+export const useBindingsEditorStore_collectionInitializationAlert = () => {
     const entityType = useEntityType();
 
     return useZustandStore<
         BindingsEditorState,
-        BindingsEditorState['collectionInitializationError']
-    >(getStoreName(entityType), (state) => state.collectionInitializationError);
+        BindingsEditorState['collectionInitializationAlert']
+    >(getStoreName(entityType), (state) => state.collectionInitializationAlert);
 };
 
-export const useBindingsEditorStore_setCollectionInitializationError = () => {
+export const useBindingsEditorStore_setCollectionInitializationAlert = () => {
     const entityType = useEntityType();
 
     return useZustandStore<
         BindingsEditorState,
-        BindingsEditorState['setCollectionInitializationError']
+        BindingsEditorState['setCollectionInitializationAlert']
     >(
         getStoreName(entityType),
-        (state) => state.setCollectionInitializationError
+        (state) => state.setCollectionInitializationAlert
     );
 };
 

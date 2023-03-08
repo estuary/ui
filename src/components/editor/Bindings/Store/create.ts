@@ -75,7 +75,7 @@ const evaluateCollectionData = async (
 const getInitialStateData = (): Pick<
     BindingsEditorState,
     | 'collectionData'
-    | 'collectionInitializationError'
+    | 'collectionInitializationAlert'
     | 'documentsRead'
     | 'inferredSchemaApplicationErrored'
     | 'inferredSpec'
@@ -85,7 +85,7 @@ const getInitialStateData = (): Pick<
     | 'schemaUpdated'
 > => ({
     collectionData: null,
-    collectionInitializationError: null,
+    collectionInitializationAlert: null,
     documentsRead: null,
     inferredSchemaApplicationErrored: false,
     inferredSpec: null,
@@ -111,13 +111,13 @@ const getInitialState = (
         );
     },
 
-    setCollectionInitializationError: (value) => {
+    setCollectionInitializationAlert: (value) => {
         set(
             produce((state: BindingsEditorState) => {
-                state.collectionInitializationError = value;
+                state.collectionInitializationAlert = value;
             }),
             false,
-            'Collection Initialization Error Set'
+            'Collection Initialization Alert Set'
         );
     },
 

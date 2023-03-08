@@ -7,7 +7,7 @@ import SchemaEditButton from 'components/editor/Bindings/SchemaEdit/Button';
 import SchemaInferenceButton from 'components/editor/Bindings/SchemaInference/Button';
 import {
     useBindingsEditorStore_collectionData,
-    useBindingsEditorStore_collectionInitializationError,
+    useBindingsEditorStore_collectionInitializationAlert,
     useBindingsEditorStore_schemaUpdateErrored,
 } from 'components/editor/Bindings/Store/hooks';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
@@ -41,8 +41,8 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
 
     // Bindings Editor Store
     const collectionData = useBindingsEditorStore_collectionData();
-    const collectionInitializationError =
-        useBindingsEditorStore_collectionInitializationError();
+    const collectionInitializationAlert =
+        useBindingsEditorStore_collectionInitializationAlert();
 
     const schemaUpdateErrored = useBindingsEditorStore_schemaUpdateErrored();
 
@@ -84,11 +84,11 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 </AlertBox>
                             ) : null}
 
-                            {collectionInitializationError ? (
+                            {collectionInitializationAlert ? (
                                 <AlertBox
                                     short
                                     severity={
-                                        collectionInitializationError.severity
+                                        collectionInitializationAlert.severity
                                     }
                                     title={
                                         <FormattedMessage id="workflows.collectionSelector.error.title.editorInitialization" />
@@ -96,7 +96,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 >
                                     <FormattedMessage
                                         id={
-                                            collectionInitializationError.messageId
+                                            collectionInitializationAlert.messageId
                                         }
                                     />
                                 </AlertBox>

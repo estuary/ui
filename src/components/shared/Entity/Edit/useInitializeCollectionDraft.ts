@@ -5,7 +5,7 @@ import {
 } from 'api/liveSpecsExt';
 import {
     useBindingsEditorStore_setCollectionData,
-    useBindingsEditorStore_setCollectionInitializationError,
+    useBindingsEditorStore_setCollectionInitializationAlert,
     useBindingsEditorStore_setSchemaInferenceDisabled,
 } from 'components/editor/Bindings/Store/hooks';
 import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
@@ -34,8 +34,8 @@ const getCollection = async (
 function useInitializeCollectionDraft() {
     // Bindings Editor Store
     const setCollectionData = useBindingsEditorStore_setCollectionData();
-    const setCollectionInitializationError =
-        useBindingsEditorStore_setCollectionInitializationError();
+    const setCollectionInitializationAlert =
+        useBindingsEditorStore_setCollectionInitializationAlert();
 
     const setSchemaInferenceDisabled =
         useBindingsEditorStore_setSchemaInferenceDisabled();
@@ -92,7 +92,7 @@ function useInitializeCollectionDraft() {
                     });
 
                     if (lastPubId && expectedPubId !== lastPubId) {
-                        setCollectionInitializationError({
+                        setCollectionInitializationAlert({
                             severity: 'warning',
                             messageId:
                                 'workflows.collectionSelector.error.message.invalidPubId',
@@ -123,7 +123,7 @@ function useInitializeCollectionDraft() {
                     //             belongsToDraft: true,
                     //         });
 
-                    //         setCollectionInitializationError({
+                    //         setCollectionInitializationAlert({
                     //             severity: 'warning',
                     //             messageId:
                     //                 'workflows.collectionSelector.error.message.invalidPubId',
@@ -154,7 +154,7 @@ function useInitializeCollectionDraft() {
                             belongsToDraft: false,
                         });
 
-                        setCollectionInitializationError({
+                        setCollectionInitializationAlert({
                             severity: 'warning',
                             messageId:
                                 'workflows.collectionSelector.error.message.draftCreationFailed',
@@ -166,11 +166,11 @@ function useInitializeCollectionDraft() {
                 }
             }
         },
-        [setCollectionInitializationError, updateBindingsEditorState, draftId]
+        [setCollectionInitializationAlert, updateBindingsEditorState, draftId]
     );
 
     return useCallback(async (): Promise<void> => {
-        setCollectionInitializationError(null);
+        setCollectionInitializationAlert(null);
 
         if (currentCollection) {
             const publishedCollection = await getCollection(currentCollection);
@@ -183,7 +183,7 @@ function useInitializeCollectionDraft() {
         }
     }, [
         getCollectionDraftSpecs,
-        setCollectionInitializationError,
+        setCollectionInitializationAlert,
         currentCollection,
     ]);
 }
