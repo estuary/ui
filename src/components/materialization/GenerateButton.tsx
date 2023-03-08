@@ -50,8 +50,6 @@ interface Props {
     mutateDraftSpecs: Function;
 }
 
-// TODO (optimization): Combine the generate button logic for materialization creation and edit.
-
 function MaterializeGenerateButton({
     disabled,
     callFailed,
