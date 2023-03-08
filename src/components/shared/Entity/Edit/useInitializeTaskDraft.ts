@@ -263,6 +263,7 @@ function useInitializeTaskDraft() {
             setPersistedDraftId,
             connectorId,
             liveSpecId,
+            prefillPubIds,
             taskSpecType,
         ]
     );

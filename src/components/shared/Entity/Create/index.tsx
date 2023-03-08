@@ -149,7 +149,13 @@ function EntityCreate({
                   imageTag.connectorId === connectorId &&
                   !entityNameChanged &&
                   persistedDraftId,
-        [entityType, entityNameChanged, imageTag.connectorId, persistedDraftId]
+        [
+            connectorId,
+            entityType,
+            entityNameChanged,
+            imageTag.connectorId,
+            persistedDraftId,
+        ]
     );
 
     return connectorTagsError ? (

@@ -53,7 +53,6 @@ import {
     useResourceConfig_resetConfigAndCollections,
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
-    useResourceConfig_restrictedDiscoveredCollections,
     useResourceConfig_setDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
 import { Entity } from 'types';
@@ -126,8 +125,6 @@ function useDiscoverCapture(
 
     // Resource Config Store
     const resourceConfig = useResourceConfig_resourceConfig();
-    const restrictedDiscoveredCollections =
-        useResourceConfig_restrictedDiscoveredCollections();
     const setDiscoveredCollections =
         useResourceConfig_setDiscoveredCollections();
     const evaluateDiscoveredCollections =
@@ -202,9 +199,7 @@ function useDiscoverCapture(
             entityType,
             evaluateDiscoveredCollections,
             lastPubId,
-            options?.initiateRediscovery,
             resetCollections,
-            restrictedDiscoveredCollections,
             setDiscoveredCollections,
             setDraftId,
             setEncryptedEndpointConfig,

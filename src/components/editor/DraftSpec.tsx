@@ -80,7 +80,14 @@ function DraftSpecEditor({
                 setSpecs(currentCollectionSpec);
             }
         }
-    }, [setSpecs, collections, currentCollection, draftSpecs, entityType]);
+    }, [
+        setSpecs,
+        collections,
+        currentCollection,
+        draftSpecs,
+        entityType,
+        localZustandScope,
+    ]);
 
     useEffect(() => {
         if (currentCatalog) {
