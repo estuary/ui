@@ -293,6 +293,7 @@ function NewCollection() {
             }
         },
         [
+            computedEntityName,
             derivationLanguage,
             displayError,
             generateDraftWithSpecs,
