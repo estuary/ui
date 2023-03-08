@@ -12,6 +12,9 @@ import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
@@ -61,6 +64,8 @@ function EntityCreate({
     RediscoverButton,
 }: Props) {
     useBrowserTitle(title);
+
+    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     // Supabase stuff
     const { combinedGrants } = useCombinedGrantsExt({
@@ -136,12 +141,16 @@ function EntityCreate({
 
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
-    const displayResourceConfig =
-        entityType === 'materialization'
-            ? hasLength(imageTag.connectorId)
-            : hasLength(imageTag.connectorId) &&
-              !entityNameChanged &&
-              persistedDraftId;
+    const displayResourceConfig = useMemo(
+        () =>
+            entityType === 'materialization'
+                ? hasLength(imageTag.connectorId)
+                : hasLength(imageTag.connectorId) &&
+                  imageTag.connectorId === connectorId &&
+                  !entityNameChanged &&
+                  persistedDraftId,
+        [entityType, entityNameChanged, imageTag.connectorId, persistedDraftId]
+    );
 
     return connectorTagsError ? (
         <Error error={connectorTagsError} />

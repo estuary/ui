@@ -54,7 +54,6 @@ import {
     useResourceConfig_restrictedDiscoveredCollections,
     useResourceConfig_setDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
-import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity } from 'types';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import {
@@ -133,10 +132,7 @@ function useDiscoverCapture(
     const resetCollections = useResourceConfig_resetConfigAndCollections();
 
     const storeDiscoveredCollections = useCallback(
-        async (
-            newDraftId: string,
-            resourceConfigForDiscovery: ResourceConfigDictionary
-        ) => {
+        async (newDraftId: string) => {
             // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
             //   More columns are selected than required to appease the typing of the editor store.
             const draftSpecsResponse = await getDraftSpecsBySpecType(
@@ -154,9 +150,7 @@ function useDiscoverCapture(
             }
 
             if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
-                if (options?.initiateRediscovery) {
-                    resetCollections();
-                }
+                resetCollections();
 
                 setDiscoveredCollections(draftSpecsResponse.data[0]);
 
@@ -168,10 +162,7 @@ function useDiscoverCapture(
                 const updatedDraftSpecsResponse =
                     await modifyDiscoveredDraftSpec(
                         draftSpecsResponse,
-                        resourceConfigForDiscovery,
-                        restrictedDiscoveredCollections,
-                        supabaseConfig,
-                        options?.initiateRediscovery
+                        supabaseConfig
                     );
 
                 if (updatedDraftSpecsResponse.error) {
@@ -231,8 +222,7 @@ function useDiscoverCapture(
     const createDiscoversSubscription = useCallback(
         (
             discoverDraftId: string,
-            existingEndpointConfig: any, // JsonFormsData,
-            resourceConfigForDiscover: ResourceConfigDictionary
+            existingEndpointConfig: any // JsonFormsData,
         ) => {
             setDraftId(null);
 
@@ -252,10 +242,7 @@ function useDiscoverCapture(
                     })
                     .order('created_at', { ascending: false }),
                 async (payload: any) => {
-                    await storeDiscoveredCollections(
-                        payload.draft_id,
-                        resourceConfigForDiscover
-                    );
+                    await storeDiscoveredCollections(payload.draft_id);
 
                     void postGenerateMutate();
 
@@ -352,11 +339,7 @@ function useDiscoverCapture(
                             },
                         });
                     }
-                    createDiscoversSubscription(
-                        draftId,
-                        endpointConfigData,
-                        resourceConfig
-                    );
+                    createDiscoversSubscription(draftId, endpointConfigData);
 
                     setFormState({
                         logToken: discoverResponse.data[0].logs_token,

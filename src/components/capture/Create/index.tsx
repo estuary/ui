@@ -81,7 +81,8 @@ function CaptureCreate() {
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
-    }, [imageTag, setDraftId]);
+        setInitiateDiscovery(true);
+    }, [setDraftId, setInitiateDiscovery, imageTag]);
 
     const resetState = () => {
         resetDetailsForm();

@@ -135,6 +135,17 @@ export const useDetailsForm_setEntityNameChanged = () => {
     >(getStoreName(entityType), (state) => state.setEntityNameChanged);
 };
 
+export const useDetailsForm_previousConnectorImage_connectorId = () => {
+    const entityType = useEntityType();
+    return useZustandStore<
+        DetailsFormState,
+        DetailsFormState['previousDetails']['data']['connectorImage']['connectorId']
+    >(
+        getStoreName(entityType),
+        (state) => state.previousDetails.data.connectorImage.connectorId
+    );
+};
+
 export const useDetailsForm_setPreviousDetails = () => {
     const entityType = useEntityType();
     return useZustandStore<

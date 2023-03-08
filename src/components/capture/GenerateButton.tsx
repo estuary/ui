@@ -2,6 +2,10 @@ import { Button } from '@mui/material';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
+import {
+    useDetailsForm_connectorImage_connectorId,
+    useDetailsForm_previousConnectorImage_connectorId,
+} from 'stores/DetailsForm/hooks';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { Entity } from 'types';
@@ -32,14 +36,29 @@ function CaptureGenerateButton({
         { initiateDiscovery: createWorkflowMetadata?.initiateDiscovery }
     );
 
+    // Details Form Store
+    const selectedConnectorId = useDetailsForm_connectorImage_connectorId();
+    const previousConnectorId =
+        useDetailsForm_previousConnectorImage_connectorId();
+
+    // Form State Store
     const formStatus = useFormStateStore_status();
+
     useEffect(() => {
         if (createWorkflowMetadata?.initiateDiscovery) {
-            if (formStatus === FormStatus.GENERATED) {
+            if (
+                formStatus === FormStatus.GENERATED &&
+                selectedConnectorId === previousConnectorId
+            ) {
                 createWorkflowMetadata.setInitiateDiscovery(false);
             }
         }
-    }, [createWorkflowMetadata, formStatus]);
+    }, [
+        createWorkflowMetadata,
+        formStatus,
+        previousConnectorId,
+        selectedConnectorId,
+    ]);
 
     const processFormData = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
