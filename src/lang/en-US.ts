@@ -259,7 +259,9 @@ const Home: ResolvedIntlConfig['messages'] = {
     'home.hero.tab.demo': `Live Demo`,
 
     'home.hero.companyOverview.cta': `How it works`,
-    'home.hero.companyOverview.description': `<b>${CommonMessages.productName}</b> helps you sync your data between the sources that produce it and destinations that consume it in real-time.`,
+    'home.hero.companyOverview.description': `{emphasis} helps you sync your data between the sources that produce it and destinations that consume it in real-time.`,
+    'home.hero.companyOverview.description.emphasis':
+        CommonMessages.productName,
 
     'home.hero.companyDetails.cta': `New capture`,
     'home.hero.companyDetails.step1': `Set up real-time data ingestion from your sources. Click “New Capture” to get started.`,

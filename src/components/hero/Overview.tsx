@@ -1,4 +1,5 @@
 import { Button, Grid, Typography } from '@mui/material';
+import MessageWithEmphasis from 'components/content/MessageWithEmphasis';
 import { NavArrowRight } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { useHeroTabs } from './hooks';
@@ -10,12 +11,7 @@ function HeroOverview() {
         <>
             <Grid item xs={12} sx={{ mb: 0.25 }}>
                 <Typography variant="subtitle1" align="center">
-                    <FormattedMessage
-                        id="home.hero.companyOverview.description"
-                        values={{
-                            b: (companyName) => <b>{companyName}</b>,
-                        }}
-                    />
+                    <MessageWithEmphasis messageID="home.hero.companyOverview.description" />
                 </Typography>
             </Grid>
 
