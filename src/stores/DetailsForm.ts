@@ -28,6 +28,7 @@ export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
         connectorImage: {
             id: string;
             iconPath: string;
+            imageName: string;
             imagePath: string;
             connectorId: string;
         };
@@ -75,6 +76,7 @@ const getInitialStateData = (): Pick<
                 connectorId: '',
                 id: '',
                 iconPath: '',
+                imageName: '',
                 imagePath: '',
             },
             entityName: '',
@@ -219,6 +221,17 @@ export const useDetailsForm_connectorImage_imagePath = () => {
     );
 };
 
+export const useDetailsForm_connectorImage_imageName = () => {
+    const entityType = useEntityType();
+    return useZustandStoreMap<
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']['imageName']
+    >(
+        storeName(entityType),
+        (state) => state.details.data.connectorImage.imageName
+    );
+};
+
 export const useDetailsForm_details = () => {
     const entityType = useEntityType();
     return useZustandStoreMap<
@@ -267,6 +280,15 @@ export const useDetailsForm_errorsExist = () => {
         DetailsFormState,
         DetailsFormState['detailsFormErrorsExist']
     >(storeName(entityType), errorsExistSelector);
+};
+
+export const useDetailsForm_draftedEntityName = () => {
+    const entityType = useEntityType();
+
+    return useZustandStoreMap<
+        DetailsFormState,
+        DetailsFormState['draftedEntityName']
+    >(storeName(entityType), (state) => state.draftedEntityName);
 };
 
 export const useDetailsForm_setDraftedEntityName = () => {
