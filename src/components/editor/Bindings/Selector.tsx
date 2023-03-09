@@ -16,8 +16,10 @@ import {
     GridSelectionModel,
     GridValueGetterParams,
 } from '@mui/x-data-grid';
+import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import CollectionPicker from 'components/collection/Picker';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
+import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import {
     alternativeDataGridHeader,
     defaultOutline,
@@ -31,6 +33,7 @@ import { useUnmount } from 'react-use';
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
+    useResourceConfig_collections,
     useResourceConfig_currentCollection,
     useResourceConfig_discoveredCollections,
     useResourceConfig_removeAllCollections,
@@ -55,9 +58,11 @@ interface RowProps {
     task: string;
     workflow: EntityWorkflow | null;
     disabled: boolean;
+    draftId: string | null;
 }
 
-function Row({ collection, task, workflow, disabled }: RowProps) {
+function Row({ collection, task, workflow, disabled, draftId }: RowProps) {
+    // Resource Config Store
     const discoveredCollections = useResourceConfig_discoveredCollections();
     const removeCollection = useResourceConfig_removeCollection();
 
@@ -84,6 +89,15 @@ function Row({ collection, task, workflow, disabled }: RowProps) {
                     : setRestrictedDiscoveredCollections(collection);
             } else {
                 setRestrictedDiscoveredCollections(collection);
+            }
+
+            if (draftId) {
+                void deleteDraftSpecsByCatalogName(
+                    draftId,
+                    'collection',
+                    [collection],
+                    'remove'
+                );
             }
         },
     };
@@ -137,12 +151,17 @@ function BindingSelector({
     // Details Form Store
     const task = useDetailsForm_details_entityName();
 
+    // Draft Editor Store
+    const draftId = useEditorStore_persistedDraftId();
+
     // Form State Store
     const formActive = useFormStateStore_isActive();
 
     // Resource Config Store
     const currentCollection = useResourceConfig_currentCollection();
     const setCurrentCollection = useResourceConfig_setCurrentCollection();
+
+    const collections = useResourceConfig_collections();
 
     const resourceConfig = useResourceConfig_resourceConfig();
 
@@ -159,6 +178,15 @@ function BindingSelector({
             event.stopPropagation();
 
             removeAllCollections(workflow, task);
+
+            if (draftId && collections && collections.length > 0) {
+                void deleteDraftSpecsByCatalogName(
+                    draftId,
+                    'collection',
+                    collections,
+                    'remove'
+                );
+            }
         },
     };
 
@@ -191,6 +219,7 @@ function BindingSelector({
                                 task={task}
                                 workflow={workflow}
                                 disabled={formActive}
+                                draftId={draftId}
                             />
                         </>
                     );
@@ -202,6 +231,7 @@ function BindingSelector({
                         task={task}
                         workflow={workflow}
                         disabled={formActive}
+                        draftId={draftId}
                     />
                 );
             },

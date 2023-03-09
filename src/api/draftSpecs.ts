@@ -186,10 +186,11 @@ export const getDraftSpecsByCatalogName = async (
 };
 
 const CHUNK_SIZE = 10;
-export const deleteUnspecifiedDraftSpecs = async (
+export const deleteDraftSpecsByCatalogName = async (
     draftId: string,
     specType: Entity,
-    catalogNamesToPreserve: string[]
+    catalogNames: string[],
+    operation: 'remove' | 'preserve'
 ) => {
     // In case we get an absolutely massive amount of catalogs to delete,
     // we don't want to spam supabase
@@ -197,24 +198,32 @@ export const deleteUnspecifiedDraftSpecs = async (
     const promises: Array<Promise<PostgrestResponse<any>>> = [];
     let index = 0;
 
-    const deletePromiseGenerator = (idx: number) =>
-        supabaseClient
+    const deletePromiseGenerator = (idx: number) => {
+        let queryBuilder = supabaseClient
             .from(TABLES.DRAFT_SPECS)
             .delete()
             .eq('draft_id', draftId)
-            .eq('spec_type', specType)
-            .not(
-                'catalog_name',
-                'in',
-                `(${catalogNamesToPreserve
-                    .slice(idx, idx + CHUNK_SIZE)
-                    .join(',')})`
-            );
+            .eq('spec_type', specType);
+
+        queryBuilder =
+            operation === 'remove'
+                ? queryBuilder.in(
+                      'catalog_name',
+                      catalogNames.slice(idx, idx + CHUNK_SIZE)
+                  )
+                : queryBuilder.not(
+                      'catalog_name',
+                      'in',
+                      `(${catalogNames.slice(idx, idx + CHUNK_SIZE).join(',')})`
+                  );
+
+        return queryBuilder;
+    };
 
     // This could probably be written in a fancy functional-programming way with
     // clever calls to concat and map and slice and stuff,
     // but I want it to be dead obvious what's happening here.
-    while (index < catalogNamesToPreserve.length) {
+    while (index < catalogNames.length) {
         // Have to do this to capture `index` correctly
         const prom = deletePromiseGenerator(index);
         promises.push(limiter(() => prom));

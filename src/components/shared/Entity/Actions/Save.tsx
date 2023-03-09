@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { deleteUnspecifiedDraftSpecs } from 'api/draftSpecs';
+import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
 import {
     useEditorStore_id,
@@ -149,10 +149,11 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
         if (draftId) {
             if (collections && collections.length > 0) {
                 const deleteDraftSpecsResponse =
-                    await deleteUnspecifiedDraftSpecs(
+                    await deleteDraftSpecsByCatalogName(
                         draftId,
                         'collection',
-                        collections
+                        collections,
+                        'preserve'
                     );
                 if (deleteDraftSpecsResponse.error) {
                     return onFailure({
