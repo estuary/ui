@@ -1,9 +1,9 @@
 import Editor, { DiffEditor } from '@monaco-editor/react';
 import { Box, Divider, Paper, Stack, useTheme } from '@mui/material';
 import Invalid from 'components/editor/Status/Invalid';
-import Saved from 'components/editor/Status/Saved';
-import Saving from 'components/editor/Status/Saving';
 import ServerDiff from 'components/editor/Status/ServerDiff';
+import Synchronized from 'components/editor/Status/Synchronized';
+import Synchronizing from 'components/editor/Status/Synchronizing';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_serverUpdate,
@@ -189,9 +189,9 @@ function MonacoEditor({
                             />
                         ) : status === EditorStatus.IDLE ? null : status ===
                           EditorStatus.EDITING ? (
-                            <Saving iconSize={ICON_SIZE} />
+                            <Synchronizing iconSize={ICON_SIZE} />
                         ) : (
-                            <Saved iconSize={ICON_SIZE} />
+                            <Synchronized iconSize={ICON_SIZE} />
                         )}
                     </Stack>
                 </Box>

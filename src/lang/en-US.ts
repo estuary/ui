@@ -17,8 +17,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.inProgress': `In Progress`,
     'common.done': `Done`,
     'common.testing': `Testing`,
-    'common.saving': `Publishing`,
-    'common.saved': `Published`,
     'common.invalid': `Invalid`,
     'common.fail': `Failed`,
     'common.success': `Success`,
