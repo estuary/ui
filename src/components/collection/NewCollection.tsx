@@ -12,12 +12,12 @@ import {
     List,
     ListItem,
     ListItemButton,
-    ListItemText,
     ListSubheader,
     MenuItem,
     Radio,
     RadioGroup,
     Select,
+    Stack,
     Step,
     StepConnector,
     stepConnectorClasses,
@@ -29,6 +29,7 @@ import {
     Theme,
     Typography,
     useMediaQuery,
+    useTheme,
 } from '@mui/material';
 import { red } from '@mui/material/colors';
 import { createEntityDraft } from 'api/drafts';
@@ -43,6 +44,7 @@ import { useCallback, useMemo, useState } from 'react';
 // Something seems to be conflicting with the import re-ordering of this
 // eslint-disable-next-line import/order
 import { Buffer } from 'buffer';
+import { truncateTextSx } from 'context/Theme';
 import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 
 const StyledStepConnector = styled(StepConnector)(() => ({
@@ -108,9 +110,8 @@ const SingleStep: React.FC<{
     children?: React.ReactChild;
     StepperProps?: StepperPropsType;
 }> = ({ num, always, children, StepperProps }) => {
-    const isSmall = useMediaQuery<Theme>((theme) =>
-        theme.breakpoints.down('sm')
-    );
+    const theme = useTheme();
+    const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
 
     const wrappedChildren = <Typography variant="h6">{children}</Typography>;
 
@@ -285,7 +286,7 @@ function NewCollection() {
                 )}/${GIT_REPO}`;
                 return url;
             } catch (e: unknown) {
-                displayError(`${e}`);
+                displayError('Failed to open GitPod');
                 console.error(e);
                 return null;
             } finally {
@@ -334,14 +335,14 @@ function NewCollection() {
     const componentListHeader = useMemo(
         () => (
             <ListSubheader disableGutters>
-                <div
-                    style={{
+                <Box
+                    sx={{
                         display: 'flex',
                         padding: '0.5em 16px',
                     }}
                 >
                     <SingleStep num={1}>Input Collections</SingleStep>
-                    <div style={{ flexGrow: 1 }} />
+                    <Box sx={{ flexGrow: 1 }} />
                     {Object.entries(selectedCollections).some(
                         ([, selected]) => selected
                     ) ? (
@@ -369,7 +370,7 @@ function NewCollection() {
                             Select All
                         </StyledButton>
                     )}
-                </div>
+                </Box>
                 <Divider />
             </ListSubheader>
         ),
@@ -413,7 +414,11 @@ function NewCollection() {
                             }}
                             dense
                         >
-                            <ListItemText>{coll.catalog_name}</ListItemText>
+                            <Typography
+                                sx={{ ...truncateTextSx, width: '85%' }}
+                            >
+                                {coll.catalog_name}
+                            </Typography>
                         </ListItemButton>
                     </ListItem>
                 ))}
@@ -454,17 +459,10 @@ function NewCollection() {
                         </Stepper>
                     </Box>
                 ) : null}
-                <div
-                    style={{
-                        height: '100%',
-                        flexGrow: 1,
-                        display: 'flex',
-                        flexDirection: isSmall ? 'column' : 'row',
-                    }}
-                >
+                <Stack direction={isSmall ? 'column' : 'row'}>
                     <StepBox>{collectionList}</StepBox>
-                    <div
-                        style={{
+                    <Box
+                        sx={{
                             flex: 1,
                         }}
                     >
@@ -555,8 +553,8 @@ function NewCollection() {
                                 <CodeBlock>flowctl --help</CodeBlock>
                             </Typography>
                         </Box>
-                    </div>
-                </div>
+                    </Box>
+                </Stack>
             </Box>
         );
     }
