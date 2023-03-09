@@ -67,7 +67,7 @@ function useInitializeCollectionDraft() {
         localScope: true,
     });
 
-    const updateEditorStates = useCallback(
+    const updateBindingEditorState = useCallback(
         (data: BindingsEditorState['collectionData']): void => {
             setCollectionData(data);
 
@@ -108,12 +108,12 @@ function useInitializeCollectionDraft() {
             ) {
                 setCollectionSpecs(newDraftSpecResponse.data);
 
-                updateEditorStates({
+                updateBindingEditorState({
                     spec: newDraftSpecResponse.data[0].spec,
                     belongsToDraft: true,
                 });
             } else {
-                updateEditorStates({
+                updateBindingEditorState({
                     spec: liveSpec,
                     belongsToDraft: false,
                 });
@@ -128,7 +128,7 @@ function useInitializeCollectionDraft() {
         [
             setCollectionInitializationAlert,
             setCollectionSpecs,
-            updateEditorStates,
+            updateBindingEditorState,
         ]
     );
 
@@ -155,7 +155,7 @@ function useInitializeCollectionDraft() {
 
                     setCollectionSpecs(draftSpecResponse.data);
 
-                    updateEditorStates({
+                    updateBindingEditorState({
                         spec: draftSpecResponse.data[0].spec,
                         belongsToDraft: true,
                     });
@@ -209,7 +209,7 @@ function useInitializeCollectionDraft() {
                     );
                 } else {
                     // The draft of a collection that has never been published could not be found.
-                    updateEditorStates(undefined);
+                    updateBindingEditorState(undefined);
                 }
             } else {
                 // A draft for the entity could not be found. Current scenarios(s): entering the
@@ -237,7 +237,7 @@ function useInitializeCollectionDraft() {
             setCollectionSpecs,
             setDraftId,
             setPersistedDraftId,
-            updateEditorStates,
+            updateBindingEditorState,
         ]
     );
 
