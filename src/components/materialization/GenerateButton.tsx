@@ -3,6 +3,7 @@ import { createEntityDraft } from 'api/drafts';
 import {
     createDraftSpec,
     generateDraftSpec,
+    getDraftSpecsByCatalogName,
     modifyDraftSpec,
 } from 'api/draftSpecs';
 import {
@@ -136,8 +137,30 @@ function MaterializeGenerateButton({
             );
 
             let evaluatedDraftId = persistedDraftId;
+            let taskDraftExists = false;
 
-            if (!persistedDraftId) {
+            if (persistedDraftId) {
+                const existingDraftSpecResponse =
+                    await getDraftSpecsByCatalogName(
+                        persistedDraftId,
+                        entityName,
+                        'materialization'
+                    );
+
+                if (existingDraftSpecResponse.error) {
+                    return callFailed({
+                        error: {
+                            title: 'materializationCreate.generate.failure.errorTitle',
+                            error: existingDraftSpecResponse.error,
+                        },
+                    });
+                } else if (
+                    existingDraftSpecResponse.data &&
+                    existingDraftSpecResponse.data.length > 0
+                ) {
+                    taskDraftExists = true;
+                }
+            } else {
                 const draftsResponse = await createEntityDraft(entityName);
 
                 if (draftsResponse.error) {
@@ -158,17 +181,17 @@ function MaterializeGenerateButton({
                 resourceConfig
             );
 
-            const draftSpecsResponse = persistedDraftId
-                ? await modifyDraftSpec(draftSpec, {
-                      draft_id: evaluatedDraftId,
-                      catalog_name: entityName,
-                  })
-                : await createDraftSpec(
-                      evaluatedDraftId,
-                      entityName,
-                      draftSpec,
-                      'materialization'
-                  );
+            const draftSpecsResponse =
+                persistedDraftId && taskDraftExists
+                    ? await modifyDraftSpec(draftSpec, {
+                          draft_id: evaluatedDraftId,
+                      })
+                    : await createDraftSpec(
+                          evaluatedDraftId,
+                          entityName,
+                          draftSpec,
+                          'materialization'
+                      );
 
             if (draftSpecsResponse.error) {
                 return callFailed({

@@ -1,3 +1,4 @@
+import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, getDraftSpecsByCatalogName } from 'api/draftSpecs';
 import {
     getLiveSpecsByCatalogName,
@@ -9,11 +10,23 @@ import {
     useBindingsEditorStore_setSchemaInferenceDisabled,
 } from 'components/editor/Bindings/Store/hooks';
 import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
-import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
+import {
+    useEditorStore_persistedDraftId,
+    useEditorStore_setId,
+    useEditorStore_setPersistedDraftId,
+} from 'components/editor/Store/hooks';
 import { useCallback } from 'react';
 import { Annotations } from 'types/jsonforms';
 
 const specType = 'collection';
+
+const createGenericDraft = async (): Promise<string | null> => {
+    const draftsResponse = await createEntityDraft('Created by the UI');
+
+    return draftsResponse.data && draftsResponse.data.length > 0
+        ? draftsResponse.data[0].id
+        : null;
+};
 
 const getCollection = async (
     collectionName: string
@@ -41,6 +54,9 @@ function useInitializeCollectionDraft() {
 
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
+    const setDraftId = useEditorStore_setId();
+
+    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     const updateBindingsEditorState = useCallback(
         (data: BindingsEditorState['collectionData']): void => {
@@ -62,15 +78,55 @@ function useInitializeCollectionDraft() {
         [setCollectionData, setSchemaInferenceDisabled]
     );
 
+    const createCollectionDraftSpec = useCallback(
+        async (
+            collectionName: string,
+            evaluatedDraftId: string,
+            lastPubId?: string,
+            liveSpec?: any
+        ) => {
+            const newDraftSpecResponse = await createDraftSpec(
+                evaluatedDraftId,
+                collectionName,
+                liveSpec,
+                specType,
+                lastPubId
+            );
+
+            if (
+                newDraftSpecResponse.data &&
+                newDraftSpecResponse.data.length > 0
+            ) {
+                updateBindingsEditorState({
+                    spec: newDraftSpecResponse.data[0].spec,
+                    belongsToDraft: true,
+                });
+            } else {
+                updateBindingsEditorState({
+                    spec: liveSpec,
+                    belongsToDraft: false,
+                });
+
+                setCollectionInitializationAlert({
+                    severity: 'warning',
+                    messageId:
+                        'workflows.collectionSelector.error.message.draftCreationFailed',
+                });
+            }
+        },
+        [setCollectionInitializationAlert, updateBindingsEditorState]
+    );
+
     const getCollectionDraftSpecs = useCallback(
         async (
             collectionName: string,
+            existingDraftId: string | null,
             lastPubId?: string,
             liveSpec?: any
         ): Promise<void> => {
-            if (draftId) {
+            if (existingDraftId) {
                 const draftSpecResponse = await getDraftSpecsByCatalogName(
-                    draftId,
+                    existingDraftId,
                     collectionName,
                     specType
                 );
@@ -128,41 +184,43 @@ function useInitializeCollectionDraft() {
                     // }
                 } else if (liveSpec) {
                     // The draft of a collection that has been published could not be found.
-                    const newDraftSpecResponse = await createDraftSpec(
-                        draftId,
+                    await createCollectionDraftSpec(
                         collectionName,
-                        liveSpec,
-                        specType,
-                        lastPubId
+                        existingDraftId,
+                        lastPubId,
+                        liveSpec
                     );
-
-                    if (
-                        newDraftSpecResponse.data &&
-                        newDraftSpecResponse.data.length > 0
-                    ) {
-                        updateBindingsEditorState({
-                            spec: newDraftSpecResponse.data[0].spec,
-                            belongsToDraft: true,
-                        });
-                    } else {
-                        updateBindingsEditorState({
-                            spec: liveSpec,
-                            belongsToDraft: false,
-                        });
-
-                        setCollectionInitializationAlert({
-                            severity: 'warning',
-                            messageId:
-                                'workflows.collectionSelector.error.message.draftCreationFailed',
-                        });
-                    }
                 } else {
                     // The draft of a collection that has never been published could not be found.
                     updateBindingsEditorState(undefined);
                 }
+            } else {
+                // A draft for the entity could not be found. Current scenarios(s): entering the
+                // materialization create workflow and attempting to edit a collection specification
+                // before the generate button is clicked. This CTA is traditionally responsible for
+                // creating the draft of a task.
+                const newDraftId = await createGenericDraft();
+
+                if (newDraftId) {
+                    await createCollectionDraftSpec(
+                        collectionName,
+                        newDraftId,
+                        lastPubId,
+                        liveSpec
+                    );
+                }
+
+                setDraftId(newDraftId);
+                setPersistedDraftId(newDraftId);
             }
         },
-        [setCollectionInitializationAlert, updateBindingsEditorState, draftId]
+        [
+            createCollectionDraftSpec,
+            setCollectionInitializationAlert,
+            setDraftId,
+            setPersistedDraftId,
+            updateBindingsEditorState,
+        ]
     );
 
     return useCallback(
@@ -174,12 +232,13 @@ function useInitializeCollectionDraft() {
 
                 await getCollectionDraftSpecs(
                     collection,
+                    draftId,
                     publishedCollection?.last_pub_id,
                     publishedCollection?.spec
                 );
             }
         },
-        [getCollectionDraftSpecs, setCollectionInitializationAlert]
+        [getCollectionDraftSpecs, setCollectionInitializationAlert, draftId]
     );
 }
 
