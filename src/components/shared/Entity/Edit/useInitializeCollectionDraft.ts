@@ -5,6 +5,7 @@ import {
     LiveSpecsExtQuery_ByCatalogName,
 } from 'api/liveSpecsExt';
 import {
+    useBindingsEditorStore_resetState,
     useBindingsEditorStore_setCollectionData,
     useBindingsEditorStore_setCollectionInitializationAlert,
     useBindingsEditorStore_setSchemaInferenceDisabled,
@@ -14,6 +15,7 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
+    useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
 import { useCallback } from 'react';
 import { Annotations } from 'types/jsonforms';
@@ -52,13 +54,20 @@ function useInitializeCollectionDraft() {
     const setSchemaInferenceDisabled =
         useBindingsEditorStore_setSchemaInferenceDisabled();
 
-    // Draft Editor Store
+    const resetBindingsEditorState = useBindingsEditorStore_resetState();
+
+    // Global Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
     const setDraftId = useEditorStore_setId();
 
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
-    const updateBindingsEditorState = useCallback(
+    // Local Draft Editor Store
+    const setCollectionSpecs = useEditorStore_setSpecs({
+        localScope: true,
+    });
+
+    const updateEditorStates = useCallback(
         (data: BindingsEditorState['collectionData']): void => {
             setCollectionData(data);
 
@@ -97,12 +106,14 @@ function useInitializeCollectionDraft() {
                 newDraftSpecResponse.data &&
                 newDraftSpecResponse.data.length > 0
             ) {
-                updateBindingsEditorState({
+                setCollectionSpecs(newDraftSpecResponse.data);
+
+                updateEditorStates({
                     spec: newDraftSpecResponse.data[0].spec,
                     belongsToDraft: true,
                 });
             } else {
-                updateBindingsEditorState({
+                updateEditorStates({
                     spec: liveSpec,
                     belongsToDraft: false,
                 });
@@ -114,7 +125,11 @@ function useInitializeCollectionDraft() {
                 });
             }
         },
-        [setCollectionInitializationAlert, updateBindingsEditorState]
+        [
+            setCollectionInitializationAlert,
+            setCollectionSpecs,
+            updateEditorStates,
+        ]
     );
 
     const getCollectionDraftSpecs = useCallback(
@@ -138,7 +153,9 @@ function useInitializeCollectionDraft() {
                     const expectedPubId =
                         draftSpecResponse.data[0].expect_pub_id;
 
-                    updateBindingsEditorState({
+                    setCollectionSpecs(draftSpecResponse.data);
+
+                    updateEditorStates({
                         spec: draftSpecResponse.data[0].spec,
                         belongsToDraft: true,
                     });
@@ -192,7 +209,7 @@ function useInitializeCollectionDraft() {
                     );
                 } else {
                     // The draft of a collection that has never been published could not be found.
-                    updateBindingsEditorState(undefined);
+                    updateEditorStates(undefined);
                 }
             } else {
                 // A draft for the entity could not be found. Current scenarios(s): entering the
@@ -217,15 +234,16 @@ function useInitializeCollectionDraft() {
         [
             createCollectionDraftSpec,
             setCollectionInitializationAlert,
+            setCollectionSpecs,
             setDraftId,
             setPersistedDraftId,
-            updateBindingsEditorState,
+            updateEditorStates,
         ]
     );
 
     return useCallback(
         async (collection: string): Promise<void> => {
-            setCollectionInitializationAlert(null);
+            resetBindingsEditorState();
 
             if (collection) {
                 const publishedCollection = await getCollection(collection);
@@ -238,7 +256,7 @@ function useInitializeCollectionDraft() {
                 );
             }
         },
-        [getCollectionDraftSpecs, setCollectionInitializationAlert, draftId]
+        [getCollectionDraftSpecs, resetBindingsEditorState, draftId]
     );
 }
 

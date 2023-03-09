@@ -8,10 +8,6 @@ import {
 import { useEntityType } from 'context/EntityContext';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
-import {
-    useResourceConfig_collections,
-    useResourceConfig_currentCollection,
-} from 'stores/ResourceConfig/hooks';
 
 export interface Props {
     disabled?: boolean;
@@ -37,15 +33,7 @@ function DraftSpecEditor({
 
     const draftId = useEditorStore_persistedDraftId();
 
-    // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
-    const collections = useResourceConfig_collections();
-
-    const { draftSpecs, mutate } = useDraftSpecs(
-        draftId,
-        null,
-        localZustandScope ? 'collection' : entityType
-    );
+    const { draftSpecs, mutate } = useDraftSpecs(draftId, null, entityType);
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
 
     const handlers = {
@@ -70,29 +58,14 @@ function DraftSpecEditor({
     useEffect(() => {
         if (!localZustandScope && draftSpecs.length > 0) {
             setSpecs(draftSpecs);
-        } else if (localZustandScope && draftSpecs.length > 0) {
-            const currentCollectionSpec = draftSpecs.filter(
-                (query) => query.catalog_name === currentCollection
-            );
-
-            if (currentCollectionSpec.length > 0) {
-                setSpecs(currentCollectionSpec);
-            }
         }
-    }, [
-        setSpecs,
-        collections,
-        currentCollection,
-        draftSpecs,
-        entityType,
-        localZustandScope,
-    ]);
+    }, [setSpecs, draftSpecs, localZustandScope]);
 
     useEffect(() => {
         if (currentCatalog) {
             setDraftSpec(currentCatalog);
         }
-    }, [currentCatalog, localZustandScope]);
+    }, [currentCatalog]);
 
     // TODO (sync editing) : turning off as right now this will show lots of "Out of sync" errors
     //    because we are comparing two JSON objects that are being stringified and that means the order

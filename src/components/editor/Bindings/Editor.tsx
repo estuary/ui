@@ -12,7 +12,11 @@ import {
 } from 'components/editor/Bindings/Store/hooks';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
 import DraftSpecEditor from 'components/editor/DraftSpec';
-import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
+import {
+    useEditorStore_persistedDraftId,
+    useEditorStore_setCurrentCatalog,
+    useEditorStore_setSpecs,
+} from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import useInitializeCollectionDraft from 'components/shared/Entity/Edit/useInitializeCollectionDraft';
 import {
@@ -46,8 +50,17 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
 
     const schemaUpdateErrored = useBindingsEditorStore_schemaUpdateErrored();
 
-    // Draft Editor Store
+    // Task Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
+
+    // Collection Draft Editor Store
+    const setCurrentCatalog = useEditorStore_setCurrentCatalog({
+        localScope: true,
+    });
+
+    const setCollectionSpecs = useEditorStore_setSpecs({
+        localScope: true,
+    });
 
     // Resource Config Store
     const currentCollection = useResourceConfig_currentCollection();
@@ -56,9 +69,18 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
 
     useEffect(() => {
         if (tabProps[activeTab].value === 'schema' && currentCollection) {
+            setCurrentCatalog(null);
+            setCollectionSpecs(null);
+
             void initializeCollectionDraft(currentCollection);
         }
-    }, [initializeCollectionDraft, activeTab, currentCollection]);
+    }, [
+        initializeCollectionDraft,
+        setCollectionSpecs,
+        setCurrentCatalog,
+        activeTab,
+        currentCollection,
+    ]);
 
     if (currentCollection) {
         return loading ? (
