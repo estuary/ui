@@ -19,6 +19,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.testing': `Testing`,
     'common.invalid': `Invalid`,
     'common.fail': `Failed`,
+    'common.publishing': `Publishing...`,
     'common.success': `Success`,
     'common.errors.heading': `Error`,
     'common.optionsAll': `All`,
