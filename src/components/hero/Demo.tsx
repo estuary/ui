@@ -21,7 +21,6 @@ function HeroDemo() {
                 <DemoButton
                     step={1}
                     onClick={() => {
-                        //estuary/wikipedia
                         navigate(
                             getPathWithParams(
                                 authenticatedRoutes.captures.fullPath,
