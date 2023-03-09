@@ -33,10 +33,11 @@ export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 export const getConnectorImageDetails = (
     connector: ConnectorWithTagDetailQuery
-) => {
+): Details['data']['connectorImage'] => {
     return {
         connectorId: connector.id,
         id: connector.connector_tags[0].id,
+        imageName: connector.image_name,
         imagePath: `${connector.image_name}${connector.connector_tags[0].image_tag}`,
         iconPath: connector.image,
     };
