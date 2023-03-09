@@ -186,10 +186,10 @@ export const getDraftSpecsByCatalogName = async (
 };
 
 const CHUNK_SIZE = 10;
-export const deleteDraftSpecsByCatalogName = async (
+export const deleteUnspecifiedDraftSpecs = async (
     draftId: string,
     specType: Entity,
-    catalogNames: string[]
+    catalogNamesToPreserve: string[]
 ) => {
     // In case we get an absolutely massive amount of catalogs to delete,
     // we don't want to spam supabase
@@ -203,12 +203,18 @@ export const deleteDraftSpecsByCatalogName = async (
             .delete()
             .eq('draft_id', draftId)
             .eq('spec_type', specType)
-            .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE));
+            .not(
+                'catalog_name',
+                'in',
+                `(${catalogNamesToPreserve
+                    .slice(idx, idx + CHUNK_SIZE)
+                    .join(',')})`
+            );
 
     // This could probably be written in a fancy functional-programming way with
     // clever calls to concat and map and slice and stuff,
     // but I want it to be dead obvious what's happening here.
-    while (index < catalogNames.length) {
+    while (index < catalogNamesToPreserve.length) {
         // Have to do this to capture `index` correctly
         const prom = deletePromiseGenerator(index);
         promises.push(limiter(() => prom));

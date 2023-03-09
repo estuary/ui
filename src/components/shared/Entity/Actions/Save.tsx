@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
+import { deleteUnspecifiedDraftSpecs } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
 import {
     useEditorStore_id,
@@ -7,7 +7,6 @@ import {
     useEditorStore_setPubId,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
-import { useEntityType } from 'context/EntityContext';
 import { useClient } from 'hooks/supabase-swr';
 import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -29,7 +28,7 @@ import { FormStatus } from 'stores/FormState/types';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
-import { useResourceConfig_restrictedDiscoveredCollections } from 'stores/ResourceConfig/hooks';
+import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
 
 interface Props {
     disabled: boolean;
@@ -49,8 +48,6 @@ const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
 };
 
 function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
-    const entityType = useEntityType();
-
     const intl = useIntl();
     const supabaseClient = useClient();
 
@@ -81,8 +78,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
     );
 
     // Resource Config Store
-    const restrictedDiscoveredCollections =
-        useResourceConfig_restrictedDiscoveredCollections();
+    const collections = useResourceConfig_collections();
 
     const waitForPublishToFinish = (
         logTokenVal: string,
@@ -151,22 +147,20 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
         updateFormStatus(status);
 
         if (draftId) {
-            if (entityType === 'capture') {
-                if (restrictedDiscoveredCollections.length > 0) {
-                    const deleteDraftSpecsResponse =
-                        await deleteDraftSpecsByCatalogName(
-                            draftId,
-                            'collection',
-                            restrictedDiscoveredCollections
-                        );
-                    if (deleteDraftSpecsResponse.error) {
-                        return onFailure({
-                            error: {
-                                title: 'captureEdit.generate.failedErrorTitle',
-                                error: deleteDraftSpecsResponse.error,
-                            },
-                        });
-                    }
+            if (collections && collections.length > 0) {
+                const deleteDraftSpecsResponse =
+                    await deleteUnspecifiedDraftSpecs(
+                        draftId,
+                        'collection',
+                        collections
+                    );
+                if (deleteDraftSpecsResponse.error) {
+                    return onFailure({
+                        error: {
+                            title: 'captureEdit.generate.failedErrorTitle',
+                            error: deleteDraftSpecsResponse.error,
+                        },
+                    });
                 }
             }
 
