@@ -430,8 +430,8 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
-    'welcome.image.alt': `A diagram explaining Flow with endpoints coming into and out of ${CommonMessages.productName}.`,
-    'welcome.demo.alt': `A diagram of Wikipedia endpoint coming into ${CommonMessages.productName} and then Google Sheets coming out of ${CommonMessages.productName}`,
+    'welcome.image.alt': `A diagram showing the Flow logo at the center, connected by pipelines to multiple endpoint systems. Source systems on the left feed data into Flow and destination systems on the right receive data from Flow.`,
+    'welcome.demo.alt': `A data pipeline diagram showing data moving into Flow from the Wikipedia HTTP source, and coming out of Flow into the Google Sheets destination.`,
 };
 
 const AccessGrants: ResolvedIntlConfig['messages'] = {
