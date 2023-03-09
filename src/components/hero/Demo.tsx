@@ -7,6 +7,9 @@ import { getPathWithParams } from 'utils/misc-utils';
 import DemoButton from './DemoButton';
 import DemoStep from './Steps/Demo';
 
+const DEMO_URL =
+    'https://docs.google.com/spreadsheets/d/1Cd_afDejaVXKeGxSTCupKaTtrb3a7ZHBghTemDNKE5I/edit#gid=0';
+
 function HeroDemo() {
     const navigate = useNavigate();
 
@@ -78,7 +81,7 @@ function HeroDemo() {
                         px: 4,
                     }}
                     variant="contained"
-                    link="https://docs.google.com/spreadsheets/d/1Cd_afDejaVXKeGxSTCupKaTtrb3a7ZHBghTemDNKE5I/edit#gid=0"
+                    link={DEMO_URL}
                 >
                     <FormattedMessage id="home.hero.button" />
                 </ExternalLink>
