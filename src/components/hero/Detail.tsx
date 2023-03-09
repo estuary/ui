@@ -3,16 +3,12 @@ import { authenticatedRoutes } from 'app/routes';
 import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { NavLink } from 'react-router-dom';
-import HeroStep from './Step';
+import DetailStep from './Steps/Detail';
 
 function HeroDetail() {
     return (
         <>
-            <Grid item xs={4}>
-                <HeroStep stepNumber={1} title="terms.capture">
-                    <FormattedMessage id="home.hero.companyDetails.step1" />
-                </HeroStep>
-            </Grid>
+            <DetailStep step={1} title="terms.capture" />
 
             <Grid
                 item
@@ -36,11 +32,7 @@ function HeroDetail() {
                 </NavLink>
             </Grid>
 
-            <Grid item xs={4}>
-                <HeroStep stepNumber={2} title="terms.materialization">
-                    <FormattedMessage id="home.hero.companyDetails.step2" />
-                </HeroStep>
-            </Grid>
+            <DetailStep step={2} title="terms.materialization" />
         </>
     );
 }
