@@ -33,8 +33,8 @@ function HeroDemo() {
                 <ExternalLink
                     color="primary"
                     sx={{
-                        py: 2,
-                        px: 4,
+                        py: 1,
+                        px: 3,
                     }}
                     variant="contained"
                     link={DEMO_URL}
