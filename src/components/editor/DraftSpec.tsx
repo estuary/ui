@@ -1,27 +1,30 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
 import MonacoEditor from 'components/editor/MonacoEditor';
+import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
-import { useEntityType } from 'context/EntityContext';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
+import { Entity } from 'types';
 
 export interface Props {
+    entityType: Entity;
     disabled?: boolean;
     localZustandScope?: boolean;
     editorHeight?: number;
+    entityName?: string;
 }
 
 function DraftSpecEditor({
+    entityType,
     disabled,
     localZustandScope = false,
     editorHeight,
+    entityName,
 }: Props) {
-    const entityType = useEntityType();
-
     // Draft Editor Store
     const currentCatalog = useEditorStore_currentCatalog({
         localScope: localZustandScope,
@@ -33,7 +36,11 @@ function DraftSpecEditor({
 
     const draftId = useEditorStore_persistedDraftId();
 
-    const { draftSpecs, mutate } = useDraftSpecs(draftId, null, entityType);
+    const { draftSpecs, isValidating, mutate } = useDraftSpecs(draftId, {
+        specType: entityType,
+        catalogName: entityName,
+    });
+
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
 
     const handlers = {
@@ -56,10 +63,10 @@ function DraftSpecEditor({
     };
 
     useEffect(() => {
-        if (!localZustandScope && draftSpecs.length > 0) {
+        if (draftSpecs.length > 0) {
             setSpecs(draftSpecs);
         }
-    }, [setSpecs, draftSpecs, localZustandScope]);
+    }, [setSpecs, draftSpecs]);
 
     useEffect(() => {
         if (currentCatalog) {
@@ -100,6 +107,8 @@ function DraftSpecEditor({
                 onChange={handlers.change}
             />
         );
+    } else if (isValidating) {
+        return <MonacoEditorSkeleton editorHeight={editorHeight} />;
     } else {
         return null;
     }

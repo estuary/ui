@@ -82,7 +82,7 @@ function CaptureEdit() {
 
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } = useDraftSpecs(
         persistedDraftId,
-        lastPubId
+        { lastPubId }
     );
 
     const resetState = () => {

@@ -15,6 +15,11 @@ import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { stringifyJSON } from 'services/stringify';
+import {
+    DEFAULT_HEIGHT,
+    DEFAULT_TOOLBAR_HEIGHT,
+    ICON_SIZE,
+} from 'utils/editor-utils';
 
 export interface Props {
     localZustandScope: boolean;
@@ -23,11 +28,6 @@ export interface Props {
     height?: number;
     toolbarHeight?: number;
 }
-
-export const DEFAULT_TOOLBAR_HEIGHT = 20;
-export const DEFAULT_HEIGHT = 330;
-export const DEFAULT_TOTAL_HEIGHT = DEFAULT_TOOLBAR_HEIGHT + DEFAULT_HEIGHT;
-const ICON_SIZE = 14;
 
 function MonacoEditor({
     localZustandScope,

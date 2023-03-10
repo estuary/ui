@@ -15,11 +15,14 @@ import {
 } from 'context/Theme';
 import { stringifyJSON } from 'services/stringify';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+import { getEditorTotalHeight, ICON_SIZE } from 'utils/editor-utils';
 
-const ICON_SIZE = 14;
 const EDITOR_HEIGHT = 396;
 const EDITOR_TOOLBAR_HEIGHT = 29;
-const EDITOR_TOTAL_HEIGHT = EDITOR_TOOLBAR_HEIGHT + EDITOR_HEIGHT + 2;
+const EDITOR_TOTAL_HEIGHT = getEditorTotalHeight(
+    EDITOR_HEIGHT,
+    EDITOR_TOOLBAR_HEIGHT
+);
 
 function ControlledEditor() {
     const theme = useTheme();

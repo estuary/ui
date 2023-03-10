@@ -75,7 +75,7 @@ function MaterializationEdit() {
 
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } = useDraftSpecs(
         persistedDraftId,
-        lastPubId
+        { lastPubId }
     );
 
     const resetState = () => {

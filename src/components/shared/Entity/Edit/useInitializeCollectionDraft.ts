@@ -15,7 +15,6 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
-    useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
 import { useCallback } from 'react';
 import { Annotations } from 'types/jsonforms';
@@ -56,16 +55,11 @@ function useInitializeCollectionDraft() {
 
     const resetBindingsEditorState = useBindingsEditorStore_resetState();
 
-    // Global Draft Editor Store
+    // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
     const setDraftId = useEditorStore_setId();
 
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
-
-    // Local Draft Editor Store
-    const setCollectionSpecs = useEditorStore_setSpecs({
-        localScope: true,
-    });
 
     const updateBindingsEditorState = useCallback(
         (data: BindingsEditorState['collectionData']): void => {
@@ -106,8 +100,6 @@ function useInitializeCollectionDraft() {
                 newDraftSpecResponse.data &&
                 newDraftSpecResponse.data.length > 0
             ) {
-                setCollectionSpecs(newDraftSpecResponse.data);
-
                 updateBindingsEditorState({
                     spec: newDraftSpecResponse.data[0].spec,
                     belongsToDraft: true,
@@ -125,11 +117,7 @@ function useInitializeCollectionDraft() {
                 });
             }
         },
-        [
-            setCollectionInitializationAlert,
-            setCollectionSpecs,
-            updateBindingsEditorState,
-        ]
+        [setCollectionInitializationAlert, updateBindingsEditorState]
     );
 
     const getCollectionDraftSpecs = useCallback(
@@ -152,8 +140,6 @@ function useInitializeCollectionDraft() {
                 ) {
                     const expectedPubId =
                         draftSpecResponse.data[0].expect_pub_id;
-
-                    setCollectionSpecs(draftSpecResponse.data);
 
                     updateBindingsEditorState({
                         spec: draftSpecResponse.data[0].spec,
@@ -234,7 +220,6 @@ function useInitializeCollectionDraft() {
         [
             createCollectionDraftSpec,
             setCollectionInitializationAlert,
-            setCollectionSpecs,
             setDraftId,
             setPersistedDraftId,
             updateBindingsEditorState,

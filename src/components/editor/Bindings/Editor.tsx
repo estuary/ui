@@ -1,5 +1,4 @@
-import { Box, Stack, Typography, useTheme } from '@mui/material';
-import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
+import { Box, Stack, Typography } from '@mui/material';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';
 import ControlledEditor from 'components/editor/Bindings/ControlledEditor';
@@ -12,6 +11,7 @@ import {
 } from 'components/editor/Bindings/Store/hooks';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
 import DraftSpecEditor from 'components/editor/DraftSpec';
+import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_setCurrentCatalog,
@@ -19,11 +19,6 @@ import {
 } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import useInitializeCollectionDraft from 'components/shared/Entity/Edit/useInitializeCollectionDraft';
-import {
-    defaultOutline,
-    monacoEditorHeaderBackground,
-    monacoEditorWidgetBackground,
-} from 'context/Theme';
 import { ReactNode, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
@@ -35,12 +30,8 @@ interface Props {
 }
 
 const EDITOR_HEIGHT = 404;
-const EDITOR_TOOLBAR_HEIGHT = 29;
-const EDITOR_TOTAL_HEIGHT = EDITOR_TOOLBAR_HEIGHT + EDITOR_HEIGHT + 2;
 
 function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
-    const theme = useTheme();
-
     const initializeCollectionDraft = useInitializeCollectionDraft();
 
     // Bindings Editor Store
@@ -151,48 +142,18 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                             {collectionData ? (
                                 collectionData.belongsToDraft ? (
                                     <DraftSpecEditor
+                                        entityType="collection"
                                         localZustandScope={true}
                                         editorHeight={EDITOR_HEIGHT}
+                                        entityName={currentCollection}
                                     />
                                 ) : (
                                     <ControlledEditor />
                                 )
                             ) : (
-                                <Box
-                                    sx={{
-                                        height: EDITOR_TOTAL_HEIGHT,
-                                        border: defaultOutline[
-                                            theme.palette.mode
-                                        ],
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            minHeight: EDITOR_TOOLBAR_HEIGHT,
-                                            backgroundColor:
-                                                monacoEditorHeaderBackground[
-                                                    theme.palette.mode
-                                                ],
-                                            borderBottom:
-                                                defaultOutline[
-                                                    theme.palette.mode
-                                                ],
-                                        }}
-                                    />
-
-                                    <Box
-                                        sx={{
-                                            height: EDITOR_HEIGHT,
-                                            p: 1,
-                                            backgroundColor:
-                                                monacoEditorWidgetBackground[
-                                                    theme.palette.mode
-                                                ],
-                                        }}
-                                    >
-                                        <BindingsEditorSchemaSkeleton />
-                                    </Box>
-                                </Box>
+                                <MonacoEditorSkeleton
+                                    editorHeight={EDITOR_HEIGHT}
+                                />
                             )}
                         </Stack>
                     ) : (
