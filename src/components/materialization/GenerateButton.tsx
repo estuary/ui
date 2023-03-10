@@ -185,6 +185,8 @@ function MaterializeGenerateButton({
                 persistedDraftId && taskDraftExists
                     ? await modifyDraftSpec(draftSpec, {
                           draft_id: evaluatedDraftId,
+                          catalog_name: entityName,
+                          spec_type: 'materialization',
                       })
                     : await createDraftSpec(
                           evaluatedDraftId,
