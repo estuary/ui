@@ -75,7 +75,7 @@ function useInitializeCollectionDraft() {
 
                 setSchemaInferenceDisabled(inferenceAnnotationValue);
             } else {
-                setSchemaInferenceDisabled(false);
+                setSchemaInferenceDisabled(true);
             }
         },
         [setCollectionData, setSchemaInferenceDisabled]
