@@ -18,7 +18,7 @@ import {
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
-import useInitializeCollectionDraft from 'components/shared/Entity/Edit/useInitializeCollectionDraft';
+import useInitializeCollectionDraft from 'hooks/useInitializeCollectionDraft';
 import { ReactNode, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
