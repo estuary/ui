@@ -30,8 +30,11 @@ const defaultResponse: DraftSpecQuery[] = [];
 
 function useDraftSpecs(
     draftId: string | null,
-    lastPubId?: string | null,
-    specType?: Entity | null
+    options?: {
+        lastPubId?: string;
+        specType?: Entity;
+        catalogName?: string;
+    }
 ): DraftSpecSwrMetadata {
     const draftSpecQuery = useQuery<DraftSpecQuery>(
         TABLES.DRAFT_SPECS,
@@ -40,12 +43,26 @@ function useDraftSpecs(
             filter: (query) => {
                 let queryBuilder = query;
 
-                if (lastPubId) {
-                    queryBuilder = queryBuilder.eq('expect_pub_id', lastPubId);
-                }
+                if (options) {
+                    const { lastPubId, specType, catalogName } = options;
 
-                if (specType) {
-                    queryBuilder = queryBuilder.eq('spec_type', specType);
+                    if (lastPubId) {
+                        queryBuilder = queryBuilder.eq(
+                            'expect_pub_id',
+                            lastPubId
+                        );
+                    }
+
+                    if (specType) {
+                        queryBuilder = queryBuilder.eq('spec_type', specType);
+                    }
+
+                    if (catalogName) {
+                        queryBuilder = queryBuilder.eq(
+                            'catalog_name',
+                            catalogName
+                        );
+                    }
                 }
 
                 return queryBuilder.eq('draft_id', draftId as string);

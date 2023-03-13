@@ -4,9 +4,10 @@ import { useSearchParams } from 'react-router-dom';
 export enum GlobalSearchParams {
     CATALOG_NAME = 'catalogName',
     CONNECTOR_ID = 'connectorId',
-    LIVE_SPEC_ID = 'liveSpecId',
-    LAST_PUB_ID = 'lastPubId',
+    DRAFT_ID = 'draftId',
     HIDDEN_SHOW_BETA = 'showBetaOnboard',
+    LAST_PUB_ID = 'lastPubId',
+    LIVE_SPEC_ID = 'liveSpecId',
     PREFILL_PUB_ID = 'prefillPubId',
 }
 
