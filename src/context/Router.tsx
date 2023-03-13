@@ -1,6 +1,6 @@
 import EntityExistenceGuard from 'app/guards/EntityExistenceGuard';
+import AppLayout from 'app/Layout';
 import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
-import AppLayout from 'AppLayout';
 import AccessGrants from 'components/admin/AccessGrants';
 import AdminApi from 'components/admin/Api';
 import AdminConnectors from 'components/admin/Connectors';

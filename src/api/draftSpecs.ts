@@ -56,33 +56,6 @@ export const createDraftSpec = (
     return insertSupabase(TABLES.DRAFT_SPECS, matchData);
 };
 
-export const updateDraftSpec = (
-    draftId: string | null,
-    catalogName: string,
-    draftSpec: any,
-    lastPubId?: string | null
-) => {
-    let matchData: UpdateMatchData = {
-        draft_id: draftId,
-        catalog_name: catalogName,
-    };
-
-    if (lastPubId) {
-        matchData = { ...matchData, expect_pub_id: lastPubId };
-    }
-
-    return updateSupabase(
-        TABLES.DRAFT_SPECS,
-        {
-            spec: draftSpec,
-        },
-        matchData
-    );
-};
-
-// TODO (optimization): Determine whether to replace all instances of updateDraftSpec
-//   with this modified and extendible version of that function. If that is desired,
-//   rename the function below to updateDraftSpec and remove the existing function.
 export const modifyDraftSpec = (
     draftSpec: any,
     matchData: UpdateMatchData,
@@ -188,11 +161,12 @@ export const getDraftSpecsBySpecType = async (
 
 // TODO (optimization | typing): This is temporary typing given the supabase package upgrade will
 //   considerably alter our approach to typing.
-interface DraftSpecsExtQuery_ByCatalogName {
+export interface DraftSpecsExtQuery_ByCatalogName {
     draft_id: string;
     catalog_name: string;
     spec_type: string;
     spec: any;
+    expect_pub_id: string;
 }
 
 export const getDraftSpecsByCatalogName = async (
@@ -202,11 +176,11 @@ export const getDraftSpecsByCatalogName = async (
 ) => {
     const data = await supabaseClient
         .from(TABLES.DRAFT_SPECS_EXT)
-        .select(`draft_id,catalog_name,spec_type,spec`)
+        .select(`draft_id,catalog_name,spec_type,spec,expect_pub_id`)
         .eq('draft_id', draftId)
         .eq('catalog_name', catalogName)
         .eq('spec_type', specType)
-        .then(handleSuccess<DraftSpecsExtQuery_ByCatalogName>, handleFailure);
+        .then(handleSuccess<DraftSpecsExtQuery_ByCatalogName[]>, handleFailure);
 
     return data;
 };
@@ -215,7 +189,8 @@ const CHUNK_SIZE = 10;
 export const deleteDraftSpecsByCatalogName = async (
     draftId: string,
     specType: Entity,
-    catalogNames: string[]
+    catalogNames: string[],
+    operation: 'remove' | 'preserve'
 ) => {
     // In case we get an absolutely massive amount of catalogs to delete,
     // we don't want to spam supabase
@@ -223,13 +198,27 @@ export const deleteDraftSpecsByCatalogName = async (
     const promises: Array<Promise<PostgrestResponse<any>>> = [];
     let index = 0;
 
-    const deletePromiseGenerator = (idx: number) =>
-        supabaseClient
+    const deletePromiseGenerator = (idx: number) => {
+        let queryBuilder = supabaseClient
             .from(TABLES.DRAFT_SPECS)
             .delete()
             .eq('draft_id', draftId)
-            .eq('spec_type', specType)
-            .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE));
+            .eq('spec_type', specType);
+
+        queryBuilder =
+            operation === 'remove'
+                ? queryBuilder.in(
+                      'catalog_name',
+                      catalogNames.slice(idx, idx + CHUNK_SIZE)
+                  )
+                : queryBuilder.not(
+                      'catalog_name',
+                      'in',
+                      `(${catalogNames.slice(idx, idx + CHUNK_SIZE).join(',')})`
+                  );
+
+        return queryBuilder;
+    };
 
     // This could probably be written in a fancy functional-programming way with
     // clever calls to concat and map and slice and stuff,
@@ -247,4 +236,26 @@ export const deleteDraftSpecsByCatalogName = async (
     const errors = res.filter((r) => r.error);
 
     return errors[0] ?? res[0];
+};
+
+export interface DraftSpecsExtQuery_ByDraftId {
+    draft_id: string;
+    catalog_name: string;
+    spec_type: string;
+    spec: any;
+    expect_pub_id: string;
+}
+
+export const getDraftSpecsByDraftId = async (
+    draftId: string,
+    specType: Entity
+) => {
+    const data = await supabaseClient
+        .from(TABLES.DRAFT_SPECS_EXT)
+        .select(`draft_id,catalog_name,spec_type,spec,expect_pub_id`)
+        .eq('draft_id', draftId)
+        .eq('spec_type', specType)
+        .then(handleSuccess<DraftSpecsExtQuery_ByDraftId[]>, handleFailure);
+
+    return data;
 };

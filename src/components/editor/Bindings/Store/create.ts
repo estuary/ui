@@ -11,7 +11,6 @@ import { isEmpty } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
-import { Annotations } from 'types/jsonforms';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -59,7 +58,7 @@ const evaluateCollectionData = async (
         );
     }
 
-    if (draftSpecResponse && !isEmpty(draftSpecResponse.data)) {
+    if (draftSpecResponse?.data && !isEmpty(draftSpecResponse.data)) {
         return { spec: draftSpecResponse.data[0].spec, belongsToDraft: true };
     } else {
         const liveSpecResponse = await getLiveSpecsByCatalogName(
@@ -67,7 +66,7 @@ const evaluateCollectionData = async (
             'collection'
         );
 
-        return isEmpty(liveSpecResponse.data)
+        return !liveSpecResponse.data || isEmpty(liveSpecResponse.data)
             ? null
             : { spec: liveSpecResponse.data[0].spec, belongsToDraft: false };
     }
@@ -76,6 +75,7 @@ const evaluateCollectionData = async (
 const getInitialStateData = (): Pick<
     BindingsEditorState,
     | 'collectionData'
+    | 'collectionInitializationAlert'
     | 'documentsRead'
     | 'inferredSchemaApplicationErrored'
     | 'inferredSpec'
@@ -85,6 +85,7 @@ const getInitialStateData = (): Pick<
     | 'schemaUpdated'
 > => ({
     collectionData: null,
+    collectionInitializationAlert: null,
     documentsRead: null,
     inferredSchemaApplicationErrored: false,
     inferredSpec: null,
@@ -100,41 +101,6 @@ const getInitialState = (
 ): BindingsEditorState => ({
     ...getInitialStateData(),
 
-    initializeCollectionData: (currentCollection, persistedDraftId) => {
-        const { setCollectionData, setSchemaInferenceDisabled } = get();
-
-        if (currentCollection) {
-            evaluateCollectionData(persistedDraftId, currentCollection).then(
-                (response) => {
-                    setCollectionData(response);
-
-                    if (response) {
-                        const writeSchemaKey = response.spec.hasOwnProperty(
-                            'writeSchema'
-                        )
-                            ? 'writeSchema'
-                            : 'schema';
-
-                        const inferenceAnnotationValue =
-                            !response.spec[writeSchemaKey][
-                                Annotations.inferSchema
-                            ];
-
-                        setSchemaInferenceDisabled(inferenceAnnotationValue);
-                    } else {
-                        setSchemaInferenceDisabled(false);
-                    }
-                },
-                () => {
-                    setCollectionData(undefined);
-                    setSchemaInferenceDisabled(false);
-                }
-            );
-        } else {
-            setCollectionData(null);
-        }
-    },
-
     setCollectionData: (value) => {
         set(
             produce((state: BindingsEditorState) => {
@@ -142,6 +108,16 @@ const getInitialState = (
             }),
             false,
             'Collection Data Set'
+        );
+    },
+
+    setCollectionInitializationAlert: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.collectionInitializationAlert = value;
+            }),
+            false,
+            'Collection Initialization Alert Set'
         );
     },
 
