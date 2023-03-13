@@ -1,4 +1,8 @@
-import { generateCaptureDraftSpec, modifyDraftSpec } from 'api/draftSpecs';
+import {
+    DraftSpecsExtQuery_ByCatalogName,
+    generateCaptureDraftSpec,
+    modifyDraftSpec,
+} from 'api/draftSpecs';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
@@ -60,7 +64,8 @@ export const modifyExistingCaptureDraftSpec = async (
     draftId: string,
     connectorImage: string,
     encryptedEndpointConfig: Schema,
-    resourceConfig: ResourceConfigDictionary
+    resourceConfig: ResourceConfigDictionary,
+    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpec = generateCaptureDraftSpec(
         {
@@ -69,7 +74,8 @@ export const modifyExistingCaptureDraftSpec = async (
                 config: encryptedEndpointConfig,
             },
         },
-        resourceConfig
+        resourceConfig,
+        existingTaskData
     );
 
     return modifyDraftSpec(draftSpec, {

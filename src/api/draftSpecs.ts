@@ -129,24 +129,39 @@ export const generateMaterializationDraftSpec = (
 
 export const generateCaptureDraftSpec = (
     endpoint: CaptureEndpoint,
-    resourceConfig: ResourceConfigDictionary | null
+    resourceConfigs: ResourceConfigDictionary | null,
+    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
 ): CaptureDef => {
-    const draftSpec: CaptureDef = {
-        bindings: [],
-        endpoint,
-    };
+    const draftSpec: CaptureDef = isEmpty(existingTaskData)
+        ? {
+              bindings: [],
+              endpoint: {},
+          }
+        : existingTaskData.spec;
 
-    if (resourceConfig) {
-        Object.keys(resourceConfig).forEach((collectionName) => {
-            const resources = resourceConfig[collectionName].data;
+    draftSpec.endpoint.connector = endpoint.connector;
 
-            if (Object.keys(resources).length > 0) {
-                draftSpec.bindings.push({
-                    target: collectionName,
-                    resource: {
-                        ...resources,
-                    },
-                });
+    if (resourceConfigs) {
+        Object.keys(resourceConfigs).forEach((collectionName) => {
+            const resourceConfig = resourceConfigs[collectionName].data;
+
+            if (Object.keys(resourceConfig).length > 0) {
+                const existingBindingIndex = draftSpec.bindings.findIndex(
+                    (binding) => binding.target === collectionName
+                );
+
+                if (existingBindingIndex > -1) {
+                    draftSpec.bindings[existingBindingIndex].resource = {
+                        ...resourceConfig,
+                    };
+                } else {
+                    draftSpec.bindings.push({
+                        target: collectionName,
+                        resource: {
+                            ...resourceConfig,
+                        },
+                    });
+                }
             }
         });
     }
