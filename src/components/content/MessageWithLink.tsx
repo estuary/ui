@@ -4,9 +4,10 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {
     messageID: string;
+    link?: string;
 }
 
-function MessageWithLink({ messageID }: Props) {
+function MessageWithLink({ link, messageID }: Props) {
     const intl = useIntl();
     return (
         <FormattedMessage
@@ -15,9 +16,12 @@ function MessageWithLink({ messageID }: Props) {
             values={{
                 docLink: (
                     <ExternalLink
-                        link={intl.formatMessage({
-                            id: `${messageID}.docPath`,
-                        })}
+                        link={
+                            link ??
+                            intl.formatMessage({
+                                id: `${messageID}.docPath`,
+                            })
+                        }
                     >
                         <FormattedMessage id={`${messageID}.docLink`} />
                     </ExternalLink>

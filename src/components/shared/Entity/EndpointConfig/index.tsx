@@ -10,7 +10,7 @@ import useConnectorTag from 'hooks/useConnectorTag';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useUpdateEffect } from 'react-use';
+import { useUnmount, useUpdateEffect } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     useEndpointConfigStore_endpointConfig_data,
@@ -21,6 +21,10 @@ import {
     useEndpointConfigStore_setPreviousEndpointConfig,
     useEndpointConfig_setServerUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
+import {
+    useSidePanelDocsStore_resetState,
+    useSidePanelDocsStore_setUrl,
+} from 'stores/SidePanelDocs/hooks';
 import { Schema } from 'types';
 
 interface Props {
@@ -35,6 +39,8 @@ function EndpointConfig({
     hideBorder,
 }: Props) {
     const intl = useIntl();
+    const setDocsURL = useSidePanelDocsStore_setUrl();
+    const sidePanelResetState = useSidePanelDocsStore_resetState();
 
     const workflow = useEntityWorkflow();
     const editWorkflow =
@@ -97,6 +103,16 @@ function EndpointConfig({
 
     const forceClose = !editWorkflow && draftId !== null;
 
+    useUnmount(() => {
+        sidePanelResetState();
+    });
+
+    useEffect(() => {
+        if (connectorTag) {
+            setDocsURL(connectorTag.documentation_url);
+        }
+    }, [connectorTag, setDocsURL]);
+
     if (error) {
         return <Error error={error} />;
     } else if (connectorTag) {
@@ -106,11 +122,7 @@ function EndpointConfig({
                 forceClose={forceClose}
                 readOnly={readOnly}
                 hideBorder={hideBorder}
-                header={
-                    <EndpointConfigHeader
-                        docsPath={connectorTag.documentation_url}
-                    />
-                }
+                header={<EndpointConfigHeader />}
             >
                 {readOnly ? (
                     <Box sx={{ mb: 3 }}>

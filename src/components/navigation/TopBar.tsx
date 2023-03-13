@@ -5,6 +5,7 @@ import CompanyLogo from 'components/graphics/CompanyLogo';
 import HelpMenu from 'components/menus/HelpMenu';
 import UserMenu from 'components/menus/UserMenu';
 import PageTitle, { PageTitleProps } from 'components/navigation/PageTitle';
+import SidePanelDocsOpenButton from 'components/sidePanelDocs/OpenButton';
 import { zIndexIncrement } from 'context/Theme';
 
 interface Props {
@@ -49,6 +50,8 @@ const Topbar = ({ pageTitleProps }: Props) => {
                     <HelpMenu />
 
                     <UserMenu iconColor={theme.palette.text.primary} />
+
+                    <SidePanelDocsOpenButton />
                 </Stack>
             </Toolbar>
         </MuiAppBar>

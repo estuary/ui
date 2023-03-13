@@ -13,12 +13,14 @@ import {
     EndpointConfigStoreNames,
     ExistingEntityStoreNames,
     FormStateStoreNames,
+    GlobalStoreNames,
     ResourceConfigStoreNames,
     SelectTableStoreNames,
     ShardDetailStoreNames,
 } from 'stores/names';
 import { createResourceConfigStore } from 'stores/ResourceConfig/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
+import { createSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
 import { MessagePrefixes } from 'types';
 
@@ -115,6 +117,11 @@ const invariableStores = {
     // Admin Storage Mappings
     [AdminStoreNames.STORAGE_MAPPINGS]: createStorageMappingsStore(
         AdminStoreNames.STORAGE_MAPPINGS
+    ),
+
+    // Global App Stores
+    [GlobalStoreNames.SIDE_PANEL_DOCS]: createSidePanelDocsStore(
+        GlobalStoreNames.SIDE_PANEL_DOCS
     ),
 };
 

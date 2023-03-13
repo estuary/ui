@@ -1,4 +1,4 @@
-import { Container, Paper, Snackbar, Toolbar, useTheme } from '@mui/material';
+import { Container, Paper, Snackbar, useTheme } from '@mui/material';
 import { PageTitleProps } from 'components/navigation/PageTitle';
 import Topbar from 'components/navigation/TopBar';
 import { paperBackground } from 'context/Theme';
@@ -77,8 +77,6 @@ function PageContainer({ children, hideBackground, pageTitleProps }: Props) {
             ) : null}
 
             <Topbar pageTitleProps={pageTitleProps} />
-
-            <Toolbar />
 
             <Paper
                 sx={{
