@@ -537,7 +537,8 @@ const Collections: ResolvedIntlConfig['messages'] = {
 const endpointConfigHeader = `Endpoint Config`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.catalogEditor.heading': `Specification Editor`,
-    'entityCreate.ctas.docs': `Connector Help`,
+    'entityCreate.docs.header': `Connector Help`,
+    'entityCreate.cta.docs': `Connector Help`,
     'entityCreate.errors.collapseTitle': `View logs`,
     'entityCreate.errors.collapseTitleOpen': `Hide logs`,
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
@@ -864,6 +865,16 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
 };
 
+const Docs: ResolvedIntlConfig['messages'] = {
+    'docs.iframe.title': `{connector} Documentation`,
+    'docs.iframe.disabled.title': `Connector documentation disabled`,
+    'docs.iframe.disabled.message': `We cannot open 3rd party documentation inline. To view you must open {docLink} in a new window.`,
+    'docs.iframe.disabled.message.docLink': `connector help`,
+    'docs.cta.expand': `Help`,
+    'docs.cta.expand.tooltip': `Expand Connector Help`,
+    'docs.cta.expand.disabled': `Open 3rd party docs in new window`,
+};
+
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
@@ -916,6 +927,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...StorageMappings,
     ...EntityNotFound,
     ...ExistingEntityCheck,
+    ...Docs,
 };
 
 export default enUSMessages;
