@@ -299,9 +299,6 @@ function BindingSelector({
                     rowCount={rows.length}
                     hideFooter
                     disableColumnSelector
-                    onSelectionModelChange={(newSelectionModel) => {
-                        setSelectionModel(newSelectionModel);
-                    }}
                     onRowClick={(params: any) => {
                         setCurrentCollection(params.row.name);
                     }}
