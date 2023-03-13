@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, ButtonTypeMap, SxProps } from '@mui/material';
 import { linkButtonSx } from 'context/Theme';
 import { OpenNewWindow } from 'iconoir-react';
 import { ReactNode } from 'react';
@@ -6,27 +6,39 @@ import { ReactNode } from 'react';
 interface Props {
     children: ReactNode;
     link: string;
+    variant?: ButtonTypeMap['props']['variant'];
     hideIcon?: boolean;
     padding?: number;
+    sx?: SxProps;
+    color?: ButtonTypeMap['props']['color'];
 }
 
-const ExternalLink = ({ children, link, hideIcon }: Props) => {
+const ExternalLink = ({
+    color,
+    children,
+    link,
+    hideIcon,
+    sx,
+    variant,
+}: Props) => {
     const onClick = (event: any) => {
         event.stopPropagation();
     };
 
+    const styling = sx ?? ({} as any);
+
     return (
         <Button
-            variant="text"
+            variant={variant ?? 'text'}
             endIcon={
                 !hideIcon ? <OpenNewWindow style={{ fontSize: 12 }} /> : null
             }
             href={link}
             target="_blank"
             rel="noopener"
-            color="secondary"
+            color={color ?? 'secondary'}
             onClick={onClick}
-            sx={linkButtonSx}
+            sx={{ ...linkButtonSx, ...styling }}
         >
             {children}
         </Button>
