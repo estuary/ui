@@ -1,6 +1,5 @@
 import { Grid } from '@mui/material';
 import LiveSpecEditor from 'components/editor/LiveSpec';
-import { DEFAULT_TOTAL_HEIGHT } from 'components/editor/MonacoEditor';
 import {
     useEditorStore_setId,
     useEditorStore_setSpecs,
@@ -12,6 +11,7 @@ import { useLiveSpecs_spec } from 'hooks/useLiveSpecs';
 import usePublications from 'hooks/usePublications';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { getEditorTotalHeight } from 'utils/editor-utils';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -20,6 +20,8 @@ interface Props {
     disableLogs?: boolean;
     collectionNames?: string[];
 }
+
+const DEFAULT_TOTAL_HEIGHT = getEditorTotalHeight();
 
 function EditorAndLogs({
     lastPubId,

@@ -31,13 +31,25 @@ export const useBindingsEditorStore_setCollectionData = () => {
     >(getStoreName(entityType), (state) => state.setCollectionData);
 };
 
-export const useBindingsEditorStore_initializeCollectionData = () => {
+export const useBindingsEditorStore_collectionInitializationAlert = () => {
     const entityType = useEntityType();
 
     return useZustandStore<
         BindingsEditorState,
-        BindingsEditorState['initializeCollectionData']
-    >(getStoreName(entityType), (state) => state.initializeCollectionData);
+        BindingsEditorState['collectionInitializationAlert']
+    >(getStoreName(entityType), (state) => state.collectionInitializationAlert);
+};
+
+export const useBindingsEditorStore_setCollectionInitializationAlert = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setCollectionInitializationAlert']
+    >(
+        getStoreName(entityType),
+        (state) => state.setCollectionInitializationAlert
+    );
 };
 
 export const useBindingsEditorStore_schemaInferenceDisabled = () => {
@@ -47,6 +59,15 @@ export const useBindingsEditorStore_schemaInferenceDisabled = () => {
         BindingsEditorState,
         BindingsEditorState['schemaInferenceDisabled']
     >(getStoreName(entityType), (state) => state.schemaInferenceDisabled);
+};
+
+export const useBindingsEditorStore_setSchemaInferenceDisabled = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setSchemaInferenceDisabled']
+    >(getStoreName(entityType), (state) => state.setSchemaInferenceDisabled);
 };
 
 export const useBindingsEditorStore_inferredSpec = () => {
