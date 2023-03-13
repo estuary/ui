@@ -2,6 +2,7 @@ import { Button } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import {
     createDraftSpec,
+    DraftSpecsExtQuery_ByCatalogName,
     generateMaterializationDraftSpec,
     getDraftSpecsByCatalogName,
     modifyDraftSpec,
@@ -137,7 +138,8 @@ function MaterializeGenerateButton({
             );
 
             let evaluatedDraftId = persistedDraftId;
-            let taskDraftExists = false;
+            let existingTaskData: DraftSpecsExtQuery_ByCatalogName | null =
+                null;
 
             if (persistedDraftId) {
                 const existingDraftSpecResponse =
@@ -158,7 +160,7 @@ function MaterializeGenerateButton({
                     existingDraftSpecResponse.data &&
                     existingDraftSpecResponse.data.length > 0
                 ) {
-                    taskDraftExists = true;
+                    existingTaskData = existingDraftSpecResponse.data[0];
                 }
             } else {
                 const draftsResponse = await createEntityDraft(entityName);
@@ -178,11 +180,12 @@ function MaterializeGenerateButton({
             const draftSpec = generateMaterializationDraftSpec(
                 encryptedEndpointConfig.data,
                 imagePath,
-                resourceConfig
+                resourceConfig,
+                existingTaskData
             );
 
             const draftSpecsResponse =
-                persistedDraftId && taskDraftExists
+                persistedDraftId && existingTaskData
                     ? await modifyDraftSpec(draftSpec, {
                           draft_id: evaluatedDraftId,
                           catalog_name: entityName,

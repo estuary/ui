@@ -1,5 +1,6 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { isEmpty } from 'lodash';
 import pLimit from 'p-limit';
 import {
     deleteSupabase,
@@ -12,7 +13,11 @@ import {
 } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity } from 'types';
-import { CaptureDef, CaptureEndpoint } from '../../flow_deps/flow';
+import {
+    CaptureDef,
+    CaptureEndpoint,
+    MaterializationDef,
+} from '../../flow_deps/flow';
 
 interface CreateMatchData {
     draft_id: string | null;
@@ -82,30 +87,39 @@ export const modifyDraftSpec = (
 export const generateMaterializationDraftSpec = (
     config: any,
     image: string,
-    resources?: any
+    resources?: any,
+    existingTaskData?: DraftSpecsExtQuery_ByCatalogName | null
 ) => {
-    // TODO (typing) MaterializationDef
-    const draftSpec: any = {
-        bindings: [],
-        endpoint: {
-            connector: {
-                config,
-                image,
-            },
-        },
-    };
+    const draftSpec: MaterializationDef = isEmpty(existingTaskData)
+        ? {
+              bindings: [],
+              endpoint: { connector: {} },
+          }
+        : existingTaskData.spec;
+
+    draftSpec.endpoint.connector = { config, image };
 
     if (resources) {
         Object.keys(resources).forEach((collectionName) => {
             const resourceConfig = resources[collectionName].data;
 
             if (Object.keys(resourceConfig).length > 0) {
-                draftSpec.bindings.push({
-                    source: collectionName,
-                    resource: {
+                const existingBindingIndex = draftSpec.bindings.findIndex(
+                    (binding) => binding.source === collectionName
+                );
+
+                if (existingBindingIndex > -1) {
+                    draftSpec.bindings[existingBindingIndex].resource = {
                         ...resourceConfig,
-                    },
-                });
+                    };
+                } else {
+                    draftSpec.bindings.push({
+                        source: collectionName,
+                        resource: {
+                            ...resourceConfig,
+                        },
+                    });
+                }
             }
         });
     }
