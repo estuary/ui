@@ -40,7 +40,7 @@ function EndpointConfig({
 }: Props) {
     const intl = useIntl();
     const setDocsURL = useSidePanelDocsStore_setUrl();
-    const resetState = useSidePanelDocsStore_resetState();
+    const sidePanelResetState = useSidePanelDocsStore_resetState();
 
     const workflow = useEntityWorkflow();
     const editWorkflow =
@@ -104,7 +104,7 @@ function EndpointConfig({
     const forceClose = !editWorkflow && draftId !== null;
 
     useUnmount(() => {
-        resetState();
+        sidePanelResetState();
     });
 
     useEffect(() => {
