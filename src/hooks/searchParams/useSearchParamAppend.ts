@@ -10,7 +10,10 @@ export default function useSearchParamAppend() {
             Object.entries(obj).forEach(([key, val]) => {
                 if (Array.isArray(val)) {
                     sp.delete(key);
-                    sp.append(key, `[${val.join(',')}]`);
+
+                    val.forEach((element) => {
+                        sp.append(key, element);
+                    });
                 } else if (val === undefined) {
                     sp.delete(key);
                 } else {

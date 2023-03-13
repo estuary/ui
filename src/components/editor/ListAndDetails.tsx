@@ -1,13 +1,10 @@
 import { useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
-import {
-    DEFAULT_HEIGHT,
-    DEFAULT_TOOLBAR_HEIGHT,
-} from 'components/editor/MonacoEditor';
 import { defaultOutline, getReflexSplitterBackground } from 'context/Theme';
 import { MoreVert } from 'iconoir-react';
 import { ReactNode } from 'react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
+import { getEditorTotalHeight } from 'utils/editor-utils';
 
 export interface Props {
     list: ReactNode;
@@ -31,7 +28,7 @@ function ListAndDetails({
 }: Props) {
     const theme = useTheme();
 
-    const heightVal = (height ?? DEFAULT_HEIGHT) + DEFAULT_TOOLBAR_HEIGHT;
+    const heightVal = getEditorTotalHeight(height);
 
     return (
         <Box

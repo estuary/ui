@@ -1,6 +1,5 @@
 import { DiffEditor } from '@monaco-editor/react';
 import { Box, Typography, useTheme } from '@mui/material';
-import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import InferenceDiffEditorFooter from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor/Footer';
 import InferenceDiffEditorHeader from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor/Header';
 import {
@@ -8,7 +7,7 @@ import {
     useBindingsEditorStore_inferredSpec,
     useBindingsEditorStore_loadingInferredSchema,
 } from 'components/editor/Bindings/Store/hooks';
-import { DEFAULT_HEIGHT } from 'components/editor/MonacoEditor';
+import { JsonSchemaSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
 import AlertBox from 'components/shared/AlertBox';
 import {
     defaultOutline,
@@ -18,6 +17,7 @@ import {
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { stringifyJSON } from 'services/stringify';
+import { DEFAULT_HEIGHT } from 'utils/editor-utils';
 
 interface Props {
     height?: number;
@@ -68,7 +68,7 @@ function InferenceDiffEditor({ height = DEFAULT_HEIGHT }: Props) {
                     }}
                 >
                     {loadingInferredSchema ? (
-                        <BindingsEditorSchemaSkeleton />
+                        <JsonSchemaSkeleton />
                     ) : inferredSpec === null ? (
                         <AlertBox
                             severity="warning"
