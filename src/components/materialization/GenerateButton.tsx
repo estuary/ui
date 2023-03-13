@@ -2,7 +2,7 @@ import { Button } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import {
     createDraftSpec,
-    generateDraftSpec,
+    generateMaterializationDraftSpec,
     getDraftSpecsByCatalogName,
     modifyDraftSpec,
 } from 'api/draftSpecs';
@@ -175,7 +175,7 @@ function MaterializeGenerateButton({
                 evaluatedDraftId = draftsResponse.data[0].id;
             }
 
-            const draftSpec = generateDraftSpec(
+            const draftSpec = generateMaterializationDraftSpec(
                 encryptedEndpointConfig.data,
                 imagePath,
                 resourceConfig

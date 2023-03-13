@@ -79,7 +79,7 @@ export const modifyDraftSpec = (
     return updateSupabase(TABLES.DRAFT_SPECS, data, matchData);
 };
 
-export const generateDraftSpec = (
+export const generateMaterializationDraftSpec = (
     config: any,
     image: string,
     resources?: any
