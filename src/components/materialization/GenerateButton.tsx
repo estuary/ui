@@ -14,7 +14,6 @@ import {
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
-import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_connectorImage_connectorId,
@@ -112,11 +111,6 @@ function MaterializeGenerateButton({
             detailsFormsHasErrors ||
             endpointConfigHasErrors
         ) {
-            setFormState({
-                status: FormStatus.FAILED,
-                displayValidation: true,
-            });
-        } else if (isEmpty(endpointConfigData)) {
             setFormState({
                 status: FormStatus.FAILED,
                 displayValidation: true,
