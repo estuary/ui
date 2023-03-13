@@ -1,43 +1,55 @@
-import { updateDraftSpec } from 'api/draftSpecs';
+import { modifyDraftSpec } from 'api/draftSpecs';
 import MonacoEditor from 'components/editor/MonacoEditor';
+import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
 import {
     useEditorStore_currentCatalog,
-    useEditorStore_id,
+    useEditorStore_persistedDraftId,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
-import { useEntityType } from 'context/EntityContext';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
-import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
+import { Entity } from 'types';
 
 export interface Props {
+    entityType: Entity;
     disabled?: boolean;
+    localZustandScope?: boolean;
+    editorHeight?: number;
+    entityName?: string;
 }
 
-function DraftSpecEditor({ disabled }: Props) {
-    const entityType = useEntityType();
-
+function DraftSpecEditor({
+    entityType,
+    disabled,
+    localZustandScope = false,
+    editorHeight,
+    entityName,
+}: Props) {
     // Draft Editor Store
-    const currentCatalog = useEditorStore_currentCatalog();
+    const currentCatalog = useEditorStore_currentCatalog({
+        localScope: localZustandScope,
+    });
 
-    const setSpecs = useEditorStore_setSpecs();
+    const setSpecs = useEditorStore_setSpecs({
+        localScope: localZustandScope,
+    });
 
-    const draftId = useEditorStore_id();
+    const draftId = useEditorStore_persistedDraftId();
 
-    // Resource Config Store
-    const collections = useResourceConfig_collections();
+    const { draftSpecs, isValidating, mutate } = useDraftSpecs(draftId, {
+        specType: entityType,
+        catalogName: entityName,
+    });
 
-    const { draftSpecs, mutate } = useDraftSpecs(draftId, null, entityType);
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
 
     const handlers = {
         change: async (newVal: any, catalogName: string) => {
             if (draftSpec) {
-                const updateResponse = await updateDraftSpec(
-                    draftId,
-                    catalogName,
-                    newVal
-                );
+                const updateResponse = await modifyDraftSpec(newVal, {
+                    draft_id: draftId,
+                    catalog_name: catalogName,
+                });
 
                 if (updateResponse.error) {
                     return Promise.reject();
@@ -54,7 +66,7 @@ function DraftSpecEditor({ disabled }: Props) {
         if (draftSpecs.length > 0) {
             setSpecs(draftSpecs);
         }
-    }, [setSpecs, collections, draftSpecs, entityType]);
+    }, [setSpecs, draftSpecs]);
 
     useEffect(() => {
         if (currentCatalog) {
@@ -90,10 +102,13 @@ function DraftSpecEditor({ disabled }: Props) {
         return (
             <MonacoEditor
                 disabled={disabled}
-                localZustandScope={false}
+                localZustandScope={localZustandScope}
+                height={editorHeight}
                 onChange={handlers.change}
             />
         );
+    } else if (isValidating) {
+        return <MonacoEditorSkeleton editorHeight={editorHeight} />;
     } else {
         return null;
     }

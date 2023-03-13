@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material';
-import { DatabaseExport } from 'iconoir-react';
+import { DatabaseBackup } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -13,7 +13,7 @@ function Synchronizing({ iconSize }: Props) {
                 <FormattedMessage id="common.synchronizing" />
             </Typography>
 
-            <DatabaseExport style={{ fontSize: iconSize }} />
+            <DatabaseBackup style={{ fontSize: iconSize }} />
         </>
     );
 }
