@@ -49,6 +49,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.permissions': `Access Grants`,
     'terms.materialization': `Materialization`,
     'terms.capture': `Capture`,
+    'terms.derivation': `Derivation`,
     'terms.documentation': `Docs`,
     'terms.storageMapping': `Storage Mappings`,
 
@@ -252,27 +253,36 @@ const Home: ResolvedIntlConfig['messages'] = {
     'home.main.header': `Welcome to Flow!`,
     'home.main.description': `Click the Captures icon on the menu bar to get started.`,
 
+    'home.hero.tab.ariaLabel': `Welcome Image Tabs`,
     'home.hero.tab.companyOverview': `What we do`,
     'home.hero.tab.companyDetails': `How it works`,
+    'home.hero.tab.demo': `Live Demo`,
 
     'home.hero.companyOverview.cta': `How it works`,
-    'home.hero.companyOverview.description': `<b>${CommonMessages.productName}</b> helps you sync your data between the sources that produce it and destinations that consume it in real-time.`,
+    'home.hero.companyOverview.description': `{emphasis} helps you sync your data between the sources that produce it and destinations that consume it in real-time.`,
+    'home.hero.companyOverview.description.emphasis':
+        CommonMessages.productName,
 
     'home.hero.companyDetails.cta': `New capture`,
     'home.hero.companyDetails.step1': `Set up real-time data ingestion from your sources. Click “New Capture” to get started.`,
     'home.hero.companyDetails.step2': `Keep destination systems up to date with Materializations: low latency views of your data.`,
 
-    'home.hero.one.title': `Step 1`,
-    'home.hero.one.message': `Start at the {emphasis} page to setup real-time data ingestion from your sources.`,
-    'home.hero.one.emphasis': RouteTitles['routeTitle.captures'],
+    'home.hero.1.title': `Wikipedia Data`,
+    'home.hero.1.message': `Flow {emphasis} about 100 events per second from the Wikipedia’s API.`,
+    'home.hero.1.message.emphasis': `captures`,
+    'home.hero.1.button': `See the Capture`,
 
-    'home.hero.two.title': `Step 2`,
-    'home.hero.two.message': `Flow automatically lands your data in {emphasis} within your cloud storage. `,
-    'home.hero.two.emphasis': RouteTitles['routeTitle.collections'],
+    'home.hero.2.title': `Transformation`,
+    'home.hero.2.message': `We use a {emphasis} to aggregate the raw data.`,
+    'home.hero.2.message.emphasis': CommonMessages['terms.derivation'],
+    'home.hero.2.button': `See the Collection`,
 
-    'home.hero.three.title': `Step 3`,
-    'home.hero.three.message': `Connect to your target systems and keep them up to date with low-latency views of collection data, known as {emphasis}.`,
-    'home.hero.three.emphasis': RouteTitles['routeTitle.materializations'],
+    'home.hero.3.title': `Google Sheets`,
+    'home.hero.3.message': `Flow {emphasis} a fact table with real-time updates.`,
+    'home.hero.3.message.emphasis': `materializes`,
+    'home.hero.3.button': `See the Materialization`,
+
+    'home.hero.button': `See The Demo`,
 };
 
 const PageNotFound: ResolvedIntlConfig['messages'] = {
@@ -420,7 +430,8 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
-    'welcome.image.alt': `content needed`,
+    'welcome.image.alt': `A diagram showing the Flow logo at the center, connected by pipelines to multiple endpoint systems. Source systems on the left feed data into Flow and destination systems on the right receive data from Flow.`,
+    'welcome.demo.alt': `A data pipeline diagram showing data moving into Flow from the Wikipedia HTTP source, and coming out of Flow into the Google Sheets destination.`,
 };
 
 const AccessGrants: ResolvedIntlConfig['messages'] = {

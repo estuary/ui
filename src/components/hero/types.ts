@@ -1,1 +1,1 @@
-export type TabOptions = 'overview' | 'details';
+export type TabOptions = 'overview' | 'details' | 'demo';

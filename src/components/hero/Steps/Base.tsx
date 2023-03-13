@@ -7,7 +7,7 @@ interface Props extends BaseComponentProps {
     title: string;
 }
 
-function HeroStep({ children, stepNumber, title }: Props) {
+function HeroBaseStep({ children, stepNumber, title }: Props) {
     return (
         <>
             <Stack
@@ -17,6 +17,7 @@ function HeroStep({ children, stepNumber, title }: Props) {
                     mb: 1.5,
                     alignItems: 'center',
                     justifyContent: 'center',
+                    minWidth: 'max-content',
                 }}
             >
                 <Avatar
@@ -41,4 +42,4 @@ function HeroStep({ children, stepNumber, title }: Props) {
     );
 }
 
-export default HeroStep;
+export default HeroBaseStep;

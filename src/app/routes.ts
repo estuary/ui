@@ -82,6 +82,7 @@ const captures = {
 const collections = {
     title: 'routeTitle.collections',
     path: 'collections',
+    fullPath: '/collections',
     // details: {
     //     title: 'routeTitle.collectionDetails',
     //     path: 'details',
