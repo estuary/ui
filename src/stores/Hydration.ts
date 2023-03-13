@@ -10,12 +10,21 @@ export interface StoreWithHydration {
     setHydrationErrorsExist: (value: boolean) => void;
 }
 
+export const getInitialHydrationData = (): Pick<
+    StoreWithHydration,
+    'hydrated' | 'hydrationErrorsExist'
+> => ({
+    hydrated: false,
+    hydrationErrorsExist: false,
+});
+
 export const getStoreWithHydrationSettings = (
     key: string,
     set: NamedSet<StoreWithHydration>
 ): StoreWithHydration => {
     return {
-        hydrated: false,
+        ...getInitialHydrationData(),
+
         setHydrated: (value) => {
             set(
                 produce((state: StoreWithHydration) => {
@@ -26,7 +35,6 @@ export const getStoreWithHydrationSettings = (
             );
         },
 
-        hydrationErrorsExist: false,
         setHydrationErrorsExist: (value) => {
             set(
                 produce((state: StoreWithHydration) => {

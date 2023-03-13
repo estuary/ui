@@ -1,3 +1,4 @@
+import { AlertColor } from '@mui/material';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 
 export enum EditorStatus {
@@ -38,6 +39,15 @@ export interface EditorStoreState<T> {
     isEditing: boolean;
     status: EditorStatus;
     setStatus: (newVal: EditorStatus) => void;
+
+    // Draft Initialization
+    draftInitializationError: null | {
+        severity: AlertColor;
+        messageId: string;
+    };
+    setDraftInitializationError: (
+        value: EditorStoreState<T>['draftInitializationError']
+    ) => void;
 
     resetState: (excludeEditDraftId?: boolean) => void;
 }

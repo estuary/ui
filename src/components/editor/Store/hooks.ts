@@ -286,6 +286,46 @@ export const useEditorStore_setStatus = (
     >(storeName(entityType, localScope), (state) => state.setStatus);
 };
 
+export const useEditorStore_draftInitializationError = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['draftInitializationError']
+    >(
+        storeName(entityType, localScope),
+        (state) => state.draftInitializationError
+    );
+};
+
+export const useEditorStore_setDraftInitializationError = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setDraftInitializationError']
+    >(
+        storeName(entityType, localScope),
+        (state) => state.setDraftInitializationError
+    );
+};
+
 export const useEditorStore_resetState = (
     params?: SelectorParams | undefined
 ) => {
