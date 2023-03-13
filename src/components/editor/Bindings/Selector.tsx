@@ -27,8 +27,9 @@ import {
 } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
 import { Cancel, WarningCircle } from 'iconoir-react';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useUnmount } from 'react-use';
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
@@ -135,6 +136,8 @@ function BindingSelector({
     RediscoverButton,
 }: BindingSelectorProps) {
     const theme = useTheme();
+
+    const onSelectTimeOut = useRef<number | null>(null);
 
     const workflow = useEntityWorkflow();
 
@@ -249,6 +252,10 @@ function BindingSelector({
         if (currentCollection) setSelectionModel([currentCollection]);
     }, [currentCollection]);
 
+    useUnmount(() => {
+        if (onSelectTimeOut.current) clearTimeout(onSelectTimeOut.current);
+    });
+
     return loading ? (
         <Box>{skeleton}</Box>
     ) : (
@@ -300,7 +307,15 @@ function BindingSelector({
                     hideFooter
                     disableColumnSelector
                     onRowClick={(params: any) => {
-                        setCurrentCollection(params.row.name);
+                        // This is hacky but it works. It clears out the
+                        //  current collection before switching.
+                        //  If a user is typing quickly in a form and then selects a
+                        //  different binding VERY quickly it could cause the updates
+                        //  to go into the wrong form.
+                        setCurrentCollection(null);
+                        onSelectTimeOut.current = window.setTimeout(() => {
+                            setCurrentCollection(params.row.name);
+                        });
                     }}
                     selectionModel={selectionModel}
                     initialState={initialState}
