@@ -3,7 +3,6 @@ import { createEntityDraft } from 'api/drafts';
 import {
     createDraftSpec,
     DraftSpecsExtQuery_ByCatalogName,
-    generateMaterializationDraftSpec,
     getDraftSpecsByCatalogName,
     modifyDraftSpec,
 } from 'api/draftSpecs';
@@ -45,6 +44,7 @@ import {
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
+import { generateMaterializationDraftSpec } from 'utils/workflow-utils';
 
 interface Props {
     disabled: boolean;

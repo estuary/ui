@@ -1,6 +1,5 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isEmpty } from 'lodash';
 import pLimit from 'p-limit';
 import {
     deleteSupabase,
@@ -11,13 +10,7 @@ import {
     TABLES,
     updateSupabase,
 } from 'services/supabase';
-import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity } from 'types';
-import {
-    CaptureDef,
-    CaptureEndpoint,
-    MaterializationDef,
-} from '../../flow_deps/flow';
 
 interface CreateMatchData {
     draft_id: string | null;
@@ -82,91 +75,6 @@ export const modifyDraftSpec = (
     }
 
     return updateSupabase(TABLES.DRAFT_SPECS, data, matchData);
-};
-
-export const generateMaterializationDraftSpec = (
-    config: any,
-    image: string,
-    resources?: any,
-    existingTaskData?: DraftSpecsExtQuery_ByCatalogName | null
-) => {
-    const draftSpec: MaterializationDef = isEmpty(existingTaskData)
-        ? {
-              bindings: [],
-              endpoint: { connector: {} },
-          }
-        : existingTaskData.spec;
-
-    draftSpec.endpoint.connector = { config, image };
-
-    if (resources) {
-        Object.keys(resources).forEach((collectionName) => {
-            const resourceConfig = resources[collectionName].data;
-
-            if (Object.keys(resourceConfig).length > 0) {
-                const existingBindingIndex = draftSpec.bindings.findIndex(
-                    (binding) => binding.source === collectionName
-                );
-
-                if (existingBindingIndex > -1) {
-                    draftSpec.bindings[existingBindingIndex].resource = {
-                        ...resourceConfig,
-                    };
-                } else {
-                    draftSpec.bindings.push({
-                        source: collectionName,
-                        resource: {
-                            ...resourceConfig,
-                        },
-                    });
-                }
-            }
-        });
-    }
-
-    return draftSpec;
-};
-
-export const generateCaptureDraftSpec = (
-    endpoint: CaptureEndpoint,
-    resourceConfigs: ResourceConfigDictionary | null,
-    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
-): CaptureDef => {
-    const draftSpec: CaptureDef = isEmpty(existingTaskData)
-        ? {
-              bindings: [],
-              endpoint: {},
-          }
-        : existingTaskData.spec;
-
-    draftSpec.endpoint.connector = endpoint.connector;
-
-    if (resourceConfigs) {
-        Object.keys(resourceConfigs).forEach((collectionName) => {
-            const resourceConfig = resourceConfigs[collectionName].data;
-
-            if (Object.keys(resourceConfig).length > 0) {
-                const existingBindingIndex = draftSpec.bindings.findIndex(
-                    (binding) => binding.target === collectionName
-                );
-
-                if (existingBindingIndex > -1) {
-                    draftSpec.bindings[existingBindingIndex].resource = {
-                        ...resourceConfig,
-                    };
-                } else {
-                    draftSpec.bindings.push({
-                        target: collectionName,
-                        resource: {
-                            ...resourceConfig,
-                        },
-                    });
-                }
-            }
-        });
-    }
-
-    return draftSpec;
 };
 
 export const deleteDraftSpec = (draftId: string) => {
