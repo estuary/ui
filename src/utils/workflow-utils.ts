@@ -6,12 +6,56 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
-import { Schema } from 'types';
-import {
-    CaptureDef,
-    ConnectorConfig,
-    MaterializationDef,
-} from '../../flow_deps/flow';
+import { EntityWithCreateWorkflow, Schema } from 'types';
+import { ConnectorConfig } from '../../flow_deps/flow';
+
+// TODO (typing): Narrow the return type for this function.
+export const generateTaskSpec = (
+    entityType: EntityWithCreateWorkflow,
+    connectorConfig: ConnectorConfig,
+    resourceConfigs: ResourceConfigDictionary | null,
+    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
+) => {
+    const draftSpec = isEmpty(existingTaskData)
+        ? {
+              bindings: [],
+              endpoint: {},
+          }
+        : existingTaskData.spec;
+
+    draftSpec.endpoint.connector = connectorConfig;
+
+    if (resourceConfigs) {
+        const collectionNameProp =
+            entityType === 'capture' ? 'target' : 'source';
+
+        Object.keys(resourceConfigs).forEach((collectionName) => {
+            const resourceConfig = resourceConfigs[collectionName].data;
+
+            if (Object.keys(resourceConfig).length > 0) {
+                const existingBindingIndex = draftSpec.bindings.findIndex(
+                    (binding: any) =>
+                        binding[collectionNameProp] === collectionName
+                );
+
+                if (existingBindingIndex > -1) {
+                    draftSpec.bindings[existingBindingIndex].resource = {
+                        ...resourceConfig,
+                    };
+                } else {
+                    draftSpec.bindings.push({
+                        [collectionNameProp]: collectionName,
+                        resource: {
+                            ...resourceConfig,
+                        },
+                    });
+                }
+            }
+        });
+    }
+
+    return draftSpec;
+};
 
 // const mergeResourceConfigs = (
 //     queryData: DraftSpecQuery,
@@ -39,90 +83,6 @@ import {
 
 //     return mergedResourceConfig;
 // };
-
-export const generateCaptureDraftSpec = (
-    connectorConfig: ConnectorConfig,
-    resourceConfigs: ResourceConfigDictionary | null,
-    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
-): CaptureDef => {
-    const draftSpec: CaptureDef = isEmpty(existingTaskData)
-        ? {
-              bindings: [],
-              endpoint: {},
-          }
-        : existingTaskData.spec;
-
-    draftSpec.endpoint.connector = connectorConfig;
-
-    if (resourceConfigs) {
-        Object.keys(resourceConfigs).forEach((collectionName) => {
-            const resourceConfig = resourceConfigs[collectionName].data;
-
-            if (Object.keys(resourceConfig).length > 0) {
-                const existingBindingIndex = draftSpec.bindings.findIndex(
-                    (binding: any) => binding.target === collectionName
-                );
-
-                if (existingBindingIndex > -1) {
-                    draftSpec.bindings[existingBindingIndex].resource = {
-                        ...resourceConfig,
-                    };
-                } else {
-                    draftSpec.bindings.push({
-                        target: collectionName,
-                        resource: {
-                            ...resourceConfig,
-                        },
-                    });
-                }
-            }
-        });
-    }
-
-    return draftSpec;
-};
-
-export const generateMaterializationDraftSpec = (
-    connectorConfig: ConnectorConfig,
-    resources?: any,
-    existingTaskData?: DraftSpecsExtQuery_ByCatalogName | null
-) => {
-    const draftSpec: MaterializationDef = isEmpty(existingTaskData)
-        ? {
-              bindings: [],
-              endpoint: {},
-          }
-        : existingTaskData.spec;
-
-    draftSpec.endpoint.connector = connectorConfig;
-
-    if (resources) {
-        Object.keys(resources).forEach((collectionName) => {
-            const resourceConfig = resources[collectionName].data;
-
-            if (Object.keys(resourceConfig).length > 0) {
-                const existingBindingIndex = draftSpec.bindings.findIndex(
-                    (binding: any) => binding.source === collectionName
-                );
-
-                if (existingBindingIndex > -1) {
-                    draftSpec.bindings[existingBindingIndex].resource = {
-                        ...resourceConfig,
-                    };
-                } else {
-                    draftSpec.bindings.push({
-                        source: collectionName,
-                        resource: {
-                            ...resourceConfig,
-                        },
-                    });
-                }
-            }
-        });
-    }
-
-    return draftSpec;
-};
 
 export interface SupabaseConfig {
     catalogName: string;
@@ -156,7 +116,8 @@ export const modifyExistingCaptureDraftSpec = async (
     resourceConfig: ResourceConfigDictionary,
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
 ): Promise<CallSupabaseResponse<any>> => {
-    const draftSpec = generateCaptureDraftSpec(
+    const draftSpec = generateTaskSpec(
+        'capture',
         { image: connectorImage, config: encryptedEndpointConfig },
         resourceConfig,
         existingTaskData

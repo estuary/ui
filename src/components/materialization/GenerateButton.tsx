@@ -44,7 +44,7 @@ import {
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
-import { generateMaterializationDraftSpec } from 'utils/workflow-utils';
+import { generateTaskSpec } from 'utils/workflow-utils';
 
 interface Props {
     disabled: boolean;
@@ -177,7 +177,8 @@ function MaterializeGenerateButton({
                 evaluatedDraftId = draftsResponse.data[0].id;
             }
 
-            const draftSpec = generateMaterializationDraftSpec(
+            const draftSpec = generateTaskSpec(
+                'materialization',
                 { image: imagePath, config: encryptedEndpointConfig.data },
                 resourceConfig,
                 existingTaskData
