@@ -32,24 +32,21 @@ export const generateTaskSpec = (
         Object.keys(resourceConfigs).forEach((collectionName) => {
             const resourceConfig = resourceConfigs[collectionName].data;
 
-            if (Object.keys(resourceConfig).length > 0) {
-                const existingBindingIndex = draftSpec.bindings.findIndex(
-                    (binding: any) =>
-                        binding[collectionNameProp] === collectionName
-                );
+            const existingBindingIndex = draftSpec.bindings.findIndex(
+                (binding: any) => binding[collectionNameProp] === collectionName
+            );
 
-                if (existingBindingIndex > -1) {
-                    draftSpec.bindings[existingBindingIndex].resource = {
+            if (existingBindingIndex > -1) {
+                draftSpec.bindings[existingBindingIndex].resource = {
+                    ...resourceConfig,
+                };
+            } else if (Object.keys(resourceConfig).length > 0) {
+                draftSpec.bindings.push({
+                    [collectionNameProp]: collectionName,
+                    resource: {
                         ...resourceConfig,
-                    };
-                } else {
-                    draftSpec.bindings.push({
-                        [collectionNameProp]: collectionName,
-                        resource: {
-                            ...resourceConfig,
-                        },
-                    });
-                }
+                    },
+                });
             }
         });
     }
