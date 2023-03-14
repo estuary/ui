@@ -9,9 +9,6 @@ function useLoginRedirectPath(redirectToBase?: string) {
         ? `${location.state?.from.pathname}${location.state?.from.search}`
         : authenticatedRoutes.home.path;
 
-    // To test OAuth locally you must change the redirect below to this:
-    //  () => (redirectToBase ? `${redirectToBase}` : from),
-    //  having the redirect prop causes issues
     const redirectTo = useMemo(
         () =>
             redirectToBase
