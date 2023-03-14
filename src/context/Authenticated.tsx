@@ -49,17 +49,17 @@ export function AuthenticatedOnlyContext({ children }: BaseComponentProps) {
         <RequireAuth>
             <Osano>
                 <QueryParamProvider>
-                    <AppGuards>
-                        <AuthEvents>
-                            <PreFetchDataProvider>
-                                <ZustandProvider>
+                    <ZustandProvider>
+                        <AppGuards>
+                            <AuthEvents>
+                                <PreFetchDataProvider>
                                     <ConfirmationModalContextProvider>
                                         {children}
                                     </ConfirmationModalContextProvider>
-                                </ZustandProvider>
-                            </PreFetchDataProvider>
-                        </AuthEvents>
-                    </AppGuards>
+                                </PreFetchDataProvider>
+                            </AuthEvents>
+                        </AppGuards>
+                    </ZustandProvider>
                 </QueryParamProvider>
             </Osano>
         </RequireAuth>
