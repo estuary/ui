@@ -9,7 +9,7 @@ import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Schema } from 'types';
 import {
     CaptureDef,
-    CaptureEndpoint,
+    ConnectorConfig,
     MaterializationDef,
 } from '../../flow_deps/flow';
 
@@ -41,7 +41,7 @@ import {
 // };
 
 export const generateCaptureDraftSpec = (
-    endpoint: CaptureEndpoint,
+    connectorConfig: ConnectorConfig,
     resourceConfigs: ResourceConfigDictionary | null,
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
 ): CaptureDef => {
@@ -52,7 +52,7 @@ export const generateCaptureDraftSpec = (
           }
         : existingTaskData.spec;
 
-    draftSpec.endpoint.connector = endpoint.connector;
+    draftSpec.endpoint.connector = connectorConfig;
 
     if (resourceConfigs) {
         Object.keys(resourceConfigs).forEach((collectionName) => {
@@ -83,19 +83,18 @@ export const generateCaptureDraftSpec = (
 };
 
 export const generateMaterializationDraftSpec = (
-    config: any,
-    image: string,
+    connectorConfig: ConnectorConfig,
     resources?: any,
     existingTaskData?: DraftSpecsExtQuery_ByCatalogName | null
 ) => {
     const draftSpec: MaterializationDef = isEmpty(existingTaskData)
         ? {
               bindings: [],
-              endpoint: { connector: {} },
+              endpoint: {},
           }
         : existingTaskData.spec;
 
-    draftSpec.endpoint.connector = { config, image };
+    draftSpec.endpoint.connector = connectorConfig;
 
     if (resources) {
         Object.keys(resources).forEach((collectionName) => {
@@ -158,12 +157,7 @@ export const modifyExistingCaptureDraftSpec = async (
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpec = generateCaptureDraftSpec(
-        {
-            connector: {
-                image: connectorImage,
-                config: encryptedEndpointConfig,
-            },
-        },
+        { image: connectorImage, config: encryptedEndpointConfig },
         resourceConfig,
         existingTaskData
     );

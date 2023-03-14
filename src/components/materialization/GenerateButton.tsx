@@ -178,8 +178,7 @@ function MaterializeGenerateButton({
             }
 
             const draftSpec = generateMaterializationDraftSpec(
-                encryptedEndpointConfig.data,
-                imagePath,
+                { image: imagePath, config: encryptedEndpointConfig.data },
                 resourceConfig,
                 existingTaskData
             );
