@@ -1,4 +1,4 @@
-import { Box, Paper } from '@mui/material';
+import { Box, Paper, Toolbar } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 import { paperBackground } from 'context/Theme';
 import { BaseComponentProps } from 'types';
@@ -6,6 +6,7 @@ import { BaseComponentProps } from 'types';
 const FullPageWrapper = ({ children }: BaseComponentProps) => {
     return (
         <PageContainer hideBackground>
+            <Toolbar />
             <Box
                 sx={{
                     width: '100%',
