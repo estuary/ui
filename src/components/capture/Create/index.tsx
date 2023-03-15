@@ -142,6 +142,12 @@ function CaptureCreate() {
         },
     };
 
+    const tasks = draftSpecsMetadata.draftSpecs
+        .filter((query) => {
+            return query.spec_type === 'capture';
+        })
+        .map((query) => query.catalog_name);
+
     return (
         <PageContainer
             pageTitleProps={{
@@ -192,6 +198,7 @@ function CaptureCreate() {
                                             closeLogs={handlers.closeLogs}
                                             callFailed={helpers.callFailed}
                                             disabled={!draftId}
+                                            taskNames={tasks}
                                             materialize={
                                                 handlers.materializeCollections
                                             }

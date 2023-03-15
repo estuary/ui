@@ -78,6 +78,10 @@ function MaterializationEdit() {
         { lastPubId }
     );
 
+    const taskNames = draftSpecsMetadata.draftSpecs
+        .filter((spec) => spec.spec_type === 'materialization')
+        .map((spec) => spec.catalog_name);
+
     const resetState = () => {
         resetFormState();
         resetEndpointConfigState();
@@ -185,6 +189,7 @@ function MaterializationEdit() {
                                             <EntitySaveButton
                                                 disabled={!draftId}
                                                 callFailed={helpers.callFailed}
+                                                taskNames={taskNames}
                                                 closeLogs={handlers.closeLogs}
                                                 logEvent={
                                                     CustomEvents.MATERIALIZATION_EDIT

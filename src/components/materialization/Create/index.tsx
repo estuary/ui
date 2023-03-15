@@ -73,6 +73,10 @@ function MaterializationCreate() {
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
         useDraftSpecs(persistedDraftId);
 
+    const taskNames = draftSpecsMetadata.draftSpecs
+        .filter((spec) => spec.spec_type === 'materialization')
+        .map((spec) => spec.catalog_name);
+
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
@@ -167,6 +171,7 @@ function MaterializationCreate() {
                                         <EntitySaveButton
                                             disabled={!draftId}
                                             callFailed={helpers.callFailed}
+                                            taskNames={taskNames}
                                             closeLogs={handlers.closeLogs}
                                             logEvent={
                                                 CustomEvents.MATERIALIZATION_CREATE

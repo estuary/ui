@@ -90,6 +90,15 @@ export const useShardDetail_getShardDetails = () => {
     >(storeName(entityType), (state) => state.getShardDetails);
 };
 
+export const useShardDetail_getTaskEndpoints = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['getTaskEndpoints']
+    >(storeName(entityType), (state) => state.getTaskEndpoints);
+};
+
 export const useShardDetail_getShardStatusColor = () => {
     const entityType = useEntityType();
 

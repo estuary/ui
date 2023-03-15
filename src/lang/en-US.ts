@@ -881,6 +881,12 @@ const CustomRenderers: ResolvedIntlConfig['messages'] = {
     'timePicker.button.ariaLabel': `Open time picker for {label}`,
 };
 
+const TaskEndpoints: ResolvedIntlConfig['messages'] = {
+    'taskEndpoint.http.message': `Endpoint exposed by {taskName}:`,
+    'taskEndpoint.otherProtocol.message': `{protocol}: {hostname}`,
+    'taskEndpoint.multipleEndpoints.message': `mutliple endpoints exposed, see task details for their addresses.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -928,6 +934,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...EntityNotFound,
     ...ExistingEntityCheck,
     ...Docs,
+    ...TaskEndpoints,
 };
 
 export default enUSMessages;

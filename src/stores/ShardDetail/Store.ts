@@ -8,12 +8,115 @@ import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import {
+    Endpoint,
     ShardDetails,
     ShardDetailStore,
     ShardStatusColor,
     ShardStatusMessageIds,
     TaskShardDetails,
 } from './types';
+
+const PORT_PUBLIC_PREFIX = 'estuary.dev/port-public/';
+const PORT_PROTO_PREFIX = 'estuary.dev/port-proto/';
+
+const getShardEndpoints = (
+    dataPlaneHostname: string,
+    shard: Shard
+): Map<string, Endpoint> => {
+    const byPort = new Map<string, Endpoint>();
+    const labels = shard.spec.labels?.labels;
+    if (!labels) {
+        return byPort;
+    }
+    const hostname = labels.find((label) => {
+        return label.name === 'estuary.dev/hostname' && label.value;
+    })?.value;
+
+    const exposeIdx = labels.findIndex((label) => {
+        return label.name === 'estuary.dev/expose-port';
+    });
+    if (!hostname || exposeIdx === -1) {
+        return byPort;
+    }
+
+    // We consider the endpoint to be "up" if the shard has a primary.
+    // This does not necessarily mean that the container is up and reachable, but
+    // it's the closest approximation we have.
+    const shardIsUp =
+        shard.status.findIndex(({ code }) => code === 'PRIMARY') >= 0;
+
+    for (let i = exposeIdx; i < labels.length; i++) {
+        const port = labels[i].value;
+        if (labels[i].name === 'estuary.dev/expose-port' && port) {
+            byPort.set(port, {
+                fullHostname: `${hostname}-${port}.${dataPlaneHostname}`,
+                isUp: shardIsUp,
+                // Add defaults for these fields, which may be updated as we continue to parse labels.
+                isPublic: false,
+                protocol: null,
+            });
+        } else {
+            break;
+        }
+    }
+
+    labels.forEach((label) => {
+        if (label.name?.startsWith(PORT_PROTO_PREFIX)) {
+            const portValue = label.name.substring(PORT_PROTO_PREFIX.length);
+            const port = byPort.get(portValue);
+            if (port && label.value) {
+                port.protocol = label.value;
+            }
+        } else if (label.name?.startsWith(PORT_PUBLIC_PREFIX)) {
+            const portValue = label.name.substring(PORT_PUBLIC_PREFIX.length);
+            const port = byPort.get(portValue);
+            if (port) {
+                port.isPublic = label.value === 'true';
+            }
+        }
+    });
+
+    return byPort;
+};
+
+const getTaskEndpoints = (dataPlaneHostname: string, taskShards: Shard[]) => {
+    const endpointMaps = taskShards.map(
+        (shard: Shard): Map<string, Endpoint> => {
+            return getShardEndpoints(dataPlaneHostname, shard);
+        }
+    );
+    if (endpointMaps.length > 0) {
+        // Merge the endpoints of each shard into a single map.
+        // Generally, we expect that all shards for a given task will
+        // have identicall configuration of exposed ports. But technically
+        // nothing requires that to be the case.
+        const endpoints = endpointMaps.reduce((left, right) => {
+            right.forEach((value, key) => {
+                const leftEp = left.get(key);
+                if (leftEp) {
+                    const merged = {
+                        fullHostname: leftEp.fullHostname,
+                        isPublic: leftEp.isPublic,
+                        protocol: leftEp.protocol,
+                        // isUp is really the only field that it makes sense to merge.
+                        // This resolution makes sense because we are constructing endpoints
+                        // that address any/all shards of a task, so if any of them are up,
+                        // then requests ought to be routed to it and thus the endpoint itself
+                        // could be considered "up".
+                        isUp: leftEp.isUp || value.isUp,
+                    };
+                    left.set(key, merged);
+                } else {
+                    left.set(key, value);
+                }
+            });
+            return left;
+        }, new Map<string, Endpoint>());
+
+        return Array.from(endpoints.values());
+    }
+    return [];
+};
 
 // TODO: Consider unifying this function with the one below in a similar fashion as evaluateTaskShardStatus.
 const evaluateShardStatusColor = (
@@ -236,6 +339,18 @@ export const getInitialState = (
                 errors: shard.status.find(({ code }) => code === 'FAILED')
                     ?.errors,
             }));
+        },
+        getTaskEndpoints: (
+            taskName: string,
+            dataPlaneHostname: string | null
+        ) => {
+            const { shards, getTaskShards } = get();
+            if (dataPlaneHostname) {
+                const taskShards = getTaskShards(taskName, shards);
+                return getTaskEndpoints(dataPlaneHostname, taskShards);
+            } else {
+                return [];
+            }
         },
         getShardStatusColor: (shardId, defaultStatusColor) => {
             const { shards } = get();

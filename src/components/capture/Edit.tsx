@@ -85,6 +85,10 @@ function CaptureEdit() {
         { lastPubId }
     );
 
+    const taskNames = draftSpecsMetadata.draftSpecs
+        .filter((spec) => spec.spec_type === 'capture')
+        .map((spec) => spec.catalog_name);
+
     const resetState = () => {
         resetDetailsForm();
         resetEndpointConfigState();
@@ -205,6 +209,7 @@ function CaptureEdit() {
                                                 closeLogs={handlers.closeLogs}
                                                 callFailed={helpers.callFailed}
                                                 disabled={!draftId}
+                                                taskNames={taskNames}
                                                 materialize={
                                                     handlers.materializeCollections
                                                 }
