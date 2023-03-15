@@ -1,13 +1,12 @@
 import {
     endOfWeek,
-    format,
     startOfMonth,
-    startOfToday,
     startOfWeek,
-    startOfYesterday,
+    subDays,
     subMonths,
     subWeeks,
 } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
 import {
     handleFailure,
     handleSuccess,
@@ -24,14 +23,10 @@ export type StatsFilter =
     | 'lastMonth'
     | 'thisMonth';
 
-// This will format the date so that it just gets the month, day, year, and hour
-//  We do not need the full minute/house/offset because the backend is not saving those
+// This will format the date so that it just gets the month, day, year
+//  We do not need the full minute/hour/offset because the backend is not saving those
 export const formatToUTC = (date: any) =>
-    format(
-        date,
-        // addMinutes(date, date.getTimezoneOffset()),
-        "yyyy-MM-dd' 'HH':00:00+00'"
-    );
+    formatInTimeZone(date, 'GMT', "yyyy-MM-dd' 00:00:00+00'");
 
 // TODO (stats) add support for which stats columns each entity wants
 //  Right now all tables run the same query even though they only need
@@ -59,19 +54,18 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
         .order('catalog_name');
 
     const today = new Date();
+    const yesterday = subDays(today, 1);
     const lastWeek = subWeeks(today, 1);
     const lastMonth = subMonths(today, 1);
 
     switch (filter) {
         // Day Range
         case 'today':
-            queryBuilder = queryBuilder
-                .eq('ts', formatToUTC(startOfToday()))
-                .eq('grain', 'daily');
+            queryBuilder = queryBuilder.eq('ts', formatToUTC(today));
             break;
         case 'yesterday':
             queryBuilder = queryBuilder
-                .eq('ts', formatToUTC(startOfYesterday()))
+                .eq('ts', formatToUTC(yesterday))
                 .eq('grain', 'daily');
             break;
 
