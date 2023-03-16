@@ -4,6 +4,12 @@ import {
     Box,
     Grid,
     Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
     TextField,
     Typography,
 } from '@mui/material';
@@ -20,6 +26,31 @@ import useConstant from 'use-constant';
 
 const boxShadow =
     'rgb(50 50 93 / 7%) 0px 3px 6px -1px, rgb(0 0 0 / 10%) 0px -2px 4px -1px, rgb(0 0 0 / 10%) 0px 2px 4px -1px';
+
+const typographySx = { mb: 2, fontSize: 16, fontWeight: 300 };
+
+const columns = [
+    {
+        field: 'month',
+        headerIntlKey: 'admin.billing.projectedCostTable.label.month',
+    },
+    {
+        field: 'data_volume',
+        headerIntlKey: 'admin.billing.projectedCostTable.label.dataVolume',
+    },
+    {
+        field: 'tasks',
+        headerIntlKey: 'admin.billing.projectedCostTable.label.tasks',
+    },
+    {
+        field: 'details',
+        headerIntlKey: 'admin.billing.projectedCostTable.label.details',
+    },
+    {
+        field: 'total_cost',
+        headerIntlKey: 'admin.billing.projectedCostTable.label.totalCost',
+    },
+];
 
 function AdminBilling() {
     useBrowserTitle('browserTitle.admin.billing');
@@ -87,11 +118,13 @@ function AdminBilling() {
                         // onChange={changeHandler}
                     />
                 </Grid>
+            </Grid>
 
+            <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
                 <Grid item xs={12} md={6}>
                     <Box
                         sx={{
-                            'height': 200,
+                            'height': 250,
                             'p': 2,
                             'background': (theme) =>
                                 semiTransparentBackground[theme.palette.mode],
@@ -106,14 +139,124 @@ function AdminBilling() {
                             },
                         }}
                     >
-                        <span>Projected Cost by Month</span>
+                        <Typography sx={typographySx}>
+                            <FormattedMessage id="admin.billing.projectedCostTable.header" />
+                        </Typography>
+
+                        <TableContainer component={Box}>
+                            <Table size="small">
+                                <TableHead>
+                                    <TableRow>
+                                        {columns.map((column, index) => (
+                                            <TableCell
+                                                key={`${column.field}-${index}`}
+                                            >
+                                                <FormattedMessage
+                                                    id={column.headerIntlKey}
+                                                />
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                </TableHead>
+
+                                <TableBody>
+                                    <TableRow hover>
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow hover>
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow hover>
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    <TableRow hover>
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span>Filler</span>
+                                        </TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </Box>
                 </Grid>
 
                 <Grid item xs={12} md={6}>
                     <Box
                         sx={{
-                            'height': 200,
+                            'height': 250,
                             'p': 2,
                             'background': (theme) =>
                                 semiTransparentBackground[theme.palette.mode],
@@ -128,14 +271,16 @@ function AdminBilling() {
                             },
                         }}
                     >
-                        <span>Data by Month</span>
+                        <Typography sx={typographySx}>
+                            <FormattedMessage id="admin.billing.graph.dataByMonth.header" />
+                        </Typography>
                     </Box>
                 </Grid>
 
                 <Grid item xs={12} md={6}>
                     <Box
                         sx={{
-                            'height': 200,
+                            'height': 250,
                             'p': 2,
                             'background': (theme) =>
                                 semiTransparentBackground[theme.palette.mode],
@@ -150,14 +295,16 @@ function AdminBilling() {
                             },
                         }}
                     >
-                        <span>Connectors by Month</span>
+                        <Typography sx={typographySx}>
+                            <FormattedMessage id="admin.billing.graph.connectorsByMonth.header" />
+                        </Typography>
                     </Box>
                 </Grid>
 
                 <Grid item xs={12} md={6}>
                     <Box
                         sx={{
-                            'height': 200,
+                            'height': 250,
                             'p': 2,
                             'background': (theme) =>
                                 semiTransparentBackground[theme.palette.mode],
@@ -172,7 +319,9 @@ function AdminBilling() {
                             },
                         }}
                     >
-                        <span>Data by Task</span>
+                        <Typography sx={typographySx}>
+                            <FormattedMessage id="admin.billing.graph.dataByTask.header" />
+                        </Typography>
                     </Box>
                 </Grid>
             </Grid>
