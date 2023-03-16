@@ -24,7 +24,6 @@ const fetcher = (
     headers.Authorization = `Bearer ${sessionKey}`;
     headers['Content-Type'] = 'application/json';
 
-    console.log('fetching new scoped data-plane access token', { prefixes });
     return client(endpoint, {
         data: { prefixes },
         headers,
@@ -63,7 +62,7 @@ const getTokenRefreshInterval = (
                 const newInt = Math.max(1, Math.round((exp - now) * 0.8));
                 return newInt;
             }
-        } catch (e) {
+        } catch (e: unknown) {
             console.error('failed to parse data-plane JWT', e);
             // Try again in 10 seconds if the token appears invalid
             return 10000;
@@ -77,10 +76,12 @@ const getTokenRefreshInterval = (
 
 // Returns an auth token for accessing the provided `prefixes` scopes in the data plane.
 // This token is not stored in local storage.
-const useScopedGatewayAuthToken = (prefixes: string[]) => {
+const useScopedGatewayAuthToken = (prefixes: string[] | null) => {
     const { session } = Auth.useUser();
-    const { data, error, mutate } = useSWR(
-        [gatewayAuthTokenEndpoint, prefixes, session?.access_token],
+    const { data, error } = useSWR(
+        prefixes === null
+            ? null
+            : [gatewayAuthTokenEndpoint, prefixes, session?.access_token],
         fetcher,
         { refreshInterval: getTokenRefreshInterval }
     );
@@ -89,7 +90,7 @@ const useScopedGatewayAuthToken = (prefixes: string[]) => {
     }
     const result = data ? data[0] : null;
 
-    return { data: result, error, refresh: () => mutate() };
+    return { data: result, error };
 };
 
 export default useScopedGatewayAuthToken;

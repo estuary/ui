@@ -187,6 +187,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
+    'routeTitle.dataPlaneAuthReq': `Data-plane authorization check`,
     'routeTitle.directives': `Directives`,
     'routeTitle.error.entityNotFound': `Entity Not Found`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
@@ -214,6 +215,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
     'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
+    'browserTitle.dataPlaneAuthReq': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dataPlaneAuthReq']}`,
     'browserTitle.error.entityNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.entityNotFound']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
     'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
@@ -887,6 +889,11 @@ const TaskEndpoints: ResolvedIntlConfig['messages'] = {
     'taskEndpoint.multipleEndpoints.message': `mutliple endpoints exposed, see task details for their addresses.`,
 };
 
+const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
+    'dataPlaneAuthReq.error.message': `Authorization to access {catalogPrefix} failed with error: {error}`,
+    'dataPlaneAuthReq.waiting.message': `Please wait while we authorize access to {catalogPrefix}. You will be redirected shortly.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -935,6 +942,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...ExistingEntityCheck,
     ...Docs,
     ...TaskEndpoints,
+    ...DataPlaneAuthReq,
 };
 
 export default enUSMessages;
