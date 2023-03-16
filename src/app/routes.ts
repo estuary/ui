@@ -21,6 +21,11 @@ const admin = {
         path: 'api',
         fullPath: '/admin/api',
     },
+    billing: {
+        title: 'routeTitle.admin.billing',
+        path: 'billing',
+        fullPath: '/admin/billing',
+    },
     connectors: {
         title: 'routeTitle.admin.connectors',
         path: 'connectors',

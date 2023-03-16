@@ -3,6 +3,7 @@ import AppLayout from 'app/Layout';
 import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
 import AccessGrants from 'components/admin/AccessGrants';
 import AdminApi from 'components/admin/Api';
+import AdminBilling from 'components/admin/Billing';
 import AdminConnectors from 'components/admin/Connectors';
 import AdminCookies from 'components/admin/Cookies';
 import StorageMappings from 'components/admin/StorageMappings';
@@ -223,6 +224,10 @@ const router = createBrowserRouter(
                                 authenticatedRoutes.admin.storageMappings.path
                             }
                             element={<StorageMappings />}
+                        />
+                        <Route
+                            path={authenticatedRoutes.admin.billing.path}
+                            element={<AdminBilling />}
                         />
                     </Route>
 

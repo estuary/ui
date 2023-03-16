@@ -180,6 +180,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin': `Admin`,
     'routeTitle.admin.accessGrants': `Access Grants`,
     'routeTitle.admin.api': `CLI - API`,
+    'routeTitle.admin.billing': `Billing`,
     'routeTitle.admin.connectors': `Connectors`,
     'routeTitle.admin.cookies': `Cookie Preferences`,
     'routeTitle.admin.storageMappings': `${CommonMessages['terms.storageMapping']}`,
@@ -207,6 +208,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
     'browserTitle.admin.accessGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.accessGrants']}`,
     'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
+    'browserTitle.admin.billing': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.billing']}`,
     'browserTitle.admin.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.connectors']}`,
     'browserTitle.admin.cookies': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.cookies']}`,
     'browserTitle.admin.storageMappings': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.storageMappings']}`,
@@ -420,6 +422,12 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
     'admin.accessToken': `Access Token`,
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
+    'admin.billing.header': `Billing`,
+    'admin.billing.message': `The basic tier includes two connectors and 20GB are free every month. Thereafter you pay $0.75/GB with a $20 minimum per connector.`,
+    'admin.billing.label.tiers': `Pricing Tier`,
+    'admin.billing.tier.free': `Open Source`,
+    'admin.billing.tier.personal': `Cloud`,
+    'admin.billing.tier.enterprise': `Enterprise`,
     'admin.cookies': `Cookie Preference Management`,
     'admin.cookies.message': `Click below to manage your preferences.`,
     'admin.tabs.users': `Users`,
@@ -427,6 +435,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.cookies': `Cookie Preferences`,
     'admin.tabs.storageMappings': `${CommonMessages['terms.storageMapping']}`,
+    'admin.tabs.billing': `Billing`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
