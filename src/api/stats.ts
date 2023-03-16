@@ -25,7 +25,7 @@ export type StatsFilter =
 
 // This will format the date so that it just gets the month, day, year
 //  We do not need the full minute/hour/offset because the backend is not saving those
-export const formatToUTC = (date: any) =>
+export const formatToGMT = (date: any) =>
     formatInTimeZone(date, 'GMT', "yyyy-MM-dd' 00:00:00+00'");
 
 // TODO (stats) add support for which stats columns each entity wants
@@ -61,38 +61,40 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
     switch (filter) {
         // Day Range
         case 'today':
-            queryBuilder = queryBuilder.eq('ts', formatToUTC(today));
+            queryBuilder = queryBuilder
+                .eq('ts', formatToGMT(today))
+                .eq('grain', 'daily');
             break;
         case 'yesterday':
             queryBuilder = queryBuilder
-                .eq('ts', formatToUTC(yesterday))
+                .eq('ts', formatToGMT(yesterday))
                 .eq('grain', 'daily');
             break;
 
         // Week Range
         case 'thisWeek':
             queryBuilder = queryBuilder
-                .gte('ts', formatToUTC(startOfWeek(today)))
-                .lte('ts', formatToUTC(endOfWeek(today)))
+                .gte('ts', formatToGMT(startOfWeek(today)))
+                .lte('ts', formatToGMT(endOfWeek(today)))
                 .eq('grain', 'daily');
             break;
         case 'lastWeek':
             queryBuilder = queryBuilder
-                .gte('ts', formatToUTC(startOfWeek(lastWeek)))
-                .lte('ts', formatToUTC(endOfWeek(lastWeek)))
+                .gte('ts', formatToGMT(startOfWeek(lastWeek)))
+                .lte('ts', formatToGMT(endOfWeek(lastWeek)))
                 .eq('grain', 'daily');
             break;
 
         // Month Range
         case 'thisMonth':
             queryBuilder = queryBuilder
-                .eq('ts', formatToUTC(startOfMonth(today)))
+                .eq('ts', formatToGMT(startOfMonth(today)))
                 .eq('grain', 'monthly');
 
             break;
         case 'lastMonth':
             queryBuilder = queryBuilder
-                .eq('ts', formatToUTC(startOfMonth(lastMonth)))
+                .eq('ts', formatToGMT(startOfMonth(lastMonth)))
                 .eq('grain', 'monthly');
             break;
 
