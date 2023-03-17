@@ -1,9 +1,12 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Box, StyledEngineProvider } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
+import { useEntityType } from 'context/EntityContext';
 import { jsonFormsPadding } from 'context/Theme';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { setDefaultsValidator } from 'services/ajv';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
@@ -12,6 +15,7 @@ import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_setEndpointConfig,
+    useEndpointConfig_endpointCanBeBlank,
 } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_displayValidation,
@@ -25,10 +29,13 @@ interface Props {
 }
 
 function EndpointConfigForm({ readOnly }: Props) {
+    const entityType = useEntityType();
+
     // Endpoint Config Store
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
     const endpointSchema = useEndpointConfigStore_endpointSchema();
+    const endpointCanBeBlank = useEndpointConfig_endpointCanBeBlank();
 
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
@@ -74,6 +81,16 @@ function EndpointConfigForm({ readOnly }: Props) {
                     onChange={setEndpointConfig}
                     ajv={setDefaultsValidator}
                 />
+                {endpointCanBeBlank ? (
+                    <AlertBox short severity="info">
+                        <FormattedMessage
+                            id="entityCreate.endpointConfig.configCanBeBlank.message"
+                            values={{
+                                entityType,
+                            }}
+                        />
+                    </AlertBox>
+                ) : null}
             </Box>
         </StyledEngineProvider>
     );
