@@ -2,7 +2,7 @@ import { Button } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import {
     createDraftSpec,
-    generateDraftSpec,
+    DraftSpecsExtQuery_ByCatalogName,
     getDraftSpecsByCatalogName,
     modifyDraftSpec,
 } from 'api/draftSpecs';
@@ -44,6 +44,7 @@ import {
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
+import { generateTaskSpec } from 'utils/workflow-utils';
 
 interface Props {
     disabled: boolean;
@@ -137,7 +138,8 @@ function MaterializeGenerateButton({
             );
 
             let evaluatedDraftId = persistedDraftId;
-            let taskDraftExists = false;
+            let existingTaskData: DraftSpecsExtQuery_ByCatalogName | null =
+                null;
 
             if (persistedDraftId) {
                 const existingDraftSpecResponse =
@@ -158,7 +160,7 @@ function MaterializeGenerateButton({
                     existingDraftSpecResponse.data &&
                     existingDraftSpecResponse.data.length > 0
                 ) {
-                    taskDraftExists = true;
+                    existingTaskData = existingDraftSpecResponse.data[0];
                 }
             } else {
                 const draftsResponse = await createEntityDraft(entityName);
@@ -175,14 +177,15 @@ function MaterializeGenerateButton({
                 evaluatedDraftId = draftsResponse.data[0].id;
             }
 
-            const draftSpec = generateDraftSpec(
-                encryptedEndpointConfig.data,
-                imagePath,
-                resourceConfig
+            const draftSpec = generateTaskSpec(
+                'materialization',
+                { image: imagePath, config: encryptedEndpointConfig.data },
+                resourceConfig,
+                existingTaskData
             );
 
             const draftSpecsResponse =
-                persistedDraftId && taskDraftExists
+                persistedDraftId && existingTaskData
                     ? await modifyDraftSpec(draftSpec, {
                           draft_id: evaluatedDraftId,
                           catalog_name: entityName,
