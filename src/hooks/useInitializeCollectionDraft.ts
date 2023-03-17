@@ -16,6 +16,7 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
+import { isEmpty } from 'lodash';
 import { useCallback } from 'react';
 import { Annotations } from 'types/jsonforms';
 
@@ -65,7 +66,7 @@ function useInitializeCollectionDraft() {
         (data: BindingsEditorState['collectionData']): void => {
             setCollectionData(data);
 
-            if (data) {
+            if (data && !isEmpty(data.spec)) {
                 const writeSchemaKey = data.spec.hasOwnProperty('writeSchema')
                     ? 'writeSchema'
                     : 'schema';

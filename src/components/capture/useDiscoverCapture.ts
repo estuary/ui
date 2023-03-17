@@ -1,6 +1,10 @@
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
-import { getDraftSpecsBySpecType } from 'api/draftSpecs';
+import {
+    DraftSpecsExtQuery_ByCatalogName,
+    getDraftSpecsByCatalogName,
+    getDraftSpecsBySpecType,
+} from 'api/draftSpecs';
 import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
@@ -359,12 +363,35 @@ function useDiscoverCapture(
                         logToken: discoverResponse.data[0].logs_token,
                     });
                 } else if (persistedDraftId) {
+                    const existingDraftSpecResponse =
+                        await getDraftSpecsByCatalogName(
+                            persistedDraftId,
+                            entityName,
+                            'capture'
+                        );
+
+                    if (existingDraftSpecResponse.error) {
+                        return callFailed({
+                            error: {
+                                title: 'captureCreate.generate.failedErrorTitle',
+                                error: existingDraftSpecResponse.error,
+                            },
+                        });
+                    }
+
+                    const existingTaskData: DraftSpecsExtQuery_ByCatalogName | null =
+                        existingDraftSpecResponse.data &&
+                        existingDraftSpecResponse.data.length > 0
+                            ? existingDraftSpecResponse.data[0]
+                            : null;
+
                     const draftSpecsResponse =
                         await modifyExistingCaptureDraftSpec(
                             persistedDraftId,
                             imagePath,
                             encryptedEndpointConfig.data,
-                            resourceConfig
+                            resourceConfig,
+                            existingTaskData
                         );
 
                     if (draftSpecsResponse.error) {
