@@ -559,6 +559,8 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.endpointConfig.collectionsMissing': `${CommonMessages['terms.collections']} missing`,
     'entityCreate.endpointConfig.resourceConfigInvalid': `Resource Config invalid`,
 
+    'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
+
     'entityCreate.bindingsConfig.collectionsLabel': `Available ${CommonMessages['terms.collections']}`,
     'entityCreate.bindingsConfig.noRows': `Please select from the ${CommonMessages['terms.collections']} above to begin.`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
