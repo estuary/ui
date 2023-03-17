@@ -43,6 +43,10 @@ export interface EndpointConfigState extends StoreWithHydration {
     serverUpdateRequired: boolean;
     setServerUpdateRequired: (value: boolean) => void;
 
+    // Storing if the encrpoint config is allowed to be blank
+    endpointCanBeBlank: boolean;
+    setEndpointCanBeBlank: (value: boolean) => void;
+
     // Hydration
     hydrateState: (
         entityType: EntityWithCreateWorkflow,
