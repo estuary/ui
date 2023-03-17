@@ -73,6 +73,7 @@ function ExistingEntityCard({ queryData }: Props) {
                         imageSrc={queryData.image}
                         maxHeight={35}
                         padding="0 0.5rem"
+                        unknownConnectorIconConfig={{ width: 51, fontSize: 24 }}
                     />
                 </Box>
 
