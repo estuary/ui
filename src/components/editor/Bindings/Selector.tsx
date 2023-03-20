@@ -92,12 +92,9 @@ function Row({ collection, task, workflow, disabled, draftId }: RowProps) {
             }
 
             if (draftId && !discoveredCollections?.includes(collection)) {
-                void deleteDraftSpecsByCatalogName(
-                    draftId,
-                    'collection',
-                    [collection],
-                    'remove'
-                );
+                void deleteDraftSpecsByCatalogName(draftId, 'collection', [
+                    collection,
+                ]);
             }
         },
     };
@@ -190,8 +187,7 @@ function BindingSelector({
                 void deleteDraftSpecsByCatalogName(
                     draftId,
                     'collection',
-                    publishedCollections,
-                    'remove'
+                    publishedCollections
                 );
             }
         },
