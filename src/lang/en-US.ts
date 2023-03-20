@@ -424,7 +424,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
 
     'admin.billing.header': `Billing`,
-    'admin.billing.message': `The basic tier includes two connectors and 20GB are free every month. Thereafter you pay $0.75/GB with a $20 minimum per connector.`,
+    'admin.billing.message': `The basic tier includes two tasks and 20GB are free every month. Thereafter you pay $0.75/GB with a $20 minimum per task.`,
     'admin.billing.label.tiers': `Pricing Tier`,
     'admin.billing.tier.free': `Open Source`,
     'admin.billing.tier.personal': `Cloud`,
