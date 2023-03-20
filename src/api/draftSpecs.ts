@@ -184,8 +184,8 @@ export const deleteDraftSpecsByCatalogName = async (
 
         // TODO (unbound collections) This is hacky but it works
         //  We call this in 3 places (as of March 2023) and only one checks
-        //  the response. It only cares if this failed to make it pass
-        //  back the error directly. This way the typing is consistent.
+        //  the response. It only checks for `error` so making this always return
+        //  back an object with error. This way the typing is consistent.
         return {
             error: errors[0] ? errors[0].error : res[0].error,
         };
