@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 import {
     deleteDraftSpecsByCatalogName,
-    getDraftSpecsBySpecType,
+    getDraftSpecsBySpecTypeReduced,
 } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
 import {
@@ -151,7 +151,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
 
         if (draftId) {
             if (collections && collections.length > 0) {
-                const draftSpecResponse = await getDraftSpecsBySpecType(
+                const draftSpecResponse = await getDraftSpecsBySpecTypeReduced(
                     draftId,
                     'collection'
                 );
@@ -177,8 +177,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
                         await deleteDraftSpecsByCatalogName(
                             draftId,
                             'collection',
-                            unboundCollections,
-                            'remove'
+                            unboundCollections
                         );
                     if (deleteDraftSpecsResponse.error) {
                         return onFailure({

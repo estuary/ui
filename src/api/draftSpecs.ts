@@ -96,6 +96,29 @@ export const getDraftSpecsBySpecType = async (
         .then(handleSuccess<DraftSpecQuery[]>, handleFailure);
 };
 
+interface DraftSpecsExtQuery_BySpecTypeReduced {
+    draft_id: string;
+    catalog_name: string;
+    spec_type: string;
+}
+
+export const getDraftSpecsBySpecTypeReduced = async (
+    draftId: string,
+    specType: Entity
+) => {
+    const data = await supabaseClient
+        .from(TABLES.DRAFT_SPECS_EXT)
+        .select(`draft_id,catalog_name,spec_type`)
+        .eq('draft_id', draftId)
+        .eq('spec_type', specType)
+        .then(
+            handleSuccess<DraftSpecsExtQuery_BySpecTypeReduced[]>,
+            handleFailure
+        );
+
+    return data;
+};
+
 // TODO (optimization | typing): This is temporary typing given the supabase package upgrade will
 //   considerably alter our approach to typing.
 export interface DraftSpecsExtQuery_ByCatalogName {
@@ -126,8 +149,7 @@ const CHUNK_SIZE = 10;
 export const deleteDraftSpecsByCatalogName = async (
     draftId: string,
     specType: Entity,
-    catalogNames: string[],
-    operation: 'remove' | 'preserve'
+    catalogNames: string[]
 ) => {
     // In case we get an absolutely massive amount of catalogs to delete,
     // we don't want to spam supabase
@@ -136,25 +158,12 @@ export const deleteDraftSpecsByCatalogName = async (
     let index = 0;
 
     const deletePromiseGenerator = (idx: number) => {
-        let queryBuilder = supabaseClient
+        return supabaseClient
             .from(TABLES.DRAFT_SPECS)
             .delete()
             .eq('draft_id', draftId)
-            .eq('spec_type', specType);
-
-        queryBuilder =
-            operation === 'remove'
-                ? queryBuilder.in(
-                      'catalog_name',
-                      catalogNames.slice(idx, idx + CHUNK_SIZE)
-                  )
-                : queryBuilder.not(
-                      'catalog_name',
-                      'in',
-                      `(${catalogNames.slice(idx, idx + CHUNK_SIZE).join(',')})`
-                  );
-
-        return queryBuilder;
+            .eq('spec_type', specType)
+            .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE));
     };
 
     // This could probably be written in a fancy functional-programming way with
