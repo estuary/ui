@@ -166,22 +166,34 @@ export const deleteDraftSpecsByCatalogName = async (
             .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE));
     };
 
-    // This could probably be written in a fancy functional-programming way with
-    // clever calls to concat and map and slice and stuff,
-    // but I want it to be dead obvious what's happening here.
-    while (index < catalogNames.length) {
-        // Have to do this to capture `index` correctly
-        const prom = deletePromiseGenerator(index);
-        promises.push(limiter(() => prom));
+    if (catalogNames.length > 0) {
+        // This could probably be written in a fancy functional-programming way with
+        // clever calls to concat and map and slice and stuff,
+        // but I want it to be dead obvious what's happening here.
+        while (index < catalogNames.length) {
+            // Have to do this to capture `index` correctly
+            const prom = deletePromiseGenerator(index);
+            promises.push(limiter(() => prom));
 
-        index = index + CHUNK_SIZE;
+            index = index + CHUNK_SIZE;
+        }
+
+        const res = await Promise.all(promises);
+
+        const errors = res.filter((r) => r.error);
+
+        // TODO (unbound collections) This is hacky but it works
+        //  We call this in 3 places (as of March 2023) and only one checks
+        //  the response. It only cares if this failed to make it pass
+        //  back the error directly. This way the typing is consistent.
+        return {
+            error: errors[0] ? errors[0].error : res[0].error,
+        };
+    } else {
+        return {
+            error: null,
+        };
     }
-
-    const res = await Promise.all(promises);
-
-    const errors = res.filter((r) => r.error);
-
-    return errors[0] ?? res[0];
 };
 
 export interface DraftSpecsExtQuery_ByDraftId {
