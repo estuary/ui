@@ -152,7 +152,8 @@ const getLiveSpecs_existingTasks = (
             count: 'exact',
         })
         .eq('connector_id', connectorId)
-        .not('catalog_name', 'ilike', 'ops/%');
+        .not('catalog_name', 'ilike', 'ops/%')
+        .not('catalog_name', 'ilike', 'demo/%');
 
     queryBuilder = distributedTableFilter<
         CaptureQueryWithSpec | MaterializationQueryWithSpec

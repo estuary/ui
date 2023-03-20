@@ -4,9 +4,18 @@ interface Props {
     imageSrc: string | null | undefined;
     maxHeight?: number;
     padding?: string | number;
+    unknownConnectorIconConfig?: {
+        width: string | number;
+        fontSize: string | number;
+    };
 }
 
-function ConnectorLogo({ imageSrc, maxHeight, padding }: Props) {
+function ConnectorLogo({
+    imageSrc,
+    maxHeight,
+    padding,
+    unknownConnectorIconConfig,
+}: Props) {
     if (imageSrc) {
         return (
             <img
@@ -21,7 +30,14 @@ function ConnectorLogo({ imageSrc, maxHeight, padding }: Props) {
             />
         );
     } else {
-        return <NetworkLeft style={{ fontSize: '3rem' }} />;
+        return (
+            <NetworkLeft
+                style={{
+                    width: unknownConnectorIconConfig?.width,
+                    fontSize: unknownConnectorIconConfig?.fontSize ?? '3rem',
+                }}
+            />
+        );
     }
 }
 
