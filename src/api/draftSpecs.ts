@@ -10,9 +10,7 @@ import {
     TABLES,
     updateSupabase,
 } from 'services/supabase';
-import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity } from 'types';
-import { CaptureDef, CaptureEndpoint } from '../../flow_deps/flow';
 
 interface CreateMatchData {
     draft_id: string | null;
@@ -77,67 +75,6 @@ export const modifyDraftSpec = (
     }
 
     return updateSupabase(TABLES.DRAFT_SPECS, data, matchData);
-};
-
-export const generateDraftSpec = (
-    config: any,
-    image: string,
-    resources?: any
-) => {
-    // TODO (typing) MaterializationDef
-    const draftSpec: any = {
-        bindings: [],
-        endpoint: {
-            connector: {
-                config,
-                image,
-            },
-        },
-    };
-
-    if (resources) {
-        Object.keys(resources).forEach((collectionName) => {
-            const resourceConfig = resources[collectionName].data;
-
-            if (Object.keys(resourceConfig).length > 0) {
-                draftSpec.bindings.push({
-                    source: collectionName,
-                    resource: {
-                        ...resourceConfig,
-                    },
-                });
-            }
-        });
-    }
-
-    return draftSpec;
-};
-
-export const generateCaptureDraftSpec = (
-    endpoint: CaptureEndpoint,
-    resourceConfig: ResourceConfigDictionary | null
-): CaptureDef => {
-    const draftSpec: CaptureDef = {
-        bindings: [],
-        endpoint,
-    };
-
-    if (resourceConfig) {
-        Object.keys(resourceConfig).forEach((collectionName) => {
-            const resources = resourceConfig[collectionName].data;
-
-            if (Object.keys(resources).length > 0) {
-                draftSpec.bindings.push({
-                    target: collectionName,
-                    resource: {
-                        ...resources,
-                    },
-                });
-            }
-        });
-    }
-
-    return draftSpec;
 };
 
 export const deleteDraftSpec = (draftId: string) => {
