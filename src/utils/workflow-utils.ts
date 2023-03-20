@@ -7,6 +7,7 @@ import { isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { EntityWithCreateWorkflow, Schema } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
 
 // TODO (typing): Narrow the return type for this function.
@@ -29,7 +30,9 @@ export const generateTaskSpec = (
         const collectionNameProp =
             entityType === 'capture' ? 'target' : 'source';
 
-        Object.keys(resourceConfigs).forEach((collectionName) => {
+        const boundCollectionNames = Object.keys(resourceConfigs);
+
+        boundCollectionNames.forEach((collectionName) => {
             const resourceConfig = resourceConfigs[collectionName].data;
 
             const existingBindingIndex = draftSpec.bindings.findIndex(
@@ -49,6 +52,16 @@ export const generateTaskSpec = (
                 });
             }
         });
+
+        if (hasLength(draftSpec.bindings)) {
+            const filteredBindings = draftSpec.bindings.filter((binding: any) =>
+                boundCollectionNames.includes(binding[collectionNameProp])
+            );
+
+            draftSpec.bindings = filteredBindings;
+        }
+    } else {
+        draftSpec.bindings = [];
     }
 
     return draftSpec;
