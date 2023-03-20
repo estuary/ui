@@ -1,5 +1,8 @@
 import { Button } from '@mui/material';
-import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
+import {
+    deleteDraftSpecsByCatalogName,
+    getDraftSpecsBySpecType,
+} from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
 import {
     useEditorStore_id,
@@ -148,20 +151,45 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
 
         if (draftId) {
             if (collections && collections.length > 0) {
-                const deleteDraftSpecsResponse =
-                    await deleteDraftSpecsByCatalogName(
-                        draftId,
-                        'collection',
-                        collections,
-                        'preserve'
-                    );
-                if (deleteDraftSpecsResponse.error) {
+                const draftSpecResponse = await getDraftSpecsBySpecType(
+                    draftId,
+                    'collection'
+                );
+
+                if (draftSpecResponse.error) {
                     return onFailure({
                         error: {
                             title: 'captureEdit.generate.failedErrorTitle',
-                            error: deleteDraftSpecsResponse.error,
+                            error: draftSpecResponse.error,
                         },
                     });
+                } else if (
+                    draftSpecResponse.data &&
+                    draftSpecResponse.data.length > 0
+                ) {
+                    const unboundCollections = draftSpecResponse.data
+                        .map((query) => query.catalog_name)
+                        .filter(
+                            (collection) => !collections.includes(collection)
+                        );
+
+                    if (unboundCollections.length > 0) {
+                        const deleteDraftSpecsResponse =
+                            await deleteDraftSpecsByCatalogName(
+                                draftId,
+                                'collection',
+                                unboundCollections,
+                                'remove'
+                            );
+                        if (deleteDraftSpecsResponse.error) {
+                            return onFailure({
+                                error: {
+                                    title: 'captureEdit.generate.failedErrorTitle',
+                                    error: deleteDraftSpecsResponse.error,
+                                },
+                            });
+                        }
+                    }
                 }
             }
 
