@@ -173,22 +173,20 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
                             (collection) => !collections.includes(collection)
                         );
 
-                    if (unboundCollections.length > 0) {
-                        const deleteDraftSpecsResponse =
-                            await deleteDraftSpecsByCatalogName(
-                                draftId,
-                                'collection',
-                                unboundCollections,
-                                'remove'
-                            );
-                        if (deleteDraftSpecsResponse.error) {
-                            return onFailure({
-                                error: {
-                                    title: 'captureEdit.generate.failedErrorTitle',
-                                    error: deleteDraftSpecsResponse.error,
-                                },
-                            });
-                        }
+                    const deleteDraftSpecsResponse =
+                        await deleteDraftSpecsByCatalogName(
+                            draftId,
+                            'collection',
+                            unboundCollections,
+                            'remove'
+                        );
+                    if (deleteDraftSpecsResponse.error) {
+                        return onFailure({
+                            error: {
+                                title: 'captureEdit.generate.failedErrorTitle',
+                                error: deleteDraftSpecsResponse.error,
+                            },
+                        });
                     }
                 }
             }
