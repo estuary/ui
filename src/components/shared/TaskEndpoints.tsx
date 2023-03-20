@@ -13,6 +13,10 @@ interface Props {
     taskName: string;
 }
 
+interface EndpointLinkProps {
+    endpoint: Endpoint;
+}
+
 const isHttp = (ep: Endpoint): boolean => {
     if (ep.protocol) {
         return ep.protocol == 'h2' || ep.protocol == 'http/1.1';
@@ -25,6 +29,87 @@ const httpUrl = (ep: Endpoint): string => {
     return `https://${ep.fullHostname}/`;
 };
 
+export function EndpointLink({ endpoint }: EndpointLinkProps) {
+    if (isHttp(endpoint)) {
+        const linkText = httpUrl(endpoint);
+        return (
+            <ExternalLink
+                link={linkText}
+                children={
+                    <Typography sx={{ textTransform: 'none' }}>
+                        {linkText}
+                    </Typography>
+                }
+            />
+        );
+    } else {
+        return (
+            <Typography>
+                <FormattedMessage
+                    id="taskEndpoint.otherProtocol.message"
+                    values={{
+                        protocol: endpoint.protocol,
+                        hostname: endpoint.fullHostname,
+                    }}
+                />
+            </Typography>
+        );
+    }
+}
+
+export function TaskEndpoints({ taskName }: Props) {
+    const gateway = useScopedGatewayAuthToken([taskName]);
+
+    const getTaskEndpoints = useShardDetail_getTaskEndpoints();
+
+    let gatewayHostname = null;
+    if (gateway.data?.gateway_url) {
+        // Even though `gateway_url` is already a `URL` object, the
+        // `host` property returns `null` for some $jsReason
+        const url = new URL(gateway.data.gateway_url.toString());
+        gatewayHostname = url.host;
+    }
+    const endpoints = getTaskEndpoints(taskName, gatewayHostname);
+
+    return endpoints.length > 0 ? (
+        <Box
+            sx={{
+                gap: '10px',
+                display: 'flex',
+                flexDirection: 'column',
+                flexWrap: 'wrap',
+                justifyContent: 'left',
+                flexGrow: 1,
+            }}
+        >
+            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 500 }}>
+                <FormattedMessage id="taskEndpoint.list.title" />
+            </Typography>
+            {endpoints.map((ep) => {
+                return (
+                    <Box
+                        key={ep.fullHostname}
+                        sx={{
+                            gap: '10px',
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            justifyContent: 'left',
+                            flexGrow: 1,
+                        }}
+                    >
+                        <EndpointLink endpoint={ep} />
+                    </Box>
+                );
+            })}
+        </Box>
+    ) : null;
+}
+
+// Displays a short message, and possibly a link, if the task exposes any endpoints.
+// The intent is to keep it short so it can fit into a small space, so only a single endpoint
+// will be rendered. If the task exposes multiple endpionts, then it just shows a message
+// directing the user to the task details where they can see a complete listing.
+// If the task doesn't expose any endpoints, then nothing will be rendered.
 export function TaskEndpoint({ taskName }: Props) {
     const gateway = useScopedGatewayAuthToken([taskName]);
 
@@ -54,30 +139,17 @@ export function TaskEndpoint({ taskName }: Props) {
     // details ;) We'll present the endpoint information differently depending
     // on the protocol.
     let message = null;
-    if (endpoints.length === 1 && isHttp(endpoints[0])) {
-        const linkText = httpUrl(endpoints[0]);
-        // ExternalLink will uppercase the text by default, so we explicitly pass `testTransform: none`
+    if (endpoints.length === 1) {
         message = (
-            <ExternalLink
-                link={linkText}
-                children={
-                    <Typography sx={{ textTransform: 'none' }}>
-                        {linkText}
-                    </Typography>
-                }
-            />
-        );
-    } else if (endpoints.length === 1) {
-        message = (
-            <Typography>
-                <FormattedMessage
-                    id="taskEndpoint.otherProtocol.message"
-                    values={{
-                        protocol: endpoints[0].protocol,
-                        hostname: endpoints[0].fullHostname,
-                    }}
-                />
-            </Typography>
+            <>
+                <Typography component="h3">
+                    <FormattedMessage
+                        id="taskEndpoint.single.title"
+                        values={{ taskName }}
+                    />
+                </Typography>
+                <EndpointLink endpoint={endpoints[0]} />
+            </>
         );
     } else if (endpoints.length > 1) {
         // We really ought to link them to the details page here, but that page doesn't exist yet.
@@ -98,12 +170,6 @@ export function TaskEndpoint({ taskName }: Props) {
                 flexGrow: 1,
             }}
         >
-            <Typography component="h3">
-                <FormattedMessage
-                    id="taskEndpoint.http.message"
-                    values={{ taskName }}
-                />
-            </Typography>
             {message}
         </Box>
     ) : null;

@@ -49,13 +49,11 @@ const getTokenRefreshInterval = (
             const exp = parsed.exp * 1000;
             const now = Date.now();
             if (now >= exp) {
-                // This would be extremely suspicious because SWR is supposed to
-                // call this function immediately after the data is fetched.
-                console.error('newly fetched data-plane JWT is expired', {
+                console.error('data-plane JWT is expired', {
                     now,
                     data,
                 });
-                return 1;
+                return 0;
             } else {
                 // Take 20% off the validity duration so that we refresh the token slightly
                 // before it's actually expired.
