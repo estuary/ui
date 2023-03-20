@@ -91,7 +91,7 @@ function Row({ collection, task, workflow, disabled, draftId }: RowProps) {
                 setRestrictedDiscoveredCollections(collection);
             }
 
-            if (draftId) {
+            if (draftId && !discoveredCollections?.includes(collection)) {
                 void deleteDraftSpecsByCatalogName(draftId, 'collection', [
                     collection,
                 ]);
@@ -159,6 +159,7 @@ function BindingSelector({
     const setCurrentCollection = useResourceConfig_setCurrentCollection();
 
     const collections = useResourceConfig_collections();
+    const discoveredCollections = useResourceConfig_discoveredCollections();
 
     const resourceConfig = useResourceConfig_resourceConfig();
 
@@ -174,11 +175,19 @@ function BindingSelector({
 
             removeAllCollections(workflow, task);
 
-            if (draftId && collections && collections.length > 0) {
+            const publishedCollections =
+                discoveredCollections && collections
+                    ? collections.filter(
+                          (collection) =>
+                              !discoveredCollections.includes(collection)
+                      )
+                    : [];
+
+            if (draftId && publishedCollections.length > 0) {
                 void deleteDraftSpecsByCatalogName(
                     draftId,
                     'collection',
-                    collections
+                    publishedCollections
                 );
             }
         },
