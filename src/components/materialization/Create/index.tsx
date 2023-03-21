@@ -15,7 +15,7 @@ import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSumm
 import PageContainer from 'components/shared/PageContainer';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
@@ -73,9 +73,13 @@ function MaterializationCreate() {
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
         useDraftSpecs(persistedDraftId);
 
-    const taskNames = draftSpecsMetadata.draftSpecs
-        .filter((spec) => spec.spec_type === 'materialization')
-        .map((spec) => spec.catalog_name);
+    const taskNames = useMemo(
+        () =>
+            draftSpecsMetadata.draftSpecs
+                .filter((spec) => spec.spec_type === 'materialization')
+                .map((spec) => spec.catalog_name),
+        [draftSpecsMetadata.draftSpecs]
+    );
 
     // Reset the catalog if the connector changes
     useEffect(() => {

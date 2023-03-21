@@ -22,6 +22,7 @@ import useGlobalSearchParams, {
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
@@ -85,9 +86,13 @@ function CaptureEdit() {
         { lastPubId }
     );
 
-    const taskNames = draftSpecsMetadata.draftSpecs
-        .filter((spec) => spec.spec_type === 'capture')
-        .map((spec) => spec.catalog_name);
+    const taskNames = useMemo(
+        () =>
+            draftSpecsMetadata.draftSpecs
+                .filter((spec) => spec.spec_type === 'capture')
+                .map((spec) => spec.catalog_name),
+        [draftSpecsMetadata.draftSpecs]
+    );
 
     const resetState = () => {
         resetDetailsForm();

@@ -18,7 +18,7 @@ import PageContainer from 'components/shared/PageContainer';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
@@ -142,11 +142,13 @@ function CaptureCreate() {
         },
     };
 
-    const tasks = draftSpecsMetadata.draftSpecs
-        .filter((query) => {
-            return query.spec_type === 'capture';
-        })
-        .map((query) => query.catalog_name);
+    const tasks = useMemo(
+        () =>
+            draftSpecsMetadata.draftSpecs
+                .filter((spec) => spec.spec_type === 'capture')
+                .map((spec) => spec.catalog_name),
+        [draftSpecsMetadata.draftSpecs]
+    );
 
     return (
         <PageContainer
