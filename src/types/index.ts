@@ -130,6 +130,15 @@ export interface CatalogStats {
     flow_document: any;
 }
 
+export interface ProjectedCostStats {
+    catalog_name: string;
+    grain: string;
+    ts: string;
+    bytes_written_by_me: number;
+    bytes_read_by_me: number;
+    flow_document: any;
+}
+
 export interface Directive {
     created_at: Date;
     detail: null;

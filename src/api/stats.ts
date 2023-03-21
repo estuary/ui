@@ -14,7 +14,7 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { CatalogStats } from 'types';
+import { CatalogStats, Grants } from 'types';
 
 export type StatsFilter =
     | 'today'
@@ -109,4 +109,26 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
     return queryBuilder.then(handleSuccess<CatalogStats[]>, handleFailure);
 };
 
-export { getStatsByName };
+const getStatsForBilling = (grants: Grants[]) => {
+    const subjectRoleFilters = grants
+        .map((grant) => `catalog_name.ilike.${grant.object_role}%`)
+        .join(',');
+
+    return supabaseClient
+        .from<CatalogStats>(TABLES.CATALOG_STATS)
+        .select(
+            `    
+            catalog_name,
+            grain,
+            ts,
+            bytes_written_by_me,
+            bytes_read_by_me,
+            flow_document
+        `
+        )
+        .eq('grain', 'monthly')
+        .or(subjectRoleFilters)
+        .order('ts');
+};
+
+export { getStatsForBilling, getStatsByName };

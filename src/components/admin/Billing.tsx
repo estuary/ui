@@ -16,12 +16,15 @@ import {
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
 import PageContainer from 'components/shared/PageContainer';
+import useProjectCostStats from 'components/tables/Billing/useProjectedCostStats';
 import {
     semiTransparentBackground,
     semiTransparentBackgroundIntensified,
 } from 'context/Theme';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useBilling_setProjectedCostStats } from 'stores/Tables/Billing/hooks';
 import useConstant from 'use-constant';
 
 const boxShadow =
@@ -39,7 +42,7 @@ const columns = [
         headerIntlKey: 'admin.billing.projectedCostTable.label.dataVolume',
     },
     {
-        field: 'tasks',
+        field: 'task_count',
         headerIntlKey: 'admin.billing.projectedCostTable.label.tasks',
     },
     {
@@ -62,6 +65,15 @@ function AdminBilling() {
         intl.formatMessage({ id: 'admin.billing.tier.personal' }),
         intl.formatMessage({ id: 'admin.billing.tier.enterprise' }),
     ]);
+
+    // Billing Store
+    const setProjectedCostStats = useBilling_setProjectedCostStats();
+
+    const { projectedCostStats } = useProjectCostStats({});
+
+    useEffect(() => {
+        setProjectedCostStats(projectedCostStats);
+    }, [setProjectedCostStats, projectedCostStats]);
 
     return (
         <PageContainer

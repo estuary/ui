@@ -21,6 +21,7 @@ import { createResourceConfigStore } from 'stores/ResourceConfig/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
 import { createSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
+import { createBillingStore } from 'stores/Tables/Billing/Store';
 import { createSelectableTableStore } from 'stores/Tables/Store';
 import { MessagePrefixes } from 'types';
 
@@ -86,6 +87,9 @@ const invariableStores = {
     ),
     [SelectTableStoreNames.CAPTURE]: createSelectableTableStore(
         SelectTableStoreNames.CAPTURE
+    ),
+    [SelectTableStoreNames.BILLING]: createBillingStore(
+        SelectTableStoreNames.BILLING
     ),
     [SelectTableStoreNames.COLLECTION]: createSelectableTableStore(
         SelectTableStoreNames.COLLECTION
