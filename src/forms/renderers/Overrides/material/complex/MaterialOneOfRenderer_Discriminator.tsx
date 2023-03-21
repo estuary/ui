@@ -54,7 +54,6 @@ import {
 import { forIn, keys } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import { useCallback, useState } from 'react';
-import { useMount } from 'react-use';
 import CombinatorProperties from './CombinatorProperties';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {
@@ -173,15 +172,6 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         },
         [setOpen, setSelectedIndex, data]
     );
-
-    // If there are no default options then go ahead and pretend
-    //  like the user clicked on the first tab. This will
-    //  default to the first tab and set props accordingly.
-    useMount(() => {
-        if (!indexOfFittingSchema) {
-            openNewTab(0);
-        }
-    });
 
     return (
         <Hidden xsUp={!visible}>
