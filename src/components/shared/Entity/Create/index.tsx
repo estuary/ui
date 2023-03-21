@@ -22,7 +22,6 @@ import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
-    useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_entityNameChanged,
 } from 'stores/DetailsForm/hooks';
@@ -80,8 +79,6 @@ function EntityCreate({
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
-    const detailsFormChanged = useDetailsForm_changed();
-
     const entityNameChanged = useDetailsForm_entityNameChanged();
 
     // Draft Editor Store
@@ -136,9 +133,7 @@ function EntityCreate({
     ]);
 
     // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.
-    // TODO (defect): Prevent prompt data loss dialog from appearing when transitioning to edit workflow.
-    const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
-
+    const promptDataLoss = endpointConfigChanged();
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
     const displayResourceConfig = useMemo(

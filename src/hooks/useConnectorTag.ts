@@ -1,6 +1,7 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { useCallback } from 'react';
 import { TABLES } from 'services/supabase';
+import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { useQuery, useSelectSingle } from './supabase-swr/';
 
@@ -11,7 +12,7 @@ export interface ConnectorTag {
     id: string;
     connector_id: string;
     image_tag: string;
-    endpoint_spec_schema: string;
+    endpoint_spec_schema: Schema;
     resource_spec_schema: string;
     documentation_url: string;
 }
