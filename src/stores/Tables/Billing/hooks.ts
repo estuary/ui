@@ -17,6 +17,13 @@ export const useBilling_setProjectedCostStats = () => {
     );
 };
 
+export const useBilling_billingDetails = () => {
+    return useZustandStore<BillingState, BillingState['billingDetails']>(
+        SelectTableStoreNames.BILLING,
+        (state) => state.billingDetails
+    );
+};
+
 export const useBilling_setBillingDetails = () => {
     return useZustandStore<BillingState, BillingState['setBillingDetails']>(
         SelectTableStoreNames.BILLING,

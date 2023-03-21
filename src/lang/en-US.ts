@@ -438,6 +438,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.projectedCostTable.label.month': `Month`,
     'admin.billing.projectedCostTable.label.tasks': `Tasks`,
     'admin.billing.projectedCostTable.label.totalCost': `Total Cost`,
+    'admin.billing.projectedCostTable.tooltip.dataVolume': `bytes of data processed by tasks`,
 
     'admin.cookies': `Cookie Preference Management`,
     'admin.cookies.message': `Click below to manage your preferences.`,

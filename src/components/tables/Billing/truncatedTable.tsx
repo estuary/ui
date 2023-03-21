@@ -7,6 +7,7 @@ import {
     TableHead,
     TableRow,
 } from '@mui/material';
+import Rows from 'components/tables/Billing/Rows';
 import { FormattedMessage } from 'react-intl';
 
 const columns = [
@@ -47,93 +48,7 @@ function TruncatedBillingTable() {
                 </TableHead>
 
                 <TableBody>
-                    <TableRow hover>
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-                    </TableRow>
-
-                    <TableRow hover>
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-                    </TableRow>
-
-                    <TableRow hover>
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-                    </TableRow>
-
-                    <TableRow hover>
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-
-                        <TableCell>
-                            <span>Filler</span>
-                        </TableCell>
-                    </TableRow>
+                    <Rows />
                 </TableBody>
             </Table>
         </TableContainer>
