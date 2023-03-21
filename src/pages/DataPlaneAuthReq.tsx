@@ -1,5 +1,6 @@
 import { Box, SxProps, Theme, Toolbar, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
+import AlertBox from 'components/shared/AlertBox';
 import PageContainer from 'components/shared/PageContainer';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
@@ -19,13 +20,16 @@ interface RedirectResult {
 
 const DataPlaneAuthReq = () => {
     useBrowserTitle('browserTitle.dataPlaneAuthReq');
+
     const [searchParams] = useSearchParams();
     const catalogPrefix = searchParams.get('prefix');
     const originalUrl = searchParams.get('orig_url');
+
     const gatewayAuth = useScopedGatewayAuthToken(catalogPrefix);
     const gatewayAuthError = gatewayAuth.error;
     const gatewayUrl = gatewayAuth.data?.gateway_url.toString();
     const gatewayAuthToken = gatewayAuth.data?.token;
+
     const [redirectResult, setRedirectResult] = useState<RedirectResult>({});
 
     useEffect(() => {
@@ -58,6 +62,7 @@ const DataPlaneAuthReq = () => {
                 const newUrl = new URL('/auth-redirect', originalUrl);
                 newUrl.searchParams.append('token', gatewayAuthToken);
                 newUrl.searchParams.append('orig_url', originalUrl);
+
                 console.log(
                     'redirecting after successful auth',
                     newUrl,
@@ -83,12 +88,12 @@ const DataPlaneAuthReq = () => {
     let elem = null;
     if (redirectResult.error) {
         elem = (
-            <Typography>
+            <AlertBox short severity="error">
                 <FormattedMessage
                     id="dataPlaneAuthReq.error.message"
                     values={{ catalogPrefix, error: redirectResult.error }}
                 />
-            </Typography>
+            </AlertBox>
         );
     } else {
         // We're still waiting on the response from the fetching the access token
