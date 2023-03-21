@@ -16,9 +16,7 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
 
     const hydrated = useEndpointConfig_hydrated();
     const setHydrated = useEndpointConfig_setHydrated();
-
     const setHydrationErrorsExist = useEndpointConfig_setHydrationErrorsExist();
-
     const hydrateState = useEndpointConfig_hydrateState();
 
     useEffectOnce(() => {

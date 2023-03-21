@@ -55,6 +55,7 @@ const getInitialStateData = (): Pick<
     | 'publishedEndpointConfig'
     | 'serverUpdateRequired'
     | 'endpointCustomErrors'
+    | 'endpointCanBeEmpty'
 > => ({
     encryptedEndpointConfig: { data: {}, errors: [] },
     endpointConfig: { data: {}, errors: [] },
@@ -67,6 +68,7 @@ const getInitialStateData = (): Pick<
     publishedEndpointConfig: { data: {}, errors: [] },
     endpointCustomErrors: [],
     serverUpdateRequired: false,
+    endpointCanBeEmpty: false,
 });
 
 const getInitialState = (
@@ -187,6 +189,16 @@ const getInitialState = (
             }),
             false,
             'Server Update Required Flag Changed'
+        );
+    },
+
+    setEndpointCanBeEmpty: (endpointCanBeEmpty) => {
+        set(
+            produce((state: EndpointConfigState) => {
+                state.endpointCanBeEmpty = endpointCanBeEmpty;
+            }),
+            false,
+            'Endpoint Can Be Empty Changed'
         );
     },
 
