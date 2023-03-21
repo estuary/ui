@@ -898,10 +898,6 @@ const TaskEndpoints: ResolvedIntlConfig['messages'] = {
 const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
     'dataPlaneAuthReq.error.message': `Authorization to access {catalogPrefix} failed: {error}`,
     'dataPlaneAuthReq.waiting.message': `Please wait while we authorize access to {catalogPrefix}. You will be redirected shortly.`,
-
-    'dataPlaneAuthReq.error.unauthorized.message': `You do not have permission to access endpoints of the requested task`,
-    'dataPlaneAuthReq.error.invalidUrl.message':
-        'Invalid URL parameters. Please contact support for assistance.',
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {

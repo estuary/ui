@@ -39,10 +39,13 @@ const DataPlaneAuthReq = () => {
             // Validate that the hostname in the orig_url is a subdomain of the gateway_url.
             // This is necessary in order to prevent malicious links using an `orig_url` parameter
             // that sends a user's auth token to a 3rd party.
+            // Ideally we would also validate that the subdomain matches the subdomain of the task,
+            // but doing so will require that control-plane be aware of those subdomains, which
+            // won't be the case until we implement pet-names.
             try {
-                const gatewayHost = new URL(gatewayUrl);
-                const parsedOrig = new URL(originalUrl);
-                if (!parsedOrig.hostname.endsWith(`.${gatewayHost}`)) {
+                const gatewayHost = new URL(gatewayUrl).hostname;
+                const origUrlHostname = new URL(originalUrl).hostname;
+                if (!origUrlHostname.endsWith(`.${gatewayHost}`)) {
                     error = 'invalid `orig_url` parameter has invalid hostname';
                 }
             } catch (e: unknown) {
