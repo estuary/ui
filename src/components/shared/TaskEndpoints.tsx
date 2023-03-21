@@ -76,7 +76,7 @@ export function EndpointLink({ endpoint }: EndpointLinkProps) {
 }
 
 export function TaskEndpoints({ taskName }: Props) {
-    const gateway = useScopedGatewayAuthToken([taskName]);
+    const gateway = useScopedGatewayAuthToken(taskName);
 
     const getTaskEndpoints = useShardDetail_getTaskEndpoints();
 
@@ -129,7 +129,7 @@ export function TaskEndpoints({ taskName }: Props) {
 // directing the user to the task details where they can see a complete listing.
 // If the task doesn't expose any endpoints, then nothing will be rendered.
 export function TaskEndpoint({ taskName }: Props) {
-    const gateway = useScopedGatewayAuthToken([taskName]);
+    const gateway = useScopedGatewayAuthToken(taskName);
 
     // The id and spec_type are irrelevant in useShardsList, but they're required to be there.
     const listShards = useShardsList([

@@ -22,31 +22,19 @@ const DataPlaneAuthReq = () => {
     const [searchParams] = useSearchParams();
     const catalogPrefix = searchParams.get('prefix');
     const originalUrl = searchParams.get('orig_url');
-    let scopes = null;
-    if (catalogPrefix) {
-        scopes = [catalogPrefix];
-    }
-    const gatewayAuth = useScopedGatewayAuthToken(scopes);
+    const gatewayAuth = useScopedGatewayAuthToken(catalogPrefix);
     const gatewayAuthError = gatewayAuth.error;
     const gatewayUrl = gatewayAuth.data?.gateway_url.toString();
     const gatewayAuthToken = gatewayAuth.data?.token;
     const [redirectResult, setRedirectResult] = useState<RedirectResult>({});
 
     useEffect(() => {
-        console.log(
-            'auth-req useEffect',
-            gatewayAuthError,
-            gatewayUrl,
-            gatewayAuthToken,
-            setRedirectResult
-        );
         let error = null;
-        if (!catalogPrefix) {
-            error = 'URL is missing `prefix` parameter';
-        } else if (!originalUrl) {
-            error = 'URL is missing `orig_url` parameter';
+        if (!catalogPrefix || !originalUrl) {
+            error =
+                'Invalid URL parameters. Please contact support for assistance.';
         } else if (gatewayAuthError) {
-            error = gatewayAuthError;
+            error = gatewayAuthError.toString();
         } else if (gatewayUrl && gatewayAuthToken) {
             // Validate that the hostname in the orig_url is a subdomain of the gateway_url.
             // This is necessary in order to prevent malicious links using an `orig_url` parameter
@@ -63,16 +51,18 @@ const DataPlaneAuthReq = () => {
                     'invalid `orig_url` parameter cannot be parsed as a URL';
             }
 
-            const newUrl = new URL('/auth-redirect', originalUrl);
-            newUrl.searchParams.append('token', gatewayAuthToken);
-            newUrl.searchParams.append('orig_url', originalUrl);
-            console.log(
-                'redirecting after successful auth',
-                newUrl,
-                gatewayUrl,
-                originalUrl
-            );
-            window.location.replace(newUrl.toString());
+            if (error === null) {
+                const newUrl = new URL('/auth-redirect', originalUrl);
+                newUrl.searchParams.append('token', gatewayAuthToken);
+                newUrl.searchParams.append('orig_url', originalUrl);
+                console.log(
+                    'redirecting after successful auth',
+                    newUrl,
+                    gatewayUrl,
+                    originalUrl
+                );
+                window.location.replace(newUrl.toString());
+            }
         }
 
         if (error) {
