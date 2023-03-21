@@ -19,7 +19,7 @@ import {
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
     useEndpointConfigStore_setPreviousEndpointConfig,
-    useEndpointConfig_setEndpointCanBeBlank,
+    useEndpointConfig_setEndpointCanBeEmpty,
     useEndpointConfig_setServerUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
 import {
@@ -58,7 +58,7 @@ function EndpointConfig({
     const endpointSchema = useEndpointConfigStore_endpointSchema();
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
-    const setEndpointCanBeBlank = useEndpointConfig_setEndpointCanBeBlank();
+    const setEndpointCanBeEmpty = useEndpointConfig_setEndpointCanBeEmpty();
 
     // Workflow related props
     const workflow = useEntityWorkflow();
@@ -76,8 +76,8 @@ function EndpointConfig({
     }, [connectorTag?.endpoint_spec_schema]);
 
     useEffect(() => {
-        setEndpointCanBeBlank(canBeEmpty);
-    }, [canBeEmpty, setEndpointCanBeBlank]);
+        setEndpointCanBeEmpty(canBeEmpty);
+    }, [canBeEmpty, setEndpointCanBeEmpty]);
 
     // Storing flag to handle knowing if a config changed
     //  during both create or edit.

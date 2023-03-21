@@ -55,7 +55,7 @@ const getInitialStateData = (): Pick<
     | 'publishedEndpointConfig'
     | 'serverUpdateRequired'
     | 'endpointCustomErrors'
-    | 'endpointCanBeBlank'
+    | 'endpointCanBeEmpty'
 > => ({
     encryptedEndpointConfig: { data: {}, errors: [] },
     endpointConfig: { data: {}, errors: [] },
@@ -68,7 +68,7 @@ const getInitialStateData = (): Pick<
     publishedEndpointConfig: { data: {}, errors: [] },
     endpointCustomErrors: [],
     serverUpdateRequired: false,
-    endpointCanBeBlank: false,
+    endpointCanBeEmpty: false,
 });
 
 const getInitialState = (
@@ -192,13 +192,13 @@ const getInitialState = (
         );
     },
 
-    setEndpointCanBeBlank: (endpointCanBeBlank) => {
+    setEndpointCanBeEmpty: (endpointCanBeEmpty) => {
         set(
             produce((state: EndpointConfigState) => {
-                state.endpointCanBeBlank = endpointCanBeBlank;
+                state.endpointCanBeEmpty = endpointCanBeEmpty;
             }),
             false,
-            'Endpoint Can Be Blank Changed'
+            'Endpoint Can Be Empty Changed'
         );
     },
 

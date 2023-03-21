@@ -15,7 +15,7 @@ import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_setEndpointConfig,
-    useEndpointConfig_endpointCanBeBlank,
+    useEndpointConfig_endpointCanBeEmpty,
 } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_displayValidation,
@@ -35,7 +35,7 @@ function EndpointConfigForm({ readOnly }: Props) {
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
     const endpointSchema = useEndpointConfigStore_endpointSchema();
-    const endpointCanBeBlank = useEndpointConfig_endpointCanBeBlank();
+    const endpointCanBeEmpty = useEndpointConfig_endpointCanBeEmpty();
 
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
@@ -81,7 +81,7 @@ function EndpointConfigForm({ readOnly }: Props) {
                     onChange={setEndpointConfig}
                     ajv={setDefaultsValidator}
                 />
-                {endpointCanBeBlank ? (
+                {endpointCanBeEmpty ? (
                     <AlertBox short severity="info">
                         <FormattedMessage
                             id="entityCreate.endpointConfig.configCanBeBlank.message"
