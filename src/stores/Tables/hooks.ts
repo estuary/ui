@@ -6,7 +6,7 @@ import {
     useQueryParams,
     withDefault,
 } from 'use-query-params';
-import { getPagination } from './EntityTable';
+import { getPagination } from '../../components/tables/EntityTable';
 
 export type TablePrefix =
     | 'ag' // access grants

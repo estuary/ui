@@ -8,11 +8,6 @@ import OptionsMenu from 'components/tables/cells/OptionsMenu';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-    StatsResponse,
-} from 'components/tables/Store';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
@@ -22,6 +17,11 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SelectTableStoreNames } from 'stores/names';
 import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+    StatsResponse,
+} from 'stores/Tables/Store';
 import { getPathWithParams, hasLength } from 'utils/misc-utils';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';

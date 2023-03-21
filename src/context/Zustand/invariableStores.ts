@@ -1,7 +1,6 @@
 import { createBindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import { createEditorStore } from 'components/editor/Store/create';
 import { createExistingEntityStore } from 'components/shared/Entity/ExistingEntityCards/Store/create';
-import { createSelectableTableStore } from 'components/tables/Store';
 import { createDetailsFormStore } from 'stores/DetailsForm/Store';
 import { createEndpointConfigStore } from 'stores/EndpointConfig/Store';
 import { createFormStateStore } from 'stores/FormState/Store';
@@ -22,6 +21,7 @@ import { createResourceConfigStore } from 'stores/ResourceConfig/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
 import { createSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
+import { createSelectableTableStore } from 'stores/Tables/Store';
 import { MessagePrefixes } from 'types';
 
 const invariableStores = {

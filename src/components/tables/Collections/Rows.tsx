@@ -15,14 +15,14 @@ import {
     useShardDetail_setError,
     useShardDetail_setShards,
 } from 'stores/ShardDetail/hooks';
-import { hasLength } from 'utils/misc-utils';
-import Bytes from '../cells/stats/Bytes';
-import Docs from '../cells/stats/Docs';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
     StatsResponse,
-} from '../Store';
+} from 'stores/Tables/Store';
+import { hasLength } from 'utils/misc-utils';
+import Bytes from '../cells/stats/Bytes';
+import Docs from '../cells/stats/Docs';
 import useCollectionColumns from './useCollectionColumns';
 
 interface RowProps {

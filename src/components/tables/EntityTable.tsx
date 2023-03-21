@@ -18,10 +18,6 @@ import {
 } from '@mui/material';
 import TablePaginationActions from 'components/tables/PaginationActions';
 import RowSelector from 'components/tables/RowActions/RowSelector';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'components/tables/Store';
 import Title from 'components/tables/Title';
 import { useZustandStore } from 'context/Zustand/provider';
 import { ArrowDown } from 'iconoir-react';
@@ -39,6 +35,10 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useEffectOnce } from 'react-use';
 import { Pagination } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'stores/Tables/Store';
 import {
     SortDirection,
     TableColumns,
