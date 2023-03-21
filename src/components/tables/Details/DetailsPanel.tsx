@@ -48,15 +48,18 @@ function DetailsPanel({
 
     const isCollection = entityType === 'collection';
 
-    let endpoints = null;
-    if (entityType === 'capture' || entityType === 'materialization') {
-        endpoints = (
-            <Grid item xs={12}>
-                {' '}
-                <TaskEndpoints taskName={entityName} />{' '}
-            </Grid>
-        );
-    }
+    const endpoints = useMemo(() => {
+        if (entityType === 'capture' || entityType === 'materialization') {
+            return (
+                <Grid item xs={12}>
+                    <TaskEndpoints taskName={entityName} />
+                    <Divider sx={{ mt: 4 }} />
+                </Grid>
+            );
+        } else {
+            return null;
+        }
+    }, [entityName, entityType]);
 
     return (
         <TableRow>
