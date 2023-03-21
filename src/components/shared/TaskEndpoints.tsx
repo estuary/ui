@@ -1,8 +1,9 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Tooltip, Typography } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
 import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
 import useShardsList from 'hooks/useShardsList';
-import { FormattedMessage } from 'react-intl';
+import { LockedWindow, NoLock } from 'iconoir-react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useShardDetail_getTaskEndpoints,
     useShardDetail_setShards,
@@ -30,9 +31,19 @@ const httpUrl = (ep: Endpoint): string => {
 };
 
 export function EndpointLink({ endpoint }: EndpointLinkProps) {
+    const intl = useIntl();
+
+    const visibility = endpoint.isPublic ? 'public' : 'private';
+    const tooltip = intl.formatMessage({
+        id: `taskEndpoint.visibility.${visibility}.tooltip`,
+    });
+    const privacyIcon = endpoint.isPublic ? <NoLock /> : <LockedWindow />;
+
+    let linky = null;
     if (isHttp(endpoint)) {
         const linkText = httpUrl(endpoint);
-        return (
+
+        linky = (
             <ExternalLink
                 link={linkText}
                 children={
@@ -43,7 +54,7 @@ export function EndpointLink({ endpoint }: EndpointLinkProps) {
             />
         );
     } else {
-        return (
+        linky = (
             <Typography>
                 <FormattedMessage
                     id="taskEndpoint.otherProtocol.message"
@@ -55,6 +66,13 @@ export function EndpointLink({ endpoint }: EndpointLinkProps) {
             </Typography>
         );
     }
+
+    return (
+        <Box sx={{ display: 'flex', justifyContent: 'left' }}>
+            <Tooltip title={tooltip}>{privacyIcon}</Tooltip>
+            {linky}
+        </Box>
+    );
 }
 
 export function TaskEndpoints({ taskName }: Props) {

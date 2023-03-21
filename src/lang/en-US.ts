@@ -888,6 +888,11 @@ const TaskEndpoints: ResolvedIntlConfig['messages'] = {
     'taskEndpoint.single.title': `Endpoint exposed by {taskName}:`,
     'taskEndpoint.otherProtocol.message': `{protocol} hostname: {hostname}`,
     'taskEndpoint.multipleEndpoints.message': `mutliple endpoints exposed, see task details for their addresses.`,
+
+    'taskEndpoint.visibility.public.tooltip':
+        'Public: anyone may access this port over the public internet',
+    'taskEndpoint.visibility.private.tooltip':
+        'Private: access to this port is restricted to authenticated users who have "admin" permissions to the task',
 };
 
 const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
