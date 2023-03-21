@@ -68,8 +68,6 @@ function EndpointConfig({
 
     // Storing if this endpointConfig can be empty or not
     //  If so we know there will never be a "change" to the endpoint config
-    //  We DO NOT use the props from the store as of March 2023. However,
-    //  populating it there as this could be helpful in the future.
     const canBeEmpty = useMemo(() => {
         return (
             !connectorTag?.endpoint_spec_schema.properties ||
