@@ -24,8 +24,12 @@ import {
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useBilling_setProjectedCostStats } from 'stores/Tables/Billing/hooks';
+import {
+    useBilling_setBillingDetails,
+    useBilling_setProjectedCostStats,
+} from 'stores/Tables/Billing/hooks';
 import useConstant from 'use-constant';
+import { hasLength } from 'utils/misc-utils';
 
 const boxShadow =
     'rgb(50 50 93 / 7%) 0px 3px 6px -1px, rgb(0 0 0 / 10%) 0px -2px 4px -1px, rgb(0 0 0 / 10%) 0px 2px 4px -1px';
@@ -68,12 +72,18 @@ function AdminBilling() {
 
     // Billing Store
     const setProjectedCostStats = useBilling_setProjectedCostStats();
+    const setBillingDetails = useBilling_setBillingDetails();
 
-    const { projectedCostStats } = useProjectCostStats({});
+    const { projectedCostStats: projectedCostStatsData } = useProjectCostStats(
+        {}
+    );
 
     useEffect(() => {
-        setProjectedCostStats(projectedCostStats);
-    }, [setProjectedCostStats, projectedCostStats]);
+        if (hasLength(projectedCostStatsData)) {
+            setProjectedCostStats(projectedCostStatsData);
+            setBillingDetails();
+        }
+    }, [setBillingDetails, setProjectedCostStats, projectedCostStatsData]);
 
     return (
         <PageContainer
