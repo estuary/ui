@@ -4,18 +4,13 @@ import {
     Box,
     Grid,
     Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
     TextField,
     Typography,
 } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
 import PageContainer from 'components/shared/PageContainer';
+import TruncatedBillingTable from 'components/tables/Billing/truncatedTable';
 import useProjectCostStats from 'components/tables/Billing/useProjectedCostStats';
 import {
     semiTransparentBackground,
@@ -35,29 +30,6 @@ const boxShadow =
     'rgb(50 50 93 / 7%) 0px 3px 6px -1px, rgb(0 0 0 / 10%) 0px -2px 4px -1px, rgb(0 0 0 / 10%) 0px 2px 4px -1px';
 
 const typographySx = { mb: 2, fontSize: 16, fontWeight: 300 };
-
-const columns = [
-    {
-        field: 'month',
-        headerIntlKey: 'admin.billing.projectedCostTable.label.month',
-    },
-    {
-        field: 'data_volume',
-        headerIntlKey: 'admin.billing.projectedCostTable.label.dataVolume',
-    },
-    {
-        field: 'task_count',
-        headerIntlKey: 'admin.billing.projectedCostTable.label.tasks',
-    },
-    {
-        field: 'details',
-        headerIntlKey: 'admin.billing.projectedCostTable.label.details',
-    },
-    {
-        field: 'total_cost',
-        headerIntlKey: 'admin.billing.projectedCostTable.label.totalCost',
-    },
-];
 
 function AdminBilling() {
     useBrowserTitle('browserTitle.admin.billing');
@@ -165,113 +137,7 @@ function AdminBilling() {
                             <FormattedMessage id="admin.billing.projectedCostTable.header" />
                         </Typography>
 
-                        <TableContainer component={Box}>
-                            <Table size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        {columns.map((column, index) => (
-                                            <TableCell
-                                                key={`${column.field}-${index}`}
-                                            >
-                                                <FormattedMessage
-                                                    id={column.headerIntlKey}
-                                                />
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-                                </TableHead>
-
-                                <TableBody>
-                                    <TableRow hover>
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow hover>
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow hover>
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-                                    </TableRow>
-
-                                    <TableRow hover>
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <span>Filler</span>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        <TruncatedBillingTable />
                     </Box>
                 </Grid>
 
