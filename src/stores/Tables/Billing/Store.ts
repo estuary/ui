@@ -9,6 +9,19 @@ import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
+const FREE_BYTES = 21474836480;
+const FREE_TASK_COUNT = 2;
+
+const evaluateTotalCost = (dataVolume: number, taskCount: number) => {
+    const dataVolumeOverLimit =
+        dataVolume > FREE_BYTES ? dataVolume - FREE_BYTES : 0;
+
+    const taskCountOverLimit =
+        taskCount > FREE_TASK_COUNT ? taskCount - FREE_TASK_COUNT : 0;
+
+    return dataVolumeOverLimit * 0.75 + taskCountOverLimit * 20;
+};
+
 const evaluateDataVolume = (
     projectedCostStats: ProjectedCostStats[]
 ): number => {
@@ -102,11 +115,17 @@ export const getInitialState = (
                                     };
                                 }
 
+                                const taskCount = stats.length;
+                                const dataVolume = evaluateDataVolume(stats);
+
                                 state.billingDetails[date].taskCount =
-                                    stats.length;
+                                    taskCount;
 
                                 state.billingDetails[date].dataVolume =
-                                    evaluateDataVolume(stats);
+                                    dataVolume;
+
+                                state.billingDetails[date].totalCost =
+                                    evaluateTotalCost(dataVolume, taskCount);
                             }
                         );
                     }

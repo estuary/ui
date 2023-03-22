@@ -1,5 +1,6 @@
-import { TableCell, TableRow } from '@mui/material';
+import { TableCell, TableRow, Typography } from '@mui/material';
 import DataVolume from 'components/tables/cells/billing/DataVolume';
+import MonetaryValue from 'components/tables/cells/billing/MonetaryValue';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { useBilling_billingDetails } from 'stores/Tables/Billing/hooks';
 import { BillingDetails } from 'stores/Tables/Billing/types';
@@ -16,16 +17,14 @@ function Row({ row }: RowProps) {
             <DataVolume val={row.dataVolume} />
 
             <TableCell>
-                <span>{row.taskCount}</span>
+                <Typography>{row.taskCount}</Typography>
             </TableCell>
 
             <TableCell>
-                <span>Filler</span>
+                <Typography>Filler</Typography>
             </TableCell>
 
-            <TableCell>
-                <span>{row.totalCost}</span>
-            </TableCell>
+            <MonetaryValue amount={row.totalCost} />
         </TableRow>
     );
 }
