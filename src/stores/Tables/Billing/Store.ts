@@ -34,6 +34,7 @@ const getInitialBillingDetails = (date: string): BillingDetails => {
     const truncatedDate = parseISO(truncatedDateStr);
 
     return {
+        date: truncatedDate,
         month: truncatedDate.getMonth() + 1,
         year: truncatedDate.getFullYear(),
         dataVolume: 0,

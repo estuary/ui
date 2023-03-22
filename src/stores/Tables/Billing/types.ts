@@ -6,6 +6,7 @@ export interface ProjectedCostStatsDictionary {
 }
 
 export interface BillingDetails {
+    date: Date;
     month: number;
     year: number;
     dataVolume: number;

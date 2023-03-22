@@ -1,5 +1,6 @@
 import { TableCell, TableRow } from '@mui/material';
 import DataVolume from 'components/tables/cells/billing/DataVolume';
+import TimeStamp from 'components/tables/cells/TimeStamp';
 import { useBilling_billingDetails } from 'stores/Tables/Billing/hooks';
 import { BillingDetails } from 'stores/Tables/Billing/types';
 
@@ -10,9 +11,7 @@ interface RowProps {
 function Row({ row }: RowProps) {
     return (
         <TableRow hover>
-            <TableCell>
-                <span>{row.month}</span>
-            </TableCell>
+            <TimeStamp time={row.date} monthOnly={true} />
 
             <DataVolume val={row.dataVolume} />
 
