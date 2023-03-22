@@ -887,10 +887,11 @@ const CustomRenderers: ResolvedIntlConfig['messages'] = {
 
 const TaskEndpoints: ResolvedIntlConfig['messages'] = {
     'taskEndpoint.list.title': `Endpoints:`,
-    'taskEndpoint.single.title': `Endpoint exposed by {taskName}:`,
     'taskEndpoint.otherProtocol.message': `{protocol} hostname: {hostname}`,
     'taskEndpoint.multipleEndpoints.message': `mutliple endpoints exposed, see task details for their addresses.`,
 
+    'taskEndpoint.link.public.label': 'Public endpoint: ',
+    'taskEndpoint.link.private.label': 'Private endpoint: ',
     'taskEndpoint.visibility.public.tooltip':
         'Public: anyone may access this port over the public internet',
     'taskEndpoint.visibility.private.tooltip':

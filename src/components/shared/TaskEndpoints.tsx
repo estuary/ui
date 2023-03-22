@@ -2,7 +2,6 @@ import { Box, Tooltip, Typography } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
 import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
 import useShardsList from 'hooks/useShardsList';
-import { LockedWindow, NoLock } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useShardDetail_getTaskEndpoints,
@@ -37,7 +36,7 @@ export function EndpointLink({ endpoint }: EndpointLinkProps) {
     const tooltip = intl.formatMessage({
         id: `taskEndpoint.visibility.${visibility}.tooltip`,
     });
-    const privacyIcon = endpoint.isPublic ? <NoLock /> : <LockedWindow />;
+    const labelMessage = `taskEndpoint.link.${visibility}.label`;
 
     let linky = null;
     if (isHttp(endpoint)) {
@@ -69,7 +68,11 @@ export function EndpointLink({ endpoint }: EndpointLinkProps) {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'left' }}>
-            <Tooltip title={tooltip}>{privacyIcon}</Tooltip>
+            <Tooltip title={tooltip}>
+                <Typography>
+                    <FormattedMessage id={labelMessage} />
+                </Typography>
+            </Tooltip>
             {linky}
         </Box>
     );
@@ -158,17 +161,7 @@ export function TaskEndpoint({ taskName }: Props) {
     // on the protocol.
     let message = null;
     if (endpoints.length === 1) {
-        message = (
-            <>
-                <Typography component="h3">
-                    <FormattedMessage
-                        id="taskEndpoint.single.title"
-                        values={{ taskName }}
-                    />
-                </Typography>
-                <EndpointLink endpoint={endpoints[0]} />
-            </>
-        );
+        message = <EndpointLink endpoint={endpoints[0]} />;
     } else if (endpoints.length > 1) {
         // We really ought to link them to the details page here, but that page doesn't exist yet.
         message = (
