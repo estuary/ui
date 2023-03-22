@@ -21,7 +21,6 @@ import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
-    useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_hydrated,
 } from 'stores/DetailsForm/hooks';
@@ -90,7 +89,6 @@ function EntityEdit({
     // Details Form Store
     const detailsFormStoreHydrated = useDetailsForm_hydrated();
     const imageTag = useDetailsForm_connectorImage();
-    const detailsFormChanged = useDetailsForm_changed();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
@@ -141,8 +139,7 @@ function EntityEdit({
     ]);
 
     // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.
-    const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
-
+    const promptDataLoss = endpointConfigChanged();
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
     const storeHydrationIncomplete =
