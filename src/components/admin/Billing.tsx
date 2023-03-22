@@ -8,6 +8,7 @@ import {
     Typography,
 } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
+import DataByMonthGraph from 'components/admin/Billing/DataByMonthGraph';
 import AdminTabs from 'components/admin/Tabs';
 import PageContainer from 'components/shared/PageContainer';
 import TruncatedBillingTable from 'components/tables/Billing/truncatedTable';
@@ -162,6 +163,8 @@ function AdminBilling() {
                         <Typography sx={typographySx}>
                             <FormattedMessage id="admin.billing.graph.dataByMonth.header" />
                         </Typography>
+
+                        <DataByMonthGraph />
                     </Box>
                 </Grid>
 
