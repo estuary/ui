@@ -105,6 +105,11 @@ const collections = {
     // },
 };
 
+const dataPlaneAuth = {
+    title: 'routeTitle.dataPlaneAuthReq',
+    path: '/data-plane-auth-req',
+};
+
 const home = {
     title: 'routeTitle.home',
     path: '/welcome',
@@ -176,6 +181,7 @@ export const authenticatedRoutes = {
     admin,
     captures,
     collections,
+    dataPlaneAuth,
     home,
     materializations,
     user,
