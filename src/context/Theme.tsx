@@ -171,6 +171,11 @@ export const defaultOutline = {
     dark: `1px solid rgba(247, 249, 252, 0.12)`,
 };
 
+export const defaultOutlineColor = {
+    light: `rgba(11, 19, 30, 0.12)`,
+    dark: `rgba(247, 249, 252, 0.12)`,
+};
+
 // Styles
 
 export const tableAlternateRowsSx: SxProps<Theme> = {
