@@ -187,6 +187,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
+    'routeTitle.collectionCreate': `Create Transformation`,
     'routeTitle.directives': `Directives`,
     'routeTitle.error.entityNotFound': `Entity Not Found`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
@@ -214,6 +215,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
     'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
+    'browserTitle.collectionCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collectionCreate']}`,
     'browserTitle.error.entityNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.entityNotFound']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
     'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
@@ -878,6 +880,10 @@ const Docs: ResolvedIntlConfig['messages'] = {
     'docs.cta.expand.disabled': `Open 3rd party docs in new window`,
 };
 
+const NewCollection: ResolvedIntlConfig['messages'] = {
+    'newCollection.modal.title': `Build a new collection`,
+};
+
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
@@ -931,6 +937,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...EntityNotFound,
     ...ExistingEntityCheck,
     ...Docs,
+    ...NewCollection,
 };
 
 export default enUSMessages;

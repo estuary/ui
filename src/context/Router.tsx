@@ -9,6 +9,7 @@ import StorageMappings from 'components/admin/StorageMappings';
 import CaptureCreate from 'components/capture/Create';
 import CaptureCreateConfig from 'components/capture/Create/Config';
 import CaptureEdit from 'components/capture/Edit';
+import DerivationCreate from 'components/derivation/Create';
 import MaterializationCreate from 'components/materialization/Create';
 import MaterializationCreateConfig from 'components/materialization/Create/Config';
 import MaterializationEdit from 'components/materialization/Edit';
@@ -31,6 +32,7 @@ import {
     createRoutesFromElements,
     Route,
     RouterProvider,
+    Routes,
 } from 'react-router-dom';
 import { isProduction } from 'utils/env-utils';
 import { RequireAuth } from './Authenticated';
@@ -90,16 +92,25 @@ const router = createBrowserRouter(
                         element={<Home />}
                     />
 
-                    <Route path={authenticatedRoutes.collections.path}>
-                        <Route
-                            path=""
-                            element={
+                    <Route
+                        path={`${authenticatedRoutes.collections.path}/*`}
+                        element={
+                            <>
                                 <EntityContextProvider value="collection">
                                     <Collections />
                                 </EntityContextProvider>
-                            }
-                        />
-                    </Route>
+                                <Routes>
+                                    <Route
+                                        path={
+                                            authenticatedRoutes.collections
+                                                .create.new.path
+                                        }
+                                        element={<DerivationCreate />}
+                                    />
+                                </Routes>
+                            </>
+                        }
+                    />
 
                     <Route path={authenticatedRoutes.captures.path}>
                         <Route
