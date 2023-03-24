@@ -68,6 +68,7 @@ function DataByMonthGraph() {
                             color: defaultOutlineColor[theme.palette.mode],
                         },
                     },
+                    minInterval: 0.001,
                 },
                 series: [
                     {
@@ -116,12 +117,12 @@ function DataByMonthGraph() {
                                         date.includes(config.axisValueLabel)
                                     ) ?? config.axisValueLabel;
 
-                            return `${tooltipTitle}<br />${config.marker} ${config.value}`;
+                            return `${tooltipTitle}<br />${config.marker} ${config.value} GB`;
                         } else {
                             return undefined;
                         }
                     },
-                    valueFormatter: (value: any) => `${value} GB`,
+                    // valueFormatter: (value: any) => `${value} GB`,
                 },
                 grid: {
                     left: 60,

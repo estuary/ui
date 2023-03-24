@@ -30,3 +30,10 @@ export const useBilling_setBillingDetails = () => {
         (state) => state.setBillingDetails
     );
 };
+
+export const useBilling_dataByTaskGraphDetails = () => {
+    return useZustandStore<
+        BillingState,
+        BillingState['dataByTaskGraphDetails']
+    >(SelectTableStoreNames.BILLING, (state) => state.dataByTaskGraphDetails);
+};

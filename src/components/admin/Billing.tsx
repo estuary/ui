@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import DataByMonthGraph from 'components/admin/Billing/DataByMonthGraph';
+import DataByTaskGraph from 'components/admin/Billing/DataByTaskGraph';
 import AdminTabs from 'components/admin/Tabs';
 import PageContainer from 'components/shared/PageContainer';
 import TruncatedBillingTable from 'components/tables/Billing/truncatedTable';
@@ -181,24 +182,19 @@ function AdminBilling() {
                 <Grid item xs={12} md={6}>
                     <Box
                         sx={{
-                            'height': 300,
-                            'p': 2,
-                            'background': (theme) =>
+                            height: 300,
+                            p: 2,
+                            background: (theme) =>
                                 semiTransparentBackground[theme.palette.mode],
                             boxShadow,
-                            'borderRadius': 3,
-                            '&:hover': {
-                                background: (theme) =>
-                                    semiTransparentBackgroundIntensified[
-                                        theme.palette.mode
-                                    ],
-                                boxShadow,
-                            },
+                            borderRadius: 3,
                         }}
                     >
                         <Typography sx={typographySx}>
                             <FormattedMessage id="admin.billing.graph.dataByTask.header" />
                         </Typography>
+
+                        <DataByTaskGraph />
                     </Box>
                 </Grid>
             </Grid>

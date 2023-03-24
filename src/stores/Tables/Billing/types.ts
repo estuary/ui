@@ -1,5 +1,5 @@
 import { SelectableTableStore } from 'stores/Tables/Store';
-import { ProjectedCostStats } from 'types';
+import { Entity, ProjectedCostStats } from 'types';
 
 export interface ProjectedCostStatsDictionary {
     [date: string]: ProjectedCostStats[];
@@ -15,7 +15,19 @@ export interface BillingDetails {
     totalCost: number;
 }
 
+interface DataVolumeByTask {
+    date: Date;
+    dataVolume: number;
+    specType: Entity;
+}
+
+export interface DataVolumeByTaskGraphDetails {
+    [catalog_name: string]: DataVolumeByTask[];
+}
+
 export interface BillingState extends SelectableTableStore {
+    dataByTaskGraphDetails: DataVolumeByTaskGraphDetails;
+
     projectedCostStats: ProjectedCostStatsDictionary;
     setProjectedCostStats: (value: ProjectedCostStats[]) => void;
 

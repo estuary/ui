@@ -4,14 +4,24 @@ import { isEmpty, isEqual, sum } from 'lodash';
 import { SelectTableStoreNames } from 'stores/names';
 import { BillingDetails, BillingState } from 'stores/Tables/Billing/types';
 import { getInitialState as getInitialSelectTableState } from 'stores/Tables/Store';
-import { ProjectedCostStats } from 'types';
+import { Entity, ProjectedCostStats } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
-const GB_IN_BYTES = 1073741824;
+const BYTES_PER_GB = 1073741824;
 const FREE_BYTES = 21474836480;
 const FREE_TASK_COUNT = 2;
+
+const evaluateSpecType = (query: ProjectedCostStats): Entity => {
+    if (Object.hasOwn(query.flow_document.taskStats, 'capture')) {
+        return 'capture';
+    } else if (Object.hasOwn(query.flow_document.taskStats, 'materialize')) {
+        return 'materialization';
+    } else {
+        return 'collection';
+    }
+};
 
 const evaluateTotalCost = (dataVolume: number, taskCount: number) => {
     const dataVolumeOverLimit =
@@ -20,7 +30,9 @@ const evaluateTotalCost = (dataVolume: number, taskCount: number) => {
     const taskCountOverLimit =
         taskCount > FREE_TASK_COUNT ? taskCount - FREE_TASK_COUNT : 0;
 
-    return (dataVolumeOverLimit / GB_IN_BYTES) * 0.75 + taskCountOverLimit * 20;
+    return (
+        (dataVolumeOverLimit / BYTES_PER_GB) * 0.75 + taskCountOverLimit * 20
+    );
 };
 
 const evaluateDataVolume = (
@@ -65,11 +77,12 @@ const getInitialBillingDetails = (date: string): BillingDetails => {
 
 const getInitialStateData = (): Pick<
     BillingState,
-    'billingDetails' | 'projectedCostStats'
+    'billingDetails' | 'projectedCostStats' | 'dataByTaskGraphDetails'
 > => {
     return {
         billingDetails: [],
         projectedCostStats: {},
+        dataByTaskGraphDetails: {},
     };
 };
 
@@ -87,6 +100,38 @@ export const getInitialState = (
                     const taskStatData = value.filter((query) =>
                         Object.hasOwn(query.flow_document, 'taskStats')
                     );
+
+                    taskStatData.forEach((query) => {
+                        if (
+                            Object.hasOwn(
+                                state.dataByTaskGraphDetails,
+                                query.catalog_name
+                            )
+                        ) {
+                            state.dataByTaskGraphDetails[
+                                query.catalog_name
+                            ].push({
+                                date: stripTimeFromDate(query.ts),
+                                dataVolume:
+                                    query.bytes_written_by_me +
+                                    query.bytes_read_by_me,
+                                specType: evaluateSpecType(query),
+                            });
+                        } else {
+                            state.dataByTaskGraphDetails = {
+                                ...state.dataByTaskGraphDetails,
+                                [query.catalog_name]: [
+                                    {
+                                        date: stripTimeFromDate(query.ts),
+                                        dataVolume:
+                                            query.bytes_written_by_me +
+                                            query.bytes_read_by_me,
+                                        specType: evaluateSpecType(query),
+                                    },
+                                ],
+                            };
+                        }
+                    });
 
                     taskStatData.forEach((query) => {
                         if (Object.hasOwn(state.projectedCostStats, query.ts)) {
