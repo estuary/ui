@@ -1,18 +1,8 @@
-import {
-    Autocomplete,
-    AutocompleteChangeReason,
-    Box,
-    TextField,
-    Typography,
-} from '@mui/material';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
-import { truncateTextSx } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import useLiveSpecs from 'hooks/useLiveSpecs';
-import { Check } from 'iconoir-react';
-import { isEqual } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
@@ -23,18 +13,11 @@ import {
     useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
-import {
-    detectAutoCompleteInputReset,
-    detectRemoveOptionWithBackspace,
-} from 'utils/mui-utils';
+import CollectionSelectorSearch from './Selector/Search';
+import { CollectionData } from './Selector/types';
 
 interface Props {
     readOnly?: boolean;
-}
-
-interface CollectionData {
-    name: string;
-    classification: string;
 }
 
 function CollectionPicker({ readOnly = false }: Props) {
@@ -42,11 +25,6 @@ function CollectionPicker({ readOnly = false }: Props) {
     const workflow = useEntityWorkflow();
 
     const intl = useIntl();
-    const collectionsLabel = useConstant(() =>
-        intl.formatMessage({
-            id: 'entityCreate.bindingsConfig.collectionsLabel',
-        })
-    );
     const discoveredCollectionsLabel = useConstant(() =>
         intl.formatMessage({
             id: 'workflows.collectionSelector.label.discoveredCollections',
@@ -64,8 +42,6 @@ function CollectionPicker({ readOnly = false }: Props) {
     const [collectionOptions, setCollectionOptions] = useState<
         CollectionData[]
     >([]);
-    const [missingInput, setMissingInput] = useState(false);
-    const [inputValue, setInputValue] = useState('');
 
     const {
         liveSpecs,
@@ -185,30 +161,16 @@ function CollectionPicker({ readOnly = false }: Props) {
     ]);
 
     const handlers = {
-        updateCollections: (
-            event: React.SyntheticEvent,
-            value: CollectionData[],
-            reason: AutocompleteChangeReason
-        ) => {
-            const removeOptionWithBackspace = detectRemoveOptionWithBackspace(
-                event,
-                reason
-            );
+        updateCollections: (value: CollectionData[]) => {
+            setResourceConfig(value.map(({ name }) => name));
 
-            if (!removeOptionWithBackspace) {
-                setResourceConfig(value.map(({ name }) => name));
+            if (value.length > 0 && discoveredCollections) {
+                const latestCollection = value[value.length - 1].name;
 
-                if (value.length > 0 && discoveredCollections) {
-                    const latestCollection = value[value.length - 1].name;
-
-                    if (discoveredCollections.includes(latestCollection)) {
-                        setRestrictedDiscoveredCollections(latestCollection);
-                    }
+                if (discoveredCollections.includes(latestCollection)) {
+                    setRestrictedDiscoveredCollections(latestCollection);
                 }
             }
-        },
-        validateSelection: () => {
-            setMissingInput(!collections || collections.length === 0);
         },
     };
 
@@ -218,80 +180,19 @@ function CollectionPicker({ readOnly = false }: Props) {
             : liveSpecsError ?? draftSpecsError;
 
     return collectionOptions.length > 0 && !specError ? (
-        <Box
-            sx={{
-                p: '0.5rem 0.5rem 1rem',
-                display: 'flex',
-                alignItems: 'center',
+        <CollectionSelectorSearch
+            options={collectionOptions}
+            readOnly={readOnly || formActive}
+            selectedCollections={collectionValues}
+            onChange={(value) => {
+                handlers.updateCollections(value as any);
             }}
-        >
-            <Autocomplete
-                disabled={readOnly || formActive}
-                multiple
-                options={collectionOptions}
-                groupBy={(option) => option.classification}
-                getOptionLabel={(option) => option.name}
-                isOptionEqualToValue={(option, value) => isEqual(option, value)}
-                value={collectionValues}
-                inputValue={inputValue}
-                size="small"
-                fullWidth
-                onChange={handlers.updateCollections}
-                onInputChange={(_event, newInputValue, reason) => {
-                    const inputBeingReset =
-                        detectAutoCompleteInputReset(reason);
-
-                    if (!inputBeingReset) {
-                        setInputValue(newInputValue);
-                    }
-                }}
-                blurOnSelect={false}
-                disableCloseOnSelect
-                disableClearable
-                renderTags={() => null}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        label={collectionsLabel}
-                        required
-                        error={missingInput}
-                        variant="standard"
-                        onBlur={handlers.validateSelection}
-                    />
-                )}
-                renderOption={(props, option, { selected }) => {
-                    return (
-                        // TODO (styling) weirdly the paddingLeft was getting overwritten
-                        //  for dark mode and caused the icon to be too close to the edge
-                        //  so hardcoding the padding here for now
-                        <li {...props} style={{ paddingLeft: 24 }}>
-                            <Box
-                                sx={{
-                                    ml: -2,
-                                    mr: 0.5,
-                                }}
-                            >
-                                <Check
-                                    aria-checked={selected}
-                                    style={{
-                                        visibility: selected
-                                            ? 'visible'
-                                            : 'hidden',
-                                    }}
-                                />
-                            </Box>
-                            <Typography
-                                sx={{
-                                    ...truncateTextSx,
-                                }}
-                            >
-                                {option.name}
-                            </Typography>
-                        </li>
-                    );
-                }}
-            />
-        </Box>
+            getValue={(option: CollectionData) => option.name}
+            AutocompleteProps={{
+                getOptionLabel: (option: CollectionData) => option.name,
+                groupBy: (option: CollectionData) => option.classification,
+            }}
+        />
     ) : null;
 }
 

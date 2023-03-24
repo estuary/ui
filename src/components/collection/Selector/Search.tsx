@@ -7,18 +7,22 @@ import {
 } from '@mui/material';
 import { truncateTextSx } from 'context/Theme';
 import { Check } from 'iconoir-react';
+import { isEqual } from 'lodash';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
     detectAutoCompleteInputReset,
     detectRemoveOptionWithBackspace,
 } from 'utils/mui-utils';
+import { CollectionData } from './types';
 
 interface Props {
     options: any[];
     onChange: (collections: string[], reason: AutocompleteChangeReason) => void;
-    selectedCollections: string[];
+    selectedCollections: string[] | CollectionData[];
     readOnly?: boolean;
+    getValue?: (option: any) => string;
+    AutocompleteProps?: any; // TODO (typing) - need to typ as props
 }
 
 function CollectionSelectorSearch({
@@ -26,6 +30,8 @@ function CollectionSelectorSearch({
     onChange,
     selectedCollections,
     readOnly = false,
+    getValue,
+    AutocompleteProps,
 }: Props) {
     const intl = useIntl();
     const collectionsLabel = intl.formatMessage({
@@ -64,11 +70,12 @@ function CollectionSelectorSearch({
             }}
         >
             <Autocomplete
+                {...AutocompleteProps}
                 disabled={readOnly}
                 multiple
                 options={options}
                 isOptionEqualToValue={(option, value) => {
-                    return option === value;
+                    return isEqual(option, value);
                 }}
                 value={selectedCollections}
                 inputValue={inputValue}
@@ -123,7 +130,7 @@ function CollectionSelectorSearch({
                                     ...truncateTextSx,
                                 }}
                             >
-                                {option}
+                                {getValue ? getValue(option) : option}
                             </Typography>
                         </li>
                     );
