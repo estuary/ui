@@ -161,6 +161,9 @@ function CollectionSelector({
                             />
                         ) : null
                     }
+                    sx={{
+                        justifyContent: 'right',
+                    }}
                 >
                     {RediscoverButton ? RediscoverButton : null}
 
