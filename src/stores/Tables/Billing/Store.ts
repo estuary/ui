@@ -1,6 +1,6 @@
 import { parseISO } from 'date-fns';
 import produce from 'immer';
-import { isEmpty, sum } from 'lodash';
+import { isEmpty, isEqual, sum } from 'lodash';
 import { SelectTableStoreNames } from 'stores/names';
 import { BillingDetails, BillingState } from 'stores/Tables/Billing/types';
 import { getInitialState as getInitialSelectTableState } from 'stores/Tables/Store';
@@ -9,6 +9,7 @@ import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
+const GB_IN_BYTES = 1073741824;
 const FREE_BYTES = 21474836480;
 const FREE_TASK_COUNT = 2;
 
@@ -19,7 +20,7 @@ const evaluateTotalCost = (dataVolume: number, taskCount: number) => {
     const taskCountOverLimit =
         taskCount > FREE_TASK_COUNT ? taskCount - FREE_TASK_COUNT : 0;
 
-    return dataVolumeOverLimit * 0.75 + taskCountOverLimit * 20;
+    return (dataVolumeOverLimit / GB_IN_BYTES) * 0.75 + taskCountOverLimit * 20;
 };
 
 const evaluateDataVolume = (
@@ -42,9 +43,14 @@ const evaluateDataVolume = (
     return sum(taskBytes);
 };
 
-const getInitialBillingDetails = (date: string): BillingDetails => {
+const stripTimeFromDate = (date: string) => {
     const [truncatedDateStr] = date.split('T', 1);
-    const truncatedDate = parseISO(truncatedDateStr);
+
+    return parseISO(truncatedDateStr);
+};
+
+const getInitialBillingDetails = (date: string): BillingDetails => {
+    const truncatedDate = stripTimeFromDate(date);
 
     return {
         date: truncatedDate,
@@ -62,7 +68,7 @@ const getInitialStateData = (): Pick<
     'billingDetails' | 'projectedCostStats'
 > => {
     return {
-        billingDetails: {},
+        billingDetails: [],
         projectedCostStats: {},
     };
 };
@@ -106,26 +112,45 @@ export const getInitialState = (
                     if (!isEmpty(projectedCostStats)) {
                         Object.entries(projectedCostStats).forEach(
                             ([date, stats]) => {
-                                if (
-                                    !Object.hasOwn(state.billingDetails, date)
-                                ) {
-                                    state.billingDetails = {
-                                        ...state.billingDetails,
-                                        [date]: getInitialBillingDetails(date),
-                                    };
-                                }
+                                const billingDetailsIndex =
+                                    state.billingDetails.findIndex((detail) =>
+                                        isEqual(
+                                            detail.date,
+                                            stripTimeFromDate(date)
+                                        )
+                                    );
 
                                 const taskCount = stats.length;
                                 const dataVolume = evaluateDataVolume(stats);
+                                const totalCost = evaluateTotalCost(
+                                    dataVolume,
+                                    taskCount
+                                );
 
-                                state.billingDetails[date].taskCount =
-                                    taskCount;
+                                if (billingDetailsIndex === -1) {
+                                    const detail =
+                                        getInitialBillingDetails(date);
 
-                                state.billingDetails[date].dataVolume =
-                                    dataVolume;
+                                    detail.taskCount = taskCount;
 
-                                state.billingDetails[date].totalCost =
-                                    evaluateTotalCost(dataVolume, taskCount);
+                                    detail.dataVolume = dataVolume;
+
+                                    detail.totalCost = totalCost;
+
+                                    state.billingDetails.push(detail);
+                                } else {
+                                    state.billingDetails[
+                                        billingDetailsIndex
+                                    ].taskCount = taskCount;
+
+                                    state.billingDetails[
+                                        billingDetailsIndex
+                                    ].dataVolume = dataVolume;
+
+                                    state.billingDetails[
+                                        billingDetailsIndex
+                                    ].totalCost = totalCost;
+                                }
                             }
                         );
                     }

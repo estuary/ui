@@ -9,21 +9,23 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { useBilling_billingDetails } from 'stores/Tables/Billing/hooks';
 
 // Grid item height - 72 = graph canvas height
+const GB_IN_BYTES = 1073741824;
 
 function DataByMonthGraph() {
     const theme = useTheme();
+    const intl = useIntl();
 
     const billingDetails = useBilling_billingDetails();
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
 
     useEffect(() => {
-        if (!isEmpty(billingDetails)) {
+        if (billingDetails.length > 0) {
             if (!myChart) {
                 echarts.use([
                     GridComponent,
@@ -43,23 +45,18 @@ function DataByMonthGraph() {
                 myChart?.resize();
             });
 
+            const months = billingDetails.map(({ date }) =>
+                intl.formatDate(date, { month: 'short' })
+            );
+
+            const dataVolumeByMonth = billingDetails.map(({ dataVolume }) =>
+                (dataVolume / GB_IN_BYTES).toFixed(3)
+            );
+
             const option = {
                 xAxis: {
                     type: 'category',
-                    data: [
-                        'Jan',
-                        'Feb',
-                        'Mar',
-                        'Apr',
-                        'May',
-                        'Jun',
-                        'Jul',
-                        'Aug',
-                        'Sept',
-                        'Oct',
-                        'Nov',
-                        'Dec',
-                    ],
+                    data: months,
                 },
                 yAxis: {
                     type: 'value',
@@ -75,7 +72,7 @@ function DataByMonthGraph() {
                 series: [
                     {
                         type: 'line',
-                        data: [5, 20, 35, 5, 8, 14, 6],
+                        data: dataVolumeByMonth,
                         markLine: {
                             data: [{ yAxis: 20, name: 'GB Free' }],
                             label: {
@@ -103,10 +100,31 @@ function DataByMonthGraph() {
                         color: theme.palette.text.primary,
                         fontWeight: 'normal',
                     },
+                    formatter: (tooltipConfigs: any[]) => {
+                        if (tooltipConfigs.length > 0) {
+                            const config = tooltipConfigs[0];
+
+                            const tooltipTitle =
+                                billingDetails
+                                    .map(({ date }) =>
+                                        intl.formatDate(date, {
+                                            month: 'short',
+                                            year: 'numeric',
+                                        })
+                                    )
+                                    .find((date) =>
+                                        date.includes(config.axisValueLabel)
+                                    ) ?? config.axisValueLabel;
+
+                            return `${tooltipTitle}<br />${config.marker} ${config.value}`;
+                        } else {
+                            return undefined;
+                        }
+                    },
                     valueFormatter: (value: any) => `${value} GB`,
                 },
                 grid: {
-                    left: 50,
+                    left: 60,
                     top: 10,
                     right: 50,
                     bottom: 20,
@@ -117,7 +135,7 @@ function DataByMonthGraph() {
         }
     }, [setMyChart, billingDetails, myChart, theme]);
 
-    return <div id="data-by-month" style={{ height: 178 }} />;
+    return <div id="data-by-month" style={{ height: 228 }} />;
 }
 
 export default DataByMonthGraph;

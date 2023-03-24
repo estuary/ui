@@ -119,19 +119,12 @@ function AdminBilling() {
                 <Grid item xs={12} md={6}>
                     <Box
                         sx={{
-                            'height': 250,
-                            'p': 2,
-                            'background': (theme) =>
+                            height: 300,
+                            p: 2,
+                            background: (theme) =>
                                 semiTransparentBackground[theme.palette.mode],
                             boxShadow,
-                            'borderRadius': 3,
-                            '&:hover': {
-                                background: (theme) =>
-                                    semiTransparentBackgroundIntensified[
-                                        theme.palette.mode
-                                    ],
-                                boxShadow,
-                            },
+                            borderRadius: 3,
                         }}
                     >
                         <Typography sx={typographySx}>
@@ -145,19 +138,12 @@ function AdminBilling() {
                 <Grid item xs={12} md={6}>
                     <Box
                         sx={{
-                            'height': 250,
-                            'p': 2,
-                            'background': (theme) =>
+                            height: 300,
+                            p: 2,
+                            background: (theme) =>
                                 semiTransparentBackground[theme.palette.mode],
                             boxShadow,
-                            'borderRadius': 3,
-                            '&:hover': {
-                                background: (theme) =>
-                                    semiTransparentBackgroundIntensified[
-                                        theme.palette.mode
-                                    ],
-                                boxShadow,
-                            },
+                            borderRadius: 3,
                         }}
                     >
                         <Typography sx={typographySx}>
@@ -171,7 +157,7 @@ function AdminBilling() {
                 <Grid item xs={12} md={6}>
                     <Box
                         sx={{
-                            'height': 250,
+                            'height': 300,
                             'p': 2,
                             'background': (theme) =>
                                 semiTransparentBackground[theme.palette.mode],
@@ -195,7 +181,7 @@ function AdminBilling() {
                 <Grid item xs={12} md={6}>
                     <Box
                         sx={{
-                            'height': 250,
+                            'height': 300,
                             'p': 2,
                             'background': (theme) =>
                                 semiTransparentBackground[theme.palette.mode],

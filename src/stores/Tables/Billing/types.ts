@@ -15,14 +15,10 @@ export interface BillingDetails {
     totalCost: number;
 }
 
-export interface BillingDetailsDictionary {
-    [date: string]: BillingDetails;
-}
-
 export interface BillingState extends SelectableTableStore {
     projectedCostStats: ProjectedCostStatsDictionary;
     setProjectedCostStats: (value: ProjectedCostStats[]) => void;
 
-    billingDetails: BillingDetailsDictionary;
+    billingDetails: BillingDetails[];
     setBillingDetails: () => void;
 }
