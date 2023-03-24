@@ -95,10 +95,8 @@ const router = createBrowserRouter(
                     <Route
                         path={`${authenticatedRoutes.collections.path}/*`}
                         element={
-                            <>
-                                <EntityContextProvider value="collection">
-                                    <Collections />
-                                </EntityContextProvider>
+                            <EntityContextProvider value="collection">
+                                <Collections />
                                 <Routes>
                                     <Route
                                         path={
@@ -108,7 +106,7 @@ const router = createBrowserRouter(
                                         element={<DerivationCreate />}
                                     />
                                 </Routes>
-                            </>
+                            </EntityContextProvider>
                         }
                     />
 

@@ -2,17 +2,10 @@ import { LoadingButton } from '@mui/lab';
 import {
     Box,
     BoxProps,
-    Button,
-    ButtonProps,
     CircularProgress,
-    darken,
     Divider,
     FormControlLabel,
     InputAdornment,
-    List,
-    ListItem,
-    ListItemButton,
-    ListSubheader,
     MenuItem,
     Radio,
     RadioGroup,
@@ -31,7 +24,6 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import { red } from '@mui/material/colors';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { getLiveSpecsByCatalogNames } from 'api/liveSpecsExt';
@@ -44,8 +36,11 @@ import { useCallback, useMemo, useState } from 'react';
 // Something seems to be conflicting with the import re-ordering of this
 // eslint-disable-next-line import/order
 import { Buffer } from 'buffer';
-import { truncateTextSx } from 'context/Theme';
+import SingleLineCode from 'components/content/SingleLineCode';
+import { useSet } from 'react-use';
 import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+import { BindingsSelectorSkeleton } from './CollectionSkeletons';
+import CollectionSelector from './Selector';
 
 const StyledStepConnector = styled(StepConnector)(() => ({
     [`& .${stepConnectorClasses.line}`]: {
@@ -54,34 +49,6 @@ const StyledStepConnector = styled(StepConnector)(() => ({
         height: 2,
     },
 }));
-
-const StyledButton = styled(Button)<ButtonProps & { rawColor?: string }>(
-    ({ rawColor, theme }) => ({
-        'maxHeight': '2.5em',
-        'padding': '0 0.5em',
-        'color': theme.palette.getContrastText(
-            rawColor ?? theme.palette.primary.main
-        ),
-        'fontWeight': 600,
-        'backgroundColor': rawColor ?? theme.palette.primary.main,
-        '&:hover': {
-            backgroundColor: darken(
-                rawColor ?? theme.palette.primary.main,
-                0.2
-            ),
-        },
-        'alignSelf': 'center',
-    })
-);
-
-const CodeBlock = styled('code')({
-    backgroundColor: 'rgb(35,39,45)',
-    color: 'rgb(170, 218, 250)',
-    padding: '4px',
-    borderRadius: 2,
-    fontFamily: 'monospace',
-    display: 'inline-block',
-});
 
 const StepBox = styled(Box)<BoxProps & { last?: boolean }>(
     ({ theme, last }) => ({
@@ -138,22 +105,16 @@ function NewCollection() {
     const [derivationLanguage, setDerivationLanguage] =
         useState<DerivationLanguage>('sql');
     const collections = useLiveSpecs('collection');
-    const [selectedCollections, setSelectedCollections] = useState<{
-        [key: string]: boolean;
-    }>({});
+
+    const [selectedCollectionSet, selectedCollectionSetFunctions] = useSet(
+        new Set<string>([])
+    );
+
     const [entityName, setEntityName] = useState<string>('');
     const [entityPrefix, setEntityPrefix] = useState<string>('');
     const [urlLoading, setUrlLoading] = useState(false);
     const isSmall = useMediaQuery<Theme>((theme) =>
         theme.breakpoints.down('sm')
-    );
-
-    const selectedSpecNames = useMemo(
-        () =>
-            Object.entries(selectedCollections)
-                .filter(([, v]) => v)
-                .map(([k]) => k),
-        [selectedCollections]
     );
 
     const grants = useCombinedGrantsExt({ adminOnly: true });
@@ -191,21 +152,14 @@ function NewCollection() {
     }, [allowedPrefixes, entityName, entityPrefix]);
 
     const submitButtonError = useMemo(() => {
-        if (selectedSpecNames.length < 1) {
+        if (selectedCollectionSet.size < 1) {
             return 'Select A Source Collection';
         }
         if (!entityName) {
             return 'Name Your Transform';
         }
         return null;
-    }, [entityName, selectedSpecNames.length]);
-
-    const toggleCollection = useCallback((collection) => {
-        setSelectedCollections((colls) => ({
-            ...colls,
-            [collection]: !colls[collection],
-        }));
-    }, []);
+    }, [entityName, selectedCollectionSet]);
 
     const { enqueueSnackbar } = useSnackbar();
     const displayError = useCallback(
@@ -235,7 +189,7 @@ function NewCollection() {
             const draftId: string = draft.data[0].id;
             const specsByName = await getLiveSpecsByCatalogNames(
                 null,
-                selectedSpecNames
+                Array.from(selectedCollectionSet)
             );
             if (specsByName.error) {
                 throw new Error(
@@ -255,7 +209,7 @@ function NewCollection() {
             }
             return draftId;
         },
-        [computedEntityName, selectedSpecNames]
+        [computedEntityName, selectedCollectionSet]
     );
 
     const generateGitpodUrl = useMemo(
@@ -280,7 +234,7 @@ function NewCollection() {
                 )},FLOW_REFRESH_TOKEN=${encodeURIComponent(
                     Buffer.from(JSON.stringify(token.body)).toString('base64')
                 )},FLOW_TEMPLATE_TYPE=${derivationLanguage},FLOW_TEMPLATE_MODE=${
-                    selectedSpecNames.length > 1 ? 'multi' : 'single'
+                    selectedCollectionSet.size > 1 ? 'multi' : 'single'
                 },FLOW_COLLECTION_NAME=${encodeURIComponent(
                     computedEntityName
                 )}/${GIT_REPO}`;
@@ -298,7 +252,7 @@ function NewCollection() {
             derivationLanguage,
             displayError,
             generateDraftWithSpecs,
-            selectedSpecNames.length,
+            selectedCollectionSet.size,
         ]
     );
 
@@ -332,107 +286,6 @@ function NewCollection() {
         [derivationLanguage]
     );
 
-    const componentListHeader = useMemo(
-        () => (
-            <ListSubheader disableGutters>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        padding: '0.5em 16px',
-                    }}
-                >
-                    <SingleStep num={1}>Input Collections</SingleStep>
-                    <Box sx={{ flexGrow: 1 }} />
-                    {Object.entries(selectedCollections).some(
-                        ([, selected]) => selected
-                    ) ? (
-                        <StyledButton
-                            variant="contained"
-                            rawColor={red[500]}
-                            onClick={() => setSelectedCollections({})}
-                        >
-                            Remove All
-                        </StyledButton>
-                    ) : (
-                        <StyledButton
-                            variant="contained"
-                            onClick={() =>
-                                setSelectedCollections(
-                                    Object.assign(
-                                        {},
-                                        ...collections.liveSpecs.map((c) => ({
-                                            [c.catalog_name]: true,
-                                        }))
-                                    )
-                                )
-                            }
-                        >
-                            Select All
-                        </StyledButton>
-                    )}
-                </Box>
-                <Divider />
-            </ListSubheader>
-        ),
-        [collections.liveSpecs, selectedCollections]
-    );
-
-    const collectionList = useMemo(
-        () => (
-            <List
-                sx={{
-                    // If we constrain this when in stacked mode,
-                    // we'll have double scroll bars
-                    maxHeight: isSmall ? undefined : 400,
-                    overflow: 'auto',
-                }}
-                subheader={componentListHeader}
-            >
-                {collections.liveSpecs.map((coll) => (
-                    <ListItem
-                        disablePadding
-                        key={coll.catalog_name}
-                        secondaryAction={
-                            <StyledButton
-                                rawColor={
-                                    selectedCollections[coll.catalog_name]
-                                        ? red[500]
-                                        : undefined
-                                }
-                                variant="contained"
-                            >
-                                {selectedCollections[coll.catalog_name]
-                                    ? 'Remove'
-                                    : 'Select'}
-                            </StyledButton>
-                        }
-                    >
-                        <ListItemButton
-                            selected={selectedCollections[coll.catalog_name]}
-                            onClick={() => {
-                                toggleCollection(coll.catalog_name);
-                            }}
-                            dense
-                        >
-                            <Typography
-                                sx={{ ...truncateTextSx, width: '85%' }}
-                            >
-                                {coll.catalog_name}
-                            </Typography>
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-            </List>
-        ),
-        [
-            collections.liveSpecs,
-            componentListHeader,
-            isSmall,
-            selectedCollections,
-            toggleCollection,
-        ]
-    );
-
     if (collections.isValidating) {
         return <CircularProgress />;
     } else {
@@ -460,7 +313,21 @@ function NewCollection() {
                     </Box>
                 ) : null}
                 <Stack direction={isSmall ? 'column' : 'row'}>
-                    <StepBox>{collectionList}</StepBox>
+                    <StepBox>
+                        <CollectionSelector
+                            height={350}
+                            loading={false}
+                            skeleton={<BindingsSelectorSkeleton />}
+                            removeAllCollections={
+                                selectedCollectionSetFunctions.reset
+                            }
+                            collections={selectedCollectionSet}
+                            removeCollection={
+                                selectedCollectionSetFunctions.remove
+                            }
+                            addCollection={selectedCollectionSetFunctions.add}
+                        />
+                    </StepBox>
                     <Box
                         sx={{
                             flex: 1,
@@ -549,8 +416,8 @@ function NewCollection() {
                             >
                                 You will be set up with an environment to create
                                 a transform. Create your query and use the CLI
-                                to continue, e.g{' '}
-                                <CodeBlock>flowctl --help</CodeBlock>
+                                to continue, e.g
+                                <SingleLineCode value="flowctl --help" />
                             </Typography>
                         </Box>
                     </Box>
