@@ -132,12 +132,12 @@ function CollectionSelector({
                 readOnly={readOnly}
                 selectedCollections={collectionsArray}
                 onChange={(value, reason) => {
-                    const change = difference(value, collectionsArray);
-
                     if (reason === 'selectOption') {
-                        addCollection(change[0]);
+                        addCollection(difference(value, collectionsArray)[0]);
                     } else if (reason === 'removeOption') {
-                        removeCollection(change[0]);
+                        removeCollection(
+                            difference(collectionsArray, value)[0]
+                        );
                     }
                 }}
             />
