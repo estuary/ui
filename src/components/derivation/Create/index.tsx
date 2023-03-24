@@ -18,7 +18,7 @@ function DerivationCreate() {
         <Dialog
             open
             fullWidth
-            maxWidth="md"
+            maxWidth="lg"
             onClose={() => {
                 navigate(authenticatedRoutes.collections.fullPath);
                 setNewCollectionKey((k) => k + 1);
