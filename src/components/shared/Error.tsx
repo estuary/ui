@@ -117,7 +117,13 @@ function Error({ error, hideTitle }: ErrorProps) {
                                 timeout="auto"
                                 unmountOnExit
                             >
-                                <Paper variant="outlined" square>
+                                <Paper
+                                    variant="outlined"
+                                    sx={{
+                                        width: '100%',
+                                    }}
+                                    square
+                                >
                                     <KeyValueList data={details} />
                                 </Paper>
                             </Collapse>
