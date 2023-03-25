@@ -4,7 +4,7 @@ import { Cancel } from 'iconoir-react';
 
 interface Props {
     collection: string;
-    disabled: boolean;
+    disabled?: boolean;
     removeCollection: (collectionName: string) => void;
 }
 

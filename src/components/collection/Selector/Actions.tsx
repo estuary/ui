@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-    removeAllCollections: () => void;
+    removeAllCollections: (event: React.MouseEvent<HTMLElement>) => void;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
 }

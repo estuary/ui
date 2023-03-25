@@ -4,11 +4,12 @@ import {
     GridColDef,
     GridColumnHeaderParams,
     GridRenderCellParams,
+    GridSelectionModel,
     GridValueGetterParams,
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { alternativeDataGridHeader, defaultOutline } from 'context/Theme';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 import useConstant from 'use-constant';
@@ -16,10 +17,12 @@ import CollectionSelectorRow from './Row';
 
 interface Props {
     collections: Set<string>;
-    removeCollection: (collectionName: string) => void;
+    removeCollection?: (collectionName: string) => void;
     currentCollection?: any;
     setCurrentCollection?: (collection: any) => void;
     height?: number;
+    renderCell?: (params: GridRenderCellParams) => void;
+    readOnly?: boolean;
 }
 
 const initialState = {
@@ -31,11 +34,13 @@ const initialState = {
 };
 
 function CollectionSelectorList({
+    readOnly,
     collections,
     removeCollection,
     currentCollection,
     setCurrentCollection,
     height,
+    renderCell,
 }: Props) {
     const onSelectTimeOut = useRef<number | null>(null);
     const theme = useTheme();
@@ -47,6 +52,12 @@ function CollectionSelectorList({
     );
 
     const selectionEnabled = currentCollection && setCurrentCollection;
+    const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
+        []
+    );
+    useEffect(() => {
+        if (currentCollection) setSelectionModel([currentCollection]);
+    }, [currentCollection]);
 
     const collectionsArray = Array.from(collections);
 
@@ -65,13 +76,17 @@ function CollectionSelectorList({
                 <Typography>{params.colDef.headerName}</Typography>
             ),
             renderCell: (params: GridRenderCellParams) => {
-                return (
-                    <CollectionSelectorRow
-                        collection={params.value}
-                        disabled={false}
-                        removeCollection={removeCollection}
-                    />
-                );
+                if (renderCell) {
+                    return renderCell(params);
+                } else if (removeCollection) {
+                    return (
+                        <CollectionSelectorRow
+                            collection={params.value}
+                            disabled={readOnly}
+                            removeCollection={removeCollection}
+                        />
+                    );
+                }
             },
             valueGetter: (params: GridValueGetterParams) => {
                 return params.row.name;
@@ -96,6 +111,7 @@ function CollectionSelectorList({
                 hideFooter
                 disableColumnSelector
                 disableSelectionOnClick={!selectionEnabled}
+                selectionModel={selectionEnabled ? selectionModel : undefined}
                 onRowClick={
                     selectionEnabled
                         ? (params: any) => {
