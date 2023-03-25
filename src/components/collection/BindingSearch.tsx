@@ -20,7 +20,7 @@ interface Props {
     readOnly?: boolean;
 }
 
-function CollectionPicker({ readOnly = false }: Props) {
+function BindingSearch({ readOnly = false }: Props) {
     const entityType = useEntityType();
     const workflow = useEntityWorkflow();
 
@@ -196,4 +196,4 @@ function CollectionPicker({ readOnly = false }: Props) {
     ) : null;
 }
 
-export default CollectionPicker;
+export default BindingSearch;

@@ -1,7 +1,7 @@
 import { Box, IconButton, ListItemText, useTheme } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
-import CollectionPicker from 'components/collection/Picker';
+import BindingSearch from 'components/collection/BindingSearch';
 import CollectionSelectorActions from 'components/collection/Selector/Actions';
 import CollectionSelectorList from 'components/collection/Selector/List';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
@@ -199,7 +199,7 @@ function BindingSelector({
         <Box>{skeleton}</Box>
     ) : (
         <>
-            <CollectionPicker readOnly={disableActions} />
+            <BindingSearch readOnly={disableActions} />
 
             <CollectionSelectorActions
                 readOnly={disableActions ?? rows.size === 0}
