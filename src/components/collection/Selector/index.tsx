@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { difference } from 'lodash';
 import { ReactNode } from 'react';
+import CollectionSelectorActions from './Actions';
 import CollectionSelectorList from './List';
 import CollectionSelectorSearch from './Search';
 
@@ -63,12 +64,16 @@ function CollectionSelector({
                 }}
             />
 
+            <CollectionSelectorActions
+                readOnly={readOnly ?? collections.size === 0}
+                removeAllCollections={removeAllCollections}
+                RediscoverButton={RediscoverButton}
+            />
+
             <CollectionSelectorList
                 height={height}
                 collections={collections}
                 removeCollection={removeCollection}
-                removeAllCollections={removeAllCollections}
-                RediscoverButton={RediscoverButton}
                 currentCollection={currentCollection}
                 setCurrentCollection={setCurrentCollection}
             />
