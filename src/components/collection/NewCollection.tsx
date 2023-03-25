@@ -2,7 +2,6 @@ import { LoadingButton } from '@mui/lab';
 import {
     Box,
     BoxProps,
-    CircularProgress,
     Divider,
     FormControlLabel,
     InputAdornment,
@@ -286,145 +285,135 @@ function NewCollection() {
         [derivationLanguage]
     );
 
-    if (collections.isValidating) {
-        return <CircularProgress />;
-    } else {
-        return (
-            <Box
-                sx={{
-                    padding: 1,
-                    display: 'flex',
-                    flexDirection: 'column',
-                }}
-            >
-                {!isSmall ? (
-                    <Box sx={{ width: '100%', marginBottom: 4, flex: 0 }}>
-                        <Stepper
-                            alternativeLabel
-                            connector={<StyledStepConnector />}
-                        >
-                            <Step active>
-                                <StepLabel>Select your collection</StepLabel>
-                            </Step>
-                            <Step active>
-                                <StepLabel>Transformation Language</StepLabel>
-                            </Step>
-                        </Stepper>
-                    </Box>
-                ) : null}
-                <Stack direction={isSmall ? 'column' : 'row'}>
-                    <StepBox>
-                        <CollectionSelector
-                            height={350}
-                            loading={false}
-                            skeleton={<BindingsSelectorSkeleton />}
-                            removeAllCollections={
-                                selectedCollectionSetFunctions.reset
-                            }
-                            collections={selectedCollectionSet}
-                            removeCollection={
-                                selectedCollectionSetFunctions.remove
-                            }
-                            addCollection={selectedCollectionSetFunctions.add}
-                        />
-                    </StepBox>
-                    <Box
-                        sx={{
-                            flex: 1,
-                        }}
+    return (
+        <Box
+            sx={{
+                padding: 1,
+                display: 'flex',
+                flexDirection: 'column',
+            }}
+        >
+            {!isSmall ? (
+                <Box sx={{ width: '100%', marginBottom: 4, flex: 0 }}>
+                    <Stepper
+                        alternativeLabel
+                        connector={<StyledStepConnector />}
                     >
-                        <StepBox last>{languageSelector}</StepBox>
-                        <Box sx={{ marginTop: 2, textAlign: 'center' }}>
-                            <SingleStep
-                                always
-                                num={3}
-                                StepperProps={{
-                                    sx: { marginBottom: 2 },
-                                    alternativeLabel: true,
-                                }}
-                            >
-                                Write Transformation
-                            </SingleStep>
-                            <TextField
-                                sx={{ marginBottom: 2 }}
-                                label="Collection Name"
-                                required
-                                fullWidth
-                                error={!!entityNameError}
-                                helperText={entityNameError}
-                                value={entityName}
-                                onChange={(event) =>
-                                    setEntityName(event.target.value)
+                        <Step active>
+                            <StepLabel>Select your collection</StepLabel>
+                        </Step>
+                        <Step active>
+                            <StepLabel>Transformation Language</StepLabel>
+                        </Step>
+                    </Stepper>
+                </Box>
+            ) : null}
+            <Stack direction={isSmall ? 'column' : 'row'}>
+                <StepBox>
+                    <CollectionSelector
+                        height={350}
+                        loading={collections.isValidating}
+                        skeleton={<BindingsSelectorSkeleton />}
+                        removeAllCollections={
+                            selectedCollectionSetFunctions.reset
+                        }
+                        collections={selectedCollectionSet}
+                        removeCollection={selectedCollectionSetFunctions.remove}
+                        addCollection={selectedCollectionSetFunctions.add}
+                    />
+                </StepBox>
+                <Box
+                    sx={{
+                        flex: 1,
+                    }}
+                >
+                    <StepBox last>{languageSelector}</StepBox>
+                    <Box sx={{ marginTop: 2, textAlign: 'center' }}>
+                        <SingleStep
+                            always
+                            num={3}
+                            StepperProps={{
+                                sx: { marginBottom: 2 },
+                                alternativeLabel: true,
+                            }}
+                        >
+                            Write Transformation
+                        </SingleStep>
+                        <TextField
+                            sx={{ marginBottom: 2 }}
+                            label="Collection Name"
+                            required
+                            fullWidth
+                            error={!!entityNameError}
+                            helperText={entityNameError}
+                            value={entityName}
+                            onChange={(event) =>
+                                setEntityName(event.target.value)
+                            }
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        {allowedPrefixes.length === 1 ? (
+                                            allowedPrefixes[0]
+                                        ) : (
+                                            <>
+                                                <Select
+                                                    variant="standard"
+                                                    value={entityPrefix}
+                                                    onChange={(evt) => {
+                                                        setEntityPrefix(
+                                                            evt.target.value
+                                                        );
+                                                    }}
+                                                >
+                                                    {allowedPrefixes.map(
+                                                        (prefix) => (
+                                                            <MenuItem
+                                                                key={prefix}
+                                                                value={prefix}
+                                                            >
+                                                                {prefix}
+                                                            </MenuItem>
+                                                        )
+                                                    )}
+                                                </Select>
+                                                <Divider orientation="vertical" />
+                                            </>
+                                        )}
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                        <LoadingButton
+                            disabled={!!entityNameError || !!submitButtonError}
+                            fullWidth
+                            variant="contained"
+                            loading={urlLoading}
+                            sx={{ marginBottom: 3 }}
+                            loadingPosition="end"
+                            onClick={async () => {
+                                const gitpodUrl = await generateGitpodUrl();
+                                if (gitpodUrl) {
+                                    window.open(gitpodUrl, '_blank');
                                 }
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            {allowedPrefixes.length === 1 ? (
-                                                allowedPrefixes[0]
-                                            ) : (
-                                                <>
-                                                    <Select
-                                                        variant="standard"
-                                                        value={entityPrefix}
-                                                        onChange={(evt) => {
-                                                            setEntityPrefix(
-                                                                evt.target.value
-                                                            );
-                                                        }}
-                                                    >
-                                                        {allowedPrefixes.map(
-                                                            (prefix) => (
-                                                                <MenuItem
-                                                                    key={prefix}
-                                                                    value={
-                                                                        prefix
-                                                                    }
-                                                                >
-                                                                    {prefix}
-                                                                </MenuItem>
-                                                            )
-                                                        )}
-                                                    </Select>
-                                                    <Divider orientation="vertical" />
-                                                </>
-                                            )}
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
-                            <LoadingButton
-                                disabled={
-                                    !!entityNameError || !!submitButtonError
-                                }
-                                fullWidth
-                                variant="contained"
-                                loading={urlLoading}
-                                sx={{ marginBottom: 3 }}
-                                loadingPosition="end"
-                                onClick={async () => {
-                                    const gitpodUrl = await generateGitpodUrl();
-                                    if (gitpodUrl) {
-                                        window.open(gitpodUrl, '_blank');
-                                    }
-                                }}
-                            >
-                                {submitButtonError ?? 'Proceed to GitPod'}
-                            </LoadingButton>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: 'rgb(150,150,150)' }}
-                            >
-                                You will be set up with an environment to create
-                                a transform. Create your query and use the CLI
-                                to continue, e.g
-                                <SingleLineCode value="flowctl --help" />
-                            </Typography>
-                        </Box>
+                            }}
+                        >
+                            {submitButtonError ?? 'Proceed to GitPod'}
+                        </LoadingButton>
+                        <Typography
+                            variant="body2"
+                            sx={{ color: 'rgb(150,150,150)' }}
+                        >
+                            You will be set up with an environment to create a
+                            transform. Create your query and use the CLI to
+                            continue, e.g
+                            <SingleLineCode value="flowctl --help" />
+                        </Typography>
                     </Box>
-                </Stack>
-            </Box>
-        );
-    }
+                </Box>
+            </Stack>
+        </Box>
+    );
 }
 
 export default NewCollection;

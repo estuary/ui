@@ -2,6 +2,7 @@ import {
     Autocomplete,
     AutocompleteChangeReason,
     Box,
+    Skeleton,
     TextField,
     Typography,
 } from '@mui/material';
@@ -61,7 +62,11 @@ function CollectionSelectorSearch({
         },
     };
 
-    return options.length > 0 ? (
+    if (options.length === 0) {
+        return <Skeleton />;
+    }
+
+    return (
         <Box
             sx={{
                 p: '0.5rem 0.5rem 1rem',
@@ -137,7 +142,7 @@ function CollectionSelectorSearch({
                 }}
             />
         </Box>
-    ) : null;
+    );
 }
 
 export default CollectionSelectorSearch;
