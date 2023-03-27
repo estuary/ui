@@ -1,5 +1,11 @@
 import { useTheme } from '@mui/material';
 import { defaultOutlineColor, paperBackground } from 'context/Theme';
+import {
+    eachMonthOfInterval,
+    isWithinInterval,
+    startOfMonth,
+    sub,
+} from 'date-fns';
 import { LineChart } from 'echarts/charts';
 import {
     GridComponent,
@@ -9,12 +15,31 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import { useEffect, useState } from 'react';
+import prettyBytes from 'pretty-bytes';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useBilling_billingDetails } from 'stores/Tables/Billing/hooks';
+import useConstant from 'use-constant';
 
 // Grid item height - 72 = graph canvas height
-const GB_IN_BYTES = 1073741824;
+interface SeriesConfig {
+    data: [string, number][];
+}
+
+const BYTES_PER_GB = 1073741824;
+
+const formatDataVolumeForDisplay = (
+    seriesConfigs: SeriesConfig[],
+    tooltipConfig: any
+): string => {
+    const dataVolumeInBytes = seriesConfigs[0].data.find(
+        ([month]) => month === tooltipConfig.name
+    );
+
+    return dataVolumeInBytes
+        ? prettyBytes(dataVolumeInBytes[1])
+        : `${tooltipConfig.value[1]} GB`;
+};
 
 function DataByMonthGraph() {
     const theme = useTheme();
@@ -23,6 +48,37 @@ function DataByMonthGraph() {
     const billingDetails = useBilling_billingDetails();
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
+
+    const today = useConstant(() => new Date());
+
+    const months = useMemo(() => {
+        const startDate = sub(today, { months: 5 });
+
+        return eachMonthOfInterval({
+            start: startDate,
+            end: today,
+        }).map((date) => intl.formatDate(date, { month: 'short' }));
+    }, [intl, today]);
+
+    const seriesConfig: SeriesConfig[] = useMemo(() => {
+        const startDate = startOfMonth(sub(today, { months: 5 }));
+
+        return [
+            {
+                data: billingDetails
+                    .filter(({ date }) =>
+                        isWithinInterval(date, {
+                            start: startDate,
+                            end: today,
+                        })
+                    )
+                    .map(({ date, dataVolume }) => [
+                        intl.formatDate(date, { month: 'short' }),
+                        dataVolume,
+                    ]),
+            },
+        ];
+    }, [billingDetails, intl, today]);
 
     useEffect(() => {
         if (billingDetails.length > 0) {
@@ -45,14 +101,6 @@ function DataByMonthGraph() {
                 myChart?.resize();
             });
 
-            const months = billingDetails.map(({ date }) =>
-                intl.formatDate(date, { month: 'short' })
-            );
-
-            const dataVolumeByMonth = billingDetails.map(({ dataVolume }) =>
-                (dataVolume / GB_IN_BYTES).toFixed(3)
-            );
-
             const option = {
                 xAxis: {
                     type: 'category',
@@ -70,26 +118,28 @@ function DataByMonthGraph() {
                     },
                     minInterval: 0.001,
                 },
-                series: [
-                    {
-                        type: 'line',
-                        data: dataVolumeByMonth,
-                        markLine: {
-                            data: [{ yAxis: 20, name: 'GB Free' }],
-                            label: {
-                                color: theme.palette.text.primary,
-                                formatter: '{b}',
-                                position: 'end',
-                            },
-                            lineStyle: {
-                                color: theme.palette.text.primary,
-                            },
-                            symbol: 'none',
+                series: seriesConfig.map(({ data }) => ({
+                    type: 'line',
+                    data: data.map(([month, dataVolume]) => [
+                        month,
+                        (dataVolume / BYTES_PER_GB).toFixed(3),
+                    ]),
+                    markLine: {
+                        data: [{ yAxis: 20, name: 'GB Free' }],
+                        label: {
+                            color: theme.palette.text.primary,
+                            formatter: '{b}',
+                            position: 'end',
                         },
-                        symbol: 'circle',
-                        symbolSize: 7,
+                        lineStyle: {
+                            color: theme.palette.text.primary,
+                        },
+                        silent: true,
+                        symbol: 'none',
                     },
-                ],
+                    symbol: 'circle',
+                    symbolSize: 7,
+                })),
                 textStyle: {
                     color: theme.palette.text.primary,
                 },
@@ -105,6 +155,11 @@ function DataByMonthGraph() {
                         if (tooltipConfigs.length > 0) {
                             const config = tooltipConfigs[0];
 
+                            const dataVolume = formatDataVolumeForDisplay(
+                                seriesConfig,
+                                config
+                            );
+
                             const tooltipTitle =
                                 billingDetails
                                     .map(({ date }) =>
@@ -117,7 +172,7 @@ function DataByMonthGraph() {
                                         date.includes(config.axisValueLabel)
                                     ) ?? config.axisValueLabel;
 
-                            return `${tooltipTitle}<br />${config.marker} ${config.value} GB`;
+                            return `${tooltipTitle}<br />${config.marker} ${dataVolume}`;
                         } else {
                             return undefined;
                         }
@@ -133,7 +188,7 @@ function DataByMonthGraph() {
 
             myChart?.setOption(option);
         }
-    }, [setMyChart, billingDetails, intl, myChart, theme]);
+    }, [setMyChart, billingDetails, intl, myChart, seriesConfig, theme]);
 
     return <div id="data-by-month" style={{ height: 228 }} />;
 }
