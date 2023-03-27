@@ -15,7 +15,6 @@ import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedCh
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import useBrowserTitle from 'hooks/useBrowserTitle';
-import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
@@ -74,11 +73,6 @@ function EntityEdit({
     RediscoverButton,
 }: Props) {
     useBrowserTitle(title);
-
-    // Supabase stuff
-    const { combinedGrants } = useCombinedGrantsExt({
-        adminOnly: true,
-    });
 
     const {
         connectorTags,
@@ -190,7 +184,6 @@ function EntityEdit({
                         <ErrorBoundryWrapper>
                             <DetailsForm
                                 connectorTags={connectorTags}
-                                accessGrants={combinedGrants}
                                 readOnly={readOnly.detailsForm}
                                 entityType={entityType}
                             />
