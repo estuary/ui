@@ -125,10 +125,10 @@ function DataByMonthGraph() {
                         (dataVolume / BYTES_PER_GB).toFixed(3),
                     ]),
                     markLine: {
-                        data: [{ yAxis: 20, name: 'GB Free' }],
+                        data: [{ yAxis: 20, name: 'GB\nFree' }],
                         label: {
                             color: theme.palette.text.primary,
-                            formatter: '{b}',
+                            formatter: '{c} {b}',
                             position: 'end',
                         },
                         lineStyle: {
@@ -180,7 +180,7 @@ function DataByMonthGraph() {
                 },
                 grid: {
                     left: 60,
-                    top: 10,
+                    top: 15,
                     right: 50,
                     bottom: 20,
                 },

@@ -153,7 +153,7 @@ function DataByMonthGraph() {
                 },
                 grid: {
                     left: 50,
-                    top: 10,
+                    top: 15,
                     right: 50,
                     bottom: 20,
                 },

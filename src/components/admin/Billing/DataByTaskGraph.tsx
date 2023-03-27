@@ -151,28 +151,39 @@ function DataByTaskGraph() {
                     },
                     minInterval: 0.001,
                 },
-                series: seriesConfig.map(({ catalogName, data }) => ({
-                    name: catalogName,
-                    type: 'line',
-                    data: data.map(([month, dataVolume]) => [
-                        month,
-                        (dataVolume / BYTES_PER_GB).toFixed(3),
-                    ]),
-                    markLine: {
-                        data: [{ yAxis: 20, name: 'GB Free' }],
-                        label: {
-                            color: theme.palette.text.primary,
-                            formatter: '{b}',
-                            position: 'end',
-                        },
-                        lineStyle: {
-                            color: theme.palette.text.primary,
-                        },
-                        symbol: 'none',
-                    },
-                    symbol: 'circle',
-                    symbolSize: 7,
-                })),
+                series: seriesConfig.map(({ catalogName, data }, index) => {
+                    let config: any = {
+                        name: catalogName,
+                        type: 'line',
+                        data: data.map(([month, dataVolume]) => [
+                            month,
+                            (dataVolume / BYTES_PER_GB).toFixed(3),
+                        ]),
+                        symbol: 'circle',
+                        symbolSize: 7,
+                    };
+
+                    if (index === 0) {
+                        config = {
+                            ...config,
+                            markLine: {
+                                data: [{ yAxis: 20, name: 'GB\nFree' }],
+                                label: {
+                                    color: theme.palette.text.primary,
+                                    formatter: '{c} {b}',
+                                    position: 'end',
+                                },
+                                lineStyle: {
+                                    color: theme.palette.text.primary,
+                                },
+                                silent: true,
+                                symbol: 'none',
+                            },
+                        };
+                    }
+
+                    return config;
+                }),
                 legend: {
                     type: 'scroll',
                     data: seriesConfig.map((config) => config.catalogName),
