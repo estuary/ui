@@ -34,11 +34,11 @@ import { useCallback, useMemo, useState } from 'react';
 
 // Something seems to be conflicting with the import re-ordering of this
 // eslint-disable-next-line import/order
-import { Buffer } from 'buffer';
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
 import SingleLineCode from 'components/content/SingleLineCode';
 import { useSet } from 'react-use';
+import { generateGitPodURL } from 'services/gitpod';
 import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 
 const StyledStepConnector = styled(StepConnector)(() => ({
@@ -94,9 +94,6 @@ const SingleStep: React.FC<{
     }
 };
 
-// TODO: Change this to master when the PR gets merged
-const GIT_REPO =
-    'https://github.com/estuary/flow-gitpod-base/tree/jshearer/getting_started';
 type DerivationLanguage = 'sql' | 'typescript';
 const NAME_RE = new RegExp(`^(${PREFIX_NAME_PATTERN}/?)*$`);
 
@@ -212,7 +209,7 @@ function TransformationCreate() {
         [computedEntityName, selectedCollectionSet]
     );
 
-    const generateGitpodUrl = useMemo(
+    const generateUrl = useMemo(
         () => async () => {
             try {
                 setUrlLoading(true);
@@ -229,16 +226,13 @@ function TransformationCreate() {
                     generateDraftWithSpecs(),
                 ]);
 
-                const url = `https://gitpod.io/#FLOW_DRAFT_ID=${encodeURIComponent(
-                    draftId
-                )},FLOW_REFRESH_TOKEN=${encodeURIComponent(
-                    Buffer.from(JSON.stringify(token.body)).toString('base64')
-                )},FLOW_TEMPLATE_TYPE=${derivationLanguage},FLOW_TEMPLATE_MODE=${
-                    selectedCollectionSet.size > 1 ? 'multi' : 'single'
-                },FLOW_COLLECTION_NAME=${encodeURIComponent(
+                return generateGitPodURL(
+                    draftId,
+                    token,
+                    derivationLanguage,
+                    selectedCollectionSet,
                     computedEntityName
-                )}/${GIT_REPO}`;
-                return url;
+                );
             } catch (e: unknown) {
                 displayError('Failed to open GitPod');
                 console.error(e);
@@ -252,7 +246,7 @@ function TransformationCreate() {
             derivationLanguage,
             displayError,
             generateDraftWithSpecs,
-            selectedCollectionSet.size,
+            selectedCollectionSet,
         ]
     );
 
@@ -393,7 +387,7 @@ function TransformationCreate() {
                             sx={{ marginBottom: 3 }}
                             loadingPosition="end"
                             onClick={async () => {
-                                const gitpodUrl = await generateGitpodUrl();
+                                const gitpodUrl = await generateUrl();
                                 if (gitpodUrl) {
                                     window.open(gitpodUrl, '_blank');
                                 }

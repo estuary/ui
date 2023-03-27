@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
-import NewCollection from 'components/collection/NewCollection';
+import TransformationCreate from 'components/transformation/create';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -28,7 +28,7 @@ function DerivationCreate() {
                 <FormattedMessage id="newCollection.modal.title" />
             </DialogTitle>
             <DialogContent>
-                <NewCollection key={newCollectionKey} />
+                <TransformationCreate key={newCollectionKey} />
             </DialogContent>
         </Dialog>
     );

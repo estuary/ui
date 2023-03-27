@@ -880,8 +880,8 @@ const Docs: ResolvedIntlConfig['messages'] = {
     'docs.cta.expand.disabled': `Open 3rd party docs in new window`,
 };
 
-const NewCollection: ResolvedIntlConfig['messages'] = {
-    'newCollection.modal.title': `Build a new collection`,
+const NewTransform: ResolvedIntlConfig['messages'] = {
+    'newTransform.modal.title': `Build a new collection`,
 };
 
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
@@ -937,7 +937,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...EntityNotFound,
     ...ExistingEntityCheck,
     ...Docs,
-    ...NewCollection,
+    ...NewTransform,
 };
 
 export default enUSMessages;
