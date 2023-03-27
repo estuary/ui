@@ -18,10 +18,7 @@ import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import {
-    useBilling_billingDetails,
-    useBilling_dataByTaskGraphDetails,
-} from 'stores/Tables/Billing/hooks';
+import { useBilling_dataByTaskGraphDetails } from 'stores/Tables/Billing/hooks';
 import { DataVolumeByTaskGraphDetails } from 'stores/Tables/Billing/types';
 import { hasLength } from 'utils/misc-utils';
 
@@ -29,8 +26,14 @@ import navArrowLeftDark from 'images/graph-icons/nav-arrow-left__dark.svg';
 import navArrowLeftLight from 'images/graph-icons/nav-arrow-left__light.svg';
 import navArrowRightDark from 'images/graph-icons/nav-arrow-right__dark.svg';
 import navArrowRightLight from 'images/graph-icons/nav-arrow-right__light.svg';
+import prettyBytes from 'pretty-bytes';
 
 // Grid item height - 72 = graph canvas height
+interface SeriesConfig {
+    catalogName: string;
+    data: [string, number][];
+}
+
 const BYTES_PER_GB = 1073741824;
 
 const today = new Date();
@@ -45,11 +48,27 @@ const navArrowsDark = [
     `image://${navArrowRightDark}`,
 ];
 
+const formatDataVolumeForDisplay = (
+    seriesConfigs: SeriesConfig[],
+    tooltipConfig: any
+): string => {
+    const selectedSeries = seriesConfigs.find(
+        (series) => series.catalogName === tooltipConfig.seriesName
+    );
+
+    const dataVolumeInBytes = selectedSeries?.data.find(
+        ([month]) => month === tooltipConfig.name
+    );
+
+    return dataVolumeInBytes
+        ? prettyBytes(dataVolumeInBytes[1])
+        : `${tooltipConfig.value[1]} GB`;
+};
+
 function DataByTaskGraph() {
     const theme = useTheme();
     const intl = useIntl();
 
-    const billingDetails = useBilling_billingDetails();
     const dataByTaskGraphDetails = useBilling_dataByTaskGraphDetails();
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
@@ -63,36 +82,35 @@ function DataByTaskGraph() {
         }).map((date) => intl.formatDate(date, { month: 'short' }));
     }, [today]);
 
-    const seriesConfig: { catalogName: string; data: string[][] }[] =
-        useMemo(() => {
-            const startDate = startOfMonth(sub(today, { months: 5 }));
+    const seriesConfig: SeriesConfig[] = useMemo(() => {
+        const startDate = startOfMonth(sub(today, { months: 5 }));
 
-            let filteredDetails: DataVolumeByTaskGraphDetails = {};
+        let filteredDetails: DataVolumeByTaskGraphDetails = {};
 
-            Object.entries(dataByTaskGraphDetails).forEach(
-                ([catalogName, details]) => {
-                    filteredDetails = {
-                        ...filteredDetails,
-                        [catalogName]: details.filter(({ date }) =>
-                            isWithinInterval(date, {
-                                start: startDate,
-                                end: today,
-                            })
-                        ),
-                    };
-                }
-            );
+        Object.entries(dataByTaskGraphDetails).forEach(
+            ([catalogName, details]) => {
+                filteredDetails = {
+                    ...filteredDetails,
+                    [catalogName]: details.filter(({ date }) =>
+                        isWithinInterval(date, {
+                            start: startDate,
+                            end: today,
+                        })
+                    ),
+                };
+            }
+        );
 
-            return Object.entries(filteredDetails).map(
-                ([catalogName, taskData]) => ({
-                    catalogName,
-                    data: taskData.map(({ date, dataVolume }) => [
-                        intl.formatDate(date, { month: 'short' }),
-                        (dataVolume / BYTES_PER_GB).toFixed(3),
-                    ]),
-                })
-            );
-        }, [dataByTaskGraphDetails, months]);
+        return Object.entries(filteredDetails).map(
+            ([catalogName, taskData]) => ({
+                catalogName,
+                data: taskData.map(({ date, dataVolume }) => [
+                    intl.formatDate(date, { month: 'short' }),
+                    dataVolume,
+                ]),
+            })
+        );
+    }, [dataByTaskGraphDetails, months]);
 
     useEffect(() => {
         if (hasLength(seriesConfig)) {
@@ -136,7 +154,10 @@ function DataByTaskGraph() {
                 series: seriesConfig.map(({ catalogName, data }) => ({
                     name: catalogName,
                     type: 'line',
-                    data,
+                    data: data.map(([month, dataVolume]) => [
+                        month,
+                        (dataVolume / BYTES_PER_GB).toFixed(3),
+                    ]),
                     markLine: {
                         data: [{ yAxis: 20, name: 'GB Free' }],
                         label: {
@@ -187,11 +208,16 @@ function DataByTaskGraph() {
                         let content: string | undefined;
 
                         tooltipConfigs.forEach((config) => {
+                            const dataVolume = formatDataVolumeForDisplay(
+                                seriesConfig,
+                                config
+                            );
+
                             if (content) {
-                                content = `${content}${config.marker} ${config.value[1]} GB<br />`;
+                                content = `${content}${config.marker} ${dataVolume}<br />`;
                             } else {
                                 const tooltipTitle =
-                                    billingDetails
+                                    dataByTaskGraphDetails[config.seriesName]
                                         .map(({ date }) =>
                                             intl.formatDate(date, {
                                                 month: 'short',
@@ -202,7 +228,7 @@ function DataByTaskGraph() {
                                             date.includes(config.name)
                                         ) ?? config.name;
 
-                                content = `${tooltipTitle}<br />${config.marker} ${config.value[1]} GB<br />`;
+                                content = `${tooltipTitle}<br />${config.marker} ${dataVolume}<br />`;
                             }
                         });
 
@@ -219,7 +245,14 @@ function DataByTaskGraph() {
 
             myChart?.setOption(option);
         }
-    }, [setMyChart, billingDetails, months, myChart, seriesConfig, theme]);
+    }, [
+        setMyChart,
+        dataByTaskGraphDetails,
+        months,
+        myChart,
+        seriesConfig,
+        theme,
+    ]);
 
     return <div id="data-by-task" style={{ height: 228 }} />;
 }
