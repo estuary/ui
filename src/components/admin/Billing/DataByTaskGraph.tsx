@@ -27,6 +27,7 @@ import navArrowLeftLight from 'images/graph-icons/nav-arrow-left__light.svg';
 import navArrowRightDark from 'images/graph-icons/nav-arrow-right__dark.svg';
 import navArrowRightLight from 'images/graph-icons/nav-arrow-right__light.svg';
 import prettyBytes from 'pretty-bytes';
+import useConstant from 'use-constant';
 
 // Grid item height - 72 = graph canvas height
 interface SeriesConfig {
@@ -35,8 +36,6 @@ interface SeriesConfig {
 }
 
 const BYTES_PER_GB = 1073741824;
-
-const today = new Date();
 
 const navArrowsLight = [
     `image://${navArrowLeftLight}`,
@@ -73,6 +72,8 @@ function DataByTaskGraph() {
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
 
+    const today = useConstant(() => new Date());
+
     const months = useMemo(() => {
         const startDate = sub(today, { months: 5 });
 
@@ -80,7 +81,7 @@ function DataByTaskGraph() {
             start: startDate,
             end: today,
         }).map((date) => intl.formatDate(date, { month: 'short' }));
-    }, [today]);
+    }, [intl, today]);
 
     const seriesConfig: SeriesConfig[] = useMemo(() => {
         const startDate = startOfMonth(sub(today, { months: 5 }));
@@ -110,7 +111,7 @@ function DataByTaskGraph() {
                 ]),
             })
         );
-    }, [dataByTaskGraphDetails, months]);
+    }, [dataByTaskGraphDetails, intl, today]);
 
     useEffect(() => {
         if (hasLength(seriesConfig)) {
@@ -248,6 +249,7 @@ function DataByTaskGraph() {
     }, [
         setMyChart,
         dataByTaskGraphDetails,
+        intl,
         months,
         myChart,
         seriesConfig,
