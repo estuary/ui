@@ -12,6 +12,8 @@ interface Props {
     sectionTitle?: string;
 }
 
+const lineHeight = 45;
+
 function KeyValueList({ data, sectionTitle }: Props) {
     const renderRow = (props: ListChildComponentProps) => {
         const { index, style } = props;
@@ -41,15 +43,13 @@ function KeyValueList({ data, sectionTitle }: Props) {
                         width: '100%',
                     }}
                 >
-                    <AutoSizer disableHeight style={{ width: '100%' }}>
-                        {(props) => {
-                            console.log('sup', props);
-
+                    <AutoSizer style={{ width: '100%', maxHeight: '400px' }}>
+                        {({ width, height }) => {
                             return (
                                 <FixedSizeList
-                                    height={300}
-                                    width={props.width}
-                                    itemSize={45}
+                                    height={height}
+                                    width={width}
+                                    itemSize={lineHeight}
                                     itemCount={data.length}
                                     overscanCount={10}
                                 >
@@ -59,16 +59,6 @@ function KeyValueList({ data, sectionTitle }: Props) {
                         }}
                     </AutoSizer>
                 </Box>
-
-                {/*                <List dense sx={{ ml: 2, pt: 0 }}>
-                    {data.map(({ title, val }, index) => (
-                        <ListItemText
-                            key={`${title}-keyValueList-${index}`}
-                            primary={title}
-                            secondary={val}
-                        />
-                    ))}
-                </List>*/}
             </>
         );
     } else {
