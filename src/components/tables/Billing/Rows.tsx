@@ -10,6 +10,9 @@ interface RowProps {
     row: BillingDetails;
 }
 
+// TODO: Determine if the details table column is necessary and, if so,
+//   what data should be displayed in that column. My proposition is that
+//   the tier evaluation for that month should be identified in that column.
 function Row({ row }: RowProps) {
     return (
         <TableRow hover>
@@ -21,9 +24,9 @@ function Row({ row }: RowProps) {
                 <Typography>{row.taskCount}</Typography>
             </TableCell>
 
-            <TableCell>
+            {/* <TableCell>
                 <Typography>Filler</Typography>
-            </TableCell>
+            </TableCell> */}
 
             <MonetaryValue amount={row.totalCost} />
         </TableRow>

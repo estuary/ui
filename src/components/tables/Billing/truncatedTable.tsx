@@ -10,6 +10,9 @@ import {
 import Rows from 'components/tables/Billing/Rows';
 import { FormattedMessage } from 'react-intl';
 
+// TODO: Determine if the details table column is necessary and, if so,
+//   what data should be displayed in that column. My proposition is that
+//   the tier evaluation for that month should be identified in that column.
 const columns = [
     {
         field: 'month',
@@ -23,10 +26,10 @@ const columns = [
         field: 'task_count',
         headerIntlKey: 'admin.billing.projectedCostTable.label.tasks',
     },
-    {
-        field: 'details',
-        headerIntlKey: 'admin.billing.projectedCostTable.label.details',
-    },
+    // {
+    //     field: 'details',
+    //     headerIntlKey: 'admin.billing.projectedCostTable.label.details',
+    // },
     {
         field: 'total_cost',
         headerIntlKey: 'admin.billing.projectedCostTable.label.totalCost',

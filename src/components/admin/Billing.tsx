@@ -37,7 +37,6 @@ function AdminBilling() {
     const intl = useIntl();
 
     const pricingTiers = useConstant(() => [
-        intl.formatMessage({ id: 'admin.billing.tier.free' }),
         intl.formatMessage({ id: 'admin.billing.tier.personal' }),
         intl.formatMessage({ id: 'admin.billing.tier.enterprise' }),
     ]);
@@ -105,7 +104,7 @@ function AdminBilling() {
                             />
                         )}
                         defaultValue={intl.formatMessage({
-                            id: 'admin.billing.tier.free',
+                            id: 'admin.billing.tier.personal',
                         })}
                         disableClearable
                         sx={{ flexGrow: 1 }}
