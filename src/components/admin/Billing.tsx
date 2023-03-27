@@ -21,6 +21,7 @@ import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useBilling_setBillingDetails,
+    useBilling_setDataByTaskGraphDetails,
     useBilling_setProjectedCostStats,
 } from 'stores/Tables/Billing/hooks';
 import useConstant from 'use-constant';
@@ -44,6 +45,7 @@ function AdminBilling() {
     // Billing Store
     const setProjectedCostStats = useBilling_setProjectedCostStats();
     const setBillingDetails = useBilling_setBillingDetails();
+    const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
 
     const { projectedCostStats: projectedCostStatsData } = useProjectCostStats(
         {}
@@ -53,8 +55,14 @@ function AdminBilling() {
         if (hasLength(projectedCostStatsData)) {
             setProjectedCostStats(projectedCostStatsData);
             setBillingDetails();
+            setDataByTaskGraphDetails(projectedCostStatsData);
         }
-    }, [setBillingDetails, setProjectedCostStats, projectedCostStatsData]);
+    }, [
+        setBillingDetails,
+        setDataByTaskGraphDetails,
+        setProjectedCostStats,
+        projectedCostStatsData,
+    ]);
 
     return (
         <PageContainer

@@ -3,13 +3,6 @@ import { SelectTableStoreNames } from 'stores/names';
 import { BillingState } from 'stores/Tables/Billing/types';
 
 // Selector Hooks
-export const useBilling_projectedCostStats = () => {
-    return useZustandStore<BillingState, BillingState['projectedCostStats']>(
-        SelectTableStoreNames.BILLING,
-        (state) => state.projectedCostStats
-    );
-};
-
 export const useBilling_setProjectedCostStats = () => {
     return useZustandStore<BillingState, BillingState['setProjectedCostStats']>(
         SelectTableStoreNames.BILLING,
@@ -36,4 +29,14 @@ export const useBilling_dataByTaskGraphDetails = () => {
         BillingState,
         BillingState['dataByTaskGraphDetails']
     >(SelectTableStoreNames.BILLING, (state) => state.dataByTaskGraphDetails);
+};
+
+export const useBilling_setDataByTaskGraphDetails = () => {
+    return useZustandStore<
+        BillingState,
+        BillingState['setDataByTaskGraphDetails']
+    >(
+        SelectTableStoreNames.BILLING,
+        (state) => state.setDataByTaskGraphDetails
+    );
 };

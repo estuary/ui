@@ -27,6 +27,7 @@ export interface DataVolumeByTaskGraphDetails {
 
 export interface BillingState extends SelectableTableStore {
     dataByTaskGraphDetails: DataVolumeByTaskGraphDetails;
+    setDataByTaskGraphDetails: (value: ProjectedCostStats[]) => void;
 
     projectedCostStats: ProjectedCostStatsDictionary;
     setProjectedCostStats: (value: ProjectedCostStats[]) => void;

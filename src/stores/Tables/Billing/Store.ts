@@ -102,38 +102,6 @@ export const getInitialState = (
                     );
 
                     taskStatData.forEach((query) => {
-                        if (
-                            Object.hasOwn(
-                                state.dataByTaskGraphDetails,
-                                query.catalog_name
-                            )
-                        ) {
-                            state.dataByTaskGraphDetails[
-                                query.catalog_name
-                            ].push({
-                                date: stripTimeFromDate(query.ts),
-                                dataVolume:
-                                    query.bytes_written_by_me +
-                                    query.bytes_read_by_me,
-                                specType: evaluateSpecType(query),
-                            });
-                        } else {
-                            state.dataByTaskGraphDetails = {
-                                ...state.dataByTaskGraphDetails,
-                                [query.catalog_name]: [
-                                    {
-                                        date: stripTimeFromDate(query.ts),
-                                        dataVolume:
-                                            query.bytes_written_by_me +
-                                            query.bytes_read_by_me,
-                                        specType: evaluateSpecType(query),
-                                    },
-                                ],
-                            };
-                        }
-                    });
-
-                    taskStatData.forEach((query) => {
                         if (Object.hasOwn(state.projectedCostStats, query.ts)) {
                             state.projectedCostStats[query.ts].push(query);
                         } else {
@@ -202,6 +170,49 @@ export const getInitialState = (
                 }),
                 false,
                 'Billing Details Set'
+            );
+        },
+
+        setDataByTaskGraphDetails: (value) => {
+            set(
+                produce((state: BillingState) => {
+                    const taskStatData = value.filter((query) =>
+                        Object.hasOwn(query.flow_document, 'taskStats')
+                    );
+
+                    taskStatData.forEach((query) => {
+                        const dataVolume =
+                            query.bytes_written_by_me + query.bytes_read_by_me;
+
+                        if (
+                            Object.hasOwn(
+                                state.dataByTaskGraphDetails,
+                                query.catalog_name
+                            )
+                        ) {
+                            state.dataByTaskGraphDetails[
+                                query.catalog_name
+                            ].push({
+                                date: stripTimeFromDate(query.ts),
+                                dataVolume,
+                                specType: evaluateSpecType(query),
+                            });
+                        } else {
+                            state.dataByTaskGraphDetails = {
+                                ...state.dataByTaskGraphDetails,
+                                [query.catalog_name]: [
+                                    {
+                                        date: stripTimeFromDate(query.ts),
+                                        dataVolume,
+                                        specType: evaluateSpecType(query),
+                                    },
+                                ],
+                            };
+                        }
+                    });
+                }),
+                false,
+                'Data By Task Graph Details Set'
             );
         },
     };
