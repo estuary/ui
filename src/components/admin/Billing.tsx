@@ -10,14 +10,12 @@ import {
 import { authenticatedRoutes } from 'app/routes';
 import DataByMonthGraph from 'components/admin/Billing/DataByMonthGraph';
 import DataByTaskGraph from 'components/admin/Billing/DataByTaskGraph';
+import TasksByMonth from 'components/admin/Billing/TasksByMonthGraph';
 import AdminTabs from 'components/admin/Tabs';
 import PageContainer from 'components/shared/PageContainer';
 import TruncatedBillingTable from 'components/tables/Billing/truncatedTable';
 import useProjectCostStats from 'components/tables/Billing/useProjectedCostStats';
-import {
-    semiTransparentBackground,
-    semiTransparentBackgroundIntensified,
-} from 'context/Theme';
+import { semiTransparentBackground } from 'context/Theme';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -158,24 +156,19 @@ function AdminBilling() {
                 <Grid item xs={12} md={6}>
                     <Box
                         sx={{
-                            'height': 300,
-                            'p': 2,
-                            'background': (theme) =>
+                            height: 300,
+                            p: 2,
+                            background: (theme) =>
                                 semiTransparentBackground[theme.palette.mode],
                             boxShadow,
-                            'borderRadius': 3,
-                            '&:hover': {
-                                background: (theme) =>
-                                    semiTransparentBackgroundIntensified[
-                                        theme.palette.mode
-                                    ],
-                                boxShadow,
-                            },
+                            borderRadius: 3,
                         }}
                     >
                         <Typography sx={typographySx}>
                             <FormattedMessage id="admin.billing.graph.connectorsByMonth.header" />
                         </Typography>
+
+                        <TasksByMonth />
                     </Box>
                 </Grid>
 

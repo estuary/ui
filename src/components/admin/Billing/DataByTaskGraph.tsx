@@ -16,18 +16,17 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import { useEffect, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
-import { useBilling_dataByTaskGraphDetails } from 'stores/Tables/Billing/hooks';
-import { DataVolumeByTaskGraphDetails } from 'stores/Tables/Billing/types';
-import { hasLength } from 'utils/misc-utils';
-
 import navArrowLeftDark from 'images/graph-icons/nav-arrow-left__dark.svg';
 import navArrowLeftLight from 'images/graph-icons/nav-arrow-left__light.svg';
 import navArrowRightDark from 'images/graph-icons/nav-arrow-right__dark.svg';
 import navArrowRightLight from 'images/graph-icons/nav-arrow-right__light.svg';
 import prettyBytes from 'pretty-bytes';
+import { useEffect, useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
+import { useBilling_dataByTaskGraphDetails } from 'stores/Tables/Billing/hooks';
+import { DataVolumeByTaskGraphDetails } from 'stores/Tables/Billing/types';
 import useConstant from 'use-constant';
+import { hasLength } from 'utils/misc-utils';
 
 // Grid item height - 72 = graph canvas height
 interface SeriesConfig {

@@ -430,7 +430,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.tier.personal': `Cloud`,
     'admin.billing.tier.enterprise': `Enterprise`,
     'admin.billing.graph.dataByMonth.header': `Data by Month`,
-    'admin.billing.graph.connectorsByMonth.header': `Connectors by Month`,
+    'admin.billing.graph.connectorsByMonth.header': `Tasks by Month`,
     'admin.billing.graph.dataByTask.header': `Data by Task`,
     'admin.billing.projectedCostTable.header': `Projected Cost by Month`,
     'admin.billing.projectedCostTable.label.dataVolume': `Data Volume`,
