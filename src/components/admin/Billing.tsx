@@ -21,7 +21,9 @@ import { semiTransparentBackground } from 'context/Theme';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useUnmount } from 'react-use';
 import {
+    useBilling_resetState,
     useBilling_setBillingDetails,
     useBilling_setDataByTaskGraphDetails,
     useBilling_setProjectedCostStats,
@@ -48,6 +50,7 @@ function AdminBilling() {
     const setProjectedCostStats = useBilling_setProjectedCostStats();
     const setBillingDetails = useBilling_setBillingDetails();
     const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
+    const resetBillingState = useBilling_resetState();
 
     const { projectedCostStats: projectedCostStatsData } = useProjectCostStats(
         {}
@@ -65,6 +68,8 @@ function AdminBilling() {
         setProjectedCostStats,
         projectedCostStatsData,
     ]);
+
+    useUnmount(() => resetBillingState());
 
     return (
         <PageContainer

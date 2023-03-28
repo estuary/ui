@@ -215,6 +215,17 @@ export const getInitialState = (
                 'Data By Task Graph Details Set'
             );
         },
+
+        resetBillingState: () => {
+            set(
+                {
+                    ...getInitialStateData(),
+                    ...getInitialSelectTableState(set, get),
+                },
+                false,
+                'State Reset'
+            );
+        },
     };
 };
 

@@ -34,4 +34,6 @@ export interface BillingState extends SelectableTableStore {
 
     billingDetails: BillingDetails[];
     setBillingDetails: () => void;
+
+    resetBillingState: () => void;
 }
