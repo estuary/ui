@@ -439,6 +439,10 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.projectedCostTable.label.tasks': `Tasks`,
     'admin.billing.projectedCostTable.label.totalCost': `Total Cost`,
     'admin.billing.projectedCostTable.tooltip.dataVolume': `bytes of data processed by tasks`,
+    'admin.billing.payment.header': `Payment Information`,
+    'admin.billing.payment.message': `We are working on integrating a payment service provider to enable in-app transactions. To make a payment or inquire about the our pricing tiers, please {docLink}.`,
+    'admin.billing.payment.message.docLink': `contact us`,
+    'admin.billing.payment.message.docPath': `mailto:support@estuary.dev`,
 
     'admin.cookies': `Cookie Preference Management`,
     'admin.cookies.message': `Click below to manage your preferences.`,

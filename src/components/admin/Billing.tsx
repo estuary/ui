@@ -2,6 +2,7 @@ import {
     Autocomplete,
     AutocompleteRenderInputParams,
     Box,
+    Divider,
     Grid,
     Stack,
     TextField,
@@ -12,6 +13,7 @@ import DataByMonthGraph from 'components/admin/Billing/DataByMonthGraph';
 import DataByTaskGraph from 'components/admin/Billing/DataByTaskGraph';
 import TasksByMonth from 'components/admin/Billing/TasksByMonthGraph';
 import AdminTabs from 'components/admin/Tabs';
+import MessageWithLink from 'components/content/MessageWithLink';
 import PageContainer from 'components/shared/PageContainer';
 import TruncatedBillingTable from 'components/tables/Billing/truncatedTable';
 import useProjectCostStats from 'components/tables/Billing/useProjectedCostStats';
@@ -196,6 +198,16 @@ function AdminBilling() {
 
                         <DataByTaskGraph />
                     </Box>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Divider sx={{ mt: 3, mb: 2 }} />
+
+                    <Typography variant="h6" sx={{ mb: 0.5 }}>
+                        <FormattedMessage id="admin.billing.payment.header" />
+                    </Typography>
+
+                    <MessageWithLink messageID="admin.billing.payment.message" />
                 </Grid>
             </Grid>
         </PageContainer>
