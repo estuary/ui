@@ -25,7 +25,7 @@ function DerivationCreate() {
             }}
         >
             <DialogTitle>
-                <FormattedMessage id="newCollection.modal.title" />
+                <FormattedMessage id="newTransform.modal.title" />
             </DialogTitle>
             <DialogContent>
                 <TransformationCreate key={newCollectionKey} />
