@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 import { Box, ListSubheader, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { truncateTextSx } from 'context/Theme';
 import { Check } from 'iconoir-react';
 import React from 'react';
@@ -76,6 +74,9 @@ const OuterElementType = React.forwardRef<HTMLDivElement>((props, ref) => {
     return <div ref={ref} {...props} {...outerProps} />;
 });
 
+const itemSize = 40;
+const groupSize = 55;
+
 const ListboxComponent = React.forwardRef<
     HTMLDivElement,
     React.HTMLAttributes<HTMLElement>
@@ -89,14 +90,11 @@ const ListboxComponent = React.forwardRef<
         }
     );
 
-    const theme = useTheme();
-    const smUp = useMediaQuery(theme.breakpoints.up('sm'));
     const itemCount = itemData.length;
-    const itemSize = smUp ? 40 : 50;
 
     const getChildSize = (child: React.ReactChild) => {
         if (child.hasOwnProperty('group')) {
-            return 50;
+            return groupSize;
         }
 
         return itemSize;
