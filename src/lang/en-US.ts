@@ -882,6 +882,24 @@ const Docs: ResolvedIntlConfig['messages'] = {
 
 const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.modal.title': `Build a new collection`,
+    'newTransform.language.title': `Language`,
+    'newTransform.language.sql': `SQL`,
+    'newTransform.language.ts': `Typescript`,
+    'newTransform.collection.label': `Collection Name`,
+    'newTransform.errors.collection': `Select A Source Collection`,
+    'newTransform.errors.name': `Name Your Transform`,
+    'newTransform.errors.prefixMissing': `No prefix selected`,
+    'newTransform.errors.namePattern': `Name does not match pattern`,
+    'newTransform.errors.nameInvalid': `Invalid entity name`,
+    'newTransform.errors.nameMissing': `Missing entity name`,
+    'newTransform.errors.gitPod': `Failed to open GitPod`,
+    'newTransform.stepper.step1.label': `Select your collection`,
+    'newTransform.stepper.step2.label': `Transformation Language`,
+    'newTransform.stepper.step3.label': `Write Transformation`,
+    'newTransform.instructions': `You will be set up with an environment to create a
+                            transform. Create your query and use the CLI to
+                            continue, e.g`,
+    'newTransform.button.cta': `Proceed to GitPod`,
 };
 
 const CustomRenderers: ResolvedIntlConfig['messages'] = {

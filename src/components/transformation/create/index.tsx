@@ -1,7 +1,6 @@
 import { LoadingButton } from '@mui/lab';
 import {
     Box,
-    BoxProps,
     Divider,
     FormControlLabel,
     InputAdornment,
@@ -15,13 +14,11 @@ import {
     stepConnectorClasses,
     StepLabel,
     Stepper,
-    StepperProps as StepperPropsType,
     styled,
     TextField,
     Theme,
     Typography,
     useMediaQuery,
-    useTheme,
 } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
@@ -37,9 +34,12 @@ import { useCallback, useMemo, useState } from 'react';
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
 import SingleLineCode from 'components/content/SingleLineCode';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useSet } from 'react-use';
 import { generateGitPodURL } from 'services/gitpod';
 import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+import SingleStep from './SingleStep';
+import { StepBox } from './StepBox';
 
 const StyledStepConnector = styled(StepConnector)(() => ({
     [`& .${stepConnectorClasses.line}`]: {
@@ -49,63 +49,19 @@ const StyledStepConnector = styled(StepConnector)(() => ({
     },
 }));
 
-const StepBox = styled(Box)<BoxProps & { last?: boolean }>(
-    ({ theme, last }) => ({
-        border: '1px solid #9AB5CB',
-        borderRadius: 3,
-        flex: 1,
-        // Prevents the white background of the header from chopping off
-        //the rounded corners of the border
-        overflow: 'hidden',
-        ...(!last
-            ? {
-                  [theme.breakpoints.down('sm')]: {
-                      marginBottom: 24,
-                  },
-                  [theme.breakpoints.up('sm')]: {
-                      marginRight: 24,
-                  },
-              }
-            : {}),
-    })
-);
-
-const SingleStep: React.FC<{
-    num: number;
-    always?: boolean;
-    children?: React.ReactChild;
-    StepperProps?: StepperPropsType;
-}> = ({ num, always, children, StepperProps }) => {
-    const theme = useTheme();
-    const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
-
-    const wrappedChildren = <Typography variant="h6">{children}</Typography>;
-
-    if (isSmall || always) {
-        return (
-            <Stepper connector={null} {...(StepperProps ?? {})}>
-                <Step sx={{ padding: 0 }} index={num - 1} active>
-                    <StepLabel>{wrappedChildren}</StepLabel>
-                </Step>
-            </Stepper>
-        );
-    } else {
-        return wrappedChildren;
-    }
-};
-
 type DerivationLanguage = 'sql' | 'typescript';
 const NAME_RE = new RegExp(`^(${PREFIX_NAME_PATTERN}/?)*$`);
 
 function TransformationCreate() {
-    const [derivationLanguage, setDerivationLanguage] =
-        useState<DerivationLanguage>('sql');
+    const intl = useIntl();
+
     const collections = useLiveSpecs('collection');
 
     const [selectedCollectionSet, selectedCollectionSetFunctions] = useSet(
         new Set<string>([])
     );
-
+    const [derivationLanguage, setDerivationLanguage] =
+        useState<DerivationLanguage>('sql');
     const [entityName, setEntityName] = useState<string>('');
     const [entityPrefix, setEntityPrefix] = useState<string>('');
 
@@ -138,25 +94,29 @@ function TransformationCreate() {
     const entityNameError = useMemo(() => {
         if (entityName) {
             if (allowedPrefixes.length > 1 && !entityPrefix) {
-                return 'No prefix selected';
+                return intl.formatMessage({
+                    id: 'newTransform.errors.prefixMissing',
+                });
             }
             if (!NAME_RE.test(entityName)) {
                 // TODO: be more descriptive
-                return 'Name does not match pattern';
+                return intl.formatMessage({
+                    id: 'newTransform.errors.namePattern',
+                });
             }
         }
         return null;
-    }, [allowedPrefixes, entityName, entityPrefix]);
+    }, [intl, allowedPrefixes, entityName, entityPrefix]);
 
     const submitButtonError = useMemo(() => {
         if (selectedCollectionSet.size < 1) {
-            return 'Select A Source Collection';
+            return intl.formatMessage({ id: 'newTransform.errors.collection' });
         }
         if (!entityName) {
-            return 'Name Your Transform';
+            return intl.formatMessage({ id: 'newTransform.errors.name' });
         }
         return null;
-    }, [entityName, selectedCollectionSet]);
+    }, [intl, entityName, selectedCollectionSet]);
 
     const { enqueueSnackbar } = useSnackbar();
     const displayError = useCallback(
@@ -175,7 +135,11 @@ function TransformationCreate() {
     const generateDraftWithSpecs = useMemo(
         () => async () => {
             if (!computedEntityName) {
-                throw new Error('Invalid entity name');
+                throw new Error(
+                    intl.formatMessage({
+                        id: 'newTransform.errors.nameInvalid',
+                    })
+                );
             }
             const draft = await createEntityDraft(computedEntityName);
             if (draft.error) {
@@ -206,7 +170,7 @@ function TransformationCreate() {
             }
             return draftId;
         },
-        [computedEntityName, selectedCollectionSet]
+        [computedEntityName, intl, selectedCollectionSet]
     );
 
     const generateUrl = useMemo(
@@ -218,7 +182,11 @@ function TransformationCreate() {
                 // we know that computedEntityName will exist because
                 // generateDraftWithSpecs() checks it and throws otherwise
                 if (!computedEntityName) {
-                    throw new Error('Missing entity name');
+                    throw new Error(
+                        intl.formatMessage({
+                            id: 'newTransform.errors.nameMissing',
+                        })
+                    );
                 }
 
                 const [token, draftId] = await Promise.all([
@@ -234,7 +202,11 @@ function TransformationCreate() {
                     computedEntityName
                 );
             } catch (e: unknown) {
-                displayError('Failed to open GitPod');
+                displayError(
+                    intl.formatMessage({
+                        id: 'newTransform.errors.gitPod',
+                    })
+                );
                 console.error(e);
                 return null;
             } finally {
@@ -246,6 +218,7 @@ function TransformationCreate() {
             derivationLanguage,
             displayError,
             generateDraftWithSpecs,
+            intl,
             selectedCollectionSet,
         ]
     );
@@ -254,7 +227,11 @@ function TransformationCreate() {
         () => (
             <>
                 <div style={{ padding: '0.5rem 16px' }}>
-                    <SingleStep num={2}>Language</SingleStep>
+                    <SingleStep num={2}>
+                        <Typography>
+                            <FormattedMessage id="newTransform.language.title" />
+                        </Typography>
+                    </SingleStep>
                 </div>
                 <Divider />
                 <RadioGroup
@@ -267,17 +244,21 @@ function TransformationCreate() {
                     <FormControlLabel
                         value="sql"
                         control={<Radio size="small" />}
-                        label="SQL"
+                        label={intl.formatMessage({
+                            id: 'newTransform.language.sql',
+                        })}
                     />
                     <FormControlLabel
                         value="typescript"
                         control={<Radio size="small" />}
-                        label="Typescript"
+                        label={intl.formatMessage({
+                            id: 'newTransform.language.ts',
+                        })}
                     />
                 </RadioGroup>
             </>
         ),
-        [derivationLanguage]
+        [derivationLanguage, intl]
     );
 
     return (
@@ -295,10 +276,18 @@ function TransformationCreate() {
                         connector={<StyledStepConnector />}
                     >
                         <Step active>
-                            <StepLabel>Select your collection</StepLabel>
+                            <StepLabel>
+                                <Typography>
+                                    <FormattedMessage id="newTransform.stepper.step1.label" />
+                                </Typography>
+                            </StepLabel>
                         </Step>
                         <Step active>
-                            <StepLabel>Transformation Language</StepLabel>
+                            <StepLabel>
+                                <Typography>
+                                    <FormattedMessage id="newTransform.stepper.step2.label" />
+                                </Typography>
+                            </StepLabel>
                         </Step>
                     </Stepper>
                 </Box>
@@ -332,11 +321,15 @@ function TransformationCreate() {
                                 alternativeLabel: true,
                             }}
                         >
-                            Write Transformation
+                            <Typography>
+                                <FormattedMessage id="newTransform.stepper.step3.label" />
+                            </Typography>
                         </SingleStep>
                         <TextField
                             sx={{ marginBottom: 2 }}
-                            label="Collection Name"
+                            label={intl.formatMessage({
+                                id: 'newTransform.collection.label',
+                            })}
                             required
                             fullWidth
                             error={!!entityNameError}
@@ -393,15 +386,16 @@ function TransformationCreate() {
                                 }
                             }}
                         >
-                            {submitButtonError ?? 'Proceed to GitPod'}
+                            {submitButtonError ??
+                                intl.formatMessage({
+                                    id: 'newTransform.button.cta',
+                                })}
                         </LoadingButton>
                         <Typography
                             variant="body2"
                             sx={{ color: 'rgb(150,150,150)' }}
                         >
-                            You will be set up with an environment to create a
-                            transform. Create your query and use the CLI to
-                            continue, e.g
+                            <FormattedMessage id="newTransform.instructions" />
                             <SingleLineCode value="flowctl --help" />
                         </Typography>
                     </Box>
