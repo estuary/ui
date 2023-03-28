@@ -1,13 +1,13 @@
 import {
     Autocomplete,
     AutocompleteChangeReason,
+    autocompleteClasses,
     Box,
+    Popper,
     Skeleton,
     TextField,
-    Typography,
 } from '@mui/material';
-import { truncateTextSx } from 'context/Theme';
-import { Check } from 'iconoir-react';
+import { styled } from '@mui/material/styles';
 import { isEqual } from 'lodash';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -16,6 +16,7 @@ import {
     detectRemoveOptionWithBackspace,
 } from 'utils/mui-utils';
 import { CollectionData } from './types';
+import ListboxComponent from './VirtualizedList';
 
 interface Props {
     options: any[];
@@ -25,6 +26,16 @@ interface Props {
     getValue?: (option: any) => string;
     AutocompleteProps?: any; // TODO (typing) - need to typ as props
 }
+
+const StyledPopper = styled(Popper)({
+    [`& .${autocompleteClasses.listbox}`]: {
+        'boxSizing': 'border-box',
+        '& ul': {
+            padding: 0,
+            margin: 0,
+        },
+    },
+});
 
 function CollectionSelectorSearch({
     options,
@@ -77,6 +88,8 @@ function CollectionSelectorSearch({
             <Autocomplete
                 {...AutocompleteProps}
                 disabled={readOnly}
+                disableListWrap
+                ListboxComponent={ListboxComponent}
                 multiple
                 options={options}
                 isOptionEqualToValue={(option, value) => {
@@ -98,6 +111,7 @@ function CollectionSelectorSearch({
                 blurOnSelect={false}
                 disableCloseOnSelect
                 disableClearable
+                PopperComponent={StyledPopper}
                 renderTags={() => null}
                 renderInput={(params) => (
                     <TextField
@@ -109,36 +123,13 @@ function CollectionSelectorSearch({
                         onBlur={handlers.validateSelection}
                     />
                 )}
-                renderOption={(props, option, { selected }) => {
-                    return (
-                        // TODO (styling) weirdly the paddingLeft was getting overwritten
-                        //  for dark mode and caused the icon to be too close to the edge
-                        //  so hardcoding the padding here for now
-                        <li {...props} style={{ paddingLeft: 24 }}>
-                            <Box
-                                sx={{
-                                    ml: -2,
-                                    mr: 0.5,
-                                }}
-                            >
-                                <Check
-                                    aria-checked={selected}
-                                    style={{
-                                        visibility: selected
-                                            ? 'visible'
-                                            : 'hidden',
-                                    }}
-                                />
-                            </Box>
-                            <Typography
-                                sx={{
-                                    ...truncateTextSx,
-                                }}
-                            >
-                                {getValue ? getValue(option) : option}
-                            </Typography>
-                        </li>
-                    );
+                renderGroup={(params) => params as unknown as React.ReactNode}
+                renderOption={(props, option, state) => {
+                    return [
+                        props,
+                        getValue ? getValue(option) : option,
+                        state.selected,
+                    ] as React.ReactNode;
                 }}
             />
         </Box>
