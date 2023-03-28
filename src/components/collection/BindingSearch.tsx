@@ -191,6 +191,13 @@ function BindingSearch({ readOnly = false }: Props) {
             AutocompleteProps={{
                 getOptionLabel: (option: CollectionData) => option.name,
                 groupBy: (option: CollectionData) => option.classification,
+                componentsProps: {
+                    paper: {
+                        sx: {
+                            width: '33vw',
+                        },
+                    },
+                },
             }}
         />
     ) : null;
