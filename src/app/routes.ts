@@ -83,6 +83,16 @@ const collections = {
     title: 'routeTitle.collections',
     path: 'collections',
     fullPath: '/collections',
+    create: {
+        title: 'routeTitle.collectionCreate',
+        path: 'create',
+        fullPath: '/collections/create',
+        new: {
+            title: 'routeTitle.collectionCreate',
+            path: 'create/new',
+            fullPath: '/collections/create/new',
+        },
+    },
     // details: {
     //     title: 'routeTitle.collectionDetails',
     //     path: 'details',

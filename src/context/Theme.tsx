@@ -347,6 +347,8 @@ export const alternateConnectorImageBackgroundSx: SxProps<Theme> = {
     background: (theme) => connectorCardLogoBackground[theme.palette.mode],
 };
 
+export const autoCompleteListPadding = 8;
+
 const themeSettings = createTheme({
     breakpoints: {
         values: {
