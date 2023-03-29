@@ -8,7 +8,13 @@ import useGlobalSearchParams, {
 import ShardInformation from '../Shard/Information';
 import Endpoints from './Endpoints';
 
-function Overview() {
+// TODO (details page)
+// Temporary - allow to pass in the name
+interface Props {
+    name?: string;
+}
+
+function Overview({ name }: Props) {
     const entityType = useEntityType();
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const isCollection = entityType === 'collection';
@@ -17,7 +23,11 @@ function Overview() {
         localScope: true,
     });
     const catalogSpec = currentCatalog?.spec ?? null;
-    const isDerivation = Boolean(catalogSpec?.derivation);
+    const isDerivation = Boolean(
+        catalogSpec?.derivation || catalogSpec?.derive
+    );
+
+    const entityName = name ?? catalogName;
 
     return (
         <Grid container spacing={2}>
@@ -29,9 +39,9 @@ function Overview() {
                 </Grid>
             ) : null}
 
-            {isCollection && catalogName ? (
+            {isCollection && entityName ? (
                 <Grid item xs={12}>
-                    <DataPreview collectionName={catalogName} />
+                    <DataPreview collectionName={entityName} />
                 </Grid>
             ) : null}
         </Grid>

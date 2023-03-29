@@ -407,6 +407,12 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.moreEntities': `{count} more`,
 
     'entityTable.detailsLink': `View details`,
+
+    'optionMenu.ariaLabel': `Open Option Menu`,
+    'optionMenu.tooltip': `Options`,
+    'optionMenu.option.detailsPanel.display': `View details`,
+    'optionMenu.option.detailsPanel.hide': `Hide details`,
+    'optionMenu.option.edit': `Edit specification`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
