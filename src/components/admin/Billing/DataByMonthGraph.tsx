@@ -15,31 +15,17 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import prettyBytes from 'pretty-bytes';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useBilling_billingDetails } from 'stores/Tables/Billing/hooks';
 import useConstant from 'use-constant';
+import {
+    BYTES_PER_GB,
+    formatDataVolumeForDisplay,
+    SeriesConfig,
+} from 'utils/billing-utils';
 
 // Grid item height - 72 = graph canvas height
-interface SeriesConfig {
-    data: [string, number][];
-}
-
-const BYTES_PER_GB = 1073741824;
-
-const formatDataVolumeForDisplay = (
-    seriesConfigs: SeriesConfig[],
-    tooltipConfig: any
-): string => {
-    const dataVolumeInBytes = seriesConfigs[0].data.find(
-        ([month]) => month === tooltipConfig.name
-    );
-
-    return dataVolumeInBytes
-        ? prettyBytes(dataVolumeInBytes[1])
-        : `${tooltipConfig.value[1]} GB`;
-};
 
 function DataByMonthGraph() {
     const theme = useTheme();
@@ -188,7 +174,15 @@ function DataByMonthGraph() {
 
             myChart?.setOption(option);
         }
-    }, [setMyChart, billingDetails, intl, myChart, seriesConfig, theme]);
+    }, [
+        setMyChart,
+        billingDetails,
+        intl,
+        months,
+        myChart,
+        seriesConfig,
+        theme,
+    ]);
 
     return <div id="data-by-month" style={{ height: 228 }} />;
 }

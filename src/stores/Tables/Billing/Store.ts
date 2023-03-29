@@ -5,11 +5,11 @@ import { SelectTableStoreNames } from 'stores/names';
 import { BillingDetails, BillingState } from 'stores/Tables/Billing/types';
 import { getInitialState as getInitialSelectTableState } from 'stores/Tables/Store';
 import { Entity, ProjectedCostStats } from 'types';
+import { BYTES_PER_GB } from 'utils/billing-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
-const BYTES_PER_GB = 1073741824;
 const FREE_BYTES = 21474836480;
 const FREE_TASK_COUNT = 2;
 

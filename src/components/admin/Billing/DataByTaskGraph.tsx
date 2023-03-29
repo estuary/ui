@@ -20,21 +20,19 @@ import navArrowLeftDark from 'images/graph-icons/nav-arrow-left__dark.svg';
 import navArrowLeftLight from 'images/graph-icons/nav-arrow-left__light.svg';
 import navArrowRightDark from 'images/graph-icons/nav-arrow-right__dark.svg';
 import navArrowRightLight from 'images/graph-icons/nav-arrow-right__light.svg';
-import prettyBytes from 'pretty-bytes';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useBilling_dataByTaskGraphDetails } from 'stores/Tables/Billing/hooks';
 import { DataVolumeByTaskGraphDetails } from 'stores/Tables/Billing/types';
 import useConstant from 'use-constant';
+import {
+    BYTES_PER_GB,
+    formatDataVolumeForDisplay,
+    SeriesConfig,
+} from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
 
 // Grid item height - 72 = graph canvas height
-interface SeriesConfig {
-    catalogName: string;
-    data: [string, number][];
-}
-
-const BYTES_PER_GB = 1073741824;
 
 const navArrowsLight = [
     `image://${navArrowLeftLight}`,
@@ -45,23 +43,6 @@ const navArrowsDark = [
     `image://${navArrowLeftDark}`,
     `image://${navArrowRightDark}`,
 ];
-
-const formatDataVolumeForDisplay = (
-    seriesConfigs: SeriesConfig[],
-    tooltipConfig: any
-): string => {
-    const selectedSeries = seriesConfigs.find(
-        (series) => series.catalogName === tooltipConfig.seriesName
-    );
-
-    const dataVolumeInBytes = selectedSeries?.data.find(
-        ([month]) => month === tooltipConfig.name
-    );
-
-    return dataVolumeInBytes
-        ? prettyBytes(dataVolumeInBytes[1])
-        : `${tooltipConfig.value[1]} GB`;
-};
 
 function DataByTaskGraph() {
     const theme = useTheme();
@@ -102,8 +83,8 @@ function DataByTaskGraph() {
         );
 
         return Object.entries(filteredDetails).map(
-            ([catalogName, taskData]) => ({
-                catalogName,
+            ([seriesName, taskData]) => ({
+                seriesName,
                 data: taskData.map(({ date, dataVolume }) => [
                     intl.formatDate(date, { month: 'short' }),
                     dataVolume,
@@ -151,9 +132,9 @@ function DataByTaskGraph() {
                     },
                     minInterval: 0.001,
                 },
-                series: seriesConfig.map(({ catalogName, data }, index) => {
+                series: seriesConfig.map(({ seriesName, data }, index) => {
                     let config: any = {
-                        name: catalogName,
+                        name: seriesName,
                         type: 'line',
                         data: data.map(([month, dataVolume]) => [
                             month,
@@ -186,7 +167,7 @@ function DataByTaskGraph() {
                 }),
                 legend: {
                     type: 'scroll',
-                    data: seriesConfig.map((config) => config.catalogName),
+                    data: seriesConfig.map((config) => config.seriesName),
                     textStyle: {
                         color: theme.palette.text.primary,
                         fontWeight: 'normal',
