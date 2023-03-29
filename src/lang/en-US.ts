@@ -188,6 +188,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
     'routeTitle.collectionCreate': `Create Transformation`,
+    'routeTitle.dataPlaneAuthReq': `Data-plane authorization check`,
     'routeTitle.directives': `Directives`,
     'routeTitle.error.entityNotFound': `Entity Not Found`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
@@ -216,6 +217,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
     'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
     'browserTitle.collectionCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collectionCreate']}`,
+    'browserTitle.dataPlaneAuthReq': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dataPlaneAuthReq']}`,
     'browserTitle.error.entityNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.entityNotFound']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
     'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
@@ -908,6 +910,24 @@ const CustomRenderers: ResolvedIntlConfig['messages'] = {
     'timePicker.button.ariaLabel': `Open time picker for {label}`,
 };
 
+const TaskEndpoints: ResolvedIntlConfig['messages'] = {
+    'taskEndpoint.list.title': `Endpoints:`,
+    'taskEndpoint.otherProtocol.message': `{protocol} hostname: {hostname}`,
+    'taskEndpoint.multipleEndpoints.message': `mutliple endpoints exposed, see task details for their addresses.`,
+
+    'taskEndpoint.link.public.label': 'Public endpoint: ',
+    'taskEndpoint.link.private.label': 'Private endpoint: ',
+    'taskEndpoint.visibility.public.tooltip':
+        'Public: anyone may access this port over the public internet',
+    'taskEndpoint.visibility.private.tooltip':
+        'Private: access to this port is restricted to authenticated users who have "admin" permissions to the task',
+};
+
+const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
+    'dataPlaneAuthReq.error.message': `Authorization to access {catalogPrefix} failed: {error}`,
+    'dataPlaneAuthReq.waiting.message': `Please wait while we authorize access to {catalogPrefix}. You will be redirected shortly.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -956,6 +976,8 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...ExistingEntityCheck,
     ...Docs,
     ...NewTransform,
+    ...TaskEndpoints,
+    ...DataPlaneAuthReq,
 };
 
 export default enUSMessages;
