@@ -1,6 +1,5 @@
 import { Box, CircularProgress, Grid, List, ListItem } from '@mui/material';
 import { PublicationSpecsExt_PublicationHistory } from 'api/publicationSpecsExt';
-import { ReactECharts } from 'components/charts/Calendar';
 import KeyValueList from 'components/shared/KeyValueList';
 import Tile from 'components/shared/Tile';
 import { addDays, endOfMonth, format, startOfMonth, subDays } from 'date-fns';
@@ -95,7 +94,7 @@ function History() {
                     </List>
                 </Grid>
                 <Grid item xs={6}>
-                    <ReactECharts
+                    {/*<ReactECharts
                         option={{
                             tooltip: {},
 
@@ -114,7 +113,7 @@ function History() {
                                 },
                             ],
                         }}
-                    />
+                    />*/}
                 </Grid>
             </Grid>
         </Box>

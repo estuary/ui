@@ -13,16 +13,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import { EditorStoreNames } from 'stores/names';
 import ShardHydrator from '../Shard/Hydrator';
-import { useDetailsPage } from './context';
-import Overview from './Overview';
-import Spec from './Spec';
+import RenderTab from './RenderTab';
 import DetailTabs from './Tabs';
 
 function EntityDetails() {
     useBrowserTitle('browserTitle.details');
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
-    const page = useDetailsPage();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -84,9 +81,7 @@ function EntityDetails() {
                         </Stack>
 
                         <Box sx={{ m: 1 }}>
-                            {/* TODO (details:history) not currently live but is here to make sure it can render*/}
-                            {/* page === 'history' ? (<History />)*/}
-                            {page === 'spec' ? <Spec /> : <Overview />}
+                            <RenderTab />
                         </Box>
                     </Box>
                 </ShardHydrator>
