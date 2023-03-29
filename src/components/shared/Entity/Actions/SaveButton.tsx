@@ -16,6 +16,7 @@ interface Props {
     closeLogs: Function;
     callFailed: Function;
     disabled: boolean;
+    taskNames: string[];
     logEvent:
         | CustomEvents.CAPTURE_CREATE
         | CustomEvents.MATERIALIZATION_CREATE
@@ -29,6 +30,7 @@ function EntitySaveButton({
     closeLogs,
     disabled,
     materialize,
+    taskNames,
     logEvent,
 }: Props) {
     // Draft Editor Store
@@ -60,6 +62,7 @@ function EntitySaveButton({
                 actionComponent={
                     <LogDialogActions
                         close={closeLogs}
+                        taskNames={taskNames}
                         materialize={
                             materialize
                                 ? {

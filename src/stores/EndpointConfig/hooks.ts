@@ -200,3 +200,21 @@ export const useEndpointConfig_setServerUpdateRequired = () => {
         EndpointConfigState['setServerUpdateRequired']
     >(getStoreName(entityType), (state) => state.setServerUpdateRequired);
 };
+
+export const useEndpointConfig_endpointCanBeEmpty = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['endpointCanBeEmpty']
+    >(getStoreName(entityType), (state) => state.endpointCanBeEmpty);
+};
+
+export const useEndpointConfig_setEndpointCanBeEmpty = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['setEndpointCanBeEmpty']
+    >(getStoreName(entityType), (state) => state.setEndpointCanBeEmpty);
+};
