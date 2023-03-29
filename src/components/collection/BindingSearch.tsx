@@ -194,6 +194,7 @@ function BindingSearch({ readOnly = false }: Props) {
                 componentsProps: {
                     paper: {
                         sx: {
+                            minWidth: 200,
                             width: '33vw',
                         },
                     },
