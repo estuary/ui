@@ -6,6 +6,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import ShardInformation from '../Shard/Information';
+import Endpoints from './Endpoints';
 
 function Overview() {
     const entityType = useEntityType();
@@ -20,6 +21,8 @@ function Overview() {
 
     return (
         <Grid container spacing={2}>
+            <Endpoints />
+
             {!isCollection || isDerivation ? (
                 <Grid item xs={12}>
                     <ShardInformation entityType={entityType} />

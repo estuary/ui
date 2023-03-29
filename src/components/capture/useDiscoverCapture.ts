@@ -1,6 +1,10 @@
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
-import { getDraftSpecsBySpecType } from 'api/draftSpecs';
+import {
+    DraftSpecsExtQuery_ByCatalogName,
+    getDraftSpecsByCatalogName,
+    getDraftSpecsBySpecType,
+} from 'api/draftSpecs';
 import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
@@ -25,11 +29,13 @@ import {
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
+    useDetailsForm_connectorImage_imageName,
     useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
+    useDetailsForm_draftedEntityName,
     useDetailsForm_errorsExist,
     useDetailsForm_setDraftedEntityName,
-} from 'stores/DetailsForm';
+} from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
@@ -51,11 +57,10 @@ import {
     useResourceConfig_resetConfigAndCollections,
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
-    useResourceConfig_restrictedDiscoveredCollections,
     useResourceConfig_setDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
-import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity } from 'types';
+import { hasLength, stripPathing } from 'utils/misc-utils';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import {
     modifyDiscoveredDraftSpec,
@@ -106,7 +111,9 @@ function useDiscoverCapture(
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
     const imagePath = useDetailsForm_connectorImage_imagePath();
+    const imageName = useDetailsForm_connectorImage_imageName();
     const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
+    const draftedEntityName = useDetailsForm_draftedEntityName();
 
     // Endpoint Config Store
     const setEncryptedEndpointConfig =
@@ -122,8 +129,6 @@ function useDiscoverCapture(
 
     // Resource Config Store
     const resourceConfig = useResourceConfig_resourceConfig();
-    const restrictedDiscoveredCollections =
-        useResourceConfig_restrictedDiscoveredCollections();
     const setDiscoveredCollections =
         useResourceConfig_setDiscoveredCollections();
     const evaluateDiscoveredCollections =
@@ -133,10 +138,7 @@ function useDiscoverCapture(
     const resetCollections = useResourceConfig_resetConfigAndCollections();
 
     const storeDiscoveredCollections = useCallback(
-        async (
-            newDraftId: string,
-            resourceConfigForDiscovery: ResourceConfigDictionary
-        ) => {
+        async (newDraftId: string) => {
             // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
             //   More columns are selected than required to appease the typing of the editor store.
             const draftSpecsResponse = await getDraftSpecsBySpecType(
@@ -154,9 +156,7 @@ function useDiscoverCapture(
             }
 
             if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
-                if (options?.initiateRediscovery) {
-                    resetCollections();
-                }
+                resetCollections();
 
                 setDiscoveredCollections(draftSpecsResponse.data[0]);
 
@@ -168,10 +168,7 @@ function useDiscoverCapture(
                 const updatedDraftSpecsResponse =
                     await modifyDiscoveredDraftSpec(
                         draftSpecsResponse,
-                        resourceConfigForDiscovery,
-                        restrictedDiscoveredCollections,
-                        supabaseConfig,
-                        options?.initiateRediscovery
+                        supabaseConfig
                     );
 
                 if (updatedDraftSpecsResponse.error) {
@@ -206,9 +203,7 @@ function useDiscoverCapture(
             entityType,
             evaluateDiscoveredCollections,
             lastPubId,
-            options?.initiateRediscovery,
             resetCollections,
-            restrictedDiscoveredCollections,
             setDiscoveredCollections,
             setDraftId,
             setEncryptedEndpointConfig,
@@ -231,8 +226,7 @@ function useDiscoverCapture(
     const createDiscoversSubscription = useCallback(
         (
             discoverDraftId: string,
-            existingEndpointConfig: any, // JsonFormsData,
-            resourceConfigForDiscover: ResourceConfigDictionary
+            existingEndpointConfig: any // JsonFormsData,
         ) => {
             setDraftId(null);
 
@@ -252,10 +246,7 @@ function useDiscoverCapture(
                     })
                     .order('created_at', { ascending: false }),
                 async (payload: any) => {
-                    await storeDiscoveredCollections(
-                        payload.draft_id,
-                        resourceConfigForDiscover
-                    );
+                    await storeDiscoveredCollections(payload.draft_id);
 
                     void postGenerateMutate();
 
@@ -326,7 +317,21 @@ function useDiscoverCapture(
                     options?.initiateRediscovery ||
                     options?.initiateDiscovery
                 ) {
-                    const draftsResponse = await createEntityDraft(entityName);
+                    // If we are doing an initial discovery add the name name to the name
+                    // If not we are either refreshing collections during create OR during edit
+                    //  Refreshing during:
+                    //    create requires draftedEntityName because it has the connector image added to it
+                    //    edit   requires entityName        because it is the name already in the system and
+                    //                                        we do not have a draftedEntityName yet
+                    const processedEntityName = options.initiateDiscovery
+                        ? `${entityName}/${stripPathing(imageName)}`
+                        : hasLength(draftedEntityName)
+                        ? draftedEntityName
+                        : entityName;
+
+                    const draftsResponse = await createEntityDraft(
+                        processedEntityName
+                    );
                     if (draftsResponse.error) {
                         return callFailed({
                             error: {
@@ -339,7 +344,7 @@ function useDiscoverCapture(
                     const draftId = draftsResponse.data[0].id;
 
                     const discoverResponse = await discover(
-                        entityName,
+                        processedEntityName,
                         encryptedEndpointConfig.data,
                         imageConnectorTagId,
                         draftId
@@ -352,22 +357,41 @@ function useDiscoverCapture(
                             },
                         });
                     }
-                    createDiscoversSubscription(
-                        draftId,
-                        endpointConfigData,
-                        resourceConfig
-                    );
+                    createDiscoversSubscription(draftId, endpointConfigData);
 
                     setFormState({
                         logToken: discoverResponse.data[0].logs_token,
                     });
                 } else if (persistedDraftId) {
+                    const existingDraftSpecResponse =
+                        await getDraftSpecsByCatalogName(
+                            persistedDraftId,
+                            entityName,
+                            'capture'
+                        );
+
+                    if (existingDraftSpecResponse.error) {
+                        return callFailed({
+                            error: {
+                                title: 'captureCreate.generate.failedErrorTitle',
+                                error: existingDraftSpecResponse.error,
+                            },
+                        });
+                    }
+
+                    const existingTaskData: DraftSpecsExtQuery_ByCatalogName | null =
+                        existingDraftSpecResponse.data &&
+                        existingDraftSpecResponse.data.length > 0
+                            ? existingDraftSpecResponse.data[0]
+                            : null;
+
                     const draftSpecsResponse =
                         await modifyExistingCaptureDraftSpec(
                             persistedDraftId,
                             imagePath,
                             encryptedEndpointConfig.data,
-                            resourceConfig
+                            resourceConfig,
+                            existingTaskData
                         );
 
                     if (draftSpecsResponse.error) {
@@ -406,21 +430,23 @@ function useDiscoverCapture(
             createDiscoversSubscription,
             postGenerateMutate,
             resetEditorState,
+            setDraftId,
             setEncryptedEndpointConfig,
             setFormState,
             setPreviousEndpointConfig,
-            setDraftId,
             updateFormStatus,
             detailsFormsHasErrors,
+            draftedEntityName,
             endpointConfigData,
             endpointConfigErrorsExist,
             endpointSchema,
             entityName,
             imageConnectorId,
             imageConnectorTagId,
+            imageName,
             imagePath,
-            options?.initiateDiscovery,
             options?.initiateRediscovery,
+            options?.initiateDiscovery,
             persistedDraftId,
             resourceConfig,
             resourceConfigHasErrors,

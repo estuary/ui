@@ -1,13 +1,12 @@
 import {
     endOfWeek,
-    format,
     startOfMonth,
     startOfWeek,
     subDays,
     subMonths,
     subWeeks,
 } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
+import { formatInTimeZone } from 'date-fns-tz';
 import {
     handleFailure,
     handleSuccess,
@@ -24,23 +23,10 @@ export type StatsFilter =
     | 'lastMonth'
     | 'thisMonth';
 
-// We want to grab the ISO String so that the time already
-//  has the offset we want. Then we convert it to a date object
-// and force that to be GMT to keep the timezone and offset correctly
-const getCurrentGMTDate = () => {
-    return utcToZonedTime(new Date().toISOString(), 'Etc/GMT');
-};
-
-// This will format the date so that it just gets the month, day, year, and hour
-//  We do not need the full minute/house/offset because the backend is not saving those
-export const formatDateToString = (date: Date, includeHour?: boolean) => {
-    const formattedDate = format(
-        date,
-        `yyyy-MM-dd' ${includeHour ? "'HH'" : '00'}:00:00+00'`
-    );
-
-    return formattedDate;
-};
+// This will format the date so that it just gets the month, day, year
+//  We do not need the full minute/hour/offset because the backend is not saving those
+export const formatToGMT = (date: any) =>
+    formatInTimeZone(date, 'GMT', "yyyy-MM-dd' 00:00:00+00'");
 
 // TODO (stats) add support for which stats columns each entity wants
 //  Right now all tables run the same query even though they only need
@@ -67,7 +53,7 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
         .in('catalog_name', names)
         .order('catalog_name');
 
-    const today = getCurrentGMTDate();
+    const today = new Date();
     const yesterday = subDays(today, 1);
     const lastWeek = subWeeks(today, 1);
     const lastMonth = subMonths(today, 1);
@@ -76,39 +62,39 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
         // Day Range
         case 'today':
             queryBuilder = queryBuilder
-                .eq('ts', formatDateToString(today))
+                .eq('ts', formatToGMT(today))
                 .eq('grain', 'daily');
             break;
         case 'yesterday':
             queryBuilder = queryBuilder
-                .eq('ts', formatDateToString(yesterday))
+                .eq('ts', formatToGMT(yesterday))
                 .eq('grain', 'daily');
             break;
 
         // Week Range
         case 'thisWeek':
             queryBuilder = queryBuilder
-                .gte('ts', formatDateToString(startOfWeek(today)))
-                .lte('ts', formatDateToString(endOfWeek(today)))
+                .gte('ts', formatToGMT(startOfWeek(today)))
+                .lte('ts', formatToGMT(endOfWeek(today)))
                 .eq('grain', 'daily');
             break;
         case 'lastWeek':
             queryBuilder = queryBuilder
-                .gte('ts', formatDateToString(startOfWeek(lastWeek)))
-                .lte('ts', formatDateToString(endOfWeek(lastWeek)))
+                .gte('ts', formatToGMT(startOfWeek(lastWeek)))
+                .lte('ts', formatToGMT(endOfWeek(lastWeek)))
                 .eq('grain', 'daily');
             break;
 
         // Month Range
         case 'thisMonth':
             queryBuilder = queryBuilder
-                .eq('ts', formatDateToString(startOfMonth(today)))
+                .eq('ts', formatToGMT(startOfMonth(today)))
                 .eq('grain', 'monthly');
 
             break;
         case 'lastMonth':
             queryBuilder = queryBuilder
-                .eq('ts', formatDateToString(startOfMonth(lastMonth)))
+                .eq('ts', formatToGMT(startOfMonth(lastMonth)))
                 .eq('grain', 'monthly');
             break;
 

@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl';
 import {
     useDetailsForm_connectorImage_id,
     useDetailsForm_details_entityName,
-} from 'stores/DetailsForm';
+} from 'stores/DetailsForm/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 function DetailsErrors() {

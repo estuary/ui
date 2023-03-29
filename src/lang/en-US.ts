@@ -17,10 +17,9 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.inProgress': `In Progress`,
     'common.done': `Done`,
     'common.testing': `Testing`,
-    'common.saving': `Publishing`,
-    'common.saved': `Published`,
     'common.invalid': `Invalid`,
     'common.fail': `Failed`,
+    'common.publishing': `Publishing...`,
     'common.success': `Success`,
     'common.errors.heading': `Error`,
     'common.optionsAll': `All`,
@@ -38,6 +37,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.synchronizing': `Synchronizing`,
     'common.synchronized': `Synchronized`,
     'common.outOfSync': `Out of Sync`,
+    'common.readOnly': `Read-Only`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -49,6 +49,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.permissions': `Access Grants`,
     'terms.materialization': `Materialization`,
     'terms.capture': `Capture`,
+    'terms.derivation': `Derivation`,
     'terms.documentation': `Docs`,
     'terms.storageMapping': `Storage Mappings`,
 
@@ -189,6 +190,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
     'routeTitle.collectionDetails': `Collection Details`,
+    'routeTitle.dataPlaneAuthReq': `Data-plane authorization check`,
     'routeTitle.directives': `Directives`,
     'routeTitle.details': `Details`,
     'routeTitle.error.entityNotFound': `Entity Not Found`,
@@ -219,6 +221,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
     'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
     'browserTitle.details': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.details']}`,
+    'browserTitle.dataPlaneAuthReq': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dataPlaneAuthReq']}`,
     'browserTitle.error.entityNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.entityNotFound']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
     'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
@@ -258,27 +261,36 @@ const Home: ResolvedIntlConfig['messages'] = {
     'home.main.header': `Welcome to Flow!`,
     'home.main.description': `Click the Captures icon on the menu bar to get started.`,
 
+    'home.hero.tab.ariaLabel': `Welcome Image Tabs`,
     'home.hero.tab.companyOverview': `What we do`,
     'home.hero.tab.companyDetails': `How it works`,
+    'home.hero.tab.demo': `Live Demo`,
 
     'home.hero.companyOverview.cta': `How it works`,
-    'home.hero.companyOverview.description': `<b>${CommonMessages.productName}</b> helps you sync your data between the sources that produce it and destinations that consume it in real-time.`,
+    'home.hero.companyOverview.description': `{emphasis} helps you sync your data between the sources that produce it and destinations that consume it in real-time.`,
+    'home.hero.companyOverview.description.emphasis':
+        CommonMessages.productName,
 
     'home.hero.companyDetails.cta': `New capture`,
     'home.hero.companyDetails.step1': `Set up real-time data ingestion from your sources. Click “New Capture” to get started.`,
     'home.hero.companyDetails.step2': `Keep destination systems up to date with Materializations: low latency views of your data.`,
 
-    'home.hero.one.title': `Step 1`,
-    'home.hero.one.message': `Start at the {emphasis} page to setup real-time data ingestion from your sources.`,
-    'home.hero.one.emphasis': RouteTitles['routeTitle.captures'],
+    'home.hero.1.title': `Wikipedia Data`,
+    'home.hero.1.message': `Flow {emphasis} about 100 events per second from the Wikipedia’s API.`,
+    'home.hero.1.message.emphasis': `captures`,
+    'home.hero.1.button': `See the Capture`,
 
-    'home.hero.two.title': `Step 2`,
-    'home.hero.two.message': `Flow automatically lands your data in {emphasis} within your cloud storage. `,
-    'home.hero.two.emphasis': RouteTitles['routeTitle.collections'],
+    'home.hero.2.title': `Transformation`,
+    'home.hero.2.message': `We use a {emphasis} to aggregate the raw data.`,
+    'home.hero.2.message.emphasis': CommonMessages['terms.derivation'],
+    'home.hero.2.button': `See the Collection`,
 
-    'home.hero.three.title': `Step 3`,
-    'home.hero.three.message': `Connect to your target systems and keep them up to date with low-latency views of collection data, known as {emphasis}.`,
-    'home.hero.three.emphasis': RouteTitles['routeTitle.materializations'],
+    'home.hero.3.title': `Google Sheets`,
+    'home.hero.3.message': `Flow {emphasis} a fact table with real-time updates.`,
+    'home.hero.3.message.emphasis': `materializes`,
+    'home.hero.3.button': `See the Materialization`,
+
+    'home.hero.button': `See The Demo`,
 };
 
 const PageNotFound: ResolvedIntlConfig['messages'] = {
@@ -297,7 +309,7 @@ const PasswordReset: ResolvedIntlConfig['messages'] = {
     'passwordReset.main': `Enter your new password below.`,
     'email.description': `The email address associated with your ${CommonMessages.productName} Account`,
     'email.label': `Email`,
-    'password.description': `Pleasae provide a safe and secure password`,
+    'password.description': `Please provide a safe and secure password`,
     'password.label': `Password`,
     'confirmPassword.label': `Confirm Password`,
 };
@@ -422,7 +434,8 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
-    'welcome.image.alt': `content needed`,
+    'welcome.image.alt': `A diagram showing the Flow logo at the center, connected by pipelines to multiple endpoint systems. Source systems on the left feed data into Flow and destination systems on the right receive data from Flow.`,
+    'welcome.demo.alt': `A data pipeline diagram showing data moving into Flow from the Wikipedia HTTP source, and coming out of Flow into the Google Sheets destination.`,
 };
 
 const AccessGrants: ResolvedIntlConfig['messages'] = {
@@ -528,7 +541,8 @@ const Collections: ResolvedIntlConfig['messages'] = {
 const endpointConfigHeader = `Endpoint Config`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.catalogEditor.heading': `Specification Editor`,
-    'entityCreate.ctas.docs': `Connector Help`,
+    'entityCreate.docs.header': `Connector Help`,
+    'entityCreate.cta.docs': `Connector Help`,
     'entityCreate.errors.collapseTitle': `View logs`,
     'entityCreate.errors.collapseTitleOpen': `Hide logs`,
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
@@ -548,6 +562,8 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.endpointConfig.endpointConfigMissing': `${endpointConfigHeader} empty`,
     'entityCreate.endpointConfig.collectionsMissing': `${CommonMessages['terms.collections']} missing`,
     'entityCreate.endpointConfig.resourceConfigInvalid': `Resource Config invalid`,
+
+    'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
 
     'entityCreate.bindingsConfig.collectionsLabel': `Available ${CommonMessages['terms.collections']}`,
     'entityCreate.bindingsConfig.noRows': `Please select from the ${CommonMessages['terms.collections']} above to begin.`,
@@ -750,11 +766,20 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
 
+    'workflows.initTask.alert.title.initFailed': `Form Initialization Error`,
+    'workflows.initTask.alert.message.initFailed': `An issue was encountered initializing the form. Try refreshing the page and if the issue persists {docLink}.`,
+    'workflows.initTask.alert.message.initFailed.docLink': `contact support`,
+    'workflows.initTask.alert.message.initFailed.docPath': `mailto:support@estuary.dev`,
+    'workflows.initTask.alert.message.patchedSpec': `An issue was encountered recovering your changes. The latest, published record of the task was used to initialize the form.`,
+
     'workflows.collectionSelector.cta.delete': `Remove All`,
     'workflows.collectionSelector.cta.rediscover': `Refresh`,
     'workflows.collectionSelector.cta.schemaEdit': `CLI`,
     'workflows.collectionSelector.cta.schemaInference': `Schema Inference`,
+    'workflows.collectionSelector.error.title.editorInitialization': `Editor initialization failed`,
     'workflows.collectionSelector.error.title.missingCollectionSchema': `Failed to fetch collection specification`,
+    'workflows.collectionSelector.error.message.invalidPubId': `This specification may have diverged from the latest, published record of the collection. Your unpublished changes can be found in the editor.`,
+    'workflows.collectionSelector.error.message.draftCreationFailed': `The latest, published record of the collection can be found in the editor. It is read-only.`,
     'workflows.collectionSelector.header.collectionSchema': `Collection Specification`,
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
@@ -853,10 +878,38 @@ const Details: ResolvedIntlConfig['messages'] = {
     'details.tabs.history': `History`,
 };
 
+const Docs: ResolvedIntlConfig['messages'] = {
+    'docs.iframe.title': `{connector} Documentation`,
+    'docs.iframe.disabled.title': `Connector documentation disabled`,
+    'docs.iframe.disabled.message': `We cannot open 3rd party documentation inline. To view you must open {docLink} in a new window.`,
+    'docs.iframe.disabled.message.docLink': `connector help`,
+    'docs.cta.expand': `Help`,
+    'docs.cta.expand.tooltip': `Expand Connector Help`,
+    'docs.cta.expand.disabled': `Open 3rd party docs in new window`,
+};
+
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
     'timePicker.button.ariaLabel': `Open time picker for {label}`,
+};
+
+const TaskEndpoints: ResolvedIntlConfig['messages'] = {
+    'taskEndpoint.list.title': `Endpoints:`,
+    'taskEndpoint.otherProtocol.message': `{protocol} hostname: {hostname}`,
+    'taskEndpoint.multipleEndpoints.message': `mutliple endpoints exposed, see task details for their addresses.`,
+
+    'taskEndpoint.link.public.label': 'Public endpoint: ',
+    'taskEndpoint.link.private.label': 'Private endpoint: ',
+    'taskEndpoint.visibility.public.tooltip':
+        'Public: anyone may access this port over the public internet',
+    'taskEndpoint.visibility.private.tooltip':
+        'Private: access to this port is restricted to authenticated users who have "admin" permissions to the task',
+};
+
+const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
+    'dataPlaneAuthReq.error.message': `Authorization to access {catalogPrefix} failed: {error}`,
+    'dataPlaneAuthReq.waiting.message': `Please wait while we authorize access to {catalogPrefix}. You will be redirected shortly.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
@@ -906,6 +959,9 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...EntityNotFound,
     ...Details,
     ...ExistingEntityCheck,
+    ...Docs,
+    ...TaskEndpoints,
+    ...DataPlaneAuthReq,
 };
 
 export default enUSMessages;

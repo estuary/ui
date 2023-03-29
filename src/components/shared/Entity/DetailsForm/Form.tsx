@@ -16,12 +16,12 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import {
-    Details,
     useDetailsForm_details,
     useDetailsForm_setDetails,
     useDetailsForm_setDetails_connector,
     useDetailsForm_setEntityNameChanged,
-} from 'stores/DetailsForm';
+} from 'stores/DetailsForm/hooks';
+import { Details } from 'stores/DetailsForm/types';
 import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
@@ -33,10 +33,11 @@ export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 export const getConnectorImageDetails = (
     connector: ConnectorWithTagDetailQuery
-) => {
+): Details['data']['connectorImage'] => {
     return {
         connectorId: connector.id,
         id: connector.connector_tags[0].id,
+        imageName: connector.image_name,
         imagePath: `${connector.image_name}${connector.connector_tags[0].image_tag}`,
         iconPath: connector.image,
     };
@@ -75,13 +76,14 @@ function DetailsFormForm({
             connectorTags.find((connector) => {
                 const response =
                     connector.connector_tags[0].connector_id === connectorId;
+
                 if (response) {
                     setDetails_connector(getConnectorImageDetails(connector));
                 }
                 return response;
             });
         }
-    }, [connectorId, connectorTags, setDetails_connector]);
+    }, [setDetails_connector, connectorId, connectorTags]);
 
     const accessGrantsOneOf = useMemo(() => {
         const response = [] as string[];

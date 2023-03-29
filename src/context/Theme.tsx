@@ -148,18 +148,20 @@ const darkMode: PaletteOptions = {
 //  It doesn't come up often but happens enough it would be nice to handle better.
 export const zIndexIncrement = 5;
 
+// Makes sure the hovering styling can be seen
+const buttonHoverIndex = zIndexIncrement * 4;
+
+// To make the delete in a multi select to work
+const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
+
+// JSONForms accordion is hardcoded to 20 so making this "1 higher"
+const accordionButton = zIndexIncrement * 5;
+
 // Need to make the sticky header be on top
 export const headerLinkIndex = zIndexIncrement * 30;
 
 // Popper component z index must be greater than 100, the z index of the reflex splitter component.
-export const popperIndex = zIndexIncrement * 25;
-
-// Makes sure the hovering styling can be seen
-const buttonHoverIndex = zIndexIncrement * 4;
-// To make the delete in a multi select to work
-const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
-// JSONForms accordion is hardcoded to 20 so making this "1 higher"
-const accordionButton = zIndexIncrement * 5;
+export const popperIndex = zIndexIncrement * 500;
 
 // Borders
 
@@ -241,10 +243,7 @@ export const alertTextPrimary = {
     light: 'rgba(0, 0, 0, 0.8)',
     dark: 'rgb(255, 255, 255)',
 };
-export const alertBackground = {
-    light: 'white',
-    dark: semiTransparentBackgroundIntensified.dark,
-};
+export const alertBackground = paperBackground;
 
 export const monacoEditorHeaderBackground = {
     light: 'white',
@@ -459,8 +458,12 @@ const themeSettings = createTheme({
     },
 } as ThemeOptions);
 
-const ColorModeContext = React.createContext({
+const ColorModeContext = React.createContext<{
+    toggleColorMode: () => void;
+    colorMode: string | undefined;
+}>({
     toggleColorMode: () => {},
+    colorMode: undefined,
 });
 
 // TODO: Enable color mode toggling once light mode colors are refined.
@@ -550,7 +553,9 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
     }, [setPalette, palette, mode]);
 
     return (
-        <ColorModeContext.Provider value={{ toggleColorMode: toggler }}>
+        <ColorModeContext.Provider
+            value={{ toggleColorMode: toggler, colorMode: mode }}
+        >
             <MUIThemeProvider theme={generatedTheme}>
                 <CssBaseline />
                 {children}

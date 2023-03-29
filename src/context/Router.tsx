@@ -1,6 +1,6 @@
 import EntityExistenceGuard from 'app/guards/EntityExistenceGuard';
+import AppLayout from 'app/Layout';
 import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
-import AppLayout from 'AppLayout';
 import AccessGrants from 'components/admin/AccessGrants';
 import AdminApi from 'components/admin/Api';
 import AdminConnectors from 'components/admin/Connectors';
@@ -25,6 +25,7 @@ import Admin from 'pages/Admin';
 import Auth from 'pages/Auth';
 import Captures from 'pages/Captures';
 import Collections from 'pages/Collections';
+import DataPlaneAuthReq from 'pages/DataPlaneAuthReq';
 import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
@@ -228,6 +229,10 @@ const router = createBrowserRouter(
                             />
                         </Route>
                     </Route>
+                    <Route
+                        path={authenticatedRoutes.dataPlaneAuth.path}
+                        element={<DataPlaneAuthReq />}
+                    />
 
                     <Route path={authenticatedRoutes.materializations.path}>
                         <Route

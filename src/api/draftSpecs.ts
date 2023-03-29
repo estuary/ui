@@ -10,9 +10,7 @@ import {
     TABLES,
     updateSupabase,
 } from 'services/supabase';
-import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity } from 'types';
-import { CaptureDef, CaptureEndpoint } from '../../flow_deps/flow';
 
 interface CreateMatchData {
     draft_id: string | null;
@@ -56,33 +54,6 @@ export const createDraftSpec = (
     return insertSupabase(TABLES.DRAFT_SPECS, matchData);
 };
 
-export const updateDraftSpec = (
-    draftId: string | null,
-    catalogName: string,
-    draftSpec: any,
-    lastPubId?: string | null
-) => {
-    let matchData: UpdateMatchData = {
-        draft_id: draftId,
-        catalog_name: catalogName,
-    };
-
-    if (lastPubId) {
-        matchData = { ...matchData, expect_pub_id: lastPubId };
-    }
-
-    return updateSupabase(
-        TABLES.DRAFT_SPECS,
-        {
-            spec: draftSpec,
-        },
-        matchData
-    );
-};
-
-// TODO (optimization): Determine whether to replace all instances of updateDraftSpec
-//   with this modified and extendible version of that function. If that is desired,
-//   rename the function below to updateDraftSpec and remove the existing function.
 export const modifyDraftSpec = (
     draftSpec: any,
     matchData: UpdateMatchData,
@@ -106,67 +77,6 @@ export const modifyDraftSpec = (
     return updateSupabase(TABLES.DRAFT_SPECS, data, matchData);
 };
 
-export const generateDraftSpec = (
-    config: any,
-    image: string,
-    resources?: any
-) => {
-    // TODO (typing) MaterializationDef
-    const draftSpec: any = {
-        bindings: [],
-        endpoint: {
-            connector: {
-                config,
-                image,
-            },
-        },
-    };
-
-    if (resources) {
-        Object.keys(resources).forEach((collectionName) => {
-            const resourceConfig = resources[collectionName].data;
-
-            if (Object.keys(resourceConfig).length > 0) {
-                draftSpec.bindings.push({
-                    source: collectionName,
-                    resource: {
-                        ...resourceConfig,
-                    },
-                });
-            }
-        });
-    }
-
-    return draftSpec;
-};
-
-export const generateCaptureDraftSpec = (
-    endpoint: CaptureEndpoint,
-    resourceConfig: ResourceConfigDictionary | null
-): CaptureDef => {
-    const draftSpec: CaptureDef = {
-        bindings: [],
-        endpoint,
-    };
-
-    if (resourceConfig) {
-        Object.keys(resourceConfig).forEach((collectionName) => {
-            const resources = resourceConfig[collectionName].data;
-
-            if (Object.keys(resources).length > 0) {
-                draftSpec.bindings.push({
-                    target: collectionName,
-                    resource: {
-                        ...resources,
-                    },
-                });
-            }
-        });
-    }
-
-    return draftSpec;
-};
-
 export const deleteDraftSpec = (draftId: string) => {
     return deleteSupabase(TABLES.DRAFT_SPECS, { draft_id: draftId });
 };
@@ -186,13 +96,37 @@ export const getDraftSpecsBySpecType = async (
         .then(handleSuccess<DraftSpecQuery[]>, handleFailure);
 };
 
+interface DraftSpecsExtQuery_BySpecTypeReduced {
+    draft_id: string;
+    catalog_name: string;
+    spec_type: string;
+}
+
+export const getDraftSpecsBySpecTypeReduced = async (
+    draftId: string,
+    specType: Entity
+) => {
+    const data = await supabaseClient
+        .from(TABLES.DRAFT_SPECS_EXT)
+        .select(`draft_id,catalog_name,spec_type`)
+        .eq('draft_id', draftId)
+        .eq('spec_type', specType)
+        .then(
+            handleSuccess<DraftSpecsExtQuery_BySpecTypeReduced[]>,
+            handleFailure
+        );
+
+    return data;
+};
+
 // TODO (optimization | typing): This is temporary typing given the supabase package upgrade will
 //   considerably alter our approach to typing.
-interface DraftSpecsExtQuery_ByCatalogName {
+export interface DraftSpecsExtQuery_ByCatalogName {
     draft_id: string;
     catalog_name: string;
     spec_type: string;
     spec: any;
+    expect_pub_id: string;
 }
 
 export const getDraftSpecsByCatalogName = async (
@@ -202,11 +136,11 @@ export const getDraftSpecsByCatalogName = async (
 ) => {
     const data = await supabaseClient
         .from(TABLES.DRAFT_SPECS_EXT)
-        .select(`draft_id,catalog_name,spec_type,spec`)
+        .select(`draft_id,catalog_name,spec_type,spec,expect_pub_id`)
         .eq('draft_id', draftId)
         .eq('catalog_name', catalogName)
         .eq('spec_type', specType)
-        .then(handleSuccess<DraftSpecsExtQuery_ByCatalogName>, handleFailure);
+        .then(handleSuccess<DraftSpecsExtQuery_ByCatalogName[]>, handleFailure);
 
     return data;
 };
@@ -223,28 +157,63 @@ export const deleteDraftSpecsByCatalogName = async (
     const promises: Array<Promise<PostgrestResponse<any>>> = [];
     let index = 0;
 
-    const deletePromiseGenerator = (idx: number) =>
-        supabaseClient
+    const deletePromiseGenerator = (idx: number) => {
+        return supabaseClient
             .from(TABLES.DRAFT_SPECS)
             .delete()
             .eq('draft_id', draftId)
             .eq('spec_type', specType)
             .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE));
+    };
 
-    // This could probably be written in a fancy functional-programming way with
-    // clever calls to concat and map and slice and stuff,
-    // but I want it to be dead obvious what's happening here.
-    while (index < catalogNames.length) {
-        // Have to do this to capture `index` correctly
-        const prom = deletePromiseGenerator(index);
-        promises.push(limiter(() => prom));
+    if (catalogNames.length > 0) {
+        // This could probably be written in a fancy functional-programming way with
+        // clever calls to concat and map and slice and stuff,
+        // but I want it to be dead obvious what's happening here.
+        while (index < catalogNames.length) {
+            // Have to do this to capture `index` correctly
+            const prom = deletePromiseGenerator(index);
+            promises.push(limiter(() => prom));
 
-        index = index + CHUNK_SIZE;
+            index = index + CHUNK_SIZE;
+        }
+
+        const res = await Promise.all(promises);
+
+        const errors = res.filter((r) => r.error);
+
+        // TODO (unbound collections) This is hacky but it works
+        //  We call this in 3 places (as of March 2023) and only one checks
+        //  the response. It only checks for `error` so making this always return
+        //  back an object with error. This way the typing is consistent.
+        return {
+            error: errors[0] ? errors[0].error : res[0].error,
+        };
+    } else {
+        return {
+            error: null,
+        };
     }
+};
 
-    const res = await Promise.all(promises);
+export interface DraftSpecsExtQuery_ByDraftId {
+    draft_id: string;
+    catalog_name: string;
+    spec_type: string;
+    spec: any;
+    expect_pub_id: string;
+}
 
-    const errors = res.filter((r) => r.error);
+export const getDraftSpecsByDraftId = async (
+    draftId: string,
+    specType: Entity
+) => {
+    const data = await supabaseClient
+        .from(TABLES.DRAFT_SPECS_EXT)
+        .select(`draft_id,catalog_name,spec_type,spec,expect_pub_id`)
+        .eq('draft_id', draftId)
+        .eq('spec_type', specType)
+        .then(handleSuccess<DraftSpecsExtQuery_ByDraftId[]>, handleFailure);
 
-    return errors[0] ?? res[0];
+    return data;
 };

@@ -12,6 +12,9 @@ import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
@@ -19,10 +22,9 @@ import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
-    useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_entityNameChanged,
-} from 'stores/DetailsForm';
+} from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_changed,
     useEndpointConfig_serverUpdateRequired,
@@ -62,6 +64,8 @@ function EntityCreate({
 }: Props) {
     useBrowserTitle(title);
 
+    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
+
     // Supabase stuff
     const { combinedGrants } = useCombinedGrantsExt({
         adminOnly: true,
@@ -75,8 +79,6 @@ function EntityCreate({
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
-    const detailsFormChanged = useDetailsForm_changed();
-
     const entityNameChanged = useDetailsForm_entityNameChanged();
 
     // Draft Editor Store
@@ -131,17 +133,25 @@ function EntityCreate({
     ]);
 
     // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.
-    // TODO (defect): Prevent prompt data loss dialog from appearing when transitioning to edit workflow.
-    const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
-
+    const promptDataLoss = endpointConfigChanged();
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
-    const displayResourceConfig =
-        entityType === 'materialization'
-            ? hasLength(imageTag.connectorId)
-            : hasLength(imageTag.connectorId) &&
-              !entityNameChanged &&
-              persistedDraftId;
+    const displayResourceConfig = useMemo(
+        () =>
+            entityType === 'materialization'
+                ? hasLength(imageTag.connectorId)
+                : hasLength(imageTag.connectorId) &&
+                  imageTag.connectorId === connectorId &&
+                  !entityNameChanged &&
+                  persistedDraftId,
+        [
+            connectorId,
+            entityType,
+            entityNameChanged,
+            imageTag.connectorId,
+            persistedDraftId,
+        ]
+    );
 
     return connectorTagsError ? (
         <Error error={connectorTagsError} />

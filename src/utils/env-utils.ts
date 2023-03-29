@@ -157,3 +157,13 @@ export const getOsanoSettings = () => {
 
     return settings;
 };
+
+export const getDocsSettings = () => {
+    const settings = {
+        origin: process.env.REACT_APP_DOCS_ORIGIN ?? '',
+        iframeStringInclude:
+            process.env.REACT_APP_DOCS_IFRAME_STRING_INCLUDE ?? '',
+    };
+
+    return settings;
+};

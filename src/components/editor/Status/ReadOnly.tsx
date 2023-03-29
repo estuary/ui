@@ -1,21 +1,21 @@
 import { Typography } from '@mui/material';
-import { DbCheck } from 'iconoir-react';
+import EditOff from 'icons/EditOff';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
     iconSize: number;
 }
 
-function Saved({ iconSize }: Props) {
+function ReadOnly({ iconSize }: Props) {
     return (
         <>
             <Typography>
-                <FormattedMessage id="common.saved" />
+                <FormattedMessage id="common.readOnly" />
             </Typography>
 
-            <DbCheck style={{ fontSize: iconSize }} />
+            <EditOff style={{ fontSize: iconSize }} />
         </>
     );
 }
 
-export default Saved;
+export default ReadOnly;

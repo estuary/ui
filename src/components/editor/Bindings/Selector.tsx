@@ -16,8 +16,10 @@ import {
     GridSelectionModel,
     GridValueGetterParams,
 } from '@mui/x-data-grid';
+import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import CollectionPicker from 'components/collection/Picker';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
+import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import {
     alternativeDataGridHeader,
     defaultOutline,
@@ -25,12 +27,13 @@ import {
 } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
 import { Cancel, WarningCircle } from 'iconoir-react';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
-import { useDetailsForm_details_entityName } from 'stores/DetailsForm';
+import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
+    useResourceConfig_collections,
     useResourceConfig_currentCollection,
     useResourceConfig_discoveredCollections,
     useResourceConfig_removeAllCollections,
@@ -55,9 +58,11 @@ interface RowProps {
     task: string;
     workflow: EntityWorkflow | null;
     disabled: boolean;
+    draftId: string | null;
 }
 
-function Row({ collection, task, workflow, disabled }: RowProps) {
+function Row({ collection, task, workflow, disabled, draftId }: RowProps) {
+    // Resource Config Store
     const discoveredCollections = useResourceConfig_discoveredCollections();
     const removeCollection = useResourceConfig_removeCollection();
 
@@ -84,6 +89,12 @@ function Row({ collection, task, workflow, disabled }: RowProps) {
                     : setRestrictedDiscoveredCollections(collection);
             } else {
                 setRestrictedDiscoveredCollections(collection);
+            }
+
+            if (draftId && !discoveredCollections?.includes(collection)) {
+                void deleteDraftSpecsByCatalogName(draftId, 'collection', [
+                    collection,
+                ]);
             }
         },
     };
@@ -137,6 +148,9 @@ function BindingSelector({
     // Details Form Store
     const task = useDetailsForm_details_entityName();
 
+    // Draft Editor Store
+    const draftId = useEditorStore_persistedDraftId();
+
     // Form State Store
     const formActive = useFormStateStore_isActive();
 
@@ -144,11 +158,12 @@ function BindingSelector({
     const currentCollection = useResourceConfig_currentCollection();
     const setCurrentCollection = useResourceConfig_setCurrentCollection();
 
+    const collections = useResourceConfig_collections();
+    const discoveredCollections = useResourceConfig_discoveredCollections();
+
     const resourceConfig = useResourceConfig_resourceConfig();
 
     const removeAllCollections = useResourceConfig_removeAllCollections();
-
-    const resourceConfigKeys = Object.keys(resourceConfig);
 
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
         []
@@ -159,6 +174,22 @@ function BindingSelector({
             event.stopPropagation();
 
             removeAllCollections(workflow, task);
+
+            const publishedCollections =
+                discoveredCollections && collections
+                    ? collections.filter(
+                          (collection) =>
+                              !discoveredCollections.includes(collection)
+                      )
+                    : [];
+
+            if (draftId && publishedCollections.length > 0) {
+                void deleteDraftSpecsByCatalogName(
+                    draftId,
+                    'collection',
+                    publishedCollections
+                );
+            }
         },
     };
 
@@ -172,7 +203,9 @@ function BindingSelector({
                 <Typography>{params.colDef.headerName}</Typography>
             ),
             renderCell: (params: GridRenderCellParams) => {
-                const currentConfig = resourceConfig[params.row];
+                const collection = params.row.name;
+                const currentConfig = resourceConfig[collection];
+
                 if (currentConfig.errors.length > 0) {
                     return (
                         <>
@@ -187,10 +220,11 @@ function BindingSelector({
                             </Box>
 
                             <Row
-                                collection={params.row}
+                                collection={collection}
                                 task={task}
                                 workflow={workflow}
                                 disabled={formActive}
+                                draftId={draftId}
                             />
                         </>
                     );
@@ -198,16 +232,26 @@ function BindingSelector({
 
                 return (
                     <Row
-                        collection={params.row}
+                        collection={collection}
                         task={task}
                         workflow={workflow}
                         disabled={formActive}
+                        draftId={draftId}
                     />
                 );
             },
-            valueGetter: (params: GridValueGetterParams) => params.row,
+            valueGetter: (params: GridValueGetterParams) => params.row.name,
         },
     ];
+
+    const rows = useMemo(
+        () =>
+            Object.keys(resourceConfig).map((collection) => ({
+                id: collection,
+                name: collection,
+            })),
+        [resourceConfig]
+    );
 
     useEffect(() => {
         if (currentCollection) setSelectionModel([currentCollection]);
@@ -261,15 +305,12 @@ function BindingSelector({
                     components={{
                         NoRowsOverlay: SelectorEmpty,
                     }}
-                    rows={resourceConfigKeys}
+                    rows={rows}
                     columns={columns}
                     headerHeight={40}
-                    rowCount={resourceConfigKeys.length}
+                    rowCount={rows.length}
                     hideFooter
                     disableColumnSelector
-                    onSelectionModelChange={(newSelectionModel) => {
-                        setSelectionModel(newSelectionModel);
-                    }}
                     onRowClick={(params: any) => {
                         // This is hacky but it works. It clears out the
                         //  current collection before switching.
@@ -278,11 +319,8 @@ function BindingSelector({
                         //  to go into the wrong form.
                         setCurrentCollection(null);
                         onSelectTimeOut.current = window.setTimeout(() => {
-                            setCurrentCollection(params.row);
+                            setCurrentCollection(params.row.name);
                         });
-                    }}
-                    getRowId={(resourceConfigKey) => {
-                        return resourceConfigKey;
                     }}
                     selectionModel={selectionModel}
                     initialState={initialState}

@@ -7,10 +7,10 @@ import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import { useEntityWorkflow } from 'context/Workflow';
 import useConnectorTag from 'hooks/useConnectorTag';
-import { isEqual } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useUpdateEffect } from 'react-use';
+import { useUnmount } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     useEndpointConfigStore_endpointConfig_data,
@@ -19,8 +19,13 @@ import {
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
     useEndpointConfigStore_setPreviousEndpointConfig,
+    useEndpointConfig_setEndpointCanBeEmpty,
     useEndpointConfig_setServerUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
+import {
+    useSidePanelDocsStore_resetState,
+    useSidePanelDocsStore_setUrl,
+} from 'stores/SidePanelDocs/hooks';
 import { Schema } from 'types';
 
 interface Props {
@@ -34,11 +39,8 @@ function EndpointConfig({
     readOnly = false,
     hideBorder,
 }: Props) {
+    // General hooks
     const intl = useIntl();
-
-    const workflow = useEntityWorkflow();
-    const editWorkflow =
-        workflow === 'capture_edit' || workflow === 'materialization_edit';
 
     // The useConnectorTag hook can accept a connector ID or a connector tag ID.
     const { connectorTag, error } = useConnectorTag(connectorImage);
@@ -49,17 +51,36 @@ function EndpointConfig({
     // Endpoint Config Store
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
-
     const previousEndpointConfig =
         useEndpointConfigStore_previousEndpointConfig_data();
     const setPreviousEndpointConfig =
         useEndpointConfigStore_setPreviousEndpointConfig();
-
     const endpointSchema = useEndpointConfigStore_endpointSchema();
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
-
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
+    const setEndpointCanBeEmpty = useEndpointConfig_setEndpointCanBeEmpty();
 
+    // Workflow related props
+    const workflow = useEntityWorkflow();
+    const editWorkflow =
+        workflow === 'capture_edit' || workflow === 'materialization_edit';
+    const forceClose = !editWorkflow && draftId !== null;
+
+    // Storing if this endpointConfig can be empty or not
+    //  If so we know there will never be a "change" to the endpoint config
+    const canBeEmpty = useMemo(() => {
+        return (
+            !connectorTag?.endpoint_spec_schema.properties ||
+            isEmpty(connectorTag.endpoint_spec_schema.properties)
+        );
+    }, [connectorTag?.endpoint_spec_schema]);
+
+    useEffect(() => {
+        setEndpointCanBeEmpty(canBeEmpty);
+    }, [canBeEmpty, setEndpointCanBeEmpty]);
+
+    // Storing flag to handle knowing if a config changed
+    //  during both create or edit.
     const endpointSchemaChanged = useMemo(
         () =>
             connectorTag?.endpoint_spec_schema &&
@@ -87,15 +108,27 @@ function EndpointConfig({
         endpointSchemaChanged,
     ]);
 
+    // Controlling if we need to show the generate button again
     const endpointConfigUpdated = useMemo(() => {
-        return !isEqual(endpointConfig, previousEndpointConfig);
-    }, [endpointConfig, previousEndpointConfig]);
-
-    useUpdateEffect(() => {
+        return canBeEmpty
+            ? false
+            : !isEqual(endpointConfig, previousEndpointConfig);
+    }, [canBeEmpty, endpointConfig, previousEndpointConfig]);
+    useEffect(() => {
         setServerUpdateRequired(endpointConfigUpdated);
     }, [setServerUpdateRequired, endpointConfigUpdated]);
 
-    const forceClose = !editWorkflow && draftId !== null;
+    // Populating/handling the side panel docs url
+    const setDocsURL = useSidePanelDocsStore_setUrl();
+    const sidePanelResetState = useSidePanelDocsStore_resetState();
+    useUnmount(() => {
+        sidePanelResetState();
+    });
+    useEffect(() => {
+        if (connectorTag) {
+            setDocsURL(connectorTag.documentation_url);
+        }
+    }, [connectorTag, setDocsURL]);
 
     if (error) {
         return <Error error={error} />;
@@ -106,11 +139,7 @@ function EndpointConfig({
                 forceClose={forceClose}
                 readOnly={readOnly}
                 hideBorder={hideBorder}
-                header={
-                    <EndpointConfigHeader
-                        docsPath={connectorTag.documentation_url}
-                    />
-                }
+                header={<EndpointConfigHeader />}
             >
                 {readOnly ? (
                     <Box sx={{ mb: 3 }}>

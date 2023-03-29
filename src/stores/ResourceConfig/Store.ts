@@ -1,3 +1,4 @@
+import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import {
     getLiveSpecsByLastPubId,
     getLiveSpecsByLiveSpecId,
@@ -151,14 +152,10 @@ const getInitialState = (
                 const collections: string[] = [];
 
                 const queryProp =
-                    entityType === 'materialization'
-                        ? 'reads_from'
-                        : 'writes_to';
+                    entityType === 'materialization' ? 'source' : 'target';
 
-                value.forEach((queryData) => {
-                    queryData[queryProp].forEach((collection) => {
-                        collections.push(collection);
-                    });
+                value.forEach((binding: any) => {
+                    collections.push(binding[queryProp]);
                 });
 
                 state.collections = collections;
@@ -503,6 +500,7 @@ const getInitialState = (
     hydrateState: async (editWorkflow, entityType) => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
+        const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
         const prefillPubIds = searchParams.getAll(
             GlobalSearchParams.PREFILL_PUB_ID
         );
@@ -529,10 +527,9 @@ const getInitialState = (
         }
 
         if (editWorkflow && liveSpecIds.length > 0) {
-            const { data, error } = await getLiveSpecsByLiveSpecId(
-                liveSpecIds[0],
-                entityType
-            );
+            const { data, error } = draftId
+                ? await getDraftSpecsByDraftId(draftId, entityType)
+                : await getLiveSpecsByLiveSpecId(liveSpecIds[0], entityType);
 
             if (error) {
                 setHydrationErrorsExist(true);
@@ -555,7 +552,7 @@ const getInitialState = (
                     })
                 );
 
-                preFillCollections(data, entityType);
+                preFillCollections(sortedBindings, entityType);
             }
         }
 
