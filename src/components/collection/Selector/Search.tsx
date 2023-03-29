@@ -8,6 +8,7 @@ import {
     TextField,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import ListboxComponent from 'components/shared/AutoComplete/VirtualizedList';
 import { isEqual } from 'lodash';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -16,7 +17,6 @@ import {
     detectRemoveOptionWithBackspace,
 } from 'utils/mui-utils';
 import { CollectionData } from './types';
-import ListboxComponent from './VirtualizedList';
 
 interface Props {
     options: any[];
