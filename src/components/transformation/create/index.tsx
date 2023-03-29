@@ -391,13 +391,16 @@ function TransformationCreate() {
                                     id: 'newTransform.button.cta',
                                 })}
                         </LoadingButton>
-                        <Typography
-                            variant="body2"
-                            sx={{ color: 'rgb(150,150,150)' }}
-                        >
-                            <FormattedMessage id="newTransform.instructions" />
+                        <Stack>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: 'rgb(150,150,150)' }}
+                            >
+                                <FormattedMessage id="newTransform.instructions" />
+                            </Typography>
+
                             <SingleLineCode value="flowctl --help" />
-                        </Typography>
+                        </Stack>
                     </Box>
                 </Box>
             </Stack>
