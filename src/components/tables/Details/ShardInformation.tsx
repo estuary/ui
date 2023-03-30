@@ -16,7 +16,6 @@ import {
 } from '@mui/material';
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import ExternalLink from 'components/shared/ExternalLink';
-import ShardErrors from 'components/tables/Details/ShardErrors';
 import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';
 import { sample_grey } from 'context/Theme';
 import { Shard } from 'data-plane-gateway/types/shard_client';
@@ -28,6 +27,7 @@ import {
     useShardDetail_shards,
 } from 'stores/ShardDetail/hooks';
 import { Entity } from 'types';
+import ShardErrors from './ShardErrors';
 
 interface Props {
     entityType?: Entity;
@@ -88,7 +88,13 @@ function ShardInformation({ entityType }: Props) {
 
     return taskShards.length > 0 ? (
         <>
-            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 500 }}>
+            <Typography
+                component="span"
+                variant="h6"
+                sx={{
+                    alignItems: 'center',
+                }}
+            >
                 <FormattedMessage id="detailsPanel.status.header" />
             </Typography>
 
