@@ -31,7 +31,7 @@ function Overview({ name }: Props) {
 
     return (
         <Grid container spacing={2}>
-            <Endpoints />
+            <Endpoints name={entityName} />
 
             {!isCollection || isDerivation ? (
                 <Grid item xs={12}>

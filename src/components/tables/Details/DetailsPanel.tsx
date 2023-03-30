@@ -1,17 +1,18 @@
 import {
     Box,
     Collapse,
+    Divider,
     Grid,
-    Stack,
     TableCell,
     TableRow,
     Typography,
     useTheme,
 } from '@mui/material';
+import { DataPreview } from 'components/collection/DataPreview';
 import { createEditorStore } from 'components/editor/Store/create';
-import EditorHydrator from 'components/editor/Store/Hydrator';
-import Overview from 'components/shared/Entity/Details/Overview';
-import ShardHydrator from 'components/shared/Entity/Shard/Hydrator';
+import { TaskEndpoints } from 'components/shared/TaskEndpoints';
+import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
+import ShardInformation from 'components/tables/Details/ShardInformation';
 import { LocalZustandProvider } from 'context/LocalZustand';
 import { detailsPanelBgColor } from 'context/Theme';
 import { concat } from 'lodash';
@@ -19,7 +20,6 @@ import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { EditorStoreNames } from 'stores/names';
 import { Entity } from 'types';
-import EditorAndLogs from './EditorAndLogs';
 
 interface Props {
     detailsExpanded: boolean;
@@ -35,7 +35,7 @@ function DetailsPanel({
     detailsExpanded,
     lastPubId,
     colSpan,
-    // entityType,
+    entityType,
     collectionNames,
     entityName,
 }: Props) {
@@ -45,6 +45,21 @@ function DetailsPanel({
         () => concat([entityName], collectionNames),
         [collectionNames, entityName]
     ) as string[];
+
+    const isCollection = entityType === 'collection';
+
+    const endpoints = useMemo(() => {
+        if (entityType === 'capture' || entityType === 'materialization') {
+            return (
+                <Grid item xs={12}>
+                    <TaskEndpoints taskName={entityName} />
+                    <Divider sx={{ mt: 4 }} />
+                </Grid>
+            );
+        } else {
+            return null;
+        }
+    }, [entityName, entityType]);
 
     return (
         <TableRow>
@@ -72,54 +87,43 @@ function DetailsPanel({
                                 EditorStoreNames.GENERAL
                             )}
                         >
-                            <EditorHydrator
-                                collectionNames={[entityName]}
-                                lastPubId={lastPubId}
-                                localZustandScope={true}
-                            >
-                                <ShardHydrator
-                                    lastPubId={lastPubId}
-                                    catalogName={entityName}
-                                >
-                                    <Box>
-                                        <Box sx={{ m: 1 }}>
-                                            <Overview name={entityName} />
-                                            <Grid container spacing={2}>
-                                                <Grid item xs={12}>
-                                                    <Stack
-                                                        direction="column"
-                                                        spacing={2}
-                                                        sx={{ m: 2 }}
-                                                    >
-                                                        <Typography
-                                                            component="span"
-                                                            variant="h6"
-                                                            sx={{
-                                                                alignItems:
-                                                                    'center',
-                                                            }}
-                                                        >
-                                                            <FormattedMessage id="detailsPanel.specification.header" />
-                                                        </Typography>
-                                                        <EditorAndLogs
-                                                            collectionNames={
-                                                                fullList
-                                                            }
-                                                            lastPubId={
-                                                                lastPubId
-                                                            }
-                                                            disableLogs={true}
-                                                            localZustandScope={
-                                                                true
-                                                            }
-                                                        />
-                                                    </Stack>
-                                                </Grid>
-                                            </Grid>
-                                        </Box>
-                                    </Box>
-                                </ShardHydrator>
-                            </EditorHydrator>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <ShardInformation entityType={entityType} />
+                                </Grid>
+
+                                {endpoints}
+
+                                <Grid item xs={12}>
+                                    <Typography
+                                        variant="subtitle1"
+                                        sx={{ mb: 2, fontWeight: 500 }}
+                                    >
+                                        <FormattedMessage id="detailsPanel.specification.header" />
+                                    </Typography>
+
+                                    <EditorAndLogs
+                                        collectionNames={fullList}
+                                        lastPubId={lastPubId}
+                                        disableLogs={true}
+                                        localZustandScope={true}
+                                    />
+                                </Grid>
+
+                                {entityName && isCollection ? (
+                                    <>
+                                        <Grid item xs={12}>
+                                            <Divider />
+                                        </Grid>
+
+                                        <Grid item xs={12}>
+                                            <DataPreview
+                                                collectionName={entityName}
+                                            />
+                                        </Grid>
+                                    </>
+                                ) : null}
+                            </Grid>
                         </LocalZustandProvider>
                     </Box>
                 </Collapse>
