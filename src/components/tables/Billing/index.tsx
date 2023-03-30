@@ -52,8 +52,6 @@ function ProjectedCostsTable({ grants }: Props) {
         setColumnToSort,
     } = useTableState('bil', 'ts', 'desc');
 
-    // const { combinedGrants } = useCombinedGrantsExt({ adminOnly: true });
-
     const query = useMemo(() => {
         return getStatsForBillingExt(grants, pagination, searchQuery, [
             {
@@ -92,7 +90,7 @@ function ProjectedCostsTable({ grants }: Props) {
                     header={headerKey}
                     filterLabel={filterKey}
                     selectableTableStoreName={selectableTableStoreName}
-                    hideHeader={true}
+                    hideHeaderAndFooter={true}
                 />
             </TableHydrator>
         </Box>

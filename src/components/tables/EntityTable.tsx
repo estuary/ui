@@ -70,12 +70,12 @@ interface Props {
     setColumnToSort: (data: any) => void;
     header: string;
     filterLabel: string;
+    noExistingDataContentIds: TableIntlConfig;
+    selectableTableStoreName: SelectTableStoreNames;
     enableSelection?: boolean;
     rowSelectorProps?: RowSelectorProps;
-    noExistingDataContentIds: TableIntlConfig;
     showEntityStatus?: boolean;
-    selectableTableStoreName: SelectTableStoreNames;
-    hideHeader?: boolean;
+    hideHeaderAndFooter?: boolean;
 }
 
 export const getPagination = (currPage: number, size: number) => {
@@ -112,7 +112,7 @@ function EntityTable({
     rowSelectorProps,
     showEntityStatus = false,
     selectableTableStoreName,
-    hideHeader,
+    hideHeaderAndFooter,
 }: Props) {
     const isFiltering = useRef(Boolean(searchQuery));
     const searchTextField = useRef<HTMLInputElement>(null);
@@ -268,7 +268,7 @@ function EntityTable({
 
     return (
         <Box data-public>
-            {hideHeader ? null : (
+            {hideHeaderAndFooter ? null : (
                 <Box sx={{ mx: 2 }}>
                     <Stack direction="row" spacing={1}>
                         {enableSelection ? (
@@ -309,7 +309,7 @@ function EntityTable({
                 </Box>
             )}
 
-            <Box sx={hideHeader ? {} : { mb: 2, mx: 2 }}>
+            <Box sx={hideHeaderAndFooter ? {} : { mb: 2, mx: 2 }}>
                 <TableContainer component={Box}>
                     <Table
                         size="small"
@@ -321,7 +321,7 @@ function EntityTable({
                         <TableHead>
                             <TableRow
                                 sx={{
-                                    background: hideHeader
+                                    background: hideHeaderAndFooter
                                         ? undefined
                                         : theme.palette.background.default,
                                 }}
@@ -345,7 +345,7 @@ function EntityTable({
                                         >
                                             {selectData &&
                                             column.field &&
-                                            !hideHeader ? (
+                                            !hideHeaderAndFooter ? (
                                                 <TableSortLabel
                                                     IconComponent={ArrowDown}
                                                     active={
@@ -430,7 +430,7 @@ function EntityTable({
                             )}
                         </TableBody>
 
-                        {dataRows && selectDataCount && !hideHeader ? (
+                        {dataRows && selectDataCount && !hideHeaderAndFooter ? (
                             <TableFooter>
                                 <TableRow>
                                     <TablePagination
