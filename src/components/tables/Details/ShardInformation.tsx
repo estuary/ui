@@ -88,13 +88,7 @@ function ShardInformation({ entityType }: Props) {
 
     return taskShards.length > 0 ? (
         <>
-            <Typography
-                component="span"
-                variant="h6"
-                sx={{
-                    alignItems: 'center',
-                }}
-            >
+            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 500 }}>
                 <FormattedMessage id="detailsPanel.status.header" />
             </Typography>
 
