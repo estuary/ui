@@ -9,9 +9,9 @@ import {
     Typography,
 } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
-import DataByMonthGraph from 'components/admin/Billing/DataByMonthGraph';
-import DataByTaskGraph from 'components/admin/Billing/DataByTaskGraph';
-import TasksByMonth from 'components/admin/Billing/TasksByMonthGraph';
+import DataByMonthGraph from 'components/admin/Billing/graphs/DataByMonthGraph';
+import DataByTaskGraph from 'components/admin/Billing/graphs/DataByTaskGraph';
+import TasksByMonth from 'components/admin/Billing/graphs/TasksByMonthGraph';
 import AdminTabs from 'components/admin/Tabs';
 import MessageWithLink from 'components/content/MessageWithLink';
 import PageContainer from 'components/shared/PageContainer';
