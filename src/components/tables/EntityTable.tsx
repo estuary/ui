@@ -75,6 +75,7 @@ interface Props {
     noExistingDataContentIds: TableIntlConfig;
     showEntityStatus?: boolean;
     selectableTableStoreName: SelectTableStoreNames;
+    hideHeader?: boolean;
 }
 
 export const getPagination = (currPage: number, size: number) => {
@@ -111,6 +112,7 @@ function EntityTable({
     rowSelectorProps,
     showEntityStatus = false,
     selectableTableStoreName,
+    hideHeader,
 }: Props) {
     const isFiltering = useRef(Boolean(searchQuery));
     const searchTextField = useRef<HTMLInputElement>(null);
@@ -266,46 +268,48 @@ function EntityTable({
 
     return (
         <Box data-public>
-            <Box sx={{ mx: 2 }}>
-                <Stack direction="row" spacing={1}>
-                    {enableSelection ? (
-                        <Title header={header} marginBottom={2} />
-                    ) : null}
-                </Stack>
+            {hideHeader ? null : (
+                <Box sx={{ mx: 2 }}>
+                    <Stack direction="row" spacing={1}>
+                        {enableSelection ? (
+                            <Title header={header} marginBottom={2} />
+                        ) : null}
+                    </Stack>
 
-                <Toolbar
-                    disableGutters
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'start',
-                    }}
-                >
-                    {enableSelection ? (
-                        <RowSelector {...rowSelectorProps} />
-                    ) : (
-                        <Title header={header} />
-                    )}
-
-                    <TextField
-                        inputRef={searchTextField}
-                        id="capture-search-box"
-                        label={intl.formatMessage({
-                            id: filterLabel,
-                        })}
-                        variant="outlined"
-                        size="small"
-                        defaultValue={searchQuery}
-                        onChange={handlers.filterTable}
+                    <Toolbar
+                        disableGutters
                         sx={{
-                            'width': belowMd ? 'auto' : 350,
-                            '& .MuiInputBase-root': { borderRadius: 3 },
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'start',
                         }}
-                    />
-                </Toolbar>
-            </Box>
+                    >
+                        {enableSelection ? (
+                            <RowSelector {...rowSelectorProps} />
+                        ) : (
+                            <Title header={header} />
+                        )}
 
-            <Box sx={{ mb: 2, mx: 2 }}>
+                        <TextField
+                            inputRef={searchTextField}
+                            id="capture-search-box"
+                            label={intl.formatMessage({
+                                id: filterLabel,
+                            })}
+                            variant="outlined"
+                            size="small"
+                            defaultValue={searchQuery}
+                            onChange={handlers.filterTable}
+                            sx={{
+                                'width': belowMd ? 'auto' : 350,
+                                '& .MuiInputBase-root': { borderRadius: 3 },
+                            }}
+                        />
+                    </Toolbar>
+                </Box>
+            )}
+
+            <Box sx={hideHeader ? {} : { mb: 2, mx: 2 }}>
                 <TableContainer component={Box}>
                     <Table
                         size="small"
@@ -317,8 +321,9 @@ function EntityTable({
                         <TableHead>
                             <TableRow
                                 sx={{
-                                    background:
-                                        theme.palette.background.default,
+                                    background: hideHeader
+                                        ? undefined
+                                        : theme.palette.background.default,
                                 }}
                             >
                                 {columns.map((column, index) => {
@@ -338,7 +343,9 @@ function EntityTable({
                                                     : false
                                             }
                                         >
-                                            {selectData && column.field ? (
+                                            {selectData &&
+                                            column.field &&
+                                            !hideHeader ? (
                                                 <TableSortLabel
                                                     IconComponent={ArrowDown}
                                                     active={
@@ -423,7 +430,7 @@ function EntityTable({
                             )}
                         </TableBody>
 
-                        {dataRows && selectDataCount ? (
+                        {dataRows && selectDataCount && !hideHeader ? (
                             <TableFooter>
                                 <TableRow>
                                     <TablePagination

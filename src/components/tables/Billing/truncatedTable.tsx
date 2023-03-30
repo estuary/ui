@@ -6,8 +6,8 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    Typography,
 } from '@mui/material';
-import Rows from 'components/tables/Billing/Rows';
 import TableLoadingRows from 'components/tables/Loading';
 import { FormattedMessage } from 'react-intl';
 import { useBilling_billingDetails } from 'stores/Tables/Billing/hooks';
@@ -62,7 +62,7 @@ function TruncatedBillingTable() {
 
                 <TableBody>
                     {hasLength(billingDetails) ? (
-                        <Rows />
+                        <Typography>Peace</Typography>
                     ) : (
                         <TableLoadingRows columns={columns} />
                     )}

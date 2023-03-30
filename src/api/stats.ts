@@ -1,3 +1,4 @@
+import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import {
     endOfWeek,
     startOfMonth,
@@ -8,12 +9,14 @@ import {
 } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import {
+    defaultTableFilter,
     handleFailure,
     handleSuccess,
+    SortingProps,
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { CatalogStats, Grants } from 'types';
+import { CatalogStats, Grants, ProjectedCostStats } from 'types';
 
 export type StatsFilter =
     | 'today'
@@ -111,7 +114,7 @@ const getStatsForBilling = (grants: Grants[]) => {
         .join(',');
 
     return supabaseClient
-        .from<CatalogStats>(TABLES.CATALOG_STATS)
+        .from<ProjectedCostStats>(TABLES.CATALOG_STATS)
         .select(
             `    
             catalog_name,
@@ -127,4 +130,41 @@ const getStatsForBilling = (grants: Grants[]) => {
         .order('ts');
 };
 
-export { getStatsForBilling, getStatsByName };
+const getStatsForBillingExt = (
+    grants: Grants[],
+    pagination: any,
+    searchQuery: any,
+    sorting: SortingProps<any>[]
+): PostgrestFilterBuilder<ProjectedCostStats> => {
+    const subjectRoleFilters = grants
+        .map((grant) => `catalog_name.ilike.${grant.object_role}%`)
+        .join(',');
+
+    let queryBuilder = supabaseClient
+        .from<ProjectedCostStats>(TABLES.CATALOG_STATS)
+        .select(
+            `    
+            catalog_name,
+            grain,
+            ts,
+            bytes_written_by_me,
+            bytes_read_by_me,
+            flow_document
+        `,
+            { count: 'exact' }
+        )
+        .eq('grain', 'monthly')
+        .or(subjectRoleFilters);
+
+    queryBuilder = defaultTableFilter<ProjectedCostStats>(
+        queryBuilder,
+        ['ts'],
+        searchQuery,
+        sorting,
+        pagination
+    );
+
+    return queryBuilder;
+};
+
+export { getStatsForBilling, getStatsForBillingExt, getStatsByName };

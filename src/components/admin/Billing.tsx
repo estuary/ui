@@ -15,10 +15,11 @@ import TasksByMonth from 'components/admin/Billing/TasksByMonthGraph';
 import AdminTabs from 'components/admin/Tabs';
 import MessageWithLink from 'components/content/MessageWithLink';
 import PageContainer from 'components/shared/PageContainer';
-import TruncatedBillingTable from 'components/tables/Billing/truncatedTable';
+import ProjectedCostsTable from 'components/tables/Billing';
 import useProjectCostStats from 'components/tables/Billing/useProjectedCostStats';
 import { semiTransparentBackground } from 'context/Theme';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
@@ -51,6 +52,8 @@ function AdminBilling() {
     const setBillingDetails = useBilling_setBillingDetails();
     const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
     const resetBillingState = useBilling_resetState();
+
+    const { combinedGrants } = useCombinedGrantsExt({ adminOnly: true });
 
     const { projectedCostStats: projectedCostStatsData } = useProjectCostStats(
         {}
@@ -144,7 +147,11 @@ function AdminBilling() {
                             <FormattedMessage id="admin.billing.projectedCostTable.header" />
                         </Typography>
 
-                        <TruncatedBillingTable />
+                        {combinedGrants.length > 0 ? (
+                            <ProjectedCostsTable grants={combinedGrants} />
+                        ) : null}
+
+                        {/* <ProjectedCostsTable /> */}
                     </Box>
                 </Grid>
 

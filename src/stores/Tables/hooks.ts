@@ -15,7 +15,8 @@ export type TablePrefix =
     | 'cap' // captures
     | 'mat' // materializations
     | 'col' // collections
-    | 'con'; // connectors
+    | 'con' // connectors
+    | 'bil'; // billing
 
 function useTableState(
     keyPrefix: TablePrefix,
