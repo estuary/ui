@@ -35,7 +35,5 @@ module.exports = {
         'react/iframe-missing-sandbox': 'error',
         'react/jsx-no-leaked-render': 'error',
         'no-constant-binary-expression': 'error',
-
-        'no-tabs': 'error',
     },
 };
