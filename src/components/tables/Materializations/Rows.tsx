@@ -49,8 +49,8 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     const handlers = {
-        clickRow: (rowId: string) => {
-            setRow(rowId, !isSelected);
+        clickRow: (rowId: string, lastPubId: string) => {
+            setRow(rowId, lastPubId, !isSelected);
         },
         editTask: () => {
             navigate(
@@ -71,7 +71,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
         <>
             <TableRow
                 hover
-                onClick={() => handlers.clickRow(row.id)}
+                onClick={() => handlers.clickRow(row.id, row.last_pub_id)}
                 selected={isSelected}
                 sx={getEntityTableRowSx(theme, detailsExpanded)}
             >
