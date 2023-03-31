@@ -130,7 +130,7 @@ const getStatsForBilling = (grants: Grants[]) => {
         .order('ts');
 };
 
-const getStatsForBillingExt = (
+const getStatsForProjectedCostTable = (
     grants: Grants[],
     pagination: any,
     searchQuery: any,
@@ -167,4 +167,4 @@ const getStatsForBillingExt = (
     return queryBuilder;
 };
 
-export { getStatsForBilling, getStatsForBillingExt, getStatsByName };
+export { getStatsForBilling, getStatsForProjectedCostTable, getStatsByName };
