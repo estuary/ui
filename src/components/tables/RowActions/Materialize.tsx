@@ -31,8 +31,8 @@ function Materialize({ selectableTableStoreName }: Props) {
         materialize: () => {
             const selectedRowsArray: string[] = [];
 
-            selectedRows.forEach((_value, key) => {
-                selectedRowsArray.push(key);
+            selectedRows.forEach((value, _key) => {
+                selectedRowsArray.push(value);
             });
 
             if (selectedRowsArray.length > 0) {

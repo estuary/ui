@@ -5,6 +5,12 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useHeroTabs } from './hooks';
 
+const lightHero =
+    'https://storage.googleapis.com/estuary-marketing-strapi-uploads/uploads//welcome_light_1_72be658eb9/welcome_light_1_72be658eb9.svg?width=771&height=345';
+
+const darkHero =
+    'https://storage.googleapis.com/estuary-marketing-strapi-uploads/uploads//welcome_dark_fd66c55902/welcome_dark_fd66c55902.svg?width=771&height=345';
+
 // TODO (hero image) would be nice to make the image change height/width
 //  smoothly when the images change
 function HeroImage() {
@@ -21,7 +27,7 @@ function HeroImage() {
         }
 
         return [
-            `https://www.estuary.dev/wp-content/uploads/2023/02/welcome_${theme.palette.mode}.png`,
+            theme.palette.mode === 'light' ? lightHero : darkHero,
             'welcome.image.alt',
         ];
     }, [activeTab, theme.palette.mode]);

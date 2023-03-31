@@ -37,7 +37,8 @@ export interface SelectableTableStore extends StoreWithHydration {
 
     selected: Map<string, any>;
     setSelected: (
-        val: SelectableTableStore['selected'],
+        key: SelectableTableStore['selected'],
+        lastPubId: string,
         isSelected: boolean
     ) => void;
     setAllSelected: (isSelected: boolean) => void;
@@ -96,13 +97,13 @@ export const getInitialState = (
         ...getInitialStateData(),
         ...getStoreWithHydrationSettings('Table Store', set),
 
-        setSelected: (val, isSelected) => {
+        setSelected: (key, lastPubId, isSelected) => {
             set(
                 produce(({ selected }) => {
                     if (isSelected) {
-                        selected.set(val, null);
+                        selected.set(key, lastPubId);
                     } else {
-                        selected.delete(val);
+                        selected.delete(key);
                     }
                 }),
                 false,
@@ -132,7 +133,7 @@ export const getInitialState = (
             set(
                 produce(({ rows }) => {
                     val.forEach((el) => {
-                        rows.set(el.last_pub_id, el);
+                        rows.set(el.id, el);
                     });
                 }),
                 false,
