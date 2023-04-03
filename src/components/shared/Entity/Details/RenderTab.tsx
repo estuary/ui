@@ -6,15 +6,16 @@ import Spec from './Spec';
 function RenderTab() {
     const page = useDetailsPage();
 
-    if (page === 'spec') {
-        return <Spec />;
-    }
+    switch (page) {
+        case 'spec':
+            return <Spec />;
 
-    if (page === 'history') {
-        return <History />;
-    }
+        case 'history':
+            return <History />;
 
-    return <Overview />;
+        default:
+            return <Overview />;
+    }
 }
 
 export default RenderTab;
