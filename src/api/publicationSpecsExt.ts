@@ -5,7 +5,7 @@ export interface PublicationSpecsExt_PublicationHistory {
     live_spec_id: string;
     pub_id: string;
     detail: null;
-    published_at: string; //Date
+    published_at: string; //timestamptz
     spec: Schema;
     spec_type: string;
     user_id: string;
