@@ -10,6 +10,12 @@ function EndpointConfigErrors() {
     const endpointErrors = useEndpointConfigStore_endpointConfigErrors();
     const endpointSchema = useEndpointConfigStore_endpointSchema();
 
+    console.log('endpoint config error', {
+        endpointErrors,
+        endpointSchema,
+        endpointCustomErrors,
+    });
+
     return (
         <SectionError
             errors={endpointCustomErrors.concat(endpointErrors)}

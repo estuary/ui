@@ -228,7 +228,7 @@ const OAuthproviderRenderer = ({
     //      This allows for the best UX when displaying errors. Otherwise we get a bunch of
     //      ajv errors about the schema not matching.
     // For edit we have all the props from the previous version but since they contain
-    //      SOPS fields then we know for sure we do not ahve all the required props.
+    //      SOPS fields then we know for sure we do not have all the required props.
     //      But down below in edit we know to show the Authenticated tag by default since
     //      the user does not need to reauthenticate until they change the Endpoint Config
     useMount(() => {
@@ -254,6 +254,8 @@ const OAuthproviderRenderer = ({
             });
         }
 
+        console.log('Oauth: customErrors', { customErrors });
+
         setCustomErrors(customErrors);
 
         return () => {
@@ -261,6 +263,11 @@ const OAuthproviderRenderer = ({
             setCustomErrors([]);
         };
     }, [hasAllRequiredProps, path, setCustomErrors]);
+
+    console.log(`oauth ${path}`, {
+        requiredFields,
+        data,
+    });
 
     return (
         <Box

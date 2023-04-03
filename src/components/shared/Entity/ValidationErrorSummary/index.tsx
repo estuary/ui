@@ -61,6 +61,10 @@ function ValidationErrorSummary({
         ? 'workflows.error.initForm'
         : 'entityCreate.endpointConfig.errorSummary';
 
+    console.log('ValidationErrorSummary2', {
+        displayValidation,
+    });
+
     return displayValidation || hydrationErrorsExist ? (
         <Collapse in={formErrorsExist} timeout="auto" unmountOnExit>
             <AlertBox severity="error" hideIcon={hideIcon}>

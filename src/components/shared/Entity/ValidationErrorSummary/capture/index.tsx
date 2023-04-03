@@ -27,6 +27,8 @@ function ValidationErrorSummary({
 
     const displayValidation = useFormStateStore_displayValidation();
 
+    console.log('ValidationErrorSummary', { displayValidation });
+
     return displayValidation ? (
         <Collapse in={errorsExist} timeout="auto" unmountOnExit>
             <AlertBox
