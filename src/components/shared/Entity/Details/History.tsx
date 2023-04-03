@@ -13,20 +13,20 @@ import { useIntl } from 'react-intl';
 const CARD_DATE_FORMAT = 'EEEE, MMM do, yyyy';
 const CALENDAR_DATE_FORMAT = 'yyyy-MM-dd';
 
-export const convertData = (
+const convertData = (
     publications: PublicationSpecsExt_PublicationHistory[]
 ) => {
     const response: { [key: string]: number } = {}; // ScatterDataItemOption
 
     publications.forEach((publication) => {
-        const formattedPublish = format(
+        const formattedPublishDate = format(
             new Date(publication.published_at),
             CALENDAR_DATE_FORMAT
         );
 
-        response[formattedPublish] = !response[formattedPublish]
+        response[formattedPublishDate] = !response[formattedPublishDate]
             ? 1
-            : response[formattedPublish] + 1;
+            : response[formattedPublishDate] + 1;
     });
 
     return Object.entries(response);
