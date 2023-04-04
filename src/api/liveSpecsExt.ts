@@ -269,7 +269,7 @@ const getLiveSpecsByCatalogNames = async (
 const getLiveSpecsByConnectorId = async (
     specType: EntityWithCreateWorkflow,
     connectorId: string,
-    prefixFilter?: string
+    prefixFilters?: string[]
 ) => {
     const taskColumns: string =
         specType === 'capture'
@@ -284,12 +284,14 @@ const getLiveSpecsByConnectorId = async (
         .eq('connector_id', connectorId)
         .eq('spec_type', specType);
 
-    if (prefixFilter) {
-        queryBuilder = queryBuilder.not(
-            'catalog_name',
-            'ilike',
-            `${prefixFilter}/%`
-        );
+    if (prefixFilters && prefixFilters.length > 0) {
+        prefixFilters.forEach((prefix) => {
+            queryBuilder = queryBuilder.not(
+                'catalog_name',
+                'ilike',
+                `${prefix}/%`
+            );
+        });
     }
 
     const data = await queryBuilder.then(
