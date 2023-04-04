@@ -1,4 +1,11 @@
-import { AlertTitle, Box, Button, Stack, Typography } from '@mui/material';
+import {
+    AlertTitle,
+    Box,
+    Button,
+    Grid,
+    Stack,
+    Typography,
+} from '@mui/material';
 import ListView from 'components/collection/DataPreview/ListView';
 import AlertBox from 'components/shared/AlertBox';
 import { useJournalData, useJournalsForCollection } from 'hooks/useJournalData';
@@ -45,7 +52,7 @@ export function DataPreview({ collectionName }: Props) {
     const isLoading = journalsLoading || journalData.loading;
 
     return (
-        <>
+        <Grid item xs={12} sx={{ m: 2 }}>
             <Stack
                 justifyContent="space-between"
                 direction="row"
@@ -143,6 +150,6 @@ export function DataPreview({ collectionName }: Props) {
             {/*             : (
                 <TableView journalData={journalData} spec={spec} />
             )}*/}
-        </>
+        </Grid>
     );
 }

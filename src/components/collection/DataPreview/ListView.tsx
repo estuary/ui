@@ -2,6 +2,7 @@ import { Box, Grid, useTheme } from '@mui/material';
 import { DataGrid, GridSelectionModel } from '@mui/x-data-grid';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import Error from 'components/shared/Error';
+import { dataGridListStyling } from 'context/Theme';
 import { JournalRecord, useJournalData } from 'hooks/useJournalData';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { JsonPointer } from 'json-ptr';
@@ -84,6 +85,7 @@ function ListView({
                             onSelectionModelChange={(newSelectionModel) => {
                                 setSelectionModel(newSelectionModel);
                             }}
+                            sx={dataGridListStyling}
                         />
                     }
                     backgroundColor={

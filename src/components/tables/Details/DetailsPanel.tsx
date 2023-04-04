@@ -51,7 +51,7 @@ function DetailsPanel({
     const endpoints = useMemo(() => {
         if (entityType === 'capture' || entityType === 'materialization') {
             return (
-                <Grid item xs={12}>
+                <Grid item xs={12} sx={{ mx: 2 }}>
                     <TaskEndpoints taskName={entityName} />
                     <Divider sx={{ mt: 4 }} />
                 </Grid>
@@ -88,13 +88,13 @@ function DetailsPanel({
                             )}
                         >
                             <Grid container spacing={2}>
-                                <Grid item xs={12}>
+                                <Grid item xs={12} sx={{ mx: 2 }}>
                                     <ShardInformation entityType={entityType} />
                                 </Grid>
 
                                 {endpoints}
 
-                                <Grid item xs={12}>
+                                <Grid item xs={12} sx={{ mx: 2 }}>
                                     <Typography
                                         variant="subtitle1"
                                         sx={{ mb: 2, fontWeight: 500 }}

@@ -21,7 +21,7 @@ import CollectionPicker from 'components/collection/Picker';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import {
-    alternativeDataGridHeader,
+    dataGridListStyling,
     defaultOutline,
     typographyTruncation,
 } from 'context/Theme';
@@ -324,38 +324,7 @@ function BindingSelector({
                     }}
                     selectionModel={selectionModel}
                     initialState={initialState}
-                    sx={{
-                        'borderBottom': 'none',
-                        '& .MuiDataGrid-row ': {
-                            cursor: 'pointer',
-                        },
-                        '& .MuiDataGrid-cell': {
-                            borderBottom: defaultOutline[theme.palette.mode],
-                        },
-                        '& .MuiDataGrid-columnSeparator': {
-                            display: 'none',
-                        },
-                        '& .MuiDataGrid-columnHeaders': {
-                            borderTop: defaultOutline[theme.palette.mode],
-                            borderBottom: defaultOutline[theme.palette.mode],
-                            bgcolor:
-                                alternativeDataGridHeader[theme.palette.mode],
-                        },
-                        '& .MuiDataGrid-columnHeader:hover': {
-                            '& .MuiDataGrid-columnHeaderTitleContainerContent':
-                                {
-                                    mr: 0.5,
-                                },
-                            '& .MuiDataGrid-menuIcon': {
-                                width: '2rem',
-                            },
-                        },
-                        '& .MuiDataGrid-columnHeaderTitleContainerContent': {
-                            width: '100%',
-                            justifyContent: 'space-between',
-                            mr: 4.5,
-                        },
-                    }}
+                    sx={dataGridListStyling}
                 />
             </Box>
         </>
