@@ -1,8 +1,6 @@
 import { Buffer } from 'buffer';
 
-// TODO: Change this to master when the PR gets merged
-const GIT_REPO =
-    'https://github.com/estuary/flow-gitpod-base/tree/jshearer/getting_started';
+const GIT_REPO = 'https://github.com/estuary/flow-gitpod-base/tree/main';
 
 export const generateGitPodURL = (
     draftId: string,

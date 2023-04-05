@@ -1,4 +1,4 @@
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import {
     DataGrid,
     GridColDef,
@@ -8,7 +8,7 @@ import {
     GridValueGetterParams,
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
-import { alternativeDataGridHeader, defaultOutline } from 'context/Theme';
+import { dataGridListStyling } from 'context/Theme';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
@@ -43,7 +43,6 @@ function CollectionSelectorList({
     renderCell,
 }: Props) {
     const onSelectTimeOut = useRef<number | null>(null);
-    const theme = useTheme();
     const intl = useIntl();
     const collectionsLabel = useConstant(() =>
         intl.formatMessage({
@@ -130,36 +129,7 @@ function CollectionSelectorList({
                         : undefined
                 }
                 initialState={initialState}
-                sx={{
-                    'borderBottom': 'none',
-                    '& .MuiDataGrid-row ': {
-                        cursor: 'pointer',
-                    },
-                    '& .MuiDataGrid-cell': {
-                        borderBottom: defaultOutline[theme.palette.mode],
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                        display: 'none',
-                    },
-                    '& .MuiDataGrid-columnHeaders': {
-                        borderTop: defaultOutline[theme.palette.mode],
-                        borderBottom: defaultOutline[theme.palette.mode],
-                        bgcolor: alternativeDataGridHeader[theme.palette.mode],
-                    },
-                    '& .MuiDataGrid-columnHeader:hover': {
-                        '& .MuiDataGrid-columnHeaderTitleContainerContent': {
-                            mr: 0.5,
-                        },
-                        '& .MuiDataGrid-menuIcon': {
-                            width: '2rem',
-                        },
-                    },
-                    '& .MuiDataGrid-columnHeaderTitleContainerContent': {
-                        width: '100%',
-                        justifyContent: 'space-between',
-                        mr: 4.5,
-                    },
-                }}
+                sx={dataGridListStyling}
             />
         </Box>
     );

@@ -52,26 +52,26 @@ const captures = {
             fullPath: '/captures/create/new',
         },
     },
-    // details: {
-    //     title: 'routeTitle.captureDetails',
-    //     path: 'details',
-    //     fullPath: '/captures/details',
-    //     overview: {
-    //         title: 'routeTitle.captureDetails.overview',
-    //         path: 'overview',
-    //         fullPath: '/captures/details/overview',
-    //     },
-    //     spec: {
-    //         title: 'routeTitle.captureDetails.spec',
-    //         path: 'spec',
-    //         fullPath: '/captures/details/spec',
-    //     },
-    //     history: {
-    //         title: 'routeTitle.captureDetails.history',
-    //         path: 'history',
-    //         fullPath: '/captures/details/history',
-    //     },
-    // },
+    details: {
+        title: 'routeTitle.captureDetails',
+        path: 'details',
+        fullPath: '/captures/details',
+        overview: {
+            title: 'routeTitle.captureDetails.overview',
+            path: 'overview',
+            fullPath: '/captures/details/overview',
+        },
+        spec: {
+            title: 'routeTitle.captureDetails.spec',
+            path: 'spec',
+            fullPath: '/captures/details/spec',
+        },
+        history: {
+            title: 'routeTitle.captureDetails.history',
+            path: 'history',
+            fullPath: '/captures/details/history',
+        },
+    },
     edit: {
         title: 'routeTitle.captureEdit',
         path: `edit`,
@@ -93,26 +93,26 @@ const collections = {
             fullPath: '/collections/create/new',
         },
     },
-    // details: {
-    //     title: 'routeTitle.collectionDetails',
-    //     path: 'details',
-    //     fullPath: '/collections/details',
-    //     overview: {
-    //         title: 'routeTitle.collectionDetails.overview',
-    //         path: 'overview',
-    //         fullPath: '/collections/details/overview',
-    //     },
-    //     spec: {
-    //         title: 'routeTitle.collectionDetails.spec',
-    //         path: 'spec',
-    //         fullPath: '/collections/details/spec',
-    //     },
-    //     history: {
-    //         title: 'routeTitle.collectionDetails.history',
-    //         path: 'history',
-    //         fullPath: '/collections/details/history',
-    //     },
-    // },
+    details: {
+        title: 'routeTitle.collectionDetails',
+        path: 'details',
+        fullPath: '/collections/details',
+        overview: {
+            title: 'routeTitle.collectionDetails.overview',
+            path: 'overview',
+            fullPath: '/collections/details/overview',
+        },
+        spec: {
+            title: 'routeTitle.collectionDetails.spec',
+            path: 'spec',
+            fullPath: '/collections/details/spec',
+        },
+        history: {
+            title: 'routeTitle.collectionDetails.history',
+            path: 'history',
+            fullPath: '/collections/details/history',
+        },
+    },
 };
 
 const dataPlaneAuth = {
@@ -139,26 +139,26 @@ const materializations = {
             fullPath: '/materializations/create/new',
         },
     },
-    // details: {
-    //     title: 'routeTitle.materializationDetails',
-    //     path: 'details',
-    //     fullPath: '/materializations/details',
-    //     overview: {
-    //         title: 'routeTitle.materializationDetails.overview',
-    //         path: 'overview',
-    //         fullPath: '/materializations/details/overview',
-    //     },
-    //     spec: {
-    //         title: 'routeTitle.materializationDetails.spec',
-    //         path: 'spec',
-    //         fullPath: '/materializations/details/spec',
-    //     },
-    //     history: {
-    //         title: 'routeTitle.materializationDetails.history',
-    //         path: 'history',
-    //         fullPath: '/materializations/details/history',
-    //     },
-    // },
+    details: {
+        title: 'routeTitle.materializationDetails',
+        path: 'details',
+        fullPath: '/materializations/details',
+        overview: {
+            title: 'routeTitle.materializationDetails.overview',
+            path: 'overview',
+            fullPath: '/materializations/details/overview',
+        },
+        spec: {
+            title: 'routeTitle.materializationDetails.spec',
+            path: 'spec',
+            fullPath: '/materializations/details/spec',
+        },
+        history: {
+            title: 'routeTitle.materializationDetails.history',
+            path: 'history',
+            fullPath: '/materializations/details/history',
+        },
+    },
     edit: {
         title: 'routeTitle.materializationEdit',
         path: 'edit',

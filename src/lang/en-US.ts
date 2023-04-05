@@ -138,6 +138,7 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.updated_at': `Updated`,
     'data.email': `Email`,
     'data.display_name': `Username`,
+    'data.published_at': `Published At`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
@@ -184,12 +185,15 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin.cookies': `Cookie Preferences`,
     'routeTitle.admin.storageMappings': `${CommonMessages['terms.storageMapping']}`,
     'routeTitle.captureCreate': `Create Capture`,
+    'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
     'routeTitle.collectionCreate': `Create Transformation`,
+    'routeTitle.collectionDetails': `Collection Details`,
     'routeTitle.dataPlaneAuthReq': `Data-plane authorization check`,
     'routeTitle.directives': `Directives`,
+    'routeTitle.details': `Details`,
     'routeTitle.error.entityNotFound': `Entity Not Found`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
@@ -197,6 +201,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.noGrants': `Signed Up`,
     'routeTitle.legal': `Legal`,
     'routeTitle.materializationCreate': `Create Materialization`,
+    'routeTitle.materializationDetails': `Materialization Details`,
     'routeTitle.materializationEdit': `Edit Materialization`,
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,
@@ -217,6 +222,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
     'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
     'browserTitle.collectionCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collectionCreate']}`,
+    'browserTitle.details': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.details']}`,
     'browserTitle.dataPlaneAuthReq': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dataPlaneAuthReq']}`,
     'browserTitle.error.entityNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.entityNotFound']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
@@ -401,6 +407,8 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.technicalDifficulties.header': `There was an issue getting your data.`,
     'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. You'll find a message describing the issue at the top of the page.`,
     'entityTable.moreEntities': `{count} more`,
+
+    'entityTable.detailsLink': `View details`,
 
     'optionMenu.ariaLabel': `Open Option Menu`,
     'optionMenu.tooltip': `Options`,
@@ -659,11 +667,13 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
 const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.logs.title': `Logs`,
     'detailsPanel.logs.notFound': `Logs for this build cannot be found. This is likely a permissions issue. You don't have permissions to view other users' logs by default.`,
+    'detailsPanel.shardDetails.fetchError': `Unable to fetch shard status`,
+    'detailsPanel.shardDetails.docLink': `Docs`,
     'detailsPanel.shardDetails.title': `Shard Information`,
     'detailsPanel.shardDetails.status.label': `Status`,
     'detailsPanel.shardDetails.id.label': `ID`,
     'detailsPanel.shardDetails.errorTitle': `Shard Replica Processing Errors`,
-    'detailsPanel.shardDetails.docLink': `Shard Help`,
+    'detailsPanel.shardDetails.noStatusFound': `No shard status to report`,
     'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
     'detailsPanel.dataPreview.header': `Data Preview`,
     'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
@@ -872,6 +882,13 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
 };
 
+const Details: ResolvedIntlConfig['messages'] = {
+    'details.tabs.overview': `Overview`,
+    'details.tabs.spec': `Spec`,
+    'details.tabs.shardStatus': `Status`,
+    'details.tabs.history': `History`,
+};
+
 const Docs: ResolvedIntlConfig['messages'] = {
     'docs.iframe.title': `{connector} Documentation`,
     'docs.iframe.disabled.title': `Connector documentation disabled`,
@@ -973,6 +990,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CustomRenderers,
     ...StorageMappings,
     ...EntityNotFound,
+    ...Details,
     ...ExistingEntityCheck,
     ...Docs,
     ...NewTransform,
