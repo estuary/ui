@@ -338,6 +338,12 @@ export const connectorImageBackgroundSx: SxProps<Theme> = {
     background: (theme) => connectorCardLogoBackground[theme.palette.mode],
 };
 
+// This is the hex code for the monaco editor background in dark mode.
+export const shardTableRow = {
+    light: sample_grey[100],
+    dark: '#252526',
+};
+
 export const alternateConnectorImageBackgroundSx: SxProps<Theme> = {
     height: 50,
     display: 'flex',
@@ -345,6 +351,37 @@ export const alternateConnectorImageBackgroundSx: SxProps<Theme> = {
     justifyContent: 'center',
     borderRadius: connectorImageBackgroundRadius,
     background: (theme) => connectorCardLogoBackground[theme.palette.mode],
+};
+
+export const dataGridListStyling: SxProps<Theme> = {
+    'borderBottom': 'none',
+    '& .MuiDataGrid-row ': {
+        cursor: 'pointer',
+    },
+    '& .MuiDataGrid-cell': {
+        borderBottom: (theme) => defaultOutline[theme.palette.mode],
+    },
+    '& .MuiDataGrid-columnSeparator': {
+        display: 'none',
+    },
+    '& .MuiDataGrid-columnHeaders': {
+        borderTop: (theme) => defaultOutline[theme.palette.mode],
+        borderBottom: (theme) => defaultOutline[theme.palette.mode],
+        bgcolor: (theme) => alternativeDataGridHeader[theme.palette.mode],
+    },
+    '& .MuiDataGrid-columnHeader:hover': {
+        '& .MuiDataGrid-columnHeaderTitleContainerContent': {
+            mr: 0.5,
+        },
+        '& .MuiDataGrid-menuIcon': {
+            width: '2rem',
+        },
+    },
+    '& .MuiDataGrid-columnHeaderTitleContainerContent': {
+        width: '100%',
+        justifyContent: 'space-between',
+        mr: 4.5,
+    },
 };
 
 const themeSettings = createTheme({
