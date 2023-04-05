@@ -1,6 +1,6 @@
 import { Buffer } from 'buffer';
 
-const GIT_REPO = 'https://github.com/estuary/flow-gitpod-base/tree/main';
+const GIT_REPO = 'https://github.com/estuary/flow-gitpod-base';
 
 export const generateGitPodURL = (
     draftId: string,
