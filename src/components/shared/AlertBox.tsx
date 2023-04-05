@@ -92,6 +92,7 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
                 'padding': 0,
                 '& > .MuiAlert-message': {
                     p: 1,
+                    width: '100%',
                 },
                 '& > .MuiAlert-action': short
                     ? {

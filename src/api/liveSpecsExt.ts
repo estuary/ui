@@ -228,14 +228,14 @@ const getLiveSpecsByCatalogName = async (
 
 export interface LiveSpecsExtQuery_ByCatalogNames {
     catalog_name: string;
-    spec_type: string;
+    spec_type: Entity;
     spec: any;
     last_pub_id: string;
 }
 
 const CHUNK_SIZE = 10;
 const getLiveSpecsByCatalogNames = async (
-    specType: Entity,
+    specType: Entity | null,
     catalogNames: string[]
 ) => {
     const limiter = pLimit(3);
@@ -244,12 +244,16 @@ const getLiveSpecsByCatalogNames = async (
     > = [];
     let index = 0;
 
-    const queryPromiseGenerator = (idx: number) =>
-        supabaseClient
+    const queryPromiseGenerator = (idx: number) => {
+        let query = supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(`catalog_name,spec_type,spec,last_pub_id`)
-            .eq('spec_type', specType)
             .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE));
+        if (specType) {
+            query = query.eq('spec_type', specType);
+        }
+        return query;
+    };
 
     while (index < catalogNames.length) {
         // Have to do this to capture `index` correctly
