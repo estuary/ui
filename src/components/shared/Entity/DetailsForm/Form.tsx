@@ -10,6 +10,7 @@ import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
+import useCatalogNameInput from 'hooks/useCatalogNameInput';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -27,7 +28,7 @@ import {
     useFormStateStore_isActive,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState/hooks';
-import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
@@ -43,12 +44,7 @@ export const getConnectorImageDetails = (
     };
 };
 
-function DetailsFormForm({
-    connectorTags,
-    accessGrants,
-    entityType,
-    readOnly,
-}: Props) {
+function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const intl = useIntl();
     const navigateToCreate = useEntityCreateNavigate();
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
@@ -71,6 +67,8 @@ function DetailsFormForm({
 
     const isActive = useFormStateStore_isActive();
 
+    const { catalogNameSchema } = useCatalogNameInput();
+
     useEffect(() => {
         if (connectorId && hasLength(connectorTags)) {
             connectorTags.find((connector) => {
@@ -84,18 +82,6 @@ function DetailsFormForm({
             });
         }
     }, [setDetails_connector, connectorId, connectorTags]);
-
-    const accessGrantsOneOf = useMemo(() => {
-        const response = [] as string[];
-
-        if (accessGrants.length > 0) {
-            accessGrants.forEach((accessGrant) => {
-                response.push(accessGrant.object_role);
-            });
-        }
-
-        return response;
-    }, [accessGrants]);
 
     const connectorsOneOf = useMemo(() => {
         const response = [] as { title: string; const: Object }[];
@@ -115,27 +101,13 @@ function DetailsFormForm({
     const schema = useMemo(() => {
         return {
             properties: {
+                [CATALOG_NAME_SCOPE]: { ...catalogNameSchema },
                 [CONNECTOR_IMAGE_SCOPE]: {
                     description: intl.formatMessage({
                         id: 'connector.description',
                     }),
                     oneOf: connectorsOneOf,
                     type: 'object',
-                },
-                [CATALOG_NAME_SCOPE]: {
-                    description: intl.formatMessage({
-                        id: 'entityName.description',
-                    }),
-
-                    // This pattern needs to match https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
-                    //     as close as possible. We just alter it to handle that we know the list of allowed prefix values
-                    //     this means that it handles the first portion of the name.
-                    // `^([a-zA-Z0-9-_.]+/)+[a-zA-Z0-9-_.]+$`
-                    examples: accessGrantsOneOf,
-                    type: 'string',
-                    pattern: `^(${accessGrantsOneOf.join(
-                        '|'
-                    )})(${PREFIX_NAME_PATTERN}/)*${PREFIX_NAME_PATTERN}$`,
                 },
                 description: {
                     description: intl.formatMessage({
@@ -147,7 +119,7 @@ function DetailsFormForm({
             required: [CATALOG_NAME_SCOPE, CONNECTOR_IMAGE_SCOPE],
             type: 'object',
         };
-    }, [accessGrantsOneOf, connectorsOneOf, intl]);
+    }, [catalogNameSchema, connectorsOneOf, intl]);
 
     const uiSchema = {
         elements: [

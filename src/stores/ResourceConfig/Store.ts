@@ -42,7 +42,7 @@ const populateResourceConfigErrors = (
         });
     } else {
         // TODO (errors) Need to populate this object with something?
-        resourceConfigErrors = [{}];
+        resourceConfigErrors = [];
     }
 
     state.resourceConfigErrors = resourceConfigErrors;
@@ -213,6 +213,7 @@ const getInitialState = (
                     ) as ResourceConfigDictionary;
 
                     state.resourceConfig = updatedResourceConfig;
+                    populateResourceConfigErrors(updatedResourceConfig, state);
                 }
             }),
             false,
@@ -263,7 +264,9 @@ const getInitialState = (
                     ...additionalRestrictedCollections,
                 ];
 
-                state.resourceConfig = {};
+                const emptyResourceConfig = {};
+                state.resourceConfig = emptyResourceConfig;
+                populateResourceConfigErrors(emptyResourceConfig, state);
             }),
             false,
             'Removed All Selected Collections'
@@ -460,6 +463,7 @@ const getInitialState = (
                     });
 
                     state.resourceConfig = reducedResourceConfig;
+                    populateResourceConfigErrors(reducedResourceConfig, state);
                 }
             }),
             false,

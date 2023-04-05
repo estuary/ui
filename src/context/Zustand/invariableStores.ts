@@ -119,6 +119,13 @@ const invariableStores = {
         AdminStoreNames.STORAGE_MAPPINGS
     ),
 
+    // Transformation Create
+    // TODO (transform create)
+    // [TransformCreateStoreNames.TRANSFORM_CREATE]:
+    //     createTransformationCreateStore(
+    //         TransformCreateStoreNames.TRANSFORM_CREATE
+    //     ),
+
     // Global App Stores
     [GlobalStoreNames.SIDE_PANEL_DOCS]: createSidePanelDocsStore(
         GlobalStoreNames.SIDE_PANEL_DOCS

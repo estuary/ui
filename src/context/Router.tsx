@@ -11,6 +11,7 @@ import CaptureCreateConfig from 'components/capture/Create/Config';
 import CaptureDetails from 'components/capture/Details';
 import CaptureEdit from 'components/capture/Edit';
 import CollectionDetails from 'components/collection/Details';
+import DerivationCreate from 'components/derivation/Create';
 import MaterializationCreate from 'components/materialization/Create';
 import MaterializationCreateConfig from 'components/materialization/Create/Config';
 import MaterializationDetails from 'components/materialization/Details';
@@ -36,6 +37,7 @@ import {
     createRoutesFromElements,
     Route,
     RouterProvider,
+    Routes,
 } from 'react-router-dom';
 import { isProduction } from 'utils/env-utils';
 import { RequireAuth } from './Authenticated';
@@ -95,56 +97,66 @@ const router = createBrowserRouter(
                         element={<Home />}
                     />
 
-                    <Route path={authenticatedRoutes.collections.path}>
-                        <Route
-                            path=""
-                            element={
-                                <EntityContextProvider value="collection">
-                                    <Collections />
-                                </EntityContextProvider>
-                            }
-                        />
+                    <Route
+                        path={`${authenticatedRoutes.collections.path}/*`}
+                        element={
+                            <EntityContextProvider value="collection">
+                                <Collections />
+                                <Routes>
+                                    <Route
+                                        path={
+                                            authenticatedRoutes.collections
+                                                .create.new.path
+                                        }
+                                        element={<DerivationCreate />}
+                                    />
 
-                        <Route
-                            path={authenticatedRoutes.collections.details.path}
-                        >
-                            <Route
-                                path={
-                                    authenticatedRoutes.collections.details
-                                        .overview.path
-                                }
-                                element={
-                                    <DetailsPageContextProvider value="overview">
-                                        <CollectionDetails />
-                                    </DetailsPageContextProvider>
-                                }
-                            />
+                                    <Route
+                                        path={
+                                            authenticatedRoutes.collections
+                                                .details.path
+                                        }
+                                    >
+                                        <Route
+                                            path={
+                                                authenticatedRoutes.collections
+                                                    .details.overview.path
+                                            }
+                                            element={
+                                                <DetailsPageContextProvider value="overview">
+                                                    <CollectionDetails />
+                                                </DetailsPageContextProvider>
+                                            }
+                                        />
 
-                            <Route
-                                path={
-                                    authenticatedRoutes.collections.details.spec
-                                        .path
-                                }
-                                element={
-                                    <DetailsPageContextProvider value="spec">
-                                        <CollectionDetails />
-                                    </DetailsPageContextProvider>
-                                }
-                            />
+                                        <Route
+                                            path={
+                                                authenticatedRoutes.collections
+                                                    .details.spec.path
+                                            }
+                                            element={
+                                                <DetailsPageContextProvider value="spec">
+                                                    <CollectionDetails />
+                                                </DetailsPageContextProvider>
+                                            }
+                                        />
 
-                            <Route
-                                path={
-                                    authenticatedRoutes.collections.details
-                                        .history.path
-                                }
-                                element={
-                                    <DetailsPageContextProvider value="history">
-                                        <CollectionDetails />
-                                    </DetailsPageContextProvider>
-                                }
-                            />
-                        </Route>
-                    </Route>
+                                        <Route
+                                            path={
+                                                authenticatedRoutes.collections
+                                                    .details.history.path
+                                            }
+                                            element={
+                                                <DetailsPageContextProvider value="history">
+                                                    <CollectionDetails />
+                                                </DetailsPageContextProvider>
+                                            }
+                                        />
+                                    </Route>
+                                </Routes>
+                            </EntityContextProvider>
+                        }
+                    />
 
                     <Route path={authenticatedRoutes.captures.path}>
                         <Route

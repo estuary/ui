@@ -1,9 +1,8 @@
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
-import { EntityWithCreateWorkflow, Grants } from 'types';
+import { EntityWithCreateWorkflow } from 'types';
 
 export interface Props {
     connectorTags: ConnectorWithTagDetailQuery[];
-    accessGrants: Grants[];
     entityType: EntityWithCreateWorkflow;
     readOnly?: boolean;
 }
