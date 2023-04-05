@@ -26,14 +26,30 @@ const copyEncryptedEndpointConfig = (
                 : '';
 
         if (isPlainObject(value)) {
+            // Need to generate the new nested object in the template
+            endpointConfigTemplate[truncatedKey || key] =
+                endpointConfigTemplate[truncatedKey || key] ?? {};
+
+            // Start copying the nested config
             copyEncryptedEndpointConfig(
                 endpointConfigTemplate[truncatedKey || key] ?? {},
                 encryptedEndpointConfig[key],
-                encryptedSuffix
+                encryptedSuffix,
+                overrideJsonFormDefaults
             );
-        } else if (overrideJsonFormDefaults && truncatedKey) {
-            endpointConfigTemplate[truncatedKey] = value;
-        } else if (!truncatedKey) {
+        } else if (truncatedKey) {
+            const valueExists = Boolean(
+                endpointConfigTemplate[truncatedKey || key]
+            );
+
+            if (valueExists) {
+                if (overrideJsonFormDefaults) {
+                    endpointConfigTemplate[truncatedKey] = value;
+                }
+            } else {
+                endpointConfigTemplate[truncatedKey] = value;
+            }
+        } else {
             endpointConfigTemplate[key] = value;
         }
     });

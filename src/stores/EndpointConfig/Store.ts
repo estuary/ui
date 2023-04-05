@@ -264,7 +264,8 @@ const getInitialState = (
 
                 const endpointConfig = parseEncryptedEndpointConfig(
                     encryptedEndpointConfig,
-                    endpointSchema
+                    endpointSchema,
+                    true
                 );
 
                 setPreviousEndpointConfig(endpointConfig);
