@@ -22,7 +22,6 @@ import {
 } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
-import { getLiveSpecsByCatalogNames } from 'api/liveSpecsExt';
 import { createRefreshToken } from 'api/tokens';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useLiveSpecs from 'hooks/useLiveSpecs';
@@ -148,26 +147,40 @@ function TransformationCreate() {
                 );
             }
             const draftId: string = draft.data[0].id;
-            const specsByName = await getLiveSpecsByCatalogNames(
-                null,
-                Array.from(selectedCollectionSet)
+            const spec = {
+                key: ['/your_key'],
+                schema: {
+                    properties: {
+                        your_key: {
+                            type: 'string',
+                        },
+                    },
+                    type: 'object',
+                    required: ['your_key'],
+                },
+                derive: {
+                    using: {
+                        sqlite: { migrations: ['migration_1.sql'] },
+                    },
+                    transforms: Array.from(selectedCollectionSet).map(
+                        (source) => {
+                            const slugified = source.replace(/[^a-z]/g, '_');
+                            return {
+                                name: `from_${slugified}`,
+                                source,
+                                lambda: `${slugified}.sql`,
+                            };
+                        }
+                    ),
+                },
+            };
+            await createDraftSpec(
+                draftId,
+                computedEntityName,
+                spec,
+                'collection',
+                null
             );
-            if (specsByName.error) {
-                throw new Error(
-                    `[${specsByName.error.code}]: ${specsByName.error.message}, ${specsByName.error.details}, ${specsByName.error.hint}`
-                );
-            }
-
-            for (const spec of specsByName.body) {
-                // eslint-disable-next-line no-await-in-loop
-                await createDraftSpec(
-                    draftId,
-                    spec.catalog_name,
-                    spec.spec,
-                    spec.spec_type,
-                    spec.last_pub_id
-                );
-            }
             return draftId;
         },
         [computedEntityName, intl, selectedCollectionSet]
