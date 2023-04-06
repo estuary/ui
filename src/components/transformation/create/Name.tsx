@@ -50,7 +50,6 @@ function TransformationCreateName() {
     const [formData] = useState({ entityName });
 
     const updateDetails = (details: any) => {
-        console.log('updateDetails', details);
         setName(details.entityName);
     };
 
