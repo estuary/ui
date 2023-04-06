@@ -7,6 +7,8 @@ export default function useUnsavedChangesPrompt(
     callback: Function
 ) {
     const intl = useIntl();
-    usePrompt(intl.formatMessage({ id: 'confirm.loseData' }), when);
+    const message = intl.formatMessage({ id: 'confirm.loseData' });
+
+    usePrompt(message, when);
     useUnmount(() => callback());
 }
