@@ -10,17 +10,14 @@ import { FormattedMessage } from 'react-intl';
 import { setDefaultsValidator } from 'services/ajv';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
-import { defaultOptions, showValidation } from 'services/jsonforms/shared';
+import { defaultOptions } from 'services/jsonforms/shared';
 import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfig_endpointCanBeEmpty,
 } from 'stores/EndpointConfig/hooks';
-import {
-    useFormStateStore_displayValidation,
-    useFormStateStore_isActive,
-} from 'stores/FormState/hooks';
+import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
@@ -30,16 +27,22 @@ interface Props {
 
 function EndpointConfigForm({ readOnly }: Props) {
     const entityType = useEntityType();
+    // const isEdit = useEntityWorkflow_Editing();
 
     // Endpoint Config Store
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
     const endpointSchema = useEndpointConfigStore_endpointSchema();
     const endpointCanBeEmpty = useEndpointConfig_endpointCanBeEmpty();
+    // const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
 
     // Form State Store
-    const displayValidation = useFormStateStore_displayValidation();
     const isActive = useFormStateStore_isActive();
+
+    // When in edit we do not need validation unless something has changed
+    // const showValidationVal = showOrDisableValidation(
+    //     isEdit && serverUpdateRequired
+    // );
 
     const categoryLikeSchema = useMemo(() => {
         if (!isEmpty(endpointSchema)) {
@@ -48,8 +51,6 @@ function EndpointConfigForm({ readOnly }: Props) {
             return null;
         }
     }, [endpointSchema]);
-
-    const showValidationVal = showValidation(displayValidation);
 
     if (categoryLikeSchema === null) {
         return null;
@@ -77,7 +78,7 @@ function EndpointConfigForm({ readOnly }: Props) {
                     cells={materialCells}
                     config={defaultOptions}
                     readonly={readOnly || isActive}
-                    validationMode={showValidationVal}
+                    validationMode="ValidateAndShow"
                     onChange={setEndpointConfig}
                     ajv={setDefaultsValidator}
                 />
