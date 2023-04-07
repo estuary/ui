@@ -157,8 +157,6 @@ function TransformationCreate({ postWindowOpen }: Props) {
                 selectedCollectionSet
             );
 
-            console.log('spec', spec);
-
             await createDraftSpec(
                 draftId,
                 computedEntityName,
