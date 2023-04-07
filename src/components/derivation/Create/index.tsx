@@ -1,10 +1,12 @@
-import { Dialog, DialogContent, DialogTitle } from '@mui/material';
+import { Dialog, DialogContent } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
+import DialogTitleWithClose from 'components/shared/Dialog/TitleWithClose';
 import TransformationCreate from 'components/transformation/create';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
+const ARIA_LABEL_ID = 'derivation-create-dialog';
 function DerivationCreate() {
     const navigate = useNavigate();
 
@@ -14,19 +16,22 @@ function DerivationCreate() {
     // selections still selected, which would be unexpected.
     const [newCollectionKey, setNewCollectionKey] = useState(0);
 
+    const closeDialog = () => {
+        navigate(authenticatedRoutes.collections.fullPath);
+        setNewCollectionKey((k) => k + 1);
+    };
+
     return (
         <Dialog
             open
             fullWidth
             maxWidth="lg"
-            onClose={() => {
-                navigate(authenticatedRoutes.collections.fullPath);
-                setNewCollectionKey((k) => k + 1);
-            }}
+            onClose={closeDialog}
+            aria-labelledby={ARIA_LABEL_ID}
         >
-            <DialogTitle>
+            <DialogTitleWithClose id={ARIA_LABEL_ID} onClose={closeDialog}>
                 <FormattedMessage id="newTransform.modal.title" />
-            </DialogTitle>
+            </DialogTitleWithClose>
             <DialogContent>
                 <TransformationCreate key={newCollectionKey} />
             </DialogContent>

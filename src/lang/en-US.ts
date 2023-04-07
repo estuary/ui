@@ -530,7 +530,7 @@ const Materializations: ResolvedIntlConfig['messages'] = {
 
 const Collections: ResolvedIntlConfig['messages'] = {
     'collectionsTable.title': `Collections`,
-    'collectionsTable.cta.new': `New Collection`,
+    'collectionsTable.cta.new': `New Transformation`,
     'collectionsTable.detailsCTA': `Details`,
     'collectionsTable.filterLabel': `Filter collections`,
     'collections.message1': `You currently have no collections. Click the Captures icon on the menu bar to get started.`,
@@ -900,11 +900,11 @@ const Docs: ResolvedIntlConfig['messages'] = {
 };
 
 const NewTransform: ResolvedIntlConfig['messages'] = {
-    'newTransform.modal.title': `Build a new collection`,
+    'newTransform.modal.title': `Build a new transformation`,
     'newTransform.language.title': `Language`,
     'newTransform.language.sql': `SQL`,
     'newTransform.language.ts': `Typescript`,
-    'newTransform.collection.label': `Collection Name`,
+    'newTransform.collection.label': `Transformation Name`,
     'newTransform.errors.collection': `Select A Source Collection`,
     'newTransform.errors.name': `Name Your Transform`,
     'newTransform.errors.prefixMissing': `No prefix selected`,
@@ -912,7 +912,7 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.errors.nameInvalid': `Invalid entity name`,
     'newTransform.errors.nameMissing': `Missing entity name`,
     'newTransform.errors.gitPod': `Failed to open GitPod`,
-    'newTransform.stepper.step1.label': `Select your collection`,
+    'newTransform.stepper.step1.label': `Select your collections`,
     'newTransform.stepper.step2.label': `Transformation Language`,
     'newTransform.stepper.step3.label': `Write Transformation`,
     'newTransform.instructions': `You will be set up with an environment to create a
