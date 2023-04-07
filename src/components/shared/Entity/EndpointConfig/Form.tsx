@@ -27,22 +27,15 @@ interface Props {
 
 function EndpointConfigForm({ readOnly }: Props) {
     const entityType = useEntityType();
-    // const isEdit = useEntityWorkflow_Editing();
 
     // Endpoint Config Store
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
     const endpointSchema = useEndpointConfigStore_endpointSchema();
     const endpointCanBeEmpty = useEndpointConfig_endpointCanBeEmpty();
-    // const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
 
     // Form State Store
     const isActive = useFormStateStore_isActive();
-
-    // When in edit we do not need validation unless something has changed
-    // const showValidationVal = showOrDisableValidation(
-    //     isEdit && serverUpdateRequired
-    // );
 
     const categoryLikeSchema = useMemo(() => {
         if (!isEmpty(endpointSchema)) {
