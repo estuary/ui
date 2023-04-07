@@ -2,6 +2,7 @@ import { stripPathing } from 'utils/misc-utils';
 
 export type DerivationLanguage = 'sql' | 'typescript';
 
+// Constants for part of the templates down below
 const key = ['/your_key'];
 const schema = {
     type: 'object',
@@ -9,7 +10,8 @@ const schema = {
     required: ['your_key'],
 };
 
-const makeNameSafe = (source: string) => {
+// Need to make sure whatever name we pass in can be used in a file name
+const makeNameSafeForFiles = (source: string) => {
     return source.replaceAll(/\//g, '_');
 };
 
@@ -18,7 +20,7 @@ const generateSqlTemplate = (
     selectedCollectionSet: Set<string>
 ) => {
     const transforms = Array.from(selectedCollectionSet).map((source) => {
-        const name = makeNameSafe(source);
+        const name = makeNameSafeForFiles(source);
         return {
             name: `${name}`,
             source,
@@ -45,7 +47,7 @@ const generateTsTemplate = (
     selectedCollectionSet: Set<string>
 ) => {
     const transforms = Array.from(selectedCollectionSet).map((source) => {
-        const name = makeNameSafe(source);
+        const name = makeNameSafeForFiles(source);
 
         return {
             name: `${name}`,
