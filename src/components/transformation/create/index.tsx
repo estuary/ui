@@ -22,7 +22,6 @@ import {
 } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
-import { getLiveSpecsByCatalogNames } from 'api/liveSpecsExt';
 import { createRefreshToken } from 'api/tokens';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useLiveSpecs from 'hooks/useLiveSpecs';
@@ -38,6 +37,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useSet } from 'react-use';
 import { generateGitPodURL } from 'services/gitpod';
 import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+import generateTemplate, { DerivationLanguage } from './generateTemplate';
 import SingleStep from './SingleStep';
 import { StepBox } from './StepBox';
 
@@ -49,7 +49,6 @@ const StyledStepConnector = styled(StepConnector)(() => ({
     },
 }));
 
-type DerivationLanguage = 'sql' | 'typescript';
 const NAME_RE = new RegExp(`^(${PREFIX_NAME_PATTERN}/?)*$`);
 
 interface Props {
@@ -152,29 +151,24 @@ function TransformationCreate({ postWindowOpen }: Props) {
                 );
             }
             const draftId: string = draft.data[0].id;
-            const specsByName = await getLiveSpecsByCatalogNames(
-                null,
-                Array.from(selectedCollectionSet)
-            );
-            if (specsByName.error) {
-                throw new Error(
-                    `[${specsByName.error.code}]: ${specsByName.error.message}, ${specsByName.error.details}, ${specsByName.error.hint}`
-                );
-            }
 
-            for (const spec of specsByName.body) {
-                // eslint-disable-next-line no-await-in-loop
-                await createDraftSpec(
-                    draftId,
-                    spec.catalog_name,
-                    spec.spec,
-                    spec.spec_type,
-                    spec.last_pub_id
-                );
-            }
+            const spec = generateTemplate(
+                derivationLanguage,
+                selectedCollectionSet
+            );
+
+            console.log('spec', spec);
+
+            await createDraftSpec(
+                draftId,
+                computedEntityName,
+                spec,
+                'collection',
+                null
+            );
             return draftId;
         },
-        [computedEntityName, intl, selectedCollectionSet]
+        [computedEntityName, derivationLanguage, intl, selectedCollectionSet]
     );
 
     const generateUrl = useMemo(
