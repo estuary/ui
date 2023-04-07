@@ -1,14 +1,13 @@
 import { ControlProps, RankedTester, rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Alert, Box, Button, Chip, Stack, Typography } from '@mui/material';
-import { useEditorStore_id } from 'components/editor/Store/hooks';
 import FullPageSpinner from 'components/fullPage/Spinner';
-import { useEntityWorkflow } from 'context/Workflow';
+import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { optionExists } from 'forms/renderers/Overrides/testers/testers';
 import { startCase } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import GoogleButton from 'react-google-button';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { useEndpointConfigStore_setEndpointCustomErrors } from 'stores/EndpointConfig/hooks';
 import { Options } from 'types/jsonforms';
@@ -17,7 +16,7 @@ import {
     getDefaultValue,
     getDiscriminator,
 } from '../Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
-import { FAKE_DEFAULTS, NO_PROVIDER } from './shared';
+import { INJECTED_VALUES, NO_PROVIDER } from './shared';
 import { useAllRequiredPropCheck } from './useAllRequiredPropCheck';
 import { useOauthHandler } from './useOauthHandler';
 
@@ -37,15 +36,13 @@ const OAuthproviderRenderer = ({
 }: ControlProps) => {
     const { options } = uischema;
 
+    const intl = useIntl();
+
     // Fetch what we need from stores
-    // const endpointConfigChanged = useEndpointConfigStore_changed();
     const setCustomErrors = useEndpointConfigStore_setEndpointCustomErrors();
 
     // Used to make a better UX for users editing a config
-    const draftId = useEditorStore_id();
-    const workflow = useEntityWorkflow();
-    const isEdit =
-        workflow === 'capture_edit' || workflow === 'materialization_edit';
+    const isEdit = useEntityWorkflow_Editing();
 
     // Pull out the provider so we can render the button
     const providerVal = options ? options[Options.oauthProvider] : NO_PROVIDER;
@@ -81,6 +78,8 @@ const OAuthproviderRenderer = ({
         return getDiscriminator(schemaToCheck);
     }, [hasOwnPathProp, path, rootSchema.properties, schema]);
 
+    // Reset the configuration either to injected values or
+    //  to special default values that we can check for
     const setConfigToDefault = () => {
         const defaults = getDefaultValue(
             schema.properties,
@@ -88,26 +87,32 @@ const OAuthproviderRenderer = ({
         );
         handleChange(onChangePath, {
             ...defaults,
-            ...FAKE_DEFAULTS,
+            ...INJECTED_VALUES,
         });
     };
 
-    const { hasAllRequiredProps, setHasAllRequiredProps } =
-        useAllRequiredPropCheck(
-            data,
-            options,
-            onChangePath,
-            discriminatorProperty
-        );
+    const { hasAllRequiredProps, showAuthenticated } = useAllRequiredPropCheck(
+        data,
+        options,
+        onChangePath,
+        discriminatorProperty
+    );
 
+    // OAuth Stuff
     const { errorMessage, openPopUp, loading } = useOauthHandler(
         provider,
-        (tokenResponse: any) => {
-            handleChange(onChangePath, {
-                ...FAKE_DEFAULTS,
+        (tokenResponse) => {
+            // Order matters here
+            //  1. Get the data we have so far
+            //  2. Merge in the injected values as those MUST match what the server is expecting
+            //  3. Add in the response from the server for the access token
+            const updatedCredentials = {
                 ...(!hasOwnPathProp ? data?.[onChangePath] : data),
+                ...INJECTED_VALUES,
                 ...tokenResponse.data,
-            });
+            };
+
+            handleChange(onChangePath, updatedCredentials);
         }
     );
 
@@ -115,16 +120,8 @@ const OAuthproviderRenderer = ({
     // For create we want to set defaults so the discriminator and injected values are set
     //      This allows for the best UX when displaying errors. Otherwise we get a bunch of
     //      ajv errors about the schema not matching.
-    // For edit we have all the props from the previous version but since they contain
-    //      SOPS fields then we know for sure we do not have all the required props.
-    //      But down below in edit we know to show the Authenticated tag by default since
-    //      the user does not need to reauthenticate until they change the Endpoint Config
     useMount(() => {
-        if (isEdit) {
-            console.log('setHasAllRequiredProps', { val: false });
-
-            setHasAllRequiredProps(false);
-        } else {
+        if (!isEdit) {
             setConfigToDefault();
         }
     });
@@ -137,14 +134,14 @@ const OAuthproviderRenderer = ({
         if (!hasAllRequiredProps) {
             customErrors.push({
                 instancePath: path,
-                message: `need to complete OAuth`,
+                message: intl.formatMessage({
+                    id: 'oauth.error.credentialsMissing',
+                }),
                 schemaPath: '',
                 keyword: '',
                 params: {},
             });
         }
-
-        console.log('Oauth: customErrors', { customErrors });
 
         setCustomErrors(customErrors);
 
@@ -152,19 +149,7 @@ const OAuthproviderRenderer = ({
             // Make sure we clean up the custom errors if we leave this component
             setCustomErrors([]);
         };
-    }, [hasAllRequiredProps, path, setCustomErrors]);
-
-    console.log('oauth', {
-        isEdit,
-        draftId,
-        hasAllRequiredProps,
-    });
-
-    const showAuthenticated =
-        // !endpointConfigChanged() ||
-        (isEdit && draftId) ||
-        (isEdit && !draftId && hasAllRequiredProps) ||
-        (!isEdit && hasAllRequiredProps);
+    }, [hasAllRequiredProps, intl, path, setCustomErrors]);
 
     return (
         <Box
