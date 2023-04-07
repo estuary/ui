@@ -9,7 +9,6 @@ type SupabaseInvokeResponse =
     | { data: null; error: Error }
     | { data: any; error: null };
 
-export const SOPS_ENCRYPTED_VALUE_PREFIX = 'ENC[';
 const sopsKey = 'sops';
 
 const copyEncryptedEndpointConfig = (
