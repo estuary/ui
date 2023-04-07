@@ -1,5 +1,6 @@
-import { Dialog, DialogContent } from '@mui/material';
+import { Collapse, Dialog, DialogContent, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
+import AlertBox from 'components/shared/AlertBox';
 import DialogTitleWithClose from 'components/shared/Dialog/TitleWithClose';
 import TransformationCreate from 'components/transformation/create';
 import { useState } from 'react';
@@ -15,16 +16,18 @@ function DerivationCreate() {
     // it's closed, so you don't reopen it and have your previous
     // selections still selected, which would be unexpected.
     const [newCollectionKey, setNewCollectionKey] = useState(0);
+    const [showBackdrop, setShowBackdrop] = useState(false);
 
     const closeDialog = () => {
         navigate(authenticatedRoutes.collections.fullPath);
+        setShowBackdrop(false);
         setNewCollectionKey((k) => k + 1);
     };
 
     return (
         <Dialog
             open
-            fullWidth
+            fullWidth={!showBackdrop}
             maxWidth="lg"
             onClose={closeDialog}
             aria-labelledby={ARIA_LABEL_ID}
@@ -33,7 +36,29 @@ function DerivationCreate() {
                 <FormattedMessage id="newTransform.modal.title" />
             </DialogTitleWithClose>
             <DialogContent>
-                <TransformationCreate key={newCollectionKey} />
+                <Collapse in={showBackdrop}>
+                    <AlertBox
+                        short
+                        severity="info"
+                        title={
+                            <Typography>
+                                <FormattedMessage id="newTransform.info.gitPodWindowTitle" />
+                            </Typography>
+                        }
+                    >
+                        <FormattedMessage id="newTransform.info.gitPodWindowMessage" />
+                    </AlertBox>
+                </Collapse>
+                <Collapse in={!showBackdrop}>
+                    <TransformationCreate
+                        key={newCollectionKey}
+                        postWindowOpen={(gitPodWindow) => {
+                            if (gitPodWindow) {
+                                setShowBackdrop(true);
+                            }
+                        }}
+                    />
+                </Collapse>
             </DialogContent>
         </Dialog>
     );

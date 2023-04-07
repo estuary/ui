@@ -52,7 +52,11 @@ const StyledStepConnector = styled(StepConnector)(() => ({
 type DerivationLanguage = 'sql' | 'typescript';
 const NAME_RE = new RegExp(`^(${PREFIX_NAME_PATTERN}/?)*$`);
 
-function TransformationCreate() {
+interface Props {
+    postWindowOpen: (window: Window | null) => void;
+}
+
+function TransformationCreate({ postWindowOpen }: Props) {
     const intl = useIntl();
 
     const collections = useLiveSpecs('collection');
@@ -204,7 +208,7 @@ function TransformationCreate() {
             } catch (e: unknown) {
                 displayError(
                     intl.formatMessage({
-                        id: 'newTransform.errors.gitPod',
+                        id: 'newTransform.errors.urlNotGenerated',
                     })
                 );
                 console.error(e);
@@ -373,16 +377,33 @@ function TransformationCreate() {
                             }}
                         />
                         <LoadingButton
-                            disabled={!!entityNameError || !!submitButtonError}
                             fullWidth
                             variant="contained"
                             loading={urlLoading}
+                            disabled={
+                                !!entityNameError ||
+                                !!submitButtonError ||
+                                urlLoading
+                            }
                             sx={{ marginBottom: 3 }}
                             loadingPosition="end"
                             onClick={async () => {
                                 const gitpodUrl = await generateUrl();
                                 if (gitpodUrl) {
-                                    window.open(gitpodUrl, '_blank');
+                                    const gitPodWindow = window.open(
+                                        gitpodUrl,
+                                        '_blank'
+                                    );
+
+                                    if (!gitPodWindow || gitPodWindow.closed) {
+                                        displayError(
+                                            intl.formatMessage({
+                                                id: 'newTransform.errors.gitPodWindow',
+                                            })
+                                        );
+                                    }
+
+                                    postWindowOpen(gitPodWindow);
                                 }
                             }}
                         >
@@ -391,12 +412,14 @@ function TransformationCreate() {
                                     id: 'newTransform.button.cta',
                                 })}
                         </LoadingButton>
-                        <Stack>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: 'rgb(150,150,150)' }}
-                            >
-                                <FormattedMessage id="newTransform.instructions" />
+                        <Stack spacing={1}>
+                            <Typography variant="caption">
+                                <Box>
+                                    <FormattedMessage id="newTransform.instructions1" />
+                                </Box>
+                                <Box>
+                                    <FormattedMessage id="newTransform.instructions2" />
+                                </Box>
                             </Typography>
 
                             <SingleLineCode value="flowctl --help" />

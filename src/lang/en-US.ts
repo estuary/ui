@@ -911,12 +911,16 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.errors.namePattern': `Name does not match pattern`,
     'newTransform.errors.nameInvalid': `Invalid entity name`,
     'newTransform.errors.nameMissing': `Missing entity name`,
-    'newTransform.errors.gitPod': `Failed to open GitPod`,
+    'newTransform.errors.urlNotGenerated': `We failed to generate the proper URL to start GitPod. ${Error['error.tryAgain']}`,
+    'newTransform.errors.gitPodWindow': `Failed to open GitPod. Your browser may be blocking it from opening. Please ensure your browser allows pop-ups.`,
+    'newTransform.info.gitPodWindowTitle': `GitPod should be opened in a new tab or window`,
+    'newTransform.info.gitPodWindowMessage': `To build out your transformation please use GitPod.`,
     'newTransform.stepper.step1.label': `Select your collections`,
     'newTransform.stepper.step2.label': `Transformation Language`,
     'newTransform.stepper.step3.label': `Write Transformation`,
-    'newTransform.instructions': `You will be set up with an environment to create a
-                            transform. Create your query and use the CLI to
+    'newTransform.instructions1': `You will be set up with an environment to create a
+                            transformation.`,
+    'newTransform.instructions2': `Create your query and use the CLI to
                             continue, e.g`,
     'newTransform.button.cta': `Proceed to GitPod`,
 };
