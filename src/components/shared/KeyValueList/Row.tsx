@@ -5,6 +5,7 @@ interface Props extends ListChildComponentProps {
     data: any;
 }
 
+// TODO (virtualization) not used right now
 function KeyValueListRow({ data, index, style }: Props) {
     const { title, val } = data;
 

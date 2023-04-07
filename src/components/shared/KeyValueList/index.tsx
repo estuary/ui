@@ -1,5 +1,4 @@
-import { List, Typography } from '@mui/material';
-import KeyValueListRow from './Row';
+import { List, ListItemText, Typography } from '@mui/material';
 
 export type KeyValue = {
     title: string;
@@ -19,12 +18,11 @@ function KeyValueList({ data, sectionTitle }: Props) {
                     <Typography variant="subtitle1">{sectionTitle}</Typography>
                 ) : null}
                 <List dense sx={{ ml: 2, pt: 0 }}>
-                    {data.map((datum, index) => (
-                        <KeyValueListRow
-                            key={`keyValueList-${index}`}
-                            data={datum}
-                            index={index}
-                            style={{}}
+                    {data.map(({ title, val }, index) => (
+                        <ListItemText
+                            key={`${title}-keyValueList-${index}`}
+                            primary={title}
+                            secondary={val}
                         />
                     ))}
                 </List>
