@@ -16,6 +16,8 @@ const makeNameSafe = (source: string) => {
     //  Do we remove only the tenant portion of the name?
     //      or
     //  Do we remove everything up to the last part of the path
+    //      or
+    //  Do we make it some combo of those and add something to ensure it is unique for a user
     const base = stripPathing(source);
 
     return { name, base };
