@@ -23,16 +23,13 @@ import {
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { createRefreshToken } from 'api/tokens';
+import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
+import CollectionSelector from 'components/collection/Selector';
+import SingleLineCode from 'components/content/SingleLineCode';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useSnackbar } from 'notistack';
 import { useCallback, useMemo, useState } from 'react';
-
-// Something seems to be conflicting with the import re-ordering of this
-// eslint-disable-next-line import/order
-import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
-import CollectionSelector from 'components/collection/Selector';
-import SingleLineCode from 'components/content/SingleLineCode';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSet } from 'react-use';
 import { generateGitPodURL } from 'services/gitpod';
