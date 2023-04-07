@@ -922,6 +922,7 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
 };
 
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
+    'oauth.error.credentialsMissing': `need to complete OAuth`,
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
     'timePicker.button.ariaLabel': `Open time picker for {label}`,
