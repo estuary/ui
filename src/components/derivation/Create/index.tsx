@@ -53,6 +53,8 @@ function DerivationCreate() {
                     <TransformationCreate
                         key={newCollectionKey}
                         postWindowOpen={(gitPodWindow) => {
+                            // If there is a window object we know the browser at least let us open it up.
+                            //  This does not 100% prove that GitPod loaded correctly
                             if (gitPodWindow) {
                                 setShowConfirmation(true);
                             }
