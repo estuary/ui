@@ -82,6 +82,12 @@ const getInitialState = (
         set(
             produce((state: EndpointConfigState) => {
                 state.endpointCustomErrors = val;
+
+                const { endpointConfig } = get();
+
+                // Setting this so that if there is a custom error then the
+                //  generate button will not proceed
+                populateEndpointConfigErrors(endpointConfig, val, state);
             }),
             false,
             'Endpoint Custom Errors Set'
@@ -264,8 +270,7 @@ const getInitialState = (
 
                 const endpointConfig = parseEncryptedEndpointConfig(
                     encryptedEndpointConfig,
-                    endpointSchema,
-                    true
+                    endpointSchema
                 );
 
                 setPreviousEndpointConfig(endpointConfig);
