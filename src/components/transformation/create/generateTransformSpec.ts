@@ -65,7 +65,7 @@ const generateTsTemplate = (
     };
 };
 
-const generateTemplate = (
+const generateTransformSpec = (
     language: DerivationLanguage,
     entityName: string,
     selectedCollectionSet: Set<string>
@@ -86,4 +86,4 @@ const generateTemplate = (
     }
 };
 
-export default generateTemplate;
+export default generateTransformSpec;

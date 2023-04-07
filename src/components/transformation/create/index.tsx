@@ -37,7 +37,9 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useSet } from 'react-use';
 import { generateGitPodURL } from 'services/gitpod';
 import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
-import generateTemplate, { DerivationLanguage } from './generateTemplate';
+import generateTransformSpec, {
+    DerivationLanguage,
+} from './generateTransformSpec';
 import SingleStep from './SingleStep';
 import { StepBox } from './StepBox';
 
@@ -152,7 +154,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
             }
             const draftId: string = draft.data[0].id;
 
-            const spec = generateTemplate(
+            const spec = generateTransformSpec(
                 derivationLanguage,
                 computedEntityName,
                 selectedCollectionSet
