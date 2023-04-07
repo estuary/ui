@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm/hooks';
 import { useEndpointConfigStore_endpointConfig_data } from 'stores/EndpointConfig/hooks';
+import { CREDENTIALS, INJECTED_VALUES } from './shared';
 
 // Hook for OAuth popup opening, error handling, error message setting, etc.
 export const useOauthHandler = (
@@ -34,10 +35,16 @@ export const useOauthHandler = (
 
     // handler for the useOauth stuff
     const onSuccess = async (payload: any) => {
+        const preparedData = endpointConfigData;
+        preparedData[CREDENTIALS] = {
+            ...endpointConfigData[CREDENTIALS],
+            ...INJECTED_VALUES,
+        };
+
         const tokenResponse = await accessToken(
             payload.state,
             payload.code,
-            endpointConfigData
+            preparedData
         );
 
         if (tokenResponse.error) {
