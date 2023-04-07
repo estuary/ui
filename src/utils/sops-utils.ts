@@ -34,8 +34,7 @@ const copyEncryptedEndpointConfig = (
             copyEncryptedEndpointConfig(
                 endpointConfigTemplate[truncatedKey || key],
                 encryptedEndpointConfig[key],
-                encryptedSuffix,
-                overrideJsonFormDefaults
+                encryptedSuffix
             );
         } else if (overrideJsonFormDefaults && truncatedKey) {
             endpointConfigTemplate[truncatedKey] = value;
