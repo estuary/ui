@@ -378,7 +378,6 @@ function TransformationCreate({ postWindowOpen }: Props) {
                                 urlLoading
                             }
                             sx={{ marginBottom: 3 }}
-                            loadingPosition="end"
                             onClick={async () => {
                                 const gitpodUrl = await generateUrl();
                                 if (gitpodUrl) {
