@@ -26,12 +26,8 @@ const copyEncryptedEndpointConfig = (
                 : '';
 
         if (isPlainObject(value)) {
-            // Need to generate the new nested object in the template
-            endpointConfigTemplate[truncatedKey || key] = {};
-
-            // Start copying the nested config
             copyEncryptedEndpointConfig(
-                endpointConfigTemplate[truncatedKey || key],
+                endpointConfigTemplate[truncatedKey || key] ?? {},
                 encryptedEndpointConfig[key],
                 encryptedSuffix
             );
