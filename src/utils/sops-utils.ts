@@ -9,6 +9,7 @@ type SupabaseInvokeResponse =
     | { data: null; error: Error }
     | { data: any; error: null };
 
+export const SOPS_ENCRYPTED_VALUE_PREFIX = 'ENC[';
 const sopsKey = 'sops';
 
 const copyEncryptedEndpointConfig = (
@@ -27,29 +28,18 @@ const copyEncryptedEndpointConfig = (
 
         if (isPlainObject(value)) {
             // Need to generate the new nested object in the template
-            endpointConfigTemplate[truncatedKey || key] =
-                endpointConfigTemplate[truncatedKey || key] ?? {};
+            endpointConfigTemplate[truncatedKey || key] = {};
 
             // Start copying the nested config
             copyEncryptedEndpointConfig(
-                endpointConfigTemplate[truncatedKey || key] ?? {},
+                endpointConfigTemplate[truncatedKey || key],
                 encryptedEndpointConfig[key],
                 encryptedSuffix,
                 overrideJsonFormDefaults
             );
-        } else if (truncatedKey) {
-            const valueExists = Boolean(
-                endpointConfigTemplate[truncatedKey || key]
-            );
-
-            if (valueExists) {
-                if (overrideJsonFormDefaults) {
-                    endpointConfigTemplate[truncatedKey] = value;
-                }
-            } else {
-                endpointConfigTemplate[truncatedKey] = value;
-            }
-        } else {
+        } else if (overrideJsonFormDefaults && truncatedKey) {
+            endpointConfigTemplate[truncatedKey] = value;
+        } else if (!truncatedKey) {
             endpointConfigTemplate[key] = value;
         }
     });
