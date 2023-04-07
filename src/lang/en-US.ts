@@ -914,7 +914,7 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.errors.urlNotGenerated': `We failed to generate the proper URL to start GitPod. ${Error['error.tryAgain']}`,
     'newTransform.errors.gitPodWindow': `Failed to open GitPod. Your browser may be blocking it from opening. Please ensure your browser allows pop-ups.`,
     'newTransform.info.gitPodWindowTitle': `GitPod should be opened in a new tab or window`,
-    'newTransform.info.gitPodWindowMessage': `To build out your transformation please use GitPod.`,
+    'newTransform.info.gitPodWindowMessage': `To develop your transformation please use GitPod.`,
     'newTransform.stepper.step1.label': `Select your collections`,
     'newTransform.stepper.step2.label': `Transformation Language`,
     'newTransform.stepper.step3.label': `Write Transformation`,
