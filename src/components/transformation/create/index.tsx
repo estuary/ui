@@ -154,6 +154,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
             const spec = generateTemplate(
                 derivationLanguage,
+                computedEntityName,
                 selectedCollectionSet
             );
 
