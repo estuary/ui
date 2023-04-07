@@ -16,18 +16,18 @@ function DerivationCreate() {
     // it's closed, so you don't reopen it and have your previous
     // selections still selected, which would be unexpected.
     const [newCollectionKey, setNewCollectionKey] = useState(0);
-    const [showBackdrop, setShowBackdrop] = useState(false);
+    const [showConfirmation, setShowConfirmation] = useState(false);
 
     const closeDialog = () => {
         navigate(authenticatedRoutes.collections.fullPath);
-        setShowBackdrop(false);
+        setShowConfirmation(false);
         setNewCollectionKey((k) => k + 1);
     };
 
     return (
         <Dialog
             open
-            fullWidth={!showBackdrop}
+            fullWidth={!showConfirmation}
             maxWidth="lg"
             onClose={closeDialog}
             aria-labelledby={ARIA_LABEL_ID}
@@ -36,7 +36,7 @@ function DerivationCreate() {
                 <FormattedMessage id="newTransform.modal.title" />
             </DialogTitleWithClose>
             <DialogContent>
-                <Collapse in={showBackdrop}>
+                <Collapse in={showConfirmation}>
                     <AlertBox
                         short
                         severity="info"
@@ -49,12 +49,12 @@ function DerivationCreate() {
                         <FormattedMessage id="newTransform.info.gitPodWindowMessage" />
                     </AlertBox>
                 </Collapse>
-                <Collapse in={!showBackdrop}>
+                <Collapse in={!showConfirmation}>
                     <TransformationCreate
                         key={newCollectionKey}
                         postWindowOpen={(gitPodWindow) => {
                             if (gitPodWindow) {
-                                setShowBackdrop(true);
+                                setShowConfirmation(true);
                             }
                         }}
                     />
