@@ -57,6 +57,10 @@ export enum GlobalStoreNames {
     SIDE_PANEL_DOCS = 'Side-Panel-Docs',
 }
 
+export enum TransformCreateStoreNames {
+    TRANSFORM_CREATE = 'Transform-Create',
+}
+
 export type StoreName =
     | BindingsEditorStoreNames
     | DetailsFormStoreNames
@@ -68,4 +72,5 @@ export type StoreName =
     | SelectTableStoreNames
     | ShardDetailStoreNames
     | AdminStoreNames
+    | TransformCreateStoreNames
     | GlobalStoreNames;

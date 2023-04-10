@@ -9,12 +9,6 @@ interface Props {
     maxChips?: number;
 }
 
-const chipListWrapperStyling = {
-    minWidth: 100,
-    maxHeight: 100,
-    overflow: 'auto',
-};
-
 function ChipList({ strings, disabled, maxChips }: Props) {
     const intl = useIntl();
 
@@ -33,7 +27,7 @@ function ChipList({ strings, disabled, maxChips }: Props) {
     };
 
     return (
-        <TableCell sx={chipListWrapperStyling}>
+        <TableCell>
             <Box
                 sx={{
                     display: 'flex',
@@ -41,6 +35,7 @@ function ChipList({ strings, disabled, maxChips }: Props) {
                     listStyle: 'none',
                     p: 0,
                     m: 0,
+                    minWidth: 100,
                     overflow: 'auto',
                     maxHeight: 100,
                 }}

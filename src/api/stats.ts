@@ -78,13 +78,13 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
         case 'thisWeek':
             queryBuilder = queryBuilder
                 .gte('ts', formatToGMT(startOfWeek(today)))
-                .lte('ts', formatToGMT(endOfWeek(today)))
+                .lt('ts', formatToGMT(endOfWeek(today)))
                 .eq('grain', 'daily');
             break;
         case 'lastWeek':
             queryBuilder = queryBuilder
                 .gte('ts', formatToGMT(startOfWeek(lastWeek)))
-                .lte('ts', formatToGMT(endOfWeek(lastWeek)))
+                .lt('ts', formatToGMT(endOfWeek(lastWeek)))
                 .eq('grain', 'daily');
             break;
 

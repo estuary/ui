@@ -4,7 +4,6 @@ import { authenticatedRoutes } from 'app/routes';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
 import EntityName from 'components/tables/cells/EntityName';
-import OptionsMenu from 'components/tables/cells/OptionsMenu';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
@@ -23,6 +22,7 @@ import {
     StatsResponse,
 } from 'stores/Tables/Store';
 import { getPathWithParams, hasLength } from 'utils/misc-utils';
+import OptionsMenu from '../cells/OptionsMenu';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
 import useCaptureColumns from './useCaptureColumns';

@@ -1,7 +1,6 @@
 import { TableRow, useTheme } from '@mui/material';
 import { CollectionQueryWithStats } from 'api/liveSpecsExt';
 import Actions from 'components/tables/cells/Actions';
-import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
@@ -21,6 +20,7 @@ import {
     StatsResponse,
 } from 'stores/Tables/Store';
 import { hasLength } from 'utils/misc-utils';
+import EntityName from '../cells/EntityName';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
 import useCollectionColumns from './useCollectionColumns';

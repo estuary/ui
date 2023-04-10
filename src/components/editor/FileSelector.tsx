@@ -11,7 +11,7 @@ import {
     useEditorStore_setCurrentCatalog,
     useEditorStore_specs,
 } from 'components/editor/Store/hooks';
-import { defaultOutline } from 'context/Theme';
+import { dataGridListStyling } from 'context/Theme';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -107,23 +107,7 @@ function EditorFileSelector({ localZustandScope }: Props) {
                 getRowId={getRowId}
                 selectionModel={selectionModel}
                 initialState={initialState}
-                sx={{
-                    '& .MuiDataGrid-row': {
-                        cursor: 'pointer',
-                    },
-                    '& .MuiDataGrid-cell': {
-                        borderBottom: (theme) =>
-                            defaultOutline[theme.palette.mode],
-                    },
-                    '& .MuiDataGrid-columnHeaders': {
-                        borderBottom: (theme) =>
-                            defaultOutline[theme.palette.mode],
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                        display: 'none',
-                    },
-                    'border': (theme) => defaultOutline[theme.palette.mode],
-                }}
+                sx={dataGridListStyling}
             />
         );
     } else {

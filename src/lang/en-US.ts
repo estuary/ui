@@ -138,6 +138,7 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.updated_at': `Updated`,
     'data.email': `Email`,
     'data.display_name': `Username`,
+    'data.published_at': `Published At`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
@@ -185,11 +186,15 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin.cookies': `Cookie Preferences`,
     'routeTitle.admin.storageMappings': `${CommonMessages['terms.storageMapping']}`,
     'routeTitle.captureCreate': `Create Capture`,
+    'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
+    'routeTitle.collectionCreate': `Create Transformation`,
+    'routeTitle.collectionDetails': `Collection Details`,
     'routeTitle.dataPlaneAuthReq': `Data-plane authorization check`,
     'routeTitle.directives': `Directives`,
+    'routeTitle.details': `Details`,
     'routeTitle.error.entityNotFound': `Entity Not Found`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
@@ -197,6 +202,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.noGrants': `Signed Up`,
     'routeTitle.legal': `Legal`,
     'routeTitle.materializationCreate': `Create Materialization`,
+    'routeTitle.materializationDetails': `Materialization Details`,
     'routeTitle.materializationEdit': `Edit Materialization`,
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,
@@ -217,6 +223,8 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
     'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
+    'browserTitle.collectionCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collectionCreate']}`,
+    'browserTitle.details': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.details']}`,
     'browserTitle.dataPlaneAuthReq': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dataPlaneAuthReq']}`,
     'browserTitle.error.entityNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.entityNotFound']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
@@ -402,6 +410,8 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. You'll find a message describing the issue at the top of the page.`,
     'entityTable.moreEntities': `{count} more`,
 
+    'entityTable.detailsLink': `View details`,
+
     'optionMenu.ariaLabel': `Open Option Menu`,
     'optionMenu.tooltip': `Options`,
     'optionMenu.option.detailsPanel.display': `View details`,
@@ -547,6 +557,7 @@ const Materializations: ResolvedIntlConfig['messages'] = {
 
 const Collections: ResolvedIntlConfig['messages'] = {
     'collectionsTable.title': `Collections`,
+    'collectionsTable.cta.new': `New Collection`,
     'collectionsTable.detailsCTA': `Details`,
     'collectionsTable.filterLabel': `Filter collections`,
     'collections.message1': `You currently have no collections. Click the Captures icon on the menu bar to get started.`,
@@ -683,11 +694,13 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
 const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.logs.title': `Logs`,
     'detailsPanel.logs.notFound': `Logs for this build cannot be found. This is likely a permissions issue. You don't have permissions to view other users' logs by default.`,
+    'detailsPanel.shardDetails.fetchError': `Unable to fetch shard status`,
+    'detailsPanel.shardDetails.docLink': `Docs`,
     'detailsPanel.shardDetails.title': `Shard Information`,
     'detailsPanel.shardDetails.status.label': `Status`,
     'detailsPanel.shardDetails.id.label': `ID`,
     'detailsPanel.shardDetails.errorTitle': `Shard Replica Processing Errors`,
-    'detailsPanel.shardDetails.docLink': `Shard Help`,
+    'detailsPanel.shardDetails.noStatusFound': `No shard status to report`,
     'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
     'detailsPanel.dataPreview.header': `Data Preview`,
     'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
@@ -896,6 +909,13 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
 };
 
+const Details: ResolvedIntlConfig['messages'] = {
+    'details.tabs.overview': `Overview`,
+    'details.tabs.spec': `Spec`,
+    'details.tabs.shardStatus': `Status`,
+    'details.tabs.history': `History`,
+};
+
 const Docs: ResolvedIntlConfig['messages'] = {
     'docs.iframe.title': `{connector} Documentation`,
     'docs.iframe.disabled.title': `Connector documentation disabled`,
@@ -904,6 +924,28 @@ const Docs: ResolvedIntlConfig['messages'] = {
     'docs.cta.expand': `Help`,
     'docs.cta.expand.tooltip': `Expand Connector Help`,
     'docs.cta.expand.disabled': `Open 3rd party docs in new window`,
+};
+
+const NewTransform: ResolvedIntlConfig['messages'] = {
+    'newTransform.modal.title': `Build a new collection`,
+    'newTransform.language.title': `Language`,
+    'newTransform.language.sql': `SQL`,
+    'newTransform.language.ts': `Typescript`,
+    'newTransform.collection.label': `Collection Name`,
+    'newTransform.errors.collection': `Select A Source Collection`,
+    'newTransform.errors.name': `Name Your Transform`,
+    'newTransform.errors.prefixMissing': `No prefix selected`,
+    'newTransform.errors.namePattern': `Name does not match pattern`,
+    'newTransform.errors.nameInvalid': `Invalid entity name`,
+    'newTransform.errors.nameMissing': `Missing entity name`,
+    'newTransform.errors.gitPod': `Failed to open GitPod`,
+    'newTransform.stepper.step1.label': `Select your collection`,
+    'newTransform.stepper.step2.label': `Transformation Language`,
+    'newTransform.stepper.step3.label': `Write Transformation`,
+    'newTransform.instructions': `You will be set up with an environment to create a
+                            transform. Create your query and use the CLI to
+                            continue, e.g`,
+    'newTransform.button.cta': `Proceed to GitPod`,
 };
 
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
@@ -975,8 +1017,10 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CustomRenderers,
     ...StorageMappings,
     ...EntityNotFound,
+    ...Details,
     ...ExistingEntityCheck,
     ...Docs,
+    ...NewTransform,
     ...TaskEndpoints,
     ...DataPlaneAuthReq,
 };
