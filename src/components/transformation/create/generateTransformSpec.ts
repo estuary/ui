@@ -10,21 +10,17 @@ const schema = {
     required: ['your_key'],
 };
 
-// Need to make sure whatever name we pass in can be used in a file name
-const makeNameSafeForFiles = (source: string) => {
-    return source.replaceAll(/\//g, '_');
-};
-
 const generateSqlTemplate = (
     entityName: string,
     selectedCollectionSet: Set<string>
 ) => {
     const transforms = Array.from(selectedCollectionSet).map((source) => {
-        const name = makeNameSafeForFiles(source);
+        const baseName = stripPathing(source);
+
         return {
-            name: `${name}`,
+            name: `${baseName}`,
             source,
-            lambda: `${entityName}.lambda.${name}.sql`,
+            lambda: `${entityName}.lambda.${baseName}.sql`,
         };
     });
 
@@ -47,10 +43,10 @@ const generateTsTemplate = (
     selectedCollectionSet: Set<string>
 ) => {
     const transforms = Array.from(selectedCollectionSet).map((source) => {
-        const name = makeNameSafeForFiles(source);
+        const baseName = stripPathing(source);
 
         return {
-            name: `${name}`,
+            name: `${baseName}`,
             source,
         };
     });
