@@ -129,8 +129,12 @@ function EndpointConfig({
     });
     useEffect(() => {
         if (connectorTag) {
+            const concatSymbol = connectorTag.documentation_url.includes('?')
+                ? '&'
+                : '?';
+
             setDocsURL(
-                `${connectorTag.documentation_url}?${DOCUSAURUS_THEME}=${theme.palette.mode}`
+                `${connectorTag.documentation_url}${concatSymbol}${DOCUSAURUS_THEME}=${theme.palette.mode}`
             );
         }
     }, [connectorTag, setDocsURL, theme.palette.mode]);
