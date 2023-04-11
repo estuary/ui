@@ -906,7 +906,7 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.language.ts': `Typescript`,
     'newTransform.collection.label': `Derived Collection Name`,
     'newTransform.errors.collection': `Select source collections`,
-    'newTransform.errors.name': `Name Your Transform`,
+    'newTransform.errors.name': `Name your Derived Collection`,
     'newTransform.errors.prefixMissing': `No prefix selected`,
     'newTransform.errors.namePattern': `Name does not match pattern`,
     'newTransform.errors.nameInvalid': `Invalid entity name`,
