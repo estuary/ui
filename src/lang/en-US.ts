@@ -900,12 +900,12 @@ const Docs: ResolvedIntlConfig['messages'] = {
 };
 
 const NewTransform: ResolvedIntlConfig['messages'] = {
-    'newTransform.modal.title': `Build a new transformation`,
+    'newTransform.modal.title': `Derive A New Collection`,
     'newTransform.language.title': `Language`,
     'newTransform.language.sql': `SQL`,
     'newTransform.language.ts': `Typescript`,
-    'newTransform.collection.label': `Transformation Name`,
-    'newTransform.errors.collection': `Select A Source Collection`,
+    'newTransform.collection.label': `Derived Collection Name`,
+    'newTransform.errors.collection': `Select source collections`,
     'newTransform.errors.name': `Name Your Transform`,
     'newTransform.errors.prefixMissing': `No prefix selected`,
     'newTransform.errors.namePattern': `Name does not match pattern`,
@@ -915,9 +915,9 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.errors.gitPodWindow': `Failed to open GitPod. Your browser may be blocking it from opening. Please ensure your browser allows pop-ups.`,
     'newTransform.info.gitPodWindowTitle': `GitPod should be opened in a new tab or window`,
     'newTransform.info.gitPodWindowMessage': `To develop your transformation please use GitPod.`,
-    'newTransform.stepper.step1.label': `Select your collections`,
+    'newTransform.stepper.step1.label': `Select source collections`,
     'newTransform.stepper.step2.label': `Transformation Language`,
-    'newTransform.stepper.step3.label': `Write Transformation`,
+    'newTransform.stepper.step3.label': `Write transformations`,
     'newTransform.instructions1': `You will be set up with an environment to create a
                             transformation.`,
     'newTransform.instructions2': `Create your query and use the CLI to
