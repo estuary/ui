@@ -22,22 +22,21 @@ import {
 } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
-import { getLiveSpecsByCatalogNames } from 'api/liveSpecsExt';
 import { createRefreshToken } from 'api/tokens';
+import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
+import CollectionSelector from 'components/collection/Selector';
+import SingleLineCode from 'components/content/SingleLineCode';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useSnackbar } from 'notistack';
 import { useCallback, useMemo, useState } from 'react';
-
-// Something seems to be conflicting with the import re-ordering of this
-// eslint-disable-next-line import/order
-import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
-import CollectionSelector from 'components/collection/Selector';
-import SingleLineCode from 'components/content/SingleLineCode';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSet } from 'react-use';
 import { generateGitPodURL } from 'services/gitpod';
 import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+import generateTransformSpec, {
+    DerivationLanguage,
+} from './generateTransformSpec';
 import SingleStep from './SingleStep';
 import { StepBox } from './StepBox';
 
@@ -49,10 +48,13 @@ const StyledStepConnector = styled(StepConnector)(() => ({
     },
 }));
 
-type DerivationLanguage = 'sql' | 'typescript';
 const NAME_RE = new RegExp(`^(${PREFIX_NAME_PATTERN}/?)*$`);
 
-function TransformationCreate() {
+interface Props {
+    postWindowOpen: (window: Window | null) => void;
+}
+
+function TransformationCreate({ postWindowOpen }: Props) {
     const intl = useIntl();
 
     const collections = useLiveSpecs('collection');
@@ -148,29 +150,23 @@ function TransformationCreate() {
                 );
             }
             const draftId: string = draft.data[0].id;
-            const specsByName = await getLiveSpecsByCatalogNames(
-                null,
-                Array.from(selectedCollectionSet)
-            );
-            if (specsByName.error) {
-                throw new Error(
-                    `[${specsByName.error.code}]: ${specsByName.error.message}, ${specsByName.error.details}, ${specsByName.error.hint}`
-                );
-            }
 
-            for (const spec of specsByName.body) {
-                // eslint-disable-next-line no-await-in-loop
-                await createDraftSpec(
-                    draftId,
-                    spec.catalog_name,
-                    spec.spec,
-                    spec.spec_type,
-                    spec.last_pub_id
-                );
-            }
+            const spec = generateTransformSpec(
+                derivationLanguage,
+                computedEntityName,
+                selectedCollectionSet
+            );
+
+            await createDraftSpec(
+                draftId,
+                computedEntityName,
+                spec,
+                'collection',
+                null
+            );
             return draftId;
         },
-        [computedEntityName, intl, selectedCollectionSet]
+        [computedEntityName, derivationLanguage, intl, selectedCollectionSet]
     );
 
     const generateUrl = useMemo(
@@ -204,7 +200,7 @@ function TransformationCreate() {
             } catch (e: unknown) {
                 displayError(
                     intl.formatMessage({
-                        id: 'newTransform.errors.gitPod',
+                        id: 'newTransform.errors.urlNotGenerated',
                     })
                 );
                 console.error(e);
@@ -373,16 +369,32 @@ function TransformationCreate() {
                             }}
                         />
                         <LoadingButton
-                            disabled={!!entityNameError || !!submitButtonError}
                             fullWidth
                             variant="contained"
                             loading={urlLoading}
+                            disabled={
+                                !!entityNameError ||
+                                !!submitButtonError ||
+                                urlLoading
+                            }
                             sx={{ marginBottom: 3 }}
-                            loadingPosition="end"
                             onClick={async () => {
                                 const gitpodUrl = await generateUrl();
                                 if (gitpodUrl) {
-                                    window.open(gitpodUrl, '_blank');
+                                    const gitPodWindow = window.open(
+                                        gitpodUrl,
+                                        '_blank'
+                                    );
+
+                                    if (!gitPodWindow || gitPodWindow.closed) {
+                                        displayError(
+                                            intl.formatMessage({
+                                                id: 'newTransform.errors.gitPodWindow',
+                                            })
+                                        );
+                                    }
+
+                                    postWindowOpen(gitPodWindow);
                                 }
                             }}
                         >
@@ -391,12 +403,14 @@ function TransformationCreate() {
                                     id: 'newTransform.button.cta',
                                 })}
                         </LoadingButton>
-                        <Stack>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: 'rgb(150,150,150)' }}
-                            >
-                                <FormattedMessage id="newTransform.instructions" />
+                        <Stack spacing={1}>
+                            <Typography variant="caption">
+                                <Box>
+                                    <FormattedMessage id="newTransform.instructions1" />
+                                </Box>
+                                <Box>
+                                    <FormattedMessage id="newTransform.instructions2" />
+                                </Box>
                             </Typography>
 
                             <SingleLineCode value="flowctl --help" />
