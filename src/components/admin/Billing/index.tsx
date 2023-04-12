@@ -30,6 +30,7 @@ import {
     useBilling_setProjectedCostStats,
 } from 'stores/Tables/Billing/hooks';
 import useConstant from 'use-constant';
+import { TOTAL_CARD_HEIGHT } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
 
 const boxShadow =
@@ -135,7 +136,7 @@ function AdminBilling() {
                 <Grid item xs={12} md={6}>
                     <Box
                         sx={{
-                            height: 300,
+                            height: TOTAL_CARD_HEIGHT,
                             p: 2,
                             background: (theme) =>
                                 semiTransparentBackground[theme.palette.mode],
@@ -158,7 +159,7 @@ function AdminBilling() {
                 <Grid item xs={12} md={6}>
                     <Box
                         sx={{
-                            height: 300,
+                            height: TOTAL_CARD_HEIGHT,
                             p: 2,
                             background: (theme) =>
                                 semiTransparentBackground[theme.palette.mode],
@@ -177,7 +178,7 @@ function AdminBilling() {
                 <Grid item xs={12} md={6}>
                     <Box
                         sx={{
-                            height: 300,
+                            height: TOTAL_CARD_HEIGHT,
                             p: 2,
                             background: (theme) =>
                                 semiTransparentBackground[theme.palette.mode],
@@ -196,7 +197,7 @@ function AdminBilling() {
                 <Grid item xs={12} md={6}>
                     <Box
                         sx={{
-                            height: 300,
+                            height: TOTAL_CARD_HEIGHT,
                             p: 2,
                             background: (theme) =>
                                 semiTransparentBackground[theme.palette.mode],

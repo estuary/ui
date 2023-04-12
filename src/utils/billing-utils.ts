@@ -4,6 +4,11 @@ import prettyBytes from 'pretty-bytes';
 import { BillingDetails } from 'stores/Tables/Billing/types';
 import { Entity, ProjectedCostStats } from 'types';
 
+export const TOTAL_CARD_HEIGHT = 300;
+
+// Grid item height - 72 = graph canvas height
+export const CARD_AREA_HEIGHT = TOTAL_CARD_HEIGHT - 72;
+
 export const BYTES_PER_GB = 1073741824;
 
 const FREE_BYTES = 21474836480;

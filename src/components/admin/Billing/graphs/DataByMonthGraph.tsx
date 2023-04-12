@@ -1,4 +1,6 @@
 import { useTheme } from '@mui/material';
+import EmptyGraphState from 'components/admin/Billing/graphs/states/Empty';
+import GraphLoadingState from 'components/admin/Billing/graphs/states/Loading';
 import { defaultOutlineColor, paperBackground } from 'context/Theme';
 import {
     eachMonthOfInterval,
@@ -17,20 +19,23 @@ import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useBilling_billingDetails } from 'stores/Tables/Billing/hooks';
+import {
+    useBilling_billingDetails,
+    useBilling_hydrated,
+} from 'stores/Tables/Billing/hooks';
 import useConstant from 'use-constant';
 import {
     BYTES_PER_GB,
+    CARD_AREA_HEIGHT,
     formatDataVolumeForDisplay,
     SeriesConfig,
 } from 'utils/billing-utils';
-
-// Grid item height - 72 = graph canvas height
 
 function DataByMonthGraph() {
     const theme = useTheme();
     const intl = useIntl();
 
+    const billingStoreHydrated = useBilling_hydrated();
     const billingDetails = useBilling_billingDetails();
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
@@ -184,7 +189,15 @@ function DataByMonthGraph() {
         theme,
     ]);
 
-    return <div id="data-by-month" style={{ height: 228 }} />;
+    if (billingStoreHydrated) {
+        return billingDetails.length > 0 ? (
+            <div id="data-by-month" style={{ height: CARD_AREA_HEIGHT }} />
+        ) : (
+            <EmptyGraphState />
+        );
+    } else {
+        return <GraphLoadingState />;
+    }
 }
 
 export default DataByMonthGraph;

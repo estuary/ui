@@ -41,6 +41,13 @@ export const useBilling_setDataByTaskGraphDetails = () => {
     );
 };
 
+export const useBilling_hydrated = () => {
+    return useZustandStore<BillingState, BillingState['hydrated']>(
+        SelectTableStoreNames.BILLING,
+        (state) => state.hydrated
+    );
+};
+
 export const useBilling_resetState = () => {
     return useZustandStore<BillingState, BillingState['resetBillingState']>(
         SelectTableStoreNames.BILLING,

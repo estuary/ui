@@ -1,4 +1,6 @@
 import { useTheme } from '@mui/material';
+import EmptyGraphState from 'components/admin/Billing/graphs/states/Empty';
+import GraphLoadingState from 'components/admin/Billing/graphs/states/Loading';
 import { defaultOutlineColor, paperBackground } from 'context/Theme';
 import {
     eachMonthOfInterval,
@@ -20,19 +22,22 @@ import navArrowLeftDark from 'images/graph-icons/nav-arrow-left__dark.svg';
 import navArrowLeftLight from 'images/graph-icons/nav-arrow-left__light.svg';
 import navArrowRightDark from 'images/graph-icons/nav-arrow-right__dark.svg';
 import navArrowRightLight from 'images/graph-icons/nav-arrow-right__light.svg';
+import { isEmpty } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useBilling_dataByTaskGraphDetails } from 'stores/Tables/Billing/hooks';
+import {
+    useBilling_dataByTaskGraphDetails,
+    useBilling_hydrated,
+} from 'stores/Tables/Billing/hooks';
 import { DataVolumeByTaskGraphDetails } from 'stores/Tables/Billing/types';
 import useConstant from 'use-constant';
 import {
     BYTES_PER_GB,
+    CARD_AREA_HEIGHT,
     formatDataVolumeForDisplay,
     SeriesConfig,
 } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
-
-// Grid item height - 72 = graph canvas height
 
 const navArrowsLight = [
     `image://${navArrowLeftLight}`,
@@ -48,6 +53,7 @@ function DataByTaskGraph() {
     const theme = useTheme();
     const intl = useIntl();
 
+    const billingStoreHydrated = useBilling_hydrated();
     const dataByTaskGraphDetails = useBilling_dataByTaskGraphDetails();
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
@@ -247,7 +253,15 @@ function DataByTaskGraph() {
         theme,
     ]);
 
-    return <div id="data-by-task" style={{ height: 228 }} />;
+    if (billingStoreHydrated) {
+        return isEmpty(dataByTaskGraphDetails) ? (
+            <EmptyGraphState />
+        ) : (
+            <div id="data-by-task" style={{ height: CARD_AREA_HEIGHT }} />
+        );
+    } else {
+        return <GraphLoadingState />;
+    }
 }
 
 export default DataByTaskGraph;
