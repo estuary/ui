@@ -137,7 +137,11 @@ function EndpointConfig({
                 `${connectorTag.documentation_url}${concatSymbol}${DOCUSAURUS_THEME}=${theme.palette.mode}`
             );
         }
-    }, [connectorTag, setDocsURL, theme.palette.mode]);
+
+        // We do not want to trigger this if the theme changes so we just use the theme at load
+        //  because we fire a message to the docs when the theme changes
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [connectorTag, setDocsURL]);
 
     if (error) {
         return <Error error={error} />;
