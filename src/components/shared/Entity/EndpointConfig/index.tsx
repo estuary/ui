@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
@@ -34,6 +34,8 @@ interface Props {
     hideBorder?: boolean;
 }
 
+const DOCUSAURUS_THEME = 'docusaurus-theme';
+
 function EndpointConfig({
     connectorImage,
     readOnly = false,
@@ -41,6 +43,7 @@ function EndpointConfig({
 }: Props) {
     // General hooks
     const intl = useIntl();
+    const theme = useTheme();
 
     // The useConnectorTag hook can accept a connector ID or a connector tag ID.
     const { connectorTag, error } = useConnectorTag(connectorImage);
@@ -126,9 +129,15 @@ function EndpointConfig({
     });
     useEffect(() => {
         if (connectorTag) {
-            setDocsURL(connectorTag.documentation_url);
+            const concatSymbol = connectorTag.documentation_url.includes('?')
+                ? '&'
+                : '?';
+
+            setDocsURL(
+                `${connectorTag.documentation_url}${concatSymbol}${DOCUSAURUS_THEME}=${theme.palette.mode}`
+            );
         }
-    }, [connectorTag, setDocsURL]);
+    }, [connectorTag, setDocsURL, theme.palette.mode]);
 
     if (error) {
         return <Error error={error} />;
