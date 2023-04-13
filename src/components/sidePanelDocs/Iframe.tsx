@@ -107,6 +107,11 @@ function SidePanelIframe() {
             <iframe
                 ref={iframeRef}
                 style={{
+                    // This is here for safety on the rare chance that
+                    //  someone is using darkmode in the app but their docs
+                    //  load in as light mode. When in light mode Docusaurus
+                    //  does not set a background and makes the text unreadable
+                    backgroundColor: '#ffffff',
                     border: 'none',
                     height: '100%',
                     visibility: loading ? 'hidden' : 'visible',
