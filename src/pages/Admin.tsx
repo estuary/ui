@@ -1,6 +1,5 @@
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
-import PageContainer from 'components/shared/PageContainer';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useNavigate } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
@@ -16,13 +15,7 @@ const Admin = () => {
     );
 
     useBrowserTitle('browserTitle.admin');
-    return (
-        <PageContainer
-            pageTitleProps={{ header: authenticatedRoutes.admin.title }}
-        >
-            <AdminTabs />
-        </PageContainer>
-    );
+    return <AdminTabs />;
 };
 
 export default Admin;
