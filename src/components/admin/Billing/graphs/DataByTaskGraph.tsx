@@ -100,7 +100,7 @@ function DataByTaskGraph() {
     }, [dataByTaskGraphDetails, intl, today]);
 
     useEffect(() => {
-        if (hasLength(seriesConfig)) {
+        if (billingStoreHydrated && hasLength(seriesConfig)) {
             if (!myChart) {
                 echarts.use([
                     GridComponent,
@@ -246,6 +246,7 @@ function DataByTaskGraph() {
     }, [
         setMyChart,
         dataByTaskGraphDetails,
+        billingStoreHydrated,
         intl,
         months,
         myChart,

@@ -72,7 +72,7 @@ function DataByMonthGraph() {
     }, [billingDetails, intl, today]);
 
     useEffect(() => {
-        if (billingDetails.length > 0) {
+        if (billingStoreHydrated && billingDetails.length > 0) {
             if (!myChart) {
                 echarts.use([
                     GridComponent,
@@ -182,6 +182,7 @@ function DataByMonthGraph() {
     }, [
         setMyChart,
         billingDetails,
+        billingStoreHydrated,
         intl,
         months,
         myChart,
