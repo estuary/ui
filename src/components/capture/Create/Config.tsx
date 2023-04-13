@@ -1,26 +1,24 @@
 import { authenticatedRoutes } from 'app/routes';
 import EntityCreateConfig from 'components/shared/Entity/Create/Config';
 import ExistingEntityHydrator from 'components/shared/Entity/ExistingEntityCards/Store/Hydrator';
-import PageContainer from 'components/shared/PageContainer';
+import usePageTitle from 'hooks/usePageTitle';
+
+const entityType = 'capture';
 
 function CaptureCreateConfig() {
-    const entityType = 'capture';
+    usePageTitle({
+        header: authenticatedRoutes.captures.create.title,
+        headerLink:
+            'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
+    });
 
     return (
-        <PageContainer
-            pageTitleProps={{
-                header: authenticatedRoutes.captures.create.title,
-                headerLink:
-                    'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
-            }}
-        >
-            <ExistingEntityHydrator>
-                <EntityCreateConfig
-                    title="browserTitle.captureCreate"
-                    entityType={entityType}
-                />
-            </ExistingEntityHydrator>
-        </PageContainer>
+        <ExistingEntityHydrator>
+            <EntityCreateConfig
+                title="browserTitle.captureCreate"
+                entityType={entityType}
+            />
+        </ExistingEntityHydrator>
     );
 }
 

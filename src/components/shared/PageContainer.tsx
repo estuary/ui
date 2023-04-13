@@ -9,7 +9,6 @@ import AlertBox from './AlertBox';
 
 interface Props {
     children: ReactNode | ReactNode[];
-    // pageTitleProps?: PageTitleProps;
     hideBackground?: boolean;
 }
 

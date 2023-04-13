@@ -19,8 +19,6 @@ import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions } from 'services/jsonforms/shared';
 
-const TITLE = 'Test JSON Forms';
-
 const TestJsonForms = () => {
     const [error, setError] = useState<string | null>(null);
     const [schemaInput, setSchemaInput] = useState<string | undefined>('');
@@ -60,7 +58,7 @@ const TestJsonForms = () => {
     };
 
     return (
-        <PageContainer pageTitleProps={{ header: TITLE }}>
+        <PageContainer>
             <Stack
                 spacing={2}
                 sx={{

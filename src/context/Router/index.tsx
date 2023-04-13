@@ -18,7 +18,6 @@ import {
     Routes,
 } from 'react-router-dom';
 import { isProduction } from 'utils/env-utils';
-import PageLoading from './PageLoading';
 import RequireAuth from './RequireAuth';
 
 const Authenticated = lazy(() => import('./Authenticated'));
@@ -102,7 +101,7 @@ const router = createBrowserRouter(
             <Route
                 path={authenticatedRoutes.path}
                 element={
-                    <Suspense fallback={<PageLoading />}>
+                    <Suspense fallback={null}>
                         <Authenticated />
                     </Suspense>
                 }
@@ -111,7 +110,7 @@ const router = createBrowserRouter(
                     <Route
                         path={authenticatedRoutes.home.path}
                         element={
-                            <Suspense fallback={<PageLoading />}>
+                            <Suspense fallback={null}>
                                 <HomePage />
                             </Suspense>
                         }
@@ -134,9 +133,7 @@ const router = createBrowserRouter(
                                                 .create.new.path
                                         }
                                         element={
-                                            <Suspense
-                                                fallback={<PageLoading />}
-                                            >
+                                            <Suspense fallback={null}>
                                                 <DerivationCreateComponent />
                                             </Suspense>
                                         }
@@ -154,9 +151,7 @@ const router = createBrowserRouter(
                                                     .details.overview.path
                                             }
                                             element={
-                                                <Suspense
-                                                    fallback={<PageLoading />}
-                                                >
+                                                <Suspense fallback={null}>
                                                     <CollectionDetailsRoute tab="overview" />
                                                 </Suspense>
                                             }
@@ -168,9 +163,7 @@ const router = createBrowserRouter(
                                                     .details.spec.path
                                             }
                                             element={
-                                                <Suspense
-                                                    fallback={<PageLoading />}
-                                                >
+                                                <Suspense fallback={null}>
                                                     <CollectionDetailsRoute tab="spec" />
                                                 </Suspense>
                                             }
@@ -182,9 +175,7 @@ const router = createBrowserRouter(
                                                     .details.history.path
                                             }
                                             element={
-                                                <Suspense
-                                                    fallback={<PageLoading />}
-                                                >
+                                                <Suspense fallback={null}>
                                                     <CollectionDetailsRoute tab="history" />
                                                 </Suspense>
                                             }
@@ -199,7 +190,7 @@ const router = createBrowserRouter(
                         <Route
                             path=""
                             element={
-                                <Suspense fallback={<PageLoading />}>
+                                <Suspense fallback={null}>
                                     <CapturesTable />
                                 </Suspense>
                             }
@@ -208,7 +199,7 @@ const router = createBrowserRouter(
                         <Route
                             path={authenticatedRoutes.captures.create.path}
                             element={
-                                <Suspense fallback={<PageLoading />}>
+                                <Suspense fallback={null}>
                                     <CaptureCreateRoute />
                                 </Suspense>
                             }
@@ -217,7 +208,7 @@ const router = createBrowserRouter(
                         <Route
                             path={authenticatedRoutes.captures.create.new.path}
                             element={
-                                <Suspense fallback={<PageLoading />}>
+                                <Suspense fallback={null}>
                                     <CaptureCreateNewRoute />
                                 </Suspense>
                             }
@@ -226,7 +217,7 @@ const router = createBrowserRouter(
                         <Route
                             path={authenticatedRoutes.captures.edit.path}
                             element={
-                                <Suspense fallback={<PageLoading />}>
+                                <Suspense fallback={null}>
                                     <CaptureEditRoute />
                                 </Suspense>
                             }
@@ -239,7 +230,7 @@ const router = createBrowserRouter(
                                         .overview.path
                                 }
                                 element={
-                                    <Suspense fallback={<PageLoading />}>
+                                    <Suspense fallback={null}>
                                         <CaptureDetailsRoute tab="overview" />
                                     </Suspense>
                                 }
@@ -251,7 +242,7 @@ const router = createBrowserRouter(
                                         .path
                                 }
                                 element={
-                                    <Suspense fallback={<PageLoading />}>
+                                    <Suspense fallback={null}>
                                         <CaptureDetailsRoute tab="spec" />
                                     </Suspense>
                                 }
@@ -263,7 +254,7 @@ const router = createBrowserRouter(
                                         .path
                                 }
                                 element={
-                                    <Suspense fallback={<PageLoading />}>
+                                    <Suspense fallback={null}>
                                         <CaptureDetailsRoute tab="history" />
                                     </Suspense>
                                 }
@@ -275,7 +266,7 @@ const router = createBrowserRouter(
                         <Route
                             path=""
                             element={
-                                <Suspense fallback={<PageLoading />}>
+                                <Suspense fallback={null}>
                                     <MaterializationsTable />
                                 </Suspense>
                             }
@@ -286,7 +277,7 @@ const router = createBrowserRouter(
                                 authenticatedRoutes.materializations.create.path
                             }
                             element={
-                                <Suspense fallback={<PageLoading />}>
+                                <Suspense fallback={null}>
                                     <MaterializationCreateRoute />
                                 </Suspense>
                             }
@@ -298,7 +289,7 @@ const router = createBrowserRouter(
                                     .path
                             }
                             element={
-                                <Suspense fallback={<PageLoading />}>
+                                <Suspense fallback={null}>
                                     <MaterializationCreateNewRoute />
                                 </Suspense>
                             }
@@ -309,7 +300,7 @@ const router = createBrowserRouter(
                                 authenticatedRoutes.materializations.edit.path
                             }
                             element={
-                                <Suspense fallback={<PageLoading />}>
+                                <Suspense fallback={null}>
                                     <MaterializationEditRoute />
                                 </Suspense>
                             }
@@ -327,7 +318,7 @@ const router = createBrowserRouter(
                                         .overview.path
                                 }
                                 element={
-                                    <Suspense fallback={<PageLoading />}>
+                                    <Suspense fallback={null}>
                                         <MaterializationDetailsRoute tab="overview" />
                                     </Suspense>
                                 }
@@ -339,7 +330,7 @@ const router = createBrowserRouter(
                                         .spec.path
                                 }
                                 element={
-                                    <Suspense fallback={<PageLoading />}>
+                                    <Suspense fallback={null}>
                                         <MaterializationDetailsRoute tab="spec" />
                                     </Suspense>
                                 }
@@ -351,7 +342,7 @@ const router = createBrowserRouter(
                                         .history.path
                                 }
                                 element={
-                                    <Suspense fallback={<PageLoading />}>
+                                    <Suspense fallback={null}>
                                         <MaterializationDetailsRoute tab="history" />
                                     </Suspense>
                                 }
@@ -363,7 +354,7 @@ const router = createBrowserRouter(
                         <Route
                             path=""
                             element={
-                                <Suspense fallback={<PageLoading />}>
+                                <Suspense fallback={null}>
                                     <Admin />
                                 </Suspense>
                             }
@@ -371,7 +362,7 @@ const router = createBrowserRouter(
                         <Route
                             path={authenticatedRoutes.admin.accessGrants.path}
                             element={
-                                <Suspense fallback={<PageLoading />}>
+                                <Suspense fallback={null}>
                                     <AccessGrants />
                                 </Suspense>
                             }
@@ -379,7 +370,7 @@ const router = createBrowserRouter(
                         <Route
                             path={authenticatedRoutes.admin.api.path}
                             element={
-                                <Suspense fallback={<PageLoading />}>
+                                <Suspense fallback={null}>
                                     <AdminApi />
                                 </Suspense>
                             }
@@ -387,7 +378,7 @@ const router = createBrowserRouter(
                         <Route
                             path={authenticatedRoutes.admin.connectors.path}
                             element={
-                                <Suspense fallback={<PageLoading />}>
+                                <Suspense fallback={null}>
                                     <AdminConnectors />
                                 </Suspense>
                             }
@@ -395,7 +386,7 @@ const router = createBrowserRouter(
                         <Route
                             path={authenticatedRoutes.admin.cookies.path}
                             element={
-                                <Suspense fallback={<PageLoading />}>
+                                <Suspense fallback={null}>
                                     <AdminCookies />
                                 </Suspense>
                             }
@@ -405,7 +396,7 @@ const router = createBrowserRouter(
                                 authenticatedRoutes.admin.storageMappings.path
                             }
                             element={
-                                <Suspense fallback={<PageLoading />}>
+                                <Suspense fallback={null}>
                                     <StorageMappings />
                                 </Suspense>
                             }

@@ -7,7 +7,7 @@ import { TopBarState } from './types';
 
 const getInitialStateData = (): Pick<TopBarState, 'header' | 'headerLink'> => ({
     header: '',
-    headerLink: null,
+    headerLink: undefined,
 });
 
 const getInitialState = (
