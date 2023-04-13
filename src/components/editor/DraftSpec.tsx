@@ -6,7 +6,7 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
-import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import useDraftSpecs, { DraftSpec } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
 import { Entity } from 'types';
 
@@ -41,7 +41,7 @@ function DraftSpecEditor({
         catalogName: entityName,
     });
 
-    const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
+    const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
 
     const handlers = {
         change: async (newVal: any, catalogName: string) => {

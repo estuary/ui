@@ -1,5 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
 import ResourceConfig from 'components/collection/ResourceConfig';
+import CollectionSchemaEditor from 'components/collection/schema/Editor';
 import MessageWithLink from 'components/content/MessageWithLink';
 import ControlledEditor from 'components/editor/Bindings/ControlledEditor';
 import SchemaEditButton from 'components/editor/Bindings/SchemaEdit/Button';
@@ -141,12 +142,17 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
 
                             {collectionData ? (
                                 collectionData.belongsToDraft ? (
-                                    <DraftSpecEditor
-                                        entityType="collection"
-                                        localZustandScope={true}
-                                        editorHeight={EDITOR_HEIGHT}
-                                        entityName={currentCollection}
-                                    />
+                                    <>
+                                        <CollectionSchemaEditor
+                                            entityName={currentCollection}
+                                        />
+                                        <DraftSpecEditor
+                                            entityType="collection"
+                                            localZustandScope={true}
+                                            editorHeight={EDITOR_HEIGHT}
+                                            entityName={currentCollection}
+                                        />
+                                    </>
                                 ) : (
                                     <ControlledEditor />
                                 )

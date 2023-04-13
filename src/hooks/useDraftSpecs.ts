@@ -12,6 +12,8 @@ export interface DraftSpecQuery {
     expect_pub_id: string;
 }
 
+export type DraftSpec = DraftSpecQuery | null;
+
 export interface DraftSpecSwrMetadata {
     draftSpecs: DraftSpecQuery[];
     error: PostgrestError | undefined;

@@ -945,6 +945,11 @@ const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
     'dataPlaneAuthReq.waiting.message': `Please wait while we authorize access to {catalogPrefix}. You will be redirected shortly.`,
 };
 
+const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
+    'data.key.label': `Key`,
+    'data.key.helper': `Ordered JSON-Pointers which define how a composite key may be extracted from a collection document.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -996,6 +1001,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...NewTransform,
     ...TaskEndpoints,
     ...DataPlaneAuthReq,
+    ...SchemaEditor_Collection,
 };
 
 export default enUSMessages;

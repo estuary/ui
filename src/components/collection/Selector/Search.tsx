@@ -1,14 +1,11 @@
 import {
     Autocomplete,
     AutocompleteChangeReason,
-    autocompleteClasses,
     Box,
-    Popper,
     Skeleton,
     TextField,
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import ListboxComponent from 'components/shared/AutoComplete/VirtualizedList';
+import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { isEqual } from 'lodash';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -26,16 +23,6 @@ interface Props {
     getValue?: (option: any) => string;
     AutocompleteProps?: any; // TODO (typing) - need to typ as props
 }
-
-const StyledPopper = styled(Popper)({
-    [`& .${autocompleteClasses.listbox}`]: {
-        'boxSizing': 'border-box',
-        '& ul': {
-            padding: 0,
-            margin: 0,
-        },
-    },
-});
 
 function CollectionSelectorSearch({
     options,
@@ -87,17 +74,15 @@ function CollectionSelectorSearch({
         >
             <Autocomplete
                 {...AutocompleteProps}
+                {...autoCompleteDefaults_Virtual_Multiple}
                 disabled={readOnly}
                 disableListWrap
-                ListboxComponent={ListboxComponent}
-                multiple
                 options={options}
                 isOptionEqualToValue={(option, value) => {
                     return isEqual(option, value);
                 }}
                 value={selectedCollections}
                 inputValue={inputValue}
-                size="small"
                 fullWidth
                 onChange={handlers.updateCollections}
                 onInputChange={(_event, newInputValue, reason) => {
@@ -108,10 +93,7 @@ function CollectionSelectorSearch({
                         setInputValue(newInputValue);
                     }
                 }}
-                blurOnSelect={false}
-                disableCloseOnSelect
                 disableClearable
-                PopperComponent={StyledPopper}
                 renderTags={() => null}
                 renderInput={(params) => (
                     <TextField
@@ -123,7 +105,6 @@ function CollectionSelectorSearch({
                         onBlur={handlers.validateSelection}
                     />
                 )}
-                renderGroup={(params) => params as unknown as React.ReactNode}
                 renderOption={(props, option, state) => {
                     return [
                         props,
