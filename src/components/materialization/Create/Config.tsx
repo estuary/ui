@@ -14,10 +14,7 @@ function MaterializationCreateConfig() {
 
     return (
         <ExistingEntityHydrator>
-            <EntityCreateConfig
-                title="browserTitle.materializationCreate"
-                entityType={entityType}
-            />
+            <EntityCreateConfig entityType={entityType} />
         </ExistingEntityHydrator>
     );
 }

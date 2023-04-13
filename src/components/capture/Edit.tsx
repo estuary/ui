@@ -175,7 +175,7 @@ function CaptureEdit() {
                 <EndpointConfigHydrator>
                     <ResourceConfigHydrator>
                         <EntityEdit
-                            title="browserTitle.captureEdit"
+                            title="routeTitle.captureEdit"
                             entityType={entityType}
                             readOnly={{ detailsForm: true }}
                             draftSpecMetadata={draftSpecsMetadata}

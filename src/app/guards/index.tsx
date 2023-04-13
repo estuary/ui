@@ -6,7 +6,7 @@ import TenantGuard from './TenantGuard';
 import UserGuard from './User';
 
 function AppGuards({ children }: BaseComponentProps) {
-    useBrowserTitle('browserTitle.loginLoading');
+    useBrowserTitle('routeTitle.loginLoading');
 
     return (
         <UserGuard>

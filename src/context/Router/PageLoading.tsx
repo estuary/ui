@@ -1,7 +1,7 @@
-import { LinearProgress } from '@mui/material';
+import { Backdrop } from '@mui/material';
 
 function PageLoading() {
-    return <LinearProgress />;
+    return <Backdrop open />;
 }
 
 export default PageLoading;

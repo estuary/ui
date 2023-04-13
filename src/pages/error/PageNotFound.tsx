@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 import usePageTitle from 'hooks/usePageTitle';
 import { FormattedMessage } from 'react-intl';
 
-const TITLE = 'browserTitle.error.pageNotFound';
+const TITLE = 'routeTitle.error.pageNotFound';
 
 const PageNotFound = () => {
     usePageTitle({

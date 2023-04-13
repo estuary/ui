@@ -14,10 +14,7 @@ function CaptureCreateConfig() {
 
     return (
         <ExistingEntityHydrator>
-            <EntityCreateConfig
-                title="browserTitle.captureCreate"
-                entityType={entityType}
-            />
+            <EntityCreateConfig entityType={entityType} />
         </ExistingEntityHydrator>
     );
 }

@@ -141,7 +141,6 @@ function MaterializationCreate() {
             <EndpointConfigHydrator>
                 <ResourceConfigHydrator>
                     <EntityCreate
-                        title="browserTitle.materializationCreate"
                         entityType={entityType}
                         draftSpecMetadata={draftSpecsMetadata}
                         resetState={resetState}

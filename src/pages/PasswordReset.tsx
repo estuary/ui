@@ -18,7 +18,7 @@ import { getUserDetails } from 'services/supabase';
 // TODO (password reset) This is not used right now but will probably be in the future
 //   email accounts were disabled and replaced with only magic link and OIDC to reduce complexity
 const PasswordReset = () => {
-    useBrowserTitle('browserTitle.passwordReset');
+    useBrowserTitle('routeTitle.passwordReset');
 
     const { enqueueSnackbar } = useSnackbar();
     const supabaseClient = useClient();

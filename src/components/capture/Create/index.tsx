@@ -160,7 +160,6 @@ function CaptureCreate() {
             <EndpointConfigHydrator>
                 <ResourceConfigHydrator>
                     <EntityCreate
-                        title="browserTitle.captureCreate"
                         entityType={entityType}
                         draftSpecMetadata={draftSpecsMetadata}
                         resetState={resetState}

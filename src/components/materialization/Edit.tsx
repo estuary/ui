@@ -156,7 +156,7 @@ function MaterializationEdit() {
                 <EndpointConfigHydrator>
                     <ResourceConfigHydrator>
                         <EntityEdit
-                            title="browserTitle.materializationEdit"
+                            title="routeTitle.materializationEdit"
                             entityType={entityType}
                             readOnly={{ detailsForm: true }}
                             draftSpecMetadata={draftSpecsMetadata}

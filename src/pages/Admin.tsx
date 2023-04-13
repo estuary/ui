@@ -14,7 +14,7 @@ const Admin = () => {
         })
     );
 
-    useBrowserTitle('browserTitle.admin');
+    useBrowserTitle('routeTitle.admin');
     return <AdminTabs />;
 };
 

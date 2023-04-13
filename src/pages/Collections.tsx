@@ -1,7 +1,6 @@
 import { Box, Button, SxProps, Theme, Toolbar } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import CollectionsTable from 'components/tables/Collections';
-import useBrowserTitle from 'hooks/useBrowserTitle';
 import usePageTitle from 'hooks/usePageTitle';
 import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
@@ -13,7 +12,6 @@ const boxStyling: SxProps<Theme> = {
 };
 
 const Collections = () => {
-    useBrowserTitle('browserTitle.collections');
     usePageTitle({
         header: authenticatedRoutes.collections.title,
         headerLink: 'https://docs.estuary.dev/concepts/#collections',
