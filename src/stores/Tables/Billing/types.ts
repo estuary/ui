@@ -15,7 +15,7 @@ export interface BillingDetails {
     totalCost: number;
 }
 
-interface DataVolumeByTask {
+export interface DataVolumeByTask {
     date: Date;
     dataVolume: number;
     specType: Entity;

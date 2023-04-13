@@ -16,7 +16,7 @@ import AdminTabs from 'components/admin/Tabs';
 import MessageWithLink from 'components/content/MessageWithLink';
 import PageContainer from 'components/shared/PageContainer';
 import ProjectedCostsTable from 'components/tables/Billing';
-import useProjectCostStats from 'components/tables/Billing/useProjectedCostStats';
+import useProjectedCostStats from 'components/tables/Billing/useProjectedCostStats';
 import { semiTransparentBackground } from 'context/Theme';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
@@ -56,9 +56,8 @@ function AdminBilling() {
 
     const { combinedGrants } = useCombinedGrantsExt({ adminOnly: true });
 
-    const { projectedCostStats: projectedCostStatsData } = useProjectCostStats(
-        {}
-    );
+    const { projectedCostStats: projectedCostStatsData } =
+        useProjectedCostStats();
 
     useEffect(() => {
         if (hasLength(projectedCostStatsData)) {
