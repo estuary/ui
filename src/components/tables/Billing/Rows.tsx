@@ -112,12 +112,13 @@ function Row({ row }: RowProps) {
     );
 }
 
+// TODO (billing): Remove pagination placeholder when the new RPC is available.
 function Rows({ data }: RowsProps) {
     const billingDetails = formatProjectedCostStats(data);
 
     return (
         <>
-            {billingDetails.map((detail, index) => (
+            {billingDetails.slice(0, 4).map((detail, index) => (
                 <Row row={detail} key={index} />
             ))}
         </>

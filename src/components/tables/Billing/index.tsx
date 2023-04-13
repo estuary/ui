@@ -40,6 +40,7 @@ export const columns: TableColumns[] = [
 
 const selectableTableStoreName = SelectTableStoreNames.BILLING;
 
+// TODO (billing): Enable pagination when the new RPC is available.
 function ProjectedCostsTable({ grants }: Props) {
     const {
         pagination,
@@ -50,16 +51,16 @@ function ProjectedCostsTable({ grants }: Props) {
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState('bil', 'ts', 'desc');
+    } = useTableState('bil', 'ts', 'desc', 4);
 
     const query = useMemo(() => {
-        return getStatsForProjectedCostTable(grants, pagination, searchQuery, [
+        return getStatsForProjectedCostTable(grants, searchQuery, [
             {
                 col: columnToSort,
                 direction: sortDirection,
             },
         ]);
-    }, [columnToSort, grants, pagination, searchQuery, sortDirection]);
+    }, [columnToSort, grants, searchQuery, sortDirection]);
 
     const headerKey = 'accessGrantsTable.prefixes.title';
     const filterKey = 'accessGrantsTable.prefixes.filterLabel';
@@ -91,6 +92,7 @@ function ProjectedCostsTable({ grants }: Props) {
                     filterLabel={filterKey}
                     selectableTableStoreName={selectableTableStoreName}
                     hideHeaderAndFooter={true}
+                    rowsPerPageOptions={[4, 6, 12]}
                 />
             </TableHydrator>
         </Box>

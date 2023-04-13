@@ -130,9 +130,10 @@ const getStatsForBilling = (grants: Grants[]) => {
         .order('ts');
 };
 
+// TODO (billing): Enable pagination when the new RPC is available.
 const getStatsForProjectedCostTable = (
     grants: Grants[],
-    pagination: any,
+    // pagination: any,
     searchQuery: any,
     sorting: SortingProps<any>[]
 ): PostgrestFilterBuilder<ProjectedCostStats> => {
@@ -160,8 +161,8 @@ const getStatsForProjectedCostTable = (
         queryBuilder,
         ['ts'],
         searchQuery,
-        sorting,
-        pagination
+        sorting
+        // pagination
     );
 
     return queryBuilder;

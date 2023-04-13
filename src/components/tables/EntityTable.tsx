@@ -76,6 +76,7 @@ interface Props {
     rowSelectorProps?: RowSelectorProps;
     showEntityStatus?: boolean;
     hideHeaderAndFooter?: boolean;
+    rowsPerPageOptions?: number[];
 }
 
 export const getPagination = (currPage: number, size: number) => {
@@ -89,8 +90,6 @@ export const getPagination = (currPage: number, size: number) => {
 const getStartingPage = (val: Pagination, size: number) => {
     return val.from / size;
 };
-
-const rowsPerPageOptions = [10, 25, 50];
 
 // TODO (tables) I think we should switch this to React Table soon
 //   Also - you MUST include a count with your query or else pagination breaks
@@ -113,6 +112,7 @@ function EntityTable({
     showEntityStatus = false,
     selectableTableStoreName,
     hideHeaderAndFooter,
+    rowsPerPageOptions = [10, 25, 50],
 }: Props) {
     const isFiltering = useRef(Boolean(searchQuery));
     const searchTextField = useRef<HTMLInputElement>(null);
