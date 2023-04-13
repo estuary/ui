@@ -74,11 +74,13 @@ function SidePanelIframe() {
         };
     }, [iframeCurrent, setAnimateOpening]);
 
-    if (disabled) {
-        if (!hasLength(docsURL)) {
-            return null;
-        }
+    // Make sure we don't include an iframe unless we actually need it
+    if (!hasLength(docsURL)) {
+        return null;
+    }
 
+    // Handle when it is disabled so there is some messaging to the user to let them know how to view docs
+    if (disabled) {
         return (
             <Box
                 sx={{
