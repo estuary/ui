@@ -1,21 +1,18 @@
 import { authenticatedRoutes } from 'app/routes';
-import AdminTabs from 'components/admin/Tabs';
-import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useNavigate } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
+import { useMount } from 'react-use';
 
 // TODO (Admin dash) this page is not used right now and we just load access grants since it is
 //  the first tab. Eventually we might make this a dashboard page to land on... so leaving it in
 const Admin = () => {
     const navigate = useNavigate();
-    useEffectOnce(() =>
+    useMount(() => {
         navigate(authenticatedRoutes.admin.accessGrants.fullPath, {
             replace: true,
-        })
-    );
+        });
+    });
 
-    useBrowserTitle('routeTitle.admin');
-    return <AdminTabs />;
+    return null;
 };
 
 export default Admin;
