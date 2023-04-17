@@ -11,8 +11,13 @@ export const CARD_AREA_HEIGHT = TOTAL_CARD_HEIGHT - 72;
 
 export const BYTES_PER_GB = 1073741824;
 
-const FREE_BYTES = 21474836480;
 const FREE_TASK_COUNT = 2;
+
+export enum FREE_GB_BY_TIER {
+    FREE = 20,
+    PERSONAL = 10,
+    ENTERPRISE = 10,
+}
 
 export const evaluateSpecType = (query: ProjectedCostStats): Entity => {
     if (Object.hasOwn(query.flow_document.taskStats, 'capture')) {
@@ -25,8 +30,10 @@ export const evaluateSpecType = (query: ProjectedCostStats): Entity => {
 };
 
 export const evaluateTotalCost = (dataVolume: number, taskCount: number) => {
+    const freeBytes = 10 * BYTES_PER_GB;
+
     const dataVolumeOverLimit =
-        dataVolume > FREE_BYTES ? dataVolume - FREE_BYTES : 0;
+        dataVolume > freeBytes ? dataVolume - freeBytes : 0;
 
     const taskCountOverLimit =
         taskCount > FREE_TASK_COUNT ? taskCount - FREE_TASK_COUNT : 0;
@@ -67,12 +74,11 @@ export const getInitialBillingDetails = (date: string): BillingDetails => {
 
     return {
         date: truncatedDate,
-        month: truncatedDate.getMonth() + 1,
-        year: truncatedDate.getFullYear(),
         dataVolume: 0,
         taskCount: 0,
-        details: null,
         totalCost: 0,
+        pricingTier: null,
+        gbFree: null,
     };
 };
 

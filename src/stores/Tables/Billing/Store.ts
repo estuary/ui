@@ -7,6 +7,7 @@ import {
     evaluateDataVolume,
     evaluateSpecType,
     evaluateTotalCost,
+    FREE_GB_BY_TIER,
     getInitialBillingDetails,
     stripTimeFromDate,
 } from 'utils/billing-utils';
@@ -92,20 +93,20 @@ export const getInitialState = (
                                 );
 
                                 if (billingDetailsIndex === -1) {
-                                    const { date, month, year, details } =
+                                    const { date, pricingTier, gbFree } =
                                         getInitialBillingDetails(ts);
 
                                     state.billingDetails.push({
                                         date,
-                                        month,
-                                        year,
                                         dataVolume,
                                         taskCount,
-                                        details,
                                         totalCost,
+                                        pricingTier: pricingTier ?? 'personal',
+                                        gbFree:
+                                            gbFree ?? FREE_GB_BY_TIER.PERSONAL,
                                     });
                                 } else {
-                                    const { date, month, year, details } =
+                                    const { date, pricingTier, gbFree } =
                                         state.billingDetails[
                                             billingDetailsIndex
                                         ];
@@ -113,12 +114,14 @@ export const getInitialState = (
                                     state.billingDetails[billingDetailsIndex] =
                                         {
                                             date,
-                                            month,
-                                            year,
                                             dataVolume,
                                             taskCount,
-                                            details,
                                             totalCost,
+                                            pricingTier:
+                                                pricingTier ?? 'personal',
+                                            gbFree:
+                                                gbFree ??
+                                                FREE_GB_BY_TIER.PERSONAL,
                                         };
                                 }
                             }

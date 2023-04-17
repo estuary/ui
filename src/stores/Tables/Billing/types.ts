@@ -7,12 +7,11 @@ export interface ProjectedCostStatsDictionary {
 
 export interface BillingDetails {
     date: Date;
-    month: number;
-    year: number;
     dataVolume: number;
     taskCount: number;
-    details: string | null;
     totalCost: number;
+    pricingTier: string | null;
+    gbFree: number | null;
 }
 
 export interface DataVolumeByTask {

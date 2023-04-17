@@ -436,7 +436,11 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
 
     'admin.billing.header': `Billing`,
-    'admin.billing.message': `The basic tier includes two tasks and 20GB are free every month. Thereafter you pay $0.75/GB with a $20 minimum per task.`,
+    'admin.billing.message.freeTier': `The {pricingTier} tier includes ten tasks and 20GB of usage.`,
+    'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and 10GB are free every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
+    'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
+    'admin.billing.error.undefinedPricingTier.docLink': `contact support`,
+    'admin.billing.error.undefinedPricingTier.docPath': `mailto:support@estuary.dev`,
     'admin.billing.label.tiers': `Pricing Tier`,
     'admin.billing.tier.free': `Open Source`,
     'admin.billing.tier.personal': `Cloud`,
@@ -454,7 +458,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.projectedCostTable.emptyTableDefault.header': `No information found.`,
     'admin.billing.projectedCostTable.emptyTableDefault.message': `We couldn't find any billing information on file. Only administrators of a tenant are able to review billing information.`,
     'admin.billing.payment.header': `Payment Information`,
-    'admin.billing.payment.message': `We are working on integrating a payment service provider to enable in-app transactions. To make a payment or inquire about the our pricing tiers, please {docLink}.`,
+    'admin.billing.payment.message': `We are working on integrating a payment service provider to enable in-app transactions. To make a payment or inquire about our pricing tiers, please {docLink}.`,
     'admin.billing.payment.message.docLink': `contact us`,
     'admin.billing.payment.message.docPath': `mailto:support@estuary.dev`,
 

@@ -1,17 +1,9 @@
-import {
-    Autocomplete,
-    AutocompleteRenderInputParams,
-    Box,
-    Divider,
-    Grid,
-    Stack,
-    TextField,
-    Typography,
-} from '@mui/material';
+import { Box, Divider, Grid, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import DataByMonthGraph from 'components/admin/Billing/graphs/DataByMonthGraph';
 import DataByTaskGraph from 'components/admin/Billing/graphs/DataByTaskGraph';
 import TasksByMonth from 'components/admin/Billing/graphs/TasksByMonthGraph';
+import PricingTierDetails from 'components/admin/Billing/PricingTierDetails';
 import AdminTabs from 'components/admin/Tabs';
 import MessageWithLink from 'components/content/MessageWithLink';
 import PageContainer from 'components/shared/PageContainer';
@@ -21,7 +13,7 @@ import { semiTransparentBackground } from 'context/Theme';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import { useEffect } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
 import {
     useBilling_resetState,
@@ -29,7 +21,6 @@ import {
     useBilling_setDataByTaskGraphDetails,
     useBilling_setProjectedCostStats,
 } from 'stores/Tables/Billing/hooks';
-import useConstant from 'use-constant';
 import { TOTAL_CARD_HEIGHT } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
 
@@ -41,18 +32,22 @@ const typographySx = { mb: 2, fontSize: 16, fontWeight: 300 };
 function AdminBilling() {
     useBrowserTitle('browserTitle.admin.billing');
 
-    const intl = useIntl();
-
-    const pricingTiers = useConstant(() => [
-        intl.formatMessage({ id: 'admin.billing.tier.personal' }),
-        intl.formatMessage({ id: 'admin.billing.tier.enterprise' }),
-    ]);
+    // const pricingTiers = useConstant(() => [
+    //     intl.formatMessage({ id: 'admin.billing.tier.free' }),
+    //     intl.formatMessage({ id: 'admin.billing.tier.personal' }),
+    //     intl.formatMessage({ id: 'admin.billing.tier.enterprise' }),
+    // ]);
 
     // Billing Store
     const setProjectedCostStats = useBilling_setProjectedCostStats();
     const setBillingDetails = useBilling_setBillingDetails();
     const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
     const resetBillingState = useBilling_resetState();
+
+    // const [pricingTier, setPricingTier] = useState<string>(pricingTiers[1]);
+    // const [taskRate, setTaskRate] = useState<FREE_GB_BY_TIER>(
+    //     FREE_GB_BY_TIER.PERSONAL
+    // );
 
     const { combinedGrants } = useCombinedGrantsExt({ adminOnly: true });
 
@@ -84,51 +79,26 @@ function AdminBilling() {
             <AdminTabs />
 
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
-                <Grid item xs={12} md={9}>
-                    <Stack>
-                        <Typography variant="h6" sx={{ mb: 0.5 }}>
-                            <FormattedMessage id="admin.billing.header" />
-                        </Typography>
+                <Grid item xs={12}>
+                    <Typography variant="h6" sx={{ mb: 0.5 }}>
+                        <FormattedMessage id="admin.billing.header" />
+                    </Typography>
 
-                        <Typography>
-                            <FormattedMessage id="admin.billing.message" />
-                        </Typography>
-                    </Stack>
+                    <PricingTierDetails />
                 </Grid>
 
-                <Grid
+                {/* <Grid
                     item
                     xs={12}
                     md={3}
                     sx={{ display: 'flex', alignItems: 'end' }}
                 >
-                    <Autocomplete
+                    <PricingTierOptions
                         options={pricingTiers}
-                        renderInput={({
-                            InputProps,
-                            ...params
-                        }: AutocompleteRenderInputParams) => (
-                            <TextField
-                                {...params}
-                                InputProps={{
-                                    ...InputProps,
-                                    sx: { borderRadius: 3 },
-                                }}
-                                label={intl.formatMessage({
-                                    id: 'admin.billing.label.tiers',
-                                })}
-                                variant="outlined"
-                                size="small"
-                            />
-                        )}
-                        defaultValue={intl.formatMessage({
-                            id: 'admin.billing.tier.personal',
-                        })}
-                        disableClearable
-                        sx={{ flexGrow: 1 }}
-                        // onChange={changeHandler}
+                        setPricingTier={setPricingTier}
+                        setTaskRate={setTaskRate}
                     />
-                </Grid>
+                </Grid> */}
             </Grid>
 
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>

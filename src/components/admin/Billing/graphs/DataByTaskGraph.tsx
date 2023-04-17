@@ -154,7 +154,7 @@ function DataByTaskGraph() {
                         config = {
                             ...config,
                             markLine: {
-                                data: [{ yAxis: 20, name: 'GB\nFree' }],
+                                data: [{ yAxis: 10, name: 'GB\nFree' }],
                                 label: {
                                     color: theme.palette.text.primary,
                                     formatter: '{c} {b}',

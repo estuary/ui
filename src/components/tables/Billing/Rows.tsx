@@ -12,6 +12,7 @@ import { ProjectedCostStats } from 'types';
 import {
     evaluateDataVolume,
     evaluateTotalCost,
+    FREE_GB_BY_TIER,
     getInitialBillingDetails,
     stripTimeFromDate,
 } from 'utils/billing-utils';
@@ -57,30 +58,28 @@ const formatProjectedCostStats = (value: ProjectedCostStats[]) => {
             const totalCost = evaluateTotalCost(dataVolume, taskCount);
 
             if (billingDetailsIndex === -1) {
-                const { date, month, year, details } =
+                const { date, pricingTier, gbFree } =
                     getInitialBillingDetails(ts);
 
                 billingDetails.push({
                     date,
-                    month,
-                    year,
                     dataVolume,
                     taskCount,
-                    details,
                     totalCost,
+                    pricingTier: pricingTier ?? 'personal',
+                    gbFree: gbFree ?? FREE_GB_BY_TIER.PERSONAL,
                 });
             } else {
-                const { date, month, year, details } =
+                const { date, pricingTier, gbFree } =
                     billingDetails[billingDetailsIndex];
 
                 billingDetails[billingDetailsIndex] = {
                     date,
-                    month,
-                    year,
                     dataVolume,
                     taskCount,
-                    details,
                     totalCost,
+                    pricingTier: pricingTier ?? 'personal',
+                    gbFree: gbFree ?? FREE_GB_BY_TIER.PERSONAL,
                 };
             }
         });
