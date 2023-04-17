@@ -53,7 +53,6 @@ const OAuthproviderRenderer = ({
     const intl = useIntl();
     const { options } = uischema;
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [codeVerifier, setCodeVerifier] = useState<string | null>(null);
 
     // Fetch what we need from stores
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
@@ -171,7 +170,7 @@ const OAuthproviderRenderer = ({
     };
 
     // handler for the useOauth stuff
-    const onSuccess = async (payload: any) => {
+    const onSuccess = async (payload: any, codeVerifier: string) => {
         const tokenResponse = await accessToken(
             payload.state,
             payload.code,
@@ -221,8 +220,11 @@ const OAuthproviderRenderer = ({
             );
         } else if (!isEmpty(fetchAuthURL.data)) {
             // This kicks off the call and the success is handled with the onSuccess/onError
-            getAuth(fetchAuthURL.data.url, fetchAuthURL.data.state);
-            setCodeVerifier(fetchAuthURL.data.code_verifier);
+            getAuth(
+                fetchAuthURL.data.url,
+                fetchAuthURL.data.state,
+                fetchAuthURL.data.code_verifier
+            );
         }
     };
 
