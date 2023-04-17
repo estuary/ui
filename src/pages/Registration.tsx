@@ -38,7 +38,7 @@ interface Errors {
 const urls = getUrls();
 
 const Registration = () => {
-    useBrowserTitle('browserTitle.registration');
+    useBrowserTitle('routeTitle.registration');
 
     const intl = useIntl();
     const theme = useTheme();

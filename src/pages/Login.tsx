@@ -24,7 +24,7 @@ interface Props {
 const bodyClass = 'loginPage';
 
 const Login = ({ showRegistration }: Props) => {
-    useBrowserTitle('browserTitle.login');
+    useBrowserTitle('routeTitle.login');
 
     const { 2: clearGatewayConfig } = useLocalStorage(LocalStorageKeys.GATEWAY);
     useEffectOnce(() => clearGatewayConfig());
