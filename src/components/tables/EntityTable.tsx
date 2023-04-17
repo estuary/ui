@@ -77,6 +77,7 @@ interface Props {
     showEntityStatus?: boolean;
     hideHeaderAndFooter?: boolean;
     rowsPerPageOptions?: number[];
+    minWidth?: number;
 }
 
 export const getPagination = (currPage: number, size: number) => {
@@ -113,6 +114,7 @@ function EntityTable({
     selectableTableStoreName,
     hideHeaderAndFooter,
     rowsPerPageOptions = [10, 25, 50],
+    minWidth = 350,
 }: Props) {
     const isFiltering = useRef(Boolean(searchQuery));
     const searchTextField = useRef<HTMLInputElement>(null);
@@ -313,7 +315,7 @@ function EntityTable({
                 <TableContainer component={Box}>
                     <Table
                         size="small"
-                        sx={{ minWidth: 350 }}
+                        sx={{ minWidth }}
                         aria-label={intl.formatMessage({
                             id: 'entityTable.title',
                         })}

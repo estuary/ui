@@ -437,7 +437,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
 
     'admin.billing.header': `Billing`,
     'admin.billing.message.freeTier': `The {pricingTier} tier includes ten tasks and 20GB of usage.`,
-    'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and 10GB are free every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
+    'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and {gbFree}GB are free every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
     'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
     'admin.billing.error.undefinedPricingTier.docLink': `contact support`,
     'admin.billing.error.undefinedPricingTier.docPath': `mailto:support@estuary.dev`,
@@ -450,7 +450,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.graph.dataByTask.header': `Data by Task`,
     'admin.billing.projectedCostTable.header': `Projected Cost by Month`,
     'admin.billing.projectedCostTable.label.dataVolume': `Data Volume`,
-    'admin.billing.projectedCostTable.label.details': `Details`,
+    'admin.billing.projectedCostTable.label.details': `Pricing Tier`,
     'admin.billing.projectedCostTable.label.month': `Month`,
     'admin.billing.projectedCostTable.label.tasks': `Tasks`,
     'admin.billing.projectedCostTable.label.totalCost': `Total Cost`,

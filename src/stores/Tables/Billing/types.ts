@@ -11,6 +11,7 @@ export interface BillingDetails {
     taskCount: number;
     totalCost: number;
     pricingTier: string | null;
+    taskRate: number | null;
     gbFree: number | null;
 }
 

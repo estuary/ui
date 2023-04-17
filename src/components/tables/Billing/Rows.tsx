@@ -4,6 +4,7 @@ import MonetaryValue from 'components/tables/cells/billing/MonetaryValue';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { isEqual } from 'date-fns';
 import { isEmpty } from 'lodash';
+import { FormattedMessage } from 'react-intl';
 import {
     BillingDetails,
     ProjectedCostStatsDictionary,
@@ -58,7 +59,7 @@ const formatProjectedCostStats = (value: ProjectedCostStats[]) => {
             const totalCost = evaluateTotalCost(dataVolume, taskCount);
 
             if (billingDetailsIndex === -1) {
-                const { date, pricingTier, gbFree } =
+                const { date, pricingTier, taskRate, gbFree } =
                     getInitialBillingDetails(ts);
 
                 billingDetails.push({
@@ -67,10 +68,11 @@ const formatProjectedCostStats = (value: ProjectedCostStats[]) => {
                     taskCount,
                     totalCost,
                     pricingTier: pricingTier ?? 'personal',
+                    taskRate: taskRate ?? 20,
                     gbFree: gbFree ?? FREE_GB_BY_TIER.PERSONAL,
                 });
             } else {
-                const { date, pricingTier, gbFree } =
+                const { date, pricingTier, taskRate, gbFree } =
                     billingDetails[billingDetailsIndex];
 
                 billingDetails[billingDetailsIndex] = {
@@ -79,6 +81,7 @@ const formatProjectedCostStats = (value: ProjectedCostStats[]) => {
                     taskCount,
                     totalCost,
                     pricingTier: pricingTier ?? 'personal',
+                    taskRate: taskRate ?? 20,
                     gbFree: gbFree ?? FREE_GB_BY_TIER.PERSONAL,
                 };
             }
@@ -102,9 +105,13 @@ function Row({ row }: RowProps) {
                 <Typography>{row.taskCount}</Typography>
             </TableCell>
 
-            {/* <TableCell>
-                <Typography>Filler</Typography>
-            </TableCell> */}
+            <TableCell>
+                <Typography>
+                    <FormattedMessage
+                        id={`admin.billing.tier.${row.pricingTier}`}
+                    />
+                </Typography>
+            </TableCell>
 
             <MonetaryValue amount={row.totalCost} />
         </TableRow>

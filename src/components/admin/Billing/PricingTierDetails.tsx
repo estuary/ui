@@ -20,29 +20,27 @@ function PricingTierDetails() {
     const billingStoreHydrated = useBilling_hydrated();
     const billingDetails = useBilling_billingDetails();
 
-    const [pricingTierId, gbFree]: [
-        BillingDetails['pricingTier'],
-        BillingDetails['gbFree']
-    ] = useMemo(() => {
-        const latestRecord = billingDetails.find((record) =>
-            isSameMonth(record.date, today)
-        );
-
-        return latestRecord
-            ? [latestRecord.pricingTier, latestRecord.gbFree]
-            : [null, null];
+    const latestBillingRecord: BillingDetails | undefined = useMemo(() => {
+        return billingDetails.find((record) => isSameMonth(record.date, today));
     }, [billingDetails, today]);
 
-    if (pricingTierId && gbFree) {
+    if (
+        latestBillingRecord?.pricingTier &&
+        latestBillingRecord.gbFree &&
+        latestBillingRecord.taskRate
+    ) {
+        const { pricingTier, gbFree, taskRate } = latestBillingRecord;
+
         return (
             <Typography>
                 <FormattedMessage
                     id="admin.billing.message.paidTier"
                     values={{
                         pricingTier: intl.formatMessage({
-                            id: `admin.billing.tier.${pricingTierId}`,
+                            id: `admin.billing.tier.${pricingTier}`,
                         }),
-                        taskRate: gbFree,
+                        gbFree,
+                        taskRate,
                     }}
                 />
             </Typography>

@@ -78,6 +78,7 @@ export const getInitialBillingDetails = (date: string): BillingDetails => {
         taskCount: 0,
         totalCost: 0,
         pricingTier: null,
+        taskRate: null,
         gbFree: null,
     };
 };

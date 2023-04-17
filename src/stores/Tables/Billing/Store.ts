@@ -93,8 +93,12 @@ export const getInitialState = (
                                 );
 
                                 if (billingDetailsIndex === -1) {
-                                    const { date, pricingTier, gbFree } =
-                                        getInitialBillingDetails(ts);
+                                    const {
+                                        date,
+                                        pricingTier,
+                                        taskRate,
+                                        gbFree,
+                                    } = getInitialBillingDetails(ts);
 
                                     state.billingDetails.push({
                                         date,
@@ -102,11 +106,17 @@ export const getInitialState = (
                                         taskCount,
                                         totalCost,
                                         pricingTier: pricingTier ?? 'personal',
+                                        taskRate: taskRate ?? 20,
                                         gbFree:
                                             gbFree ?? FREE_GB_BY_TIER.PERSONAL,
                                     });
                                 } else {
-                                    const { date, pricingTier, gbFree } =
+                                    const {
+                                        date,
+                                        pricingTier,
+                                        taskRate,
+                                        gbFree,
+                                    } =
                                         state.billingDetails[
                                             billingDetailsIndex
                                         ];
@@ -119,6 +129,7 @@ export const getInitialState = (
                                             totalCost,
                                             pricingTier:
                                                 pricingTier ?? 'personal',
+                                            taskRate: taskRate ?? 20,
                                             gbFree:
                                                 gbFree ??
                                                 FREE_GB_BY_TIER.PERSONAL,

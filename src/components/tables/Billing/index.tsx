@@ -28,10 +28,10 @@ export const columns: TableColumns[] = [
         field: 'task_count',
         headerIntlKey: 'admin.billing.projectedCostTable.label.tasks',
     },
-    // {
-    //     field: 'details',
-    //     headerIntlKey: 'admin.billing.projectedCostTable.label.details',
-    // },
+    {
+        field: 'details',
+        headerIntlKey: 'admin.billing.projectedCostTable.label.details',
+    },
     {
         field: 'total_cost',
         headerIntlKey: 'admin.billing.projectedCostTable.label.totalCost',
@@ -93,6 +93,7 @@ function ProjectedCostsTable({ grants }: Props) {
                     selectableTableStoreName={selectableTableStoreName}
                     hideHeaderAndFooter={true}
                     rowsPerPageOptions={[4, 6, 12]}
+                    minWidth={500}
                 />
             </TableHydrator>
         </Box>
