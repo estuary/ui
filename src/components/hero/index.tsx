@@ -3,7 +3,8 @@ import HeroTabs from 'components/hero/Tabs';
 import HeroDemo from './Demo';
 import HeroDetail from './Detail';
 import { useHeroTabs } from './hooks';
-import HeroImage from './Image';
+import DemoImage from './Images/Demo';
+import WelcomeImage from './Images/Welcome';
 import HeroOverview from './Overview';
 
 function HeroImageAndDescription() {
@@ -32,7 +33,7 @@ function HeroImageAndDescription() {
                         justifyContent: 'center',
                     }}
                 >
-                    <HeroImage />
+                    {activeTab === 'demo' ? <DemoImage /> : <WelcomeImage />}
                 </Grid>
             </Grid>
 
