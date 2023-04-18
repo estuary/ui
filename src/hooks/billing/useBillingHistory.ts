@@ -3,7 +3,7 @@ import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import { BillingRecord } from 'stores/Billing/types';
 import { CatalogStats_Billing } from 'types';
-import { formatProjectedCostStats } from 'utils/billing-utils';
+import { formatBillingCatalogStats } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -30,7 +30,7 @@ function useBillingHistory({ query }: Props) {
 
     return {
         billingHistory: data
-            ? formatProjectedCostStats(data.data)
+            ? formatBillingCatalogStats(data.data)
             : defaultResponse,
         error,
         mutate,

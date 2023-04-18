@@ -1,10 +1,6 @@
 import { StoreWithHydration } from 'stores/Hydration';
 import { CatalogStats_Billing, Entity } from 'types';
 
-export interface ProjectedCostStatsDictionary {
-    [date: string]: CatalogStats_Billing[];
-}
-
 export interface BillingRecord {
     date: Date;
     dataVolume: number;

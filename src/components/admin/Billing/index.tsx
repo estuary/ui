@@ -6,7 +6,7 @@ import TasksByMonth from 'components/admin/Billing/graphs/TasksByMonthGraph';
 import PricingTierDetails from 'components/admin/Billing/PricingTierDetails';
 import AdminTabs from 'components/admin/Tabs';
 import MessageWithLink from 'components/content/MessageWithLink';
-import ProjectedCostsTable from 'components/tables/Billing';
+import BillingHistoryTable from 'components/tables/Billing';
 import { semiTransparentBackground } from 'context/Theme';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
 import useBrowserTitle from 'hooks/useBrowserTitle';
@@ -108,11 +108,11 @@ function AdminBilling() {
                         }}
                     >
                         <Typography sx={typographySx}>
-                            <FormattedMessage id="admin.billing.projectedCostTable.header" />
+                            <FormattedMessage id="admin.billing.table.history.header" />
                         </Typography>
 
                         {combinedGrants.length > 0 ? (
-                            <ProjectedCostsTable grants={combinedGrants} />
+                            <BillingHistoryTable grants={combinedGrants} />
                         ) : null}
                     </Box>
                 </Grid>

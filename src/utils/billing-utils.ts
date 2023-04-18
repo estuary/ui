@@ -1,10 +1,7 @@
 import { isEqual, parseISO } from 'date-fns';
 import { isEmpty, sum } from 'lodash';
 import prettyBytes from 'pretty-bytes';
-import {
-    BillingRecord,
-    ProjectedCostStatsDictionary,
-} from 'stores/Billing/types';
+import { BillingRecord } from 'stores/Billing/types';
 import { CatalogStats_Billing, Entity } from 'types';
 
 export const TOTAL_CARD_HEIGHT = 300;
@@ -46,10 +43,8 @@ const evaluateTotalCost = (dataVolume: number, taskCount: number) => {
     );
 };
 
-const evaluateDataVolume = (
-    projectedCostStats: CatalogStats_Billing[]
-): number => {
-    const taskBytes: number[] = projectedCostStats.map((query) => {
+const evaluateDataVolume = (stats: CatalogStats_Billing[]): number => {
+    const taskBytes: number[] = stats.map((query) => {
         if (Object.hasOwn(query.flow_document.taskStats, 'capture')) {
             return query.bytes_written_by_me;
         } else if (
@@ -86,14 +81,16 @@ const getInitialBillingRecord = (date: string): BillingRecord => {
 
 // TODO (billing): Remove this helper function to translate data returned from
 //   the new RPC when available.
-export const formatProjectedCostStats = (
+export const formatBillingCatalogStats = (
     value: CatalogStats_Billing[]
 ): BillingRecord[] => {
     const taskStatData = value.filter((query) =>
         Object.hasOwn(query.flow_document, 'taskStats')
     );
 
-    let sortedStats: ProjectedCostStatsDictionary = {};
+    let sortedStats: {
+        [date: string]: CatalogStats_Billing[];
+    } = {};
 
     taskStatData.forEach((query) => {
         if (Object.hasOwn(sortedStats, query.ts)) {

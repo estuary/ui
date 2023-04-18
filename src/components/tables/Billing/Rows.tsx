@@ -23,7 +23,7 @@ function Row({ row }: RowProps) {
 
             <Bytes
                 val={row.dataVolume}
-                messageId="admin.billing.projectedCostTable.tooltip.dataVolume"
+                messageId="admin.billing.table.history.tooltip.dataVolume"
             />
 
             <TableCell>

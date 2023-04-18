@@ -16,11 +16,11 @@ function EmptyGraphState() {
             }}
         >
             <Typography variant="subtitle2" align="center">
-                <FormattedMessage id="admin.billing.projectedCostTable.emptyTableDefault.header" />
+                <FormattedMessage id="admin.billing.table.history.emptyTableDefault.header" />
             </Typography>
 
             <Typography component="div">
-                <FormattedMessage id="admin.billing.projectedCostTable.emptyTableDefault.message" />
+                <FormattedMessage id="admin.billing.table.history.emptyTableDefault.message" />
             </Typography>
         </Stack>
     );

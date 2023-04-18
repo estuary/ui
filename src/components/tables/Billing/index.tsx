@@ -18,30 +18,30 @@ interface Props {
 export const columns: TableColumns[] = [
     {
         field: 'month',
-        headerIntlKey: 'admin.billing.projectedCostTable.label.month',
+        headerIntlKey: 'admin.billing.table.history.label.month',
     },
     {
         field: 'data_volume',
-        headerIntlKey: 'admin.billing.projectedCostTable.label.dataVolume',
+        headerIntlKey: 'admin.billing.table.history.label.dataVolume',
     },
     {
         field: 'task_count',
-        headerIntlKey: 'admin.billing.projectedCostTable.label.tasks',
+        headerIntlKey: 'admin.billing.table.history.label.tasks',
     },
     {
         field: 'details',
-        headerIntlKey: 'admin.billing.projectedCostTable.label.details',
+        headerIntlKey: 'admin.billing.table.history.label.details',
     },
     {
         field: 'total_cost',
-        headerIntlKey: 'admin.billing.projectedCostTable.label.totalCost',
+        headerIntlKey: 'admin.billing.table.history.label.totalCost',
     },
 ];
 
 const selectableTableStoreName = SelectTableStoreNames.BILLING;
 
 // TODO (billing): Enable pagination when the new RPC is available.
-function ProjectedCostsTable({ grants }: Props) {
+function BillingHistoryTable({ grants }: Props) {
     const {
         pagination,
         setPagination,
@@ -70,9 +70,9 @@ function ProjectedCostsTable({ grants }: Props) {
             <BillingHistoryTableHydrator query={query}>
                 <EntityTable
                     noExistingDataContentIds={{
-                        header: 'admin.billing.projectedCostTable.emptyTableDefault.header',
+                        header: 'admin.billing.table.history.emptyTableDefault.header',
                         message:
-                            'admin.billing.projectedCostTable.emptyTableDefault.message',
+                            'admin.billing.table.history.emptyTableDefault.message',
                         disableDoclink: true,
                     }}
                     columns={columns}
@@ -97,4 +97,4 @@ function ProjectedCostsTable({ grants }: Props) {
     );
 }
 
-export default ProjectedCostsTable;
+export default BillingHistoryTable;
