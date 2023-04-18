@@ -1,6 +1,8 @@
 import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/collection/ResourceConfigForm';
 import { FormattedMessage } from 'react-intl';
+import { useResourceConfig_hydrated } from 'stores/ResourceConfig/hooks';
+import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
 
 interface Props {
     collectionName: string;
@@ -8,6 +10,8 @@ interface Props {
 }
 
 function ResourceConfig({ collectionName, readOnly = false }: Props) {
+    const hydrated = useResourceConfig_hydrated();
+
     return (
         <>
             <Typography variant="h6" sx={{ mb: 2 }}>
@@ -15,10 +19,14 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
             </Typography>
 
             <Box sx={{ width: '100%' }}>
-                <ResourceConfigForm
-                    collectionName={collectionName}
-                    readOnly={readOnly}
-                />
+                {hydrated ? (
+                    <ResourceConfigForm
+                        collectionName={collectionName}
+                        readOnly={readOnly}
+                    />
+                ) : (
+                    <BindingsEditorConfigSkeleton />
+                )}
             </Box>
         </>
     );
