@@ -34,7 +34,7 @@ export const useOauthHandler = (
     };
 
     // handler for the useOauth stuff
-    const onSuccess = async (payload: any) => {
+    const onSuccess = async (payload: any, codeVerifier: string) => {
         const preparedData = endpointConfigData;
         preparedData[CREDENTIALS] = {
             ...endpointConfigData[CREDENTIALS],
@@ -44,7 +44,8 @@ export const useOauthHandler = (
         const tokenResponse = await accessToken(
             payload.state,
             payload.code,
-            preparedData
+            preparedData,
+            codeVerifier
         );
 
         if (tokenResponse.error) {
@@ -85,7 +86,11 @@ export const useOauthHandler = (
             );
         } else if (!isEmpty(fetchAuthURL.data)) {
             // This kicks off the call and the success is handled with the onSuccess/onError
-            getAuth(fetchAuthURL.data.url, fetchAuthURL.data.state);
+            getAuth(
+                fetchAuthURL.data.url,
+                fetchAuthURL.data.state,
+                fetchAuthURL.data.code_verifier
+            );
         }
     };
 

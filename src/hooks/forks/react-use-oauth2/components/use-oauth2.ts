@@ -19,7 +19,10 @@ export type AuthTokenPayload = {
 
 export type Oauth2Props<TData = AuthTokenPayload> = {
     onError: (error: string) => void | Promise<any> | PromiseLike<any>;
-    onSuccess: (payload: TData) => void | Promise<any> | PromiseLike<any>;
+    onSuccess: (
+        payload: TData,
+        codeVerifier: string
+    ) => void | Promise<any> | PromiseLike<any>;
 };
 
 const saveState = (state: string) => {
@@ -69,7 +72,7 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
     const [loading, setLoading] = useState(false);
 
     const getAuth = useCallback(
-        (authorizeUrl: string, state: string) => {
+        (authorizeUrl: string, state: string, codeVerifier: string) => {
             // 1. Init
             setLoading(true);
 
@@ -89,7 +92,7 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
                             await onError(errorMaybe);
                         } else {
                             const payload = message.data?.payload;
-                            await onSuccess(payload);
+                            await onSuccess(payload, codeVerifier);
                         }
                         cleanup(intervalRef, popupRef, handleMessageListener);
                         setLoading(false);

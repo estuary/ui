@@ -12,9 +12,9 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import EntityToolbar from 'components/shared/Entity/Header';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
-import PageContainer from 'components/shared/PageContainer';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
+import usePageTitle from 'hooks/usePageTitle';
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
@@ -36,6 +36,11 @@ import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 
 function MaterializationCreate() {
+    usePageTitle({
+        header: authenticatedRoutes.materializations.create.new.title,
+        headerLink:
+            'https://docs.estuary.dev/guides/create-dataflow/#create-a-materialization',
+    });
     const navigate = useNavigate();
 
     const entityType = 'materialization';
@@ -132,63 +137,54 @@ function MaterializationCreate() {
     };
 
     return (
-        <PageContainer
-            pageTitleProps={{
-                header: authenticatedRoutes.materializations.create.new.title,
-                headerLink:
-                    'https://docs.estuary.dev/guides/create-dataflow/#create-a-materialization',
-            }}
-        >
-            <DetailsFormHydrator>
-                <EndpointConfigHydrator>
-                    <ResourceConfigHydrator>
-                        <EntityCreate
-                            title="browserTitle.materializationCreate"
-                            entityType={entityType}
-                            draftSpecMetadata={draftSpecsMetadata}
-                            resetState={resetState}
-                            errorSummary={
-                                <ValidationErrorSummary
-                                    errorsExist={detailsFormErrorsExist}
-                                />
-                            }
-                            toolbar={
-                                <EntityToolbar
-                                    GenerateButton={
-                                        <MaterializeGenerateButton
-                                            disabled={!hasConnectors}
-                                            callFailed={helpers.callFailed}
-                                            mutateDraftSpecs={mutateDraftSpecs}
-                                        />
-                                    }
-                                    TestButton={
-                                        <EntityTestButton
-                                            disabled={!hasConnectors}
-                                            callFailed={helpers.callFailed}
-                                            closeLogs={handlers.closeLogs}
-                                            logEvent={
-                                                CustomEvents.MATERIALIZATION_TEST
-                                            }
-                                        />
-                                    }
-                                    SaveButton={
-                                        <EntitySaveButton
-                                            disabled={!draftId}
-                                            callFailed={helpers.callFailed}
-                                            taskNames={taskNames}
-                                            closeLogs={handlers.closeLogs}
-                                            logEvent={
-                                                CustomEvents.MATERIALIZATION_CREATE
-                                            }
-                                        />
-                                    }
-                                />
-                            }
-                        />
-                    </ResourceConfigHydrator>
-                </EndpointConfigHydrator>
-            </DetailsFormHydrator>
-        </PageContainer>
+        <DetailsFormHydrator>
+            <EndpointConfigHydrator>
+                <ResourceConfigHydrator>
+                    <EntityCreate
+                        entityType={entityType}
+                        draftSpecMetadata={draftSpecsMetadata}
+                        resetState={resetState}
+                        errorSummary={
+                            <ValidationErrorSummary
+                                errorsExist={detailsFormErrorsExist}
+                            />
+                        }
+                        toolbar={
+                            <EntityToolbar
+                                GenerateButton={
+                                    <MaterializeGenerateButton
+                                        disabled={!hasConnectors}
+                                        callFailed={helpers.callFailed}
+                                        mutateDraftSpecs={mutateDraftSpecs}
+                                    />
+                                }
+                                TestButton={
+                                    <EntityTestButton
+                                        disabled={!hasConnectors}
+                                        callFailed={helpers.callFailed}
+                                        closeLogs={handlers.closeLogs}
+                                        logEvent={
+                                            CustomEvents.MATERIALIZATION_TEST
+                                        }
+                                    />
+                                }
+                                SaveButton={
+                                    <EntitySaveButton
+                                        disabled={!draftId}
+                                        callFailed={helpers.callFailed}
+                                        taskNames={taskNames}
+                                        closeLogs={handlers.closeLogs}
+                                        logEvent={
+                                            CustomEvents.MATERIALIZATION_CREATE
+                                        }
+                                    />
+                                }
+                            />
+                        }
+                    />
+                </ResourceConfigHydrator>
+            </EndpointConfigHydrator>
+        </DetailsFormHydrator>
     );
 }
 

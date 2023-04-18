@@ -17,7 +17,8 @@ import RenderTab from './RenderTab';
 import DetailTabs from './Tabs';
 
 function EntityDetails() {
-    useBrowserTitle('browserTitle.details');
+    useBrowserTitle('routeTitle.details');
+
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
 
