@@ -3,7 +3,7 @@ import DataVolume from 'components/tables/cells/billing/DataVolume';
 import MonetaryValue from 'components/tables/cells/billing/MonetaryValue';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { FormattedMessage } from 'react-intl';
-import { BillingRecord } from 'stores/Tables/Billing/types';
+import { BillingRecord } from 'stores/Billing/types';
 
 interface RowProps {
     row: BillingRecord;

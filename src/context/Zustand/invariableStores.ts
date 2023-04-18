@@ -1,11 +1,13 @@
 import { createBindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import { createEditorStore } from 'components/editor/Store/create';
 import { createExistingEntityStore } from 'components/shared/Entity/ExistingEntityCards/Store/create';
+import { createBillingStore } from 'stores/Billing/Store';
 import { createDetailsFormStore } from 'stores/DetailsForm/Store';
 import { createEndpointConfigStore } from 'stores/EndpointConfig/Store';
 import { createFormStateStore } from 'stores/FormState/Store';
 import {
     AdminStoreNames,
+    BillingStoreNames,
     BindingsEditorStoreNames,
     DetailsFormStoreNames,
     EditorStoreNames,
@@ -21,11 +23,14 @@ import { createResourceConfigStore } from 'stores/ResourceConfig/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
 import { createSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
-import { createBillingStore } from 'stores/Tables/Billing/Store';
+import { createBillingTableStore } from 'stores/Tables/Billing/Store';
 import { createSelectableTableStore } from 'stores/Tables/Store';
 import { MessagePrefixes } from 'types';
 
 const invariableStores = {
+    // Billing Store
+    [BillingStoreNames.GENERAL]: createBillingStore(BillingStoreNames.GENERAL),
+
     // Bindings Editor Store
     [BindingsEditorStoreNames.GENERAL]: createBindingsEditorStore(
         BindingsEditorStoreNames.GENERAL
@@ -85,11 +90,11 @@ const invariableStores = {
     [SelectTableStoreNames.ACCESS_GRANTS_USERS]: createSelectableTableStore(
         SelectTableStoreNames.ACCESS_GRANTS_USERS
     ),
+    [SelectTableStoreNames.BILLING]: createBillingTableStore(
+        SelectTableStoreNames.BILLING
+    ),
     [SelectTableStoreNames.CAPTURE]: createSelectableTableStore(
         SelectTableStoreNames.CAPTURE
-    ),
-    [SelectTableStoreNames.BILLING]: createBillingStore(
-        SelectTableStoreNames.BILLING
     ),
     [SelectTableStoreNames.COLLECTION]: createSelectableTableStore(
         SelectTableStoreNames.COLLECTION

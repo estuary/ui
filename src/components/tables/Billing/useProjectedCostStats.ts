@@ -6,7 +6,7 @@ import { hasLength } from 'utils/misc-utils';
 
 const INTERVAL = 30000;
 
-const defaultResponse: ProjectedCostStats[] = [];
+// const defaultResponse: ProjectedCostStats[] = [];
 
 function useProjectedCostStats() {
     const { combinedGrants } = useCombinedGrantsExt({ adminOnly: true });
@@ -22,9 +22,7 @@ function useProjectedCostStats() {
     );
 
     return {
-        projectedCostStats: data
-            ? (data.data as ProjectedCostStats[])
-            : defaultResponse,
+        projectedCostStats: data ? (data.data as ProjectedCostStats[]) : null,
         error,
         mutate,
         isValidating,

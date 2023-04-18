@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import TableLoadingRows from 'components/tables/Loading';
 import { FormattedMessage } from 'react-intl';
-import { useBilling_billingHistory } from 'stores/Tables/Billing/hooks';
+import { useBilling_billingHistory } from 'stores/Billing/hooks';
 import { TableColumns } from 'types';
 import { hasLength } from 'utils/misc-utils';
 

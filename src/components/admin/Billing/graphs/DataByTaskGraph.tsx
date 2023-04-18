@@ -28,8 +28,8 @@ import { useIntl } from 'react-intl';
 import {
     useBilling_dataByTaskGraphDetails,
     useBilling_hydrated,
-} from 'stores/Tables/Billing/hooks';
-import { DataVolumeByTaskGraphDetails } from 'stores/Tables/Billing/types';
+} from 'stores/Billing/hooks';
+import { DataVolumeByTaskGraphDetails } from 'stores/Billing/types';
 import useConstant from 'use-constant';
 import {
     BYTES_PER_GB,

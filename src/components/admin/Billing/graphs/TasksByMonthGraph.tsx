@@ -22,7 +22,7 @@ import { useIntl } from 'react-intl';
 import {
     useBilling_billingHistory,
     useBilling_hydrated,
-} from 'stores/Tables/Billing/hooks';
+} from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
 import { CARD_AREA_HEIGHT, SeriesConfig } from 'utils/billing-utils';
 

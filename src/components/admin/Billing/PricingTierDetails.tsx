@@ -7,8 +7,8 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useBilling_billingHistory,
     useBilling_hydrated,
-} from 'stores/Tables/Billing/hooks';
-import { BillingRecord } from 'stores/Tables/Billing/types';
+} from 'stores/Billing/hooks';
+import { BillingRecord } from 'stores/Billing/types';
 import useConstant from 'use-constant';
 
 function PricingTierDetails() {

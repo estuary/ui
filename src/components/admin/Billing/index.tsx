@@ -16,13 +16,14 @@ import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
 import {
+    useBilling_hydrated,
     useBilling_resetState,
     useBilling_setBillingHistory,
     useBilling_setDataByTaskGraphDetails,
-    useBilling_setProjectedCostStats,
-} from 'stores/Tables/Billing/hooks';
+    useBilling_setHydrated,
+    useBilling_setHydrationErrorsExist,
+} from 'stores/Billing/hooks';
 import { TOTAL_CARD_HEIGHT } from 'utils/billing-utils';
-import { hasLength } from 'utils/misc-utils';
 
 const boxShadow =
     'rgb(50 50 93 / 7%) 0px 3px 6px -1px, rgb(0 0 0 / 10%) 0px -2px 4px -1px, rgb(0 0 0 / 10%) 0px 2px 4px -1px';
@@ -39,9 +40,13 @@ function AdminBilling() {
     // ]);
 
     // Billing Store
-    const setProjectedCostStats = useBilling_setProjectedCostStats();
+    const hydrated = useBilling_hydrated();
+    const setHydrated = useBilling_setHydrated();
+    const setHydrationErrorsExist = useBilling_setHydrationErrorsExist();
+
     const setBillingHistory = useBilling_setBillingHistory();
     const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
+
     const resetBillingState = useBilling_resetState();
 
     // const [pricingTier, setPricingTier] = useState<string>(pricingTiers[1]);
@@ -51,20 +56,31 @@ function AdminBilling() {
 
     const { combinedGrants } = useCombinedGrantsExt({ adminOnly: true });
 
-    const { projectedCostStats: projectedCostStatsData } =
-        useProjectedCostStats();
+    const { projectedCostStats, error, isValidating } = useProjectedCostStats();
 
     useEffect(() => {
-        if (hasLength(projectedCostStatsData)) {
-            setProjectedCostStats(projectedCostStatsData);
-            setBillingHistory();
-            setDataByTaskGraphDetails(projectedCostStatsData);
+        if (!isValidating && projectedCostStats) {
+            setBillingHistory(projectedCostStats);
+            setDataByTaskGraphDetails(projectedCostStats);
+
+            if (!hydrated) {
+                setHydrated(true);
+            }
+        }
+
+        if (error) {
+            setHydrationErrorsExist(true);
+            setHydrated(true);
         }
     }, [
         setBillingHistory,
         setDataByTaskGraphDetails,
-        setProjectedCostStats,
-        projectedCostStatsData,
+        setHydrated,
+        setHydrationErrorsExist,
+        error,
+        hydrated,
+        isValidating,
+        projectedCostStats,
     ]);
 
     useUnmount(() => resetBillingState());

@@ -1,7 +1,10 @@
-import { parseISO } from 'date-fns';
-import { sum } from 'lodash';
+import { isEqual, parseISO } from 'date-fns';
+import { isEmpty, sum } from 'lodash';
 import prettyBytes from 'pretty-bytes';
-import { BillingRecord } from 'stores/Tables/Billing/types';
+import {
+    BillingRecord,
+    ProjectedCostStatsDictionary,
+} from 'stores/Billing/types';
 import { Entity, ProjectedCostStats } from 'types';
 
 export const TOTAL_CARD_HEIGHT = 300;
@@ -29,7 +32,7 @@ export const evaluateSpecType = (query: ProjectedCostStats): Entity => {
     }
 };
 
-export const evaluateTotalCost = (dataVolume: number, taskCount: number) => {
+const evaluateTotalCost = (dataVolume: number, taskCount: number) => {
     const freeBytes = 10 * BYTES_PER_GB;
 
     const dataVolumeOverLimit =
@@ -43,7 +46,7 @@ export const evaluateTotalCost = (dataVolume: number, taskCount: number) => {
     );
 };
 
-export const evaluateDataVolume = (
+const evaluateDataVolume = (
     projectedCostStats: ProjectedCostStats[]
 ): number => {
     const taskBytes: number[] = projectedCostStats.map((query) => {
@@ -54,9 +57,7 @@ export const evaluateDataVolume = (
         ) {
             return query.bytes_read_by_me;
         } else {
-            console.log('Derivation skipped');
-
-            return 0;
+            return query.bytes_written_by_me + query.bytes_read_by_me;
         }
     });
 
@@ -69,7 +70,7 @@ export const stripTimeFromDate = (date: string) => {
     return parseISO(truncatedDateStr);
 };
 
-export const getInitialBillingRecord = (date: string): BillingRecord => {
+const getInitialBillingRecord = (date: string): BillingRecord => {
     const truncatedDate = stripTimeFromDate(date);
 
     return {
@@ -81,6 +82,73 @@ export const getInitialBillingRecord = (date: string): BillingRecord => {
         taskRate: null,
         gbFree: null,
     };
+};
+
+// TODO (billing): Remove this helper function to translate data returned from
+//   the new RPC when available.
+export const formatProjectedCostStats = (
+    value: ProjectedCostStats[]
+): BillingRecord[] => {
+    const taskStatData = value.filter((query) =>
+        Object.hasOwn(query.flow_document, 'taskStats')
+    );
+
+    let sortedStats: ProjectedCostStatsDictionary = {};
+
+    taskStatData.forEach((query) => {
+        if (Object.hasOwn(sortedStats, query.ts)) {
+            sortedStats[query.ts].push(query);
+        } else {
+            sortedStats = {
+                ...sortedStats,
+                [query.ts]: [query],
+            };
+        }
+    });
+
+    const billingHistory: BillingRecord[] = [];
+
+    if (!isEmpty(sortedStats)) {
+        Object.entries(sortedStats).forEach(([ts, stats]) => {
+            const billingRecordIndex = billingHistory.findIndex((record) =>
+                isEqual(record.date, stripTimeFromDate(ts))
+            );
+
+            const taskCount = stats.length;
+            const dataVolume = evaluateDataVolume(stats);
+            const totalCost = evaluateTotalCost(dataVolume, taskCount);
+
+            if (billingRecordIndex === -1) {
+                const { date, pricingTier, taskRate, gbFree } =
+                    getInitialBillingRecord(ts);
+
+                billingHistory.push({
+                    date,
+                    dataVolume,
+                    taskCount,
+                    totalCost,
+                    pricingTier: pricingTier ?? 'personal',
+                    taskRate: taskRate ?? 20,
+                    gbFree: gbFree ?? FREE_GB_BY_TIER.PERSONAL,
+                });
+            } else {
+                const { date, pricingTier, taskRate, gbFree } =
+                    billingHistory[billingRecordIndex];
+
+                billingHistory[billingRecordIndex] = {
+                    date,
+                    dataVolume,
+                    taskCount,
+                    totalCost,
+                    pricingTier: pricingTier ?? 'personal',
+                    taskRate: taskRate ?? 20,
+                    gbFree: gbFree ?? FREE_GB_BY_TIER.PERSONAL,
+                };
+            }
+        });
+    }
+
+    return billingHistory;
 };
 
 export interface SeriesConfig {
