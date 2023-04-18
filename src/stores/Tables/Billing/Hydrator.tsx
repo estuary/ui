@@ -1,6 +1,6 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import useBillingHistory from 'components/tables/Billing/useBillingHistory';
 import { useZustandStore } from 'context/Zustand/provider';
+import useBillingHistory from 'hooks/billing/useBillingHistory';
 import { useEffect } from 'react';
 import { useUnmount } from 'react-use';
 import { SelectTableStoreNames } from 'stores/names';
