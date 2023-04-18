@@ -35,8 +35,8 @@ export const ResourceConfigHydrator = ({
 
     const hydrateState = useResourceConfig_hydrateState();
 
-    const hydrateTheState = () => {
-        hydrateState(editWorkflow, entityType).then(
+    const hydrateTheState = (rehydrating: boolean) => {
+        hydrateState(editWorkflow, entityType, rehydrating).then(
             () => {
                 setHydrated(true);
             },
@@ -49,12 +49,12 @@ export const ResourceConfigHydrator = ({
 
     useEffectOnce(() => {
         if (workflow && !hydrated) {
-            hydrateTheState();
+            hydrateTheState(false);
         }
     });
 
     useUpdateEffect(() => {
-        hydrateTheState();
+        hydrateTheState(true);
     }, [connectorId]);
 
     return <div>{children}</div>;

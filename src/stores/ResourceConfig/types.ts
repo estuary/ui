@@ -21,7 +21,10 @@ export interface ResourceConfigDictionary {
 export interface ResourceConfigState {
     // Collection Selector
     collections: string[] | null;
-    preFillEmptyCollections: (collections: LiveSpecsExtQuery[]) => void;
+    preFillEmptyCollections: (
+        collections: LiveSpecsExtQuery[],
+        rehydrating?: boolean
+    ) => void;
     preFillCollections: (
         bindings: CaptureBinding[] | MaterializationBinding[],
         entityType: Entity
@@ -76,7 +79,11 @@ export interface ResourceConfigState {
     hydrationErrorsExist: boolean;
     setHydrationErrorsExist: (value: boolean) => void;
 
-    hydrateState: (editWorkflow: boolean, entityType: Entity) => Promise<void>;
+    hydrateState: (
+        editWorkflow: boolean,
+        entityType: Entity,
+        rehydrating?: boolean
+    ) => Promise<void>;
 
     // Server-Form Alignment
     serverUpdateRequired: boolean;
@@ -88,5 +95,5 @@ export interface ResourceConfigState {
 
     // Misc.
     stateChanged: () => boolean;
-    resetState: () => void;
+    resetState: (keepCollections?: boolean) => void;
 }
