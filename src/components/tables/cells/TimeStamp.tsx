@@ -13,16 +13,25 @@ function TimeStamp({ enableRelative, time, monthOnly }: Props) {
         <TableCell>
             <Tooltip
                 title={
-                    <FormattedDate
-                        day="numeric"
-                        month="long"
-                        year="numeric"
-                        hour="numeric"
-                        minute="numeric"
-                        second="numeric"
-                        timeZoneName="short"
-                        value={time}
-                    />
+                    monthOnly ? (
+                        <FormattedDate
+                            day="numeric"
+                            month="long"
+                            year="numeric"
+                            value={time}
+                        />
+                    ) : (
+                        <FormattedDate
+                            day="numeric"
+                            month="long"
+                            year="numeric"
+                            hour="numeric"
+                            minute="numeric"
+                            second="numeric"
+                            timeZoneName="short"
+                            value={time}
+                        />
+                    )
                 }
                 placement="bottom-start"
             >

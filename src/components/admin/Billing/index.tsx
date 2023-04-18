@@ -114,8 +114,6 @@ function AdminBilling() {
                         {combinedGrants.length > 0 ? (
                             <ProjectedCostsTable grants={combinedGrants} />
                         ) : null}
-
-                        {/* <ProjectedCostsTable /> */}
                     </Box>
                 </Grid>
 
@@ -179,7 +177,7 @@ function AdminBilling() {
                 <Grid item xs={12}>
                     <Divider sx={{ mt: 3, mb: 2 }} />
 
-                    <Typography variant="h6" sx={{ mb: 0.5 }}>
+                    <Typography sx={{ mb: 1, fontSize: 18, fontWeight: '400' }}>
                         <FormattedMessage id="admin.billing.payment.header" />
                     </Typography>
 
