@@ -20,7 +20,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
-    useBilling_billingDetails,
+    useBilling_billingHistory,
     useBilling_hydrated,
 } from 'stores/Tables/Billing/hooks';
 import useConstant from 'use-constant';
@@ -36,7 +36,7 @@ function DataByMonthGraph() {
     const intl = useIntl();
 
     const billingStoreHydrated = useBilling_hydrated();
-    const billingDetails = useBilling_billingDetails();
+    const billingHistory = useBilling_billingHistory();
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
 
@@ -56,7 +56,7 @@ function DataByMonthGraph() {
 
         return [
             {
-                data: billingDetails
+                data: billingHistory
                     .filter(({ date }) =>
                         isWithinInterval(date, {
                             start: startDate,
@@ -69,10 +69,10 @@ function DataByMonthGraph() {
                     ]),
             },
         ];
-    }, [billingDetails, intl, today]);
+    }, [billingHistory, intl, today]);
 
     useEffect(() => {
-        if (billingStoreHydrated && billingDetails.length > 0) {
+        if (billingStoreHydrated && billingHistory.length > 0) {
             if (!myChart) {
                 echarts.use([
                     GridComponent,
@@ -152,7 +152,7 @@ function DataByMonthGraph() {
                             );
 
                             const tooltipTitle =
-                                billingDetails
+                                billingHistory
                                     .map(({ date }) =>
                                         intl.formatDate(date, {
                                             month: 'short',
@@ -181,7 +181,7 @@ function DataByMonthGraph() {
         }
     }, [
         setMyChart,
-        billingDetails,
+        billingHistory,
         billingStoreHydrated,
         intl,
         months,
@@ -191,7 +191,7 @@ function DataByMonthGraph() {
     ]);
 
     if (billingStoreHydrated) {
-        return billingDetails.length > 0 ? (
+        return billingHistory.length > 0 ? (
             <div id="data-by-month" style={{ height: CARD_AREA_HEIGHT }} />
         ) : (
             <EmptyGraphState />

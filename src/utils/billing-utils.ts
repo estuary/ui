@@ -1,7 +1,7 @@
 import { parseISO } from 'date-fns';
 import { sum } from 'lodash';
 import prettyBytes from 'pretty-bytes';
-import { BillingDetails } from 'stores/Tables/Billing/types';
+import { BillingRecord } from 'stores/Tables/Billing/types';
 import { Entity, ProjectedCostStats } from 'types';
 
 export const TOTAL_CARD_HEIGHT = 300;
@@ -69,7 +69,7 @@ export const stripTimeFromDate = (date: string) => {
     return parseISO(truncatedDateStr);
 };
 
-export const getInitialBillingDetails = (date: string): BillingDetails => {
+export const getInitialBillingRecord = (date: string): BillingRecord => {
     const truncatedDate = stripTimeFromDate(date);
 
     return {

@@ -8,7 +8,7 @@ import {
     evaluateSpecType,
     evaluateTotalCost,
     FREE_GB_BY_TIER,
-    getInitialBillingDetails,
+    getInitialBillingRecord,
     stripTimeFromDate,
 } from 'utils/billing-utils';
 import { devtoolsOptions } from 'utils/store-utils';
@@ -17,10 +17,10 @@ import { devtools, NamedSet } from 'zustand/middleware';
 
 const getInitialStateData = (): Pick<
     BillingState,
-    'billingDetails' | 'projectedCostStats' | 'dataByTaskGraphDetails'
+    'billingHistory' | 'dataByTaskGraphDetails' | 'projectedCostStats'
 > => {
     return {
-        billingDetails: [],
+        billingHistory: [],
         projectedCostStats: {},
         dataByTaskGraphDetails: {},
     };
@@ -69,7 +69,7 @@ export const getInitialState = (
             );
         },
 
-        setBillingDetails: () => {
+        setBillingHistory: () => {
             set(
                 produce((state: BillingState) => {
                     const { projectedCostStats } = get();
@@ -77,8 +77,8 @@ export const getInitialState = (
                     if (!isEmpty(projectedCostStats)) {
                         Object.entries(projectedCostStats).forEach(
                             ([ts, stats]) => {
-                                const billingDetailsIndex =
-                                    state.billingDetails.findIndex((detail) =>
+                                const billingRecordIndex =
+                                    state.billingHistory.findIndex((detail) =>
                                         isEqual(
                                             detail.date,
                                             stripTimeFromDate(ts)
@@ -92,15 +92,15 @@ export const getInitialState = (
                                     taskCount
                                 );
 
-                                if (billingDetailsIndex === -1) {
+                                if (billingRecordIndex === -1) {
                                     const {
                                         date,
                                         pricingTier,
                                         taskRate,
                                         gbFree,
-                                    } = getInitialBillingDetails(ts);
+                                    } = getInitialBillingRecord(ts);
 
-                                    state.billingDetails.push({
+                                    state.billingHistory.push({
                                         date,
                                         dataVolume,
                                         taskCount,
@@ -117,23 +117,20 @@ export const getInitialState = (
                                         taskRate,
                                         gbFree,
                                     } =
-                                        state.billingDetails[
-                                            billingDetailsIndex
+                                        state.billingHistory[
+                                            billingRecordIndex
                                         ];
 
-                                    state.billingDetails[billingDetailsIndex] =
-                                        {
-                                            date,
-                                            dataVolume,
-                                            taskCount,
-                                            totalCost,
-                                            pricingTier:
-                                                pricingTier ?? 'personal',
-                                            taskRate: taskRate ?? 20,
-                                            gbFree:
-                                                gbFree ??
-                                                FREE_GB_BY_TIER.PERSONAL,
-                                        };
+                                    state.billingHistory[billingRecordIndex] = {
+                                        date,
+                                        dataVolume,
+                                        taskCount,
+                                        totalCost,
+                                        pricingTier: pricingTier ?? 'personal',
+                                        taskRate: taskRate ?? 20,
+                                        gbFree:
+                                            gbFree ?? FREE_GB_BY_TIER.PERSONAL,
+                                    };
                                 }
                             }
                         );

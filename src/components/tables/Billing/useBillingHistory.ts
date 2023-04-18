@@ -4,7 +4,7 @@ import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import { isEmpty } from 'lodash';
 import {
-    BillingDetails,
+    BillingRecord,
     ProjectedCostStatsDictionary,
 } from 'stores/Tables/Billing/types';
 import { ProjectedCostStats } from 'types';
@@ -12,7 +12,7 @@ import {
     evaluateDataVolume,
     evaluateTotalCost,
     FREE_GB_BY_TIER,
-    getInitialBillingDetails,
+    getInitialBillingRecord,
     stripTimeFromDate,
 } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
@@ -23,13 +23,13 @@ interface Props {
 
 const INTERVAL = 30000;
 
-const defaultResponse: BillingDetails[] = [];
+const defaultResponse: BillingRecord[] = [];
 
 // TODO (billing): Remove this helper function to translate data returned from
 //   the new RPC when available.
 const formatProjectedCostStats = (
     value: ProjectedCostStats[]
-): BillingDetails[] => {
+): BillingRecord[] => {
     const taskStatData = value.filter((query) =>
         Object.hasOwn(query.flow_document, 'taskStats')
     );
@@ -47,23 +47,23 @@ const formatProjectedCostStats = (
         }
     });
 
-    const billingDetails: BillingDetails[] = [];
+    const billingHistory: BillingRecord[] = [];
 
     if (!isEmpty(sortedStats)) {
         Object.entries(sortedStats).forEach(([ts, stats]) => {
-            const billingDetailsIndex = billingDetails.findIndex((detail) =>
-                isEqual(detail.date, stripTimeFromDate(ts))
+            const billingRecordIndex = billingHistory.findIndex((record) =>
+                isEqual(record.date, stripTimeFromDate(ts))
             );
 
             const taskCount = stats.length;
             const dataVolume = evaluateDataVolume(stats);
             const totalCost = evaluateTotalCost(dataVolume, taskCount);
 
-            if (billingDetailsIndex === -1) {
+            if (billingRecordIndex === -1) {
                 const { date, pricingTier, taskRate, gbFree } =
-                    getInitialBillingDetails(ts);
+                    getInitialBillingRecord(ts);
 
-                billingDetails.push({
+                billingHistory.push({
                     date,
                     dataVolume,
                     taskCount,
@@ -74,9 +74,9 @@ const formatProjectedCostStats = (
                 });
             } else {
                 const { date, pricingTier, taskRate, gbFree } =
-                    billingDetails[billingDetailsIndex];
+                    billingHistory[billingRecordIndex];
 
-                billingDetails[billingDetailsIndex] = {
+                billingHistory[billingRecordIndex] = {
                     date,
                     dataVolume,
                     taskCount,
@@ -89,7 +89,7 @@ const formatProjectedCostStats = (
         });
     }
 
-    return billingDetails;
+    return billingHistory;
 };
 
 function useBillingHistory({ query }: Props) {

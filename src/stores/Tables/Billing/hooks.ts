@@ -10,17 +10,17 @@ export const useBilling_setProjectedCostStats = () => {
     );
 };
 
-export const useBilling_billingDetails = () => {
-    return useZustandStore<BillingState, BillingState['billingDetails']>(
+export const useBilling_billingHistory = () => {
+    return useZustandStore<BillingState, BillingState['billingHistory']>(
         SelectTableStoreNames.BILLING,
-        (state) => state.billingDetails
+        (state) => state.billingHistory
     );
 };
 
-export const useBilling_setBillingDetails = () => {
-    return useZustandStore<BillingState, BillingState['setBillingDetails']>(
+export const useBilling_setBillingHistory = () => {
+    return useZustandStore<BillingState, BillingState['setBillingHistory']>(
         SelectTableStoreNames.BILLING,
-        (state) => state.setBillingDetails
+        (state) => state.setBillingHistory
     );
 };
 

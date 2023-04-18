@@ -6,7 +6,7 @@ export interface ProjectedCostStatsDictionary {
     [date: string]: ProjectedCostStats[];
 }
 
-export interface BillingDetails {
+export interface BillingRecord {
     date: Date;
     dataVolume: number;
     taskCount: number;
@@ -33,11 +33,11 @@ export interface BillingState extends SelectableTableStore {
     projectedCostStats: ProjectedCostStatsDictionary;
     setProjectedCostStats: (value: ProjectedCostStats[]) => void;
 
-    billingDetails: BillingDetails[];
-    setBillingDetails: () => void;
+    billingHistory: BillingRecord[];
+    setBillingHistory: () => void;
 
     hydrateContinuously: (
-        data: BillingDetails[],
+        data: BillingRecord[],
         error?: PostgrestError
     ) => void;
 

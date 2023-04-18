@@ -5,10 +5,10 @@ import { isSameMonth } from 'date-fns';
 import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
-    useBilling_billingDetails,
+    useBilling_billingHistory,
     useBilling_hydrated,
 } from 'stores/Tables/Billing/hooks';
-import { BillingDetails } from 'stores/Tables/Billing/types';
+import { BillingRecord } from 'stores/Tables/Billing/types';
 import useConstant from 'use-constant';
 
 function PricingTierDetails() {
@@ -18,11 +18,11 @@ function PricingTierDetails() {
 
     // Billing Store
     const billingStoreHydrated = useBilling_hydrated();
-    const billingDetails = useBilling_billingDetails();
+    const billingHistory = useBilling_billingHistory();
 
-    const latestBillingRecord: BillingDetails | undefined = useMemo(() => {
-        return billingDetails.find((record) => isSameMonth(record.date, today));
-    }, [billingDetails, today]);
+    const latestBillingRecord: BillingRecord | undefined = useMemo(() => {
+        return billingHistory.find((record) => isSameMonth(record.date, today));
+    }, [billingHistory, today]);
 
     if (
         latestBillingRecord?.pricingTier &&

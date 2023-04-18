@@ -17,7 +17,7 @@ import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
 import {
     useBilling_resetState,
-    useBilling_setBillingDetails,
+    useBilling_setBillingHistory,
     useBilling_setDataByTaskGraphDetails,
     useBilling_setProjectedCostStats,
 } from 'stores/Tables/Billing/hooks';
@@ -40,7 +40,7 @@ function AdminBilling() {
 
     // Billing Store
     const setProjectedCostStats = useBilling_setProjectedCostStats();
-    const setBillingDetails = useBilling_setBillingDetails();
+    const setBillingHistory = useBilling_setBillingHistory();
     const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
     const resetBillingState = useBilling_resetState();
 
@@ -57,11 +57,11 @@ function AdminBilling() {
     useEffect(() => {
         if (hasLength(projectedCostStatsData)) {
             setProjectedCostStats(projectedCostStatsData);
-            setBillingDetails();
+            setBillingHistory();
             setDataByTaskGraphDetails(projectedCostStatsData);
         }
     }, [
-        setBillingDetails,
+        setBillingHistory,
         setDataByTaskGraphDetails,
         setProjectedCostStats,
         projectedCostStatsData,
