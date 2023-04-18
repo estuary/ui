@@ -1,6 +1,6 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
-import DataVolume from 'components/tables/cells/billing/DataVolume';
-import MonetaryValue from 'components/tables/cells/billing/MonetaryValue';
+import MonetaryValue from 'components/tables/cells/MonetaryValue';
+import Bytes from 'components/tables/cells/stats/Bytes';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { FormattedMessage } from 'react-intl';
 import { BillingRecord } from 'stores/Billing/types';
@@ -21,7 +21,10 @@ function Row({ row }: RowProps) {
         <TableRow hover>
             <TimeStamp time={row.date} monthOnly={true} />
 
-            <DataVolume val={row.dataVolume} />
+            <Bytes
+                val={row.dataVolume}
+                messageId="admin.billing.projectedCostTable.tooltip.dataVolume"
+            />
 
             <TableCell>
                 <Typography>{row.taskCount}</Typography>
