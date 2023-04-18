@@ -1,3 +1,4 @@
+import { PostgrestError } from '@supabase/postgrest-js';
 import { SelectableTableStore } from 'stores/Tables/Store';
 import { Entity, ProjectedCostStats } from 'types';
 
@@ -34,6 +35,11 @@ export interface BillingState extends SelectableTableStore {
 
     billingDetails: BillingDetails[];
     setBillingDetails: () => void;
+
+    hydrateContinuously: (
+        data: BillingDetails[],
+        error?: PostgrestError
+    ) => void;
 
     resetBillingState: () => void;
 }

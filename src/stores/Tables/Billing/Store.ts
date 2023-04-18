@@ -198,6 +198,48 @@ export const getInitialState = (
             );
         },
 
+        hydrateContinuously: (data, error) => {
+            const { fetcher } = get().query;
+
+            if (!fetcher) {
+                throw new Error(
+                    'You must populate the query before hydrating.'
+                );
+            }
+
+            set(
+                produce((state) => {
+                    state.query.loading = true;
+                }),
+                false,
+                'Table Store Hydration Start'
+            );
+
+            if (error) {
+                set(
+                    produce((state) => {
+                        state.query.response = null;
+                        state.query.loading = false;
+                        state.query.error = error;
+                    }),
+                    false,
+                    'Table Store Hydration Failure'
+                );
+            }
+
+            set(
+                produce((state) => {
+                    state.hydrated = true;
+
+                    state.query.count = data.length;
+                    state.query.response = data;
+                    state.query.loading = false;
+                }),
+                false,
+                'Table Store Hydration Success'
+            );
+        },
+
         resetBillingState: () => {
             set(
                 {

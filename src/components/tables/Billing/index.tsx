@@ -4,8 +4,8 @@ import Rows from 'components/tables/Billing/Rows';
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
+import BillingHistoryTableHydrator from 'stores/Tables/Billing/Hydrator';
 import useTableState from 'stores/Tables/hooks';
-import TableHydrator from 'stores/Tables/Hydrator';
 import { Grants, TableColumns } from 'types';
 
 interface Props {
@@ -67,10 +67,7 @@ function ProjectedCostsTable({ grants }: Props) {
 
     return (
         <Box>
-            <TableHydrator
-                query={query}
-                selectableTableStoreName={selectableTableStoreName}
-            >
+            <BillingHistoryTableHydrator query={query}>
                 <EntityTable
                     noExistingDataContentIds={{
                         header: 'admin.billing.projectedCostTable.emptyTableDefault.header',
@@ -95,7 +92,7 @@ function ProjectedCostsTable({ grants }: Props) {
                     rowsPerPageOptions={[4, 6, 12]}
                     minWidth={500}
                 />
-            </TableHydrator>
+            </BillingHistoryTableHydrator>
         </Box>
     );
 }

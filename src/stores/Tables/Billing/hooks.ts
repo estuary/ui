@@ -48,6 +48,13 @@ export const useBilling_hydrated = () => {
     );
 };
 
+export const useBilling_hydrateContinuously = () => {
+    return useZustandStore<BillingState, BillingState['hydrateContinuously']>(
+        SelectTableStoreNames.BILLING,
+        (state) => state.hydrateContinuously
+    );
+};
+
 export const useBilling_resetState = () => {
     return useZustandStore<BillingState, BillingState['resetBillingState']>(
         SelectTableStoreNames.BILLING,
