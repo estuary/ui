@@ -33,12 +33,6 @@ const typographySx = { mb: 2, fontSize: 16, fontWeight: 300 };
 function AdminBilling() {
     useBrowserTitle('browserTitle.admin.billing');
 
-    // const pricingTiers = useConstant(() => [
-    //     intl.formatMessage({ id: 'admin.billing.tier.free' }),
-    //     intl.formatMessage({ id: 'admin.billing.tier.personal' }),
-    //     intl.formatMessage({ id: 'admin.billing.tier.enterprise' }),
-    // ]);
-
     // Billing Store
     const hydrated = useBilling_hydrated();
     const setHydrated = useBilling_setHydrated();
@@ -48,11 +42,6 @@ function AdminBilling() {
     const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
 
     const resetBillingState = useBilling_resetState();
-
-    // const [pricingTier, setPricingTier] = useState<string>(pricingTiers[1]);
-    // const [taskRate, setTaskRate] = useState<FREE_GB_BY_TIER>(
-    //     FREE_GB_BY_TIER.PERSONAL
-    // );
 
     const { combinedGrants } = useCombinedGrantsExt({ adminOnly: true });
 
@@ -102,19 +91,6 @@ function AdminBilling() {
 
                     <PricingTierDetails />
                 </Grid>
-
-                {/* <Grid
-                    item
-                    xs={12}
-                    md={3}
-                    sx={{ display: 'flex', alignItems: 'end' }}
-                >
-                    <PricingTierOptions
-                        options={pricingTiers}
-                        setPricingTier={setPricingTier}
-                        setTaskRate={setTaskRate}
-                    />
-                </Grid> */}
             </Grid>
 
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
