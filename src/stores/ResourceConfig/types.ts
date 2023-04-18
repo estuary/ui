@@ -22,7 +22,7 @@ export interface ResourceConfigState {
     // Collection Selector
     collections: string[] | null;
     preFillEmptyCollections: (
-        collections: LiveSpecsExtQuery[],
+        collections: LiveSpecsExtQuery[] | null[],
         rehydrating?: boolean
     ) => void;
     preFillCollections: (

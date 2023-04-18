@@ -141,7 +141,7 @@ const getInitialState = (
                 const modifiedResourceConfig = resourceConfig;
 
                 value.forEach((capture) => {
-                    capture.writes_to.forEach((collection) => {
+                    capture?.writes_to.forEach((collection) => {
                         if (!emptyCollections.includes(collection)) {
                             emptyCollections.push(collection);
                         }
@@ -606,6 +606,11 @@ const getInitialState = (
 
                 preFillEmptyCollections(data, rehydrating);
             }
+        } else if (rehydrating) {
+            // If there is nothign to prefill but we are rehydrating we want to make sure
+            //  we prefill any collections the user already selected
+            const { preFillEmptyCollections } = get();
+            preFillEmptyCollections([], rehydrating);
         }
     },
 
