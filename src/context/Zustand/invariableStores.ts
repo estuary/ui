@@ -25,6 +25,7 @@ import { createSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
 import { createBillingTableStore } from 'stores/Tables/Billing/Store';
 import { createSelectableTableStore } from 'stores/Tables/Store';
+import { createTopBarStore } from 'stores/TopBar/Store';
 import { MessagePrefixes } from 'types';
 
 const invariableStores = {
@@ -139,6 +140,7 @@ const invariableStores = {
     [GlobalStoreNames.SIDE_PANEL_DOCS]: createSidePanelDocsStore(
         GlobalStoreNames.SIDE_PANEL_DOCS
     ),
+    [GlobalStoreNames.TOP_BAR]: createTopBarStore(GlobalStoreNames.TOP_BAR),
 };
 
 export default invariableStores;

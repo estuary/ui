@@ -209,36 +209,6 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.passwordReset': `Password Reset`,
 };
 
-const BrowserTitles: ResolvedIntlConfig['messages'] = {
-    'browserTitle.home': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.home']}`,
-    'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dashboard']}`,
-    'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
-    'browserTitle.admin.accessGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.accessGrants']}`,
-    'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
-    'browserTitle.admin.billing': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.billing']}`,
-    'browserTitle.admin.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.connectors']}`,
-    'browserTitle.admin.cookies': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.cookies']}`,
-    'browserTitle.admin.storageMappings': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.storageMappings']}`,
-    'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
-    'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
-    'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
-    'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
-    'browserTitle.collectionCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collectionCreate']}`,
-    'browserTitle.details': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.details']}`,
-    'browserTitle.dataPlaneAuthReq': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dataPlaneAuthReq']}`,
-    'browserTitle.error.entityNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.entityNotFound']}`,
-    'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
-    'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
-    'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
-    'browserTitle.legal': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.legal']}`,
-    'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
-    'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
-    'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationEdit']}`,
-    'browserTitle.materializations': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializations']}`,
-    'browserTitle.registration': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.registration']}`,
-    'browserTitle.passwordReset': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.passwordReset']}`,
-};
-
 const Header: ResolvedIntlConfig['messages'] = {
     'mainMenu.tooltip': `Open Main Menu`,
 
@@ -985,7 +955,6 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CTAs,
     ...Data,
     ...ErrorBoundry,
-    ...BrowserTitles,
     ...RouteTitles,
     ...FullPage,
     ...Header,

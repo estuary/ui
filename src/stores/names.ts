@@ -59,6 +59,7 @@ export enum AdminStoreNames {
 
 export enum GlobalStoreNames {
     SIDE_PANEL_DOCS = 'Side-Panel-Docs',
+    TOP_BAR = 'Top-Bar',
 }
 
 export enum TransformCreateStoreNames {

@@ -1,38 +1,15 @@
-import EntityExistenceGuard from 'app/guards/EntityExistenceGuard';
-import AppLayout from 'app/Layout';
 import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
-import AccessGrants from 'components/admin/AccessGrants';
-import AdminApi from 'components/admin/Api';
-import AdminBilling from 'components/admin/Billing';
-import AdminConnectors from 'components/admin/Connectors';
-import AdminCookies from 'components/admin/Cookies';
-import StorageMappings from 'components/admin/StorageMappings';
-import CaptureCreate from 'components/capture/Create';
-import CaptureCreateConfig from 'components/capture/Create/Config';
-import CaptureDetails from 'components/capture/Details';
-import CaptureEdit from 'components/capture/Edit';
-import CollectionDetails from 'components/collection/Details';
-import DerivationCreate from 'components/derivation/Create';
-import MaterializationCreate from 'components/materialization/Create';
-import MaterializationCreateConfig from 'components/materialization/Create/Config';
-import MaterializationDetails from 'components/materialization/Details';
-import MaterializationEdit from 'components/materialization/Edit';
-import { DetailsPageContextProvider } from 'components/shared/Entity/Details/context';
 import { AuthenticatedOnlyContext } from 'context/Authenticated';
 import { EntityContextProvider } from 'context/EntityContext';
-import { WorkflowContextProvider } from 'context/Workflow';
 import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
 import useBrowserTitle from 'hooks/useBrowserTitle';
-import Admin from 'pages/Admin';
 import Auth from 'pages/Auth';
-import Captures from 'pages/Captures';
 import Collections from 'pages/Collections';
 import DataPlaneAuthReq from 'pages/DataPlaneAuthReq';
 import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
-import Home from 'pages/Home';
 import Login from 'pages/Login';
-import Materializations from 'pages/Materializations';
+import { lazy, Suspense } from 'react';
 import {
     createBrowserRouter,
     createRoutesFromElements,
@@ -41,7 +18,45 @@ import {
     Routes,
 } from 'react-router-dom';
 import { isProduction } from 'utils/env-utils';
-import { RequireAuth } from './Authenticated';
+import RequireAuth from './RequireAuth';
+
+const Authenticated = lazy(() => import('./Authenticated'));
+const HomePage = lazy(() => import('pages/Home'));
+
+// Capture
+const CaptureCreateRoute = lazy(() => import('./CaptureCreate'));
+const CaptureCreateNewRoute = lazy(() => import('./CaptureCreateNew'));
+const CaptureDetailsRoute = lazy(() => import('./CaptureDetails'));
+const CaptureEditRoute = lazy(() => import('./CaptureEdit'));
+const CapturesTable = lazy(() => import('./CapturesTable'));
+
+// Collection
+const DerivationCreateComponent = lazy(
+    () => import('components/derivation/Create')
+);
+const CollectionDetailsRoute = lazy(() => import('./CollectionDetails'));
+
+//Materializations
+const MaterializationCreateRoute = lazy(
+    () => import('./MaterializationCreate')
+);
+const MaterializationCreateNewRoute = lazy(
+    () => import('./MaterializationCreateNew')
+);
+const MaterializationDetailsRoute = lazy(
+    () => import('./MaterializationDetails')
+);
+const MaterializationEditRoute = lazy(() => import('./MaterializationEdit'));
+const MaterializationsTable = lazy(() => import('./MaterializationsTable'));
+
+//Admin
+const Admin = lazy(() => import('pages/Admin'));
+const AccessGrants = lazy(() => import('components/admin/AccessGrants'));
+const AdminApi = lazy(() => import('components/admin/Api'));
+const AdminBilling = lazy(() => import('components/admin/Billing'));
+const AdminConnectors = lazy(() => import('components/admin/Connectors'));
+const AdminCookies = lazy(() => import('components/admin/Cookies'));
+const StorageMappings = lazy(() => import('components/admin/StorageMappings'));
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -87,15 +102,24 @@ const router = createBrowserRouter(
             <Route
                 path={authenticatedRoutes.path}
                 element={
-                    <AuthenticatedOnlyContext>
-                        <AppLayout />
-                    </AuthenticatedOnlyContext>
+                    <Suspense fallback={null}>
+                        <Authenticated />
+                    </Suspense>
                 }
             >
                 <Route>
                     <Route
                         path={authenticatedRoutes.home.path}
-                        element={<Home />}
+                        element={
+                            <Suspense fallback={null}>
+                                <HomePage />
+                            </Suspense>
+                        }
+                    />
+
+                    <Route
+                        path={authenticatedRoutes.dataPlaneAuth.path}
+                        element={<DataPlaneAuthReq />}
                     />
 
                     <Route
@@ -109,7 +133,11 @@ const router = createBrowserRouter(
                                             authenticatedRoutes.collections
                                                 .create.new.path
                                         }
-                                        element={<DerivationCreate />}
+                                        element={
+                                            <Suspense fallback={null}>
+                                                <DerivationCreateComponent />
+                                            </Suspense>
+                                        }
                                     />
 
                                     <Route
@@ -124,9 +152,9 @@ const router = createBrowserRouter(
                                                     .details.overview.path
                                             }
                                             element={
-                                                <DetailsPageContextProvider value="overview">
-                                                    <CollectionDetails />
-                                                </DetailsPageContextProvider>
+                                                <Suspense fallback={null}>
+                                                    <CollectionDetailsRoute tab="overview" />
+                                                </Suspense>
                                             }
                                         />
 
@@ -136,9 +164,9 @@ const router = createBrowserRouter(
                                                     .details.spec.path
                                             }
                                             element={
-                                                <DetailsPageContextProvider value="spec">
-                                                    <CollectionDetails />
-                                                </DetailsPageContextProvider>
+                                                <Suspense fallback={null}>
+                                                    <CollectionDetailsRoute tab="spec" />
+                                                </Suspense>
                                             }
                                         />
 
@@ -148,9 +176,9 @@ const router = createBrowserRouter(
                                                     .details.history.path
                                             }
                                             element={
-                                                <DetailsPageContextProvider value="history">
-                                                    <CollectionDetails />
-                                                </DetailsPageContextProvider>
+                                                <Suspense fallback={null}>
+                                                    <CollectionDetailsRoute tab="history" />
+                                                </Suspense>
                                             }
                                         />
                                     </Route>
@@ -163,44 +191,36 @@ const router = createBrowserRouter(
                         <Route
                             path=""
                             element={
-                                <EntityContextProvider value="capture">
-                                    <Captures />
-                                </EntityContextProvider>
+                                <Suspense fallback={null}>
+                                    <CapturesTable />
+                                </Suspense>
                             }
                         />
 
                         <Route
                             path={authenticatedRoutes.captures.create.path}
                             element={
-                                <EntityContextProvider value="capture">
-                                    <WorkflowContextProvider value="capture_create">
-                                        <CaptureCreateConfig />
-                                    </WorkflowContextProvider>
-                                </EntityContextProvider>
+                                <Suspense fallback={null}>
+                                    <CaptureCreateRoute />
+                                </Suspense>
                             }
                         />
 
                         <Route
                             path={authenticatedRoutes.captures.create.new.path}
                             element={
-                                <EntityContextProvider value="capture">
-                                    <WorkflowContextProvider value="capture_create">
-                                        <CaptureCreate />
-                                    </WorkflowContextProvider>
-                                </EntityContextProvider>
+                                <Suspense fallback={null}>
+                                    <CaptureCreateNewRoute />
+                                </Suspense>
                             }
                         />
 
                         <Route
                             path={authenticatedRoutes.captures.edit.path}
                             element={
-                                <EntityContextProvider value="capture">
-                                    <WorkflowContextProvider value="capture_edit">
-                                        <EntityExistenceGuard>
-                                            <CaptureEdit />
-                                        </EntityExistenceGuard>
-                                    </WorkflowContextProvider>
-                                </EntityContextProvider>
+                                <Suspense fallback={null}>
+                                    <CaptureEditRoute />
+                                </Suspense>
                             }
                         />
 
@@ -211,9 +231,9 @@ const router = createBrowserRouter(
                                         .overview.path
                                 }
                                 element={
-                                    <DetailsPageContextProvider value="overview">
-                                        <CaptureDetails />
-                                    </DetailsPageContextProvider>
+                                    <Suspense fallback={null}>
+                                        <CaptureDetailsRoute tab="overview" />
+                                    </Suspense>
                                 }
                             />
 
@@ -223,9 +243,9 @@ const router = createBrowserRouter(
                                         .path
                                 }
                                 element={
-                                    <DetailsPageContextProvider value="spec">
-                                        <CaptureDetails />
-                                    </DetailsPageContextProvider>
+                                    <Suspense fallback={null}>
+                                        <CaptureDetailsRoute tab="spec" />
+                                    </Suspense>
                                 }
                             />
 
@@ -235,25 +255,21 @@ const router = createBrowserRouter(
                                         .path
                                 }
                                 element={
-                                    <DetailsPageContextProvider value="history">
-                                        <CaptureDetails />
-                                    </DetailsPageContextProvider>
+                                    <Suspense fallback={null}>
+                                        <CaptureDetailsRoute tab="history" />
+                                    </Suspense>
                                 }
                             />
                         </Route>
                     </Route>
-                    <Route
-                        path={authenticatedRoutes.dataPlaneAuth.path}
-                        element={<DataPlaneAuthReq />}
-                    />
 
                     <Route path={authenticatedRoutes.materializations.path}>
                         <Route
                             path=""
                             element={
-                                <EntityContextProvider value="materialization">
-                                    <Materializations />
-                                </EntityContextProvider>
+                                <Suspense fallback={null}>
+                                    <MaterializationsTable />
+                                </Suspense>
                             }
                         />
 
@@ -262,11 +278,9 @@ const router = createBrowserRouter(
                                 authenticatedRoutes.materializations.create.path
                             }
                             element={
-                                <EntityContextProvider value="materialization">
-                                    <WorkflowContextProvider value="materialization_create">
-                                        <MaterializationCreateConfig />
-                                    </WorkflowContextProvider>
-                                </EntityContextProvider>
+                                <Suspense fallback={null}>
+                                    <MaterializationCreateRoute />
+                                </Suspense>
                             }
                         />
 
@@ -276,11 +290,9 @@ const router = createBrowserRouter(
                                     .path
                             }
                             element={
-                                <EntityContextProvider value="materialization">
-                                    <WorkflowContextProvider value="materialization_create">
-                                        <MaterializationCreate />
-                                    </WorkflowContextProvider>
-                                </EntityContextProvider>
+                                <Suspense fallback={null}>
+                                    <MaterializationCreateNewRoute />
+                                </Suspense>
                             }
                         />
 
@@ -289,13 +301,9 @@ const router = createBrowserRouter(
                                 authenticatedRoutes.materializations.edit.path
                             }
                             element={
-                                <EntityContextProvider value="materialization">
-                                    <WorkflowContextProvider value="materialization_edit">
-                                        <EntityExistenceGuard>
-                                            <MaterializationEdit />
-                                        </EntityExistenceGuard>
-                                    </WorkflowContextProvider>
-                                </EntityContextProvider>
+                                <Suspense fallback={null}>
+                                    <MaterializationEditRoute />
+                                </Suspense>
                             }
                         />
 
@@ -311,9 +319,9 @@ const router = createBrowserRouter(
                                         .overview.path
                                 }
                                 element={
-                                    <DetailsPageContextProvider value="overview">
-                                        <MaterializationDetails />
-                                    </DetailsPageContextProvider>
+                                    <Suspense fallback={null}>
+                                        <MaterializationDetailsRoute tab="overview" />
+                                    </Suspense>
                                 }
                             />
 
@@ -323,9 +331,9 @@ const router = createBrowserRouter(
                                         .spec.path
                                 }
                                 element={
-                                    <DetailsPageContextProvider value="spec">
-                                        <MaterializationDetails />
-                                    </DetailsPageContextProvider>
+                                    <Suspense fallback={null}>
+                                        <MaterializationDetailsRoute tab="spec" />
+                                    </Suspense>
                                 }
                             />
 
@@ -335,41 +343,72 @@ const router = createBrowserRouter(
                                         .history.path
                                 }
                                 element={
-                                    <DetailsPageContextProvider value="history">
-                                        <MaterializationDetails />
-                                    </DetailsPageContextProvider>
+                                    <Suspense fallback={null}>
+                                        <MaterializationDetailsRoute tab="history" />
+                                    </Suspense>
                                 }
                             />
                         </Route>
                     </Route>
 
                     <Route path={authenticatedRoutes.admin.path}>
-                        <Route path="" element={<Admin />} />
+                        <Route
+                            path=""
+                            element={
+                                <Suspense fallback={null}>
+                                    <Admin />
+                                </Suspense>
+                            }
+                        />
                         <Route
                             path={authenticatedRoutes.admin.accessGrants.path}
-                            element={<AccessGrants />}
+                            element={
+                                <Suspense fallback={null}>
+                                    <AccessGrants />
+                                </Suspense>
+                            }
                         />
                         <Route
                             path={authenticatedRoutes.admin.api.path}
-                            element={<AdminApi />}
+                            element={
+                                <Suspense fallback={null}>
+                                    <AdminApi />
+                                </Suspense>
+                            }
+                        />
+                        <Route
+                            path={authenticatedRoutes.admin.billing.path}
+                            element={
+                                <Suspense fallback={null}>
+                                    <AdminBilling />
+                                </Suspense>
+                            }
                         />
                         <Route
                             path={authenticatedRoutes.admin.connectors.path}
-                            element={<AdminConnectors />}
+                            element={
+                                <Suspense fallback={null}>
+                                    <AdminConnectors />
+                                </Suspense>
+                            }
                         />
                         <Route
                             path={authenticatedRoutes.admin.cookies.path}
-                            element={<AdminCookies />}
+                            element={
+                                <Suspense fallback={null}>
+                                    <AdminCookies />
+                                </Suspense>
+                            }
                         />
                         <Route
                             path={
                                 authenticatedRoutes.admin.storageMappings.path
                             }
-                            element={<StorageMappings />}
-                        />
-                        <Route
-                            path={authenticatedRoutes.admin.billing.path}
-                            element={<AdminBilling />}
+                            element={
+                                <Suspense fallback={null}>
+                                    <StorageMappings />
+                                </Suspense>
+                            }
                         />
                     </Route>
 
@@ -395,7 +434,7 @@ const router = createBrowserRouter(
 );
 
 const ApplicationRouter = () => {
-    useBrowserTitle('browserTitle.loginLoading');
+    useBrowserTitle('routeTitle.loginLoading');
 
     return <RouterProvider router={router} />;
 };

@@ -6,12 +6,12 @@ import TasksByMonth from 'components/admin/Billing/graphs/TasksByMonthGraph';
 import PricingTierDetails from 'components/admin/Billing/PricingTierDetails';
 import AdminTabs from 'components/admin/Tabs';
 import MessageWithLink from 'components/content/MessageWithLink';
-import PageContainer from 'components/shared/PageContainer';
 import ProjectedCostsTable from 'components/tables/Billing';
 import { semiTransparentBackground } from 'context/Theme';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
+import usePageTitle from 'hooks/usePageTitle';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
@@ -30,8 +30,10 @@ const boxShadow =
 
 const typographySx = { mb: 2, fontSize: 16, fontWeight: 300 };
 
+const routeTitle = authenticatedRoutes.admin.billing.title;
+
 function AdminBilling() {
-    useBrowserTitle('browserTitle.admin.billing');
+    useBrowserTitle(routeTitle);
 
     // Billing Store
     const hydrated = useBilling_hydrated();
@@ -74,13 +76,13 @@ function AdminBilling() {
 
     useUnmount(() => resetBillingState());
 
+    usePageTitle({
+        header: routeTitle,
+        headerLink: 'https://www.estuary.dev/pricing/',
+    });
+
     return (
-        <PageContainer
-            pageTitleProps={{
-                header: authenticatedRoutes.admin.billing.title,
-                headerLink: 'https://www.estuary.dev/pricing/',
-            }}
-        >
+        <>
             <AdminTabs />
 
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
@@ -184,7 +186,7 @@ function AdminBilling() {
                     <MessageWithLink messageID="admin.billing.payment.message" />
                 </Grid>
             </Grid>
-        </PageContainer>
+        </>
     );
 }
 

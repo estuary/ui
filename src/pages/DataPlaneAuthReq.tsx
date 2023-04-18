@@ -1,8 +1,7 @@
 import { Box, SxProps, Theme, Toolbar, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import AlertBox from 'components/shared/AlertBox';
-import PageContainer from 'components/shared/PageContainer';
-import useBrowserTitle from 'hooks/useBrowserTitle';
+import usePageTitle from 'hooks/usePageTitle';
 import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -19,7 +18,10 @@ interface RedirectResult {
 }
 
 const DataPlaneAuthReq = () => {
-    useBrowserTitle('browserTitle.dataPlaneAuthReq');
+    usePageTitle({
+        header: authenticatedRoutes.captures.title,
+        headerLink: 'https://docs.estuary.dev/concepts/#captures',
+    });
 
     const [searchParams] = useSearchParams();
     const catalogPrefix = searchParams.get('prefix');
@@ -108,12 +110,7 @@ const DataPlaneAuthReq = () => {
     }
 
     return (
-        <PageContainer
-            pageTitleProps={{
-                header: authenticatedRoutes.captures.title,
-                headerLink: 'https://docs.estuary.dev/concepts/#captures',
-            }}
-        >
+        <>
             <Toolbar
                 sx={{
                     alignItems: 'center',
@@ -123,7 +120,7 @@ const DataPlaneAuthReq = () => {
             />
 
             <Box sx={boxStyling}>{elem}</Box>
-        </PageContainer>
+        </>
     );
 };
 

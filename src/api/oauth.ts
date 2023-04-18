@@ -13,6 +13,7 @@ export interface AccessTokenResponse {
 export interface AuthURLResponse {
     url: string;
     state: string;
+    code_verifier: string;
 }
 
 export const authURL = (connectorId: string, config: any) => {
@@ -24,13 +25,19 @@ export const authURL = (connectorId: string, config: any) => {
     });
 };
 
-export const accessToken = (state: string, code: string, config: any) => {
+export const accessToken = (
+    state: string,
+    code: string,
+    config: any,
+    code_verifier: string | null
+) => {
     return invokeSupabase<AccessTokenResponse>(FUNCTIONS.OAUTH, {
         operation: OPERATIONS.ACCESS_TOKEN,
         redirect_uri: `${window.location.origin}/oauth`,
         state,
         code,
         config,
+        code_verifier,
     });
 };
 
