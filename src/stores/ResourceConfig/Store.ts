@@ -512,16 +512,15 @@ const getInitialState = (
             GlobalSearchParams.LIVE_SPEC_ID
         );
 
-        const { setHydrationErrorsExist } = get();
+        const { resetState, setHydrationErrorsExist } = get();
+        resetState();
 
         if (connectorId) {
             const { data, error } = await getSchema_Resource(connectorId);
 
             if (error) {
                 setHydrationErrorsExist(true);
-            }
-
-            if (data && data.length > 0) {
+            } else if (data && data.length > 0) {
                 const { setResourceSchema } = get();
 
                 setResourceSchema(
@@ -537,9 +536,7 @@ const getInitialState = (
 
             if (error) {
                 setHydrationErrorsExist(true);
-            }
-
-            if (data && data.length > 0) {
+            } else if (data && data.length > 0) {
                 const { setResourceConfig, preFillCollections } = get();
 
                 const collectionNameProp =
@@ -570,9 +567,7 @@ const getInitialState = (
 
             if (error) {
                 setHydrationErrorsExist(true);
-            }
-
-            if (data && data.length > 0) {
+            } else if (data && data.length > 0) {
                 const { preFillEmptyCollections } = get();
 
                 preFillEmptyCollections(data);
