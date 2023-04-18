@@ -1,8 +1,8 @@
 import { StoreWithHydration } from 'stores/Hydration';
-import { Entity, ProjectedCostStats } from 'types';
+import { CatalogStats_Billing, Entity } from 'types';
 
 export interface ProjectedCostStatsDictionary {
-    [date: string]: ProjectedCostStats[];
+    [date: string]: CatalogStats_Billing[];
 }
 
 export interface BillingRecord {
@@ -27,10 +27,10 @@ export interface DataVolumeByTaskGraphDetails {
 
 export interface BillingState extends StoreWithHydration {
     dataByTaskGraphDetails: DataVolumeByTaskGraphDetails;
-    setDataByTaskGraphDetails: (value: ProjectedCostStats[]) => void;
+    setDataByTaskGraphDetails: (value: CatalogStats_Billing[]) => void;
 
     billingHistory: BillingRecord[];
-    setBillingHistory: (value: ProjectedCostStats[]) => void;
+    setBillingHistory: (value: CatalogStats_Billing[]) => void;
 
     resetState: () => void;
 }

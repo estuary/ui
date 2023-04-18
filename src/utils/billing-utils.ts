@@ -5,7 +5,7 @@ import {
     BillingRecord,
     ProjectedCostStatsDictionary,
 } from 'stores/Billing/types';
-import { Entity, ProjectedCostStats } from 'types';
+import { CatalogStats_Billing, Entity } from 'types';
 
 export const TOTAL_CARD_HEIGHT = 300;
 
@@ -22,7 +22,7 @@ export enum FREE_GB_BY_TIER {
     ENTERPRISE = 10,
 }
 
-export const evaluateSpecType = (query: ProjectedCostStats): Entity => {
+export const evaluateSpecType = (query: CatalogStats_Billing): Entity => {
     if (Object.hasOwn(query.flow_document.taskStats, 'capture')) {
         return 'capture';
     } else if (Object.hasOwn(query.flow_document.taskStats, 'materialize')) {
@@ -47,7 +47,7 @@ const evaluateTotalCost = (dataVolume: number, taskCount: number) => {
 };
 
 const evaluateDataVolume = (
-    projectedCostStats: ProjectedCostStats[]
+    projectedCostStats: CatalogStats_Billing[]
 ): number => {
     const taskBytes: number[] = projectedCostStats.map((query) => {
         if (Object.hasOwn(query.flow_document.taskStats, 'capture')) {
@@ -87,7 +87,7 @@ const getInitialBillingRecord = (date: string): BillingRecord => {
 // TODO (billing): Remove this helper function to translate data returned from
 //   the new RPC when available.
 export const formatProjectedCostStats = (
-    value: ProjectedCostStats[]
+    value: CatalogStats_Billing[]
 ): BillingRecord[] => {
     const taskStatData = value.filter((query) =>
         Object.hasOwn(query.flow_document, 'taskStats')

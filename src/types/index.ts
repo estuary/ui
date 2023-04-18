@@ -130,7 +130,7 @@ export interface CatalogStats {
     flow_document: any;
 }
 
-export interface ProjectedCostStats {
+export interface CatalogStats_Billing {
     catalog_name: string;
     grain: string;
     ts: string;

@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { getStatsForProjectedCostTable } from 'api/stats';
+import { getStatsForBillingHistoryTable } from 'api/stats';
 import Rows from 'components/tables/Billing/Rows';
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
@@ -54,7 +54,7 @@ function ProjectedCostsTable({ grants }: Props) {
     } = useTableState('bil', 'ts', 'desc', 4);
 
     const query = useMemo(() => {
-        return getStatsForProjectedCostTable(grants, searchQuery, [
+        return getStatsForBillingHistoryTable(grants, searchQuery, [
             {
                 col: columnToSort,
                 direction: sortDirection,

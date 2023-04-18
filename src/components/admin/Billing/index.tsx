@@ -8,7 +8,7 @@ import AdminTabs from 'components/admin/Tabs';
 import MessageWithLink from 'components/content/MessageWithLink';
 import PageContainer from 'components/shared/PageContainer';
 import ProjectedCostsTable from 'components/tables/Billing';
-import useProjectedCostStats from 'components/tables/Billing/useProjectedCostStats';
+import useBillingCatalogStats from 'components/tables/Billing/useBillingCatalogStats';
 import { semiTransparentBackground } from 'context/Theme';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
@@ -56,12 +56,12 @@ function AdminBilling() {
 
     const { combinedGrants } = useCombinedGrantsExt({ adminOnly: true });
 
-    const { projectedCostStats, error, isValidating } = useProjectedCostStats();
+    const { billingStats, error, isValidating } = useBillingCatalogStats();
 
     useEffect(() => {
-        if (!isValidating && projectedCostStats) {
-            setBillingHistory(projectedCostStats);
-            setDataByTaskGraphDetails(projectedCostStats);
+        if (!isValidating && billingStats) {
+            setBillingHistory(billingStats);
+            setDataByTaskGraphDetails(billingStats);
 
             if (!hydrated) {
                 setHydrated(true);
@@ -77,10 +77,10 @@ function AdminBilling() {
         setDataByTaskGraphDetails,
         setHydrated,
         setHydrationErrorsExist,
+        billingStats,
         error,
         hydrated,
         isValidating,
-        projectedCostStats,
     ]);
 
     useUnmount(() => resetBillingState());

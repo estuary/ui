@@ -16,7 +16,7 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { CatalogStats, Grants, ProjectedCostStats } from 'types';
+import { CatalogStats, CatalogStats_Billing, Grants } from 'types';
 
 export type StatsFilter =
     | 'today'
@@ -114,7 +114,7 @@ const getStatsForBilling = (grants: Grants[]) => {
         .join(',');
 
     return supabaseClient
-        .from<ProjectedCostStats>(TABLES.CATALOG_STATS)
+        .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
         .select(
             `    
             catalog_name,
@@ -131,18 +131,18 @@ const getStatsForBilling = (grants: Grants[]) => {
 };
 
 // TODO (billing): Enable pagination when the new RPC is available.
-const getStatsForProjectedCostTable = (
+const getStatsForBillingHistoryTable = (
     grants: Grants[],
     // pagination: any,
     searchQuery: any,
     sorting: SortingProps<any>[]
-): PostgrestFilterBuilder<ProjectedCostStats> => {
+): PostgrestFilterBuilder<CatalogStats_Billing> => {
     const subjectRoleFilters = grants
         .map((grant) => `catalog_name.ilike.${grant.object_role}%`)
         .join(',');
 
     let queryBuilder = supabaseClient
-        .from<ProjectedCostStats>(TABLES.CATALOG_STATS)
+        .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
         .select(
             `    
             catalog_name,
@@ -157,7 +157,7 @@ const getStatsForProjectedCostTable = (
         .eq('grain', 'monthly')
         .or(subjectRoleFilters);
 
-    queryBuilder = defaultTableFilter<ProjectedCostStats>(
+    queryBuilder = defaultTableFilter<CatalogStats_Billing>(
         queryBuilder,
         ['ts'],
         searchQuery,
@@ -168,4 +168,4 @@ const getStatsForProjectedCostTable = (
     return queryBuilder;
 };
 
-export { getStatsForBilling, getStatsForProjectedCostTable, getStatsByName };
+export { getStatsForBilling, getStatsForBillingHistoryTable, getStatsByName };

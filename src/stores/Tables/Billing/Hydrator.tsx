@@ -9,11 +9,11 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { BaseComponentProps, ProjectedCostStats } from 'types';
+import { BaseComponentProps, CatalogStats_Billing } from 'types';
 
 // Hydrator
 interface TableHydratorProps extends BaseComponentProps {
-    query: PostgrestFilterBuilder<ProjectedCostStats>;
+    query: PostgrestFilterBuilder<CatalogStats_Billing>;
 }
 
 export const BillingHistoryTableHydrator = ({
