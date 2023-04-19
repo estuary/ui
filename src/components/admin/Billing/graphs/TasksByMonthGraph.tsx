@@ -24,7 +24,11 @@ import {
     useBilling_hydrated,
 } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
-import { CARD_AREA_HEIGHT, SeriesConfig } from 'utils/billing-utils';
+import {
+    CARD_AREA_HEIGHT,
+    evaluateSeriesDataUnderLimit,
+    SeriesConfig,
+} from 'utils/billing-utils';
 
 function DataByMonthGraph() {
     const theme = useTheme();
@@ -87,6 +91,8 @@ function DataByMonthGraph() {
                 myChart?.resize();
             });
 
+            const showMarkLine = evaluateSeriesDataUnderLimit(seriesConfig, 2);
+
             const option = {
                 xAxis: {
                     type: 'category',
@@ -101,25 +107,35 @@ function DataByMonthGraph() {
                     },
                     minInterval: 1,
                 },
-                series: seriesConfig.map(({ data }) => ({
-                    type: 'line',
-                    data,
-                    markLine: {
-                        data: [{ yAxis: 2, name: 'Tasks\nFree' }],
-                        label: {
-                            color: theme.palette.text.primary,
-                            formatter: '{c} {b}',
-                            position: 'end',
-                        },
-                        lineStyle: {
-                            color: theme.palette.text.primary,
-                        },
-                        silent: true,
-                        symbol: 'none',
-                    },
-                    symbol: 'circle',
-                    symbolSize: 7,
-                })),
+                series: seriesConfig.map(({ data }, index) => {
+                    let config: any = {
+                        type: 'line',
+                        data,
+                        symbol: 'circle',
+                        symbolSize: 7,
+                    };
+
+                    if (index === 0 && showMarkLine) {
+                        config = {
+                            ...config,
+                            markLine: {
+                                data: [{ yAxis: 2, name: 'Tasks\nFree' }],
+                                label: {
+                                    color: theme.palette.text.primary,
+                                    formatter: '{c} {b}',
+                                    position: 'end',
+                                },
+                                lineStyle: {
+                                    color: theme.palette.text.primary,
+                                },
+                                silent: true,
+                                symbol: 'none',
+                            },
+                        };
+                    }
+
+                    return config;
+                }),
                 textStyle: {
                     color: theme.palette.text.primary,
                 },

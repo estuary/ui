@@ -34,7 +34,9 @@ import useConstant from 'use-constant';
 import {
     BYTES_PER_GB,
     CARD_AREA_HEIGHT,
+    evaluateSeriesDataUnderLimit,
     formatDataVolumeForDisplay,
+    FREE_GB_BY_TIER,
     SeriesConfig,
 } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
@@ -121,6 +123,12 @@ function DataByTaskGraph() {
                 myChart?.resize();
             });
 
+            const showMarkLine = evaluateSeriesDataUnderLimit(
+                seriesConfig,
+                FREE_GB_BY_TIER.PERSONAL,
+                true
+            );
+
             const option = {
                 xAxis: {
                     type: 'category',
@@ -150,11 +158,16 @@ function DataByTaskGraph() {
                         symbolSize: 7,
                     };
 
-                    if (index === 0) {
+                    if (index === 0 && showMarkLine) {
                         config = {
                             ...config,
                             markLine: {
-                                data: [{ yAxis: 10, name: 'GB\nFree' }],
+                                data: [
+                                    {
+                                        yAxis: FREE_GB_BY_TIER.PERSONAL,
+                                        name: 'GB\nFree',
+                                    },
+                                ],
                                 label: {
                                     color: theme.palette.text.primary,
                                     formatter: '{c} {b}',

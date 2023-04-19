@@ -172,3 +172,18 @@ export const formatDataVolumeForDisplay = (
         ? prettyBytes(dataVolumeInBytes[1], { minimumFractionDigits: 2 })
         : `${tooltipConfig.value[1]} GB`;
 };
+
+export const evaluateSeriesDataUnderLimit = (
+    seriesConfig: SeriesConfig[],
+    tierConstraint: number,
+    metricInBytes?: boolean
+): boolean => {
+    const evaluatedLimit = metricInBytes
+        ? tierConstraint * BYTES_PER_GB
+        : tierConstraint;
+
+    return seriesConfig
+        .map(({ data }) => data[0])
+        .map(([_month, value]) => value)
+        .some((value) => value < evaluatedLimit);
+};
