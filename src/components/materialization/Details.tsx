@@ -1,18 +1,15 @@
 import { authenticatedRoutes } from 'app/routes';
 import EntityDetails from 'components/shared/Entity/Details';
-import PageContainer from 'components/shared/PageContainer';
 import { EntityContextProvider } from 'context/EntityContext';
+import usePageTitle from 'hooks/usePageTitle';
 
 function MaterializationDetails() {
+    usePageTitle({
+        header: authenticatedRoutes.materializations.details.title,
+    });
     return (
         <EntityContextProvider value="materialization">
-            <PageContainer
-                pageTitleProps={{
-                    header: authenticatedRoutes.materializations.details.title,
-                }}
-            >
-                <EntityDetails />
-            </PageContainer>
+            <EntityDetails />
         </EntityContextProvider>
     );
 }

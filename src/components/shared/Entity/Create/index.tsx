@@ -15,7 +15,6 @@ import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useBrowserTitle from 'hooks/useBrowserTitle';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
@@ -40,7 +39,6 @@ import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
 
 interface Props {
-    title: string;
     entityType: EntityWithCreateWorkflow;
     draftSpecMetadata: Pick<
         DraftSpecSwrMetadata,
@@ -53,7 +51,6 @@ interface Props {
 }
 
 function EntityCreate({
-    title,
     entityType,
     draftSpecMetadata,
     resetState,
@@ -61,8 +58,6 @@ function EntityCreate({
     toolbar,
     RediscoverButton,
 }: Props) {
-    useBrowserTitle(title);
-
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const {

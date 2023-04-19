@@ -208,35 +208,6 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.passwordReset': `Password Reset`,
 };
 
-const BrowserTitles: ResolvedIntlConfig['messages'] = {
-    'browserTitle.home': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.home']}`,
-    'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dashboard']}`,
-    'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
-    'browserTitle.admin.accessGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.accessGrants']}`,
-    'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
-    'browserTitle.admin.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.connectors']}`,
-    'browserTitle.admin.cookies': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.cookies']}`,
-    'browserTitle.admin.storageMappings': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.storageMappings']}`,
-    'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
-    'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
-    'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
-    'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
-    'browserTitle.collectionCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collectionCreate']}`,
-    'browserTitle.details': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.details']}`,
-    'browserTitle.dataPlaneAuthReq': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dataPlaneAuthReq']}`,
-    'browserTitle.error.entityNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.entityNotFound']}`,
-    'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
-    'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
-    'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
-    'browserTitle.legal': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.legal']}`,
-    'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
-    'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
-    'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationEdit']}`,
-    'browserTitle.materializations': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializations']}`,
-    'browserTitle.registration': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.registration']}`,
-    'browserTitle.passwordReset': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.passwordReset']}`,
-};
-
 const Header: ResolvedIntlConfig['messages'] = {
     'mainMenu.tooltip': `Open Main Menu`,
 
@@ -530,7 +501,7 @@ const Materializations: ResolvedIntlConfig['messages'] = {
 
 const Collections: ResolvedIntlConfig['messages'] = {
     'collectionsTable.title': `Collections`,
-    'collectionsTable.cta.new': `New Collection`,
+    'collectionsTable.cta.new': `New Transformation`,
     'collectionsTable.detailsCTA': `Details`,
     'collectionsTable.filterLabel': `Filter collections`,
     'collections.message1': `You currently have no collections. Click the Captures icon on the menu bar to get started.`,
@@ -900,23 +871,27 @@ const Docs: ResolvedIntlConfig['messages'] = {
 };
 
 const NewTransform: ResolvedIntlConfig['messages'] = {
-    'newTransform.modal.title': `Build a new collection`,
+    'newTransform.modal.title': `Derive A New Collection`,
     'newTransform.language.title': `Language`,
     'newTransform.language.sql': `SQL`,
     'newTransform.language.ts': `Typescript`,
-    'newTransform.collection.label': `Collection Name`,
-    'newTransform.errors.collection': `Select A Source Collection`,
-    'newTransform.errors.name': `Name Your Transform`,
+    'newTransform.collection.label': `Derived Collection Name`,
+    'newTransform.errors.collection': `Select source collections`,
+    'newTransform.errors.name': `Name your Derived Collection`,
     'newTransform.errors.prefixMissing': `No prefix selected`,
     'newTransform.errors.namePattern': `Name does not match pattern`,
     'newTransform.errors.nameInvalid': `Invalid entity name`,
     'newTransform.errors.nameMissing': `Missing entity name`,
-    'newTransform.errors.gitPod': `Failed to open GitPod`,
-    'newTransform.stepper.step1.label': `Select your collection`,
+    'newTransform.errors.urlNotGenerated': `We failed to generate the proper URL to start GitPod. ${Error['error.tryAgain']}`,
+    'newTransform.errors.gitPodWindow': `Failed to open GitPod. Your browser may be blocking it from opening. Please ensure your browser allows pop-ups.`,
+    'newTransform.info.gitPodWindowTitle': `GitPod should be opened in a new tab or window`,
+    'newTransform.info.gitPodWindowMessage': `To develop your transformation please use GitPod.`,
+    'newTransform.stepper.step1.label': `Select source collections`,
     'newTransform.stepper.step2.label': `Transformation Language`,
-    'newTransform.stepper.step3.label': `Write Transformation`,
-    'newTransform.instructions': `You will be set up with an environment to create a
-                            transform. Create your query and use the CLI to
+    'newTransform.stepper.step3.label': `Write transformations`,
+    'newTransform.instructions1': `You will be set up with an environment to create a
+                            transformation.`,
+    'newTransform.instructions2': `Create your query and use the CLI to
                             continue, e.g`,
     'newTransform.button.cta': `Proceed to GitPod`,
 };
@@ -955,7 +930,6 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CTAs,
     ...Data,
     ...ErrorBoundry,
-    ...BrowserTitles,
     ...RouteTitles,
     ...FullPage,
     ...Header,

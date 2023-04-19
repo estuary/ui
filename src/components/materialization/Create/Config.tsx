@@ -1,26 +1,21 @@
 import { authenticatedRoutes } from 'app/routes';
 import EntityCreateConfig from 'components/shared/Entity/Create/Config';
 import ExistingEntityHydrator from 'components/shared/Entity/ExistingEntityCards/Store/Hydrator';
-import PageContainer from 'components/shared/PageContainer';
+import usePageTitle from 'hooks/usePageTitle';
+
+const entityType = 'materialization';
 
 function MaterializationCreateConfig() {
-    const entityType = 'materialization';
+    usePageTitle({
+        header: authenticatedRoutes.materializations.create.title,
+        headerLink:
+            'https://docs.estuary.dev/guides/create-dataflow/#create-a-materialization',
+    });
 
     return (
-        <PageContainer
-            pageTitleProps={{
-                header: authenticatedRoutes.materializations.create.title,
-                headerLink:
-                    'https://docs.estuary.dev/guides/create-dataflow/#create-a-materialization',
-            }}
-        >
-            <ExistingEntityHydrator>
-                <EntityCreateConfig
-                    title="browserTitle.materializationCreate"
-                    entityType={entityType}
-                />
-            </ExistingEntityHydrator>
-        </PageContainer>
+        <ExistingEntityHydrator>
+            <EntityCreateConfig entityType={entityType} />
+        </ExistingEntityHydrator>
     );
 }
 

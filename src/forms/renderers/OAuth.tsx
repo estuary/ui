@@ -170,11 +170,12 @@ const OAuthproviderRenderer = ({
     };
 
     // handler for the useOauth stuff
-    const onSuccess = async (payload: any) => {
+    const onSuccess = async (payload: any, codeVerifier: string) => {
         const tokenResponse = await accessToken(
             payload.state,
             payload.code,
-            endpointConfigData
+            endpointConfigData,
+            codeVerifier
         );
 
         if (tokenResponse.error) {
@@ -219,7 +220,11 @@ const OAuthproviderRenderer = ({
             );
         } else if (!isEmpty(fetchAuthURL.data)) {
             // This kicks off the call and the success is handled with the onSuccess/onError
-            getAuth(fetchAuthURL.data.url, fetchAuthURL.data.state);
+            getAuth(
+                fetchAuthURL.data.url,
+                fetchAuthURL.data.state,
+                fetchAuthURL.data.code_verifier
+            );
         }
     };
 

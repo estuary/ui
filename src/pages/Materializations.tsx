@@ -1,8 +1,7 @@
 import { Box, Button, SxProps, Theme, Toolbar } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
-import PageContainer from 'components/shared/PageContainer';
 import MaterializationsTable from 'components/tables/Materializations';
-import useBrowserTitle from 'hooks/useBrowserTitle';
+import usePageTitle from 'hooks/usePageTitle';
 import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { NavLink } from 'react-router-dom';
@@ -13,16 +12,13 @@ const boxStyling: SxProps<Theme> = {
 };
 
 const Materializations = () => {
-    useBrowserTitle('browserTitle.materializations');
+    usePageTitle({
+        header: authenticatedRoutes.materializations.title,
+        headerLink: 'https://docs.estuary.dev/concepts/#materializations',
+    });
 
     return (
-        <PageContainer
-            pageTitleProps={{
-                header: authenticatedRoutes.materializations.title,
-                headerLink:
-                    'https://docs.estuary.dev/concepts/#materializations',
-            }}
-        >
+        <>
             <Toolbar
                 sx={{
                     alignItems: 'center',
@@ -46,7 +42,7 @@ const Materializations = () => {
             <Box sx={boxStyling}>
                 <MaterializationsTable />
             </Box>
-        </PageContainer>
+        </>
     );
 };
 
