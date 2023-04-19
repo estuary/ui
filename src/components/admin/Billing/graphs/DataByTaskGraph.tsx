@@ -22,7 +22,7 @@ import navArrowLeftDark from 'images/graph-icons/nav-arrow-left__dark.svg';
 import navArrowLeftLight from 'images/graph-icons/nav-arrow-left__light.svg';
 import navArrowRightDark from 'images/graph-icons/nav-arrow-right__dark.svg';
 import navArrowRightLight from 'images/graph-icons/nav-arrow-right__light.svg';
-import { isEmpty } from 'lodash';
+import { isEmpty, sortBy, sum } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
@@ -50,6 +50,29 @@ const navArrowsDark = [
     `image://${navArrowLeftDark}`,
     `image://${navArrowRightDark}`,
 ];
+
+const evaluateLargestDataProducingTasks = (
+    dataVolumeByTask: DataVolumeByTaskGraphDetails
+): string[] => {
+    const totalDataVolumeByTask: {
+        catalogName: string;
+        totalDataVolume: number;
+    }[] = [];
+
+    Object.entries(dataVolumeByTask).forEach(([catalogName, details]) => {
+        const dataVolumes = details.map(({ dataVolume }) => dataVolume);
+
+        totalDataVolumeByTask.push({
+            catalogName,
+            totalDataVolume: sum(dataVolumes),
+        });
+    });
+
+    return sortBy(totalDataVolumeByTask, ['totalDataVolume'])
+        .reverse()
+        .slice(0, 6)
+        .map(({ catalogName }) => catalogName);
+};
 
 function DataByTaskGraph() {
     const theme = useTheme();
@@ -90,15 +113,20 @@ function DataByTaskGraph() {
             }
         );
 
-        return Object.entries(filteredDetails).map(
-            ([seriesName, taskData]) => ({
+        const largestDataProducingTasks =
+            evaluateLargestDataProducingTasks(filteredDetails);
+
+        return Object.entries(filteredDetails)
+            .filter(([catalogName]) =>
+                largestDataProducingTasks.includes(catalogName)
+            )
+            .map(([seriesName, taskData]) => ({
                 seriesName,
                 data: taskData.map(({ date, dataVolume }) => [
                     intl.formatDate(date, { month: 'short' }),
                     dataVolume,
                 ]),
-            })
-        );
+            }));
     }, [dataByTaskGraphDetails, intl, today]);
 
     useEffect(() => {
