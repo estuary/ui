@@ -1,4 +1,13 @@
-import { Box, Divider, Grid, Typography } from '@mui/material';
+import {
+    Box,
+    Divider,
+    Grid,
+    Stack,
+    Tooltip,
+    Typography,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import DataByMonthGraph from 'components/admin/Billing/graphs/DataByMonthGraph';
 import DataByTaskGraph from 'components/admin/Billing/graphs/DataByTaskGraph';
@@ -9,11 +18,11 @@ import MessageWithLink from 'components/content/MessageWithLink';
 import BillingHistoryTable from 'components/tables/Billing';
 import { semiTransparentBackground } from 'context/Theme';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
-import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import usePageTitle from 'hooks/usePageTitle';
+import { HelpCircle } from 'iconoir-react';
 import { useEffect } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 import {
     useBilling_hydrated,
@@ -33,7 +42,10 @@ const typographySx = { mb: 2, fontSize: 16, fontWeight: 300 };
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
 function AdminBilling() {
-    useBrowserTitle(routeTitle);
+    const theme = useTheme();
+    const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
+
+    const intl = useIntl();
 
     // Billing Store
     const hydrated = useBilling_hydrated();
@@ -101,7 +113,7 @@ function AdminBilling() {
                         sx={{
                             height: TOTAL_CARD_HEIGHT,
                             p: 2,
-                            background: (theme) =>
+                            background:
                                 semiTransparentBackground[theme.palette.mode],
                             boxShadow,
                             borderRadius: 3,
@@ -122,7 +134,7 @@ function AdminBilling() {
                         sx={{
                             height: TOTAL_CARD_HEIGHT,
                             p: 2,
-                            background: (theme) =>
+                            background:
                                 semiTransparentBackground[theme.palette.mode],
                             boxShadow,
                             borderRadius: 3,
@@ -141,7 +153,7 @@ function AdminBilling() {
                         sx={{
                             height: TOTAL_CARD_HEIGHT,
                             p: 2,
-                            background: (theme) =>
+                            background:
                                 semiTransparentBackground[theme.palette.mode],
                             boxShadow,
                             borderRadius: 3,
@@ -160,15 +172,37 @@ function AdminBilling() {
                         sx={{
                             height: TOTAL_CARD_HEIGHT,
                             p: 2,
-                            background: (theme) =>
+                            background:
                                 semiTransparentBackground[theme.palette.mode],
                             boxShadow,
                             borderRadius: 3,
                         }}
                     >
-                        <Typography sx={typographySx}>
-                            <FormattedMessage id="admin.billing.graph.dataByTask.header" />
-                        </Typography>
+                        <Stack
+                            direction="row"
+                            spacing={1}
+                            sx={{ alignItems: 'center' }}
+                        >
+                            <Typography sx={typographySx}>
+                                <FormattedMessage id="admin.billing.graph.dataByTask.header" />
+                            </Typography>
+
+                            <Tooltip
+                                placement={belowLg ? 'bottom' : 'right'}
+                                title={intl.formatMessage({
+                                    id: 'admin.billing.graph.dataByTask.tooltip',
+                                })}
+                            >
+                                <HelpCircle
+                                    style={{
+                                        marginBottom: 16,
+                                        fontSize: 12,
+                                        strokeWidth: 1,
+                                        color: theme.palette.text.primary,
+                                    }}
+                                />
+                            </Tooltip>
+                        </Stack>
 
                         <DataByTaskGraph />
                     </Box>
