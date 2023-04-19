@@ -1,5 +1,5 @@
 import { isEqual, parseISO } from 'date-fns';
-import { isEmpty, sum } from 'lodash';
+import { flatten, isEmpty, sum } from 'lodash';
 import prettyBytes from 'pretty-bytes';
 import { BillingRecord } from 'stores/Billing/types';
 import { CatalogStats_Billing, Entity } from 'types';
@@ -182,8 +182,9 @@ export const evaluateSeriesDataUnderLimit = (
         ? tierConstraint * BYTES_PER_GB
         : tierConstraint;
 
-    return seriesConfig
-        .map(({ data }) => data[0])
-        .map(([_month, value]) => value)
-        .some((value) => value < evaluatedLimit);
+    const [seriesData] = seriesConfig.map(({ data }) => flatten(data));
+
+    return seriesData.some((item) => {
+        return typeof item === 'number' ? item <= evaluatedLimit : false;
+    });
 };
