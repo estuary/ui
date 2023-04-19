@@ -70,7 +70,7 @@ const evaluateLargestDataProducingTasks = (
 
     return sortBy(totalDataVolumeByTask, ['totalDataVolume'])
         .reverse()
-        .slice(0, 6)
+        .slice(0, 10)
         .map(({ catalogName }) => catalogName);
 };
 
