@@ -7,10 +7,21 @@ import { useIntl } from 'react-intl';
 interface Props {
     read?: boolean;
     val?: number | null;
+    messageId?: string;
 }
 
+const evaluateTooltipMessageId = (messageId?: string, read?: boolean) => {
+    if (messageId) {
+        return messageId;
+    } else {
+        return read
+            ? 'entityTable.stats.bytes_read'
+            : 'entityTable.stats.bytes_written';
+    }
+};
+
 // TODO (stats) we can combine this with the Docs component.
-const Bytes = ({ read, val }: Props) => {
+const Bytes = ({ read, val, messageId }: Props) => {
     const intl = useIntl();
     const statsLoading = val === null;
     const defaultedVal = val ?? 0;
@@ -33,9 +44,7 @@ const Bytes = ({ read, val }: Props) => {
             <Box sx={{ maxWidth: 'fit-content' }}>
                 <Tooltip
                     title={`${defaultedVal} ${intl.formatMessage({
-                        id: read
-                            ? 'entityTable.stats.bytes_read'
-                            : 'entityTable.stats.bytes_written',
+                        id: evaluateTooltipMessageId(messageId, read),
                     })}`}
                 >
                     <Typography

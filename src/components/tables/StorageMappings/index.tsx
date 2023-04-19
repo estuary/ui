@@ -3,8 +3,8 @@ import { getStorageMappings } from 'api/storageMappings';
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
+import useTableState from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
-import useTableState from '../hooks';
 import Rows, { tableColumns } from './Rows';
 
 function StorageMappingsTable() {

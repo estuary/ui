@@ -45,6 +45,7 @@
         "data-plane-gateway": "https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main",
         "date-fns": "^2.29.3",
         "date-fns-tz": "^2.0.0",
+        "echarts": "^5.4.1",
         "filter-obj": "^5.1.0",
         "iconoir-react": "^6.2.0",
         "immer": "^9.0.17",

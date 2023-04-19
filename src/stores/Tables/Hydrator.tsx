@@ -1,12 +1,12 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'components/tables/Store';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useEffect } from 'react';
 import { useUnmount } from 'react-use';
 import { SelectTableStoreNames } from 'stores/names';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'stores/Tables/Store';
 import { BaseComponentProps } from 'types';
 
 // Hydrator
