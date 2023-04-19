@@ -1,9 +1,10 @@
+import { infer } from '@estuary/flow-web';
 import { Autocomplete, Skeleton, TextField } from '@mui/material';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isPlainObject } from 'lodash';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { hasLength } from 'utils/misc-utils';
 
 type OnChange = typeof autoCompleteDefaults_Virtual_Multiple['onChange'];
 
@@ -13,20 +14,39 @@ interface Props {
     onChange: OnChange;
 }
 
+const typesAllowedAsKeys = ['string', 'integer', 'boolean'];
+
 function ArrayOfPointers({ spec, value, onChange }: Props) {
     const [keys, setKeys] = useState<string[]>([]);
 
     useEffect(() => {
-        // TODO (schema editor) make this recursive and move to a standard location
-        // We want to grab all the properties that are a type of string
-        const nonObjectProperties = Object.entries(spec.schema.properties)
-            .filter(
-                ([_, propValue]: [any, any]) =>
-                    isPlainObject(propValue) && propValue.type !== 'object'
-            )
-            .map((filteredList) => `/${filteredList[0]}`);
+        // Infer the properties with WebFlow and then filter/map them for the dropdown
+        const inferredProperties = infer(spec.schema)
+            ?.properties?.filter((inferredProperty: any) => {
+                const interrefPropertyTypes = inferredProperty.types;
+                // If there is a blank pointer it cannot be used
+                if (!hasLength(inferredProperty.pointer)) {
+                    return false;
+                }
 
-        setKeys(nonObjectProperties);
+                // Check if this field:
+                //  must exist
+                //  has a single known type
+                //  has an allowed type
+                return (
+                    inferredProperty.exists === 'must' &&
+                    interrefPropertyTypes.length === 1 &&
+                    typesAllowedAsKeys.some((key) =>
+                        interrefPropertyTypes.includes(key)
+                    )
+                );
+            })
+            .map(
+                // We only care about the pointer
+                (filteredInferredProperty: any) =>
+                    filteredInferredProperty.pointer
+            );
+        setKeys(inferredProperties);
     }, [spec]);
 
     if (keys.length === 0) {
