@@ -1,5 +1,6 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import {
+    eachMonthOfInterval,
     endOfWeek,
     startOfMonth,
     startOfWeek,
@@ -113,6 +114,14 @@ const getStatsForBilling = (grants: Grants[]) => {
         .map((grant) => `catalog_name.ilike.${grant.object_role}%`)
         .join(',');
 
+    const today = new Date();
+    const currentMonth = startOfMonth(today);
+    const startMonth = subMonths(currentMonth, 5);
+    const dateRange = eachMonthOfInterval({
+        start: startMonth,
+        end: currentMonth,
+    }).map((date) => formatToGMT(date));
+
     return supabaseClient
         .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
         .select(
@@ -126,8 +135,9 @@ const getStatsForBilling = (grants: Grants[]) => {
         `
         )
         .eq('grain', 'monthly')
+        .in('ts', dateRange)
         .or(subjectRoleFilters)
-        .order('ts');
+        .order('ts', { ascending: false });
 };
 
 // TODO (billing): Enable pagination when the new RPC is available.
@@ -140,6 +150,14 @@ const getStatsForBillingHistoryTable = (
     const subjectRoleFilters = grants
         .map((grant) => `catalog_name.ilike.${grant.object_role}%`)
         .join(',');
+
+    const today = new Date();
+    const currentMonth = startOfMonth(today);
+    const startMonth = subMonths(currentMonth, 5);
+    const dateRange = eachMonthOfInterval({
+        start: startMonth,
+        end: currentMonth,
+    }).map((date) => formatToGMT(date));
 
     let queryBuilder = supabaseClient
         .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
@@ -155,6 +173,7 @@ const getStatsForBillingHistoryTable = (
             { count: 'exact' }
         )
         .eq('grain', 'monthly')
+        .in('ts', dateRange)
         .or(subjectRoleFilters);
 
     queryBuilder = defaultTableFilter<CatalogStats_Billing>(
