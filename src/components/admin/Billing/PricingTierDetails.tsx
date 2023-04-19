@@ -21,7 +21,17 @@ function PricingTierDetails() {
     const billingHistory = useBilling_billingHistory();
 
     const latestBillingRecord: BillingRecord | undefined = useMemo(() => {
-        return billingHistory.find((record) => isSameMonth(record.date, today));
+        if (billingHistory.length > 0) {
+            const evaluatedBillingRecord = billingHistory.find((record) =>
+                isSameMonth(record.date, today)
+            );
+
+            return evaluatedBillingRecord
+                ? evaluatedBillingRecord
+                : billingHistory[0];
+        } else {
+            return undefined;
+        }
     }, [billingHistory, today]);
 
     if (
