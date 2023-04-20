@@ -304,6 +304,7 @@ function EntityTable({
                             columnToSort={columnToSort}
                             headerClick={handlers.sort}
                             hide={hideHeaderAndFooter}
+                            selectData={selectData}
                             selectableTableStoreName={selectableTableStoreName}
                             sortDirection={sortDirection}
                         />

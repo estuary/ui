@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { TableColumns, TableState, TableStatuses } from 'types';
 import EntityTableBody from '../EntityTable/TableBody';
+import EntityTableHeader from '../EntityTable/TableHeader';
 import Rows from './Rows';
 
 export const columns: TableColumns[] = [
@@ -24,8 +25,6 @@ export const columns: TableColumns[] = [
     },
 ];
 
-// const selectableTableStoreName = SelectTableStoreNames.BILLING;
-
 interface Props {
     inferredSchema: any;
 }
@@ -45,10 +44,6 @@ function SchemaPropertiesTable({ inferredSchema }: Props) {
         }
     }, [inferredSchema]);
 
-    console.log('schema table renderer', {
-        tableState,
-    });
-
     return (
         <Box>
             <TableContainer component={Box}>
@@ -59,6 +54,8 @@ function SchemaPropertiesTable({ inferredSchema }: Props) {
                         id: 'entityTable.title',
                     })}
                 >
+                    <EntityTableHeader columns={columns} hide />
+
                     <EntityTableBody
                         columns={columns}
                         noExistingDataContentIds={{

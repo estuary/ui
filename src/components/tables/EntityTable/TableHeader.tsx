@@ -1,22 +1,18 @@
 import { TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
-import { useZustandStore } from 'context/Zustand/provider';
 import { ArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
 import { SortDirection } from 'types';
 import { ColumnProps } from './types';
 
 interface Props {
     columns: ColumnProps[];
-    columnToSort: string;
-    headerClick: (column: any) => (event: React.MouseEvent<unknown>) => void;
-    selectableTableStoreName: SelectTableStoreNames;
-    sortDirection: SortDirection;
+    headerClick?: (column: any) => (event: React.MouseEvent<unknown>) => void;
     hide?: boolean;
+    columnToSort?: string;
+    selectData?: any;
+    selectableTableStoreName?: SelectTableStoreNames;
+    sortDirection?: SortDirection;
 }
 
 function EntityTableHeader({
@@ -24,13 +20,11 @@ function EntityTableHeader({
     columnToSort,
     headerClick,
     hide,
+    selectData,
     selectableTableStoreName,
     sortDirection,
 }: Props) {
-    const selectData = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['query']['response']
-    >(selectableTableStoreName, selectableTableStoreSelectors.query.response);
+    const enableSort = columnToSort && headerClick && sortDirection;
 
     return (
         <TableHead>
@@ -40,7 +34,7 @@ function EntityTableHeader({
                 }}
             >
                 {columns.map((column, index) => {
-                    if (column.renderHeader) {
+                    if (column.renderHeader && selectableTableStoreName) {
                         return column.renderHeader(
                             index,
                             selectableTableStoreName
@@ -51,9 +45,11 @@ function EntityTableHeader({
                         <TableCell
                             key={`${column.field}-${index}`}
                             sortDirection={
-                                columnToSort === column.field
-                                    ? sortDirection
-                                    : false
+                                enableSort
+                                    ? columnToSort === column.field
+                                        ? sortDirection
+                                        : false
+                                    : undefined
                             }
                         >
                             {selectData && column.field && !hide ? (
@@ -61,11 +57,17 @@ function EntityTableHeader({
                                     IconComponent={ArrowDown}
                                     active={columnToSort === column.field}
                                     direction={
-                                        columnToSort === column.field
-                                            ? sortDirection
-                                            : 'asc'
+                                        enableSort
+                                            ? columnToSort === column.field
+                                                ? sortDirection
+                                                : 'asc'
+                                            : undefined
                                     }
-                                    onClick={headerClick(column.field)}
+                                    onClick={
+                                        headerClick
+                                            ? headerClick(column.field)
+                                            : undefined
+                                    }
                                     sx={{
                                         '& .MuiTableSortLabel-icon': {
                                             fontSize: 14,
