@@ -39,15 +39,15 @@ import merge from 'lodash/merge';
 import React, { ReactNode } from 'react';
 
 export interface WithOptionLabel {
+    filterOptions?(
+        options: any[],
+        state: FilterOptionsState<any>
+    ): EnumOption[];
     renderOption?(
         props: React.HTMLAttributes<HTMLLIElement>,
         option: any,
         state: AutocompleteRenderOptionState
     ): ReactNode;
-    filterOptions?(
-        options: any[],
-        state: FilterOptionsState<any>
-    ): EnumOption[];
 }
 
 const generateOptionsArray = (rootSchema: JsonSchema7, path: string) => {

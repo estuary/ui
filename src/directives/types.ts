@@ -26,18 +26,18 @@ export interface OnboardClaim {
 export type UserClaims = ClickToAcceptClaim | OnboardClaim;
 
 export interface DirectiveSettings<T> {
-    token: string;
-    queryFilter: (
-        queryBuilder: PostgrestFilterBuilder<JoinedAppliedDirective>
-    ) => PostgrestFilterBuilder<JoinedAppliedDirective>;
-    generateUserClaim: (args: any[]) => T;
     calculateStatus: (
         appliedDirective?: AppliedDirective<T> | null
     ) => DirectiveStates;
+    generateUserClaim: (args: any[]) => T;
+    queryFilter: (
+        queryBuilder: PostgrestFilterBuilder<JoinedAppliedDirective>
+    ) => PostgrestFilterBuilder<JoinedAppliedDirective>;
+    token: string;
 }
 
 export interface DirectiveProps {
     directive: any;
-    status: DirectiveStates;
     mutate: KeyedMutator<SuccessResponse<JoinedAppliedDirective>>;
+    status: DirectiveStates;
 }

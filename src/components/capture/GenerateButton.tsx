@@ -12,9 +12,9 @@ import { Entity } from 'types';
 import useDiscoverCapture from './useDiscoverCapture';
 
 interface Props {
-    entityType: Entity;
-    disabled: boolean;
     callFailed: Function;
+    disabled: boolean;
+    entityType: Entity;
     postGenerateMutate: Function;
     createWorkflowMetadata?: {
         initiateDiscovery: boolean;

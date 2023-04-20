@@ -2,8 +2,8 @@ import { Avatar } from '@mui/material';
 
 interface Props {
     avatarUrl: string | null;
-    userName: string | null;
     userEmail: string;
+    userName: string | null;
     size?: number;
 }
 

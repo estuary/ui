@@ -16,13 +16,13 @@ import { devtools, NamedSet } from 'zustand/middleware';
 export interface StatsSchema {
     [k: string]:
         | {
-              bytes_written_by_me?: number;
-              docs_written_by_me?: number;
-
               bytes_read_by_me?: number;
-              docs_read_by_me?: number;
+              bytes_written_by_me?: number;
 
               bytes_written_to_me?: number;
+              docs_read_by_me?: number;
+
+              docs_written_by_me?: number;
               docs_written_to_me?: number;
           }
         | undefined;
@@ -31,32 +31,32 @@ export interface StatsSchema {
 export type StatsResponse = StatsSchema | null;
 
 export interface SelectableTableStore extends StoreWithHydration {
-    rows: Map<string, any>;
-    setRows: (val: LiveSpecsExtQuery[]) => void;
+    hydrate: () => void;
+    incrementSuccessfulTransformations: () => void;
+    query: AsyncOperationProps;
+
     removeRows: () => void;
+    resetState: () => void;
+    rows: Map<string, any>;
 
     selected: Map<string, any>;
+    setAllSelected: (isSelected: boolean) => void;
+
+    setQuery: (query: PostgrestFilterBuilder<any>) => void;
+
+    setRows: (val: LiveSpecsExtQuery[]) => void;
     setSelected: (
         key: SelectableTableStore['selected'],
         lastPubId: string,
         isSelected: boolean
     ) => void;
-    setAllSelected: (isSelected: boolean) => void;
-
-    successfulTransformations: number;
-    incrementSuccessfulTransformations: () => void;
-
-    resetState: () => void;
-
-    setQuery: (query: PostgrestFilterBuilder<any>) => void;
-    query: AsyncOperationProps;
-    hydrate: () => void;
-
     setStats: () => void;
+
+    setStatsFilter: (val: SelectableTableStore['statsFilter']) => void;
     stats: StatsResponse;
 
     statsFilter: StatsFilter;
-    setStatsFilter: (val: SelectableTableStore['statsFilter']) => void;
+    successfulTransformations: number;
 }
 
 export const initialCreateStates = {

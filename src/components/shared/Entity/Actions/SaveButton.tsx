@@ -13,15 +13,15 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 
 interface Props {
-    closeLogs: Function;
     callFailed: Function;
+    closeLogs: Function;
     disabled: boolean;
-    taskNames: string[];
     logEvent:
         | CustomEvents.CAPTURE_CREATE
         | CustomEvents.MATERIALIZATION_CREATE
         | CustomEvents.CAPTURE_EDIT
         | CustomEvents.MATERIALIZATION_EDIT;
+    taskNames: string[];
     materialize?: Function;
 }
 

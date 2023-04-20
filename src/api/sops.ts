@@ -1,8 +1,8 @@
 import { getEncryptedConfig } from 'services/encryption';
 
 interface EncryptConfig {
-    error?: any;
     data: any;
+    error?: any;
 }
 
 export const encryptConfig = (

@@ -17,14 +17,14 @@ export enum ProgressStates {
 }
 
 export interface SharedProgressProps {
-    name: string;
     error: any | null;
     logToken: string | null;
-    renderError?: Function;
-    renderLogs?: Function;
-    successMessageID: string;
+    name: string;
     runningMessageID: string;
     state: ProgressStates;
+    successMessageID: string;
+    renderError?: Function;
+    renderLogs?: Function;
 }
 
 const wrapperStyling = { mb: 1, ml: 3, width: '100%' };

@@ -33,11 +33,11 @@ interface RowsProps {
 }
 
 export interface RowProps {
-    stats?: StatsResponse;
+    isSelected: boolean;
     row: CaptureQueryWithStats;
     setRow: any;
-    isSelected: boolean;
     showEntityStatus: boolean;
+    stats?: StatsResponse;
 }
 
 function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {

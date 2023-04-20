@@ -5,8 +5,8 @@ import { FormattedMessage } from 'react-intl';
 
 interface Props {
     removeAllCollections: (event: React.MouseEvent<HTMLElement>) => void;
-    readOnly?: boolean;
     RediscoverButton?: ReactNode;
+    readOnly?: boolean;
 }
 
 function CollectionSelectorActions({

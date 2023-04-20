@@ -2,8 +2,8 @@ import { Box } from '@mui/material';
 import ConnectorName from 'components/connectors/ConnectorName';
 
 interface Props {
-    renderOptionProps: any;
     option: any;
+    renderOptionProps: any;
 }
 
 function ConnectorOption({ renderOptionProps, option }: Props) {

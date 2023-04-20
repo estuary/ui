@@ -26,16 +26,16 @@ export interface Schema {
 export type StoreSelector<T> = Record<string, (state: T) => any>;
 
 export interface BaseHook<T> {
-    idle?: boolean;
-    loading: boolean;
-    error: string | null;
     data: T;
+    error: string | null;
+    loading: boolean;
+    idle?: boolean;
 }
 
 export type BaseData = {
+    attributes: any;
     id: string;
     type: string;
-    attributes: any;
     links?: any;
 };
 
@@ -74,88 +74,88 @@ export interface MuiTabProps<T> {
 export interface AppliedDirective<T> {
     created_at: Date;
     detail: null;
+    directive_id: string;
     id: string;
-    updated_at: Date;
     job_status: JobStatus;
     logs_token: string;
-    directive_id: string;
-    user_id: string;
+    updated_at: Date;
     user_claims: T | null;
+    user_id: string;
 }
 
 export interface JoinedAppliedDirective extends AppliedDirective<any> {
     // FILTERING HACK
     ['applied_directives']: AppliedDirective<any>;
-    ['spec->>type']: undefined;
     ['applied_directives.user_id']: undefined;
     ['directives.spec->>type']: undefined;
+    ['spec->>type']: undefined;
 }
 
 export interface StorageMappingStore {
-    provider: string;
     bucket: string;
     prefix: string;
+    provider: string;
 }
 export interface StorageMappings {
-    id: string;
     // detail: string;
     catalog_prefix: string;
+    id: string;
     spec: { stores: StorageMappingStore[] };
     // created_at: string;
     updated_at: string;
 }
 
 export interface Tenants {
+    collections_quota: number;
+    created_at: string;
+    detail: string;
     id: string;
     tasks_quota: number;
-    collections_quota: number;
-    detail: string;
     tenant: string;
-    created_at: string;
     updated_at: string;
 }
 
 export interface CatalogStats {
-    catalog_name: string;
-    grain: string;
-    bytes_written_by_me: number;
-    docs_written_by_me: number;
     bytes_read_by_me: number;
-    docs_read_by_me: number;
-    bytes_written_to_me: number;
-    docs_written_to_me: number;
     bytes_read_from_me: number;
+    bytes_written_by_me: number;
+    bytes_written_to_me: number;
+    catalog_name: string;
+    docs_read_by_me: number;
     docs_read_from_me: number;
-    ts: Date;
+    docs_written_by_me: number;
+    docs_written_to_me: number;
     flow_document: any;
+    grain: string;
+    ts: Date;
 }
 
 export interface CatalogStats_Billing {
+    bytes_read_by_me: number;
+    bytes_written_by_me: number;
     catalog_name: string;
+    flow_document: any;
     grain: string;
     ts: string;
-    bytes_written_by_me: number;
-    bytes_read_by_me: number;
-    flow_document: any;
 }
 
 export interface Directive {
+    catalog_prefix: string;
     created_at: Date;
     detail: null;
     id: string;
-    updated_at: Date;
-    catalog_prefix: string;
     single_use: boolean;
     spec: JobStatus;
     token: string;
+    updated_at: Date;
 }
 
 export interface Grants {
     capability: string;
+    id: string;
     object_role: string;
     subject_role: string;
     user_id: string;
-    id: string;
 }
 
 export interface LiveSpecsExtBareMinimum {
@@ -169,8 +169,8 @@ export interface LiveSpecsExtBaseQuery extends LiveSpecsExtBareMinimum {
     connector_image_name: string | null;
     connector_image_tag: string | null;
     image: string;
-    title: string;
     last_pub_id: string;
+    title: string;
     updated_at: string;
 }
 
@@ -195,8 +195,8 @@ export type EntityWorkflow =
 export type SortDirection = 'asc' | 'desc';
 
 export enum TableStatuses {
-    LOADING = 'LOADING',
     DATA_FETCHED = 'DATA_FETCHED',
+    LOADING = 'LOADING',
     NO_EXISTING_DATA = 'NO_EXISTING_DATA',
     TECHNICAL_DIFFICULTIES = 'TECHNICAL_DIFFICULTIES',
     UNMATCHED_FILTER = 'UNMATCHED_FILTER',

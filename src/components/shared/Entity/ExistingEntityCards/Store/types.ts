@@ -7,18 +7,18 @@ import { EntityWithCreateWorkflow } from 'types';
 
 export interface ExistingEntityState extends StoreWithHydration {
     connectorName: string | null;
-    setConnectorName: (value: ExistingEntityState['connectorName']) => void;
-
-    queryData: CaptureQueryWithSpec[] | MaterializationQueryWithSpec[] | null;
-    setQueryData: (value: ExistingEntityState['queryData']) => void;
-
     createNewTask: boolean;
-    setCreateNewTask: (value: ExistingEntityState['createNewTask']) => void;
 
     hydrateState: (
         entityType: EntityWithCreateWorkflow,
         connectorId: string
     ) => Promise<void>;
+    queryData: CaptureQueryWithSpec[] | MaterializationQueryWithSpec[] | null;
 
     resetState: () => void;
+    setConnectorName: (value: ExistingEntityState['connectorName']) => void;
+
+    setCreateNewTask: (value: ExistingEntityState['createNewTask']) => void;
+
+    setQueryData: (value: ExistingEntityState['queryData']) => void;
 }

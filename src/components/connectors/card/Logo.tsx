@@ -5,8 +5,8 @@ interface Props {
     maxHeight?: number;
     padding?: string | number;
     unknownConnectorIconConfig?: {
-        width: string | number;
         fontSize: string | number;
+        width: string | number;
     };
 }
 

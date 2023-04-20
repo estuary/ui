@@ -4,13 +4,13 @@ import { defaultOutline } from 'context/Theme';
 import { ReactNode, useEffect, useState } from 'react';
 
 interface Props {
-    header: ReactNode;
     children: ReactNode;
-    forceClose?: boolean;
+    header: ReactNode;
     disableClose?: boolean;
+    forceClose?: boolean;
+    hideBorder?: boolean;
     mountClosed?: boolean;
     readOnly?: boolean;
-    hideBorder?: boolean;
 }
 
 const expandOnMount = (

@@ -17,18 +17,18 @@ import {
 import React, { ReactNode } from 'react';
 
 interface CustomPopoverPosition {
-    transformOrigin?: PopoverOrigin;
     anchorOrigin?: PopoverOrigin;
+    transformOrigin?: PopoverOrigin;
 }
 
 interface Props {
     ariaLabel: string;
+    children: ReactNode;
     icon: ReactNode;
     identifier: string;
     tooltip: string;
-    children: ReactNode;
-    hideArrow?: boolean;
     customMenuPosition?: CustomPopoverPosition;
+    hideArrow?: boolean;
 }
 
 const IconMenu = ({

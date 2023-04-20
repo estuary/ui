@@ -4,49 +4,49 @@ import { EntityWithCreateWorkflow, EntityWorkflow } from 'types';
 
 export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
-        description?: string;
-        entityName: string;
         connectorImage: {
-            id: string;
+            connectorId: string;
             iconPath: string;
+            id: string;
             imageName: string;
             imagePath: string;
-            connectorId: string;
         };
+        entityName: string;
+        description?: string;
     };
 }
 
 export interface DetailsFormState extends StoreWithHydration {
-    // Form Data
-    details: Details;
-    setDetails: (details: Details) => void;
-    setDetails_connector: (
-        connector: Details['data']['connectorImage']
-    ) => void;
-
-    detailsFormErrorsExist: boolean;
-
     // Connectors
     connectors: { [key: string]: any }[];
-    setConnectors: (val: DetailsFormState['connectors']) => void;
+    // Form Data
+    details: Details;
+    detailsFormErrorsExist: boolean;
 
     // Misc.
     draftedEntityName: string;
-    setDraftedEntityName: (
-        value: DetailsFormState['draftedEntityName']
-    ) => void;
 
     entityNameChanged: boolean;
-    setEntityNameChanged: (value: string) => void;
-
-    previousDetails: Details;
-    setPreviousDetails: (value: DetailsFormState['previousDetails']) => void;
-
     hydrateState: (
         entityType: EntityWithCreateWorkflow,
         workflow: EntityWorkflow | null
     ) => Promise<void>;
 
-    stateChanged: () => boolean;
+    previousDetails: Details;
     resetState: () => void;
+
+    setConnectors: (val: DetailsFormState['connectors']) => void;
+    setDetails: (details: Details) => void;
+
+    setDetails_connector: (
+        connector: Details['data']['connectorImage']
+    ) => void;
+    setDraftedEntityName: (
+        value: DetailsFormState['draftedEntityName']
+    ) => void;
+
+    setEntityNameChanged: (value: string) => void;
+
+    setPreviousDetails: (value: DetailsFormState['previousDetails']) => void;
+    stateChanged: () => boolean;
 }

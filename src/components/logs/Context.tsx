@@ -13,17 +13,17 @@ import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 
 interface Props extends BaseComponentProps {
     token: string | null;
-    jobCompleted?: boolean;
     disableIntervalFetching?: boolean;
     fetchAll?: boolean;
+    jobCompleted?: boolean;
 }
 
 type LogsContextValue = {
-    reset: () => void;
+    fetchingCanSafelyStop: boolean;
     logs: ViewLogs_Line[];
     networkFailure: boolean;
+    reset: () => void;
     stopped: boolean;
-    fetchingCanSafelyStop: boolean;
 };
 
 const MAX_EMPTY_CALLS = 90; // about 1.5 minute

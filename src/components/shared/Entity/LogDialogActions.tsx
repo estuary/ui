@@ -8,11 +8,11 @@ import { FormStatus } from 'stores/FormState/types';
 interface Props {
     close: any;
     closeCtaKey?: string;
-    taskNames?: string[];
     materialize?: {
         action: any;
         title: string;
     };
+    taskNames?: string[];
 }
 
 function LogDialogActions({

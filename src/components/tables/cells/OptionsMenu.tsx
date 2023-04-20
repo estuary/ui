@@ -5,8 +5,8 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {
     detailsExpanded: boolean;
-    toggleDetailsPanel: () => void;
     editTask: () => void;
+    toggleDetailsPanel: () => void;
 }
 
 function OptionsMenu({ detailsExpanded, toggleDetailsPanel, editTask }: Props) {

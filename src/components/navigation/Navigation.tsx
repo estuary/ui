@@ -26,9 +26,9 @@ import { useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
 
 interface NavigationProps {
+    onNavigationToggle: Function;
     open: boolean;
     width: number;
-    onNavigationToggle: Function;
 }
 
 const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {

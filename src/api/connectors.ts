@@ -37,14 +37,14 @@ const getConnectors = (
 
 // Hydration-specific queries
 export interface ConnectorsQuery_DetailsForm {
+    connector_tags: {
+        connector_id: string;
+        id: string;
+        image_tag: string;
+    }[];
     id: string;
     image_name: string;
     logo_url: string;
-    connector_tags: {
-        id: string;
-        connector_id: string;
-        image_tag: string;
-    }[];
 }
 
 const DETAILS_FORM_QUERY = `

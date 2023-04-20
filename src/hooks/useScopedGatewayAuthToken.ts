@@ -11,9 +11,9 @@ import {
 const { gatewayAuthTokenEndpoint } = getGatewayAuthTokenSettings();
 
 export interface Token {
-    token: string;
     gateway_url: URL;
     parsed: JWTPayload;
+    token: string;
 }
 
 // The request body for this API is a string array corresponding to the prefixes a user has access to.

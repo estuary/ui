@@ -2,9 +2,9 @@ import { List, ListItemText, Stack, TableCell } from '@mui/material';
 import UserAvatar from 'components/shared/UserAvatar';
 
 interface Props {
-    name: string | null;
     avatar: string | null;
     email: string;
+    name: string | null;
 }
 
 function UserName({ name, avatar, email }: Props) {

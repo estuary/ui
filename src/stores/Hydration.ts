@@ -4,9 +4,9 @@ import { NamedSet } from 'zustand/middleware';
 
 export interface StoreWithHydration {
     hydrated: boolean;
-    setHydrated: (value: boolean) => void;
-
     hydrationErrorsExist: boolean;
+
+    setHydrated: (value: boolean) => void;
     setHydrationErrorsExist: (value: boolean) => void;
 }
 
@@ -48,11 +48,11 @@ export const getStoreWithHydrationSettings = (
 };
 
 export interface AsyncOperationProps {
+    count: number | null;
+    error: any;
     fetcher: PostgrestFilterBuilder<any> | null;
     loading: boolean;
     response: any;
-    error: any;
-    count: number | null;
 }
 export const getAsyncDefault = (): AsyncOperationProps => {
     return {

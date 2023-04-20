@@ -7,10 +7,10 @@ import { TableColumns } from 'types';
 import StatusIndicatorAndLabel from './StatusIndicatorAndLabel';
 
 interface Props {
-    shards: Shard[] | null;
+    columns: TableColumns[];
     page: number;
     rowsPerPage: number;
-    columns: TableColumns[];
+    shards: Shard[] | null;
 }
 
 function InformationTableBody({ columns, page, rowsPerPage, shards }: Props) {

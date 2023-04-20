@@ -84,7 +84,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     }, [setDetails_connector, connectorId, connectorTags]);
 
     const connectorsOneOf = useMemo(() => {
-        const response = [] as { title: string; const: Object }[];
+        const response = [] as { const: Object; title: string }[];
 
         if (connectorTags.length > 0) {
             connectorTags.forEach((connector) => {

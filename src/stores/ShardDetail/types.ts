@@ -5,22 +5,22 @@ import { Shard } from 'data-plane-gateway/types/shard_client';
 export type SetShards = (shards: Shard[]) => void;
 
 export enum ShardStatusMessageIds {
-    PRIMARY = 'shardStatus.primary',
+    BACKFILL = 'shardStatus.backfill',
+    COLLECTION = 'shardStatus.basicCollection',
+    DISABLED = 'shardStatus.disabled',
     FAILED = 'shardStatus.failed',
     IDLE = 'shardStatus.idle',
-    STANDBY = 'shardStatus.standby',
-    BACKFILL = 'shardStatus.backfill',
-    DISABLED = 'shardStatus.disabled',
-    COLLECTION = 'shardStatus.basicCollection',
     NONE = 'shardStatus.none',
+    PRIMARY = 'shardStatus.primary',
+    STANDBY = 'shardStatus.standby',
 }
 
 // The hex string additions correspond to sample_grey[500] | sample_grey[300].
 export type ShardStatusColor = SemanticColor | '#C4D3E9' | '#E1E9F4';
 
 export interface TaskShardDetails {
-    messageId: ShardStatusMessageIds;
     color: ShardStatusColor;
+    messageId: ShardStatusMessageIds;
     disabled?: boolean;
 }
 
@@ -29,8 +29,8 @@ export interface TaskShardDetailsWithShard extends TaskShardDetails {
 }
 
 export interface ShardDetails {
-    id: string | undefined;
     errors: string[] | undefined;
+    id: string | undefined;
 }
 
 // Represents an endpoint that is exposed by a connector. Connectors may expose 0 or more
@@ -56,18 +56,14 @@ export interface Endpoint {
 }
 
 export interface ShardDetailStore {
-    shards: Shard[];
-    setShards: SetShards;
     error: Error | string | null;
-    setError: (val: ShardDetailStore['error']) => void;
-    getTaskShards: (
-        catalogNamespace: string | undefined,
-        shards: Shard[]
-    ) => Shard[];
-    getTaskShardDetails: (
-        taskShards: Shard[],
+    evaluateShardProcessingState: (shardId: string) => boolean;
+    getShardDetails: (shards: Shard[]) => ShardDetails[];
+    getShardStatusColor: (
+        shardId: string,
         defaultStatusColor: ShardStatusColor
-    ) => TaskShardDetailsWithShard[];
+    ) => ShardStatusColor;
+    getShardStatusMessageId: (shardId: string) => ShardStatusMessageIds;
     // Returns an array of endpoints for the task. In the case that the task has multiple shards,
     // this will _only_ return endpoints that are served by all of the shards. In other words, endpoints
     // for connecting to specific shards will be omitted from the results.
@@ -75,15 +71,19 @@ export interface ShardDetailStore {
         taskName: string,
         dataPlaneHostname: string | null
     ) => Endpoint[];
+    getTaskShardDetails: (
+        taskShards: Shard[],
+        defaultStatusColor: ShardStatusColor
+    ) => TaskShardDetailsWithShard[];
+    getTaskShards: (
+        catalogNamespace: string | undefined,
+        shards: Shard[]
+    ) => Shard[];
     getTaskStatusColor: (
         taskShardDetails: TaskShardDetails[],
         defaultStatusColor: ShardStatusColor
     ) => ShardStatusColor;
-    getShardDetails: (shards: Shard[]) => ShardDetails[];
-    getShardStatusColor: (
-        shardId: string,
-        defaultStatusColor: ShardStatusColor
-    ) => ShardStatusColor;
-    getShardStatusMessageId: (shardId: string) => ShardStatusMessageIds;
-    evaluateShardProcessingState: (shardId: string) => boolean;
+    setError: (val: ShardDetailStore['error']) => void;
+    setShards: SetShards;
+    shards: Shard[];
 }

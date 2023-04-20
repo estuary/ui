@@ -4,9 +4,9 @@ import { FormattedMessage } from 'react-intl';
 import { Entity } from 'types';
 
 interface Props {
-    entityType: Entity;
-    disabled: boolean;
     callFailed: Function;
+    disabled: boolean;
+    entityType: Entity;
     postGenerateMutate: Function;
 }
 

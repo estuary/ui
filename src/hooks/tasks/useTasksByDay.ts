@@ -35,10 +35,10 @@ export interface TaskFlowDocument {
 }
 
 export interface TasksByDayQuery {
+    flow_document: TaskFlowDocument;
+    kind: Entity;
     name: string;
     ts: Date;
-    kind: Entity;
-    flow_document: TaskFlowDocument;
 }
 
 const TASK_BY_DAY_COLS = ['name', 'ts', 'kind', 'flow_document'];

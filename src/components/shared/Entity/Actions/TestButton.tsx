@@ -13,8 +13,8 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 
 interface Props {
-    closeLogs: Function;
     callFailed: Function;
+    closeLogs: Function;
     disabled: boolean;
     logEvent: CustomEvents.CAPTURE_TEST | CustomEvents.MATERIALIZATION_TEST;
 }

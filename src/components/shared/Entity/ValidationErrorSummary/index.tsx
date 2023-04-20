@@ -22,8 +22,8 @@ import { hasLength } from 'utils/misc-utils';
 interface Props {
     errorsExist: boolean;
     ErrorComponent?: any | boolean;
-    hideIcon?: boolean;
     headerMessageId?: string;
+    hideIcon?: boolean;
 }
 
 function ValidationErrorSummary({

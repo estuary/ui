@@ -7,45 +7,19 @@ import {
 } from 'types';
 
 export interface EndpointConfigState extends StoreWithHydration {
-    endpointSchema: Schema;
-    setEndpointSchema: (val: EndpointConfigState['endpointSchema']) => void;
+    encryptedEndpointConfig: JsonFormsData;
+    // Storing if the endpoint config is allowed to be empty
+    endpointCanBeEmpty: boolean;
+
+    endpointConfig: JsonFormsData;
+    endpointConfigErrors: { message: string | undefined }[];
+
+    endpointConfigErrorsExist: boolean;
 
     // Used to display custom errors in JsonForms
     endpointCustomErrors: any[];
-    setEndpointCustomErrors: (
-        val: EndpointConfigState['endpointCustomErrors']
-    ) => void;
 
-    // Encrypted Endpoint Configs
-    publishedEndpointConfig: JsonFormsData;
-    setPublishedEndpointConfig: (
-        encryptedEndpointConfig: EndpointConfigState['publishedEndpointConfig']
-    ) => void;
-
-    encryptedEndpointConfig: JsonFormsData;
-    setEncryptedEndpointConfig: (
-        encryptedEndpointConfig: EndpointConfigState['encryptedEndpointConfig']
-    ) => void;
-
-    // JSON Form Compatible-Endpoint Configs
-    previousEndpointConfig: JsonFormsData;
-    setPreviousEndpointConfig: (
-        endpointConfig: EndpointConfigState['previousEndpointConfig']
-    ) => void;
-
-    endpointConfig: JsonFormsData;
-    setEndpointConfig: (endpointConfig: JsonFormsData) => void;
-
-    endpointConfigErrorsExist: boolean;
-    endpointConfigErrors: { message: string | undefined }[];
-
-    // Server-Form Alignment
-    serverUpdateRequired: boolean;
-    setServerUpdateRequired: (value: boolean) => void;
-
-    // Storing if the endpoint config is allowed to be empty
-    endpointCanBeEmpty: boolean;
-    setEndpointCanBeEmpty: (value: boolean) => void;
+    endpointSchema: Schema;
 
     // Hydration
     hydrateState: (
@@ -53,7 +27,38 @@ export interface EndpointConfigState extends StoreWithHydration {
         workflow: EntityWorkflow | null
     ) => Promise<void>;
 
+    // JSON Form Compatible-Endpoint Configs
+    previousEndpointConfig: JsonFormsData;
+
+    // Encrypted Endpoint Configs
+    publishedEndpointConfig: JsonFormsData;
+
+    resetState: () => void;
+
+    // Server-Form Alignment
+    serverUpdateRequired: boolean;
+
+    setEncryptedEndpointConfig: (
+        encryptedEndpointConfig: EndpointConfigState['encryptedEndpointConfig']
+    ) => void;
+    setEndpointCanBeEmpty: (value: boolean) => void;
+
+    setEndpointConfig: (endpointConfig: JsonFormsData) => void;
+    setEndpointCustomErrors: (
+        val: EndpointConfigState['endpointCustomErrors']
+    ) => void;
+
+    setEndpointSchema: (val: EndpointConfigState['endpointSchema']) => void;
+    setPreviousEndpointConfig: (
+        endpointConfig: EndpointConfigState['previousEndpointConfig']
+    ) => void;
+
+    setPublishedEndpointConfig: (
+        encryptedEndpointConfig: EndpointConfigState['publishedEndpointConfig']
+    ) => void;
+
+    setServerUpdateRequired: (value: boolean) => void;
+
     // Misc.
     stateChanged: () => boolean;
-    resetState: () => void;
 }

@@ -2,54 +2,55 @@ import { AlertColor } from '@mui/material';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 
 export enum EditorStatus {
-    IDLE = 'nothing happened since load',
     EDITING = 'user typing',
+    IDLE = 'nothing happened since load',
     INVALID = 'editor value not parsable',
-    SAVING = 'calling server to save changes',
+    OUT_OF_SYNC = 'there are changes on server that client needs to merge',
     SAVED = 'changes saved to server',
     SAVE_FAILED = 'calling server failed',
-    OUT_OF_SYNC = 'there are changes on server that client needs to merge',
+    SAVING = 'calling server to save changes',
 }
 
 export interface EditorStoreState<T> {
-    id: string | null;
-    setId: (newVal: EditorStoreState<T>['id']) => void;
-
-    persistedDraftId: string | null;
-    setPersistedDraftId: (
-        newVal: EditorStoreState<T>['persistedDraftId']
-    ) => void;
-
-    pubId: string | null;
-    setPubId: (newVal: EditorStoreState<T>['pubId']) => void;
-
     // TODO: Resolve conflicting type. Determine whether current catalog can be a DraftSpecQuery, LiveSpecsQuery_spec, or null.
     //   See the FileSelector component for reference.
     currentCatalog: DraftSpecQuery | null;
-    setCurrentCatalog: (newVal: EditorStoreState<T>['currentCatalog']) => void;
-
-    specs: T[] | null;
-    setSpecs: (newVal: EditorStoreState<T>['specs']) => void;
-
-    // TODO: Confirm that a server update will always be a DraftSpecQuery.
-    serverUpdate: any | null;
-    setServerUpdate: (newVal: EditorStoreState<T>['serverUpdate']) => void;
-
-    isSaving: boolean;
-    isEditing: boolean;
-    status: EditorStatus;
-    setStatus: (newVal: EditorStatus) => void;
 
     // Draft Initialization
     draftInitializationError: null | {
-        severity: AlertColor;
         messageId: string;
+        severity: AlertColor;
     };
+
+    id: string | null;
+    isEditing: boolean;
+
+    isSaving: boolean;
+    persistedDraftId: string | null;
+
+    pubId: string | null;
+    resetState: (excludeEditDraftId?: boolean) => void;
+
+    // TODO: Confirm that a server update will always be a DraftSpecQuery.
+    serverUpdate: any | null;
+    setCurrentCatalog: (newVal: EditorStoreState<T>['currentCatalog']) => void;
+
     setDraftInitializationError: (
         value: EditorStoreState<T>['draftInitializationError']
     ) => void;
+    setId: (newVal: EditorStoreState<T>['id']) => void;
 
-    resetState: (excludeEditDraftId?: boolean) => void;
+    setPersistedDraftId: (
+        newVal: EditorStoreState<T>['persistedDraftId']
+    ) => void;
+    setPubId: (newVal: EditorStoreState<T>['pubId']) => void;
+    setServerUpdate: (newVal: EditorStoreState<T>['serverUpdate']) => void;
+    setSpecs: (newVal: EditorStoreState<T>['specs']) => void;
+
+    setStatus: (newVal: EditorStatus) => void;
+    specs: T[] | null;
+
+    status: EditorStatus;
 }
 
 // Selector Hooks

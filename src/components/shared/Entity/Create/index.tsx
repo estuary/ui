@@ -39,14 +39,14 @@ import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
 
 interface Props {
-    entityType: EntityWithCreateWorkflow;
     draftSpecMetadata: Pick<
         DraftSpecSwrMetadata,
         'draftSpecs' | 'isValidating' | 'error'
     >;
+    entityType: EntityWithCreateWorkflow;
+    errorSummary: ReactNode;
     resetState: () => void;
     toolbar: ReactNode;
-    errorSummary: ReactNode;
     RediscoverButton?: ReactNode;
 }
 

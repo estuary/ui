@@ -3,11 +3,11 @@ import Input from '@mui/material/Input';
 import ConnectorIcon from 'components/connectors/ConnectorIcon';
 
 interface Props {
-    inputProps: any;
     InputProps: any;
-    currentOption: any | null;
     appliedUiSchemaOptions: any;
+    currentOption: any | null;
     enabled: any;
+    inputProps: any;
 }
 
 function ConnectorInput({

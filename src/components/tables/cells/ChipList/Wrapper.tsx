@@ -4,11 +4,11 @@ import { FormattedMessage } from 'react-intl';
 import { stripPathing } from 'utils/misc-utils';
 
 interface Props {
-    onClick?: () => void;
+    val: string;
     disabled?: boolean;
+    onClick?: () => void;
     stripPath?: boolean;
     title?: string;
-    val: string;
 }
 
 const ListItem = styled('li')(({ theme }) => ({

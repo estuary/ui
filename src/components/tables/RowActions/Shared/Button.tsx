@@ -12,16 +12,16 @@ import {
 } from 'stores/Tables/Store';
 
 interface Props {
-    confirmationMessage?: ReactNode;
+    messageID: string;
     renderProgress: (
         item: any,
         index: number,
         onFinish: (response: any) => void
     ) => ReactNode;
-    messageID: string;
     selectableTableStoreName:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.MATERIALIZATION;
+    confirmationMessage?: ReactNode;
 }
 
 function RowActionButton({

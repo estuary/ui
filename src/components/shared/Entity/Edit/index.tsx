@@ -43,20 +43,20 @@ import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
 
 interface Props {
-    title: string;
+    callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
+    draftSpecMetadata: Pick<
+        DraftSpecSwrMetadata,
+        'draftSpecs' | 'isValidating' | 'error'
+    >;
     entityType: EntityWithCreateWorkflow;
+    errorSummary: ReactNode;
     readOnly: {
         detailsForm?: true;
         endpointConfigForm?: true;
         resourceConfigForm?: true;
     };
-    draftSpecMetadata: Pick<
-        DraftSpecSwrMetadata,
-        'draftSpecs' | 'isValidating' | 'error'
-    >;
-    callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
     resetState: () => void;
-    errorSummary: ReactNode;
+    title: string;
     toolbar: ReactNode;
     RediscoverButton?: ReactNode;
 }

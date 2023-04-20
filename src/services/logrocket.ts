@@ -17,26 +17,26 @@ interface IUserTraits {
 
 // TODO (typing) They have types for LR but not sure how to access them
 interface Settings {
-    release: any;
     dom: any;
+    release: any;
     network?: any;
 }
 
 type ParsedBody = [{ [k: string]: any }] | { [k: string]: any } | undefined;
 
 export enum CustomEvents {
-    CAPTURE_TEST = 'Capture_Test',
     CAPTURE_CREATE = 'Capture_Create',
     CAPTURE_CREATE_CONFIG_CREATE = 'Capture_Create_Config_Create',
     CAPTURE_CREATE_CONFIG_EDIT = 'Capture_Create_Config_Edit',
     CAPTURE_DISCOVER = 'Capture_Discover',
     CAPTURE_EDIT = 'Capture_Edit',
+    CAPTURE_TEST = 'Capture_Test',
+    DIRECTIVE = 'Directive',
     MATERIALIZATION_CREATE = 'Materialization_Create',
     MATERIALIZATION_CREATE_CONFIG_CREATE = 'Materialization_Create_Config_Create',
     MATERIALIZATION_CREATE_CONFIG_EDIT = 'Materialization_Create_Config_Edit',
-    MATERIALIZATION_TEST = 'Materialization_Test',
     MATERIALIZATION_EDIT = 'Materialization_Edit',
-    DIRECTIVE = 'Directive',
+    MATERIALIZATION_TEST = 'Materialization_Test',
 }
 
 const logRocketSettings = getLogRocketSettings();

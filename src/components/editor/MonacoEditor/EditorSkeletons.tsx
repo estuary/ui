@@ -31,9 +31,9 @@ function JsonSchemaSkeleton() {
 }
 
 interface MonacoEditorSkeletonProps {
+    customTotalHeight?: number;
     editorHeight?: number;
     toolbarHeight?: number;
-    customTotalHeight?: number;
 }
 
 function MonacoEditorSkeleton({

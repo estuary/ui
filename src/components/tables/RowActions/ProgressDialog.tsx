@@ -10,13 +10,13 @@ import { ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-    selectedEntities: any[];
+    finished: Function;
     renderComponent: (
         item: any,
         index: number,
         onFinish: (response: any) => void
     ) => ReactNode;
-    finished: Function;
+    selectedEntities: any[];
 }
 
 function ProgressDialog({

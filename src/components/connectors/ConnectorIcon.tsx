@@ -2,8 +2,8 @@ import { Avatar, Box } from '@mui/material';
 import { QuestionMark } from 'iconoir-react';
 
 interface Props {
-    size?: number;
     iconPath?: string | null;
+    size?: number;
 }
 
 const defaultSize = 20;

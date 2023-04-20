@@ -7,6 +7,6 @@ export interface SpinnerMessageKeys {
 
 export interface SpinnerOptions {
     disable?: boolean;
-    severity?: AlertColor | null;
     messages?: SpinnerMessageKeys;
+    severity?: AlertColor | null;
 }

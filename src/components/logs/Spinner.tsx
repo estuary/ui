@@ -9,8 +9,8 @@ import SpinnerIcon from './SpinnerIcon';
 import { SpinnerMessageKeys } from './types';
 
 interface Props {
-    severity?: AlertColor;
     runningKey?: SpinnerMessageKeys['runningKey'];
+    severity?: AlertColor;
     stoppedKey?: SpinnerMessageKeys['stoppedKey'];
 }
 

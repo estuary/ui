@@ -7,10 +7,10 @@ import { SpinnerMessageKeys } from './types';
 
 export interface LogProps {
     token: string | null;
-    loadingLineSeverity?: AlertColor | null;
     disableIntervalFetching?: boolean;
     fetchAll?: boolean;
     height?: number;
+    loadingLineSeverity?: AlertColor | null;
     spinnerMessages?: SpinnerMessageKeys;
 }
 

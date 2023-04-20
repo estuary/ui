@@ -19,65 +19,20 @@ export interface ResourceConfigDictionary {
 // TODO (naming): Determine whether the resourceConfig state property should be made plural.
 //   It is a dictionary of individual resource configs, so I am leaning "yes."
 export interface ResourceConfigState {
+    addCollections: (value: string[]) => void;
+    collectionErrorsExist: boolean;
+    collectionRemovalMetadata: {
+        index: number;
+        removedCollection: string;
+        selectedCollection: string | null;
+    };
     // Collection Selector
     collections: string[] | null;
-    preFillEmptyCollections: (
-        collections: LiveSpecsExtQuery[] | null[],
-        rehydrating?: boolean
-    ) => void;
-    preFillCollections: (
-        bindings: CaptureBinding[] | MaterializationBinding[],
-        entityType: Entity
-    ) => void;
-    addCollections: (value: string[]) => void;
-    removeCollection: (value: string) => void;
-    removeAllCollections: (
-        workflow: EntityWorkflow | null,
-        catalogName: string
-    ) => void;
-    resetConfigAndCollections: () => void;
-
-    collectionRemovalMetadata: {
-        selectedCollection: string | null;
-        removedCollection: string;
-        index: number;
-    };
-
-    collectionErrorsExist: boolean;
-
     currentCollection: string | null;
-    setCurrentCollection: (collections: string | null) => void;
-
     discoveredCollections: string[] | null;
-    setDiscoveredCollections: (value: DraftSpecQuery) => void;
-
-    restrictedDiscoveredCollections: string[];
-    setRestrictedDiscoveredCollections: (
-        collection: string,
-        nativeCollectionFlag?: boolean
+    evaluateDiscoveredCollections: (
+        response: CallSupabaseResponse<any>
     ) => void;
-
-    // Resource Config
-    resourceConfig: ResourceConfigDictionary;
-    setResourceConfig: (
-        key: string | string[],
-        resourceConfig?: ResourceConfig
-    ) => void;
-    resetResourceConfigAndCollections: () => void;
-
-    resourceConfigErrorsExist: boolean;
-    resourceConfigErrors: (string | undefined)[];
-
-    // Resource Schema
-    resourceSchema: Schema;
-    setResourceSchema: (val: ResourceConfigState['resourceSchema']) => void;
-
-    // Hydration
-    hydrated: boolean;
-    setHydrated: (value: boolean) => void;
-
-    hydrationErrorsExist: boolean;
-    setHydrationErrorsExist: (value: boolean) => void;
 
     hydrateState: (
         editWorkflow: boolean,
@@ -85,15 +40,60 @@ export interface ResourceConfigState {
         rehydrating?: boolean
     ) => Promise<void>;
 
-    // Server-Form Alignment
-    serverUpdateRequired: boolean;
-    setServerUpdateRequired: (value: boolean) => void;
+    // Hydration
+    hydrated: boolean;
 
-    evaluateDiscoveredCollections: (
-        response: CallSupabaseResponse<any>
+    hydrationErrorsExist: boolean;
+    preFillCollections: (
+        bindings: CaptureBinding[] | MaterializationBinding[],
+        entityType: Entity
     ) => void;
 
+    preFillEmptyCollections: (
+        collections: LiveSpecsExtQuery[] | null[],
+        rehydrating?: boolean
+    ) => void;
+    removeAllCollections: (
+        workflow: EntityWorkflow | null,
+        catalogName: string
+    ) => void;
+
+    removeCollection: (value: string) => void;
+    resetConfigAndCollections: () => void;
+
+    resetResourceConfigAndCollections: () => void;
+    resetState: (keepCollections?: boolean) => void;
+    // Resource Config
+    resourceConfig: ResourceConfigDictionary;
+
+    resourceConfigErrors: (string | undefined)[];
+    resourceConfigErrorsExist: boolean;
+
+    // Resource Schema
+    resourceSchema: Schema;
+    restrictedDiscoveredCollections: string[];
+
+    // Server-Form Alignment
+    serverUpdateRequired: boolean;
+    setCurrentCollection: (collections: string | null) => void;
+
+    setDiscoveredCollections: (value: DraftSpecQuery) => void;
+    setHydrated: (value: boolean) => void;
+
+    setHydrationErrorsExist: (value: boolean) => void;
+
+    setResourceConfig: (
+        key: string | string[],
+        resourceConfig?: ResourceConfig
+    ) => void;
+    setResourceSchema: (val: ResourceConfigState['resourceSchema']) => void;
+
+    setRestrictedDiscoveredCollections: (
+        collection: string,
+        nativeCollectionFlag?: boolean
+    ) => void;
+
+    setServerUpdateRequired: (value: boolean) => void;
     // Misc.
     stateChanged: () => boolean;
-    resetState: (keepCollections?: boolean) => void;
 }

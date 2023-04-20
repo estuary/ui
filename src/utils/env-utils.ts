@@ -67,8 +67,8 @@ type Settings = {
     appID: string | null;
     idUser: {
         enabled: boolean;
-        includeName: boolean;
         includeEmail: boolean;
+        includeName: boolean;
     };
     sanitize: {
         inputs: boolean;

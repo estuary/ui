@@ -10,9 +10,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 
 enum ErrorFlags {
-    TOKEN_NOT_FOUND = 'Unauthenticated',
-    TOKEN_INVALID = 'Authentication failed',
     OPERATION_INVALID = 'Unauthorized',
+    TOKEN_INVALID = 'Authentication failed',
+    TOKEN_NOT_FOUND = 'Unauthenticated',
 }
 
 const useJournalsForCollection = (collectionName: string | undefined) => {
@@ -120,10 +120,10 @@ async function loadDocuments({
     documentCount,
     maxBytes,
 }: {
-    journalName?: string;
-    client?: JournalClient;
     documentCount: number;
     maxBytes: number;
+    client?: JournalClient;
+    journalName?: string;
 }) {
     if (!client || !journalName) {
         console.warn('Cannot load documents without client and journal');

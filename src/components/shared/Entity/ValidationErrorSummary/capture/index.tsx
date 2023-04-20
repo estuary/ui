@@ -11,10 +11,10 @@ import { useFormStateStore_displayValidation } from 'stores/FormState/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
-    ErrorComponent?: any | boolean;
-    hideIcon?: boolean;
-    headerMessageId?: string;
     errorsExist: boolean;
+    ErrorComponent?: any | boolean;
+    headerMessageId?: string;
+    hideIcon?: boolean;
 }
 
 function ValidationErrorSummary({

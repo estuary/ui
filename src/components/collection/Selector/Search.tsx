@@ -19,12 +19,12 @@ import {
 import { CollectionData } from './types';
 
 interface Props {
-    options: any[];
     onChange: (collections: string[], reason: AutocompleteChangeReason) => void;
+    options: any[];
     selectedCollections: string[] | CollectionData[];
-    readOnly?: boolean;
+    AutocompleteProps?: any; // TODO (typing) - need to type as AutocompleteProps<>
     getValue?: (option: any) => string;
-    AutocompleteProps?: any; // TODO (typing) - need to typ as props
+    readOnly?: boolean;
 }
 
 const StyledPopper = styled(Popper)({

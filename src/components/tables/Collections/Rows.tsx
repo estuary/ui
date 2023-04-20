@@ -26,9 +26,9 @@ import Docs from '../cells/stats/Docs';
 import useCollectionColumns from './useCollectionColumns';
 
 interface RowProps {
-    stats?: StatsResponse;
     row: CollectionQueryWithStats;
     showEntityStatus: boolean;
+    stats?: StatsResponse;
 }
 
 interface RowsProps {

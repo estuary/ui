@@ -11,9 +11,9 @@ import React from 'react';
 
 interface Props {
     num: number;
+    StepperProps?: StepperPropsType;
     always?: boolean;
     children?: React.ReactChild;
-    StepperProps?: StepperPropsType;
 }
 
 function SingleStep({ num, always, children, StepperProps }: Props) {

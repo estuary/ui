@@ -34,16 +34,16 @@ import merge from 'lodash/merge';
 import React, { ReactNode } from 'react';
 
 export interface WithOptionLabel {
+    filterOptions?(
+        options: EnumOption[],
+        state: FilterOptionsState<EnumOption>
+    ): EnumOption[];
     getOptionLabel?(option: EnumOption): string;
     renderOption?(
         props: React.HTMLAttributes<HTMLLIElement>,
         option: EnumOption,
         state: AutocompleteRenderOptionState
     ): ReactNode;
-    filterOptions?(
-        options: EnumOption[],
-        state: FilterOptionsState<EnumOption>
-    ): EnumOption[];
 }
 
 const areOptionsEqual = (option?: any, value?: any) => {

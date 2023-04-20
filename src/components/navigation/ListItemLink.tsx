@@ -12,11 +12,11 @@ import { useIntl } from 'react-intl';
 
 interface Props {
     icon: ReactNode;
-    title: string;
     link: string | any;
+    title: string;
+    badgeContent?: number;
     isOpen?: boolean;
     menuWidth?: number;
-    badgeContent?: number;
     tooltipDelay?: number;
 }
 

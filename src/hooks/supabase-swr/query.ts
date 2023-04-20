@@ -2,8 +2,8 @@ import { Count, DistributedFilter, Filter } from './types';
 
 export type QueryConfig<Data> = {
     columns?: string | string[];
-    filter?: Filter<Data>;
     count?: Count;
+    filter?: Filter<Data>;
     head?: boolean;
 };
 export type Query<Data> = [string, QueryConfig<Data>] | null;
@@ -15,8 +15,8 @@ export const createQuery = <Data>(
 
 export type DistributedQueryConfig<Data> = {
     columns?: string | string[];
-    filter?: DistributedFilter<Data>;
     count?: Count;
+    filter?: DistributedFilter<Data>;
     head?: boolean;
 };
 

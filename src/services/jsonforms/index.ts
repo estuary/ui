@@ -174,15 +174,15 @@ const getOrderedProps = (jsonSchema?: JsonSchema): string[] => {
 // };
 
 interface CategoryUiSchema_Elements {
-    type: string;
-    label: string;
-    options?: any;
     elements: any[];
+    label: string;
+    type: string;
+    options?: any;
 }
 
 interface CategoryUiSchema {
-    type: string;
     elements: CategoryUiSchema_Elements[];
+    type: string;
 }
 export const generateCategoryUiSchema = (uiSchema: any) => {
     const basicElements: CategoryUiSchema_Elements[] = [];

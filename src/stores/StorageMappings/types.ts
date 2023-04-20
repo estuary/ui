@@ -1,14 +1,14 @@
 export interface StorageMappingForm {
-    prefix: string;
-    lastUpdated: string;
     bucket: string;
+    lastUpdated: string;
+    prefix: string;
     provider: string;
 }
 
 export interface StorageMappingsState {
-    spec: StorageMappingForm | null;
-    setSpec: (val: StorageMappingsState['spec']) => void;
-
     hydrate: () => void;
     loading: boolean;
+
+    setSpec: (val: StorageMappingsState['spec']) => void;
+    spec: StorageMappingForm | null;
 }

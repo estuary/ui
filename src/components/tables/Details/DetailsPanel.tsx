@@ -22,11 +22,11 @@ import { EditorStoreNames } from 'stores/names';
 import { Entity } from 'types';
 
 interface Props {
-    detailsExpanded: boolean;
-    lastPubId: string;
     colSpan: number;
-    entityType: Entity;
+    detailsExpanded: boolean;
     entityName: string;
+    entityType: Entity;
+    lastPubId: string;
     collectionNames?: string[];
     disableLogs?: boolean; // TODO (detail logs) We'll start using this again when we have better logs
 }

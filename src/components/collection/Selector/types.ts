@@ -1,4 +1,4 @@
 export interface CollectionData {
-    name: string;
     classification: string;
+    name: string;
 }

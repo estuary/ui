@@ -3,8 +3,8 @@ import { TABLES } from 'services/supabase';
 import { useQuery, useSelect } from './supabase-swr';
 
 export interface DraftQuery {
-    id: string;
     detail: string;
+    id: string;
     updated_at: string;
     user_id: string;
 }

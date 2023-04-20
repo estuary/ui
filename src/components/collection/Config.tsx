@@ -16,9 +16,9 @@ import {
 
 interface Props {
     draftSpecs: DraftSpecQuery[];
-    readOnly?: boolean;
-    hideBorder?: boolean;
     RediscoverButton?: ReactNode;
+    hideBorder?: boolean;
+    readOnly?: boolean;
 }
 
 function CollectionConfig({

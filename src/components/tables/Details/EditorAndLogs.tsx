@@ -17,8 +17,8 @@ import { hasLength } from 'utils/misc-utils';
 interface Props {
     lastPubId: string;
     localZustandScope: boolean;
-    disableLogs?: boolean;
     collectionNames?: string[];
+    disableLogs?: boolean;
 }
 
 const DEFAULT_TOTAL_HEIGHT = getEditorTotalHeight();

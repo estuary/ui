@@ -38,21 +38,21 @@ export enum TABLES {
     APPLIED_DIRECTIVES = 'applied_directives',
     CATALOG_STATS = 'catalog_stats',
     COMBINED_GRANTS_EXT = 'combined_grants_ext',
-    CONNECTOR_TAGS = 'connector_tags',
     CONNECTORS = 'connectors',
-    DISCOVERS = 'discovers',
+    CONNECTOR_TAGS = 'connector_tags',
     DIRECTIVES = 'directives',
+    DISCOVERS = 'discovers',
+    DRAFTS = 'drafts',
+    DRAFTS_EXT = 'drafts_ext',
     DRAFT_ERRORS = 'draft_errors',
     DRAFT_SPECS = 'draft_specs',
     DRAFT_SPECS_EXT = 'draft_specs_ext',
-    DRAFTS = 'drafts',
-    DRAFTS_EXT = 'drafts_ext',
-    LIVE_SPEC_FLOW = 'live_spec_flow',
     LIVE_SPECS = 'live_specs',
     LIVE_SPECS_EXT = 'live_specs_ext',
+    LIVE_SPEC_FLOW = 'live_spec_flow',
+    PUBLICATIONS = 'publications',
     PUBLICATION_SPECS = 'publication_specs',
     PUBLICATION_SPECS_EXT = 'publication_specs_ext',
-    PUBLICATIONS = 'publications',
     ROLE_GRANTS = 'role_grants',
     STORAGE_MAPPINGS = 'storage_mappings',
     TASKS_BY_DAY = 'task_stats_by_day',
@@ -63,9 +63,9 @@ export enum TABLES {
 }
 
 export enum RPCS {
+    CREATE_REFRESH_TOKEN = 'create_refresh_token',
     EXCHANGE_DIRECTIVES = 'exchange_directive_token',
     VIEW_LOGS = 'view_logs',
-    CREATE_REFRESH_TOKEN = 'create_refresh_token',
 }
 
 export enum FUNCTIONS {
@@ -203,8 +203,8 @@ export const getUserDetails = (user: User | null) => {
 };
 
 export interface CallSupabaseResponse<T> {
-    error?: PostgrestError;
     data: T | null;
+    error?: PostgrestError;
 }
 
 export const handleSuccess = <T>(response: any) => {

@@ -9,17 +9,17 @@ import {
 } from '@mui/material';
 
 interface Props {
-    label: string;
-    options: string[];
-    defaultValue: string;
     changeHandler: (
         event: React.SyntheticEvent<Element, Event>,
         value: string,
         reason: AutocompleteChangeReason,
         details?: AutocompleteChangeDetails<string> | undefined
     ) => void;
-    id?: string;
+    defaultValue: string;
+    label: string;
+    options: string[];
     autocompleteSx?: SxProps<Theme>;
+    id?: string;
 }
 
 function AutocompletedField({

@@ -3,10 +3,10 @@ import { NavArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-    onClick?: any;
     disabled?: boolean;
     expanded?: boolean;
     messageId?: string;
+    onClick?: any;
 }
 
 function ExpandDetails({

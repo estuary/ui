@@ -13,11 +13,11 @@ import {
 import { Entity } from 'types';
 
 interface CreateMatchData {
-    draft_id: string | null;
     catalog_name: string;
+    draft_id: string | null;
     spec: any;
-    spec_type?: Entity | null;
     expect_pub_id?: string;
+    spec_type?: Entity | null;
 }
 
 interface UpdateMatchData {
@@ -97,8 +97,8 @@ export const getDraftSpecsBySpecType = async (
 };
 
 interface DraftSpecsExtQuery_BySpecTypeReduced {
-    draft_id: string;
     catalog_name: string;
+    draft_id: string;
     spec_type: string;
 }
 
@@ -122,11 +122,11 @@ export const getDraftSpecsBySpecTypeReduced = async (
 // TODO (optimization | typing): This is temporary typing given the supabase package upgrade will
 //   considerably alter our approach to typing.
 export interface DraftSpecsExtQuery_ByCatalogName {
-    draft_id: string;
     catalog_name: string;
-    spec_type: string;
-    spec: any;
+    draft_id: string;
     expect_pub_id: string;
+    spec: any;
+    spec_type: string;
 }
 
 export const getDraftSpecsByCatalogName = async (
@@ -197,11 +197,11 @@ export const deleteDraftSpecsByCatalogName = async (
 };
 
 export interface DraftSpecsExtQuery_ByDraftId {
-    draft_id: string;
     catalog_name: string;
-    spec_type: string;
-    spec: any;
+    draft_id: string;
     expect_pub_id: string;
+    spec: any;
+    spec_type: string;
 }
 
 export const getDraftSpecsByDraftId = async (

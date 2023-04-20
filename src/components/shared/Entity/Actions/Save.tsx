@@ -35,8 +35,8 @@ import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
 
 interface Props {
     disabled: boolean;
-    onFailure: Function;
     logEvent: CustomEvents;
+    onFailure: Function;
     dryRun?: boolean;
 }
 

@@ -2,19 +2,19 @@ import { client } from 'services/client';
 import { getAuthPath } from 'utils/env-utils';
 
 export interface AuthTokenResponse {
+    IDToken: string;
     accessToken: string;
     credential: Credential;
     expires: number;
-    IDToken: string;
     role: string;
     sub: string;
 }
 
 export interface Credential {
-    iss: string;
-    sub: string;
     exp: number;
     ext: Ext;
+    iss: string;
+    sub: string;
 }
 
 export interface Ext {

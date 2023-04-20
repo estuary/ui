@@ -7,10 +7,10 @@ import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 export interface ErrorLogsProps {
-    logToken?: string | null;
     defaultOpen?: boolean;
     height?: number;
     logProps?: Omit<LogProps, 'token' | 'height'>;
+    logToken?: string | null;
 }
 
 function ErrorLogs({

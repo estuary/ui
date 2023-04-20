@@ -8,25 +8,26 @@ import { useQuery, useSelect } from './supabase-swr';
 
 export interface ConnectorWithTagDetailQuery {
     connector_tags: {
-        documentation_url: string;
-        protocol: EntityWithCreateWorkflow;
-        image_tag: string;
-        image_name: string;
-        id: string;
         connector_id: string;
+        documentation_url: string;
+        id: string;
+        image_name: string;
+        image_tag: string;
+        protocol: EntityWithCreateWorkflow;
         title: string;
     }[];
-    id: string;
     detail: string;
-    updated_at: string;
-    image_name: string;
+    id: string;
     image: string;
+    image_name: string;
     recommended: boolean;
     title: string;
+    updated_at: string;
     // FILTERING TYPES HACK
-    ['connector_tags.protocol']: undefined;
-    ['connector_tags.image_tag']: undefined;
+    // eslint-disable-next-line typescript-sort-keys/interface
     [CONNECTOR_NAME]: undefined;
+    ['connector_tags.image_tag']: undefined;
+    ['connector_tags.protocol']: undefined;
 }
 
 export const CONNECTOR_WITH_TAG_QUERY = `

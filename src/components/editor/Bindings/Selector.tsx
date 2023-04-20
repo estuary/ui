@@ -27,16 +27,16 @@ import { hasLength } from 'utils/misc-utils';
 interface BindingSelectorProps {
     loading: boolean;
     skeleton: ReactNode;
-    readOnly?: boolean;
     RediscoverButton?: ReactNode;
+    readOnly?: boolean;
 }
 
 interface RowProps {
     collection: string;
-    task: string;
-    workflow: EntityWorkflow | null;
     disabled: boolean;
     draftId: string | null;
+    task: string;
+    workflow: EntityWorkflow | null;
 }
 
 function Row({ collection, task, workflow, disabled, draftId }: RowProps) {

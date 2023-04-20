@@ -6,25 +6,25 @@ import { useQuery, useSelect } from './supabase-swr/';
 // TODO: Consider consolidating query interface instances.
 export interface LiveSpecsExtQuery {
     id: string;
-    spec: any;
-    reads_from: string[];
-    writes_to: string[];
-    spec_type: string;
     last_pub_id: string;
+    reads_from: string[];
+    spec: any;
+    spec_type: string;
+    writes_to: string[];
 }
 
 // TODO (typing) don't just copy the settings from SWR/Supabase and just pick/extend 'em
 interface Response<T> {
-    liveSpecs: T[];
     error: PostgrestError | undefined;
-    mutate: any;
     isValidating: boolean;
+    liveSpecs: T[];
+    mutate: any;
 }
 
 export interface LiveSpecsExtQueryWithSpec extends LiveSpecsExtQuery {
-    spec: any;
     catalog_name: string;
     detail: string;
+    spec: any;
 }
 
 const defaultResponse: LiveSpecsExtQuery[] = [];

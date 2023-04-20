@@ -8,10 +8,10 @@ import { QueryConfig } from '../query';
 import useClient from './useClient';
 
 export enum FetcherType {
+    CSV = 'csv',
+    MAYBE_SINGLE = 'maybeSingle',
     MULTIPLE = 'multiple',
     SINGLE = 'single',
-    MAYBE_SINGLE = 'maybeSingle',
-    CSV = 'csv',
 }
 
 export type Fetcher<Data> = (

@@ -7,21 +7,21 @@ import CollectionSelectorList from './List';
 import CollectionSelectorSearch from './Search';
 
 interface BindingSelectorProps {
-    loading: boolean;
-    skeleton: ReactNode;
-    removeAllCollections: () => void;
-
-    currentCollection?: any;
-    setCurrentCollection?: (collection: any) => void;
-
-    collections: Set<string>;
-    removeCollection: (collectionName: string) => void;
     addCollection: (collectionName: string) => void;
+    collections: Set<string>;
+    loading: boolean;
 
-    readOnly?: boolean;
+    removeAllCollections: () => void;
+    removeCollection: (collectionName: string) => void;
+
+    skeleton: ReactNode;
     RediscoverButton?: ReactNode;
+    currentCollection?: any;
 
     height?: number;
+    readOnly?: boolean;
+
+    setCurrentCollection?: (collection: any) => void;
 }
 
 function CollectionSelector({

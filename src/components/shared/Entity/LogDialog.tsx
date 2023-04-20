@@ -10,10 +10,10 @@ import { useFormStateStore_message } from 'stores/FormState/hooks';
 import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
 
 interface Props {
-    open: boolean;
-    token: string | null;
-    title: ReactNode;
     actionComponent: ReactNode;
+    open: boolean;
+    title: ReactNode;
+    token: string | null;
 }
 
 const TITLE_ID = 'logs-dialog-title';

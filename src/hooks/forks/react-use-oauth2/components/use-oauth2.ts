@@ -10,11 +10,11 @@ import {
 } from './constants';
 
 export type AuthTokenPayload = {
-    token_type: string;
-    expires_in: number;
     access_token: string;
-    scope: string;
+    expires_in: number;
     refresh_token: string;
+    scope: string;
+    token_type: string;
 };
 
 export type Oauth2Props<TData = AuthTokenPayload> = {

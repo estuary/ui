@@ -29,9 +29,9 @@ import omit from 'lodash/omit';
 import React from 'react';
 
 interface CombinatorPropertiesProps {
-    schema: JsonSchema;
     combinatorKeyword: 'oneOf' | 'anyOf';
     path: string;
+    schema: JsonSchema;
 }
 
 export const isLayout = (uischema: UISchemaElement): uischema is Layout =>

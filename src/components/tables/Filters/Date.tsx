@@ -19,8 +19,8 @@ import {
 } from 'stores/Tables/Store';
 
 interface Props {
-    header: string;
     disabled: boolean;
+    header: string;
     selectableTableStoreName: SelectTableStoreNames;
 }
 

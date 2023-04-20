@@ -21,18 +21,18 @@ import { getUserDetails } from 'services/supabase';
 import { getUrls } from 'utils/env-utils';
 
 interface RegistrationRequest {
-    fullName: string;
-    email: string;
-    company: string;
-    useCase: string;
     acknowledgedDocuments: boolean;
+    company: string;
+    email: string;
+    fullName: string;
+    useCase: string;
 }
 
 interface Errors {
-    fullName: boolean;
-    email: boolean;
-    company: boolean;
     acknowledgedDocuments: boolean;
+    company: boolean;
+    email: boolean;
+    fullName: boolean;
 }
 
 const urls = getUrls();

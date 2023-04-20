@@ -12,8 +12,8 @@ import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 
 interface Props {
     GenerateButton: ReactNode;
-    TestButton: ReactNode;
     SaveButton: ReactNode;
+    TestButton: ReactNode;
 }
 
 export const buttonSx: SxProps<Theme> = { ml: 1 };

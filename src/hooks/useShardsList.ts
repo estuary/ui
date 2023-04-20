@@ -7,9 +7,9 @@ import useSWR from 'swr';
 import { LiveSpecsExtBareMinimum } from 'types';
 
 enum ErrorFlags {
-    TOKEN_NOT_FOUND = 'Unauthenticated',
-    TOKEN_INVALID = 'Authentication failed',
     OPERATION_INVALID = 'Unauthorized',
+    TOKEN_INVALID = 'Authentication failed',
+    TOKEN_NOT_FOUND = 'Unauthenticated',
 }
 
 // These status do not change often so checking every 30 seconds is probably enough

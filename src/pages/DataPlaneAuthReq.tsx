@@ -13,8 +13,8 @@ const boxStyling: SxProps<Theme> = {
 };
 
 interface RedirectResult {
-    targetUrl?: string;
     error?: string;
+    targetUrl?: string;
 }
 
 const DataPlaneAuthReq = () => {

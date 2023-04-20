@@ -37,8 +37,8 @@ export enum ResourceConfigStoreNames {
 }
 
 export enum SelectTableStoreNames {
-    ACCESS_GRANTS_USERS = 'AccessGrants-Selectable-Table-Users',
     ACCESS_GRANTS_PREFIXES = 'AccessGrants-Selectable-Table-Prefixes',
+    ACCESS_GRANTS_USERS = 'AccessGrants-Selectable-Table-Users',
     BILLING = 'Billing-Selectable-Table',
     CAPTURE = 'Captures-Selectable-Table',
     COLLECTION = 'Collections-Selectable-Table',
@@ -49,8 +49,8 @@ export enum SelectTableStoreNames {
 
 export enum ShardDetailStoreNames {
     CAPTURE = 'Capture-Shard-Detail',
-    MATERIALIZATION = 'Materialization-Shard-Detail',
     COLLECTION = 'Collection-Shard-Detail',
+    MATERIALIZATION = 'Materialization-Shard-Detail',
 }
 
 export enum AdminStoreNames {

@@ -2,8 +2,8 @@ import { Button } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-    onClick?: any;
     disabled?: boolean;
+    onClick?: any;
 }
 
 function MaterializeAction({ onClick, disabled }: Props) {

@@ -5,9 +5,9 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 interface Props {
+    messageId?: string;
     read?: boolean;
     val?: number | null;
-    messageId?: string;
 }
 
 const evaluateTooltipMessageId = (messageId?: string, read?: boolean) => {

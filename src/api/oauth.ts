@@ -11,9 +11,9 @@ export interface AccessTokenResponse {
 }
 
 export interface AuthURLResponse {
-    url: string;
-    state: string;
     code_verifier: string;
+    state: string;
+    url: string;
 }
 
 export const authURL = (connectorId: string, config: any) => {

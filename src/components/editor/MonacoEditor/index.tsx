@@ -24,8 +24,8 @@ import {
 export interface Props {
     localZustandScope: boolean;
     disabled?: boolean;
-    onChange?: (newVal: any, path: string, specType: string) => any;
     height?: number;
+    onChange?: (newVal: any, path: string, specType: string) => any;
     toolbarHeight?: number;
 }
 

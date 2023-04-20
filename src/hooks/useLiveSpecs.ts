@@ -40,11 +40,11 @@ function useLiveSpecs(specType: Entity) {
 export interface LiveSpecsQuery_spec extends LiveSpecsQuery {
     id: string;
     spec: {
+        key: string[];
         schema: {
             properties: Record<string, any>;
             required?: string[];
         };
-        key: string[];
     };
 }
 const specQuery = queryColumns.concat(['id', 'spec']);

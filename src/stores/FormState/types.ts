@@ -4,47 +4,47 @@ import { MessagePrefixes } from 'types';
 
 export interface FormState {
     displayValidation: boolean;
-    status: FormStatus;
-    showLogs: boolean;
-    exitWhenLogsClose: boolean;
-    logToken: string | null;
     error: {
         title: string;
         error?: PostgrestError;
     } | null;
+    exitWhenLogsClose: boolean;
+    logToken: string | null;
     message: {
         key: string | null;
         severity: AlertColor | null;
     };
+    showLogs: boolean;
+    status: FormStatus;
 }
 
 export enum FormStatus {
-    INIT = 'IDLE',
+    FAILED = 'FAILED',
 
-    SAVING = 'SAVING',
+    GENERATED = 'GENERATED_PREVIEW',
+    GENERATING = 'GENERATING_PREVIEW',
+
+    INIT = 'IDLE',
     SAVED = 'SAVED',
 
-    TESTING = 'TESTING',
+    SAVING = 'SAVING',
     TESTED = 'TESTED',
 
-    GENERATING = 'GENERATING_PREVIEW',
-    GENERATED = 'GENERATED_PREVIEW',
-
-    FAILED = 'FAILED',
+    TESTING = 'TESTING',
 }
 
 export interface EntityFormState {
     // Form State
     formState: FormState;
-    setFormState: (data: Partial<FormState>) => void;
+    isActive: boolean;
 
     // Form Status
     isIdle: boolean;
-    isActive: boolean;
-
-    updateStatus: (status: FormStatus) => void;
+    messagePrefix: MessagePrefixes;
 
     // Misc.
     resetState: () => void;
-    messagePrefix: MessagePrefixes;
+
+    setFormState: (data: Partial<FormState>) => void;
+    updateStatus: (status: FormStatus) => void;
 }

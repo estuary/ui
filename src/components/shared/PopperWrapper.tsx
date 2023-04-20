@@ -10,8 +10,8 @@ import { paperBackground, popperIndex } from 'context/Theme';
 import { Dispatch, ReactNode, SetStateAction } from 'react';
 
 interface Props {
-    children: ReactNode;
     anchorEl: HTMLElement | null;
+    children: ReactNode;
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
 }

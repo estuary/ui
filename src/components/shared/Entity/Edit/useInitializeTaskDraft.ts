@@ -86,8 +86,8 @@ function useInitializeTaskDraft() {
             catalog_name,
             spec,
         }: LiveSpecsExtQuery_ByLiveSpecId): Promise<{
-            evaluatedDraftId: string | null;
             draftSpecsRequestConfig: SupabaseConfig | null;
+            evaluatedDraftId: string | null;
         }> => {
             const existingDraftsResponse = await getDraftsByCatalogName(
                 catalog_name,

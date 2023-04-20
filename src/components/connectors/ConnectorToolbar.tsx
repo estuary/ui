@@ -21,15 +21,15 @@ interface Props {
     setColumnToSort: Dispatch<
         SetStateAction<keyof ConnectorWithTagDetailQuery>
     >;
-    hideProtocol?: boolean;
     setProtocol: Dispatch<SetStateAction<string | null>>;
-    setSortDirection: Dispatch<SetStateAction<SortDirection>>;
     setSearchQuery: Dispatch<SetStateAction<string | null>>;
+    setSortDirection: Dispatch<SetStateAction<SortDirection>>;
+    hideProtocol?: boolean;
 }
 
 interface ProtocolOption {
-    protocol: Entity | null;
     message: string;
+    protocol: Entity | null;
 }
 
 function ConnectorToolbar({

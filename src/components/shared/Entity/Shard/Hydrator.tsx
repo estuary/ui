@@ -8,8 +8,8 @@ import {
 import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
-    lastPubId: string;
     catalogName: string;
+    lastPubId: string;
 }
 
 function ShardHydrator({ catalogName, children, lastPubId }: Props) {

@@ -2,8 +2,8 @@ import { Box, TableCell, Tooltip } from '@mui/material';
 import ConnectorIcon from 'components/connectors/ConnectorIcon';
 
 interface Props {
-    connectorName: string | null;
     connectorImage: string | null;
+    connectorName: string | null;
     imageTag: string;
 }
 

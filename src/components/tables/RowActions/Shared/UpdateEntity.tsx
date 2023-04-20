@@ -26,16 +26,16 @@ import { Entity } from 'types';
 
 export interface UpdateEntityProps {
     entity: CaptureQuery;
-    onFinish: (response: any) => void;
     generateNewSpec: (
         spec: LiveSpecsExtQueryWithSpec['spec']
     ) => any | Promise<void>;
     generateNewSpecType: (entity: CaptureQuery) => Entity | null;
+    onFinish: (response: any) => void;
     runningMessageID: SharedProgressProps['runningMessageID'];
-    successMessageID: SharedProgressProps['successMessageID'];
     selectableStoreName:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.MATERIALIZATION;
+    successMessageID: SharedProgressProps['successMessageID'];
 }
 
 function UpdateEntity({

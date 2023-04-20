@@ -7,12 +7,12 @@ import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { getEditorTotalHeight } from 'utils/editor-utils';
 
 export interface Props {
-    list: ReactNode;
     details: ReactNode;
-    height?: number;
+    list: ReactNode;
     backgroundColor?: string;
-    displayBorder?: boolean;
     codeEditorDetails?: boolean;
+    displayBorder?: boolean;
+    height?: number;
 }
 
 const MIN_RESIZE_WIDTH = 25;

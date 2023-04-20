@@ -11,10 +11,10 @@ import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
 
 export interface IConfirmationModalOptions {
-    confirmText?: string;
-    cancelText?: string;
-    title?: string;
     message: string | ReactNode;
+    cancelText?: string;
+    confirmText?: string;
+    title?: string;
 }
 
 interface IConfirmationModalContext {

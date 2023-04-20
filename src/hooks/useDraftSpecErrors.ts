@@ -4,9 +4,9 @@ import { SWRConfiguration } from 'swr';
 import { useQuery, useSelect } from './supabase-swr/';
 
 interface DraftErrorsQuery {
-    scope: string;
     detail: string;
     draft_id: string;
+    scope: string;
 }
 
 const DRAFT_SPEC_COLS = ['scope', 'detail', 'draft_id'];

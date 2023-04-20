@@ -58,26 +58,26 @@ export interface ColumnProps extends TableColumns {
 }
 
 interface Props {
-    columns: ColumnProps[];
-    renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
-    pagination: Pagination;
-    setPagination: (data: any) => void;
-    searchQuery: string | null;
-    setSearchQuery: (data: any) => void;
-    sortDirection: SortDirection;
-    setSortDirection: (data: any) => void;
     columnToSort: string;
-    setColumnToSort: (data: any) => void;
-    header: string;
+    columns: ColumnProps[];
     filterLabel: string;
+    header: string;
     noExistingDataContentIds: TableIntlConfig;
+    pagination: Pagination;
+    renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
+    searchQuery: string | null;
     selectableTableStoreName: SelectTableStoreNames;
+    setColumnToSort: (data: any) => void;
+    setPagination: (data: any) => void;
+    setSearchQuery: (data: any) => void;
+    setSortDirection: (data: any) => void;
+    sortDirection: SortDirection;
     enableSelection?: boolean;
-    rowSelectorProps?: RowSelectorProps;
-    showEntityStatus?: boolean;
     hideHeaderAndFooter?: boolean;
-    rowsPerPageOptions?: number[];
     minWidth?: number;
+    rowSelectorProps?: RowSelectorProps;
+    rowsPerPageOptions?: number[];
+    showEntityStatus?: boolean;
 }
 
 export const getPagination = (currPage: number, size: number) => {

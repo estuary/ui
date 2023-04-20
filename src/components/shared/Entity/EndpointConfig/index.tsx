@@ -30,8 +30,8 @@ import { Schema } from 'types';
 
 interface Props {
     connectorImage: string;
-    readOnly?: boolean;
     hideBorder?: boolean;
+    readOnly?: boolean;
 }
 
 const DOCUSAURUS_THEME = 'docusaurus-theme';

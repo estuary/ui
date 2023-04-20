@@ -1,8 +1,9 @@
 export interface TreeNode {
-    name: string;
-    id: string;
-    fullPath: string | null; //If null it means the item is NOT selectable
+    //If null it means the item is NOT selectable
     children: TreeNode[];
+    fullPath: string | null;
+    id: string;
+    name: string;
 }
 
 const createNode = (path: string[], tree: TreeNode[], catalogName: string) => {

@@ -38,8 +38,8 @@ import { Schema } from 'types';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];
-    readOnly?: boolean;
     RediscoverButton?: ReactNode;
+    readOnly?: boolean;
 }
 
 function BindingsMultiEditor({

@@ -497,8 +497,8 @@ const themeSettings = createTheme({
 } as ThemeOptions);
 
 const ColorModeContext = React.createContext<{
-    toggleColorMode: () => void;
     colorMode: string | undefined;
+    toggleColorMode: () => void;
 }>({
     toggleColorMode: () => {},
     colorMode: undefined,

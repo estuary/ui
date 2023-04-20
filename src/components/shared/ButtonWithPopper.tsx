@@ -6,10 +6,10 @@ import { FormattedMessage } from 'react-intl';
 interface Props {
     messageId: string;
     popper: ReactNode;
+    buttonSx?: SxProps<Theme>;
     disabled?: boolean;
     startIcon?: ReactNode;
     variant?: 'text' | 'outlined' | 'contained';
-    buttonSx?: SxProps<Theme>;
 }
 
 function ButtonWithPopper({

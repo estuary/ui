@@ -6,17 +6,17 @@ import { SuccessResponse, useQuery, useSelect } from './supabase-swr/';
 
 export interface DraftSpecQuery {
     catalog_name: string;
-    spec_type: string;
-    spec: any;
     draft_id: string;
     expect_pub_id: string;
+    spec: any;
+    spec_type: string;
 }
 
 export interface DraftSpecSwrMetadata {
     draftSpecs: DraftSpecQuery[];
     error: PostgrestError | undefined;
-    mutate: KeyedMutator<SuccessResponse<DraftSpecQuery>>;
     isValidating: boolean;
+    mutate: KeyedMutator<SuccessResponse<DraftSpecQuery>>;
 }
 
 const DRAFT_SPEC_COLS = [
@@ -31,9 +31,9 @@ const defaultResponse: DraftSpecQuery[] = [];
 function useDraftSpecs(
     draftId: string | null,
     options?: {
+        catalogName?: string;
         lastPubId?: string;
         specType?: Entity;
-        catalogName?: string;
     }
 ): DraftSpecSwrMetadata {
     const draftSpecQuery = useQuery<DraftSpecQuery>(

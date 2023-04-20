@@ -18,8 +18,8 @@ const deleteEntityDraft = (draftId: string) => {
 };
 
 export interface DraftsQuery_ByCatalogName {
-    id: string;
     detail: string;
+    id: string;
     updated_at: string;
 }
 

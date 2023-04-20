@@ -39,8 +39,8 @@ export interface WithInput {
 
 interface Props {
     inputEvents: {
-        keyDown: (event?: any) => any;
         focus: (event?: any) => any;
+        keyDown: (event?: any) => any;
     };
 }
 

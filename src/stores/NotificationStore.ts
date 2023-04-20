@@ -4,18 +4,18 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 export interface Notification {
-    title: string;
     description: string;
     severity: AlertColor;
+    title: string;
 }
 
 export interface NotificationState {
+    clearNotificationHistory: () => void;
+    hideNotification: () => void;
     notification: Notification | null;
     notificationHistory: Notification[];
     showNotification: (notification: Notification) => void;
-    hideNotification: () => void;
     updateNotificationHistory: (notification: Notification) => void;
-    clearNotificationHistory: () => void;
 }
 
 export const useNotificationStore = create<NotificationState>()(

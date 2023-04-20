@@ -11,8 +11,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactJson from 'react-json-view';
 
 interface PreviewJsonModeProps {
-    spec: LiveSpecsQuery_spec;
     journalData: ReturnType<typeof useJournalData>;
+    spec: LiveSpecsQuery_spec;
 }
 
 function ListView({

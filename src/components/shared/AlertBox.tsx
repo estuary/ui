@@ -18,10 +18,10 @@ import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
     severity: AlertColor;
-    short?: boolean;
     hideIcon?: boolean;
-    title?: string | ReactNode;
     onClose?: () => void;
+    short?: boolean;
+    title?: string | ReactNode;
 }
 
 const SHARED_STYLING = {

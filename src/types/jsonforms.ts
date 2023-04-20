@@ -4,18 +4,18 @@
 //  in the component (ex: CatalogName)
 
 export enum Options {
-    multi = 'multi',
     format = 'format',
-    oauthProvider = 'oauth_provider',
+    multi = 'multi',
+    multiLineSecret = 'multiLineSecret',
     oauthFields = 'oauth_fields',
     oauthPathToFields = 'oauth_path_to_fields',
-    multiLineSecret = 'multiLineSecret',
+    oauthProvider = 'oauth_provider',
 }
 
 export enum Formats {
-    password = 'password',
     date = 'date',
     dateTime = 'date-time',
+    password = 'password',
     time = 'time',
 }
 
@@ -29,10 +29,10 @@ export enum Patterns {
 
 export enum Annotations {
     advanced = 'advanced',
-    oAuthProvider = 'x-oauth2-provider',
-    multiline = 'multiline',
-    order = 'order',
-    secret = 'secret',
     defaultResourceConfigName = 'x-collection-name',
     inferSchema = 'x-infer-schema',
+    multiline = 'multiline',
+    oAuthProvider = 'x-oauth2-provider',
+    order = 'order',
+    secret = 'secret',
 }

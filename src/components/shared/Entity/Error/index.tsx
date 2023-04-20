@@ -8,9 +8,9 @@ import Error, { ErrorProps } from 'components/shared/Error';
 
 interface Props {
     title: string;
+    draftId?: DraftErrorProps['draftId'];
     error?: ErrorProps['error'];
     logToken?: ErrorLogsProps['logToken'];
-    draftId?: DraftErrorProps['draftId'];
 }
 
 function EntityError({ logToken, error, title, draftId }: Props) {

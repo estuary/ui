@@ -10,9 +10,9 @@ import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-    logo: ReactNode;
-    details: ReactNode;
     cta: ReactNode;
+    details: ReactNode;
+    logo: ReactNode;
     title: ReactNode;
 
     docsUrl?: string;

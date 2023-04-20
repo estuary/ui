@@ -33,11 +33,11 @@ interface RowsProps {
 }
 
 interface RowProps {
-    stats?: StatsResponse;
+    isSelected: boolean;
     row: MaterializationQueryWithStats;
     setRow: any;
-    isSelected: boolean;
     showEntityStatus: boolean;
+    stats?: StatsResponse;
 }
 
 function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {

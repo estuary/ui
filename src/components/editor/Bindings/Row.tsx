@@ -12,10 +12,10 @@ import { hasLength } from 'utils/misc-utils';
 
 interface RowProps {
     collection: string;
-    task: string;
-    workflow: EntityWorkflow | null;
     disabled: boolean;
     draftId: string | null;
+    task: string;
+    workflow: EntityWorkflow | null;
 }
 
 function ResourceConfigRow({

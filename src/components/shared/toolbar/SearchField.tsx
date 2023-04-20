@@ -1,12 +1,12 @@
 import { TextField } from '@mui/material';
 
 interface Props {
-    label: string;
     changeHandler: React.ChangeEventHandler<
         HTMLTextAreaElement | HTMLInputElement
     >;
-    id?: string;
+    label: string;
     autoFocus?: boolean;
+    id?: string;
 }
 
 function SearchField({ label, changeHandler, id, autoFocus }: Props) {

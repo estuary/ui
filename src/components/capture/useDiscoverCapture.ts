@@ -82,7 +82,7 @@ function useDiscoverCapture(
     entityType: Entity,
     callFailed: Function,
     postGenerateMutate: Function,
-    options?: { initiateRediscovery?: boolean; initiateDiscovery?: boolean }
+    options?: { initiateDiscovery?: boolean; initiateRediscovery?: boolean }
 ) {
     const supabaseClient = useClient();
 

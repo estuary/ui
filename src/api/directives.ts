@@ -14,8 +14,8 @@ import {
 } from 'types';
 
 export interface ExchangeResponse {
-    directive: Directive | null; //Only null so we can "fake" this respose below
     applied_directive: AppliedDirective<UserClaims>;
+    directive: Directive | null; //Only null so we can "fake" this respose below
 }
 
 const generateMatchData = (data: ExchangeResponse['applied_directive']) => {

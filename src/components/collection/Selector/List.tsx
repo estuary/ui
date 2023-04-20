@@ -17,12 +17,12 @@ import CollectionSelectorRow from './Row';
 
 interface Props {
     collections: Set<string>;
-    removeCollection?: (collectionName: string) => void;
     currentCollection?: any;
-    setCurrentCollection?: (collection: any) => void;
     height?: number;
-    renderCell?: (params: GridRenderCellParams) => void;
     readOnly?: boolean;
+    removeCollection?: (collectionName: string) => void;
+    renderCell?: (params: GridRenderCellParams) => void;
+    setCurrentCollection?: (collection: any) => void;
 }
 
 const initialState = {

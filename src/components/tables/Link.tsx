@@ -2,8 +2,8 @@ import ExternalLink from 'components/shared/ExternalLink';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-    path?: string;
     messageId: string;
+    path?: string;
 }
 
 function Link({ path, messageId }: Props) {

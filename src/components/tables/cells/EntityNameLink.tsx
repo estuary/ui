@@ -11,9 +11,9 @@ import { useIntl } from 'react-intl';
 import { NavLink, useLocation } from 'react-router-dom';
 
 interface Props {
+    detailsLink: string;
     name: string;
     showEntityStatus: boolean;
-    detailsLink: string;
 }
 
 function EntityNameLink({ name, detailsLink, showEntityStatus }: Props) {

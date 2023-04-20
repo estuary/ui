@@ -5,9 +5,9 @@ import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     errors: any;
-    errorMessage?: string;
     config?: any;
     configEmptyMessage?: string;
+    errorMessage?: string;
     title?: string;
 }
 

@@ -46,8 +46,8 @@ import { encryptEndpointConfig } from 'utils/sops-utils';
 import { generateTaskSpec } from 'utils/workflow-utils';
 
 interface Props {
-    disabled: boolean;
     callFailed: Function;
+    disabled: boolean;
     mutateDraftSpecs: Function;
 }
 

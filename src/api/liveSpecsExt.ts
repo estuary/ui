@@ -168,14 +168,14 @@ const getLiveSpecs_existingTasks = (
 // Hydration-specific queries
 export interface LiveSpecsExtQuery_DetailsForm {
     catalog_name: string;
-    id: string;
-    spec_type: Entity;
-    spec: any;
-    detail: string | null;
-    connector_tag_id: string;
     connector_image_name: string;
     connector_image_tag: string;
     connector_logo_url: string;
+    connector_tag_id: string;
+    detail: string | null;
+    id: string;
+    spec: any;
+    spec_type: Entity;
 }
 
 const DETAILS_FORM_QUERY = `
@@ -207,9 +207,9 @@ const getLiveSpecs_detailsForm = async (
 // Multipurpose queries
 export interface LiveSpecsExtQuery_ByCatalogName {
     catalog_name: string;
-    spec_type: string;
-    spec: any;
     last_pub_id: string;
+    spec: any;
+    spec_type: string;
 }
 
 const getLiveSpecsByCatalogName = async (
@@ -228,9 +228,9 @@ const getLiveSpecsByCatalogName = async (
 
 export interface LiveSpecsExtQuery_ByCatalogNames {
     catalog_name: string;
-    spec_type: Entity;
-    spec: any;
     last_pub_id: string;
+    spec: any;
+    spec_type: Entity;
 }
 
 const CHUNK_SIZE = 10;
@@ -309,9 +309,9 @@ const getLiveSpecsByConnectorId = async (
 export interface LiveSpecsExtQuery_ByLiveSpecId {
     catalog_name: string;
     id: string;
-    spec_type: Entity;
     last_pub_id: string;
     spec: any;
+    spec_type: Entity;
 }
 
 const getLiveSpecsByLiveSpecId = async (

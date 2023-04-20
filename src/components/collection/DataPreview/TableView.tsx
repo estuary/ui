@@ -19,8 +19,8 @@ import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 
 interface PreviewTableModeProps {
-    spec: LiveSpecsQuery_spec;
     journalData: ReturnType<typeof useJournalData>;
+    spec: LiveSpecsQuery_spec;
 }
 
 const heightSx: SxProps<Theme> = {

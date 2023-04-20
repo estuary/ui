@@ -13,9 +13,9 @@ import { Entity } from 'types';
 export interface Props {
     entityType: Entity;
     disabled?: boolean;
-    localZustandScope?: boolean;
     editorHeight?: number;
     entityName?: string;
+    localZustandScope?: boolean;
 }
 
 function DraftSpecEditor({

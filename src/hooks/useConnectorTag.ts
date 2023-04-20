@@ -6,15 +6,15 @@ import { hasLength } from 'utils/misc-utils';
 import { useQuery, useSelectSingle } from './supabase-swr/';
 
 export interface ConnectorTag {
+    connector_id: string;
     connectors: {
         image_name: string;
     };
-    id: string;
-    connector_id: string;
-    image_tag: string;
-    endpoint_spec_schema: Schema;
-    resource_spec_schema: string;
     documentation_url: string;
+    endpoint_spec_schema: Schema;
+    id: string;
+    image_tag: string;
+    resource_spec_schema: string;
 }
 
 export const CONNECTOR_TAG_QUERY = `
