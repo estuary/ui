@@ -2,17 +2,12 @@ import {
     Box,
     Stack,
     Table,
-    TableBody,
-    TableCell,
     TableContainer,
     TableFooter,
-    TableHead,
     TablePagination,
     TableRow,
-    TableSortLabel,
     TextField,
     Toolbar,
-    Typography,
     useMediaQuery,
     useTheme,
 } from '@mui/material';
@@ -20,7 +15,6 @@ import TablePaginationActions from 'components/tables/PaginationActions';
 import RowSelector from 'components/tables/RowActions/RowSelector';
 import Title from 'components/tables/Title';
 import { useZustandStore } from 'context/Zustand/provider';
-import { ArrowDown } from 'iconoir-react';
 import { debounce } from 'lodash';
 import {
     ChangeEvent,
@@ -31,7 +25,7 @@ import {
     useRef,
     useState,
 } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useEffectOnce } from 'react-use';
 import { Pagination } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
@@ -41,21 +35,14 @@ import {
 } from 'stores/Tables/Store';
 import {
     SortDirection,
-    TableColumns,
     TableIntlConfig,
     TableState,
     TableStatuses,
 } from 'types';
-import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
-import TableLoadingRows from './Loading';
-import { RowSelectorProps } from './RowActions/types';
-
-export interface ColumnProps extends TableColumns {
-    renderHeader?: (
-        index: number,
-        storeName: SelectTableStoreNames
-    ) => ReactNode;
-}
+import { RowSelectorProps } from '../RowActions/types';
+import EntityTableBody from './TableBody';
+import EntityTableHeader from './TableHeader';
+import { ColumnProps } from './types';
 
 interface Props {
     columns: ColumnProps[];
@@ -320,117 +307,25 @@ function EntityTable({
                             id: 'entityTable.title',
                         })}
                     >
-                        <TableHead>
-                            <TableRow
-                                sx={{
-                                    background: hideHeaderAndFooter
-                                        ? undefined
-                                        : theme.palette.background.default,
-                                }}
-                            >
-                                {columns.map((column, index) => {
-                                    if (column.renderHeader) {
-                                        return column.renderHeader(
-                                            index,
-                                            selectableTableStoreName
-                                        );
-                                    }
+                        <EntityTableHeader
+                            columns={columns}
+                            columnToSort={columnToSort}
+                            headerClick={handlers.sort}
+                            hide={hideHeaderAndFooter}
+                            selectableTableStoreName={selectableTableStoreName}
+                            sortDirection={sortDirection}
+                        />
 
-                                    return (
-                                        <TableCell
-                                            key={`${column.field}-${index}`}
-                                            sortDirection={
-                                                columnToSort === column.field
-                                                    ? sortDirection
-                                                    : false
-                                            }
-                                        >
-                                            {selectData &&
-                                            column.field &&
-                                            !hideHeaderAndFooter ? (
-                                                <TableSortLabel
-                                                    IconComponent={ArrowDown}
-                                                    active={
-                                                        columnToSort ===
-                                                        column.field
-                                                    }
-                                                    direction={
-                                                        columnToSort ===
-                                                        column.field
-                                                            ? sortDirection
-                                                            : 'asc'
-                                                    }
-                                                    onClick={handlers.sort(
-                                                        column.field
-                                                    )}
-                                                    sx={{
-                                                        '& .MuiTableSortLabel-icon':
-                                                            {
-                                                                fontSize: 14,
-                                                            },
-                                                    }}
-                                                >
-                                                    {column.headerIntlKey ? (
-                                                        <FormattedMessage
-                                                            id={
-                                                                column.headerIntlKey
-                                                            }
-                                                        />
-                                                    ) : null}
-                                                </TableSortLabel>
-                                            ) : column.headerIntlKey ? (
-                                                <FormattedMessage
-                                                    id={column.headerIntlKey}
-                                                />
-                                            ) : null}
-                                        </TableCell>
-                                    );
-                                })}
-                            </TableRow>
-                        </TableHead>
-
-                        <TableBody>
-                            {dataRows ? (
-                                dataRows
-                            ) : isValidating ||
-                              tableState.status === TableStatuses.LOADING ? (
-                                <TableLoadingRows columns={columns} />
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={columns.length}>
-                                        <Box
-                                            sx={{
-                                                p: 2,
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                            }}
-                                        >
-                                            <Box width={450}>
-                                                <Typography
-                                                    variant="subtitle2"
-                                                    align="center"
-                                                    sx={{ mb: 1 }}
-                                                >
-                                                    <FormattedMessage
-                                                        id={getEmptyTableHeader(
-                                                            tableState.status,
-                                                            noExistingDataContentIds
-                                                        )}
-                                                    />
-                                                </Typography>
-
-                                                <Typography component="div">
-                                                    {getEmptyTableMessage(
-                                                        tableState.status,
-                                                        noExistingDataContentIds
-                                                    )}
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
+                        <EntityTableBody
+                            columns={columns}
+                            rows={dataRows}
+                            loading={
+                                isValidating ||
+                                tableState.status === TableStatuses.LOADING
+                            }
+                            noExistingDataContentIds={noExistingDataContentIds}
+                            tableState={tableState}
+                        />
 
                         {dataRows && selectDataCount && !hideHeaderAndFooter ? (
                             <TableFooter>
