@@ -1,5 +1,5 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
-import MonetaryValue from 'components/tables/cells/MonetaryValue';
+import ChipList from '../cells/ChipList';
 
 interface RowProps {
     row: any;
@@ -20,15 +20,11 @@ function Row({ row }: RowProps) {
                 <Typography>{row.pointer}</Typography>
             </TableCell>
 
-            <TableCell>
-                <Typography>{row.types}</Typography>
-            </TableCell>
+            <ChipList strings={row.types} stripPath={false} />
 
             <TableCell>
                 <Typography>{row.exists}</Typography>
             </TableCell>
-
-            <MonetaryValue amount={row.totalCost} />
         </TableRow>
     );
 }

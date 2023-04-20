@@ -7,9 +7,10 @@ interface Props {
     strings: string[];
     disabled?: boolean;
     maxChips?: number;
+    stripPath?: boolean;
 }
 
-function ChipList({ strings, disabled, maxChips }: Props) {
+function ChipList({ strings, disabled, maxChips, stripPath }: Props) {
     const intl = useIntl();
 
     const [maxRender, setMaxRender] = useState(maxChips ?? strings.length);
@@ -47,7 +48,7 @@ function ChipList({ strings, disabled, maxChips }: Props) {
                             val={val}
                             key={`${val}-${index}`}
                             disabled={disabled}
-                            stripPath
+                            stripPath={stripPath ?? true}
                         />
                     );
                 })}
