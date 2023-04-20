@@ -181,6 +181,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin': `Admin`,
     'routeTitle.admin.accessGrants': `Access Grants`,
     'routeTitle.admin.api': `CLI - API`,
+    'routeTitle.admin.billing': `Billing`,
     'routeTitle.admin.connectors': `Connectors`,
     'routeTitle.admin.cookies': `Cookie Preferences`,
     'routeTitle.admin.storageMappings': `${CommonMessages['terms.storageMapping']}`,
@@ -403,6 +404,34 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
     'admin.accessToken': `Access Token`,
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
+
+    'admin.billing.header': `Billing`,
+    'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and {gbFree}GB are free every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
+    'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
+    'admin.billing.error.undefinedPricingTier.docLink': `contact support`,
+    'admin.billing.error.undefinedPricingTier.docPath': `mailto:support@estuary.dev`,
+    'admin.billing.label.tiers': `Pricing Tier`,
+    'admin.billing.tier.free': `Open Source`,
+    'admin.billing.tier.personal': `Cloud`,
+    'admin.billing.tier.enterprise': `Enterprise`,
+    'admin.billing.graph.dataByMonth.header': `Data Volume by Month`,
+    'admin.billing.graph.connectorsByMonth.header': `Tasks by Month`,
+    'admin.billing.graph.dataByTask.header': `Data Volume by Task`,
+    'admin.billing.graph.dataByTask.tooltip': `This graph displays the ten, largest data producing tasks over the set interval.`,
+    'admin.billing.table.history.header': `Recent History`,
+    'admin.billing.table.history.label.dataVolume': `Data Volume`,
+    'admin.billing.table.history.label.details': `Pricing Tier`,
+    'admin.billing.table.history.label.month': `Month`,
+    'admin.billing.table.history.label.tasks': `Tasks`,
+    'admin.billing.table.history.label.totalCost': `Total Cost`,
+    'admin.billing.table.history.tooltip.dataVolume': `bytes of data processed by tasks`,
+    'admin.billing.table.history.emptyTableDefault.header': `No information found.`,
+    'admin.billing.table.history.emptyTableDefault.message': `We couldn't find any billing information on file. Only administrators of a tenant are able to review billing information.`,
+    'admin.billing.payment.header': `Payment Information`,
+    'admin.billing.payment.message': `We are working on integrating a payment service provider to enable in-app transactions. To make a payment or inquire about our pricing tiers, please {docLink}.`,
+    'admin.billing.payment.message.docLink': `contact us`,
+    'admin.billing.payment.message.docPath': `mailto:support@estuary.dev`,
+
     'admin.cookies': `Cookie Preference Management`,
     'admin.cookies.message': `Click below to manage your preferences.`,
     'admin.tabs.users': `Users`,
@@ -410,6 +439,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.cookies': `Cookie Preferences`,
     'admin.tabs.storageMappings': `${CommonMessages['terms.storageMapping']}`,
+    'admin.tabs.billing': `Billing`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
@@ -897,6 +927,7 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
 };
 
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
+    'oauth.error.credentialsMissing': `need to complete OAuth`,
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
     'timePicker.button.ariaLabel': `Open time picker for {label}`,

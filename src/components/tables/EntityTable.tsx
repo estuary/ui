@@ -18,10 +18,6 @@ import {
 } from '@mui/material';
 import TablePaginationActions from 'components/tables/PaginationActions';
 import RowSelector from 'components/tables/RowActions/RowSelector';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'components/tables/Store';
 import Title from 'components/tables/Title';
 import { useZustandStore } from 'context/Zustand/provider';
 import { ArrowDown } from 'iconoir-react';
@@ -39,6 +35,10 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useEffectOnce } from 'react-use';
 import { Pagination } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'stores/Tables/Store';
 import {
     SortDirection,
     TableColumns,
@@ -70,11 +70,14 @@ interface Props {
     setColumnToSort: (data: any) => void;
     header: string;
     filterLabel: string;
+    noExistingDataContentIds: TableIntlConfig;
+    selectableTableStoreName: SelectTableStoreNames;
     enableSelection?: boolean;
     rowSelectorProps?: RowSelectorProps;
-    noExistingDataContentIds: TableIntlConfig;
     showEntityStatus?: boolean;
-    selectableTableStoreName: SelectTableStoreNames;
+    hideHeaderAndFooter?: boolean;
+    rowsPerPageOptions?: number[];
+    minWidth?: number;
 }
 
 export const getPagination = (currPage: number, size: number) => {
@@ -88,8 +91,6 @@ export const getPagination = (currPage: number, size: number) => {
 const getStartingPage = (val: Pagination, size: number) => {
     return val.from / size;
 };
-
-const rowsPerPageOptions = [10, 25, 50];
 
 // TODO (tables) I think we should switch this to React Table soon
 //   Also - you MUST include a count with your query or else pagination breaks
@@ -111,6 +112,9 @@ function EntityTable({
     rowSelectorProps,
     showEntityStatus = false,
     selectableTableStoreName,
+    hideHeaderAndFooter,
+    rowsPerPageOptions = [10, 25, 50],
+    minWidth = 350,
 }: Props) {
     const isFiltering = useRef(Boolean(searchQuery));
     const searchTextField = useRef<HTMLInputElement>(null);
@@ -266,50 +270,52 @@ function EntityTable({
 
     return (
         <Box data-public>
-            <Box sx={{ mx: 2 }}>
-                <Stack direction="row" spacing={1}>
-                    {enableSelection ? (
-                        <Title header={header} marginBottom={2} />
-                    ) : null}
-                </Stack>
+            {hideHeaderAndFooter ? null : (
+                <Box sx={{ mx: 2 }}>
+                    <Stack direction="row" spacing={1}>
+                        {enableSelection ? (
+                            <Title header={header} marginBottom={2} />
+                        ) : null}
+                    </Stack>
 
-                <Toolbar
-                    disableGutters
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'start',
-                    }}
-                >
-                    {enableSelection ? (
-                        <RowSelector {...rowSelectorProps} />
-                    ) : (
-                        <Title header={header} />
-                    )}
-
-                    <TextField
-                        inputRef={searchTextField}
-                        id="capture-search-box"
-                        label={intl.formatMessage({
-                            id: filterLabel,
-                        })}
-                        variant="outlined"
-                        size="small"
-                        defaultValue={searchQuery}
-                        onChange={handlers.filterTable}
+                    <Toolbar
+                        disableGutters
                         sx={{
-                            'width': belowMd ? 'auto' : 350,
-                            '& .MuiInputBase-root': { borderRadius: 3 },
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'start',
                         }}
-                    />
-                </Toolbar>
-            </Box>
+                    >
+                        {enableSelection ? (
+                            <RowSelector {...rowSelectorProps} />
+                        ) : (
+                            <Title header={header} />
+                        )}
 
-            <Box sx={{ mb: 2, mx: 2 }}>
+                        <TextField
+                            inputRef={searchTextField}
+                            id="capture-search-box"
+                            label={intl.formatMessage({
+                                id: filterLabel,
+                            })}
+                            variant="outlined"
+                            size="small"
+                            defaultValue={searchQuery}
+                            onChange={handlers.filterTable}
+                            sx={{
+                                'width': belowMd ? 'auto' : 350,
+                                '& .MuiInputBase-root': { borderRadius: 3 },
+                            }}
+                        />
+                    </Toolbar>
+                </Box>
+            )}
+
+            <Box sx={hideHeaderAndFooter ? {} : { mb: 2, mx: 2 }}>
                 <TableContainer component={Box}>
                     <Table
                         size="small"
-                        sx={{ minWidth: 350 }}
+                        sx={{ minWidth }}
                         aria-label={intl.formatMessage({
                             id: 'entityTable.title',
                         })}
@@ -317,8 +323,9 @@ function EntityTable({
                         <TableHead>
                             <TableRow
                                 sx={{
-                                    background:
-                                        theme.palette.background.default,
+                                    background: hideHeaderAndFooter
+                                        ? undefined
+                                        : theme.palette.background.default,
                                 }}
                             >
                                 {columns.map((column, index) => {
@@ -338,7 +345,9 @@ function EntityTable({
                                                     : false
                                             }
                                         >
-                                            {selectData && column.field ? (
+                                            {selectData &&
+                                            column.field &&
+                                            !hideHeaderAndFooter ? (
                                                 <TableSortLabel
                                                     IconComponent={ArrowDown}
                                                     active={
@@ -423,7 +432,7 @@ function EntityTable({
                             )}
                         </TableBody>
 
-                        {dataRows && selectDataCount ? (
+                        {dataRows && selectDataCount && !hideHeaderAndFooter ? (
                             <TableFooter>
                                 <TableRow>
                                     <TablePagination

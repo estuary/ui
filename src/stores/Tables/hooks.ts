@@ -6,7 +6,7 @@ import {
     useQueryParams,
     withDefault,
 } from 'use-query-params';
-import { getPagination } from './EntityTable';
+import { getPagination } from '../../components/tables/EntityTable';
 
 export type TablePrefix =
     | 'ag' // access grants
@@ -15,15 +15,15 @@ export type TablePrefix =
     | 'cap' // captures
     | 'mat' // materializations
     | 'col' // collections
-    | 'con'; // connectors
+    | 'con' // connectors
+    | 'bil'; // billing
 
 function useTableState(
     keyPrefix: TablePrefix,
     defaultSortCol: any,
-    defaultSortDir?: SortDirection
+    defaultSortDir?: SortDirection,
+    rowsPerPage?: number
 ) {
-    const rowsPerPage = 10;
-
     const { paginationKey, searchQueryKey, sortDirectionKey, sortColumnKey } =
         useMemo(() => {
             return {
@@ -38,7 +38,10 @@ function useTableState(
         [sortColumnKey]: withDefault(StringParam, defaultSortCol),
         [sortDirectionKey]: withDefault(StringParam, defaultSortDir ?? 'asc'),
         [searchQueryKey]: withDefault(StringParam, null),
-        [paginationKey]: withDefault(JsonParam, getPagination(0, rowsPerPage)),
+        [paginationKey]: withDefault(
+            JsonParam,
+            getPagination(0, rowsPerPage ?? 10)
+        ),
     });
 
     const setPagination = useCallback(
