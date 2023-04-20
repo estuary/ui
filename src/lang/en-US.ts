@@ -885,11 +885,11 @@ const Tenant: ResolvedIntlConfig['messages'] = {
 
     'tenant.origin.radioGroup.label': `How'd you hear about us?`,
     'tenant.origin.radio.browserSearch.label': `Search (Google, Bing, etc.)`,
-    'tenant.origin.radio.linkedin.label': `Linkedin`,
+    'tenant.origin.radio.linkedIn.label': `LinkedIn`,
     'tenant.origin.radio.referral.label': `Referral by a Partner`,
-    'tenant.origin.radio.youtube.label': `Youtube`,
+    'tenant.origin.radio.youTube.label': `YouTube`,
     'tenant.origin.radio.email.label': `Email`,
-    'tenant.origin.radio.github.label': `Github`,
+    'tenant.origin.radio.gitHub.label': `GitHub`,
     'tenant.origin.radio.other.label': `Other`,
 
     'tenant.errorMessage.missingSurvey': `You must answer the survey before continuing.`,

@@ -67,11 +67,11 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
 
     const originOptions = useConstant(() => [
         intl.formatMessage({ id: 'tenant.origin.radio.browserSearch.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.linkedin.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.linkedIn.label' }),
         intl.formatMessage({ id: 'tenant.origin.radio.referral.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.youtube.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.youTube.label' }),
         intl.formatMessage({ id: 'tenant.origin.radio.email.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.github.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.gitHub.label' }),
         surveyOptionOther,
     ]);
 
