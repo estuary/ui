@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
 import StatsHeader from '../cells/stats/Header';
-import { ColumnProps } from '../EntityTable';
+import { ColumnProps } from '../EntityTable/types';
 
 const defaultColumns: ColumnProps[] = [
     {

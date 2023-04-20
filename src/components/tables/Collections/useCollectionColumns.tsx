@@ -2,7 +2,7 @@ import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useMemo } from 'react';
 import { hasLength } from 'utils/misc-utils';
 import StatsHeader from '../cells/stats/Header';
-import { ColumnProps } from '../EntityTable';
+import { ColumnProps } from '../EntityTable/types';
 
 const defaultColumns: ColumnProps[] = [
     {
