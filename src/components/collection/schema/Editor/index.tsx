@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import ArrayOfPointers from 'components/schema/ArrayOfPointers';
 import AlertBox from 'components/shared/AlertBox';
 import useCatalogDetails from './useCatalogDetails';
@@ -20,12 +21,16 @@ function CollectionSchemaEditor({ disabled, entityName }: Props) {
 
     if (draftSpec) {
         return (
-            <form>
+            <Box>
                 <ArrayOfPointers
                     value={draftSpec.spec.key}
                     spec={draftSpec.spec}
                     onChange={async (event, value, reason) => {
-                        console.log('event', { event, value, reason });
+                        console.log('123event>>>>>>>>>', {
+                            event,
+                            value,
+                            reason,
+                        });
                         draftSpec.spec.key = value;
                         await onChange(draftSpec.spec);
                     }}
@@ -37,7 +42,7 @@ function CollectionSchemaEditor({ disabled, entityName }: Props) {
                     <br />
                     readSchema: json
                 </AlertBox>
-            </form>
+            </Box>
         );
     } else if (isValidating) {
         return <>This is the collection schema skeleton</>;
