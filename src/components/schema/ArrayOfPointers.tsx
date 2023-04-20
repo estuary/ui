@@ -2,7 +2,7 @@ import { infer } from '@estuary/flow-web';
 import { Autocomplete, Skeleton, TextField } from '@mui/material';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 
@@ -17,6 +17,7 @@ interface Props {
 const typesAllowedAsKeys = ['string', 'integer', 'boolean'];
 
 function ArrayOfPointers({ spec, value, onChange }: Props) {
+    const defaultValue = useRef(value);
     const [keys, setKeys] = useState<string[]>([]);
 
     useEffect(() => {
@@ -57,7 +58,7 @@ function ArrayOfPointers({ spec, value, onChange }: Props) {
         <Autocomplete
             {...autoCompleteDefaults_Virtual_Multiple}
             onChange={onChange}
-            defaultValue={value}
+            defaultValue={defaultValue.current}
             options={keys}
             renderInput={(params) => (
                 <TextField
