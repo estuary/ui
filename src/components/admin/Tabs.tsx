@@ -11,6 +11,7 @@ function AdminTabs() {
     const { pathname } = useLocation();
     const [selectedTab, setSelectedTab] = useState(0);
 
+    // TODO (billing): Enable the billing tab when the work needed on the control-plane is complete.
     const tabProps = useConstant(() => {
         const response = [
             {
@@ -21,6 +22,10 @@ function AdminTabs() {
                 label: 'admin.tabs.storageMappings',
                 path: authenticatedRoutes.admin.storageMappings.fullPath,
             },
+            // {
+            //     label: 'admin.tabs.billing',
+            //     path: authenticatedRoutes.admin.billing.fullPath,
+            // },
             {
                 label: 'admin.tabs.connectors',
                 path: authenticatedRoutes.admin.connectors.fullPath,

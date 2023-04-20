@@ -2,15 +2,15 @@ import { Button, ButtonGroup, Menu, MenuItem, Stack } from '@mui/material';
 import DeleteButton from 'components/tables/RowActions/Delete/Button';
 import DisableEnableButton from 'components/tables/RowActions/DisableEnable/Button';
 import Materialize from 'components/tables/RowActions/Materialize';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'components/tables/Store';
 import { useZustandStore } from 'context/Zustand/provider';
 import { MinusSquare, NavArrowDown, Square } from 'iconoir-react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'stores/Tables/Store';
 import { RowSelectorProps } from './types';
 
 function RowSelector({

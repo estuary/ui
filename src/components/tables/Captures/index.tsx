@@ -4,9 +4,9 @@ import Rows from 'components/tables/Captures/Rows';
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
+import useTableState from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
-import useTableState from '../hooks';
-import StatsHydrator from './StatsHydrator';
+import StatsHydrator from 'stores/Tables/StatsHydrator';
 import useCaptureColumns from './useCaptureColumns';
 
 function CapturesTable() {

@@ -3,7 +3,9 @@ import {
     AutocompleteChangeDetails,
     AutocompleteChangeReason,
     AutocompleteRenderInputParams,
+    SxProps,
     TextField,
+    Theme,
 } from '@mui/material';
 
 interface Props {
@@ -17,6 +19,7 @@ interface Props {
         details?: AutocompleteChangeDetails<string> | undefined
     ) => void;
     id?: string;
+    autocompleteSx?: SxProps<Theme>;
 }
 
 function AutocompletedField({
@@ -25,6 +28,7 @@ function AutocompletedField({
     defaultValue,
     changeHandler,
     id,
+    autocompleteSx,
 }: Props) {
     return (
         <Autocomplete
@@ -47,6 +51,7 @@ function AutocompletedField({
             )}
             defaultValue={defaultValue}
             disableClearable
+            sx={autocompleteSx}
             onChange={changeHandler}
         />
     );

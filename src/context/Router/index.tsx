@@ -53,6 +53,7 @@ const MaterializationsTable = lazy(() => import('./MaterializationsTable'));
 const Admin = lazy(() => import('pages/Admin'));
 const AccessGrants = lazy(() => import('components/admin/AccessGrants'));
 const AdminApi = lazy(() => import('components/admin/Api'));
+const AdminBilling = lazy(() => import('components/admin/Billing'));
 const AdminConnectors = lazy(() => import('components/admin/Connectors'));
 const AdminCookies = lazy(() => import('components/admin/Cookies'));
 const StorageMappings = lazy(() => import('components/admin/StorageMappings'));
@@ -372,6 +373,14 @@ const router = createBrowserRouter(
                             element={
                                 <Suspense fallback={null}>
                                     <AdminApi />
+                                </Suspense>
+                            }
+                        />
+                        <Route
+                            path={authenticatedRoutes.admin.billing.path}
+                            element={
+                                <Suspense fallback={null}>
+                                    <AdminBilling />
                                 </Suspense>
                             }
                         />

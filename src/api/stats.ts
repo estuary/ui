@@ -1,4 +1,6 @@
+import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import {
+    eachMonthOfInterval,
     endOfWeek,
     startOfMonth,
     startOfWeek,
@@ -8,12 +10,14 @@ import {
 } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import {
+    defaultTableFilter,
     handleFailure,
     handleSuccess,
+    SortingProps,
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { CatalogStats } from 'types';
+import { CatalogStats, CatalogStats_Billing, Grants } from 'types';
 
 export type StatsFilter =
     | 'today'
@@ -105,4 +109,82 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
     return queryBuilder.then(handleSuccess<CatalogStats[]>, handleFailure);
 };
 
-export { getStatsByName };
+const getStatsForBilling = (grants: Grants[]) => {
+    const subjectRoleFilters = grants
+        .map((grant) => `catalog_name.ilike.${grant.object_role}%`)
+        .join(',');
+
+    const today = new Date();
+    const currentMonth = startOfMonth(today);
+    const startMonth = subMonths(currentMonth, 5);
+    const dateRange = eachMonthOfInterval({
+        start: startMonth,
+        end: currentMonth,
+    }).map((date) => formatToGMT(date));
+
+    return supabaseClient
+        .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
+        .select(
+            `    
+            catalog_name,
+            grain,
+            ts,
+            bytes_written_by_me,
+            bytes_read_by_me,
+            flow_document
+        `
+        )
+        .eq('grain', 'monthly')
+        .in('ts', dateRange)
+        .or(subjectRoleFilters)
+        .order('ts', { ascending: false });
+};
+
+// TODO (billing): Enable pagination when the new RPC is available.
+const getStatsForBillingHistoryTable = (
+    grants: Grants[],
+    // pagination: any,
+    searchQuery: any,
+    sorting: SortingProps<any>[]
+): PostgrestFilterBuilder<CatalogStats_Billing> => {
+    const subjectRoleFilters = grants
+        .map((grant) => `catalog_name.ilike.${grant.object_role}%`)
+        .join(',');
+
+    const today = new Date();
+    const currentMonth = startOfMonth(today);
+    const startMonth = subMonths(currentMonth, 5);
+    const dateRange = eachMonthOfInterval({
+        start: startMonth,
+        end: currentMonth,
+    }).map((date) => formatToGMT(date));
+
+    let queryBuilder = supabaseClient
+        .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
+        .select(
+            `    
+            catalog_name,
+            grain,
+            ts,
+            bytes_written_by_me,
+            bytes_read_by_me,
+            flow_document
+        `,
+            { count: 'exact' }
+        )
+        .eq('grain', 'monthly')
+        .in('ts', dateRange)
+        .or(subjectRoleFilters);
+
+    queryBuilder = defaultTableFilter<CatalogStats_Billing>(
+        queryBuilder,
+        ['ts'],
+        searchQuery,
+        sorting
+        // pagination
+    );
+
+    return queryBuilder;
+};
+
+export { getStatsForBilling, getStatsForBillingHistoryTable, getStatsByName };
