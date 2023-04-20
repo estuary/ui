@@ -1,5 +1,6 @@
 import { LoadingButton } from '@mui/lab';
 import {
+    Box,
     FormControl,
     FormControlLabel,
     FormLabel,
@@ -13,7 +14,7 @@ import {
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
-import ExternalLink from 'components/shared/ExternalLink';
+import customerQuote from 'images/customer_quote.png';
 import { ChangeEvent, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { fireGtmEvent } from 'services/gtm';
@@ -53,6 +54,9 @@ const getValidationErrorMessageId = (
 
 const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     trackEvent(`${directiveName}:Viewed`);
+
+    // const theme = useTheme();
+    // const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
 
     const intl = useIntl();
     const surveyOptionOther = intl.formatMessage({
@@ -179,145 +183,191 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     // );
 
     return (
-        <>
-            <Stack
-                spacing={2}
+        <Stack direction="row">
+            <Box
                 sx={{
-                    mt: 1,
-                    mb: 2,
+                    width: '50%',
+                    mr: 2,
                     display: 'flex',
-                    alignItems: 'left',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundSize: 'contain',
                 }}
             >
-                <Typography variant="h5" align="center" sx={{ mb: 1.5 }}>
-                    <FormattedMessage id="tenant.heading" />
-                </Typography>
+                <img
+                    src={customerQuote}
+                    width="85%"
+                    alt={intl.formatMessage({ id: 'company' })}
+                />
+            </Box>
 
-                {nameMissing || surveyResultsMissing ? (
-                    <AlertBox
-                        short
-                        severity="error"
-                        title={<FormattedMessage id="error.title" />}
-                    >
-                        <FormattedMessage
-                            id={getValidationErrorMessageId(
-                                nameMissing,
-                                surveyResultsMissing
-                            )}
-                        />
-                    </AlertBox>
-                ) : null}
-
-                {serverError ? (
-                    <AlertBox
-                        severity="error"
-                        short
-                        title={<FormattedMessage id="common.fail" />}
-                    >
-                        {serverError}
-                    </AlertBox>
-                ) : null}
-
-                <Typography>
-                    <FormattedMessage id="tenant.message.1" />
-                </Typography>
-
-                <Typography>
-                    <FormattedMessage
-                        id="tenant.docs.message"
-                        values={{
-                            link: (
-                                <ExternalLink
-                                    link={intl.formatMessage({
-                                        id: 'tenant.docs.message.link',
-                                    })}
-                                >
-                                    <FormattedMessage id="terms.documentation" />
-                                </ExternalLink>
-                            ),
-                        }}
-                    />
-                </Typography>
-            </Stack>
-
-            <form noValidate onSubmit={handlers.submit}>
+            <Stack sx={{ width: '50%' }}>
                 <Stack
                     spacing={2}
                     sx={{
-                        width: '100%',
+                        mt: 1,
+                        mb: 2,
                         display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        alignItems: 'left',
                     }}
                 >
-                    <TextField
-                        fullWidth
-                        placeholder={intl.formatMessage({
-                            id: 'tenant.input.placeholder',
-                        })}
-                        helperText={intl.formatMessage({
-                            id: nameMissing
-                                ? 'tenant.expectations.error'
-                                : 'tenant.expectations',
-                        })}
-                        error={nameMissing}
-                        id="requestedTenant"
-                        label={
-                            <FormattedMessage id="common.tenant.creationForm" />
-                        }
-                        value={requestedTenant}
-                        onChange={(event) =>
-                            handlers.update(event.target.value)
-                        }
-                        required
-                        inputProps={{
-                            pattern: PREFIX_NAME_PATTERN,
-                        }}
-                    />
+                    <Typography variant="h5" sx={{ mb: 1.5 }}>
+                        <FormattedMessage id="tenant.heading" />
+                    </Typography>
 
-                    <FormControl>
-                        <FormLabel id="origin">
-                            <FormattedMessage id="tenant.origin.radioGroup.label" />
-                        </FormLabel>
-
-                        <RadioGroup
-                            aria-labelledby="demo-radio-buttons-group-label"
-                            name="radio-buttons-group"
-                            onChange={handlers.updateSurveyOrigin}
+                    {nameMissing || surveyResultsMissing ? (
+                        <AlertBox
+                            short
+                            severity="error"
+                            title={<FormattedMessage id="error.title" />}
                         >
-                            {originOptions.map((option, index) => (
-                                <FormControlLabel
-                                    key={`${option}-${index}`}
-                                    value={option}
-                                    control={<Radio size="small" />}
-                                    label={option}
-                                />
-                            ))}
-                        </RadioGroup>
+                            <FormattedMessage
+                                id={getValidationErrorMessageId(
+                                    nameMissing,
+                                    surveyResultsMissing
+                                )}
+                            />
+                        </AlertBox>
+                    ) : null}
 
-                        <TextField
-                            // error={surveyResponseDetailsRequired}
-                            onChange={(event) =>
-                                handlers.updateSurveyDetails(event.target.value)
-                            }
-                            sx={{ ml: 3 }}
-                        />
-                    </FormControl>
-
-                    <Toolbar>
-                        <LoadingButton
-                            type="submit"
-                            variant="contained"
-                            loading={saving}
-                            disabled={saving}
+                    {serverError ? (
+                        <AlertBox
+                            severity="error"
+                            short
+                            title={<FormattedMessage id="common.fail" />}
                         >
-                            <FormattedMessage id="cta.continue" />
-                        </LoadingButton>
-                    </Toolbar>
+                            {serverError}
+                        </AlertBox>
+                    ) : null}
                 </Stack>
-            </form>
-        </>
+
+                <form noValidate onSubmit={handlers.submit}>
+                    <Stack
+                        spacing={4}
+                        sx={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'left',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <FormControl>
+                            <FormLabel
+                                id="origin"
+                                required
+                                sx={{ mb: 1, fontSize: 18 }}
+                            >
+                                <FormattedMessage id="tenant.input.label" />
+                            </FormLabel>
+
+                            {/* <Stack spacing={2} sx={{ maxWidth: 540, mb: 1 }}>
+                                <Typography>
+                                    <FormattedMessage id="tenant.message.1" />
+                                </Typography>
+
+                                <Typography>
+                                    <FormattedMessage
+                                        id="tenant.docs.message"
+                                        values={{
+                                            link: (
+                                                <ExternalLink
+                                                    link={intl.formatMessage({
+                                                        id: 'tenant.docs.message.link',
+                                                    })}
+                                                >
+                                                    <FormattedMessage id="terms.documentation" />
+                                                </ExternalLink>
+                                            ),
+                                        }}
+                                    />
+                                </Typography>
+                            </Stack> */}
+
+                            <TextField
+                                size="small"
+                                placeholder={intl.formatMessage({
+                                    id: 'tenant.input.placeholder',
+                                })}
+                                helperText={intl.formatMessage({
+                                    id: nameMissing
+                                        ? 'tenant.expectations.error'
+                                        : 'tenant.expectations',
+                                })}
+                                error={nameMissing}
+                                id="requestedTenant"
+                                label={
+                                    <FormattedMessage id="common.tenant.creationForm" />
+                                }
+                                value={requestedTenant}
+                                onChange={(event) =>
+                                    handlers.update(event.target.value)
+                                }
+                                required
+                                inputProps={{
+                                    pattern: PREFIX_NAME_PATTERN,
+                                }}
+                                sx={{
+                                    'maxWidth': 424,
+                                    '& .MuiInputBase-root': { borderRadius: 3 },
+                                }}
+                            />
+                        </FormControl>
+
+                        <FormControl>
+                            <FormLabel
+                                id="origin"
+                                required
+                                sx={{ mb: 1, fontSize: 18 }}
+                            >
+                                <FormattedMessage id="tenant.origin.radioGroup.label" />
+                            </FormLabel>
+
+                            <RadioGroup
+                                aria-labelledby="demo-radio-buttons-group-label"
+                                name="radio-buttons-group"
+                                onChange={handlers.updateSurveyOrigin}
+                            >
+                                {originOptions.map((option, index) => (
+                                    <FormControlLabel
+                                        key={`${option}-${index}`}
+                                        value={option}
+                                        control={<Radio size="small" />}
+                                        label={option}
+                                    />
+                                ))}
+                            </RadioGroup>
+
+                            <TextField
+                                // error={surveyResponseDetailsRequired}
+                                size="small"
+                                onChange={(event) =>
+                                    handlers.updateSurveyDetails(
+                                        event.target.value
+                                    )
+                                }
+                                sx={{
+                                    'maxWidth': 400,
+                                    'ml': 3,
+                                    '& .MuiInputBase-root': { borderRadius: 3 },
+                                }}
+                            />
+                        </FormControl>
+
+                        <Toolbar disableGutters>
+                            <LoadingButton
+                                type="submit"
+                                variant="contained"
+                                loading={saving}
+                                disabled={saving}
+                            >
+                                <FormattedMessage id="cta.continue" />
+                            </LoadingButton>
+                        </Toolbar>
+                    </Stack>
+                </form>
+            </Stack>
+        </Stack>
     );
 };
 

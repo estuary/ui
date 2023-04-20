@@ -870,12 +870,13 @@ const Legal: ResolvedIntlConfig['messages'] = {
 };
 
 const Tenant: ResolvedIntlConfig['messages'] = {
-    'tenant.heading': `Organization Name`,
+    'tenant.heading': `Let's get started`,
     'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary.  It will only be public if you share data with other organizations.`,
 
     'tenant.expectations': `You can use letters, numbers, periods, underscores, and hyphens`,
     'tenant.expectations.error': `Sorry, only letters(a-z), numbers(0-9), periods(.), underscores(_), and hyphens(-) allowed.`,
 
+    'tenant.input.label': `Organization Name`,
     'tenant.input.placeholder': `acmeCo`,
     'tenant.errorMessage.empty': `You must provide a name before continuing.`,
 

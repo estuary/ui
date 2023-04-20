@@ -3,7 +3,11 @@ import PageContainer from 'components/shared/PageContainer';
 import { paperBackground } from 'context/Theme';
 import { BaseComponentProps } from 'types';
 
-const FullPageWrapper = ({ children }: BaseComponentProps) => {
+interface Props extends BaseComponentProps {
+    fullWidth?: boolean;
+}
+
+const FullPageWrapper = ({ children, fullWidth }: Props) => {
     return (
         <PageContainer hideBackground>
             <Toolbar />
@@ -16,7 +20,7 @@ const FullPageWrapper = ({ children }: BaseComponentProps) => {
             >
                 <Paper
                     sx={{
-                        maxWidth: 500,
+                        maxWidth: fullWidth ? undefined : 500,
                         padding: 2,
                         background: (theme) =>
                             paperBackground[theme.palette.mode],

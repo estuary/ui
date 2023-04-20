@@ -26,7 +26,7 @@ function OnboardGuard({ children, forceDisplay, grantsMutate }: Props) {
         return <FullPageSpinner />;
     } else if (forceDisplay || status !== 'fulfilled') {
         return (
-            <FullPageWrapper>
+            <FullPageWrapper fullWidth={true}>
                 <BetaOnboard
                     directive={directive}
                     status={status}
