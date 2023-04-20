@@ -181,7 +181,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     };
 
     return (
-        <Stack direction="row">
+        <Stack direction="row" sx={{ width: '100%' }}>
             {belowMd ? null : (
                 <Box
                     sx={{
@@ -251,7 +251,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
 
                 <form noValidate onSubmit={handlers.submit}>
                     <Stack
-                        spacing={4}
+                        spacing={3}
                         sx={{
                             width: '100%',
                             display: 'flex',
@@ -264,7 +264,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                             <FormLabel
                                 id="origin"
                                 required
-                                sx={{ mb: 1, fontSize: 18 }}
+                                sx={{ mb: 1, fontSize: 16 }}
                             >
                                 <FormattedMessage id="tenant.input.label" />
                             </FormLabel>
@@ -303,7 +303,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                             <FormLabel
                                 id="origin"
                                 required
-                                sx={{ mb: 1, fontSize: 18 }}
+                                sx={{ mb: 1, fontSize: 16 }}
                             >
                                 <FormattedMessage id="tenant.origin.radioGroup.label" />
                             </FormLabel>

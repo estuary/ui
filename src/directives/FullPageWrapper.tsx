@@ -20,7 +20,7 @@ const FullPageWrapper = ({ children, fullWidth }: Props) => {
             >
                 <Paper
                     sx={{
-                        maxWidth: fullWidth ? undefined : 500,
+                        maxWidth: fullWidth ? 1180 : 500,
                         padding: 2,
                         background: (theme) =>
                             paperBackground[theme.palette.mode],
