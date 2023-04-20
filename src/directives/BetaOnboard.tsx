@@ -211,7 +211,11 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                         alignItems: 'left',
                     }}
                 >
-                    <Typography variant="h5" sx={{ mb: 1.5 }}>
+                    <Typography
+                        variant="h5"
+                        align={belowMd ? 'center' : 'left'}
+                        sx={{ mb: 1.5 }}
+                    >
                         <FormattedMessage id="tenant.heading" />
                     </Typography>
 
@@ -334,7 +338,14 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                             />
                         </FormControl>
 
-                        <Toolbar disableGutters>
+                        <Toolbar
+                            disableGutters
+                            sx={{
+                                justifyContent: belowMd
+                                    ? 'center'
+                                    : 'flex-start',
+                            }}
+                        >
                             <LoadingButton
                                 type="submit"
                                 variant="contained"
