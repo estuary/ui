@@ -1,30 +1,86 @@
 import { LoadingButton } from '@mui/lab';
-import { Stack, TextField, Toolbar, Typography } from '@mui/material';
+import {
+    FormControl,
+    FormControlLabel,
+    FormLabel,
+    Radio,
+    RadioGroup,
+    Stack,
+    TextField,
+    Toolbar,
+    Typography,
+} from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { fireGtmEvent } from 'services/gtm';
 import { jobStatusPoller } from 'services/supabase';
+import useConstant from 'use-constant';
 import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 import { jobStatusQuery, trackEvent } from './shared';
 import { DirectiveProps } from './types';
 
 const directiveName = 'betaOnboard';
 
-const submit_onboard = async (requestedTenant: string, directive: any) => {
-    return submitDirective(directiveName, directive, requestedTenant);
+const submit_onboard = async (
+    requestedTenant: string,
+    directive: any,
+    surveyResponse: any
+) => {
+    return submitDirective(
+        directiveName,
+        directive,
+        requestedTenant,
+        surveyResponse
+    );
+};
+
+const getValidationErrorMessageId = (
+    nameMissing: boolean,
+    surveyResultsMissing: boolean
+): string => {
+    if (nameMissing && surveyResultsMissing) {
+        return 'tenant.errorMessage.missingOrganizationAndSurvey';
+    } else {
+        return nameMissing
+            ? 'tenant.errorMessage.empty'
+            : 'tenant.errorMessage.missingSurvey';
+    }
 };
 
 const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     trackEvent(`${directiveName}:Viewed`);
 
     const intl = useIntl();
+    const surveyOptionOther = intl.formatMessage({
+        id: 'tenant.origin.radio.other.label',
+    });
+
+    const originOptions = useConstant(() => [
+        intl.formatMessage({ id: 'tenant.origin.radio.browserSearch.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.linkedin.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.referral.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.youtube.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.email.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.github.label' }),
+        surveyOptionOther,
+    ]);
+
     const [requestedTenant, setRequestedTenant] = useState<string>('');
     const [saving, setSaving] = useState(false);
     const [nameMissing, setNameMissing] = useState(false);
+
+    const [surveyResponse, setSurveyResponse] = useState<{
+        origin: string;
+        details: string;
+    }>({ origin: '', details: '' });
+
+    const [surveyResultsMissing, setSurveyResultsMissing] =
+        useState<boolean>(false);
+
     const [serverError, setServerError] = useState<string | null>(null);
 
     const handlers = {
@@ -33,20 +89,59 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
 
             if (nameMissing) setNameMissing(!hasLength(updatedValue));
         },
+        updateSurveyOrigin: (
+            _event: ChangeEvent<HTMLInputElement>,
+            value: string
+        ) => {
+            const { details } = surveyResponse;
+
+            setSurveyResponse({ origin: value, details });
+
+            setSurveyResultsMissing(
+                value === surveyOptionOther ? !hasLength(details) : false
+            );
+        },
+        updateSurveyDetails: (value: string) => {
+            const { origin } = surveyResponse;
+
+            setSurveyResponse({ origin, details: value });
+
+            if (surveyResultsMissing && origin === surveyOptionOther) {
+                setSurveyResultsMissing(!hasLength(value));
+            }
+        },
         submit: async (event: any) => {
             event.preventDefault();
 
-            if (!hasLength(requestedTenant)) {
-                setNameMissing(true);
+            if (
+                !hasLength(requestedTenant) ||
+                !hasLength(surveyResponse.origin) ||
+                (surveyResponse.origin === surveyOptionOther &&
+                    !hasLength(surveyResponse.details))
+            ) {
+                if (!hasLength(requestedTenant)) {
+                    setNameMissing(true);
+                }
+
+                if (
+                    !hasLength(surveyResponse.origin) ||
+                    (surveyResponse.origin === surveyOptionOther &&
+                        !hasLength(surveyResponse.details))
+                ) {
+                    setSurveyResultsMissing(true);
+                }
+
                 setServerError(null);
             } else {
                 setServerError(null);
                 setNameMissing(false);
+                setSurveyResultsMissing(false);
                 setSaving(true);
 
                 const clickToAcceptResponse = await submit_onboard(
                     requestedTenant,
-                    directive
+                    directive,
+                    surveyResponse
                 );
 
                 if (clickToAcceptResponse.error) {
@@ -77,6 +172,12 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
         },
     };
 
+    // const surveyResponseDetailsRequired = useMemo(
+    //     () =>
+    //         surveyResultsMissing && surveyResponse.origin === surveyOptionOther,
+    //     [surveyOptionOther, surveyResponse.origin, surveyResultsMissing]
+    // );
+
     return (
         <>
             <Stack
@@ -92,13 +193,18 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                     <FormattedMessage id="tenant.heading" />
                 </Typography>
 
-                {nameMissing ? (
+                {nameMissing || surveyResultsMissing ? (
                     <AlertBox
                         short
                         severity="error"
                         title={<FormattedMessage id="error.title" />}
                     >
-                        <FormattedMessage id="tenant.errorMessage.empty" />
+                        <FormattedMessage
+                            id={getValidationErrorMessageId(
+                                nameMissing,
+                                surveyResultsMissing
+                            )}
+                        />
                     </AlertBox>
                 ) : null}
 
@@ -169,6 +275,35 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                             pattern: PREFIX_NAME_PATTERN,
                         }}
                     />
+
+                    <FormControl>
+                        <FormLabel id="origin">
+                            <FormattedMessage id="tenant.origin.radioGroup.label" />
+                        </FormLabel>
+
+                        <RadioGroup
+                            aria-labelledby="demo-radio-buttons-group-label"
+                            name="radio-buttons-group"
+                            onChange={handlers.updateSurveyOrigin}
+                        >
+                            {originOptions.map((option, index) => (
+                                <FormControlLabel
+                                    key={`${option}-${index}`}
+                                    value={option}
+                                    control={<Radio size="small" />}
+                                    label={option}
+                                />
+                            ))}
+                        </RadioGroup>
+
+                        <TextField
+                            // error={surveyResponseDetailsRequired}
+                            onChange={(event) =>
+                                handlers.updateSurveyDetails(event.target.value)
+                            }
+                            sx={{ ml: 3 }}
+                        />
+                    </FormControl>
 
                     <Toolbar>
                         <LoadingButton

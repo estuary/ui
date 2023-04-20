@@ -881,6 +881,18 @@ const Tenant: ResolvedIntlConfig['messages'] = {
 
     'tenant.docs.message': `To see a detailed explanation please view our {link}`,
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
+
+    'tenant.origin.radioGroup.label': `How'd you hear about us?`,
+    'tenant.origin.radio.browserSearch.label': `Search (Google, Bing, etc.)`,
+    'tenant.origin.radio.linkedin.label': `Linkedin`,
+    'tenant.origin.radio.referral.label': `Referral by a Partner`,
+    'tenant.origin.radio.youtube.label': `Youtube`,
+    'tenant.origin.radio.email.label': `Email`,
+    'tenant.origin.radio.github.label': `Github`,
+    'tenant.origin.radio.other.label': `Other`,
+
+    'tenant.errorMessage.missingSurvey': `You must answer the survey before continuing.`,
+    'tenant.errorMessage.missingOrganizationAndSurvey': `You must provide an organization name and answer the survey before continuing.`,
 };
 
 const Details: ResolvedIntlConfig['messages'] = {
