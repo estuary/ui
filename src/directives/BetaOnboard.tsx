@@ -10,6 +10,8 @@ import {
     TextField,
     Toolbar,
     Typography,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
@@ -55,8 +57,8 @@ const getValidationErrorMessageId = (
 const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     trackEvent(`${directiveName}:Viewed`);
 
-    // const theme = useTheme();
-    // const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
+    const theme = useTheme();
+    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
     const intl = useIntl();
     const surveyOptionOther = intl.formatMessage({
@@ -184,24 +186,26 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
 
     return (
         <Stack direction="row">
-            <Box
-                sx={{
-                    width: '50%',
-                    mr: 2,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundSize: 'contain',
-                }}
-            >
-                <img
-                    src={customerQuote}
-                    width="85%"
-                    alt={intl.formatMessage({ id: 'company' })}
-                />
-            </Box>
+            {belowMd ? null : (
+                <Box
+                    sx={{
+                        width: '50%',
+                        mr: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundSize: 'contain',
+                    }}
+                >
+                    <img
+                        src={customerQuote}
+                        width="85%"
+                        alt={intl.formatMessage({ id: 'company' })}
+                    />
+                </Box>
+            )}
 
-            <Stack sx={{ width: '50%' }}>
+            <Stack sx={{ width: belowMd ? '100%' : '50%' }}>
                 <Stack
                     spacing={2}
                     sx={{
