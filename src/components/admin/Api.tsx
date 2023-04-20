@@ -3,8 +3,7 @@ import { Auth } from '@supabase/ui';
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
 import SingleLineCode from 'components/content/SingleLineCode';
-import PageContainer from 'components/shared/PageContainer';
-import useBrowserTitle from 'hooks/useBrowserTitle';
+import usePageTitle from 'hooks/usePageTitle';
 import { FormattedMessage } from 'react-intl';
 
 const boxStyling: SxProps<Theme> = {
@@ -13,18 +12,16 @@ const boxStyling: SxProps<Theme> = {
 };
 
 function AdminApi() {
-    useBrowserTitle('browserTitle.admin.api');
+    usePageTitle({
+        header: authenticatedRoutes.admin.api.title,
+        headerLink:
+            'https://docs.estuary.dev/reference/authentication/#authenticating-flow-using-the-cli',
+    });
 
     const { session } = Auth.useUser();
 
     return (
-        <PageContainer
-            pageTitleProps={{
-                header: authenticatedRoutes.admin.api.title,
-                headerLink:
-                    'https://docs.estuary.dev/reference/authentication/#authenticating-flow-using-the-cli',
-            }}
-        >
+        <>
             <AdminTabs />
 
             <Box sx={boxStyling}>
@@ -39,7 +36,7 @@ function AdminApi() {
                 {/* TODO (defect): Display an error in the event the access token does not exist. */}
                 <SingleLineCode value={session?.access_token ?? ''} />
             </Box>
-        </PageContainer>
+        </>
     );
 }
 

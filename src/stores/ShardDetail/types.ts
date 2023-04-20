@@ -33,6 +33,28 @@ export interface ShardDetails {
     errors: string[] | undefined;
 }
 
+// Represents an endpoint that is exposed by a connector. Connectors may expose 0 or more
+// endpoints, and each one will have a unique hostname that is a subdomain of the data-plane.
+// An endpoint _may_ be served by multiple task processing shards if you have a task with split
+// shards, in which case the data-plane-gateway would decide which shard to use for each
+// connection. But an endpoint may also be specific to a single shard, even if that shard is
+// just one member of a split task group.
+export interface Endpoint {
+    // The complete hostname to use for connecting to the given endpoint.
+    fullHostname: string;
+    // Whether the endpoint allows unauthenticated connections. If `isPublic` is
+    // `false`, then HTTP requests made to the endpoint must contain a data-plane JWT
+    // that's been signed by the control plane.
+    isPublic: boolean;
+    // True if any shards for the endpoint are in PRIMARY status.
+    isUp: boolean;
+    // The name of the protocol associated with the endpoint. A `null` protocol here
+    // is a special case that means that both HTTP2 and HTTP/1.1 are supported.
+    // All protocol names are given as their official (if there is one) ALPN designations,
+    // for example `h2` and `http/1.1`.
+    protocol: string | null;
+}
+
 export interface ShardDetailStore {
     shards: Shard[];
     setShards: SetShards;
@@ -46,6 +68,13 @@ export interface ShardDetailStore {
         taskShards: Shard[],
         defaultStatusColor: ShardStatusColor
     ) => TaskShardDetailsWithShard[];
+    // Returns an array of endpoints for the task. In the case that the task has multiple shards,
+    // this will _only_ return endpoints that are served by all of the shards. In other words, endpoints
+    // for connecting to specific shards will be omitted from the results.
+    getTaskEndpoints: (
+        taskName: string,
+        dataPlaneHostname: string | null
+    ) => Endpoint[];
     getTaskStatusColor: (
         taskShardDetails: TaskShardDetails[],
         defaultStatusColor: ShardStatusColor

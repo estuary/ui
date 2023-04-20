@@ -1,7 +1,7 @@
 import { Typography, useTheme } from '@mui/material';
 import { WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import { useDetailsForm_errorsExist } from 'stores/DetailsForm';
+import { useDetailsForm_errorsExist } from 'stores/DetailsForm/hooks';
 
 interface Props {
     messagePrefix: string;

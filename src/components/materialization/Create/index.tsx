@@ -3,6 +3,7 @@ import { useBindingsEditorStore_resetState } from 'components/editor/Bindings/St
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
+    useEditorStore_resetState,
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
 import MaterializeGenerateButton from 'components/materialization/GenerateButton';
@@ -11,17 +12,18 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import EntityToolbar from 'components/shared/Entity/Header';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
-import PageContainer from 'components/shared/PageContainer';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
-import { useEffect } from 'react';
+import usePageTitle from 'hooks/usePageTitle';
+import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
-} from 'stores/DetailsForm';
+} from 'stores/DetailsForm/hooks';
+import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig/hooks';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
 import {
@@ -34,6 +36,11 @@ import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 
 function MaterializationCreate() {
+    usePageTitle({
+        header: authenticatedRoutes.materializations.create.new.title,
+        headerLink:
+            'https://docs.estuary.dev/guides/create-dataflow/#create-a-materialization',
+    });
     const navigate = useNavigate();
 
     const entityType = 'materialization';
@@ -55,6 +62,7 @@ function MaterializationCreate() {
     const setDraftId = useEditorStore_setId();
 
     const persistedDraftId = useEditorStore_persistedDraftId();
+    const resetEditorStore = useEditorStore_resetState();
 
     // Endpoint Config Store
     const resetEndpointConfigState = useEndpointConfigStore_reset();
@@ -70,6 +78,14 @@ function MaterializationCreate() {
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
         useDraftSpecs(persistedDraftId);
 
+    const taskNames = useMemo(
+        () =>
+            draftSpecsMetadata.draftSpecs
+                .filter((spec) => spec.spec_type === 'materialization')
+                .map((spec) => spec.catalog_name),
+        [draftSpecsMetadata.draftSpecs]
+    );
+
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
@@ -80,6 +96,7 @@ function MaterializationCreate() {
         resetDetailsForm();
         resetFormState();
         resetResourceConfigState();
+        resetEditorStore();
         resetBindingsEditorStore();
     };
 
@@ -120,17 +137,10 @@ function MaterializationCreate() {
     };
 
     return (
-        <PageContainer
-            pageTitleProps={{
-                header: authenticatedRoutes.materializations.create.new.title,
-                headerLink:
-                    'https://docs.estuary.dev/guides/create-dataflow/#create-a-materialization',
-            }}
-        >
+        <DetailsFormHydrator>
             <EndpointConfigHydrator>
                 <ResourceConfigHydrator>
                     <EntityCreate
-                        title="browserTitle.materializationCreate"
                         entityType={entityType}
                         draftSpecMetadata={draftSpecsMetadata}
                         resetState={resetState}
@@ -145,6 +155,7 @@ function MaterializationCreate() {
                                     <MaterializeGenerateButton
                                         disabled={!hasConnectors}
                                         callFailed={helpers.callFailed}
+                                        mutateDraftSpecs={mutateDraftSpecs}
                                     />
                                 }
                                 TestButton={
@@ -161,6 +172,7 @@ function MaterializationCreate() {
                                     <EntitySaveButton
                                         disabled={!draftId}
                                         callFailed={helpers.callFailed}
+                                        taskNames={taskNames}
                                         closeLogs={handlers.closeLogs}
                                         logEvent={
                                             CustomEvents.MATERIALIZATION_CREATE
@@ -172,7 +184,7 @@ function MaterializationCreate() {
                     />
                 </ResourceConfigHydrator>
             </EndpointConfigHydrator>
-        </PageContainer>
+        </DetailsFormHydrator>
     );
 }
 

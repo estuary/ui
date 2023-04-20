@@ -1,5 +1,4 @@
-import { Container, Paper, Snackbar, Toolbar, useTheme } from '@mui/material';
-import { PageTitleProps } from 'components/navigation/PageTitle';
+import { Container, Paper, Snackbar, useTheme } from '@mui/material';
 import Topbar from 'components/navigation/TopBar';
 import { paperBackground } from 'context/Theme';
 import { ReactNode, useEffect, useState } from 'react';
@@ -10,7 +9,6 @@ import AlertBox from './AlertBox';
 
 interface Props {
     children: ReactNode | ReactNode[];
-    pageTitleProps?: PageTitleProps;
     hideBackground?: boolean;
 }
 
@@ -21,7 +19,7 @@ const selectors = {
         state.updateNotificationHistory,
 };
 
-function PageContainer({ children, hideBackground, pageTitleProps }: Props) {
+function PageContainer({ children, hideBackground }: Props) {
     const theme = useTheme();
 
     const notification = useNotificationStore(selectors.notification);
@@ -76,9 +74,7 @@ function PageContainer({ children, hideBackground, pageTitleProps }: Props) {
                 </Snackbar>
             ) : null}
 
-            <Topbar pageTitleProps={pageTitleProps} />
-
-            <Toolbar />
+            <Topbar />
 
             <Paper
                 sx={{

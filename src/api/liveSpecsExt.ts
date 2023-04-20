@@ -152,7 +152,8 @@ const getLiveSpecs_existingTasks = (
             count: 'exact',
         })
         .eq('connector_id', connectorId)
-        .not('catalog_name', 'ilike', 'ops/%');
+        .not('catalog_name', 'ilike', 'ops/%')
+        .not('catalog_name', 'ilike', 'demo/%');
 
     queryBuilder = distributedTableFilter<
         CaptureQueryWithSpec | MaterializationQueryWithSpec
@@ -162,6 +163,45 @@ const getLiveSpecs_existingTasks = (
     );
 
     return queryBuilder;
+};
+
+// Hydration-specific queries
+export interface LiveSpecsExtQuery_DetailsForm {
+    catalog_name: string;
+    id: string;
+    spec_type: Entity;
+    spec: any;
+    detail: string | null;
+    connector_tag_id: string;
+    connector_image_name: string;
+    connector_image_tag: string;
+    connector_logo_url: string;
+}
+
+const DETAILS_FORM_QUERY = `
+    catalog_name,
+    id,
+    spec_type,
+    spec,
+    detail,
+    connector_tag_id,
+    connector_image_name,
+    connector_image_tag,
+    connector_logo_url:connector_logo_url->>en-US::text
+`;
+
+const getLiveSpecs_detailsForm = async (
+    liveSpecId: string,
+    specType: Entity
+) => {
+    const data = await supabaseClient
+        .from(TABLES.LIVE_SPECS_EXT)
+        .select(DETAILS_FORM_QUERY)
+        .eq('id', liveSpecId)
+        .eq('spec_type', specType)
+        .then(handleSuccess<LiveSpecsExtQuery_DetailsForm[]>, handleFailure);
+
+    return data;
 };
 
 // Multipurpose queries
@@ -181,21 +221,21 @@ const getLiveSpecsByCatalogName = async (
         .select(`catalog_name,spec_type,spec,last_pub_id`)
         .eq('catalog_name', catalogName)
         .eq('spec_type', specType)
-        .then(handleSuccess<LiveSpecsExtQuery_ByCatalogName>, handleFailure);
+        .then(handleSuccess<LiveSpecsExtQuery_ByCatalogName[]>, handleFailure);
 
     return data;
 };
 
 export interface LiveSpecsExtQuery_ByCatalogNames {
     catalog_name: string;
-    spec_type: string;
+    spec_type: Entity;
     spec: any;
     last_pub_id: string;
 }
 
 const CHUNK_SIZE = 10;
 const getLiveSpecsByCatalogNames = async (
-    specType: Entity,
+    specType: Entity | null,
     catalogNames: string[]
 ) => {
     const limiter = pLimit(3);
@@ -204,12 +244,16 @@ const getLiveSpecsByCatalogNames = async (
     > = [];
     let index = 0;
 
-    const queryPromiseGenerator = (idx: number) =>
-        supabaseClient
+    const queryPromiseGenerator = (idx: number) => {
+        let query = supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(`catalog_name,spec_type,spec,last_pub_id`)
-            .eq('spec_type', specType)
             .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE));
+        if (specType) {
+            query = query.eq('spec_type', specType);
+        }
+        return query;
+    };
 
     while (index < catalogNames.length) {
         // Have to do this to capture `index` correctly
@@ -229,7 +273,7 @@ const getLiveSpecsByCatalogNames = async (
 const getLiveSpecsByConnectorId = async (
     specType: EntityWithCreateWorkflow,
     connectorId: string,
-    prefixFilter?: string
+    prefixFilters?: string[]
 ) => {
     const taskColumns: string =
         specType === 'capture'
@@ -244,12 +288,14 @@ const getLiveSpecsByConnectorId = async (
         .eq('connector_id', connectorId)
         .eq('spec_type', specType);
 
-    if (prefixFilter) {
-        queryBuilder = queryBuilder.not(
-            'catalog_name',
-            'ilike',
-            `${prefixFilter}/%`
-        );
+    if (prefixFilters && prefixFilters.length > 0) {
+        prefixFilters.forEach((prefix) => {
+            queryBuilder = queryBuilder.not(
+                'catalog_name',
+                'ilike',
+                `${prefix}/%`
+            );
+        });
     }
 
     const data = await queryBuilder.then(
@@ -260,12 +306,36 @@ const getLiveSpecsByConnectorId = async (
     return data;
 };
 
+export interface LiveSpecsExtQuery_ByLiveSpecId {
+    catalog_name: string;
+    id: string;
+    spec_type: Entity;
+    last_pub_id: string;
+    spec: any;
+}
+
+const getLiveSpecsByLiveSpecId = async (
+    liveSpecId: string,
+    specType: Entity
+) => {
+    const data = await supabaseClient
+        .from(TABLES.LIVE_SPECS_EXT)
+        .select('catalog_name,id,spec_type,last_pub_id,spec')
+        .eq('id', liveSpecId)
+        .eq('spec_type', specType)
+        .then(handleSuccess<LiveSpecsExtQuery_ByLiveSpecId[]>, handleFailure);
+
+    return data;
+};
+
 export {
     getLiveSpecs_captures,
     getLiveSpecs_collections,
     getLiveSpecs_existingTasks,
     getLiveSpecs_materializations,
+    getLiveSpecs_detailsForm,
     getLiveSpecsByCatalogName,
     getLiveSpecsByCatalogNames,
     getLiveSpecsByConnectorId,
+    getLiveSpecsByLiveSpecId,
 };

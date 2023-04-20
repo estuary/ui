@@ -1,13 +1,13 @@
 import { Avatar, Stack, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
-import { EntityWithCreateWorkflow } from 'types';
+import { BaseComponentProps } from 'types';
 
-interface Props {
-    stepNumber: 1 | 2;
-    entityType: EntityWithCreateWorkflow;
+interface Props extends BaseComponentProps {
+    stepNumber: number;
+    title: string;
 }
 
-function Step({ stepNumber, entityType }: Props) {
+function HeroStep({ children, stepNumber, title }: Props) {
     return (
         <>
             <Stack
@@ -32,17 +32,13 @@ function Step({ stepNumber, entityType }: Props) {
                 </Avatar>
 
                 <Typography variant="h6">
-                    <FormattedMessage id={`terms.${entityType}`} />
+                    <FormattedMessage id={title} />
                 </Typography>
             </Stack>
 
-            <Typography variant="subtitle1">
-                <FormattedMessage
-                    id={`home.hero.companyDetails.step${stepNumber}`}
-                />
-            </Typography>
+            <Typography variant="subtitle1">{children}</Typography>
         </>
     );
 }
 
-export default Step;
+export default HeroStep;

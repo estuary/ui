@@ -9,10 +9,6 @@ import SharedProgress, {
     ProgressStates,
     SharedProgressProps,
 } from 'components/tables/RowActions/Shared/Progress';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'components/tables/Store';
 import { useZustandStore } from 'context/Zustand/provider';
 import {
     LiveSpecsExtQueryWithSpec,
@@ -22,6 +18,10 @@ import usePublications from 'hooks/usePublications';
 import { useEffect, useState } from 'react';
 import { jobSucceeded } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'stores/Tables/Store';
 import { Entity } from 'types';
 
 export interface UpdateEntityProps {

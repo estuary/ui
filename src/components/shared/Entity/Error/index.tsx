@@ -17,11 +17,7 @@ function EntityError({ logToken, error, title, draftId }: Props) {
     return (
         <HeaderSummary severity="error" title={title}>
             <Stack direction="column" spacing={2}>
-                <Box
-                    sx={{
-                        overflow: 'auto',
-                    }}
-                >
+                <Box>
                     <Error error={error} hideTitle={true} />
 
                     {draftId ? <DraftErrors draftId={draftId} /> : null}

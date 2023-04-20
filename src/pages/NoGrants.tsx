@@ -4,7 +4,7 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
 
 const NoGrants = () => {
-    useBrowserTitle('browserTitle.noGrants');
+    useBrowserTitle('routeTitle.noGrants');
 
     return (
         <FullPageWrapper>

@@ -12,21 +12,24 @@ import {
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
+import DraftInitializer from 'components/shared/Entity/Edit/DraftInitializer';
 import EntityToolbar from 'components/shared/Entity/Header';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
-import PageContainer from 'components/shared/PageContainer';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
+import usePageTitle from 'hooks/usePageTitle';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
-} from 'stores/DetailsForm';
+} from 'stores/DetailsForm/hooks';
+import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig/hooks';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
 import {
@@ -40,6 +43,10 @@ import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 import { getPathWithParams } from 'utils/misc-utils';
 
 function CaptureEdit() {
+    usePageTitle({
+        header: authenticatedRoutes.captures.edit.title,
+    });
+
     const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
     const navigate = useNavigate();
 
@@ -80,7 +87,15 @@ function CaptureEdit() {
 
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } = useDraftSpecs(
         persistedDraftId,
-        lastPubId
+        { lastPubId }
+    );
+
+    const taskNames = useMemo(
+        () =>
+            draftSpecsMetadata.draftSpecs
+                .filter((spec) => spec.spec_type === 'capture')
+                .map((spec) => spec.catalog_name),
+        [draftSpecsMetadata.draftSpecs]
     );
 
     const resetState = () => {
@@ -155,68 +170,69 @@ function CaptureEdit() {
     };
 
     return (
-        <PageContainer
-            pageTitleProps={{
-                header: authenticatedRoutes.captures.edit.title,
-            }}
-        >
-            <EndpointConfigHydrator>
-                <ResourceConfigHydrator>
-                    <EntityEdit
-                        title="browserTitle.captureEdit"
-                        entityType={entityType}
-                        readOnly={{ detailsForm: true }}
-                        draftSpecMetadata={draftSpecsMetadata}
-                        callFailed={helpers.callFailed}
-                        resetState={resetState}
-                        errorSummary={
-                            <ValidationErrorSummary
-                                errorsExist={detailsFormErrorsExist}
-                            />
-                        }
-                        toolbar={
-                            <EntityToolbar
-                                GenerateButton={
-                                    <CaptureGenerateButton
-                                        entityType={entityType}
-                                        disabled={!hasConnectors}
-                                        callFailed={helpers.callFailed}
-                                        postGenerateMutate={mutateDraftSpecs}
-                                    />
-                                }
-                                TestButton={
-                                    <EntityTestButton
-                                        closeLogs={handlers.closeLogs}
-                                        callFailed={helpers.callFailed}
-                                        disabled={!hasConnectors}
-                                        logEvent={CustomEvents.CAPTURE_TEST}
-                                    />
-                                }
-                                SaveButton={
-                                    <EntitySaveButton
-                                        closeLogs={handlers.closeLogs}
-                                        callFailed={helpers.callFailed}
-                                        disabled={!draftId}
-                                        materialize={
-                                            handlers.materializeCollections
-                                        }
-                                        logEvent={CustomEvents.CAPTURE_EDIT}
-                                    />
-                                }
-                            />
-                        }
-                        RediscoverButton={
-                            <RediscoverButton
-                                entityType={entityType}
-                                disabled={!hasConnectors}
-                                callFailed={helpers.callFailed}
-                                postGenerateMutate={mutateDraftSpecs}
-                            />
-                        }
-                    />
-                </ResourceConfigHydrator>
-            </EndpointConfigHydrator>
-        </PageContainer>
+        <DraftInitializer>
+            <DetailsFormHydrator>
+                <EndpointConfigHydrator>
+                    <ResourceConfigHydrator>
+                        <EntityEdit
+                            title="routeTitle.captureEdit"
+                            entityType={entityType}
+                            readOnly={{ detailsForm: true }}
+                            draftSpecMetadata={draftSpecsMetadata}
+                            callFailed={helpers.callFailed}
+                            resetState={resetState}
+                            errorSummary={
+                                <ValidationErrorSummary
+                                    errorsExist={detailsFormErrorsExist}
+                                />
+                            }
+                            toolbar={
+                                <EntityToolbar
+                                    GenerateButton={
+                                        <CaptureGenerateButton
+                                            entityType={entityType}
+                                            disabled={!hasConnectors}
+                                            callFailed={helpers.callFailed}
+                                            postGenerateMutate={
+                                                mutateDraftSpecs
+                                            }
+                                        />
+                                    }
+                                    TestButton={
+                                        <EntityTestButton
+                                            closeLogs={handlers.closeLogs}
+                                            callFailed={helpers.callFailed}
+                                            disabled={!hasConnectors}
+                                            logEvent={CustomEvents.CAPTURE_TEST}
+                                        />
+                                    }
+                                    SaveButton={
+                                        <EntitySaveButton
+                                            closeLogs={handlers.closeLogs}
+                                            callFailed={helpers.callFailed}
+                                            disabled={!draftId}
+                                            taskNames={taskNames}
+                                            materialize={
+                                                handlers.materializeCollections
+                                            }
+                                            logEvent={CustomEvents.CAPTURE_EDIT}
+                                        />
+                                    }
+                                />
+                            }
+                            RediscoverButton={
+                                <RediscoverButton
+                                    entityType={entityType}
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                    postGenerateMutate={mutateDraftSpecs}
+                                />
+                            }
+                        />
+                    </ResourceConfigHydrator>
+                </EndpointConfigHydrator>
+            </DetailsFormHydrator>
+        </DraftInitializer>
     );
 }
 

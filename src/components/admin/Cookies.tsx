@@ -1,8 +1,7 @@
 import { Box, Button, SxProps, Theme, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
-import PageContainer from 'components/shared/PageContainer';
-import useBrowserTitle from 'hooks/useBrowserTitle';
+import usePageTitle from 'hooks/usePageTitle';
 import { FormattedMessage } from 'react-intl';
 import { showCookieDrawer } from 'services/osano';
 
@@ -12,14 +11,12 @@ const boxStyling: SxProps<Theme> = {
 };
 
 function AdminCookies() {
-    useBrowserTitle('browserTitle.admin.cookies');
+    usePageTitle({
+        header: authenticatedRoutes.admin.cookies.title,
+    });
 
     return (
-        <PageContainer
-            pageTitleProps={{
-                header: authenticatedRoutes.admin.cookies.title,
-            }}
-        >
+        <>
             <AdminTabs />
             <Box sx={boxStyling}>
                 <Typography variant="h6" sx={{ mb: 0.5 }}>
@@ -34,7 +31,7 @@ function AdminCookies() {
                     <FormattedMessage id="cta.configure" />
                 </Button>
             </Box>
-        </PageContainer>
+        </>
     );
 }
 

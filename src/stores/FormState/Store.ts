@@ -42,7 +42,7 @@ const getMessageSettings = (
         if (formStatus === FormStatus.TESTING) {
             key = 'common.testing';
         } else if (formStatus === FormStatus.SAVING) {
-            key = 'common.saving';
+            key = 'common.publishing';
         }
 
         return {

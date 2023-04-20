@@ -17,10 +17,9 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.inProgress': `In Progress`,
     'common.done': `Done`,
     'common.testing': `Testing`,
-    'common.saving': `Publishing`,
-    'common.saved': `Published`,
     'common.invalid': `Invalid`,
     'common.fail': `Failed`,
+    'common.publishing': `Publishing...`,
     'common.success': `Success`,
     'common.errors.heading': `Error`,
     'common.optionsAll': `All`,
@@ -38,6 +37,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.synchronizing': `Synchronizing`,
     'common.synchronized': `Synchronized`,
     'common.outOfSync': `Out of Sync`,
+    'common.readOnly': `Read-Only`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -49,6 +49,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.permissions': `Access Grants`,
     'terms.materialization': `Materialization`,
     'terms.capture': `Capture`,
+    'terms.derivation': `Derivation`,
     'terms.documentation': `Docs`,
     'terms.storageMapping': `Storage Mappings`,
 
@@ -137,6 +138,7 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.updated_at': `Updated`,
     'data.email': `Email`,
     'data.display_name': `Username`,
+    'data.published_at': `Published At`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
@@ -179,14 +181,20 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin': `Admin`,
     'routeTitle.admin.accessGrants': `Access Grants`,
     'routeTitle.admin.api': `CLI - API`,
+    'routeTitle.admin.billing': `Billing`,
     'routeTitle.admin.connectors': `Connectors`,
     'routeTitle.admin.cookies': `Cookie Preferences`,
     'routeTitle.admin.storageMappings': `${CommonMessages['terms.storageMapping']}`,
     'routeTitle.captureCreate': `Create Capture`,
+    'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
+    'routeTitle.collectionCreate': `Create Transformation`,
+    'routeTitle.collectionDetails': `Collection Details`,
+    'routeTitle.dataPlaneAuthReq': `Data-plane authorization check`,
     'routeTitle.directives': `Directives`,
+    'routeTitle.details': `Details`,
     'routeTitle.error.entityNotFound': `Entity Not Found`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
@@ -194,36 +202,11 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.noGrants': `Signed Up`,
     'routeTitle.legal': `Legal`,
     'routeTitle.materializationCreate': `Create Materialization`,
+    'routeTitle.materializationDetails': `Materialization Details`,
     'routeTitle.materializationEdit': `Edit Materialization`,
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,
     'routeTitle.passwordReset': `Password Reset`,
-};
-
-const BrowserTitles: ResolvedIntlConfig['messages'] = {
-    'browserTitle.home': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.home']}`,
-    'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dashboard']}`,
-    'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
-    'browserTitle.admin.accessGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.accessGrants']}`,
-    'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
-    'browserTitle.admin.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.connectors']}`,
-    'browserTitle.admin.cookies': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.cookies']}`,
-    'browserTitle.admin.storageMappings': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.storageMappings']}`,
-    'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
-    'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
-    'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
-    'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
-    'browserTitle.error.entityNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.entityNotFound']}`,
-    'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
-    'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
-    'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
-    'browserTitle.legal': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.legal']}`,
-    'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
-    'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
-    'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationEdit']}`,
-    'browserTitle.materializations': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializations']}`,
-    'browserTitle.registration': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.registration']}`,
-    'browserTitle.passwordReset': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.passwordReset']}`,
 };
 
 const Header: ResolvedIntlConfig['messages'] = {
@@ -252,27 +235,36 @@ const Home: ResolvedIntlConfig['messages'] = {
     'home.main.header': `Welcome to Flow!`,
     'home.main.description': `Click the Captures icon on the menu bar to get started.`,
 
+    'home.hero.tab.ariaLabel': `Welcome Image Tabs`,
     'home.hero.tab.companyOverview': `What we do`,
     'home.hero.tab.companyDetails': `How it works`,
+    'home.hero.tab.demo': `Live Demo`,
 
     'home.hero.companyOverview.cta': `How it works`,
-    'home.hero.companyOverview.description': `<b>${CommonMessages.productName}</b> helps you sync your data between the sources that produce it and destinations that consume it in real-time.`,
+    'home.hero.companyOverview.description': `{emphasis} helps you sync your data between the sources that produce it and destinations that consume it in real-time.`,
+    'home.hero.companyOverview.description.emphasis':
+        CommonMessages.productName,
 
     'home.hero.companyDetails.cta': `New capture`,
     'home.hero.companyDetails.step1': `Set up real-time data ingestion from your sources. Click “New Capture” to get started.`,
     'home.hero.companyDetails.step2': `Keep destination systems up to date with Materializations: low latency views of your data.`,
 
-    'home.hero.one.title': `Step 1`,
-    'home.hero.one.message': `Start at the {emphasis} page to setup real-time data ingestion from your sources.`,
-    'home.hero.one.emphasis': RouteTitles['routeTitle.captures'],
+    'home.hero.1.title': `Wikipedia Data`,
+    'home.hero.1.message': `Flow {emphasis} about 100 events per second from the Wikipedia’s API.`,
+    'home.hero.1.message.emphasis': `captures`,
+    'home.hero.1.button': `See the Capture`,
 
-    'home.hero.two.title': `Step 2`,
-    'home.hero.two.message': `Flow automatically lands your data in {emphasis} within your cloud storage. `,
-    'home.hero.two.emphasis': RouteTitles['routeTitle.collections'],
+    'home.hero.2.title': `Transformation`,
+    'home.hero.2.message': `We use a {emphasis} to aggregate the raw data.`,
+    'home.hero.2.message.emphasis': CommonMessages['terms.derivation'],
+    'home.hero.2.button': `See the Collection`,
 
-    'home.hero.three.title': `Step 3`,
-    'home.hero.three.message': `Connect to your target systems and keep them up to date with low-latency views of collection data, known as {emphasis}.`,
-    'home.hero.three.emphasis': RouteTitles['routeTitle.materializations'],
+    'home.hero.3.title': `Google Sheets`,
+    'home.hero.3.message': `Flow {emphasis} a fact table with real-time updates.`,
+    'home.hero.3.message.emphasis': `materializes`,
+    'home.hero.3.button': `See the Materialization`,
+
+    'home.hero.button': `See The Demo`,
 };
 
 const PageNotFound: ResolvedIntlConfig['messages'] = {
@@ -291,7 +283,7 @@ const PasswordReset: ResolvedIntlConfig['messages'] = {
     'passwordReset.main': `Enter your new password below.`,
     'email.description': `The email address associated with your ${CommonMessages.productName} Account`,
     'email.label': `Email`,
-    'password.description': `Pleasae provide a safe and secure password`,
+    'password.description': `Please provide a safe and secure password`,
     'password.label': `Password`,
     'confirmPassword.label': `Confirm Password`,
 };
@@ -388,6 +380,8 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. You'll find a message describing the issue at the top of the page.`,
     'entityTable.moreEntities': `{count} more`,
 
+    'entityTable.detailsLink': `View details`,
+
     'optionMenu.ariaLabel': `Open Option Menu`,
     'optionMenu.tooltip': `Options`,
     'optionMenu.option.detailsPanel.display': `View details`,
@@ -410,6 +404,34 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
     'admin.accessToken': `Access Token`,
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
+
+    'admin.billing.header': `Billing`,
+    'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and {gbFree}GB are free every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
+    'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
+    'admin.billing.error.undefinedPricingTier.docLink': `contact support`,
+    'admin.billing.error.undefinedPricingTier.docPath': `mailto:support@estuary.dev`,
+    'admin.billing.label.tiers': `Pricing Tier`,
+    'admin.billing.tier.free': `Open Source`,
+    'admin.billing.tier.personal': `Cloud`,
+    'admin.billing.tier.enterprise': `Enterprise`,
+    'admin.billing.graph.dataByMonth.header': `Data Volume by Month`,
+    'admin.billing.graph.connectorsByMonth.header': `Tasks by Month`,
+    'admin.billing.graph.dataByTask.header': `Data Volume by Task`,
+    'admin.billing.graph.dataByTask.tooltip': `This graph displays the ten, largest data producing tasks over the set interval.`,
+    'admin.billing.table.history.header': `Recent History`,
+    'admin.billing.table.history.label.dataVolume': `Data Volume`,
+    'admin.billing.table.history.label.details': `Pricing Tier`,
+    'admin.billing.table.history.label.month': `Month`,
+    'admin.billing.table.history.label.tasks': `Tasks`,
+    'admin.billing.table.history.label.totalCost': `Total Cost`,
+    'admin.billing.table.history.tooltip.dataVolume': `bytes of data processed by tasks`,
+    'admin.billing.table.history.emptyTableDefault.header': `No information found.`,
+    'admin.billing.table.history.emptyTableDefault.message': `We couldn't find any billing information on file. Only administrators of a tenant are able to review billing information.`,
+    'admin.billing.payment.header': `Payment Information`,
+    'admin.billing.payment.message': `We are working on integrating a payment service provider to enable in-app transactions. To make a payment or inquire about our pricing tiers, please {docLink}.`,
+    'admin.billing.payment.message.docLink': `contact us`,
+    'admin.billing.payment.message.docPath': `mailto:support@estuary.dev`,
+
     'admin.cookies': `Cookie Preference Management`,
     'admin.cookies.message': `Click below to manage your preferences.`,
     'admin.tabs.users': `Users`,
@@ -417,10 +439,12 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.cookies': `Cookie Preferences`,
     'admin.tabs.storageMappings': `${CommonMessages['terms.storageMapping']}`,
+    'admin.tabs.billing': `Billing`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
-    'welcome.image.alt': `content needed`,
+    'welcome.image.alt': `A diagram showing the Flow logo at the center, connected by pipelines to multiple endpoint systems. Source systems on the left feed data into Flow and destination systems on the right receive data from Flow.`,
+    'welcome.demo.alt': `A data pipeline diagram showing data moving into Flow from the Wikipedia HTTP source, and coming out of Flow into the Google Sheets destination.`,
 };
 
 const AccessGrants: ResolvedIntlConfig['messages'] = {
@@ -507,6 +531,7 @@ const Materializations: ResolvedIntlConfig['messages'] = {
 
 const Collections: ResolvedIntlConfig['messages'] = {
     'collectionsTable.title': `Collections`,
+    'collectionsTable.cta.new': `New Transformation`,
     'collectionsTable.detailsCTA': `Details`,
     'collectionsTable.filterLabel': `Filter collections`,
     'collections.message1': `You currently have no collections. Click the Captures icon on the menu bar to get started.`,
@@ -526,7 +551,8 @@ const Collections: ResolvedIntlConfig['messages'] = {
 const endpointConfigHeader = `Endpoint Config`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.catalogEditor.heading': `Specification Editor`,
-    'entityCreate.ctas.docs': `Connector Help`,
+    'entityCreate.docs.header': `Connector Help`,
+    'entityCreate.cta.docs': `Connector Help`,
     'entityCreate.errors.collapseTitle': `View logs`,
     'entityCreate.errors.collapseTitleOpen': `Hide logs`,
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
@@ -546,6 +572,8 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.endpointConfig.endpointConfigMissing': `${endpointConfigHeader} empty`,
     'entityCreate.endpointConfig.collectionsMissing': `${CommonMessages['terms.collections']} missing`,
     'entityCreate.endpointConfig.resourceConfigInvalid': `Resource Config invalid`,
+
+    'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
 
     'entityCreate.bindingsConfig.collectionsLabel': `Available ${CommonMessages['terms.collections']}`,
     'entityCreate.bindingsConfig.noRows': `Please select from the ${CommonMessages['terms.collections']} above to begin.`,
@@ -640,11 +668,13 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
 const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.logs.title': `Logs`,
     'detailsPanel.logs.notFound': `Logs for this build cannot be found. This is likely a permissions issue. You don't have permissions to view other users' logs by default.`,
+    'detailsPanel.shardDetails.fetchError': `Unable to fetch shard status`,
+    'detailsPanel.shardDetails.docLink': `Docs`,
     'detailsPanel.shardDetails.title': `Shard Information`,
     'detailsPanel.shardDetails.status.label': `Status`,
     'detailsPanel.shardDetails.id.label': `ID`,
     'detailsPanel.shardDetails.errorTitle': `Shard Replica Processing Errors`,
-    'detailsPanel.shardDetails.docLink': `Shard Help`,
+    'detailsPanel.shardDetails.noStatusFound': `No shard status to report`,
     'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
     'detailsPanel.dataPreview.header': `Data Preview`,
     'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
@@ -748,11 +778,20 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
 
+    'workflows.initTask.alert.title.initFailed': `Form Initialization Error`,
+    'workflows.initTask.alert.message.initFailed': `An issue was encountered initializing the form. Try refreshing the page and if the issue persists {docLink}.`,
+    'workflows.initTask.alert.message.initFailed.docLink': `contact support`,
+    'workflows.initTask.alert.message.initFailed.docPath': `mailto:support@estuary.dev`,
+    'workflows.initTask.alert.message.patchedSpec': `An issue was encountered recovering your changes. The latest, published record of the task was used to initialize the form.`,
+
     'workflows.collectionSelector.cta.delete': `Remove All`,
     'workflows.collectionSelector.cta.rediscover': `Refresh`,
     'workflows.collectionSelector.cta.schemaEdit': `CLI`,
     'workflows.collectionSelector.cta.schemaInference': `Schema Inference`,
+    'workflows.collectionSelector.error.title.editorInitialization': `Editor initialization failed`,
     'workflows.collectionSelector.error.title.missingCollectionSchema': `Failed to fetch collection specification`,
+    'workflows.collectionSelector.error.message.invalidPubId': `This specification may have diverged from the latest, published record of the collection. Your unpublished changes can be found in the editor.`,
+    'workflows.collectionSelector.error.message.draftCreationFailed': `The latest, published record of the collection can be found in the editor. It is read-only.`,
     'workflows.collectionSelector.header.collectionSchema': `Collection Specification`,
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
@@ -844,10 +883,72 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
 };
 
+const Details: ResolvedIntlConfig['messages'] = {
+    'details.tabs.overview': `Overview`,
+    'details.tabs.spec': `Spec`,
+    'details.tabs.shardStatus': `Status`,
+    'details.tabs.history': `History`,
+};
+
+const Docs: ResolvedIntlConfig['messages'] = {
+    'docs.iframe.title': `{connector} Documentation`,
+    'docs.iframe.disabled.title': `Connector documentation disabled`,
+    'docs.iframe.disabled.message': `We cannot open 3rd party documentation inline. To view you must open {docLink} in a new window.`,
+    'docs.iframe.disabled.message.docLink': `connector help`,
+    'docs.cta.expand': `Help`,
+    'docs.cta.expand.tooltip': `Expand Connector Help`,
+    'docs.cta.expand.disabled': `Open 3rd party docs in new window`,
+};
+
+const NewTransform: ResolvedIntlConfig['messages'] = {
+    'newTransform.modal.title': `Derive A New Collection`,
+    'newTransform.language.title': `Language`,
+    'newTransform.language.sql': `SQL`,
+    'newTransform.language.ts': `Typescript`,
+    'newTransform.collection.label': `Derived Collection Name`,
+    'newTransform.errors.collection': `Select source collections`,
+    'newTransform.errors.name': `Name your Derived Collection`,
+    'newTransform.errors.prefixMissing': `No prefix selected`,
+    'newTransform.errors.namePattern': `Name does not match pattern`,
+    'newTransform.errors.nameInvalid': `Invalid entity name`,
+    'newTransform.errors.nameMissing': `Missing entity name`,
+    'newTransform.errors.urlNotGenerated': `We failed to generate the proper URL to start GitPod. ${Error['error.tryAgain']}`,
+    'newTransform.errors.gitPodWindow': `Failed to open GitPod. Your browser may be blocking it from opening. Please ensure your browser allows pop-ups.`,
+    'newTransform.info.gitPodWindowTitle': `GitPod should be opened in a new tab or window`,
+    'newTransform.info.gitPodWindowMessage': `To develop your transformation please use GitPod.`,
+    'newTransform.stepper.step1.label': `Select source collections`,
+    'newTransform.stepper.step2.label': `Transformation Language`,
+    'newTransform.stepper.step3.label': `Write transformations`,
+    'newTransform.instructions1': `You will be set up with an environment to create a
+                            transformation.`,
+    'newTransform.instructions2': `Create your query and use the CLI to
+                            continue, e.g`,
+    'newTransform.button.cta': `Proceed to GitPod`,
+};
+
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
+    'oauth.error.credentialsMissing': `need to complete OAuth`,
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
     'timePicker.button.ariaLabel': `Open time picker for {label}`,
+};
+
+const TaskEndpoints: ResolvedIntlConfig['messages'] = {
+    'taskEndpoint.list.title': `Endpoints:`,
+    'taskEndpoint.otherProtocol.message': `{protocol} hostname: {hostname}`,
+    'taskEndpoint.multipleEndpoints.message': `mutliple endpoints exposed, see task details for their addresses.`,
+
+    'taskEndpoint.link.public.label': 'Public endpoint: ',
+    'taskEndpoint.link.private.label': 'Private endpoint: ',
+    'taskEndpoint.visibility.public.tooltip':
+        'Public: anyone may access this port over the public internet',
+    'taskEndpoint.visibility.private.tooltip':
+        'Private: access to this port is restricted to authenticated users who have "admin" permissions to the task',
+};
+
+const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
+    'dataPlaneAuthReq.error.message': `Authorization to access {catalogPrefix} failed: {error}`,
+    'dataPlaneAuthReq.waiting.message': `Please wait while we authorize access to {catalogPrefix}. You will be redirected shortly.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
@@ -855,7 +956,6 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CTAs,
     ...Data,
     ...ErrorBoundry,
-    ...BrowserTitles,
     ...RouteTitles,
     ...FullPage,
     ...Header,
@@ -895,7 +995,12 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CustomRenderers,
     ...StorageMappings,
     ...EntityNotFound,
+    ...Details,
     ...ExistingEntityCheck,
+    ...Docs,
+    ...NewTransform,
+    ...TaskEndpoints,
+    ...DataPlaneAuthReq,
 };
 
 export default enUSMessages;

@@ -2,6 +2,10 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import { CallSupabaseResponse } from 'services/supabase';
 import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
+import {
+    CaptureBinding,
+    MaterializationBinding,
+} from '../../../flow_deps/flow';
 
 export interface ResourceConfig {
     [key: string]: JsonFormsData | any[];
@@ -17,9 +21,12 @@ export interface ResourceConfigDictionary {
 export interface ResourceConfigState {
     // Collection Selector
     collections: string[] | null;
-    preFillEmptyCollections: (collections: LiveSpecsExtQuery[]) => void;
+    preFillEmptyCollections: (
+        collections: LiveSpecsExtQuery[] | null[],
+        rehydrating?: boolean
+    ) => void;
     preFillCollections: (
-        liveSpecsData: LiveSpecsExtQuery[],
+        bindings: CaptureBinding[] | MaterializationBinding[],
         entityType: Entity
     ) => void;
     addCollections: (value: string[]) => void;
@@ -72,7 +79,11 @@ export interface ResourceConfigState {
     hydrationErrorsExist: boolean;
     setHydrationErrorsExist: (value: boolean) => void;
 
-    hydrateState: (editWorkflow: boolean, entityType: Entity) => Promise<void>;
+    hydrateState: (
+        editWorkflow: boolean,
+        entityType: Entity,
+        rehydrating?: boolean
+    ) => Promise<void>;
 
     // Server-Form Alignment
     serverUpdateRequired: boolean;
@@ -84,5 +95,5 @@ export interface ResourceConfigState {
 
     // Misc.
     stateChanged: () => boolean;
-    resetState: () => void;
+    resetState: (keepCollections?: boolean) => void;
 }

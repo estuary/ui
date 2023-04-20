@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
 import { createEditorStore } from 'components/editor/Store/create';
+import { TaskEndpoints } from 'components/shared/TaskEndpoints';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
 import ShardInformation from 'components/tables/Details/ShardInformation';
 import { LocalZustandProvider } from 'context/LocalZustand';
@@ -47,6 +48,19 @@ function DetailsPanel({
 
     const isCollection = entityType === 'collection';
 
+    const endpoints = useMemo(() => {
+        if (entityType === 'capture' || entityType === 'materialization') {
+            return (
+                <Grid item xs={12} sx={{ mx: 2 }}>
+                    <TaskEndpoints taskName={entityName} />
+                    <Divider sx={{ mt: 4 }} />
+                </Grid>
+            );
+        } else {
+            return null;
+        }
+    }, [entityName, entityType]);
+
     return (
         <TableRow>
             <TableCell
@@ -74,11 +88,13 @@ function DetailsPanel({
                             )}
                         >
                             <Grid container spacing={2}>
-                                <Grid item xs={12}>
+                                <Grid item xs={12} sx={{ mx: 2 }}>
                                     <ShardInformation entityType={entityType} />
                                 </Grid>
 
-                                <Grid item xs={12}>
+                                {endpoints}
+
+                                <Grid item xs={12} sx={{ mx: 2 }}>
                                     <Typography
                                         variant="subtitle1"
                                         sx={{ mb: 2, fontWeight: 500 }}

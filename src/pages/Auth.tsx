@@ -13,7 +13,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 //    - The error message Supabase puts in the URL is the one we display... should probably handle custom messages sometime.
 //    - If there are ANY issues logging in we will log the user out.
 const Auth = () => {
-    useBrowserTitle('browserTitle.loginLoading');
+    useBrowserTitle('routeTitle.loginLoading');
 
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();

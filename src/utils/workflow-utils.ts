@@ -1,35 +1,98 @@
-import { generateCaptureDraftSpec, modifyDraftSpec } from 'api/draftSpecs';
+import {
+    DraftSpecsExtQuery_ByCatalogName,
+    modifyDraftSpec,
+} from 'api/draftSpecs';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
-import { Schema } from 'types';
+import { EntityWithCreateWorkflow, Schema } from 'types';
+import { hasLength } from 'utils/misc-utils';
+import { ConnectorConfig } from '../../flow_deps/flow';
 
-const mergeResourceConfigs = (
-    queryData: DraftSpecQuery,
-    resourceConfig: ResourceConfigDictionary,
-    restrictedDiscoveredCollections: string[]
-): ResourceConfigDictionary => {
-    const existingCollections = Object.keys(resourceConfig);
-    const mergedResourceConfig: ResourceConfigDictionary = {};
+// TODO (typing): Narrow the return type for this function.
+export const generateTaskSpec = (
+    entityType: EntityWithCreateWorkflow,
+    connectorConfig: ConnectorConfig,
+    resourceConfigs: ResourceConfigDictionary | null,
+    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
+) => {
+    const draftSpec = isEmpty(existingTaskData)
+        ? {
+              bindings: [],
+              endpoint: {},
+          }
+        : existingTaskData.spec;
 
-    Object.entries(resourceConfig).forEach(([key, value]) => {
-        mergedResourceConfig[key] = value;
-    });
+    draftSpec.endpoint.connector = connectorConfig;
 
-    queryData.spec.bindings.forEach((binding: any) => {
-        if (
-            !existingCollections.includes(binding.target) &&
-            !restrictedDiscoveredCollections.includes(binding.target)
-        ) {
-            mergedResourceConfig[binding.target] = {
-                data: binding.resource,
-                errors: [],
-            };
+    if (resourceConfigs) {
+        const collectionNameProp =
+            entityType === 'capture' ? 'target' : 'source';
+
+        const boundCollectionNames = Object.keys(resourceConfigs);
+
+        boundCollectionNames.forEach((collectionName) => {
+            const resourceConfig = resourceConfigs[collectionName].data;
+
+            const existingBindingIndex = draftSpec.bindings.findIndex(
+                (binding: any) => binding[collectionNameProp] === collectionName
+            );
+
+            if (existingBindingIndex > -1) {
+                draftSpec.bindings[existingBindingIndex].resource = {
+                    ...resourceConfig,
+                };
+            } else if (Object.keys(resourceConfig).length > 0) {
+                draftSpec.bindings.push({
+                    [collectionNameProp]: collectionName,
+                    resource: {
+                        ...resourceConfig,
+                    },
+                });
+            }
+        });
+
+        if (hasLength(draftSpec.bindings)) {
+            const filteredBindings = draftSpec.bindings.filter((binding: any) =>
+                boundCollectionNames.includes(binding[collectionNameProp])
+            );
+
+            draftSpec.bindings = filteredBindings;
         }
-    });
+    } else {
+        draftSpec.bindings = [];
+    }
 
-    return mergedResourceConfig;
+    return draftSpec;
 };
+
+// const mergeResourceConfigs = (
+//     queryData: DraftSpecQuery,
+//     resourceConfig: ResourceConfigDictionary,
+//     restrictedDiscoveredCollections: string[]
+// ): ResourceConfigDictionary => {
+//     const existingCollections = Object.keys(resourceConfig);
+//     const mergedResourceConfig: ResourceConfigDictionary = {};
+
+//     Object.entries(resourceConfig).forEach(([key, value]) => {
+//         mergedResourceConfig[key] = value;
+//     });
+
+//     queryData.spec.bindings.forEach((binding: any) => {
+//         if (
+//             !existingCollections.includes(binding.target) &&
+//             !restrictedDiscoveredCollections.includes(binding.target)
+//         ) {
+//             mergedResourceConfig[binding.target] = {
+//                 data: binding.resource,
+//                 errors: [],
+//             };
+//         }
+//     });
+
+//     return mergedResourceConfig;
+// };
 
 export interface SupabaseConfig {
     catalogName: string;
@@ -41,32 +104,12 @@ export const modifyDiscoveredDraftSpec = async (
         data: DraftSpecQuery[];
         error?: undefined;
     },
-    resourceConfig: ResourceConfigDictionary,
-    restrictedDiscoveredCollections: string[],
-    supabaseConfig?: SupabaseConfig | null,
-    rediscoveryInitiated?: boolean
+    supabaseConfig?: SupabaseConfig | null
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpecData = response.data[0];
 
-    const mergedResourceConfig = rediscoveryInitiated
-        ? null
-        : mergeResourceConfigs(
-              draftSpecData,
-              resourceConfig,
-              restrictedDiscoveredCollections
-          );
-
-    const mergedDraftSpec = generateCaptureDraftSpec(
-        draftSpecData.spec.endpoint,
-        mergedResourceConfig
-    );
-
-    if (rediscoveryInitiated) {
-        mergedDraftSpec.bindings = draftSpecData.spec.bindings;
-    }
-
     return modifyDraftSpec(
-        mergedDraftSpec,
+        draftSpecData.spec,
         {
             draft_id: draftSpecData.draft_id,
             catalog_name: draftSpecData.catalog_name,
@@ -80,16 +123,14 @@ export const modifyExistingCaptureDraftSpec = async (
     draftId: string,
     connectorImage: string,
     encryptedEndpointConfig: Schema,
-    resourceConfig: ResourceConfigDictionary
+    resourceConfig: ResourceConfigDictionary,
+    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
 ): Promise<CallSupabaseResponse<any>> => {
-    const draftSpec = generateCaptureDraftSpec(
-        {
-            connector: {
-                image: connectorImage,
-                config: encryptedEndpointConfig,
-            },
-        },
-        resourceConfig
+    const draftSpec = generateTaskSpec(
+        'capture',
+        { image: connectorImage, config: encryptedEndpointConfig },
+        resourceConfig,
+        existingTaskData
     );
 
     return modifyDraftSpec(draftSpec, {

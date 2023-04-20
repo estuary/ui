@@ -148,18 +148,20 @@ const darkMode: PaletteOptions = {
 //  It doesn't come up often but happens enough it would be nice to handle better.
 export const zIndexIncrement = 5;
 
+// Makes sure the hovering styling can be seen
+const buttonHoverIndex = zIndexIncrement * 4;
+
+// To make the delete in a multi select to work
+const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
+
+// JSONForms accordion is hardcoded to 20 so making this "1 higher"
+const accordionButton = zIndexIncrement * 5;
+
 // Need to make the sticky header be on top
 export const headerLinkIndex = zIndexIncrement * 30;
 
 // Popper component z index must be greater than 100, the z index of the reflex splitter component.
-export const popperIndex = zIndexIncrement * 25;
-
-// Makes sure the hovering styling can be seen
-const buttonHoverIndex = zIndexIncrement * 4;
-// To make the delete in a multi select to work
-const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
-// JSONForms accordion is hardcoded to 20 so making this "1 higher"
-const accordionButton = zIndexIncrement * 5;
+export const popperIndex = zIndexIncrement * 500;
 
 // Borders
 
@@ -167,6 +169,11 @@ const accordionButton = zIndexIncrement * 5;
 export const defaultOutline = {
     light: `1px solid rgba(11, 19, 30, 0.12)`,
     dark: `1px solid rgba(247, 249, 252, 0.12)`,
+};
+
+export const defaultOutlineColor = {
+    light: `rgba(11, 19, 30, 0.12)`,
+    dark: `rgba(247, 249, 252, 0.12)`,
 };
 
 // Styles
@@ -241,10 +248,7 @@ export const alertTextPrimary = {
     light: 'rgba(0, 0, 0, 0.8)',
     dark: 'rgb(255, 255, 255)',
 };
-export const alertBackground = {
-    light: 'white',
-    dark: semiTransparentBackgroundIntensified.dark,
-};
+export const alertBackground = paperBackground;
 
 export const monacoEditorHeaderBackground = {
     light: 'white',
@@ -339,6 +343,12 @@ export const connectorImageBackgroundSx: SxProps<Theme> = {
     background: (theme) => connectorCardLogoBackground[theme.palette.mode],
 };
 
+// This is the hex code for the monaco editor background in dark mode.
+export const shardTableRow = {
+    light: sample_grey[100],
+    dark: '#252526',
+};
+
 export const alternateConnectorImageBackgroundSx: SxProps<Theme> = {
     height: 50,
     display: 'flex',
@@ -346,6 +356,39 @@ export const alternateConnectorImageBackgroundSx: SxProps<Theme> = {
     justifyContent: 'center',
     borderRadius: connectorImageBackgroundRadius,
     background: (theme) => connectorCardLogoBackground[theme.palette.mode],
+};
+
+export const autoCompleteListPadding = 8;
+
+export const dataGridListStyling: SxProps<Theme> = {
+    'borderBottom': 'none',
+    '& .MuiDataGrid-row ': {
+        cursor: 'pointer',
+    },
+    '& .MuiDataGrid-cell': {
+        borderBottom: (theme) => defaultOutline[theme.palette.mode],
+    },
+    '& .MuiDataGrid-columnSeparator': {
+        display: 'none',
+    },
+    '& .MuiDataGrid-columnHeaders': {
+        borderTop: (theme) => defaultOutline[theme.palette.mode],
+        borderBottom: (theme) => defaultOutline[theme.palette.mode],
+        bgcolor: (theme) => alternativeDataGridHeader[theme.palette.mode],
+    },
+    '& .MuiDataGrid-columnHeader:hover': {
+        '& .MuiDataGrid-columnHeaderTitleContainerContent': {
+            mr: 0.5,
+        },
+        '& .MuiDataGrid-menuIcon': {
+            width: '2rem',
+        },
+    },
+    '& .MuiDataGrid-columnHeaderTitleContainerContent': {
+        width: '100%',
+        justifyContent: 'space-between',
+        mr: 4.5,
+    },
 };
 
 const themeSettings = createTheme({
@@ -453,8 +496,12 @@ const themeSettings = createTheme({
     },
 } as ThemeOptions);
 
-const ColorModeContext = React.createContext({
+const ColorModeContext = React.createContext<{
+    toggleColorMode: () => void;
+    colorMode: string | undefined;
+}>({
     toggleColorMode: () => {},
+    colorMode: undefined,
 });
 
 // TODO: Enable color mode toggling once light mode colors are refined.
@@ -544,7 +591,9 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
     }, [setPalette, palette, mode]);
 
     return (
-        <ColorModeContext.Provider value={{ toggleColorMode: toggler }}>
+        <ColorModeContext.Provider
+            value={{ toggleColorMode: toggler, colorMode: mode }}
+        >
             <MUIThemeProvider theme={generatedTheme}>
                 <CssBaseline />
                 {children}

@@ -14,18 +14,19 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import EntityToolbar from 'components/shared/Entity/Header';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
-import PageContainer from 'components/shared/PageContainer';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
-import { useEffect, useState } from 'react';
+import usePageTitle from 'hooks/usePageTitle';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
-} from 'stores/DetailsForm';
+} from 'stores/DetailsForm/hooks';
+import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig/hooks';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
 import {
@@ -39,6 +40,11 @@ import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 import { getPathWithParams } from 'utils/misc-utils';
 
 function CaptureCreate() {
+    usePageTitle({
+        header: authenticatedRoutes.captures.create.new.title,
+        headerLink:
+            'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
+    });
     const navigate = useNavigate();
 
     const entityType = 'capture';
@@ -80,7 +86,8 @@ function CaptureCreate() {
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
-    }, [imageTag, setDraftId]);
+        setInitiateDiscovery(true);
+    }, [setDraftId, setInitiateDiscovery, imageTag]);
 
     const resetState = () => {
         resetDetailsForm();
@@ -140,18 +147,19 @@ function CaptureCreate() {
         },
     };
 
+    const tasks = useMemo(
+        () =>
+            draftSpecsMetadata.draftSpecs
+                .filter((spec) => spec.spec_type === 'capture')
+                .map((spec) => spec.catalog_name),
+        [draftSpecsMetadata.draftSpecs]
+    );
+
     return (
-        <PageContainer
-            pageTitleProps={{
-                header: authenticatedRoutes.captures.create.new.title,
-                headerLink:
-                    'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
-            }}
-        >
+        <DetailsFormHydrator>
             <EndpointConfigHydrator>
                 <ResourceConfigHydrator>
                     <EntityCreate
-                        title="browserTitle.captureCreate"
                         entityType={entityType}
                         draftSpecMetadata={draftSpecsMetadata}
                         resetState={resetState}
@@ -187,6 +195,7 @@ function CaptureCreate() {
                                         closeLogs={handlers.closeLogs}
                                         callFailed={helpers.callFailed}
                                         disabled={!draftId}
+                                        taskNames={tasks}
                                         materialize={
                                             handlers.materializeCollections
                                         }
@@ -206,7 +215,7 @@ function CaptureCreate() {
                     />
                 </ResourceConfigHydrator>
             </EndpointConfigHydrator>
-        </PageContainer>
+        </DetailsFormHydrator>
     );
 }
 

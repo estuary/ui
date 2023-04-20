@@ -3,10 +3,10 @@ import {
     CaptureQueryWithSpec,
     MaterializationQueryWithSpec,
 } from 'api/liveSpecsExt';
-import { authenticatedRoutes } from 'app/routes';
 import ConnectorLogo from 'components/connectors/card/Logo';
 import CustomWidthTooltip from 'components/shared/CustomWidthTooltip';
 import EntityCardWrapper from 'components/shared/Entity/ExistingEntityCards/Cards/Wrapper';
+import useEntityEditNavigate from 'components/shared/Entity/hooks/useEntityEditNavigate';
 import { alternateConnectorImageBackgroundSx } from 'context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -14,9 +14,7 @@ import useGlobalSearchParams, {
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { useIntl } from 'react-intl';
-import { useNavigate } from 'react-router';
 import { CustomEvents } from 'services/logrocket';
-import { getPathWithParams } from 'utils/misc-utils';
 
 interface Props {
     queryData: CaptureQueryWithSpec | MaterializationQueryWithSpec | null;
@@ -41,7 +39,7 @@ function ExistingEntityCard({ queryData }: Props) {
         GlobalSearchParams.PREFILL_PUB_ID,
         true
     );
-    const navigate = useNavigate();
+    const navigateToEdit = useEntityEditNavigate();
 
     const intl = useIntl();
 
@@ -49,30 +47,19 @@ function ExistingEntityCard({ queryData }: Props) {
         if (!isEmpty(queryData)) {
             trackEvent(queryData);
 
-            const baseURL =
-                queryData.spec_type === 'capture'
-                    ? authenticatedRoutes.captures.edit.fullPath
-                    : authenticatedRoutes.materializations.edit.fullPath;
-
             const baseParams = {
                 [GlobalSearchParams.CONNECTOR_ID]: queryData.connector_id,
                 [GlobalSearchParams.LIVE_SPEC_ID]: queryData.id,
                 [GlobalSearchParams.LAST_PUB_ID]: queryData.last_pub_id,
             };
 
+            const optionalParams =
+                prefillPubIds.length > 0
+                    ? { [GlobalSearchParams.PREFILL_PUB_ID]: prefillPubIds }
+                    : null;
+
             // TODO (routes): Allow the user to return to the existing entity check page on browser back.
-            navigate(
-                getPathWithParams(
-                    baseURL,
-                    prefillPubIds.length > 0
-                        ? {
-                              ...baseParams,
-                              [GlobalSearchParams.PREFILL_PUB_ID]:
-                                  prefillPubIds,
-                          }
-                        : baseParams
-                )
-            );
+            navigateToEdit(queryData.spec_type, baseParams, optionalParams);
         }
     };
 
@@ -86,6 +73,7 @@ function ExistingEntityCard({ queryData }: Props) {
                         imageSrc={queryData.image}
                         maxHeight={35}
                         padding="0 0.5rem"
+                        unknownConnectorIconConfig={{ width: 51, fontSize: 24 }}
                     />
                 </Box>
 

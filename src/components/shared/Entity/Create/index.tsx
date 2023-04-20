@@ -12,17 +12,17 @@ import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import useBrowserTitle from 'hooks/useBrowserTitle';
-import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
-    useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_entityNameChanged,
-} from 'stores/DetailsForm';
+} from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_changed,
     useEndpointConfig_serverUpdateRequired,
@@ -39,7 +39,6 @@ import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
 
 interface Props {
-    title: string;
     entityType: EntityWithCreateWorkflow;
     draftSpecMetadata: Pick<
         DraftSpecSwrMetadata,
@@ -52,7 +51,6 @@ interface Props {
 }
 
 function EntityCreate({
-    title,
     entityType,
     draftSpecMetadata,
     resetState,
@@ -60,12 +58,7 @@ function EntityCreate({
     toolbar,
     RediscoverButton,
 }: Props) {
-    useBrowserTitle(title);
-
-    // Supabase stuff
-    const { combinedGrants } = useCombinedGrantsExt({
-        adminOnly: true,
-    });
+    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const {
         connectorTags,
@@ -75,8 +68,6 @@ function EntityCreate({
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
-    const detailsFormChanged = useDetailsForm_changed();
-
     const entityNameChanged = useDetailsForm_entityNameChanged();
 
     // Draft Editor Store
@@ -131,17 +122,25 @@ function EntityCreate({
     ]);
 
     // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.
-    // TODO (defect): Prevent prompt data loss dialog from appearing when transitioning to edit workflow.
-    const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
-
+    const promptDataLoss = endpointConfigChanged();
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
-    const displayResourceConfig =
-        entityType === 'materialization'
-            ? hasLength(imageTag.connectorId)
-            : hasLength(imageTag.connectorId) &&
-              !entityNameChanged &&
-              persistedDraftId;
+    const displayResourceConfig = useMemo(
+        () =>
+            entityType === 'materialization'
+                ? hasLength(imageTag.connectorId)
+                : hasLength(imageTag.connectorId) &&
+                  imageTag.connectorId === connectorId &&
+                  !entityNameChanged &&
+                  persistedDraftId,
+        [
+            connectorId,
+            entityType,
+            entityNameChanged,
+            imageTag.connectorId,
+            persistedDraftId,
+        ]
+    );
 
     return connectorTagsError ? (
         <Error error={connectorTagsError} />
@@ -172,7 +171,6 @@ function EntityCreate({
                 <ErrorBoundryWrapper>
                     <DetailsForm
                         connectorTags={connectorTags}
-                        accessGrants={combinedGrants}
                         entityType={entityType}
                     />
                 </ErrorBoundryWrapper>

@@ -1,3 +1,4 @@
+import 'index.css';
 import 'polyfills/transformStream';
 
 import ApplicationRouter from 'context/Router';
