@@ -6,7 +6,7 @@ interface RowProps {
 }
 
 interface RowsProps {
-    data: any[];
+    data?: any[];
 }
 
 function Row({ row }: RowProps) {
@@ -34,6 +34,10 @@ function Row({ row }: RowProps) {
 }
 
 function Rows({ data }: RowsProps) {
+    if (!data) {
+        return null;
+    }
+
     return (
         <>
             {data.map((record, index) => (

@@ -956,6 +956,8 @@ const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
 const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
     'data.key.label': `Key`,
     'data.key.helper': `Ordered JSON-Pointers which define how a composite key may be extracted from a collection document.`,
+    'schemaEditor.table.empty.header': `No schema to display.`,
+    'schemaEditor.table.empty.message': `There was an issue generating the table from the schema.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {

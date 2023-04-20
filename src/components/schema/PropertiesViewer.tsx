@@ -1,5 +1,6 @@
 import { Box, Grid, Typography } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { GridColDef } from '@mui/x-data-grid';
+import SchemaPropertiesTable from 'components/tables/Schema';
 
 interface Props {
     inferredSchema: any;
@@ -25,11 +26,7 @@ function PropertiesViewer({ inferredSchema }: Props) {
                 <Typography variant="h5" component="span">
                     Fields
                 </Typography>
-                <DataGrid
-                    rows={inferredSchema}
-                    columns={columns}
-                    getRowId={(row) => row.pointer}
-                />
+                <SchemaPropertiesTable inferredSchema={inferredSchema} />
             </Box>
         </Grid>
     );

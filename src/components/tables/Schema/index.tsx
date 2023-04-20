@@ -1,5 +1,9 @@
-import { Box } from '@mui/material';
-import { TableColumns } from 'types';
+import { Box, Table, TableContainer } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
+import { TableColumns, TableState, TableStatuses } from 'types';
+import EntityTableBody from '../EntityTable/TableBody';
+import Rows from './Rows';
 
 export const columns: TableColumns[] = [
     {
@@ -22,25 +26,52 @@ export const columns: TableColumns[] = [
 
 // const selectableTableStoreName = SelectTableStoreNames.BILLING;
 
-function SchemaPropertiesTable() {
+interface Props {
+    inferredSchema: any;
+}
+
+function SchemaPropertiesTable({ inferredSchema }: Props) {
+    const intl = useIntl();
+
+    const [tableState, setTableState] = useState<TableState>({
+        status: TableStatuses.LOADING,
+    });
+
+    useEffect(() => {
+        if (inferredSchema && inferredSchema.length > 0) {
+            setTableState({ status: TableStatuses.DATA_FETCHED });
+        } else {
+            setTableState({ status: TableStatuses.NO_EXISTING_DATA });
+        }
+    }, [inferredSchema]);
+
+    console.log('schema table renderer', {
+        tableState,
+    });
+
     return (
         <Box>
-            {/*                <EntityTable
-                    noExistingDataContentIds={{
-                        header: 'admin.billing.table.history.emptyTableDefault.header',
-                        message:
-                            'admin.billing.table.history.emptyTableDefault.message',
-                        disableDoclink: true,
-                    }}
-                    columns={columns}
-                    renderTableRows={(data) => <Rows data={data} />}
-                    header="Header Key"
-                    filterLabel="Filter key"
-                    selectableTableStoreName={selectableTableStoreName}
-                    hideHeaderAndFooter={true}
-                    rowsPerPageOptions={[4, 6, 12]}
-                    minWidth={500}
-                />*/}
+            <TableContainer component={Box}>
+                <Table
+                    size="small"
+                    sx={{ minWidth: 350 }}
+                    aria-label={intl.formatMessage({
+                        id: 'entityTable.title',
+                    })}
+                >
+                    <EntityTableBody
+                        columns={columns}
+                        noExistingDataContentIds={{
+                            header: 'schemaEditor.table.empty.header',
+                            message: 'schemaEditor.table.empty.message',
+                            disableDoclink: true,
+                        }}
+                        tableState={tableState}
+                        loading={!inferredSchema}
+                        rows={<Rows data={inferredSchema} />}
+                    />
+                </Table>
+            </TableContainer>
         </Box>
     );
 }

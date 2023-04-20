@@ -3,15 +3,11 @@ import {
     Stack,
     Table,
     TableContainer,
-    TableFooter,
-    TablePagination,
-    TableRow,
     TextField,
     Toolbar,
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import TablePaginationActions from 'components/tables/PaginationActions';
 import RowSelector from 'components/tables/RowActions/RowSelector';
 import Title from 'components/tables/Title';
 import { useZustandStore } from 'context/Zustand/provider';
@@ -41,6 +37,7 @@ import {
 } from 'types';
 import { RowSelectorProps } from '../RowActions/types';
 import EntityTableBody from './TableBody';
+import EntityTableFooter from './TableFooter';
 import EntityTableHeader from './TableHeader';
 import { ColumnProps } from './types';
 
@@ -120,11 +117,6 @@ function EntityTable({
         SelectableTableStore,
         SelectableTableStore['query']['response']
     >(selectableTableStoreName, selectableTableStoreSelectors.query.response);
-
-    const selectDataCount = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['query']['count']
-    >(selectableTableStoreName, selectableTableStoreSelectors.query.count);
 
     const hydrate = useZustandStore<
         SelectableTableStore,
@@ -327,25 +319,14 @@ function EntityTable({
                             tableState={tableState}
                         />
 
-                        {dataRows && selectDataCount && !hideHeaderAndFooter ? (
-                            <TableFooter>
-                                <TableRow>
-                                    <TablePagination
-                                        ActionsComponent={
-                                            TablePaginationActions
-                                        }
-                                        rowsPerPageOptions={rowsPerPageOptions}
-                                        count={selectDataCount}
-                                        rowsPerPage={rowsPerPage}
-                                        page={page}
-                                        onPageChange={handlers.changePage}
-                                        onRowsPerPageChange={
-                                            handlers.changeRowsPerPage
-                                        }
-                                    />
-                                </TableRow>
-                            </TableFooter>
-                        ) : null}
+                        <EntityTableFooter
+                            hide={!dataRows || hideHeaderAndFooter}
+                            onPageChange={handlers.changePage}
+                            onRowsPerPageChange={handlers.changeRowsPerPage}
+                            page={page}
+                            rowsPerPage={rowsPerPage}
+                            selectableTableStoreName={selectableTableStoreName}
+                        />
                     </Table>
                 </TableContainer>
             </Box>

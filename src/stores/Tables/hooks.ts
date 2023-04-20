@@ -8,7 +8,7 @@ import {
 } from 'use-query-params';
 import { getPagination } from '../../components/tables/EntityTable';
 
-export type TablePrefix =
+export type TablePrefix = 
     | 'ag' // access grants
     | 'pr' // prefixes
     | 'sm' // storage mappings
@@ -16,7 +16,8 @@ export type TablePrefix =
     | 'mat' // materializations
     | 'col' // collections
     | 'con' // connectors
-    | 'bil'; // billing
+    | 'bil' // billing
+    | 'sv'; // schema viewer
 
 function useTableState(
     keyPrefix: TablePrefix,
