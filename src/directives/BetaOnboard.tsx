@@ -104,7 +104,9 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
             setSurveyResponse({ origin: value, details });
 
             setSurveyResultsMissing(
-                value === surveyOptionOther ? !hasLength(details) : false
+                value === surveyOptionOther && surveyResultsMissing
+                    ? !hasLength(details)
+                    : false
             );
         },
         updateSurveyDetails: (value: string) => {
