@@ -139,6 +139,8 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.email': `Email`,
     'data.display_name': `Username`,
     'data.published_at': `Published At`,
+    'data.pointer': `Pointer`,
+    'data.exists': `Exists`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
