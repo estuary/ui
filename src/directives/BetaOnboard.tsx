@@ -265,29 +265,6 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                                 <FormattedMessage id="tenant.input.label" />
                             </FormLabel>
 
-                            {/* <Stack spacing={2} sx={{ maxWidth: 540, mb: 1 }}>
-                                <Typography>
-                                    <FormattedMessage id="tenant.message.1" />
-                                </Typography>
-
-                                <Typography>
-                                    <FormattedMessage
-                                        id="tenant.docs.message"
-                                        values={{
-                                            link: (
-                                                <ExternalLink
-                                                    link={intl.formatMessage({
-                                                        id: 'tenant.docs.message.link',
-                                                    })}
-                                                >
-                                                    <FormattedMessage id="terms.documentation" />
-                                                </ExternalLink>
-                                            ),
-                                        }}
-                                    />
-                                </Typography>
-                            </Stack> */}
-
                             <TextField
                                 size="small"
                                 placeholder={intl.formatMessage({
