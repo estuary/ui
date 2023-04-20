@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import { BaseComponentProps, EntityWorkflow as Workflow } from 'types';
 
 interface Props extends BaseComponentProps {
@@ -19,4 +19,17 @@ const useEntityWorkflow = () => {
     return useContext(WorkflowContext);
 };
 
-export { WorkflowContextProvider, useEntityWorkflow };
+const useEntityWorkflow_Editing = () => {
+    const workflow = useContext(WorkflowContext);
+    return useMemo(
+        () =>
+            workflow === 'capture_edit' || workflow === 'materialization_edit',
+        [workflow]
+    );
+};
+
+export {
+    WorkflowContextProvider,
+    useEntityWorkflow,
+    useEntityWorkflow_Editing,
+};
