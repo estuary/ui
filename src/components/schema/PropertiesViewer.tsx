@@ -10,20 +10,10 @@ const columns: GridColDef[] = [
     { field: 'pointer', headerName: 'JSON Pointer', width: 225 },
     { field: 'types', headerName: 'Types', width: 150 },
     { field: 'exists', headerName: 'Exists' },
-    { field: 'reduction', headerName: 'Reduction' },
-    {
-        field: 'is_pattern_property',
-        headerName: 'Pattern Property',
-    },
-
+    // { field: 'reduction', headerName: 'Reduction' },
     // {
-    //     field: 'fullName',
-    //     headerName: 'Full name',
-    //     description: 'This column has a value getter and is not sortable.',
-    //     sortable: false,
-    //     width: 160,
-    //     valueGetter: (params: GridValueGetterParams) =>
-    //         `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+    //     field: 'is_pattern_property',
+    //     headerName: 'Pattern Property',
     // },
 ];
 
