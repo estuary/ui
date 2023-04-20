@@ -55,6 +55,7 @@ const AccessGrants = lazy(() => import('components/admin/AccessGrants'));
 const AdminApi = lazy(() => import('components/admin/Api'));
 const AdminBilling = lazy(() => import('components/admin/Billing'));
 const AdminConnectors = lazy(() => import('components/admin/Connectors'));
+const AdminBilling = lazy(() => import('components/admin/Billing'));
 const AdminCookies = lazy(() => import('components/admin/Cookies'));
 const StorageMappings = lazy(() => import('components/admin/StorageMappings'));
 
@@ -389,6 +390,14 @@ const router = createBrowserRouter(
                             element={
                                 <Suspense fallback={null}>
                                     <AdminConnectors />
+                                </Suspense>
+                            }
+                        />
+                        <Route
+                            path={authenticatedRoutes.admin.billing.path}
+                            element={
+                                <Suspense fallback={null}>
+                                    <AdminBilling />
                                 </Suspense>
                             }
                         />

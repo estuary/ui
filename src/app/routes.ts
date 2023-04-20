@@ -31,6 +31,11 @@ const admin = {
         path: 'connectors',
         fullPath: '/admin/connectors',
     },
+    billing: {
+        title: 'routeTitle.admin.billing',
+        path: 'billing',
+        fullPath: '/admin/billing',
+    },
     cookies: {
         title: 'routeTitle.admin.cookies',
         path: 'cookies',

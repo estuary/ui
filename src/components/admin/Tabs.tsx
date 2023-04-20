@@ -34,6 +34,10 @@ function AdminTabs() {
                 label: 'admin.tabs.api',
                 path: authenticatedRoutes.admin.api.fullPath,
             },
+            {
+                label: 'admin.tabs.billing',
+                path: authenticatedRoutes.admin.billing.fullPath,
+            },
         ];
 
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
