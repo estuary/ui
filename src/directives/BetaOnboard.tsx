@@ -178,12 +178,6 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
         },
     };
 
-    // const surveyResponseDetailsRequired = useMemo(
-    //     () =>
-    //         surveyResultsMissing && surveyResponse.origin === surveyOptionOther,
-    //     [surveyOptionOther, surveyResponse.origin, surveyResultsMissing]
-    // );
-
     return (
         <Stack direction="row">
             {belowMd ? null : (
@@ -220,28 +214,32 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                     </Typography>
 
                     {nameMissing || surveyResultsMissing ? (
-                        <AlertBox
-                            short
-                            severity="error"
-                            title={<FormattedMessage id="error.title" />}
-                        >
-                            <FormattedMessage
-                                id={getValidationErrorMessageId(
-                                    nameMissing,
-                                    surveyResultsMissing
-                                )}
-                            />
-                        </AlertBox>
+                        <Box sx={{ maxWidth: 424 }}>
+                            <AlertBox
+                                short
+                                severity="error"
+                                title={<FormattedMessage id="error.title" />}
+                            >
+                                <FormattedMessage
+                                    id={getValidationErrorMessageId(
+                                        nameMissing,
+                                        surveyResultsMissing
+                                    )}
+                                />
+                            </AlertBox>
+                        </Box>
                     ) : null}
 
                     {serverError ? (
-                        <AlertBox
-                            severity="error"
-                            short
-                            title={<FormattedMessage id="common.fail" />}
-                        >
-                            {serverError}
-                        </AlertBox>
+                        <Box sx={{ maxWidth: 424 }}>
+                            <AlertBox
+                                severity="error"
+                                short
+                                title={<FormattedMessage id="common.fail" />}
+                            >
+                                {serverError}
+                            </AlertBox>
+                        </Box>
                     ) : null}
                 </Stack>
 
@@ -320,7 +318,6 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                             </RadioGroup>
 
                             <TextField
-                                // error={surveyResponseDetailsRequired}
                                 size="small"
                                 onChange={(event) =>
                                     handlers.updateSurveyDetails(
