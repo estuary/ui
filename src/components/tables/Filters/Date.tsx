@@ -13,7 +13,10 @@ import { Filter } from 'iconoir-react';
 import React, { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
-import { SelectableTableStore, selectableTableStoreSelectors } from '../Store';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'stores/Tables/Store';
 
 interface Props {
     header: string;

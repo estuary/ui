@@ -1,3 +1,7 @@
+export enum BillingStoreNames {
+    GENERAL = 'general_billing',
+}
+
 export enum BindingsEditorStoreNames {
     GENERAL = 'general_bindings_editor',
 }
@@ -35,6 +39,7 @@ export enum ResourceConfigStoreNames {
 export enum SelectTableStoreNames {
     ACCESS_GRANTS_USERS = 'AccessGrants-Selectable-Table-Users',
     ACCESS_GRANTS_PREFIXES = 'AccessGrants-Selectable-Table-Prefixes',
+    BILLING = 'Billing-Selectable-Table',
     CAPTURE = 'Captures-Selectable-Table',
     COLLECTION = 'Collections-Selectable-Table',
     CONNECTOR = 'Connectors-Selectable-Table',
@@ -62,6 +67,7 @@ export enum TransformCreateStoreNames {
 }
 
 export type StoreName =
+    | BillingStoreNames
     | BindingsEditorStoreNames
     | DetailsFormStoreNames
     | EditorStoreNames
