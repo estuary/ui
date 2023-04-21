@@ -27,6 +27,9 @@ interface Props {
     children: ReactNode;
 }
 
+const ARIA_DESC_ID = 'chunkNotFetched-dialog-description';
+const ARIA_LABEL_ID = 'chunkNotFetched-dialog-title';
+
 function ErrorFallback({ error }: { error: Error }): JSX.Element {
     const intl = useIntl();
     const theme = useTheme();
@@ -62,10 +65,10 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
         return (
             <Dialog
                 open
-                aria-labelledby="chunkNotFetched-dialog-title"
-                aria-describedby="chunkNotFetched-dialog-description"
+                aria-labelledby={ARIA_LABEL_ID}
+                aria-describedby={ARIA_DESC_ID}
             >
-                <DialogTitle id="chunkNotFetched-dialog-title">
+                <DialogTitle id={ARIA_LABEL_ID}>
                     <FormattedMessage id="errorBoundry.chunkNotFetched.dialog.title" />
                 </DialogTitle>
                 <DialogContent>
@@ -77,7 +80,7 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
                         }
                     >
                         <Box>
-                            <DialogContentText id="chunkNotFetched-dialog-description">
+                            <DialogContentText id={ARIA_DESC_ID}>
                                 <Stack>
                                     <Typography>
                                         <FormattedMessage id="errorBoundry.chunkNotFetched.error.message1" />
