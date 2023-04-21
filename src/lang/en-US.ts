@@ -158,6 +158,8 @@ const ErrorBoundry: ResolvedIntlConfig['messages'] = {
     'errorBoundry.title': `${Error['error.title']}`,
     'errorBoundry.message1': `There was an unexpected application error. `,
     'errorBoundry.message2': `Expand to see details.`,
+    'errorBoundry.chunkNotFetched.message1': `There was an issue fetching this portion of the application.`,
+    'errorBoundry.chunkNotFetched.message2': `To continue please reload.`,
 };
 
 const ConfirmationDialog: ResolvedIntlConfig['messages'] = {
