@@ -12,9 +12,6 @@ interface Props {
     children: ReactNode;
 }
 
-const ARIA_DESC_ID = 'chunkNotFetched-dialog-description';
-const ARIA_LABEL_ID = 'chunkNotFetched-dialog-title';
-
 const logErrorToLogRocket = (error: Error) => {
     // Let LogRocket know this was rendered since there is almost never
     //  a time where it is good that this was shown to a user.
