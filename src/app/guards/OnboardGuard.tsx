@@ -1,6 +1,9 @@
 import FullPageSpinner from 'components/fullPage/Spinner';
+import { LocalZustandProvider } from 'context/LocalZustand';
 import BetaOnboard from 'directives/BetaOnboard';
 import FullPageWrapper from 'directives/FullPageWrapper';
+import { createOnboardingStore } from 'directives/Onboard/Store/create';
+import { OnboardingStoreNames } from 'stores/names';
 import { BaseComponentProps } from 'types';
 import useDirectiveGuard from './hooks';
 
@@ -27,11 +30,17 @@ function OnboardGuard({ children, forceDisplay, grantsMutate }: Props) {
     } else if (forceDisplay || status !== 'fulfilled') {
         return (
             <FullPageWrapper fullWidth={true}>
-                <BetaOnboard
-                    directive={directive}
-                    status={status}
-                    mutate={grantsMutate}
-                />
+                <LocalZustandProvider
+                    createStore={createOnboardingStore(
+                        OnboardingStoreNames.GENERAL
+                    )}
+                >
+                    <BetaOnboard
+                        directive={directive}
+                        status={status}
+                        mutate={grantsMutate}
+                    />
+                </LocalZustandProvider>
             </FullPageWrapper>
         );
     } else {

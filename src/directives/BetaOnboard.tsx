@@ -234,7 +234,6 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                         />
 
                         <OnboardingSurvey
-                            surveyOptionOther={surveyOptionOther}
                             surveyResponse={surveyResponse}
                             surveyResultsMissing={surveyResultsMissing}
                             setSurveyResponse={setSurveyResponse}

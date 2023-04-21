@@ -6,6 +6,7 @@ import {
     RadioGroup,
     TextField,
 } from '@mui/material';
+import { useOnboardingStore_surveyOptionOther } from 'directives/Onboard/Store/hooks';
 import React, { ChangeEvent, SetStateAction } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useConstant from 'use-constant';
@@ -17,7 +18,6 @@ export interface SurveyResponse {
 }
 
 interface Props {
-    surveyOptionOther: string;
     surveyResponse: SurveyResponse;
     surveyResultsMissing: boolean;
     setSurveyResponse: React.Dispatch<SetStateAction<SurveyResponse>>;
@@ -25,13 +25,14 @@ interface Props {
 }
 
 function OnboardingSurvey({
-    surveyOptionOther,
     surveyResponse,
     surveyResultsMissing,
     setSurveyResponse,
     setSurveyResultsMissing,
 }: Props) {
     const intl = useIntl();
+
+    const surveyOptionOther = useOnboardingStore_surveyOptionOther();
 
     const originOptions: string[] = useConstant(() => [
         intl.formatMessage({ id: 'tenant.origin.radio.browserSearch.label' }),
