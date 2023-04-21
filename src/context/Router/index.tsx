@@ -38,7 +38,9 @@ const CaptureDetailsRoute = lazy(
 const CaptureEditRoute = lazy(
     () => import(/* webpackPrefetch: true */ './CaptureEdit')
 );
-const CapturesTable = lazy(() => import('./CapturesTable'));
+const CapturesTable = lazy(
+    () => import(/* webpackPrefetch: true */ './CapturesTable')
+);
 
 // Collection
 const DerivationCreateComponent = lazy(
