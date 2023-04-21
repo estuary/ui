@@ -30,6 +30,15 @@ interface Props {
 const ARIA_DESC_ID = 'chunkNotFetched-dialog-description';
 const ARIA_LABEL_ID = 'chunkNotFetched-dialog-title';
 
+const logErrorToLogRocket = (error: Error) => {
+    // Let LogRocket know this was rendered since there is almost never
+    //  a time where it is good that this was shown to a user.
+    logRocketEvent(CustomEvents.ERROR_BOUNDARY_DISPLAYED, {
+        name: error.name,
+        stack: error.stack ?? 'No stack trace available',
+    });
+};
+
 function ErrorFallback({ error }: { error: Error }): JSX.Element {
     const intl = useIntl();
     const theme = useTheme();
@@ -43,13 +52,6 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
     };
 
     useMount(() => {
-        // Let LogRocket know this was rendered since there is almost never
-        //  a time where it is good that this was shown to a user.
-        logRocketEvent(CustomEvents.ERROR_BOUNDRY_DISPLAYED, {
-            name: error.name,
-            stackTrace: error.stack,
-        });
-
         // In case the error is due to failing to fetch a chunk then show
         //  a reload dialog to inform the user what happened.
         if (error.name === 'ChunkLoadError') {
@@ -148,7 +150,10 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
 
 const ErrorBoundryWrapper = ({ children }: Props) => {
     return (
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
+        <ErrorBoundary
+            FallbackComponent={ErrorFallback}
+            onError={logErrorToLogRocket}
+        >
             {children}
         </ErrorBoundary>
     );
