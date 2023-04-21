@@ -10,6 +10,7 @@ import {
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
+import CustomerQuote from 'directives/Onboard/CustomerQuote';
 import OrganizationNameField from 'directives/Onboard/OrganizationName';
 import {
     useOnboardingStore_nameInvalid,
@@ -17,14 +18,13 @@ import {
     useOnboardingStore_requestedTenant,
     useOnboardingStore_setNameMissing,
     useOnboardingStore_setSurveyResponseMissing,
+    useOnboardingStore_surveyOptionOther,
     useOnboardingStore_surveyResponse,
     useOnboardingStore_surveyResponseMissing,
 } from 'directives/Onboard/Store/hooks';
 import OnboardingSurvey from 'directives/Onboard/Survey';
-import customerQuoteDark from 'images/customer_quote-dark.png';
-import customerQuoteLight from 'images/customer_quote-light.png';
 import { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { fireGtmEvent } from 'services/gtm';
 import { jobStatusPoller } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
@@ -65,17 +65,13 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
-    const intl = useIntl();
-    const surveyOptionOther = intl.formatMessage({
-        id: 'tenant.origin.radio.other.label',
-    });
-
     // Onboarding Store
     const requestedTenant = useOnboardingStore_requestedTenant();
     const nameInvalid = useOnboardingStore_nameInvalid();
     const nameMissing = useOnboardingStore_nameMissing();
     const setNameMissing = useOnboardingStore_setNameMissing();
 
+    const surveyOptionOther = useOnboardingStore_surveyOptionOther();
     const surveyResponse = useOnboardingStore_surveyResponse();
     const surveyResponseMissing = useOnboardingStore_surveyResponseMissing();
     const setSurveyResponseMissing =
@@ -150,27 +146,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
 
     return (
         <Stack direction="row">
-            {belowMd ? null : (
-                <Box
-                    sx={{
-                        width: '50%',
-                        mr: 2,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
-                    <img
-                        src={
-                            theme.palette.mode === 'light'
-                                ? customerQuoteLight
-                                : customerQuoteDark
-                        }
-                        width="85%"
-                        alt={intl.formatMessage({ id: 'company' })}
-                    />
-                </Box>
-            )}
+            <CustomerQuote hideQuote={belowMd} />
 
             <Stack sx={{ width: belowMd ? '100%' : '50%' }}>
                 <Stack
