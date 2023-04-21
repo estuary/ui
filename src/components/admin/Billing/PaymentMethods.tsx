@@ -134,7 +134,7 @@ const PaymentMethods = () => {
                 </FormControl>
             ) : null}
 
-            {selectedTenant && methods.length > 0 && !methodsLoading ? (
+            {selectedTenant && !methodsLoading ? (
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 650 }}
@@ -173,6 +173,20 @@ const PaymentMethods = () => {
                                     primary={method.id === defaultSource}
                                 />
                             ))}
+                            {methods.length < 1 ? (
+                                <TableRow>
+                                    <TableCell colSpan={6}>
+                                        <Typography
+                                            sx={{
+                                                textAlign: 'center',
+                                                fontSize: 15,
+                                            }}
+                                        >
+                                            <MessageWithLink messageID="billing.payment_methods.none_available" />
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            ) : null}
                         </TableBody>
                     </Table>
                 </TableContainer>
