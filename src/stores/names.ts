@@ -32,6 +32,10 @@ export enum FormStateStoreNames {
     MATERIALIZATION_EDIT = 'Materialization-Edit-Form-State',
 }
 
+export enum OnboardingStoreNames {
+    GENERAL = 'Onboarding',
+}
+
 export enum ResourceConfigStoreNames {
     GENERAL = 'general-resource-config',
 }
@@ -74,6 +78,7 @@ export type StoreName =
     | EndpointConfigStoreNames
     | ExistingEntityStoreNames
     | FormStateStoreNames
+    | OnboardingStoreNames
     | ResourceConfigStoreNames
     | SelectTableStoreNames
     | ShardDetailStoreNames

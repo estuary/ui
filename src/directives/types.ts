@@ -21,6 +21,7 @@ export interface ClickToAcceptClaim {
 
 export interface OnboardClaim {
     requestedTenant: string;
+    survey: any;
 }
 
 export type UserClaims = ClickToAcceptClaim | OnboardClaim;

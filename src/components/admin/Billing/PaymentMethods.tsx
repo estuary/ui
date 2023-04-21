@@ -29,19 +29,18 @@ import {
 } from 'api/billing';
 import { PaymentForm } from 'components/admin/Billing/CapturePaymentMethod';
 import { PaymentMethod } from 'components/admin/Billing/PaymentMethodRow';
-import MessageWithLink from 'components/content/MessageWithLink';
+import { useTenantDetails } from 'context/fetcher/Tenant';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
-import useTenants from 'hooks/useTenants';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-const stripePromise = loadStripe(
-    process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ?? ''
-);
-
 const PaymentMethods = () => {
-    const tenants = useTenants();
+    const stripePromise = useMemo(
+        () => loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ?? ''),
+        []
+    );
+    const tenants = useTenantDetails();
     const grants = useCombinedGrantsExt({ adminOnly: true });
 
     const [refreshCounter, setRefreshCounter] = useState(0);
@@ -58,10 +57,10 @@ const PaymentMethods = () => {
     const [defaultSource, setDefaultSource] = useState<string | null>(null);
 
     useEffect(() => {
-        if (tenants.tenants.length > 0 && selectedTenant === null) {
-            setSelectedTenant(tenants.tenants[0].tenant);
+        if (tenants && tenants.length > 0 && selectedTenant === null) {
+            setSelectedTenant(tenants[0].tenant);
         }
-    }, [selectedTenant, tenants.tenants]);
+    }, [selectedTenant, tenants]);
 
     useEffect(() => {
         void (async () => {
@@ -86,7 +85,7 @@ const PaymentMethods = () => {
     }, [selectedTenant, refreshCounter]);
 
     return (
-        <Stack direction="column" spacing={2} sx={{ m: 2, width: '100%' }}>
+        <Stack direction="column" spacing={2} sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex' }}>
                 <Typography
                     component="span"
@@ -107,11 +106,11 @@ const PaymentMethods = () => {
                 </Button>
             </Box>
 
-            <MessageWithLink messageID="billing.payment_methods.description" />
+            <FormattedMessage id="billing.payment_methods.description" />
 
             <Divider />
 
-            {tenants.tenants.length > 1 ? (
+            {tenants && tenants.length > 1 ? (
                 <FormControl fullWidth>
                     <InputLabel>Tenant</InputLabel>
                     <Select
@@ -119,7 +118,7 @@ const PaymentMethods = () => {
                         value={selectedTenant ?? ''}
                         onChange={(evt) => setSelectedTenant(evt.target.value)}
                     >
-                        {tenants.tenants
+                        {tenants
                             .filter((t) =>
                                 grants.combinedGrants.find(
                                     (g) => g.object_role === t.tenant
@@ -134,7 +133,7 @@ const PaymentMethods = () => {
                 </FormControl>
             ) : null}
 
-            {selectedTenant && methods.length > 0 && !methodsLoading ? (
+            {selectedTenant && !methodsLoading ? (
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 650 }}
@@ -173,6 +172,20 @@ const PaymentMethods = () => {
                                     primary={method.id === defaultSource}
                                 />
                             ))}
+                            {methods.length < 1 ? (
+                                <TableRow>
+                                    <TableCell colSpan={6}>
+                                        <Typography
+                                            sx={{
+                                                textAlign: 'center',
+                                                fontSize: 15,
+                                            }}
+                                        >
+                                            <FormattedMessage id="billing.payment_methods.none_available" />
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            ) : null}
                         </TableBody>
                     </Table>
                 </TableContainer>

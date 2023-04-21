@@ -93,6 +93,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'billing.payment_methods.header': 'Payment Information',
     'billing.payment_methods.description':
         'Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.',
+    'billing.payment_methods.none_available': 'No payment methods available',
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -418,6 +419,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
 
     'admin.billing.header': `Billing`,
     'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and {gbFree}GB are free every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
+    'admin.billing.error.paymentMethodsError': `There was an error connecting with our payment provider.  Please try again later.`,
     'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
     'admin.billing.error.undefinedPricingTier.docLink': `contact support`,
     'admin.billing.error.undefinedPricingTier.docPath': `mailto:support@estuary.dev`,
@@ -881,17 +883,27 @@ const Legal: ResolvedIntlConfig['messages'] = {
 };
 
 const Tenant: ResolvedIntlConfig['messages'] = {
-    'tenant.heading': `Organization Name`,
+    'tenant.heading': `Let's get started`,
     'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary.  It will only be public if you share data with other organizations.`,
 
     'tenant.expectations': `You can use letters, numbers, periods, underscores, and hyphens`,
     'tenant.expectations.error': `Sorry, only letters(a-z), numbers(0-9), periods(.), underscores(_), and hyphens(-) allowed.`,
 
+    'tenant.input.label': `Organization Name`,
     'tenant.input.placeholder': `acmeCo`,
     'tenant.errorMessage.empty': `You must provide a name before continuing.`,
 
     'tenant.docs.message': `To see a detailed explanation please view our {link}`,
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
+
+    'tenant.origin.radioGroup.label': `How'd you hear about us?`,
+    'tenant.origin.radio.browserSearch.label': `Search (Google, Bing, etc.)`,
+    'tenant.origin.radio.linkedIn.label': `LinkedIn`,
+    'tenant.origin.radio.referral.label': `Referral by a Partner`,
+    'tenant.origin.radio.youTube.label': `YouTube`,
+    'tenant.origin.radio.email.label': `Email`,
+    'tenant.origin.radio.gitHub.label': `GitHub`,
+    'tenant.origin.radio.other.label': `Other`,
 };
 
 const Details: ResolvedIntlConfig['messages'] = {
