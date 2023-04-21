@@ -38,7 +38,7 @@ function MustReloadDialog() {
                         <FormattedMessage id="errorBoundry.chunkNotFetched.error.title" />
                     }
                 >
-                    <DialogContentText id={ARIA_DESC_ID}>
+                    <DialogContentText id={ARIA_DESC_ID} component="div">
                         <Typography>
                             <FormattedMessage id="errorBoundry.chunkNotFetched.error.message1" />
                         </Typography>
