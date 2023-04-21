@@ -545,9 +545,12 @@ const getInitialState = (
         const liveSpecIds = searchParams.getAll(
             GlobalSearchParams.LIVE_SPEC_ID
         );
+        const materializationHydrating = entityType === 'materialization';
+        const materializationReydrating =
+            materializationHydrating && rehydrating;
 
         const { resetState, setHydrationErrorsExist } = get();
-        resetState(rehydrating);
+        resetState(materializationReydrating);
 
         if (connectorId) {
             const { data, error } = await getSchema_Resource(connectorId);
@@ -573,8 +576,9 @@ const getInitialState = (
             } else if (data && data.length > 0) {
                 const { setResourceConfig, preFillCollections } = get();
 
-                const collectionNameProp =
-                    entityType === 'materialization' ? 'source' : 'target';
+                const collectionNameProp = materializationHydrating
+                    ? 'source'
+                    : 'target';
 
                 const sortedBindings = sortBy(data[0].spec.bindings, [
                     collectionNameProp,
@@ -606,9 +610,11 @@ const getInitialState = (
 
                 preFillEmptyCollections(data, rehydrating);
             }
-        } else if (rehydrating) {
+        } else if (materializationReydrating) {
             // If there is nothign to prefill but we are rehydrating we want to make sure
-            //  we prefill any collections the user already selected
+            //  we prefill any collections the user already selected but only for materializations
+            //  because for a Capture the collections are discovered and if the hydration is kicked
+            //  off then they will need to rediscover everything again
             const { preFillEmptyCollections } = get();
             preFillEmptyCollections([], rehydrating);
         }
