@@ -211,7 +211,7 @@ function AdminBilling() {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <Divider sx={{ mt: 3, mb: 2 }} />
+                    <Divider sx={{ mt: 3 }} />
                 </Grid>
 
                 <Grid item xs={12}>

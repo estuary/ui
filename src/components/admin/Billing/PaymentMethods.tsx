@@ -4,7 +4,6 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
-    Divider,
     FormControl,
     InputLabel,
     MenuItem,
@@ -85,43 +84,43 @@ const PaymentMethods = () => {
     }, [selectedTenant, refreshCounter]);
 
     return (
-        <Stack direction="column" spacing={2} sx={{ width: '100%' }}>
-            <Box sx={{ display: 'flex' }}>
-                <Typography
-                    component="span"
-                    align="center"
-                    sx={{
-                        mb: 1,
-                        fontSize: 18,
-                        fontWeight: '400',
-                    }}
-                >
-                    <FormattedMessage id="admin.billing.payment_methods.header" />
-                </Typography>
+        <Stack spacing={3}>
+            <Stack
+                direction="row"
+                sx={{ mb: 1, justifyContent: 'space-between' }}
+            >
+                <Box>
+                    <Typography
+                        sx={{
+                            mb: 1,
+                            fontSize: 18,
+                            fontWeight: '400',
+                        }}
+                    >
+                        <FormattedMessage id="admin.billing.payment_methods.header" />
+                    </Typography>
 
-                <Box sx={{ flexGrow: 1 }} />
+                    <Typography>
+                        <FormattedMessage id="admin.billing.payment_methods.description" />
+                    </Typography>
+                </Box>
 
-                <Button
-                    sx={{ marginTop: 1 }}
-                    onClick={() => setNewMethodOpen(true)}
-                >
-                    Add Payment Method
-                </Button>
-            </Box>
-
-            <Typography>
-                <FormattedMessage id="admin.billing.payment_methods.description" />
-            </Typography>
-
-            <Divider />
+                <Box>
+                    <Button onClick={() => setNewMethodOpen(true)}>
+                        Add Payment Method
+                    </Button>
+                </Box>
+            </Stack>
 
             {tenants && tenants.length > 1 ? (
-                <FormControl fullWidth>
+                <FormControl size="small" sx={{ width: 350 }}>
                     <InputLabel>Tenant</InputLabel>
+
                     <Select
                         label="Tenant"
                         value={selectedTenant ?? ''}
                         onChange={(evt) => setSelectedTenant(evt.target.value)}
+                        sx={{ borderRadius: 3 }}
                     >
                         {tenants
                             .filter((t) =>
@@ -146,7 +145,12 @@ const PaymentMethods = () => {
                         size="small"
                     >
                         <TableHead>
-                            <TableRow>
+                            <TableRow
+                                sx={{
+                                    background: (theme) =>
+                                        theme.palette.background.default,
+                                }}
+                            >
                                 <TableCell width={200}>Type</TableCell>
                                 <TableCell>Name</TableCell>
                                 <TableCell>Last 4 digits</TableCell>
