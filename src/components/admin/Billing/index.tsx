@@ -14,6 +14,8 @@ import TasksByMonth from 'components/admin/Billing/graphs/TasksByMonthGraph';
 import PaymentMethods from 'components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'components/admin/Billing/PricingTierDetails';
 import AdminTabs from 'components/admin/Tabs';
+import MessageWithLink from 'components/content/MessageWithLink';
+import AlertBox from 'components/shared/AlertBox';
 import BillingHistoryTable from 'components/tables/Billing';
 import { semiTransparentBackground } from 'context/Theme';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
@@ -21,6 +23,7 @@ import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import usePageTitle from 'hooks/usePageTitle';
 import { HelpCircle } from 'iconoir-react';
 import { useEffect } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 import {
@@ -206,8 +209,19 @@ function AdminBilling() {
                         <DataByTaskGraph />
                     </Box>
                 </Grid>
-
-                <PaymentMethods />
+                <Box sx={{ paddingLeft: 2, paddingTop: 3, width: '100%' }}>
+                    <ErrorBoundary
+                        fallback={
+                            <AlertBox short severity="error">
+                                <Typography component="div">
+                                    <MessageWithLink messageID="admin.billing.error.paymentMethodsError" />
+                                </Typography>
+                            </AlertBox>
+                        }
+                    >
+                        <PaymentMethods />
+                    </ErrorBoundary>
+                </Box>
             </Grid>
         </>
     );

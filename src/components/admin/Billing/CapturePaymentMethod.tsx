@@ -92,6 +92,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                                 email: 'never',
                             },
                         },
+                        readOnly: loading,
                         defaultValues: {
                             billingDetails: {
                                 name: user?.user_metadata.full_name,

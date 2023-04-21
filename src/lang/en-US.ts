@@ -412,6 +412,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
 
     'admin.billing.header': `Billing`,
     'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and {gbFree}GB are free every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
+    'admin.billing.error.paymentMethodsError': `Sorry, something went wrong talking to our payment provider. We have been notified, please check back later.`,
     'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
     'admin.billing.error.undefinedPricingTier.docLink': `contact support`,
     'admin.billing.error.undefinedPricingTier.docPath': `mailto:support@estuary.dev`,
