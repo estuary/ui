@@ -418,7 +418,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
 
     'admin.billing.header': `Billing`,
-    'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and {gbFree}GB are free every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
+    'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and {gbFree}GB every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
     'admin.billing.error.paymentMethodsError': `There was an error connecting with our payment provider.  Please try again later.`,
     'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
     'admin.billing.error.undefinedPricingTier.docLink': `contact support`,
