@@ -88,12 +88,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'filter.time.thisWeek': `This Week`,
     'filter.time.lastMonth': `Last Month`,
     'filter.time.thisMonth': `This Month`,
-
-    // Billing Page
-    'billing.payment_methods.header': 'Payment Information',
-    'billing.payment_methods.description':
-        'Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.',
-    'billing.payment_methods.none_available': 'No payment methods available',
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -440,10 +434,10 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.table.history.tooltip.dataVolume': `bytes of data processed by tasks`,
     'admin.billing.table.history.emptyTableDefault.header': `No information found.`,
     'admin.billing.table.history.emptyTableDefault.message': `We couldn't find any billing information on file. Only administrators of a tenant are able to review billing information.`,
-    'admin.billing.payment.header': `Payment Information`,
-    'admin.billing.payment.message': `We are working on integrating a payment service provider to enable in-app transactions. To make a payment or inquire about our pricing tiers, please {docLink}.`,
-    'admin.billing.payment.message.docLink': `contact us`,
-    'admin.billing.payment.message.docPath': `mailto:support@estuary.dev`,
+
+    'admin.billing.payment_methods.header': `Payment Information`,
+    'admin.billing.payment_methods.description': `Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.`,
+    'admin.billing.payment_methods.none_available': `No payment methods available`,
 
     'admin.cookies': `Cookie Preference Management`,
     'admin.cookies.message': `Click below to manage your preferences.`,
