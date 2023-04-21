@@ -73,11 +73,11 @@ const AccessGrants = lazy(
 const AdminApi = lazy(
     () => import(/* webpackPrefetch: true */ 'components/admin/Api')
 );
-const AdminBilling = lazy(
-    () => import(/* webpackPrefetch: true */ 'components/admin/Billing')
-);
 const AdminConnectors = lazy(
     () => import(/* webpackPrefetch: true */ 'components/admin/Connectors')
+);
+const AdminBilling = lazy(
+    () => import(/* webpackPrefetch: true */ 'components/admin/Billing')
 );
 const AdminCookies = lazy(
     () => import(/* webpackPrefetch: true */ 'components/admin/Cookies')
@@ -417,6 +417,14 @@ const router = createBrowserRouter(
                             element={
                                 <Suspense fallback={null}>
                                     <AdminConnectors />
+                                </Suspense>
+                            }
+                        />
+                        <Route
+                            path={authenticatedRoutes.admin.billing.path}
+                            element={
+                                <Suspense fallback={null}>
+                                    <AdminBilling />
                                 </Suspense>
                             }
                         />

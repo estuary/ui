@@ -109,7 +109,7 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
             title={<FormattedMessage id="errorBoundry.title" />}
         >
             <FormattedMessage id="errorBoundry.message1" />
-            <FormattedMessage id="errorBoundry.message3" />
+            <FormattedMessage id="errorBoundry.message2" />
             <Divider />
 
             <IconButton

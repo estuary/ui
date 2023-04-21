@@ -88,6 +88,11 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'filter.time.thisWeek': `This Week`,
     'filter.time.lastMonth': `Last Month`,
     'filter.time.thisMonth': `This Month`,
+
+    // Billing Page
+    'billing.payment_methods.header': 'Payment Information',
+    'billing.payment_methods.description':
+        'Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.',
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -444,8 +449,8 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.cookies': `Cookie Preferences`,
-    'admin.tabs.storageMappings': `${CommonMessages['terms.storageMapping']}`,
     'admin.tabs.billing': `Billing`,
+    'admin.tabs.storageMappings': `${CommonMessages['terms.storageMapping']}`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
