@@ -1,10 +1,7 @@
 import { LoadingButton } from '@mui/lab';
 import {
     Box,
-    FormControl,
-    FormLabel,
     Stack,
-    TextField,
     Toolbar,
     Typography,
     useMediaQuery,
@@ -13,6 +10,7 @@ import {
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
+import OrganizationNameField from 'directives/Onboard/OrganizationName';
 import OnboardingSurvey from 'directives/Onboard/Survey';
 import customerQuoteDark from 'images/customer_quote-dark.png';
 import customerQuoteLight from 'images/customer_quote-light.png';
@@ -20,7 +18,7 @@ import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { fireGtmEvent } from 'services/gtm';
 import { jobStatusPoller } from 'services/supabase';
-import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
 import { jobStatusQuery, trackEvent } from './shared';
 import { DirectiveProps } from './types';
 
@@ -80,16 +78,6 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     const [serverError, setServerError] = useState<string | null>(null);
 
     const handlers = {
-        update: (updatedValue: string) => {
-            setRequestedTenant(updatedValue);
-
-            if (nameMissing) setNameMissing(!hasLength(updatedValue));
-        },
-        validateOrganizationName: () => {
-            const pattern = new RegExp(`^${PREFIX_NAME_PATTERN}$`);
-
-            setNameInvalid(!pattern.test(requestedTenant));
-        },
         submit: async (event: any) => {
             event.preventDefault();
 
@@ -236,48 +224,14 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                             justifyContent: 'center',
                         }}
                     >
-                        <FormControl>
-                            <FormLabel
-                                id="origin"
-                                required
-                                sx={{ mb: 1, fontSize: 16 }}
-                            >
-                                <FormattedMessage id="tenant.input.label" />
-                            </FormLabel>
-
-                            <TextField
-                                size="small"
-                                placeholder={intl.formatMessage({
-                                    id: 'tenant.input.placeholder',
-                                })}
-                                helperText={intl.formatMessage({
-                                    id:
-                                        nameMissing || nameInvalid
-                                            ? 'tenant.expectations.error'
-                                            : 'tenant.expectations',
-                                })}
-                                error={nameMissing || nameInvalid}
-                                id="requestedTenant"
-                                label={
-                                    <FormattedMessage id="common.tenant.creationForm" />
-                                }
-                                value={requestedTenant}
-                                onChange={(event) =>
-                                    handlers.update(event.target.value)
-                                }
-                                onBlur={() =>
-                                    handlers.validateOrganizationName()
-                                }
-                                required
-                                inputProps={{
-                                    pattern: PREFIX_NAME_PATTERN,
-                                }}
-                                sx={{
-                                    'maxWidth': 424,
-                                    '& .MuiInputBase-root': { borderRadius: 3 },
-                                }}
-                            />
-                        </FormControl>
+                        <OrganizationNameField
+                            nameInvalid={nameInvalid}
+                            nameMissing={nameMissing}
+                            requestedTenant={requestedTenant}
+                            setNameInvalid={setNameInvalid}
+                            setNameMissing={setNameMissing}
+                            setRequestedTenant={setRequestedTenant}
+                        />
 
                         <OnboardingSurvey
                             surveyOptionOther={surveyOptionOther}
