@@ -1,26 +1,27 @@
 import { FormControl, FormLabel, TextField } from '@mui/material';
-import { SetStateAction } from 'react';
+import {
+    useOnboardingStore_nameInvalid,
+    useOnboardingStore_nameMissing,
+    useOnboardingStore_requestedTenant,
+    useOnboardingStore_setNameInvalid,
+    useOnboardingStore_setNameMissing,
+    useOnboardingStore_setRequestedTenant,
+} from 'directives/Onboard/Store/hooks';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 
-interface Props {
-    nameInvalid: boolean;
-    nameMissing: boolean;
-    requestedTenant: string;
-    setNameInvalid: React.Dispatch<SetStateAction<boolean>>;
-    setNameMissing: React.Dispatch<SetStateAction<boolean>>;
-    setRequestedTenant: React.Dispatch<SetStateAction<string>>;
-}
-
-function OrganizationNameField({
-    nameInvalid,
-    nameMissing,
-    requestedTenant,
-    setNameInvalid,
-    setNameMissing,
-    setRequestedTenant,
-}: Props) {
+function OrganizationNameField() {
     const intl = useIntl();
+
+    // Onboarding Store
+    const nameInvalid = useOnboardingStore_nameInvalid();
+    const setNameInvalid = useOnboardingStore_setNameInvalid();
+
+    const nameMissing = useOnboardingStore_nameMissing();
+    const setNameMissing = useOnboardingStore_setNameMissing();
+
+    const requestedTenant = useOnboardingStore_requestedTenant();
+    const setRequestedTenant = useOnboardingStore_setRequestedTenant();
 
     const handlers = {
         update: (updatedValue: string) => {

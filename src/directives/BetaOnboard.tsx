@@ -11,7 +11,15 @@ import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
 import OrganizationNameField from 'directives/Onboard/OrganizationName';
-import { useOnboardingStore_surveyResponse } from 'directives/Onboard/Store/hooks';
+import {
+    useOnboardingStore_nameInvalid,
+    useOnboardingStore_nameMissing,
+    useOnboardingStore_requestedTenant,
+    useOnboardingStore_setNameMissing,
+    useOnboardingStore_setSurveyResponseMissing,
+    useOnboardingStore_surveyResponse,
+    useOnboardingStore_surveyResponseMissing,
+} from 'directives/Onboard/Store/hooks';
 import OnboardingSurvey from 'directives/Onboard/Survey';
 import customerQuoteDark from 'images/customer_quote-dark.png';
 import customerQuoteLight from 'images/customer_quote-light.png';
@@ -63,17 +71,17 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     });
 
     // Onboarding Store
+    const requestedTenant = useOnboardingStore_requestedTenant();
+    const nameInvalid = useOnboardingStore_nameInvalid();
+    const nameMissing = useOnboardingStore_nameMissing();
+    const setNameMissing = useOnboardingStore_setNameMissing();
+
     const surveyResponse = useOnboardingStore_surveyResponse();
+    const surveyResponseMissing = useOnboardingStore_surveyResponseMissing();
+    const setSurveyResponseMissing =
+        useOnboardingStore_setSurveyResponseMissing();
 
-    const [requestedTenant, setRequestedTenant] = useState<string>('');
     const [saving, setSaving] = useState(false);
-
-    const [nameMissing, setNameMissing] = useState(false);
-    const [nameInvalid, setNameInvalid] = useState(false);
-
-    const [surveyResultsMissing, setSurveyResultsMissing] =
-        useState<boolean>(false);
-
     const [serverError, setServerError] = useState<string | null>(null);
 
     const handlers = {
@@ -96,14 +104,14 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                     (surveyResponse.origin === surveyOptionOther &&
                         !hasLength(surveyResponse.details))
                 ) {
-                    setSurveyResultsMissing(true);
+                    setSurveyResponseMissing(true);
                 }
 
                 setServerError(null);
             } else {
                 setServerError(null);
                 setNameMissing(false);
-                setSurveyResultsMissing(false);
+                setSurveyResponseMissing(false);
                 setSaving(true);
 
                 const clickToAcceptResponse = await submit_onboard(
@@ -182,7 +190,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                         <FormattedMessage id="tenant.heading" />
                     </Typography>
 
-                    {nameMissing || surveyResultsMissing ? (
+                    {nameMissing || surveyResponseMissing ? (
                         <Box sx={{ maxWidth: 424 }}>
                             <AlertBox
                                 short
@@ -192,7 +200,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                                 <FormattedMessage
                                     id={getValidationErrorMessageId(
                                         nameMissing,
-                                        surveyResultsMissing
+                                        surveyResponseMissing
                                     )}
                                 />
                             </AlertBox>
@@ -223,14 +231,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                             justifyContent: 'center',
                         }}
                     >
-                        <OrganizationNameField
-                            nameInvalid={nameInvalid}
-                            nameMissing={nameMissing}
-                            requestedTenant={requestedTenant}
-                            setNameInvalid={setNameInvalid}
-                            setNameMissing={setNameMissing}
-                            setRequestedTenant={setRequestedTenant}
-                        />
+                        <OrganizationNameField />
 
                         <OnboardingSurvey />
 
