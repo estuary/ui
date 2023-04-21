@@ -1,25 +1,12 @@
-import {
-    Button,
-    Collapse,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    Divider,
-    IconButton,
-    Paper,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { Collapse, Divider, IconButton, Paper, useTheme } from '@mui/material';
 import { NavArrowDown } from 'iconoir-react';
 import { ReactNode, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
 import { useMount } from 'react-use';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import AlertBox from './AlertBox';
+import MustReloadDialog from './MustReloadDialog';
 
 interface Props {
     children: ReactNode;
@@ -40,7 +27,6 @@ const logErrorToLogRocket = (error: Error) => {
 function ErrorFallback({ error }: { error: Error }): JSX.Element {
     const intl = useIntl();
     const theme = useTheme();
-    const navigate = useNavigate();
 
     const [offerReload, setOfferReload] = useState(false);
     const [expanded, setExpanded] = useState(false);
@@ -58,47 +44,7 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
     });
 
     if (offerReload) {
-        const reloadPage = () => {
-            navigate(0);
-        };
-
-        return (
-            <Dialog
-                open
-                aria-labelledby={ARIA_LABEL_ID}
-                aria-describedby={ARIA_DESC_ID}
-            >
-                <DialogTitle id={ARIA_LABEL_ID}>
-                    <FormattedMessage id="errorBoundry.chunkNotFetched.dialog.title" />
-                </DialogTitle>
-                <DialogContent>
-                    <AlertBox
-                        short
-                        severity="error"
-                        title={
-                            <FormattedMessage id="errorBoundry.chunkNotFetched.error.title" />
-                        }
-                    >
-                        <DialogContentText id={ARIA_DESC_ID}>
-                            <Typography>
-                                <FormattedMessage id="errorBoundry.chunkNotFetched.error.message1" />
-                            </Typography>
-                            <Typography>
-                                <FormattedMessage id="errorBoundry.chunkNotFetched.error.message2" />
-                            </Typography>
-                            <Typography>
-                                <FormattedMessage id="errorBoundry.chunkNotFetched.error.instructions" />
-                            </Typography>
-                        </DialogContentText>
-                    </AlertBox>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={reloadPage}>
-                        <FormattedMessage id="cta.reload" />
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        );
+        return <MustReloadDialog />;
     }
 
     return (
