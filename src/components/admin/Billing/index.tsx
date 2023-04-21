@@ -214,13 +214,13 @@ function AdminBilling() {
                         fallback={
                             <>
                                 <Typography
-                                    component="span"
-                                    variant="h6"
                                     sx={{
-                                        alignItems: 'center',
+                                        mb: 1,
+                                        fontSize: 18,
+                                        fontWeight: '400',
                                     }}
                                 >
-                                    <FormattedMessage id="billing.payment_methods.header" />
+                                    <FormattedMessage id="admin.billing.payment_methods.header" />
                                 </Typography>
                                 <AlertBox short severity="error">
                                     <Typography component="div">
