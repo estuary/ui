@@ -1,5 +1,4 @@
 import {
-    Box,
     Button,
     Collapse,
     Dialog,
@@ -10,7 +9,6 @@ import {
     Divider,
     IconButton,
     Paper,
-    Stack,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -81,21 +79,17 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
                             <FormattedMessage id="errorBoundry.chunkNotFetched.error.title" />
                         }
                     >
-                        <Box>
-                            <DialogContentText id={ARIA_DESC_ID}>
-                                <Stack>
-                                    <Typography>
-                                        <FormattedMessage id="errorBoundry.chunkNotFetched.error.message1" />
-                                    </Typography>
-                                    <Typography>
-                                        <FormattedMessage id="errorBoundry.chunkNotFetched.error.message2" />
-                                    </Typography>
-                                    <Typography>
-                                        <FormattedMessage id="errorBoundry.chunkNotFetched.error.instructions" />
-                                    </Typography>
-                                </Stack>
-                            </DialogContentText>
-                        </Box>
+                        <DialogContentText id={ARIA_DESC_ID}>
+                            <Typography>
+                                <FormattedMessage id="errorBoundry.chunkNotFetched.error.message1" />
+                            </Typography>
+                            <Typography>
+                                <FormattedMessage id="errorBoundry.chunkNotFetched.error.message2" />
+                            </Typography>
+                            <Typography>
+                                <FormattedMessage id="errorBoundry.chunkNotFetched.error.instructions" />
+                            </Typography>
+                        </DialogContentText>
                     </AlertBox>
                 </DialogContent>
                 <DialogActions>
