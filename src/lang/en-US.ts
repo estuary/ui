@@ -126,6 +126,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.register.github': `Register with GitHub`,
     'cta.configure': `Configure`,
     'cta.showAll': `Show All`,
+    'cta.reload': `Reload`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -158,8 +159,11 @@ const ErrorBoundry: ResolvedIntlConfig['messages'] = {
     'errorBoundry.title': `${Error['error.title']}`,
     'errorBoundry.message1': `There was an unexpected application error. `,
     'errorBoundry.message2': `Expand to see details.`,
-    'errorBoundry.chunkNotFetched.message1': `There was an issue fetching this portion of the application.`,
-    'errorBoundry.chunkNotFetched.message2': `To continue please reload.`,
+    'errorBoundry.chunkNotFetched.dialog.title': `Reload Required`,
+    'errorBoundry.chunkNotFetched.error.title': `Failure to load`,
+    'errorBoundry.chunkNotFetched.error.message1': `There was an issue fetching this portion of the application.`,
+    'errorBoundry.chunkNotFetched.error.message2': `This is usually caused by a network issue or an old dashboard version being cached.`,
+    'errorBoundry.chunkNotFetched.error.instructions': `To continue please reload.`,
 };
 
 const ConfirmationDialog: ResolvedIntlConfig['messages'] = {
