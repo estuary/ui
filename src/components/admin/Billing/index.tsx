@@ -14,7 +14,6 @@ import TasksByMonth from 'components/admin/Billing/graphs/TasksByMonthGraph';
 import PaymentMethods from 'components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'components/admin/Billing/PricingTierDetails';
 import AdminTabs from 'components/admin/Tabs';
-import MessageWithLink from 'components/content/MessageWithLink';
 import AlertBox from 'components/shared/AlertBox';
 import BillingHistoryTable from 'components/tables/Billing';
 import { semiTransparentBackground } from 'context/Theme';
@@ -214,7 +213,7 @@ function AdminBilling() {
                         fallback={
                             <AlertBox short severity="error">
                                 <Typography component="div">
-                                    <MessageWithLink messageID="admin.billing.error.paymentMethodsError" />
+                                    <FormattedMessage id="admin.billing.error.paymentMethodsError" />
                                 </Typography>
                             </AlertBox>
                         }
