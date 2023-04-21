@@ -37,7 +37,8 @@ export enum CustomEvents {
     MATERIALIZATION_TEST = 'Materialization_Test',
     MATERIALIZATION_EDIT = 'Materialization_Edit',
     DIRECTIVE = 'Directive',
-    ERROR_BOUNDRY_DISPLAYED = 'Error_Boundry_Displayed',
+    ERROR_BOUNDARY_DISPLAYED = 'Error_Boundary_Displayed',
+    ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
 }
 
 const logRocketSettings = getLogRocketSettings();
