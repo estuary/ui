@@ -1,5 +1,6 @@
 import {
     Box,
+    Divider,
     Grid,
     Stack,
     Tooltip,
@@ -14,7 +15,6 @@ import TasksByMonth from 'components/admin/Billing/graphs/TasksByMonthGraph';
 import PaymentMethods from 'components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'components/admin/Billing/PricingTierDetails';
 import AdminTabs from 'components/admin/Tabs';
-import MessageWithLink from 'components/content/MessageWithLink';
 import AlertBox from 'components/shared/AlertBox';
 import BillingHistoryTable from 'components/tables/Billing';
 import { semiTransparentBackground } from 'context/Theme';
@@ -209,19 +209,24 @@ function AdminBilling() {
                         <DataByTaskGraph />
                     </Box>
                 </Grid>
-                <Box sx={{ paddingLeft: 2, paddingTop: 3, width: '100%' }}>
+
+                <Grid item xs={12}>
+                    <Divider sx={{ mt: 3, mb: 2 }} />
+                </Grid>
+
+                <Grid item xs={12}>
                     <ErrorBoundary
                         fallback={
                             <AlertBox short severity="error">
                                 <Typography component="div">
-                                    <MessageWithLink messageID="admin.billing.error.paymentMethodsError" />
+                                    <FormattedMessage id="admin.billing.error.paymentMethodsError" />
                                 </Typography>
                             </AlertBox>
                         }
                     >
                         <PaymentMethods />
                     </ErrorBoundary>
-                </Box>
+                </Grid>
             </Grid>
         </>
     );

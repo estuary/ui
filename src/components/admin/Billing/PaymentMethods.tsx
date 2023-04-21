@@ -29,7 +29,6 @@ import {
 } from 'api/billing';
 import { PaymentForm } from 'components/admin/Billing/CapturePaymentMethod';
 import { PaymentMethod } from 'components/admin/Billing/PaymentMethodRow';
-import MessageWithLink from 'components/content/MessageWithLink';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useTenants from 'hooks/useTenants';
 
@@ -90,13 +89,16 @@ const PaymentMethods = () => {
             <Box sx={{ display: 'flex' }}>
                 <Typography
                     component="span"
-                    variant="h6"
+                    align="center"
                     sx={{
-                        alignItems: 'center',
+                        mb: 1,
+                        fontSize: 18,
+                        fontWeight: '400',
                     }}
                 >
-                    <FormattedMessage id="billing.payment_methods.header" />
+                    <FormattedMessage id="admin.billing.payment_methods.header" />
                 </Typography>
+
                 <Box sx={{ flexGrow: 1 }} />
 
                 <Button
@@ -107,7 +109,9 @@ const PaymentMethods = () => {
                 </Button>
             </Box>
 
-            <MessageWithLink messageID="billing.payment_methods.description" />
+            <Typography>
+                <FormattedMessage id="admin.billing.payment_methods.description" />
+            </Typography>
 
             <Divider />
 
@@ -182,7 +186,7 @@ const PaymentMethods = () => {
                                                 fontSize: 15,
                                             }}
                                         >
-                                            <MessageWithLink messageID="billing.payment_methods.none_available" />
+                                            <FormattedMessage id="admin.billing.payment_methods.none_available" />
                                         </Typography>
                                     </TableCell>
                                 </TableRow>
