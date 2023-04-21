@@ -25,6 +25,7 @@ import { useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
     useBilling_hydrated,
     useBilling_resetState,
@@ -211,12 +212,31 @@ function AdminBilling() {
                 <Box sx={{ paddingLeft: 2, paddingTop: 3, width: '100%' }}>
                     <ErrorBoundary
                         fallback={
-                            <AlertBox short severity="error">
-                                <Typography component="div">
-                                    <FormattedMessage id="admin.billing.error.paymentMethodsError" />
+                            <>
+                                <Typography
+                                    component="span"
+                                    variant="h6"
+                                    sx={{
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <FormattedMessage id="billing.payment_methods.header" />
                                 </Typography>
-                            </AlertBox>
+                                <AlertBox short severity="error">
+                                    <Typography component="div">
+                                        <FormattedMessage id="admin.billing.error.paymentMethodsError" />
+                                    </Typography>
+                                </AlertBox>
+                            </>
                         }
+                        onError={(errorLoadingPaymentMethods) => {
+                            logRocketEvent(
+                                CustomEvents.ERROR_BOUNDARY_PAYMENT_METHODS,
+                                {
+                                    stack: errorLoadingPaymentMethods.stack,
+                                }
+                            );
+                        }}
                     >
                         <PaymentMethods />
                     </ErrorBoundary>
