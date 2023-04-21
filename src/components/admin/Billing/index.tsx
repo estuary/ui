@@ -1,5 +1,6 @@
 import {
     Box,
+    Divider,
     Grid,
     Stack,
     Tooltip,
@@ -208,7 +209,12 @@ function AdminBilling() {
                         <DataByTaskGraph />
                     </Box>
                 </Grid>
-                <Box sx={{ paddingLeft: 2, paddingTop: 3, width: '100%' }}>
+
+                <Grid item xs={12}>
+                    <Divider sx={{ mt: 3 }} />
+                </Grid>
+
+                <Grid item xs={12}>
                     <ErrorBoundary
                         fallback={
                             <AlertBox short severity="error">
@@ -220,7 +226,7 @@ function AdminBilling() {
                     >
                         <PaymentMethods />
                     </ErrorBoundary>
-                </Box>
+                </Grid>
             </Grid>
         </>
     );

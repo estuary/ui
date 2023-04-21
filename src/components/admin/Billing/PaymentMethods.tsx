@@ -4,7 +4,6 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
-    Divider,
     FormControl,
     InputLabel,
     MenuItem,
@@ -85,38 +84,43 @@ const PaymentMethods = () => {
     }, [selectedTenant, refreshCounter]);
 
     return (
-        <Stack direction="column" spacing={2} sx={{ width: '100%' }}>
-            <Box sx={{ display: 'flex' }}>
-                <Typography
-                    component="span"
-                    variant="h6"
-                    sx={{
-                        alignItems: 'center',
-                    }}
-                >
-                    <FormattedMessage id="billing.payment_methods.header" />
-                </Typography>
-                <Box sx={{ flexGrow: 1 }} />
+        <Stack spacing={3}>
+            <Stack
+                direction="row"
+                sx={{ mb: 1, justifyContent: 'space-between' }}
+            >
+                <Box>
+                    <Typography
+                        sx={{
+                            mb: 1,
+                            fontSize: 18,
+                            fontWeight: '400',
+                        }}
+                    >
+                        <FormattedMessage id="admin.billing.payment_methods.header" />
+                    </Typography>
 
-                <Button
-                    sx={{ marginTop: 1 }}
-                    onClick={() => setNewMethodOpen(true)}
-                >
-                    Add Payment Method
-                </Button>
-            </Box>
+                    <Typography>
+                        <FormattedMessage id="admin.billing.payment_methods.description" />
+                    </Typography>
+                </Box>
 
-            <FormattedMessage id="billing.payment_methods.description" />
-
-            <Divider />
+                <Box>
+                    <Button onClick={() => setNewMethodOpen(true)}>
+                        Add Payment Method
+                    </Button>
+                </Box>
+            </Stack>
 
             {tenants && tenants.length > 1 ? (
-                <FormControl fullWidth>
+                <FormControl size="small" sx={{ width: 350 }}>
                     <InputLabel>Tenant</InputLabel>
+
                     <Select
                         label="Tenant"
                         value={selectedTenant ?? ''}
                         onChange={(evt) => setSelectedTenant(evt.target.value)}
+                        sx={{ borderRadius: 3 }}
                     >
                         {tenants
                             .filter((t) =>
@@ -141,7 +145,12 @@ const PaymentMethods = () => {
                         size="small"
                     >
                         <TableHead>
-                            <TableRow>
+                            <TableRow
+                                sx={{
+                                    background: (theme) =>
+                                        theme.palette.background.default,
+                                }}
+                            >
                                 <TableCell width={200}>Type</TableCell>
                                 <TableCell>Name</TableCell>
                                 <TableCell>Last 4 digits</TableCell>
@@ -181,7 +190,7 @@ const PaymentMethods = () => {
                                                 fontSize: 15,
                                             }}
                                         >
-                                            <FormattedMessage id="billing.payment_methods.none_available" />
+                                            <FormattedMessage id="admin.billing.payment_methods.none_available" />
                                         </Typography>
                                     </TableCell>
                                 </TableRow>
