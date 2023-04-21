@@ -65,20 +65,6 @@ export const useOnboardingStore_setSurveyResponse = () => {
     >(OnboardingStoreNames.GENERAL, (state) => state.setSurveyResponse);
 };
 
-export const useOnboardingStore_surveyResponseMissing = () => {
-    return useLocalZustandStore<
-        OnboardingState,
-        OnboardingState['surveyResponseMissing']
-    >(OnboardingStoreNames.GENERAL, (state) => state.surveyResponseMissing);
-};
-
-export const useOnboardingStore_setSurveyResponseMissing = () => {
-    return useLocalZustandStore<
-        OnboardingState,
-        OnboardingState['setSurveyResponseMissing']
-    >(OnboardingStoreNames.GENERAL, (state) => state.setSurveyResponseMissing);
-};
-
 export const useOnboardingStore_resetState = () => {
     return useLocalZustandStore<OnboardingState, OnboardingState['resetState']>(
         OnboardingStoreNames.GENERAL,

@@ -896,9 +896,6 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.origin.radio.email.label': `Email`,
     'tenant.origin.radio.gitHub.label': `GitHub`,
     'tenant.origin.radio.other.label': `Other`,
-
-    'tenant.errorMessage.missingSurvey': `You must answer the survey before continuing.`,
-    'tenant.errorMessage.missingOrganizationAndSurvey': `You must provide an organization name and answer the survey before continuing.`,
 };
 
 const Details: ResolvedIntlConfig['messages'] = {

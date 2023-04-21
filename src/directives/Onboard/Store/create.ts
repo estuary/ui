@@ -12,14 +12,12 @@ const getInitialStateData = (): Pick<
     | 'requestedTenant'
     | 'surveyOptionOther'
     | 'surveyResponse'
-    | 'surveyResponseMissing'
 > => ({
     nameInvalid: false,
     nameMissing: false,
     requestedTenant: '',
     surveyOptionOther: 'Other',
     surveyResponse: { origin: '', details: '' },
-    surveyResponseMissing: false,
 });
 
 const getInitialState = (
@@ -65,16 +63,6 @@ const getInitialState = (
             }),
             false,
             'Survey Response Set'
-        );
-    },
-
-    setSurveyResponseMissing: (value) => {
-        set(
-            produce((state: OnboardingState) => {
-                state.surveyResponseMissing = value;
-            }),
-            false,
-            'Missing Survey Response Flag Set'
         );
     },
 

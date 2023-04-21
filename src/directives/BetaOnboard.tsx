@@ -16,15 +16,14 @@ import {
     useOnboardingStore_nameInvalid,
     useOnboardingStore_nameMissing,
     useOnboardingStore_requestedTenant,
+    useOnboardingStore_resetState,
     useOnboardingStore_setNameMissing,
-    useOnboardingStore_setSurveyResponseMissing,
-    useOnboardingStore_surveyOptionOther,
     useOnboardingStore_surveyResponse,
-    useOnboardingStore_surveyResponseMissing,
 } from 'directives/Onboard/Store/hooks';
 import OnboardingSurvey from 'directives/Onboard/Survey';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useUnmount } from 'react-use';
 import { fireGtmEvent } from 'services/gtm';
 import { jobStatusPoller } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
@@ -46,19 +45,6 @@ const submit_onboard = async (
     );
 };
 
-const getValidationErrorMessageId = (
-    nameMissing: boolean,
-    surveyResultsMissing: boolean
-): string => {
-    if (nameMissing && surveyResultsMissing) {
-        return 'tenant.errorMessage.missingOrganizationAndSurvey';
-    } else {
-        return nameMissing
-            ? 'tenant.errorMessage.empty'
-            : 'tenant.errorMessage.missingSurvey';
-    }
-};
-
 const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     trackEvent(`${directiveName}:Viewed`);
 
@@ -70,12 +56,8 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     const nameInvalid = useOnboardingStore_nameInvalid();
     const nameMissing = useOnboardingStore_nameMissing();
     const setNameMissing = useOnboardingStore_setNameMissing();
-
-    const surveyOptionOther = useOnboardingStore_surveyOptionOther();
     const surveyResponse = useOnboardingStore_surveyResponse();
-    const surveyResponseMissing = useOnboardingStore_surveyResponseMissing();
-    const setSurveyResponseMissing =
-        useOnboardingStore_setSurveyResponseMissing();
+    const resetOnboardingState = useOnboardingStore_resetState();
 
     const [saving, setSaving] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
@@ -84,30 +66,15 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
         submit: async (event: any) => {
             event.preventDefault();
 
-            if (
-                !hasLength(requestedTenant) ||
-                nameInvalid ||
-                !hasLength(surveyResponse.origin) ||
-                (surveyResponse.origin === surveyOptionOther &&
-                    !hasLength(surveyResponse.details))
-            ) {
+            if (nameInvalid || !hasLength(requestedTenant)) {
                 if (!hasLength(requestedTenant)) {
                     setNameMissing(true);
-                }
-
-                if (
-                    !hasLength(surveyResponse.origin) ||
-                    (surveyResponse.origin === surveyOptionOther &&
-                        !hasLength(surveyResponse.details))
-                ) {
-                    setSurveyResponseMissing(true);
                 }
 
                 setServerError(null);
             } else {
                 setServerError(null);
                 setNameMissing(false);
-                setSurveyResponseMissing(false);
                 setSaving(true);
 
                 const clickToAcceptResponse = await submit_onboard(
@@ -144,6 +111,8 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
         },
     };
 
+    useUnmount(() => resetOnboardingState());
+
     return (
         <Stack direction="row">
             <CustomerQuote hideQuote={belowMd} />
@@ -166,19 +135,14 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                         <FormattedMessage id="tenant.heading" />
                     </Typography>
 
-                    {nameMissing || surveyResponseMissing ? (
+                    {nameMissing ? (
                         <Box sx={{ maxWidth: 424 }}>
                             <AlertBox
                                 short
                                 severity="error"
                                 title={<FormattedMessage id="error.title" />}
                             >
-                                <FormattedMessage
-                                    id={getValidationErrorMessageId(
-                                        nameMissing,
-                                        surveyResponseMissing
-                                    )}
-                                />
+                                <FormattedMessage id="tenant.errorMessage.empty" />
                             </AlertBox>
                         </Box>
                     ) : null}

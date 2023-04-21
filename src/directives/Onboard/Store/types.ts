@@ -20,9 +20,6 @@ export interface OnboardingState {
     surveyResponse: SurveyResponse;
     setSurveyResponse: (value: SurveyResponse) => void;
 
-    surveyResponseMissing: boolean;
-    setSurveyResponseMissing: (value: boolean) => void;
-
     // Misc.
     resetState: () => void;
 }
