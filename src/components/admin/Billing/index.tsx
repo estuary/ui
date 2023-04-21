@@ -1,6 +1,5 @@
 import {
     Box,
-    Divider,
     Grid,
     Stack,
     Tooltip,
@@ -12,9 +11,9 @@ import { authenticatedRoutes } from 'app/routes';
 import DataByMonthGraph from 'components/admin/Billing/graphs/DataByMonthGraph';
 import DataByTaskGraph from 'components/admin/Billing/graphs/DataByTaskGraph';
 import TasksByMonth from 'components/admin/Billing/graphs/TasksByMonthGraph';
+import PaymentMethods from 'components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'components/admin/Billing/PricingTierDetails';
 import AdminTabs from 'components/admin/Tabs';
-import MessageWithLink from 'components/content/MessageWithLink';
 import BillingHistoryTable from 'components/tables/Billing';
 import { semiTransparentBackground } from 'context/Theme';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
@@ -208,15 +207,7 @@ function AdminBilling() {
                     </Box>
                 </Grid>
 
-                <Grid item xs={12}>
-                    <Divider sx={{ mt: 3, mb: 2 }} />
-
-                    <Typography sx={{ mb: 1, fontSize: 18, fontWeight: '400' }}>
-                        <FormattedMessage id="admin.billing.payment.header" />
-                    </Typography>
-
-                    <MessageWithLink messageID="admin.billing.payment.message" />
-                </Grid>
+                <PaymentMethods />
             </Grid>
         </>
     );
