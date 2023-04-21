@@ -33,14 +33,14 @@ import MessageWithLink from 'components/content/MessageWithLink';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useTenants from 'hooks/useTenants';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-const stripePromise = loadStripe(
-    process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ?? ''
-);
-
 const PaymentMethods = () => {
+    const stripePromise = useMemo(
+        () => loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ?? ''),
+        []
+    );
     const tenants = useTenants();
     const grants = useCombinedGrantsExt({ adminOnly: true });
 
@@ -86,7 +86,7 @@ const PaymentMethods = () => {
     }, [selectedTenant, refreshCounter]);
 
     return (
-        <Stack direction="column" spacing={2} sx={{ m: 2, width: '100%' }}>
+        <Stack direction="column" spacing={2} sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex' }}>
                 <Typography
                     component="span"
@@ -134,7 +134,7 @@ const PaymentMethods = () => {
                 </FormControl>
             ) : null}
 
-            {selectedTenant && methods.length > 0 && !methodsLoading ? (
+            {selectedTenant && !methodsLoading ? (
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 650 }}
@@ -173,6 +173,20 @@ const PaymentMethods = () => {
                                     primary={method.id === defaultSource}
                                 />
                             ))}
+                            {methods.length < 1 ? (
+                                <TableRow>
+                                    <TableCell colSpan={6}>
+                                        <Typography
+                                            sx={{
+                                                textAlign: 'center',
+                                                fontSize: 15,
+                                            }}
+                                        >
+                                            <MessageWithLink messageID="billing.payment_methods.none_available" />
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            ) : null}
                         </TableBody>
                     </Table>
                 </TableContainer>

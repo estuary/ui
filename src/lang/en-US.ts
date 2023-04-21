@@ -93,6 +93,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'billing.payment_methods.header': 'Payment Information',
     'billing.payment_methods.description':
         'Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.',
+    'billing.payment_methods.none_available': 'No payment methods available',
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -412,6 +413,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
 
     'admin.billing.header': `Billing`,
     'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and {gbFree}GB are free every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
+    'admin.billing.error.paymentMethodsError': `There was an error connecting with our payment provider.  Please try again later.`,
     'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
     'admin.billing.error.undefinedPricingTier.docLink': `contact support`,
     'admin.billing.error.undefinedPricingTier.docPath': `mailto:support@estuary.dev`,
