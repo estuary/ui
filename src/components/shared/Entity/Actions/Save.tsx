@@ -11,9 +11,8 @@ import {
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { useClient } from 'hooks/supabase-swr';
-import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { CustomEvents } from 'services/logrocket';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
     DEFAULT_FILTER,
     jobStatusPoller,
@@ -41,7 +40,7 @@ interface Props {
 }
 
 const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
-    LogRocket.track(logEvent, {
+    logRocketEvent(logEvent, {
         id: payload.id ?? DEFAULT_FILTER,
         draft_id: payload.draft_id ?? DEFAULT_FILTER,
         dry_run: payload.dry_run ?? DEFAULT_FILTER,
@@ -210,7 +209,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
                 });
             }
         } else {
-            LogRocket.track('Entity:Create:Missing draftId');
+            logRocketEvent('Entity:Create:Missing draftId');
             onFailure({
                 error: {
                     title: `${messagePrefix}.save.failure.errorTitle`,

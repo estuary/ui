@@ -126,6 +126,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.register.github': `Register with GitHub`,
     'cta.configure': `Configure`,
     'cta.showAll': `Show All`,
+    'cta.reload': `Reload`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -158,6 +159,11 @@ const ErrorBoundry: ResolvedIntlConfig['messages'] = {
     'errorBoundry.title': `${Error['error.title']}`,
     'errorBoundry.message1': `There was an unexpected application error. `,
     'errorBoundry.message2': `Expand to see details.`,
+    'errorBoundry.chunkNotFetched.dialog.title': `Reload Required`,
+    'errorBoundry.chunkNotFetched.error.title': `Failure to load`,
+    'errorBoundry.chunkNotFetched.error.message1': `There was an issue fetching this portion of the application.`,
+    'errorBoundry.chunkNotFetched.error.message2': `This is usually caused by a network issue or an old dashboard version being cached.`,
+    'errorBoundry.chunkNotFetched.error.instructions': `To continue please reload.`,
 };
 
 const ConfirmationDialog: ResolvedIntlConfig['messages'] = {
@@ -406,7 +412,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
 
     'admin.billing.header': `Billing`,
-    'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and {gbFree}GB are free every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
+    'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and {gbFree}GB every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
     'admin.billing.error.paymentMethodsError': `There was an error connecting with our payment provider.  Please try again later.`,
     'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
     'admin.billing.error.undefinedPricingTier.docLink': `contact support`,

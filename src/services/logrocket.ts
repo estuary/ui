@@ -37,6 +37,8 @@ export enum CustomEvents {
     MATERIALIZATION_TEST = 'Materialization_Test',
     MATERIALIZATION_EDIT = 'Materialization_Edit',
     DIRECTIVE = 'Directive',
+    ERROR_BOUNDARY_DISPLAYED = 'Error_Boundary_Displayed',
+    ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
 }
 
 const logRocketSettings = getLogRocketSettings();
@@ -215,5 +217,16 @@ export const identifyUser = (user: User) => {
         }
 
         LogRocket.identify(user.id, traits);
+    }
+};
+
+export const logRocketEvent = (
+    event: CustomEvents | string,
+    eventProperties?: any
+) => {
+    // Just want to be very very safe
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (LogRocket?.track) {
+        LogRocket.track(event, eventProperties);
     }
 };

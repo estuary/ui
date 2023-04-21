@@ -12,9 +12,8 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { isEmpty } from 'lodash';
-import LogRocket from 'logrocket';
 import { useIntl } from 'react-intl';
-import { CustomEvents } from 'services/logrocket';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 
 interface Props {
     queryData: CaptureQueryWithSpec | MaterializationQueryWithSpec | null;
@@ -28,7 +27,7 @@ const trackEvent = (
             ? CustomEvents.CAPTURE_CREATE_CONFIG_EDIT
             : CustomEvents.MATERIALIZATION_CREATE_CONFIG_EDIT;
 
-    LogRocket.track(logEvent, {
+    logRocketEvent(logEvent, {
         id: data.id,
         connector_id: data.connector_id,
     });
