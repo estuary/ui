@@ -443,7 +443,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.cookies': `Cookie Preferences`,
-    'admin.tabs.billing': `Billing Preferences`,
+    'admin.tabs.billing': `Billing`,
     'admin.tabs.storageMappings': `${CommonMessages['terms.storageMapping']}`,
 };
 

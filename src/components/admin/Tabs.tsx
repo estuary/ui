@@ -22,10 +22,10 @@ function AdminTabs() {
                 label: 'admin.tabs.storageMappings',
                 path: authenticatedRoutes.admin.storageMappings.fullPath,
             },
-            // {
-            //     label: 'admin.tabs.billing',
-            //     path: authenticatedRoutes.admin.billing.fullPath,
-            // },
+            {
+                label: 'admin.tabs.billing',
+                path: authenticatedRoutes.admin.billing.fullPath,
+            },
             {
                 label: 'admin.tabs.connectors',
                 path: authenticatedRoutes.admin.connectors.fullPath,
@@ -33,10 +33,6 @@ function AdminTabs() {
             {
                 label: 'admin.tabs.api',
                 path: authenticatedRoutes.admin.api.fullPath,
-            },
-            {
-                label: 'admin.tabs.billing',
-                path: authenticatedRoutes.admin.billing.fullPath,
             },
         ];
 
