@@ -78,7 +78,9 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
 
     const [requestedTenant, setRequestedTenant] = useState<string>('');
     const [saving, setSaving] = useState(false);
+
     const [nameMissing, setNameMissing] = useState(false);
+    const [nameInvalid, setNameInvalid] = useState(false);
 
     const [surveyResponse, setSurveyResponse] = useState<{
         origin: string;
@@ -95,6 +97,11 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
             setRequestedTenant(updatedValue);
 
             if (nameMissing) setNameMissing(!hasLength(updatedValue));
+        },
+        validateOrganizationName: () => {
+            const pattern = new RegExp(`^${PREFIX_NAME_PATTERN}$`);
+
+            setNameInvalid(!pattern.test(requestedTenant));
         },
         updateSurveyOrigin: (
             _event: ChangeEvent<HTMLInputElement>,
@@ -124,6 +131,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
 
             if (
                 !hasLength(requestedTenant) ||
+                nameInvalid ||
                 !hasLength(surveyResponse.origin) ||
                 (surveyResponse.origin === surveyOptionOther &&
                     !hasLength(surveyResponse.details))
@@ -182,7 +190,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     };
 
     return (
-        <Stack direction="row" sx={{ width: '100%' }}>
+        <Stack direction="row">
             {belowMd ? null : (
                 <Box
                     sx={{
@@ -279,11 +287,12 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                                     id: 'tenant.input.placeholder',
                                 })}
                                 helperText={intl.formatMessage({
-                                    id: nameMissing
-                                        ? 'tenant.expectations.error'
-                                        : 'tenant.expectations',
+                                    id:
+                                        nameMissing || nameInvalid
+                                            ? 'tenant.expectations.error'
+                                            : 'tenant.expectations',
                                 })}
-                                error={nameMissing}
+                                error={nameMissing || nameInvalid}
                                 id="requestedTenant"
                                 label={
                                     <FormattedMessage id="common.tenant.creationForm" />
@@ -291,6 +300,9 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                                 value={requestedTenant}
                                 onChange={(event) =>
                                     handlers.update(event.target.value)
+                                }
+                                onBlur={() =>
+                                    handlers.validateOrganizationName()
                                 }
                                 required
                                 inputProps={{
@@ -313,9 +325,10 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                             </FormLabel>
 
                             <RadioGroup
-                                aria-labelledby="demo-radio-buttons-group-label"
+                                aria-labelledby="survey-radio-buttons-group-label"
                                 name="radio-buttons-group"
                                 onChange={handlers.updateSurveyOrigin}
+                                sx={{ width: 'fit-content' }}
                             >
                                 {originOptions.map((option, index) => (
                                     <FormControlLabel
