@@ -37,7 +37,10 @@ export const DIRECTIVES: Directives = {
             return queryBuilder;
         },
         generateUserClaim: (args: any[]) => {
-            return { requestedTenant: args[0] };
+            return {
+                requestedTenant: args[0],
+                survey: args.length > 1 ? args[1] : null,
+            };
         },
         calculateStatus: (appliedDirective) => {
             // If there is no directive to check it is unfulfilled
