@@ -2,10 +2,7 @@ import { LoadingButton } from '@mui/lab';
 import {
     Box,
     FormControl,
-    FormControlLabel,
     FormLabel,
-    Radio,
-    RadioGroup,
     Stack,
     TextField,
     Toolbar,
@@ -16,13 +13,13 @@ import {
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
+import OnboardingSurvey from 'directives/Onboard/Survey';
 import customerQuoteDark from 'images/customer_quote-dark.png';
 import customerQuoteLight from 'images/customer_quote-light.png';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { fireGtmEvent } from 'services/gtm';
 import { jobStatusPoller } from 'services/supabase';
-import useConstant from 'use-constant';
 import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 import { jobStatusQuery, trackEvent } from './shared';
 import { DirectiveProps } from './types';
@@ -66,16 +63,6 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
         id: 'tenant.origin.radio.other.label',
     });
 
-    const originOptions = useConstant(() => [
-        intl.formatMessage({ id: 'tenant.origin.radio.browserSearch.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.linkedIn.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.referral.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.youTube.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.email.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.gitHub.label' }),
-        surveyOptionOther,
-    ]);
-
     const [requestedTenant, setRequestedTenant] = useState<string>('');
     const [saving, setSaving] = useState(false);
 
@@ -102,29 +89,6 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
             const pattern = new RegExp(`^${PREFIX_NAME_PATTERN}$`);
 
             setNameInvalid(!pattern.test(requestedTenant));
-        },
-        updateSurveyOrigin: (
-            _event: ChangeEvent<HTMLInputElement>,
-            value: string
-        ) => {
-            const { details } = surveyResponse;
-
-            setSurveyResponse({ origin: value, details });
-
-            setSurveyResultsMissing(
-                value === surveyOptionOther && surveyResultsMissing
-                    ? !hasLength(details)
-                    : false
-            );
-        },
-        updateSurveyDetails: (value: string) => {
-            const { origin } = surveyResponse;
-
-            setSurveyResponse({ origin, details: value });
-
-            if (surveyResultsMissing && origin === surveyOptionOther) {
-                setSurveyResultsMissing(!hasLength(value));
-            }
         },
         submit: async (event: any) => {
             event.preventDefault();
@@ -315,45 +279,13 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                             />
                         </FormControl>
 
-                        <FormControl>
-                            <FormLabel
-                                id="origin"
-                                required
-                                sx={{ mb: 1, fontSize: 16 }}
-                            >
-                                <FormattedMessage id="tenant.origin.radioGroup.label" />
-                            </FormLabel>
-
-                            <RadioGroup
-                                aria-labelledby="survey-radio-buttons-group-label"
-                                name="radio-buttons-group"
-                                onChange={handlers.updateSurveyOrigin}
-                                sx={{ width: 'fit-content' }}
-                            >
-                                {originOptions.map((option, index) => (
-                                    <FormControlLabel
-                                        key={`${option}-${index}`}
-                                        value={option}
-                                        control={<Radio size="small" />}
-                                        label={option}
-                                    />
-                                ))}
-                            </RadioGroup>
-
-                            <TextField
-                                size="small"
-                                onChange={(event) =>
-                                    handlers.updateSurveyDetails(
-                                        event.target.value
-                                    )
-                                }
-                                sx={{
-                                    'maxWidth': 400,
-                                    'ml': 3,
-                                    '& .MuiInputBase-root': { borderRadius: 3 },
-                                }}
-                            />
-                        </FormControl>
+                        <OnboardingSurvey
+                            surveyOptionOther={surveyOptionOther}
+                            surveyResponse={surveyResponse}
+                            surveyResultsMissing={surveyResultsMissing}
+                            setSurveyResponse={setSurveyResponse}
+                            setSurveyResultsMissing={setSurveyResultsMissing}
+                        />
 
                         <Toolbar
                             disableGutters
