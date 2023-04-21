@@ -29,8 +29,8 @@ import {
 } from 'api/billing';
 import { PaymentForm } from 'components/admin/Billing/CapturePaymentMethod';
 import { PaymentMethod } from 'components/admin/Billing/PaymentMethodRow';
+import { useTenantDetails } from 'context/fetcher/Tenant';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
-import useTenants from 'hooks/useTenants';
 
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -40,7 +40,7 @@ const PaymentMethods = () => {
         () => loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ?? ''),
         []
     );
-    const tenants = useTenants();
+    const tenants = useTenantDetails();
     const grants = useCombinedGrantsExt({ adminOnly: true });
 
     const [refreshCounter, setRefreshCounter] = useState(0);
@@ -57,10 +57,10 @@ const PaymentMethods = () => {
     const [defaultSource, setDefaultSource] = useState<string | null>(null);
 
     useEffect(() => {
-        if (tenants.tenants.length > 0 && selectedTenant === null) {
-            setSelectedTenant(tenants.tenants[0].tenant);
+        if (tenants && tenants.length > 0 && selectedTenant === null) {
+            setSelectedTenant(tenants[0].tenant);
         }
-    }, [selectedTenant, tenants.tenants]);
+    }, [selectedTenant, tenants]);
 
     useEffect(() => {
         void (async () => {
@@ -115,7 +115,7 @@ const PaymentMethods = () => {
 
             <Divider />
 
-            {tenants.tenants.length > 1 ? (
+            {tenants && tenants.length > 1 ? (
                 <FormControl fullWidth>
                     <InputLabel>Tenant</InputLabel>
                     <Select
@@ -123,7 +123,7 @@ const PaymentMethods = () => {
                         value={selectedTenant ?? ''}
                         onChange={(evt) => setSelectedTenant(evt.target.value)}
                     >
-                        {tenants.tenants
+                        {tenants
                             .filter((t) =>
                                 grants.combinedGrants.find(
                                     (g) => g.object_role === t.tenant
