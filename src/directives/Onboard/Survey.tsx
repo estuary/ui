@@ -6,8 +6,14 @@ import {
     RadioGroup,
     TextField,
 } from '@mui/material';
-import { useOnboardingStore_surveyOptionOther } from 'directives/Onboard/Store/hooks';
-import React, { ChangeEvent, SetStateAction } from 'react';
+import {
+    useOnboardingStore_setSurveyResponse,
+    useOnboardingStore_setSurveyResponseMissing,
+    useOnboardingStore_surveyOptionOther,
+    useOnboardingStore_surveyResponse,
+    useOnboardingStore_surveyResponseMissing,
+} from 'directives/Onboard/Store/hooks';
+import { ChangeEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useConstant from 'use-constant';
 import { hasLength } from 'utils/misc-utils';
@@ -17,22 +23,18 @@ export interface SurveyResponse {
     details: string;
 }
 
-interface Props {
-    surveyResponse: SurveyResponse;
-    surveyResultsMissing: boolean;
-    setSurveyResponse: React.Dispatch<SetStateAction<SurveyResponse>>;
-    setSurveyResultsMissing: React.Dispatch<SetStateAction<boolean>>;
-}
-
-function OnboardingSurvey({
-    surveyResponse,
-    surveyResultsMissing,
-    setSurveyResponse,
-    setSurveyResultsMissing,
-}: Props) {
+function OnboardingSurvey() {
     const intl = useIntl();
 
+    // Onboarding Store
     const surveyOptionOther = useOnboardingStore_surveyOptionOther();
+
+    const surveyResponse = useOnboardingStore_surveyResponse();
+    const setSurveyResponse = useOnboardingStore_setSurveyResponse();
+
+    const surveyResponseMissing = useOnboardingStore_surveyResponseMissing();
+    const setSurveyResponseMissing =
+        useOnboardingStore_setSurveyResponseMissing();
 
     const originOptions: string[] = useConstant(() => [
         intl.formatMessage({ id: 'tenant.origin.radio.browserSearch.label' }),
@@ -53,19 +55,19 @@ function OnboardingSurvey({
 
             setSurveyResponse({ origin: value, details });
 
-            setSurveyResultsMissing(
-                value === surveyOptionOther && surveyResultsMissing
-                    ? !hasLength(details)
-                    : false
-            );
+            if (value === surveyOptionOther) {
+                setSurveyResponseMissing(!hasLength(details));
+            } else if (surveyResponseMissing) {
+                setSurveyResponseMissing(false);
+            }
         },
         updateSurveyDetails: (value: string) => {
             const { origin } = surveyResponse;
 
             setSurveyResponse({ origin, details: value });
 
-            if (surveyResultsMissing && origin === surveyOptionOther) {
-                setSurveyResultsMissing(!hasLength(value));
+            if (surveyResponseMissing && origin === surveyOptionOther) {
+                setSurveyResponseMissing(!hasLength(value));
             }
         },
     };
@@ -94,7 +96,7 @@ function OnboardingSurvey({
 
             <TextField
                 size="small"
-                onChange={(event) =>
+                onBlur={(event) =>
                     handlers.updateSurveyDetails(event.target.value)
                 }
                 sx={{

@@ -11,6 +11,7 @@ import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
 import OrganizationNameField from 'directives/Onboard/OrganizationName';
+import { useOnboardingStore_surveyResponse } from 'directives/Onboard/Store/hooks';
 import OnboardingSurvey from 'directives/Onboard/Survey';
 import customerQuoteDark from 'images/customer_quote-dark.png';
 import customerQuoteLight from 'images/customer_quote-light.png';
@@ -61,16 +62,14 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
         id: 'tenant.origin.radio.other.label',
     });
 
+    // Onboarding Store
+    const surveyResponse = useOnboardingStore_surveyResponse();
+
     const [requestedTenant, setRequestedTenant] = useState<string>('');
     const [saving, setSaving] = useState(false);
 
     const [nameMissing, setNameMissing] = useState(false);
     const [nameInvalid, setNameInvalid] = useState(false);
-
-    const [surveyResponse, setSurveyResponse] = useState<{
-        origin: string;
-        details: string;
-    }>({ origin: '', details: '' });
 
     const [surveyResultsMissing, setSurveyResultsMissing] =
         useState<boolean>(false);
@@ -233,12 +232,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                             setRequestedTenant={setRequestedTenant}
                         />
 
-                        <OnboardingSurvey
-                            surveyResponse={surveyResponse}
-                            surveyResultsMissing={surveyResultsMissing}
-                            setSurveyResponse={setSurveyResponse}
-                            setSurveyResultsMissing={setSurveyResultsMissing}
-                        />
+                        <OnboardingSurvey />
 
                         <Toolbar
                             disableGutters
