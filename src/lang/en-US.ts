@@ -90,8 +90,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'filter.time.thisMonth': `This Month`,
 
     // Billing Page
-    'billing.header': 'Payment Information',
-    'billing.description':
+    'billing.payment_methods.header': 'Payment Information',
+    'billing.payment_methods.description':
         'Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.',
 };
 
@@ -188,7 +188,6 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin.api': `CLI - API`,
     'routeTitle.admin.billing': `Billing`,
     'routeTitle.admin.connectors': `Connectors`,
-    'routeTitle.admin.billing': `Billing`,
     'routeTitle.admin.cookies': `Cookie Preferences`,
     'routeTitle.admin.storageMappings': `${CommonMessages['terms.storageMapping']}`,
     'routeTitle.captureCreate': `Create Capture`,
@@ -446,7 +445,6 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.tabs.cookies': `Cookie Preferences`,
     'admin.tabs.billing': `Billing Preferences`,
     'admin.tabs.storageMappings': `${CommonMessages['terms.storageMapping']}`,
-    'admin.tabs.billing': `Billing`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {

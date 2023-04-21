@@ -53,7 +53,6 @@ const MaterializationsTable = lazy(() => import('./MaterializationsTable'));
 const Admin = lazy(() => import('pages/Admin'));
 const AccessGrants = lazy(() => import('components/admin/AccessGrants'));
 const AdminApi = lazy(() => import('components/admin/Api'));
-const AdminBilling = lazy(() => import('components/admin/Billing'));
 const AdminConnectors = lazy(() => import('components/admin/Connectors'));
 const AdminBilling = lazy(() => import('components/admin/Billing'));
 const AdminCookies = lazy(() => import('components/admin/Cookies'));
