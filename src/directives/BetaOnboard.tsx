@@ -16,7 +16,8 @@ import {
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
-import customerQuote from 'images/customer_quote.png';
+import customerQuoteDark from 'images/customer_quote-dark.png';
+import customerQuoteLight from 'images/customer_quote-light.png';
 import { ChangeEvent, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { fireGtmEvent } from 'services/gtm';
@@ -190,11 +191,14 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        backgroundSize: 'contain',
                     }}
                 >
                     <img
-                        src={customerQuote}
+                        src={
+                            theme.palette.mode === 'light'
+                                ? customerQuoteLight
+                                : customerQuoteDark
+                        }
                         width="85%"
                         alt={intl.formatMessage({ id: 'company' })}
                     />
