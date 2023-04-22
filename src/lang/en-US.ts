@@ -140,6 +140,9 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.email': `Email`,
     'data.display_name': `Username`,
     'data.published_at': `Published At`,
+    'data.failures': `Failures`,
+    'data.errors': `Errors`,
+    'data.warnings': `Warnings`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
