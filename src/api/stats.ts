@@ -51,7 +51,10 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
             docs_written_to_me,
             bytes_read_from_me,
             docs_read_from_me,
-            ts
+            ts,
+            errors,
+            failures,
+            warnings
         `
         )
         .in('catalog_name', names)

@@ -13,19 +13,25 @@ import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
+export interface StatsRuns {
+    errors?: number;
+    failures?: number;
+    warnings?: number;
+}
+
+export interface StatsDetails extends StatsRuns {
+    bytes_written_by_me?: number;
+    docs_written_by_me?: number;
+
+    bytes_read_by_me?: number;
+    docs_read_by_me?: number;
+
+    bytes_written_to_me?: number;
+    docs_written_to_me?: number;
+}
+
 export interface StatsSchema {
-    [k: string]:
-        | {
-              bytes_written_by_me?: number;
-              docs_written_by_me?: number;
-
-              bytes_read_by_me?: number;
-              docs_read_by_me?: number;
-
-              bytes_written_to_me?: number;
-              docs_written_to_me?: number;
-          }
-        | undefined;
+    [k: string]: StatsDetails | undefined;
 }
 
 export type StatsResponse = StatsSchema | null;
