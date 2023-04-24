@@ -1,6 +1,7 @@
-import { TableRow, useTheme } from '@mui/material';
+import { TableCell, TableRow, useTheme } from '@mui/material';
 import { CaptureQueryWithStats } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
+import Issues from 'components/shared/StatsBasedIssues';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
 import EntityName from 'components/tables/cells/EntityName';
@@ -104,6 +105,10 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                                     : null
                             }
                         />
+
+                        <TableCell>
+                            <Issues stats={stats?.[row.catalog_name]} />
+                        </TableCell>
                     </>
                 ) : null}
 
