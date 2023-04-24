@@ -3,7 +3,6 @@ import ResourceConfig from 'components/collection/ResourceConfig';
 import CollectionSchemaEditor from 'components/collection/schema/Editor';
 import MessageWithLink from 'components/content/MessageWithLink';
 import ControlledEditor from 'components/editor/Bindings/ControlledEditor';
-import SchemaEditButton from 'components/editor/Bindings/SchemaEdit/Button';
 import SchemaInferenceButton from 'components/editor/Bindings/SchemaInference/Button';
 import {
     useBindingsEditorStore_collectionData,
@@ -23,6 +22,8 @@ import useInitializeCollectionDraft from 'hooks/useInitializeCollectionDraft';
 import { ReactNode, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+import SchemaEditCLIButton from './SchemaEdit/CLIButton';
+import SchemaEditToggle from './SchemaEdit/Toggle';
 
 interface Props {
     loading: boolean;
@@ -131,7 +132,9 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                     <Stack direction="row" spacing={1}>
                                         <SchemaInferenceButton />
 
-                                        <SchemaEditButton />
+                                        <SchemaEditCLIButton />
+
+                                        <SchemaEditToggle />
                                     </Stack>
                                 </Box>
                             ) : (

@@ -6,7 +6,7 @@ import { useBindingsEditorStore_collectionData } from 'components/editor/Binding
 import ButtonWithPopper from 'components/shared/ButtonWithPopper';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 
-function SchemaEditButton() {
+function SchemaEditCLIButton() {
     // Bindings Editor Store
     const collectionData = useBindingsEditorStore_collectionData();
     const isActive = useFormStateStore_isActive();
@@ -31,4 +31,4 @@ function SchemaEditButton() {
     );
 }
 
-export default SchemaEditButton;
+export default SchemaEditCLIButton;

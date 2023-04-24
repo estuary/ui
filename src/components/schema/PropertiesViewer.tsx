@@ -9,7 +9,7 @@ function PropertiesViewer({ inferredSchema }: Props) {
     console.log('inferredSchema', inferredSchema);
     return (
         <Grid item xs={12}>
-            <Box sx={{ height: 400, width: '100%' }}>
+            <Box sx={{ height: 400, width: '100%', overflowY: 'auto' }}>
                 <Typography variant="h5" component="span">
                     Fields
                 </Typography>

@@ -37,15 +37,15 @@ function CollectionSchemaEditor({ disabled, entityName }: Props) {
                 <KeyAutoComplete
                     value={draftSpec.spec.key}
                     inferredSchema={inferredSchema.data}
-                    onChange={async (event, value, reason) => {
-                        console.log('123event>>>>>>>>>', {
-                            event,
-                            value,
-                            reason,
-                        });
-                        draftSpec.spec.key = value;
-                        await onChange(draftSpec.spec);
-                    }}
+                    // onChange={async (event, value, reason) => {
+                    //     console.log('123event>>>>>>>>>', {
+                    //         event,
+                    //         value,
+                    //         reason,
+                    //     });
+                    //     draftSpec.spec.key = value;
+                    //     await onChange(draftSpec.spec);
+                    // }}
                 />
                 <PropertiesViewer inferredSchema={inferredSchema.data} />
             </Grid>

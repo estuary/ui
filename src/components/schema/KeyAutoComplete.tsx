@@ -1,10 +1,4 @@
-import {
-    Autocomplete,
-    Grid,
-    Skeleton,
-    TextField,
-    Typography,
-} from '@mui/material';
+import { Autocomplete, Grid, Skeleton, TextField } from '@mui/material';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -15,7 +9,7 @@ type OnChange = typeof autoCompleteDefaults_Virtual_Multiple['onChange'];
 interface Props {
     value: any;
     inferredSchema: any;
-    onChange: OnChange;
+    onChange?: OnChange;
 }
 
 const typesAllowedAsKeys = ['string', 'integer', 'boolean'];
@@ -58,24 +52,67 @@ function KeyAutoComplete({ inferredSchema, value, onChange }: Props) {
         return <Skeleton />;
     }
 
+    // TODO (collection editor) decide if we want to make a unique UI
+    //  so the read only version is more than just a "read only" autocomplete
+    // if (!onChange) {
+    //         return (
+    //             <Grid item xs={12}>
+    //                 <Stack
+    //                     direction="row"
+    //                     sx={{
+    //                         alignItems: 'center',
+    //                         alignContent: 'center',
+    //                     }}
+    //                 >
+    //                     <Typography variant="subtitle1" component="span">
+    //                         <FormattedMessage id="data.key.label" />
+    //                     </Typography>
+
+    //                     <List>
+    //                         {keys.map((key) => {
+    //                             let icon;
+    //                             return (
+    //                                 <ListItem key={`read-only-key-${keys}`}>
+    //                                     <Chip icon={icon} label={key} />
+    //                                 </ListItem>
+    //                             );
+    //                         })}
+    //                     </List>
+    //                 </Stack>
+    //                 <Typography variant="subtitle1" component="span">
+    //                     <FormattedMessage id="data.key.helper" />
+    //                 </Typography>
+    //             </Grid>
+    //         );
+    //     }
+
+    const disabled = !onChange;
+
     return (
         <Grid item xs={12}>
-            <Typography variant="h5" component="span">
-                Key
-            </Typography>
             <Autocomplete
                 {...autoCompleteDefaults_Virtual_Multiple}
                 onChange={onChange}
+                readOnly={disabled}
                 defaultValue={defaultValue.current}
                 options={keys}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        variant="standard"
-                        label={<FormattedMessage id="data.key.label" />}
-                        helperText={<FormattedMessage id="data.key.helper" />}
-                    />
-                )}
+                renderInput={(params) => {
+                    params.InputProps.endAdornment = disabled
+                        ? undefined
+                        : params.InputProps.endAdornment;
+
+                    return (
+                        <TextField
+                            {...params}
+                            variant="standard"
+                            disabled={disabled}
+                            label={<FormattedMessage id="data.key.label" />}
+                            helperText={
+                                <FormattedMessage id="data.key.helper" />
+                            }
+                        />
+                    );
+                }}
             />
         </Grid>
     );
