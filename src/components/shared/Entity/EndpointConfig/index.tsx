@@ -16,6 +16,7 @@ import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_previousEndpointConfig_data,
+    useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
     useEndpointConfigStore_setPreviousEndpointConfig,
@@ -62,6 +63,8 @@ function EndpointConfig({
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
     const setEndpointCanBeEmpty = useEndpointConfig_setEndpointCanBeEmpty();
+    const setEncryptedEndpointConfig =
+        useEndpointConfigStore_setEncryptedEndpointConfig();
 
     // Workflow related props
     const workflow = useEntityWorkflow();
@@ -100,15 +103,21 @@ function EndpointConfig({
 
             const defaultConfig = createJSONFormDefaults(schema);
 
+            setServerUpdateRequired(true);
+            setEncryptedEndpointConfig({
+                data: {},
+            });
             setEndpointConfig(defaultConfig);
             setPreviousEndpointConfig(defaultConfig);
         }
     }, [
+        setServerUpdateRequired,
         setEndpointConfig,
         setEndpointSchema,
         setPreviousEndpointConfig,
         connectorTag?.endpoint_spec_schema,
         endpointSchemaChanged,
+        setEncryptedEndpointConfig,
     ]);
 
     // Controlling if we need to show the generate button again

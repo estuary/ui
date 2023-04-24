@@ -126,6 +126,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.register.github': `Register with GitHub`,
     'cta.configure': `Configure`,
     'cta.showAll': `Show All`,
+    'cta.reload': `Reload`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -160,6 +161,11 @@ const ErrorBoundry: ResolvedIntlConfig['messages'] = {
     'errorBoundry.title': `${Error['error.title']}`,
     'errorBoundry.message1': `There was an unexpected application error. `,
     'errorBoundry.message2': `Expand to see details.`,
+    'errorBoundry.chunkNotFetched.dialog.title': `Reload Required`,
+    'errorBoundry.chunkNotFetched.error.title': `Failure to load`,
+    'errorBoundry.chunkNotFetched.error.message1': `There was an issue fetching this portion of the application.`,
+    'errorBoundry.chunkNotFetched.error.message2': `This is usually caused by a network issue or an old dashboard version being cached.`,
+    'errorBoundry.chunkNotFetched.error.instructions': `To continue please reload.`,
 };
 
 const ConfirmationDialog: ResolvedIntlConfig['messages'] = {
@@ -408,7 +414,8 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
 
     'admin.billing.header': `Billing`,
-    'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and {gbFree}GB are free every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
+    'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and {gbFree}GB every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
+    'admin.billing.error.paymentMethodsError': `There was an error connecting with our payment provider.  Please try again later.`,
     'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
     'admin.billing.error.undefinedPricingTier.docLink': `contact support`,
     'admin.billing.error.undefinedPricingTier.docPath': `mailto:support@estuary.dev`,
@@ -429,10 +436,10 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.table.history.tooltip.dataVolume': `bytes of data processed by tasks`,
     'admin.billing.table.history.emptyTableDefault.header': `No information found.`,
     'admin.billing.table.history.emptyTableDefault.message': `We couldn't find any billing information on file. Only administrators of a tenant are able to review billing information.`,
-    'admin.billing.payment.header': `Payment Information`,
-    'admin.billing.payment.message': `We are working on integrating a payment service provider to enable in-app transactions. To make a payment or inquire about our pricing tiers, please {docLink}.`,
-    'admin.billing.payment.message.docLink': `contact us`,
-    'admin.billing.payment.message.docPath': `mailto:support@estuary.dev`,
+
+    'admin.billing.payment_methods.header': `Payment Information`,
+    'admin.billing.payment_methods.description': `Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.`,
+    'admin.billing.payment_methods.none_available': `No payment methods available`,
 
     'admin.cookies': `Cookie Preference Management`,
     'admin.cookies.message': `Click below to manage your preferences.`,
@@ -440,8 +447,8 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.cookies': `Cookie Preferences`,
-    'admin.tabs.storageMappings': `${CommonMessages['terms.storageMapping']}`,
     'admin.tabs.billing': `Billing`,
+    'admin.tabs.storageMappings': `${CommonMessages['terms.storageMapping']}`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
@@ -872,17 +879,27 @@ const Legal: ResolvedIntlConfig['messages'] = {
 };
 
 const Tenant: ResolvedIntlConfig['messages'] = {
-    'tenant.heading': `Organization Name`,
+    'tenant.heading': `Let's get started`,
     'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary.  It will only be public if you share data with other organizations.`,
 
     'tenant.expectations': `You can use letters, numbers, periods, underscores, and hyphens`,
     'tenant.expectations.error': `Sorry, only letters(a-z), numbers(0-9), periods(.), underscores(_), and hyphens(-) allowed.`,
 
+    'tenant.input.label': `Organization Name`,
     'tenant.input.placeholder': `acmeCo`,
     'tenant.errorMessage.empty': `You must provide a name before continuing.`,
 
     'tenant.docs.message': `To see a detailed explanation please view our {link}`,
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
+
+    'tenant.origin.radioGroup.label': `How'd you hear about us?`,
+    'tenant.origin.radio.browserSearch.label': `Search (Google, Bing, etc.)`,
+    'tenant.origin.radio.linkedIn.label': `LinkedIn`,
+    'tenant.origin.radio.referral.label': `Referral by a Partner`,
+    'tenant.origin.radio.youTube.label': `YouTube`,
+    'tenant.origin.radio.email.label': `Email`,
+    'tenant.origin.radio.gitHub.label': `GitHub`,
+    'tenant.origin.radio.other.label': `Other`,
 };
 
 const Details: ResolvedIntlConfig['messages'] = {

@@ -1,23 +1,48 @@
 import { Collapse, Divider, IconButton, Paper, useTheme } from '@mui/material';
 import { NavArrowDown } from 'iconoir-react';
-import React, { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useMount } from 'react-use';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import AlertBox from './AlertBox';
+import MustReloadDialog from './MustReloadDialog';
 
 interface Props {
     children: ReactNode;
 }
 
+const logErrorToLogRocket = (error: Error) => {
+    // Let LogRocket know this was rendered since there is almost never
+    //  a time where it is good that this was shown to a user.
+    logRocketEvent(CustomEvents.ERROR_BOUNDARY_DISPLAYED, {
+        name: error.name,
+        stack: error.stack ?? 'No stack trace available',
+    });
+};
+
 function ErrorFallback({ error }: { error: Error }): JSX.Element {
     const intl = useIntl();
     const theme = useTheme();
 
-    const [expanded, setExpanded] = React.useState(false);
+    const [offerReload, setOfferReload] = useState(false);
+    const [expanded, setExpanded] = useState(false);
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
+
+    useMount(() => {
+        // In case the error is due to failing to fetch a chunk then show
+        //  a reload dialog to inform the user what happened.
+        if (error.name === 'ChunkLoadError') {
+            setOfferReload(true);
+        }
+    });
+
+    if (offerReload) {
+        return <MustReloadDialog />;
+    }
 
     return (
         <AlertBox
@@ -27,7 +52,6 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
         >
             <FormattedMessage id="errorBoundry.message1" />
             <FormattedMessage id="errorBoundry.message2" />
-
             <Divider />
 
             <IconButton
@@ -44,7 +68,10 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
                 }}
             >
                 <NavArrowDown
-                    style={{ fontSize: 14, color: theme.palette.text.primary }}
+                    style={{
+                        fontSize: 14,
+                        color: theme.palette.text.primary,
+                    }}
                 />
             </IconButton>
 
@@ -53,13 +80,17 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
                     {error.stack}
                 </Paper>
             </Collapse>
+            <Divider />
         </AlertBox>
     );
 }
 
 const ErrorBoundryWrapper = ({ children }: Props) => {
     return (
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
+        <ErrorBoundary
+            FallbackComponent={ErrorFallback}
+            onError={logErrorToLogRocket}
+        >
             {children}
         </ErrorBoundary>
     );

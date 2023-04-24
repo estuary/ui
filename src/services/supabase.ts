@@ -70,6 +70,7 @@ export enum RPCS {
 
 export enum FUNCTIONS {
     OAUTH = 'oauth',
+    BILLING = 'billing',
 }
 
 export const supabaseClient = createClient(
