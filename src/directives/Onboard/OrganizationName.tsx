@@ -25,14 +25,13 @@ function OrganizationNameField() {
 
     const handlers = {
         update: (updatedValue: string) => {
+            const pattern = new RegExp(`^${PREFIX_NAME_PATTERN}$`);
+
+            setNameInvalid(!pattern.test(updatedValue));
+
             setRequestedTenant(updatedValue);
 
             if (nameMissing) setNameMissing(!hasLength(updatedValue));
-        },
-        validateOrganizationName: () => {
-            const pattern = new RegExp(`^${PREFIX_NAME_PATTERN}$`);
-
-            setNameInvalid(!pattern.test(requestedTenant));
         },
     };
 
@@ -58,7 +57,6 @@ function OrganizationNameField() {
                 label={<FormattedMessage id="common.tenant.creationForm" />}
                 value={requestedTenant}
                 onChange={(event) => handlers.update(event.target.value)}
-                onBlur={() => handlers.validateOrganizationName()}
                 required
                 inputProps={{
                     pattern: PREFIX_NAME_PATTERN,
