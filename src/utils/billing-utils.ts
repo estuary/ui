@@ -151,6 +151,13 @@ export const formatBillingCatalogStats = (
 export interface SeriesConfig {
     data: [string, number][];
     seriesName?: string;
+    stack?: string;
+}
+
+export interface SeriesConfig_SinglePoint {
+    data: number[];
+    seriesName?: string;
+    stackId?: string;
 }
 
 export const formatDataVolumeForDisplay = (
@@ -167,6 +174,24 @@ export const formatDataVolumeForDisplay = (
     const dataVolumeInBytes = selectedSeries?.data.find(
         ([month]) => month === tooltipConfig.name
     );
+
+    return dataVolumeInBytes
+        ? prettyBytes(dataVolumeInBytes[1], { minimumFractionDigits: 2 })
+        : `${tooltipConfig.value[1]} GB`;
+};
+
+export const formatDataVolumeForDisplay_Test = (
+    seriesConfigs: SeriesConfig_SinglePoint[],
+    tooltipConfig: any
+): string => {
+    const selectedSeries =
+        seriesConfigs.length === 1
+            ? seriesConfigs[0]
+            : seriesConfigs.find(
+                  (series) => series.seriesName === tooltipConfig.seriesName
+              );
+
+    const dataVolumeInBytes = selectedSeries?.data[0];
 
     return dataVolumeInBytes
         ? prettyBytes(dataVolumeInBytes[1], { minimumFractionDigits: 2 })
