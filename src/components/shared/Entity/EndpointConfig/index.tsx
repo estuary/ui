@@ -5,6 +5,7 @@ import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
 import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
+import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityWorkflow } from 'context/Workflow';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { isEmpty, isEqual } from 'lodash';
@@ -154,17 +155,19 @@ function EndpointConfig({
                 hideBorder={hideBorder}
                 header={<EndpointConfigHeader />}
             >
-                {readOnly ? (
-                    <Box sx={{ mb: 3 }}>
-                        <AlertBox severity="info" short>
-                            {intl.formatMessage({
-                                id: 'entityEdit.alert.endpointConfigDisabled',
-                            })}
-                        </AlertBox>
-                    </Box>
-                ) : null}
+                <ErrorBoundryWrapper>
+                    {readOnly ? (
+                        <Box sx={{ mb: 3 }}>
+                            <AlertBox severity="info" short>
+                                {intl.formatMessage({
+                                    id: 'entityEdit.alert.endpointConfigDisabled',
+                                })}
+                            </AlertBox>
+                        </Box>
+                    ) : null}
 
-                <EndpointConfigForm readOnly={readOnly} />
+                    <EndpointConfigForm readOnly={readOnly} />
+                </ErrorBoundryWrapper>
             </WrapperWithHeader>
         );
     } else {
