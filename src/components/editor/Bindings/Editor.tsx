@@ -10,7 +10,6 @@ import {
     useBindingsEditorStore_schemaUpdateErrored,
 } from 'components/editor/Bindings/Store/hooks';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
-import DraftSpecEditor from 'components/editor/DraftSpec';
 import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
 import {
     useEditorStore_persistedDraftId,
@@ -145,17 +144,9 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
 
                             {collectionData ? (
                                 collectionData.belongsToDraft ? (
-                                    <>
-                                        <CollectionSchemaEditor
-                                            entityName={currentCollection}
-                                        />
-                                        <DraftSpecEditor
-                                            entityType="collection"
-                                            localZustandScope={true}
-                                            editorHeight={EDITOR_HEIGHT}
-                                            entityName={currentCollection}
-                                        />
-                                    </>
+                                    <CollectionSchemaEditor
+                                        entityName={currentCollection}
+                                    />
                                 ) : (
                                     <ControlledEditor />
                                 )
