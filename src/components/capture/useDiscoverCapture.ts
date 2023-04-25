@@ -17,9 +17,8 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
-import LogRocket from 'logrocket';
 import { useCallback, useMemo } from 'react';
-import { CustomEvents } from 'services/logrocket';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
     DEFAULT_FILTER,
     jobStatusPoller,
@@ -69,7 +68,7 @@ import {
 } from 'utils/workflow-utils';
 
 const trackEvent = (payload: any) => {
-    LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
+    logRocketEvent(CustomEvents.CAPTURE_DISCOVER, {
         name: payload.capture_name ?? DEFAULT_FILTER,
         id: payload.id ?? DEFAULT_FILTER,
         draft_id: payload.draft_id ?? DEFAULT_FILTER,

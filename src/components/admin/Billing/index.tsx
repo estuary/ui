@@ -12,9 +12,10 @@ import { authenticatedRoutes } from 'app/routes';
 import DataByMonthGraph from 'components/admin/Billing/graphs/DataByMonthGraph';
 import DataByTaskGraph from 'components/admin/Billing/graphs/DataByTaskGraph';
 import TasksByMonth from 'components/admin/Billing/graphs/TasksByMonthGraph';
+import PaymentMethods from 'components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'components/admin/Billing/PricingTierDetails';
 import AdminTabs from 'components/admin/Tabs';
-import MessageWithLink from 'components/content/MessageWithLink';
+import AlertBox from 'components/shared/AlertBox';
 import BillingHistoryTable from 'components/tables/Billing';
 import { semiTransparentBackground } from 'context/Theme';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
@@ -22,8 +23,10 @@ import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import usePageTitle from 'hooks/usePageTitle';
 import { HelpCircle } from 'iconoir-react';
 import { useEffect } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
     useBilling_hydrated,
     useBilling_resetState,
@@ -209,13 +212,40 @@ function AdminBilling() {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <Divider sx={{ mt: 3, mb: 2 }} />
+                    <Divider sx={{ mt: 3 }} />
+                </Grid>
 
-                    <Typography sx={{ mb: 1, fontSize: 18, fontWeight: '400' }}>
-                        <FormattedMessage id="admin.billing.payment.header" />
-                    </Typography>
-
-                    <MessageWithLink messageID="admin.billing.payment.message" />
+                <Grid item xs={12}>
+                    <ErrorBoundary
+                        fallback={
+                            <>
+                                <Typography
+                                    sx={{
+                                        mb: 1,
+                                        fontSize: 18,
+                                        fontWeight: '400',
+                                    }}
+                                >
+                                    <FormattedMessage id="admin.billing.payment_methods.header" />
+                                </Typography>
+                                <AlertBox short severity="error">
+                                    <Typography component="div">
+                                        <FormattedMessage id="admin.billing.error.paymentMethodsError" />
+                                    </Typography>
+                                </AlertBox>
+                            </>
+                        }
+                        onError={(errorLoadingPaymentMethods) => {
+                            logRocketEvent(
+                                CustomEvents.ERROR_BOUNDARY_PAYMENT_METHODS,
+                                {
+                                    stack: errorLoadingPaymentMethods.stack,
+                                }
+                            );
+                        }}
+                    >
+                        <PaymentMethods />
+                    </ErrorBoundary>
                 </Grid>
             </Grid>
         </>

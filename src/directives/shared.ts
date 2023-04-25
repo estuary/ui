@@ -1,6 +1,5 @@
 import { isEmpty } from 'lodash';
-import LogRocket from 'logrocket';
-import { CustomEvents } from 'services/logrocket';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import { JOB_STATUS_COLUMNS, supabaseClient, TABLES } from 'services/supabase';
 import { AppliedDirective } from 'types';
 import { Directives, UserClaims } from './types';
@@ -37,7 +36,10 @@ export const DIRECTIVES: Directives = {
             return queryBuilder;
         },
         generateUserClaim: (args: any[]) => {
-            return { requestedTenant: args[0] };
+            return {
+                requestedTenant: args[0],
+                survey: args.length > 1 ? args[1] : null,
+            };
         },
         calculateStatus: (appliedDirective) => {
             // If there is no directive to check it is unfulfilled
@@ -121,7 +123,7 @@ export const trackEvent = (
     type: string,
     directive?: AppliedDirective<UserClaims>
 ) => {
-    LogRocket.track(
+    logRocketEvent(
         `${CustomEvents.DIRECTIVE}:${type}`,
         directive
             ? {
