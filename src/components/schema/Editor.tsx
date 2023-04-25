@@ -11,7 +11,8 @@ export interface Props {
     entityName?: string;
 }
 
-function DraftSpecEditor({
+const editorScope = '/schema';
+function Editor({
     entityType,
     disabled,
     localZustandScope = false,
@@ -30,6 +31,7 @@ function DraftSpecEditor({
                 disabled={disabled}
                 localZustandScope={localZustandScope}
                 height={editorHeight}
+                schemaPointer={editorScope}
                 onChange={onChange}
             />
         );
@@ -40,4 +42,4 @@ function DraftSpecEditor({
     }
 }
 
-export default DraftSpecEditor;
+export default Editor;

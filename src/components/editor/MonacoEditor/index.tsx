@@ -11,6 +11,8 @@ import {
     useEditorStore_status,
 } from 'components/editor/Store/hooks';
 import { EditorStatus } from 'components/editor/Store/types';
+import { JsonPointer } from 'json-ptr';
+import { PathSegments, Pointer } from 'json-ptr/dist/types/types';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -27,6 +29,7 @@ export interface Props {
     onChange?: (newVal: any, path: string, specType: string) => any;
     height?: number;
     toolbarHeight?: number;
+    schemaPointer?: Pointer | PathSegments; // Used to scop the schema editor
 }
 
 function MonacoEditor({
@@ -35,6 +38,7 @@ function MonacoEditor({
     height = DEFAULT_HEIGHT,
     onChange,
     toolbarHeight = DEFAULT_TOOLBAR_HEIGHT,
+    schemaPointer,
 }: Props) {
     const theme = useTheme();
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
@@ -104,7 +108,17 @@ function MonacoEditor({
                     catalogType,
                 });
                 setStatus(EditorStatus.SAVING);
-                onChange(parsedVal, catalogName, catalogType)
+
+                let updatedValue;
+                if (schemaPointer) {
+                    console.log('editor:update:saving:schemaPointer', {
+                        schemaPointer,
+                    });
+                    updatedValue = { ...catalogSpec };
+                    JsonPointer.set(updatedValue, schemaPointer, parsedVal);
+                }
+
+                onChange(updatedValue ?? parsedVal, catalogName, catalogType)
                     .then(() => {
                         console.log('editor:update:saving:success');
                         setStatus(EditorStatus.SAVED);
@@ -134,10 +148,19 @@ function MonacoEditor({
         catalogName,
     ]);
 
-    const specAsString = useMemo(
-        () => stringifyJSON(catalogSpec),
-        [catalogSpec]
-    );
+    const specAsString = useMemo(() => {
+        const scopeToStringify = JsonPointer.get(
+            catalogSpec,
+            schemaPointer ?? ''
+        );
+
+        console.log('scopeToStringify', {
+            scopeToStringify,
+            schemaPointer,
+        });
+
+        return stringifyJSON(scopeToStringify);
+    }, [catalogSpec, schemaPointer]);
 
     const handlers = {
         change: (value: any, ev: any) => {

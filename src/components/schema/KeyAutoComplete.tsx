@@ -10,10 +10,11 @@ import {
     Tooltip,
     Typography,
 } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { useEntityType } from 'context/EntityContext';
 import { HelpCircle } from 'iconoir-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 import { OnChange } from './types';
@@ -28,41 +29,47 @@ interface Props {
 const typesAllowedAsKeys = ['string', 'integer', 'boolean'];
 
 function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
-    const defaultValue = useRef(value);
+    const [defaultValue] = useState<string[]>(value);
     const [keys, setKeys] = useState<string[]>([]);
 
     const entityType = useEntityType();
     const editKeyAllowed = entityType === 'capture';
 
     useEffect(() => {
-        // Infer the properties with WebFlow and then filter/map them for the dropdown
-        const inferredProperties = inferredSchema
-            ?.filter((inferredProperty: any) => {
-                const interrefPropertyTypes = inferredProperty.types;
-                // If there is a blank pointer it cannot be used
-                if (!hasLength(inferredProperty.pointer)) {
-                    return false;
-                }
+        let inferredProperties;
+        if (disabled) {
+            inferredProperties = [];
+        } else {
+            // Infer the properties with WebFlow and then filter/map them for the dropdown
+            inferredProperties = inferredSchema
+                ?.filter((inferredProperty: any) => {
+                    const interrefPropertyTypes = inferredProperty.types;
+                    // If there is a blank pointer it cannot be used
+                    if (!hasLength(inferredProperty.pointer)) {
+                        return false;
+                    }
 
-                // Check if this field:
-                //  must exist
-                //  has a single known type
-                //  has an allowed type
-                return (
-                    inferredProperty.exists === 'must' &&
-                    interrefPropertyTypes.length === 1 &&
-                    typesAllowedAsKeys.some((key) =>
-                        interrefPropertyTypes.includes(key)
-                    )
+                    // Check if this field:
+                    //  must exist
+                    //  has a single known type
+                    //  has an allowed type
+                    return (
+                        inferredProperty.exists === 'must' &&
+                        interrefPropertyTypes.length === 1 &&
+                        typesAllowedAsKeys.some((key) =>
+                            interrefPropertyTypes.includes(key)
+                        )
+                    );
+                })
+                .map(
+                    // We only care about the pointer
+                    (filteredInferredProperty: any) =>
+                        filteredInferredProperty.pointer
                 );
-            })
-            .map(
-                // We only care about the pointer
-                (filteredInferredProperty: any) =>
-                    filteredInferredProperty.pointer
-            );
+        }
+
         setKeys(inferredProperties);
-    }, [inferredSchema]);
+    }, [inferredSchema, disabled]);
 
     const changeHandler = editKeyAllowed ? onChange : undefined;
     const disableInput = editKeyAllowed ? disabled : false;
@@ -107,18 +114,24 @@ function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
                             pl: 0,
                         }}
                     >
-                        {value.map((key: string) => {
-                            let icon;
-                            return (
-                                <ListItem
-                                    key={`read-only-key-${keys}`}
-                                    dense
-                                    sx={{ px: 0.5 }}
-                                >
-                                    <Chip icon={icon} label={key} />
-                                </ListItem>
-                            );
-                        })}
+                        {!value ? (
+                            <AlertBox severity="warning" short>
+                                <FormattedMessage id="keyAutoComplete.keys.missing" />
+                            </AlertBox>
+                        ) : (
+                            value.map((key: string) => {
+                                let icon;
+                                return (
+                                    <ListItem
+                                        key={`read-only-key-${keys}`}
+                                        dense
+                                        sx={{ px: 0.5 }}
+                                    >
+                                        <Chip icon={icon} label={key} />
+                                    </ListItem>
+                                );
+                            })
+                        )}
                     </Stack>
                 </Stack>
             </Grid>
@@ -138,7 +151,7 @@ function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
                 {...autoCompleteDefaults_Virtual_Multiple}
                 onChange={changeHandler}
                 readOnly={disableInput}
-                defaultValue={defaultValue.current}
+                defaultValue={defaultValue}
                 options={keys}
                 renderInput={(params) => {
                     return (

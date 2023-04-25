@@ -1,6 +1,5 @@
 import { Grid } from '@mui/material';
 import { useBindingsEditorStore_editModeEnabled } from 'components/editor/Bindings/Store/hooks';
-import DraftSpecEditor from 'components/editor/DraftSpec';
 import KeyAutoComplete from 'components/schema/KeyAutoComplete';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
 import { OnChange } from 'components/schema/types';
@@ -12,11 +11,13 @@ export interface Props {
     entityName?: string;
 }
 
-const EDITOR_HEIGHT = 404;
-
 function CollectionSchemaEditor({ entityName }: Props) {
     const { onChange, catalogSpec, catalogType, draftSpec, isValidating } =
         useCatalogDetails(entityName);
+
+    console.log('unused vars', {
+        catalogSpec,
+    });
 
     const inferredSchema = useFlowInfer(draftSpec?.spec.schema);
 
@@ -36,12 +37,6 @@ function CollectionSchemaEditor({ entityName }: Props) {
         }
     };
 
-    console.log('unused vars', {
-        onChange,
-        catalogSpec,
-        catalogType,
-    });
-
     if (inferredSchema.error) {
         return (
             <AlertBox short severity="error">
@@ -50,7 +45,14 @@ function CollectionSchemaEditor({ entityName }: Props) {
         );
     }
 
-    if (draftSpec && catalogType && inferredSchema.data.length > 0) {
+    if (isValidating) {
+        return <>This is the collection schema skeleton</>;
+    } else if (
+        draftSpec &&
+        catalogType &&
+        entityName &&
+        inferredSchema.data.length > 0
+    ) {
         return (
             <Grid container>
                 <KeyAutoComplete
@@ -59,20 +61,13 @@ function CollectionSchemaEditor({ entityName }: Props) {
                     disabled={!editModeEnabled}
                     onChange={keyFieldChange}
                 />
-                {editModeEnabled ? (
-                    <DraftSpecEditor
-                        entityType={catalogType}
-                        localZustandScope={true}
-                        editorHeight={EDITOR_HEIGHT}
-                        entityName={entityName}
-                    />
-                ) : (
-                    <PropertiesViewer inferredSchema={inferredSchema.data} />
-                )}
+                <PropertiesViewer
+                    inferredSchema={inferredSchema.data}
+                    disabled={!editModeEnabled}
+                    entityName={entityName}
+                />
             </Grid>
         );
-    } else if (isValidating) {
-        return <>This is the collection schema skeleton</>;
     } else {
         return null;
     }
