@@ -203,6 +203,24 @@ export const useBindingsEditorStore_setSchemaUpdateErrored = () => {
     >(getStoreName(entityType), (state) => state.setSchemaUpdateErrored);
 };
 
+export const useBindingsEditorStore_editModeEnabled = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['editModeEnabled']
+    >(getStoreName(entityType), (state) => state.editModeEnabled);
+};
+
+export const useBindingsEditorStore_setEditModeEnabled = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setEditModeEnabled']
+    >(getStoreName(entityType), (state) => state.setEditModeEnabled);
+};
+
 export const useBindingsEditorStore_resetState = () => {
     const entityType = useEntityType();
 

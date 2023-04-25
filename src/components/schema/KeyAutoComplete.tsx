@@ -1,22 +1,38 @@
-import { Autocomplete, Grid, Skeleton, TextField } from '@mui/material';
+import {
+    Autocomplete,
+    Chip,
+    Grid,
+    IconButton,
+    ListItem,
+    Skeleton,
+    Stack,
+    TextField,
+    Tooltip,
+    Typography,
+} from '@mui/material';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
+import { useEntityType } from 'context/EntityContext';
+import { HelpCircle } from 'iconoir-react';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
-
-type OnChange = typeof autoCompleteDefaults_Virtual_Multiple['onChange'];
+import { OnChange } from './types';
 
 interface Props {
     value: any;
     inferredSchema: any;
+    disabled?: boolean;
     onChange?: OnChange;
 }
 
 const typesAllowedAsKeys = ['string', 'integer', 'boolean'];
 
-function KeyAutoComplete({ inferredSchema, value, onChange }: Props) {
+function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
     const defaultValue = useRef(value);
     const [keys, setKeys] = useState<string[]>([]);
+
+    const entityType = useEntityType();
+    const editKeyAllowed = entityType === 'capture';
 
     useEffect(() => {
         // Infer the properties with WebFlow and then filter/map them for the dropdown
@@ -48,64 +64,88 @@ function KeyAutoComplete({ inferredSchema, value, onChange }: Props) {
         setKeys(inferredProperties);
     }, [inferredSchema]);
 
+    const changeHandler = editKeyAllowed ? onChange : undefined;
+    const disableInput = editKeyAllowed ? disabled : false;
+
     if (keys.length === 0) {
         return <Skeleton />;
     }
 
-    // TODO (collection editor) decide if we want to make a unique UI
-    //  so the read only version is more than just a "read only" autocomplete
-    // if (!onChange) {
-    //         return (
-    //             <Grid item xs={12}>
-    //                 <Stack
-    //                     direction="row"
-    //                     sx={{
-    //                         alignItems: 'center',
-    //                         alignContent: 'center',
-    //                     }}
-    //                 >
-    //                     <Typography variant="subtitle1" component="span">
-    //                         <FormattedMessage id="data.key.label" />
-    //                     </Typography>
+    if (!editKeyAllowed || disableInput) {
+        return (
+            <Grid item xs={12}>
+                <Stack
+                    direction="row"
+                    sx={{
+                        alignItems: 'center',
+                        alignContent: 'center',
+                    }}
+                >
+                    <Stack
+                        direction="row"
+                        sx={{
+                            alignItems: 'center',
+                            alignContent: 'center',
+                        }}
+                    >
+                        <Typography variant="subtitle1" component="div">
+                            <FormattedMessage id="data.key.label" />
+                        </Typography>
+                        <Tooltip
+                            title={<FormattedMessage id="data.key.helper" />}
+                        >
+                            <IconButton>
+                                <HelpCircle />
+                            </IconButton>
+                        </Tooltip>
+                    </Stack>
+                    <Stack
+                        direction="row"
+                        component="ol"
+                        sx={{
+                            overflowY: 'auto',
+                            pl: 0,
+                        }}
+                    >
+                        {value.map((key: string) => {
+                            let icon;
+                            return (
+                                <ListItem
+                                    key={`read-only-key-${keys}`}
+                                    dense
+                                    sx={{ px: 0.5 }}
+                                >
+                                    <Chip icon={icon} label={key} />
+                                </ListItem>
+                            );
+                        })}
+                    </Stack>
+                </Stack>
+            </Grid>
+        );
+    }
 
-    //                     <List>
-    //                         {keys.map((key) => {
-    //                             let icon;
-    //                             return (
-    //                                 <ListItem key={`read-only-key-${keys}`}>
-    //                                     <Chip icon={icon} label={key} />
-    //                                 </ListItem>
-    //                             );
-    //                         })}
-    //                     </List>
-    //                 </Stack>
-    //                 <Typography variant="subtitle1" component="span">
-    //                     <FormattedMessage id="data.key.helper" />
-    //                 </Typography>
-    //             </Grid>
-    //         );
-    //     }
-
-    const disabled = !onChange;
+    console.log('key auto complete', {
+        changeHandler,
+        disabled,
+        entityType,
+        disableInput,
+    });
 
     return (
         <Grid item xs={12}>
             <Autocomplete
                 {...autoCompleteDefaults_Virtual_Multiple}
-                onChange={onChange}
-                readOnly={disabled}
+                onChange={changeHandler}
+                readOnly={disableInput}
                 defaultValue={defaultValue.current}
                 options={keys}
                 renderInput={(params) => {
-                    params.InputProps.endAdornment = disabled
-                        ? undefined
-                        : params.InputProps.endAdornment;
-
                     return (
                         <TextField
                             {...params}
                             variant="standard"
-                            disabled={disabled}
+                            disabled={disableInput}
                             label={<FormattedMessage id="data.key.label" />}
                             helperText={
                                 <FormattedMessage id="data.key.helper" />

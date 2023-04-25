@@ -83,6 +83,7 @@ const getInitialStateData = (): Pick<
     | 'schemaInferenceDisabled'
     | 'schemaUpdateErrored'
     | 'schemaUpdated'
+    | 'editModeEnabled'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -93,6 +94,7 @@ const getInitialStateData = (): Pick<
     schemaInferenceDisabled: false,
     schemaUpdateErrored: false,
     schemaUpdated: true,
+    editModeEnabled: false,
 });
 
 const getInitialState = (
@@ -100,6 +102,16 @@ const getInitialState = (
     get: StoreApi<BindingsEditorState>['getState']
 ): BindingsEditorState => ({
     ...getInitialStateData(),
+
+    setEditModeEnabled: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.editModeEnabled = value;
+            }),
+            false,
+            'Edit Mode Enabled Set'
+        );
+    },
 
     setCollectionData: (value) => {
         set(

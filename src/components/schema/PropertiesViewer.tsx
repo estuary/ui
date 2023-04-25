@@ -1,5 +1,6 @@
 import { Box, Grid, Typography } from '@mui/material';
 import SchemaPropertiesTable from 'components/tables/Schema';
+import { FormattedMessage } from 'react-intl';
 
 interface Props {
     inferredSchema: any;
@@ -10,8 +11,8 @@ function PropertiesViewer({ inferredSchema }: Props) {
     return (
         <Grid item xs={12}>
             <Box sx={{ height: 400, width: '100%', overflowY: 'auto' }}>
-                <Typography variant="h5" component="span">
-                    Fields
+                <Typography variant="subtitle1" component="span">
+                    <FormattedMessage id="data.fields.label" />
                 </Typography>
                 <SchemaPropertiesTable inferredSchema={inferredSchema} />
             </Box>

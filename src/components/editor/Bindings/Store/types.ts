@@ -57,6 +57,9 @@ export interface BindingsEditorState {
         setOpen: Dispatch<SetStateAction<boolean>>
     ) => void;
 
+    editModeEnabled: boolean;
+    setEditModeEnabled: (value: BindingsEditorState['editModeEnabled']) => void;
+
     // Misc.
     resetState: () => void;
 }
