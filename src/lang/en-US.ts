@@ -954,6 +954,8 @@ const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
 };
 
 const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
+    'data.fields.label': `Fields`,
+    'data.fields.helper': `These are all the data points that Flow knows about`,
     'data.key.label': `Key`,
     'data.key.helper': `Ordered JSON-Pointers which define how a composite key may be extracted from a collection document.`,
     'schemaEditor.table.empty.header': `No schema to display.`,
