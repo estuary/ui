@@ -11,7 +11,8 @@ export interface Props {
     entityName?: string;
 }
 
-const editorScope = '/schema';
+const editorSchemaScope = 'schema';
+
 function Editor({
     entityType,
     disabled,
@@ -31,7 +32,7 @@ function Editor({
                 disabled={disabled}
                 localZustandScope={localZustandScope}
                 height={editorHeight}
-                schemaPointer={editorScope}
+                editorSchemaScope={editorSchemaScope}
                 onChange={onChange}
             />
         );

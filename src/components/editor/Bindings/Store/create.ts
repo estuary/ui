@@ -1,3 +1,4 @@
+import { infer } from '@estuary/flow-web';
 import {
     createDraftSpec,
     getDraftSpecsByCatalogName,
@@ -7,10 +8,11 @@ import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
 import { CollectionData } from 'components/editor/Bindings/types';
 import produce from 'immer';
-import { isEmpty } from 'lodash';
+import { isEmpty, isPlainObject } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -84,6 +86,8 @@ const getInitialStateData = (): Pick<
     | 'schemaUpdateErrored'
     | 'schemaUpdated'
     | 'editModeEnabled'
+    | 'inferSchemaResponse'
+    | 'inferSchemaError'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -95,6 +99,8 @@ const getInitialStateData = (): Pick<
     schemaUpdateErrored: false,
     schemaUpdated: true,
     editModeEnabled: false,
+    inferSchemaResponse: null,
+    inferSchemaError: null,
 });
 
 const getInitialState = (
@@ -293,6 +299,54 @@ const getInitialState = (
             );
         } else {
             return null;
+        }
+    },
+
+    populateInferSchemaResponse: (schema) => {
+        const populateState = (
+            dataVal: BindingsEditorState['inferSchemaResponse'],
+            errorVal: BindingsEditorState['inferSchemaError']
+        ) => {
+            if (dataVal && dataVal.length > 0) {
+                dataVal = dataVal.filter((inferredProperty: any) => {
+                    // If there is a blank pointer it cannot be used
+                    return hasLength(inferredProperty.pointer);
+                });
+            }
+            // Save the values into the store
+            set(
+                produce((state: BindingsEditorState) => {
+                    state.inferSchemaError = errorVal;
+                    state.inferSchemaResponse = dataVal;
+                }),
+                false,
+                'Infere Schema Populated'
+            );
+        };
+
+        // If no schema then we can just keep the state
+        if (!schema) {
+            return;
+        }
+
+        // Make sure we have an object
+        if (!isPlainObject(schema)) {
+            populateState([], 'Cannot infer anything that is not an object');
+            return;
+        }
+
+        try {
+            // Make an attempt to infer
+            const inferResponse = infer(schema)?.properties;
+
+            // Make sure there is a response
+            if (inferResponse?.length === 0) {
+                populateState([], 'No properties were able to be inferred');
+            } else {
+                populateState(inferResponse, null);
+            }
+        } catch (err: unknown) {
+            populateState([], err as string);
         }
     },
 

@@ -57,8 +57,15 @@ export interface BindingsEditorState {
         setOpen: Dispatch<SetStateAction<boolean>>
     ) => void;
 
+    // Read/Write mode for collection schema
     editModeEnabled: boolean;
     setEditModeEnabled: (value: BindingsEditorState['editModeEnabled']) => void;
+
+    inferSchemaResponse: Schema | null;
+    inferSchemaError: string | null;
+    populateInferSchemaResponse: (
+        value: BindingsEditorState['inferSchemaResponse']
+    ) => void;
 
     // Misc.
     resetState: () => void;

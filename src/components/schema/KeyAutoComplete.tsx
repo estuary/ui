@@ -16,7 +16,6 @@ import { useEntityType } from 'context/EntityContext';
 import { HelpCircle } from 'iconoir-react';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { hasLength } from 'utils/misc-utils';
 import { OnChange } from './types';
 
 interface Props {
@@ -43,16 +42,11 @@ function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
             // Infer the properties with WebFlow and then filter/map them for the dropdown
             inferredProperties = inferredSchema
                 ?.filter((inferredProperty: any) => {
-                    const interrefPropertyTypes = inferredProperty.types;
-                    // If there is a blank pointer it cannot be used
-                    if (!hasLength(inferredProperty.pointer)) {
-                        return false;
-                    }
-
                     // Check if this field:
                     //  must exist
                     //  has a single known type
                     //  has an allowed type
+                    const interrefPropertyTypes = inferredProperty.types;
                     return (
                         inferredProperty.exists === 'must' &&
                         interrefPropertyTypes.length === 1 &&
@@ -74,7 +68,7 @@ function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
     const changeHandler = editKeyAllowed ? onChange : undefined;
     const disableInput = editKeyAllowed ? disabled : false;
 
-    if (keys.length === 0) {
+    if (!disabled && keys.length === 0) {
         return <Skeleton />;
     }
 
@@ -137,13 +131,6 @@ function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
             </Grid>
         );
     }
-
-    console.log('key auto complete', {
-        changeHandler,
-        disabled,
-        entityType,
-        disableInput,
-    });
 
     return (
         <Grid item xs={12}>

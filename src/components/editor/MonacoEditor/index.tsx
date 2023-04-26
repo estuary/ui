@@ -11,8 +11,6 @@ import {
     useEditorStore_status,
 } from 'components/editor/Store/hooks';
 import { EditorStatus } from 'components/editor/Store/types';
-import { JsonPointer } from 'json-ptr';
-import { PathSegments, Pointer } from 'json-ptr/dist/types/types';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -29,7 +27,7 @@ export interface Props {
     onChange?: (newVal: any, path: string, specType: string) => any;
     height?: number;
     toolbarHeight?: number;
-    schemaPointer?: Pointer | PathSegments; // Used to scop the schema editor
+    editorSchemaScope?: string; // Used to scop the schema editor
 }
 
 function MonacoEditor({
@@ -38,7 +36,7 @@ function MonacoEditor({
     height = DEFAULT_HEIGHT,
     onChange,
     toolbarHeight = DEFAULT_TOOLBAR_HEIGHT,
-    schemaPointer,
+    editorSchemaScope,
 }: Props) {
     const theme = useTheme();
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
@@ -110,12 +108,14 @@ function MonacoEditor({
                 setStatus(EditorStatus.SAVING);
 
                 let updatedValue;
-                if (schemaPointer) {
-                    console.log('editor:update:saving:schemaPointer', {
-                        schemaPointer,
+                if (editorSchemaScope) {
+                    console.log('editor:update:saving:nestedProperty', {
+                        nestedProperty: editorSchemaScope,
                     });
-                    updatedValue = { ...catalogSpec };
-                    JsonPointer.set(updatedValue, schemaPointer, parsedVal);
+                    updatedValue = {
+                        ...catalogSpec,
+                        [editorSchemaScope]: parsedVal,
+                    };
                 }
 
                 onChange(updatedValue ?? parsedVal, catalogName, catalogType)
@@ -149,18 +149,10 @@ function MonacoEditor({
     ]);
 
     const specAsString = useMemo(() => {
-        const scopeToStringify = JsonPointer.get(
-            catalogSpec,
-            schemaPointer ?? ''
+        return stringifyJSON(
+            editorSchemaScope ? catalogSpec[editorSchemaScope] : catalogSpec
         );
-
-        console.log('scopeToStringify', {
-            scopeToStringify,
-            schemaPointer,
-        });
-
-        return stringifyJSON(scopeToStringify);
-    }, [catalogSpec, schemaPointer]);
+    }, [catalogSpec, editorSchemaScope]);
 
     const handlers = {
         change: (value: any, ev: any) => {

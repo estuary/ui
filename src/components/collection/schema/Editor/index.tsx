@@ -1,10 +1,15 @@
 import { Grid } from '@mui/material';
-import { useBindingsEditorStore_editModeEnabled } from 'components/editor/Bindings/Store/hooks';
+import {
+    useBindingsEditorStore_editModeEnabled,
+    useBindingsEditorStore_inferSchemaError,
+    useBindingsEditorStore_inferSchemaResponse,
+    useBindingsEditorStore_populateInferSchemaResponse,
+} from 'components/editor/Bindings/Store/hooks';
 import KeyAutoComplete from 'components/schema/KeyAutoComplete';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
 import { OnChange } from 'components/schema/types';
 import AlertBox from 'components/shared/AlertBox';
-import useFlowInfer from 'hooks/useFlowInfer';
+import { useEffect } from 'react';
 import useCatalogDetails from './useCatalogDetails';
 
 export interface Props {
@@ -12,23 +17,16 @@ export interface Props {
 }
 
 function CollectionSchemaEditor({ entityName }: Props) {
-    const { onChange, catalogSpec, catalogType, draftSpec, isValidating } =
+    const { onChange, catalogType, draftSpec, isValidating } =
         useCatalogDetails(entityName);
 
-    console.log('unused vars', {
-        catalogSpec,
-    });
-
-    const inferredSchema = useFlowInfer(draftSpec?.spec.schema);
-
+    const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
+    const inferSchemaError = useBindingsEditorStore_inferSchemaError();
+    const populateInferSchemaResponse =
+        useBindingsEditorStore_populateInferSchemaResponse();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
 
-    const keyFieldChange: OnChange = async (event, value, reason) => {
-        console.log('Changing key for collection', {
-            event,
-            value,
-            reason,
-        });
+    const keyFieldChange: OnChange = async (event, value) => {
         if (draftSpec?.spec?.key) {
             draftSpec.spec.key = value;
             await onChange(draftSpec.spec);
@@ -37,32 +35,41 @@ function CollectionSchemaEditor({ entityName }: Props) {
         }
     };
 
-    if (inferredSchema.error) {
+    useEffect(() => {
+        if (draftSpec) {
+            populateInferSchemaResponse(draftSpec.spec.schema);
+        }
+    }, [draftSpec, populateInferSchemaResponse]);
+
+    if (inferSchemaError) {
         return (
             <AlertBox short severity="error">
-                {inferredSchema.error}
+                {inferSchemaError}
             </AlertBox>
         );
     }
 
     if (isValidating) {
         return <>This is the collection schema skeleton</>;
-    } else if (
+    }
+
+    if (
         draftSpec &&
         catalogType &&
         entityName &&
-        inferredSchema.data.length > 0
+        inferSchemaResponse &&
+        inferSchemaResponse.length > 0
     ) {
         return (
             <Grid container>
                 <KeyAutoComplete
                     value={draftSpec.spec.key}
-                    inferredSchema={inferredSchema.data}
+                    inferredSchema={inferSchemaResponse}
                     disabled={!editModeEnabled}
                     onChange={keyFieldChange}
                 />
                 <PropertiesViewer
-                    inferredSchema={inferredSchema.data}
+                    inferredSchema={inferSchemaResponse}
                     disabled={!editModeEnabled}
                     entityName={entityName}
                 />
