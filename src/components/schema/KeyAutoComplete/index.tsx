@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { OnChange } from '../types';
 import ReadOnly from './ReadOnly';
-import Tag from './Tag';
+import Tags from './Tags';
 
 interface Props {
     value: any;
@@ -75,7 +75,7 @@ function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
                 options={keys}
                 renderTags={(tagValues, getTagProps, ownerState) => {
                     return (
-                        <Tag
+                        <Tags
                             values={tagValues}
                             getTagProps={getTagProps}
                             ownerState={ownerState}

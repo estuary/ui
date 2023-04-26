@@ -24,7 +24,7 @@ interface Props {
     values: any;
 }
 
-function Tag({ getTagProps, onOrderChange, ownerState, values }: Props) {
+function Tags({ getTagProps, onOrderChange, ownerState, values }: Props) {
     const intl = useIntl();
 
     const [activeId, setActiveId] = useState(null);
@@ -111,4 +111,4 @@ function Tag({ getTagProps, onOrderChange, ownerState, values }: Props) {
     );
 }
 
-export default Tag;
+export default Tags;
