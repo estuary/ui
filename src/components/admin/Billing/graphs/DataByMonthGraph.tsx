@@ -31,6 +31,7 @@ import {
     FREE_GB_BY_TIER,
     SeriesConfig,
 } from 'utils/billing-utils';
+import './graph.css';
 
 const stackId = 'Data Volume';
 const freeBytes = FREE_GB_BY_TIER.PERSONAL * BYTES_PER_GB;
@@ -80,12 +81,12 @@ function DataByMonthGraph() {
 
                         return [
                             {
-                                seriesName: 'Free Data Volume',
+                                seriesName: 'Included',
                                 stack: stackId,
                                 data: [[month, freeBytes]],
                             },
                             {
-                                seriesName: 'Additional Data Volume',
+                                seriesName: 'Additional',
                                 stack: stackId,
                                 data: [[month, byteSurplus]],
                             },
@@ -93,12 +94,12 @@ function DataByMonthGraph() {
                     } else {
                         return [
                             {
-                                seriesName: 'Free Data Volume',
+                                seriesName: 'Included',
                                 stack: stackId,
                                 data: [[month, dataVolume]],
                             },
                             {
-                                seriesName: 'Additional Data Volume',
+                                seriesName: 'Additional',
                                 stack: stackId,
                                 data: [[month, 0]],
                             },
@@ -154,7 +155,7 @@ function DataByMonthGraph() {
                     emphasis: {
                         focus: 'series',
                     },
-                    barMinHeight: seriesName === 'Free Data Volume' ? 2 : 0,
+                    barMinHeight: seriesName === 'Included' ? 3 : 0,
                     data: data.map(([month, dataVolume]) => [
                         month,
                         (dataVolume / BYTES_PER_GB).toFixed(3),
@@ -184,7 +185,14 @@ function DataByMonthGraph() {
                             );
 
                             if (content) {
-                                content = `${content}${config.marker} ${dataVolume} | ${config.seriesName}<br />`;
+                                content = `${content}
+                                            <div class="tooltipItem">
+                                                <div>
+                                                    ${config.marker}
+                                                    <span>${config.seriesName}</span>
+                                                </div>
+                                                <span class="tooltipDataValue">${dataVolume}</span>
+                                            </div>`;
                             } else {
                                 const tooltipTitle =
                                     billingHistory
@@ -198,7 +206,14 @@ function DataByMonthGraph() {
                                             date.includes(config.axisValueLabel)
                                         ) ?? config.axisValueLabel;
 
-                                content = `${tooltipTitle}<br />${config.marker} ${dataVolume} | ${config.seriesName}<br />`;
+                                content = `<div class="tooltipTitle">${tooltipTitle}</div>
+                                            <div class="tooltipItem">
+                                                <div>
+                                                    ${config.marker}
+                                                    <span>${config.seriesName}</span>
+                                                </div>
+                                                <span class="tooltipDataValue">${dataVolume}</span>
+                                            </div>`;
                             }
                         });
 

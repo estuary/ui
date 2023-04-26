@@ -1,0 +1,15 @@
+.tooltipTitle {
+    margin-bottom: 0.5rem;
+}
+
+.tooltipItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+}
+
+.tooltipDataValue {
+    margin-left: 20px;
+    font-weight: 600;
+}
