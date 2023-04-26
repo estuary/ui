@@ -13,9 +13,10 @@ import {
     SortableContext,
     sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
-import { Box, Chip, Tooltip } from '@mui/material';
+import { Chip } from '@mui/material';
+import DraggableWrapper from 'components/shared/DragAndDrop/DraggableWrapper';
 import { useState } from 'react';
-import { useIntl } from 'react-intl';
+import Tag from './Tag';
 
 interface Props {
     getTagProps: any;
@@ -25,8 +26,6 @@ interface Props {
 }
 
 function Tags({ getTagProps, onOrderChange, ownerState, values }: Props) {
-    const intl = useIntl();
-
     const [activeId, setActiveId] = useState(null);
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -67,46 +66,23 @@ function Tags({ getTagProps, onOrderChange, ownerState, values }: Props) {
                 items={values}
                 strategy={horizontalListSortingStrategy}
             >
-                {values.map((tagValue: any, tagValueIndex: number) => {
-                    const tagProps = getTagProps({ index: tagValueIndex });
-
-                    const validOption = ownerState.options.includes(tagValue);
-
-                    return (
-                        <Box
-                            id={tagValue}
-                            key={`autocomplete-selected-tag-${tagValue}`}
-                        >
-                            <Tooltip
-                                disableInteractive={validOption}
-                                disableFocusListener={validOption}
-                                disableHoverListener={validOption}
-                                disableTouchListener={validOption}
-                                title={
-                                    !validOption
-                                        ? intl.formatMessage({
-                                              id: 'data.key.errors.invalidKey',
-                                          })
-                                        : undefined
-                                }
-                            >
-                                <Chip
-                                    {...tagProps}
-                                    label={tagValue}
-                                    sx={{
-                                        bgcolor: (theme) =>
-                                            validOption
-                                                ? undefined
-                                                : theme.palette.error.main,
-                                    }}
-                                />
-                            </Tooltip>
-                        </Box>
-                    );
-                })}
+                {values.map((tagValue: any, tagValueIndex: number) => (
+                    <DraggableWrapper
+                        id={tagValue}
+                        key={`autocomplete-selected-tag-${tagValue}`}
+                    >
+                        <Tag
+                            tagProps={getTagProps({ index: tagValueIndex })}
+                            value={tagValue}
+                            validOption={ownerState.options.includes(tagValue)}
+                        />
+                    </DraggableWrapper>
+                ))}
             </SortableContext>
-            {/*eslint-disable-next-line @typescript-eslint/no-unnecessary-condition*/}
-            <DragOverlay>{activeId ? <Box id={activeId} /> : null}</DragOverlay>
+            <DragOverlay>
+                {/*eslint-disable-next-line @typescript-eslint/no-unnecessary-condition*/}
+                {activeId ? <Chip id={activeId} title={activeId} /> : null}
+            </DragOverlay>
         </DndContext>
     );
 }
