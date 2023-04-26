@@ -15,7 +15,13 @@ function PropertiesViewer({ disabled, entityName, inferredSchema }: Props) {
     console.log('inferredSchema', inferredSchema);
 
     return (
-        <Grid item xs={12}>
+        <Grid
+            item
+            xs={12}
+            sx={{
+                mt: 2,
+            }}
+        >
             <Typography variant="subtitle1" component="span">
                 <FormattedMessage id="data.fields.label" />
             </Typography>

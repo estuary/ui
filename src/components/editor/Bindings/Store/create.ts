@@ -313,6 +313,7 @@ const getInitialState = (
                     return hasLength(inferredProperty.pointer);
                 });
             }
+
             // Save the values into the store
             set(
                 produce((state: BindingsEditorState) => {
@@ -331,7 +332,7 @@ const getInitialState = (
 
         // Make sure we have an object
         if (!isPlainObject(schema)) {
-            populateState([], 'Cannot infer anything that is not an object');
+            populateState([], 'Schema must be object');
             return;
         }
 

@@ -15,7 +15,7 @@ import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoCom
 import { useEntityType } from 'context/EntityContext';
 import { HelpCircle } from 'iconoir-react';
 import { useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { OnChange } from './types';
 
 interface Props {
@@ -28,6 +28,8 @@ interface Props {
 const typesAllowedAsKeys = ['string', 'integer', 'boolean'];
 
 function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
+    const intl = useIntl();
+
     const [defaultValue] = useState<string[]>(value);
     const [keys, setKeys] = useState<string[]>([]);
 
@@ -69,6 +71,7 @@ function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
     const disableInput = editKeyAllowed ? disabled : false;
 
     if (!disabled && keys.length === 0) {
+        console.log('keyautocomplete loading');
         return <Skeleton />;
     }
 
@@ -140,6 +143,47 @@ function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
                 readOnly={disableInput}
                 defaultValue={defaultValue}
                 options={keys}
+                renderTags={(tagValues, getTagProps, ownerState) => {
+                    return tagValues.map((tagValue, tagValueIndex) => {
+                        const tagProps = getTagProps({ index: tagValueIndex });
+
+                        const validOption =
+                            ownerState.options.includes(tagValue);
+
+                        console.log(
+                            `${tagValue} is a validOption`,
+                            validOption
+                        );
+
+                        return (
+                            <Tooltip
+                                key={`autocomplete-selected-tag-${tagValue}`}
+                                disableInteractive={validOption}
+                                disableFocusListener={validOption}
+                                disableHoverListener={validOption}
+                                disableTouchListener={validOption}
+                                title={
+                                    !validOption
+                                        ? intl.formatMessage({
+                                              id: 'data.key.errors.invalidKey',
+                                          })
+                                        : undefined
+                                }
+                            >
+                                <Chip
+                                    {...tagProps}
+                                    label={tagValue}
+                                    sx={{
+                                        bgcolor: (theme) =>
+                                            validOption
+                                                ? undefined
+                                                : theme.palette.error.main,
+                                    }}
+                                />
+                            </Tooltip>
+                        );
+                    });
+                }}
                 renderInput={(params) => {
                     return (
                         <TextField

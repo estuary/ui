@@ -41,16 +41,20 @@ function CollectionSchemaEditor({ entityName }: Props) {
         }
     }, [draftSpec, populateInferSchemaResponse]);
 
+    console.log(`inferSchemaResponse = `, inferSchemaResponse);
+
+    if (isValidating) {
+        console.log('CollectionSchemaEditor loading');
+
+        return <>This is the collection schema skeleton</>;
+    }
+
     if (inferSchemaError) {
         return (
             <AlertBox short severity="error">
                 {inferSchemaError}
             </AlertBox>
         );
-    }
-
-    if (isValidating) {
-        return <>This is the collection schema skeleton</>;
     }
 
     if (
