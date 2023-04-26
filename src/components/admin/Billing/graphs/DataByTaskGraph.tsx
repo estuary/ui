@@ -8,7 +8,7 @@ import {
     startOfMonth,
     sub,
 } from 'date-fns';
-import { LineChart } from 'echarts/charts';
+import { BarChart } from 'echarts/charts';
 import {
     GridComponent,
     LegendComponent,
@@ -22,21 +22,19 @@ import navArrowLeftDark from 'images/graph-icons/nav-arrow-left__dark.svg';
 import navArrowLeftLight from 'images/graph-icons/nav-arrow-left__light.svg';
 import navArrowRightDark from 'images/graph-icons/nav-arrow-right__dark.svg';
 import navArrowRightLight from 'images/graph-icons/nav-arrow-right__light.svg';
-import { isEmpty, sortBy, sum } from 'lodash';
+import { isEmpty, sortBy, sum, uniq } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useBilling_dataByTaskGraphDetails,
     useBilling_hydrated,
 } from 'stores/Billing/hooks';
-import { DataVolumeByTaskGraphDetails } from 'stores/Billing/types';
+import { DataVolumeByTask } from 'stores/Billing/types';
 import useConstant from 'use-constant';
 import {
     BYTES_PER_GB,
     CARD_AREA_HEIGHT,
-    evaluateSeriesDataUnderLimit,
     formatDataVolumeForDisplay,
-    FREE_GB_BY_TIER,
     SeriesConfig,
 } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
@@ -52,15 +50,19 @@ const navArrowsDark = [
 ];
 
 const evaluateLargestDataProducingTasks = (
-    dataVolumeByTask: DataVolumeByTaskGraphDetails
+    dataVolumeByTask: DataVolumeByTask[]
 ): string[] => {
     const totalDataVolumeByTask: {
         catalogName: string;
         totalDataVolume: number;
     }[] = [];
 
-    Object.entries(dataVolumeByTask).forEach(([catalogName, details]) => {
-        const dataVolumes = details.map(({ dataVolume }) => dataVolume);
+    const tasks = uniq(dataVolumeByTask.map(({ catalogName }) => catalogName));
+
+    tasks.forEach((catalogName) => {
+        const dataVolumes = dataVolumeByTask
+            .filter((item) => item.catalogName === catalogName)
+            .map(({ dataVolume }) => dataVolume);
 
         totalDataVolumeByTask.push({
             catalogName,
@@ -70,7 +72,7 @@ const evaluateLargestDataProducingTasks = (
 
     return sortBy(totalDataVolumeByTask, ['totalDataVolume'])
         .reverse()
-        .slice(0, 10)
+        .slice(0, 3)
         .map(({ catalogName }) => catalogName);
 };
 
@@ -97,36 +99,28 @@ function DataByTaskGraph() {
     const seriesConfig: SeriesConfig[] = useMemo(() => {
         const startDate = startOfMonth(sub(today, { months: 5 }));
 
-        let filteredDetails: DataVolumeByTaskGraphDetails = {};
-
-        Object.entries(dataByTaskGraphDetails).forEach(
-            ([catalogName, details]) => {
-                filteredDetails = {
-                    ...filteredDetails,
-                    [catalogName]: details.filter(({ date }) =>
-                        isWithinInterval(date, {
-                            start: startDate,
-                            end: today,
-                        })
-                    ),
-                };
-            }
+        const scopedDetails = dataByTaskGraphDetails.filter(({ date }) =>
+            isWithinInterval(date, {
+                start: startDate,
+                end: today,
+            })
         );
 
-        const largestDataProducingTasks =
-            evaluateLargestDataProducingTasks(filteredDetails);
+        return evaluateLargestDataProducingTasks(scopedDetails).map((task) => {
+            const detailsByTask = scopedDetails.filter(
+                ({ catalogName }) => catalogName === task
+            );
 
-        return Object.entries(filteredDetails)
-            .filter(([catalogName]) =>
-                largestDataProducingTasks.includes(catalogName)
-            )
-            .map(([seriesName, taskData]) => ({
-                seriesName,
-                data: taskData.map(({ date, dataVolume }) => [
-                    intl.formatDate(date, { month: 'short' }),
-                    dataVolume,
-                ]),
-            }));
+            return {
+                seriesName: task,
+                data: detailsByTask.map(
+                    ({ date, dataVolume }): [string, number] => [
+                        intl.formatDate(date, { month: 'short' }),
+                        dataVolume,
+                    ]
+                ),
+            };
+        });
     }, [dataByTaskGraphDetails, intl, today]);
 
     useEffect(() => {
@@ -135,7 +129,7 @@ function DataByTaskGraph() {
                 echarts.use([
                     GridComponent,
                     LegendComponent,
-                    LineChart,
+                    BarChart,
                     CanvasRenderer,
                     UniversalTransition,
                     MarkLineComponent,
@@ -150,12 +144,6 @@ function DataByTaskGraph() {
             window.addEventListener('resize', () => {
                 myChart?.resize();
             });
-
-            const showMarkLine = evaluateSeriesDataUnderLimit(
-                seriesConfig,
-                FREE_GB_BY_TIER.PERSONAL,
-                true
-            );
 
             const option = {
                 xAxis: {
@@ -174,44 +162,18 @@ function DataByTaskGraph() {
                     },
                     minInterval: 0.001,
                 },
-                series: seriesConfig.map(({ seriesName, data }, index) => {
-                    let config: any = {
-                        name: seriesName,
-                        type: 'line',
-                        data: data.map(([month, dataVolume]) => [
-                            month,
-                            (dataVolume / BYTES_PER_GB).toFixed(3),
-                        ]),
-                        symbol: 'circle',
-                        symbolSize: 7,
-                    };
-
-                    if (index === 0 && showMarkLine) {
-                        config = {
-                            ...config,
-                            markLine: {
-                                data: [
-                                    {
-                                        yAxis: FREE_GB_BY_TIER.PERSONAL,
-                                        name: 'GB\nFree',
-                                    },
-                                ],
-                                label: {
-                                    color: theme.palette.text.primary,
-                                    formatter: '{c} {b}',
-                                    position: 'end',
-                                },
-                                lineStyle: {
-                                    color: theme.palette.text.primary,
-                                },
-                                silent: true,
-                                symbol: 'none',
-                            },
-                        };
-                    }
-
-                    return config;
-                }),
+                series: seriesConfig.map(({ seriesName, data }) => ({
+                    name: seriesName,
+                    type: 'bar',
+                    emphasis: {
+                        focus: 'series',
+                    },
+                    barMinHeight: 3,
+                    data: data.map(([month, dataVolume]) => [
+                        month,
+                        (dataVolume / BYTES_PER_GB).toFixed(3),
+                    ]),
+                })),
                 legend: {
                     type: 'scroll',
                     data: seriesConfig.map((config) => config.seriesName),
@@ -243,6 +205,9 @@ function DataByTaskGraph() {
                         color: theme.palette.text.primary,
                         fontWeight: 'normal',
                     },
+                    axisPointer: {
+                        type: 'shadow',
+                    },
                     formatter: (tooltipConfigs: any[]) => {
                         let content: string | undefined;
 
@@ -256,7 +221,7 @@ function DataByTaskGraph() {
                                 content = `${content}${config.marker} ${dataVolume}<br />`;
                             } else {
                                 const tooltipTitle =
-                                    dataByTaskGraphDetails[config.seriesName]
+                                    dataByTaskGraphDetails
                                         .map(({ date }) =>
                                             intl.formatDate(date, {
                                                 month: 'short',
@@ -275,10 +240,11 @@ function DataByTaskGraph() {
                     },
                 },
                 grid: {
-                    left: 60,
+                    left: 10,
                     top: 50,
                     right: 50,
-                    bottom: 20,
+                    bottom: 0,
+                    containLabel: true,
                 },
             };
 

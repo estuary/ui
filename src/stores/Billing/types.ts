@@ -12,6 +12,7 @@ export interface BillingRecord {
 }
 
 export interface DataVolumeByTask {
+    catalogName: string;
     date: Date;
     dataVolume: number;
     specType: Entity;
@@ -22,7 +23,7 @@ export interface DataVolumeByTaskGraphDetails {
 }
 
 export interface BillingState extends StoreWithHydration {
-    dataByTaskGraphDetails: DataVolumeByTaskGraphDetails;
+    dataByTaskGraphDetails: DataVolumeByTask[];
     setDataByTaskGraphDetails: (value: CatalogStats_Billing[]) => void;
 
     billingHistory: BillingRecord[];

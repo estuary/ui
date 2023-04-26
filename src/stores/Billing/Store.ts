@@ -21,7 +21,7 @@ const getInitialStateData = (): Pick<
 > => {
     return {
         billingHistory: [],
-        dataByTaskGraphDetails: {},
+        dataByTaskGraphDetails: [],
     };
 };
 
@@ -49,6 +49,7 @@ export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
 
                     taskStatData.forEach((query) => {
                         const dataVolumeByTask: DataVolumeByTask = {
+                            catalogName: query.catalog_name,
                             date: stripTimeFromDate(query.ts),
                             dataVolume:
                                 query.bytes_written_by_me +
@@ -56,36 +57,21 @@ export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
                             specType: evaluateSpecType(query),
                         };
 
-                        if (
-                            Object.hasOwn(
-                                state.dataByTaskGraphDetails,
-                                query.catalog_name
-                            )
-                        ) {
-                            const existingStatIndex =
-                                state.dataByTaskGraphDetails[
-                                    query.catalog_name
-                                ].findIndex((stat) =>
+                        const existingStatIndex =
+                            state.dataByTaskGraphDetails.findIndex(
+                                (stat) =>
+                                    query.catalog_name === stat.catalogName &&
                                     isEqual(
                                         stat.date,
                                         stripTimeFromDate(query.ts)
                                     )
-                                );
+                            );
 
-                            if (existingStatIndex === -1) {
-                                state.dataByTaskGraphDetails[
-                                    query.catalog_name
-                                ].push(dataVolumeByTask);
-                            } else {
-                                state.dataByTaskGraphDetails[
-                                    query.catalog_name
-                                ][existingStatIndex] = dataVolumeByTask;
-                            }
+                        if (existingStatIndex === -1) {
+                            state.dataByTaskGraphDetails.push(dataVolumeByTask);
                         } else {
-                            state.dataByTaskGraphDetails = {
-                                ...state.dataByTaskGraphDetails,
-                                [query.catalog_name]: [dataVolumeByTask],
-                            };
+                            state.dataByTaskGraphDetails[existingStatIndex] =
+                                dataVolumeByTask;
                         }
                     });
                 }),
