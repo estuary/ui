@@ -1,4 +1,5 @@
 import { useDraggable } from '@dnd-kit/core';
+import { Box } from '@mui/material';
 import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
@@ -10,10 +11,17 @@ function DraggableWrapper({ children, id }: Props) {
         id,
     });
 
+    console.log('DraggableWrapper attributes', attributes);
+
     return (
-        <span ref={setNodeRef} {...listeners} {...attributes}>
+        <Box
+            ref={setNodeRef}
+            sx={{ cursor: 'grab' }}
+            {...listeners}
+            {...attributes}
+        >
             {children}
-        </span>
+        </Box>
     );
 }
 

@@ -7,7 +7,6 @@ import {
 } from 'components/editor/Bindings/Store/hooks';
 import KeyAutoComplete from 'components/schema/KeyAutoComplete';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
-import { OnChange } from 'components/schema/types';
 import AlertBox from 'components/shared/AlertBox';
 import { useEffect } from 'react';
 import useCatalogDetails from './useCatalogDetails';
@@ -26,7 +25,7 @@ function CollectionSchemaEditor({ entityName }: Props) {
         useBindingsEditorStore_populateInferSchemaResponse();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
 
-    const keyFieldChange: OnChange = async (event, value) => {
+    const keyFieldChange = async (_event: any, value: string[]) => {
         if (draftSpec?.spec?.key) {
             draftSpec.spec.key = value;
             await onChange(draftSpec.spec);

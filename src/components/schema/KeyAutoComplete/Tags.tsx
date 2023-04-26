@@ -8,19 +8,18 @@ import {
     useSensors,
 } from '@dnd-kit/core';
 import {
-    arrayMove,
     horizontalListSortingStrategy,
     SortableContext,
     sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
 import { Chip } from '@mui/material';
-import DraggableWrapper from 'components/shared/DragAndDrop/DraggableWrapper';
+import SortableWrapper from 'components/shared/DragAndDrop/SortableWrapper';
 import { useState } from 'react';
 import Tag from './Tag';
 
 interface Props {
     getTagProps: any;
-    onOrderChange: (newList: any) => void;
+    onOrderChange: (activeId: string, overId: string) => void;
     ownerState: any;
     values: any;
 }
@@ -37,19 +36,18 @@ function Tags({ getTagProps, onOrderChange, ownerState, values }: Props) {
     function handleDragStart(event: any) {
         const { active } = event;
 
+        console.log('schemaEditor:key:drag:start', event);
+
         setActiveId(active.id);
     }
 
     function handleDragEnd(event: any) {
         const { active, over } = event;
 
-        if (active.id !== over.id) {
-            onOrderChange((items: any) => {
-                const oldIndex = items.indexOf(active.id);
-                const newIndex = items.indexOf(over.id);
+        console.log('schemaEditor:key:drag:end');
 
-                return arrayMove(items, oldIndex, newIndex);
-            });
+        if (active.id !== over.id) {
+            onOrderChange(active.id, over.id);
         }
 
         setActiveId(null);
@@ -67,7 +65,7 @@ function Tags({ getTagProps, onOrderChange, ownerState, values }: Props) {
                 strategy={horizontalListSortingStrategy}
             >
                 {values.map((tagValue: any, tagValueIndex: number) => (
-                    <DraggableWrapper
+                    <SortableWrapper
                         id={tagValue}
                         key={`autocomplete-selected-tag-${tagValue}`}
                     >
@@ -76,12 +74,18 @@ function Tags({ getTagProps, onOrderChange, ownerState, values }: Props) {
                             value={tagValue}
                             validOption={ownerState.options.includes(tagValue)}
                         />
-                    </DraggableWrapper>
+                    </SortableWrapper>
                 ))}
             </SortableContext>
             <DragOverlay>
                 {/*eslint-disable-next-line @typescript-eslint/no-unnecessary-condition*/}
-                {activeId ? <Chip id={activeId} title={activeId} /> : null}
+                {activeId ? (
+                    <Chip
+                        id={activeId}
+                        title={activeId}
+                        sx={{ cursor: 'grabbed' }}
+                    />
+                ) : null}
             </DragOverlay>
         </DndContext>
     );

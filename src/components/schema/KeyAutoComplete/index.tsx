@@ -1,9 +1,9 @@
+import { arrayMove } from '@dnd-kit/sortable';
 import { Autocomplete, Grid, Skeleton, TextField } from '@mui/material';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { useEntityType } from 'context/EntityContext';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { OnChange } from '../types';
 import ReadOnly from './ReadOnly';
 import Tags from './Tags';
 
@@ -11,7 +11,7 @@ interface Props {
     value: any;
     inferredSchema: any;
     disabled?: boolean;
-    onChange?: OnChange;
+    onChange?: (event: any, newValue: string[], reason: string) => void;
 }
 
 const typesAllowedAsKeys = ['string', 'integer', 'boolean'];
@@ -79,8 +79,18 @@ function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
                             values={tagValues}
                             getTagProps={getTagProps}
                             ownerState={ownerState}
-                            onOrderChange={(newValue) => {
-                                console.log('Order changed', newValue);
+                            onOrderChange={(activeId, overId) => {
+                                if (onChange) {
+                                    const oldIndex = value.indexOf(activeId);
+                                    const newIndex = value.indexOf(overId);
+
+                                    const updatedArray = arrayMove<string>(
+                                        value,
+                                        oldIndex,
+                                        newIndex
+                                    );
+                                    onChange(null, updatedArray, 'orderChange');
+                                }
                             }}
                         />
                     );
