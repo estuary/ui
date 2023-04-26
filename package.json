@@ -26,6 +26,9 @@
         "pre_commit": "npm run lint-staged; npm run depcheck"
     },
     "dependencies": {
+        "@dnd-kit/core": "^6.0.8",
+        "@dnd-kit/modifiers": "^6.0.1",
+        "@dnd-kit/sortable": "^7.0.2",
         "@emotion/react": "^11.10.5",
         "@emotion/styled": "^11.10.5",
         "@estuary/flow-web": "^0.2.0",
