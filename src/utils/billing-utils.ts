@@ -1,5 +1,5 @@
 import { isEqual, parseISO } from 'date-fns';
-import { flatten, isEmpty, sum } from 'lodash';
+import { isEmpty, sum } from 'lodash';
 import prettyBytes from 'pretty-bytes';
 import { BillingRecord } from 'stores/Billing/types';
 import { CatalogStats_Billing, Entity } from 'types';
@@ -76,6 +76,7 @@ const getInitialBillingRecord = (date: string): BillingRecord => {
         pricingTier: null,
         taskRate: null,
         gbFree: null,
+        includedTasks: null,
     };
 };
 
@@ -116,7 +117,7 @@ export const formatBillingCatalogStats = (
             const totalCost = evaluateTotalCost(dataVolume, taskCount);
 
             if (billingRecordIndex === -1) {
-                const { date, pricingTier, taskRate, gbFree } =
+                const { date, pricingTier, taskRate, gbFree, includedTasks } =
                     getInitialBillingRecord(ts);
 
                 billingHistory.push({
@@ -127,9 +128,10 @@ export const formatBillingCatalogStats = (
                     pricingTier: pricingTier ?? 'personal',
                     taskRate: taskRate ?? 20,
                     gbFree: gbFree ?? FREE_GB_BY_TIER.PERSONAL,
+                    includedTasks: includedTasks ?? 2,
                 });
             } else {
-                const { date, pricingTier, taskRate, gbFree } =
+                const { date, pricingTier, taskRate, gbFree, includedTasks } =
                     billingHistory[billingRecordIndex];
 
                 billingHistory[billingRecordIndex] = {
@@ -140,6 +142,7 @@ export const formatBillingCatalogStats = (
                     pricingTier: pricingTier ?? 'personal',
                     taskRate: taskRate ?? 20,
                     gbFree: gbFree ?? FREE_GB_BY_TIER.PERSONAL,
+                    includedTasks: includedTasks ?? 2,
                 };
             }
         });
@@ -152,12 +155,6 @@ export interface SeriesConfig {
     data: [string, number][];
     seriesName?: string;
     stack?: string;
-}
-
-export interface SeriesConfig_SinglePoint {
-    data: number[];
-    seriesName?: string;
-    stackId?: string;
 }
 
 export const formatDataVolumeForDisplay = (
@@ -178,38 +175,4 @@ export const formatDataVolumeForDisplay = (
     return dataVolumeInBytes
         ? prettyBytes(dataVolumeInBytes[1], { minimumFractionDigits: 2 })
         : `${tooltipConfig.value[1]} GB`;
-};
-
-export const formatDataVolumeForDisplay_Test = (
-    seriesConfigs: SeriesConfig_SinglePoint[],
-    tooltipConfig: any
-): string => {
-    const selectedSeries =
-        seriesConfigs.length === 1
-            ? seriesConfigs[0]
-            : seriesConfigs.find(
-                  (series) => series.seriesName === tooltipConfig.seriesName
-              );
-
-    const dataVolumeInBytes = selectedSeries?.data[0];
-
-    return dataVolumeInBytes
-        ? prettyBytes(dataVolumeInBytes[1], { minimumFractionDigits: 2 })
-        : `${tooltipConfig.value[1]} GB`;
-};
-
-export const evaluateSeriesDataUnderLimit = (
-    seriesConfig: SeriesConfig[],
-    tierConstraint: number,
-    metricInBytes?: boolean
-): boolean => {
-    const evaluatedLimit = metricInBytes
-        ? tierConstraint * BYTES_PER_GB
-        : tierConstraint;
-
-    const [seriesData] = seriesConfig.map(({ data }) => flatten(data));
-
-    return seriesData.some((item) => {
-        return typeof item === 'number' ? item <= evaluatedLimit : false;
-    });
 };

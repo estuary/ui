@@ -33,7 +33,6 @@ import {
 } from 'utils/billing-utils';
 
 const stackId = 'Data Volume';
-const freeBytes = FREE_GB_BY_TIER.PERSONAL * BYTES_PER_GB;
 
 function DataByMonthGraph() {
     const theme = useTheme();
@@ -58,23 +57,33 @@ function DataByMonthGraph() {
     const seriesConfig: SeriesConfig[] = useMemo(() => {
         const startDate = startOfMonth(sub(today, { months: 5 }));
 
-        const scopedDataSet: [string, number][] = billingHistory
+        const scopedDataSet: {
+            month: string;
+            dataVolume: number;
+            gbFree: number | null;
+        }[] = billingHistory
             .filter(({ date }) =>
                 isWithinInterval(date, {
                     start: startDate,
                     end: today,
                 })
             )
-            .map(({ date, dataVolume }) => [
-                intl.formatDate(date, { month: 'short' }),
+            .map(({ date, dataVolume, gbFree }) => ({
+                month: intl.formatDate(date, { month: 'short' }),
                 dataVolume,
-            ]);
+                gbFree,
+            }));
 
         return scopedDataSet
             .map(
-                ([month, dataVolume]: [string, number]):
-                    | SeriesConfig
-                    | SeriesConfig[] => {
+                ({
+                    month,
+                    dataVolume,
+                    gbFree,
+                }): SeriesConfig | SeriesConfig[] => {
+                    const freeBytes =
+                        (gbFree ?? FREE_GB_BY_TIER.PERSONAL) * BYTES_PER_GB;
+
                     if (dataVolume > freeBytes) {
                         const byteSurplus = dataVolume - freeBytes;
 

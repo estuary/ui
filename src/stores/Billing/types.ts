@@ -9,6 +9,7 @@ export interface BillingRecord {
     pricingTier: string | null;
     taskRate: number | null;
     gbFree: number | null;
+    includedTasks: number | null;
 }
 
 export interface DataVolumeByTask {
