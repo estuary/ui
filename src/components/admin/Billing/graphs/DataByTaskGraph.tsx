@@ -218,7 +218,13 @@ function DataByTaskGraph() {
                             );
 
                             if (content) {
-                                content = `${content}${config.marker} ${dataVolume}<br />`;
+                                content = `${content}
+                                            <div class="tooltipItem">
+                                                <div>
+                                                    ${config.marker}
+                                                    <span>${dataVolume}</span>
+                                                </div>
+                                            </div>`;
                             } else {
                                 const tooltipTitle =
                                     dataByTaskGraphDetails
@@ -232,7 +238,13 @@ function DataByTaskGraph() {
                                             date.includes(config.name)
                                         ) ?? config.name;
 
-                                content = `${tooltipTitle}<br />${config.marker} ${dataVolume}<br />`;
+                                content = `<div class="tooltipTitle">${tooltipTitle}</div>
+                                            <div class="tooltipItem">
+                                                <div>
+                                                    ${config.marker}
+                                                    <span>${dataVolume}</span>
+                                                </div>
+                                            </div>`;
                             }
                         });
 

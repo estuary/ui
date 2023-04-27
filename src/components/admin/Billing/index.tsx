@@ -36,6 +36,7 @@ import {
     useBilling_setHydrationErrorsExist,
 } from 'stores/Billing/hooks';
 import { TOTAL_CARD_HEIGHT } from 'utils/billing-utils';
+import './graphs/graph.css';
 
 const boxShadow =
     'rgb(50 50 93 / 7%) 0px 3px 6px -1px, rgb(0 0 0 / 10%) 0px -2px 4px -1px, rgb(0 0 0 / 10%) 0px 2px 4px -1px';

@@ -31,7 +31,6 @@ import {
     FREE_GB_BY_TIER,
     SeriesConfig,
 } from 'utils/billing-utils';
-import './graph.css';
 
 const stackId = 'Data Volume';
 const freeBytes = FREE_GB_BY_TIER.PERSONAL * BYTES_PER_GB;
