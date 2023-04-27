@@ -157,7 +157,27 @@ export interface SeriesConfig {
     stack?: string;
 }
 
-export const formatDataVolumeForDisplay = (
+export const formatDataVolumeForDisplay_StackedBar = (
+    seriesConfigs: SeriesConfig[],
+    tooltipConfig: any
+): string => {
+    const selectedSeries =
+        seriesConfigs.length === 1
+            ? seriesConfigs[0]
+            : seriesConfigs.find(
+                  (series) =>
+                      series.seriesName === tooltipConfig.seriesName &&
+                      series.data[0][0] === tooltipConfig.name
+              );
+
+    const dataVolumeInBytes = selectedSeries?.data[0][1];
+
+    return dataVolumeInBytes
+        ? prettyBytes(dataVolumeInBytes, { minimumFractionDigits: 2 })
+        : `${tooltipConfig.value[1]} GB`;
+};
+
+export const formatDataVolumeForDisplay_Bar = (
     seriesConfigs: SeriesConfig[],
     tooltipConfig: any
 ): string => {

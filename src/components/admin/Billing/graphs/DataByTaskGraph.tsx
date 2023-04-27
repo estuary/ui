@@ -34,7 +34,7 @@ import useConstant from 'use-constant';
 import {
     BYTES_PER_GB,
     CARD_AREA_HEIGHT,
-    formatDataVolumeForDisplay,
+    formatDataVolumeForDisplay_Bar,
     SeriesConfig,
 } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
@@ -212,7 +212,7 @@ function DataByTaskGraph() {
                         let content: string | undefined;
 
                         tooltipConfigs.forEach((config) => {
-                            const dataVolume = formatDataVolumeForDisplay(
+                            const dataVolume = formatDataVolumeForDisplay_Bar(
                                 seriesConfig,
                                 config
                             );
