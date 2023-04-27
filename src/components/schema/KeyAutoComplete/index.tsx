@@ -93,13 +93,13 @@ function KeyAutoComplete({
             <Autocomplete
                 {...autoCompleteDefaults_Virtual_Multiple}
                 inputValue={inputValue}
-                value={localCopyValue}
                 onChange={changeHandler}
-                onInputChange={(_event, newInputValue) => {
+                onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
                 }}
                 options={keys}
                 readOnly={disableInput}
+                value={value}
                 renderTags={(tagValues, getTagProps, ownerState) => {
                     return (
                         <SortableTags
