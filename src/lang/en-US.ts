@@ -424,7 +424,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.graph.dataByMonth.header': `Data Volume by Month`,
     'admin.billing.graph.connectorsByMonth.header': `Tasks by Month`,
     'admin.billing.graph.dataByTask.header': `Data Volume by Task`,
-    'admin.billing.graph.dataByTask.tooltip': `This graph displays the ten, largest data producing tasks over the set interval.`,
+    'admin.billing.graph.dataByTask.tooltip': `This graph displays the three, largest data producing tasks over the set interval.`,
     'admin.billing.table.history.header': `Recent History`,
     'admin.billing.table.history.label.dataVolume': `Data Volume`,
     'admin.billing.table.history.label.details': `Pricing Tier`,
