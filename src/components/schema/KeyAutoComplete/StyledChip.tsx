@@ -1,4 +1,4 @@
-import { Chip, IconButton } from '@mui/material';
+import { Chip, IconButton, SxProps, Theme } from '@mui/material';
 import { draggableChipIconSx } from 'context/Theme';
 import { MoreVert } from 'iconoir-react';
 
@@ -12,9 +12,10 @@ interface Props {
     };
     id?: string;
     style?: any;
+    sx?: SxProps<Theme>;
 }
 
-function StyledChip({ componentProps, color, id, label, style }: Props) {
+function StyledChip({ componentProps, color, id, label, style, sx }: Props) {
     return (
         <Chip
             {...componentProps?.chip}
@@ -27,7 +28,7 @@ function StyledChip({ componentProps, color, id, label, style }: Props) {
             }
             label={label}
             style={style}
-            sx={draggableChipIconSx}
+            sx={{ ...draggableChipIconSx, ...sx }}
         />
     );
 }

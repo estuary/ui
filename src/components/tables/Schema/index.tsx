@@ -26,10 +26,10 @@ export const columns: TableColumns[] = [
 ];
 
 interface Props {
-    inferredSchema: any;
+    inferSchemaResponse: any;
 }
 
-function SchemaPropertiesTable({ inferredSchema }: Props) {
+function SchemaPropertiesTable({ inferSchemaResponse }: Props) {
     const intl = useIntl();
 
     const [tableState, setTableState] = useState<TableState>({
@@ -37,12 +37,12 @@ function SchemaPropertiesTable({ inferredSchema }: Props) {
     });
 
     useEffect(() => {
-        if (inferredSchema && inferredSchema.length > 0) {
+        if (inferSchemaResponse && inferSchemaResponse.length > 0) {
             setTableState({ status: TableStatuses.DATA_FETCHED });
         } else {
             setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
-    }, [inferredSchema]);
+    }, [inferSchemaResponse]);
 
     return (
         <Box>
@@ -64,8 +64,8 @@ function SchemaPropertiesTable({ inferredSchema }: Props) {
                             disableDoclink: true,
                         }}
                         tableState={tableState}
-                        loading={!inferredSchema}
-                        rows={<Rows data={inferredSchema} />}
+                        loading={!inferSchemaResponse}
+                        rows={<Rows data={inferSchemaResponse} />}
                     />
                 </Table>
             </TableContainer>

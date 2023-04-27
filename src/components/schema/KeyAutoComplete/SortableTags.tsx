@@ -9,7 +9,7 @@ import {
 } from '@dnd-kit/core';
 import {
     restrictToFirstScrollableAncestor,
-    restrictToHorizontalAxis,
+    restrictToParentElement,
 } from '@dnd-kit/modifiers';
 import {
     horizontalListSortingStrategy,
@@ -67,7 +67,7 @@ function SortableTags({
             collisionDetection={closestCenter}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
-            modifiers={[restrictToHorizontalAxis]}
+            modifiers={[restrictToParentElement]}
         >
             <SortableContext
                 items={values}

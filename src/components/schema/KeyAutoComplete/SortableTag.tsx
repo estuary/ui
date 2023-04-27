@@ -23,7 +23,7 @@ function SortableTag({ tagProps, label, validOption }: Props) {
     } = useSortable({ id: label });
 
     const style = {
-        opacity: isDragging ? 0 : 1,
+        opacity: isDragging ? 0.33 : 1,
         transform: CSS.Transform.toString(transform),
         transition,
     };
@@ -36,21 +36,8 @@ function SortableTag({ tagProps, label, validOption }: Props) {
             style={style}
             {...attributes}
         >
-            <Tooltip
-                disableInteractive={validOption}
-                disableFocusListener={validOption}
-                disableHoverListener={validOption}
-                disableTouchListener={validOption}
-                title={
-                    !validOption
-                        ? intl.formatMessage({
-                              id: 'data.key.errors.invalidKey',
-                          })
-                        : undefined
-                }
-            >
+            {validOption ? (
                 <StyledChip
-                    color={validOption ? 'default' : 'error'}
                     componentProps={{
                         chip: tagProps,
                         icon: {
@@ -60,7 +47,25 @@ function SortableTag({ tagProps, label, validOption }: Props) {
                     }}
                     label={label}
                 />
-            </Tooltip>
+            ) : (
+                <Tooltip
+                    title={intl.formatMessage({
+                        id: 'data.key.errors.invalidKey',
+                    })}
+                >
+                    <StyledChip
+                        color="error"
+                        componentProps={{
+                            chip: tagProps,
+                            icon: {
+                                ref: setActivatorNodeRef,
+                                ...listeners,
+                            },
+                        }}
+                        label={label}
+                    />
+                </Tooltip>
+            )}
         </Box>
     );
 }

@@ -60,12 +60,12 @@ function CollectionSchemaEditor({ entityName }: Props) {
             <Grid container>
                 <KeyAutoComplete
                     value={draftSpec.spec.key}
-                    inferredSchema={inferSchemaResponse}
+                    inferSchemaResponse={inferSchemaResponse}
                     disabled={!editModeEnabled}
                     onChange={keyFieldChange}
                 />
                 <PropertiesViewer
-                    inferredSchema={inferSchemaResponse}
+                    inferSchemaResponse={inferSchemaResponse}
                     disabled={!editModeEnabled}
                     entityName={entityName}
                 />

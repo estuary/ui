@@ -4,16 +4,18 @@ import { FormattedMessage } from 'react-intl';
 import Editor from './Editor';
 
 interface Props {
-    inferredSchema: any;
+    inferSchemaResponse: any;
     disabled: boolean;
     entityName: string;
 }
 
 const EDITOR_HEIGHT = 404;
 
-function PropertiesViewer({ disabled, entityName, inferredSchema }: Props) {
-    console.log('inferredSchema', inferredSchema);
-
+function PropertiesViewer({
+    disabled,
+    entityName,
+    inferSchemaResponse,
+}: Props) {
     return (
         <Grid
             item
@@ -27,7 +29,9 @@ function PropertiesViewer({ disabled, entityName, inferredSchema }: Props) {
             </Typography>
             {disabled ? (
                 <Box sx={{ height: 400, width: '100%', overflowY: 'auto' }}>
-                    <SchemaPropertiesTable inferredSchema={inferredSchema} />
+                    <SchemaPropertiesTable
+                        inferSchemaResponse={inferSchemaResponse}
+                    />
                 </Box>
             ) : (
                 <Editor
