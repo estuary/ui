@@ -27,7 +27,12 @@ interface Props {
     values: any;
 }
 
-function Tags({ getTagProps, onOrderChange, ownerState, values }: Props) {
+function SortableTags({
+    getTagProps,
+    onOrderChange,
+    ownerState,
+    values,
+}: Props) {
     const [activeId, setActiveId] = useState(null);
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -87,4 +92,4 @@ function Tags({ getTagProps, onOrderChange, ownerState, values }: Props) {
     );
 }
 
-export default Tags;
+export default SortableTags;

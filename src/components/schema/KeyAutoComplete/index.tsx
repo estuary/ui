@@ -5,7 +5,7 @@ import { useEntityType } from 'context/EntityContext';
 import { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import ReadOnly from './ReadOnly';
-import Tags from './Tags';
+import SortableTags from './SortableTags';
 
 interface Props {
     value: any;
@@ -17,8 +17,8 @@ interface Props {
 const typesAllowedAsKeys = ['string', 'integer', 'boolean'];
 
 function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
-    const [defaultValue] = useState<string[]>(value);
     const [keys, setKeys] = useState<string[]>([]);
+    const [inputValue, setInputValue] = useState('');
 
     const entityType = useEntityType();
     const editKeyAllowed = entityType === 'capture';
@@ -58,7 +58,7 @@ function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
         (tagValues, getTagProps, ownerState) => {
             console.log('rendering tags', tagValues);
             return (
-                <Tags
+                <SortableTags
                     values={tagValues}
                     getTagProps={getTagProps}
                     ownerState={ownerState}
@@ -92,16 +92,20 @@ function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
         return <ReadOnly value={value} />;
     }
 
-    console.log('autocomplete', value);
+    console.log('autocomplete value = ', value);
 
     return (
         <Grid item xs={12}>
             <Autocomplete
                 {...autoCompleteDefaults_Virtual_Multiple}
+                value={value}
                 onChange={changeHandler}
-                readOnly={disableInput}
-                defaultValue={defaultValue}
+                inputValue={inputValue}
+                onInputChange={(event, newInputValue) => {
+                    setInputValue(newInputValue);
+                }}
                 options={keys}
+                readOnly={disableInput}
                 renderTags={renderTags}
                 renderInput={(params) => {
                     return (

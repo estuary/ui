@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Tooltip } from '@mui/material';
+import { Box, Tooltip } from '@mui/material';
 import { useIntl } from 'react-intl';
 import StyledChip from './StyledChip';
 
@@ -29,7 +29,13 @@ function SortableTag({ tagProps, label, validOption }: Props) {
     };
 
     return (
-        <span id={label} ref={setNodeRef} style={style} {...attributes}>
+        <Box
+            component="span"
+            id={label}
+            ref={setNodeRef}
+            style={style}
+            {...attributes}
+        >
             <Tooltip
                 disableInteractive={validOption}
                 disableFocusListener={validOption}
@@ -55,7 +61,7 @@ function SortableTag({ tagProps, label, validOption }: Props) {
                     label={label}
                 />
             </Tooltip>
-        </span>
+        </Box>
     );
 }
 
