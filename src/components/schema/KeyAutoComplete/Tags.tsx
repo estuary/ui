@@ -8,14 +8,17 @@ import {
     useSensors,
 } from '@dnd-kit/core';
 import {
+    restrictToFirstScrollableAncestor,
+    restrictToHorizontalAxis,
+} from '@dnd-kit/modifiers';
+import {
     horizontalListSortingStrategy,
     SortableContext,
     sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
-import { Chip } from '@mui/material';
-import SortableWrapper from 'components/shared/DragAndDrop/SortableWrapper';
 import { useState } from 'react';
-import Tag from './Tag';
+import SortableTag from './SortableTag';
+import StyledChip from './StyledChip';
 
 interface Props {
     getTagProps: any;
@@ -59,32 +62,25 @@ function Tags({ getTagProps, onOrderChange, ownerState, values }: Props) {
             collisionDetection={closestCenter}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
+            modifiers={[restrictToHorizontalAxis]}
         >
             <SortableContext
                 items={values}
                 strategy={horizontalListSortingStrategy}
             >
                 {values.map((tagValue: any, tagValueIndex: number) => (
-                    <SortableWrapper
-                        id={tagValue}
+                    <SortableTag
                         key={`autocomplete-selected-tag-${tagValue}`}
-                    >
-                        <Tag
-                            tagProps={getTagProps({ index: tagValueIndex })}
-                            value={tagValue}
-                            validOption={ownerState.options.includes(tagValue)}
-                        />
-                    </SortableWrapper>
+                        label={tagValue}
+                        tagProps={getTagProps({ index: tagValueIndex })}
+                        validOption={ownerState.options.includes(tagValue)}
+                    />
                 ))}
             </SortableContext>
-            <DragOverlay>
+            <DragOverlay modifiers={[restrictToFirstScrollableAncestor]}>
                 {/*eslint-disable-next-line @typescript-eslint/no-unnecessary-condition*/}
                 {activeId ? (
-                    <Chip
-                        id={activeId}
-                        title={activeId}
-                        sx={{ cursor: 'grabbed' }}
-                    />
+                    <StyledChip id={activeId} label={activeId} />
                 ) : null}
             </DragOverlay>
         </DndContext>

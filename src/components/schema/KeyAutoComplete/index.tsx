@@ -2,7 +2,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { Autocomplete, Grid, Skeleton, TextField } from '@mui/material';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { useEntityType } from 'context/EntityContext';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import ReadOnly from './ReadOnly';
 import Tags from './Tags';
@@ -54,6 +54,33 @@ function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
         setKeys(inferredProperties);
     }, [inferredSchema, disabled]);
 
+    const renderTags = useCallback(
+        (tagValues, getTagProps, ownerState) => {
+            console.log('rendering tags', tagValues);
+            return (
+                <Tags
+                    values={tagValues}
+                    getTagProps={getTagProps}
+                    ownerState={ownerState}
+                    onOrderChange={(activeId, overId) => {
+                        if (onChange) {
+                            const oldIndex = value.indexOf(activeId);
+                            const newIndex = value.indexOf(overId);
+
+                            const updatedArray = arrayMove<string>(
+                                value,
+                                oldIndex,
+                                newIndex
+                            );
+                            onChange(null, updatedArray, 'orderChange');
+                        }
+                    }}
+                />
+            );
+        },
+        [onChange, value]
+    );
+
     const changeHandler = editKeyAllowed ? onChange : undefined;
     const disableInput = editKeyAllowed ? disabled : false;
 
@@ -65,6 +92,8 @@ function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
         return <ReadOnly value={value} />;
     }
 
+    console.log('autocomplete', value);
+
     return (
         <Grid item xs={12}>
             <Autocomplete
@@ -73,28 +102,7 @@ function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
                 readOnly={disableInput}
                 defaultValue={defaultValue}
                 options={keys}
-                renderTags={(tagValues, getTagProps, ownerState) => {
-                    return (
-                        <Tags
-                            values={tagValues}
-                            getTagProps={getTagProps}
-                            ownerState={ownerState}
-                            onOrderChange={(activeId, overId) => {
-                                if (onChange) {
-                                    const oldIndex = value.indexOf(activeId);
-                                    const newIndex = value.indexOf(overId);
-
-                                    const updatedArray = arrayMove<string>(
-                                        value,
-                                        oldIndex,
-                                        newIndex
-                                    );
-                                    onChange(null, updatedArray, 'orderChange');
-                                }
-                            }}
-                        />
-                    );
-                }}
+                renderTags={renderTags}
                 renderInput={(params) => {
                     return (
                         <TextField

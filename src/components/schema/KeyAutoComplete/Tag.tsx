@@ -1,13 +1,14 @@
 import { Chip, Tooltip } from '@mui/material';
+import { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 
 interface Props {
     tagProps: any;
-    value: string;
+    label: ReactNode;
     validOption: boolean;
 }
 
-function Tag({ tagProps, value, validOption }: Props) {
+function Tag({ tagProps, label, validOption }: Props) {
     const intl = useIntl();
 
     return (
@@ -26,10 +27,19 @@ function Tag({ tagProps, value, validOption }: Props) {
         >
             <Chip
                 {...tagProps}
-                label={value}
+                onClick={() => {
+                    console.log('chip was clicked');
+                }}
+                onDelete={() => {
+                    console.log('chip was deleted');
+                }}
+                color={validOption ? 'default' : 'error'}
+                label={label}
                 sx={{
-                    bgcolor: (theme) =>
-                        validOption ? undefined : theme.palette.error.main,
+                    '& .MuiChip-deleteIcon::after': {
+                        zIndex: 999999,
+                        color: 'purple',
+                    },
                 }}
             />
         </Tooltip>

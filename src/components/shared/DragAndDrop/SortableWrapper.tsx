@@ -1,4 +1,5 @@
 import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
@@ -6,10 +7,22 @@ interface Props extends BaseComponentProps {
 }
 
 function SortableWrapper({ children, id }: Props) {
-    const { attributes, listeners, setNodeRef } = useSortable({ id });
+    const { attributes, listeners, setNodeRef, transform, transition } =
+        useSortable({ id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
 
     return (
-        <span id={id} ref={setNodeRef} {...attributes} {...listeners}>
+        <span
+            id={id}
+            ref={setNodeRef}
+            style={style}
+            {...attributes}
+            {...listeners}
+        >
             {children}
         </span>
     );

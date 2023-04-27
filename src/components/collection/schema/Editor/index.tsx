@@ -16,8 +16,7 @@ export interface Props {
 }
 
 function CollectionSchemaEditor({ entityName }: Props) {
-    const { onChange, catalogType, draftSpec, isValidating } =
-        useCatalogDetails(entityName);
+    const { onChange, catalogType, draftSpec } = useCatalogDetails(entityName);
 
     const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
     const inferSchemaError = useBindingsEditorStore_inferSchemaError();
@@ -41,12 +40,6 @@ function CollectionSchemaEditor({ entityName }: Props) {
     }, [draftSpec, populateInferSchemaResponse]);
 
     console.log(`inferSchemaResponse = `, inferSchemaResponse);
-
-    if (isValidating) {
-        console.log('CollectionSchemaEditor loading');
-
-        return <>This is the collection schema skeleton</>;
-    }
 
     if (inferSchemaError) {
         return (
