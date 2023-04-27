@@ -1,14 +1,6 @@
-import {
-    Box,
-    Divider,
-    Grid,
-    Stack,
-    Tooltip,
-    Typography,
-    useMediaQuery,
-    useTheme,
-} from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
+import CardWrapper from 'components/admin/Billing/CardWrapper';
 import DataByMonthGraph from 'components/admin/Billing/graphs/DataByMonthGraph';
 import DataByTaskGraph from 'components/admin/Billing/graphs/DataByTaskGraph';
 import TasksByMonth from 'components/admin/Billing/graphs/TasksByMonthGraph';
@@ -17,14 +9,12 @@ import PricingTierDetails from 'components/admin/Billing/PricingTierDetails';
 import AdminTabs from 'components/admin/Tabs';
 import AlertBox from 'components/shared/AlertBox';
 import BillingHistoryTable from 'components/tables/Billing';
-import { semiTransparentBackground } from 'context/Theme';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import usePageTitle from 'hooks/usePageTitle';
-import { HelpCircle } from 'iconoir-react';
 import { useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
@@ -35,22 +25,11 @@ import {
     useBilling_setHydrated,
     useBilling_setHydrationErrorsExist,
 } from 'stores/Billing/hooks';
-import { TOTAL_CARD_HEIGHT } from 'utils/billing-utils';
 import './graphs/graph.css';
-
-const boxShadow =
-    'rgb(50 50 93 / 7%) 0px 3px 6px -1px, rgb(0 0 0 / 10%) 0px -2px 4px -1px, rgb(0 0 0 / 10%) 0px 2px 4px -1px';
-
-const typographySx = { mb: 2, fontSize: 16, fontWeight: 300 };
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
 function AdminBilling() {
-    const theme = useTheme();
-    const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
-
-    const intl = useIntl();
-
     // Billing Store
     const hydrated = useBilling_hydrated();
     const setHydrated = useBilling_setHydrated();
@@ -113,103 +92,32 @@ function AdminBilling() {
 
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
                 <Grid item xs={12} md={6}>
-                    <Box
-                        sx={{
-                            height: TOTAL_CARD_HEIGHT,
-                            p: 2,
-                            background:
-                                semiTransparentBackground[theme.palette.mode],
-                            boxShadow,
-                            borderRadius: 3,
-                        }}
-                    >
-                        <Typography sx={typographySx}>
-                            <FormattedMessage id="admin.billing.table.history.header" />
-                        </Typography>
-
+                    <CardWrapper messageId="admin.billing.table.history.header">
                         {combinedGrants.length > 0 ? (
                             <BillingHistoryTable grants={combinedGrants} />
                         ) : null}
-                    </Box>
+                    </CardWrapper>
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                    <Box
-                        sx={{
-                            height: TOTAL_CARD_HEIGHT,
-                            p: 2,
-                            background:
-                                semiTransparentBackground[theme.palette.mode],
-                            boxShadow,
-                            borderRadius: 3,
-                        }}
-                    >
-                        <Typography sx={typographySx}>
-                            <FormattedMessage id="admin.billing.graph.dataByMonth.header" />
-                        </Typography>
-
+                    <CardWrapper messageId="admin.billing.graph.dataByMonth.header">
                         <DataByMonthGraph />
-                    </Box>
+                    </CardWrapper>
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                    <Box
-                        sx={{
-                            height: TOTAL_CARD_HEIGHT,
-                            p: 2,
-                            background:
-                                semiTransparentBackground[theme.palette.mode],
-                            boxShadow,
-                            borderRadius: 3,
-                        }}
-                    >
-                        <Typography sx={typographySx}>
-                            <FormattedMessage id="admin.billing.graph.connectorsByMonth.header" />
-                        </Typography>
-
+                    <CardWrapper messageId="admin.billing.graph.tasksByMonth.header">
                         <TasksByMonth />
-                    </Box>
+                    </CardWrapper>
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                    <Box
-                        sx={{
-                            height: TOTAL_CARD_HEIGHT,
-                            p: 2,
-                            background:
-                                semiTransparentBackground[theme.palette.mode],
-                            boxShadow,
-                            borderRadius: 3,
-                        }}
+                    <CardWrapper
+                        messageId="admin.billing.graph.dataByTask.header"
+                        tooltipMessageId="admin.billing.graph.dataByTask.tooltip"
                     >
-                        <Stack
-                            direction="row"
-                            spacing={1}
-                            sx={{ alignItems: 'center' }}
-                        >
-                            <Typography sx={typographySx}>
-                                <FormattedMessage id="admin.billing.graph.dataByTask.header" />
-                            </Typography>
-
-                            <Tooltip
-                                placement={belowLg ? 'bottom' : 'right'}
-                                title={intl.formatMessage({
-                                    id: 'admin.billing.graph.dataByTask.tooltip',
-                                })}
-                            >
-                                <HelpCircle
-                                    style={{
-                                        marginBottom: 16,
-                                        fontSize: 12,
-                                        strokeWidth: 1,
-                                        color: theme.palette.text.primary,
-                                    }}
-                                />
-                            </Tooltip>
-                        </Stack>
-
                         <DataByTaskGraph />
-                    </Box>
+                    </CardWrapper>
                 </Grid>
 
                 <Grid item xs={12}>
