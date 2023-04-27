@@ -24,7 +24,11 @@ import {
     useBilling_hydrated,
 } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
-import { CARD_AREA_HEIGHT, SeriesConfig } from 'utils/billing-utils';
+import {
+    CARD_AREA_HEIGHT,
+    SeriesConfig,
+    SeriesNames,
+} from 'utils/billing-utils';
 
 const stackId = 'Task Count';
 
@@ -68,47 +72,45 @@ function DataByMonthGraph() {
                 includedTasks,
             }));
 
-        return scopedDataSet
-            .map(
-                ({
-                    month,
-                    taskCount,
-                    includedTasks,
-                }): SeriesConfig | SeriesConfig[] => {
-                    const freeTasks = includedTasks ?? 2;
+        return scopedDataSet.flatMap(
+            ({
+                month,
+                taskCount,
+                includedTasks,
+            }): SeriesConfig | SeriesConfig[] => {
+                const freeTasks = includedTasks ?? 2;
 
-                    if (taskCount > freeTasks) {
-                        const taskSurplus = taskCount - freeTasks;
+                if (taskCount > freeTasks) {
+                    const taskSurplus = taskCount - freeTasks;
 
-                        return [
-                            {
-                                seriesName: 'Included',
-                                stack: stackId,
-                                data: [[month, freeTasks]],
-                            },
-                            {
-                                seriesName: 'Additional',
-                                stack: stackId,
-                                data: [[month, taskSurplus]],
-                            },
-                        ];
-                    } else {
-                        return [
-                            {
-                                seriesName: 'Included',
-                                stack: stackId,
-                                data: [[month, taskCount]],
-                            },
-                            {
-                                seriesName: 'Additional',
-                                stack: stackId,
-                                data: [[month, 0]],
-                            },
-                        ];
-                    }
+                    return [
+                        {
+                            seriesName: SeriesNames.INCLUDED,
+                            stack: stackId,
+                            data: [[month, freeTasks]],
+                        },
+                        {
+                            seriesName: SeriesNames.SURPLUS,
+                            stack: stackId,
+                            data: [[month, taskSurplus]],
+                        },
+                    ];
+                } else {
+                    return [
+                        {
+                            seriesName: SeriesNames.INCLUDED,
+                            stack: stackId,
+                            data: [[month, taskCount]],
+                        },
+                        {
+                            seriesName: SeriesNames.SURPLUS,
+                            stack: stackId,
+                            data: [[month, 0]],
+                        },
+                    ];
                 }
-            )
-            .flat();
+            }
+        );
     }, [billingHistory, intl, today]);
 
     useEffect(() => {

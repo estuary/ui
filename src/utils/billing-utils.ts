@@ -151,6 +151,11 @@ export const formatBillingCatalogStats = (
     return billingHistory;
 };
 
+export enum SeriesNames {
+    INCLUDED = 'Included',
+    SURPLUS = 'Billed',
+}
+
 export interface SeriesConfig {
     data: [string, number][];
     seriesName?: string;

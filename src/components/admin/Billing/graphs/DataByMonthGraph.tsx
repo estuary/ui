@@ -30,6 +30,7 @@ import {
     formatDataVolumeForDisplay,
     FREE_GB_BY_TIER,
     SeriesConfig,
+    SeriesNames,
 } from 'utils/billing-utils';
 
 const stackId = 'Data Volume';
@@ -74,48 +75,42 @@ function DataByMonthGraph() {
                 gbFree,
             }));
 
-        return scopedDataSet
-            .map(
-                ({
-                    month,
-                    dataVolume,
-                    gbFree,
-                }): SeriesConfig | SeriesConfig[] => {
-                    const freeBytes =
-                        (gbFree ?? FREE_GB_BY_TIER.PERSONAL) * BYTES_PER_GB;
+        return scopedDataSet.flatMap(
+            ({ month, dataVolume, gbFree }): SeriesConfig | SeriesConfig[] => {
+                const freeBytes =
+                    (gbFree ?? FREE_GB_BY_TIER.PERSONAL) * BYTES_PER_GB;
 
-                    if (dataVolume > freeBytes) {
-                        const byteSurplus = dataVolume - freeBytes;
+                if (dataVolume > freeBytes) {
+                    const byteSurplus = dataVolume - freeBytes;
 
-                        return [
-                            {
-                                seriesName: 'Included',
-                                stack: stackId,
-                                data: [[month, freeBytes]],
-                            },
-                            {
-                                seriesName: 'Additional',
-                                stack: stackId,
-                                data: [[month, byteSurplus]],
-                            },
-                        ];
-                    } else {
-                        return [
-                            {
-                                seriesName: 'Included',
-                                stack: stackId,
-                                data: [[month, dataVolume]],
-                            },
-                            {
-                                seriesName: 'Additional',
-                                stack: stackId,
-                                data: [[month, 0]],
-                            },
-                        ];
-                    }
+                    return [
+                        {
+                            seriesName: SeriesNames.INCLUDED,
+                            stack: stackId,
+                            data: [[month, freeBytes]],
+                        },
+                        {
+                            seriesName: SeriesNames.SURPLUS,
+                            stack: stackId,
+                            data: [[month, byteSurplus]],
+                        },
+                    ];
+                } else {
+                    return [
+                        {
+                            seriesName: SeriesNames.INCLUDED,
+                            stack: stackId,
+                            data: [[month, dataVolume]],
+                        },
+                        {
+                            seriesName: SeriesNames.SURPLUS,
+                            stack: stackId,
+                            data: [[month, 0]],
+                        },
+                    ];
                 }
-            )
-            .flat();
+            }
+        );
     }, [billingHistory, intl, today]);
 
     useEffect(() => {
