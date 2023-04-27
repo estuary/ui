@@ -27,7 +27,7 @@ import useConstant from 'use-constant';
 import {
     BYTES_PER_GB,
     CARD_AREA_HEIGHT,
-    formatDataVolumeForDisplay_StackedBar,
+    formatDataVolumeForDisplay,
     FREE_GB_BY_TIER,
     SeriesConfig,
 } from 'utils/billing-utils';
@@ -187,11 +187,10 @@ function DataByMonthGraph() {
                         let content: string | undefined;
 
                         tooltipConfigs.forEach((config) => {
-                            const dataVolume =
-                                formatDataVolumeForDisplay_StackedBar(
-                                    seriesConfig,
-                                    config
-                                );
+                            const dataVolume = formatDataVolumeForDisplay(
+                                seriesConfig,
+                                config
+                            );
 
                             if (content) {
                                 content = `${content}

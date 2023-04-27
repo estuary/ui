@@ -157,40 +157,20 @@ export interface SeriesConfig {
     stack?: string;
 }
 
-export const formatDataVolumeForDisplay_StackedBar = (
+export const formatDataVolumeForDisplay = (
     seriesConfigs: SeriesConfig[],
     tooltipConfig: any
 ): string => {
-    const selectedSeries =
+    const filteredSeries =
         seriesConfigs.length === 1
-            ? seriesConfigs[0]
-            : seriesConfigs.find(
-                  (series) =>
-                      series.seriesName === tooltipConfig.seriesName &&
-                      series.data[0][0] === tooltipConfig.name
-              );
-
-    const dataVolumeInBytes = selectedSeries?.data[0][1];
-
-    return dataVolumeInBytes
-        ? prettyBytes(dataVolumeInBytes, { minimumFractionDigits: 2 })
-        : `${tooltipConfig.value[1]} GB`;
-};
-
-export const formatDataVolumeForDisplay_Bar = (
-    seriesConfigs: SeriesConfig[],
-    tooltipConfig: any
-): string => {
-    const selectedSeries =
-        seriesConfigs.length === 1
-            ? seriesConfigs[0]
-            : seriesConfigs.find(
+            ? seriesConfigs
+            : seriesConfigs.filter(
                   (series) => series.seriesName === tooltipConfig.seriesName
               );
 
-    const dataVolumeInBytes = selectedSeries?.data.find(
-        ([month]) => month === tooltipConfig.name
-    );
+    const dataVolumeInBytes = filteredSeries
+        .flatMap(({ data }) => data)
+        .find(([month]) => month === tooltipConfig.name);
 
     return dataVolumeInBytes
         ? prettyBytes(dataVolumeInBytes[1], { minimumFractionDigits: 2 })
