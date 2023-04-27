@@ -98,9 +98,9 @@ function KeyAutoComplete({ disabled, inferredSchema, onChange, value }: Props) {
         <Grid item xs={12}>
             <Autocomplete
                 {...autoCompleteDefaults_Virtual_Multiple}
+                inputValue={inputValue}
                 value={value}
                 onChange={changeHandler}
-                inputValue={inputValue}
                 onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
                 }}
