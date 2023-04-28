@@ -28,6 +28,34 @@ import { PaymentMethod } from 'components/admin/Billing/PaymentMethodRow';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useBilling_selectedTenant } from 'stores/Billing/hooks';
+import { TableColumns } from 'types';
+
+const columns: TableColumns[] = [
+    {
+        field: 'type',
+        headerIntlKey: 'admin.billing.paymentMethods.table.label.cardType',
+    },
+    {
+        field: 'name',
+        headerIntlKey: 'admin.billing.paymentMethods.table.label.name',
+    },
+    {
+        field: 'last_four_digits',
+        headerIntlKey: 'admin.billing.paymentMethods.table.label.lastFour',
+    },
+    {
+        field: 'details',
+        headerIntlKey: 'admin.billing.paymentMethods.table.label.details',
+    },
+    {
+        field: 'primary',
+        headerIntlKey: 'admin.billing.paymentMethods.table.label.primary',
+    },
+    {
+        field: 'actions',
+        headerIntlKey: 'admin.billing.paymentMethods.table.label.actions',
+    },
+];
 
 const PaymentMethods = () => {
     const selectedTenant = useBilling_selectedTenant();
@@ -113,14 +141,21 @@ const PaymentMethods = () => {
                                         theme.palette.background.default,
                                 }}
                             >
-                                <TableCell width={200}>Type</TableCell>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Last 4 digits</TableCell>
-                                <TableCell>Details</TableCell>
-                                <TableCell>Primary</TableCell>
-                                <TableCell>Actions</TableCell>
+                                {columns.map((column, index) => (
+                                    <TableCell
+                                        key={`${column.field}-${index}`}
+                                        width={index === 0 ? 200 : 'auto'}
+                                    >
+                                        {column.headerIntlKey ? (
+                                            <FormattedMessage
+                                                id={column.headerIntlKey}
+                                            />
+                                        ) : null}
+                                    </TableCell>
+                                ))}
                             </TableRow>
                         </TableHead>
+
                         <TableBody>
                             {methods.map((method) => (
                                 <PaymentMethod
@@ -147,12 +182,9 @@ const PaymentMethods = () => {
                                 <TableRow>
                                     <TableCell colSpan={6}>
                                         <Typography
-                                            sx={{
-                                                textAlign: 'center',
-                                                fontSize: 15,
-                                            }}
+                                            sx={{ textAlign: 'center' }}
                                         >
-                                            <FormattedMessage id="admin.billing.paymentMethods.noneAvailable" />
+                                            <FormattedMessage id="admin.billing.paymentMethods.table.emptyTableDefault.message" />
                                         </Typography>
                                     </TableCell>
                                 </TableRow>

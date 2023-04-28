@@ -437,7 +437,13 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
 
     'admin.billing.paymentMethods.header': `Payment Information`,
     'admin.billing.paymentMethods.description': `Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.`,
-    'admin.billing.paymentMethods.noneAvailable': `No payment methods available`,
+    'admin.billing.paymentMethods.table.label.cardType': `Type`,
+    'admin.billing.paymentMethods.table.label.name': `Name`,
+    'admin.billing.paymentMethods.table.label.lastFour': `Last 4 Digits`,
+    'admin.billing.paymentMethods.table.label.details': `Details`,
+    'admin.billing.paymentMethods.table.label.primary': `Primary`,
+    'admin.billing.paymentMethods.table.label.actions': `Actions`,
+    'admin.billing.paymentMethods.table.emptyTableDefault.message': `No payment methods available.`,
 
     'admin.cookies': `Cookie Preference Management`,
     'admin.cookies.message': `Click below to manage your preferences.`,
