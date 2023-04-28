@@ -971,14 +971,14 @@ const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
 };
 
 const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
-    'data.fields.label': `Fields`,
-    'data.fields.helper': `These are all the data points that Flow knows about`,
-    'data.key.label': `Key`,
-    'data.key.errors.invalidKey': `Key no longer valid. Please remove.`,
-    'keyAutoComplete.keys.missing': `key property missing or empty`,
-    'data.key.helper': `Ordered JSON-Pointers which define how a composite key may be extracted from a collection document.`,
+    'schemaEditor.fields.label': `Schema`,
+    'schemaEditor.key.label': `Key`,
+    'schemaEditor.key.helper': `Ordered JSON-Pointers which define how a composite key may be extracted from a collection document.`,
+    'schemaEditor.key.errors.invalidKey': `Key no longer valid. Please remove.`,
     'schemaEditor.table.empty.header': `No schema to display.`,
     'schemaEditor.table.empty.message': `There was an issue generating the table from the schema.`,
+    'keyAutoComplete.keys.missing.title': `Key is empty`,
+    'keyAutoComplete.keys.missing.message': `Please provide a key before continuing or you may face issues.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
