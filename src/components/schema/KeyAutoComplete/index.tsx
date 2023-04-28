@@ -133,9 +133,11 @@ function KeyAutoComplete({
                             {...params}
                             disabled={disableInput}
                             helperText={
-                                <FormattedMessage id="data.key.helper" />
+                                <FormattedMessage id="schemaEditor.key.helper" />
                             }
-                            label={<FormattedMessage id="data.key.label" />}
+                            label={
+                                <FormattedMessage id="schemaEditor.key.label" />
+                            }
                             variant="standard"
                         />
                     );
