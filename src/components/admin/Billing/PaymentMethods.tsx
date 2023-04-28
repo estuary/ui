@@ -84,11 +84,11 @@ const PaymentMethods = () => {
                             fontWeight: '400',
                         }}
                     >
-                        <FormattedMessage id="admin.billing.payment_methods.header" />
+                        <FormattedMessage id="admin.billing.paymentMethods.header" />
                     </Typography>
 
                     <Typography>
-                        <FormattedMessage id="admin.billing.payment_methods.description" />
+                        <FormattedMessage id="admin.billing.paymentMethods.description" />
                     </Typography>
                 </Box>
 
@@ -152,7 +152,7 @@ const PaymentMethods = () => {
                                                 fontSize: 15,
                                             }}
                                         >
-                                            <FormattedMessage id="admin.billing.payment_methods.none_available" />
+                                            <FormattedMessage id="admin.billing.paymentMethods.noneAvailable" />
                                         </Typography>
                                     </TableCell>
                                 </TableRow>

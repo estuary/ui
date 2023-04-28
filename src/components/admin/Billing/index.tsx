@@ -159,7 +159,7 @@ function AdminBilling() {
                                         fontWeight: '400',
                                     }}
                                 >
-                                    <FormattedMessage id="admin.billing.payment_methods.header" />
+                                    <FormattedMessage id="admin.billing.paymentMethods.header" />
                                 </Typography>
                                 <AlertBox short severity="error">
                                     <Typography component="div">

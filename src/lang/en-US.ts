@@ -435,9 +435,9 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.table.history.emptyTableDefault.header': `No information found.`,
     'admin.billing.table.history.emptyTableDefault.message': `We couldn't find any billing information on file. Only administrators of a tenant are able to review billing information.`,
 
-    'admin.billing.payment_methods.header': `Payment Information`,
-    'admin.billing.payment_methods.description': `Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.`,
-    'admin.billing.payment_methods.none_available': `No payment methods available`,
+    'admin.billing.paymentMethods.header': `Payment Information`,
+    'admin.billing.paymentMethods.description': `Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.`,
+    'admin.billing.paymentMethods.noneAvailable': `No payment methods available`,
 
     'admin.cookies': `Cookie Preference Management`,
     'admin.cookies.message': `Click below to manage your preferences.`,
