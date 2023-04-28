@@ -21,7 +21,7 @@ import {
     ICON_SIZE,
 } from 'utils/editor-utils';
 
-export interface Props {
+export interface MonacoEditorProps {
     localZustandScope: boolean;
     disabled?: boolean;
     onChange?: (newVal: any, path: string, specType: string) => any;
@@ -37,7 +37,7 @@ function MonacoEditor({
     onChange,
     toolbarHeight = DEFAULT_TOOLBAR_HEIGHT,
     editorSchemaScope,
-}: Props) {
+}: MonacoEditorProps) {
     const theme = useTheme();
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
