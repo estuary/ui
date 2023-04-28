@@ -11,8 +11,6 @@ function DraggableWrapper({ children, id }: Props) {
         id,
     });
 
-    console.log('DraggableWrapper attributes', attributes);
-
     return (
         <Box
             ref={setNodeRef}

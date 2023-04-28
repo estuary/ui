@@ -303,6 +303,7 @@ const getInitialState = (
     },
 
     populateInferSchemaResponse: (schema) => {
+        console.log('populateInferSchemaResponse', schema);
         const populateState = (
             dataVal: BindingsEditorState['inferSchemaResponse'],
             errorVal: BindingsEditorState['inferSchemaError']
@@ -317,7 +318,9 @@ const getInitialState = (
             // Save the values into the store
             set(
                 produce((state: BindingsEditorState) => {
-                    state.inferSchemaError = errorVal;
+                    state.inferSchemaError = errorVal
+                        ? `Cannot Infer Fields: ${errorVal}`
+                        : null;
                     state.inferSchemaResponse = dataVal;
                 }),
                 false,
@@ -325,14 +328,15 @@ const getInitialState = (
             );
         };
 
-        // If no schema then we can just keep the state
+        // If no schema then just return because hopefully it means
+        //  we are still just waiting for the schema to load in
         if (!schema) {
             return;
         }
 
         // Make sure we have an object
         if (!isPlainObject(schema)) {
-            populateState([], 'Schema must be object');
+            populateState([], 'schema must be an object');
             return;
         }
 
@@ -342,7 +346,7 @@ const getInitialState = (
 
             // Make sure there is a response
             if (inferResponse?.length === 0) {
-                populateState([], 'No properties were able to be inferred');
+                populateState([], 'no fields returned');
             } else {
                 populateState(inferResponse, null);
             }

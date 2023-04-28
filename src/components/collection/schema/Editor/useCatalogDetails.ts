@@ -29,7 +29,6 @@ function useCatalogDetails(entityName: string | undefined) {
 
     const handlers = {
         change: async (newVal: any) => {
-            console.log('newVal', newVal);
             if (draftSpec) {
                 const updateResponse = await modifyDraftSpec(newVal, {
                     draft_id: draftId,
