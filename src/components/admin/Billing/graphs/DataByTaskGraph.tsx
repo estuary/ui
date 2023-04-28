@@ -278,7 +278,7 @@ function DataByTaskGraph() {
     ]);
 
     useEffect(() => {
-        if (selection !== selectedTenant && myChart) {
+        if (selection && selection !== selectedTenant && myChart) {
             myChart.dispose();
 
             setSelection(selectedTenant);
