@@ -437,6 +437,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
 
     'admin.billing.paymentMethods.header': `Payment Information`,
     'admin.billing.paymentMethods.description': `Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.`,
+    'admin.billing.paymentMethods.cta.addPaymentMethod': `Add Payment Method`,
     'admin.billing.paymentMethods.table.label.cardType': `Type`,
     'admin.billing.paymentMethods.table.label.name': `Name`,
     'admin.billing.paymentMethods.table.label.lastFour': `Last 4 Digits`,

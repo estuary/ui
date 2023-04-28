@@ -104,6 +104,7 @@ const PaymentMethods = () => {
     return (
         <Stack spacing={3}>
             <Stack
+                spacing={2}
                 direction="row"
                 sx={{ mb: 1, justifyContent: 'space-between' }}
             >
@@ -124,8 +125,11 @@ const PaymentMethods = () => {
                 </Box>
 
                 <Box>
-                    <Button onClick={() => setNewMethodOpen(true)}>
-                        Add Payment Method
+                    <Button
+                        onClick={() => setNewMethodOpen(true)}
+                        sx={{ whiteSpace: 'nowrap' }}
+                    >
+                        <FormattedMessage id="admin.billing.paymentMethods.cta.addPaymentMethod" />
                     </Button>
                 </Box>
             </Stack>
