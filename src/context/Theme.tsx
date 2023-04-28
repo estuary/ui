@@ -120,9 +120,6 @@ const lightMode: PaletteOptions = {
         secondary: sample_blue[800],
     },
     tonalOffset,
-    warning: {
-        main: warningMain,
-    },
 };
 
 const darkMode: PaletteOptions = {
