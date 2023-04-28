@@ -10,12 +10,15 @@ import {
 import AlertBox from 'components/shared/AlertBox';
 import { HelpCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     value: string[] | null;
 }
 
 function ReadOnly({ value }: Props) {
+    const valueEmpty = !value || !hasLength(value);
+
     return (
         <Grid item xs={12}>
             <Stack
@@ -25,50 +28,53 @@ function ReadOnly({ value }: Props) {
                     alignContent: 'center',
                 }}
             >
-                <Stack
-                    direction="row"
-                    sx={{
-                        alignItems: 'center',
-                        alignContent: 'center',
-                    }}
+                <Typography variant="subtitle1" component="div">
+                    <FormattedMessage id="schemaEditor.key.label" />
+                </Typography>
+                <Tooltip
+                    title={<FormattedMessage id="schemaEditor.key.helper" />}
                 >
-                    <Typography variant="subtitle1" component="div">
-                        <FormattedMessage id="data.key.label" />
-                    </Typography>
-                    <Tooltip title={<FormattedMessage id="data.key.helper" />}>
-                        <IconButton>
-                            <HelpCircle />
-                        </IconButton>
-                    </Tooltip>
-                </Stack>
+                    <IconButton>
+                        <HelpCircle />
+                    </IconButton>
+                </Tooltip>
+            </Stack>
+
+            {valueEmpty ? (
+                <AlertBox
+                    short
+                    severity="warning"
+                    title={
+                        <FormattedMessage id="keyAutoComplete.keys.missing.title" />
+                    }
+                >
+                    <FormattedMessage id="keyAutoComplete.keys.missing.message" />
+                </AlertBox>
+            ) : (
                 <Stack
                     direction="row"
                     component="ol"
                     sx={{
-                        overflowY: 'auto',
+                        alignItems: 'center',
+                        alignContent: 'center',
+                        flexFlow: 'wrap',
+                        overflowY: 'wr',
                         pl: 0,
                     }}
                 >
-                    {!value ? (
-                        <AlertBox severity="warning" short>
-                            <FormattedMessage id="keyAutoComplete.keys.missing" />
-                        </AlertBox>
-                    ) : (
-                        value.map((key: string) => {
-                            let icon;
-                            return (
-                                <ListItem
-                                    key={`read-only-keys-${key}`}
-                                    dense
-                                    sx={{ px: 0.5 }}
-                                >
-                                    <Chip icon={icon} label={key} />
-                                </ListItem>
-                            );
-                        })
-                    )}
+                    {value.map((key: string) => {
+                        return (
+                            <ListItem
+                                key={`read-only-keys-${key}`}
+                                dense
+                                sx={{ px: 0.5, width: 'auto' }}
+                            >
+                                <Chip label={key} />
+                            </ListItem>
+                        );
+                    })}
                 </Stack>
-            </Stack>
+            )}
         </Grid>
     );
 }

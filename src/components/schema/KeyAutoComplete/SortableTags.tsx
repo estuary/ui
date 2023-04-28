@@ -4,6 +4,7 @@ import {
     DragOverlay,
     KeyboardSensor,
     PointerSensor,
+    UniqueIdentifier,
     useSensor,
     useSensors,
 } from '@dnd-kit/core';
@@ -16,12 +17,13 @@ import {
     SortableContext,
     sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
+import { AutocompleteGetTagProps } from '@mui/material';
 import { useState } from 'react';
 import SortableTag from './SortableTag';
 import StyledChip from './StyledChip';
 
 interface Props {
-    getTagProps: any;
+    getTagProps: AutocompleteGetTagProps;
     onOrderChange: (activeId: string, overId: string) => void;
     ownerState: any;
     values: any;
@@ -33,7 +35,7 @@ function SortableTags({
     ownerState,
     values,
 }: Props) {
-    const [activeId, setActiveId] = useState(null);
+    const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {
@@ -41,33 +43,25 @@ function SortableTags({
         })
     );
 
-    function handleDragStart(event: any) {
-        const { active } = event;
-
-        console.log('schemaEditor:key:drag:start', event);
-
-        setActiveId(active.id);
-    }
-
-    function handleDragEnd(event: any) {
-        const { active, over } = event;
-
-        console.log('schemaEditor:key:drag:end');
-
-        if (active.id !== over.id) {
-            onOrderChange(active.id, over.id);
-        }
-
-        setActiveId(null);
-    }
-
     return (
         <DndContext
-            sensors={sensors}
             collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
             modifiers={[restrictToParentElement]}
+            sensors={sensors}
+            onDragStart={(event) => {
+                const { active } = event;
+
+                setActiveId(active.id);
+            }}
+            onDragEnd={(event) => {
+                const { active, over } = event;
+
+                if (over && active.id !== over.id) {
+                    onOrderChange(active.id as string, over.id as string);
+                }
+
+                setActiveId(null);
+            }}
         >
             <SortableContext
                 items={values}
@@ -85,7 +79,7 @@ function SortableTags({
             <DragOverlay modifiers={[restrictToFirstScrollableAncestor]}>
                 {/*eslint-disable-next-line @typescript-eslint/no-unnecessary-condition*/}
                 {activeId ? (
-                    <StyledChip id={activeId} label={activeId} />
+                    <StyledChip id={activeId as string} label={activeId} />
                 ) : null}
             </DragOverlay>
         </DndContext>

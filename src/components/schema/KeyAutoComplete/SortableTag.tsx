@@ -1,11 +1,11 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Box, Tooltip } from '@mui/material';
+import { Box, ChipProps, Tooltip } from '@mui/material';
 import { useIntl } from 'react-intl';
 import StyledChip from './StyledChip';
 
 interface Props {
-    tagProps: any;
+    tagProps: Partial<ChipProps>;
     label: string;
     validOption: boolean;
 }
@@ -54,9 +54,11 @@ function SortableTag({ tagProps, label, validOption }: Props) {
                     })}
                 >
                     <StyledChip
-                        color="error"
                         componentProps={{
-                            chip: tagProps,
+                            chip: {
+                                ...tagProps,
+                                color: 'error',
+                            },
                             icon: {
                                 ref: setActivatorNodeRef,
                                 ...listeners,

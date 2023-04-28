@@ -1,25 +1,23 @@
-import { Chip, IconButton, SxProps, Theme } from '@mui/material';
+import { UniqueIdentifier } from '@dnd-kit/core';
+import { Chip, ChipProps, IconButton, IconButtonProps } from '@mui/material';
+import { CommonProps } from '@mui/material/OverridableComponent';
 import { draggableChipIconSx } from 'context/Theme';
 import { MoreVert } from 'iconoir-react';
 
 interface Props {
-    label: string;
-
-    color?: any;
+    label: UniqueIdentifier;
     componentProps?: {
-        icon?: any;
-        chip?: any;
+        icon?: Partial<IconButtonProps>;
+        chip?: Partial<ChipProps>;
     };
     id?: string;
-    style?: any;
-    sx?: SxProps<Theme>;
+    style?: CommonProps['style'];
 }
 
-function StyledChip({ componentProps, color, id, label, style, sx }: Props) {
+function StyledChip({ componentProps, id, label, style }: Props) {
     return (
         <Chip
             {...componentProps?.chip}
-            color={color}
             id={id}
             icon={
                 <IconButton size="small" {...componentProps?.icon}>
@@ -28,7 +26,7 @@ function StyledChip({ componentProps, color, id, label, style, sx }: Props) {
             }
             label={label}
             style={style}
-            sx={{ ...draggableChipIconSx, ...sx }}
+            sx={draggableChipIconSx}
         />
     );
 }
