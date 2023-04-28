@@ -21,10 +21,17 @@ import {
     ICON_SIZE,
 } from 'utils/editor-utils';
 
+type onChange = (
+    newVal: any,
+    path: string,
+    specType: string,
+    scope?: string
+) => any;
+
 export interface MonacoEditorProps {
     localZustandScope: boolean;
     disabled?: boolean;
-    onChange?: (newVal: any, path: string, specType: string) => any;
+    onChange?: onChange;
     height?: number;
     toolbarHeight?: number;
     editorSchemaScope?: string; // Used to scop the schema editor
@@ -107,26 +114,35 @@ function MonacoEditor({
                 });
                 setStatus(EditorStatus.SAVING);
 
-                let updatedValue;
                 if (editorSchemaScope) {
-                    console.log('editor:update:saving:nestedProperty', {
+                    console.log('editor:update:saving:scoped', {
                         nestedProperty: editorSchemaScope,
                     });
-                    updatedValue = {
-                        ...catalogSpec,
-                        [editorSchemaScope]: parsedVal,
-                    };
+                    onChange(
+                        parsedVal,
+                        catalogName,
+                        catalogType,
+                        editorSchemaScope
+                    )
+                        .then(() => {
+                            console.log('editor:update:saving:scoped:success');
+                            setStatus(EditorStatus.SAVED);
+                        })
+                        .catch(() => {
+                            console.log('editor:update:saving:scoped:failed');
+                            setStatus(EditorStatus.SAVE_FAILED);
+                        });
+                } else {
+                    onChange(parsedVal, catalogName, catalogType)
+                        .then(() => {
+                            console.log('editor:update:saving:success');
+                            setStatus(EditorStatus.SAVED);
+                        })
+                        .catch(() => {
+                            console.log('editor:update:saving:failed');
+                            setStatus(EditorStatus.SAVE_FAILED);
+                        });
                 }
-
-                onChange(updatedValue ?? parsedVal, catalogName, catalogType)
-                    .then(() => {
-                        console.log('editor:update:saving:success');
-                        setStatus(EditorStatus.SAVED);
-                    })
-                    .catch(() => {
-                        console.log('editor:update:saving:failed');
-                        setStatus(EditorStatus.SAVE_FAILED);
-                    });
             } else {
                 console.log('editor:update:invalid', {
                     parsedVal,

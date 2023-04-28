@@ -18,13 +18,13 @@ import {
     sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
 import { AutocompleteGetTagProps } from '@mui/material';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import SortableTag from './SortableTag';
 import StyledChip from './StyledChip';
 
 interface Props {
     getTagProps: AutocompleteGetTagProps;
-    onOrderChange: (activeId: string, overId: string) => void;
+    onOrderChange: (activeId: string, overId: string) => PromiseLike<any>;
     ownerState: any;
     values: any;
 }
@@ -43,6 +43,17 @@ function SortableTags({
         })
     );
 
+    const renderedTags = useMemo(() => {
+        return values.map((tagValue: any, tagValueIndex: number) => (
+            <SortableTag
+                key={`autocomplete-selected-tag-${tagValue}`}
+                label={tagValue}
+                tagProps={getTagProps({ index: tagValueIndex })}
+                validOption={ownerState.options.includes(tagValue)}
+            />
+        ));
+    }, [getTagProps, ownerState.options, values]);
+
     return (
         <DndContext
             collisionDetection={closestCenter}
@@ -53,11 +64,11 @@ function SortableTags({
 
                 setActiveId(active.id);
             }}
-            onDragEnd={(event) => {
+            onDragEnd={async (event) => {
                 const { active, over } = event;
 
                 if (over && active.id !== over.id) {
-                    onOrderChange(active.id as string, over.id as string);
+                    await onOrderChange(active.id as string, over.id as string);
                 }
 
                 setActiveId(null);
@@ -67,14 +78,7 @@ function SortableTags({
                 items={values}
                 strategy={horizontalListSortingStrategy}
             >
-                {values.map((tagValue: any, tagValueIndex: number) => (
-                    <SortableTag
-                        key={`autocomplete-selected-tag-${tagValue}`}
-                        label={tagValue}
-                        tagProps={getTagProps({ index: tagValueIndex })}
-                        validOption={ownerState.options.includes(tagValue)}
-                    />
-                ))}
+                {renderedTags}
             </SortableContext>
             <DragOverlay modifiers={[restrictToFirstScrollableAncestor]}>
                 {/*eslint-disable-next-line @typescript-eslint/no-unnecessary-condition*/}

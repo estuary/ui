@@ -74,8 +74,6 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
         currentCollection,
     ]);
 
-    console.log('collectionData === ', collectionData);
-
     if (currentCollection) {
         return loading ? (
             <Box>{skeleton}</Box>

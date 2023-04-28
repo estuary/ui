@@ -18,6 +18,7 @@ function DraftSpecEditor({
     editorHeight,
     entityName,
 }: Props) {
+    console.log('DraftSpecEditor');
     const { draftSpec, isValidating, onChange } = useDraftSpecEditor(
         entityName,
         entityType,

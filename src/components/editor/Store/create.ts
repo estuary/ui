@@ -1,6 +1,6 @@
 import produce from 'immer';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create } from 'zustand';
+import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { EditorStatus, EditorStoreState } from './types';
 
@@ -24,7 +24,8 @@ const getInitialStateData = () => {
 };
 
 const getInitialState = <T>(
-    set: NamedSet<EditorStoreState<T>>
+    set: NamedSet<EditorStoreState<T>>,
+    get: StoreApi<EditorStoreState<T>>['getState']
 ): EditorStoreState<T> => {
     return {
         ...getInitialStateData(),
@@ -61,6 +62,7 @@ const getInitialState = <T>(
         setCurrentCatalog: (newVal) => {
             set(
                 produce((state) => {
+                    console.log('setting current catalog', newVal);
                     state.currentCatalog = newVal;
                     state.status = EditorStatus.IDLE;
                 }),
@@ -70,11 +72,32 @@ const getInitialState = <T>(
         },
 
         setSpecs: (newVal) => {
+            const { currentCatalog, specs } = get();
             set(
                 produce((state) => {
+                    console.log('specs', {
+                        get: specs,
+                        state: state.specs,
+                        newVal,
+                    });
+
                     if (newVal && newVal.length > 0) {
-                        if (state.specs === null || newVal.length === 1) {
+                        if (specs === null || newVal.length === 1) {
+                            console.log('setting current catalog', newVal[0]);
+
                             state.currentCatalog = newVal[0];
+                        } else {
+                            specs.some((val: any) => {
+                                if (
+                                    val.catalog_name !==
+                                    currentCatalog?.catalog_name
+                                ) {
+                                    return false;
+                                }
+
+                                state.currentCatalog = val;
+                                return true;
+                            });
                         }
 
                         state.specs = newVal;
@@ -135,8 +158,19 @@ const getInitialState = <T>(
     };
 };
 
+const editorStoreCache = new Map();
 export const createEditorStore = <T>(key: string) => {
-    return create<EditorStoreState<T>>()(
-        devtools((set) => getInitialState<T>(set), devtoolsOptions(key))
-    );
+    if (!editorStoreCache.has(key)) {
+        editorStoreCache.set(
+            key,
+            create<EditorStoreState<T>>()(
+                devtools(
+                    (set, get) => getInitialState<T>(set, get),
+                    devtoolsOptions(key)
+                )
+            )
+        );
+    }
+
+    return editorStoreCache.get(key);
 };

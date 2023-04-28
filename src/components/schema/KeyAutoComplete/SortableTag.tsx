@@ -50,22 +50,24 @@ function SortableTag({ tagProps, label, validOption }: Props) {
             ) : (
                 <Tooltip
                     title={intl.formatMessage({
-                        id: 'data.key.errors.invalidKey',
+                        id: 'keyAutoComplete.keys.invalid.message',
                     })}
                 >
-                    <StyledChip
-                        componentProps={{
-                            chip: {
-                                ...tagProps,
-                                color: 'error',
-                            },
-                            icon: {
-                                ref: setActivatorNodeRef,
-                                ...listeners,
-                            },
-                        }}
-                        label={label}
-                    />
+                    <Box>
+                        <StyledChip
+                            componentProps={{
+                                chip: {
+                                    ...tagProps,
+                                    color: 'error',
+                                },
+                                icon: {
+                                    ref: setActivatorNodeRef,
+                                    ...listeners,
+                                },
+                            }}
+                            label={label}
+                        />
+                    </Box>
                 </Tooltip>
             )}
         </Box>

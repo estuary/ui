@@ -1,5 +1,5 @@
 import { arrayMove } from '@dnd-kit/sortable';
-import { Autocomplete, Grid, Skeleton, TextField } from '@mui/material';
+import { Autocomplete, Grid, TextField } from '@mui/material';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { useEntityType } from 'context/EntityContext';
 import { useEffect, useState } from 'react';
@@ -11,7 +11,11 @@ interface Props {
     value: any;
     inferSchemaResponse: any;
     disabled?: boolean;
-    onChange?: (event: any, newValue: string[], reason: string) => void;
+    onChange?: (
+        event: any,
+        newValue: string[],
+        reason: string
+    ) => PromiseLike<any>;
 }
 
 const typesAllowedAsKeys = ['string', 'integer', 'boolean'];
@@ -76,9 +80,10 @@ function KeyAutoComplete({
     const changeHandler = editKeyAllowed ? onChange : undefined;
     const disableInput = editKeyAllowed ? disabled : false;
 
+    // TODO (collection editor) this means nothing shows when you edit the schema and there are not valid keys
     // Loading state
     if (!disabled && keys.length === 0) {
-        return <Skeleton />;
+        return null;
     }
 
     // For this component we have a custom read only mode instead of displaying
@@ -99,14 +104,14 @@ function KeyAutoComplete({
                 }}
                 options={keys}
                 readOnly={disableInput}
-                value={value}
+                value={localCopyValue}
                 renderTags={(tagValues, getTagProps, ownerState) => {
                     return (
                         <SortableTags
                             values={tagValues}
                             getTagProps={getTagProps}
                             ownerState={ownerState}
-                            onOrderChange={(activeId, overId) => {
+                            onOrderChange={async (activeId, overId) => {
                                 const oldIndex =
                                     localCopyValue.indexOf(activeId);
                                 const newIndex = localCopyValue.indexOf(overId);
@@ -118,7 +123,7 @@ function KeyAutoComplete({
                                 );
 
                                 setLocalCopyValue(updatedArray);
-                                changeHandler?.(
+                                await changeHandler?.(
                                     null,
                                     updatedArray,
                                     'orderingUpdated'

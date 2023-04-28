@@ -5,13 +5,12 @@ import {
     useBindingsEditorStore_inferSchemaResponse,
     useBindingsEditorStore_populateInferSchemaResponse,
 } from 'components/editor/Bindings/Store/hooks';
-import { useEditorStore_setCurrentCatalog } from 'components/editor/Store/hooks';
 import KeyAutoComplete from 'components/schema/KeyAutoComplete';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
 import AlertBox from 'components/shared/AlertBox';
+import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
 import { useEffect, useState } from 'react';
 import { Schema } from 'types';
-import useCatalogDetails from './useCatalogDetails';
 
 export interface Props {
     entityName?: string;
@@ -33,7 +32,11 @@ const getProperSchemaScope = (spec: any) => {
 };
 
 function CollectionSchemaEditor({ entityName }: Props) {
-    const { onChange, catalogType, draftSpec } = useCatalogDetails(entityName);
+    const { onChange, draftSpec } = useDraftSpecEditor(
+        entityName,
+        'collection',
+        true
+    );
 
     const [editorSchemaScope, setEditorSchemaScope] = useState<
         string | undefined
@@ -45,74 +48,50 @@ function CollectionSchemaEditor({ entityName }: Props) {
         useBindingsEditorStore_populateInferSchemaResponse();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
 
-    const setCurrentCatalog = useEditorStore_setCurrentCatalog({
-        localScope: true,
-    });
-
-    const keyFieldChange = async (_event: any, value: string[]) => {
-        if (draftSpec?.spec?.key) {
-            draftSpec.spec.key = value;
-            await onChange(draftSpec.spec);
-        } else {
-            console.error('Unable to update spec key due to missing spec');
-        }
-    };
-
-    const schemaChange = async (_event: any, value: Schema) => {
-        if (editorSchemaScope && draftSpec?.spec) {
-            draftSpec.spec[editorSchemaScope] = value[editorSchemaScope];
-            await onChange(draftSpec.spec);
-        } else {
-            console.error(
-                'Unable to update schema due to missing spec or scope'
-            );
-        }
-    };
-
     useEffect(() => {
         if (draftSpec) {
             const schemaScope = getProperSchemaScope(draftSpec.spec);
 
             setEditorSchemaScope(schemaScope);
-            setCurrentCatalog(draftSpec);
             populateInferSchemaResponse(draftSpec.spec[schemaScope]);
         }
-    }, [draftSpec, populateInferSchemaResponse, setCurrentCatalog]);
+    }, [draftSpec, populateInferSchemaResponse]);
 
-    if (inferSchemaError) {
-        return (
-            <AlertBox short severity="error">
-                {inferSchemaError}
-            </AlertBox>
-        );
-    }
+    console.log('schema editor draftSpec', draftSpec);
 
     if (
         draftSpec &&
-        catalogType &&
         entityName &&
         inferSchemaResponse &&
         inferSchemaResponse.length > 0
     ) {
         return (
             <Grid container>
+                {inferSchemaError ? (
+                    <AlertBox short severity="error">
+                        {inferSchemaError}
+                    </AlertBox>
+                ) : null}
                 <KeyAutoComplete
                     value={draftSpec.spec.key}
                     inferSchemaResponse={inferSchemaResponse}
                     disabled={!editModeEnabled}
-                    onChange={keyFieldChange}
+                    onChange={async (_event, keys) => {
+                        await onChange(keys, entityName, 'key');
+                    }}
                 />
                 <PropertiesViewer
                     inferSchemaResponse={inferSchemaResponse}
                     disabled={!editModeEnabled}
                     editorProps={{
-                        onChange: async (newVal, path, specType) => {
-                            console.log('editor chang', {
-                                newVal,
-                                path,
-                                specType,
-                            });
-                            await schemaChange(null, newVal);
+                        onChange: async (value: Schema, path, _type, scope) => {
+                            if (scope) {
+                                await onChange(value, path, scope);
+                            } else {
+                                console.error(
+                                    'Unable to update schema due to missing scope'
+                                );
+                            }
                         },
                         editorSchemaScope,
                     }}

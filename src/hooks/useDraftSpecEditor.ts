@@ -25,15 +25,24 @@ function useDraftSpecEditor(
     });
     const draftId = useEditorStore_persistedDraftId();
 
+    // Fetch the draft specs for this draft
     const { draftSpecs, isValidating, mutate } = useDraftSpecs(draftId, {
         specType: entityType,
         catalogName: entityName,
     });
 
     const handlers = {
-        change: async (newVal: any, catalogName: string) => {
+        change: async (
+            newVal: any,
+            catalogName: string,
+            propUpdating?: string
+        ) => {
             if (draftSpec) {
-                const updateResponse = await modifyDraftSpec(newVal, {
+                if (propUpdating) {
+                    draftSpec.spec[propUpdating] = newVal;
+                }
+
+                const updateResponse = await modifyDraftSpec(draftSpec.spec, {
                     draft_id: draftId,
                     catalog_name: catalogName,
                 });
@@ -52,8 +61,21 @@ function useDraftSpecEditor(
     useEffect(() => {
         if (draftSpecs.length > 0) {
             setSpecs(draftSpecs);
+
+            if (currentCatalog) {
+                draftSpecs.some((val) => {
+                    if (val.catalog_name !== entityName) {
+                        return false;
+                    }
+
+                    setDraftSpec(val);
+                    return true;
+                });
+            }
         }
-    }, [setSpecs, draftSpecs]);
+        // We do not care if currentCatalog changes that is handled below
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [draftSpecs, entityName, setSpecs]);
 
     useEffect(() => {
         if (currentCatalog) {
