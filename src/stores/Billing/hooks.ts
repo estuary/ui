@@ -52,6 +52,34 @@ export const useBilling_setHydrationErrorsExist = () => {
     >(BillingStoreNames.GENERAL, (state) => state.setHydrationErrorsExist);
 };
 
+export const useBilling_tenants = () => {
+    return useZustandStore<BillingState, BillingState['tenants']>(
+        BillingStoreNames.GENERAL,
+        (state) => state.tenants
+    );
+};
+
+export const useBilling_setTenants = () => {
+    return useZustandStore<BillingState, BillingState['setTenants']>(
+        BillingStoreNames.GENERAL,
+        (state) => state.setTenants
+    );
+};
+
+export const useBilling_selectedTenant = () => {
+    return useZustandStore<BillingState, BillingState['selectedTenant']>(
+        BillingStoreNames.GENERAL,
+        (state) => state.selectedTenant
+    );
+};
+
+export const useBilling_setSelectedTenant = () => {
+    return useZustandStore<BillingState, BillingState['setSelectedTenant']>(
+        BillingStoreNames.GENERAL,
+        (state) => state.setSelectedTenant
+    );
+};
+
 export const useBilling_resetState = () => {
     return useZustandStore<BillingState, BillingState['resetState']>(
         BillingStoreNames.GENERAL,

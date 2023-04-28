@@ -22,6 +22,7 @@ import { useIntl } from 'react-intl';
 import {
     useBilling_billingHistory,
     useBilling_hydrated,
+    useBilling_selectedTenant,
 } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
 import {
@@ -39,7 +40,10 @@ function DataByMonthGraph() {
     const billingStoreHydrated = useBilling_hydrated();
     const billingHistory = useBilling_billingHistory();
 
+    const selectedTenant = useBilling_selectedTenant();
+
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
+    const [selection, setSelection] = useState<string>(selectedTenant);
 
     const today = useConstant(() => new Date());
 
@@ -239,6 +243,15 @@ function DataByMonthGraph() {
         theme.palette.mode,
         theme.palette.text.primary,
     ]);
+
+    useEffect(() => {
+        if (selection !== selectedTenant && myChart) {
+            myChart.dispose();
+
+            setSelection(selectedTenant);
+            setMyChart(null);
+        }
+    }, [setMyChart, setSelection, myChart, selection, selectedTenant]);
 
     if (billingStoreHydrated) {
         return billingHistory.length > 0 ? (

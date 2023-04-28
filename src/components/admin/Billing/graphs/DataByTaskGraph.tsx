@@ -28,6 +28,7 @@ import { useIntl } from 'react-intl';
 import {
     useBilling_dataByTaskGraphDetails,
     useBilling_hydrated,
+    useBilling_selectedTenant,
 } from 'stores/Billing/hooks';
 import { DataVolumeByTask } from 'stores/Billing/types';
 import useConstant from 'use-constant';
@@ -83,7 +84,10 @@ function DataByTaskGraph() {
     const billingStoreHydrated = useBilling_hydrated();
     const dataByTaskGraphDetails = useBilling_dataByTaskGraphDetails();
 
+    const selectedTenant = useBilling_selectedTenant();
+
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
+    const [selection, setSelection] = useState<string>(selectedTenant);
 
     const today = useConstant(() => new Date());
 
@@ -272,6 +276,15 @@ function DataByTaskGraph() {
         seriesConfig,
         theme,
     ]);
+
+    useEffect(() => {
+        if (selection !== selectedTenant && myChart) {
+            myChart.dispose();
+
+            setSelection(selectedTenant);
+            setMyChart(null);
+        }
+    }, [setMyChart, setSelection, myChart, selection, selectedTenant]);
 
     if (billingStoreHydrated) {
         return isEmpty(dataByTaskGraphDetails) ? (

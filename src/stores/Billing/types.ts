@@ -1,5 +1,5 @@
 import { StoreWithHydration } from 'stores/Hydration';
-import { CatalogStats_Billing, Entity } from 'types';
+import { CatalogStats_Billing, Entity, Grants } from 'types';
 
 export interface BillingRecord {
     date: Date;
@@ -24,6 +24,12 @@ export interface DataVolumeByTaskGraphDetails {
 }
 
 export interface BillingState extends StoreWithHydration {
+    tenants: string[];
+    setTenants: (value: Grants[]) => void;
+
+    selectedTenant: string;
+    setSelectedTenant: (value: string) => void;
+
     dataByTaskGraphDetails: DataVolumeByTask[];
     setDataByTaskGraphDetails: (value: CatalogStats_Billing[]) => void;
 
