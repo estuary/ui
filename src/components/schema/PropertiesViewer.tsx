@@ -1,20 +1,22 @@
 import { Box, Grid, Typography } from '@mui/material';
+import MonacoEditor, {
+    MonacoEditorProps,
+} from 'components/editor/MonacoEditor';
 import SchemaPropertiesTable from 'components/tables/Schema';
 import { FormattedMessage } from 'react-intl';
-import Editor from './Editor';
 
 interface Props {
     inferSchemaResponse: any;
     disabled: boolean;
-    entityName: string;
+    editorProps?: Partial<MonacoEditorProps>;
 }
 
 const EDITOR_HEIGHT = 404;
 
 function PropertiesViewer({
     disabled,
-    entityName,
     inferSchemaResponse,
+    editorProps,
 }: Props) {
     return (
         <Grid
@@ -25,8 +27,9 @@ function PropertiesViewer({
             }}
         >
             <Typography variant="subtitle1" component="span">
-                <FormattedMessage id="data.fields.label" />
+                <FormattedMessage id="schemaEditor.fields.label" />
             </Typography>
+
             {disabled ? (
                 <Box sx={{ height: 400, width: '100%', overflowY: 'auto' }}>
                     <SchemaPropertiesTable
@@ -34,11 +37,10 @@ function PropertiesViewer({
                     />
                 </Box>
             ) : (
-                <Editor
-                    entityType="collection"
-                    localZustandScope={true}
-                    editorHeight={EDITOR_HEIGHT}
-                    entityName={entityName}
+                <MonacoEditor
+                    localZustandScope
+                    height={EDITOR_HEIGHT}
+                    {...editorProps}
                 />
             )}
         </Grid>
