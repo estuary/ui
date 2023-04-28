@@ -4,10 +4,6 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
     Skeleton,
     Stack,
     Table,
@@ -28,23 +24,15 @@ import {
 } from 'api/billing';
 import { PaymentForm } from 'components/admin/Billing/CapturePaymentMethod';
 import { PaymentMethod } from 'components/admin/Billing/PaymentMethodRow';
-import { useTenantDetails } from 'context/fetcher/Tenant';
-import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useBilling_selectedTenant } from 'stores/Billing/hooks';
 
 const PaymentMethods = () => {
-    const stripePromise = useMemo(
-        () => loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ?? ''),
-        []
-    );
-    const tenants = useTenantDetails();
-    const grants = useCombinedGrantsExt({ adminOnly: true });
+    const selectedTenant = useBilling_selectedTenant();
 
     const [refreshCounter, setRefreshCounter] = useState(0);
-
-    const [selectedTenant, setSelectedTenant] = useState<string | null>(null);
 
     const [setupIntentSecret, setSetupIntentSecret] = useState<string | null>(
         null
@@ -55,11 +43,10 @@ const PaymentMethods = () => {
     const [methods, setMethods] = useState<any[]>([]);
     const [defaultSource, setDefaultSource] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (tenants && tenants.length > 0 && selectedTenant === null) {
-            setSelectedTenant(tenants[0].tenant);
-        }
-    }, [selectedTenant, tenants]);
+    const stripePromise = useMemo(
+        () => loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ?? ''),
+        []
+    );
 
     useEffect(() => {
         void (async () => {
@@ -111,31 +98,6 @@ const PaymentMethods = () => {
                     </Button>
                 </Box>
             </Stack>
-
-            {tenants && tenants.length > 1 ? (
-                <FormControl size="small" sx={{ width: 350 }}>
-                    <InputLabel>Tenant</InputLabel>
-
-                    <Select
-                        label="Tenant"
-                        value={selectedTenant ?? ''}
-                        onChange={(evt) => setSelectedTenant(evt.target.value)}
-                        sx={{ borderRadius: 3 }}
-                    >
-                        {tenants
-                            .filter((t) =>
-                                grants.combinedGrants.find(
-                                    (g) => g.object_role === t.tenant
-                                )
-                            )
-                            .map((tenant) => (
-                                <MenuItem key={tenant.id} value={tenant.tenant}>
-                                    {tenant.tenant}
-                                </MenuItem>
-                            ))}
-                    </Select>
-                </FormControl>
-            ) : null}
 
             {selectedTenant && !methodsLoading ? (
                 <TableContainer>
