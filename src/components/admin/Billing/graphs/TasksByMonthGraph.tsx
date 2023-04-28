@@ -1,6 +1,4 @@
 import { useTheme } from '@mui/material';
-import EmptyGraphState from 'components/admin/Billing/graphs/states/Empty';
-import GraphLoadingState from 'components/admin/Billing/graphs/states/Loading';
 import { defaultOutlineColor, paperBackground } from 'context/Theme';
 import {
     eachMonthOfInterval,
@@ -22,7 +20,6 @@ import { useIntl } from 'react-intl';
 import {
     useBilling_billingHistory,
     useBilling_hydrated,
-    useBilling_selectedTenant,
 } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
 import {
@@ -40,10 +37,7 @@ function DataByMonthGraph() {
     const billingStoreHydrated = useBilling_hydrated();
     const billingHistory = useBilling_billingHistory();
 
-    const selectedTenant = useBilling_selectedTenant();
-
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
-    const [selection, setSelection] = useState<string>(selectedTenant);
 
     const today = useConstant(() => new Date());
 
@@ -241,24 +235,7 @@ function DataByMonthGraph() {
         theme.palette.text.primary,
     ]);
 
-    useEffect(() => {
-        if (selection && selection !== selectedTenant && myChart) {
-            myChart.dispose();
-
-            setSelection(selectedTenant);
-            setMyChart(null);
-        }
-    }, [setMyChart, setSelection, myChart, selection, selectedTenant]);
-
-    if (billingStoreHydrated) {
-        return billingHistory.length > 0 ? (
-            <div id="tasks-by-month" style={{ height: CARD_AREA_HEIGHT }} />
-        ) : (
-            <EmptyGraphState />
-        );
-    } else {
-        return <GraphLoadingState />;
-    }
+    return <div id="tasks-by-month" style={{ height: CARD_AREA_HEIGHT }} />;
 }
 
 export default DataByMonthGraph;

@@ -1,6 +1,4 @@
 import { useTheme } from '@mui/material';
-import EmptyGraphState from 'components/admin/Billing/graphs/states/Empty';
-import GraphLoadingState from 'components/admin/Billing/graphs/states/Loading';
 import { defaultOutlineColor, paperBackground } from 'context/Theme';
 import {
     eachMonthOfInterval,
@@ -22,13 +20,12 @@ import navArrowLeftDark from 'images/graph-icons/nav-arrow-left__dark.svg';
 import navArrowLeftLight from 'images/graph-icons/nav-arrow-left__light.svg';
 import navArrowRightDark from 'images/graph-icons/nav-arrow-right__dark.svg';
 import navArrowRightLight from 'images/graph-icons/nav-arrow-right__light.svg';
-import { isEmpty, sortBy, sum, uniq } from 'lodash';
+import { sortBy, sum, uniq } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useBilling_dataByTaskGraphDetails,
     useBilling_hydrated,
-    useBilling_selectedTenant,
 } from 'stores/Billing/hooks';
 import { DataVolumeByTask } from 'stores/Billing/types';
 import useConstant from 'use-constant';
@@ -84,10 +81,7 @@ function DataByTaskGraph() {
     const billingStoreHydrated = useBilling_hydrated();
     const dataByTaskGraphDetails = useBilling_dataByTaskGraphDetails();
 
-    const selectedTenant = useBilling_selectedTenant();
-
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
-    const [selection, setSelection] = useState<string>(selectedTenant);
 
     const today = useConstant(() => new Date());
 
@@ -277,24 +271,7 @@ function DataByTaskGraph() {
         theme,
     ]);
 
-    useEffect(() => {
-        if (selection && selection !== selectedTenant && myChart) {
-            myChart.dispose();
-
-            setSelection(selectedTenant);
-            setMyChart(null);
-        }
-    }, [setMyChart, setSelection, myChart, selection, selectedTenant]);
-
-    if (billingStoreHydrated) {
-        return isEmpty(dataByTaskGraphDetails) ? (
-            <EmptyGraphState />
-        ) : (
-            <div id="data-by-task" style={{ height: CARD_AREA_HEIGHT }} />
-        );
-    } else {
-        return <GraphLoadingState />;
-    }
+    return <div id="data-by-task" style={{ height: CARD_AREA_HEIGHT }} />;
 }
 
 export default DataByTaskGraph;
