@@ -4,7 +4,6 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
-    Skeleton,
     Stack,
     Table,
     TableBody,
@@ -24,15 +23,19 @@ import {
 } from 'api/billing';
 import { PaymentForm } from 'components/admin/Billing/CapturePaymentMethod';
 import { PaymentMethod } from 'components/admin/Billing/PaymentMethodRow';
+import TableLoadingRows from 'components/tables/Loading';
 
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useBilling_selectedTenant } from 'stores/Billing/hooks';
 import { TableColumns } from 'types';
+import { hasLength } from 'utils/misc-utils';
+
+const cardTypeField = 'type';
 
 const columns: TableColumns[] = [
     {
-        field: 'type',
+        field: cardTypeField,
         headerIntlKey: 'admin.billing.paymentMethods.table.label.cardType',
     },
     {
@@ -127,7 +130,7 @@ const PaymentMethods = () => {
                 </Box>
             </Stack>
 
-            {selectedTenant && !methodsLoading ? (
+            {selectedTenant ? (
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 650 }}
@@ -144,7 +147,11 @@ const PaymentMethods = () => {
                                 {columns.map((column, index) => (
                                     <TableCell
                                         key={`${column.field}-${index}`}
-                                        width={index === 0 ? 200 : 'auto'}
+                                        width={
+                                            column.field === cardTypeField
+                                                ? 200
+                                                : 'auto'
+                                        }
                                     >
                                         {column.headerIntlKey ? (
                                             <FormattedMessage
@@ -157,28 +164,31 @@ const PaymentMethods = () => {
                         </TableHead>
 
                         <TableBody>
-                            {methods.map((method) => (
-                                <PaymentMethod
-                                    onDelete={async () => {
-                                        await deleteTenantPaymentMethod(
-                                            selectedTenant,
-                                            method.id
-                                        );
-                                        setRefreshCounter((r) => r + 1);
-                                    }}
-                                    onPrimary={async () => {
-                                        await setTenantPrimaryPaymentMethod(
-                                            selectedTenant,
-                                            method.id
-                                        );
-                                        setRefreshCounter((r) => r + 1);
-                                    }}
-                                    key={method.id}
-                                    {...method}
-                                    primary={method.id === defaultSource}
-                                />
-                            ))}
-                            {methods.length < 1 ? (
+                            {methodsLoading ? (
+                                <TableLoadingRows columns={columns} />
+                            ) : hasLength(methods) ? (
+                                methods.map((method) => (
+                                    <PaymentMethod
+                                        onDelete={async () => {
+                                            await deleteTenantPaymentMethod(
+                                                selectedTenant,
+                                                method.id
+                                            );
+                                            setRefreshCounter((r) => r + 1);
+                                        }}
+                                        onPrimary={async () => {
+                                            await setTenantPrimaryPaymentMethod(
+                                                selectedTenant,
+                                                method.id
+                                            );
+                                            setRefreshCounter((r) => r + 1);
+                                        }}
+                                        key={method.id}
+                                        {...method}
+                                        primary={method.id === defaultSource}
+                                    />
+                                ))
+                            ) : (
                                 <TableRow>
                                     <TableCell colSpan={6}>
                                         <Typography
@@ -188,16 +198,10 @@ const PaymentMethods = () => {
                                         </Typography>
                                     </TableCell>
                                 </TableRow>
-                            ) : null}
+                            )}
                         </TableBody>
                     </Table>
                 </TableContainer>
-            ) : methodsLoading ? (
-                <>
-                    <Skeleton animation="wave" />
-                    <Skeleton animation="wave" />
-                    <Skeleton animation="wave" />
-                </>
             ) : null}
 
             <Dialog
