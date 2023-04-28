@@ -159,9 +159,6 @@ function DataByMonthGraph() {
                     name: seriesName,
                     type: 'bar',
                     stack,
-                    emphasis: {
-                        focus: 'series',
-                    },
                     barMinHeight: seriesName === 'Included' ? 3 : 0,
                     data: data.map(([month, dataVolume]) => [
                         month,

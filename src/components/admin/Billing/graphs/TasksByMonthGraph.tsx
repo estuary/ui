@@ -157,9 +157,6 @@ function DataByMonthGraph() {
                     type: 'bar',
                     stack,
                     data,
-                    emphasis: {
-                        focus: 'series',
-                    },
                 })),
                 textStyle: {
                     color: theme.palette.text.primary,
