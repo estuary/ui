@@ -31,12 +31,11 @@ import { useBilling_selectedTenant } from 'stores/Billing/hooks';
 import { TableColumns } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
-const cardTypeField = 'type';
-
 const columns: TableColumns[] = [
     {
-        field: cardTypeField,
+        field: 'type',
         headerIntlKey: 'admin.billing.paymentMethods.table.label.cardType',
+        width: 200,
     },
     {
         field: 'name',
@@ -151,11 +150,7 @@ const PaymentMethods = () => {
                                 {columns.map((column, index) => (
                                     <TableCell
                                         key={`${column.field}-${index}`}
-                                        width={
-                                            column.field === cardTypeField
-                                                ? 200
-                                                : 'auto'
-                                        }
+                                        width={column.width ?? 'auto'}
                                     >
                                         {column.headerIntlKey ? (
                                             <FormattedMessage
