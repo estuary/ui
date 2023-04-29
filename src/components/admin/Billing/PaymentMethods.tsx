@@ -23,13 +23,13 @@ import {
 } from 'api/billing';
 import { PaymentForm } from 'components/admin/Billing/CapturePaymentMethod';
 import { PaymentMethod } from 'components/admin/Billing/PaymentMethodRow';
+import AlertBox from 'components/shared/AlertBox';
 import TableLoadingRows from 'components/tables/Loading';
 
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useBilling_selectedTenant } from 'stores/Billing/hooks';
 import { TableColumns } from 'types';
-import { hasLength } from 'utils/misc-utils';
 
 const columns: TableColumns[] = [
     {
@@ -70,8 +70,10 @@ const PaymentMethods = () => {
     const [newMethodOpen, setNewMethodOpen] = useState(false);
 
     const [methodsLoading, setMethodsLoading] = useState(false);
-    const [methods, setMethods] = useState<any[]>([]);
-    const [defaultSource, setDefaultSource] = useState<string | null>(null);
+    const [methods, setMethods] = useState<any[] | undefined>([]);
+    const [defaultSource, setDefaultSource] = useState<
+        string | null | undefined
+    >(null);
 
     const stripePromise = useMemo(
         () => loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ?? ''),
@@ -83,9 +85,16 @@ const PaymentMethods = () => {
             if (selectedTenant) {
                 try {
                     setMethodsLoading(true);
+
+                    // TODO (optimization): Add proper typing and error handling for this service call. The response assumes
+                    //  an unexpected shape when the service errors. The error property is null and the data property
+                    //  is an object with the following shape: { error: string; }. Consequently, an undefined value is passed
+                    //  to the setters below (unbeknownst to the compiler given the state typing defined above), causing the
+                    //  the component to lean on the ErrorBoundary wrapper for its display in the presence of an error.
                     const methodsResponse = await getTenantPaymentMethods(
                         selectedTenant
                     );
+
                     setMethods(methodsResponse.data.payment_methods);
                     setDefaultSource(methodsResponse.data.primary);
                 } finally {
@@ -100,8 +109,18 @@ const PaymentMethods = () => {
         })();
     }, [selectedTenant, refreshCounter]);
 
+    // TODO (optimization): Remove this temporary, hacky means of detecting when the payment methods service errs
+    //   when proper error handling is in place.
+    const serverErrored = useMemo(
+        () =>
+            !methodsLoading &&
+            (typeof defaultSource === 'undefined' ||
+                typeof methods === 'undefined'),
+        [defaultSource, methods, methodsLoading]
+    );
+
     return (
-        <Stack spacing={3}>
+        <Stack spacing={serverErrored ? 0 : 3}>
             <Stack
                 spacing={2}
                 direction="row"
@@ -118,22 +137,32 @@ const PaymentMethods = () => {
                         <FormattedMessage id="admin.billing.paymentMethods.header" />
                     </Typography>
 
-                    <Typography>
-                        <FormattedMessage id="admin.billing.paymentMethods.description" />
-                    </Typography>
+                    {serverErrored ? null : (
+                        <Typography>
+                            <FormattedMessage id="admin.billing.paymentMethods.description" />
+                        </Typography>
+                    )}
                 </Box>
 
-                <Box>
-                    <Button
-                        onClick={() => setNewMethodOpen(true)}
-                        sx={{ whiteSpace: 'nowrap' }}
-                    >
-                        <FormattedMessage id="admin.billing.paymentMethods.cta.addPaymentMethod" />
-                    </Button>
-                </Box>
+                {serverErrored ? null : (
+                    <Box>
+                        <Button
+                            onClick={() => setNewMethodOpen(true)}
+                            sx={{ whiteSpace: 'nowrap' }}
+                        >
+                            <FormattedMessage id="admin.billing.paymentMethods.cta.addPaymentMethod" />
+                        </Button>
+                    </Box>
+                )}
             </Stack>
 
-            {selectedTenant ? (
+            {serverErrored ? (
+                <AlertBox short severity="error">
+                    <Typography component="div">
+                        <FormattedMessage id="admin.billing.error.paymentMethodsError" />
+                    </Typography>
+                </AlertBox>
+            ) : (
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 650 }}
@@ -163,9 +192,9 @@ const PaymentMethods = () => {
                         </TableHead>
 
                         <TableBody>
-                            {methodsLoading ? (
+                            {!selectedTenant || methodsLoading ? (
                                 <TableLoadingRows columns={columns} />
-                            ) : hasLength(methods) ? (
+                            ) : methods && methods.length > 0 ? (
                                 methods.map((method) => (
                                     <PaymentMethod
                                         onDelete={async () => {
@@ -201,7 +230,7 @@ const PaymentMethods = () => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-            ) : null}
+            )}
 
             <Dialog
                 maxWidth="sm"
