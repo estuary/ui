@@ -221,6 +221,15 @@ export const useBindingsEditorStore_setEditModeEnabled = () => {
     >(getStoreName(entityType), (state) => state.setEditModeEnabled);
 };
 
+export const useBindingsEditorStore_inferSchemaDoneProcessing = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['inferSchemaDoneProcessing']
+    >(getStoreName(entityType), (state) => state.inferSchemaDoneProcessing);
+};
+
 export const useBindingsEditorStore_inferSchemaResponse = () => {
     const entityType = useEntityType();
 

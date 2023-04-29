@@ -1,5 +1,9 @@
 import { arrayMove } from '@dnd-kit/sortable';
 import { Autocomplete, Grid, TextField } from '@mui/material';
+import {
+    useBindingsEditorStore_inferSchemaDoneProcessing,
+    useBindingsEditorStore_inferSchemaResponse,
+} from 'components/editor/Bindings/Store/hooks';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { useEntityType } from 'context/EntityContext';
 import { useEffect, useState } from 'react';
@@ -9,7 +13,6 @@ import SortableTags from './SortableTags';
 
 interface Props {
     value: any;
-    inferSchemaResponse: any;
     disabled?: boolean;
     onChange?: (
         event: any,
@@ -20,12 +23,7 @@ interface Props {
 
 const typesAllowedAsKeys = ['string', 'integer', 'boolean'];
 
-function KeyAutoComplete({
-    disabled,
-    inferSchemaResponse,
-    onChange,
-    value,
-}: Props) {
+function KeyAutoComplete({ disabled, onChange, value }: Props) {
     // We want a local copy so that the display is updated right away when the user
     //  is done dragging. Otherwise, the item being dragged kind flies around when
     //  put in a new location
@@ -37,6 +35,11 @@ function KeyAutoComplete({
     const entityType = useEntityType();
     const editKeyAllowed = entityType === 'capture';
 
+    // Need the response so we know the options
+    const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
+    const inferSchemaDoneProcessing =
+        useBindingsEditorStore_inferSchemaDoneProcessing();
+
     // Make sure we keep our local copy up to date
     useEffect(() => {
         setLocalCopyValue(value);
@@ -46,17 +49,15 @@ function KeyAutoComplete({
     //  that cannot be keys and then populate the list of possible
     //  keys.
     useEffect(() => {
-        let inferredProperties;
-        if (disabled) {
-            inferredProperties = [];
-        } else {
+        let inferredProperties = [];
+        if (!disabled && inferSchemaDoneProcessing && inferSchemaResponse) {
             // Infer the properties with WebFlow and then filter/map them for the dropdown
             //  We will check if this field:
             //      must exist
             //      has a single known type
             //      has an allowed type
             inferredProperties = inferSchemaResponse
-                ?.filter((inferredProperty: any) => {
+                .filter((inferredProperty: any) => {
                     const interrefPropertyTypes = inferredProperty.types;
                     return (
                         inferredProperty.exists === 'must' &&
@@ -74,15 +75,22 @@ function KeyAutoComplete({
         }
 
         setKeys(inferredProperties);
-    }, [inferSchemaResponse, disabled]);
+    }, [inferSchemaDoneProcessing, inferSchemaResponse, disabled]);
 
     // Store off variables for when this should be in read only mode
     const changeHandler = editKeyAllowed ? onChange : undefined;
     const disableInput = editKeyAllowed ? disabled : false;
+    const noInferSchema =
+        inferSchemaDoneProcessing && inferSchemaResponse === null;
 
-    // TODO (collection editor) this means nothing shows when you edit the schema and there are not valid keys
-    // Loading state
-    if (!disabled && keys.length === 0) {
+    // Loading state and we do not want to stop here if
+    // the noInferSchema error is hit because we'll handle
+    // that below by showing the error and input in an error state
+    if (!noInferSchema && !disabled && keys.length === 0) {
+        console.log('return null', {
+            keys,
+            disabled,
+        });
         return null;
     }
 
@@ -97,6 +105,7 @@ function KeyAutoComplete({
         <Grid item xs={12}>
             <Autocomplete
                 {...autoCompleteDefaults_Virtual_Multiple}
+                disabled={noInferSchema}
                 inputValue={inputValue}
                 onChange={changeHandler}
                 onInputChange={(event, newInputValue) => {
@@ -108,6 +117,7 @@ function KeyAutoComplete({
                 renderTags={(tagValues, getTagProps, ownerState) => {
                     return (
                         <SortableTags
+                            validateOptions={!noInferSchema}
                             values={tagValues}
                             getTagProps={getTagProps}
                             ownerState={ownerState}
@@ -136,9 +146,14 @@ function KeyAutoComplete({
                     return (
                         <TextField
                             {...params}
-                            disabled={disableInput}
+                            disabled={noInferSchema || disableInput}
+                            error={noInferSchema}
                             helperText={
-                                <FormattedMessage id="schemaEditor.key.helper" />
+                                noInferSchema ? (
+                                    <FormattedMessage id="keyAutoComplete.noOptions.message" />
+                                ) : (
+                                    <FormattedMessage id="schemaEditor.key.helper" />
+                                )
                             }
                             label={
                                 <FormattedMessage id="schemaEditor.key.label" />

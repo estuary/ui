@@ -88,6 +88,7 @@ const getInitialStateData = (): Pick<
     | 'editModeEnabled'
     | 'inferSchemaResponse'
     | 'inferSchemaError'
+    | 'inferSchemaDoneProcessing'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -101,6 +102,7 @@ const getInitialStateData = (): Pick<
     editModeEnabled: false,
     inferSchemaResponse: null,
     inferSchemaError: null,
+    inferSchemaDoneProcessing: false,
 });
 
 const getInitialState = (
@@ -303,7 +305,6 @@ const getInitialState = (
     },
 
     populateInferSchemaResponse: (schema) => {
-        console.log('populateInferSchemaResponse', schema);
         const populateState = (
             dataVal: BindingsEditorState['inferSchemaResponse'],
             errorVal: BindingsEditorState['inferSchemaError']
@@ -318,15 +319,22 @@ const getInitialState = (
             // Save the values into the store
             set(
                 produce((state: BindingsEditorState) => {
-                    state.inferSchemaError = errorVal
-                        ? `Cannot Infer Fields: ${errorVal}`
-                        : null;
+                    state.inferSchemaError = errorVal;
                     state.inferSchemaResponse = dataVal;
+                    state.inferSchemaDoneProcessing = true;
                 }),
                 false,
                 'Infere Schema Populated'
             );
         };
+
+        set(
+            produce((state: BindingsEditorState) => {
+                state.inferSchemaDoneProcessing = true;
+            }),
+            false,
+            'Restting inferSchemaDoneProcessing flag'
+        );
 
         // If no schema then just return because hopefully it means
         //  we are still just waiting for the schema to load in
@@ -351,7 +359,7 @@ const getInitialState = (
                 populateState(inferResponse, null);
             }
         } catch (err: unknown) {
-            populateState([], err as string);
+            populateState(null, err as string);
         }
     },
 

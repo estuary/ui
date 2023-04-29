@@ -63,6 +63,7 @@ export interface BindingsEditorState {
 
     inferSchemaResponse: Schema | null;
     inferSchemaError: string | null;
+    inferSchemaDoneProcessing: boolean;
     populateInferSchemaResponse: (
         value: BindingsEditorState['inferSchemaResponse']
     ) => void;

@@ -976,9 +976,11 @@ const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
     'schemaEditor.key.helper': `Ordered JSON-Pointers which define how a composite key may be extracted from a collection document.`,
     'schemaEditor.table.empty.header': `No schema to display.`,
     'schemaEditor.table.empty.message': `There was an issue generating the table from the schema.`,
+    'schemaEditor.error.title': `Schema Invalid`,
     'keyAutoComplete.keys.invalid.message': `Field not a valid key. Please remove.`,
     'keyAutoComplete.keys.missing.title': `Key is empty`,
     'keyAutoComplete.keys.missing.message': `Please provide a key before continuing or you may face issues.`,
+    'keyAutoComplete.noOptions.message': `Without a valid schema we cannot provide options for the key. Please fix schema to continue editing.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {

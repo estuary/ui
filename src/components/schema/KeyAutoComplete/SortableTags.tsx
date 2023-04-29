@@ -27,6 +27,7 @@ interface Props {
     onOrderChange: (activeId: string, overId: string) => PromiseLike<any>;
     ownerState: any;
     values: any;
+    validateOptions?: boolean;
 }
 
 function SortableTags({
@@ -34,6 +35,7 @@ function SortableTags({
     onOrderChange,
     ownerState,
     values,
+    validateOptions,
 }: Props) {
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
     const sensors = useSensors(
@@ -49,10 +51,14 @@ function SortableTags({
                 key={`autocomplete-selected-tag-${tagValue}`}
                 label={tagValue}
                 tagProps={getTagProps({ index: tagValueIndex })}
-                validOption={ownerState.options.includes(tagValue)}
+                validOption={
+                    validateOptions
+                        ? ownerState.options.includes(tagValue)
+                        : true
+                }
             />
         ));
-    }, [getTagProps, ownerState.options, values]);
+    }, [getTagProps, ownerState.options, validateOptions, values]);
 
     return (
         <DndContext

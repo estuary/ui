@@ -1,13 +1,10 @@
 import { Grid } from '@mui/material';
 import {
     useBindingsEditorStore_editModeEnabled,
-    useBindingsEditorStore_inferSchemaError,
-    useBindingsEditorStore_inferSchemaResponse,
     useBindingsEditorStore_populateInferSchemaResponse,
 } from 'components/editor/Bindings/Store/hooks';
 import KeyAutoComplete from 'components/schema/KeyAutoComplete';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
-import AlertBox from 'components/shared/AlertBox';
 import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
 import { useEffect, useState } from 'react';
 import { Schema } from 'types';
@@ -42,8 +39,6 @@ function CollectionSchemaEditor({ entityName }: Props) {
         string | undefined
     >(undefined);
 
-    const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
-    const inferSchemaError = useBindingsEditorStore_inferSchemaError();
     const populateInferSchemaResponse =
         useBindingsEditorStore_populateInferSchemaResponse();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
@@ -59,29 +54,17 @@ function CollectionSchemaEditor({ entityName }: Props) {
 
     console.log('schema editor draftSpec', draftSpec);
 
-    if (
-        draftSpec &&
-        entityName &&
-        inferSchemaResponse &&
-        inferSchemaResponse.length > 0
-    ) {
+    if (draftSpec && entityName) {
         return (
             <Grid container>
-                {inferSchemaError ? (
-                    <AlertBox short severity="error">
-                        {inferSchemaError}
-                    </AlertBox>
-                ) : null}
                 <KeyAutoComplete
                     value={draftSpec.spec.key}
-                    inferSchemaResponse={inferSchemaResponse}
                     disabled={!editModeEnabled}
                     onChange={async (_event, keys) => {
                         await onChange(keys, entityName, 'key');
                     }}
                 />
                 <PropertiesViewer
-                    inferSchemaResponse={inferSchemaResponse}
                     disabled={!editModeEnabled}
                     editorProps={{
                         onChange: async (value: Schema, path, _type, scope) => {

@@ -62,7 +62,6 @@ const getInitialState = <T>(
         setCurrentCatalog: (newVal) => {
             set(
                 produce((state) => {
-                    console.log('setting current catalog', newVal);
                     state.currentCatalog = newVal;
                     state.status = EditorStatus.IDLE;
                 }),
@@ -83,10 +82,9 @@ const getInitialState = <T>(
 
                     if (newVal && newVal.length > 0) {
                         if (specs === null || newVal.length === 1) {
-                            console.log('setting current catalog', newVal[0]);
-
                             state.currentCatalog = newVal[0];
                         } else {
+                            // TODO (collection editor) is this needed?
                             specs.some((val: any) => {
                                 if (
                                     val.catalog_name !==
