@@ -12,10 +12,11 @@ import { FormattedMessage } from 'react-intl';
 interface Props {
     logo: ReactNode;
     details: ReactNode;
-    cta: ReactNode;
     title: ReactNode;
-
+    clickHandler?: () => void;
+    cta?: ReactNode;
     docsUrl?: string;
+    externalLink?: { href: string; target: string; rel: string };
     recommended?: boolean;
 }
 function ConnectorCard({
@@ -25,10 +26,12 @@ function ConnectorCard({
     title,
     details,
     recommended,
+    clickHandler,
+    externalLink,
 }: Props) {
     return (
-        <Grid item xs={2} md={4} lg={2} xl={2} sx={{ maxWidth: 275 }}>
-            <Tile>
+        <Grid item xs={2} md={4} lg={2} xl={2}>
+            <Tile clickHandler={clickHandler} externalLink={externalLink}>
                 <Stack
                     sx={{
                         mb: 3,

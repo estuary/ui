@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     Grid,
     Paper,
     Skeleton,
@@ -21,7 +20,7 @@ import {
     ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
 } from 'hooks/useConnectorWithTagDetail';
-import { AddSquare, OpenNewWindow } from 'iconoir-react';
+import { AddSquare } from 'iconoir-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
@@ -40,7 +39,6 @@ import {
 } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
-import ConnectorCardCTA from './card/CTA';
 import ConnectorCardDetails from './card/Details';
 import ConnectorLogo from './card/Logo';
 import ConnectorCardTitle from './card/Title';
@@ -200,13 +198,8 @@ function ConnectorTiles({
                                     lastUpdate={row.updated_at}
                                 />
                             }
-                            cta={
-                                <ConnectorCardCTA
-                                    ctaCallback={() => primaryCtaClick(row)}
-                                    entity={row.connector_tags[0].protocol}
-                                />
-                            }
                             recommended={row.recommended}
+                            clickHandler={() => primaryCtaClick(row)}
                         />
                     ))
                     .concat(
@@ -221,25 +214,9 @@ function ConnectorTiles({
                                 />
                             }
                             details={
-                                <Typography component="p">
+                                <Typography component="p" align="left">
                                     <FormattedMessage id="connectors.main.message2.alt" />
                                 </Typography>
-                            }
-                            cta={
-                                <Button
-                                    href={intl.formatMessage({
-                                        id: 'connectors.main.message2.docPath',
-                                    })}
-                                    target="_blank"
-                                    rel="noopener"
-                                    endIcon={
-                                        <OpenNewWindow
-                                            style={{ fontSize: 14 }}
-                                        />
-                                    }
-                                >
-                                    <FormattedMessage id="connectorTable.actionsCta.connectorRequest" />
-                                </Button>
                             }
                             title={
                                 <ConnectorCardTitle
@@ -248,6 +225,13 @@ function ConnectorTiles({
                                     })}
                                 />
                             }
+                            externalLink={{
+                                href: intl.formatMessage({
+                                    id: 'connectors.main.message2.docPath',
+                                }),
+                                target: '_blank',
+                                rel: 'noopener',
+                            }}
                         />
                     )
             ) : isValidating || tableState.status === TableStatuses.LOADING ? (
@@ -267,12 +251,6 @@ function ConnectorTiles({
 
                                 <Skeleton sx={{ mb: 5 }} />
                             </Box>
-
-                            <Skeleton
-                                variant="rectangular"
-                                height={36}
-                                sx={{ borderRadius: 3 }}
-                            />
                         </Tile>
                     )
                     .map((skeleton, index) => (
