@@ -47,7 +47,7 @@ const navArrowsDark = [
     `image://${navArrowRightDark}`,
 ];
 
-const evaluateLargestDataProducingTasks = (
+const evaluateLargestDataProcessingTasks = (
     dataVolumeByTask: DataVolumeByTask[]
 ): string[] => {
     const totalDataVolumeByTask: {
@@ -104,7 +104,7 @@ function DataByTaskGraph() {
             })
         );
 
-        return evaluateLargestDataProducingTasks(scopedDetails).map((task) => {
+        return evaluateLargestDataProcessingTasks(scopedDetails).map((task) => {
             const detailsByTask = scopedDetails.filter(
                 ({ catalogName }) => catalogName === task
             );
