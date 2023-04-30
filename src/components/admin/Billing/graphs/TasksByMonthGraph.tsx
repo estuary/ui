@@ -150,6 +150,7 @@ function DataByMonthGraph() {
                     name: seriesName,
                     type: 'bar',
                     stack,
+                    barMinHeight: seriesName === SeriesNames.INCLUDED ? 3 : 0,
                     data,
                 })),
                 textStyle: {

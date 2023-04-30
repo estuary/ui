@@ -153,7 +153,7 @@ function DataByMonthGraph() {
                     name: seriesName,
                     type: 'bar',
                     stack,
-                    barMinHeight: seriesName === 'Included' ? 3 : 0,
+                    barMinHeight: seriesName === SeriesNames.INCLUDED ? 3 : 0,
                     data: data.map(([month, dataVolume]) => [
                         month,
                         (dataVolume / BYTES_PER_GB).toFixed(3),
