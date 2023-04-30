@@ -3,6 +3,7 @@ import { CatalogStats_Billing, Entity, Grants } from 'types';
 
 export interface BillingRecord {
     date: Date;
+    timestamp: string;
     dataVolume: number;
     taskCount: number;
     totalCost: number;

@@ -70,6 +70,7 @@ const getInitialBillingRecord = (date: string): BillingRecord => {
 
     return {
         date: truncatedDate,
+        timestamp: date,
         dataVolume: 0,
         taskCount: 0,
         totalCost: 0,
@@ -122,6 +123,7 @@ export const formatBillingCatalogStats = (
 
                 billingHistory.push({
                     date,
+                    timestamp: ts,
                     dataVolume,
                     taskCount,
                     totalCost,
@@ -136,6 +138,7 @@ export const formatBillingCatalogStats = (
 
                 billingHistory[billingRecordIndex] = {
                     date,
+                    timestamp: ts,
                     dataVolume,
                     taskCount,
                     totalCost,
