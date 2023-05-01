@@ -83,6 +83,12 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
     const noInferSchema =
         inferSchemaDoneProcessing && inferSchemaResponse === null;
 
+    console.log('key auto complete', {
+        inferSchemaDoneProcessing,
+        inferSchemaResponse,
+        noInferSchema,
+    });
+
     // Loading state and we do not want to stop here if
     // the noInferSchema error is hit because we'll handle
     // that below by showing the error and input in an error state

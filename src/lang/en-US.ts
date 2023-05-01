@@ -142,6 +142,7 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.published_at': `Published At`,
     'data.pointer': `Pointer`,
     'data.exists': `Exists`,
+    'data.field': `Field`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {

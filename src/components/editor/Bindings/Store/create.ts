@@ -344,19 +344,25 @@ const getInitialState = (
 
         // Make sure we have an object
         if (!isPlainObject(schema)) {
-            populateState([], 'schema must be an object');
+            populateState(null, 'schema must be an object');
             return;
         }
 
         try {
             // Make an attempt to infer
-            const inferResponse = infer(schema)?.properties;
+            const inferResponse = infer(schema);
+            const { properties } = inferResponse;
 
             // Make sure there is a response
-            if (inferResponse?.length === 0) {
-                populateState([], 'no fields returned');
+            if (properties?.length === 0) {
+                populateState(null, 'no fields returned');
+            } else if (
+                properties.length === 1 &&
+                properties[0].pointer === ''
+            ) {
+                populateState(null, 'empty object');
             } else {
-                populateState(inferResponse, null);
+                populateState(properties, null);
             }
         } catch (err: unknown) {
             populateState(null, err as string);

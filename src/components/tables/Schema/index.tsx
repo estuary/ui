@@ -9,7 +9,7 @@ import Rows from './Rows';
 export const columns: TableColumns[] = [
     {
         field: null,
-        headerIntlKey: 'data.name',
+        headerIntlKey: 'data.field',
     },
     {
         field: null,

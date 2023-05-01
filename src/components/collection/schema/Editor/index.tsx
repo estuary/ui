@@ -52,8 +52,6 @@ function CollectionSchemaEditor({ entityName }: Props) {
         }
     }, [draftSpec, populateInferSchemaResponse]);
 
-    console.log('schema editor draftSpec', draftSpec);
-
     if (draftSpec && entityName) {
         return (
             <Grid container>
