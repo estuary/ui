@@ -1,4 +1,4 @@
-import { Button, Skeleton } from '@mui/material';
+import { Button } from '@mui/material';
 import SchemaInferenceDialog from 'components/editor/Bindings/SchemaInference/Dialog';
 import {
     useBindingsEditorStore_collectionData,
@@ -111,9 +111,7 @@ function SchemaInferenceButton() {
 
                 <SchemaInferenceDialog open={open} setOpen={setOpen} />
             </>
-        ) : (
-            <Skeleton variant="rectangular" width={125} />
-        );
+        ) : null;
     }
 }
 
