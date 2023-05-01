@@ -1,8 +1,7 @@
 import { Box, Collapse, Grid, Typography } from '@mui/material';
 import {
-    useBindingsEditorStore_inferSchemaDoneProcessing,
     useBindingsEditorStore_inferSchemaError,
-    useBindingsEditorStore_inferSchemaResponse,
+    useBindingsEditorStore_inferSchemaResponseEmpty,
 } from 'components/editor/Bindings/Store/hooks';
 import MonacoEditor, {
     MonacoEditorProps,
@@ -20,13 +19,8 @@ const EDITOR_HEIGHT = 404;
 
 function PropertiesViewer({ disabled, editorProps }: Props) {
     const inferSchemaError = useBindingsEditorStore_inferSchemaError();
-    const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
-    const inferSchemaDoneProcessing =
-        useBindingsEditorStore_inferSchemaDoneProcessing();
-
-    const noInferSchema = Boolean(
-        inferSchemaDoneProcessing && inferSchemaError
-    );
+    const inferSchemaResponseEmpty =
+        useBindingsEditorStore_inferSchemaResponseEmpty();
 
     return (
         <Grid
@@ -41,9 +35,9 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
             </Typography>
 
             <Collapse
-                in={noInferSchema}
+                in={inferSchemaResponseEmpty}
                 sx={{
-                    mb: noInferSchema ? 2 : undefined,
+                    mb: inferSchemaResponseEmpty ? 2 : undefined,
                 }}
             >
                 <AlertBox
@@ -56,10 +50,8 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
             </Collapse>
 
             {disabled ? (
-                <Box sx={{ height: 400, width: '100%', overflowY: 'auto' }}>
-                    <SchemaPropertiesTable
-                        inferSchemaResponse={inferSchemaResponse}
-                    />
+                <Box sx={{ width: '100%' }}>
+                    <SchemaPropertiesTable />
                 </Box>
             ) : (
                 <MonacoEditor

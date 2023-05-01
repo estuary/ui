@@ -1,4 +1,5 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
+import { Schema } from 'types';
 import ChipList from '../cells/ChipList';
 
 interface RowProps {
@@ -6,7 +7,7 @@ interface RowProps {
 }
 
 interface RowsProps {
-    data?: any[];
+    data: Schema | null;
 }
 
 function Row({ row }: RowProps) {
@@ -36,8 +37,8 @@ function Rows({ data }: RowsProps) {
 
     return (
         <>
-            {data.map((record, index) => (
-                <Row row={record} key={index} />
+            {data.map((record: any, index: number) => (
+                <Row row={record} key={`schema-table-rows-${index}`} />
             ))}
         </>
     );

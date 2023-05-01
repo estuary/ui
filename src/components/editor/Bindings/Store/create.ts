@@ -89,6 +89,7 @@ const getInitialStateData = (): Pick<
     | 'inferSchemaResponse'
     | 'inferSchemaError'
     | 'inferSchemaDoneProcessing'
+    | 'inferSchemaResponseEmpty'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -103,6 +104,7 @@ const getInitialStateData = (): Pick<
     inferSchemaResponse: null,
     inferSchemaError: null,
     inferSchemaDoneProcessing: false,
+    inferSchemaResponseEmpty: false,
 });
 
 const getInitialState = (
@@ -309,8 +311,10 @@ const getInitialState = (
             dataVal: BindingsEditorState['inferSchemaResponse'],
             errorVal: BindingsEditorState['inferSchemaError']
         ) => {
-            if (dataVal && dataVal.length > 0) {
-                dataVal = dataVal.filter((inferredProperty: any) => {
+            const hasResponse = dataVal && dataVal.length > 0;
+
+            if (hasResponse) {
+                dataVal = dataVal?.filter((inferredProperty: any) => {
                     // If there is a blank pointer it cannot be used
                     return hasLength(inferredProperty.pointer);
                 });
@@ -322,6 +326,7 @@ const getInitialState = (
                     state.inferSchemaError = errorVal;
                     state.inferSchemaResponse = dataVal;
                     state.inferSchemaDoneProcessing = true;
+                    state.inferSchemaResponseEmpty = !hasResponse;
                 }),
                 false,
                 'Infere Schema Populated'
@@ -355,12 +360,12 @@ const getInitialState = (
 
             // Make sure there is a response
             if (properties?.length === 0) {
-                populateState(null, 'no fields returned');
+                populateState(null, 'no fields inferred from schema');
             } else if (
                 properties.length === 1 &&
                 properties[0].pointer === ''
             ) {
-                populateState(null, 'empty object');
+                populateState(null, 'no usable fields inferred from schema');
             } else {
                 populateState(properties, null);
             }

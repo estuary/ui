@@ -1,4 +1,9 @@
 import { Box, Table, TableContainer } from '@mui/material';
+import {
+    useBindingsEditorStore_inferSchemaDoneProcessing,
+    useBindingsEditorStore_inferSchemaResponse,
+    useBindingsEditorStore_inferSchemaResponseEmpty,
+} from 'components/editor/Bindings/Store/hooks';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { TableColumns, TableState, TableStatuses } from 'types';
@@ -25,24 +30,34 @@ export const columns: TableColumns[] = [
     },
 ];
 
-interface Props {
-    inferSchemaResponse: any;
-}
-
-function SchemaPropertiesTable({ inferSchemaResponse }: Props) {
+function SchemaPropertiesTable() {
     const intl = useIntl();
 
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
 
+    const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
+    const inferSchemaDoneProcessing =
+        useBindingsEditorStore_inferSchemaDoneProcessing();
+    const inferSchemaResponseEmpty =
+        useBindingsEditorStore_inferSchemaResponseEmpty();
+
     useEffect(() => {
-        if (inferSchemaResponse && inferSchemaResponse.length > 0) {
-            setTableState({ status: TableStatuses.DATA_FETCHED });
+        console.log('ue', {
+            inferSchemaDoneProcessing,
+            inferSchemaResponse,
+        });
+        if (inferSchemaDoneProcessing) {
+            if (inferSchemaResponse && inferSchemaResponse.length > 0) {
+                setTableState({ status: TableStatuses.DATA_FETCHED });
+            } else {
+                setTableState({ status: TableStatuses.NO_EXISTING_DATA });
+            }
         } else {
-            setTableState({ status: TableStatuses.NO_EXISTING_DATA });
+            setTableState({ status: TableStatuses.LOADING });
         }
-    }, [inferSchemaResponse]);
+    }, [inferSchemaDoneProcessing, inferSchemaResponse]);
 
     return (
         <Box>
@@ -64,8 +79,12 @@ function SchemaPropertiesTable({ inferSchemaResponse }: Props) {
                             disableDoclink: true,
                         }}
                         tableState={tableState}
-                        loading={!inferSchemaResponse}
-                        rows={<Rows data={inferSchemaResponse} />}
+                        loading={!inferSchemaDoneProcessing}
+                        rows={
+                            !inferSchemaResponseEmpty ? (
+                                <Rows data={inferSchemaResponse} />
+                            ) : null
+                        }
                     />
                 </Table>
             </TableContainer>

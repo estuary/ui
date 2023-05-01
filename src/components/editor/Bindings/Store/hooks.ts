@@ -230,6 +230,15 @@ export const useBindingsEditorStore_inferSchemaDoneProcessing = () => {
     >(getStoreName(entityType), (state) => state.inferSchemaDoneProcessing);
 };
 
+export const useBindingsEditorStore_inferSchemaResponseEmpty = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['inferSchemaResponseEmpty']
+    >(getStoreName(entityType), (state) => state.inferSchemaResponseEmpty);
+};
+
 export const useBindingsEditorStore_inferSchemaResponse = () => {
     const entityType = useEntityType();
 

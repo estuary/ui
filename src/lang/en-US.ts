@@ -619,7 +619,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
     'captureCreate.collections.heading': `Output Collections`,
     'captureCreate.collectionSelector.heading': `Collection Selector`,
-    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To make changes, you can enter new values in the this section of the form or edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
+    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To make changes to the configuration please update the fields under the Config tab. To make changes to the schema click on Edit under the Specification tab.`,
 
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
     'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -975,8 +975,8 @@ const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
     'schemaEditor.fields.label': `Schema`,
     'schemaEditor.key.label': `Key`,
     'schemaEditor.key.helper': `Ordered JSON-Pointers which define how a composite key may be extracted from a collection document.`,
-    'schemaEditor.table.empty.header': `No schema to display.`,
-    'schemaEditor.table.empty.message': `There was an issue generating the table from the schema.`,
+    'schemaEditor.table.empty.header': `No fields to display.`,
+    'schemaEditor.table.empty.message': `We were unable to generate a table from the current schema. Please update the schema.`,
     'schemaEditor.error.title': `Schema Invalid`,
     'keyAutoComplete.keys.invalid.message': `Field not a valid key. Please remove.`,
     'keyAutoComplete.keys.missing.title': `Key is empty`,

@@ -3,6 +3,7 @@ import { Autocomplete, Grid, TextField } from '@mui/material';
 import {
     useBindingsEditorStore_inferSchemaDoneProcessing,
     useBindingsEditorStore_inferSchemaResponse,
+    useBindingsEditorStore_inferSchemaResponseEmpty,
 } from 'components/editor/Bindings/Store/hooks';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { useEntityType } from 'context/EntityContext';
@@ -39,6 +40,8 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
     const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
     const inferSchemaDoneProcessing =
         useBindingsEditorStore_inferSchemaDoneProcessing();
+    const inferSchemaResponseEmpty =
+        useBindingsEditorStore_inferSchemaResponseEmpty();
 
     // Make sure we keep our local copy up to date
     useEffect(() => {
@@ -50,14 +53,14 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
     //  keys.
     useEffect(() => {
         let inferredProperties = [];
-        if (!disabled && inferSchemaDoneProcessing && inferSchemaResponse) {
+        if (!disabled && !inferSchemaResponseEmpty) {
             // Infer the properties with WebFlow and then filter/map them for the dropdown
             //  We will check if this field:
             //      must exist
             //      has a single known type
             //      has an allowed type
             inferredProperties = inferSchemaResponse
-                .filter((inferredProperty: any) => {
+                ?.filter((inferredProperty: any) => {
                     const interrefPropertyTypes = inferredProperty.types;
                     return (
                         inferredProperty.exists === 'must' &&
@@ -75,24 +78,22 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
         }
 
         setKeys(inferredProperties);
-    }, [inferSchemaDoneProcessing, inferSchemaResponse, disabled]);
+    }, [disabled, inferSchemaResponse, inferSchemaResponseEmpty]);
 
     // Store off variables for when this should be in read only mode
     const changeHandler = editKeyAllowed ? onChange : undefined;
     const disableInput = editKeyAllowed ? disabled : false;
-    const noInferSchema =
-        inferSchemaDoneProcessing && inferSchemaResponse === null;
 
     console.log('key auto complete', {
         inferSchemaDoneProcessing,
         inferSchemaResponse,
-        noInferSchema,
+        inferSchemaMissing: inferSchemaResponseEmpty,
     });
 
     // Loading state and we do not want to stop here if
-    // the noInferSchema error is hit because we'll handle
+    // the inferSchemaMissing error is hit because we'll handle
     // that below by showing the error and input in an error state
-    if (!noInferSchema && !disabled && keys.length === 0) {
+    if (!inferSchemaResponseEmpty && !disabled && keys.length === 0) {
         console.log('return null', {
             keys,
             disabled,
@@ -111,7 +112,7 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
         <Grid item xs={12}>
             <Autocomplete
                 {...autoCompleteDefaults_Virtual_Multiple}
-                disabled={noInferSchema}
+                disabled={inferSchemaResponseEmpty}
                 inputValue={inputValue}
                 onChange={changeHandler}
                 onInputChange={(event, newInputValue) => {
@@ -123,7 +124,7 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 renderTags={(tagValues, getTagProps, ownerState) => {
                     return (
                         <SortableTags
-                            validateOptions={!noInferSchema}
+                            validateOptions={!inferSchemaResponseEmpty}
                             values={tagValues}
                             getTagProps={getTagProps}
                             ownerState={ownerState}
@@ -152,10 +153,10 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                     return (
                         <TextField
                             {...params}
-                            disabled={noInferSchema || disableInput}
-                            error={noInferSchema}
+                            disabled={inferSchemaResponseEmpty || disableInput}
+                            error={inferSchemaResponseEmpty}
                             helperText={
-                                noInferSchema ? (
+                                inferSchemaResponseEmpty ? (
                                     <FormattedMessage id="keyAutoComplete.noOptions.message" />
                                 ) : (
                                     <FormattedMessage id="schemaEditor.key.helper" />
