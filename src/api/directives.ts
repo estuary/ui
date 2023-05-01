@@ -1,6 +1,8 @@
 import { DIRECTIVES } from 'directives/shared';
 import { UserClaims } from 'directives/types';
 import {
+    CallSupabaseResponse,
+    insertSupabase,
     RPCS,
     supabaseClient,
     TABLES,
@@ -9,6 +11,7 @@ import {
 import {
     AppliedDirective,
     Directive,
+    GrantDirective,
     JoinedAppliedDirective,
     Schema,
 } from 'types';
@@ -105,4 +108,23 @@ const getAppliedDirectives = (
         .limit(1);
 };
 
-export { exchangeBearerToken, getAppliedDirectives, submitDirective };
+const generateGrantDirective = (
+    prefix: string,
+    capability: string
+): PromiseLike<CallSupabaseResponse<GrantDirective[]>> => {
+    return insertSupabase(TABLES.DIRECTIVES, {
+        catalog_prefix: prefix,
+        spec: {
+            type: 'grant',
+            grantedPrefix: prefix,
+            capability,
+        },
+    });
+};
+
+export {
+    exchangeBearerToken,
+    generateGrantDirective,
+    getAppliedDirectives,
+    submitDirective,
+};

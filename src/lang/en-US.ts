@@ -439,6 +439,12 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.payment_methods.description': `Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.`,
     'admin.billing.payment_methods.none_available': `No payment methods available`,
 
+    'admin.users.cta.sharePrefix': `Manage Access Links`,
+    'admin.users.sharePrefix.header': `Manage Access Links`,
+    'admin.users.sharePrefix.message': `This is a placeholder for a description.`,
+    'admin.users.sharePrefix.label.capability': `Capability`,
+    'admin.users.sharePrefix.cta.generateLink': `Generate Access Link`,
+
     'admin.cookies': `Cookie Preference Management`,
     'admin.cookies.message': `Click below to manage your preferences.`,
     'admin.tabs.users': `Users`,

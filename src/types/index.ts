@@ -91,6 +91,21 @@ export interface JoinedAppliedDirective extends AppliedDirective<any> {
     ['directives.spec->>type']: undefined;
 }
 
+export interface GrantDirective {
+    created_at: string;
+    detail: string | null;
+    id: string;
+    updated_at: string;
+    catalog_prefix: string;
+    uses_remaining: number | null;
+    spec: {
+        type: string;
+        capability: string;
+        grantedPrefix: string;
+    };
+    token: string;
+}
+
 export interface StorageMappingStore {
     provider: string;
     bucket: string;
