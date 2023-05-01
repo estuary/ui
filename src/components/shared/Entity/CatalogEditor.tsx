@@ -23,9 +23,7 @@ function CatalogEditor({ messageId }: Props) {
     const formStatus = useFormStateStore_status();
     const formActive = useFormStateStore_isActive();
 
-    console.log('CatalogEditor', formStatus);
-
-    if (draftId && formStatus === FormStatus.GENERATED) {
+    if (draftId && formStatus !== FormStatus.INIT) {
         return (
             <WrapperWithHeader
                 header={
@@ -34,6 +32,7 @@ function CatalogEditor({ messageId }: Props) {
                     </Typography>
                 }
                 hideBorder
+                mountClosed
             >
                 <ErrorBoundryWrapper>
                     <Typography sx={{ mb: 2 }}>

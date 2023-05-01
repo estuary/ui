@@ -560,7 +560,7 @@ const Collections: ResolvedIntlConfig['messages'] = {
 
 const endpointConfigHeader = `Endpoint Config`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
-    'entityCreate.catalogEditor.heading': `Specification Editor`,
+    'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,
     'entityCreate.docs.header': `Connector Help`,
     'entityCreate.cta.docs': `Connector Help`,
     'entityCreate.errors.collapseTitle': `View logs`,
@@ -595,7 +595,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
 
 const EntityEdit: ResolvedIntlConfig['messages'] = {
     'entityEdit.alert.detailsFormDisabled': `The details form cannot be edited at this time.`,
-    'entityEdit.alert.endpointConfigDisabled': `We are working to enable editing of the endpoint configuration form. In the meantime, edits can be made in the Specification Editor below.`,
+    'entityEdit.alert.endpointConfigDisabled': `Editing of the endpoint configuration form disabled.`,
 };
 
 const MonacoEditor: ResolvedIntlConfig['messages'] = {
@@ -615,11 +615,11 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.config.source.homepage': `Home`,
     'captureCreate.save.failed': `Capture creation failed. See below for details:`,
     'captureCreate.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
-    'captureCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the specification file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
+    'captureCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the specification file directly below. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
     'captureCreate.collections.heading': `Output Collections`,
     'captureCreate.collectionSelector.heading': `Collection Selector`,
-    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To make changes to the configuration please update the fields under the Config tab. To make changes to the schema click on Edit under the Specification tab.`,
+    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To update the configuration please update the fields under the Config tab. To update the schema click on Edit under the Specification tab.`,
 
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
     'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -655,7 +655,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
 
     'captureEdit.collections.heading': `Output Collections`,
     'captureEdit.collectionSelector.heading': `Collection Selector`,
-    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To make changes, you can enter new values in the this section of the form or edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
+    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To update the configuration please update the fields under the Config tab. To update the schema click on Edit under the Specification tab.`,
 
     'captureEdit.test.failedErrorTitle': `Configuration Test Failed`,
     'captureEdit.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -750,7 +750,7 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.test.inProgress': `Please wait while we try to connect to the destination.`,
 
     'materializationEdit.collectionSelector.heading': `Collection Selector`,
-    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To make changes, you can enter new values in the this section of the form or edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
+    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To update the configuration please update the fields under the Config tab. To update the schema click on Edit under the Specification tab.`,
 
     'materializationEdit.resourceConfig.heading': `Resource Configuration`,
     'materializationEdit.save.failedErrorTitle': `Materialization Save Failed`,
