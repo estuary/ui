@@ -156,19 +156,11 @@ const getInitialState = <T>(
     };
 };
 
-const editorStoreCache = new Map();
 export const createEditorStore = <T>(key: string) => {
-    if (!editorStoreCache.has(key)) {
-        editorStoreCache.set(
-            key,
-            create<EditorStoreState<T>>()(
-                devtools(
-                    (set, get) => getInitialState<T>(set, get),
-                    devtoolsOptions(key)
-                )
-            )
-        );
-    }
-
-    return editorStoreCache.get(key);
+    return create<EditorStoreState<T>>()(
+        devtools(
+            (set, get) => getInitialState<T>(set, get),
+            devtoolsOptions(key)
+        )
+    );
 };
