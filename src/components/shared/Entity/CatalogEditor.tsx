@@ -4,7 +4,12 @@ import { useEditorStore_id } from 'components/editor/Store/hooks';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { useEntityType } from 'context/EntityContext';
 import { FormattedMessage } from 'react-intl';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import {
+    useFormStateStore_isActive,
+    useFormStateStore_status,
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
+import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
 
 interface Props {
     messageId: string;
@@ -15,9 +20,12 @@ function CatalogEditor({ messageId }: Props) {
 
     const draftId = useEditorStore_id();
 
+    const formStatus = useFormStateStore_status();
     const formActive = useFormStateStore_isActive();
 
-    if (draftId) {
+    console.log('CatalogEditor', formStatus);
+
+    if (draftId && formStatus === FormStatus.GENERATED) {
         return (
             <WrapperWithHeader
                 header={
@@ -27,7 +35,7 @@ function CatalogEditor({ messageId }: Props) {
                 }
                 hideBorder
             >
-                <>
+                <ErrorBoundryWrapper>
                     <Typography sx={{ mb: 2 }}>
                         <FormattedMessage id={messageId} />
                     </Typography>
@@ -38,7 +46,7 @@ function CatalogEditor({ messageId }: Props) {
                             disabled={formActive}
                         />
                     </Paper>
-                </>
+                </ErrorBoundryWrapper>
             </WrapperWithHeader>
         );
     } else {
