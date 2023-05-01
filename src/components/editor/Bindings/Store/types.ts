@@ -62,8 +62,9 @@ export interface BindingsEditorState {
     setEditModeEnabled: (value: BindingsEditorState['editModeEnabled']) => void;
 
     inferSchemaResponse: Schema | null;
-    inferSchemaError: string | null;
-    inferSchemaDoneProcessing: boolean;
+    inferSchemaResponse_Keys: string[];
+    inferSchemaResponseError: string | null;
+    inferSchemaResponseDoneProcessing: boolean;
     inferSchemaResponseEmpty: boolean;
     populateInferSchemaResponse: (
         value: BindingsEditorState['inferSchemaResponse']

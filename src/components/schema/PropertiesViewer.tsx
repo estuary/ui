@@ -1,7 +1,7 @@
 import { Box, Collapse, Grid, Typography } from '@mui/material';
 import {
-    useBindingsEditorStore_inferSchemaError,
     useBindingsEditorStore_inferSchemaResponseEmpty,
+    useBindingsEditorStore_inferSchemaResponseError,
 } from 'components/editor/Bindings/Store/hooks';
 import MonacoEditor, {
     MonacoEditorProps,
@@ -18,7 +18,7 @@ interface Props {
 const EDITOR_HEIGHT = 404;
 
 function PropertiesViewer({ disabled, editorProps }: Props) {
-    const inferSchemaError = useBindingsEditorStore_inferSchemaError();
+    const inferSchemaError = useBindingsEditorStore_inferSchemaResponseError();
     const inferSchemaResponseEmpty =
         useBindingsEditorStore_inferSchemaResponseEmpty();
 

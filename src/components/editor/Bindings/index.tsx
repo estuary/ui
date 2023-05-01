@@ -49,6 +49,11 @@ function BindingsMultiEditor({
 }: Props) {
     const theme = useTheme();
 
+    const localStore = useMemo(
+        () => createEditorStore(EditorStoreNames.GENERAL),
+        []
+    );
+
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const entityType = useEntityType();
@@ -146,9 +151,7 @@ function BindingsMultiEditor({
             : draftSpecs.length === 0;
 
     return (
-        <LocalZustandProvider
-            createStore={createEditorStore(EditorStoreNames.GENERAL)}
-        >
+        <LocalZustandProvider createStore={localStore}>
             <Typography sx={{ mb: 2 }}>
                 <FormattedMessage
                     id={`${messagePrefix}.collectionSelector.instructions`}

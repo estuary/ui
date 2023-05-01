@@ -982,6 +982,7 @@ const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
     'keyAutoComplete.keys.missing.title': `Key is empty`,
     'keyAutoComplete.keys.missing.message': `Please provide a key before continuing or you may face issues.`,
     'keyAutoComplete.noOptions.message': `Without a valid schema we cannot provide options for the key. Please fix schema to continue editing.`,
+    'keyAutoComplete.noUsableKeys.message': `No fields in the schema are valid keys. Please update schema to continue editing.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {

@@ -1,14 +1,14 @@
 import { arrayMove } from '@dnd-kit/sortable';
 import { Autocomplete, Grid, TextField } from '@mui/material';
 import {
-    useBindingsEditorStore_inferSchemaDoneProcessing,
-    useBindingsEditorStore_inferSchemaResponse,
     useBindingsEditorStore_inferSchemaResponseEmpty,
+    useBindingsEditorStore_inferSchemaResponse_Keys,
 } from 'components/editor/Bindings/Store/hooks';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { useEntityType } from 'context/EntityContext';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { hasLength } from 'utils/misc-utils';
 import ReadOnly from './ReadOnly';
 import SortableTags from './SortableTags';
 
@@ -22,14 +22,11 @@ interface Props {
     ) => PromiseLike<any>;
 }
 
-const typesAllowedAsKeys = ['string', 'integer', 'boolean'];
-
 function KeyAutoComplete({ disabled, onChange, value }: Props) {
     // We want a local copy so that the display is updated right away when the user
     //  is done dragging. Otherwise, the item being dragged kind flies around when
     //  put in a new location
     const [localCopyValue, setLocalCopyValue] = useState<string[]>([]);
-    const [keys, setKeys] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState('');
 
     // We only want to all edit during Capture create/edit.
@@ -37,67 +34,32 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
     const editKeyAllowed = entityType === 'capture';
 
     // Need the response so we know the options
-    const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
-    const inferSchemaDoneProcessing =
-        useBindingsEditorStore_inferSchemaDoneProcessing();
     const inferSchemaResponseEmpty =
         useBindingsEditorStore_inferSchemaResponseEmpty();
+    const keys = useBindingsEditorStore_inferSchemaResponse_Keys();
 
     // Make sure we keep our local copy up to date
     useEffect(() => {
         setLocalCopyValue(value);
     }, [value]);
 
-    // Run through the inferSchemaResponse to filter out fields
-    //  that cannot be keys and then populate the list of possible
-    //  keys.
-    useEffect(() => {
-        let inferredProperties = [];
-        if (!disabled && !inferSchemaResponseEmpty) {
-            // Infer the properties with WebFlow and then filter/map them for the dropdown
-            //  We will check if this field:
-            //      must exist
-            //      has a single known type
-            //      has an allowed type
-            inferredProperties = inferSchemaResponse
-                ?.filter((inferredProperty: any) => {
-                    const interrefPropertyTypes = inferredProperty.types;
-                    return (
-                        inferredProperty.exists === 'must' &&
-                        interrefPropertyTypes.length === 1 &&
-                        typesAllowedAsKeys.some((key) =>
-                            interrefPropertyTypes.includes(key)
-                        )
-                    );
-                })
-                .map(
-                    // We only care about the pointer string at this point
-                    (filteredInferredProperty: any) =>
-                        filteredInferredProperty.pointer
-                );
-        }
-
-        setKeys(inferredProperties);
-    }, [disabled, inferSchemaResponse, inferSchemaResponseEmpty]);
-
     // Store off variables for when this should be in read only mode
+    const noUsableKeys = !hasLength(keys);
     const changeHandler = editKeyAllowed ? onChange : undefined;
     const disableInput = editKeyAllowed ? disabled : false;
+    const showEditErrorState = inferSchemaResponseEmpty || noUsableKeys;
 
-    console.log('key auto complete', {
-        inferSchemaDoneProcessing,
-        inferSchemaResponse,
-        inferSchemaMissing: inferSchemaResponseEmpty,
+    console.log('>>>>>>>>LKJ', {
+        noUsableKeys,
+        keys,
+        showEditErrorState,
+        inferSchemaResponseEmpty,
     });
 
     // Loading state and we do not want to stop here if
     // the inferSchemaMissing error is hit because we'll handle
     // that below by showing the error and input in an error state
-    if (!inferSchemaResponseEmpty && !disabled && keys.length === 0) {
-        console.log('return null', {
-            keys,
-            disabled,
-        });
+    if (!showEditErrorState && !disabled && keys.length === 0) {
         return null;
     }
 
@@ -114,6 +76,9 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 {...autoCompleteDefaults_Virtual_Multiple}
                 disabled={inferSchemaResponseEmpty}
                 inputValue={inputValue}
+                isOptionEqualToValue={(option, tagValue) => {
+                    return showEditErrorState ? false : option === tagValue;
+                }}
                 onChange={changeHandler}
                 onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
@@ -154,10 +119,12 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                         <TextField
                             {...params}
                             disabled={inferSchemaResponseEmpty || disableInput}
-                            error={inferSchemaResponseEmpty}
+                            error={showEditErrorState}
                             helperText={
                                 inferSchemaResponseEmpty ? (
                                     <FormattedMessage id="keyAutoComplete.noOptions.message" />
+                                ) : noUsableKeys ? (
+                                    <FormattedMessage id="keyAutoComplete.noUsableKeys.message" />
                                 ) : (
                                     <FormattedMessage id="schemaEditor.key.helper" />
                                 )

@@ -4,7 +4,6 @@ import {
     useContext,
 } from 'react';
 import { StoreName } from 'stores/names';
-import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
 
 interface LocalZustandProviderProps {
@@ -18,10 +17,9 @@ export const LocalZustandProvider = ({
     children,
     createStore,
 }: LocalZustandProviderProps) => {
-    const store = useConstant(() => createStore);
-
+    console.log('local store', { createStore });
     return (
-        <LocalZustandContext.Provider value={store}>
+        <LocalZustandContext.Provider value={createStore}>
             {children}
         </LocalZustandContext.Provider>
     );

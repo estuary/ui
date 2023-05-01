@@ -15,6 +15,7 @@ export enum EditorStoreNames {
     CAPTURE = 'capture_editor_store',
     GENERAL = 'general_editor_store',
     BINDINGS = 'bindings_editor_store',
+    SPECIFICATION = 'specification_editor_store',
     MATERIALIZATION = 'materialization_editor_store',
 }
 

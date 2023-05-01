@@ -221,13 +221,34 @@ export const useBindingsEditorStore_setEditModeEnabled = () => {
     >(getStoreName(entityType), (state) => state.setEditModeEnabled);
 };
 
-export const useBindingsEditorStore_inferSchemaDoneProcessing = () => {
+export const useBindingsEditorStore_inferSchemaResponse = () => {
     const entityType = useEntityType();
 
     return useZustandStore<
         BindingsEditorState,
-        BindingsEditorState['inferSchemaDoneProcessing']
-    >(getStoreName(entityType), (state) => state.inferSchemaDoneProcessing);
+        BindingsEditorState['inferSchemaResponse']
+    >(getStoreName(entityType), (state) => state.inferSchemaResponse);
+};
+
+export const useBindingsEditorStore_inferSchemaResponse_Keys = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['inferSchemaResponse_Keys']
+    >(getStoreName(entityType), (state) => state.inferSchemaResponse_Keys);
+};
+
+export const useBindingsEditorStore_inferSchemaResponseDoneProcessing = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['inferSchemaResponseDoneProcessing']
+    >(
+        getStoreName(entityType),
+        (state) => state.inferSchemaResponseDoneProcessing
+    );
 };
 
 export const useBindingsEditorStore_inferSchemaResponseEmpty = () => {
@@ -239,22 +260,13 @@ export const useBindingsEditorStore_inferSchemaResponseEmpty = () => {
     >(getStoreName(entityType), (state) => state.inferSchemaResponseEmpty);
 };
 
-export const useBindingsEditorStore_inferSchemaResponse = () => {
+export const useBindingsEditorStore_inferSchemaResponseError = () => {
     const entityType = useEntityType();
 
     return useZustandStore<
         BindingsEditorState,
-        BindingsEditorState['inferSchemaResponse']
-    >(getStoreName(entityType), (state) => state.inferSchemaResponse);
-};
-
-export const useBindingsEditorStore_inferSchemaError = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['inferSchemaError']
-    >(getStoreName(entityType), (state) => state.inferSchemaError);
+        BindingsEditorState['inferSchemaResponseError']
+    >(getStoreName(entityType), (state) => state.inferSchemaResponseError);
 };
 
 export const useBindingsEditorStore_populateInferSchemaResponse = () => {

@@ -17,6 +17,8 @@ import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
+const typesAllowedAsKeys = ['string', 'integer', 'boolean'];
+
 const processDraftSpecResponse = (
     draftSpecResponse: CallSupabaseResponse<any>,
     setOpen: Dispatch<SetStateAction<boolean>>,
@@ -87,9 +89,10 @@ const getInitialStateData = (): Pick<
     | 'schemaUpdated'
     | 'editModeEnabled'
     | 'inferSchemaResponse'
-    | 'inferSchemaError'
-    | 'inferSchemaDoneProcessing'
+    | 'inferSchemaResponseError'
+    | 'inferSchemaResponseDoneProcessing'
     | 'inferSchemaResponseEmpty'
+    | 'inferSchemaResponse_Keys'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -102,8 +105,9 @@ const getInitialStateData = (): Pick<
     schemaUpdated: true,
     editModeEnabled: false,
     inferSchemaResponse: null,
-    inferSchemaError: null,
-    inferSchemaDoneProcessing: false,
+    inferSchemaResponse_Keys: [],
+    inferSchemaResponseError: null,
+    inferSchemaResponseDoneProcessing: false,
     inferSchemaResponseEmpty: false,
 });
 
@@ -307,26 +311,47 @@ const getInitialState = (
     },
 
     populateInferSchemaResponse: (schema) => {
+        const allowedToBeKeys: string[] = [];
+
         const populateState = (
             dataVal: BindingsEditorState['inferSchemaResponse'],
-            errorVal: BindingsEditorState['inferSchemaError']
+            errorVal: BindingsEditorState['inferSchemaResponseError']
         ) => {
             const hasResponse = dataVal && dataVal.length > 0;
 
             if (hasResponse) {
-                dataVal = dataVal?.filter((inferredProperty: any) => {
-                    // If there is a blank pointer it cannot be used
-                    return hasLength(inferredProperty.pointer);
-                });
+                dataVal = dataVal
+                    ?.filter((inferredProperty: any) => {
+                        // If there is a blank pointer it cannot be used
+                        return hasLength(inferredProperty.pointer);
+                    })
+                    .map((inferredProperty: any) => {
+                        const interrefPropertyTypes = inferredProperty.types;
+                        const isValidKey = Boolean(
+                            inferredProperty.exists === 'must' &&
+                                interrefPropertyTypes.length === 1 &&
+                                typesAllowedAsKeys.some((key) =>
+                                    interrefPropertyTypes.includes(key)
+                                )
+                        );
+
+                        if (isValidKey) {
+                            allowedToBeKeys.push(inferredProperty.pointer);
+                        }
+
+                        inferredProperty.allowedToBeKey = isValidKey;
+                        return inferredProperty;
+                    });
             }
 
             // Save the values into the store
             set(
                 produce((state: BindingsEditorState) => {
-                    state.inferSchemaError = errorVal;
+                    state.inferSchemaResponseError = errorVal;
                     state.inferSchemaResponse = dataVal;
-                    state.inferSchemaDoneProcessing = true;
+                    state.inferSchemaResponseDoneProcessing = true;
                     state.inferSchemaResponseEmpty = !hasResponse;
+                    state.inferSchemaResponse_Keys = allowedToBeKeys;
                 }),
                 false,
                 'Infere Schema Populated'
@@ -335,7 +360,7 @@ const getInitialState = (
 
         set(
             produce((state: BindingsEditorState) => {
-                state.inferSchemaDoneProcessing = true;
+                state.inferSchemaResponseDoneProcessing = true;
             }),
             false,
             'Restting inferSchemaDoneProcessing flag'

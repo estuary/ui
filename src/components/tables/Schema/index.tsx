@@ -1,7 +1,7 @@
 import { Box, Table, TableContainer } from '@mui/material';
 import {
-    useBindingsEditorStore_inferSchemaDoneProcessing,
     useBindingsEditorStore_inferSchemaResponse,
+    useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_inferSchemaResponseEmpty,
 } from 'components/editor/Bindings/Store/hooks';
 import { useEffect, useState } from 'react';
@@ -39,7 +39,7 @@ function SchemaPropertiesTable() {
 
     const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
     const inferSchemaDoneProcessing =
-        useBindingsEditorStore_inferSchemaDoneProcessing();
+        useBindingsEditorStore_inferSchemaResponseDoneProcessing();
     const inferSchemaResponseEmpty =
         useBindingsEditorStore_inferSchemaResponseEmpty();
 
