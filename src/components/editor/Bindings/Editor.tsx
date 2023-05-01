@@ -1,6 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import CollectionSchemaEditor from 'components/collection/schema/Editor';
+import CollectionSchemaEditorSkeleton from 'components/collection/schema/Editor/Skeleton';
 import MessageWithLink from 'components/content/MessageWithLink';
 import ControlledEditor from 'components/editor/Bindings/ControlledEditor';
 import SchemaInferenceButton from 'components/editor/Bindings/SchemaInference/Button';
@@ -10,7 +11,6 @@ import {
     useBindingsEditorStore_schemaUpdateErrored,
 } from 'components/editor/Bindings/Store/hooks';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
-import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_setCurrentCatalog,
@@ -29,8 +29,6 @@ interface Props {
     skeleton: ReactNode;
     readOnly?: boolean;
 }
-
-const EDITOR_HEIGHT = 404;
 
 function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const initializeCollectionDraft = useInitializeCollectionDraft();
@@ -151,9 +149,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                     <ControlledEditor />
                                 )
                             ) : (
-                                <MonacoEditorSkeleton
-                                    editorHeight={EDITOR_HEIGHT}
-                                />
+                                <CollectionSchemaEditorSkeleton />
                             )}
                         </Stack>
                     ) : (
