@@ -49,13 +49,6 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
     const disableInput = editKeyAllowed ? disabled : false;
     const showEditErrorState = inferSchemaResponseEmpty || noUsableKeys;
 
-    console.log('>>>>>>>>LKJ', {
-        noUsableKeys,
-        keys,
-        showEditErrorState,
-        inferSchemaResponseEmpty,
-    });
-
     // Loading state and we do not want to stop here if
     // the inferSchemaMissing error is hit because we'll handle
     // that below by showing the error and input in an error state

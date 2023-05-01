@@ -71,33 +71,15 @@ const getInitialState = <T>(
         },
 
         setSpecs: (newVal) => {
-            const { currentCatalog, specs } = get();
+            const { specs } = get();
             set(
                 produce((state) => {
-                    console.log('specs', {
-                        get: specs,
-                        state: state.specs,
-                        newVal,
-                    });
-
                     if (newVal && newVal.length > 0) {
+                        console.log('state', state.specs);
+                        console.log('get', specs);
                         if (specs === null || newVal.length === 1) {
                             state.currentCatalog = newVal[0];
-                        } else {
-                            // TODO (collection editor) is this needed?
-                            specs.some((val: any) => {
-                                if (
-                                    val.catalog_name !==
-                                    currentCatalog?.catalog_name
-                                ) {
-                                    return false;
-                                }
-
-                                state.currentCatalog = val;
-                                return true;
-                            });
                         }
-
                         state.specs = newVal;
                     }
                 }),

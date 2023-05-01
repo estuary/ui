@@ -44,10 +44,6 @@ function SchemaPropertiesTable() {
         useBindingsEditorStore_inferSchemaResponseEmpty();
 
     useEffect(() => {
-        console.log('ue', {
-            inferSchemaDoneProcessing,
-            inferSchemaResponse,
-        });
         if (inferSchemaDoneProcessing) {
             if (inferSchemaResponse && inferSchemaResponse.length > 0) {
                 setTableState({ status: TableStatuses.DATA_FETCHED });

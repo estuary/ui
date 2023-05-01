@@ -17,7 +17,6 @@ export const LocalZustandProvider = ({
     children,
     createStore,
 }: LocalZustandProviderProps) => {
-    console.log('local store', { createStore });
     return (
         <LocalZustandContext.Provider value={createStore}>
             {children}
