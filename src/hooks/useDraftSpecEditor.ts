@@ -35,11 +35,14 @@ function useDraftSpecEditor(
         change: async (
             newVal: any,
             catalogName: string,
+            specType: string,
             propUpdating?: string
         ) => {
             if (draftSpec) {
                 if (propUpdating) {
                     draftSpec.spec[propUpdating] = newVal;
+                } else {
+                    draftSpec.spec = newVal;
                 }
 
                 const updateResponse = await modifyDraftSpec(draftSpec.spec, {

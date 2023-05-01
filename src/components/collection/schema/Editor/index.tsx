@@ -59,15 +59,15 @@ function CollectionSchemaEditor({ entityName }: Props) {
                     value={draftSpec.spec.key}
                     disabled={!editModeEnabled}
                     onChange={async (_event, keys) => {
-                        await onChange(keys, entityName, 'key');
+                        await onChange(keys, entityName, 'collection', 'key');
                     }}
                 />
                 <PropertiesViewer
                     disabled={!editModeEnabled}
                     editorProps={{
-                        onChange: async (value: Schema, path, _type, scope) => {
+                        onChange: async (value: Schema, path, type, scope) => {
                             if (scope) {
-                                await onChange(value, path, scope);
+                                await onChange(value, path, type, scope);
                             } else {
                                 console.error(
                                     'Unable to update schema due to missing scope'
