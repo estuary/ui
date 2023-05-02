@@ -7,6 +7,31 @@ on:
         branches: [main]
 
 jobs:
+    cacheNPM:
+        name: NPM Install
+        id: npm-install-cache
+
+        runs-on: ubuntu-latest
+        steps:
+            - name: Stop previous
+              uses: styfle/cancel-workflow-action@0.11.0
+
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+                  cache: 'npm'
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '@estuary'
+
+            - name: Get Deps
+              run: npm install
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     prettier:
         name: Prettier
 
@@ -22,14 +47,10 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
-                  registry-url: 'https://npm.pkg.github.com'
-                  scope: '@estuary'
-                  # token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Get Deps
+              if: steps.cnpm-install-cache.outputs.cache-hit != 'true'
               run: npm install
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Prettier...ing
               run: npm run format
@@ -51,6 +72,7 @@ jobs:
                   node-version: 16
 
             - name: Get Deps
+              if: steps.cnpm-install-cache.outputs.cache-hit != 'true'
               run: npm install
 
             - name: Linting
@@ -73,6 +95,7 @@ jobs:
                   node-version: 16
 
             - name: Get Deps
+              if: steps.cnpm-install-cache.outputs.cache-hit != 'true'
               run: npm install
 
             - name: Type Checking
@@ -94,6 +117,7 @@ jobs:
                   node-version: 16
 
             - name: Get Deps
+              if: steps.cnpm-install-cache.outputs.cache-hit != 'true'
               run: npm install
 
             - name: Run jest
@@ -124,6 +148,7 @@ jobs:
                   node-version: 16
 
             - name: Get Deps
+              if: steps.cnpm-install-cache.outputs.cache-hit != 'true'
               run: npm install
 
             - name: Create a release build
