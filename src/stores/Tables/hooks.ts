@@ -8,7 +8,7 @@ import {
 } from 'use-query-params';
 import { getPagination } from '../../components/tables/EntityTable';
 
-export type TablePrefix = 
+export type TablePrefix =
     | 'ag' // access grants
     | 'pr' // prefixes
     | 'sm' // storage mappings
