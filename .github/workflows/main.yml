@@ -9,8 +9,6 @@ on:
 jobs:
     cacheNPM:
         name: NPM Install
-        id: npm-install-cache
-
         runs-on: ubuntu-latest
         steps:
             - name: Stop previous
@@ -34,7 +32,7 @@ jobs:
 
     prettier:
         name: Prettier
-
+        needs: cacheNPM
         runs-on: ubuntu-latest
         steps:
             - name: Stop previous
@@ -47,17 +45,13 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
-
-            - name: Get Deps
-              if: steps.cnpm-install-cache.outputs.cache-hit != 'true'
-              run: npm install
 
             - name: Prettier...ing
               run: npm run format
 
     lint:
         name: ESLint
-
+        needs: cacheNPM
         runs-on: ubuntu-latest
         steps:
             - name: Stop previous
@@ -70,17 +64,13 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
-
-            - name: Get Deps
-              if: steps.cnpm-install-cache.outputs.cache-hit != 'true'
-              run: npm install
 
             - name: Linting
               run: npm run lint
 
     typecheck:
         name: TypeScript
-
+        needs: cacheNPM
         runs-on: ubuntu-latest
         steps:
             - name: Stop previous
@@ -93,16 +83,13 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
-
-            - name: Get Deps
-              if: steps.cnpm-install-cache.outputs.cache-hit != 'true'
-              run: npm install
 
             - name: Type Checking
               run: npm run typecheck
 
     test:
         name: Tests
+        needs: cacheNPM
         runs-on: ubuntu-latest
         steps:
             - name: Stop previous
@@ -115,10 +102,6 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
-
-            - name: Get Deps
-              if: steps.cnpm-install-cache.outputs.cache-hit != 'true'
-              run: npm install
 
             - name: Run jest
               run: npm run test
@@ -126,6 +109,7 @@ jobs:
     # Deployment steps undertaken on a merge to `main`.
     deploy:
         name: Deploy
+        needs: cacheNPM
         runs-on: ubuntu-latest
         if: ${{ github.ref == 'refs/heads/main' }}
 
@@ -146,10 +130,6 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
-
-            - name: Get Deps
-              if: steps.cnpm-install-cache.outputs.cache-hit != 'true'
-              run: npm install
 
             - name: Create a release build
               run: npm run build
