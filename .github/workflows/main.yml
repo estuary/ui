@@ -46,6 +46,8 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
+                  cache: 'npm'
+                  cache-dependency-path: '**/package-lock.json'
 
             - name: Prettier...ing
               run: npm run format
@@ -65,6 +67,8 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
+                  cache: 'npm'
+                  cache-dependency-path: '**/package-lock.json'
 
             - name: Linting
               run: npm run lint
@@ -84,6 +88,8 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
+                  cache: 'npm'
+                  cache-dependency-path: '**/package-lock.json'
 
             - name: Type Checking
               run: npm run typecheck
@@ -103,6 +109,8 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
+                  cache: 'npm'
+                  cache-dependency-path: '**/package-lock.json'
 
             - name: Run jest
               run: npm run test
@@ -131,6 +139,8 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
+                  cache: 'npm'
+                  cache-dependency-path: '**/package-lock.json'
 
             - name: Create a release build
               run: npm run build
