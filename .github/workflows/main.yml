@@ -7,8 +7,8 @@ on:
         branches: [main]
 
 jobs:
-    cacheNPM:
-        name: NPM Install
+    setup:
+        name: Setup build process
         runs-on: ubuntu-latest
         steps:
             - name: Stop previous
@@ -33,22 +33,9 @@ jobs:
 
     prettier:
         name: Prettier
-        needs: cacheNPM
+        needs: setup
         runs-on: ubuntu-latest
         steps:
-            - name: Stop previous
-              uses: styfle/cancel-workflow-action@0.11.0
-
-            - name: Checkout
-              uses: actions/checkout@v3
-
-            - name: Setup Node
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 16
-                  cache: 'npm'
-                  cache-dependency-path: '**/package-lock.json'
-
             - name: Get Deps
               run: npm install
 
@@ -57,22 +44,9 @@ jobs:
 
     lint:
         name: ESLint
-        needs: cacheNPM
+        needs: setup
         runs-on: ubuntu-latest
         steps:
-            - name: Stop previous
-              uses: styfle/cancel-workflow-action@0.11.0
-
-            - name: Checkout
-              uses: actions/checkout@v3
-
-            - name: Setup Node
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 16
-                  cache: 'npm'
-                  cache-dependency-path: '**/package-lock.json'
-
             - name: Get Deps
               run: npm install
 
@@ -81,22 +55,9 @@ jobs:
 
     typecheck:
         name: TypeScript
-        needs: cacheNPM
+        needs: setup
         runs-on: ubuntu-latest
         steps:
-            - name: Stop previous
-              uses: styfle/cancel-workflow-action@0.11.0
-
-            - name: Checkout
-              uses: actions/checkout@v3
-
-            - name: Setup Node
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 16
-                  cache: 'npm'
-                  cache-dependency-path: '**/package-lock.json'
-
             - name: Get Deps
               run: npm install
 
@@ -105,22 +66,9 @@ jobs:
 
     test:
         name: Tests
-        needs: cacheNPM
+        needs: setup
         runs-on: ubuntu-latest
         steps:
-            - name: Stop previous
-              uses: styfle/cancel-workflow-action@0.11.0
-
-            - name: Checkout
-              uses: actions/checkout@v3
-
-            - name: Setup Node
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 16
-                  cache: 'npm'
-                  cache-dependency-path: '**/package-lock.json'
-
             - name: Get Deps
               run: npm install
 
@@ -141,19 +89,6 @@ jobs:
             id-token: write
 
         steps:
-            - name: Stop previous
-              uses: styfle/cancel-workflow-action@0.11.0
-
-            - name: Checkout
-              uses: actions/checkout@v3
-
-            - name: Setup Node
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 16
-                  cache: 'npm'
-                  cache-dependency-path: '**/package-lock.json'
-
             - name: Get Deps
               run: npm install
 
