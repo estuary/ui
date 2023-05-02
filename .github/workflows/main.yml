@@ -31,48 +31,36 @@ jobs:
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    prettier:
-        name: Prettier
+    quality:
+        name: Checking Quality [types, lint, format, test]
         needs: setup
         runs-on: ubuntu-latest
         steps:
-            - name: Get Deps
-              run: npm install
+            - name: Stop previous
+              uses: styfle/cancel-workflow-action@0.11.0
 
-            - name: Prettier...ing
-              run: npm run format
+            - name: Checkout
+              uses: actions/checkout@v3
 
-    lint:
-        name: ESLint
-        needs: setup
-        runs-on: ubuntu-latest
-        steps:
-            - name: Get Deps
-              run: npm install
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+                  cache-dependency-path: '**/package-lock.json'
 
-            - name: Linting
-              run: npm run lint
-
-    typecheck:
-        name: TypeScript
-        needs: setup
-        runs-on: ubuntu-latest
-        steps:
             - name: Get Deps
               run: npm install
 
             - name: Type Checking
               run: npm run typecheck
 
-    test:
-        name: Tests
-        needs: setup
-        runs-on: ubuntu-latest
-        steps:
-            - name: Get Deps
-              run: npm install
+            - name: Linting
+              run: npm run lint
 
-            - name: Run jest
+            - name: Type Checking
+              run: npm run format
+
+            - name: Testing
               run: npm run test
 
     # Deployment steps undertaken on a merge to `main`.
@@ -89,6 +77,18 @@ jobs:
             id-token: write
 
         steps:
+            - name: Stop previous
+              uses: styfle/cancel-workflow-action@0.11.0
+
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+                  cache-dependency-path: '**/package-lock.json'
+
             - name: Get Deps
               run: npm install
 
