@@ -52,16 +52,16 @@ jobs:
             - name: Get Deps
               run: npm install
 
-            - name: Type Checking
+            - name: Typecheck
               run: npm run typecheck
 
             - name: Linting
               run: npm run lint
 
-            - name: Type Checking
+            - name: Prettier
               run: npm run format
 
-            - name: Testing
+            - name: Jest
               run: npm run test
 
     # Deployment steps undertaken on a merge to `main`.
