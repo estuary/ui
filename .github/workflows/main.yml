@@ -8,7 +8,7 @@ on:
 
 jobs:
     setup:
-        name: Setup build process
+        name: Setup Node/NPM
         runs-on: ubuntu-latest
         steps:
             - name: Stop previous
@@ -32,7 +32,7 @@ jobs:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     quality:
-        name: Checking Quality [types, lint, format, test]
+        name: Check Quality
         needs: setup
         runs-on: ubuntu-latest
         steps:
