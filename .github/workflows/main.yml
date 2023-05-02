@@ -22,6 +22,8 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
+                  # registry-url: '@estuary:registry=https://npm.pkg.github.com'
+                  token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Get Deps
               run: npm install
