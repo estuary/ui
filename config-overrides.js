@@ -1,5 +1,4 @@
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const webpack = require('webpack');
 
 // https://github.com/facebook/create-react-app/issues/11756#issuecomment-1016688275
 // Since WebPack 5 no longer polyfills NodeJS stuff we have to manually do it
