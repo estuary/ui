@@ -67,7 +67,7 @@ jobs:
     # Deployment steps undertaken on a merge to `main`.
     deploy:
         name: Deploy
-        needs: [prettier, lint, typecheck, test]
+        needs: quality
         runs-on: ubuntu-latest
         if: ${{ github.ref == 'refs/heads/main' }}
 
