@@ -2,11 +2,13 @@ import { Grid } from '@mui/material';
 import {
     useBindingsEditorStore_editModeEnabled,
     useBindingsEditorStore_populateInferSchemaResponse,
+    useBindingsEditorStore_schemaUpdated,
 } from 'components/editor/Bindings/Store/hooks';
 import KeyAutoComplete from 'components/schema/KeyAutoComplete';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
 import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
 import { useEffect, useState } from 'react';
+import { useUpdateEffect } from 'react-use';
 import { Schema } from 'types';
 
 export interface Props {
@@ -29,7 +31,7 @@ const getProperSchemaScope = (spec: any) => {
 };
 
 function CollectionSchemaEditor({ entityName }: Props) {
-    const { onChange, draftSpec } = useDraftSpecEditor(
+    const { onChange, draftSpec, mutate } = useDraftSpecEditor(
         entityName,
         'collection',
         true
@@ -38,6 +40,9 @@ function CollectionSchemaEditor({ entityName }: Props) {
     const [editorSchemaScope, setEditorSchemaScope] = useState<
         string | undefined
     >(undefined);
+
+    // We need to know the schema was updated so we can "reload" this section
+    const schemaUpdated = useBindingsEditorStore_schemaUpdated();
 
     const populateInferSchemaResponse =
         useBindingsEditorStore_populateInferSchemaResponse();
@@ -51,6 +56,14 @@ function CollectionSchemaEditor({ entityName }: Props) {
             populateInferSchemaResponse(draftSpec.spec[schemaScope]);
         }
     }, [draftSpec, populateInferSchemaResponse]);
+
+    useUpdateEffect(() => {
+        // If the schema is updated via the scheme inferrence
+        //  of CLI button we want to fire mutate and make sure we get the latest
+        if (schemaUpdated) {
+            void mutate();
+        }
+    }, [schemaUpdated]);
 
     if (draftSpec && entityName) {
         return (

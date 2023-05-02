@@ -114,6 +114,7 @@ function useDraftSpecEditor(
         onChange: handlers.change,
         draftSpec,
         isValidating,
+        mutate,
     };
 }
 
