@@ -49,6 +49,9 @@ jobs:
                   cache: 'npm'
                   cache-dependency-path: '**/package-lock.json'
 
+            - name: Get Deps
+              run: npm install
+
             - name: Prettier...ing
               run: npm run format
 
