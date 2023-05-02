@@ -2,6 +2,8 @@ import { DIRECTIVES } from 'directives/shared';
 import { UserClaims } from 'directives/types';
 import {
     CallSupabaseResponse,
+    handleFailure,
+    handleSuccess,
     insertSupabase,
     RPCS,
     supabaseClient,
@@ -17,7 +19,7 @@ import {
 } from 'types';
 
 export interface ExchangeResponse {
-    directive: Directive | null; //Only null so we can "fake" this respose below
+    directive: Directive | null; // Only null so we can "fake" this response below
     applied_directive: AppliedDirective<UserClaims>;
 }
 
@@ -122,9 +124,23 @@ const generateGrantDirective = (
     });
 };
 
+const getDirectiveByToken = async (token: string) => {
+    const data = await supabaseClient
+        .from(TABLES.DIRECTIVES)
+        .select(`spec,token`)
+        .eq('token', token)
+        .then(
+            handleSuccess<Pick<GrantDirective, 'spec' | 'token'>[]>,
+            handleFailure
+        );
+
+    return data;
+};
+
 export {
     exchangeBearerToken,
     generateGrantDirective,
     getAppliedDirectives,
+    getDirectiveByToken,
     submitDirective,
 };

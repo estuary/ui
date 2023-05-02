@@ -11,7 +11,7 @@ const SELECTED_DIRECTIVE = 'betaOnboard';
 
 // We need to pass the grants mutate and NOT the directive guards mutate
 //  because The Onboard guard is kind of like a "child guard" of the Tenant
-//  guard. This is only until all users to transinioned to haveing the
+//  guard. This is only until all users to transitioned to having the
 //  onboarding directive filled out. Once we remove this then we need to
 //  stop passing in the grantsMutate and pass the directiveGuard mutate.
 interface Props extends BaseComponentProps {
@@ -22,7 +22,7 @@ interface Props extends BaseComponentProps {
 function OnboardGuard({ children, forceDisplay, grantsMutate }: Props) {
     const { directive, loading, status } = useDirectiveGuard(
         SELECTED_DIRECTIVE,
-        forceDisplay
+        { forceNew: forceDisplay }
     );
 
     if (loading || status === null) {

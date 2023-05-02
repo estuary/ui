@@ -14,6 +14,7 @@ import { generateGrantDirective } from 'api/directives';
 import { unauthenticatedRoutes } from 'app/routes';
 import SingleLineCode from 'components/content/SingleLineCode';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { Cancel } from 'iconoir-react';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -141,7 +142,7 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
                                             response.data.length > 0
                                         ) {
                                             setLinkURL(
-                                                `${window.location.origin}${unauthenticatedRoutes.login.path}?someToken=${response.data[0].token}`
+                                                `${window.location.origin}${unauthenticatedRoutes.login.path}?${GlobalSearchParams.GRANT_TOKEN}=${response.data[0].token}`
                                             );
                                             setLinkCreated(true);
                                         }

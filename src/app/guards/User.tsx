@@ -1,6 +1,9 @@
 import { Auth } from '@supabase/ui';
 import { unauthenticatedRoutes } from 'app/routes';
 import FullPageSpinner from 'components/fullPage/Spinner';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import * as React from 'react';
 import { useEffect } from 'react';
 import 'react-reflex/styles.css';
@@ -9,6 +12,8 @@ import { identifyUser } from 'services/logrocket';
 import { BaseComponentProps } from 'types';
 
 function UserGuard({ children }: BaseComponentProps) {
+    const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
+
     const { user } = Auth.useUser();
 
     useEffect(() => {
@@ -22,7 +27,14 @@ function UserGuard({ children }: BaseComponentProps) {
             {user ? (
                 children
             ) : (
-                <Navigate to={unauthenticatedRoutes.login.path} replace />
+                <Navigate
+                    to={
+                        grantToken
+                            ? `${unauthenticatedRoutes.login.path}?${GlobalSearchParams.GRANT_TOKEN}=${grantToken}`
+                            : unauthenticatedRoutes.login.path
+                    }
+                    replace
+                />
             )}
         </React.Suspense>
     );

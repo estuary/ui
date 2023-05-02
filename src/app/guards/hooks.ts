@@ -9,7 +9,7 @@ import { AppliedDirective } from 'types';
 
 const useDirectiveGuard = (
     selectedDirective: keyof typeof DIRECTIVES,
-    forceNew?: boolean
+    options?: { forceNew?: boolean; token?: string }
 ) => {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -40,10 +40,14 @@ const useDirectiveGuard = (
         //   unfulfilled : user never exchanged a token before
         //   outdated    : user has exchanged AND submitted something before
         if (
-            (forceNew && directiveState === 'fulfilled') ||
+            (options?.forceNew && directiveState === 'fulfilled') ||
             directiveState === 'unfulfilled' ||
             directiveState === 'outdated'
         ) {
+            if (options?.token) {
+                DIRECTIVES[selectedDirective].token = options.token;
+            }
+
             const fetchDirective = async () => {
                 return exchangeBearerToken(DIRECTIVES[selectedDirective].token);
             };
@@ -73,7 +77,14 @@ const useDirectiveGuard = (
                 }
             );
         }
-    }, [directiveState, enqueueSnackbar, forceNew, intl, selectedDirective]);
+    }, [
+        directiveState,
+        enqueueSnackbar,
+        intl,
+        options?.forceNew,
+        options?.token,
+        selectedDirective,
+    ]);
 
     return useMemo(() => {
         if (directiveState === null) {

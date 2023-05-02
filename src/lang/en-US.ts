@@ -904,6 +904,9 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.origin.radio.email.label': `Email`,
     'tenant.origin.radio.gitHub.label': `GitHub`,
     'tenant.origin.radio.other.label': `Other`,
+
+    'tenant.grantDirective.error.header': `Technical Difficulties`,
+    'tenant.grantDirective.error.message': `A problem was encountered provisioning access to the requested tenant.`,
 };
 
 const Details: ResolvedIntlConfig['messages'] = {

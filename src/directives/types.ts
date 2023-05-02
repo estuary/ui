@@ -7,6 +7,7 @@ import { AppliedDirective, JoinedAppliedDirective } from 'types';
 export interface Directives {
     betaOnboard: DirectiveSettings<OnboardClaim>;
     clickToAccept: DirectiveSettings<ClickToAcceptClaim>;
+    grant: DirectiveSettings<GrantClaim>;
 }
 
 export type DirectiveStates =
@@ -19,12 +20,16 @@ export interface ClickToAcceptClaim {
     version: string;
 }
 
+export interface GrantClaim {
+    requestedPrefix: string;
+}
+
 export interface OnboardClaim {
     requestedTenant: string;
     survey: any;
 }
 
-export type UserClaims = ClickToAcceptClaim | OnboardClaim;
+export type UserClaims = ClickToAcceptClaim | GrantClaim | OnboardClaim;
 
 export interface DirectiveSettings<T> {
     token: string;

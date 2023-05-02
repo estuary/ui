@@ -165,6 +165,14 @@ export interface Directive {
     token: string;
 }
 
+export interface UserGrants {
+    capability: string;
+    object_role: string;
+    user_id: string;
+    id: string;
+    detail: string | null;
+}
+
 export interface Grants {
     capability: string;
     object_role: string;
