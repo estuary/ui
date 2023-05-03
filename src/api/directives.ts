@@ -124,6 +124,7 @@ const generateGrantDirective = (
             grantedPrefix: prefix,
             capability,
         },
+        uses_remaining: 1,
     });
 };
 
@@ -155,8 +156,8 @@ const getDirectiveByCatalogPrefix = (
         .select(`id,catalog_prefix,uses_remaining,spec,token,updated_at`, {
             count: 'exact',
         })
-        .or(prefixFilters);
-    // .neq('uses_remaining', 0);
+        .or(prefixFilters)
+        .eq('uses_remaining', 1);
 
     queryBuilder = defaultTableFilter<GrantDirective_AccessLinks>(
         queryBuilder,
