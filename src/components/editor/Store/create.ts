@@ -1,6 +1,6 @@
 import produce from 'immer';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
+import { create } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { EditorStatus, EditorStoreState } from './types';
 
@@ -24,8 +24,7 @@ const getInitialStateData = () => {
 };
 
 const getInitialState = <T>(
-    set: NamedSet<EditorStoreState<T>>,
-    get: StoreApi<EditorStoreState<T>>['getState']
+    set: NamedSet<EditorStoreState<T>>
 ): EditorStoreState<T> => {
     return {
         ...getInitialStateData(),
@@ -71,11 +70,10 @@ const getInitialState = <T>(
         },
 
         setSpecs: (newVal) => {
-            const { specs } = get();
             set(
                 produce((state) => {
                     if (newVal && newVal.length > 0) {
-                        if (specs === null || newVal.length === 1) {
+                        if (state.specs === null || newVal.length === 1) {
                             state.currentCatalog = newVal[0];
                         }
                         state.specs = newVal;
@@ -138,9 +136,6 @@ const getInitialState = <T>(
 
 export const createEditorStore = <T>(key: string) => {
     return create<EditorStoreState<T>>()(
-        devtools(
-            (set, get) => getInitialState<T>(set, get),
-            devtoolsOptions(key)
-        )
+        devtools((set) => getInitialState<T>(set), devtoolsOptions(key))
     );
 };
