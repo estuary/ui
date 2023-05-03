@@ -401,7 +401,7 @@ const getInitialState = (
 
         // Make sure we have an object
         if (!schemasToTest.every((schema) => isPlainObject(schema))) {
-            populateState(null, 'schemas must be an object');
+            populateState(null, 'schema must be an object');
             return;
         }
 
