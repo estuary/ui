@@ -41,6 +41,7 @@ export enum ResourceConfigStoreNames {
 }
 
 export enum SelectTableStoreNames {
+    ACCESS_GRANTS_LINKS = 'AccessGrants-Selectable-Table-Links',
     ACCESS_GRANTS_USERS = 'AccessGrants-Selectable-Table-Users',
     ACCESS_GRANTS_PREFIXES = 'AccessGrants-Selectable-Table-Prefixes',
     BILLING = 'Billing-Selectable-Table',

@@ -468,6 +468,15 @@ const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrantsTable.prefixes.filterLabel': `Filter Prefix or Object`,
     'accessGrants.message1': `No results found.`,
     'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
+
+    'accessGrants.table.accessLinks.title': `Access Links`,
+    'accessGrants.table.accessLinks.label.filter': `Filter Prefix or Capability`,
+    'accessGrants.table.accessLinks.label.provisioningPrefix': `Provisioner`,
+    'accessGrants.table.accessLinks.label.grantedPrefix': `Prefix`,
+    'accessGrants.table.accessLinks.label.capability': `Capability`,
+    'accessGrants.table.accessLinks.label.token': `Token`,
+    'accessGrants.table.accessLinks.label.lastUpdated': `Last Updated`,
+    'accessGrants.table.accessLinks.label.actions': `Actions`,
 };
 
 const StorageMappings: ResolvedIntlConfig['messages'] = {

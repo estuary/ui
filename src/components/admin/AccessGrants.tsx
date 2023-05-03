@@ -3,7 +3,7 @@ import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
 import MessageWithLink from 'components/content/MessageWithLink';
 import AccessGrantsTable from 'components/tables/AccessGrants';
-import AccessLinksButton from 'components/tables/AccessGrants/AccessLinks/Button';
+import AccessLinksButton from 'components/tables/AccessGrants/AccessLinks/Dialog/Button';
 import usePageTitle from 'hooks/usePageTitle';
 import { FormattedMessage } from 'react-intl';
 

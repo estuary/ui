@@ -14,6 +14,7 @@ import { generateGrantDirective } from 'api/directives';
 import { unauthenticatedRoutes } from 'app/routes';
 import SingleLineCode from 'components/content/SingleLineCode';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
+import AccessLinksTable from 'components/tables/AccessGrants/AccessLinks';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { Cancel } from 'iconoir-react';
 import { Dispatch, SetStateAction, useState } from 'react';
@@ -76,7 +77,7 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
     return (
         <Dialog
             open={open}
-            maxWidth="sm"
+            maxWidth="md"
             fullWidth
             aria-labelledby={TITLE_ID}
             onClose={handlers.closeDialog}
@@ -159,6 +160,8 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
                     <Collapse in={linkCreated}>
                         <SingleLineCode value={linkURL} />
                     </Collapse>
+
+                    <AccessLinksTable prefixes={tenants} />
                 </Stack>
             </DialogContent>
         </Dialog>

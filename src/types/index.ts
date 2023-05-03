@@ -106,6 +106,21 @@ export interface GrantDirective {
     token: string;
 }
 
+export interface GrantDirective_AccessLinks {
+    id: string;
+    updated_at: string;
+    catalog_prefix: string;
+    uses_remaining: number | null;
+    spec: {
+        type: string;
+        capability: string;
+        grantedPrefix: string;
+    };
+    token: string;
+    ['spec->>capability']: undefined;
+    ['spec->>grantedPrefix']: undefined;
+}
+
 export interface StorageMappingStore {
     provider: string;
     bucket: string;

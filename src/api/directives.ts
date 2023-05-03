@@ -2,10 +2,12 @@ import { DIRECTIVES } from 'directives/shared';
 import { UserClaims } from 'directives/types';
 import {
     CallSupabaseResponse,
+    defaultTableFilter,
     handleFailure,
     handleSuccess,
     insertSupabase,
     RPCS,
+    SortingProps,
     supabaseClient,
     TABLES,
     updateSupabase,
@@ -14,6 +16,7 @@ import {
     AppliedDirective,
     Directive,
     GrantDirective,
+    GrantDirective_AccessLinks,
     JoinedAppliedDirective,
     Schema,
 } from 'types';
@@ -137,10 +140,40 @@ const getDirectiveByToken = async (token: string) => {
     return data;
 };
 
+const getDirectiveByCatalogPrefix = (
+    prefixes: string[],
+    pagination: any,
+    searchQuery: any,
+    sorting: SortingProps<any>[]
+) => {
+    const prefixFilters = prefixes
+        .map((prefix) => `catalog_prefix.ilike.${prefix}%`)
+        .join(',');
+
+    let queryBuilder = supabaseClient
+        .from(TABLES.DIRECTIVES)
+        .select(`id,catalog_prefix,uses_remaining,spec,token,updated_at`, {
+            count: 'exact',
+        })
+        .or(prefixFilters);
+    // .neq('uses_remaining', 0);
+
+    queryBuilder = defaultTableFilter<GrantDirective_AccessLinks>(
+        queryBuilder,
+        ['catalog_prefix', `spec->>capability`, `spec->>grantedPrefix`],
+        searchQuery,
+        sorting,
+        pagination
+    );
+
+    return queryBuilder;
+};
+
 export {
     exchangeBearerToken,
     generateGrantDirective,
     getAppliedDirectives,
+    getDirectiveByCatalogPrefix,
     getDirectiveByToken,
     submitDirective,
 };
