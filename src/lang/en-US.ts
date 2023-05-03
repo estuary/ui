@@ -470,6 +470,7 @@ const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
 
     'accessGrants.table.accessLinks.title': `Access Links`,
+    'accessGrants.table.accessLinks.cta.generate': `Create Links`,
     'accessGrants.table.accessLinks.label.filter': `Filter Prefix or Capability`,
     'accessGrants.table.accessLinks.label.provisioningPrefix': `Provisioner`,
     'accessGrants.table.accessLinks.label.grantedPrefix': `Prefix`,

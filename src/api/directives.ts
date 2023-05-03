@@ -124,7 +124,6 @@ const generateGrantDirective = (
             grantedPrefix: prefix,
             capability,
         },
-        uses_remaining: 1,
     });
 };
 
@@ -142,6 +141,7 @@ const getDirectiveByToken = async (token: string) => {
 };
 
 const getDirectiveByCatalogPrefix = (
+    directiveType: keyof typeof DIRECTIVES,
     prefixes: string[],
     pagination: any,
     searchQuery: any,
@@ -157,7 +157,7 @@ const getDirectiveByCatalogPrefix = (
             count: 'exact',
         })
         .or(prefixFilters)
-        .eq('uses_remaining', 1);
+        .eq('spec->>type', directiveType);
 
     queryBuilder = defaultTableFilter<GrantDirective_AccessLinks>(
         queryBuilder,

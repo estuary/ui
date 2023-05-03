@@ -55,12 +55,18 @@ function AccessLinksTable({ prefixes }: Props) {
     } = useTableState('ali', 'updated_at', 'desc');
 
     const query = useMemo(() => {
-        return getDirectiveByCatalogPrefix(prefixes, pagination, searchQuery, [
-            {
-                col: columnToSort,
-                direction: sortDirection,
-            },
-        ]);
+        return getDirectiveByCatalogPrefix(
+            'grant',
+            prefixes,
+            pagination,
+            searchQuery,
+            [
+                {
+                    col: columnToSort,
+                    direction: sortDirection,
+                },
+            ]
+        );
     }, [columnToSort, pagination, prefixes, searchQuery, sortDirection]);
 
     const headerKey = 'accessGrants.table.accessLinks.title';

@@ -1,12 +1,11 @@
 import {
-    Box,
     Button,
     Collapse,
     Dialog,
     DialogContent,
     DialogTitle,
+    Grid,
     IconButton,
-    Stack,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -33,7 +32,11 @@ interface GrantConfig {
     capability: string;
 }
 
-const capabilityOptions = ['read', 'write', 'admin'];
+// The write capability should be obscured to the user. It is more challenging
+// for a user to understand the nuances of this grant and likely will not be used
+// outside of advanced cases.
+
+const capabilityOptions = ['admin', 'read'];
 
 function SharePrefixDialog({ tenants, open, setOpen }: Props) {
     const theme = useTheme();
@@ -109,26 +112,30 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
                     <FormattedMessage id="admin.users.sharePrefix.message" />
                 </Typography>
 
-                <Stack spacing={2}>
-                    <AutocompletedField
-                        label={intl.formatMessage({
-                            id: 'common.tenant',
-                        })}
-                        options={tenants}
-                        defaultValue={tenants[0]}
-                        changeHandler={handlers.setGrantPrefix}
-                    />
+                <Grid container spacing={2} sx={{ mb: 5 }}>
+                    <Grid item xs={7}>
+                        <AutocompletedField
+                            label={intl.formatMessage({
+                                id: 'common.tenant',
+                            })}
+                            options={tenants}
+                            defaultValue={tenants[0]}
+                            changeHandler={handlers.setGrantPrefix}
+                        />
+                    </Grid>
 
-                    <AutocompletedField
-                        label={intl.formatMessage({
-                            id: 'admin.users.sharePrefix.label.capability',
-                        })}
-                        options={capabilityOptions}
-                        defaultValue={capabilityOptions[0]}
-                        changeHandler={handlers.setGrantCapability}
-                    />
+                    <Grid item xs={2}>
+                        <AutocompletedField
+                            label={intl.formatMessage({
+                                id: 'admin.users.sharePrefix.label.capability',
+                            })}
+                            options={capabilityOptions}
+                            defaultValue={capabilityOptions[0]}
+                            changeHandler={handlers.setGrantCapability}
+                        />
+                    </Grid>
 
-                    <Box>
+                    <Grid item xs={3} sx={{ display: 'flex' }}>
                         <Button
                             onClick={() => {
                                 generateGrantDirective(
@@ -151,18 +158,20 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
                                     (error) => console.log('error', error)
                                 );
                             }}
-                            sx={{ mb: linkCreated ? 3 : 0 }}
+                            sx={{ flexGrow: 1 }}
                         >
                             <FormattedMessage id="admin.users.sharePrefix.cta.generateLink" />
                         </Button>
-                    </Box>
+                    </Grid>
 
-                    <Collapse in={linkCreated}>
-                        <SingleLineCode value={linkURL} />
-                    </Collapse>
+                    <Grid item xs={12}>
+                        <Collapse in={linkCreated}>
+                            <SingleLineCode value={linkURL} />
+                        </Collapse>
+                    </Grid>
+                </Grid>
 
-                    <AccessLinksTable prefixes={tenants} />
-                </Stack>
+                <AccessLinksTable prefixes={tenants} />
             </DialogContent>
         </Dialog>
     );
