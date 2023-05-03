@@ -75,8 +75,6 @@ const getInitialState = <T>(
             set(
                 produce((state) => {
                     if (newVal && newVal.length > 0) {
-                        console.log('state', state.specs);
-                        console.log('get', specs);
                         if (specs === null || newVal.length === 1) {
                             state.currentCatalog = newVal[0];
                         }
