@@ -19,6 +19,7 @@ import {
 import { isEmpty } from 'lodash';
 import { useCallback } from 'react';
 import { Annotations } from 'types/jsonforms';
+import { getProperSchemaScope } from 'utils/schema-utils';
 
 const specType = 'collection';
 
@@ -67,9 +68,7 @@ function useInitializeCollectionDraft() {
             setCollectionData(data);
 
             if (data && !isEmpty(data.spec)) {
-                const writeSchemaKey = data.spec.hasOwnProperty('writeSchema')
-                    ? 'writeSchema'
-                    : 'schema';
+                const [writeSchemaKey] = getProperSchemaScope(data.spec);
 
                 const inferenceAnnotationValue =
                     !data.spec[writeSchemaKey][Annotations.inferSchema];

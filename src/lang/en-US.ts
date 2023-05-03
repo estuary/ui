@@ -978,11 +978,12 @@ const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
     'schemaEditor.table.empty.header': `No fields to display.`,
     'schemaEditor.table.empty.message': `We were unable to generate a table from the current schema. Please update the schema.`,
     'schemaEditor.error.title': `Schema Invalid`,
-    'keyAutoComplete.keys.invalid.message': `Field not a valid key. Please remove.`,
+    'keyAutoComplete.keys.invalid.message': `Field is not a valid key. Please remove or update the schema.`,
+    'keyAutoComplete.keys.invalid.message.readOnly': `Field is not a valid key. Please update the schema.`,
     'keyAutoComplete.keys.missing.title': `Key is empty`,
     'keyAutoComplete.keys.missing.message': `Please provide a key before continuing or you may face issues.`,
-    'keyAutoComplete.noOptions.message': `Without a valid schema we cannot provide options for the key. Please fix schema to continue editing.`,
-    'keyAutoComplete.noUsableKeys.message': `No fields in the schema are valid keys. Please update schema to continue editing.`,
+    'keyAutoComplete.noOptions.message': `Without a valid schema we cannot provide options for the key. Please fix schema.`,
+    'keyAutoComplete.noUsableKeys.message': `No fields in the schema are valid keys. Please update schema.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {

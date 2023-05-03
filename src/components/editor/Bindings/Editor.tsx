@@ -17,6 +17,7 @@ import {
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
+import ExternalLink from 'components/shared/ExternalLink';
 import useInitializeCollectionDraft from 'hooks/useInitializeCollectionDraft';
 import { ReactNode, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -124,6 +125,9 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 >
                                     <Typography variant="h6" sx={{ mr: 1 }}>
                                         <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
+                                        <ExternalLink link="https://docs.estuary.dev/concepts/collections/#specification">
+                                            <FormattedMessage id="terms.documentation" />
+                                        </ExternalLink>
                                     </Typography>
 
                                     <Stack direction="row" spacing={1}>

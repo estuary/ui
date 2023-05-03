@@ -7,9 +7,13 @@ import {
     Tooltip,
     Typography,
 } from '@mui/material';
+import {
+    useBindingsEditorStore_inferSchemaResponseEmpty,
+    useBindingsEditorStore_inferSchemaResponse_Keys,
+} from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import { HelpCircle } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -17,7 +21,21 @@ interface Props {
 }
 
 function ReadOnly({ value }: Props) {
+    const intl = useIntl();
     const valueEmpty = !value || !hasLength(value);
+
+    const inferSchemaResponseEmpty =
+        useBindingsEditorStore_inferSchemaResponseEmpty();
+    const keys = useBindingsEditorStore_inferSchemaResponse_Keys();
+
+    // TODO (collection editor) move these helper vars into the store
+    const noUsableKeys = !hasLength(keys);
+
+    console.log('read only', {
+        keys,
+        noUsableKeys,
+        inferSchemaResponseEmpty,
+    });
 
     return (
         <Grid item xs={12}>
@@ -32,6 +50,7 @@ function ReadOnly({ value }: Props) {
                     <FormattedMessage id="schemaEditor.key.label" />
                 </Typography>
                 <Tooltip
+                    leaveDelay={250}
                     title={<FormattedMessage id="schemaEditor.key.helper" />}
                 >
                     <IconButton>
@@ -63,18 +82,47 @@ function ReadOnly({ value }: Props) {
                     }}
                 >
                     {value.map((key: string) => {
-                        return (
+                        const validOption = keys.includes(key);
+                        const Tag = (
                             <ListItem
                                 key={`read-only-keys-${key}`}
                                 dense
                                 sx={{ px: 0.5, width: 'auto' }}
                             >
-                                <Chip label={key} />
+                                <Chip
+                                    label={key}
+                                    color={!validOption ? 'error' : undefined}
+                                />
                             </ListItem>
+                        );
+
+                        if (validOption) {
+                            return Tag;
+                        }
+
+                        return (
+                            <Tooltip
+                                key={`read-only-keys-${key}`}
+                                title={intl.formatMessage({
+                                    id: 'keyAutoComplete.keys.invalid.message.readOnly',
+                                })}
+                            >
+                                {Tag}
+                            </Tooltip>
                         );
                     })}
                 </Stack>
             )}
+
+            {inferSchemaResponseEmpty ? (
+                <AlertBox short severity="warning">
+                    <FormattedMessage id="keyAutoComplete.noOptions.message" />
+                </AlertBox>
+            ) : noUsableKeys ? (
+                <AlertBox short severity="warning">
+                    <FormattedMessage id="keyAutoComplete.noUsableKeys.message" />
+                </AlertBox>
+            ) : null}
         </Grid>
     );
 }

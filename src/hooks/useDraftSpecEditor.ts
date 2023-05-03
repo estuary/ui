@@ -1,4 +1,5 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
+import { AllowedScopes } from 'components/editor/MonacoEditor/types';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
@@ -36,7 +37,7 @@ function useDraftSpecEditor(
             newVal: any,
             catalogName: string,
             specType: string,
-            propUpdating?: string
+            propUpdating?: AllowedScopes
         ) => {
             if (draftSpec) {
                 if (propUpdating) {

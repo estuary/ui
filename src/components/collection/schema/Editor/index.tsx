@@ -3,32 +3,21 @@ import {
     useBindingsEditorStore_editModeEnabled,
     useBindingsEditorStore_populateInferSchemaResponse,
     useBindingsEditorStore_schemaUpdated,
+    useBindingsEditorStore_setCollectionData,
 } from 'components/editor/Bindings/Store/hooks';
+import { AllowedScopes } from 'components/editor/MonacoEditor/types';
 import KeyAutoComplete from 'components/schema/KeyAutoComplete';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
+import { useEntityType } from 'context/EntityContext';
 import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
 import { useEffect, useState } from 'react';
 import { useUpdateEffect } from 'react-use';
 import { Schema } from 'types';
+import { getProperSchemaScope } from 'utils/schema-utils';
 
 export interface Props {
     entityName?: string;
 }
-
-// TODO (collection editor) need to figure out if we want to
-//  test if the user is on materialization or captures
-//  and force the user to only update schema when on captures
-const getProperSchemaScope = (spec: any) => {
-    let key;
-
-    if (spec.readSchema) {
-        key = 'readSchema';
-    } else {
-        key = 'schema';
-    }
-
-    return key;
-};
 
 function CollectionSchemaEditor({ entityName }: Props) {
     const { onChange, draftSpec, mutate } = useDraftSpecEditor(
@@ -38,11 +27,15 @@ function CollectionSchemaEditor({ entityName }: Props) {
     );
 
     const [editorSchemaScope, setEditorSchemaScope] = useState<
-        string | undefined
+        AllowedScopes | undefined
     >(undefined);
+
+    const entityType = useEntityType();
 
     // We need to know the schema was updated so we can "reload" this section
     const schemaUpdated = useBindingsEditorStore_schemaUpdated();
+
+    const setCollectionData = useBindingsEditorStore_setCollectionData();
 
     const populateInferSchemaResponse =
         useBindingsEditorStore_populateInferSchemaResponse();
@@ -50,12 +43,24 @@ function CollectionSchemaEditor({ entityName }: Props) {
 
     useEffect(() => {
         if (draftSpec) {
-            const schemaScope = getProperSchemaScope(draftSpec.spec);
+            // TODO (collection editor) when we allow collections to get updated
+            //  from the details page we'll need to handle this for that.
 
+            // Figure out if we need to use schema or readSchema
+            const [schemaScope] = getProperSchemaScope(draftSpec.spec);
+
+            // Store off what scope is being used
             setEditorSchemaScope(schemaScope);
-            populateInferSchemaResponse(draftSpec.spec[schemaScope]);
+
+            // Infer schema and pass in spec so the function can handle
+            //  if there is a read/write or just plain schema
+            populateInferSchemaResponse(draftSpec.spec);
+
+            // Need to keep the collection data updated so that the schema
+            //  inference and CLI buttons work
+            setCollectionData({ spec: draftSpec.spec, belongsToDraft: true });
         }
-    }, [draftSpec, populateInferSchemaResponse]);
+    }, [draftSpec, entityType, populateInferSchemaResponse, setCollectionData]);
 
     useUpdateEffect(() => {
         // If the schema is updated via the scheme inferrence
@@ -79,13 +84,12 @@ function CollectionSchemaEditor({ entityName }: Props) {
                     disabled={!editModeEnabled}
                     editorProps={{
                         onChange: async (value: Schema, path, type, scope) => {
-                            if (scope) {
-                                await onChange(value, path, type, scope);
-                            } else {
-                                console.error(
-                                    'Unable to update schema due to missing scope'
-                                );
-                            }
+                            await onChange(
+                                value,
+                                path,
+                                type,
+                                scope ?? 'schema'
+                            );
                         },
                         editorSchemaScope,
                     }}

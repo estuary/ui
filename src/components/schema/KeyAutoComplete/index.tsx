@@ -43,6 +43,7 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
         setLocalCopyValue(value);
     }, [value]);
 
+    // TODO (collection editor) move these helper vars into the store
     // Store off variables for when this should be in read only mode
     const noUsableKeys = !hasLength(keys);
     const changeHandler = editKeyAllowed ? onChange : undefined;

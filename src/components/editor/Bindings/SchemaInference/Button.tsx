@@ -9,12 +9,12 @@ import {
 } from 'components/editor/Bindings/Store/hooks';
 import { useEntityWorkflow } from 'context/Workflow';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
-import { isEmpty } from 'lodash';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUnmountPromise } from 'react-use';
 import getInferredSchema from 'services/schema-inference';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+import { moveUpdatedSchemaToReadSchema } from 'utils/schema-utils';
 
 function SchemaInferenceButton() {
     const workflow = useEntityWorkflow();
@@ -56,32 +56,10 @@ function SchemaInferenceButton() {
             )
                 .then(
                     (response) => {
-                        let inferredSpec = null;
-                        if (Object.hasOwn(collectionData.spec, 'writeSchema')) {
-                            const { ...additionalSpecKeys } =
-                                collectionData.spec;
-
-                            inferredSpec = !isEmpty(response.schema)
-                                ? {
-                                      ...additionalSpecKeys,
-                                      writeSchema:
-                                          collectionData.spec.writeSchema,
-                                      readSchema: response.schema,
-                                  }
-                                : null;
-                        } else {
-                            // Removing schema from the object
-                            const { schema, ...additionalSpecKeys } =
-                                collectionData.spec;
-
-                            inferredSpec = !isEmpty(response.schema)
-                                ? {
-                                      ...additionalSpecKeys,
-                                      writeSchema: collectionData.spec.schema,
-                                      readSchema: response.schema,
-                                  }
-                                : null;
-                        }
+                        const inferredSpec = moveUpdatedSchemaToReadSchema(
+                            collectionData,
+                            response.schema
+                        );
 
                         setInferredSpec(inferredSpec);
                         setDocumentsRead(response.documents_read);
