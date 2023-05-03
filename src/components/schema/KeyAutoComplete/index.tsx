@@ -71,7 +71,11 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 disabled={inferSchemaResponseEmpty}
                 inputValue={inputValue}
                 isOptionEqualToValue={(option, tagValue) => {
-                    return showEditErrorState ? false : option === tagValue;
+                    console.log('isOptionEqualToValue', {
+                        option,
+                        tagValue,
+                    });
+                    return option === tagValue;
                 }}
                 onChange={changeHandler}
                 onInputChange={(event, newInputValue) => {
