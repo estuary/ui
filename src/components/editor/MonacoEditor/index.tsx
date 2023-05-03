@@ -151,7 +151,7 @@ function MonacoEditor({
         if (editorSchemaScope) {
             // If there is a schema sdcope make sure it exists first
             //  otherwise we will fall back to the schema prop
-            //  then during update we will populate the new schemaScope
+            // This is just being super safe
             if (catalogSpec[editorSchemaScope]) {
                 spec = catalogSpec[editorSchemaScope];
             } else {
