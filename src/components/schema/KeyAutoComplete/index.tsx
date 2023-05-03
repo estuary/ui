@@ -70,13 +70,6 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 {...autoCompleteDefaults_Virtual_Multiple}
                 disabled={inferSchemaResponseEmpty}
                 inputValue={inputValue}
-                isOptionEqualToValue={(option, tagValue) => {
-                    console.log('isOptionEqualToValue', {
-                        option,
-                        tagValue,
-                    });
-                    return option === tagValue;
-                }}
                 onChange={changeHandler}
                 onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
