@@ -31,6 +31,7 @@ interface Props {
 interface GrantConfig {
     prefix: string;
     capability: string;
+    reusability?: string;
 }
 
 // The write capability should be obscured to the user. It is more challenging
@@ -38,6 +39,8 @@ interface GrantConfig {
 // outside of advanced cases.
 
 const capabilityOptions = ['admin', 'read'];
+
+const typeOptions = ['multi-use', 'single-use'];
 
 const baseURL = `${window.location.origin}${unauthenticatedRoutes.login.path}`;
 
@@ -48,6 +51,7 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
     const [grantConfig, setGrantConfig] = useState<GrantConfig>({
         prefix: tenants[0],
         capability: capabilityOptions[0],
+        reusability: typeOptions[0],
     });
 
     const [linkCreated, setLinkCreated] = useState<boolean>(false);
@@ -65,18 +69,29 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
                 setLinkURL('');
             }
 
-            const { capability } = grantConfig;
+            const { capability, reusability } = grantConfig;
 
-            setGrantConfig({ prefix: value, capability });
+            setGrantConfig({ prefix: value, capability, reusability });
         },
         setGrantCapability: (_event: React.SyntheticEvent, value: string) => {
             if (linkCreated) {
                 setLinkCreated(false);
                 setLinkURL('');
             }
-            const { prefix } = grantConfig;
 
-            setGrantConfig({ prefix, capability: value });
+            const { prefix, reusability } = grantConfig;
+
+            setGrantConfig({ prefix, capability: value, reusability });
+        },
+        setGrantReusability: (_event: React.SyntheticEvent, value: string) => {
+            if (linkCreated) {
+                setLinkCreated(false);
+                setLinkURL('');
+            }
+
+            const { prefix, capability } = grantConfig;
+
+            setGrantConfig({ prefix, capability, reusability: value });
         },
     };
 
@@ -116,7 +131,7 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
                 </Typography>
 
                 <Grid container spacing={2} sx={{ mb: 5 }}>
-                    <Grid item xs={7}>
+                    <Grid item xs={5}>
                         <AutocompletedField
                             label={intl.formatMessage({
                                 id: 'common.tenant',
@@ -138,12 +153,24 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
                         />
                     </Grid>
 
+                    <Grid item xs={2}>
+                        <AutocompletedField
+                            label={intl.formatMessage({
+                                id: 'admin.users.sharePrefix.label.type',
+                            })}
+                            options={typeOptions}
+                            defaultValue={typeOptions[0]}
+                            changeHandler={handlers.setGrantReusability}
+                        />
+                    </Grid>
+
                     <Grid item xs={3} sx={{ display: 'flex' }}>
                         <Button
                             onClick={() => {
                                 generateGrantDirective(
                                     grantConfig.prefix,
-                                    grantConfig.capability
+                                    grantConfig.capability,
+                                    grantConfig.reusability === 'single-use'
                                 ).then(
                                     (response) => {
                                         console.log('success', response);

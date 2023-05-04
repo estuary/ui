@@ -91,6 +91,12 @@ export interface JoinedAppliedDirective extends AppliedDirective<any> {
     ['directives.spec->>type']: undefined;
 }
 
+export interface GrantDirectiveSpec {
+    type: string;
+    capability: string;
+    grantedPrefix: string;
+}
+
 export interface GrantDirective {
     created_at: string;
     detail: string | null;
@@ -98,11 +104,7 @@ export interface GrantDirective {
     updated_at: string;
     catalog_prefix: string;
     uses_remaining: number | null;
-    spec: {
-        type: string;
-        capability: string;
-        grantedPrefix: string;
-    };
+    spec: GrantDirectiveSpec;
     token: string;
 }
 

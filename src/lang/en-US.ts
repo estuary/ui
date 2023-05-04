@@ -443,6 +443,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.users.sharePrefix.header': `Manage Access Links`,
     'admin.users.sharePrefix.message': `This is a placeholder for a description.`,
     'admin.users.sharePrefix.label.capability': `Capability`,
+    'admin.users.sharePrefix.label.type': `Type`,
     'admin.users.sharePrefix.cta.generateLink': `Generate Access Link`,
 
     'admin.cookies': `Cookie Preference Management`,

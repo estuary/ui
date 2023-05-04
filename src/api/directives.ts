@@ -17,10 +17,17 @@ import {
     AppliedDirective,
     Directive,
     GrantDirective,
+    GrantDirectiveSpec,
     GrantDirective_AccessLinks,
     JoinedAppliedDirective,
     Schema,
 } from 'types';
+
+interface GrantDirective_CreateMatchData {
+    catalog_prefix: string;
+    spec: GrantDirectiveSpec;
+    uses_remaining?: number | null;
+}
 
 export interface ExchangeResponse {
     directive: Directive | null; // Only null so we can "fake" this response below
@@ -116,16 +123,22 @@ const getAppliedDirectives = (
 
 const generateGrantDirective = (
     prefix: string,
-    capability: string
+    capability: string,
+    singleUse?: boolean
 ): PromiseLike<CallSupabaseResponse<GrantDirective[]>> => {
-    return insertSupabase(TABLES.DIRECTIVES, {
+    let data: GrantDirective_CreateMatchData = {
         catalog_prefix: prefix,
         spec: {
             type: 'grant',
             grantedPrefix: prefix,
             capability,
         },
-    });
+    };
+
+    if (singleUse) {
+        data = { ...data, uses_remaining: 1 };
+    }
+    return insertSupabase(TABLES.DIRECTIVES, data);
 };
 
 const getDirectiveByToken = async (token: string) => {
