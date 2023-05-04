@@ -263,6 +263,7 @@ function useDiscoverCapture(
                     if (payload.error === JOB_STATUS_POLLER_ERROR) {
                         jobFailed(payload.error);
                     } else {
+                        setDraftId(discoverDraftId);
                         jobFailed(`${messagePrefix}.test.failedErrorTitle`);
                     }
                 }
