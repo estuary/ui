@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import { getDirectiveByCatalogPrefix } from 'api/directives';
 import Rows from 'components/tables/AccessGrants/AccessLinks/Rows';
 import EntityTable from 'components/tables/EntityTable';
+import RowSelector from 'components/tables/RowActions/AccessLinks/RowSelector';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import useTableState from 'stores/Tables/hooks';
@@ -13,6 +14,10 @@ interface Props {
 }
 
 export const columns: TableColumns[] = [
+    {
+        field: null,
+        headerIntlKey: '',
+    },
     {
         field: 'provisioning_prefix',
         headerIntlKey:
@@ -33,10 +38,6 @@ export const columns: TableColumns[] = [
     {
         field: 'updated_at',
         headerIntlKey: 'accessGrants.table.accessLinks.label.lastUpdated',
-    },
-    {
-        field: 'actions',
-        headerIntlKey: 'accessGrants.table.accessLinks.label.actions',
     },
 ];
 
@@ -97,6 +98,9 @@ function AccessLinksTable({ prefixes }: Props) {
                     header={headerKey}
                     filterLabel={filterKey}
                     selectableTableStoreName={selectableTableStoreName}
+                    enableSelection={true}
+                    showToolbar={true}
+                    toolbar={<RowSelector />}
                 />
             </TableHydrator>
         </Box>

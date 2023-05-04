@@ -18,6 +18,7 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { Cancel } from 'iconoir-react';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { getPathWithParams } from 'utils/misc-utils';
 
 const TITLE_ID = 'share-prefix-dialog-title';
 
@@ -37,6 +38,8 @@ interface GrantConfig {
 // outside of advanced cases.
 
 const capabilityOptions = ['admin', 'read'];
+
+const baseURL = `${window.location.origin}${unauthenticatedRoutes.login.path}`;
 
 function SharePrefixDialog({ tenants, open, setOpen }: Props) {
     const theme = useTheme();
@@ -150,7 +153,10 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
                                             response.data.length > 0
                                         ) {
                                             setLinkURL(
-                                                `${window.location.origin}${unauthenticatedRoutes.login.path}?${GlobalSearchParams.GRANT_TOKEN}=${response.data[0].token}`
+                                                getPathWithParams(baseURL, {
+                                                    [GlobalSearchParams.GRANT_TOKEN]:
+                                                        response.data[0].token,
+                                                })
                                             );
                                             setLinkCreated(true);
                                         }

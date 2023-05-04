@@ -3,6 +3,7 @@ import { UserClaims } from 'directives/types';
 import {
     CallSupabaseResponse,
     defaultTableFilter,
+    deleteSupabase,
     handleFailure,
     handleSuccess,
     insertSupabase,
@@ -170,7 +171,12 @@ const getDirectiveByCatalogPrefix = (
     return queryBuilder;
 };
 
+const deleteDirective = (directiveId: string) => {
+    return deleteSupabase(TABLES.DIRECTIVES, { id: directiveId });
+};
+
 export {
+    deleteDirective,
     exchangeBearerToken,
     generateGrantDirective,
     getAppliedDirectives,

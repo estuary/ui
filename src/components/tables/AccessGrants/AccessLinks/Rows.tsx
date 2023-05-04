@@ -1,8 +1,8 @@
-import { Button, TableCell, TableRow, Typography } from '@mui/material';
+import { TableCell, TableRow, Typography } from '@mui/material';
+import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import TruncatedToken from 'components/tables/cells/TruncatedToken';
 import { useZustandStore } from 'context/Zustand/provider';
-import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
@@ -16,15 +16,25 @@ interface RowsProps {
 
 interface RowProps {
     row: GrantDirective_AccessLinks;
-    setRow: any;
     isSelected: boolean;
+    setRow: SelectableTableStore['setSelected'];
 }
 
 const selectTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
 
-function Row({ row }: RowProps) {
+function Row({ row, isSelected, setRow }: RowProps) {
+    const selectRow = (rowId: string, token: string): void => {
+        setRow(rowId, token, !isSelected);
+    };
+
     return (
-        <TableRow hover>
+        <TableRow
+            hover
+            selected={isSelected}
+            onClick={() => selectRow(row.id, row.token)}
+        >
+            <RowSelect isSelected={isSelected} name={row.catalog_prefix} />
+
             <TableCell>
                 <Typography>{row.catalog_prefix}</Typography>
             </TableCell>
@@ -40,12 +50,6 @@ function Row({ row }: RowProps) {
             <TruncatedToken token={row.token} />
 
             <TimeStamp time={row.updated_at} />
-
-            <TableCell>
-                <Button size="small">
-                    <FormattedMessage id="cta.delete" />
-                </Button>
-            </TableCell>
         </TableRow>
     );
 }

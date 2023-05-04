@@ -36,12 +36,8 @@ export interface SelectableTableStore extends StoreWithHydration {
     removeRows: () => void;
 
     selected: Map<string, any>;
-    setSelected: (
-        key: SelectableTableStore['selected'],
-        lastPubId: string,
-        isSelected: boolean
-    ) => void;
-    setAllSelected: (isSelected: boolean) => void;
+    setSelected: (key: string, value: string, isSelected: boolean) => void;
+    setAllSelected: (isSelected: boolean, valueProperty?: string) => void;
 
     successfulTransformations: number;
     incrementSuccessfulTransformations: () => void;
@@ -97,11 +93,11 @@ export const getInitialState = (
         ...getInitialStateData(),
         ...getStoreWithHydrationSettings('Table Store', set),
 
-        setSelected: (key, lastPubId, isSelected) => {
+        setSelected: (key, value, isSelected) => {
             set(
-                produce(({ selected }) => {
+                produce(({ selected }: SelectableTableStore) => {
                     if (isSelected) {
-                        selected.set(key, lastPubId);
+                        selected.set(key, value);
                     } else {
                         selected.delete(key);
                     }
@@ -111,14 +107,18 @@ export const getInitialState = (
             );
         },
 
-        setAllSelected: (isSelected) => {
+        setAllSelected: (isSelected, valueProperty) => {
             set(
-                produce(({ selected }) => {
+                produce(({ selected }: SelectableTableStore) => {
                     if (isSelected) {
                         const { rows } = get();
 
-                        rows.forEach((_value, key) => {
-                            selected.set(key, null);
+                        rows.forEach((value, key) => {
+                            const evaluatedValue = valueProperty
+                                ? value[valueProperty]
+                                : null;
+
+                            selected.set(key, evaluatedValue);
                         });
                     } else {
                         selected.clear();
