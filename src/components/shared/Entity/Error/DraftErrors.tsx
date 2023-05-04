@@ -1,4 +1,4 @@
-import { Paper } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
 import useDraftSpecErrors from 'hooks/useDraftSpecErrors';
 
@@ -31,11 +31,32 @@ function DraftErrors({ draftId, enablePolling }: DraftErrorProps) {
 
             return {
                 val: (
-                    <Paper variant="outlined" sx={{ overflow: 'auto', p: 1 }}>
+                    <Box
+                        sx={{
+                            overflow: 'auto',
+                            pl: 2,
+                            whiteSpace: 'pre',
+                        }}
+                    >
                         {detail}
-                    </Paper>
+                    </Box>
                 ),
-                title: filteredScope,
+                title: (
+                    <Typography
+                        variant="h6"
+                        component="span"
+                        sx={{
+                            borderWidth: 1,
+                            borderStyle: 'solid',
+                            borderLeft: 0,
+                            borderRight: 0,
+                            borderTop: 0,
+                            maxWidth: 'min-content',
+                        }}
+                    >
+                        {filteredScope}
+                    </Typography>
+                ),
             };
         });
         return <KeyValueList data={errors} disableTypography />;

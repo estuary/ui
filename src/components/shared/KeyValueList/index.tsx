@@ -19,16 +19,16 @@ function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
                 {sectionTitle ? (
                     <Typography variant="subtitle1">{sectionTitle}</Typography>
                 ) : null}
-                <List dense sx={{ ml: 2, pt: 0 }}>
+                <List
+                    dense
+                    sx={{ ml: 2, pt: 0, overflow: 'auto', maxHeight: 300 }}
+                >
                     {data.map(({ title, val }, index) => (
                         <ListItem key={`${title}-keyValueList-${index}`}>
                             <ListItemText
                                 disableTypography={disableTypography}
                                 primary={title}
                                 secondary={val}
-                                sx={{
-                                    whiteSpace: 'pre',
-                                }}
                             />
                         </ListItem>
                     ))}
