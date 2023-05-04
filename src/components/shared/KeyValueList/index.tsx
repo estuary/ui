@@ -23,6 +23,9 @@ function KeyValueList({ data, sectionTitle }: Props) {
                             key={`${title}-keyValueList-${index}`}
                             primary={title}
                             secondary={val}
+                            sx={{
+                                whiteSpace: 'pre',
+                            }}
                         />
                     ))}
                 </List>
