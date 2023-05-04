@@ -1,6 +1,7 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Breadcrumbs, Typography } from '@mui/material';
 import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
 import useDraftSpecErrors from 'hooks/useDraftSpecErrors';
+import { FormattedMessage } from 'react-intl';
 
 export interface DraftErrorProps {
     draftId?: string | null;
@@ -8,9 +9,14 @@ export interface DraftErrorProps {
 }
 
 function DraftErrors({ draftId, enablePolling }: DraftErrorProps) {
-    const { draftSpecErrors } = useDraftSpecErrors(draftId, enablePolling);
+    const { draftSpecErrors, count } = useDraftSpecErrors(
+        draftId,
+        enablePolling
+    );
 
-    if (draftSpecErrors.length > 0) {
+    //Make sure we have errors to display
+    const errorLength = draftSpecErrors.length;
+    if (errorLength > 0) {
         const errors: KeyValue[] = draftSpecErrors.map((draftError) => {
             const filteredScope = draftError.scope
                 // Strip the canonical source file used by control-plane builds.
@@ -21,45 +27,55 @@ function DraftErrors({ draftId, enablePolling }: DraftErrorProps) {
                 .replaceAll('~1', '/')
                 .replaceAll('~0', '~');
 
-            // // Split by seperator so we can make a breadcrumb
-            // const scopes = filteredScope
-            //     .split('/')
-            //     // Ensure the splits have values (mainly strips the first item)
-            //     .filter((value) => hasLength(value));
-
-            const detail = draftError.detail;
+            // TODO (johnny) - this is where the scopes need populated
+            const scopes = filteredScope.split('/');
 
             return {
                 val: (
                     <Box
                         sx={{
-                            overflow: 'auto',
+                            overflowY: 'auto',
                             pl: 2,
                             whiteSpace: 'pre',
                         }}
                     >
-                        {detail}
+                        {draftError.detail}
                     </Box>
                 ),
                 title: (
-                    <Typography
-                        variant="h6"
-                        component="span"
-                        sx={{
-                            borderWidth: 1,
-                            borderStyle: 'solid',
-                            borderLeft: 0,
-                            borderRight: 0,
-                            borderTop: 0,
-                            maxWidth: 'min-content',
-                        }}
-                    >
-                        {filteredScope}
-                    </Typography>
+                    <Breadcrumbs>
+                        {scopes.map((scope) => {
+                            return (
+                                <Typography
+                                    key={`draft-error-breadcrumbs-${scope}`}
+                                    variant="h6"
+                                    component="span"
+                                >
+                                    {scope}
+                                </Typography>
+                            );
+                        })}
+                    </Breadcrumbs>
                 ),
             };
         });
-        return <KeyValueList data={errors} disableTypography />;
+
+        return (
+            <Box>
+                {count && count > errorLength ? (
+                    <Typography>
+                        <FormattedMessage
+                            id="draftErrors.totalCount"
+                            values={{
+                                displaying: errorLength,
+                                total: count,
+                            }}
+                        />
+                    </Typography>
+                ) : null}
+                <KeyValueList data={errors} disableTypography />
+            </Box>
+        );
     } else {
         return null;
     }
