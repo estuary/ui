@@ -915,8 +915,11 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.origin.radio.gitHub.label': `GitHub`,
     'tenant.origin.radio.other.label': `Other`,
 
-    'tenant.grantDirective.error.header': `Technical Difficulties`,
-    'tenant.grantDirective.error.message': `A problem was encountered provisioning access to the requested tenant.`,
+    'tenant.grantDirective.error.header': `Unable to Provision Access`,
+    'tenant.grantDirective.error.message': `A problem was encountered provisioning access to the requested tenant. The access link could have been single-use or revoked by an administrator of the tenant.`,
+    'tenant.grantDirective.error.message.help': `For additional context, please {docLink}.`,
+    'tenant.grantDirective.error.message.help.docLink': `contact support`,
+    'tenant.grantDirective.error.message.help.docPath': `mailto:support@estuary.dev`,
 };
 
 const Details: ResolvedIntlConfig['messages'] = {

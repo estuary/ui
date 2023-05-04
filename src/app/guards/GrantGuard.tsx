@@ -1,6 +1,7 @@
 import { Stack, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { getDirectiveByToken, submitDirective } from 'api/directives';
+import MessageWithLink from 'components/content/MessageWithLink';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import FullPageWrapper from 'directives/FullPageWrapper';
 import { jobStatusQuery, trackEvent } from 'directives/shared';
@@ -66,12 +67,12 @@ function GrantGuard({ children, token, grantsMutate }: Props) {
     const [processUninitiated, setProcessUninitiated] = useState<boolean>(true);
     const [serverError, setServerError] = useState<string | null>(null);
 
-    const { directive, loading, status } = useDirectiveGuard(
+    const { directive, loading, status, error } = useDirectiveGuard(
         SELECTED_DIRECTIVE,
         { token }
     );
 
-    if ((loading || status !== 'fulfilled') && !serverError) {
+    if ((loading || status !== 'fulfilled') && !serverError && !error) {
         if (processUninitiated && directive) {
             setProcessUninitiated(false);
 
@@ -79,7 +80,7 @@ function GrantGuard({ children, token, grantsMutate }: Props) {
         }
 
         return <FullPageSpinner />;
-    } else if (serverError || status !== 'fulfilled') {
+    } else if (serverError || error || status !== 'fulfilled') {
         return (
             <FullPageWrapper>
                 <Stack spacing={2}>
@@ -90,6 +91,8 @@ function GrantGuard({ children, token, grantsMutate }: Props) {
                     <Typography>
                         <FormattedMessage id="tenant.grantDirective.error.message" />
                     </Typography>
+
+                    <MessageWithLink messageID="tenant.grantDirective.error.message.help" />
                 </Stack>
             </FullPageWrapper>
         );

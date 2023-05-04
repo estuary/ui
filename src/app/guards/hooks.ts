@@ -1,3 +1,4 @@
+import { PostgrestError } from '@supabase/postgrest-js';
 import { exchangeBearerToken } from 'api/directives';
 import { DIRECTIVES } from 'directives/shared';
 import { UserClaims } from 'directives/types';
@@ -14,6 +15,8 @@ const useDirectiveGuard = (
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
+    const [serverError, setServerError] = useState<PostgrestError | null>(null);
+
     const { appliedDirective, isValidating, mutate } =
         useAppliedDirectives(selectedDirective);
 
@@ -27,8 +30,18 @@ const useDirectiveGuard = (
             return null;
         }
 
+        if (options?.token && serverError) {
+            return 'errored';
+        }
+
         return calculateStatus(appliedDirective);
-    }, [isValidating, appliedDirective, calculateStatus]);
+    }, [
+        calculateStatus,
+        appliedDirective,
+        isValidating,
+        options?.token,
+        serverError,
+    ]);
 
     const [freshDirective, setFreshDirective] =
         useState<AppliedDirective<UserClaims> | null>(null);
@@ -58,7 +71,9 @@ const useDirectiveGuard = (
                         setFreshDirective(response.data.applied_directive);
                     }
                 })
-                .catch(() => {});
+                .catch((error) => {
+                    setServerError(error);
+                });
         }
 
         // Show a message to remind the user why they are seeing the directive page
@@ -77,6 +92,18 @@ const useDirectiveGuard = (
                 }
             );
         }
+
+        // Show a message to remind the user why they are seeing the directive page
+        if (directiveState === 'errored' && serverError?.message) {
+            enqueueSnackbar(serverError.message, {
+                anchorOrigin: {
+                    vertical: 'top',
+                    horizontal: 'center',
+                },
+                preventDuplicate: true,
+                variant: 'error',
+            });
+        }
     }, [
         directiveState,
         enqueueSnackbar,
@@ -84,6 +111,7 @@ const useDirectiveGuard = (
         options?.forceNew,
         options?.token,
         selectedDirective,
+        serverError,
     ]);
 
     return useMemo(() => {
@@ -93,6 +121,7 @@ const useDirectiveGuard = (
                 directive: null,
                 status: null,
                 mutate: null,
+                error: null,
             };
         } else {
             return {
@@ -100,6 +129,7 @@ const useDirectiveGuard = (
                 directive: freshDirective ? freshDirective : appliedDirective,
                 status: directiveState,
                 mutate,
+                error: serverError,
             };
         }
     }, [appliedDirective, directiveState, freshDirective, mutate]);

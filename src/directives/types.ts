@@ -14,7 +14,8 @@ export type DirectiveStates =
     | 'unfulfilled'
     | 'in progress'
     | 'fulfilled'
-    | 'outdated';
+    | 'outdated'
+    | 'errored';
 
 export interface ClickToAcceptClaim {
     version: string;
