@@ -619,7 +619,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
     'captureCreate.collections.heading': `Output Collections`,
     'captureCreate.collectionSelector.heading': `Collection Selector`,
-    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To update the configuration please update the fields under the Config tab. To update the schema click on Edit under the Specification tab.`,
+    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Specification tab.`,
 
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
     'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -655,7 +655,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
 
     'captureEdit.collections.heading': `Output Collections`,
     'captureEdit.collectionSelector.heading': `Collection Selector`,
-    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To update the configuration please update the fields under the Config tab. To update the schema click on Edit under the Specification tab.`,
+    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Specification tab.`,
 
     'captureEdit.test.failedErrorTitle': `Configuration Test Failed`,
     'captureEdit.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -750,7 +750,7 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.test.inProgress': `Please wait while we try to connect to the destination.`,
 
     'materializationEdit.collectionSelector.heading': `Collection Selector`,
-    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To update the configuration please update the fields under the Config tab. To update the schema click on Edit under the Specification tab.`,
+    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Specification tab.`,
 
     'materializationEdit.resourceConfig.heading': `Resource Configuration`,
     'materializationEdit.save.failedErrorTitle': `Materialization Save Failed`,
@@ -974,14 +974,14 @@ const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
 const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
     'schemaEditor.fields.label': `Schema`,
     'schemaEditor.key.label': `Key`,
-    'schemaEditor.key.helper': `Ordered JSON-Pointers which define how a composite key may be extracted from a collection document.`,
+    'schemaEditor.key.helper': `Ordered JSON Pointers that define how a composite key may be extracted from a collection document.`,
     'schemaEditor.table.empty.header': `No fields to display.`,
     'schemaEditor.table.empty.message': `We were unable to generate a table from the current schema. Please update the schema.`,
     'schemaEditor.error.title': `Schema Invalid`,
     'keyAutoComplete.keys.invalid.message': `Field is not a valid key. Please remove or update the schema.`,
     'keyAutoComplete.keys.invalid.message.readOnly': `Field is not a valid key. Please update the schema.`,
     'keyAutoComplete.keys.missing.title': `Key is empty`,
-    'keyAutoComplete.keys.missing.message': `Please provide a key before continuing or you may face issues.`,
+    'keyAutoComplete.keys.missing.message': `All collections require a key. Please provide a key to continue.`,
     'keyAutoComplete.noOptions.message': `Without a valid schema we cannot provide options for the key. Please fix schema.`,
     'keyAutoComplete.noUsableKeys.message': `No fields in the schema are valid keys. Please update schema.`,
 };
