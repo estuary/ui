@@ -127,6 +127,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.configure': `Configure`,
     'cta.showAll': `Show All`,
     'cta.reload': `Reload`,
+    'cta.evolve': `Create New Collection Versions`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -968,6 +969,14 @@ const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
     'dataPlaneAuthReq.waiting.message': `Please wait while we authorize access to {catalogPrefix}. You will be redirected shortly.`,
 };
 
+const EntityEvolution: ResolvedIntlConfig['messages'] = {
+    'entityEvolution.failure.errorTitle': `Capture Update Failed`,
+    'entityEvolution.serverUnreachable': `Unable to reach server while saving capture`,
+    'entityEvolution.error.title': `Changes Rejected Due to Incompatible Schema Updates`,
+    'entityEvolution.error.message': `Schema changes will break downstream tasks. To avoid this, click below and then publish a new version of the affected collections.`,
+    'entityEvolution.error.note': `Note: This may result in additional cost as new collection versions are backfilled.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1018,6 +1027,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...NewTransform,
     ...TaskEndpoints,
     ...DataPlaneAuthReq,
+    ...EntityEvolution,
 };
 
 export default enUSMessages;
