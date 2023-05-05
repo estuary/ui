@@ -1,4 +1,5 @@
 import { Button, Grid } from '@mui/material';
+import { PostgrestError } from '@supabase/postgrest-js';
 import { generateGrantDirective } from 'api/directives';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import { useZustandStore } from 'context/Zustand/provider';
@@ -9,9 +10,12 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     objectRoles: string[];
+    serverError: PostgrestError | null;
+    setServerError: React.Dispatch<React.SetStateAction<PostgrestError | null>>;
 }
 
 // The write capability should be obscured to the user. It is more challenging
@@ -22,7 +26,11 @@ const capabilityOptions = ['admin', 'read'];
 
 const typeOptions = ['single-use', 'multi-use'];
 
-function GenerateInvitation({ objectRoles }: Props) {
+function GenerateInvitation({
+    objectRoles,
+    serverError,
+    setServerError,
+}: Props) {
     const intl = useIntl();
 
     const hydrate = useZustandStore<
@@ -39,13 +47,47 @@ function GenerateInvitation({ objectRoles }: Props) {
 
     const handlers = {
         setGrantPrefix: (_event: React.SyntheticEvent, value: string) => {
+            if (serverError) {
+                setServerError(null);
+            }
+
             setPrefix(value);
         },
         setGrantCapability: (_event: React.SyntheticEvent, value: string) => {
+            if (serverError) {
+                setServerError(null);
+            }
+
             setCapability(value);
         },
         setGrantReusability: (_event: React.SyntheticEvent, value: string) => {
+            if (serverError) {
+                setServerError(null);
+            }
+
             setReusability(value);
+        },
+        generateInvitation: (event: React.MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+
+            generateGrantDirective(
+                prefix,
+                capability,
+                reusability === 'single-use'
+            ).then(
+                (response) => {
+                    if (response.error) {
+                        setServerError(response.error);
+                    } else if (hasLength(response.data)) {
+                        if (serverError) {
+                            setServerError(null);
+                        }
+
+                        hydrate();
+                    }
+                },
+                (error) => setServerError(error)
+            );
         },
     };
 
@@ -86,20 +128,7 @@ function GenerateInvitation({ objectRoles }: Props) {
 
             <Grid item xs={4} md={3} sx={{ display: 'flex' }}>
                 <Button
-                    onClick={() => {
-                        generateGrantDirective(
-                            prefix,
-                            capability,
-                            reusability === 'single-use'
-                        ).then(
-                            (response) => {
-                                console.log('success', response);
-
-                                hydrate();
-                            },
-                            (error) => console.log('error', error)
-                        );
-                    }}
+                    onClick={handlers.generateInvitation}
                     sx={{ flexGrow: 1 }}
                 >
                     <FormattedMessage id="admin.users.sharePrefix.cta.generateLink" />
