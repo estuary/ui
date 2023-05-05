@@ -178,14 +178,16 @@ function useDiscoverCapture(
             );
         },
         [
+            callFailed,
+            entityType,
             jobFailed,
+            messagePrefix,
+            postGenerateMutate,
             setDraftId,
             setDraftedEntityName,
             setFormState,
             setPreviousEndpointConfig,
             storeDiscoveredCollections,
-            messagePrefix,
-            postGenerateMutate,
             supabaseClient,
         ]
     );
