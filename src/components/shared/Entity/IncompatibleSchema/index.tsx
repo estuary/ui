@@ -1,17 +1,17 @@
 import { Box, Collapse, Stack, Typography } from '@mui/material';
-import { useBindingsEditorStore_hasInvalidSchemaCollections } from 'components/editor/Bindings/Store/hooks';
+import { useBindingsEditorStore_hasIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
 import Actions from './Actions';
 import CollectionsList from './CollectionsList';
 
 function IncompatibleSchema() {
-    const hasInvalidSchemas =
-        useBindingsEditorStore_hasInvalidSchemaCollections();
+    const hasIncompatibleCollections =
+        useBindingsEditorStore_hasIncompatibleCollections();
 
     return (
         <Collapse
-            in={hasInvalidSchemas}
+            in={hasIncompatibleCollections}
             sx={{
                 mb: 2,
             }}

@@ -203,31 +203,31 @@ export const useBindingsEditorStore_setSchemaUpdateErrored = () => {
     >(getStoreName(entityType), (state) => state.setSchemaUpdateErrored);
 };
 
-export const useBindingsEditorStore_invalidSchemaCollections = () => {
+export const useBindingsEditorStore_incompatibleCollections = () => {
     const entityType = useEntityType();
 
     return useZustandStore<
         BindingsEditorState,
-        BindingsEditorState['invalidSchemaCollections']
-    >(getStoreName(entityType), (state) => state.invalidSchemaCollections);
+        BindingsEditorState['incompatibleCollections']
+    >(getStoreName(entityType), (state) => state.incompatibleCollections);
 };
 
-export const useBindingsEditorStore_hasInvalidSchemaCollections = () => {
+export const useBindingsEditorStore_hasIncompatibleCollections = () => {
     const entityType = useEntityType();
 
     return useZustandStore<
         BindingsEditorState,
-        BindingsEditorState['hasInvalidSchemaCollections']
-    >(getStoreName(entityType), (state) => state.hasInvalidSchemaCollections);
+        BindingsEditorState['hasIncompatibleCollections']
+    >(getStoreName(entityType), (state) => state.hasIncompatibleCollections);
 };
 
-export const useBindingsEditorStore_setInvalidSchemaCollections = () => {
+export const useBindingsEditorStore_setIncompatibleCollections = () => {
     const entityType = useEntityType();
 
     return useZustandStore<
         BindingsEditorState,
-        BindingsEditorState['setInvalidSchemaCollections']
-    >(getStoreName(entityType), (state) => state.setInvalidSchemaCollections);
+        BindingsEditorState['setIncompatibleCollections']
+    >(getStoreName(entityType), (state) => state.setIncompatibleCollections);
 };
 
 export const useBindingsEditorStore_resetState = () => {
