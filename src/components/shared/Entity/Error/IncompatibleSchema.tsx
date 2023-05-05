@@ -44,7 +44,13 @@ function IncompatibleSchema() {
     const setFormState = useFormStateStore_setFormState();
 
     return (
-        <Collapse in={open} unmountOnExit>
+        <Collapse
+            in={open}
+            sx={{
+                mb: open ? 2 : undefined,
+            }}
+            unmountOnExit
+        >
             <AlertBox
                 short
                 severity="error"

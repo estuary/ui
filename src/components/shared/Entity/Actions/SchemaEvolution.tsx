@@ -5,20 +5,19 @@ import {
     useEditorStore_isSaving,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
+import { useEntityType } from 'context/EntityContext';
+import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { useClient } from 'hooks/supabase-swr';
-import { FormattedMessage, useIntl } from 'react-intl';
+import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
+import { FormattedMessage } from 'react-intl';
 import { logRocketEvent } from 'services/logrocket';
 import { jobStatusPoller, JOB_STATUS_COLUMNS, TABLES } from 'services/supabase';
 import {
     useFormStateStore_isActive,
-    useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
 import { FormState, FormStatus } from 'stores/FormState/types';
-import useNotificationStore, {
-    notificationStoreSelectors,
-} from 'stores/NotificationStore';
 import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
 
 interface Props {
@@ -26,29 +25,24 @@ interface Props {
 }
 
 function SchemaEvolution({ onFailure }: Props) {
-    const intl = useIntl();
     const supabaseClient = useClient();
+
+    const entityType = useEntityType();
+    const editingEntity = useEntityWorkflow_Editing();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
     const isSaving = useEditorStore_isSaving();
 
     // Form State Store
-    const messagePrefix = useFormStateStore_messagePrefix();
-
     const setFormState = useFormStateStore_setFormState();
-
     const updateFormStatus = useFormStateStore_updateStatus();
-
     const formActive = useFormStateStore_isActive();
-
-    // Notification Store
-    const showNotification = useNotificationStore(
-        notificationStoreSelectors.showNotification
-    );
 
     // Resource Config Store
     const collections = useResourceConfig_collections();
+
+    const storeDiscoveredCollections = useStoreDiscoveredCaptures();
 
     const waitForEvolutionToFinish = (
         logTokenVal: string,
@@ -59,7 +53,7 @@ function SchemaEvolution({ onFailure }: Props) {
         jobStatusPoller(
             supabaseClient
                 .from(TABLES.EVOLUTIONS)
-                .select(`${JOB_STATUS_COLUMNS}, collections`)
+                .select(`${JOB_STATUS_COLUMNS}, collections, draft_id`)
                 .match({
                     draft_id: draftIdVal,
                     logs_token: logTokenVal,
@@ -69,17 +63,17 @@ function SchemaEvolution({ onFailure }: Props) {
                     status: FormStatus.SCHEMA_EVOLVED,
                 });
 
-                console.log('Evolution success', payload);
+                console.log(
+                    'Evolution success',
+                    payload.job_status.evolvedCollections
+                );
 
-                showNotification({
-                    description: intl.formatMessage({
-                        id: `${messagePrefix}.testNotification.desc`,
-                    }),
-                    severity: 'success',
-                    title: intl.formatMessage({
-                        id: `${messagePrefix}.createNotification.title`,
-                    }),
-                });
+                // TODO - run through all the collections and update the name in the store?
+                await storeDiscoveredCollections(
+                    payload.draft_id,
+                    entityType,
+                    onFailure
+                );
             },
             async (payload: any) => {
                 onFailure({
@@ -129,6 +123,10 @@ function SchemaEvolution({ onFailure }: Props) {
         }
     };
 
+    // Only show in edit mode and for captures
+    if (!editingEntity || entityType !== 'capture') {
+        return null;
+    }
     return (
         <Button onClick={save} disabled={isSaving || formActive} sx={buttonSx}>
             <FormattedMessage id="cta.evolve" />
