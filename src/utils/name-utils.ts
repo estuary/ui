@@ -16,7 +16,8 @@ export const incrementCollectionNames = (collections: string[]) => {
     // Go through all the collections and make sure the names are properly versioned
     return collections.map((collectionName) => {
         return {
-            [collectionName]: suggestedName(collectionName),
+            old_name: collectionName,
+            new_name: suggestedName(collectionName),
         };
     });
 };

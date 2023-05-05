@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import Actions from './Actions';
 import CollectionsList from './CollectionsList';
 
-function IncompatibleSchema() {
+function IncompatibleCollections() {
     const hasIncompatibleCollections =
         useBindingsEditorStore_hasIncompatibleCollections();
 
@@ -46,4 +46,4 @@ function IncompatibleSchema() {
     );
 }
 
-export default IncompatibleSchema;
+export default IncompatibleCollections;

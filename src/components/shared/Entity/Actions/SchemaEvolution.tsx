@@ -64,14 +64,10 @@ function SchemaEvolution({ onFailure }: Props) {
                     logs_token: logTokenVal,
                 }),
             async (payload: any) => {
+                // Update the state so it knows that things came back correctly
                 setFormState({
                     status: FormStatus.SCHEMA_EVOLVED,
                 });
-
-                console.log(
-                    'Evolution success',
-                    payload.job_status.evolvedCollections
-                );
 
                 // Treat these like discovered collections. This will mean the UI
                 //  will go fetch all the new collections, specs, configs and store
@@ -104,11 +100,12 @@ function SchemaEvolution({ onFailure }: Props) {
         if (draftId) {
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (incompatibleCollections && incompatibleCollections.length > 0) {
-                // Inset the evolution details
-                // TODO: need logic to update collections
                 const response = await createEvolution(
                     draftId,
-                    incompatibleCollections
+                    incompatibleCollections.map(
+                        (incompatibleCollection) =>
+                            incompatibleCollection.collection
+                    )
                 );
                 if (response.error) {
                     onFailure({

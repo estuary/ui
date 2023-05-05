@@ -41,7 +41,7 @@ import {
 import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
-import IncompatibleSchema from '../IncompatibleSchema';
+import IncompatibleCollections from '../IncompatibleCollections';
 
 interface Props {
     title: string;
@@ -163,7 +163,7 @@ function EntityEdit({
                         ) : null}
                     </Collapse>
 
-                    <IncompatibleSchema />
+                    <IncompatibleCollections />
 
                     {draftInitializationError ? (
                         <Box sx={{ mb: 2 }}>

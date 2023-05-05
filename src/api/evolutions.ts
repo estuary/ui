@@ -13,10 +13,11 @@ export interface IncompatibleCollections {
     }[];
 }
 
-export const createEvolution = (draftId: string | null, collections: any[]) => {
-    const updatedCollectionNames = incrementCollectionNames(collections);
-
-    console.log('object', updatedCollectionNames);
+export const createEvolution = (
+    draftId: string | null,
+    collectionNames: string[]
+) => {
+    const collections = incrementCollectionNames(collectionNames);
 
     return insertSupabase(TABLES.EVOLUTIONS, {
         draft_id: draftId ?? DEFAULT_FILTER,
