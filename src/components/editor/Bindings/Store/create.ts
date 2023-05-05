@@ -84,8 +84,8 @@ const getInitialStateData = (): Pick<
     | 'schemaInferenceDisabled'
     | 'schemaUpdateErrored'
     | 'schemaUpdated'
-    | 'invalidSchemaCollections'
-    | 'hasInvalidSchemaCollections'
+    | 'incompatibleCollections'
+    | 'hasIncompatibleCollections'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -96,8 +96,8 @@ const getInitialStateData = (): Pick<
     schemaInferenceDisabled: false,
     schemaUpdateErrored: false,
     schemaUpdated: true,
-    invalidSchemaCollections: [],
-    hasInvalidSchemaCollections: false,
+    incompatibleCollections: [],
+    hasIncompatibleCollections: false,
 });
 
 const getInitialState = (
@@ -126,14 +126,14 @@ const getInitialState = (
         );
     },
 
-    setInvalidSchemaCollections: (value) => {
+    setIncompatibleCollections: (value) => {
         set(
             produce((state: BindingsEditorState) => {
-                state.invalidSchemaCollections = value;
-                state.hasInvalidSchemaCollections = hasLength(value);
+                state.incompatibleCollections = value;
+                state.hasIncompatibleCollections = hasLength(value);
             }),
             false,
-            'Invalid Schema Collection List Set'
+            'Incompatible Collections List Set'
         );
     },
 

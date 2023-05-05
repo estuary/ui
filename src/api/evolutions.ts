@@ -1,7 +1,8 @@
 import { DEFAULT_FILTER, insertSupabase, TABLES } from 'services/supabase';
 import { incrementCollectionNames } from 'utils/name-utils';
 
-export interface InvalidSchemaJobStatus {
+// Evolution starts by returning the key `incompatible_collections`
+export interface IncompatibleCollections {
     collection: string;
     affected_materializations: {
         name: string;

@@ -4,7 +4,7 @@ import {
     getDraftSpecsBySpecTypeReduced,
 } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
-import { useBindingsEditorStore_setInvalidSchemaCollections } from 'components/editor/Bindings/Store/hooks';
+import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
@@ -65,8 +65,8 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
     // Details Form Store
     const entityDescription = useDetailsForm_details_description();
 
-    const setInvalidSchemaCollections =
-        useBindingsEditorStore_setInvalidSchemaCollections();
+    const setIncompatibleCollections =
+        useBindingsEditorStore_setIncompatibleCollections();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -135,7 +135,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
                 const imcompatibleCollections =
                     payload?.job_status?.incompatible_collections;
                 if (hasLength(imcompatibleCollections)) {
-                    setInvalidSchemaCollections(imcompatibleCollections);
+                    setIncompatibleCollections(imcompatibleCollections);
                 }
 
                 onFailure({

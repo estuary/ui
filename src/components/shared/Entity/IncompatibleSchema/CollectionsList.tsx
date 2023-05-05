@@ -1,10 +1,9 @@
 import { Chip, ListItem, Stack } from '@mui/material';
-import { useBindingsEditorStore_invalidSchemaCollections } from 'components/editor/Bindings/Store/hooks';
+import { useBindingsEditorStore_incompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 
 function CollectionsList() {
-    const collections = useBindingsEditorStore_invalidSchemaCollections();
-
-    console.log('CollectionsList', collections);
+    const incompatibleCollections =
+        useBindingsEditorStore_incompatibleCollections();
 
     return (
         <Stack
@@ -18,14 +17,14 @@ function CollectionsList() {
                 ml: 1,
             }}
         >
-            {collections.map((data) => {
+            {incompatibleCollections.map((incompatibleCollection) => {
                 return (
                     <ListItem
-                        key={`evolving-collections-${data.collection}`}
+                        key={`evolving-collections-${incompatibleCollection.collection}`}
                         dense
                         sx={{ px: 0.5, width: 'auto' }}
                     >
-                        <Chip label={data.collection} />
+                        <Chip label={incompatibleCollection.collection} />
                     </ListItem>
                 );
             })}

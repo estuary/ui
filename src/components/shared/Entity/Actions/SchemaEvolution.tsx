@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import { createEvolution } from 'api/evolutions';
-import { useBindingsEditorStore_invalidSchemaCollections } from 'components/editor/Bindings/Store/hooks';
+import { useBindingsEditorStore_incompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
@@ -40,7 +40,8 @@ function SchemaEvolution({ onFailure }: Props) {
     const updateFormStatus = useFormStateStore_updateStatus();
     const formActive = useFormStateStore_isActive();
 
-    const collections = useBindingsEditorStore_invalidSchemaCollections();
+    const incompatibleCollections =
+        useBindingsEditorStore_incompatibleCollections();
 
     const waitForEvolutionToFinish = (
         logTokenVal: string,
@@ -90,10 +91,13 @@ function SchemaEvolution({ onFailure }: Props) {
 
         if (draftId) {
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (collections && collections.length > 0) {
+            if (incompatibleCollections && incompatibleCollections.length > 0) {
                 // Inset the evolution details
                 // TODO: need logic to update collections
-                const response = await createEvolution(draftId, collections);
+                const response = await createEvolution(
+                    draftId,
+                    incompatibleCollections
+                );
                 if (response.error) {
                     onFailure({
                         error: {
