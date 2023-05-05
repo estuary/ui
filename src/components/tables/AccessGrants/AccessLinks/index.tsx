@@ -81,8 +81,9 @@ function AccessLinksTable({ prefixes }: Props) {
             >
                 <EntityTable
                     noExistingDataContentIds={{
-                        header: 'accessGrants.message1',
-                        message: 'accessGrants.message2',
+                        header: 'accessGrants.table.accessLinks.header.noData',
+                        message:
+                            'accessGrants.table.accessLinks.message.noData',
                         disableDoclink: true,
                     }}
                     columns={columns}

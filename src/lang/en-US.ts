@@ -472,6 +472,8 @@ const AccessGrants: ResolvedIntlConfig['messages'] = {
 
     'accessGrants.table.accessLinks.title': `Active Invitations`,
     'accessGrants.table.accessLinks.cta.generate': `Create Links`,
+    'accessGrants.table.accessLinks.header.noData': `No active invitations found.`,
+    'accessGrants.table.accessLinks.message.noData': `To create an invitation, click the "Generate Invitation" button above. Invitations will be listed here while they are live.`,
     'accessGrants.table.accessLinks.label.filter': `Filter Prefix or Capability`,
     'accessGrants.table.accessLinks.label.provisioningPrefix': `Provisioner`,
     'accessGrants.table.accessLinks.label.grantedPrefix': `Prefix`,
