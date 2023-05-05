@@ -4,6 +4,8 @@ import { useBindingsEditorStore_invalidSchemaCollections } from 'components/edit
 function CollectionsList() {
     const collections = useBindingsEditorStore_invalidSchemaCollections();
 
+    console.log('CollectionsList', collections);
+
     return (
         <Stack
             direction="row"
@@ -16,14 +18,14 @@ function CollectionsList() {
                 ml: 1,
             }}
         >
-            {collections.map((collectionName: string) => {
+            {collections.map((data) => {
                 return (
                     <ListItem
-                        key={`evolving-collections-${collectionName}`}
+                        key={`evolving-collections-${data.collection}`}
                         dense
                         sx={{ px: 0.5, width: 'auto' }}
                     >
-                        <Chip label={collectionName} />
+                        <Chip label={data.collection} />
                     </ListItem>
                 );
             })}

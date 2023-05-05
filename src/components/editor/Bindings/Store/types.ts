@@ -1,4 +1,5 @@
 import { AlertColor } from '@mui/material';
+import { InvalidSchemaJobStatus } from 'api/evolutions';
 import { CollectionData } from 'components/editor/Bindings/types';
 import { Dispatch, SetStateAction } from 'react';
 import { Schema } from 'types';
@@ -58,7 +59,7 @@ export interface BindingsEditorState {
     ) => void;
 
     // Schema Evolution
-    invalidSchemaCollections: string[];
+    invalidSchemaCollections: InvalidSchemaJobStatus[];
     setInvalidSchemaCollections: (
         value: BindingsEditorState['invalidSchemaCollections']
     ) => void;
