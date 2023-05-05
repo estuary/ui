@@ -13,9 +13,16 @@ import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { useClient } from 'hooks/supabase-swr';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
+import { useCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { logRocketEvent } from 'services/logrocket';
-import { jobStatusPoller, JOB_STATUS_COLUMNS, TABLES } from 'services/supabase';
+import {
+    DEFAULT_POLLER_ERROR,
+    jobStatusPoller,
+    JOB_STATUS_COLUMNS,
+    JOB_STATUS_POLLER_ERROR,
+    TABLES,
+} from 'services/supabase';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
@@ -48,6 +55,16 @@ function SchemaEvolution({ onFailure }: Props) {
 
     const setIncompatibleCollections =
         useBindingsEditorStore_setIncompatibleCollections();
+
+    const jobFailed = useCallback(
+        (error) => {
+            setFormState({
+                error,
+                status: FormStatus.FAILED,
+            });
+        },
+        [setFormState]
+    );
 
     const waitForEvolutionToFinish = (
         logTokenVal: string,
@@ -83,11 +100,14 @@ function SchemaEvolution({ onFailure }: Props) {
                 setIncompatibleCollections([]);
             },
             async (payload: any) => {
-                onFailure({
-                    error: {
-                        title: payload?.job_status?.error ?? null,
-                    },
-                });
+                if (payload.error === JOB_STATUS_POLLER_ERROR) {
+                    jobFailed(DEFAULT_POLLER_ERROR);
+                } else {
+                    jobFailed({
+                        ...DEFAULT_POLLER_ERROR,
+                        message: `entityEvolution.serverUnreachable`,
+                    });
+                }
             }
         );
     };

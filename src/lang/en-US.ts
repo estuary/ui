@@ -861,7 +861,8 @@ const OAuth: ResolvedIntlConfig['messages'] = {
 };
 
 const Supabase: ResolvedIntlConfig['messages'] = {
-    'supabase.poller.failed': `We encountered a problem retrieving the status of this action. Please check your network connection and try again.`,
+    'supabase.poller.failed.title': `Potential Network or Server Issue`,
+    'supabase.poller.failed.message': `We encountered a problem retrieving the status of this action. Please check your network connection and try again.`,
 };
 
 const Legal: ResolvedIntlConfig['messages'] = {
@@ -971,7 +972,7 @@ const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
 
 const EntityEvolution: ResolvedIntlConfig['messages'] = {
     'entityEvolution.failure.errorTitle': `Capture Update Failed`,
-    'entityEvolution.serverUnreachable': `Unable to reach server while saving capture`,
+    'entityEvolution.serverUnreachable': `Unable to reach server while trying to update collections`,
     'entityEvolution.error.title': `Changes Rejected Due to Incompatible Schema Updates`,
     'entityEvolution.error.message': `Schema changes will break downstream tasks. To avoid this, click below and then publish a new version of the affected collections.`,
     'entityEvolution.error.note': `Note: This may result in additional cost as new collection versions are backfilled.`,

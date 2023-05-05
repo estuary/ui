@@ -16,6 +16,7 @@ import { useCallback, useMemo } from 'react';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
     DEFAULT_FILTER,
+    DEFAULT_POLLER_ERROR,
     jobStatusPoller,
     JOB_STATUS_POLLER_ERROR,
     TABLES,
@@ -116,11 +117,9 @@ function useDiscoverCapture(
     const storeDiscoveredCollections = useStoreDiscoveredCaptures();
 
     const jobFailed = useCallback(
-        (errorTitle: string) => {
+        (error) => {
             setFormState({
-                error: {
-                    title: errorTitle,
-                },
+                error,
                 status: FormStatus.FAILED,
             });
         },
@@ -170,9 +169,14 @@ function useDiscoverCapture(
                 },
                 (payload: any) => {
                     if (payload.error === JOB_STATUS_POLLER_ERROR) {
-                        jobFailed(payload.error);
+                        jobFailed(DEFAULT_POLLER_ERROR);
                     } else {
-                        jobFailed(`${messagePrefix}.test.failedErrorTitle`);
+                        jobFailed({
+                            title: `${messagePrefix}.test.failedErrorTitle`,
+                            error: {
+                                message: `${messagePrefix}.test.serverUnreachable`,
+                            },
+                        });
                     }
                 }
             );

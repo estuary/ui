@@ -13,6 +13,8 @@ export interface IncompatibleCollections {
     }[];
 }
 
+// TODO (schema evolution) we do not use this response yet as we do not manually check
+//  or display any information to the user about which things were updated.
 // Evolution success will return this object in job_status['evolved_collections']
 export interface EvolvedCollections {
     new_name: string;

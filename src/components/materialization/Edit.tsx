@@ -127,11 +127,9 @@ function MaterializationEdit() {
                 replace: true,
             });
         },
-        jobFailed: (errorTitle: string) => {
+        jobFailed: (error: any) => {
             setFormState({
-                error: {
-                    title: errorTitle,
-                },
+                error,
                 status: FormStatus.FAILED,
             });
         },

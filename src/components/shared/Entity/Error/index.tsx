@@ -1,4 +1,4 @@
-import { Box, Stack } from '@mui/material';
+import { Box, Divider, Stack } from '@mui/material';
 import DraftErrors, {
     DraftErrorProps,
 } from 'components/shared/Entity/Error/DraftErrors';
@@ -18,9 +18,13 @@ function EntityError({ logToken, error, title, draftId }: Props) {
         <HeaderSummary severity="error" title={title}>
             <Stack direction="column" spacing={2}>
                 <Box>
-                    <Error error={error} hideTitle={true} />
+                    <Error error={error} hideTitle={true} noAlertBox />
 
-                    {draftId ? <DraftErrors draftId={draftId} /> : null}
+                    {!error && draftId ? (
+                        <>
+                            <Divider /> <DraftErrors draftId={draftId} />
+                        </>
+                    ) : null}
                 </Box>
 
                 <ErrorLogs

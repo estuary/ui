@@ -110,11 +110,9 @@ function CaptureCreate() {
             resetState();
             navigate(authenticatedRoutes.captures.fullPath);
         },
-        jobFailed: (errorTitle: string) => {
+        jobFailed: (error: any) => {
             setFormState({
-                error: {
-                    title: errorTitle,
-                },
+                error,
                 status: FormStatus.FAILED,
             });
         },

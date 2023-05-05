@@ -19,7 +19,7 @@ function IncompatibleCollections() {
         >
             <AlertBox
                 short
-                severity="error"
+                severity="warning"
                 title={
                     <Typography variant="h5" component="span">
                         <FormattedMessage id="entityEvolution.error.title" />
