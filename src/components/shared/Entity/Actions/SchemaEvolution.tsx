@@ -1,6 +1,9 @@
 import { Button } from '@mui/material';
 import { createEvolution } from 'api/evolutions';
-import { useBindingsEditorStore_incompatibleCollections } from 'components/editor/Bindings/Store/hooks';
+import {
+    useBindingsEditorStore_incompatibleCollections,
+    useBindingsEditorStore_setIncompatibleCollections,
+} from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
@@ -43,6 +46,9 @@ function SchemaEvolution({ onFailure }: Props) {
     const incompatibleCollections =
         useBindingsEditorStore_incompatibleCollections();
 
+    const setIncompatibleCollections =
+        useBindingsEditorStore_setIncompatibleCollections();
+
     const waitForEvolutionToFinish = (
         logTokenVal: string,
         draftIdVal: string
@@ -67,12 +73,18 @@ function SchemaEvolution({ onFailure }: Props) {
                     payload.job_status.evolvedCollections
                 );
 
-                // TODO - run through all the collections and update the name in the store?
+                // Treat these like discovered collections. This will mean the UI
+                //  will go fetch all the new collections, specs, configs and store
+                //  them locally and present them
                 await storeDiscoveredCollections(
                     payload.draft_id,
                     entityType,
                     onFailure
                 );
+
+                // Now that the collections are updated we can clear out the list so
+                //  the error section is no longer displayed.
+                setIncompatibleCollections([]);
             },
             async (payload: any) => {
                 onFailure({
