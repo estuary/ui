@@ -41,7 +41,7 @@ import {
 import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
-import IncompatibleSchema from '../Error/IncompatibleSchema';
+import IncompatibleSchema from '../IncompatibleSchema';
 
 interface Props {
     title: string;

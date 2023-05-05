@@ -1,5 +1,6 @@
 import { Button } from '@mui/material';
 import { createEvolution } from 'api/evolutions';
+import { useBindingsEditorStore_invalidSchemaCollections } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
@@ -18,7 +19,6 @@ import {
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
 import { FormState, FormStatus } from 'stores/FormState/types';
-import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
 
 interface Props {
     onFailure: (formState: Partial<FormState>) => void;
@@ -40,23 +40,7 @@ function SchemaEvolution({ onFailure }: Props) {
     const updateFormStatus = useFormStateStore_updateStatus();
     const formActive = useFormStateStore_isActive();
 
-    // Resource Config Store
-    const collections = useResourceConfig_collections();
-    // const collections = [
-    //     'a/b/c',
-    //     'a/b/d',
-    //     'a/b/e',
-    //     'a/b/f',
-    //     'a/b/g',
-    //     'a/b/g_v2',
-    //     'a/b/g_v999999999999999999999999',
-    //     'a/b/g_v1e+24',
-    //     'a/b/g-v1',
-    //     'a/b/g_v1',
-    //     'a/b/g_v2',
-    //     'a/b/g_version2',
-    //     'a/b/g_version999',
-    // ];
+    const collections = useBindingsEditorStore_invalidSchemaCollections();
 
     const waitForEvolutionToFinish = (
         logTokenVal: string,

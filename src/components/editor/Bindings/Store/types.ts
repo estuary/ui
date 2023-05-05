@@ -57,6 +57,13 @@ export interface BindingsEditorState {
         setOpen: Dispatch<SetStateAction<boolean>>
     ) => void;
 
+    // Schema Evolution
+    invalidSchemaCollections: string[];
+    setInvalidSchemaCollections: (
+        value: BindingsEditorState['invalidSchemaCollections']
+    ) => void;
+    hasInvalidSchemaCollections: boolean;
+
     // Misc.
     resetState: () => void;
 }

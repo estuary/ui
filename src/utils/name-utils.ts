@@ -1,8 +1,4 @@
-import { forEach } from 'lodash';
-
-export const MAX_VERSION_ERROR = 'version max';
-
-const COLLECTION_VERSION_RE = new RegExp('.*[_-][vV](?<version>\\d+)$');
+const COLLECTION_VERSION_RE = new RegExp('.*[_-][vV](\\d+)$');
 export const suggestedName = (oldName: string) => {
     const regExMatch = COLLECTION_VERSION_RE.exec(oldName);
 
@@ -17,12 +13,10 @@ export const suggestedName = (oldName: string) => {
 };
 
 export const incrementCollectionNames = (collections: string[]) => {
-    const response = {};
-
     // Go through all the collections and make sure the names are properly versioned
-    forEach(collections, (collectionName) => {
-        response[collectionName] = suggestedName(collectionName);
+    return collections.map((collectionName) => {
+        return {
+            [collectionName]: suggestedName(collectionName),
+        };
     });
-
-    return response;
 };

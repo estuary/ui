@@ -203,6 +203,33 @@ export const useBindingsEditorStore_setSchemaUpdateErrored = () => {
     >(getStoreName(entityType), (state) => state.setSchemaUpdateErrored);
 };
 
+export const useBindingsEditorStore_invalidSchemaCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['invalidSchemaCollections']
+    >(getStoreName(entityType), (state) => state.invalidSchemaCollections);
+};
+
+export const useBindingsEditorStore_hasInvalidSchemaCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['hasInvalidSchemaCollections']
+    >(getStoreName(entityType), (state) => state.hasInvalidSchemaCollections);
+};
+
+export const useBindingsEditorStore_setInvalidSchemaCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setInvalidSchemaCollections']
+    >(getStoreName(entityType), (state) => state.setInvalidSchemaCollections);
+};
+
 export const useBindingsEditorStore_resetState = () => {
     const entityType = useEntityType();
 
