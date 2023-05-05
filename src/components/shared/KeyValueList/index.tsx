@@ -1,29 +1,33 @@
-import { List, ListItemText, Typography } from '@mui/material';
+import { List, ListItem, ListItemText, Typography } from '@mui/material';
+import { ReactNode } from 'react';
 
 export type KeyValue = {
-    title: string;
-    val?: string;
+    title: string | ReactNode;
+    val?: string | ReactNode;
 };
 
 interface Props {
     data: KeyValue[];
+    disableTypography?: boolean;
     sectionTitle?: string;
 }
 
-function KeyValueList({ data, sectionTitle }: Props) {
+function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
     if (data.length > 0) {
         return (
             <>
                 {sectionTitle ? (
                     <Typography variant="subtitle1">{sectionTitle}</Typography>
                 ) : null}
-                <List dense sx={{ ml: 2, pt: 0 }}>
+                <List dense sx={{ ml: 1, pt: 0, overflowY: 'auto' }}>
                     {data.map(({ title, val }, index) => (
-                        <ListItemText
-                            key={`${title}-keyValueList-${index}`}
-                            primary={title}
-                            secondary={val}
-                        />
+                        <ListItem key={`${title}-keyValueList-${index}`}>
+                            <ListItemText
+                                disableTypography={disableTypography}
+                                primary={title}
+                                secondary={val}
+                            />
+                        </ListItem>
                     ))}
                 </List>
             </>

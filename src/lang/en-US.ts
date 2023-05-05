@@ -996,6 +996,10 @@ const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
     'dataPlaneAuthReq.waiting.message': `Please wait while we authorize access to {catalogPrefix}. You will be redirected shortly.`,
 };
 
+const DraftErrors: ResolvedIntlConfig['messages'] = {
+    'draftErrors.totalCount': `Displaying {displaying} of {total, plural, one {# error} other {# errors}} `,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1046,6 +1050,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...NewTransform,
     ...TaskEndpoints,
     ...DataPlaneAuthReq,
+    ...DraftErrors,
 };
 
 export default enUSMessages;
