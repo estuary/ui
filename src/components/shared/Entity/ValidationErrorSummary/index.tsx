@@ -57,12 +57,6 @@ function ValidationErrorSummary({
     const formErrorsExist =
         errorsExist || endpointConfigErrorsExist || resourceConfigErrorsExist;
 
-    console.log('validation error ', {
-        errorsExist,
-        endpointConfigErrorsExist,
-        resourceConfigErrorsExist,
-    });
-
     const defaultHeaderMessageId = hydrationErrorsExist
         ? 'workflows.error.initForm'
         : 'entityCreate.endpointConfig.errorSummary';

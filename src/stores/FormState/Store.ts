@@ -7,7 +7,6 @@ import { FormStateStoreNames } from '../names';
 import { EntityFormState, FormState, FormStatus } from './types';
 
 const formActive = (status: FormStatus) => {
-    console.log('form active check', status);
     return (
         status === FormStatus.TESTING ||
         status === FormStatus.GENERATING ||
