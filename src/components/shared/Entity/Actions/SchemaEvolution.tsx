@@ -15,17 +15,17 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
+import { FormState, FormStatus } from 'stores/FormState/types';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
 import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
 
 interface Props {
-    onFailure: Function;
+    onFailure: (formState: Partial<FormState>) => void;
 }
 
-function UpdateCollections({ onFailure }: Props) {
+function SchemaEvolution({ onFailure }: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
 
@@ -54,7 +54,7 @@ function UpdateCollections({ onFailure }: Props) {
         logTokenVal: string,
         draftIdVal: string
     ) => {
-        updateFormStatus(FormStatus.UPDATING);
+        updateFormStatus(FormStatus.SCHEMA_EVOLVING);
 
         jobStatusPoller(
             supabaseClient
@@ -66,7 +66,7 @@ function UpdateCollections({ onFailure }: Props) {
                 }),
             async (payload: any) => {
                 setFormState({
-                    status: FormStatus.UPDATED,
+                    status: FormStatus.SCHEMA_EVOLVED,
                 });
 
                 console.log('Evolution success', payload);
@@ -82,11 +82,9 @@ function UpdateCollections({ onFailure }: Props) {
                 });
             },
             async (payload: any) => {
-                console.log('Evolution failure', payload);
-
                 onFailure({
                     error: {
-                        title: `${messagePrefix}.save.failedErrorTitle`,
+                        title: payload?.job_status?.error ?? null,
                     },
                 });
             }
@@ -96,7 +94,7 @@ function UpdateCollections({ onFailure }: Props) {
     const save = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        updateFormStatus(FormStatus.UPDATING);
+        updateFormStatus(FormStatus.SCHEMA_EVOLVING);
 
         if (draftId) {
             if (collections && collections.length > 0) {
@@ -117,7 +115,7 @@ function UpdateCollections({ onFailure }: Props) {
                     );
                     setFormState({
                         logToken: response.data[0].logs_token,
-                        showLogs: true,
+                        showLogs: false,
                     });
                 }
             }
@@ -125,10 +123,7 @@ function UpdateCollections({ onFailure }: Props) {
             logRocketEvent('Entity:Create:Missing draftId');
             onFailure({
                 error: {
-                    title: `entityEvolution.failure.errorTitle`,
-                    error: intl.formatMessage({
-                        id: 'entityCreate.errors.missingDraftId',
-                    }),
+                    title: `entityCreate.errors.missingDraftId`,
                 },
             });
         }
@@ -141,4 +136,4 @@ function UpdateCollections({ onFailure }: Props) {
     );
 }
 
-export default UpdateCollections;
+export default SchemaEvolution;

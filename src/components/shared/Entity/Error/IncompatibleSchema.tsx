@@ -7,14 +7,15 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import { RealtimeSubscription } from '@supabase/supabase-js';
 import AlertBox from 'components/shared/AlertBox';
-import { useClient } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
+import {
+    useFormStateStore_isActive,
+    useFormStateStore_setFormState,
+} from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import UpdateCollections from '../Actions/UpdateCollections';
+import SchemaEvolution from '../Actions/SchemaEvolution';
 
 const fakeCollections = [
     'acmeCo/anvils/Stark/Pacheco',
@@ -39,30 +40,8 @@ function IncompatibleSchema() {
 
     const [open, setOpen] = useState(true);
 
-    const supabaseClient = useClient();
+    const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
-
-    const callFailed = (
-        formState: any,
-        subscription?: RealtimeSubscription
-    ) => {
-        const setFailureState = () => {
-            setFormState({
-                status: FormStatus.FAILED,
-                ...formState,
-            });
-        };
-        if (subscription) {
-            supabaseClient
-                .removeSubscription(subscription)
-                .then(() => {
-                    setFailureState();
-                })
-                .catch(() => {});
-        } else {
-            setFailureState();
-        }
-    };
 
     return (
         <Collapse in={open} unmountOnExit>
@@ -113,13 +92,21 @@ function IncompatibleSchema() {
                         }}
                     >
                         <Button
+                            disabled={formActive}
                             onClick={() => {
                                 setOpen(false);
                             }}
                         >
                             <FormattedMessage id="cta.cancel" />
                         </Button>
-                        <UpdateCollections onFailure={callFailed} />
+                        <SchemaEvolution
+                            onFailure={(formState) => {
+                                setFormState({
+                                    status: FormStatus.SCHEMA_EVOLVING_FAILED,
+                                    ...formState,
+                                });
+                            }}
+                        />
                     </Box>
                 </Stack>
             </AlertBox>

@@ -146,8 +146,6 @@ function EntityEdit({
         <>
             {toolbar}
 
-            <IncompatibleSchema />
-
             <Box sx={{ mb: 4 }}>{errorSummary}</Box>
 
             {connectorTagsError ? (
@@ -164,6 +162,8 @@ function EntityEdit({
                             />
                         ) : null}
                     </Collapse>
+
+                    <IncompatibleSchema />
 
                     {draftInitializationError ? (
                         <Box sx={{ mb: 2 }}>

@@ -7,10 +7,12 @@ import { FormStateStoreNames } from '../names';
 import { EntityFormState, FormState, FormStatus } from './types';
 
 const formActive = (status: FormStatus) => {
+    console.log('form active check', status);
     return (
         status === FormStatus.TESTING ||
         status === FormStatus.GENERATING ||
-        status === FormStatus.SAVING
+        status === FormStatus.SAVING ||
+        status === FormStatus.SCHEMA_EVOLVING
     );
 };
 
@@ -19,7 +21,8 @@ const formIdle = (status: FormStatus) => {
         status === FormStatus.TESTED ||
         status === FormStatus.INIT ||
         status === FormStatus.SAVED ||
-        status === FormStatus.GENERATED
+        status === FormStatus.GENERATED ||
+        status === FormStatus.SCHEMA_EVOLVED
     );
 };
 
