@@ -439,12 +439,12 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.payment_methods.description': `Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.`,
     'admin.billing.payment_methods.none_available': `No payment methods available`,
 
-    'admin.users.cta.sharePrefix': `Manage Access Links`,
-    'admin.users.sharePrefix.header': `Manage Access Links`,
+    'admin.users.cta.sharePrefix': `Manage Invitations`,
+    'admin.users.sharePrefix.header': `Manage Invitations`,
     'admin.users.sharePrefix.message': `This is a placeholder for a description.`,
     'admin.users.sharePrefix.label.capability': `Capability`,
     'admin.users.sharePrefix.label.type': `Type`,
-    'admin.users.sharePrefix.cta.generateLink': `Generate Access Link`,
+    'admin.users.sharePrefix.cta.generateLink': `Generate Invitation`,
 
     'admin.cookies': `Cookie Preference Management`,
     'admin.cookies.message': `Click below to manage your preferences.`,
@@ -470,13 +470,13 @@ const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrants.message1': `No results found.`,
     'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
 
-    'accessGrants.table.accessLinks.title': `Access Links`,
+    'accessGrants.table.accessLinks.title': `Active Invitations`,
     'accessGrants.table.accessLinks.cta.generate': `Create Links`,
     'accessGrants.table.accessLinks.label.filter': `Filter Prefix or Capability`,
     'accessGrants.table.accessLinks.label.provisioningPrefix': `Provisioner`,
     'accessGrants.table.accessLinks.label.grantedPrefix': `Prefix`,
     'accessGrants.table.accessLinks.label.capability': `Capability`,
-    'accessGrants.table.accessLinks.label.token': `Token`,
+    'accessGrants.table.accessLinks.label.url': `URL`,
     'accessGrants.table.accessLinks.label.lastUpdated': `Last Updated`,
     'accessGrants.table.accessLinks.label.actions': `Actions`,
 };

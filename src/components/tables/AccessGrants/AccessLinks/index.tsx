@@ -32,12 +32,12 @@ export const columns: TableColumns[] = [
         headerIntlKey: 'accessGrants.table.accessLinks.label.capability',
     },
     {
-        field: 'token',
-        headerIntlKey: 'accessGrants.table.accessLinks.label.token',
-    },
-    {
         field: 'updated_at',
         headerIntlKey: 'accessGrants.table.accessLinks.label.lastUpdated',
+    },
+    {
+        field: null,
+        headerIntlKey: '',
     },
 ];
 

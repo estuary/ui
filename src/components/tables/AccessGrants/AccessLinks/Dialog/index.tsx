@@ -1,6 +1,5 @@
 import {
     Button,
-    Collapse,
     Dialog,
     DialogContent,
     DialogTitle,
@@ -10,20 +9,22 @@ import {
     useTheme,
 } from '@mui/material';
 import { generateGrantDirective } from 'api/directives';
-import { unauthenticatedRoutes } from 'app/routes';
-import SingleLineCode from 'components/content/SingleLineCode';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import AccessLinksTable from 'components/tables/AccessGrants/AccessLinks';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { useZustandStore } from 'context/Zustand/provider';
 import { Cancel } from 'iconoir-react';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { getPathWithParams } from 'utils/misc-utils';
+import { SelectTableStoreNames } from 'stores/names';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'stores/Tables/Store';
 
 const TITLE_ID = 'share-prefix-dialog-title';
 
 interface Props {
-    tenants: string[];
+    objectRoles: string[];
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
@@ -40,22 +41,25 @@ interface GrantConfig {
 
 const capabilityOptions = ['admin', 'read'];
 
-const typeOptions = ['multi-use', 'single-use'];
+const typeOptions = ['single-use', 'multi-use'];
 
-const baseURL = `${window.location.origin}${unauthenticatedRoutes.login.path}`;
-
-function SharePrefixDialog({ tenants, open, setOpen }: Props) {
+function SharePrefixDialog({ objectRoles, open, setOpen }: Props) {
     const theme = useTheme();
     const intl = useIntl();
 
+    const hydrate = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['hydrate']
+    >(
+        SelectTableStoreNames.ACCESS_GRANTS_LINKS,
+        selectableTableStoreSelectors.query.hydrate
+    );
+
     const [grantConfig, setGrantConfig] = useState<GrantConfig>({
-        prefix: tenants[0],
+        prefix: objectRoles[0],
         capability: capabilityOptions[0],
         reusability: typeOptions[0],
     });
-
-    const [linkCreated, setLinkCreated] = useState<boolean>(false);
-    const [linkURL, setLinkURL] = useState<string>('');
 
     const handlers = {
         closeDialog: (event: React.MouseEvent<HTMLElement>) => {
@@ -64,31 +68,16 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
             setOpen(false);
         },
         setGrantPrefix: (_event: React.SyntheticEvent, value: string) => {
-            if (linkCreated) {
-                setLinkCreated(false);
-                setLinkURL('');
-            }
-
             const { capability, reusability } = grantConfig;
 
             setGrantConfig({ prefix: value, capability, reusability });
         },
         setGrantCapability: (_event: React.SyntheticEvent, value: string) => {
-            if (linkCreated) {
-                setLinkCreated(false);
-                setLinkURL('');
-            }
-
             const { prefix, reusability } = grantConfig;
 
             setGrantConfig({ prefix, capability: value, reusability });
         },
         setGrantReusability: (_event: React.SyntheticEvent, value: string) => {
-            if (linkCreated) {
-                setLinkCreated(false);
-                setLinkURL('');
-            }
-
             const { prefix, capability } = grantConfig;
 
             setGrantConfig({ prefix, capability, reusability: value });
@@ -131,18 +120,18 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
                 </Typography>
 
                 <Grid container spacing={2} sx={{ mb: 5 }}>
-                    <Grid item xs={5}>
+                    <Grid item xs={12} md={5}>
                         <AutocompletedField
                             label={intl.formatMessage({
                                 id: 'common.tenant',
                             })}
-                            options={tenants}
-                            defaultValue={tenants[0]}
+                            options={objectRoles}
+                            defaultValue={objectRoles[0]}
                             changeHandler={handlers.setGrantPrefix}
                         />
                     </Grid>
 
-                    <Grid item xs={2}>
+                    <Grid item xs={4} md={2}>
                         <AutocompletedField
                             label={intl.formatMessage({
                                 id: 'admin.users.sharePrefix.label.capability',
@@ -153,7 +142,7 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
                         />
                     </Grid>
 
-                    <Grid item xs={2}>
+                    <Grid item xs={4} md={2}>
                         <AutocompletedField
                             label={intl.formatMessage({
                                 id: 'admin.users.sharePrefix.label.type',
@@ -164,7 +153,7 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
                         />
                     </Grid>
 
-                    <Grid item xs={3} sx={{ display: 'flex' }}>
+                    <Grid item xs={4} md={3} sx={{ display: 'flex' }}>
                         <Button
                             onClick={() => {
                                 generateGrantDirective(
@@ -175,18 +164,7 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
                                     (response) => {
                                         console.log('success', response);
 
-                                        if (
-                                            response.data &&
-                                            response.data.length > 0
-                                        ) {
-                                            setLinkURL(
-                                                getPathWithParams(baseURL, {
-                                                    [GlobalSearchParams.GRANT_TOKEN]:
-                                                        response.data[0].token,
-                                                })
-                                            );
-                                            setLinkCreated(true);
-                                        }
+                                        hydrate();
                                     },
                                     (error) => console.log('error', error)
                                 );
@@ -196,15 +174,9 @@ function SharePrefixDialog({ tenants, open, setOpen }: Props) {
                             <FormattedMessage id="admin.users.sharePrefix.cta.generateLink" />
                         </Button>
                     </Grid>
-
-                    <Grid item xs={12}>
-                        <Collapse in={linkCreated}>
-                            <SingleLineCode value={linkURL} />
-                        </Collapse>
-                    </Grid>
                 </Grid>
 
-                <AccessLinksTable prefixes={tenants} />
+                <AccessLinksTable prefixes={objectRoles} />
             </DialogContent>
         </Dialog>
     );

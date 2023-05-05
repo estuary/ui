@@ -89,7 +89,6 @@ function DeleteButton() {
         <>
             <Button
                 variant="outlined"
-                size="small"
                 disabled={!selectionsExist}
                 onClick={handlers.showConfirmationDialog}
             >
