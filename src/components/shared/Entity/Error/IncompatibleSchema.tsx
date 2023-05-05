@@ -15,33 +15,37 @@ import {
     useFormStateStore_setFormState,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
 import SchemaEvolution from '../Actions/SchemaEvolution';
 
-const fakeCollections = [
-    'acmeCo/anvils/Stark/Pacheco',
-    'acmeCo/anvils/Greene/WaltonReallyLongNameForThisOne',
-    'acmeCo/anvils/Freda/Oliver',
-    'acmeCo/anvils/Shana/Keller',
-    'acmeCo/anvils/Marshall/Chambers',
-    'acmeCo/anvils/Maynard/Branch',
-    'acmeCo/anvils/Hester/Miller',
-    'acmeCo/anvils/Ferrell/WillisAlsoHasALongNameForAnEntity',
-    'acmeCo/anvils/Walls/Figueroa',
-    'acmeCo/anvils/Augusta/Carney',
-    'acmeCo/anvils/Higgins/York',
-    'acmeCo/anvils/Christian/Moody',
-    'acmeCo/anvils/Judy/Camacho',
-    'acmeCo/anvils/Zamora/CoteWantedToHaveALongNameAsWell',
-    'acmeCo/anvils/Darla/Mcguire',
-    'acmeCo/anvils/Shari/Guerrero',
-];
+// const fakeCollections = [
+//     'acmeCo/anvils/Stark/Pacheco',
+//     'acmeCo/anvils/Greene/WaltonReallyLongNameForThisOne',
+//     'acmeCo/anvils/Freda/Oliver',
+//     'acmeCo/anvils/Shana/Keller',
+//     'acmeCo/anvils/Marshall/Chambers',
+//     'acmeCo/anvils/Maynard/Branch',
+//     'acmeCo/anvils/Hester/Miller',
+//     'acmeCo/anvils/Ferrell/WillisAlsoHasALongNameForAnEntity',
+//     'acmeCo/anvils/Walls/Figueroa',
+//     'acmeCo/anvils/Augusta/Carney',
+//     'acmeCo/anvils/Higgins/York',
+//     'acmeCo/anvils/Christian/Moody',
+//     'acmeCo/anvils/Judy/Camacho',
+//     'acmeCo/anvils/Zamora/CoteWantedToHaveALongNameAsWell',
+//     'acmeCo/anvils/Darla/Mcguire',
+//     'acmeCo/anvils/Shari/Guerrero',
+// ];
 function IncompatibleSchema() {
-    const collections = fakeCollections;
-
     const [open, setOpen] = useState(true);
 
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
+    const collections = useResourceConfig_collections();
+
+    if (!collections) {
+        return null;
+    }
 
     return (
         <Collapse
