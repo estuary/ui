@@ -1,4 +1,3 @@
-import GrantGuard from 'app/guards/GrantGuard';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -13,8 +12,6 @@ import OnboardGuard from './OnboardGuard';
 const hiddenSearchParam = 'please_show';
 
 function TenantGuard({ children }: BaseComponentProps) {
-    const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
-
     const showTenantCreation = useGlobalSearchParams(
         GlobalSearchParams.HIDDEN_SHOW_BETA
     );
@@ -32,13 +29,7 @@ function TenantGuard({ children }: BaseComponentProps) {
     if (checkingGrants) {
         return <FullPageSpinner />;
     } else if (userGrants.length === 0 || showBeta) {
-        if (grantToken) {
-            return <GrantGuard token={grantToken} grantsMutate={mutate} />;
-        } else {
-            return (
-                <OnboardGuard grantsMutate={mutate} forceDisplay={showBeta} />
-            );
-        }
+        return <OnboardGuard grantsMutate={mutate} forceDisplay={showBeta} />;
     } else {
         // eslint-disable-next-line react/jsx-no-useless-fragment
         return <>{children}</>;

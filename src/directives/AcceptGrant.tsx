@@ -27,8 +27,6 @@ function AcceptGrant({
     grantedPrefix,
     grantedCapability,
 }: Props) {
-    // const [grantAccepted, setGrantAccepted] = useState<boolean>(false);
-
     const [saving, setSaving] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
@@ -84,11 +82,14 @@ function AcceptGrant({
             ) : null}
 
             <Typography variant="h5" align="center">
-                Tenant shared with you
+                <FormattedMessage id="tenant.grantDirective.header" />
             </Typography>
 
             <Typography>
-                {`You have been provisioned ${grantedCapability} access to the following tenant:`}
+                <FormattedMessage
+                    id="tenant.grantDirective.message"
+                    values={{ grantedCapability: <b>{grantedCapability}</b> }}
+                />
             </Typography>
 
             <Box

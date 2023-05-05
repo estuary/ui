@@ -916,6 +916,9 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.origin.radio.gitHub.label': `GitHub`,
     'tenant.origin.radio.other.label': `Other`,
 
+    'tenant.grantDirective.header': `Tenant shared with you`,
+    'tenant.grantDirective.message': `You have been provisioned {grantedCapability} access to the following tenant:`,
+
     'tenant.grantDirective.error.header': `Unable to Provision Access`,
     'tenant.grantDirective.error.message': `A problem was encountered provisioning access to the requested tenant. The access link could have been single-use or revoked by an administrator of the tenant.`,
     'tenant.grantDirective.error.message.help': `For additional context, please {docLink}.`,
