@@ -61,19 +61,23 @@ const useDirectiveGuard = (
                 DIRECTIVES[selectedDirective].token = options.token;
             }
 
-            const fetchDirective = async () => {
-                return exchangeBearerToken(DIRECTIVES[selectedDirective].token);
-            };
+            if (DIRECTIVES[selectedDirective].token) {
+                const fetchDirective = async () => {
+                    return exchangeBearerToken(
+                        DIRECTIVES[selectedDirective].token
+                    );
+                };
 
-            fetchDirective()
-                .then((response) => {
-                    if (response.data) {
-                        setFreshDirective(response.data.applied_directive);
-                    }
-                })
-                .catch((error) => {
-                    setServerError(error);
-                });
+                fetchDirective()
+                    .then((response) => {
+                        if (response.data) {
+                            setFreshDirective(response.data.applied_directive);
+                        }
+                    })
+                    .catch((error) => {
+                        setServerError(error);
+                    });
+            }
         }
 
         // Show a message to remind the user why they are seeing the directive page

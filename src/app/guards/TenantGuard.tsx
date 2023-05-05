@@ -24,7 +24,9 @@ function TenantGuard({ children }: BaseComponentProps) {
         userGrants,
         isValidating: checkingGrants,
         mutate,
-    } = useUserGrants({});
+    } = useUserGrants({
+        singleCall: true,
+    });
 
     if (checkingGrants) {
         return <FullPageSpinner />;

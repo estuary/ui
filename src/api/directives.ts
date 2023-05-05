@@ -171,7 +171,7 @@ const getDirectiveByCatalogPrefix = (
         })
         .or(prefixFilters)
         .eq('spec->>type', directiveType)
-        .neq('uses_remaining', 0);
+        .or(`uses_remaining.eq.1,uses_remaining.is.null`);
 
     queryBuilder = defaultTableFilter<GrantDirective_AccessLinks>(
         queryBuilder,
