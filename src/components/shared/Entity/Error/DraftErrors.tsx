@@ -15,7 +15,7 @@ function parseScopeCrumbs(scope: string): string[] {
 
     // Match either a resource with a JSON fragment pointer, or a simple resource.
     const pivot = scope.indexOf('#/');
-    if (pivot != -1) {
+    if (pivot !== -1) {
         // Decode the fragment into a JSON pointer.
         const ptr = decodeURIComponent(scope.slice(pivot + 2));
 
@@ -32,7 +32,7 @@ function parseScopeCrumbs(scope: string): string[] {
 
     // Strip the canonical source file used by control-plane builds.
     // It's not user-defined and thus not useful to the user.
-    if (parts[0] == 'file:///flow.json') {
+    if (parts[0] === 'file:///flow.json') {
         parts.shift();
     }
     return parts;
