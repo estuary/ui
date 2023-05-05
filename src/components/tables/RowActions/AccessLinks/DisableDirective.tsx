@@ -1,4 +1,4 @@
-import { deleteDirective } from 'api/directives';
+import { disableDirective } from 'api/directives';
 import Progress from 'components/tables/RowActions/AccessLinks/Progress';
 import { ProgressStates } from 'components/tables/RowActions/Shared/Progress';
 import { useZustandStore } from 'context/Zustand/provider';
@@ -18,13 +18,13 @@ export interface Props {
     onFinish: (response: any) => void;
 }
 
-const removeDirective = async (
+const disableInvitation = async (
     directiveId: string,
     setProgress: Dispatch<SetStateAction<ProgressStates>>,
     setError: Dispatch<SetStateAction<any | null>>,
     onFinish: (response: any) => void
 ) => {
-    const response = await deleteDirective(directiveId);
+    const response = await disableDirective(directiveId);
 
     if (!response.error && response.data) {
         setProgress(ProgressStates.SUCCESS);
@@ -36,7 +36,7 @@ const removeDirective = async (
     onFinish(directiveId);
 };
 
-function RemoveDirective({
+function DisableDirective({
     linkConfig,
     runningMessageID,
     successMessageID,
@@ -56,7 +56,7 @@ function RemoveDirective({
     );
 
     useEffect(() => {
-        void removeDirective(
+        void disableInvitation(
             linkConfig.directiveId,
             setProgress,
             setError,
@@ -81,4 +81,4 @@ function RemoveDirective({
     );
 }
 
-export default RemoveDirective;
+export default DisableDirective;

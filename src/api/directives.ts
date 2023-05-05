@@ -3,7 +3,6 @@ import { UserClaims } from 'directives/types';
 import {
     CallSupabaseResponse,
     defaultTableFilter,
-    deleteSupabase,
     handleFailure,
     handleSuccess,
     insertSupabase,
@@ -171,7 +170,8 @@ const getDirectiveByCatalogPrefix = (
             count: 'exact',
         })
         .or(prefixFilters)
-        .eq('spec->>type', directiveType);
+        .eq('spec->>type', directiveType)
+        .neq('uses_remaining', 0);
 
     queryBuilder = defaultTableFilter<GrantDirective_AccessLinks>(
         queryBuilder,
@@ -184,12 +184,16 @@ const getDirectiveByCatalogPrefix = (
     return queryBuilder;
 };
 
-const deleteDirective = (directiveId: string) => {
-    return deleteSupabase(TABLES.DIRECTIVES, { id: directiveId });
+const disableDirective = (directiveId: string) => {
+    return updateSupabase(
+        TABLES.DIRECTIVES,
+        { uses_remaining: 0 },
+        { id: directiveId }
+    );
 };
 
 export {
-    deleteDirective,
+    disableDirective,
     exchangeBearerToken,
     generateGrantDirective,
     getAppliedDirectives,

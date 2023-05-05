@@ -1,7 +1,7 @@
 import { Button, Dialog } from '@mui/material';
 import { unauthenticatedRoutes } from 'app/routes';
 import ConfirmationMessage from 'components/tables/RowActions/AccessLinks/ConfirmationMessage';
-import RemoveDirective from 'components/tables/RowActions/AccessLinks/RemoveDirective';
+import DisableDirective from 'components/tables/RowActions/AccessLinks/DisableDirective';
 import ProgressDialog from 'components/tables/RowActions/ProgressDialog';
 import RowActionConfirmation from 'components/tables/RowActions/Shared/Confirmation';
 import { useConfirmationModalContext } from 'context/Confirmation';
@@ -20,7 +20,7 @@ const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
 
 const baseURL = `${window.location.origin}${unauthenticatedRoutes.login.path}`;
 
-function DeleteButton() {
+function DisableButton() {
     const confirmationModalContext = useConfirmationModalContext();
 
     const [showProgress, setShowProgress] = useState<boolean>(false);
@@ -92,7 +92,7 @@ function DeleteButton() {
                 disabled={!selectionsExist}
                 onClick={handlers.showConfirmationDialog}
             >
-                <FormattedMessage id="cta.delete" />
+                <FormattedMessage id="cta.disable" />
             </Button>
 
             <Dialog open={showProgress} maxWidth="md">
@@ -101,11 +101,11 @@ function DeleteButton() {
                         selectedEntities={targets}
                         finished={handlers.resetState}
                         renderComponent={(item, index, onFinish) => (
-                            <RemoveDirective
+                            <DisableDirective
                                 key={`remove-directive-${index}`}
                                 linkConfig={item}
-                                successMessageID="common.deleted"
-                                runningMessageID="common.deleting"
+                                successMessageID="common.disabled"
+                                runningMessageID="common.disabling"
                                 onFinish={onFinish}
                             />
                         )}
@@ -116,4 +116,4 @@ function DeleteButton() {
     );
 }
 
-export default DeleteButton;
+export default DisableButton;

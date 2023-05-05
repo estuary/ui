@@ -1,5 +1,5 @@
 import { Button, ButtonGroup, Menu, MenuItem, Stack } from '@mui/material';
-import DeleteButton from 'components/tables/RowActions/AccessLinks/DeleteButton';
+import DisableButton from 'components/tables/RowActions/AccessLinks/DisableButton';
 import { useZustandStore } from 'context/Zustand/provider';
 import { MinusSquare, NavArrowDown, Square } from 'iconoir-react';
 import { useState } from 'react';
@@ -65,7 +65,7 @@ function RowSelector() {
                 </Button>
             </ButtonGroup>
 
-            <DeleteButton />
+            <DisableButton />
 
             <Menu
                 id="row-selector-menu"
