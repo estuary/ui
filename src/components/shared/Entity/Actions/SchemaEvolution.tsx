@@ -26,6 +26,7 @@ interface Props {
 
 function SchemaEvolution({ onFailure }: Props) {
     const supabaseClient = useClient();
+    const storeDiscoveredCollections = useStoreDiscoveredCaptures();
 
     const entityType = useEntityType();
     const editingEntity = useEntityWorkflow_Editing();
@@ -41,8 +42,21 @@ function SchemaEvolution({ onFailure }: Props) {
 
     // Resource Config Store
     const collections = useResourceConfig_collections();
-
-    const storeDiscoveredCollections = useStoreDiscoveredCaptures();
+    // const collections = [
+    //     'a/b/c',
+    //     'a/b/d',
+    //     'a/b/e',
+    //     'a/b/f',
+    //     'a/b/g',
+    //     'a/b/g_v2',
+    //     'a/b/g_v999999999999999999999999',
+    //     'a/b/g_v1e+24',
+    //     'a/b/g-v1',
+    //     'a/b/g_v1',
+    //     'a/b/g_v2',
+    //     'a/b/g_version2',
+    //     'a/b/g_version999',
+    // ];
 
     const waitForEvolutionToFinish = (
         logTokenVal: string,
@@ -91,6 +105,7 @@ function SchemaEvolution({ onFailure }: Props) {
         updateFormStatus(FormStatus.SCHEMA_EVOLVING);
 
         if (draftId) {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (collections && collections.length > 0) {
                 // Inset the evolution details
                 // TODO: need logic to update collections
