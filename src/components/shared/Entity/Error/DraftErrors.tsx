@@ -8,6 +8,36 @@ export interface DraftErrorProps {
     enablePolling?: boolean;
 }
 
+// Parse a draft error scope, which is generally a URL with a fragment-encoded
+// JSON pointer, into structured bread crumb components.
+function parseScopeCrumbs(scope: string): string[] {
+    const parts: Array<string> = [];
+
+    // Match either a resource with a JSON fragment pointer, or a simple resource.
+    const pivot = scope.indexOf('#/');
+    if (pivot != -1) {
+        // Decode the fragment into a JSON pointer.
+        const ptr = decodeURIComponent(scope.slice(pivot + 2));
+
+        parts.push(scope.slice(0, pivot));
+
+        // Split the pointer into its components, de-escaping each,
+        // and adding to `parts`.
+        ptr.split('/').forEach((component) =>
+            parts.push(component.replace(/~1/g, '/').replace(/~0/g, '~'))
+        );
+    } else {
+        parts.push(scope);
+    }
+
+    // Strip the canonical source file used by control-plane builds.
+    // It's not user-defined and thus not useful to the user.
+    if (parts[0] == 'file:///flow.json') {
+        parts.shift();
+    }
+    return parts;
+}
+
 function DraftErrors({ draftId, enablePolling }: DraftErrorProps) {
     const { draftSpecErrors, count } = useDraftSpecErrors(
         draftId,
@@ -18,17 +48,7 @@ function DraftErrors({ draftId, enablePolling }: DraftErrorProps) {
     const errorLength = draftSpecErrors.length;
     if (errorLength > 0) {
         const errors: KeyValue[] = draftSpecErrors.map((draftError) => {
-            const filteredScope = draftError.scope
-                // Strip the canonical source file used by control-plane builds.
-                // It's not user-defined and thus not useful to the user.
-                .replace('file:///flow.json#', '')
-                // Remove JSON pointer escapes. The result is not technically a JSON pointer,
-                // but it's far more legible.
-                .replaceAll('~1', '/')
-                .replaceAll('~0', '~');
-
-            // TODO (johnny) - this is where the scopes need populated
-            const scopes = filteredScope.split('/');
+            const crumbs = parseScopeCrumbs(draftError.scope);
 
             return {
                 val: (
@@ -44,7 +64,7 @@ function DraftErrors({ draftId, enablePolling }: DraftErrorProps) {
                 ),
                 title: (
                     <Breadcrumbs>
-                        {scopes.map((scope) => {
+                        {crumbs.map((scope) => {
                             return (
                                 <Typography
                                     key={`draft-error-breadcrumbs-${scope}`}
