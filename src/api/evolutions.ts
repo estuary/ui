@@ -1,7 +1,7 @@
 import { DEFAULT_FILTER, insertSupabase, TABLES } from 'services/supabase';
 import { incrementCollectionNames } from 'utils/name-utils';
 
-// Evolution starts by returning the key `incompatible_collections`
+// Evolution starts by the publish returning this object in job_status['incompatible_collections']
 export interface IncompatibleCollections {
     collection: string;
     affected_materializations: {
@@ -11,6 +11,14 @@ export interface IncompatibleCollections {
             reason: string;
         }[];
     }[];
+}
+
+// Evolution success will return this object in job_status['evolved_collections']
+export interface EvolvedCollections {
+    new_name: string;
+    old_name: string;
+    updated_captures: string[];
+    updated_materializations: string[];
 }
 
 export const createEvolution = (
