@@ -87,6 +87,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
         draftIdVal: string
     ) => {
         updateFormStatus(status);
+        setIncompatibleCollections([]);
 
         jobStatusPoller(
             supabaseClient
