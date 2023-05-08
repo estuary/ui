@@ -1,4 +1,5 @@
 import { Box, Stack } from '@mui/material';
+import { useEditorStore_discoveredDraftId } from 'components/editor/Store/hooks';
 import DraftErrors, {
     DraftErrorProps,
 } from 'components/shared/Entity/Error/DraftErrors';
@@ -14,13 +15,26 @@ interface Props {
 }
 
 function EntityError({ logToken, error, title, draftId }: Props) {
+    const discoveredDraftId = useEditorStore_discoveredDraftId();
+
+    // When a user is discovering we need to make sure we show those errors
+    //  but we would not want to show then at the same time we show test/pub
+    //  draft errors.
+    const idForDraftErrors = discoveredDraftId
+        ? discoveredDraftId
+        : draftId
+        ? draftId
+        : null;
+
     return (
         <HeaderSummary severity="error" title={title}>
             <Stack direction="column" spacing={2}>
                 <Box>
                     <Error error={error} hideTitle={true} />
 
-                    {draftId ? <DraftErrors draftId={draftId} /> : null}
+                    {idForDraftErrors ? (
+                        <DraftErrors draftId={idForDraftErrors} />
+                    ) : null}
                 </Box>
 
                 <ErrorLogs

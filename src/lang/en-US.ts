@@ -806,7 +806,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
     'workflows.collectionSelector.label.listHeader': `Collections`,
-    'workflows.collectionSelector.tab.collectionSchema': `Specification`,
+    'workflows.collectionSelector.tab.collectionSchema': `Schema`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
@@ -900,6 +900,7 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.origin.radio.youTube.label': `YouTube`,
     'tenant.origin.radio.email.label': `Email`,
     'tenant.origin.radio.gitHub.label': `GitHub`,
+    'tenant.origin.radio.paidAdvertising.label': `Paid Advertising`,
     'tenant.origin.radio.other.label': `Other`,
 };
 
@@ -986,6 +987,10 @@ const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
     'keyAutoComplete.noUsableKeys.message': `No fields in the schema are valid keys. Please update schema.`,
 };
 
+const DraftErrors: ResolvedIntlConfig['messages'] = {
+    'draftErrors.totalCount': `Displaying {displaying} of {total, plural, one {# error} other {# errors}} `,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1037,6 +1042,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...TaskEndpoints,
     ...DataPlaneAuthReq,
     ...SchemaEditor_Collection,
+    ...DraftErrors,
 };
 
 export default enUSMessages;

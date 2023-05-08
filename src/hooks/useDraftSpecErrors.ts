@@ -9,6 +9,7 @@ interface DraftErrorsQuery {
     draft_id: string;
 }
 
+const MAX_ERRORS_DISPLAYED = 10;
 const DRAFT_SPEC_COLS = ['scope', 'detail', 'draft_id'];
 const defaultResponse: DraftErrorsQuery[] = [];
 
@@ -17,7 +18,11 @@ function useDraftSpecErrors(draftId?: string | null, enablePolling?: boolean) {
         TABLES.DRAFT_ERRORS,
         {
             columns: DRAFT_SPEC_COLS,
-            filter: (query) => query.eq('draft_id', draftId as string),
+            count: 'exact',
+            filter: (query) =>
+                query
+                    .eq('draft_id', draftId as string)
+                    .limit(MAX_ERRORS_DISPLAYED),
         },
         [draftId]
     );
@@ -33,6 +38,7 @@ function useDraftSpecErrors(draftId?: string | null, enablePolling?: boolean) {
 
     return {
         draftSpecErrors: data ? data.data : defaultResponse,
+        count: data ? data.count : null,
         error,
         mutate,
         isValidating,

@@ -86,6 +86,40 @@ export const useEditorStore_setPersistedDraftId = (
     >(storeName(entityType, localScope), (state) => state.setPersistedDraftId);
 };
 
+export const useEditorStore_discoveredDraftId = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['discoveredDraftId']
+    >(storeName(entityType, localScope), (state) => state.discoveredDraftId);
+};
+
+export const useEditorStore_setDiscoveredDraftId = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setDiscoveredDraftId']
+    >(storeName(entityType, localScope), (state) => state.setDiscoveredDraftId);
+};
+
 export const useEditorStore_pubId = (params?: SelectorParams | undefined) => {
     const localScope = params?.localScope;
 

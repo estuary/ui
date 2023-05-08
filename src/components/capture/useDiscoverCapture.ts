@@ -9,6 +9,7 @@ import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
+    useEditorStore_setDiscoveredDraftId,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
@@ -94,6 +95,7 @@ function useDiscoverCapture(
     const persistedDraftId = useEditorStore_persistedDraftId();
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
     const setDraftId = useEditorStore_setId();
+    const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
 
     const isSaving = useEditorStore_isSaving();
     const resetEditorState = useEditorStore_resetState();
@@ -228,6 +230,7 @@ function useDiscoverCapture(
             existingEndpointConfig: any // JsonFormsData,
         ) => {
             setDraftId(null);
+            setDiscoveredDraftId(discoverDraftId);
 
             jobStatusPoller(
                 supabaseClient
@@ -270,13 +273,14 @@ function useDiscoverCapture(
         },
         [
             jobFailed,
+            messagePrefix,
+            postGenerateMutate,
+            setDiscoveredDraftId,
             setDraftId,
             setDraftedEntityName,
             setFormState,
             setPreviousEndpointConfig,
             storeDiscoveredCollections,
-            messagePrefix,
-            postGenerateMutate,
             supabaseClient,
         ]
     );

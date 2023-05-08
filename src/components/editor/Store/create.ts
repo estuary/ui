@@ -12,6 +12,7 @@ const getInitialStateData = () => {
     return {
         currentCatalog: null,
         id: null,
+        discoveredDraftId: null,
         persistedDraftId: null,
         pubId: null,
         specs: null,
@@ -45,6 +46,16 @@ const getInitialState = <T>(
                 }),
                 false,
                 'Set persisted draft id'
+            );
+        },
+
+        setDiscoveredDraftId: (newVal) => {
+            set(
+                produce((state) => {
+                    state.discoveredDraftId = newVal;
+                }),
+                false,
+                'Set discovered draft id'
             );
         },
 
