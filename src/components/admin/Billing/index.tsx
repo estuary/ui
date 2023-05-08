@@ -12,7 +12,6 @@ import AdminTabs from 'components/admin/Tabs';
 import AlertBox from 'components/shared/AlertBox';
 import BillingHistoryTable from 'components/tables/Billing';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
-import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import usePageTitle from 'hooks/usePageTitle';
 import { useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -26,7 +25,6 @@ import {
     useBilling_setDataByTaskGraphDetails,
     useBilling_setHydrated,
     useBilling_setHydrationErrorsExist,
-    useBilling_setTenants,
 } from 'stores/Billing/hooks';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
@@ -37,27 +35,16 @@ function AdminBilling() {
     const setHydrated = useBilling_setHydrated();
     const setHydrationErrorsExist = useBilling_setHydrationErrorsExist();
 
-    const setTenants = useBilling_setTenants();
-
     const setBillingHistory = useBilling_setBillingHistory();
     const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
 
     const resetBillingState = useBilling_resetState();
-
-    const { combinedGrants, isValidating: isValidatingGrants } =
-        useCombinedGrantsExt({ adminOnly: true });
 
     const {
         billingStats,
         error,
         isValidating: isValidatingStats,
     } = useBillingCatalogStats();
-
-    useEffect(() => {
-        if (!isValidatingGrants) {
-            setTenants(combinedGrants);
-        }
-    }, [setTenants, combinedGrants, isValidatingGrants]);
 
     useEffect(() => {
         if (!isValidatingStats && billingStats) {
@@ -117,9 +104,7 @@ function AdminBilling() {
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
                 <Grid item xs={12} md={6}>
                     <CardWrapper messageId="admin.billing.table.history.header">
-                        {combinedGrants.length > 0 ? (
-                            <BillingHistoryTable />
-                        ) : null}
+                        <BillingHistoryTable />
                     </CardWrapper>
                 </Grid>
 

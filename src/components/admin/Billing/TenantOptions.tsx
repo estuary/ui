@@ -1,11 +1,10 @@
 import { Skeleton } from '@mui/material';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
+import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useZustandStore } from 'context/Zustand/provider';
+import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
-import {
-    useBilling_setSelectedTenant,
-    useBilling_tenants,
-} from 'stores/Billing/hooks';
+import { useBilling_setSelectedTenant } from 'stores/Billing/hooks';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     useBillingTable_setHydrated,
@@ -19,8 +18,9 @@ import {
 function TenantOptions() {
     const intl = useIntl();
 
+    const tenants = useTenantDetails();
+
     // Billing Store
-    const tenants = useBilling_tenants();
     const setSelectedTenant = useBilling_setSelectedTenant();
 
     // Billing Select Table Store
@@ -32,13 +32,19 @@ function TenantOptions() {
         SelectableTableStore['resetState']
     >(SelectTableStoreNames.BILLING, selectableTableStoreSelectors.state.reset);
 
-    return tenants.length > 0 ? (
+    useEffect(() => {
+        if (tenants && tenants.length > 0) {
+            setSelectedTenant(tenants[0].tenant);
+        }
+    }, [setSelectedTenant, tenants]);
+
+    return tenants && tenants.length > 0 ? (
         <AutocompletedField
             label={intl.formatMessage({
                 id: 'common.tenant',
             })}
-            options={tenants}
-            defaultValue={tenants[0]}
+            options={tenants.map(({ tenant }) => tenant)}
+            defaultValue={tenants[0].tenant}
             changeHandler={(_event, value) => {
                 setSelectedTenant(value);
 

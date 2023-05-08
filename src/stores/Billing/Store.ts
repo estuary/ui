@@ -17,13 +17,12 @@ import { devtools, NamedSet } from 'zustand/middleware';
 
 const getInitialStateData = (): Pick<
     BillingState,
-    'billingHistory' | 'dataByTaskGraphDetails' | 'selectedTenant' | 'tenants'
+    'billingHistory' | 'dataByTaskGraphDetails' | 'selectedTenant'
 > => {
     return {
         billingHistory: [],
         dataByTaskGraphDetails: [],
         selectedTenant: '',
-        tenants: [],
     };
 };
 
@@ -31,18 +30,6 @@ export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
     return {
         ...getInitialStateData(),
         ...getStoreWithHydrationSettings('Billing', set),
-
-        setTenants: (value) => {
-            set(
-                produce((state: BillingState) => {
-                    state.tenants = value.map(({ object_role }) => object_role);
-
-                    state.selectedTenant = state.tenants[0];
-                }),
-                false,
-                'Tenants Set'
-            );
-        },
 
         setSelectedTenant: (value) => {
             set(
