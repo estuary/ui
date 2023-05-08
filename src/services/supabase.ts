@@ -327,21 +327,13 @@ export const jobStatusPoller = (
                             payload.data[0]) ??
                         null;
                     if (
-                        (response?.job_status?.type &&
-                            response.job_status.type !== 'queued') ||
-                        (response?.job_status?.status &&
-                            response.job_status.status !== 'queued')
+                        response?.job_status?.type &&
+                        response.job_status.type !== 'queued'
                     ) {
                         LogRocket.log(
-                            `Poller : response : ${
-                                response.job_status.type ??
-                                response.job_status.status
-                            }`
+                            `Poller : response : ${response.job_status.type}`
                         );
-                        if (
-                            response.job_status.type === 'success' ||
-                            response.job_status.status === 'success'
-                        ) {
+                        if (response.job_status.type === 'success') {
                             success(response);
                         } else {
                             failure(response);
