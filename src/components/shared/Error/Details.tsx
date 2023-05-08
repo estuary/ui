@@ -1,9 +1,5 @@
-import { Collapse, Divider, IconButton, Paper, useTheme } from '@mui/material';
 import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
-import { NavArrowDown } from 'iconoir-react';
-import { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { isProduction } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 import { ErrorDetails } from './types';
 
@@ -11,19 +7,10 @@ interface Props {
     error?: ErrorDetails;
 }
 
+// This is not visible to users. This can be used while
+//  developing new code to see all the details supabase is returning
 function Details({ error }: Props) {
     const intl = useIntl();
-    const theme = useTheme();
-
-    const [expanded, setExpanded] = useState(false);
-
-    const handleExpandClick = () => {
-        setExpanded(!expanded);
-    };
-
-    if (!isProduction) {
-        return null;
-    }
 
     const details: KeyValue[] = [];
     if (error) {
@@ -60,40 +47,7 @@ function Details({ error }: Props) {
         return null;
     }
 
-    return (
-        <>
-            <Divider />
-            <IconButton
-                onClick={handleExpandClick}
-                aria-expanded={expanded}
-                aria-label={intl.formatMessage({
-                    id: expanded ? 'aria.closeExpand' : 'aria.openExpand',
-                })}
-                sx={{
-                    marginRight: 0,
-                    transform: `rotate(${expanded ? '180' : '0'}deg)`,
-                    transition: 'all 250ms ease-in-out',
-                }}
-            >
-                <NavArrowDown
-                    style={{
-                        color: theme.palette.text.primary,
-                    }}
-                />
-            </IconButton>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <Paper
-                    variant="outlined"
-                    sx={{
-                        width: '100%',
-                    }}
-                    square
-                >
-                    <KeyValueList data={details} />
-                </Paper>
-            </Collapse>
-        </>
-    );
+    return <KeyValueList data={details} />;
 }
 
 export default Details;
