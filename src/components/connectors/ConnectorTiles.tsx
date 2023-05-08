@@ -196,6 +196,7 @@ function ConnectorTiles({
                                 <ConnectorCardDetails
                                     description={row.detail}
                                     lastUpdate={row.updated_at}
+                                    specType={row.connector_tags[0].protocol}
                                 />
                             }
                             recommended={row.recommended}
