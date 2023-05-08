@@ -589,6 +589,9 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
 
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
     'entityCreate.errors.missingDraftId': `Missing Draft ID.`,
+
+    'discovery.failed.title': `Generating Specification Failed`,
+    'discovery.failed.message': `There was an issue attempting to discover your endpoint. Please review details below.`,
 };
 
 const EntityEdit: ResolvedIntlConfig['messages'] = {

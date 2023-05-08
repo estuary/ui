@@ -43,7 +43,6 @@ import {
 } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
-    useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
@@ -87,7 +86,6 @@ function useDiscoverCapture(
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
     const updateFormStatus = useFormStateStore_updateStatus();
-    const messagePrefix = useFormStateStore_messagePrefix();
 
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
@@ -175,9 +173,9 @@ function useDiscoverCapture(
                         jobFailed(DEFAULT_POLLER_ERROR);
                     } else {
                         jobFailed({
-                            title: `${messagePrefix}.test.failedErrorTitle`,
+                            title: 'discovery.failed.title',
                             error: {
-                                message: `${messagePrefix}.test.serverUnreachable`,
+                                message: 'discovery.failed.message',
                             },
                         });
                     }
@@ -188,7 +186,6 @@ function useDiscoverCapture(
             callFailed,
             entityType,
             jobFailed,
-            messagePrefix,
             postGenerateMutate,
             setDiscoveredDraftId,
             setDraftId,
