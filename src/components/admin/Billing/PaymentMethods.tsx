@@ -60,6 +60,11 @@ const columns: TableColumns[] = [
 ];
 
 const PaymentMethods = () => {
+    const stripePromise = useMemo(
+        () => loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ?? ''),
+        []
+    );
+
     const selectedTenant = useBilling_selectedTenant();
 
     const [refreshCounter, setRefreshCounter] = useState(0);
@@ -74,11 +79,6 @@ const PaymentMethods = () => {
     const [defaultSource, setDefaultSource] = useState<
         string | null | undefined
     >(null);
-
-    const stripePromise = useMemo(
-        () => loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ?? ''),
-        []
-    );
 
     useEffect(() => {
         void (async () => {
