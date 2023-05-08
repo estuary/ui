@@ -14,6 +14,11 @@ function Message({ error }: Props) {
     const intl = useIntl();
 
     // Check if the message object is coming from the server
+    //  Easiest check I could think of. Our shortest keys are
+    //      `cta.foo` which can look a lot like how Supabase returns
+    //      errors when fetching wrong keys from a table (`tableName.col`)
+    //      so we can not use a RegEx like originally planned.
+    //  Code seems to almost always come back.
     const messageFromServer =
         typeof error === 'object' && error.hasOwnProperty('code');
 
