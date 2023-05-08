@@ -1,27 +1,37 @@
 import { Box, Stack, Typography } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import { FormattedMessage, useIntl } from 'react-intl';
-import Details from './Details';
 import { ErrorDetails } from './types';
 
 interface Props {
     error?: ErrorDetails;
 }
 
-const TRANSLATE_KEY_RE = new RegExp(/((\w+)\.(\w+))+/);
-
 function Message({ error }: Props) {
     const intl = useIntl();
-    const message = TRANSLATE_KEY_RE.test(error.message)
-        ? intl.formatMessage({ id: error.message })
-        : error.message;
+
+    // Check if the message object is coming from the server
+    const messageFromServer =
+        typeof error === 'object' && error.hasOwnProperty('code');
+
+    // We do not need to translate messages from Supabase as they comeback readable
+    const message = messageFromServer
+        ? error.message
+        : intl.formatMessage({ id: error.message });
+
+    if (!messageFromServer) {
+        return (
+            <Box sx={{ my: 1 }}>
+                <Typography>{message}</Typography>
+            </Box>
+        );
+    }
 
     return (
-        <>
+        <Stack spacing={2}>
             <Box>
                 <MessageWithLink messageID="error.message" />
             </Box>
-
             <Stack direction="row" spacing={1}>
                 <Typography sx={{ fontWeight: 'bold' }}>
                     <FormattedMessage id="error.messageLabel" />
@@ -29,8 +39,7 @@ function Message({ error }: Props) {
 
                 <Typography>{message}</Typography>
             </Stack>
-            <Details error={error} />
-        </>
+        </Stack>
     );
 }
 
