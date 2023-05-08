@@ -8,6 +8,7 @@ import { useBindingsEditorStore_setIncompatibleCollections } from 'components/ed
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
+    useEditorStore_setDiscoveredDraftId,
     useEditorStore_setPubId,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
@@ -61,6 +62,8 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
     const draftId = useEditorStore_id();
     const setPubId = useEditorStore_setPubId();
     const isSaving = useEditorStore_isSaving();
+
+    const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
 
     // Details Form Store
     const entityDescription = useDetailsForm_details_description();
@@ -173,6 +176,10 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
                     draftSpecResponse.data &&
                     draftSpecResponse.data.length > 0
                 ) {
+                    // Now that we are making a call we can delete the
+                    //  draftId used for showing discovery errors
+                    setDiscoveredDraftId(null);
+
                     const unboundCollections = draftSpecResponse.data
                         .map((query) => query.catalog_name)
                         .filter(

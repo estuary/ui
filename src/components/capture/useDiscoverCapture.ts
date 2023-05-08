@@ -8,6 +8,7 @@ import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
+    useEditorStore_setDiscoveredDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
 import { useClient } from 'hooks/supabase-swr';
@@ -77,6 +78,7 @@ function useDiscoverCapture(
     // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
     const setDraftId = useEditorStore_setId();
+    const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
 
     const isSaving = useEditorStore_isSaving();
     const resetEditorState = useEditorStore_resetState();
@@ -132,6 +134,7 @@ function useDiscoverCapture(
             existingEndpointConfig: any // JsonFormsData,
         ) => {
             setDraftId(null);
+            setDiscoveredDraftId(discoverDraftId);
 
             jobStatusPoller(
                 supabaseClient
@@ -187,6 +190,7 @@ function useDiscoverCapture(
             jobFailed,
             messagePrefix,
             postGenerateMutate,
+            setDiscoveredDraftId,
             setDraftId,
             setDraftedEntityName,
             setFormState,

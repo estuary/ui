@@ -899,6 +899,7 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.origin.radio.youTube.label': `YouTube`,
     'tenant.origin.radio.email.label': `Email`,
     'tenant.origin.radio.gitHub.label': `GitHub`,
+    'tenant.origin.radio.paidAdvertising.label': `Paid Advertising`,
     'tenant.origin.radio.other.label': `Other`,
 };
 
@@ -978,6 +979,10 @@ const EntityEvolution: ResolvedIntlConfig['messages'] = {
     'entityEvolution.error.note': `Note: This may result in additional cost as new collection versions are backfilled.`,
 };
 
+const DraftErrors: ResolvedIntlConfig['messages'] = {
+    'draftErrors.totalCount': `Displaying {displaying} of {total, plural, one {# error} other {# errors}} `,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1029,6 +1034,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...TaskEndpoints,
     ...DataPlaneAuthReq,
     ...EntityEvolution,
+    ...DraftErrors,
 };
 
 export default enUSMessages;
