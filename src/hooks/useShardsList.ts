@@ -1,8 +1,8 @@
 import { Auth } from '@supabase/ui';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
-import LogRocket from 'logrocket';
 import { useMemo } from 'react';
+import { logRocketConsole } from 'services/logrocket';
 import useSWR from 'swr';
 import { LiveSpecsExtBareMinimum } from 'types';
 
@@ -53,7 +53,7 @@ const useShardsList = <T extends LiveSpecsExtBareMinimum>(specs: T[]) => {
             };
             // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
         } catch (error: any) {
-            LogRocket.log('ShardsList : error : ', error);
+            logRocketConsole('ShardsList : error : ', error);
 
             return {
                 shards: [],

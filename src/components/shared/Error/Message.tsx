@@ -1,6 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { logRocketConsole } from 'services/logrocket';
 import { ErrorDetails } from './types';
 
 interface Props {
@@ -8,6 +9,8 @@ interface Props {
 }
 
 function Message({ error }: Props) {
+    logRocketConsole('Error message displayed', error);
+
     const intl = useIntl();
 
     // Check if the message object is coming from the server
