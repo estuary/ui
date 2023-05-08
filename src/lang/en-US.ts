@@ -975,7 +975,7 @@ const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
 };
 
 const EntityEvolution: ResolvedIntlConfig['messages'] = {
-    'entityEvolution.failure.errorTitle': `Capture Update Failed`,
+    'entityEvolution.failure.errorTitle': `Update Failed`,
     'entityEvolution.serverUnreachable': `Unable to reach server while trying to update collections`,
     'entityEvolution.error.title': `Changes Rejected Due to Incompatible Schema Updates`,
     'entityEvolution.error.message': `Schema changes will break downstream tasks. To avoid this, click below and then publish a new version of the affected collections.`,
