@@ -146,7 +146,7 @@ function SchemaEvolution({ onFailure }: Props) {
                 }
             }
         } else {
-            logRocketEvent('Entity:Create:Missing draftId');
+            logRocketEvent('Schema:Evolution:Missing draftId');
             onFailure({
                 error: {
                     title: `entityCreate.errors.missingDraftId`,
