@@ -20,6 +20,11 @@ export interface EditorStoreState<T> {
         newVal: EditorStoreState<T>['persistedDraftId']
     ) => void;
 
+    discoveredDraftId: string | null;
+    setDiscoveredDraftId: (
+        newVal: EditorStoreState<T>['discoveredDraftId']
+    ) => void;
+
     pubId: string | null;
     setPubId: (newVal: EditorStoreState<T>['pubId']) => void;
 

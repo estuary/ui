@@ -905,6 +905,7 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.origin.radio.youTube.label': `YouTube`,
     'tenant.origin.radio.email.label': `Email`,
     'tenant.origin.radio.gitHub.label': `GitHub`,
+    'tenant.origin.radio.paidAdvertising.label': `Paid Advertising`,
     'tenant.origin.radio.other.label': `Other`,
 };
 
@@ -976,6 +977,10 @@ const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
     'dataPlaneAuthReq.waiting.message': `Please wait while we authorize access to {catalogPrefix}. You will be redirected shortly.`,
 };
 
+const DraftErrors: ResolvedIntlConfig['messages'] = {
+    'draftErrors.totalCount': `Displaying {displaying} of {total, plural, one {# error} other {# errors}} `,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1026,6 +1031,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...NewTransform,
     ...TaskEndpoints,
     ...DataPlaneAuthReq,
+    ...DraftErrors,
 };
 
 export default enUSMessages;

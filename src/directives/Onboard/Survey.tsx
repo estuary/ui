@@ -36,6 +36,7 @@ function OnboardingSurvey() {
         intl.formatMessage({ id: 'tenant.origin.radio.youTube.label' }),
         intl.formatMessage({ id: 'tenant.origin.radio.email.label' }),
         intl.formatMessage({ id: 'tenant.origin.radio.gitHub.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.paidAdvertising.label' }),
         surveyOptionOther,
     ]);
 
