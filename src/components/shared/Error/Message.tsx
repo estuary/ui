@@ -1,7 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { DEFAULT_POLLER_ERROR_MESSAGE_KEY } from 'services/supabase';
 import Details from './Details';
 import { ErrorDetails } from './types';
 
@@ -9,18 +8,13 @@ interface Props {
     error?: ErrorDetails;
 }
 
+const TRANSLATE_KEY_RE = new RegExp(/((\w+)\.(\w+))+/);
+
 function Message({ error }: Props) {
-    console.log('Message', error);
     const intl = useIntl();
-    const pollerFailure = error.message === DEFAULT_POLLER_ERROR_MESSAGE_KEY;
-
-    const foo = intl.formatMessage({ id: error.message });
-
-    console.log('foo', foo);
-
-    const message = !pollerFailure
-        ? error.message
-        : intl.formatMessage({ id: error.message });
+    const message = TRANSLATE_KEY_RE.test(error.message)
+        ? intl.formatMessage({ id: error.message })
+        : error.message;
 
     return (
         <>

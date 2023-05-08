@@ -1,4 +1,4 @@
-import { Box, Stack } from '@mui/material';
+import { Box, Divider, Stack } from '@mui/material';
 import { useEditorStore_discoveredDraftId } from 'components/editor/Store/hooks';
 import DraftErrors, {
     DraftErrorProps,
@@ -33,7 +33,10 @@ function EntityError({ logToken, error, title, draftId }: Props) {
                     <Error error={error} hideTitle={true} noAlertBox />
 
                     {idForDraftErrors ? (
-                        <DraftErrors draftId={idForDraftErrors} />
+                        <>
+                            <Divider />
+                            <DraftErrors draftId={idForDraftErrors} />
+                        </>
                     ) : null}
                 </Box>
 

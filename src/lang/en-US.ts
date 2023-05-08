@@ -861,7 +861,7 @@ const OAuth: ResolvedIntlConfig['messages'] = {
 };
 
 const Supabase: ResolvedIntlConfig['messages'] = {
-    'supabase.poller.failed.title': `Potential Network or Server Issue`,
+    'supabase.poller.failed.title': `Unable To Reach Server`,
     'supabase.poller.failed.message': `We encountered a problem retrieving the status of this action. Please check your network connection and try again.`,
 };
 
