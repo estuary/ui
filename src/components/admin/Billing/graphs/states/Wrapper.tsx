@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import EmptyGraphState from 'components/admin/Billing/graphs/states/Empty';
 import GraphLoadingState from 'components/admin/Billing/graphs/states/Loading';
 import {
@@ -16,8 +17,25 @@ function GraphStateWrapper({ children }: BaseComponentProps) {
     if (billingStoreHydrated) {
         return hasLength(billingHistory) &&
             hasLength(dataByTaskGraphDetails) ? (
-            // eslint-disable-next-line react/jsx-no-useless-fragment
-            <>{children}</>
+            <Box
+                sx={{
+                    '& .tooltipTitle': {
+                        marginBottom: '0.5rem',
+                    },
+                    '& .tooltipItem': {
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: '0.25rem',
+                    },
+                    '& .tooltipDataValue': {
+                        marginLeft: '20px',
+                        fontWeight: 600,
+                    },
+                }}
+            >
+                {children}
+            </Box>
         ) : (
             <EmptyGraphState />
         );

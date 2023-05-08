@@ -28,7 +28,6 @@ import {
     useBilling_setHydrationErrorsExist,
     useBilling_setTenants,
 } from 'stores/Billing/hooks';
-import './graphs/graph.css';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
