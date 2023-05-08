@@ -28,6 +28,7 @@ import TableLoadingRows from 'components/tables/Loading';
 
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import { useBilling_selectedTenant } from 'stores/Billing/hooks';
 import { TableColumns } from 'types';
 
@@ -95,8 +96,8 @@ const PaymentMethods = () => {
                         selectedTenant
                     );
 
-                    setMethods(methodsResponse.data.payment_methods);
-                    setDefaultSource(methodsResponse.data.primary);
+                    setMethods(methodsResponse.data?.payment_methods);
+                    setDefaultSource(methodsResponse.data?.primary);
                 } finally {
                     setMethodsLoading(false);
                 }
@@ -118,6 +119,12 @@ const PaymentMethods = () => {
                 typeof methods === 'undefined'),
         [defaultSource, methods, methodsLoading]
     );
+
+    useEffect(() => {
+        if (serverErrored) {
+            logRocketEvent(CustomEvents.ERROR_BOUNDARY_PAYMENT_METHODS);
+        }
+    }, [serverErrored]);
 
     return (
         <Stack spacing={serverErrored ? 0 : 3}>
