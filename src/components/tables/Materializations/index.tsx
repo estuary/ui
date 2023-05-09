@@ -2,12 +2,15 @@ import { Box } from '@mui/material';
 import { getLiveSpecs_materializations } from 'api/liveSpecsExt';
 import EntityTable from 'components/tables/EntityTable';
 import Rows from 'components/tables/Materializations/Rows';
+import RowSelector from 'components/tables/RowActions/RowSelector';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import useTableState from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import StatsHydrator from 'stores/Tables/StatsHydrator';
 import useMaterializationColumns from './useMaterializationColumns';
+
+const selectableTableStoreName = SelectTableStoreNames.MATERIALIZATION;
 
 function MaterializationsTable() {
     const {
@@ -35,12 +38,10 @@ function MaterializationsTable() {
         <Box>
             <TableHydrator
                 query={query}
-                selectableTableStoreName={SelectTableStoreNames.MATERIALIZATION}
+                selectableTableStoreName={selectableTableStoreName}
             >
                 <StatsHydrator
-                    selectableTableStoreName={
-                        SelectTableStoreNames.MATERIALIZATION
-                    }
+                    selectableTableStoreName={selectableTableStoreName}
                 >
                     <EntityTable
                         enableSelection
@@ -65,13 +66,15 @@ function MaterializationsTable() {
                         setColumnToSort={setColumnToSort}
                         header="materializationsTable.title"
                         filterLabel="materializationsTable.filterLabel"
-                        rowSelectorProps={{
-                            selectableTableStoreName:
-                                SelectTableStoreNames.MATERIALIZATION,
-                        }}
                         showEntityStatus={true}
-                        selectableTableStoreName={
-                            SelectTableStoreNames.MATERIALIZATION
+                        selectableTableStoreName={selectableTableStoreName}
+                        showToolbar={true}
+                        toolbar={
+                            <RowSelector
+                                selectableTableStoreName={
+                                    selectableTableStoreName
+                                }
+                            />
                         }
                     />
                 </StatsHydrator>

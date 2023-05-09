@@ -5,12 +5,13 @@ import Message from './Message';
 import { ErrorDetails } from './types';
 
 export interface ErrorProps {
+    condensed?: boolean;
     error?: ErrorDetails;
     hideTitle?: boolean;
     noAlertBox?: boolean;
 }
 
-function Error({ error, hideTitle, noAlertBox }: ErrorProps) {
+function Error({ condensed, error, hideTitle, noAlertBox }: ErrorProps) {
     if (!error) {
         return null;
     }
@@ -27,6 +28,7 @@ function Error({ error, hideTitle, noAlertBox }: ErrorProps) {
         <Box sx={{ width: '100%' }}>
             <AlertBox
                 severity="error"
+                short={condensed}
                 title={
                     !hideTitle ? (
                         <AlertTitle>
