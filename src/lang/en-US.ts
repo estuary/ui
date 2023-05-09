@@ -916,6 +916,7 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.origin.radio.youTube.label': `YouTube`,
     'tenant.origin.radio.email.label': `Email`,
     'tenant.origin.radio.gitHub.label': `GitHub`,
+    'tenant.origin.radio.paidAdvertising.label': `Paid Advertising`,
     'tenant.origin.radio.other.label': `Other`,
 
     'tenant.grantDirective.header': `Tenant shared with you`,
