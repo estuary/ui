@@ -1,6 +1,5 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import {
-    eachMonthOfInterval,
     endOfWeek,
     startOfMonth,
     startOfWeek,
@@ -117,10 +116,6 @@ const getStatsForBilling = (tenants: string[]) => {
     const today = new Date();
     const currentMonth = startOfMonth(today);
     const startMonth = subMonths(currentMonth, 5);
-    const dateRange = eachMonthOfInterval({
-        start: startMonth,
-        end: currentMonth,
-    }).map((date) => formatToGMT(date));
 
     return supabaseClient
         .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
@@ -135,7 +130,8 @@ const getStatsForBilling = (tenants: string[]) => {
         `
         )
         .eq('grain', 'monthly')
-        .in('ts', dateRange)
+        .gte('ts', formatToGMT(startMonth))
+        .lt('ts', formatToGMT(today))
         .or(subjectRoleFilters)
         .order('ts', { ascending: false });
 };
@@ -154,10 +150,6 @@ const getStatsForBillingHistoryTable = (
     const today = new Date();
     const currentMonth = startOfMonth(today);
     const startMonth = subMonths(currentMonth, 5);
-    const dateRange = eachMonthOfInterval({
-        start: startMonth,
-        end: currentMonth,
-    }).map((date) => formatToGMT(date));
 
     let queryBuilder = supabaseClient
         .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
@@ -173,7 +165,8 @@ const getStatsForBillingHistoryTable = (
             { count: 'exact' }
         )
         .eq('grain', 'monthly')
-        .in('ts', dateRange)
+        .gte('ts', formatToGMT(startMonth))
+        .lt('ts', formatToGMT(today))
         .or(subjectRoleFilters);
 
     queryBuilder = defaultTableFilter<CatalogStats_Billing>(
