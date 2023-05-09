@@ -99,7 +99,20 @@ function ConnectorCard({
                     </Box>
 
                     {specType ? (
-                        <Typography sx={{ pb: 1, fontSize: 16 }}>
+                        <Typography
+                            component="div"
+                            sx={{
+                                p: 1,
+                                fontSize: 16,
+                                color: (theme) =>
+                                    theme.palette.mode === 'light'
+                                        ? sample_grey[100]
+                                        : sample_grey[900],
+                                backgroundColor: (theme) =>
+                                    theme.palette.primary.main,
+                                borderRadius: 2,
+                            }}
+                        >
                             <FormattedMessage id={`terms.${specType}`} />
                         </Typography>
                     ) : null}
