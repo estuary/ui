@@ -1,27 +1,34 @@
-import { Paper } from '@mui/material';
+import { ButtonBase } from '@mui/material';
 import {
     semiTransparentBackground,
     semiTransparentBackgroundIntensified,
 } from 'context/Theme';
 import { BaseComponentProps } from 'types';
 
-type TileProps = BaseComponentProps;
+interface TileProps extends BaseComponentProps {
+    clickHandler?: () => void;
+    externalLink?: { href: string; target: string; rel: string };
+}
 
 const boxShadow =
     'rgb(50 50 93 / 7%) 0px 3px 6px -1px, rgb(0 0 0 / 10%) 0px -2px 4px -1px, rgb(0 0 0 / 10%) 0px 2px 4px -1px';
 
-function Tile({ children }: TileProps) {
+function Tile({ children, clickHandler, externalLink }: TileProps) {
     return (
-        <Paper
-            elevation={0}
+        <ButtonBase
+            href={externalLink?.href ?? ''}
+            target={externalLink?.target}
+            rel={externalLink?.rel}
+            onClick={clickHandler}
             sx={{
-                'maxWidth': 500,
+                'width': '100%',
                 'height': '100%',
                 'padding': 1,
-                'flexGrow': 1,
+                'display': 'block',
                 'background': (theme) =>
                     semiTransparentBackground[theme.palette.mode],
                 boxShadow,
+                'border': 'none',
                 'borderRadius': 3,
                 '&:hover': {
                     boxShadow,
@@ -33,7 +40,7 @@ function Tile({ children }: TileProps) {
             }}
         >
             {children}
-        </Paper>
+        </ButtonBase>
     );
 }
 

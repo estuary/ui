@@ -10,12 +10,7 @@ function ConnectorCardDetails({ description, lastUpdate }: Props) {
     return (
         <Stack direction="column" spacing={1} sx={{ alignItems: 'baseline' }}>
             <Typography component="div">
-                <span
-                    style={{
-                        marginRight: '.5rem',
-                        fontWeight: 500,
-                    }}
-                >
+                <span style={{ marginRight: '.5rem', fontWeight: 500 }}>
                     <FormattedMessage id="entityTable.data.lastUpdatedWithColon" />
                 </span>
 
