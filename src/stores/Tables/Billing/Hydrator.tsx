@@ -4,7 +4,7 @@ import useBillingHistory from 'hooks/billing/useBillingHistory';
 import { useEffect } from 'react';
 import { useUnmount } from 'react-use';
 import { SelectTableStoreNames } from 'stores/names';
-import { useBilling_hydrateContinuously } from 'stores/Tables/Billing/hooks';
+import { useBillingTable_hydrateContinuously } from 'stores/Tables/Billing/hooks';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -30,7 +30,7 @@ export const BillingHistoryTableHydrator = ({
         SelectableTableStore['resetState']
     >(SelectTableStoreNames.BILLING, selectableTableStoreSelectors.state.reset);
 
-    const hydrateState = useBilling_hydrateContinuously();
+    const hydrateState = useBillingTable_hydrateContinuously();
 
     const { billingHistory, error, isValidating } = useBillingHistory({
         query,

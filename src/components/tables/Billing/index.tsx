@@ -3,14 +3,11 @@ import { getStatsForBillingHistoryTable } from 'api/stats';
 import Rows from 'components/tables/Billing/Rows';
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
+import { useBilling_selectedTenant } from 'stores/Billing/hooks';
 import { SelectTableStoreNames } from 'stores/names';
 import BillingHistoryTableHydrator from 'stores/Tables/Billing/Hydrator';
 import useTableState from 'stores/Tables/hooks';
-import { Grants, TableColumns } from 'types';
-
-interface Props {
-    grants: Grants[];
-}
+import { TableColumns } from 'types';
 
 // TODO: Determine if the details table column is necessary and, if so,
 //   what data should be displayed in that column. My proposition is that
@@ -41,7 +38,9 @@ export const columns: TableColumns[] = [
 const selectableTableStoreName = SelectTableStoreNames.BILLING;
 
 // TODO (billing): Enable pagination when the new RPC is available.
-function BillingHistoryTable({ grants }: Props) {
+function BillingHistoryTable() {
+    const selectedTenant = useBilling_selectedTenant();
+
     const {
         pagination,
         setPagination,
@@ -54,13 +53,13 @@ function BillingHistoryTable({ grants }: Props) {
     } = useTableState('bil', 'ts', 'desc', 4);
 
     const query = useMemo(() => {
-        return getStatsForBillingHistoryTable(grants, searchQuery, [
+        return getStatsForBillingHistoryTable([selectedTenant], searchQuery, [
             {
                 col: columnToSort,
                 direction: sortDirection,
             },
         ]);
-    }, [columnToSort, grants, searchQuery, sortDirection]);
+    }, [columnToSort, selectedTenant, searchQuery, sortDirection]);
 
     const headerKey = 'accessGrantsTable.prefixes.title';
     const filterKey = 'accessGrantsTable.prefixes.filterLabel';

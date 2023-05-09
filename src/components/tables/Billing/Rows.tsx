@@ -1,7 +1,7 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
+import TimeStamp from 'components/tables/cells/billing/TimeStamp';
 import MonetaryValue from 'components/tables/cells/MonetaryValue';
 import Bytes from 'components/tables/cells/stats/Bytes';
-import TimeStamp from 'components/tables/cells/TimeStamp';
 import { FormattedMessage } from 'react-intl';
 import { BillingRecord } from 'stores/Billing/types';
 
@@ -19,7 +19,7 @@ interface RowsProps {
 function Row({ row }: RowProps) {
     return (
         <TableRow hover>
-            <TimeStamp time={row.date} monthOnly={true} />
+            <TimeStamp date={row.date} timestamp={row.timestamp} />
 
             <Bytes
                 val={row.dataVolume}
