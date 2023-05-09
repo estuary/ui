@@ -1,4 +1,9 @@
-import { FUNCTIONS, invokeSupabase } from 'services/supabase';
+import {
+    FUNCTIONS,
+    invokeSupabase,
+    RPCS,
+    supabaseClient,
+} from 'services/supabase';
 
 const OPERATIONS = {
     SETUP_INTENT: 'setup-intent',
@@ -35,4 +40,18 @@ export const setTenantPrimaryPaymentMethod = (tenant: string, id: string) => {
         tenant,
         id,
     });
+};
+
+// TODO (billing): Add return type annotation.
+export const getBillingHistory = (
+    billed_prefix: string,
+    billed_month: string
+) => {
+    return supabaseClient
+        .rpc(RPCS.BILLING_REPORT, {
+            billed_prefix,
+            billed_month,
+        })
+        .throwOnError()
+        .single();
 };

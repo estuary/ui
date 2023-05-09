@@ -1,5 +1,5 @@
 import { isEqual, parseISO } from 'date-fns';
-import { flatten, isEmpty, sum } from 'lodash';
+import { isEmpty, sum } from 'lodash';
 import prettyBytes from 'pretty-bytes';
 import { BillingRecord } from 'stores/Billing/types';
 import { CatalogStats_Billing, Entity } from 'types';
@@ -70,12 +70,14 @@ const getInitialBillingRecord = (date: string): BillingRecord => {
 
     return {
         date: truncatedDate,
+        timestamp: date,
         dataVolume: 0,
         taskCount: 0,
         totalCost: 0,
         pricingTier: null,
         taskRate: null,
         gbFree: null,
+        includedTasks: null,
     };
 };
 
@@ -116,30 +118,34 @@ export const formatBillingCatalogStats = (
             const totalCost = evaluateTotalCost(dataVolume, taskCount);
 
             if (billingRecordIndex === -1) {
-                const { date, pricingTier, taskRate, gbFree } =
+                const { date, pricingTier, taskRate, gbFree, includedTasks } =
                     getInitialBillingRecord(ts);
 
                 billingHistory.push({
                     date,
+                    timestamp: ts,
                     dataVolume,
                     taskCount,
                     totalCost,
                     pricingTier: pricingTier ?? 'personal',
                     taskRate: taskRate ?? 20,
                     gbFree: gbFree ?? FREE_GB_BY_TIER.PERSONAL,
+                    includedTasks: includedTasks ?? 2,
                 });
             } else {
-                const { date, pricingTier, taskRate, gbFree } =
+                const { date, pricingTier, taskRate, gbFree, includedTasks } =
                     billingHistory[billingRecordIndex];
 
                 billingHistory[billingRecordIndex] = {
                     date,
+                    timestamp: ts,
                     dataVolume,
                     taskCount,
                     totalCost,
                     pricingTier: pricingTier ?? 'personal',
                     taskRate: taskRate ?? 20,
                     gbFree: gbFree ?? FREE_GB_BY_TIER.PERSONAL,
+                    includedTasks: includedTasks ?? 2,
                 };
             }
         });
@@ -148,43 +154,33 @@ export const formatBillingCatalogStats = (
     return billingHistory;
 };
 
+export enum SeriesNames {
+    INCLUDED = 'Included',
+    SURPLUS = 'Billed',
+}
+
 export interface SeriesConfig {
     data: [string, number][];
     seriesName?: string;
+    stack?: string;
 }
 
 export const formatDataVolumeForDisplay = (
     seriesConfigs: SeriesConfig[],
     tooltipConfig: any
 ): string => {
-    const selectedSeries =
+    const filteredSeries =
         seriesConfigs.length === 1
-            ? seriesConfigs[0]
-            : seriesConfigs.find(
+            ? seriesConfigs
+            : seriesConfigs.filter(
                   (series) => series.seriesName === tooltipConfig.seriesName
               );
 
-    const dataVolumeInBytes = selectedSeries?.data.find(
-        ([month]) => month === tooltipConfig.name
-    );
+    const dataVolumeInBytes = filteredSeries
+        .flatMap(({ data }) => data)
+        .find(([month]) => month === tooltipConfig.name);
 
     return dataVolumeInBytes
         ? prettyBytes(dataVolumeInBytes[1], { minimumFractionDigits: 2 })
         : `${tooltipConfig.value[1]} GB`;
-};
-
-export const evaluateSeriesDataUnderLimit = (
-    seriesConfig: SeriesConfig[],
-    tierConstraint: number,
-    metricInBytes?: boolean
-): boolean => {
-    const evaluatedLimit = metricInBytes
-        ? tierConstraint * BYTES_PER_GB
-        : tierConstraint;
-
-    const [seriesData] = seriesConfig.map(({ data }) => flatten(data));
-
-    return seriesData.some((item) => {
-        return typeof item === 'number' ? item <= evaluatedLimit : false;
-    });
 };
