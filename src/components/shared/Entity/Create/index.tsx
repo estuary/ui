@@ -195,11 +195,9 @@ function EntityCreate({
                 </ErrorBoundryWrapper>
             ) : null}
 
-            <ErrorBoundryWrapper>
-                <CatalogEditor
-                    messageId={`${messagePrefix}.finalReview.instructions`}
-                />
-            </ErrorBoundryWrapper>
+            <CatalogEditor
+                messageId={`${messagePrefix}.finalReview.instructions`}
+            />
         </>
     );
 }

@@ -19,6 +19,11 @@ import DetailTabs from './Tabs';
 function EntityDetails() {
     useBrowserTitle('routeTitle.details');
 
+    const localStore = useMemo(
+        () => createEditorStore(EditorStoreNames.GENERAL),
+        []
+    );
+
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
 
@@ -51,9 +56,7 @@ function EntityDetails() {
     });
 
     return (
-        <LocalZustandProvider
-            createStore={createEditorStore(EditorStoreNames.GENERAL)}
-        >
+        <LocalZustandProvider createStore={localStore}>
             <EditorHydrator
                 collectionNames={[catalogName]}
                 lastPubId={lastPubId}

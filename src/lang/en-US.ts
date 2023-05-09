@@ -141,6 +141,9 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.email': `Email`,
     'data.display_name': `Username`,
     'data.published_at': `Published At`,
+    'data.pointer': `Pointer`,
+    'data.exists': `Exists`,
+    'data.field': `Field`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
@@ -586,7 +589,7 @@ const Collections: ResolvedIntlConfig['messages'] = {
 
 const endpointConfigHeader = `Endpoint Config`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
-    'entityCreate.catalogEditor.heading': `Specification Editor`,
+    'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,
     'entityCreate.docs.header': `Connector Help`,
     'entityCreate.cta.docs': `Connector Help`,
     'entityCreate.errors.collapseTitle': `View logs`,
@@ -624,7 +627,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
 
 const EntityEdit: ResolvedIntlConfig['messages'] = {
     'entityEdit.alert.detailsFormDisabled': `The details form cannot be edited at this time.`,
-    'entityEdit.alert.endpointConfigDisabled': `We are working to enable editing of the endpoint configuration form. In the meantime, edits can be made in the Specification Editor below.`,
+    'entityEdit.alert.endpointConfigDisabled': `Editing of the endpoint configuration form disabled.`,
 };
 
 const MonacoEditor: ResolvedIntlConfig['messages'] = {
@@ -644,11 +647,11 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.config.source.homepage': `Home`,
     'captureCreate.save.failed': `Capture creation failed. See below for details:`,
     'captureCreate.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
-    'captureCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the specification file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
+    'captureCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the specification file directly below. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
     'captureCreate.collections.heading': `Output Collections`,
     'captureCreate.collectionSelector.heading': `Collection Selector`,
-    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To make changes, you can enter new values in the this section of the form or edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
+    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Specification tab.`,
 
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
     'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -684,7 +687,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
 
     'captureEdit.collections.heading': `Output Collections`,
     'captureEdit.collectionSelector.heading': `Collection Selector`,
-    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To make changes, you can enter new values in the this section of the form or edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
+    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Specification tab.`,
 
     'captureEdit.test.failedErrorTitle': `Configuration Test Failed`,
     'captureEdit.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -779,7 +782,7 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.test.inProgress': `Please wait while we try to connect to the destination.`,
 
     'materializationEdit.collectionSelector.heading': `Collection Selector`,
-    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To make changes, you can enter new values in the this section of the form or edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
+    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Specification tab.`,
 
     'materializationEdit.resourceConfig.heading': `Resource Configuration`,
     'materializationEdit.save.failedErrorTitle': `Materialization Save Failed`,
@@ -831,11 +834,11 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.error.title.missingCollectionSchema': `Failed to fetch collection specification`,
     'workflows.collectionSelector.error.message.invalidPubId': `This specification may have diverged from the latest, published record of the collection. Your unpublished changes can be found in the editor.`,
     'workflows.collectionSelector.error.message.draftCreationFailed': `The latest, published record of the collection can be found in the editor. It is read-only.`,
-    'workflows.collectionSelector.header.collectionSchema': `Collection Specification`,
+    'workflows.collectionSelector.header.collectionSchema': `Collection Schema`,
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
     'workflows.collectionSelector.label.listHeader': `Collections`,
-    'workflows.collectionSelector.tab.collectionSchema': `Specification`,
+    'workflows.collectionSelector.tab.collectionSchema': `Schema`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
@@ -1011,6 +1014,21 @@ const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
     'dataPlaneAuthReq.waiting.message': `Please wait while we authorize access to {catalogPrefix}. You will be redirected shortly.`,
 };
 
+const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
+    'schemaEditor.fields.label': `Schema`,
+    'schemaEditor.key.label': `Key`,
+    'schemaEditor.key.helper': `Ordered JSON Pointers that define how a composite key may be extracted from a collection document.`,
+    'schemaEditor.table.empty.header': `No fields to display.`,
+    'schemaEditor.table.empty.message': `We were unable to generate a table from the current schema. Please update the schema.`,
+    'schemaEditor.error.title': `Schema Invalid`,
+    'keyAutoComplete.keys.invalid.message': `Field is not a valid key. Please remove or update the schema.`,
+    'keyAutoComplete.keys.invalid.message.readOnly': `Field is not a valid key. Please update the schema.`,
+    'keyAutoComplete.keys.missing.title': `Key is empty`,
+    'keyAutoComplete.keys.missing.message': `All collections require a key. Please provide a key to continue.`,
+    'keyAutoComplete.noOptions.message': `Without a valid schema we cannot provide options for the key. Please fix schema.`,
+    'keyAutoComplete.noUsableKeys.message': `No fields in the schema are valid keys. Please update schema.`,
+};
+
 const EntityEvolution: ResolvedIntlConfig['messages'] = {
     'entityEvolution.failure.errorTitle': `Update Failed`,
     'entityEvolution.serverUnreachable': `Unable to reach server while trying to update collections`,
@@ -1073,6 +1091,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...NewTransform,
     ...TaskEndpoints,
     ...DataPlaneAuthReq,
+    ...SchemaEditor_Collection,
     ...EntityEvolution,
     ...DraftErrors,
 };

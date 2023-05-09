@@ -120,9 +120,6 @@ const lightMode: PaletteOptions = {
         secondary: sample_blue[800],
     },
     tonalOffset,
-    warning: {
-        main: warningMain,
-    },
 };
 
 const darkMode: PaletteOptions = {
@@ -153,6 +150,9 @@ const buttonHoverIndex = zIndexIncrement * 4;
 
 // To make the delete in a multi select to work
 const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
+
+// To make the sortable chip list work
+export const chipDraggableIndex = buttonHoverIndex + zIndexIncrement;
 
 // JSONForms accordion is hardcoded to 20 so making this "1 higher"
 const accordionButton = zIndexIncrement * 5;
@@ -188,6 +188,16 @@ export const typographyTruncation: TypographyProps = {
     noWrap: true,
     sx: {
         minWidth: 0,
+    },
+};
+
+export const draggableChipIconSx: SxProps<Theme> = {
+    '& .MuiChip-icon': {
+        borderTopRightRadius: 0,
+        borderBottomRightRadius: 0,
+        cursor: 'grab',
+        ml: 0,
+        zIndex: chipDraggableIndex,
     },
 };
 

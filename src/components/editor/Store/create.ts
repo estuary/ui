@@ -87,7 +87,6 @@ const getInitialState = <T>(
                         if (state.specs === null || newVal.length === 1) {
                             state.currentCatalog = newVal[0];
                         }
-
                         state.specs = newVal;
                     }
                 }),

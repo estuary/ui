@@ -1,3 +1,4 @@
+import { infer } from '@estuary/flow-web';
 import {
     createDraftSpec,
     getDraftSpecsByCatalogName,
@@ -7,11 +8,12 @@ import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
 import { CollectionData } from 'components/editor/Bindings/types';
 import produce from 'immer';
-import { isEmpty } from 'lodash';
+import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
 import { hasLength } from 'utils/misc-utils';
+import { filterInferSchemaResponse, hasReadSchema } from 'utils/schema-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -73,6 +75,44 @@ const evaluateCollectionData = async (
     }
 };
 
+// Used to properly populate the inferSchemaResponse related state
+const evaluateInferSchemaResponse = (
+    dataVal: BindingsEditorState['inferSchemaResponse'][] | null
+) => {
+    let updatedVal: BindingsEditorState['inferSchemaResponse'] | null,
+        validKeys: string[];
+
+    const hasResponse = dataVal && dataVal.length > 0;
+    if (hasResponse) {
+        // Need list of fields and keys to be populated by the data
+        const filteredKeys: string[][] = [];
+        const filteredFields: any[] = [];
+
+        // Go through all the data and grab the filtered values
+        //  and put them into the lists
+        forEach(dataVal, (val) => {
+            const response = filterInferSchemaResponse(val);
+            filteredKeys.push(response.validKeys);
+            filteredFields.push(response.fields);
+        });
+
+        // Find the keys that are valid in BOTH read/write schema
+        validKeys = intersection(...filteredKeys);
+
+        // Put the read/write output together so all keys are rendered
+        updatedVal = union(...filteredFields);
+    } else {
+        updatedVal = dataVal;
+        validKeys = [];
+    }
+
+    return {
+        updatedVal,
+        validKeys,
+        hasResponse,
+    };
+};
+
 const getInitialStateData = (): Pick<
     BindingsEditorState,
     | 'collectionData'
@@ -84,6 +124,12 @@ const getInitialStateData = (): Pick<
     | 'schemaInferenceDisabled'
     | 'schemaUpdateErrored'
     | 'schemaUpdated'
+    | 'editModeEnabled'
+    | 'inferSchemaResponse'
+    | 'inferSchemaResponseError'
+    | 'inferSchemaResponseDoneProcessing'
+    | 'inferSchemaResponseEmpty'
+    | 'inferSchemaResponse_Keys'
     | 'incompatibleCollections'
     | 'hasIncompatibleCollections'
 > => ({
@@ -96,6 +142,12 @@ const getInitialStateData = (): Pick<
     schemaInferenceDisabled: false,
     schemaUpdateErrored: false,
     schemaUpdated: true,
+    editModeEnabled: false,
+    inferSchemaResponse: null,
+    inferSchemaResponse_Keys: [],
+    inferSchemaResponseError: null,
+    inferSchemaResponseDoneProcessing: false,
+    inferSchemaResponseEmpty: false,
     incompatibleCollections: [],
     hasIncompatibleCollections: false,
 });
@@ -105,6 +157,16 @@ const getInitialState = (
     get: StoreApi<BindingsEditorState>['getState']
 ): BindingsEditorState => ({
     ...getInitialStateData(),
+
+    setEditModeEnabled: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.editModeEnabled = value;
+            }),
+            false,
+            'Edit Mode Enabled Set'
+        );
+    },
 
     setCollectionData: (value) => {
         set(
@@ -297,6 +359,102 @@ const getInitialState = (
             );
         } else {
             return null;
+        }
+    },
+
+    // TODO (collection editor) maybe
+    // This code was initially written supporting being able to
+    //  run against `schema` OR [`readSchema`, `writeSchema`].
+    // That was removed but might be needed in the future
+    //  so we left things running through loops in case we need
+    //  to support that again
+    populateInferSchemaResponse: (spec) => {
+        const populateState = (
+            dataVal: BindingsEditorState['inferSchemaResponse'][] | null,
+            errorVal: BindingsEditorState['inferSchemaResponseError']
+        ) => {
+            const { hasResponse, updatedVal, validKeys } =
+                evaluateInferSchemaResponse(dataVal);
+
+            // Save the values into the store
+            set(
+                produce((state: BindingsEditorState) => {
+                    state.inferSchemaResponseError = errorVal;
+                    state.inferSchemaResponse = updatedVal;
+                    state.inferSchemaResponseDoneProcessing = true;
+                    state.inferSchemaResponseEmpty = !hasResponse;
+                    state.inferSchemaResponse_Keys = validKeys;
+                }),
+                false,
+                'Infere Schema Populated'
+            );
+        };
+
+        set(
+            produce((state: BindingsEditorState) => {
+                state.inferSchemaResponseDoneProcessing = true;
+            }),
+            false,
+            'Resetting inferSchemaDoneProcessing flag'
+        );
+
+        // If no schema then just return because hopefully it means
+        //  we are still just waiting for the schema to load in
+        if (!spec) {
+            return;
+        }
+
+        const schemasToTest = hasReadSchema(spec)
+            ? [spec.readSchema]
+            : [spec.schema];
+
+        // If no schema then just return because hopefully it means
+        //  we are still just waiting for the schema to load in
+        if (!hasLength(schemasToTest)) {
+            return;
+        }
+
+        // Make sure we have an object
+        if (!schemasToTest.every((schema) => isPlainObject(schema))) {
+            populateState(null, 'schema must be an object');
+            return;
+        }
+
+        try {
+            // Run infer against schema
+            const responses = schemasToTest.map((schema) => infer(schema));
+
+            // Make sure all the responses are valid
+            const allResponsesValid = responses.every((inferResponse) => {
+                const { properties } = inferResponse;
+
+                // Make sure there is a response
+                if (properties?.length === 0) {
+                    populateState(null, 'no fields inferred from schema');
+                    return false;
+                }
+
+                // Make sure we did not ONLY get the root object back as a pointer
+                if (properties.length === 1 && properties[0].pointer === '') {
+                    populateState(
+                        null,
+                        'no usable fields inferred from schema'
+                    );
+                    return false;
+                }
+
+                return true;
+            });
+
+            if (!allResponsesValid) {
+                // This just returns because we already populated the state
+                //  in the above loop
+                return;
+            }
+
+            populateState(responses, null);
+        } catch (err: unknown) {
+            populateState(null, err as string);
         }
     },
 

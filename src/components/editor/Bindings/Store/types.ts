@@ -58,6 +58,19 @@ export interface BindingsEditorState {
         setOpen: Dispatch<SetStateAction<boolean>>
     ) => void;
 
+    // Read/Write mode for collection schema
+    editModeEnabled: boolean;
+    setEditModeEnabled: (value: BindingsEditorState['editModeEnabled']) => void;
+
+    inferSchemaResponse: Schema | null;
+    inferSchemaResponse_Keys: string[];
+    inferSchemaResponseError: string | null;
+    inferSchemaResponseDoneProcessing: boolean;
+    inferSchemaResponseEmpty: boolean;
+    populateInferSchemaResponse: (
+        value: BindingsEditorState['inferSchemaResponse']
+    ) => void;
+
     // Schema Evolution
     incompatibleCollections: IncompatibleCollections[];
     setIncompatibleCollections: (

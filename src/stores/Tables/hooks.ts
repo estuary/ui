@@ -17,7 +17,8 @@ export type TablePrefix =
     | 'mat' // materializations
     | 'col' // collections
     | 'con' // connectors
-    | 'bil'; // billing
+    | 'bil' // billing
+    | 'sv'; // schema viewer
 
 function useTableState(
     keyPrefix: TablePrefix,

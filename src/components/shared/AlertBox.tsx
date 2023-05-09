@@ -72,12 +72,14 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
         [severity, short]
     );
 
+    const iconProps = hideIcon ? { icon: hideIcon } : {};
+
     return (
         <Alert
+            {...iconProps}
             ref={ref}
             severity={severity}
             variant="outlined"
-            icon={hideIcon ?? undefined}
             iconMapping={{
                 error: <DeleteCircle style={iconComponentStyling} />,
                 warning: <WarningCircle style={iconComponentStyling} />,
@@ -92,6 +94,7 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
                 'padding': 0,
                 '& > .MuiAlert-message': {
                     p: 1,
+                    pl: 0,
                     width: '100%',
                 },
                 '& > .MuiAlert-action': short

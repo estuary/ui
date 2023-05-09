@@ -6,11 +6,13 @@ import { SuccessResponse, useQuery, useSelect } from './supabase-swr/';
 
 export interface DraftSpecQuery {
     catalog_name: string;
-    spec_type: string;
+    spec_type: Entity;
     spec: any;
     draft_id: string;
     expect_pub_id: string;
 }
+
+export type DraftSpec = DraftSpecQuery | null;
 
 export interface DraftSpecSwrMetadata {
     draftSpecs: DraftSpecQuery[];
