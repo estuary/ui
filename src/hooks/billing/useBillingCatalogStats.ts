@@ -1,16 +1,16 @@
 import { getStatsForBilling } from 'api/stats';
 import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
-import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
+import { useBilling_selectedTenant } from 'stores/Billing/hooks';
 import { CatalogStats_Billing } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 const INTERVAL = 30000;
 
 function useBillingCatalogStats() {
-    const { combinedGrants } = useCombinedGrantsExt({ adminOnly: true });
+    const selectedTenant = useBilling_selectedTenant();
 
     const { data, error, mutate, isValidating } = useSelectNew(
-        hasLength(combinedGrants) ? getStatsForBilling(combinedGrants) : null,
+        hasLength(selectedTenant) ? getStatsForBilling([selectedTenant]) : null,
         {
             errorRetryCount: 3,
             errorRetryInterval: INTERVAL / 2,

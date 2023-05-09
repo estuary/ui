@@ -1,6 +1,4 @@
 import { useTheme } from '@mui/material';
-import EmptyGraphState from 'components/admin/Billing/graphs/states/Empty';
-import GraphLoadingState from 'components/admin/Billing/graphs/states/Loading';
 import { defaultOutlineColor, paperBackground } from 'context/Theme';
 import {
     eachMonthOfInterval,
@@ -8,7 +6,7 @@ import {
     startOfMonth,
     sub,
 } from 'date-fns';
-import { LineChart } from 'echarts/charts';
+import { BarChart } from 'echarts/charts';
 import {
     GridComponent,
     MarkLineComponent,
@@ -27,11 +25,13 @@ import useConstant from 'use-constant';
 import {
     BYTES_PER_GB,
     CARD_AREA_HEIGHT,
-    evaluateSeriesDataUnderLimit,
     formatDataVolumeForDisplay,
     FREE_GB_BY_TIER,
     SeriesConfig,
+    SeriesNames,
 } from 'utils/billing-utils';
+
+const stackId = 'Data Volume';
 
 function DataByMonthGraph() {
     const theme = useTheme();
@@ -56,21 +56,59 @@ function DataByMonthGraph() {
     const seriesConfig: SeriesConfig[] = useMemo(() => {
         const startDate = startOfMonth(sub(today, { months: 5 }));
 
-        return [
-            {
-                data: billingHistory
-                    .filter(({ date }) =>
-                        isWithinInterval(date, {
-                            start: startDate,
-                            end: today,
-                        })
-                    )
-                    .map(({ date, dataVolume }) => [
-                        intl.formatDate(date, { month: 'short' }),
-                        dataVolume,
-                    ]),
-            },
-        ];
+        const scopedDataSet: {
+            month: string;
+            dataVolume: number;
+            gbFree: number | null;
+        }[] = billingHistory
+            .filter(({ date }) =>
+                isWithinInterval(date, {
+                    start: startDate,
+                    end: today,
+                })
+            )
+            .map(({ date, dataVolume, gbFree }) => ({
+                month: intl.formatDate(date, { month: 'short' }),
+                dataVolume,
+                gbFree,
+            }));
+
+        return scopedDataSet.flatMap(
+            ({ month, dataVolume, gbFree }): SeriesConfig | SeriesConfig[] => {
+                const freeBytes =
+                    (gbFree ?? FREE_GB_BY_TIER.PERSONAL) * BYTES_PER_GB;
+
+                if (dataVolume > freeBytes) {
+                    const byteSurplus = dataVolume - freeBytes;
+
+                    return [
+                        {
+                            seriesName: SeriesNames.INCLUDED,
+                            stack: stackId,
+                            data: [[month, freeBytes]],
+                        },
+                        {
+                            seriesName: SeriesNames.SURPLUS,
+                            stack: stackId,
+                            data: [[month, byteSurplus]],
+                        },
+                    ];
+                } else {
+                    return [
+                        {
+                            seriesName: SeriesNames.INCLUDED,
+                            stack: stackId,
+                            data: [[month, dataVolume]],
+                        },
+                        {
+                            seriesName: SeriesNames.SURPLUS,
+                            stack: stackId,
+                            data: [[month, 0]],
+                        },
+                    ];
+                }
+            }
+        );
     }, [billingHistory, intl, today]);
 
     useEffect(() => {
@@ -78,7 +116,7 @@ function DataByMonthGraph() {
             if (!myChart) {
                 echarts.use([
                     GridComponent,
-                    LineChart,
+                    BarChart,
                     CanvasRenderer,
                     UniversalTransition,
                     MarkLineComponent,
@@ -93,12 +131,6 @@ function DataByMonthGraph() {
             window.addEventListener('resize', () => {
                 myChart?.resize();
             });
-
-            const showMarkLine = evaluateSeriesDataUnderLimit(
-                seriesConfig,
-                FREE_GB_BY_TIER.PERSONAL,
-                true
-            );
 
             const option = {
                 xAxis: {
@@ -117,43 +149,16 @@ function DataByMonthGraph() {
                     },
                     minInterval: 0.001,
                 },
-                series: seriesConfig.map(({ data }, index) => {
-                    let config: any = {
-                        type: 'line',
-                        data: data.map(([month, dataVolume]) => [
-                            month,
-                            (dataVolume / BYTES_PER_GB).toFixed(3),
-                        ]),
-                        symbol: 'circle',
-                        symbolSize: 7,
-                    };
-
-                    if (index === 0 && showMarkLine) {
-                        config = {
-                            ...config,
-                            markLine: {
-                                data: [
-                                    {
-                                        yAxis: FREE_GB_BY_TIER.PERSONAL,
-                                        name: 'GB\nFree',
-                                    },
-                                ],
-                                label: {
-                                    color: theme.palette.text.primary,
-                                    formatter: '{c} {b}',
-                                    position: 'end',
-                                },
-                                lineStyle: {
-                                    color: theme.palette.text.primary,
-                                },
-                                silent: true,
-                                symbol: 'none',
-                            },
-                        };
-                    }
-
-                    return config;
-                }),
+                series: seriesConfig.map(({ seriesName, stack, data }) => ({
+                    name: seriesName,
+                    type: 'bar',
+                    stack,
+                    barMinHeight: seriesName === SeriesNames.INCLUDED ? 3 : 0,
+                    data: data.map(([month, dataVolume]) => [
+                        month,
+                        (dataVolume / BYTES_PER_GB).toFixed(3),
+                    ]),
+                })),
                 textStyle: {
                     color: theme.palette.text.primary,
                 },
@@ -165,38 +170,60 @@ function DataByMonthGraph() {
                         color: theme.palette.text.primary,
                         fontWeight: 'normal',
                     },
+                    axisPointer: {
+                        type: 'shadow',
+                    },
                     formatter: (tooltipConfigs: any[]) => {
-                        if (tooltipConfigs.length > 0) {
-                            const config = tooltipConfigs[0];
+                        let content: string | undefined;
 
+                        tooltipConfigs.forEach((config) => {
                             const dataVolume = formatDataVolumeForDisplay(
                                 seriesConfig,
                                 config
                             );
 
-                            const tooltipTitle =
-                                billingHistory
-                                    .map(({ date }) =>
-                                        intl.formatDate(date, {
-                                            month: 'short',
-                                            year: 'numeric',
-                                        })
-                                    )
-                                    .find((date) =>
-                                        date.includes(config.axisValueLabel)
-                                    ) ?? config.axisValueLabel;
+                            if (content) {
+                                content = `${content}
+                                            <div class="tooltipItem">
+                                                <div>
+                                                    ${config.marker}
+                                                    <span>${config.seriesName}</span>
+                                                </div>
+                                                <span class="tooltipDataValue">${dataVolume}</span>
+                                            </div>`;
+                            } else {
+                                const tooltipTitle =
+                                    billingHistory
+                                        .map(({ date }) =>
+                                            intl.formatDate(date, {
+                                                month: 'short',
+                                                year: 'numeric',
+                                            })
+                                        )
+                                        .find((date) =>
+                                            date.includes(config.axisValueLabel)
+                                        ) ?? config.axisValueLabel;
 
-                            return `${tooltipTitle}<br />${config.marker} ${dataVolume}`;
-                        } else {
-                            return undefined;
-                        }
+                                content = `<div class="tooltipTitle">${tooltipTitle}</div>
+                                            <div class="tooltipItem">
+                                                <div>
+                                                    ${config.marker}
+                                                    <span>${config.seriesName}</span>
+                                                </div>
+                                                <span class="tooltipDataValue">${dataVolume}</span>
+                                            </div>`;
+                            }
+                        });
+
+                        return content;
                     },
                 },
                 grid: {
-                    left: 60,
+                    left: 10,
                     top: 15,
                     right: 50,
-                    bottom: 20,
+                    bottom: 0,
+                    containLabel: true,
                 },
             };
 
@@ -213,15 +240,7 @@ function DataByMonthGraph() {
         theme,
     ]);
 
-    if (billingStoreHydrated) {
-        return billingHistory.length > 0 ? (
-            <div id="data-by-month" style={{ height: CARD_AREA_HEIGHT }} />
-        ) : (
-            <EmptyGraphState />
-        );
-    } else {
-        return <GraphLoadingState />;
-    }
+    return <div id="data-by-month" style={{ height: CARD_AREA_HEIGHT }} />;
 }
 
 export default DataByMonthGraph;

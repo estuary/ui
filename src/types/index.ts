@@ -205,6 +205,7 @@ export enum TableStatuses {
 export interface TableColumns {
     field: string | null;
     headerIntlKey?: string | null;
+    width?: number;
 }
 
 export interface TableState {

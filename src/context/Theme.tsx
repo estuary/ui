@@ -201,6 +201,9 @@ export const draggableChipIconSx: SxProps<Theme> = {
     },
 };
 
+export const defaultBoxShadow =
+    'rgb(50 50 93 / 7%) 0px 3px 6px -1px, rgb(0 0 0 / 10%) 0px -2px 4px -1px, rgb(0 0 0 / 10%) 0px 2px 4px -1px';
+
 // TODO (Colors) need to follow a pattern where all colors are in the theme file.
 //      this is one way to handle the light/dark mode:
 

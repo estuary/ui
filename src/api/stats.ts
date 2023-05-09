@@ -16,7 +16,7 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { CatalogStats, CatalogStats_Billing, Grants } from 'types';
+import { CatalogStats, CatalogStats_Billing } from 'types';
 
 export type StatsFilter =
     | 'today'
@@ -108,9 +108,9 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
     return queryBuilder.then(handleSuccess<CatalogStats[]>, handleFailure);
 };
 
-const getStatsForBilling = (grants: Grants[]) => {
-    const subjectRoleFilters = grants
-        .map((grant) => `catalog_name.ilike.${grant.object_role}%`)
+const getStatsForBilling = (tenants: string[]) => {
+    const subjectRoleFilters = tenants
+        .map((tenant) => `catalog_name.ilike.${tenant}%`)
         .join(',');
 
     const today = new Date();
@@ -138,13 +138,13 @@ const getStatsForBilling = (grants: Grants[]) => {
 
 // TODO (billing): Enable pagination when the new RPC is available.
 const getStatsForBillingHistoryTable = (
-    grants: Grants[],
+    tenants: string[],
     // pagination: any,
     searchQuery: any,
     sorting: SortingProps<any>[]
 ): PostgrestFilterBuilder<CatalogStats_Billing> => {
-    const subjectRoleFilters = grants
-        .map((grant) => `catalog_name.ilike.${grant.object_role}%`)
+    const subjectRoleFilters = tenants
+        .map((tenant) => `catalog_name.ilike.${tenant}%`)
         .join(',');
 
     const today = new Date();

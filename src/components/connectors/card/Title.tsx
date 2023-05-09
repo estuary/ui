@@ -11,6 +11,7 @@ function ConnectorCardTitle({ title }: Props) {
             marginBottom={1}
             fontSize={18}
             fontWeight="400"
+            align="left"
         >
             {title}
         </Typography>
