@@ -6,6 +6,10 @@ import { ColumnProps } from '../EntityTable/types';
 
 const defaultColumns: ColumnProps[] = [
     {
+        field: null,
+        headerIntlKey: '',
+    },
+    {
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.entity',
     },

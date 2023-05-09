@@ -44,7 +44,6 @@ function CapturesTable() {
                     selectableTableStoreName={selectableTableStoreName}
                 >
                     <EntityTable
-                        enableSelection
                         noExistingDataContentIds={{
                             header: 'captures.message1',
                             message: 'captures.message2',
@@ -68,7 +67,7 @@ function CapturesTable() {
                         filterLabel="capturesTable.filterLabel"
                         showEntityStatus={true}
                         selectableTableStoreName={selectableTableStoreName}
-                        showToolbar={true}
+                        showToolbar
                         toolbar={
                             <RowSelector
                                 selectableTableStoreName={

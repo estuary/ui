@@ -1,4 +1,4 @@
-import { Box, Stack } from '@mui/material';
+import ChipList from 'components/shared/ChipList';
 import { ReactNode } from 'react';
 
 interface RowActionConfirmationprops {
@@ -13,15 +13,10 @@ function RowActionConfirmation({
     return (
         <>
             {message}
-            <Stack
-                direction="column"
-                spacing={1}
-                sx={{ mt: 2, wordWrap: 'break-word' }}
-            >
-                {selected.map((value: any, index: number) => {
-                    return <Box key={index}>{value}</Box>;
-                })}
-            </Stack>
+            <ChipList
+                items={selected.map((value: string) => value)}
+                keyPrefix="confirmation-selected-items-"
+            />
         </>
     );
 }
