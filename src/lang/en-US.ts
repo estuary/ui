@@ -811,7 +811,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.error.title.missingCollectionSchema': `Failed to fetch collection specification`,
     'workflows.collectionSelector.error.message.invalidPubId': `This specification may have diverged from the latest, published record of the collection. Your unpublished changes can be found in the editor.`,
     'workflows.collectionSelector.error.message.draftCreationFailed': `The latest, published record of the collection can be found in the editor. It is read-only.`,
-    'workflows.collectionSelector.header.collectionSchema': `Collection Specification`,
+    'workflows.collectionSelector.header.collectionSchema': `Collection Schema`,
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
     'workflows.collectionSelector.label.listHeader': `Collections`,
