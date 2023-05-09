@@ -1,15 +1,15 @@
 import produce from 'immer';
 import { SelectTableStoreNames } from 'stores/names';
-import { BillingState } from 'stores/Tables/Billing/types';
+import { BillingTableState } from 'stores/Tables/Billing/types';
 import { getInitialState as getInitialSelectTableState } from 'stores/Tables/Store';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
 export const getInitialState = (
-    set: NamedSet<BillingState>,
-    get: StoreApi<BillingState>['getState']
-): BillingState => {
+    set: NamedSet<BillingTableState>,
+    get: StoreApi<BillingTableState>['getState']
+): BillingTableState => {
     return {
         ...getInitialSelectTableState(set, get),
 
@@ -58,7 +58,7 @@ export const getInitialState = (
 };
 
 export const createBillingTableStore = (key: SelectTableStoreNames.BILLING) => {
-    return create<BillingState>()(
+    return create<BillingTableState>()(
         devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
     );
 };
