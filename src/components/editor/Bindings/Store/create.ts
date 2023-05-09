@@ -130,6 +130,8 @@ const getInitialStateData = (): Pick<
     | 'inferSchemaResponseDoneProcessing'
     | 'inferSchemaResponseEmpty'
     | 'inferSchemaResponse_Keys'
+    | 'incompatibleCollections'
+    | 'hasIncompatibleCollections'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -146,6 +148,8 @@ const getInitialStateData = (): Pick<
     inferSchemaResponseError: null,
     inferSchemaResponseDoneProcessing: false,
     inferSchemaResponseEmpty: false,
+    incompatibleCollections: [],
+    hasIncompatibleCollections: false,
 });
 
 const getInitialState = (
@@ -181,6 +185,17 @@ const getInitialState = (
             }),
             false,
             'Collection Initialization Alert Set'
+        );
+    },
+
+    setIncompatibleCollections: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.incompatibleCollections = value;
+                state.hasIncompatibleCollections = hasLength(value);
+            }),
+            false,
+            'Incompatible Collections List Set'
         );
     },
 

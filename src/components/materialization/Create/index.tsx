@@ -113,14 +113,6 @@ function MaterializationCreate() {
 
             navigate(authenticatedRoutes.materializations.fullPath);
         },
-        jobFailed: (errorTitle: string) => {
-            setFormState({
-                error: {
-                    title: errorTitle,
-                },
-                status: FormStatus.FAILED,
-            });
-        },
     };
 
     // Form Event Handlers

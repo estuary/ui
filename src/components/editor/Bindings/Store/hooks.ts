@@ -203,6 +203,33 @@ export const useBindingsEditorStore_setSchemaUpdateErrored = () => {
     >(getStoreName(entityType), (state) => state.setSchemaUpdateErrored);
 };
 
+export const useBindingsEditorStore_incompatibleCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['incompatibleCollections']
+    >(getStoreName(entityType), (state) => state.incompatibleCollections);
+};
+
+export const useBindingsEditorStore_hasIncompatibleCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['hasIncompatibleCollections']
+    >(getStoreName(entityType), (state) => state.hasIncompatibleCollections);
+};
+
+export const useBindingsEditorStore_setIncompatibleCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setIncompatibleCollections']
+    >(getStoreName(entityType), (state) => state.setIncompatibleCollections);
+};
+
 export const useBindingsEditorStore_editModeEnabled = () => {
     const entityType = useEntityType();
 

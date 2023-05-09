@@ -127,14 +127,6 @@ function MaterializationEdit() {
                 replace: true,
             });
         },
-        jobFailed: (errorTitle: string) => {
-            setFormState({
-                error: {
-                    title: errorTitle,
-                },
-                status: FormStatus.FAILED,
-            });
-        },
     };
 
     // Form Event Handlers

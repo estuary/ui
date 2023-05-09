@@ -216,7 +216,11 @@ export const identifyUser = (user: User) => {
             traits.email = userDetails.email;
         }
 
-        LogRocket.identify(user.id, traits);
+        // Just want to be very very safe
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (LogRocket) {
+            LogRocket.identify(user.id, traits);
+        }
     }
 };
 
@@ -228,5 +232,13 @@ export const logRocketEvent = (
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (LogRocket?.track) {
         LogRocket.track(event, eventProperties);
+    }
+};
+
+export const logRocketConsole = (message: string, ...props: any[]) => {
+    // Just want to be very very safe
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (LogRocket?.log) {
+        LogRocket.log(message, props);
     }
 };
