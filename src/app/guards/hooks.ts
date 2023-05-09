@@ -136,7 +136,7 @@ const useDirectiveGuard = (
                 error: serverError,
             };
         }
-    }, [appliedDirective, directiveState, freshDirective, mutate]);
+    }, [appliedDirective, directiveState, freshDirective, mutate, serverError]);
 };
 
 export default useDirectiveGuard;
