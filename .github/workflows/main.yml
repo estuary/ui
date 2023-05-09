@@ -1,4 +1,4 @@
-name: UI Quality Check
+name: UI Build
 
 on:
     push:
