@@ -125,7 +125,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 >
                                     <Typography variant="h6" sx={{ mr: 1 }}>
                                         <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
-                                        <ExternalLink link="https://docs.estuary.dev/concepts/collections/#specification">
+                                        <ExternalLink link="https://docs.estuary.dev/concepts/collections/#schemas">
                                             <FormattedMessage id="terms.documentation" />
                                         </ExternalLink>
                                     </Typography>
