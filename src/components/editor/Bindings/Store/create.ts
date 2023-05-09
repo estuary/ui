@@ -11,6 +11,7 @@ import { isEmpty } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -83,6 +84,8 @@ const getInitialStateData = (): Pick<
     | 'schemaInferenceDisabled'
     | 'schemaUpdateErrored'
     | 'schemaUpdated'
+    | 'incompatibleCollections'
+    | 'hasIncompatibleCollections'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -93,6 +96,8 @@ const getInitialStateData = (): Pick<
     schemaInferenceDisabled: false,
     schemaUpdateErrored: false,
     schemaUpdated: true,
+    incompatibleCollections: [],
+    hasIncompatibleCollections: false,
 });
 
 const getInitialState = (
@@ -118,6 +123,17 @@ const getInitialState = (
             }),
             false,
             'Collection Initialization Alert Set'
+        );
+    },
+
+    setIncompatibleCollections: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.incompatibleCollections = value;
+                state.hasIncompatibleCollections = hasLength(value);
+            }),
+            false,
+            'Incompatible Collections List Set'
         );
     },
 

@@ -127,6 +127,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.configure': `Configure`,
     'cta.showAll': `Show All`,
     'cta.reload': `Reload`,
+    'cta.evolve': `Create New Collection Versions`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -616,6 +617,9 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
 
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
     'entityCreate.errors.missingDraftId': `Missing Draft ID.`,
+
+    'discovery.failed.title': `Generating Specification Failed`,
+    'discovery.failed.message': `There was an issue attempting to discover your endpoint. Please review details below.`,
 };
 
 const EntityEdit: ResolvedIntlConfig['messages'] = {
@@ -888,7 +892,8 @@ const OAuth: ResolvedIntlConfig['messages'] = {
 };
 
 const Supabase: ResolvedIntlConfig['messages'] = {
-    'supabase.poller.failed': `We encountered a problem retrieving the status of this action. Please check your network connection and try again.`,
+    'supabase.poller.failed.title': `Unable To Reach Server`,
+    'supabase.poller.failed.message': `We encountered a problem retrieving the status of this action. Please check your network connection and try again.`,
 };
 
 const Legal: ResolvedIntlConfig['messages'] = {
@@ -1006,6 +1011,14 @@ const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
     'dataPlaneAuthReq.waiting.message': `Please wait while we authorize access to {catalogPrefix}. You will be redirected shortly.`,
 };
 
+const EntityEvolution: ResolvedIntlConfig['messages'] = {
+    'entityEvolution.failure.errorTitle': `Update Failed`,
+    'entityEvolution.serverUnreachable': `Unable to reach server while trying to update collections`,
+    'entityEvolution.error.title': `Changes Rejected Due to Incompatible Schema Updates`,
+    'entityEvolution.error.message': `Schema changes will break downstream tasks. To avoid this, click below and then publish a new version of the affected collections.`,
+    'entityEvolution.error.note': `Note: This may result in additional cost as new collection versions are backfilled.`,
+};
+
 const DraftErrors: ResolvedIntlConfig['messages'] = {
     'draftErrors.totalCount': `Displaying {displaying} of {total, plural, one {# error} other {# errors}} `,
 };
@@ -1060,6 +1073,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...NewTransform,
     ...TaskEndpoints,
     ...DataPlaneAuthReq,
+    ...EntityEvolution,
     ...DraftErrors,
 };
 

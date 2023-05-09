@@ -3,7 +3,6 @@ import { createEntityDraft } from 'api/drafts';
 import {
     DraftSpecsExtQuery_ByCatalogName,
     getDraftSpecsByCatalogName,
-    getDraftSpecsBySpecType,
 } from 'api/draftSpecs';
 import {
     useEditorStore_isSaving,
@@ -11,17 +10,14 @@ import {
     useEditorStore_resetState,
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setId,
-    useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
-import { useEntityWorkflow } from 'context/Workflow';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
+import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback, useMemo } from 'react';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
     DEFAULT_FILTER,
+    DEFAULT_POLLER_ERROR,
     jobStatusPoller,
     JOB_STATUS_POLLER_ERROR,
     TABLES,
@@ -47,26 +43,18 @@ import {
 } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
-    useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import {
-    useResourceConfig_evaluateDiscoveredCollections,
-    useResourceConfig_resetConfigAndCollections,
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
-    useResourceConfig_setDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
 import { Entity } from 'types';
 import { hasLength, stripPathing } from 'utils/misc-utils';
 import { encryptEndpointConfig } from 'utils/sops-utils';
-import {
-    modifyDiscoveredDraftSpec,
-    modifyExistingCaptureDraftSpec,
-    SupabaseConfig,
-} from 'utils/workflow-utils';
+import { modifyExistingCaptureDraftSpec } from 'utils/workflow-utils';
 
 const trackEvent = (payload: any) => {
     logRocketEvent(CustomEvents.CAPTURE_DISCOVER, {
@@ -86,14 +74,8 @@ function useDiscoverCapture(
 ) {
     const supabaseClient = useClient();
 
-    const [lastPubId] = useGlobalSearchParams([GlobalSearchParams.LAST_PUB_ID]);
-
-    const workflow = useEntityWorkflow();
-    const editWorkflow = workflow === 'capture_edit';
-
     // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
-    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
     const setDraftId = useEditorStore_setId();
     const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
 
@@ -104,7 +86,6 @@ function useDiscoverCapture(
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
     const updateFormStatus = useFormStateStore_updateStatus();
-    const messagePrefix = useFormStateStore_messagePrefix();
 
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
@@ -130,94 +111,15 @@ function useDiscoverCapture(
 
     // Resource Config Store
     const resourceConfig = useResourceConfig_resourceConfig();
-    const setDiscoveredCollections =
-        useResourceConfig_setDiscoveredCollections();
-    const evaluateDiscoveredCollections =
-        useResourceConfig_evaluateDiscoveredCollections();
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
-    const resetCollections = useResourceConfig_resetConfigAndCollections();
 
-    const storeDiscoveredCollections = useCallback(
-        async (newDraftId: string) => {
-            // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
-            //   More columns are selected than required to appease the typing of the editor store.
-            const draftSpecsResponse = await getDraftSpecsBySpecType(
-                newDraftId,
-                entityType
-            );
-
-            if (draftSpecsResponse.error) {
-                return callFailed({
-                    error: {
-                        title: 'captureCreate.generate.failedErrorTitle',
-                        error: draftSpecsResponse.error,
-                    },
-                });
-            }
-
-            if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
-                resetCollections();
-
-                setDiscoveredCollections(draftSpecsResponse.data[0]);
-
-                const supabaseConfig: SupabaseConfig | null =
-                    editWorkflow && lastPubId
-                        ? { catalogName: entityName, lastPubId }
-                        : null;
-
-                const updatedDraftSpecsResponse =
-                    await modifyDiscoveredDraftSpec(
-                        draftSpecsResponse,
-                        supabaseConfig
-                    );
-
-                if (updatedDraftSpecsResponse.error) {
-                    return callFailed({
-                        error: {
-                            title: 'captureCreate.generate.failedErrorTitle',
-                            error: updatedDraftSpecsResponse.error,
-                        },
-                    });
-                }
-
-                if (
-                    updatedDraftSpecsResponse.data &&
-                    updatedDraftSpecsResponse.data.length > 0
-                ) {
-                    evaluateDiscoveredCollections(updatedDraftSpecsResponse);
-
-                    setEncryptedEndpointConfig({
-                        data: updatedDraftSpecsResponse.data[0].spec.endpoint
-                            .connector.config,
-                    });
-                }
-
-                setDraftId(newDraftId);
-                setPersistedDraftId(newDraftId);
-            }
-        },
-        [
-            callFailed,
-            editWorkflow,
-            entityName,
-            entityType,
-            evaluateDiscoveredCollections,
-            lastPubId,
-            resetCollections,
-            setDiscoveredCollections,
-            setDraftId,
-            setEncryptedEndpointConfig,
-            setPersistedDraftId,
-        ]
-    );
+    const storeDiscoveredCollections = useStoreDiscoveredCaptures();
 
     const jobFailed = useCallback(
-        (errorTitle: string) => {
+        (error) => {
             setFormState({
-                error: {
-                    title: errorTitle,
-                },
+                error,
                 status: FormStatus.FAILED,
             });
         },
@@ -248,7 +150,11 @@ function useDiscoverCapture(
                     })
                     .order('created_at', { ascending: false }),
                 async (payload: any) => {
-                    await storeDiscoveredCollections(payload.draft_id);
+                    await storeDiscoveredCollections(
+                        payload.draft_id,
+                        entityType,
+                        callFailed
+                    );
 
                     void postGenerateMutate();
 
@@ -264,16 +170,22 @@ function useDiscoverCapture(
                 },
                 (payload: any) => {
                     if (payload.error === JOB_STATUS_POLLER_ERROR) {
-                        jobFailed(payload.error);
+                        jobFailed(DEFAULT_POLLER_ERROR);
                     } else {
-                        jobFailed(`${messagePrefix}.test.failedErrorTitle`);
+                        jobFailed({
+                            title: 'discovery.failed.title',
+                            error: {
+                                message: 'discovery.failed.message',
+                            },
+                        });
                     }
                 }
             );
         },
         [
+            callFailed,
+            entityType,
             jobFailed,
-            messagePrefix,
             postGenerateMutate,
             setDiscoveredDraftId,
             setDraftId,

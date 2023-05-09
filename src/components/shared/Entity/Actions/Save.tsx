@@ -4,6 +4,7 @@ import {
     getDraftSpecsBySpecTypeReduced,
 } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
+import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
@@ -32,6 +33,7 @@ import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
 import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     disabled: boolean;
@@ -58,9 +60,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
-
     const setPubId = useEditorStore_setPubId();
-
     const isSaving = useEditorStore_isSaving();
 
     const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
@@ -68,13 +68,13 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
     // Details Form Store
     const entityDescription = useDetailsForm_details_description();
 
+    const setIncompatibleCollections =
+        useBindingsEditorStore_setIncompatibleCollections();
+
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
-
     const setFormState = useFormStateStore_setFormState();
-
     const updateFormStatus = useFormStateStore_updateStatus();
-
     const formActive = useFormStateStore_isActive();
 
     // Notification Store
@@ -90,6 +90,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
         draftIdVal: string
     ) => {
         updateFormStatus(status);
+        setIncompatibleCollections([]);
 
         jobStatusPoller(
             supabaseClient
@@ -134,6 +135,12 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
             },
             async (payload: any) => {
                 trackEvent(logEvent, payload);
+
+                const imcompatibleCollections =
+                    payload?.job_status?.incompatible_collections;
+                if (hasLength(imcompatibleCollections)) {
+                    setIncompatibleCollections(imcompatibleCollections);
+                }
 
                 onFailure({
                     error: {
