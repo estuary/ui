@@ -17,7 +17,6 @@ import {
     useTheme,
 } from '@mui/material';
 import TablePaginationActions from 'components/tables/PaginationActions';
-import RowSelector from 'components/tables/RowActions/RowSelector';
 import Title from 'components/tables/Title';
 import { useZustandStore } from 'context/Zustand/provider';
 import { ArrowDown } from 'iconoir-react';
@@ -48,7 +47,6 @@ import {
 } from 'types';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
 import TableLoadingRows from './Loading';
-import { RowSelectorProps } from './RowActions/types';
 
 export interface ColumnProps extends TableColumns {
     renderHeader?: (
@@ -73,11 +71,12 @@ interface Props {
     noExistingDataContentIds: TableIntlConfig;
     selectableTableStoreName: SelectTableStoreNames;
     enableSelection?: boolean;
-    rowSelectorProps?: RowSelectorProps;
     showEntityStatus?: boolean;
     hideHeaderAndFooter?: boolean;
     rowsPerPageOptions?: number[];
     minWidth?: number;
+    showToolbar?: boolean;
+    toolbar?: ReactNode;
 }
 
 export const getPagination = (currPage: number, size: number) => {
@@ -109,12 +108,13 @@ function EntityTable({
     header,
     filterLabel,
     enableSelection,
-    rowSelectorProps,
     showEntityStatus = false,
     selectableTableStoreName,
     hideHeaderAndFooter,
     rowsPerPageOptions = [10, 25, 50],
     minWidth = 350,
+    showToolbar,
+    toolbar,
 }: Props) {
     const isFiltering = useRef(Boolean(searchQuery));
     const searchTextField = useRef<HTMLInputElement>(null);
@@ -273,7 +273,7 @@ function EntityTable({
             {hideHeaderAndFooter ? null : (
                 <Box sx={{ mx: 2 }}>
                     <Stack direction="row" spacing={1}>
-                        {enableSelection ? (
+                        {showToolbar ? (
                             <Title header={header} marginBottom={2} />
                         ) : null}
                     </Stack>
@@ -286,11 +286,7 @@ function EntityTable({
                             alignItems: 'start',
                         }}
                     >
-                        {enableSelection ? (
-                            <RowSelector {...rowSelectorProps} />
-                        ) : (
-                            <Title header={header} />
-                        )}
+                        {showToolbar ? toolbar : <Title header={header} />}
 
                         <TextField
                             inputRef={searchTextField}

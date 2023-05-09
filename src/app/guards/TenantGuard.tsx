@@ -2,7 +2,7 @@ import FullPageSpinner from 'components/fullPage/Spinner';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
+import useUserGrants from 'hooks/useUserGrants';
 import { useMemo } from 'react';
 import { BaseComponentProps } from 'types';
 import OnboardGuard from './OnboardGuard';
@@ -21,16 +21,16 @@ function TenantGuard({ children }: BaseComponentProps) {
     );
 
     const {
-        combinedGrants,
+        userGrants,
         isValidating: checkingGrants,
         mutate,
-    } = useCombinedGrantsExt({
+    } = useUserGrants({
         singleCall: true,
     });
 
     if (checkingGrants) {
         return <FullPageSpinner />;
-    } else if (combinedGrants.length === 0 || showBeta) {
+    } else if (userGrants.length === 0 || showBeta) {
         return <OnboardGuard grantsMutate={mutate} forceDisplay={showBeta} />;
     } else {
         // eslint-disable-next-line react/jsx-no-useless-fragment
