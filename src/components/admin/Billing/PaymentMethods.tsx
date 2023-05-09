@@ -4,11 +4,6 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    Skeleton,
     Stack,
     Table,
     TableBody,
@@ -28,23 +23,52 @@ import {
 } from 'api/billing';
 import { PaymentForm } from 'components/admin/Billing/CapturePaymentMethod';
 import { PaymentMethod } from 'components/admin/Billing/PaymentMethodRow';
-import { useTenantDetails } from 'context/fetcher/Tenant';
-import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
+import AlertBox from 'components/shared/AlertBox';
+import TableLoadingRows from 'components/tables/Loading';
 
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
+import { useBilling_selectedTenant } from 'stores/Billing/hooks';
+import { TableColumns } from 'types';
+
+const columns: TableColumns[] = [
+    {
+        field: 'type',
+        headerIntlKey: 'admin.billing.paymentMethods.table.label.cardType',
+        width: 200,
+    },
+    {
+        field: 'name',
+        headerIntlKey: 'admin.billing.paymentMethods.table.label.name',
+    },
+    {
+        field: 'last_four_digits',
+        headerIntlKey: 'admin.billing.paymentMethods.table.label.lastFour',
+    },
+    {
+        field: 'details',
+        headerIntlKey: 'admin.billing.paymentMethods.table.label.details',
+    },
+    {
+        field: 'primary',
+        headerIntlKey: 'admin.billing.paymentMethods.table.label.primary',
+    },
+    {
+        field: 'actions',
+        headerIntlKey: 'admin.billing.paymentMethods.table.label.actions',
+    },
+];
 
 const PaymentMethods = () => {
     const stripePromise = useMemo(
         () => loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ?? ''),
         []
     );
-    const tenants = useTenantDetails();
-    const grants = useCombinedGrantsExt({ adminOnly: true });
+
+    const selectedTenant = useBilling_selectedTenant();
 
     const [refreshCounter, setRefreshCounter] = useState(0);
-
-    const [selectedTenant, setSelectedTenant] = useState<string | null>(null);
 
     const [setupIntentSecret, setSetupIntentSecret] = useState<string | null>(
         null
@@ -52,25 +76,28 @@ const PaymentMethods = () => {
     const [newMethodOpen, setNewMethodOpen] = useState(false);
 
     const [methodsLoading, setMethodsLoading] = useState(false);
-    const [methods, setMethods] = useState<any[]>([]);
-    const [defaultSource, setDefaultSource] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (tenants && tenants.length > 0 && selectedTenant === null) {
-            setSelectedTenant(tenants[0].tenant);
-        }
-    }, [selectedTenant, tenants]);
+    const [methods, setMethods] = useState<any[] | undefined>([]);
+    const [defaultSource, setDefaultSource] = useState<
+        string | null | undefined
+    >(null);
 
     useEffect(() => {
         void (async () => {
             if (selectedTenant) {
                 try {
                     setMethodsLoading(true);
+
+                    // TODO (optimization): Add proper typing and error handling for this service call. The response assumes
+                    //  an unexpected shape when the service errors. The error property is null and the data property
+                    //  is an object with the following shape: { error: string; }. Consequently, an undefined value is passed
+                    //  to the setters below (unbeknownst to the compiler given the state typing defined above), causing the
+                    //  the component to lean on the ErrorBoundary wrapper for its display in the presence of an error.
                     const methodsResponse = await getTenantPaymentMethods(
                         selectedTenant
                     );
-                    setMethods(methodsResponse.data.payment_methods);
-                    setDefaultSource(methodsResponse.data.primary);
+
+                    setMethods(methodsResponse.data?.payment_methods);
+                    setDefaultSource(methodsResponse.data?.primary);
                 } finally {
                     setMethodsLoading(false);
                 }
@@ -83,9 +110,26 @@ const PaymentMethods = () => {
         })();
     }, [selectedTenant, refreshCounter]);
 
+    // TODO (optimization): Remove this temporary, hacky means of detecting when the payment methods service errs
+    //   when proper error handling is in place.
+    const serverErrored = useMemo(
+        () =>
+            !methodsLoading &&
+            (typeof defaultSource === 'undefined' ||
+                typeof methods === 'undefined'),
+        [defaultSource, methods, methodsLoading]
+    );
+
+    useEffect(() => {
+        if (serverErrored) {
+            logRocketEvent(CustomEvents.ERROR_BOUNDARY_PAYMENT_METHODS);
+        }
+    }, [serverErrored]);
+
     return (
-        <Stack spacing={3}>
+        <Stack spacing={serverErrored ? 0 : 3}>
             <Stack
+                spacing={2}
                 direction="row"
                 sx={{ mb: 1, justifyContent: 'space-between' }}
             >
@@ -97,47 +141,35 @@ const PaymentMethods = () => {
                             fontWeight: '400',
                         }}
                     >
-                        <FormattedMessage id="admin.billing.payment_methods.header" />
+                        <FormattedMessage id="admin.billing.paymentMethods.header" />
                     </Typography>
 
-                    <Typography>
-                        <FormattedMessage id="admin.billing.payment_methods.description" />
-                    </Typography>
+                    {serverErrored ? null : (
+                        <Typography>
+                            <FormattedMessage id="admin.billing.paymentMethods.description" />
+                        </Typography>
+                    )}
                 </Box>
 
-                <Box>
-                    <Button onClick={() => setNewMethodOpen(true)}>
-                        Add Payment Method
-                    </Button>
-                </Box>
+                {serverErrored ? null : (
+                    <Box>
+                        <Button
+                            onClick={() => setNewMethodOpen(true)}
+                            sx={{ whiteSpace: 'nowrap' }}
+                        >
+                            <FormattedMessage id="admin.billing.paymentMethods.cta.addPaymentMethod" />
+                        </Button>
+                    </Box>
+                )}
             </Stack>
 
-            {tenants && tenants.length > 1 ? (
-                <FormControl size="small" sx={{ width: 350 }}>
-                    <InputLabel>Tenant</InputLabel>
-
-                    <Select
-                        label="Tenant"
-                        value={selectedTenant ?? ''}
-                        onChange={(evt) => setSelectedTenant(evt.target.value)}
-                        sx={{ borderRadius: 3 }}
-                    >
-                        {tenants
-                            .filter((t) =>
-                                grants.combinedGrants.find(
-                                    (g) => g.object_role === t.tenant
-                                )
-                            )
-                            .map((tenant) => (
-                                <MenuItem key={tenant.id} value={tenant.tenant}>
-                                    {tenant.tenant}
-                                </MenuItem>
-                            ))}
-                    </Select>
-                </FormControl>
-            ) : null}
-
-            {selectedTenant && !methodsLoading ? (
+            {serverErrored ? (
+                <AlertBox short severity="error">
+                    <Typography component="div">
+                        <FormattedMessage id="admin.billing.error.paymentMethodsError" />
+                    </Typography>
+                </AlertBox>
+            ) : (
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 650 }}
@@ -151,60 +183,61 @@ const PaymentMethods = () => {
                                         theme.palette.background.default,
                                 }}
                             >
-                                <TableCell width={200}>Type</TableCell>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Last 4 digits</TableCell>
-                                <TableCell>Details</TableCell>
-                                <TableCell>Primary</TableCell>
-                                <TableCell>Actions</TableCell>
+                                {columns.map((column, index) => (
+                                    <TableCell
+                                        key={`${column.field}-${index}`}
+                                        width={column.width ?? 'auto'}
+                                    >
+                                        {column.headerIntlKey ? (
+                                            <FormattedMessage
+                                                id={column.headerIntlKey}
+                                            />
+                                        ) : null}
+                                    </TableCell>
+                                ))}
                             </TableRow>
                         </TableHead>
+
                         <TableBody>
-                            {methods.map((method) => (
-                                <PaymentMethod
-                                    onDelete={async () => {
-                                        await deleteTenantPaymentMethod(
-                                            selectedTenant,
-                                            method.id
-                                        );
-                                        setRefreshCounter((r) => r + 1);
-                                    }}
-                                    onPrimary={async () => {
-                                        await setTenantPrimaryPaymentMethod(
-                                            selectedTenant,
-                                            method.id
-                                        );
-                                        setRefreshCounter((r) => r + 1);
-                                    }}
-                                    key={method.id}
-                                    {...method}
-                                    primary={method.id === defaultSource}
-                                />
-                            ))}
-                            {methods.length < 1 ? (
+                            {!selectedTenant || methodsLoading ? (
+                                <TableLoadingRows columns={columns} />
+                            ) : methods && methods.length > 0 ? (
+                                methods.map((method) => (
+                                    <PaymentMethod
+                                        onDelete={async () => {
+                                            await deleteTenantPaymentMethod(
+                                                selectedTenant,
+                                                method.id
+                                            );
+                                            setRefreshCounter((r) => r + 1);
+                                        }}
+                                        onPrimary={async () => {
+                                            await setTenantPrimaryPaymentMethod(
+                                                selectedTenant,
+                                                method.id
+                                            );
+                                            setRefreshCounter((r) => r + 1);
+                                        }}
+                                        key={method.id}
+                                        {...method}
+                                        primary={method.id === defaultSource}
+                                    />
+                                ))
+                            ) : (
                                 <TableRow>
                                     <TableCell colSpan={6}>
                                         <Typography
-                                            sx={{
-                                                textAlign: 'center',
-                                                fontSize: 15,
-                                            }}
+                                            sx={{ textAlign: 'center' }}
                                         >
-                                            <FormattedMessage id="admin.billing.payment_methods.none_available" />
+                                            <FormattedMessage id="admin.billing.paymentMethods.table.emptyTableDefault.message" />
                                         </Typography>
                                     </TableCell>
                                 </TableRow>
-                            ) : null}
+                            )}
                         </TableBody>
                     </Table>
                 </TableContainer>
-            ) : methodsLoading ? (
-                <>
-                    <Skeleton animation="wave" />
-                    <Skeleton animation="wave" />
-                    <Skeleton animation="wave" />
-                </>
-            ) : null}
+            )}
 
             <Dialog
                 maxWidth="sm"

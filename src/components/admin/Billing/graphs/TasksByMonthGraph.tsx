@@ -1,6 +1,4 @@
 import { useTheme } from '@mui/material';
-import EmptyGraphState from 'components/admin/Billing/graphs/states/Empty';
-import GraphLoadingState from 'components/admin/Billing/graphs/states/Loading';
 import { defaultOutlineColor, paperBackground } from 'context/Theme';
 import {
     eachMonthOfInterval,
@@ -8,7 +6,7 @@ import {
     startOfMonth,
     sub,
 } from 'date-fns';
-import { LineChart } from 'echarts/charts';
+import { BarChart } from 'echarts/charts';
 import {
     GridComponent,
     MarkLineComponent,
@@ -26,9 +24,11 @@ import {
 import useConstant from 'use-constant';
 import {
     CARD_AREA_HEIGHT,
-    evaluateSeriesDataUnderLimit,
     SeriesConfig,
+    SeriesNames,
 } from 'utils/billing-utils';
+
+const stackId = 'Task Count';
 
 function DataByMonthGraph() {
     const theme = useTheme();
@@ -53,21 +53,62 @@ function DataByMonthGraph() {
     const seriesConfig: SeriesConfig[] = useMemo(() => {
         const startDate = startOfMonth(sub(today, { months: 5 }));
 
-        return [
-            {
-                data: billingHistory
-                    .filter(({ date }) =>
-                        isWithinInterval(date, {
-                            start: startDate,
-                            end: today,
-                        })
-                    )
-                    .map(({ date, taskCount }) => [
-                        intl.formatDate(date, { month: 'short' }),
-                        taskCount,
-                    ]),
-            },
-        ];
+        const scopedDataSet: {
+            month: string;
+            taskCount: number;
+            includedTasks: number | null;
+        }[] = billingHistory
+            .filter(({ date }) =>
+                isWithinInterval(date, {
+                    start: startDate,
+                    end: today,
+                })
+            )
+            .map(({ date, taskCount, includedTasks }) => ({
+                month: intl.formatDate(date, { month: 'short' }),
+                taskCount,
+                includedTasks,
+            }));
+
+        return scopedDataSet.flatMap(
+            ({
+                month,
+                taskCount,
+                includedTasks,
+            }): SeriesConfig | SeriesConfig[] => {
+                const freeTasks = includedTasks ?? 2;
+
+                if (taskCount > freeTasks) {
+                    const taskSurplus = taskCount - freeTasks;
+
+                    return [
+                        {
+                            seriesName: SeriesNames.INCLUDED,
+                            stack: stackId,
+                            data: [[month, freeTasks]],
+                        },
+                        {
+                            seriesName: SeriesNames.SURPLUS,
+                            stack: stackId,
+                            data: [[month, taskSurplus]],
+                        },
+                    ];
+                } else {
+                    return [
+                        {
+                            seriesName: SeriesNames.INCLUDED,
+                            stack: stackId,
+                            data: [[month, taskCount]],
+                        },
+                        {
+                            seriesName: SeriesNames.SURPLUS,
+                            stack: stackId,
+                            data: [[month, 0]],
+                        },
+                    ];
+                }
+            }
+        );
     }, [billingHistory, intl, today]);
 
     useEffect(() => {
@@ -75,7 +116,7 @@ function DataByMonthGraph() {
             if (!myChart) {
                 echarts.use([
                     GridComponent,
-                    LineChart,
+                    BarChart,
                     CanvasRenderer,
                     UniversalTransition,
                     MarkLineComponent,
@@ -91,8 +132,6 @@ function DataByMonthGraph() {
                 myChart?.resize();
             });
 
-            const showMarkLine = evaluateSeriesDataUnderLimit(seriesConfig, 2);
-
             const option = {
                 xAxis: {
                     type: 'category',
@@ -107,35 +146,13 @@ function DataByMonthGraph() {
                     },
                     minInterval: 1,
                 },
-                series: seriesConfig.map(({ data }, index) => {
-                    let config: any = {
-                        type: 'line',
-                        data,
-                        symbol: 'circle',
-                        symbolSize: 7,
-                    };
-
-                    if (index === 0 && showMarkLine) {
-                        config = {
-                            ...config,
-                            markLine: {
-                                data: [{ yAxis: 2, name: 'Tasks\nFree' }],
-                                label: {
-                                    color: theme.palette.text.primary,
-                                    formatter: '{c} {b}',
-                                    position: 'end',
-                                },
-                                lineStyle: {
-                                    color: theme.palette.text.primary,
-                                },
-                                silent: true,
-                                symbol: 'none',
-                            },
-                        };
-                    }
-
-                    return config;
-                }),
+                series: seriesConfig.map(({ seriesName, stack, data }) => ({
+                    name: seriesName,
+                    type: 'bar',
+                    stack,
+                    barMinHeight: seriesName === SeriesNames.INCLUDED ? 3 : 0,
+                    data,
+                })),
                 textStyle: {
                     color: theme.palette.text.primary,
                 },
@@ -147,33 +164,61 @@ function DataByMonthGraph() {
                         color: theme.palette.text.primary,
                         fontWeight: 'normal',
                     },
+                    axisPointer: {
+                        type: 'shadow',
+                    },
                     formatter: (tooltipConfigs: any[]) => {
-                        if (tooltipConfigs.length > 0) {
-                            const config = tooltipConfigs[0];
+                        let content: string | undefined;
 
-                            const tooltipTitle =
-                                billingHistory
-                                    .map(({ date }) =>
-                                        intl.formatDate(date, {
-                                            month: 'short',
-                                            year: 'numeric',
-                                        })
-                                    )
-                                    .find((date) =>
-                                        date.includes(config.axisValueLabel)
-                                    ) ?? config.axisValueLabel;
+                        tooltipConfigs.forEach((config) => {
+                            const taskCount = config.value[1];
+                            const formattedValue =
+                                taskCount === 1
+                                    ? `${taskCount} Task`
+                                    : `${taskCount} Tasks`;
 
-                            return `${tooltipTitle}<br />${config.marker} ${config.value[1]} Tasks`;
-                        } else {
-                            return undefined;
-                        }
+                            if (content) {
+                                content = `${content}
+                                            <div class="tooltipItem">
+                                                <div>
+                                                    ${config.marker}
+                                                    <span>${config.seriesName}</span>
+                                                </div>
+                                                <span class="tooltipDataValue">${formattedValue}</span>
+                                            </div>`;
+                            } else {
+                                const tooltipTitle =
+                                    billingHistory
+                                        .map(({ date }) =>
+                                            intl.formatDate(date, {
+                                                month: 'short',
+                                                year: 'numeric',
+                                            })
+                                        )
+                                        .find((date) =>
+                                            date.includes(config.axisValueLabel)
+                                        ) ?? config.axisValueLabel;
+
+                                content = `<div class="tooltipTitle">${tooltipTitle}</div>
+                                            <div class="tooltipItem">
+                                                <div>
+                                                    ${config.marker}
+                                                    <span>${config.seriesName}</span>
+                                                </div>
+                                                <span class="tooltipDataValue">${formattedValue}</span>
+                                            </div>`;
+                            }
+                        });
+
+                        return content;
                     },
                 },
                 grid: {
-                    left: 50,
+                    left: 30,
                     top: 15,
                     right: 50,
-                    bottom: 20,
+                    bottom: 0,
+                    containLabel: true,
                 },
             };
 
@@ -191,15 +236,7 @@ function DataByMonthGraph() {
         theme.palette.text.primary,
     ]);
 
-    if (billingStoreHydrated) {
-        return billingHistory.length > 0 ? (
-            <div id="tasks-by-month" style={{ height: CARD_AREA_HEIGHT }} />
-        ) : (
-            <EmptyGraphState />
-        );
-    } else {
-        return <GraphLoadingState />;
-    }
+    return <div id="tasks-by-month" style={{ height: CARD_AREA_HEIGHT }} />;
 }
 
 export default DataByMonthGraph;
