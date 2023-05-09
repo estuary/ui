@@ -85,6 +85,9 @@ const invariableStores = {
     ),
 
     // Select Table Store
+    [SelectTableStoreNames.ACCESS_GRANTS_LINKS]: createSelectableTableStore(
+        SelectTableStoreNames.ACCESS_GRANTS_LINKS
+    ),
     [SelectTableStoreNames.ACCESS_GRANTS_PREFIXES]: createSelectableTableStore(
         SelectTableStoreNames.ACCESS_GRANTS_PREFIXES
     ),

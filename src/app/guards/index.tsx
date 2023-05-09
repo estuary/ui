@@ -1,3 +1,4 @@
+import GrantGuard from 'app/guards/GrantGaurd';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import 'react-reflex/styles.css';
 import { BaseComponentProps } from 'types';
@@ -11,7 +12,9 @@ function AppGuards({ children }: BaseComponentProps) {
     return (
         <UserGuard>
             <LegalGuard>
-                <TenantGuard>{children}</TenantGuard>
+                <GrantGuard>
+                    <TenantGuard>{children}</TenantGuard>
+                </GrantGuard>
             </LegalGuard>
         </UserGuard>
     );

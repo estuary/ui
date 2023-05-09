@@ -1,7 +1,13 @@
 import { DIRECTIVES } from 'directives/shared';
 import { UserClaims } from 'directives/types';
 import {
+    CallSupabaseResponse,
+    defaultTableFilter,
+    handleFailure,
+    handleSuccess,
+    insertSupabase,
     RPCS,
+    SortingProps,
     supabaseClient,
     TABLES,
     updateSupabase,
@@ -9,12 +15,21 @@ import {
 import {
     AppliedDirective,
     Directive,
+    GrantDirective,
+    GrantDirectiveSpec,
+    GrantDirective_AccessLinks,
     JoinedAppliedDirective,
     Schema,
 } from 'types';
 
+interface GrantDirective_CreateMatchData {
+    catalog_prefix: string;
+    spec: GrantDirectiveSpec;
+    uses_remaining?: number | null;
+}
+
 export interface ExchangeResponse {
-    directive: Directive | null; //Only null so we can "fake" this respose below
+    directive: Directive | null; // Only null so we can "fake" this response below
     applied_directive: AppliedDirective<UserClaims>;
 }
 
@@ -105,4 +120,84 @@ const getAppliedDirectives = (
         .limit(1);
 };
 
-export { exchangeBearerToken, getAppliedDirectives, submitDirective };
+const generateGrantDirective = (
+    prefix: string,
+    capability: string,
+    singleUse?: boolean
+): PromiseLike<CallSupabaseResponse<GrantDirective[]>> => {
+    let data: GrantDirective_CreateMatchData = {
+        catalog_prefix: prefix,
+        spec: {
+            type: 'grant',
+            grantedPrefix: prefix,
+            capability,
+        },
+    };
+
+    if (singleUse) {
+        data = { ...data, uses_remaining: 1 };
+    }
+    return insertSupabase(TABLES.DIRECTIVES, data);
+};
+
+const getDirectiveByToken = async (token: string) => {
+    const data = await supabaseClient
+        .from(TABLES.DIRECTIVES)
+        .select(`spec,token`)
+        .eq('token', token)
+        .then(
+            handleSuccess<Pick<GrantDirective, 'spec' | 'token'>[]>,
+            handleFailure
+        );
+
+    return data;
+};
+
+const getDirectiveByCatalogPrefix = (
+    directiveType: keyof typeof DIRECTIVES,
+    prefixes: string[],
+    pagination: any,
+    searchQuery: any,
+    sorting: SortingProps<any>[]
+) => {
+    const prefixFilters = prefixes
+        .map((prefix) => `catalog_prefix.ilike.${prefix}%`)
+        .join(',');
+
+    let queryBuilder = supabaseClient
+        .from(TABLES.DIRECTIVES)
+        .select(`id,catalog_prefix,uses_remaining,spec,token,updated_at`, {
+            count: 'exact',
+        })
+        .or(prefixFilters)
+        .eq('spec->>type', directiveType)
+        .or(`uses_remaining.eq.1,uses_remaining.is.null`);
+
+    queryBuilder = defaultTableFilter<GrantDirective_AccessLinks>(
+        queryBuilder,
+        ['catalog_prefix', `spec->>capability`, `spec->>grantedPrefix`],
+        searchQuery,
+        sorting,
+        pagination
+    );
+
+    return queryBuilder;
+};
+
+const disableDirective = (directiveId: string) => {
+    return updateSupabase(
+        TABLES.DIRECTIVES,
+        { uses_remaining: 0 },
+        { id: directiveId }
+    );
+};
+
+export {
+    disableDirective,
+    exchangeBearerToken,
+    generateGrantDirective,
+    getAppliedDirectives,
+    getDirectiveByCatalogPrefix,
+    getDirectiveByToken,
+    submitDirective,
+};

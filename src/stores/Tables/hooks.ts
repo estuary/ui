@@ -11,6 +11,7 @@ import { getPagination } from '../../components/tables/EntityTable';
 export type TablePrefix =
     | 'ag' // access grants
     | 'pr' // prefixes
+    | 'ali' // access links
     | 'sm' // storage mappings
     | 'cap' // captures
     | 'mat' // materializations

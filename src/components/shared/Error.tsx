@@ -20,10 +20,11 @@ import AlertBox from './AlertBox';
 
 export interface ErrorProps {
     error?: PostgrestError | any | null;
+    condensed?: boolean;
     hideTitle?: boolean;
 }
 
-function Error({ error, hideTitle }: ErrorProps) {
+function Error({ error, condensed, hideTitle }: ErrorProps) {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -68,6 +69,7 @@ function Error({ error, hideTitle }: ErrorProps) {
             <Box sx={{ width: '100%' }}>
                 <AlertBox
                     severity="error"
+                    short={condensed}
                     title={
                         !hideTitle ? (
                             <AlertTitle>

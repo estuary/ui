@@ -451,6 +451,13 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.paymentMethods.table.label.actions': `Actions`,
     'admin.billing.paymentMethods.table.emptyTableDefault.message': `No payment methods available.`,
 
+    'admin.users.cta.sharePrefix': `Manage Invitations`,
+    'admin.users.sharePrefix.header': `Manage Invitations`,
+    'admin.users.sharePrefix.message': `This is a placeholder for a description.`,
+    'admin.users.sharePrefix.label.capability': `Capability`,
+    'admin.users.sharePrefix.label.type': `Type`,
+    'admin.users.sharePrefix.cta.generateLink': `Generate Invitation`,
+
     'admin.cookies': `Cookie Preference Management`,
     'admin.cookies.message': `Click below to manage your preferences.`,
     'admin.tabs.users': `Users`,
@@ -474,6 +481,18 @@ const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrantsTable.prefixes.filterLabel': `Filter Prefix or Object`,
     'accessGrants.message1': `No results found.`,
     'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
+
+    'accessGrants.table.accessLinks.title': `Active Invitations`,
+    'accessGrants.table.accessLinks.cta.generate': `Create Links`,
+    'accessGrants.table.accessLinks.header.noData': `No active invitations found.`,
+    'accessGrants.table.accessLinks.message.noData': `To create an invitation, click the "Generate Invitation" button above. Invitations will be listed here while they are live.`,
+    'accessGrants.table.accessLinks.label.filter': `Filter Prefix or Capability`,
+    'accessGrants.table.accessLinks.label.provisioningPrefix': `Provisioner`,
+    'accessGrants.table.accessLinks.label.grantedPrefix': `Prefix`,
+    'accessGrants.table.accessLinks.label.capability': `Capability`,
+    'accessGrants.table.accessLinks.label.url': `URL`,
+    'accessGrants.table.accessLinks.label.lastUpdated': `Last Updated`,
+    'accessGrants.table.accessLinks.label.actions': `Actions`,
 };
 
 const StorageMappings: ResolvedIntlConfig['messages'] = {
@@ -911,6 +930,15 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.origin.radio.gitHub.label': `GitHub`,
     'tenant.origin.radio.paidAdvertising.label': `Paid Advertising`,
     'tenant.origin.radio.other.label': `Other`,
+
+    'tenant.grantDirective.header': `Tenant shared with you`,
+    'tenant.grantDirective.message': `You have been provisioned {grantedCapability} access to the following tenant:`,
+
+    'tenant.grantDirective.error.header': `Unable to Provision Access`,
+    'tenant.grantDirective.error.message': `A problem was encountered provisioning access to the requested tenant. The access link could have been single-use or revoked by an administrator of the tenant.`,
+    'tenant.grantDirective.error.message.help': `For additional context, please {docLink}.`,
+    'tenant.grantDirective.error.message.help.docLink': `contact support`,
+    'tenant.grantDirective.error.message.help.docPath': `mailto:support@estuary.dev`,
 };
 
 const Details: ResolvedIntlConfig['messages'] = {

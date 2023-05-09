@@ -67,6 +67,7 @@ export enum RPCS {
     VIEW_LOGS = 'view_logs',
     CREATE_REFRESH_TOKEN = 'create_refresh_token',
     BILLING_REPORT = 'billing_report',
+    AUTH_ROLES = 'auth_roles',
 }
 
 export enum FUNCTIONS {
