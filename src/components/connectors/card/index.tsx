@@ -1,4 +1,4 @@
-import { Box, Grid, Stack } from '@mui/material';
+import { Box, Grid, Stack, Typography } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
 import Tile from 'components/shared/Tile';
 import {
@@ -18,6 +18,7 @@ interface Props {
     docsUrl?: string;
     externalLink?: { href: string; target: string; rel: string };
     recommended?: boolean;
+    specType?: string;
 }
 function ConnectorCard({
     cta,
@@ -28,6 +29,7 @@ function ConnectorCard({
     recommended,
     clickHandler,
     externalLink,
+    specType,
 }: Props) {
     return (
         <Grid item xs={2} md={4} lg={2} xl={2}>
@@ -95,6 +97,12 @@ function ConnectorCard({
 
                         {details}
                     </Box>
+
+                    {specType ? (
+                        <Typography sx={{ pb: 1, fontSize: 16 }}>
+                            <FormattedMessage id={`terms.${specType}`} />
+                        </Typography>
+                    ) : null}
 
                     {cta}
                 </Stack>
