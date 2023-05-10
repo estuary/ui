@@ -114,6 +114,8 @@ const TestJsonForms = () => {
         }
     };
 
+    const searchParams = new URLSearchParams(window.location.search);
+
     return (
         <PageContainer>
             <Stack
@@ -129,21 +131,32 @@ const TestJsonForms = () => {
                 <JsonForms
                     schema={topSchema}
                     uischema={topUiSchema}
-                    data={{}}
+                    data={{
+                        connectorImage: {
+                            id: searchParams.get(
+                                GlobalSearchParams.CONNECTOR_ID
+                            ),
+                        },
+                    }}
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
                     validationMode="ValidateAndShow"
                     onChange={(state) => {
                         console.log('This is the new state of the form', state);
-                        const searchParams = new URLSearchParams(
-                            window.location.search
-                        );
-                        searchParams.set(
-                            GlobalSearchParams.CONNECTOR_ID,
-                            state.data.connectorImage.id
-                        );
-                        window.location.search = searchParams.toString();
+                        const connectorId = state.data?.connectorImage?.id;
+                        if (
+                            connectorId &&
+                            searchParams.get(
+                                GlobalSearchParams.CONNECTOR_ID
+                            ) !== connectorId
+                        ) {
+                            searchParams.set(
+                                GlobalSearchParams.CONNECTOR_ID,
+                                connectorId
+                            );
+                            window.location.search = searchParams.toString();
+                        }
                     }}
                     ajv={setDefaultsValidator}
                 />

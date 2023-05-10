@@ -213,6 +213,14 @@ export const getInitialState = (
                     setHydrationErrorsExist(true);
                 }
             } else {
+                const { setDetails_connector } = get();
+                setDetails_connector({
+                    id: connectorId,
+                    iconPath: '',
+                    imageName: '',
+                    imagePath: '',
+                    connectorId,
+                });
                 setHydrationErrorsExist(true);
             }
         }
