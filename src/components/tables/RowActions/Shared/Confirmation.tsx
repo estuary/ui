@@ -1,4 +1,4 @@
-import ChipList from 'components/shared/ChipList';
+import { List, ListItem, Typography } from '@mui/material';
 import { ReactNode } from 'react';
 
 interface RowActionConfirmationprops {
@@ -13,10 +13,17 @@ function RowActionConfirmation({
     return (
         <>
             {message}
-            <ChipList
-                items={selected.map((value: string) => value)}
-                keyPrefix="confirmation-selected-items-"
-            />
+            <List>
+                {selected.map((value: string) => {
+                    return (
+                        <ListItem key={`confirmation-selected-items-${value}`}>
+                            <Typography variant="h6" component="span">
+                                {value}
+                            </Typography>
+                        </ListItem>
+                    );
+                })}
+            </List>
         </>
     );
 }
