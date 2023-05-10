@@ -3,6 +3,7 @@ import {
     CircularProgress,
     ListItemText,
     Stack,
+    Typography,
     useTheme,
 } from '@mui/material';
 import ErrorLogs from 'components/shared/Entity/Error/Logs';
@@ -19,9 +20,9 @@ export enum ProgressStates {
 export interface SharedProgressProps {
     name: string;
     error: any | null;
-    logToken: string | null;
+    logToken?: string | null;
     renderError?: Function;
-    renderLogs?: Function;
+    renderLogs?: Function | boolean;
     successMessageID: string;
     runningMessageID: string;
     state: ProgressStates;
@@ -40,6 +41,8 @@ function SharedProgress({
     runningMessageID,
 }: SharedProgressProps) {
     const theme = useTheme();
+
+    const showErrors = state === ProgressStates.FAILED && error !== null;
 
     return (
         <Box
@@ -61,23 +64,29 @@ function SharedProgress({
                 )}
 
                 <ListItemText
-                    primary={name}
+                    primary={
+                        <Typography variant="h6" component="span">
+                            {name}
+                        </Typography>
+                    }
                     secondary={
-                        <FormattedMessage
-                            id={
-                                state === ProgressStates.SUCCESS
-                                    ? successMessageID
-                                    : state === ProgressStates.FAILED
-                                    ? 'common.fail'
-                                    : runningMessageID
-                            }
-                        />
+                        showErrors ? null : (
+                            <FormattedMessage
+                                id={
+                                    state === ProgressStates.SUCCESS
+                                        ? successMessageID
+                                        : state === ProgressStates.FAILED
+                                        ? 'common.fail'
+                                        : runningMessageID
+                                }
+                            />
+                        )
                     }
                 />
             </Stack>
 
             <Box sx={wrapperStyling}>
-                {state === ProgressStates.FAILED && error !== null ? (
+                {showErrors ? (
                     renderError ? (
                         renderError(error)
                     ) : (
@@ -86,22 +95,24 @@ function SharedProgress({
                 ) : null}
             </Box>
 
-            <Box sx={wrapperStyling}>
-                {state !== ProgressStates.RUNNING && logToken !== null ? (
-                    renderLogs ? (
-                        renderLogs(logToken)
-                    ) : (
-                        <ErrorLogs
-                            logToken={logToken}
-                            height={150}
-                            logProps={{
-                                disableIntervalFetching: true,
-                                fetchAll: true,
-                            }}
-                        />
-                    )
-                ) : null}
-            </Box>
+            {renderLogs && logToken !== null ? (
+                <Box sx={wrapperStyling}>
+                    {state !== ProgressStates.RUNNING ? (
+                        typeof renderLogs === 'function' ? (
+                            renderLogs(logToken)
+                        ) : (
+                            <ErrorLogs
+                                logToken={logToken}
+                                height={150}
+                                logProps={{
+                                    disableIntervalFetching: true,
+                                    fetchAll: true,
+                                }}
+                            />
+                        )
+                    ) : null}
+                </Box>
+            ) : null}
         </Box>
     );
 }
