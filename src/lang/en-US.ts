@@ -1041,6 +1041,10 @@ const DraftErrors: ResolvedIntlConfig['messages'] = {
     'draftErrors.totalCount': `Displaying {displaying} of {total, plural, one {# error} other {# errors}} `,
 };
 
+const UpdateEntity: ResolvedIntlConfig['messages'] = {
+    'updateEntity.noLiveSpecs': `Unable to find entity on server.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1094,6 +1098,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...SchemaEditor_Collection,
     ...EntityEvolution,
     ...DraftErrors,
+    ...UpdateEntity,
 };
 
 export default enUSMessages;
