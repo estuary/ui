@@ -1,4 +1,3 @@
-import { Alert } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { CaptureQuery } from 'api/liveSpecsExt';
@@ -34,6 +33,7 @@ export interface UpdateEntityProps {
     runningMessageID: SharedProgressProps['runningMessageID'];
     successMessageID: SharedProgressProps['successMessageID'];
     selectableStoreName:
+        | SelectTableStoreNames.ACCESS_GRANTS_LINKS
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
         | SelectTableStoreNames.MATERIALIZATION;
@@ -62,56 +62,74 @@ function UpdateEntity({
         selectableTableStoreSelectors.successfulTransformations.increment
     );
 
-    const { liveSpecs } = useLiveSpecsExtWithSpec(entity.id, entity.spec_type);
+    const liveSpecsResponse = useLiveSpecsExtWithSpec(
+        entity.id,
+        entity.spec_type
+    );
+    const liveSpecs = liveSpecsResponse.liveSpecs;
+    const liveSpecsError = liveSpecsResponse.error;
+    const liveSpecsValidating = liveSpecsResponse.isValidating;
 
     useEffect(() => {
         const failed = (response: any) => {
             setState(ProgressStates.FAILED);
-            setError(response.error);
+            setError(response.error ?? response);
             onFinish(response);
         };
 
-        if (liveSpecs.length > 0) {
-            const updateEntity = async (
-                targetEntity: CaptureQuery,
-                spec: LiveSpecsExtQueryWithSpec['spec']
-            ) => {
-                const entityName = targetEntity.catalog_name;
-
-                const draftsResponse = await createEntityDraft(entityName);
-                if (draftsResponse.error) {
-                    return failed(draftsResponse);
-                }
-
-                const newDraftId = draftsResponse.data[0].id;
-                setDraftId(newDraftId);
-
-                const draftSpecsResponse = await createDraftSpec(
-                    newDraftId,
-                    entityName,
-                    generateNewSpec(spec),
-                    generateNewSpecType(targetEntity)
-                );
-                if (draftSpecsResponse.error) {
-                    return failed(draftSpecsResponse);
-                }
-
-                const publishResponse = await createPublication(
-                    newDraftId,
-                    false
-                );
-                if (publishResponse.error) {
-                    return failed(publishResponse);
-                }
-                setPubID(publishResponse.data[0].id);
-            };
-
-            void updateEntity(entity, liveSpecs[0].spec);
+        if (liveSpecsValidating) {
+            return;
         }
 
+        if (liveSpecsError) {
+            return failed({ error: liveSpecsError });
+        }
+
+        if (liveSpecs.length <= 0) {
+            return failed({
+                error: {
+                    message: 'updateEntity.noLiveSpecs',
+                },
+            });
+        }
+
+        const updateEntity = async (
+            targetEntity: CaptureQuery,
+            spec: LiveSpecsExtQueryWithSpec['spec']
+        ) => {
+            const entityName = targetEntity.catalog_name;
+
+            const draftsResponse = await createEntityDraft(entityName);
+            if (draftsResponse.error) {
+                return failed(draftsResponse);
+            }
+
+            const newDraftId = draftsResponse.data[0].id;
+            setDraftId(newDraftId);
+
+            const draftSpecsResponse = await createDraftSpec(
+                newDraftId,
+                entityName,
+                generateNewSpec(spec),
+                generateNewSpecType(targetEntity)
+            );
+            if (draftSpecsResponse.error) {
+                return failed(draftSpecsResponse);
+            }
+
+            const publishResponse = await createPublication(newDraftId, false);
+            if (publishResponse.error) {
+                return failed(publishResponse);
+            }
+            setPubID(publishResponse.data[0].id);
+        };
+
+        void updateEntity(entity, liveSpecs[0].spec);
+
         // We only want to run the useEffect after the data is fetched
+        //  OR if there was an error
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [liveSpecs]);
+    }, [liveSpecs, liveSpecsError, liveSpecsValidating]);
 
     const { publication } = usePublications(pubID, true);
     useEffect(() => {
@@ -140,23 +158,16 @@ function UpdateEntity({
             name={entity.catalog_name}
             error={error}
             logToken={logToken}
-            renderError={(errorProvided: any) => (
-                <>
-                    {errorProvided?.message ? (
-                        <Error error={errorProvided} hideTitle={true} />
-                    ) : null}
-                    <Alert
-                        icon={false}
-                        severity="error"
-                        sx={{
-                            maxHeight: 100,
-                            overflowY: 'auto',
-                        }}
-                    >
+            renderError={(errorProvided: any) => {
+                return (
+                    <>
+                        {errorProvided?.message ? (
+                            <Error error={errorProvided} condensed />
+                        ) : null}
                         <DraftErrors draftId={draftId} />
-                    </Alert>
-                </>
-            )}
+                    </>
+                );
+            }}
             state={state}
             runningMessageID={runningMessageID}
             successMessageID={successMessageID}
