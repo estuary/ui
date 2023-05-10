@@ -70,17 +70,15 @@ function SharedProgress({
                         </Typography>
                     }
                     secondary={
-                        showErrors ? null : (
-                            <FormattedMessage
-                                id={
-                                    state === ProgressStates.SUCCESS
-                                        ? successMessageID
-                                        : state === ProgressStates.FAILED
-                                        ? 'common.fail'
-                                        : runningMessageID
-                                }
-                            />
-                        )
+                        <FormattedMessage
+                            id={
+                                state === ProgressStates.SUCCESS
+                                    ? successMessageID
+                                    : state === ProgressStates.FAILED
+                                    ? 'common.fail'
+                                    : runningMessageID
+                            }
+                        />
                     }
                 />
             </Stack>

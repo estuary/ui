@@ -2,6 +2,7 @@ import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { CaptureQuery } from 'api/liveSpecsExt';
 import { createPublication } from 'api/publications';
+import AlertBox from 'components/shared/AlertBox';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import Error from 'components/shared/Error';
 import SharedProgress, {
@@ -161,10 +162,12 @@ function UpdateEntity({
             renderError={(errorProvided: any) => {
                 return (
                     <>
+                        <AlertBox short hideIcon severity="error">
+                            <DraftErrors draftId={draftId} />
+                        </AlertBox>
                         {errorProvided?.message ? (
                             <Error error={errorProvided} condensed />
                         ) : null}
-                        <DraftErrors draftId={draftId} />
                     </>
                 );
             }}
