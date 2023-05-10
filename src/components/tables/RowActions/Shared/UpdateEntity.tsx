@@ -34,7 +34,6 @@ export interface UpdateEntityProps {
     runningMessageID: SharedProgressProps['runningMessageID'];
     successMessageID: SharedProgressProps['successMessageID'];
     selectableStoreName:
-        | SelectTableStoreNames.ACCESS_GRANTS_LINKS
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
         | SelectTableStoreNames.MATERIALIZATION;
