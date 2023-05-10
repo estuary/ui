@@ -22,7 +22,7 @@ function ConnectorCardDetails({ description, lastUpdate }: Props) {
                 />
             </Typography>
 
-            <Typography component="div" variant="subtitle1">
+            <Typography align="left" component="div" variant="subtitle1">
                 {description}
             </Typography>
         </Stack>
