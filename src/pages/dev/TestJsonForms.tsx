@@ -13,6 +13,7 @@ import AlertBox from 'components/shared/AlertBox';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import PageContainer from 'components/shared/PageContainer';
 import { jsonFormsPadding } from 'context/Theme';
+import { WorkflowContextProvider } from 'context/Workflow';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectors from 'hooks/useConnectors';
@@ -118,96 +119,102 @@ const TestJsonForms = () => {
 
     return (
         <PageContainer>
-            <Stack
-                spacing={2}
-                sx={{
-                    justifyContent: 'center',
-                }}
-            >
-                {error !== null ? (
-                    <AlertBox severity="error">{error}</AlertBox>
-                ) : null}
-
-                <JsonForms
-                    schema={topSchema}
-                    uischema={topUiSchema}
-                    data={{
-                        connectorImage: {
-                            id: searchParams.get(
-                                GlobalSearchParams.CONNECTOR_ID
-                            ),
-                        },
+            <WorkflowContextProvider value="test_json_forms">
+                <Stack
+                    spacing={2}
+                    sx={{
+                        justifyContent: 'center',
                     }}
-                    renderers={defaultRenderers}
-                    cells={materialCells}
-                    config={defaultOptions}
-                    validationMode="ValidateAndShow"
-                    onChange={(state) => {
-                        console.log('This is the new state of the form', state);
-                        const connectorId = state.data?.connectorImage?.id;
-                        if (
-                            connectorId &&
-                            searchParams.get(
-                                GlobalSearchParams.CONNECTOR_ID
-                            ) !== connectorId
-                        ) {
-                            searchParams.set(
-                                GlobalSearchParams.CONNECTOR_ID,
-                                connectorId
-                            );
-                            window.location.search = searchParams.toString();
-                        }
-                    }}
-                    ajv={setDefaultsValidator}
-                />
+                >
+                    {error !== null ? (
+                        <AlertBox severity="error">{error}</AlertBox>
+                    ) : null}
 
-                <Editor
-                    height="500px"
-                    defaultLanguage="json"
-                    onChange={(val) => {
-                        setSchemaInput(val);
-                    }}
-                />
-
-                <Button onClick={parseSchema}>Render</Button>
-
-                <Divider flexItem>Form will render below this line</Divider>
-            </Stack>
-            <WrapperWithHeader header={<>Fake Form Header</>}>
-                <StyledEngineProvider injectFirst>
-                    <Box
-                        sx={{
-                            ...jsonFormsPadding,
+                    <JsonForms
+                        schema={topSchema}
+                        uischema={topUiSchema}
+                        data={{
+                            connectorImage: {
+                                id: searchParams.get(
+                                    GlobalSearchParams.CONNECTOR_ID
+                                ),
+                            },
                         }}
-                    >
-                        <DetailsFormHydrator>
-                            {schema !== null && uiSchema !== null ? (
-                                <JsonForms
-                                    schema={schema}
-                                    uischema={uiSchema}
-                                    data={formData}
-                                    renderers={defaultRenderers}
-                                    cells={materialCells}
-                                    config={defaultOptions}
-                                    validationMode="ValidateAndShow"
-                                    onChange={(state) => {
-                                        console.log(
-                                            'This is the new state of the form',
-                                            state
-                                        );
-                                    }}
-                                    ajv={setDefaultsValidator}
-                                />
-                            ) : (
-                                <>
-                                    To render form enter a schema above and
-                                    click the Render button
-                                </>
-                            )}
-                        </DetailsFormHydrator>
-                    </Box>
-                </StyledEngineProvider>
-            </WrapperWithHeader>
+                        renderers={defaultRenderers}
+                        cells={materialCells}
+                        config={defaultOptions}
+                        validationMode="ValidateAndShow"
+                        onChange={(state) => {
+                            console.log(
+                                'This is the new state of the form',
+                                state
+                            );
+                            const connectorId = state.data?.connectorImage?.id;
+                            if (
+                                connectorId &&
+                                searchParams.get(
+                                    GlobalSearchParams.CONNECTOR_ID
+                                ) !== connectorId
+                            ) {
+                                searchParams.set(
+                                    GlobalSearchParams.CONNECTOR_ID,
+                                    connectorId
+                                );
+                                window.location.search =
+                                    searchParams.toString();
+                            }
+                        }}
+                        ajv={setDefaultsValidator}
+                    />
+
+                    <Editor
+                        height="500px"
+                        defaultLanguage="json"
+                        onChange={(val) => {
+                            setSchemaInput(val);
+                        }}
+                    />
+
+                    <Button onClick={parseSchema}>Render</Button>
+
+                    <Divider flexItem>Form will render below this line</Divider>
+                </Stack>
+                <WrapperWithHeader header={<>Fake Form Header</>}>
+                    <StyledEngineProvider injectFirst>
+                        <Box
+                            sx={{
+                                ...jsonFormsPadding,
+                            }}
+                        >
+                            <DetailsFormHydrator>
+                                {schema !== null && uiSchema !== null ? (
+                                    <JsonForms
+                                        schema={schema}
+                                        uischema={uiSchema}
+                                        data={formData}
+                                        renderers={defaultRenderers}
+                                        cells={materialCells}
+                                        config={defaultOptions}
+                                        validationMode="ValidateAndShow"
+                                        onChange={(state) => {
+                                            console.log(
+                                                'This is the new state of the form',
+                                                state
+                                            );
+                                        }}
+                                        ajv={setDefaultsValidator}
+                                    />
+                                ) : (
+                                    <>
+                                        To render form enter a schema above and
+                                        click the Render button
+                                    </>
+                                )}
+                            </DetailsFormHydrator>
+                        </Box>
+                    </StyledEngineProvider>
+                </WrapperWithHeader>
+            </WorkflowContextProvider>
         </PageContainer>
     );
 };
