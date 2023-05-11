@@ -66,9 +66,9 @@ function SharePrefixDialog({ objectRoles, open, setOpen }: Props) {
             </DialogTitle>
 
             <DialogContent>
-                <Typography sx={{ mb: 3 }}>
+                {/* <Typography sx={{ mb: 3 }}>
                     <FormattedMessage id="admin.users.sharePrefix.message" />
-                </Typography>
+                </Typography> */}
 
                 {serverError ? (
                     <Box sx={{ mb: 3 }}>

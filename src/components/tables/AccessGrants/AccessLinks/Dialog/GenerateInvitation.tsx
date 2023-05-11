@@ -92,7 +92,7 @@ function GenerateInvitation({
     };
 
     return (
-        <Grid container spacing={2} sx={{ mb: 5 }}>
+        <Grid container spacing={2} sx={{ mb: 5, pt: 1 }}>
             <Grid item xs={12} md={5}>
                 <AutocompletedField
                     label={intl.formatMessage({
