@@ -84,7 +84,10 @@ const Login = ({ showRegistration }: Props) => {
 
                 <Stack direction="column" spacing={2}>
                     <Box>
-                        <OIDCs isRegister={isRegister} />
+                        <OIDCs
+                            isRegister={isRegister}
+                            grantToken={grantToken}
+                        />
                     </Box>
 
                     {!isRegister && loginSettings.showEmail ? (
