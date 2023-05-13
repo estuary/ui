@@ -42,7 +42,7 @@ const getInitialState = (
     },
 
     resetState: () => {
-        set(getInitialStateData(), false, 'ransform Create State Reset');
+        set(getInitialStateData(), false, 'Transform Create State Reset');
     },
 });
 

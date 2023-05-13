@@ -9,16 +9,8 @@ import {
     RadioGroup,
     Select,
     Stack,
-    Step,
-    StepConnector,
-    stepConnectorClasses,
-    StepLabel,
-    Stepper,
-    styled,
     TextField,
-    Theme,
     Typography,
-    useMediaQuery,
 } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
@@ -26,6 +18,7 @@ import { createRefreshToken } from 'api/tokens';
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
 import SingleLineCode from 'components/content/SingleLineCode';
+import LanguageSelector from 'components/transformation/create/LanguageSelector';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useSnackbar } from 'notistack';
@@ -38,15 +31,7 @@ import generateTransformSpec, {
     DerivationLanguage,
 } from './generateTransformSpec';
 import SingleStep from './SingleStep';
-import { StepBox } from './StepBox';
-
-const StyledStepConnector = styled(StepConnector)(() => ({
-    [`& .${stepConnectorClasses.line}`]: {
-        backgroundImage: `repeating-linear-gradient(90deg, #9AB5CB, #9AB5CB 30px, transparent 30px, transparent 46px)`,
-        border: 0,
-        height: 2,
-    },
-}));
+import StepWrapper from './Wrapper';
 
 const NAME_RE = new RegExp(`^(${PREFIX_NAME_PATTERN}/?)*$`);
 
@@ -68,9 +53,6 @@ function TransformationCreate({ postWindowOpen }: Props) {
     const [entityPrefix, setEntityPrefix] = useState<string>('');
 
     const [urlLoading, setUrlLoading] = useState(false);
-    const isSmall = useMediaQuery<Theme>((theme) =>
-        theme.breakpoints.down('sm')
-    );
 
     const grants = useCombinedGrantsExt({ adminOnly: true });
 
@@ -222,14 +204,12 @@ function TransformationCreate({ postWindowOpen }: Props) {
     const languageSelector = useMemo(
         () => (
             <>
-                <div style={{ padding: '0.5rem 16px' }}>
-                    <SingleStep num={2}>
-                        <Typography>
-                            <FormattedMessage id="newTransform.language.title" />
-                        </Typography>
-                    </SingleStep>
-                </div>
+                <Typography sx={{ py: 1, px: 2 }}>
+                    <FormattedMessage id="newTransform.language.title" />
+                </Typography>
+
                 <Divider />
+
                 <RadioGroup
                     sx={{ padding: '16px', paddingTop: '4px' }}
                     value={derivationLanguage}
@@ -244,6 +224,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
                             id: 'newTransform.language.sql',
                         })}
                     />
+
                     <FormControlLabel
                         value="typescript"
                         control={<Radio size="small" />}
@@ -265,31 +246,8 @@ function TransformationCreate({ postWindowOpen }: Props) {
                 flexDirection: 'column',
             }}
         >
-            {!isSmall ? (
-                <Box sx={{ width: '100%', marginBottom: 4, flex: 0 }}>
-                    <Stepper
-                        alternativeLabel
-                        connector={<StyledStepConnector />}
-                    >
-                        <Step active>
-                            <StepLabel>
-                                <Typography>
-                                    <FormattedMessage id="newTransform.stepper.step1.label" />
-                                </Typography>
-                            </StepLabel>
-                        </Step>
-                        <Step active>
-                            <StepLabel>
-                                <Typography>
-                                    <FormattedMessage id="newTransform.stepper.step2.label" />
-                                </Typography>
-                            </StepLabel>
-                        </Step>
-                    </Stepper>
-                </Box>
-            ) : null}
-            <Stack direction={isSmall ? 'column' : 'row'}>
-                <StepBox>
+            <Stack spacing={2}>
+                <StepWrapper>
                     <CollectionSelector
                         height={350}
                         loading={collections.isValidating}
@@ -301,13 +259,13 @@ function TransformationCreate({ postWindowOpen }: Props) {
                         removeCollection={selectedCollectionSetFunctions.remove}
                         addCollection={selectedCollectionSetFunctions.add}
                     />
-                </StepBox>
-                <Box
-                    sx={{
-                        flex: 1,
-                    }}
-                >
-                    <StepBox last>{languageSelector}</StepBox>
+                </StepWrapper>
+
+                <Box sx={{ flex: 1 }}>
+                    <StepWrapper>{languageSelector}</StepWrapper>
+
+                    <LanguageSelector />
+
                     <Box sx={{ marginTop: 2, textAlign: 'center' }}>
                         <SingleStep
                             always
@@ -321,6 +279,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
                                 <FormattedMessage id="newTransform.stepper.step3.label" />
                             </Typography>
                         </SingleStep>
+
                         <TextField
                             sx={{ marginBottom: 2 }}
                             label={intl.formatMessage({
@@ -361,6 +320,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
                                                         )
                                                     )}
                                                 </Select>
+
                                                 <Divider orientation="vertical" />
                                             </>
                                         )}
@@ -368,6 +328,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
                                 ),
                             }}
                         />
+
                         <LoadingButton
                             fullWidth
                             variant="contained"
@@ -403,11 +364,13 @@ function TransformationCreate({ postWindowOpen }: Props) {
                                     id: 'newTransform.button.cta',
                                 })}
                         </LoadingButton>
+
                         <Stack spacing={1}>
                             <Typography variant="caption">
                                 <Box>
                                     <FormattedMessage id="newTransform.instructions1" />
                                 </Box>
+
                                 <Box>
                                     <FormattedMessage id="newTransform.instructions2" />
                                 </Box>

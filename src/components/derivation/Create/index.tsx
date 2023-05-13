@@ -35,6 +35,7 @@ function DerivationCreate() {
             <DialogTitleWithClose id={ARIA_LABEL_ID} onClose={closeDialog}>
                 <FormattedMessage id="newTransform.modal.title" />
             </DialogTitleWithClose>
+
             <DialogContent>
                 <Collapse in={showConfirmation}>
                     <AlertBox
@@ -49,6 +50,7 @@ function DerivationCreate() {
                         <FormattedMessage id="newTransform.info.gitPodWindowMessage" />
                     </AlertBox>
                 </Collapse>
+
                 <Collapse in={!showConfirmation}>
                     <TransformationCreate
                         key={newCollectionKey}
