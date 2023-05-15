@@ -21,6 +21,7 @@ interface Props {
     messageID: string;
     selectableTableStoreName:
         | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.COLLECTION
         | SelectTableStoreNames.MATERIALIZATION;
 }
 

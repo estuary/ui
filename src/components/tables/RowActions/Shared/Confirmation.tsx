@@ -1,4 +1,4 @@
-import { Box, Stack } from '@mui/material';
+import { List, ListItem, Typography } from '@mui/material';
 import { ReactNode } from 'react';
 
 interface RowActionConfirmationprops {
@@ -13,15 +13,17 @@ function RowActionConfirmation({
     return (
         <>
             {message}
-            <Stack
-                direction="column"
-                spacing={1}
-                sx={{ mt: 2, wordWrap: 'break-word' }}
-            >
-                {selected.map((value: any, index: number) => {
-                    return <Box key={index}>{value}</Box>;
+            <List>
+                {selected.map((value: string) => {
+                    return (
+                        <ListItem key={`confirmation-selected-items-${value}`}>
+                            <Typography variant="h6" component="span">
+                                {value}
+                            </Typography>
+                        </ListItem>
+                    );
                 })}
-            </Stack>
+            </List>
         </>
     );
 }
