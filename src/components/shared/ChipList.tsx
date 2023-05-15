@@ -6,10 +6,10 @@ interface Props {
     maxHeight?: number;
 }
 
-// Styled different from the table because this is based on
-//  when chips are shown inside an autocomplete. We'll need
-//  to decide if we want to keep two styled of chips. One
-//  for the table and one for elsewhere.
+// Styled different from the table because this is meant
+//  to look like when chips are shown inside an autocomplete.
+//  We'll need to decide if we want to keep two styles of chips.
+//  One for the table and one for inside an input.
 function ChipList({ items, keyPrefix, maxHeight }: Props) {
     return (
         <Stack
