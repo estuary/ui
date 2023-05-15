@@ -132,6 +132,10 @@ export const getInitialState = (
         setRows: (val) => {
             set(
                 produce(({ rows }) => {
+                    // Reset rows so we start with an empty map
+                    rows.clear();
+
+                    // Go through all the rows and add to the map
                     val.forEach((el) => {
                         rows.set(el.id, el);
                     });
