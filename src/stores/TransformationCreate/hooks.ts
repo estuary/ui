@@ -1,30 +1,30 @@
-import { useZustandStore } from 'context/Zustand/provider';
+import { useLocalZustandStore } from 'context/LocalZustand';
 import { TransformCreateStoreNames } from 'stores/names';
 import { TransformCreateState } from './types';
 
 export const useTransformationCreate_language = () => {
-    return useZustandStore<
+    return useLocalZustandStore<
         TransformCreateState,
         TransformCreateState['language']
     >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.language);
 };
 
 export const useTransformationCreate_setLanguage = () => {
-    return useZustandStore<
+    return useLocalZustandStore<
         TransformCreateState,
         TransformCreateState['setLanguage']
     >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.setLanguage);
 };
 
 export const useTransformationCreate_name = () => {
-    return useZustandStore<TransformCreateState, TransformCreateState['name']>(
-        TransformCreateStoreNames.TRANSFORM_CREATE,
-        (state) => state.name
-    );
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['name']
+    >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.name);
 };
 
 export const useTransformationCreate_setName = () => {
-    return useZustandStore<
+    return useLocalZustandStore<
         TransformCreateState,
         TransformCreateState['setName']
     >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.setName);

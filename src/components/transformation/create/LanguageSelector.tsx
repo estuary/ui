@@ -1,11 +1,4 @@
-import {
-    Box,
-    Divider,
-    FormControlLabel,
-    Radio,
-    RadioGroup,
-    Typography,
-} from '@mui/material';
+import { Divider, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useTransformationCreate_language,
@@ -23,20 +16,17 @@ function LanguageSelector() {
 
     return (
         <StepWrapper>
-            <Box sx={{ py: 1, px: 0.5 }}>
-                <SingleStep num={2}>
-                    <Typography>
-                        <FormattedMessage id="newTransform.language.title" />
-                    </Typography>
-                </SingleStep>
-            </Box>
+            <SingleStep>
+                <FormattedMessage id="newTransform.language.title" />
+            </SingleStep>
 
             <Divider />
 
             <RadioGroup
-                sx={{ pt: 1, pb: 1, px: 2 }}
+                row
                 value={language}
                 onChange={(e) => setLanguage(e.target.value as any)}
+                sx={{ py: 1, px: 2 }}
             >
                 <FormControlLabel
                     value="sql"

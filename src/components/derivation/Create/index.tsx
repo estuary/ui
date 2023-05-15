@@ -3,9 +3,12 @@ import { authenticatedRoutes } from 'app/routes';
 import AlertBox from 'components/shared/AlertBox';
 import DialogTitleWithClose from 'components/shared/Dialog/TitleWithClose';
 import TransformationCreate from 'components/transformation/create';
+import { LocalZustandProvider } from 'context/LocalZustand';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { TransformCreateStoreNames } from 'stores/names';
+import { createTransformationCreateStore } from 'stores/TransformationCreate/Store';
 
 const ARIA_LABEL_ID = 'derivation-create-dialog';
 function DerivationCreate() {
@@ -28,7 +31,7 @@ function DerivationCreate() {
         <Dialog
             open
             fullWidth={!showConfirmation}
-            maxWidth="lg"
+            maxWidth="md"
             onClose={closeDialog}
             aria-labelledby={ARIA_LABEL_ID}
         >
@@ -52,16 +55,22 @@ function DerivationCreate() {
                 </Collapse>
 
                 <Collapse in={!showConfirmation}>
-                    <TransformationCreate
-                        key={newCollectionKey}
-                        postWindowOpen={(gitPodWindow) => {
-                            // If there is a window object we know the browser at least let us open it up.
-                            //  This does not 100% prove that GitPod loaded correctly
-                            if (gitPodWindow) {
-                                setShowConfirmation(true);
-                            }
-                        }}
-                    />
+                    <LocalZustandProvider
+                        createStore={createTransformationCreateStore(
+                            TransformCreateStoreNames.TRANSFORM_CREATE
+                        )}
+                    >
+                        <TransformationCreate
+                            key={newCollectionKey}
+                            postWindowOpen={(gitPodWindow) => {
+                                // If there is a window object we know the browser at least let us open it up.
+                                //  This does not 100% prove that GitPod loaded correctly
+                                if (gitPodWindow) {
+                                    setShowConfirmation(true);
+                                }
+                            }}
+                        />
+                    </LocalZustandProvider>
                 </Collapse>
             </DialogContent>
         </Dialog>
