@@ -6,6 +6,7 @@ import { SelectTableStoreNames } from 'stores/names';
 interface Props {
     selectableTableStoreName:
         | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.COLLECTION
         | SelectTableStoreNames.MATERIALIZATION;
 }
 

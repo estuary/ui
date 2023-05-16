@@ -11,9 +11,13 @@ import {
 } from 'stores/Tables/Store';
 import { getPathWithParams } from 'utils/misc-utils';
 
+// TODO (materialize collections) materializing specific collections
+//  has not been implemented. Updated typing before implementing to
+//  make coding easier.
 interface Props {
     selectableTableStoreName:
         | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.COLLECTION
         | SelectTableStoreNames.MATERIALIZATION;
 }
 

@@ -61,7 +61,6 @@ interface Props {
     filterLabel: string;
     noExistingDataContentIds: TableIntlConfig;
     selectableTableStoreName: SelectTableStoreNames;
-    enableSelection?: boolean;
     showEntityStatus?: boolean;
     hideHeaderAndFooter?: boolean;
     rowsPerPageOptions?: number[];
@@ -98,7 +97,6 @@ function EntityTable({
     setColumnToSort,
     header,
     filterLabel,
-    enableSelection,
     showEntityStatus = false,
     selectableTableStoreName,
     hideHeaderAndFooter,
@@ -162,13 +160,13 @@ function EntityTable({
     useEffect(() => {
         if (selectData && selectData.length > 0) {
             setTableState({ status: TableStatuses.DATA_FETCHED });
-            enableSelection ? setRows(selectData) : null;
+            toolbar ? setRows(selectData) : null;
         } else if (isFiltering.current) {
             setTableState({ status: TableStatuses.UNMATCHED_FILTER });
         } else {
             setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
-    }, [selectData, setRows, enableSelection]);
+    }, [selectData, setRows, toolbar]);
 
     useEffect(() => {
         if (successfulTransformations > 0) {
@@ -177,9 +175,8 @@ function EntityTable({
     }, [hydrate, successfulTransformations]);
 
     const resetSelection = () => {
-        if (enableSelection) {
+        if (toolbar) {
             setAll(false);
-
             resetRows();
         }
     };

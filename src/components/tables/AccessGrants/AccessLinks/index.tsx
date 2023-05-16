@@ -99,8 +99,7 @@ function AccessLinksTable({ prefixes }: Props) {
                     header={headerKey}
                     filterLabel={filterKey}
                     selectableTableStoreName={selectableTableStoreName}
-                    enableSelection={true}
-                    showToolbar={true}
+                    showToolbar
                     toolbar={<RowSelector />}
                 />
             </TableHydrator>

@@ -21,14 +21,17 @@ import {
 } from 'stores/Tables/Store';
 import { hasLength } from 'utils/misc-utils';
 import EntityName from '../cells/EntityName';
+import RowSelect from '../cells/RowSelect';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
 import useCollectionColumns from './useCollectionColumns';
 
 interface RowProps {
-    stats?: StatsResponse;
+    isSelected: boolean;
     row: CollectionQueryWithStats;
+    setRow: any;
     showEntityStatus: boolean;
+    stats?: StatsResponse;
 }
 
 interface RowsProps {
@@ -36,7 +39,7 @@ interface RowsProps {
     showEntityStatus: boolean;
 }
 
-function Row({ row, stats, showEntityStatus }: RowProps) {
+function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const theme = useTheme();
     const tenantDetails = useTenantDetails();
     const tableColumns = useCollectionColumns();
@@ -69,8 +72,12 @@ function Row({ row, stats, showEntityStatus }: RowProps) {
         <>
             <TableRow
                 key={`Entity-${row.id}`}
+                selected={isSelected}
+                onClick={() => setRow(row.id, row.last_pub_id, !isSelected)}
                 sx={getEntityTableRowSx(theme, detailsExpanded)}
             >
+                <RowSelect isSelected={isSelected} name={row.catalog_name} />
+
                 <EntityName
                     name={row.catalog_name}
                     showEntityStatus={showEntityStatus}
@@ -128,6 +135,16 @@ function Rows({ data, showEntityStatus }: RowsProps) {
 
     const selectTableStoreName = SelectTableStoreNames.COLLECTION;
 
+    const selected = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['selected']
+    >(selectTableStoreName, selectableTableStoreSelectors.selected.get);
+
+    const setRow = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setSelected']
+    >(selectTableStoreName, selectableTableStoreSelectors.selected.set);
+
     const stats = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['stats']
@@ -137,10 +154,12 @@ function Rows({ data, showEntityStatus }: RowsProps) {
         <>
             {data.map((row) => (
                 <Row
-                    stats={stats}
-                    row={row}
-                    showEntityStatus={showEntityStatus}
+                    isSelected={selected.has(row.id)}
                     key={row.id}
+                    row={row}
+                    setRow={setRow}
+                    showEntityStatus={showEntityStatus}
+                    stats={stats}
                 />
             ))}
         </>

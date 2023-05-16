@@ -6,6 +6,7 @@ function DeleteConfirmation() {
     return (
         <AlertBox
             severity="warning"
+            short
             title={
                 <Typography component="div">
                     <FormattedMessage id="common.noUnDo" />
