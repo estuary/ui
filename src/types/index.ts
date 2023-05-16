@@ -230,7 +230,8 @@ export type EntityWorkflow =
     | 'capture_create'
     | 'capture_edit'
     | 'materialization_create'
-    | 'materialization_edit';
+    | 'materialization_edit'
+    | 'test_json_forms';
 
 export type SortDirection = 'asc' | 'desc';
 
