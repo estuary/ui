@@ -19,10 +19,12 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectors from 'hooks/useConnectors';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useUnmount } from 'react-use';
 import { setDefaultsValidator } from 'services/ajv';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions } from 'services/jsonforms/shared';
+import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 
 const TestJsonForms = () => {
@@ -33,6 +35,8 @@ const TestJsonForms = () => {
     const [schema, setSchema] = useState<JsonSchema | null>(null);
     const [uiSchema, setUiSchema] = useState<any | null>(null);
     const [formData, setFormData] = useState({});
+
+    const resetDetailsForm = useDetailsForm_resetState();
 
     const connectorsOneOf = useMemo(() => {
         const response = [] as { title: string; const: Object }[];
@@ -116,6 +120,10 @@ const TestJsonForms = () => {
     };
 
     const searchParams = new URLSearchParams(window.location.search);
+
+    useUnmount(() => {
+        resetDetailsForm();
+    });
 
     return (
         <PageContainer>
