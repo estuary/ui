@@ -58,6 +58,7 @@ function BindingsMultiEditor({
 
     const entityType = useEntityType();
     const workflow = useEntityWorkflow();
+    const isCaptureCreate = workflow === 'capture_create';
 
     // Details Form Store
     const catalogName = useDetailsForm_details_entityName();
@@ -122,7 +123,7 @@ function BindingsMultiEditor({
 
     const removeDiscoveredCollectionOptions = useMemo(() => {
         if (
-            workflow === 'capture_create' &&
+            isCaptureCreate &&
             discoveredCollections &&
             discoveredCollections.length > 0 &&
             draftSpecs.length > 0
@@ -135,7 +136,7 @@ function BindingsMultiEditor({
         } else {
             return false;
         }
-    }, [catalogName, discoveredCollections, draftSpecs, workflow]);
+    }, [catalogName, discoveredCollections, draftSpecs, isCaptureCreate]);
 
     useEffect(() => {
         if (removeDiscoveredCollectionOptions) {
@@ -161,6 +162,7 @@ function BindingsMultiEditor({
             <ListAndDetails
                 list={
                     <BindingSelector
+                        shortenName={true}
                         loading={fetchingSpecs}
                         skeleton={<BindingsSelectorSkeleton />}
                         readOnly={readOnly}

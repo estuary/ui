@@ -22,13 +22,14 @@ import {
     useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
 import { EntityWorkflow } from 'types';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength, stripPathing } from 'utils/misc-utils';
 
 interface BindingSelectorProps {
     loading: boolean;
     skeleton: ReactNode;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
+    shortenName?: boolean;
 }
 
 interface RowProps {
@@ -37,9 +38,17 @@ interface RowProps {
     workflow: EntityWorkflow | null;
     disabled: boolean;
     draftId: string | null;
+    shortenName?: boolean;
 }
 
-function Row({ collection, task, workflow, disabled, draftId }: RowProps) {
+function Row({
+    collection,
+    disabled,
+    draftId,
+    shortenName,
+    task,
+    workflow,
+}: RowProps) {
     // Resource Config Store
     const discoveredCollections = useResourceConfig_discoveredCollections();
     const removeCollection = useResourceConfig_removeCollection();
@@ -80,7 +89,7 @@ function Row({ collection, task, workflow, disabled, draftId }: RowProps) {
     return (
         <>
             <ListItemText
-                primary={collection}
+                primary={shortenName ? stripPathing(collection) : collection}
                 primaryTypographyProps={typographyTruncation}
             />
 
@@ -98,8 +107,9 @@ function Row({ collection, task, workflow, disabled, draftId }: RowProps) {
 
 function BindingSelector({
     loading,
-    skeleton,
     readOnly,
+    shortenName,
+    skeleton,
     RediscoverButton,
 }: BindingSelectorProps) {
     const theme = useTheme();
@@ -168,10 +178,11 @@ function BindingSelector({
 
                     <Row
                         collection={collection}
-                        task={task}
-                        workflow={workflow}
                         disabled={formActive}
                         draftId={draftId}
+                        shortenName={shortenName}
+                        task={task}
+                        workflow={workflow}
                     />
                 </>
             );
@@ -180,10 +191,11 @@ function BindingSelector({
         return (
             <Row
                 collection={collection}
-                task={task}
-                workflow={workflow}
                 disabled={formActive}
                 draftId={draftId}
+                shortenName={shortenName}
+                task={task}
+                workflow={workflow}
             />
         );
     };
