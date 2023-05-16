@@ -651,7 +651,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
     'captureCreate.collections.heading': `Output Collections`,
     'captureCreate.collectionSelector.heading': `Collection Selector`,
-    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Specification tab.`,
+    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
     'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -687,7 +687,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
 
     'captureEdit.collections.heading': `Output Collections`,
     'captureEdit.collectionSelector.heading': `Collection Selector`,
-    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Specification tab.`,
+    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
     'captureEdit.test.failedErrorTitle': `Configuration Test Failed`,
     'captureEdit.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -782,7 +782,7 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.test.inProgress': `Please wait while we try to connect to the destination.`,
 
     'materializationEdit.collectionSelector.heading': `Collection Selector`,
-    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Specification tab.`,
+    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
     'materializationEdit.resourceConfig.heading': `Resource Configuration`,
     'materializationEdit.save.failedErrorTitle': `Materialization Save Failed`,
@@ -838,7 +838,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
     'workflows.collectionSelector.label.listHeader': `Collections`,
-    'workflows.collectionSelector.tab.collectionSchema': `Schema`,
+    'workflows.collectionSelector.tab.collectionSchema': `Collection`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
