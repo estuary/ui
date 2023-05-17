@@ -1,9 +1,12 @@
+import { Box, Skeleton, TextField } from '@mui/material';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
+import { useEntityWorkflow } from 'context/Workflow';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import useLiveSpecs from 'hooks/useLiveSpecs';
-import { useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
     useResourceConfig_collections,
@@ -12,18 +15,23 @@ import {
     useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
-import { stripPathing } from 'utils/misc-utils';
+import { stripName, stripPathing } from 'utils/misc-utils';
 import CollectionSelectorSearch from './Selector/Search';
 import { CollectionData } from './Selector/types';
 
 interface Props {
+    emptyListComponent?: ReactNode;
     readOnly?: boolean;
     shortenName?: boolean;
 }
 
-function BindingSearch({ shortenName, readOnly = false }: Props) {
+function BindingSearch({
+    emptyListComponent,
+    shortenName,
+    readOnly = false,
+}: Props) {
     const entityType = useEntityType();
-    const isCapture = entityType === 'capture';
+    const workFlow = useEntityWorkflow();
 
     const intl = useIntl();
     const discoveredCollectionsLabel = useConstant(() =>
@@ -44,11 +52,25 @@ function BindingSearch({ shortenName, readOnly = false }: Props) {
         CollectionData[]
     >([]);
 
+    // We want the entityName so during edit of capture we can
+    //  make sure we only fetch liveSpecs that match the capture
+    const entityName = useDetailsForm_details_entityName();
+
+    // If we are in capture create then we only show discovered
+    const specType = workFlow !== 'capture_create' ? 'collection' : undefined;
+
+    // During capture edit we only want to show things that match the name
+    const specTypeFilter =
+        workFlow === 'capture_edit' && entityName
+            ? stripName(entityName)
+            : undefined;
+
+    // Query to fetch the current live specs to populate the Available Collections
     const {
         liveSpecs,
         error: liveSpecsError,
         isValidating: isValidatingLiveSpecs,
-    } = useLiveSpecs('collection');
+    } = useLiveSpecs(specType, specTypeFilter);
 
     // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
@@ -86,21 +108,23 @@ function BindingSearch({ shortenName, readOnly = false }: Props) {
 
     useEffect(() => {
         if (populateCollectionOptions) {
-            const liveSpecCollectionOptions: CollectionData[] = isCapture
-                ? []
-                : liveSpecs.map(({ catalog_name }) => ({
-                      name: catalog_name,
-                      classification: existingCollectionsLabel,
-                  }));
-
-            const draftSpecCollectionOptions: CollectionData[] = isCapture
-                ? draftSpecs
-                      .filter(({ spec_type }) => spec_type === 'collection')
-                      .map(({ catalog_name }) => ({
+            const liveSpecCollectionOptions: CollectionData[] =
+                workFlow === 'capture_create'
+                    ? []
+                    : liveSpecs.map(({ catalog_name }) => ({
                           name: catalog_name,
-                          classification: discoveredCollectionsLabel,
-                      }))
-                : [];
+                          classification: existingCollectionsLabel,
+                      }));
+
+            const draftSpecCollectionOptions: CollectionData[] =
+                entityType === 'capture'
+                    ? draftSpecs
+                          .filter(({ spec_type }) => spec_type === 'collection')
+                          .map(({ catalog_name }) => ({
+                              name: catalog_name,
+                              classification: discoveredCollectionsLabel,
+                          }))
+                    : [];
 
             const draftSpecCollections: string[] =
                 draftSpecCollectionOptions.map((collection) => collection.name);
@@ -117,10 +141,11 @@ function BindingSearch({ shortenName, readOnly = false }: Props) {
     }, [
         discoveredCollectionsLabel,
         draftSpecs,
+        entityType,
         existingCollectionsLabel,
-        isCapture,
         liveSpecs,
         populateCollectionOptions,
+        workFlow,
     ]);
 
     const populateCollectionValues = useMemo(() => {
@@ -176,31 +201,50 @@ function BindingSearch({ shortenName, readOnly = false }: Props) {
             ? liveSpecsError
             : liveSpecsError ?? draftSpecsError;
 
-    return collectionOptions.length > 0 && !specError ? (
-        <CollectionSelectorSearch
-            options={collectionOptions}
-            readOnly={readOnly || formActive}
-            selectedCollections={collectionValues}
-            onChange={(value) => {
-                handlers.updateCollections(value as any);
-            }}
-            getValue={(option: CollectionData) =>
-                shortenName ? stripPathing(option.name) : option.name
-            }
-            AutocompleteProps={{
-                getOptionLabel: (option: CollectionData) => option.name,
-                groupBy: (option: CollectionData) => option.classification,
-                componentsProps: {
-                    paper: {
-                        sx: {
-                            minWidth: 200,
-                            width: '33vw',
+    if (!populateCollectionOptions) {
+        return (
+            <Box sx={{ p: 1 }}>
+                <Skeleton width="100%">
+                    <TextField />
+                </Skeleton>
+            </Box>
+        );
+    }
+
+    if (collectionOptions.length > 0 && !specError) {
+        return (
+            <CollectionSelectorSearch
+                options={collectionOptions}
+                readOnly={readOnly || formActive}
+                selectedCollections={collectionValues}
+                onChange={(value) => {
+                    handlers.updateCollections(value as any);
+                }}
+                getValue={(option: CollectionData) =>
+                    shortenName ? stripPathing(option.name) : option.name
+                }
+                AutocompleteProps={{
+                    getOptionLabel: (option: CollectionData) => option.name,
+                    groupBy: (option: CollectionData) => option.classification,
+                    componentsProps: {
+                        paper: {
+                            sx: {
+                                minWidth: 200,
+                                width: '33vw',
+                            },
                         },
                     },
-                },
-            }}
-        />
-    ) : null;
+                }}
+            />
+        );
+    }
+
+    if (emptyListComponent) {
+        // eslint-disable-next-line react/jsx-no-useless-fragment
+        return <>{emptyListComponent}</>;
+    }
+
+    return null;
 }
 
 export default BindingSearch;
