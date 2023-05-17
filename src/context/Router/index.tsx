@@ -17,7 +17,6 @@ import {
     RouterProvider,
     Routes,
 } from 'react-router-dom';
-import { isProduction } from 'utils/env-utils';
 import RequireAuth from './RequireAuth';
 
 const Authenticated = lazy(
@@ -450,16 +449,14 @@ const router = createBrowserRouter(
                         />
                     </Route>
 
-                    {!isProduction ? (
-                        <Route
-                            path="test/jsonforms"
-                            element={
-                                <EntityContextProvider value="capture">
-                                    <TestJsonForms />
-                                </EntityContextProvider>
-                            }
-                        />
-                    ) : null}
+                    <Route
+                        path="test/jsonforms"
+                        element={
+                            <EntityContextProvider value="capture">
+                                <TestJsonForms />
+                            </EntityContextProvider>
+                        }
+                    />
 
                     <Route
                         path={authenticatedRoutes.pageNotFound.path}
