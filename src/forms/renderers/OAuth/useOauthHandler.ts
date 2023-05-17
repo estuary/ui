@@ -15,7 +15,7 @@ export const useOauthHandler = (
     const intl = useIntl();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
-    const imageTag = useDetailsForm_connectorImage_connectorId();
+    const connectorId = useDetailsForm_connectorImage_connectorId();
 
     // handler for the useOauth stuff
     const onError = (error: any) => {
@@ -78,7 +78,7 @@ export const useOauthHandler = (
         setErrorMessage(null);
 
         // Make the call to know what pop url to open
-        const fetchAuthURL = await authURL(imageTag, endpointConfigData);
+        const fetchAuthURL = await authURL(connectorId, endpointConfigData);
 
         if (fetchAuthURL.error) {
             setErrorMessage(
