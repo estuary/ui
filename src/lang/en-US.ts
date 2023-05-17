@@ -95,6 +95,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.close': `Close`,
     'cta.dismiss': `Dismiss`,
     'cta.continue': `Continue`,
+    'cta.next': `Next`,
     'cta.delete': `Delete`,
     'cta.download': `Download`,
     'cta.edit': `Edit`,

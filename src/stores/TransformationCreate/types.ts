@@ -9,5 +9,10 @@ export interface TransformCreateState {
     name: string;
     setName: (val: TransformCreateState['name']) => void;
 
+    prefix: string;
+    setPrefix: (value: TransformCreateState['prefix']) => void;
+
+    catalogName: string | null;
+
     resetState: () => void;
 }

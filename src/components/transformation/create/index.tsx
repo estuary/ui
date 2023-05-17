@@ -4,21 +4,24 @@ import {
     InputAdornment,
     MenuItem,
     Select,
+    Skeleton,
     Stack,
     TextField,
 } from '@mui/material';
+import { getAuthRoles } from 'api/combinedGrantsExt';
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
-import GitPodButton from 'components/transformation/create/GitPodButton';
+import InitializeDraftButton from 'components/transformation/create/InitializeDraftButton';
 import LanguageSelector from 'components/transformation/create/LanguageSelector';
-import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import React, { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useSet } from 'react-use';
+import { useEffectOnce, useSet } from 'react-use';
 import {
     useTransformationCreate_name,
+    useTransformationCreate_prefix,
     useTransformationCreate_setName,
+    useTransformationCreate_setPrefix,
 } from 'stores/TransformationCreate/hooks';
 import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 import SingleStep from './SingleStep';
@@ -26,55 +29,35 @@ import StepWrapper from './Wrapper';
 
 const NAME_RE = new RegExp(`^(${PREFIX_NAME_PATTERN}/?)*$`);
 
-interface Props {
-    postWindowOpen: (window: Window | null) => void;
-}
+// interface Props {
+//     postWindowOpen: (window: Window | null) => void;
+// }
 
-function TransformationCreate({ postWindowOpen }: Props) {
+function TransformationCreate() {
     const intl = useIntl();
 
     const collections = useLiveSpecs('collection');
 
-    const entityName = useTransformationCreate_name();
-    const setEntityName = useTransformationCreate_setName();
+    const derivationName = useTransformationCreate_name();
+    const setDerivationName = useTransformationCreate_setName();
+
+    const catalogPrefix = useTransformationCreate_prefix();
+    const setCatalogPrefix = useTransformationCreate_setPrefix();
+
+    const [prefixOptions, setPrefixOptions] = useState<string[] | null>(null);
 
     const [selectedCollectionSet, selectedCollectionSetFunctions] = useSet(
         new Set<string>([])
     );
 
-    const [entityPrefix, setEntityPrefix] = useState<string>('');
-
-    // const [urlLoading, setUrlLoading] = useState(false);
-
-    const grants = useCombinedGrantsExt({ adminOnly: true });
-
-    const allowedPrefixes = useMemo(
-        () => grants.combinedGrants.map((grant) => grant.object_role),
-        [grants]
-    );
-
-    // const computedEntityName = useMemo(() => {
-    //     if (entityName) {
-    //         if (allowedPrefixes.length === 1) {
-    //             return `${allowedPrefixes[0]}${entityName}`;
-    //         } else if (entityPrefix) {
-    //             return `${entityPrefix}${entityName}`;
-    //         } else {
-    //             return null;
-    //         }
-    //     } else {
-    //         return null;
-    //     }
-    // }, [allowedPrefixes, entityName, entityPrefix]);
-
     const entityNameError = useMemo(() => {
-        if (entityName) {
-            if (allowedPrefixes.length > 1 && !entityPrefix) {
+        if (derivationName) {
+            if (prefixOptions && prefixOptions.length > 1 && !catalogPrefix) {
                 return intl.formatMessage({
                     id: 'newTransform.errors.prefixMissing',
                 });
             }
-            if (!NAME_RE.test(entityName)) {
+            if (!NAME_RE.test(derivationName)) {
                 // TODO: be more descriptive
                 return intl.formatMessage({
                     id: 'newTransform.errors.namePattern',
@@ -82,15 +65,33 @@ function TransformationCreate({ postWindowOpen }: Props) {
             }
         }
         return null;
-    }, [intl, allowedPrefixes, entityName, entityPrefix]);
+    }, [intl, catalogPrefix, derivationName, prefixOptions]);
 
     const handlers = {
         evaluateCatalogName: (
             event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
         ) => {
-            setEntityName(event.target.value);
+            setDerivationName(event.target.value);
         },
     };
+
+    useEffectOnce(() => {
+        getAuthRoles('admin').then(
+            (response) => {
+                if (response.data && response.data.length > 0) {
+                    const roles = response.data.map(
+                        ({ role_prefix }) => role_prefix
+                    );
+
+                    setPrefixOptions(roles);
+                    setCatalogPrefix(roles[0]);
+                }
+            },
+            () => {
+                setPrefixOptions([]);
+            }
+        );
+    });
 
     return (
         <Stack spacing={3} sx={{ pt: 2 }}>
@@ -121,49 +122,54 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
                 <Divider />
 
-                <TextField
-                    sx={{ mt: 1, mb: 2, px: 2 }}
-                    size="small"
-                    variant="standard"
-                    required
-                    fullWidth
-                    error={!!entityNameError}
-                    helperText={entityNameError}
-                    value={entityName}
-                    onChange={handlers.evaluateCatalogName}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                {allowedPrefixes.length === 1 ? (
-                                    allowedPrefixes[0]
-                                ) : (
-                                    <>
-                                        <Select
-                                            variant="standard"
-                                            value={entityPrefix}
-                                            onChange={(evt) => {
-                                                setEntityPrefix(
-                                                    evt.target.value
-                                                );
-                                            }}
-                                        >
-                                            {allowedPrefixes.map((prefix) => (
-                                                <MenuItem
-                                                    key={prefix}
-                                                    value={prefix}
-                                                >
-                                                    {prefix}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
+                {prefixOptions ? (
+                    <TextField
+                        sx={{ mt: 1, mb: 2, px: 2 }}
+                        size="small"
+                        variant="standard"
+                        required
+                        fullWidth
+                        error={!!entityNameError}
+                        helperText={entityNameError}
+                        value={derivationName}
+                        onChange={handlers.evaluateCatalogName}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    {prefixOptions.length === 1 ? (
+                                        prefixOptions[0]
+                                    ) : (
+                                        <>
+                                            <Select
+                                                size="small"
+                                                variant="standard"
+                                                value={catalogPrefix}
+                                                onChange={(evt) => {
+                                                    setCatalogPrefix(
+                                                        evt.target.value
+                                                    );
+                                                }}
+                                            >
+                                                {prefixOptions.map((prefix) => (
+                                                    <MenuItem
+                                                        key={prefix}
+                                                        value={prefix}
+                                                    >
+                                                        {prefix}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
 
-                                        <Divider orientation="vertical" />
-                                    </>
-                                )}
-                            </InputAdornment>
-                        ),
-                    }}
-                />
+                                            <Divider orientation="vertical" />
+                                        </>
+                                    )}
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                ) : (
+                    <Skeleton height={26} sx={{ mt: 1, mb: 2, mx: 2 }} />
+                )}
             </StepWrapper>
 
             <Box
@@ -173,11 +179,9 @@ function TransformationCreate({ postWindowOpen }: Props) {
                     justifyContent: 'space-around',
                 }}
             >
-                <GitPodButton
+                <InitializeDraftButton
                     entityNameError={entityNameError}
-                    entityPrefix={entityPrefix}
                     selectedCollections={selectedCollectionSet}
-                    postWindowOpen={postWindowOpen}
                 />
             </Box>
 

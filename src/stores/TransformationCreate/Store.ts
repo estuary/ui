@@ -1,23 +1,23 @@
 import produce from 'immer';
 import { TransformCreateStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create } from 'zustand';
+import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { TransformCreateState } from './types';
 
-// TODO (transform create)
-
 const getInitialStateData = (): Pick<
     TransformCreateState,
-    'language' | 'name'
+    'catalogName' | 'language' | 'name' | 'prefix'
 > => ({
-    name: '',
+    catalogName: null,
     language: 'sql',
+    name: '',
+    prefix: '',
 });
 
 const getInitialState = (
-    set: NamedSet<TransformCreateState>
-    // get: StoreApi<TransformCreateState>['getState']
+    set: NamedSet<TransformCreateState>,
+    get: StoreApi<TransformCreateState>['getState']
 ): TransformCreateState => ({
     ...getInitialStateData(),
 
@@ -31,13 +31,27 @@ const getInitialState = (
         );
     },
 
-    setName: (val) => {
+    setName: (value) => {
         set(
             produce((state: TransformCreateState) => {
-                state.name = val;
+                const { prefix } = get();
+
+                state.name = value;
+                state.catalogName = prefix ? `${prefix}${value}` : null;
             }),
             false,
             'Transform Create Name Set'
+        );
+    },
+
+    setPrefix: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                state.prefix = value;
+                state.catalogName = `${value}${state.name}`;
+            }),
+            false,
+            'Transform Create Prefix Set'
         );
     },
 
@@ -50,6 +64,6 @@ export const createTransformationCreateStore = (
     key: TransformCreateStoreNames
 ) => {
     return create<TransformCreateState>()(
-        devtools((set, _get) => getInitialState(set), devtoolsOptions(key))
+        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
     );
 };

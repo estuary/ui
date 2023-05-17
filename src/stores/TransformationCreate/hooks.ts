@@ -29,3 +29,24 @@ export const useTransformationCreate_setName = () => {
         TransformCreateState['setName']
     >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.setName);
 };
+
+export const useTransformationCreate_prefix = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['prefix']
+    >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.prefix);
+};
+
+export const useTransformationCreate_setPrefix = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['setPrefix']
+    >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.setPrefix);
+};
+
+export const useTransformationCreate_catalogName = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['catalogName']
+    >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.catalogName);
+};

@@ -3,65 +3,44 @@ import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { createRefreshToken } from 'api/tokens';
 import generateTransformSpec from 'components/transformation/create/generateTransformSpec';
-import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import { useSnackbar } from 'notistack';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { generateGitPodURL } from 'services/gitpod';
 import {
+    useTransformationCreate_catalogName,
     useTransformationCreate_language,
     useTransformationCreate_name,
 } from 'stores/TransformationCreate/hooks';
 
 interface Props {
     entityNameError: string | null;
-    entityPrefix: string;
     selectedCollections: Set<string>;
     postWindowOpen: (window: Window | null) => void;
 }
 
 function GitPodButton({
     entityNameError,
-    entityPrefix,
     selectedCollections,
     postWindowOpen,
 }: Props) {
     const intl = useIntl();
 
     const language = useTransformationCreate_language();
+
     const entityName = useTransformationCreate_name();
+    const catalogName = useTransformationCreate_catalogName();
 
     const [urlLoading, setUrlLoading] = useState(false);
-
-    const grants = useCombinedGrantsExt({ adminOnly: true });
-
-    const allowedPrefixes = useMemo(
-        () => grants.combinedGrants.map((grant) => grant.object_role),
-        [grants]
-    );
-
-    const computedEntityName = useMemo(() => {
-        if (entityName) {
-            if (allowedPrefixes.length === 1) {
-                return `${allowedPrefixes[0]}${entityName}`;
-            } else if (entityPrefix) {
-                return `${entityPrefix}${entityName}`;
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }, [allowedPrefixes, entityName, entityPrefix]);
 
     const submitButtonError = useMemo(() => {
         if (selectedCollections.size < 1) {
             return intl.formatMessage({ id: 'newTransform.errors.collection' });
-        }
-        if (!entityName) {
+        } else if (!entityName) {
             return intl.formatMessage({ id: 'newTransform.errors.name' });
+        } else {
+            return null;
         }
-        return null;
     }, [intl, entityName, selectedCollections]);
 
     const { enqueueSnackbar } = useSnackbar();
@@ -80,14 +59,14 @@ function GitPodButton({
 
     const generateDraftWithSpecs = useMemo(
         () => async () => {
-            if (!computedEntityName) {
+            if (!catalogName) {
                 throw new Error(
                     intl.formatMessage({
                         id: 'newTransform.errors.nameInvalid',
                     })
                 );
             }
-            const draft = await createEntityDraft(computedEntityName);
+            const draft = await createEntityDraft(catalogName);
             if (draft.error) {
                 throw new Error(
                     `[${draft.error.code}]: ${draft.error.message}, ${draft.error.details}, ${draft.error.hint}`
@@ -97,20 +76,20 @@ function GitPodButton({
 
             const spec = generateTransformSpec(
                 language,
-                computedEntityName,
+                catalogName,
                 selectedCollections
             );
 
             await createDraftSpec(
                 draftId,
-                computedEntityName,
+                catalogName,
                 spec,
                 'collection',
                 null
             );
             return draftId;
         },
-        [computedEntityName, intl, language, selectedCollections]
+        [catalogName, intl, language, selectedCollections]
     );
 
     const generateUrl = useMemo(
@@ -121,7 +100,7 @@ function GitPodButton({
                 // This is really just here to make Typescript happy,
                 // we know that computedEntityName will exist because
                 // generateDraftWithSpecs() checks it and throws otherwise
-                if (!computedEntityName) {
+                if (!catalogName) {
                     throw new Error(
                         intl.formatMessage({
                             id: 'newTransform.errors.nameMissing',
@@ -139,7 +118,7 @@ function GitPodButton({
                     token,
                     language,
                     selectedCollections,
-                    computedEntityName
+                    catalogName
                 );
             } catch (e: unknown) {
                 displayError(
@@ -154,7 +133,7 @@ function GitPodButton({
             }
         },
         [
-            computedEntityName,
+            catalogName,
             displayError,
             generateDraftWithSpecs,
             intl,
@@ -168,7 +147,6 @@ function GitPodButton({
             variant="contained"
             loading={urlLoading}
             disabled={!!entityNameError || !!submitButtonError || urlLoading}
-            sx={{ marginBottom: 3 }}
             onClick={async () => {
                 const gitpodUrl = await generateUrl();
                 if (gitpodUrl) {
