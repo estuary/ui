@@ -15,17 +15,29 @@ const queryColumns = ['catalog_name', 'spec_type'];
 
 const defaultResponse: LiveSpecsQuery[] = [];
 
-function useLiveSpecs(specType: Entity) {
+function useLiveSpecs(specType: Entity, matchName?: string) {
     const draftSpecQuery = useQuery<LiveSpecsQuery>(
         TABLES.LIVE_SPECS_EXT,
         {
             columns: queryColumns,
-            filter: (query) =>
-                query.eq('spec_type', specType).order('updated_at', {
-                    ascending: false,
-                }),
+            filter: (query) => {
+                let queryBuilder = query
+                    .eq('spec_type', specType)
+                    .order('updated_at', {
+                        ascending: false,
+                    });
+
+                if (matchName) {
+                    queryBuilder = queryBuilder.like(
+                        'catalog_name',
+                        `${matchName}%`
+                    );
+                }
+
+                return queryBuilder;
+            },
         },
-        [specType]
+        [specType, matchName]
     );
 
     const { data, error, isValidating } = useSelect(draftSpecQuery);
