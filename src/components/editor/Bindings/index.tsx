@@ -162,7 +162,7 @@ function BindingsMultiEditor({
             <ListAndDetails
                 list={
                     <BindingSelector
-                        shortenName={true}
+                        shortenName={entityType === 'capture'}
                         loading={fetchingSpecs}
                         skeleton={<BindingsSelectorSkeleton />}
                         readOnly={readOnly}

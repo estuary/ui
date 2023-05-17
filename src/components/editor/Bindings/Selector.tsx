@@ -211,7 +211,10 @@ function BindingSelector({
         <Box>{skeleton}</Box>
     ) : (
         <>
-            <BindingSearch readOnly={disableActions} />
+            <BindingSearch
+                readOnly={disableActions}
+                shortenName={shortenName}
+            />
 
             <CollectionSelectorActions
                 readOnly={disableActions ?? rows.size === 0}

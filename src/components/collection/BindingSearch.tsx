@@ -19,9 +19,10 @@ import { CollectionData } from './Selector/types';
 
 interface Props {
     readOnly?: boolean;
+    shortenName?: boolean;
 }
 
-function BindingSearch({ readOnly = false }: Props) {
+function BindingSearch({ shortenName, readOnly = false }: Props) {
     const entityType = useEntityType();
     const workflow = useEntityWorkflow();
 
@@ -188,7 +189,9 @@ function BindingSearch({ readOnly = false }: Props) {
             onChange={(value) => {
                 handlers.updateCollections(value as any);
             }}
-            getValue={(option: CollectionData) => stripPathing(option.name)}
+            getValue={(option: CollectionData) =>
+                shortenName ? stripPathing(option.name) : option.name
+            }
             AutocompleteProps={{
                 getOptionLabel: (option: CollectionData) => option.name,
                 groupBy: (option: CollectionData) => option.classification,
