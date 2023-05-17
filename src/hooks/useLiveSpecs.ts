@@ -15,7 +15,7 @@ const queryColumns = ['catalog_name', 'spec_type'];
 
 const defaultResponse: LiveSpecsQuery[] = [];
 
-function useLiveSpecs(specType: Entity, matchName?: string) {
+function useLiveSpecs(specType?: Entity, matchName?: string) {
     const draftSpecQuery = useQuery<LiveSpecsQuery>(
         TABLES.LIVE_SPECS_EXT,
         {
@@ -40,7 +40,9 @@ function useLiveSpecs(specType: Entity, matchName?: string) {
         [specType, matchName]
     );
 
-    const { data, error, isValidating } = useSelect(draftSpecQuery);
+    const { data, error, isValidating } = useSelect(
+        specType ? draftSpecQuery : null
+    );
 
     return {
         liveSpecs: data ? data.data : defaultResponse,
