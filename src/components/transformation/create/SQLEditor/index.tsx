@@ -8,14 +8,18 @@ import {
     Typography,
 } from '@mui/material';
 import DraftSpecEditor from 'components/editor/DraftSpec';
+import TransformList from 'components/transformation/create/SQLEditor/TransformList';
 import { intensifiedOutline } from 'context/Theme';
 
 function SQLEditor() {
+    // const transformConfigs = useTransformationCreate_transformConfigs();
+
     return (
         <Grid
             container
             sx={{
                 border: (theme) => intensifiedOutline[theme.palette.mode],
+                borderRadius: 3,
             }}
         >
             <Grid
@@ -41,7 +45,7 @@ function SQLEditor() {
                     </Typography>
                 </Box>
 
-                <span>Transform</span>
+                <TransformList />
             </Grid>
 
             <Grid
@@ -79,6 +83,7 @@ function SQLEditor() {
                     <Box>
                         <Autocomplete
                             options={['Simple Select']}
+                            // defaultValue={transformConfigs['Template1']}
                             renderInput={({
                                 InputProps,
                                 ...params

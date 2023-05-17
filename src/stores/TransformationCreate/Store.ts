@@ -7,12 +7,13 @@ import { TransformCreateState } from './types';
 
 const getInitialStateData = (): Pick<
     TransformCreateState,
-    'catalogName' | 'language' | 'name' | 'prefix'
+    'catalogName' | 'language' | 'name' | 'prefix' | 'transformConfigs'
 > => ({
     catalogName: null,
     language: 'sql',
     name: '',
     prefix: '',
+    transformConfigs: {},
 });
 
 const getInitialState = (
@@ -52,6 +53,25 @@ const getInitialState = (
             }),
             false,
             'Transform Create Prefix Set'
+        );
+    },
+
+    addTransformConfigs: (configs) => {
+        set(
+            produce((state: TransformCreateState) => {
+                const { transformConfigs } = get();
+
+                const originalKeyCount = Object.keys(transformConfigs).length;
+
+                configs.forEach((config, index: number) => {
+                    state.transformConfigs = {
+                        ...state.transformConfigs,
+                        [`Transform${originalKeyCount + index + 1}`]: config,
+                    };
+                });
+            }),
+            false,
+            'Transform Configs Added'
         );
     },
 

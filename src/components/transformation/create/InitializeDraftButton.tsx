@@ -9,10 +9,12 @@ import generateTransformSpec from 'components/transformation/create/generateTran
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
+    useTransformationCreate_addTransformConfigs,
     useTransformationCreate_catalogName,
     useTransformationCreate_language,
     useTransformationCreate_name,
 } from 'stores/TransformationCreate/hooks';
+import { TransformConfig } from 'stores/TransformationCreate/types';
 
 interface Props {
     entityNameError: string | null;
@@ -30,6 +32,8 @@ function InitializeDraftButton({
 
     const entityName = useTransformationCreate_name();
     const catalogName = useTransformationCreate_catalogName();
+
+    const addTransformConfigs = useTransformationCreate_addTransformConfigs();
 
     // Draft Editor Store
     const setDraftId = useEditorStore_setId();
@@ -59,6 +63,16 @@ function InitializeDraftButton({
             } else if (draftsResponse.data && draftsResponse.data.length > 0) {
                 const draftId = draftsResponse.data[0].id;
 
+                const transformConfigs: TransformConfig[] = Array.from(
+                    selectedCollections
+                ).map((collection) => ({
+                    lambda: 'SELECT * FROM demo/1234',
+                    sqlTemplate: 'Simple Select',
+                    collection,
+                }));
+
+                addTransformConfigs(transformConfigs);
+
                 const spec = generateTransformSpec(
                     language,
                     catalogName,
@@ -85,6 +99,7 @@ function InitializeDraftButton({
             }
         }
     }, [
+        addTransformConfigs,
         setDraftId,
         setOpenSQLEditor,
         setPersistedDraftId,

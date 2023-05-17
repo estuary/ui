@@ -44,6 +44,26 @@ export const useTransformationCreate_setPrefix = () => {
     >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.setPrefix);
 };
 
+export const useTransformationCreate_transformConfigs = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['transformConfigs']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.transformConfigs
+    );
+};
+
+export const useTransformationCreate_addTransformConfigs = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['addTransformConfigs']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.addTransformConfigs
+    );
+};
+
 export const useTransformationCreate_catalogName = () => {
     return useLocalZustandStore<
         TransformCreateState,
