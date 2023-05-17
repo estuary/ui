@@ -12,9 +12,10 @@ export enum DetailsFormStoreNames {
 }
 
 export enum EditorStoreNames {
-    CAPTURE = 'capture_editor_store',
-    GENERAL = 'general_editor_store',
     BINDINGS = 'bindings_editor_store',
+    CAPTURE = 'capture_editor_store',
+    DERIVATION = 'derivation_editor_store',
+    GENERAL = 'general_editor_store',
     MATERIALIZATION = 'materialization_editor_store',
 }
 

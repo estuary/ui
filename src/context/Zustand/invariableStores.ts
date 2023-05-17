@@ -47,6 +47,9 @@ const invariableStores = {
 
     // Specification Editor Store
     [EditorStoreNames.CAPTURE]: createEditorStore(EditorStoreNames.CAPTURE),
+    [EditorStoreNames.DERIVATION]: createEditorStore(
+        EditorStoreNames.DERIVATION
+    ),
     [EditorStoreNames.MATERIALIZATION]: createEditorStore(
         EditorStoreNames.MATERIALIZATION
     ),

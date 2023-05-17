@@ -31,7 +31,7 @@ function DerivationCreate() {
         <Dialog
             open
             fullWidth={!showConfirmation}
-            maxWidth="md"
+            maxWidth="lg"
             onClose={closeDialog}
             aria-labelledby={ARIA_LABEL_ID}
         >

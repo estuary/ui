@@ -1,5 +1,6 @@
 import {
     Box,
+    Collapse,
     Divider,
     InputAdornment,
     MenuItem,
@@ -13,8 +14,9 @@ import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkelet
 import CollectionSelector from 'components/collection/Selector';
 import InitializeDraftButton from 'components/transformation/create/InitializeDraftButton';
 import LanguageSelector from 'components/transformation/create/LanguageSelector';
+import SQLEditor from 'components/transformation/create/SQLEditor';
 import useLiveSpecs from 'hooks/useLiveSpecs';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useEffectOnce, useSet } from 'react-use';
 import {
@@ -45,6 +47,7 @@ function TransformationCreate() {
     const setCatalogPrefix = useTransformationCreate_setPrefix();
 
     const [prefixOptions, setPrefixOptions] = useState<string[] | null>(null);
+    const [sqlEditorOpen, setSQLEditorOpen] = useState(false);
 
     const [selectedCollectionSet, selectedCollectionSetFunctions] = useSet(
         new Set<string>([])
@@ -94,111 +97,131 @@ function TransformationCreate() {
     });
 
     return (
-        <Stack spacing={3} sx={{ pt: 2 }}>
-            <StepWrapper>
-                <SingleStep>
-                    <FormattedMessage id="newTransform.baseConfig.sourceCollections.label" />
-                </SingleStep>
+        <>
+            <Collapse in={!sqlEditorOpen}>
+                <Stack spacing={3} sx={{ pt: 2 }}>
+                    <StepWrapper>
+                        <SingleStep>
+                            <FormattedMessage id="newTransform.baseConfig.sourceCollections.label" />
+                        </SingleStep>
 
-                <Divider />
+                        <Divider />
 
-                <CollectionSelector
-                    height={350}
-                    loading={collections.isValidating}
-                    skeleton={<BindingsSelectorSkeleton />}
-                    removeAllCollections={selectedCollectionSetFunctions.reset}
-                    collections={selectedCollectionSet}
-                    removeCollection={selectedCollectionSetFunctions.remove}
-                    addCollection={selectedCollectionSetFunctions.add}
-                />
-            </StepWrapper>
+                        <CollectionSelector
+                            height={350}
+                            loading={collections.isValidating}
+                            skeleton={<BindingsSelectorSkeleton />}
+                            removeAllCollections={
+                                selectedCollectionSetFunctions.reset
+                            }
+                            collections={selectedCollectionSet}
+                            removeCollection={
+                                selectedCollectionSetFunctions.remove
+                            }
+                            addCollection={selectedCollectionSetFunctions.add}
+                        />
+                    </StepWrapper>
 
-            <LanguageSelector />
+                    <LanguageSelector />
 
-            <StepWrapper>
-                <SingleStep>
-                    <FormattedMessage id="newTransform.collection.label" />
-                </SingleStep>
+                    <StepWrapper>
+                        <SingleStep>
+                            <FormattedMessage id="newTransform.collection.label" />
+                        </SingleStep>
 
-                <Divider />
+                        <Divider />
 
-                {prefixOptions ? (
-                    <TextField
-                        sx={{ mt: 1, mb: 2, px: 2 }}
-                        size="small"
-                        variant="standard"
-                        required
-                        fullWidth
-                        error={!!entityNameError}
-                        helperText={entityNameError}
-                        value={derivationName}
-                        onChange={handlers.evaluateCatalogName}
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    {prefixOptions.length === 1 ? (
-                                        prefixOptions[0]
-                                    ) : (
-                                        <>
-                                            <Select
-                                                size="small"
-                                                variant="standard"
-                                                value={catalogPrefix}
-                                                onChange={(evt) => {
-                                                    setCatalogPrefix(
-                                                        evt.target.value
-                                                    );
-                                                }}
-                                            >
-                                                {prefixOptions.map((prefix) => (
-                                                    <MenuItem
-                                                        key={prefix}
-                                                        value={prefix}
+                        {prefixOptions ? (
+                            <TextField
+                                sx={{ mt: 1, mb: 2, px: 2 }}
+                                size="small"
+                                variant="standard"
+                                required
+                                fullWidth
+                                error={!!entityNameError}
+                                helperText={entityNameError}
+                                value={derivationName}
+                                onChange={handlers.evaluateCatalogName}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            {prefixOptions.length === 1 ? (
+                                                prefixOptions[0]
+                                            ) : (
+                                                <>
+                                                    <Select
+                                                        size="small"
+                                                        variant="standard"
+                                                        value={catalogPrefix}
+                                                        onChange={(evt) => {
+                                                            setCatalogPrefix(
+                                                                evt.target.value
+                                                            );
+                                                        }}
                                                     >
-                                                        {prefix}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
+                                                        {prefixOptions.map(
+                                                            (prefix) => (
+                                                                <MenuItem
+                                                                    key={prefix}
+                                                                    value={
+                                                                        prefix
+                                                                    }
+                                                                >
+                                                                    {prefix}
+                                                                </MenuItem>
+                                                            )
+                                                        )}
+                                                    </Select>
 
-                                            <Divider orientation="vertical" />
-                                        </>
-                                    )}
-                                </InputAdornment>
-                            ),
+                                                    <Divider orientation="vertical" />
+                                                </>
+                                            )}
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                        ) : (
+                            <Skeleton
+                                height={26}
+                                sx={{ mt: 1, mb: 2, mx: 2 }}
+                            />
+                        )}
+                    </StepWrapper>
+
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-around',
                         }}
-                    />
-                ) : (
-                    <Skeleton height={26} sx={{ mt: 1, mb: 2, mx: 2 }} />
-                )}
-            </StepWrapper>
-
-            <Box
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-around',
-                }}
-            >
-                <InitializeDraftButton
-                    entityNameError={entityNameError}
-                    selectedCollections={selectedCollectionSet}
-                />
-            </Box>
-
-            {/* <Stack spacing={1}>
-                <Typography variant="caption">
-                    <Box>
-                        <FormattedMessage id="newTransform.instructions1" />
+                    >
+                        <InitializeDraftButton
+                            entityNameError={entityNameError}
+                            selectedCollections={selectedCollectionSet}
+                            setSQLEditorOpen={setSQLEditorOpen}
+                        />
                     </Box>
 
-                    <Box>
-                        <FormattedMessage id="newTransform.instructions2" />
-                    </Box>
-                </Typography>
+                    {/* <Stack spacing={1}>
+                        <Typography variant="caption">
+                            <Box>
+                                <FormattedMessage id="newTransform.instructions1" />
+                            </Box>
 
-                <SingleLineCode value="flowctl --help" />
-            </Stack> */}
-        </Stack>
+                            <Box>
+                                <FormattedMessage id="newTransform.instructions2" />
+                            </Box>
+                        </Typography>
+
+                        <SingleLineCode value="flowctl --help" />
+                    </Stack> */}
+                </Stack>
+            </Collapse>
+
+            <Collapse in={sqlEditorOpen}>
+                <SQLEditor />
+            </Collapse>
+        </>
     );
 }
 

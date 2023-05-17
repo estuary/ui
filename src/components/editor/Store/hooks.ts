@@ -18,7 +18,7 @@ const storeName = (
     } else if (entityType === 'materialization') {
         return EditorStoreNames.MATERIALIZATION;
     } else {
-        throw new Error('Invalid Editor store name');
+        return EditorStoreNames.DERIVATION;
     }
 };
 
