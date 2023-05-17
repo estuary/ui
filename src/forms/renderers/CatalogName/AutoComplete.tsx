@@ -117,7 +117,7 @@ export const CatalogNameAutoComplete = (
                 getStringValue(option) === value
             }
             onChange={(_event: any, newValue: any) => {
-                handleChange(path, newValue?.const);
+                handleChange(path, getStringValue(newValue));
             }}
             onInputChange={(_event, newInputValue) => {
                 setInputValue(newInputValue);
