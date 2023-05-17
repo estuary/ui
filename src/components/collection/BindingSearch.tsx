@@ -13,6 +13,7 @@ import {
     useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
+import { stripPathing } from 'utils/misc-utils';
 import CollectionSelectorSearch from './Selector/Search';
 import { CollectionData } from './Selector/types';
 
@@ -187,7 +188,7 @@ function BindingSearch({ readOnly = false }: Props) {
             onChange={(value) => {
                 handlers.updateCollections(value as any);
             }}
-            getValue={(option: CollectionData) => option.name}
+            getValue={(option: CollectionData) => stripPathing(option.name)}
             AutocompleteProps={{
                 getOptionLabel: (option: CollectionData) => option.name,
                 groupBy: (option: CollectionData) => option.classification,
