@@ -1,6 +1,5 @@
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow } from 'context/Workflow';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useEffect, useMemo, useState } from 'react';
@@ -24,7 +23,7 @@ interface Props {
 
 function BindingSearch({ shortenName, readOnly = false }: Props) {
     const entityType = useEntityType();
-    const workflow = useEntityWorkflow();
+    const isCapture = entityType === 'capture';
 
     const intl = useIntl();
     const discoveredCollectionsLabel = useConstant(() =>
@@ -87,23 +86,21 @@ function BindingSearch({ shortenName, readOnly = false }: Props) {
 
     useEffect(() => {
         if (populateCollectionOptions) {
-            const liveSpecCollectionOptions: CollectionData[] =
-                workflow === 'capture_create'
-                    ? []
-                    : liveSpecs.map(({ catalog_name }) => ({
-                          name: catalog_name,
-                          classification: existingCollectionsLabel,
-                      }));
+            const liveSpecCollectionOptions: CollectionData[] = isCapture
+                ? []
+                : liveSpecs.map(({ catalog_name }) => ({
+                      name: catalog_name,
+                      classification: existingCollectionsLabel,
+                  }));
 
-            const draftSpecCollectionOptions: CollectionData[] =
-                entityType === 'capture'
-                    ? draftSpecs
-                          .filter(({ spec_type }) => spec_type === 'collection')
-                          .map(({ catalog_name }) => ({
-                              name: catalog_name,
-                              classification: discoveredCollectionsLabel,
-                          }))
-                    : [];
+            const draftSpecCollectionOptions: CollectionData[] = isCapture
+                ? draftSpecs
+                      .filter(({ spec_type }) => spec_type === 'collection')
+                      .map(({ catalog_name }) => ({
+                          name: catalog_name,
+                          classification: discoveredCollectionsLabel,
+                      }))
+                : [];
 
             const draftSpecCollections: string[] =
                 draftSpecCollectionOptions.map((collection) => collection.name);
@@ -118,14 +115,12 @@ function BindingSearch({ shortenName, readOnly = false }: Props) {
             setCollectionOptions(collectionsOnServer);
         }
     }, [
-        setCollectionOptions,
         discoveredCollectionsLabel,
         draftSpecs,
-        entityType,
         existingCollectionsLabel,
+        isCapture,
         liveSpecs,
         populateCollectionOptions,
-        workflow,
     ]);
 
     const populateCollectionValues = useMemo(() => {
