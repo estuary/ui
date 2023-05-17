@@ -105,6 +105,7 @@ export const CatalogNameAutoComplete = (
             disabled={!enabled}
             freeSolo
             fullWidth
+            selectOnFocus={false}
             getOptionLabel={getStringValue}
             id={id}
             inputValue={inputValue}
