@@ -6,37 +6,28 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import CatalogListItem from 'components/transformation/create/SQLEditor/CatalogListItem';
+import CatalogListItem from 'components/transformation/create/SQLEditor/Catalog/CatalogListItem';
 import { Plus } from 'iconoir-react';
-import { isEmpty } from 'lodash';
-import { CSSProperties, useMemo } from 'react';
+import { CSSProperties, MouseEventHandler } from 'react';
 import { FormattedMessage } from 'react-intl';
-import {
-    useTransformationCreate_migrations,
-    useTransformationCreate_transformConfigs,
-} from 'stores/TransformationCreate/hooks';
-import {
-    MigrationDictionary,
-    TransformConfig,
-    TransformConfigDictionary,
-} from 'stores/TransformationCreate/types';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     contentType: 'transform' | 'migration';
+    content: string[][];
+    addButtonClickHandler: MouseEventHandler<HTMLButtonElement>;
     borderBottom?: CSSProperties['borderBottom'];
     minHeight?: number;
 }
 
-function CatalogList({ contentType, borderBottom, minHeight = 400 }: Props) {
+function CatalogList({
+    contentType,
+    content,
+    addButtonClickHandler,
+    borderBottom,
+    minHeight = 400,
+}: Props) {
     const theme = useTheme();
-
-    const transformConfigs = useTransformationCreate_transformConfigs();
-    const migrations = useTransformationCreate_migrations();
-
-    const content: TransformConfigDictionary | MigrationDictionary = useMemo(
-        () => (contentType === 'transform' ? transformConfigs : migrations),
-        [transformConfigs, migrations]
-    );
 
     return (
         <List
@@ -58,7 +49,10 @@ function CatalogList({ contentType, borderBottom, minHeight = 400 }: Props) {
                         />
                     </Typography>
 
-                    <IconButton sx={{ borderRadius: 0 }}>
+                    <IconButton
+                        onClick={addButtonClickHandler}
+                        sx={{ borderRadius: 0 }}
+                    >
                         <Plus style={{ color: theme.palette.secondary.main }} />
                     </IconButton>
                 </Stack>
@@ -68,7 +62,15 @@ function CatalogList({ contentType, borderBottom, minHeight = 400 }: Props) {
                 borderBottom,
             }}
         >
-            {isEmpty(content) ? (
+            {hasLength(content) ? (
+                content.map(([attributeId, value]) => (
+                    <CatalogListItem
+                        key={attributeId}
+                        itemLabel={attributeId}
+                        hiddenItemLabel={value}
+                    />
+                ))
+            ) : (
                 <ListItem>
                     <Typography sx={{ mt: 1 }}>
                         <FormattedMessage
@@ -77,20 +79,6 @@ function CatalogList({ contentType, borderBottom, minHeight = 400 }: Props) {
                         />
                     </Typography>
                 </ListItem>
-            ) : (
-                Object.entries(content).map(
-                    ([name, config]: [string, TransformConfig | string]) => (
-                        <CatalogListItem
-                            key={name}
-                            itemLabel={name}
-                            hiddenItemLabel={
-                                typeof config === 'string'
-                                    ? config
-                                    : config.collection
-                            }
-                        />
-                    )
-                )
             )}
         </List>
     );

@@ -1,12 +1,9 @@
 import {
-    Autocomplete,
-    AutocompleteRenderInputParams,
     Box,
     Button,
     Grid,
     GridSize,
     Stack,
-    TextField,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -68,49 +65,17 @@ function SQLEditorHeader() {
                     </Box>
 
                     <Box>
-                        <Autocomplete
-                            options={['Simple Select']}
-                            // defaultValue={transformConfigs['Template1']}
-                            renderInput={({
-                                InputProps,
-                                ...params
-                            }: AutocompleteRenderInputParams) => (
-                                <TextField
-                                    {...params}
-                                    InputProps={{
-                                        ...InputProps,
-                                        sx: { borderRadius: 3 },
-                                    }}
-                                    label="SQL Template"
-                                    variant="outlined"
-                                    size="small"
-                                />
-                            )}
-                            disableClearable
-                            sx={{ minWidth: 150 }}
-                        />
+                        <Button variant="outlined">Preview</Button>
                     </Box>
                 </Stack>
             </Wrapper>
 
             <Wrapper gridSize={4} hideBorderRight>
-                <Stack
-                    spacing={1}
-                    direction="row"
-                    sx={{ justifyContent: 'space-between' }}
-                >
-                    <Box>
-                        <Typography sx={headerStyle}>Preview</Typography>
+                <Typography sx={headerStyle}>Data Preview</Typography>
 
-                        <Typography variant="caption">
-                            This is a placeholder for a section description
-                        </Typography>
-                    </Box>
-
-                    <Box>
-                        <Button variant="outlined">Run</Button>
-                    </Box>
-                </Stack>
+                <Typography variant="caption">
+                    This is a placeholder for a section description
+                </Typography>
             </Wrapper>
         </Grid>
     );

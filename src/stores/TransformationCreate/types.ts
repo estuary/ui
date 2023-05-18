@@ -28,6 +28,12 @@ export interface TransformCreateState {
 
     catalogName: string | null;
 
+    // Source Collections
+    sourceCollections: string[];
+    setSourceCollections: (
+        value: TransformCreateState['sourceCollections']
+    ) => void;
+
     // Transformation Config
     transformConfigs: TransformConfigDictionary;
     addTransformConfigs: (configs: TransformConfig[]) => void;

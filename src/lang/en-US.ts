@@ -970,6 +970,7 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.language.sql': `SQL`,
     'newTransform.language.ts': `Typescript`,
     'newTransform.baseConfig.sourceCollections.label': `Source Collections`,
+    'newTransform.baseConfig.sqlTemplates.label': `SQL Templates`,
     'newTransform.collection.label': `Derived Collection Name`,
     'newTransform.errors.collection': `Select source collections`,
     'newTransform.errors.name': `Name your Derived Collection`,

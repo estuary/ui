@@ -1,9 +1,9 @@
 import { Grid, Typography, useTheme } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
-import CatalogList from 'components/transformation/create/SQLEditor/CatalogList';
+import MigrationList from 'components/transformation/create/SQLEditor/Catalog/MigrationList';
+import TransformList from 'components/transformation/create/SQLEditor/Catalog/TransformList';
 import SQLEditorHeader from 'components/transformation/create/SQLEditor/Header';
 import LambdaEditor from 'components/transformation/create/SQLEditor/LambdaEditor';
-import { intensifiedOutline, intensifiedOutlineThick } from 'context/Theme';
+import { intensifiedOutlineThick } from 'context/Theme';
 import { useTransformationCreate_catalogName } from 'stores/TransformationCreate/hooks';
 
 function SQLEditor() {
@@ -29,12 +29,9 @@ function SQLEditor() {
                     borderRight: intensifiedOutlineThick[theme.palette.mode],
                 }}
             >
-                <CatalogList
-                    contentType="transform"
-                    borderBottom={intensifiedOutline[theme.palette.mode]}
-                />
+                <TransformList />
 
-                <CatalogList contentType="migration" minHeight={200} />
+                <MigrationList />
             </Grid>
 
             <Grid
@@ -52,9 +49,7 @@ function SQLEditor() {
             </Grid>
 
             <Grid item xs={4} sx={{ p: 1 }}>
-                <AlertBox severity="info" short>
-                    <Typography>Click RUN to execute your query.</Typography>
-                </AlertBox>
+                <Typography>Click RUN to execute your query.</Typography>
             </Grid>
         </Grid>
     );

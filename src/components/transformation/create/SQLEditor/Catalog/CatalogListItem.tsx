@@ -64,7 +64,7 @@ function CatalogListItem({ itemLabel, hiddenItemLabel }: Props) {
                         dense
                         selected={selectedAttribute === itemLabel}
                         onClick={handlers.displayAttributeSQL(itemLabel)}
-                        sx={{ pl: 3 }}
+                        sx={{ pl: 5 }}
                     >
                         <ListItemText primary={hiddenItemLabel} />
                     </ListItemButton>

@@ -14,6 +14,7 @@ import {
     useTransformationCreate_language,
     useTransformationCreate_name,
     useTransformationCreate_setSelectedAttribute,
+    useTransformationCreate_setSourceCollections,
 } from 'stores/TransformationCreate/hooks';
 import { TransformConfig } from 'stores/TransformationCreate/types';
 
@@ -36,6 +37,7 @@ function InitializeDraftButton({
 
     const addTransformConfigs = useTransformationCreate_addTransformConfigs();
     const setSelectedAttribute = useTransformationCreate_setSelectedAttribute();
+    const setSourceCollections = useTransformationCreate_setSourceCollections();
 
     // Draft Editor Store
     const setDraftId = useEditorStore_setId();
@@ -65,16 +67,20 @@ function InitializeDraftButton({
             } else if (draftsResponse.data && draftsResponse.data.length > 0) {
                 const draftId = draftsResponse.data[0].id;
 
-                const transformConfigs: TransformConfig[] = Array.from(
-                    selectedCollections
-                ).map((collection) => ({
-                    lambda: 'SELECT * FROM demo/1234',
-                    sqlTemplate: 'Simple Select',
-                    collection,
-                }));
+                const collections = Array.from(selectedCollections);
+
+                setSourceCollections(collections);
+
+                const transformConfigs: TransformConfig[] = collections.map(
+                    (collection) => ({
+                        lambda: 'SELECT * FROM demo/1234',
+                        sqlTemplate: 'Simple Select',
+                        collection,
+                    })
+                );
 
                 addTransformConfigs(transformConfigs);
-                setSelectedAttribute('Transform1');
+                setSelectedAttribute(`${entityName}.lambda.0.sql`);
 
                 const spec = generateTransformSpec(
                     language,
@@ -106,6 +112,7 @@ function InitializeDraftButton({
         setDraftId,
         setOpenSQLEditor,
         setPersistedDraftId,
+        setSourceCollections,
         catalogName,
         language,
         selectedCollections,

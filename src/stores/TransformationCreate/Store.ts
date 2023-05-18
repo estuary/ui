@@ -13,6 +13,7 @@ const getInitialStateData = (): Pick<
     | 'name'
     | 'prefix'
     | 'selectedAttribute'
+    | 'sourceCollections'
     | 'transformConfigs'
 > => ({
     catalogName: null,
@@ -21,6 +22,7 @@ const getInitialStateData = (): Pick<
     name: '',
     prefix: '',
     selectedAttribute: '',
+    sourceCollections: [],
     transformConfigs: {},
 });
 
@@ -64,17 +66,28 @@ const getInitialState = (
         );
     },
 
+    setSourceCollections: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                state.sourceCollections = value;
+            }),
+            false,
+            'Source Collections Set'
+        );
+    },
+
     addTransformConfigs: (configs) => {
         set(
             produce((state: TransformCreateState) => {
-                const { transformConfigs } = get();
+                const { transformConfigs, name } = get();
 
                 const originalKeyCount = Object.keys(transformConfigs).length;
 
                 configs.forEach((config, index: number) => {
                     state.transformConfigs = {
                         ...state.transformConfigs,
-                        [`Transform${originalKeyCount + index + 1}`]: config,
+                        [`${name}.lambda.${originalKeyCount + index}.sql`]:
+                            config,
                     };
                 });
             }),
@@ -86,14 +99,15 @@ const getInitialState = (
     addMigrations: (values) => {
         set(
             produce((state: TransformCreateState) => {
-                const { migrations } = get();
+                const { migrations, name } = get();
 
                 const originalKeyCount = Object.keys(migrations).length;
 
                 values.forEach((migration, index: number) => {
                     state.migrations = {
                         ...state.migrations,
-                        [`Migration${originalKeyCount + index + 1}`]: migration,
+                        [`${name}.migration.${originalKeyCount + index}.sql`]:
+                            migration,
                     };
                 });
             }),
