@@ -20,12 +20,14 @@ import CollectionSelectorSearch from './Selector/Search';
 import { CollectionData } from './Selector/types';
 
 interface Props {
+    itemType?: string;
     emptyListComponent?: ReactNode;
     readOnly?: boolean;
     shortenName?: boolean;
 }
 
 function BindingSearch({
+    itemType,
     emptyListComponent,
     shortenName,
     readOnly = false,
@@ -214,6 +216,7 @@ function BindingSearch({
     if (collectionOptions.length > 0 && !specError) {
         return (
             <CollectionSelectorSearch
+                itemType={itemType}
                 options={collectionOptions}
                 readOnly={readOnly || formActive}
                 selectedCollections={collectionValues}

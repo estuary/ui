@@ -27,6 +27,7 @@ import { hasLength, stripPathing } from 'utils/misc-utils';
 interface BindingSelectorProps {
     loading: boolean;
     skeleton: ReactNode;
+    itemType?: string;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
     shortenName?: boolean;
@@ -106,6 +107,7 @@ function Row({
 }
 
 function BindingSelector({
+    itemType,
     loading,
     readOnly,
     shortenName,
@@ -212,17 +214,19 @@ function BindingSelector({
     ) : (
         <>
             <BindingSearch
+                itemType={itemType}
                 readOnly={disableActions}
                 shortenName={shortenName}
             />
 
             <CollectionSelectorActions
-                readOnly={disableActions ?? rows.size === 0}
+                readOnly={rows.size === 0 || disableActions}
                 RediscoverButton={RediscoverButton}
                 removeAllCollections={handlers.removeAllCollections}
             />
 
             <CollectionSelectorList
+                header={itemType}
                 readOnly={disableActions}
                 collections={rows}
                 currentCollection={currentCollection}

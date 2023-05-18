@@ -17,6 +17,7 @@ import CollectionSelectorRow from './Row';
 
 interface Props {
     collections: Set<string>;
+    header?: string;
     removeCollection?: (collectionName: string) => void;
     currentCollection?: any;
     setCurrentCollection?: (collection: any) => void;
@@ -36,6 +37,7 @@ const initialState = {
 function CollectionSelectorList({
     readOnly,
     collections,
+    header,
     removeCollection,
     currentCollection,
     setCurrentCollection,
@@ -44,10 +46,12 @@ function CollectionSelectorList({
 }: Props) {
     const onSelectTimeOut = useRef<number | null>(null);
     const intl = useIntl();
-    const collectionsLabel = useConstant(() =>
-        intl.formatMessage({
-            id: 'workflows.collectionSelector.label.listHeader',
-        })
+    const collectionsLabel = useConstant(
+        () =>
+            header ??
+            intl.formatMessage({
+                id: 'workflows.collectionSelector.label.listHeader',
+            })
     );
 
     const selectionEnabled = currentCollection && setCurrentCollection;
