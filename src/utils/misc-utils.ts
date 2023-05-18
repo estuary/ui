@@ -12,6 +12,12 @@ export const stripPathing = (stringVal: string) => {
     );
 };
 
+export const stripName = (stringVal: string) => {
+    if (!stringVal) return stringVal;
+
+    return stringVal.substring(0, stringVal.lastIndexOf('/') + 1);
+};
+
 export const hasLength = (val: string | any[] | null | undefined): boolean => {
     return Boolean(val && val.length > 0);
 };

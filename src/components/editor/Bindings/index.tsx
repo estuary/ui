@@ -19,7 +19,7 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { isEqual } from 'lodash';
 import { ReactNode, useEffect, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_details_entityName,
@@ -47,6 +47,7 @@ function BindingsMultiEditor({
     readOnly = false,
     RediscoverButton,
 }: Props) {
+    const intl = useIntl();
     const theme = useTheme();
 
     const localStore = useMemo(
@@ -150,6 +151,14 @@ function BindingsMultiEditor({
             ? liveSpecs.length === 0
             : draftSpecs.length === 0;
 
+    // For captures we want to show the bindings config as "Bindings"
+    //  Other entities we still call them "collections" so we set to undefined
+    //      as the default display is "collections"
+    const itemType =
+        entityType === 'capture'
+            ? intl.formatMessage({ id: 'terms.bindings' })
+            : undefined;
+
     return (
         <LocalZustandProvider createStore={localStore}>
             <Typography sx={{ mb: 2 }}>
@@ -161,6 +170,8 @@ function BindingsMultiEditor({
             <ListAndDetails
                 list={
                     <BindingSelector
+                        itemType={itemType}
+                        shortenName={entityType === 'capture'}
                         loading={fetchingSpecs}
                         skeleton={<BindingsSelectorSkeleton />}
                         readOnly={readOnly}

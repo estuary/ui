@@ -79,6 +79,7 @@ function ReadOnly({ value }: Props) {
                         flexFlow: 'wrap',
                         overflowY: 'wr',
                         pl: 0,
+                        mt: 0,
                     }}
                 >
                     {value.map((key: string) => {
