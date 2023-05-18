@@ -34,7 +34,6 @@ import {
     FilterOptionsState,
     Input,
 } from '@mui/material';
-import { throttle } from 'lodash';
 import merge from 'lodash/merge';
 import React, { ReactNode } from 'react';
 
@@ -73,6 +72,7 @@ export const CatalogNameAutoComplete = (
         data,
         className,
         id,
+        isValid,
         enabled,
         path,
         handleChange,
@@ -84,35 +84,45 @@ export const CatalogNameAutoComplete = (
 
     const options = generateOptionsArray(rootSchema as JsonSchema7, path);
     const appliedUiSchemaOptions = merge({}, config, options);
-    const [inputValue, setInputValue] = React.useState(data ?? '');
+    const singleOption = options.length === 1;
+    const singleOptionString = getStringValue(options[0]);
 
-    const debounceUpdate = throttle((newInputValue: any) => {
-        handleChange(path, newInputValue);
-    }, 250);
+    // Attempt to set the input value to:
+    //  The data provided
+    //  The only option
+    //  Default to blank
+    const [inputValue, setInputValue] = React.useState(
+        data ? data : singleOption ? singleOptionString : ''
+    );
+    const inputEmpty = inputValue.length === 0;
 
     return (
         <Autocomplete
+            autoComplete
+            autoHighlight
             className={className}
-            id={id}
+            disableClearable
             disabled={!enabled}
-            value={inputValue}
+            freeSolo
+            fullWidth
+            selectOnFocus={false}
+            getOptionLabel={getStringValue}
+            id={id}
             inputValue={inputValue}
+            openOnFocus={!isValid || inputEmpty}
+            options={options}
+            style={{ marginTop: 16 }}
+            value={inputValue}
+            isOptionEqualToValue={(option, value) =>
+                getStringValue(option) === value
+            }
             onChange={(_event: any, newValue: any) => {
-                handleChange(path, newValue?.value);
+                handleChange(path, getStringValue(newValue));
             }}
             onInputChange={(_event, newInputValue) => {
                 setInputValue(newInputValue);
-                debounceUpdate(newInputValue);
+                handleChange(path, newInputValue);
             }}
-            autoHighlight
-            autoComplete
-            disableClearable
-            openOnFocus={inputValue.length === 0}
-            fullWidth
-            freeSolo
-            options={options}
-            getOptionLabel={getStringValue}
-            style={{ marginTop: 16 }}
             renderInput={(params) => (
                 <Input
                     style={{ width: '100%' }}
