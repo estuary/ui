@@ -193,7 +193,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin.api': `CLI - API`,
     'routeTitle.admin.billing': `Billing`,
     'routeTitle.admin.connectors': `Connectors`,
-    'routeTitle.admin.settings': `${CommonMessages['terms.storageMapping']}`,
+    'routeTitle.admin.settings': `Settings`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captureEdit': `Edit Capture`,
