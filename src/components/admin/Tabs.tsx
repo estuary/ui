@@ -3,7 +3,6 @@ import { authenticatedRoutes } from 'app/routes';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Link, useLocation } from 'react-router-dom';
-import { osanoActive } from 'services/osano';
 import useConstant from 'use-constant';
 
 function AdminTabs() {
@@ -19,8 +18,8 @@ function AdminTabs() {
                 path: authenticatedRoutes.admin.accessGrants.fullPath,
             },
             {
-                label: 'admin.tabs.storageMappings',
-                path: authenticatedRoutes.admin.storageMappings.fullPath,
+                label: 'admin.tabs.settings',
+                path: authenticatedRoutes.admin.settings.fullPath,
             },
             {
                 label: 'admin.tabs.billing',
@@ -35,14 +34,6 @@ function AdminTabs() {
                 path: authenticatedRoutes.admin.api.fullPath,
             },
         ];
-
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (osanoActive()) {
-            response.push({
-                label: 'admin.tabs.cookies',
-                path: authenticatedRoutes.admin.cookies.fullPath,
-            });
-        }
 
         return response;
     });

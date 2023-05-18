@@ -17,12 +17,12 @@ function Settings() {
 
             <StorageMappings />
 
-            <Stack>
-                <Divider />
-                <AdminCookies />
-            </Stack>
-
-            {osanoActive() ? <AdminCookies /> : null}
+            {osanoActive() ? (
+                <Stack>
+                    <Divider />
+                    <AdminCookies />
+                </Stack>
+            ) : null}
         </>
     );
 }
