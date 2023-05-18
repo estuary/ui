@@ -1,12 +1,15 @@
-import { Grid, useTheme } from '@mui/material';
-import DraftSpecEditor from 'components/editor/DraftSpec';
+import { Grid, Typography, useTheme } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
 import SQLEditorHeader from 'components/transformation/create/SQLEditor/Header';
+import LambdaEditor from 'components/transformation/create/SQLEditor/LambdaEditor';
 import TransformList from 'components/transformation/create/SQLEditor/TransformList';
 import { intensifiedOutline, intensifiedOutlineThick } from 'context/Theme';
+import { useTransformationCreate_catalogName } from 'stores/TransformationCreate/hooks';
 
 function SQLEditor() {
     const theme = useTheme();
 
+    const catalogName = useTransformationCreate_catalogName();
     // const transformConfigs = useTransformationCreate_transformConfigs();
 
     return (
@@ -40,11 +43,17 @@ function SQLEditor() {
                     borderRight: intensifiedOutlineThick[theme.palette.mode],
                 }}
             >
-                <DraftSpecEditor entityType="collection" editorHeight={380} />
+                {catalogName ? (
+                    <LambdaEditor entityName={catalogName} editorHeight={362} />
+                ) : (
+                    <span>Failure</span>
+                )}
             </Grid>
 
-            <Grid item xs={4}>
-                <span>Some Editor...</span>
+            <Grid item xs={4} sx={{ p: 1 }}>
+                <AlertBox severity="info" short>
+                    <Typography>Click RUN to execute your query.</Typography>
+                </AlertBox>
             </Grid>
         </Grid>
     );

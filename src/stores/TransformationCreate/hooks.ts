@@ -64,6 +64,43 @@ export const useTransformationCreate_addTransformConfigs = () => {
     );
 };
 
+export const useTransformationCreate_migrations = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['migrations']
+    >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.migrations);
+};
+
+export const useTransformationCreate_addMigrations = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['addMigrations']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.addMigrations
+    );
+};
+
+export const useTransformationCreate_selectedAttribute = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['selectedAttribute']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.selectedAttribute
+    );
+};
+
+export const useTransformationCreate_setSelectedAttribute = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['setSelectedAttribute']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.setSelectedAttribute
+    );
+};
+
 export const useTransformationCreate_catalogName = () => {
     return useLocalZustandStore<
         TransformCreateState,

@@ -7,12 +7,20 @@ import { TransformCreateState } from './types';
 
 const getInitialStateData = (): Pick<
     TransformCreateState,
-    'catalogName' | 'language' | 'name' | 'prefix' | 'transformConfigs'
+    | 'catalogName'
+    | 'language'
+    | 'migrations'
+    | 'name'
+    | 'prefix'
+    | 'selectedAttribute'
+    | 'transformConfigs'
 > => ({
     catalogName: null,
     language: 'sql',
+    migrations: {},
     name: '',
     prefix: '',
+    selectedAttribute: '',
     transformConfigs: {},
 });
 
@@ -72,6 +80,35 @@ const getInitialState = (
             }),
             false,
             'Transform Configs Added'
+        );
+    },
+
+    addMigrations: (values) => {
+        set(
+            produce((state: TransformCreateState) => {
+                const { migrations } = get();
+
+                const originalKeyCount = Object.keys(migrations).length;
+
+                values.forEach((migration, index: number) => {
+                    state.migrations = {
+                        ...state.migrations,
+                        [`Migration${originalKeyCount + index + 1}`]: migration,
+                    };
+                });
+            }),
+            false,
+            'Migrations Added'
+        );
+    },
+
+    setSelectedAttribute: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                state.selectedAttribute = value;
+            }),
+            false,
+            'Selected Attribute Set'
         );
     },
 

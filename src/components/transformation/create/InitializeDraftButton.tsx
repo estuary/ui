@@ -13,6 +13,7 @@ import {
     useTransformationCreate_catalogName,
     useTransformationCreate_language,
     useTransformationCreate_name,
+    useTransformationCreate_setSelectedAttribute,
 } from 'stores/TransformationCreate/hooks';
 import { TransformConfig } from 'stores/TransformationCreate/types';
 
@@ -34,6 +35,7 @@ function InitializeDraftButton({
     const catalogName = useTransformationCreate_catalogName();
 
     const addTransformConfigs = useTransformationCreate_addTransformConfigs();
+    const setSelectedAttribute = useTransformationCreate_setSelectedAttribute();
 
     // Draft Editor Store
     const setDraftId = useEditorStore_setId();
@@ -72,6 +74,7 @@ function InitializeDraftButton({
                 }));
 
                 addTransformConfigs(transformConfigs);
+                setSelectedAttribute('Transform1');
 
                 const spec = generateTransformSpec(
                     language,
