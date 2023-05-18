@@ -16,7 +16,7 @@ function TransformListItem({ itemLabel, hiddenItemLabel }: Props) {
 
     return (
         <>
-            <ListItemButton dense onClick={toggleList}>
+            <ListItemButton dense onClick={toggleList} sx={{ px: 1 }}>
                 <ListItemText
                     primary={itemLabel}
                     sx={{
@@ -31,7 +31,7 @@ function TransformListItem({ itemLabel, hiddenItemLabel }: Props) {
 
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                    <ListItemButton dense sx={{ pl: 4 }}>
+                    <ListItemButton dense sx={{ pl: 3 }}>
                         <ListItemText primary={hiddenItemLabel} />
                     </ListItemButton>
                 </List>
