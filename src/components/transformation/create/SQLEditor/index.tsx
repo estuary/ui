@@ -1,8 +1,8 @@
 import { Grid, Typography, useTheme } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
+import CatalogList from 'components/transformation/create/SQLEditor/CatalogList';
 import SQLEditorHeader from 'components/transformation/create/SQLEditor/Header';
 import LambdaEditor from 'components/transformation/create/SQLEditor/LambdaEditor';
-import TransformList from 'components/transformation/create/SQLEditor/TransformList';
 import { intensifiedOutline, intensifiedOutlineThick } from 'context/Theme';
 import { useTransformationCreate_catalogName } from 'stores/TransformationCreate/hooks';
 
@@ -29,11 +29,12 @@ function SQLEditor() {
                     borderRight: intensifiedOutlineThick[theme.palette.mode],
                 }}
             >
-                <TransformList
+                <CatalogList
+                    contentType="transform"
                     borderBottom={intensifiedOutline[theme.palette.mode]}
                 />
 
-                <TransformList minHeight={200} />
+                <CatalogList contentType="migration" minHeight={200} />
             </Grid>
 
             <Grid

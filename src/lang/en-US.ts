@@ -989,6 +989,10 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.instructions2': `Create your query and use the CLI to
                             continue, e.g`,
     'newTransform.button.cta': `Proceed to GitPod`,
+
+    'newTransform.editor.catalog.transform.header': `Transforms`,
+    'newTransform.editor.catalog.migration.header': `Migrations`,
+    'newTransform.editor.catalog.message.empty': `Click on the plus sign above to create a {contentType}.`,
 };
 
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
