@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material';
+import { Grid, Stack, Typography } from '@mui/material';
 import {
     useBindingsEditorStore_editModeEnabled,
     useBindingsEditorStore_populateInferSchemaResponse,
@@ -11,6 +11,7 @@ import PropertiesViewer from 'components/schema/PropertiesViewer';
 import { useEntityType } from 'context/EntityContext';
 import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
 import { useEffect, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { useUpdateEffect } from 'react-use';
 import { Schema } from 'types';
 import { getProperSchemaScope } from 'utils/schema-utils';
@@ -73,6 +74,19 @@ function CollectionSchemaEditor({ entityName }: Props) {
     if (draftSpec && entityName) {
         return (
             <Grid container>
+                <Stack
+                    sx={{
+                        alignItems: 'start',
+                        alignContent: 'start',
+                        mb: 3,
+                    }}
+                >
+                    <Typography variant="subtitle1" component="div">
+                        <FormattedMessage id="entityName.label" />
+                    </Typography>
+                    <Typography sx={{ ml: 1.5 }}>{entityName}</Typography>
+                </Stack>
+
                 <KeyAutoComplete
                     value={draftSpec.spec.key}
                     disabled={!editModeEnabled}
