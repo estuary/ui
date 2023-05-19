@@ -1,4 +1,4 @@
-import CatalogList from 'components/transformation/create/SQLEditor/Catalog/CatalogList';
+import CatalogList from 'components/transformation/create/DerivationEditor/Catalog/CatalogList';
 import { useMemo } from 'react';
 import {
     useTransformationCreate_addMigrations,
@@ -9,8 +9,8 @@ function MigrationList() {
     const migrations = useTransformationCreate_migrations();
     const addMigrations = useTransformationCreate_addMigrations();
 
-    const content = useMemo(
-        () => Object.keys(migrations).map((id) => [id, id]),
+    const content: [string, null][] = useMemo(
+        () => Object.keys(migrations).map((id) => [id, null]),
         [migrations]
     );
 
@@ -22,11 +22,11 @@ function MigrationList() {
 
     return (
         <CatalogList
-                contentType="migration"
-                content={content}
-                addButtonClickHandler={handlers.insertBlankMigration}
-                minHeight={200}
-            />
+            fixedAttributeType="migration"
+            content={content}
+            addButtonClickHandler={handlers.insertBlankMigration}
+            minHeight={200}
+        />
     );
 }
 

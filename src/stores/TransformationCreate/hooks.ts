@@ -121,6 +121,26 @@ export const useTransformationCreate_setSelectedAttribute = () => {
     );
 };
 
+export const useTransformationCreate_attributeType = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['attributeType']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.attributeType
+    );
+};
+
+export const useTransformationCreate_setAttributeType = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['setAttributeType']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.setAttributeType
+    );
+};
+
 export const useTransformationCreate_catalogName = () => {
     return useLocalZustandStore<
         TransformCreateState,

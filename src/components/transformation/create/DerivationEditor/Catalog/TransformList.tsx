@@ -10,8 +10,8 @@ import {
 } from '@mui/material';
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
+import CatalogList from 'components/transformation/create/DerivationEditor/Catalog/CatalogList';
 import SingleStep from 'components/transformation/create/SingleStep';
-import CatalogList from 'components/transformation/create/SQLEditor/Catalog/CatalogList';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import { intensifiedOutline } from 'context/Theme';
 import useLiveSpecs from 'hooks/useLiveSpecs';
@@ -31,7 +31,7 @@ function TransformList() {
     const transformConfigs = useTransformationCreate_transformConfigs();
     const sourceCollections = useTransformationCreate_sourceCollections();
 
-    const content = useMemo(
+    const content: [string, string][] = useMemo(
         () =>
             Object.entries(transformConfigs).map(([name, { collection }]) => [
                 name,
@@ -62,7 +62,7 @@ function TransformList() {
     return (
         <>
             <CatalogList
-                contentType="transform"
+                fixedAttributeType="transform"
                 content={content}
                 addButtonClickHandler={handlers.toggleDialog}
                 borderBottom={intensifiedOutline[theme.palette.mode]}

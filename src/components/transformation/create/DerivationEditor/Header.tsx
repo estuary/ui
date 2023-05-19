@@ -39,7 +39,7 @@ function Wrapper({ children, gridSize, hideBorderRight }: WrapperProps) {
 
 const headerStyle = { mb: 0.5, fontSize: 16, fontWeight: 500 };
 
-function SQLEditorHeader() {
+function DerivationEditorHeader() {
     return (
         <Grid container>
             <Wrapper gridSize={3}>
@@ -81,4 +81,4 @@ function SQLEditorHeader() {
     );
 }
 
-export default SQLEditorHeader;
+export default DerivationEditorHeader;

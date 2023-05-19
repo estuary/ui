@@ -20,25 +20,17 @@ import { EditorStatus } from 'components/editor/Store/types';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useRef, useState } from 'react';
-import {
-    useTransformationCreate_selectedAttribute,
-    useTransformationCreate_transformConfigs,
-} from 'stores/TransformationCreate/hooks';
+import { useTransformationCreate_selectedAttribute } from 'stores/TransformationCreate/hooks';
 import {
     DEFAULT_HEIGHT,
     DEFAULT_TOOLBAR_HEIGHT,
     ICON_SIZE,
 } from 'utils/editor-utils';
 
-type onChange = (
-    value: any,
-    subject: 'transform' | 'migration',
-    transformSource?: string
-) => any;
+type onChange = (value: any, attributeId: string) => any;
 
 export interface MonacoEditorProps {
     localZustandScope: boolean;
-    changeType: 'transform' | 'migration';
     defaultSQL: string;
     disabled?: boolean;
     onChange?: onChange;
@@ -48,7 +40,6 @@ export interface MonacoEditorProps {
 
 function MonacoEditor({
     localZustandScope,
-    changeType,
     defaultSQL,
     disabled,
     height = DEFAULT_HEIGHT,
@@ -65,14 +56,6 @@ function MonacoEditor({
     });
 
     const attributeId = useTransformationCreate_selectedAttribute();
-    const transformConfigs = useTransformationCreate_transformConfigs();
-
-    // const currentCatalog = useEditorStore_currentCatalog({
-    //     localScope: localZustandScope,
-    // });
-
-    // TODO (editor store) Should just fetch these directly from the store?
-    // const catalogName = currentCatalog?.catalog_name ?? null;
 
     const status = useEditorStore_status({ localScope: localZustandScope });
     const setStatus = useEditorStore_setStatus({
@@ -100,31 +83,15 @@ function MonacoEditor({
                 });
                 setStatus(EditorStatus.SAVING);
 
-                if (changeType === 'transform') {
-                    onChange(
-                        currentValue,
-                        changeType,
-                        transformConfigs[attributeId].collection
-                    )
-                        .then(() => {
-                            console.log('editor:update:saving:scoped:success');
-                            setStatus(EditorStatus.SAVED);
-                        })
-                        .catch(() => {
-                            console.log('editor:update:saving:scoped:failed');
-                            setStatus(EditorStatus.SAVE_FAILED);
-                        });
-                } else {
-                    onChange(currentValue, changeType)
-                        .then(() => {
-                            console.log('editor:update:saving:success');
-                            setStatus(EditorStatus.SAVED);
-                        })
-                        .catch(() => {
-                            console.log('editor:update:saving:failed');
-                            setStatus(EditorStatus.SAVE_FAILED);
-                        });
-                }
+                onChange(currentValue, attributeId)
+                    .then(() => {
+                        console.log('editor:update:saving:success');
+                        setStatus(EditorStatus.SAVED);
+                    })
+                    .catch(() => {
+                        console.log('editor:update:saving:failed');
+                        setStatus(EditorStatus.SAVE_FAILED);
+                    });
             } else {
                 console.log('editor:update:invalid', {
                     currentValue,

@@ -6,22 +6,23 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import CatalogListItem from 'components/transformation/create/SQLEditor/Catalog/CatalogListItem';
+import CatalogListItem from 'components/transformation/create/DerivationEditor/Catalog/CatalogListItem';
 import { Plus } from 'iconoir-react';
 import { CSSProperties, MouseEventHandler } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { DerivationAttribute } from 'stores/TransformationCreate/types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
-    contentType: 'transform' | 'migration';
-    content: string[][];
+    fixedAttributeType: DerivationAttribute;
+    content: [string, string | null][];
     addButtonClickHandler: MouseEventHandler<HTMLButtonElement>;
     borderBottom?: CSSProperties['borderBottom'];
     minHeight?: number;
 }
 
 function CatalogList({
-    contentType,
+    fixedAttributeType,
     content,
     addButtonClickHandler,
     borderBottom,
@@ -45,7 +46,7 @@ function CatalogList({
                         }}
                     >
                         <FormattedMessage
-                            id={`newTransform.editor.catalog.${contentType}.header`}
+                            id={`newTransform.editor.catalog.${fixedAttributeType}.header`}
                         />
                     </Typography>
 
@@ -66,8 +67,9 @@ function CatalogList({
                 content.map(([attributeId, value]) => (
                     <CatalogListItem
                         key={attributeId}
+                        fixedAttributeType={fixedAttributeType}
                         itemLabel={attributeId}
-                        hiddenItemLabel={value}
+                        nestedItemLabel={value}
                     />
                 ))
             ) : (
@@ -75,7 +77,7 @@ function CatalogList({
                     <Typography sx={{ mt: 1 }}>
                         <FormattedMessage
                             id="newTransform.editor.catalog.message.empty"
-                            values={{ contentType }}
+                            values={{ contentType: fixedAttributeType }}
                         />
                     </Typography>
                 </ListItem>

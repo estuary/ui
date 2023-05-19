@@ -7,6 +7,7 @@ import { TransformCreateState } from './types';
 
 const getInitialStateData = (): Pick<
     TransformCreateState,
+    | 'attributeType'
     | 'catalogName'
     | 'language'
     | 'migrations'
@@ -16,6 +17,7 @@ const getInitialStateData = (): Pick<
     | 'sourceCollections'
     | 'transformConfigs'
 > => ({
+    attributeType: 'transform',
     catalogName: null,
     language: 'sql',
     migrations: {},
@@ -123,6 +125,16 @@ const getInitialState = (
             }),
             false,
             'Selected Attribute Set'
+        );
+    },
+
+    setAttributeType: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                state.attributeType = value;
+            }),
+            false,
+            'Attribute Type Set'
         );
     },
 

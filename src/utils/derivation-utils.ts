@@ -1,4 +1,7 @@
-import { TransformConfigDictionary } from 'stores/TransformationCreate/types';
+import {
+    MigrationDictionary,
+    TransformConfigDictionary,
+} from 'stores/TransformationCreate/types';
 import { stripPathing } from 'utils/misc-utils';
 
 interface Transform {
@@ -26,7 +29,7 @@ export const updateTransforms = (
 export const updateMigrations = (
     migrationId: string,
     newMigration: string,
-    existingMigrations: { [key: string]: string }
+    existingMigrations: MigrationDictionary
 ): string[] =>
     Object.entries(existingMigrations).map(([id, migration]) =>
         id === migrationId ? newMigration : migration

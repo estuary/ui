@@ -1,16 +1,20 @@
 import { Grid, Typography, useTheme } from '@mui/material';
-import MigrationList from 'components/transformation/create/SQLEditor/Catalog/MigrationList';
-import TransformList from 'components/transformation/create/SQLEditor/Catalog/TransformList';
-import SQLEditorHeader from 'components/transformation/create/SQLEditor/Header';
-import LambdaEditor from 'components/transformation/create/SQLEditor/LambdaEditor';
+import MigrationList from 'components/transformation/create/DerivationEditor/Catalog/MigrationList';
+import TransformList from 'components/transformation/create/DerivationEditor/Catalog/TransformList';
+import DerivationEditorHeader from 'components/transformation/create/DerivationEditor/Header';
+import SQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor';
 import { intensifiedOutlineThick } from 'context/Theme';
-import { useTransformationCreate_catalogName } from 'stores/TransformationCreate/hooks';
+import { isEmpty } from 'lodash';
+import {
+    useTransformationCreate_catalogName,
+    useTransformationCreate_transformConfigs,
+} from 'stores/TransformationCreate/hooks';
 
-function SQLEditor() {
+function DerivationEditor() {
     const theme = useTheme();
 
     const catalogName = useTransformationCreate_catalogName();
-    // const transformConfigs = useTransformationCreate_transformConfigs();
+    const transformConfigs = useTransformationCreate_transformConfigs();
 
     return (
         <Grid
@@ -20,7 +24,7 @@ function SQLEditor() {
                 borderRadius: 3,
             }}
         >
-            <SQLEditorHeader />
+            <DerivationEditorHeader />
 
             <Grid
                 item
@@ -41,8 +45,8 @@ function SQLEditor() {
                     borderRight: intensifiedOutlineThick[theme.palette.mode],
                 }}
             >
-                {catalogName ? (
-                    <LambdaEditor entityName={catalogName} editorHeight={362} />
+                {catalogName && !isEmpty(transformConfigs) ? (
+                    <SQLEditor entityName={catalogName} editorHeight={362} />
                 ) : (
                     <span>Failure</span>
                 )}
@@ -55,4 +59,4 @@ function SQLEditor() {
     );
 }
 
-export default SQLEditor;
+export default DerivationEditor;

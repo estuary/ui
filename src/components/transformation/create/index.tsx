@@ -12,9 +12,9 @@ import {
 import { getAuthRoles } from 'api/combinedGrantsExt';
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
+import DerivationEditor from 'components/transformation/create/DerivationEditor';
 import InitializeDraftButton from 'components/transformation/create/InitializeDraftButton';
 import LanguageSelector from 'components/transformation/create/LanguageSelector';
-import SQLEditor from 'components/transformation/create/SQLEditor';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -219,7 +219,7 @@ function TransformationCreate() {
             </Collapse>
 
             <Collapse in={sqlEditorOpen}>
-                <SQLEditor />
+                <DerivationEditor />
             </Collapse>
         </>
     );

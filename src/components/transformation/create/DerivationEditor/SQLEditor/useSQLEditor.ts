@@ -6,8 +6,12 @@ import {
 } from 'components/editor/Store/hooks';
 import useDraftSpecs, { DraftSpec } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
-import { useTransformationCreate_transformConfigs } from 'stores/TransformationCreate/hooks';
-import { updateTransforms } from 'utils/derivation-utils';
+import {
+    useTransformationCreate_attributeType,
+    useTransformationCreate_migrations,
+    useTransformationCreate_transformConfigs,
+} from 'stores/TransformationCreate/hooks';
+import { updateMigrations, updateTransforms } from 'utils/derivation-utils';
 
 const entityType = 'collection';
 
@@ -21,6 +25,8 @@ function useSQLEditor(entityName: string) {
 
     // Transform Create Store
     const transformConfigs = useTransformationCreate_transformConfigs();
+    const migrations = useTransformationCreate_migrations();
+    const attributeType = useTransformationCreate_attributeType();
 
     const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
 
@@ -29,18 +35,17 @@ function useSQLEditor(entityName: string) {
         catalogName: entityName,
     });
 
-    const processEditorValue = async (
-        value: any,
-        subject: 'transform' | 'migration',
-        transformSource?: string
-    ) => {
+    const processEditorValue = async (value: any, attributeId: string) => {
         if (draftSpec) {
-            if (subject === 'transform' && transformSource) {
+            if (attributeType === 'transform') {
                 draftSpec.spec.derive.transforms = updateTransforms(
-                    transformSource,
+                    transformConfigs[attributeId].collection,
                     value,
                     transformConfigs
                 );
+            } else {
+                draftSpec.spec.derive.using.sqlite.migrations =
+                    updateMigrations(attributeId, value, migrations);
             }
 
             const updateResponse = await modifyDraftSpec(draftSpec.spec, {

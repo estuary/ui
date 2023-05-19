@@ -1,5 +1,7 @@
 type DerivationLanguage = 'sql' | 'typescript';
 
+export type DerivationAttribute = 'transform' | 'migration';
+
 export interface TransformConfig {
     lambda: string;
     sqlTemplate: string;
@@ -28,13 +30,12 @@ export interface TransformCreateState {
 
     catalogName: string | null;
 
-    // Source Collections
+    // Transformation Config
     sourceCollections: string[];
     setSourceCollections: (
         value: TransformCreateState['sourceCollections']
     ) => void;
 
-    // Transformation Config
     transformConfigs: TransformConfigDictionary;
     addTransformConfigs: (configs: TransformConfig[]) => void;
 
@@ -42,8 +43,12 @@ export interface TransformCreateState {
     migrations: MigrationDictionary;
     addMigrations: (configs: string[]) => void;
 
+    // Misc.
     selectedAttribute: string;
     setSelectedAttribute: (value: string) => void;
+
+    attributeType: DerivationAttribute;
+    setAttributeType: (value: TransformCreateState['attributeType']) => void;
 
     resetState: () => void;
 }
