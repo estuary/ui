@@ -128,6 +128,22 @@ const getInitialState = (
         );
     },
 
+    patchSelectedAttribute: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                const { attributeType, selectedAttribute } = get();
+
+                if (attributeType === 'transform') {
+                    state.transformConfigs[selectedAttribute].lambda = value;
+                } else {
+                    state.migrations[selectedAttribute] = value;
+                }
+            }),
+            false,
+            'Selected Attribute Set'
+        );
+    },
+
     setAttributeType: (value) => {
         set(
             produce((state: TransformCreateState) => {

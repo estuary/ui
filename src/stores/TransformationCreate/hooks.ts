@@ -121,6 +121,16 @@ export const useTransformationCreate_setSelectedAttribute = () => {
     );
 };
 
+export const useTransformationCreate_patchSelectedAttribute = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['patchSelectedAttribute']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.patchSelectedAttribute
+    );
+};
+
 export const useTransformationCreate_attributeType = () => {
     return useLocalZustandStore<
         TransformCreateState,

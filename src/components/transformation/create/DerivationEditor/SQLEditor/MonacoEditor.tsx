@@ -20,7 +20,10 @@ import { EditorStatus } from 'components/editor/Store/types';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useRef, useState } from 'react';
-import { useTransformationCreate_selectedAttribute } from 'stores/TransformationCreate/hooks';
+import {
+    useTransformationCreate_patchSelectedAttribute,
+    useTransformationCreate_selectedAttribute,
+} from 'stores/TransformationCreate/hooks';
 import {
     DEFAULT_HEIGHT,
     DEFAULT_TOOLBAR_HEIGHT,
@@ -51,16 +54,20 @@ function MonacoEditor({
         null
     );
 
+    // Draft Editor Store
     const serverUpdate = useEditorStore_serverUpdate({
         localScope: localZustandScope,
     });
-
-    const attributeId = useTransformationCreate_selectedAttribute();
 
     const status = useEditorStore_status({ localScope: localZustandScope });
     const setStatus = useEditorStore_setStatus({
         localScope: localZustandScope,
     });
+
+    // Transformation Create Store
+    const attributeId = useTransformationCreate_selectedAttribute();
+    const patchSelectedAttribute =
+        useTransformationCreate_patchSelectedAttribute();
 
     const [showServerDiff, setShowServerDiff] = useState(false);
 
@@ -85,6 +92,8 @@ function MonacoEditor({
 
                 onChange(currentValue, attributeId)
                     .then(() => {
+                        patchSelectedAttribute(currentValue);
+
                         console.log('editor:update:saving:success');
                         setStatus(EditorStatus.SAVED);
                     })

@@ -46,6 +46,7 @@ export interface TransformCreateState {
     // Misc.
     selectedAttribute: string;
     setSelectedAttribute: (value: string) => void;
+    patchSelectedAttribute: (value: string) => void;
 
     attributeType: DerivationAttribute;
     setAttributeType: (value: TransformCreateState['attributeType']) => void;
