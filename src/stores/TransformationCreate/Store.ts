@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { intersection } from 'lodash';
 import { TransformCreateStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
@@ -16,6 +17,7 @@ const getInitialStateData = (): Pick<
     | 'selectedAttribute'
     | 'sourceCollections'
     | 'transformConfigs'
+    | 'transformCount'
 > => ({
     attributeType: 'transform',
     catalogName: null,
@@ -26,6 +28,7 @@ const getInitialStateData = (): Pick<
     selectedAttribute: '',
     sourceCollections: [],
     transformConfigs: {},
+    transformCount: 0,
 });
 
 const getInitialState = (
@@ -81,20 +84,45 @@ const getInitialState = (
     addTransformConfigs: (configs) => {
         set(
             produce((state: TransformCreateState) => {
-                const { transformConfigs, name } = get();
-
-                const originalKeyCount = Object.keys(transformConfigs).length;
+                const { transformCount, name } = get();
 
                 configs.forEach((config, index: number) => {
+                    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+                    const compositeIndex = transformCount + index;
+
                     state.transformConfigs = {
                         ...state.transformConfigs,
-                        [`${name}.lambda.${originalKeyCount + index}.sql`]:
-                            config,
+                        [`${name}.lambda.${compositeIndex}.sql`]: config,
                     };
                 });
+
+                state.transformCount += Object.keys(
+                    state.transformConfigs
+                ).length;
             }),
             false,
             'Transform Configs Added'
+        );
+    },
+
+    updateTransformConfigs: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                const { sourceCollections, transformConfigs } = get();
+
+                const existingSourceCollections = Object.values(
+                    transformConfigs
+                ).map(({ collection }) => collection);
+
+                state.transformConfigs = value;
+
+                state.transformCount +=
+                    Object.keys(state.transformConfigs).length -
+                    intersection(existingSourceCollections, sourceCollections)
+                        .length;
+            }),
+            false,
+            'Transform Configs Updated'
         );
     },
 

@@ -17,6 +17,7 @@ import {
     useTransformationCreate_setSourceCollections,
 } from 'stores/TransformationCreate/hooks';
 import { TransformConfig } from 'stores/TransformationCreate/types';
+import { templateTransformConfig } from 'utils/derivation-utils';
 
 interface Props {
     entityNameError: string | null;
@@ -72,11 +73,7 @@ function InitializeDraftButton({
                 setSourceCollections(collections);
 
                 const transformConfigs: TransformConfig[] = collections.map(
-                    (collection) => ({
-                        lambda: 'SELECT * FROM demo/1234',
-                        sqlTemplate: 'Simple Select',
-                        collection,
-                    })
+                    (collection) => templateTransformConfig(collection)
                 );
 
                 addTransformConfigs(transformConfigs);
@@ -112,8 +109,10 @@ function InitializeDraftButton({
         setDraftId,
         setOpenSQLEditor,
         setPersistedDraftId,
+        setSelectedAttribute,
         setSourceCollections,
         catalogName,
+        entityName,
         language,
         selectedCollections,
     ]);

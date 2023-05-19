@@ -11,6 +11,7 @@ import {
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
 import CatalogList from 'components/transformation/create/DerivationEditor/Catalog/CatalogList';
+import UpdateDraftButton from 'components/transformation/create/DerivationEditor/Catalog/UpdateDraftButton';
 import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import { intensifiedOutline } from 'context/Theme';
@@ -57,7 +58,7 @@ function TransformList() {
                 selectedCollectionSet.add(collection);
             });
         }
-    }, [open]);
+    }, [selectedCollectionSet, sourceCollections, open]);
 
     return (
         <>
@@ -100,7 +101,14 @@ function TransformList() {
                 </DialogContent>
 
                 <DialogActions>
-                    <Button onClick={handlers.toggleDialog}>Close</Button>
+                    <Button variant="outlined" onClick={handlers.toggleDialog}>
+                        <FormattedMessage id="cta.cancel" />
+                    </Button>
+
+                    <UpdateDraftButton
+                        selectedCollections={selectedCollectionSet}
+                        setDialogOpen={setOpen}
+                    />
                 </DialogActions>
             </Dialog>
         </>

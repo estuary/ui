@@ -36,8 +36,11 @@ export interface TransformCreateState {
         value: TransformCreateState['sourceCollections']
     ) => void;
 
+    transformCount: number;
+
     transformConfigs: TransformConfigDictionary;
     addTransformConfigs: (configs: TransformConfig[]) => void;
+    updateTransformConfigs: (value: TransformConfigDictionary) => void;
 
     // Migration Config
     migrations: MigrationDictionary;

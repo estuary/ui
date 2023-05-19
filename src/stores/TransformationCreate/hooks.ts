@@ -64,6 +64,16 @@ export const useTransformationCreate_setSourceCollections = () => {
     );
 };
 
+export const useTransformationCreate_transformCount = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['transformCount']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.transformCount
+    );
+};
+
 export const useTransformationCreate_transformConfigs = () => {
     return useLocalZustandStore<
         TransformCreateState,
@@ -81,6 +91,16 @@ export const useTransformationCreate_addTransformConfigs = () => {
     >(
         TransformCreateStoreNames.TRANSFORM_CREATE,
         (state) => state.addTransformConfigs
+    );
+};
+
+export const useTransformationCreate_updateTransformConfigs = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['updateTransformConfigs']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.updateTransformConfigs
     );
 };
 
