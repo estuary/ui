@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
@@ -14,7 +15,7 @@ import CatalogList from 'components/transformation/create/DerivationEditor/Catal
 import UpdateDraftButton from 'components/transformation/create/DerivationEditor/Catalog/UpdateDraftButton';
 import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
-import { intensifiedOutline } from 'context/Theme';
+import { intensifiedOutline, intensifiedOutlineThick } from 'context/Theme';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -61,7 +62,12 @@ function TransformList() {
     }, [selectedCollectionSet, sourceCollections, open]);
 
     return (
-        <>
+        <Box
+            sx={{
+                borderLeft: intensifiedOutlineThick[theme.palette.mode],
+                borderRight: intensifiedOutlineThick[theme.palette.mode],
+            }}
+        >
             <CatalogList
                 fixedAttributeType="transform"
                 content={content}
@@ -111,7 +117,7 @@ function TransformList() {
                     />
                 </DialogActions>
             </Dialog>
-        </>
+        </Box>
     );
 }
 

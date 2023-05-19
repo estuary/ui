@@ -15,7 +15,7 @@ interface WrapperProps extends BaseComponentProps {
     hideBorderRight?: boolean;
 }
 
-function Wrapper({ children, gridSize, hideBorderRight }: WrapperProps) {
+function Wrapper({ children, gridSize }: WrapperProps) {
     const theme = useTheme();
 
     return (
@@ -27,9 +27,9 @@ function Wrapper({ children, gridSize, hideBorderRight }: WrapperProps) {
                 pb: 1,
                 px: 1,
                 borderBottom: intensifiedOutline[theme.palette.mode],
-                borderRight: hideBorderRight
-                    ? undefined
-                    : intensifiedOutlineThick[theme.palette.mode],
+                borderTop: intensifiedOutlineThick[theme.palette.mode],
+                borderRight: intensifiedOutlineThick[theme.palette.mode],
+                borderLeft: intensifiedOutlineThick[theme.palette.mode],
             }}
         >
             {children}

@@ -2,34 +2,17 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
+    Box,
+    Stack,
+    Tooltip,
     Typography,
     useTheme,
 } from '@mui/material';
-import CatalogList from 'components/transformation/create/DerivationEditor/Catalog/CatalogList';
 import { defaultOutline, intensifiedOutlineThick } from 'context/Theme';
-import { NavArrowDown } from 'iconoir-react';
-import { useMemo } from 'react';
-import {
-    useTransformationCreate_addMigrations,
-    useTransformationCreate_migrations,
-} from 'stores/TransformationCreate/hooks';
+import { HelpCircle, NavArrowDown } from 'iconoir-react';
 
-function MigrationList() {
+function ShuffleKeys() {
     const theme = useTheme();
-
-    const migrations = useTransformationCreate_migrations();
-    const addMigrations = useTransformationCreate_addMigrations();
-
-    const content: [string, null][] = useMemo(
-        () => Object.keys(migrations).map((id) => [id, null]),
-        [migrations]
-    );
-
-    const handlers = {
-        insertBlankMigration: () => {
-            addMigrations(['']);
-        },
-    };
 
     return (
         <Accordion
@@ -70,20 +53,41 @@ function MigrationList() {
                 }}
             >
                 <Typography sx={{ fontWeight: 500 }}>
-                    Advanced Catalog Settings
+                    Advanced Streaming Settings
                 </Typography>
             </AccordionSummary>
 
             <AccordionDetails sx={{ pt: 0, px: 0, borderBottomLeftRadius: 4 }}>
-                <CatalogList
-                    fixedAttributeType="migration"
-                    content={content}
-                    addButtonClickHandler={handlers.insertBlankMigration}
-                    minHeight={200}
-                />
+                <Box sx={{ p: 1 }}>
+                    <Stack
+                        spacing={1}
+                        direction="row"
+                        sx={{ mb: 3, alignItems: 'center' }}
+                    >
+                        <Typography sx={{ fontWeight: 500 }}>
+                            Shuffle Keys
+                        </Typography>
+
+                        <Tooltip
+                            title="Select a key from your source collection schemas to help scale joins"
+                            placement="right"
+                        >
+                            <HelpCircle
+                                style={{
+                                    fontSize: 12,
+                                    color: theme.palette.text.primary,
+                                }}
+                            />
+                        </Tooltip>
+                    </Stack>
+
+                    <Typography sx={{ px: 1 }}>
+                        Soon you will be able to shuffle some keys!
+                    </Typography>
+                </Box>
             </AccordionDetails>
         </Accordion>
     );
 }
 
-export default MigrationList;
+export default ShuffleKeys;

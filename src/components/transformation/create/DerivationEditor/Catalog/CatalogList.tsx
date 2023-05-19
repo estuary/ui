@@ -39,8 +39,7 @@ function CatalogList({
                         component="div"
                         color="secondary"
                         sx={{
-                            py: 1,
-                            pl: 1,
+                            p: 1,
                             fontWeight: 500,
                             textTransform: 'uppercase',
                         }}

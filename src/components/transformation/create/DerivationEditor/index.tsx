@@ -1,9 +1,10 @@
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import MigrationList from 'components/transformation/create/DerivationEditor/Catalog/MigrationList';
 import TransformList from 'components/transformation/create/DerivationEditor/Catalog/TransformList';
 import DerivationEditorHeader from 'components/transformation/create/DerivationEditor/Header';
+import ShuffleKeys from 'components/transformation/create/DerivationEditor/ShuffleKeys';
 import SQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor';
-import { intensifiedOutlineThick } from 'context/Theme';
+import { intensifiedOutline, intensifiedOutlineThick } from 'context/Theme';
 import { isEmpty } from 'lodash';
 import {
     useTransformationCreate_catalogName,
@@ -11,49 +12,60 @@ import {
 } from 'stores/TransformationCreate/hooks';
 
 function DerivationEditor() {
-    const theme = useTheme();
+    // const theme = useTheme();
 
     const catalogName = useTransformationCreate_catalogName();
     const transformConfigs = useTransformationCreate_transformConfigs();
 
     return (
-        <Grid
-            container
-            sx={{
-                border: intensifiedOutlineThick[theme.palette.mode],
-                borderRadius: 3,
-            }}
-        >
+        <Grid container>
             <DerivationEditorHeader />
 
-            <Grid
-                item
-                xs={3}
-                sx={{
-                    borderRight: intensifiedOutlineThick[theme.palette.mode],
-                }}
-            >
+            <Grid item xs={3} sx={{ display: 'flex', flexDirection: 'column' }}>
                 <TransformList />
 
                 <MigrationList />
             </Grid>
 
-            <Grid
-                item
-                xs={5}
-                sx={{
-                    borderRight: intensifiedOutlineThick[theme.palette.mode],
-                }}
-            >
+            <Grid item xs={5} sx={{ display: 'flex', flexDirection: 'column' }}>
                 {catalogName && !isEmpty(transformConfigs) ? (
-                    <SQLEditor entityName={catalogName} editorHeight={362} />
+                    <Box
+                        sx={{
+                            borderBottom: (theme) =>
+                                intensifiedOutline[theme.palette.mode],
+                            borderRight: (theme) =>
+                                intensifiedOutlineThick[theme.palette.mode],
+                            borderLeft: (theme) =>
+                                intensifiedOutlineThick[theme.palette.mode],
+                        }}
+                    >
+                        <SQLEditor
+                            entityName={catalogName}
+                            editorHeight={362}
+                        />
+                    </Box>
                 ) : (
                     <span>Failure</span>
                 )}
+
+                <ShuffleKeys />
             </Grid>
 
-            <Grid item xs={4} sx={{ p: 1 }}>
-                <Typography>Click RUN to execute your query.</Typography>
+            <Grid item xs={4} sx={{ display: 'flex', flexDirection: 'column' }}>
+                <Box
+                    sx={{
+                        p: 1,
+                        flexGrow: 1,
+                        borderBottom: (theme) =>
+                            intensifiedOutlineThick[theme.palette.mode],
+                        borderRight: (theme) =>
+                            intensifiedOutlineThick[theme.palette.mode],
+                        borderLeft: (theme) =>
+                            intensifiedOutlineThick[theme.palette.mode],
+                    }}
+                >
+                    <Typography>Click RUN to execute your query.</Typography>
+                </Box>
             </Grid>
         </Grid>
     );
