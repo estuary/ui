@@ -31,15 +31,10 @@ const admin = {
         path: 'billing',
         fullPath: '/admin/billing',
     },
-    cookies: {
-        title: 'routeTitle.admin.cookies',
-        path: 'cookies',
-        fullPath: '/admin/cookies',
-    },
-    storageMappings: {
-        title: 'routeTitle.admin.storageMappings',
-        path: 'storage-mappings',
-        fullPath: '/admin/storage-mappings',
+    settings: {
+        title: 'routeTitle.admin.settings',
+        path: 'settings',
+        fullPath: '/admin/settings',
     },
 };
 

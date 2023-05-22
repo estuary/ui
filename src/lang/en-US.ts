@@ -194,8 +194,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin.api': `CLI - API`,
     'routeTitle.admin.billing': `Billing`,
     'routeTitle.admin.connectors': `Connectors`,
-    'routeTitle.admin.cookies': `Cookie Preferences`,
-    'routeTitle.admin.storageMappings': `${CommonMessages['terms.storageMapping']}`,
+    'routeTitle.admin.settings': `Settings`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captureEdit': `Edit Capture`,
@@ -460,14 +459,13 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.users.sharePrefix.label.type': `Type`,
     'admin.users.sharePrefix.cta.generateLink': `Generate Invitation`,
 
-    'admin.cookies': `Cookie Preference Management`,
-    'admin.cookies.message': `Click below to manage your preferences.`,
+    'admin.cookies': `Cookie Preferences`,
+    'admin.cookies.message': `Click below to configure your cookie preferences.`,
     'admin.tabs.users': `Users`,
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
-    'admin.tabs.cookies': `Cookie Preferences`,
     'admin.tabs.billing': `Billing`,
-    'admin.tabs.storageMappings': `${CommonMessages['terms.storageMapping']}`,
+    'admin.tabs.settings': `Settings`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
