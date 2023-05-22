@@ -10,12 +10,14 @@ import { DerivationAttribute } from 'stores/TransformationCreate/types';
 
 interface Props {
     fixedAttributeType: DerivationAttribute;
+    attributeId: string;
     itemLabel: string;
-    nestedItemLabel: string | null;
+    nestedItemLabel?: string;
 }
 
 function CatalogListItem({
     fixedAttributeType,
+    attributeId,
     itemLabel,
     nestedItemLabel,
 }: Props) {
@@ -29,9 +31,9 @@ function CatalogListItem({
         toggleList: () => {
             setOpen(!open);
         },
-        displayAttributeSQL: (attributeId: string) => () => {
+        displayAttributeSQL: (id: string) => () => {
             setAttributeType(fixedAttributeType);
-            setSelectedAttribute(attributeId);
+            setSelectedAttribute(id);
         },
     };
 
@@ -40,7 +42,7 @@ function CatalogListItem({
             <>
                 <ListItemButton
                     dense
-                    selected={selectedAttribute === itemLabel}
+                    selected={selectedAttribute === attributeId}
                     onClick={handlers.toggleList}
                     sx={{
                         'px': 1,
@@ -50,7 +52,7 @@ function CatalogListItem({
                                 : 'rgba(58, 86, 202, 0.08)',
                             color: (theme) =>
                                 open
-                                    ? theme.palette.secondary.main
+                                    ? theme.palette.primary.main
                                     : theme.palette.text.primary,
                         },
                     }}
@@ -72,8 +74,8 @@ function CatalogListItem({
                     <List component="div" disablePadding>
                         <ListItemButton
                             dense
-                            selected={selectedAttribute === itemLabel}
-                            onClick={handlers.displayAttributeSQL(itemLabel)}
+                            selected={selectedAttribute === attributeId}
+                            onClick={handlers.displayAttributeSQL(attributeId)}
                             sx={{ pl: 5 }}
                         >
                             <ListItemText primary={nestedItemLabel} />
@@ -86,8 +88,8 @@ function CatalogListItem({
         return (
             <ListItemButton
                 dense
-                selected={selectedAttribute === itemLabel}
-                onClick={handlers.displayAttributeSQL(itemLabel)}
+                selected={selectedAttribute === attributeId}
+                onClick={handlers.displayAttributeSQL(attributeId)}
                 sx={{ px: 1 }}
             >
                 <ListItemText primary={itemLabel} />

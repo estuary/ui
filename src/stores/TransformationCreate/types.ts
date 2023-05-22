@@ -3,6 +3,7 @@ type DerivationLanguage = 'sql' | 'typescript';
 export type DerivationAttribute = 'transform' | 'migration';
 
 export interface TransformConfig {
+    filename: string;
     lambda: string;
     sqlTemplate: string;
     collection: string;

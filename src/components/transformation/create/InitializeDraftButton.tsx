@@ -73,7 +73,8 @@ function InitializeDraftButton({
                 setSourceCollections(collections);
 
                 const transformConfigs: TransformConfig[] = collections.map(
-                    (collection) => templateTransformConfig(collection)
+                    (collection) =>
+                        templateTransformConfig(collection, entityName)
                 );
 
                 addTransformConfigs(transformConfigs);

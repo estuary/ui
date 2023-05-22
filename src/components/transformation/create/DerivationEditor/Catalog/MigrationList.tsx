@@ -5,7 +5,9 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import CatalogList from 'components/transformation/create/DerivationEditor/Catalog/CatalogList';
+import CatalogList, {
+    CatalogListContent,
+} from 'components/transformation/create/DerivationEditor/Catalog/CatalogList';
 import { defaultOutline, intensifiedOutlineThick } from 'context/Theme';
 import { NavArrowDown } from 'iconoir-react';
 import { useMemo } from 'react';
@@ -20,8 +22,12 @@ function MigrationList() {
     const migrations = useTransformationCreate_migrations();
     const addMigrations = useTransformationCreate_addMigrations();
 
-    const content: [string, null][] = useMemo(
-        () => Object.keys(migrations).map((id) => [id, null]),
+    const content: CatalogListContent[] = useMemo(
+        () =>
+            Object.keys(migrations).map((attributeId) => ({
+                attributeId,
+                value: attributeId,
+            })),
         [migrations]
     );
 

@@ -11,7 +11,9 @@ import {
 } from '@mui/material';
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
-import CatalogList from 'components/transformation/create/DerivationEditor/Catalog/CatalogList';
+import CatalogList, {
+    CatalogListContent,
+} from 'components/transformation/create/DerivationEditor/Catalog/CatalogList';
 import UpdateDraftButton from 'components/transformation/create/DerivationEditor/Catalog/UpdateDraftButton';
 import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
@@ -33,12 +35,15 @@ function TransformList() {
     const transformConfigs = useTransformationCreate_transformConfigs();
     const sourceCollections = useTransformationCreate_sourceCollections();
 
-    const content: [string, string][] = useMemo(
+    const content: CatalogListContent[] = useMemo(
         () =>
-            Object.entries(transformConfigs).map(([name, { collection }]) => [
-                name,
-                collection,
-            ]),
+            Object.entries(transformConfigs).map(
+                ([attributeId, { filename, collection }]) => ({
+                    attributeId,
+                    value: filename,
+                    nestedValue: collection,
+                })
+            ),
         [transformConfigs]
     );
 
@@ -59,7 +64,8 @@ function TransformList() {
                 selectedCollectionSet.add(collection);
             });
         }
-    }, [selectedCollectionSet, sourceCollections, open]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sourceCollections, open]);
 
     return (
         <Box

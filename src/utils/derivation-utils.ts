@@ -37,11 +37,19 @@ export const updateMigrations = (
         id === migrationId ? newMigration : migration
     );
 
-export const templateTransformConfig = (source: string): TransformConfig => ({
-    lambda: 'SELECT * FROM demo/1234',
-    sqlTemplate: 'Simple Select',
-    collection: source,
-});
+export const templateTransformConfig = (
+    source: string,
+    entityName: string
+): TransformConfig => {
+    const tableName = stripPathing(source);
+
+    return {
+        filename: `${entityName}.lambda.${tableName}.sql`,
+        lambda: `SELECT * FROM ${tableName};`,
+        sqlTemplate: 'Simple Select',
+        collection: source,
+    };
+};
 
 export const evaluateTransformConfigs = (
     selectedCollections: string[],
@@ -69,7 +77,7 @@ export const evaluateTransformConfigs = (
             compositeTransformConfigs = {
                 ...compositeTransformConfigs,
                 [`${name}.lambda.${compositeIndex}.sql`]:
-                    templateTransformConfig(source),
+                    templateTransformConfig(source, name),
             };
         } else if (selectedCollections.includes(source)) {
             // Retain the transform configuration for an existing source collection
