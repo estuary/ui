@@ -82,7 +82,14 @@ const OAuthproviderRenderer = ({
     //  to special default values that we can check for
     const setConfigToDefault = () => {
         const defaults = getDefaultValue(
-            schema.properties?.[onChangePath]?.properties,
+            // If Oauth is not inside oneOf (ex: slack materialization)
+            //      We get the schema is for the ENTIRE config. So we need to
+            //      fetch just the credential config otherwise we'll end up nesting
+            schema.properties?.[onChangePath]?.properties ??
+                // If Oauth is inside oneOf (ex: google sheets capture)
+                //      We get just the schema for the credentials object so JsonForms
+                //      has already handled the "nesting" for us
+                schema.properties,
             discriminatorProperty
         );
         handleChange(onChangePath, {
