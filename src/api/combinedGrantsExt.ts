@@ -1,11 +1,9 @@
 import {
     defaultTableFilter,
-    RPCS,
     SortingProps,
     supabaseClient,
-    TABLES,
 } from 'services/supabase';
-import { Grants } from 'types';
+import { PublicEnums } from 'types/supabaseSchema';
 
 // Used to display prefix grants in admin page
 const getGrants = (
@@ -14,7 +12,7 @@ const getGrants = (
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from(TABLES.COMBINED_GRANTS_EXT)
+        .from(COMBINED_GRANTS_EXT)
         .select(
             `
             id, 
@@ -47,7 +45,7 @@ const getGrants_Users = (
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from(TABLES.COMBINED_GRANTS_EXT)
+        .from(COMBINED_GRANTS_EXT)
         .select(
             `
             id, 
@@ -77,9 +75,7 @@ const getGrants_Users = (
 
 // Used when getting grants for a user to know what tenant to list
 const getGrantsForUser = (userId: string, adminOnly?: boolean) => {
-    let queryBuilder = supabaseClient
-        .from<Grants>(TABLES.COMBINED_GRANTS_EXT)
-        .select(`*`);
+    let queryBuilder = supabaseClient.from('combined_grants_ext').select(`*`);
 
     if (adminOnly) {
         queryBuilder = queryBuilder.eq('capability', 'admin');
@@ -90,14 +86,16 @@ const getGrantsForUser = (userId: string, adminOnly?: boolean) => {
 
 // Used to find out what prefixes we can use in the data plane gateway
 const getGrantsForAuthToken = () => {
-    return supabaseClient
-        .from<Grants>(TABLES.COMBINED_GRANTS_EXT)
-        .select(`id, object_role`);
+    // <Grants>
+    return supabaseClient.from('combined_grants_ext').select(`id, object_role`);
 };
 
-export const getAuthRoles = async (capability: string) => {
+export const getAuthRoles = async (
+    capability: PublicEnums['grant_capability']
+) => {
+    // <PublicFunctions['auth_roles']['Returns']>
     return supabaseClient
-        .rpc<{ role_prefix: string; capability: string }>(RPCS.AUTH_ROLES, {
+        .rpc('auth_roles', {
             min_capability: capability,
         })
         .throwOnError();

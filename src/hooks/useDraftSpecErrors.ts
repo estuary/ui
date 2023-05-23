@@ -1,5 +1,4 @@
 import { DEFAULT_POLLING } from 'context/SWR';
-import { TABLES } from 'services/supabase';
 import { SWRConfiguration } from 'swr';
 import { useQuery, useSelect } from './supabase-swr/';
 
@@ -15,7 +14,7 @@ const defaultResponse: DraftErrorsQuery[] = [];
 
 function useDraftSpecErrors(draftId?: string | null, enablePolling?: boolean) {
     const draftErrorsQuery = useQuery<DraftErrorsQuery>(
-        TABLES.DRAFT_ERRORS,
+        'draft_errors',
         {
             columns: DRAFT_SPEC_COLS,
             count: 'exact',

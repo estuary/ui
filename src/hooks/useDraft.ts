@@ -1,5 +1,4 @@
 import { Auth } from '@supabase/ui';
-import { TABLES } from 'services/supabase';
 import { useQuery, useSelect } from './supabase-swr';
 
 export interface DraftQuery {
@@ -16,7 +15,7 @@ function useDraft(catalogName: string | null) {
     const { user } = Auth.useUser();
 
     const draftQuery = useQuery<DraftQuery>(
-        TABLES.DRAFTS_EXT,
+        'drafts_ext',
         {
             columns: DRAFT_COLS,
             filter: (query) =>

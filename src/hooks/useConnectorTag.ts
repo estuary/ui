@@ -1,7 +1,7 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { useCallback } from 'react';
-import { TABLES } from 'services/supabase';
 import { Schema } from 'types';
+import { ConnectorTags, PublicDatabase } from 'types/supabaseSchema';
 import { hasLength } from 'utils/misc-utils';
 import { useQuery, useSelectSingle } from './supabase-swr/';
 
@@ -31,7 +31,13 @@ export const CONNECTOR_TAG_QUERY = `
 
 function useConnectorTag(connectorImage: string | null) {
     const filter = useCallback(
-        (query: PostgrestFilterBuilder<ConnectorTag>) =>
+        (
+            query: PostgrestFilterBuilder<
+                PublicDatabase,
+                ConnectorTags,
+                ConnectorTag
+            >
+        ) =>
             query.or(
                 `id.eq.${connectorImage},connector_id.eq.${connectorImage}`
             ),
@@ -39,7 +45,7 @@ function useConnectorTag(connectorImage: string | null) {
     );
 
     const connectorTagsQuery = useQuery<ConnectorTag>(
-        TABLES.CONNECTOR_TAGS,
+        'connector_tags',
         {
             columns: CONNECTOR_TAG_QUERY,
             filter,

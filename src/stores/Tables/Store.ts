@@ -44,7 +44,7 @@ export interface SelectableTableStore extends StoreWithHydration {
 
     resetState: () => void;
 
-    setQuery: (query: PostgrestFilterBuilder<any>) => void;
+    setQuery: (query: PostgrestFilterBuilder<any, any, any>) => void;
     query: AsyncOperationProps;
     hydrate: () => void;
 

@@ -1,8 +1,4 @@
-import {
-    CONNECTOR_NAME,
-    CONNECTOR_RECOMMENDED,
-    TABLES,
-} from 'services/supabase';
+import { CONNECTOR_NAME, CONNECTOR_RECOMMENDED } from 'services/supabase';
 import { EntityWithCreateWorkflow } from 'types';
 import { useQuery, useSelect } from './supabase-swr';
 
@@ -53,7 +49,7 @@ function useConnectorWithTagDetail(
     connectorId?: string | null
 ) {
     const connectorTagsQuery = useQuery<ConnectorWithTagDetailQuery>(
-        TABLES.CONNECTORS,
+        'connectors',
         {
             columns: CONNECTOR_WITH_TAG_QUERY,
             filter: (query) =>

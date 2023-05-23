@@ -3,25 +3,21 @@ import {
     Pagination,
     SortingProps,
     supabaseClient,
-    TABLES,
 } from 'services/supabase';
-import { StorageMappings } from 'types';
 
 const getStorageMappings = (
     pagination: Pagination,
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
-        .from<StorageMappings>(TABLES.STORAGE_MAPPINGS)
-        .select(
-            `
+    let queryBuilder = supabaseClient.from('storage_mappings').select(
+        `
             id,
             spec,
             catalog_prefix,
             updated_at
         `
-        );
+    );
 
     queryBuilder = defaultTableFilter(
         queryBuilder,
@@ -36,11 +32,11 @@ const getStorageMappings = (
 
 const getStorageMapping = (catalog_prefix: string) => {
     const queryBuilder = supabaseClient
-        .from<StorageMappings>(TABLES.STORAGE_MAPPINGS)
+        .from('storage_mappings')
         .select(
             `    
-            spec,
             catalog_prefix,
+            spec,
             updated_at
         `
         )

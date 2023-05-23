@@ -1,4 +1,4 @@
-import { supabaseClient, TABLES } from 'services/supabase';
+import { supabaseClient } from 'services/supabase';
 import { Schema } from 'types';
 
 export interface PublicationSpecsExt_PublicationHistory {
@@ -18,7 +18,7 @@ export interface PublicationSpecsExt_PublicationHistory {
 
 export const getPublicationHistoryByCatalogName = (catalogName: string) => {
     // const data = await supabaseClient
-    //  .from(TABLES.PUBLICATION_SPECS_EXT)
+    //  .from('publication_specs_ext')
     //  .select(`*`)
     //  .eq('catalog_name', catalogName)
     //  .then(
@@ -28,10 +28,9 @@ export const getPublicationHistoryByCatalogName = (catalogName: string) => {
 
     // return data;
 
+    //<PublicationSpecsExt_PublicationHistory>
     return supabaseClient
-        .from<PublicationSpecsExt_PublicationHistory>(
-            TABLES.PUBLICATION_SPECS_EXT
-        )
+        .from('publication_specs_ext')
         .select(`*`)
         .eq('catalog_name', catalogName);
 };

@@ -2,6 +2,7 @@ import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { SuccessResponse } from 'hooks/supabase-swr';
 import { KeyedMutator } from 'swr';
 import { AppliedDirective, JoinedAppliedDirective } from 'types';
+import { AppliedDirectives, PublicDatabase } from 'types/supabaseSchema';
 
 // THESE MUST STAY IN SYNC WITH THE DB
 export interface Directives {
@@ -35,8 +36,16 @@ export type UserClaims = ClickToAcceptClaim | GrantClaim | OnboardClaim;
 export interface DirectiveSettings<T> {
     token: string;
     queryFilter: (
-        queryBuilder: PostgrestFilterBuilder<JoinedAppliedDirective>
-    ) => PostgrestFilterBuilder<JoinedAppliedDirective>;
+        queryBuilder: PostgrestFilterBuilder<
+            PublicDatabase,
+            AppliedDirectives,
+            JoinedAppliedDirective
+        >
+    ) => PostgrestFilterBuilder<
+        PublicDatabase,
+        AppliedDirectives,
+        JoinedAppliedDirective
+    >;
     generateUserClaim: (args: any[]) => T;
     calculateStatus: (
         appliedDirective?: AppliedDirective<T> | null

@@ -1,9 +1,9 @@
 import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { createClient, User } from '@supabase/supabase-js';
-import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { forEach, isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { JobStatus, SortDirection } from 'types';
+import { Database } from 'types/supabaseSchema';
 import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 
 if (
@@ -76,7 +76,7 @@ export enum FUNCTIONS {
     BILLING = 'billing',
 }
 
-export const supabaseClient = createClient(
+export const supabaseClient = createClient<Database>(
     supabaseSettings.url,
     supabaseSettings.anonKey,
     {
@@ -98,12 +98,12 @@ export const DEFAULT_POLLING_INTERVAL = 750;
 export type Pagination = { from: number; to: number };
 export type Protocol<Data> = { column: keyof Data; value: string | null };
 export const defaultTableFilter = <Data>(
-    query: PostgrestFilterBuilder<Data>,
+    query: PostgrestFilterBuilder<any, any, Data>,
     searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
     searchQuery: string | null,
-    sorting: SortingProps<Data>[],
+    sorting: any, // SortingProps<Data>[]
     pagination?: Pagination,
-    protocol?: Protocol<Data>
+    protocol?: any // Protocol<Data>
 ) => {
     let queryBuilder = query;
 
@@ -139,12 +139,12 @@ export const defaultTableFilter = <Data>(
 };
 
 export const distributedTableFilter = <Data>(
-    query: ToPostgrestFilterBuilder<Data>,
+    query: PostgrestFilterBuilder<any, any, Data>,
     searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
     searchQuery: string | null,
-    sorting: SortingProps<Data>[],
+    sorting: any, // SortingProps<Data>[],
     pagination?: Pagination,
-    protocol?: Protocol<Data>
+    protocol?: any // Protocol<Data>
 ) => {
     let queryBuilder = query;
 

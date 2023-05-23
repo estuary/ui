@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import { createQuery, Query, QueryConfig } from '../query';
+import { createQuery, QueryConfig } from '../query';
 
 const useQuery = <Data>(
     table: string,
     config: QueryConfig<Data>,
     deps: any[]
-): Query<Data> => {
+) => {
     // console.log(`useQuery:${table}`, deps);
     return useMemo(() => {
         // console.log(`     useQuery:${table}:memo`, deps);

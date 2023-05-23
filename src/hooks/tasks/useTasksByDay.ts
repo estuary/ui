@@ -1,4 +1,3 @@
-import { TABLES } from 'services/supabase';
 import { Entity } from 'types';
 import { useQuery, useSelect } from '../supabase-swr/';
 
@@ -46,7 +45,7 @@ const TASK_BY_DAY_QUERY = TASK_BY_DAY_COLS.join(', ');
 
 function useTasksByDay(name: string | null, kind: Entity | null) {
     const taskByDayQuery = useQuery<TasksByDayQuery>(
-        TABLES.TASKS_BY_DAY,
+        'task_stats_by_day',
         {
             columns: TASK_BY_DAY_QUERY,
             filter: (query) =>

@@ -1,10 +1,15 @@
-import { supabaseClient, TABLES } from 'services/supabase';
-import { UserGrants } from 'types';
+import { supabaseClient } from 'services/supabase';
 
 export const getUserGrants = (userId: string, adminOnly?: boolean) => {
-    let queryBuilder = supabaseClient
-        .from<UserGrants>(TABLES.USER_GRANTS)
-        .select(`*`);
+    let queryBuilder = supabaseClient.from('user_grants').select(`
+        capability,
+        created_at,
+        detail,
+        id,
+        object_role,
+        updated_at,
+        user_id
+    `);
 
     if (adminOnly) {
         queryBuilder = queryBuilder.eq('capability', 'admin');

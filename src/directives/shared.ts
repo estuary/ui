@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
-import { JOB_STATUS_COLUMNS, supabaseClient, TABLES } from 'services/supabase';
+import { JOB_STATUS_COLUMNS, supabaseClient } from 'services/supabase';
 import { AppliedDirective } from 'types';
 import { Directives, UserClaims } from './types';
 
@@ -20,7 +20,7 @@ export const claimSubmitted = (
 
 export const jobStatusQuery = (data: AppliedDirective<UserClaims>) => {
     return supabaseClient
-        .from<AppliedDirective<UserClaims>>(TABLES.APPLIED_DIRECTIVES)
+        .from<AppliedDirective<UserClaims>>('applied_directives')
         .select(JOB_STATUS_COLUMNS)
         .match({
             logs_token: data.logs_token,

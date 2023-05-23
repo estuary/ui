@@ -7,7 +7,6 @@ import {
     handleSuccess,
     insertSupabase,
     supabaseClient,
-    TABLES,
     updateSupabase,
 } from 'services/supabase';
 import { Entity } from 'types';
@@ -51,7 +50,7 @@ export const createDraftSpec = (
         matchData = { ...matchData, expect_pub_id: lastPubId };
     }
 
-    return insertSupabase(TABLES.DRAFT_SPECS, matchData);
+    return insertSupabase('draft_specs', matchData);
 };
 
 export const modifyDraftSpec = (
@@ -74,11 +73,11 @@ export const modifyDraftSpec = (
         data = { ...data, expect_pub_id: lastPubId };
     }
 
-    return updateSupabase(TABLES.DRAFT_SPECS, data, matchData);
+    return updateSupabase('draft_specs', data, matchData);
 };
 
 export const deleteDraftSpec = (draftId: string) => {
-    return deleteSupabase(TABLES.DRAFT_SPECS, { draft_id: draftId });
+    return deleteSupabase('draft_specs', { draft_id: draftId });
 };
 
 // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
@@ -89,7 +88,7 @@ export const getDraftSpecsBySpecType = async (
     specType: Entity
 ) => {
     return supabaseClient
-        .from(TABLES.DRAFT_SPECS_EXT)
+        .from('draft_specs_ext')
         .select(`catalog_name,draft_id,expect_pub_id,spec,spec_type`)
         .eq('draft_id', draftId)
         .eq('spec_type', specType)
@@ -107,7 +106,7 @@ export const getDraftSpecsBySpecTypeReduced = async (
     specType: Entity
 ) => {
     const data = await supabaseClient
-        .from(TABLES.DRAFT_SPECS_EXT)
+        .from('draft_specs_ext')
         .select(`draft_id,catalog_name,spec_type`)
         .eq('draft_id', draftId)
         .eq('spec_type', specType)
@@ -135,7 +134,7 @@ export const getDraftSpecsByCatalogName = async (
     specType: Entity
 ) => {
     const data = await supabaseClient
-        .from(TABLES.DRAFT_SPECS_EXT)
+        .from('draft_specs_ext')
         .select(`draft_id,catalog_name,spec_type,spec,expect_pub_id`)
         .eq('draft_id', draftId)
         .eq('catalog_name', catalogName)
@@ -159,7 +158,7 @@ export const deleteDraftSpecsByCatalogName = async (
 
     const deletePromiseGenerator = (idx: number) => {
         return supabaseClient
-            .from(TABLES.DRAFT_SPECS)
+            .from('draft_specs')
             .delete()
             .eq('draft_id', draftId)
             .eq('spec_type', specType)
@@ -209,7 +208,7 @@ export const getDraftSpecsByDraftId = async (
     specType: Entity
 ) => {
     const data = await supabaseClient
-        .from(TABLES.DRAFT_SPECS_EXT)
+        .from('draft_specs_ext')
         .select(`draft_id,catalog_name,spec_type,spec,expect_pub_id`)
         .eq('draft_id', draftId)
         .eq('spec_type', specType)

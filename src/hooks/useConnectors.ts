@@ -1,4 +1,3 @@
-import { TABLES } from 'services/supabase';
 import { useQuery, useSelect } from './supabase-swr/';
 
 interface Connector {
@@ -16,7 +15,7 @@ export const CONNECTOR_QUERY = `
 //  connector_tags. Made for the jsonForms test page (as of Q2 2023)
 function useConnectors() {
     const connectorsQuery = useQuery<Connector>(
-        TABLES.CONNECTORS,
+        'connectors',
         {
             columns: CONNECTOR_QUERY,
         },

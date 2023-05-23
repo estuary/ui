@@ -4,17 +4,16 @@ import {
     handleSuccess,
     insertSupabase,
     supabaseClient,
-    TABLES,
 } from 'services/supabase';
 
 const createEntityDraft = (entityName: string) => {
-    return insertSupabase(TABLES.DRAFTS, {
+    return insertSupabase('drafts', {
         detail: entityName,
     });
 };
 
 const deleteEntityDraft = (draftId: string) => {
-    return deleteSupabase(TABLES.DRAFTS, { id: draftId });
+    return deleteSupabase('drafts', { id: draftId });
 };
 
 export interface DraftsQuery_ByCatalogName {
@@ -28,7 +27,7 @@ const getDraftsByCatalogName = async (
     lastUpdatedOnly?: boolean
 ) => {
     let queryBuilder = supabaseClient
-        .from(TABLES.DRAFTS)
+        .from('drafts')
         .select('id,detail,updated_at')
         .eq('detail', catalogName)
         .order('updated_at', { ascending: false });

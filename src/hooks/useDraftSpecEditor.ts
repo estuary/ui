@@ -94,7 +94,7 @@ function useDraftSpecEditor(
     //
     // useEffectOnce(() => {
     //     const publicationSubscription = supabaseClient
-    //         .from(TABLES.DRAFT_SPECS)
+    //         .from('draft_specs')
     //         .on('*', async (payload: any) => {
     //             if (payload.new.spec) {
     //                 setServerUpdates(payload.new.spec);

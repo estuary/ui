@@ -19,7 +19,6 @@ import {
     DEFAULT_FILTER,
     jobStatusPoller,
     JOB_STATUS_COLUMNS,
-    TABLES,
 } from 'services/supabase';
 import { useDetailsForm_details_description } from 'stores/DetailsForm/hooks';
 import {
@@ -94,7 +93,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
 
         jobStatusPoller(
             supabaseClient
-                .from(TABLES.PUBLICATIONS)
+                .from('publications')
                 .select(JOB_STATUS_COLUMNS)
                 .match({
                     draft_id: draftIdVal,

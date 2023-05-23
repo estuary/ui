@@ -10,10 +10,15 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { BaseComponentProps, CatalogStats_Billing } from 'types';
+import { CatalogStats, PublicDatabase } from 'types/supabaseSchema';
 
 // Hydrator
 interface TableHydratorProps extends BaseComponentProps {
-    query: PostgrestFilterBuilder<CatalogStats_Billing>;
+    query: PostgrestFilterBuilder<
+        PublicDatabase,
+        CatalogStats,
+        CatalogStats_Billing[]
+    >;
 }
 
 export const BillingHistoryTableHydrator = ({

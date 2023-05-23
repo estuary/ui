@@ -1,4 +1,3 @@
-import { TABLES } from 'services/supabase';
 import { useQuery, useSelectSingle } from './supabase-swr/';
 
 interface Connector {
@@ -13,7 +12,7 @@ export const CONNECTOR_QUERY = `
 
 function useConnector(id: string | null) {
     const connectorTagsQuery = useQuery<Connector>(
-        TABLES.CONNECTOR_TAGS,
+        'connector_tags',
         {
             columns: CONNECTOR_QUERY,
             filter: (query) => query.eq('id', id as string),

@@ -1,4 +1,4 @@
-import { DEFAULT_FILTER, insertSupabase, TABLES } from 'services/supabase';
+import { DEFAULT_FILTER, insertSupabase } from 'services/supabase';
 import { incrementCollectionNames } from 'utils/name-utils';
 
 // Evolution starts by the publish returning this object in job_status['incompatible_collections']
@@ -29,7 +29,7 @@ export const createEvolution = (
 ) => {
     const collections = incrementCollectionNames(collectionNames);
 
-    return insertSupabase(TABLES.EVOLUTIONS, {
+    return insertSupabase('evolutions', {
         draft_id: draftId ?? DEFAULT_FILTER,
         collections,
     });

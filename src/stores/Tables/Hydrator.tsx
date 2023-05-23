@@ -11,7 +11,7 @@ import { BaseComponentProps } from 'types';
 
 // Hydrator
 interface TableHydratorProps extends BaseComponentProps {
-    query: PostgrestFilterBuilder<any>;
+    query: PostgrestFilterBuilder<any, any, any>;
     selectableTableStoreName: SelectTableStoreNames;
 }
 

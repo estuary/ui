@@ -1,5 +1,4 @@
 import { PostgrestError } from '@supabase/postgrest-js';
-import { TABLES } from 'services/supabase';
 import { KeyedMutator } from 'swr';
 import { Entity } from 'types';
 import { SuccessResponse, useQuery, useSelect } from './supabase-swr/';
@@ -39,7 +38,7 @@ function useDraftSpecs(
     }
 ): DraftSpecSwrMetadata {
     const draftSpecQuery = useQuery<DraftSpecQuery>(
-        TABLES.DRAFT_SPECS,
+        'draft_specs',
         {
             columns: DRAFT_SPEC_COLS,
             filter: (query) => {

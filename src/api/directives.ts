@@ -9,7 +9,6 @@ import {
     RPCS,
     SortingProps,
     supabaseClient,
-    TABLES,
     updateSupabase,
 } from 'services/supabase';
 import {
@@ -47,7 +46,7 @@ const callUpdate = (
     response: ExchangeResponse['applied_directive']
 ) => {
     return updateSupabase(
-        TABLES.APPLIED_DIRECTIVES,
+        'applied_directives',
         {
             user_claims,
         },
@@ -99,7 +98,7 @@ const getAppliedDirectives = (
     userId: string
 ) => {
     let queryBuilder = supabaseClient.from<JoinedAppliedDirective>(
-        TABLES.APPLIED_DIRECTIVES
+        'applied_directives'
     ).select(`
             id,
             directive_id,
@@ -137,12 +136,12 @@ const generateGrantDirective = (
     if (singleUse) {
         data = { ...data, uses_remaining: 1 };
     }
-    return insertSupabase(TABLES.DIRECTIVES, data);
+    return insertSupabase('directives', data);
 };
 
 const getDirectiveByToken = async (token: string) => {
     const data = await supabaseClient
-        .from(TABLES.DIRECTIVES)
+        .from('directives')
         .select(`spec,token`)
         .eq('token', token)
         .then(
@@ -165,7 +164,7 @@ const getDirectiveByCatalogPrefix = (
         .join(',');
 
     let queryBuilder = supabaseClient
-        .from(TABLES.DIRECTIVES)
+        .from('directives')
         .select(`id,catalog_prefix,uses_remaining,spec,token,updated_at`, {
             count: 'exact',
         })
@@ -186,7 +185,7 @@ const getDirectiveByCatalogPrefix = (
 
 const disableDirective = (directiveId: string) => {
     return updateSupabase(
-        TABLES.DIRECTIVES,
+        'directives',
         { uses_remaining: 0 },
         { id: directiveId }
     );

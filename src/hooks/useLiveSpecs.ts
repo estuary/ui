@@ -1,5 +1,4 @@
 import { useDebugValue } from 'react';
-import { TABLES } from 'services/supabase';
 import { Entity } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { useQuery, useSelect } from './supabase-swr/';
@@ -17,7 +16,7 @@ const defaultResponse: LiveSpecsQuery[] = [];
 
 function useLiveSpecs(specType?: Entity, matchName?: string) {
     const draftSpecQuery = useQuery<LiveSpecsQuery>(
-        TABLES.LIVE_SPECS_EXT,
+        'live_specs_ext',
         {
             columns: queryColumns,
             filter: (query) => {
@@ -74,7 +73,7 @@ const withKey =
 export function useLiveSpecs_spec(id: string, collectionNames?: string[]) {
     useDebugValue(`useLiveSpecs_spec ${collectionNames?.join(', ')}`);
     const liveSpecQuery = useQuery<LiveSpecsQuery_spec>(
-        TABLES.LIVE_SPECS_EXT,
+        'live_specs_ext',
         {
             columns: specQuery,
             filter: (query) =>

@@ -3,11 +3,16 @@ import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { useBilling_selectedTenant } from 'stores/Billing/hooks';
 import { BillingRecord } from 'stores/Billing/types';
 import { CatalogStats_Billing } from 'types';
+import { CatalogStats, PublicDatabase } from 'types/supabaseSchema';
 import { formatBillingCatalogStats } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
-    query: PostgrestFilterBuilder<CatalogStats_Billing>;
+    query: PostgrestFilterBuilder<
+        PublicDatabase,
+        CatalogStats,
+        CatalogStats_Billing[]
+    >;
 }
 
 const INTERVAL = 30000;

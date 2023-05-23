@@ -21,7 +21,6 @@ import {
     DEFAULT_POLLER_ERROR,
     jobStatusPoller,
     JOB_STATUS_POLLER_ERROR,
-    TABLES,
 } from 'services/supabase';
 import {
     useDetailsForm_connectorImage_connectorId,
@@ -140,7 +139,7 @@ function useDiscoverCapture(
 
             jobStatusPoller(
                 supabaseClient
-                    .from(TABLES.DISCOVERS)
+                    .from('discovers')
                     .select(
                         `
                         capture_name,

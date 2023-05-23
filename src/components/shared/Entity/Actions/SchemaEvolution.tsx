@@ -21,7 +21,6 @@ import {
     jobStatusPoller,
     JOB_STATUS_COLUMNS,
     JOB_STATUS_POLLER_ERROR,
-    TABLES,
 } from 'services/supabase';
 import {
     useFormStateStore_isActive,
@@ -74,7 +73,7 @@ function SchemaEvolution({ onFailure }: Props) {
 
         jobStatusPoller(
             supabaseClient
-                .from(TABLES.EVOLUTIONS)
+                .from('evolutions')
                 .select(`${JOB_STATUS_COLUMNS}, collections, draft_id`)
                 .match({
                     draft_id: draftIdVal,

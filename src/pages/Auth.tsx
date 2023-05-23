@@ -44,9 +44,10 @@ const Auth = () => {
 
         if (!user) {
             supabaseClient.auth
-                .getSessionFromUrl({
-                    storeSession: true,
-                })
+                // .getSessionFromUrl({
+                //     storeSession: true,
+                // })
+                .getSession()
                 .then(async (response) => {
                     if (response.error) {
                         await failed(response.error.message);

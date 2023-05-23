@@ -1,5 +1,4 @@
 import { PostgrestError } from '@supabase/postgrest-js';
-import { TABLES } from 'services/supabase';
 import { Entity } from 'types';
 import { useQuery, useSelect } from './supabase-swr/';
 
@@ -66,7 +65,7 @@ function useLiveSpecsExt(
     const draftSpecQuery = useQuery<
         LiveSpecsExtQueryWithSpec | LiveSpecsExtQuery
     >(
-        TABLES.LIVE_SPECS_EXT,
+        'live_specs_ext',
         {
             columns: includeSpec ? queryColumnsWithSpec : queryColumns,
             filter: draftId
@@ -123,7 +122,7 @@ export function useLiveSpecsExtByLastPubId(
     const draftSpecQuery = useQuery<
         LiveSpecsExtQueryWithSpec | LiveSpecsExtQuery
     >(
-        TABLES.LIVE_SPECS_EXT,
+        'live_specs_ext',
         {
             columns: queryColumns,
             filter: lastPubId

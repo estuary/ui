@@ -10,7 +10,6 @@ import {
     QUERY_PARAM_CONNECTOR_TITLE,
     SortingProps,
     supabaseClient,
-    TABLES,
 } from 'services/supabase';
 import {
     CatalogStats,
@@ -73,7 +72,7 @@ const getLiveSpecs_captures = (
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<CaptureQuery>(TABLES.LIVE_SPECS_EXT)
+        .from<CaptureQuery>('live_specs_ext')
         .select(captureColumns, {
             count: 'exact',
         });
@@ -95,7 +94,7 @@ const getLiveSpecs_materializations = (
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<MaterializationQuery>(TABLES.LIVE_SPECS_EXT)
+        .from<MaterializationQuery>('live_specs_ext')
         .select(materializationsColumns, {
             count: 'exact',
         });
@@ -117,7 +116,7 @@ const getLiveSpecs_collections = (
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<CollectionQuery>(TABLES.LIVE_SPECS_EXT)
+        .from<CollectionQuery>('live_specs_ext')
         .select(collectionColumns, {
             count: 'exact',
         });
@@ -147,7 +146,7 @@ const getLiveSpecs_existingTasks = (
     const columns = taskColumns.concat(',connector_id');
 
     let queryBuilder = supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
+        .from('live_specs_ext')
         .select(columns, {
             count: 'exact',
         })
@@ -195,7 +194,7 @@ const getLiveSpecs_detailsForm = async (
     specType: Entity
 ) => {
     const data = await supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
+        .from('live_specs_ext')
         .select(DETAILS_FORM_QUERY)
         .eq('id', liveSpecId)
         .eq('spec_type', specType)
@@ -217,7 +216,7 @@ const getLiveSpecsByCatalogName = async (
     specType: Entity
 ) => {
     const data = await supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
+        .from('live_specs_ext')
         .select(`catalog_name,spec_type,spec,last_pub_id`)
         .eq('catalog_name', catalogName)
         .eq('spec_type', specType)
@@ -246,7 +245,7 @@ const getLiveSpecsByCatalogNames = async (
 
     const queryPromiseGenerator = (idx: number) => {
         let query = supabaseClient
-            .from(TABLES.LIVE_SPECS_EXT)
+            .from('live_specs_ext')
             .select(`catalog_name,spec_type,spec,last_pub_id`)
             .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE));
         if (specType) {
@@ -283,7 +282,7 @@ const getLiveSpecsByConnectorId = async (
     const columns = taskColumns.concat(',connector_id');
 
     let queryBuilder = supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
+        .from('live_specs_ext')
         .select(columns)
         .eq('connector_id', connectorId)
         .eq('spec_type', specType);
@@ -319,7 +318,7 @@ const getLiveSpecsByLiveSpecId = async (
     specType: Entity
 ) => {
     const data = await supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
+        .from('live_specs_ext')
         .select('catalog_name,id,spec_type,last_pub_id,spec')
         .eq('id', liveSpecId)
         .eq('spec_type', specType)

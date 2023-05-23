@@ -1,4 +1,4 @@
-import { insertSupabase, TABLES } from 'services/supabase';
+import { insertSupabase } from 'services/supabase';
 
 export const discover = (
     entityName: string,
@@ -6,7 +6,7 @@ export const discover = (
     connectorID: string,
     draftID: string
 ) => {
-    return insertSupabase(TABLES.DISCOVERS, {
+    return insertSupabase('discovers', {
         capture_name: entityName,
         endpoint_config: config,
         connector_tag_id: connectorID,

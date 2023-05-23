@@ -4,7 +4,6 @@ import {
     handleFailure,
     handleSuccess,
     supabaseClient,
-    TABLES,
 } from 'services/supabase';
 import { Entity } from 'types';
 
@@ -22,7 +21,7 @@ type ConnectorTagEndpointData = Pick<
 
 export const getSchema_Endpoint = async (connectorId: string | null) => {
     const endpointSchema = await supabaseClient
-        .from(TABLES.CONNECTOR_TAGS)
+        .from('connector_tags')
         .select(`connector_id,endpoint_spec_schema`)
         .eq('connector_id', connectorId)
         .then(handleSuccess<ConnectorTagEndpointData[]>, handleFailure);
@@ -32,7 +31,7 @@ export const getSchema_Endpoint = async (connectorId: string | null) => {
 
 export const getSchema_Resource = async (connectorId: string | null) => {
     const resourceSchema = await supabaseClient
-        .from(TABLES.CONNECTOR_TAGS)
+        .from('connector_tags')
         .select(`connector_id,resource_spec_schema`)
         .eq('connector_id', connectorId)
         .then(handleSuccess<ConnectorTagResourceData[]>, handleFailure);
@@ -50,7 +49,7 @@ export const getLiveSpecsByLiveSpecId = async (
         typeof liveSpecId === 'string' ? [liveSpecId] : liveSpecId;
 
     const data = await supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
+        .from('live_specs_ext')
         .select(liveSpecColumns)
         .eq('spec_type', specType)
         .or(`id.in.(${draftArray})`)
@@ -68,7 +67,7 @@ export const getLiveSpecsByLastPubId = async (
         typeof lastPubId === 'string' ? [lastPubId] : lastPubId;
 
     const data = await supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
+        .from('live_specs_ext')
         .select(liveSpecColumns)
         .eq('spec_type', specType)
         .or(`last_pub_id.in.(${draftArray})`)

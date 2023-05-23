@@ -9,7 +9,6 @@ import {
     handleSuccess,
     SortingProps,
     supabaseClient,
-    TABLES,
 } from 'services/supabase';
 
 // Table-specific queries
@@ -18,8 +17,9 @@ const getConnectors = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
+    //<ConnectorWithTagDetailQuery>
     let queryBuilder = supabaseClient
-        .from<ConnectorWithTagDetailQuery>(TABLES.CONNECTORS)
+        .from('connectors')
         .select(CONNECTOR_WITH_TAG_QUERY, {
             count: 'exact',
         });
@@ -60,7 +60,7 @@ const DETAILS_FORM_QUERY = `
 
 const getConnectors_detailsForm = async (connectorId: string) => {
     const data = await supabaseClient
-        .from(TABLES.CONNECTORS)
+        .from('connectors')
         .select(DETAILS_FORM_QUERY)
         .eq('id', connectorId)
         .eq('connector_tags.connector_id', connectorId)

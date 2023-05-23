@@ -1,5 +1,4 @@
 import { DEFAULT_POLLING } from 'context/SWR';
-import { TABLES } from 'services/supabase';
 import { SWRConfiguration } from 'swr';
 import { JobStatus } from 'types';
 import { useQuery, useSelectSingle } from './supabase-swr/';
@@ -14,7 +13,7 @@ const PUBLICATION_COLS = ['id', 'job_status', 'logs_token'];
 
 function usePublications(lastPubId: string | null, enablePolling?: boolean) {
     const publicationsQuery = useQuery<Publications>(
-        TABLES.PUBLICATIONS,
+        'publications',
         {
             columns: PUBLICATION_COLS,
             filter: (query) => query.eq('id', lastPubId as string),

@@ -14,9 +14,9 @@ import {
     handleSuccess,
     SortingProps,
     supabaseClient,
-    TABLES,
 } from 'services/supabase';
-import { CatalogStats, CatalogStats_Billing } from 'types';
+import { CatalogStats_Billing } from 'types';
+import { CatalogStats, PublicDatabase } from 'types/supabaseSchema';
 
 export type StatsFilter =
     | 'today'
@@ -37,7 +37,7 @@ export const formatToGMT = (date: any) =>
 //  are all 0.
 const getStatsByName = (names: string[], filter?: StatsFilter) => {
     let queryBuilder = supabaseClient
-        .from<CatalogStats>(TABLES.CATALOG_STATS)
+        .from('catalog_stats')
         .select(
             `    
             catalog_name,
@@ -118,7 +118,7 @@ const getStatsForBilling = (tenants: string[]) => {
     const startMonth = subMonths(currentMonth, 5);
 
     return supabaseClient
-        .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
+        .from('catalog_stats')
         .select(
             `    
             catalog_name,
@@ -136,13 +136,26 @@ const getStatsForBilling = (tenants: string[]) => {
         .order('ts', { ascending: false });
 };
 
+const getStatsForBillingHistoryTable_string = `    
+            catalog_name,
+            grain,
+            ts,
+            bytes_written_by_me,
+            bytes_read_by_me,
+            flow_document
+        `;
+
 // TODO (billing): Enable pagination when the new RPC is available.
 const getStatsForBillingHistoryTable = (
     tenants: string[],
     // pagination: any,
     searchQuery: any,
     sorting: SortingProps<any>[]
-): PostgrestFilterBuilder<CatalogStats_Billing> => {
+): PostgrestFilterBuilder<
+    PublicDatabase,
+    CatalogStats,
+    CatalogStats_Billing[]
+> => {
     const subjectRoleFilters = tenants
         .map((tenant) => `catalog_name.ilike.${tenant}%`)
         .join(',');
@@ -152,18 +165,8 @@ const getStatsForBillingHistoryTable = (
     const startMonth = subMonths(currentMonth, 5);
 
     let queryBuilder = supabaseClient
-        .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
-        .select(
-            `    
-            catalog_name,
-            grain,
-            ts,
-            bytes_written_by_me,
-            bytes_read_by_me,
-            flow_document
-        `,
-            { count: 'exact' }
-        )
+        .from('catalog_stats')
+        .select(getStatsForBillingHistoryTable_string, { count: 'exact' })
         .eq('grain', 'monthly')
         .gte('ts', formatToGMT(startMonth))
         .lt('ts', formatToGMT(today))

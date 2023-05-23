@@ -10,7 +10,7 @@ import useFetcher, { FetcherType } from './useFetcher';
 const useSelect = <Data>(
     query: Query<Data>,
     swrConfig?: Omit<SWRConfiguration, 'fetcher'>
-): SWRResponse<SuccessResponse<Data>, PostgrestError> => {
+) => {
     const fetcher = useFetcher<Data>(FetcherType.MULTIPLE);
     return useSWR(query, fetcher, swrConfig);
 };

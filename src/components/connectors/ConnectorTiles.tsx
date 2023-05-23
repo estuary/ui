@@ -27,7 +27,6 @@ import {
     CONNECTOR_NAME,
     CONNECTOR_RECOMMENDED,
     defaultTableFilter,
-    TABLES,
 } from 'services/supabase';
 import {
     BaseComponentProps,
@@ -113,7 +112,7 @@ function ConnectorTiles({
     });
 
     const liveSpecQuery = useQuery<ConnectorWithTagDetailQuery>(
-        TABLES.CONNECTORS,
+        'connectors',
         {
             columns: CONNECTOR_WITH_TAG_QUERY,
             filter: (query) => {
