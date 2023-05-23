@@ -1,24 +1,43 @@
+import { getAuthRoles } from 'api/combinedGrantsExt';
 import FullPageError from 'components/fullPage/Error';
 import FullPageSpinner from 'components/fullPage/Spinner';
+import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useEffectOnce } from 'react-use';
+import useSWR from 'swr';
 import { BaseComponentProps } from 'types';
 import {
-    useEntitiesStore_hydrate,
     useEntitiesStore_hydrated,
     useEntitiesStore_hydrationErrors,
+    useEntitiesStore_setCapabilities,
+    useEntitiesStore_setHydrated,
+    useEntitiesStore_setHydrationErrors,
 } from './hooks';
 
 export const EntitiesHydrator = ({ children }: BaseComponentProps) => {
-    const hydrateState = useEntitiesStore_hydrate();
     const hydrated = useEntitiesStore_hydrated();
     const hydrationErrors = useEntitiesStore_hydrationErrors();
+    const setHydrationErrors = useEntitiesStore_setHydrationErrors();
+    const setCapabilities = useEntitiesStore_setCapabilities();
+    const setHydrated = useEntitiesStore_setHydrated();
 
-    useEffectOnce(() => {
-        if (!hydrated) {
-            void hydrateState();
-        }
+    const { data, error, isValidating } = useSWR('entities_hydrator', () => {
+        return getAuthRoles('read');
     });
+
+    useEffect(() => {
+        if (!isValidating) {
+            setHydrationErrors(error);
+            setCapabilities(data?.data ?? null);
+            setHydrated(true);
+        }
+    }, [
+        data,
+        error,
+        isValidating,
+        setCapabilities,
+        setHydrated,
+        setHydrationErrors,
+    ]);
 
     if (!hydrated) {
         return <FullPageSpinner />;

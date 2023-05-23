@@ -1,3 +1,4 @@
+import { PostgrestResponse } from '@supabase/postgrest-js';
 import { AuthRoles, Schema } from 'types';
 
 interface PrefixProps {
@@ -16,9 +17,12 @@ export interface EntitiesState {
         write: PrefixProps | Schema | {};
     };
 
-    hydrateState: () => Promise<void>;
+    hydrateState: () => Promise<PostgrestResponse<AuthRoles>>;
     hydrated: boolean;
-    hydrationErrors: any;
     setHydrated: (val: EntitiesState['hydrated']) => void;
+
+    hydrationErrors: any;
+    setHydrationErrors: (val: EntitiesState['hydrationErrors']) => void;
+
     resetState: () => void;
 }

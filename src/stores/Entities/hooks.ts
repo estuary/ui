@@ -67,6 +67,12 @@ export const useEntitiesStore_hydrationErrors = () => {
         (state) => state.hydrationErrors
     );
 };
+export const useEntitiesStore_setHydrationErrors = () => {
+    return useZustandStore<EntitiesState, EntitiesState['setHydrationErrors']>(
+        GlobalStoreNames.ENTITIES,
+        (state) => state.setHydrationErrors
+    );
+};
 
 export const useSidePanelDocsStore_resetState = () => {
     return useZustandStore<EntitiesState, EntitiesState['resetState']>(
