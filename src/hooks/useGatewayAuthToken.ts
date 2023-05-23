@@ -1,8 +1,9 @@
 import { Auth } from '@supabase/ui';
-import { getGrantsForAuthToken } from 'api/combinedGrantsExt';
 import { isBefore } from 'date-fns';
 import { decodeJwt, JWTPayload } from 'jose';
+import { isEmpty } from 'lodash';
 import { client } from 'services/client';
+import { useEntitiesStore_prefixes_readable } from 'stores/Entities/hooks';
 import useSWR from 'swr';
 import { GatewayAuthTokenResponse } from 'types';
 import {
@@ -13,17 +14,11 @@ import {
     getStoredGatewayAuthConfig,
     storeGatewayAuthConfig,
 } from 'utils/localStorage-utils';
-import { useSelectNew } from './supabase-swr/hooks/useSelect';
-
-interface CombinedGrantsExtQuery {
-    id: string;
-    object_role: string;
-}
 
 const { gatewayAuthTokenEndpoint } = getGatewayAuthTokenSettings();
 
 // The request body for this API is a string array corresponding to the prefixes a user has access to.
-const fetcher = (
+export const gatewayFetcher = (
     endpoint: string,
     prefixes: string[],
     sessionKey: string | undefined
@@ -45,12 +40,12 @@ const fetcher = (
 const useGatewayAuthToken = (prefixes: string[] | null) => {
     const { session } = Auth.useUser();
 
-    const { data: grants } = useSelectNew<CombinedGrantsExtQuery>(
-        getGrantsForAuthToken()
-    );
+    const readablePrefixes = useEntitiesStore_prefixes_readable();
+    const grants = Object.keys(readablePrefixes);
 
-    const allowed_prefixes: string[] =
-        grants?.data.map(({ object_role }) => object_role) ?? [];
+    const allowed_prefixes: string[] = !isEmpty(grants)
+        ? grants.map((grant) => grant)
+        : [];
 
     const authorized_prefixes = prefixes
         ? prefixes.filter((prefix) =>
@@ -61,10 +56,7 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
         : [];
 
     if (prefixes) {
-        if (
-            authorized_prefixes.length !== prefixes.length &&
-            grants !== undefined
-        ) {
+        if (authorized_prefixes.length !== prefixes.length) {
             console.warn(
                 'Attempt to fetch auth token for prefixes that you do not have permissions on: ',
                 prefixes.filter((prefix) => !allowed_prefixes.includes(prefix))
@@ -86,7 +78,7 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
         tokenExpired = isBefore(jwt.exp * 1000, Date.now());
     }
 
-    const response = useSWR(
+    const { data, mutate } = useSWR(
         tokenExpired || authorized_prefixes.length > 0
             ? [
                   gatewayAuthTokenEndpoint,
@@ -94,7 +86,7 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
                   session?.access_token,
               ]
             : null,
-        fetcher,
+        gatewayFetcher,
         {
             onSuccess: ([config]) => {
                 storeGatewayAuthConfig(config);
@@ -106,7 +98,7 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
         }
     );
 
-    return { data: response.data?.[0], refresh: () => response.mutate() };
+    return { data: data?.[0], refresh: () => mutate() };
 };
 
 export default useGatewayAuthToken;

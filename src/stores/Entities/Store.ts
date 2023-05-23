@@ -78,7 +78,7 @@ const getInitialState = (
                     return;
                 }
 
-                val.forEach((authRole) => {
+                val.forEach(async (authRole) => {
                     state.prefixes[authRole.capability] = {
                         ...state.prefixes[authRole.capability],
                         [authRole.role_prefix]: {},

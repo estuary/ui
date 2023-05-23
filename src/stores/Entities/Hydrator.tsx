@@ -3,7 +3,6 @@ import FullPageSpinner from 'components/fullPage/Spinner';
 import { FormattedMessage } from 'react-intl';
 import { useEffectOnce } from 'react-use';
 import { BaseComponentProps } from 'types';
-
 import {
     useEntitiesStore_hydrate,
     useEntitiesStore_hydrated,

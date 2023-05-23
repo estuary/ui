@@ -1,13 +1,19 @@
 import { AuthRoles, Schema } from 'types';
 
+interface PrefixProps {
+    [key: string]: {
+        token?: string;
+    };
+}
+
 export interface EntitiesState {
     // Storing what the user has access to
     setCapabilities: (capabilities: AuthRoles[] | null) => void;
 
     prefixes: {
-        admin: Schema;
-        read: Schema;
-        write: Schema;
+        admin: PrefixProps | Schema | {};
+        read: PrefixProps | Schema | {};
+        write: PrefixProps | Schema | {};
     };
 
     hydrateState: () => Promise<void>;
