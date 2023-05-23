@@ -46,6 +46,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     // Terms
     'terms.connectors': `Connectors`,
     'terms.collections': `Collections`,
+    'terms.bindings': `Bindings`,
     'terms.permissions': `Access Grants`,
     'terms.materialization': `Materialization`,
     'terms.capture': `Capture`,
@@ -193,8 +194,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin.api': `CLI - API`,
     'routeTitle.admin.billing': `Billing`,
     'routeTitle.admin.connectors': `Connectors`,
-    'routeTitle.admin.cookies': `Cookie Preferences`,
-    'routeTitle.admin.storageMappings': `${CommonMessages['terms.storageMapping']}`,
+    'routeTitle.admin.settings': `Settings`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captureEdit': `Edit Capture`,
@@ -459,14 +459,13 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.users.sharePrefix.label.type': `Type`,
     'admin.users.sharePrefix.cta.generateLink': `Generate Invitation`,
 
-    'admin.cookies': `Cookie Preference Management`,
-    'admin.cookies.message': `Click below to manage your preferences.`,
+    'admin.cookies': `Cookie Preferences`,
+    'admin.cookies.message': `Click below to configure your cookie preferences.`,
     'admin.tabs.users': `Users`,
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
-    'admin.tabs.cookies': `Cookie Preferences`,
     'admin.tabs.billing': `Billing`,
-    'admin.tabs.storageMappings': `${CommonMessages['terms.storageMapping']}`,
+    'admin.tabs.settings': `Settings`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
@@ -614,8 +613,8 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
 
     'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
 
-    'entityCreate.bindingsConfig.collectionsLabel': `Available ${CommonMessages['terms.collections']}`,
-    'entityCreate.bindingsConfig.noRows': `Please select from the ${CommonMessages['terms.collections']} above to begin.`,
+    'entityCreate.bindingsConfig.collectionsLabel': `Available {items}`,
+    'entityCreate.bindingsConfig.noRows': `Please select from the list above to begin.`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
 
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
@@ -651,7 +650,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
     'captureCreate.collections.heading': `Output Collections`,
     'captureCreate.collectionSelector.heading': `Collection Selector`,
-    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Specification tab.`,
+    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
     'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -687,7 +686,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
 
     'captureEdit.collections.heading': `Output Collections`,
     'captureEdit.collectionSelector.heading': `Collection Selector`,
-    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Specification tab.`,
+    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
     'captureEdit.test.failedErrorTitle': `Configuration Test Failed`,
     'captureEdit.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -782,7 +781,7 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.test.inProgress': `Please wait while we try to connect to the destination.`,
 
     'materializationEdit.collectionSelector.heading': `Collection Selector`,
-    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Specification tab.`,
+    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
     'materializationEdit.resourceConfig.heading': `Resource Configuration`,
     'materializationEdit.save.failedErrorTitle': `Materialization Save Failed`,
@@ -838,7 +837,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
     'workflows.collectionSelector.label.listHeader': `Collections`,
-    'workflows.collectionSelector.tab.collectionSchema': `Schema`,
+    'workflows.collectionSelector.tab.collectionSchema': `Collection`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,

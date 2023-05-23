@@ -57,7 +57,7 @@ interface Props {
     setSortDirection: (data: any) => void;
     columnToSort: string;
     setColumnToSort: (data: any) => void;
-    header: string;
+    header: string | ReactNode;
     filterLabel: string;
     noExistingDataContentIds: TableIntlConfig;
     selectableTableStoreName: SelectTableStoreNames;
@@ -266,7 +266,7 @@ function EntityTable({
                         sx={{
                             display: 'flex',
                             justifyContent: 'space-between',
-                            alignItems: 'start',
+                            alignItems: 'center',
                         }}
                     >
                         {showToolbar ? toolbar : <Title header={header} />}

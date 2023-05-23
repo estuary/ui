@@ -1,13 +1,17 @@
 import { Box } from '@mui/material';
 import { getStorageMappings } from 'api/storageMappings';
 import EntityTable from 'components/tables/EntityTable';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import useTableState from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import Rows, { tableColumns } from './Rows';
 
-function StorageMappingsTable() {
+interface Props {
+    header: ReactNode;
+}
+
+function StorageMappingsTable({ header }: Props) {
     const {
         pagination,
         setPagination,
@@ -52,7 +56,7 @@ function StorageMappingsTable() {
                     setSortDirection={setSortDirection}
                     columnToSort={columnToSort}
                     setColumnToSort={setColumnToSort}
-                    header="storageMappingsTable.title"
+                    header={header}
                     filterLabel="storageMappingsTable.filterLabel"
                     selectableTableStoreName={
                         SelectTableStoreNames.STORAGE_MAPPINGS

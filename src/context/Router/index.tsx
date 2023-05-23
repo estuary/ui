@@ -80,11 +80,8 @@ const AdminConnectors = lazy(
 const AdminBilling = lazy(
     () => import(/* webpackPrefetch: true */ 'components/admin/Billing')
 );
-const AdminCookies = lazy(
-    () => import(/* webpackPrefetch: true */ 'components/admin/Cookies')
-);
-const StorageMappings = lazy(
-    () => import(/* webpackPrefetch: true */ 'components/admin/StorageMappings')
+const AdminSettings = lazy(
+    () => import(/* webpackPrefetch: true */ 'components/admin/Settings')
 );
 
 const router = createBrowserRouter(
@@ -430,20 +427,10 @@ const router = createBrowserRouter(
                             }
                         />
                         <Route
-                            path={authenticatedRoutes.admin.cookies.path}
+                            path={authenticatedRoutes.admin.settings.path}
                             element={
                                 <Suspense fallback={null}>
-                                    <AdminCookies />
-                                </Suspense>
-                            }
-                        />
-                        <Route
-                            path={
-                                authenticatedRoutes.admin.storageMappings.path
-                            }
-                            element={
-                                <Suspense fallback={null}>
-                                    <StorageMappings />
+                                    <AdminSettings />
                                 </Suspense>
                             }
                         />
