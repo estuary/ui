@@ -82,7 +82,7 @@ const OAuthproviderRenderer = ({
     //  to special default values that we can check for
     const setConfigToDefault = () => {
         const defaults = getDefaultValue(
-            schema.properties,
+            schema.properties?.[onChangePath]?.properties,
             discriminatorProperty
         );
         handleChange(onChangePath, {
