@@ -1,26 +1,22 @@
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useEntitiesStore_prefixes_writable } from 'stores/Entities/hooks';
 import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
-import useCombinedGrantsExt from './useCombinedGrantsExt';
 
 function useCatalogNameInput() {
     const intl = useIntl();
 
-    const { combinedGrants } = useCombinedGrantsExt({
-        adminOnly: true,
-    });
+    const writablePrefixes = useEntitiesStore_prefixes_writable();
 
     const accessGrantsOneOf = useMemo(() => {
         const response = [] as string[];
 
-        if (combinedGrants.length > 0) {
-            combinedGrants.forEach((accessGrant) => {
-                response.push(accessGrant.object_role);
-            });
-        }
+        Object.keys(writablePrefixes).forEach((adminPrefix) => {
+            response.push(adminPrefix);
+        });
 
         return response;
-    }, [combinedGrants]);
+    }, [writablePrefixes]);
 
     const catalogNameSchema = useMemo(() => {
         return {

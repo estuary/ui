@@ -1,37 +1,18 @@
-import { Backdrop, Box, List, ListItem } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
-import { FormattedMessage } from 'react-intl';
-import { BaseError } from 'types';
+import { Typography } from '@mui/material';
+import Error from 'components/shared/Error';
+import FullPageWrapper from 'directives/FullPageWrapper';
+import { ReactElement } from 'react';
 
 interface Props {
-    errors: BaseError[];
+    error: any;
+    title: ReactElement | string;
 }
-function FullPageError({ errors }: Props) {
+function FullPageError({ error, title }: Props) {
     return (
-        <Backdrop
-            sx={{ color: 'error', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-            open={true}
-        >
-            <Box sx={{ width: '100%' }}>
-                <AlertBox
-                    severity="error"
-                    title={<FormattedMessage id="fullpage.error" />}
-                >
-                    {errors.length > 0 ? (
-                        <List dense>
-                            {errors.map((error, index: number) => {
-                                return (
-                                    <ListItem key={`${index}${error.detail}`}>
-                                        <b>{error.title} : </b>
-                                        {error.detail}
-                                    </ListItem>
-                                );
-                            })}
-                        </List>
-                    ) : null}
-                </AlertBox>
-            </Box>
-        </Backdrop>
+        <FullPageWrapper fullWidth={true}>
+            <Typography>{title}</Typography>
+            <Error error={error} />
+        </FullPageWrapper>
     );
 }
 

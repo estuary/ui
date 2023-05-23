@@ -4,6 +4,7 @@ import { createExistingEntityStore } from 'components/shared/Entity/ExistingEnti
 import { createBillingStore } from 'stores/Billing/Store';
 import { createDetailsFormStore } from 'stores/DetailsForm/Store';
 import { createEndpointConfigStore } from 'stores/EndpointConfig/Store';
+import { createEntitiesStore } from 'stores/Entities/Store';
 import { createFormStateStore } from 'stores/FormState/Store';
 import {
     AdminStoreNames,
@@ -140,6 +141,7 @@ const invariableStores = {
     //     ),
 
     // Global App Stores
+    [GlobalStoreNames.ENTITIES]: createEntitiesStore(GlobalStoreNames.ENTITIES),
     [GlobalStoreNames.SIDE_PANEL_DOCS]: createSidePanelDocsStore(
         GlobalStoreNames.SIDE_PANEL_DOCS
     ),
