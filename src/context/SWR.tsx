@@ -25,29 +25,6 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
         });
     };
 
-    const errorHandler = async (error: any) => {
-        // Handle JWT tokens expiring
-        if (error.message === ERROR_MESSAGES.jwtExpired) {
-            await supabaseClient.auth
-                .signOut()
-                .then(() => {
-                    enqueueSnackbar(
-                        intl.formatMessage({
-                            id: 'login.jwtExpired',
-                        }),
-                        {
-                            anchorOrigin: {
-                                vertical: 'top',
-                                horizontal: 'center',
-                            },
-                            variant: 'error',
-                        }
-                    );
-                })
-                .catch(() => {});
-        }
-    };
-
     return (
         <SWRConfig
             value={{
@@ -56,7 +33,31 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
         >
             <SWRConfig
                 value={{
-                    onError: errorHandler,
+                    onError: async (error, _key, _config) => {
+                        // Handle JWT tokens expiring
+                        if (error.message === ERROR_MESSAGES.jwtExpired) {
+                            await supabaseClient.auth
+                                .signOut()
+                                .then(() => {
+                                    enqueueSnackbar(
+                                        intl.formatMessage({
+                                            id: 'login.jwtExpired',
+                                        }),
+                                        {
+                                            anchorOrigin: {
+                                                vertical: 'top',
+                                                horizontal: 'center',
+                                            },
+                                            variant: 'error',
+                                        }
+                                    );
+                                })
+                                .catch(() => {});
+                        }
+                    },
+
+                    // Start with a quick retry in case the problem was ephemeral
+                    errorRetryInterval: 1000,
 
                     // TODO (SWR) this is nice but we need some UX built out before turning it back on
                     revalidateOnFocus: false,
