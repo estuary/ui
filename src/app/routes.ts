@@ -26,15 +26,15 @@ const admin = {
         path: 'connectors',
         fullPath: '/admin/connectors',
     },
-    cookies: {
-        title: 'routeTitle.admin.cookies',
-        path: 'cookies',
-        fullPath: '/admin/cookies',
+    billing: {
+        title: 'routeTitle.admin.billing',
+        path: 'billing',
+        fullPath: '/admin/billing',
     },
-    storageMappings: {
-        title: 'routeTitle.admin.storageMappings',
-        path: 'storage-mappings',
-        fullPath: '/admin/storage-mappings',
+    settings: {
+        title: 'routeTitle.admin.settings',
+        path: 'settings',
+        fullPath: '/admin/settings',
     },
 };
 
@@ -82,6 +82,17 @@ const captures = {
 const collections = {
     title: 'routeTitle.collections',
     path: 'collections',
+    fullPath: '/collections',
+    create: {
+        title: 'routeTitle.collectionCreate',
+        path: 'create',
+        fullPath: '/collections/create',
+        new: {
+            title: 'routeTitle.collectionCreate',
+            path: 'create/new',
+            fullPath: '/collections/create/new',
+        },
+    },
     details: {
         title: 'routeTitle.collectionDetails',
         path: 'details',
@@ -102,7 +113,6 @@ const collections = {
             fullPath: '/collections/details/history',
         },
     },
-    fullPath: '/collections',
 };
 
 const dataPlaneAuth = {

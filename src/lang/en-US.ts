@@ -46,6 +46,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     // Terms
     'terms.connectors': `Connectors`,
     'terms.collections': `Collections`,
+    'terms.bindings': `Bindings`,
     'terms.permissions': `Access Grants`,
     'terms.materialization': `Materialization`,
     'terms.capture': `Capture`,
@@ -126,6 +127,8 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.register.github': `Register with GitHub`,
     'cta.configure': `Configure`,
     'cta.showAll': `Show All`,
+    'cta.reload': `Reload`,
+    'cta.evolve': `Create New Collection Versions`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -139,6 +142,9 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.email': `Email`,
     'data.display_name': `Username`,
     'data.published_at': `Published At`,
+    'data.pointer': `Pointer`,
+    'data.exists': `Exists`,
+    'data.field': `Field`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
@@ -158,6 +164,11 @@ const ErrorBoundry: ResolvedIntlConfig['messages'] = {
     'errorBoundry.title': `${Error['error.title']}`,
     'errorBoundry.message1': `There was an unexpected application error. `,
     'errorBoundry.message2': `Expand to see details.`,
+    'errorBoundry.chunkNotFetched.dialog.title': `Reload Required`,
+    'errorBoundry.chunkNotFetched.error.title': `Failure to load`,
+    'errorBoundry.chunkNotFetched.error.message1': `There was an issue fetching this portion of the application.`,
+    'errorBoundry.chunkNotFetched.error.message2': `This is usually caused by a network issue or an old dashboard version being cached.`,
+    'errorBoundry.chunkNotFetched.error.instructions': `To continue please reload.`,
 };
 
 const ConfirmationDialog: ResolvedIntlConfig['messages'] = {
@@ -181,14 +192,15 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin': `Admin`,
     'routeTitle.admin.accessGrants': `Access Grants`,
     'routeTitle.admin.api': `CLI - API`,
+    'routeTitle.admin.billing': `Billing`,
     'routeTitle.admin.connectors': `Connectors`,
-    'routeTitle.admin.cookies': `Cookie Preferences`,
-    'routeTitle.admin.storageMappings': `${CommonMessages['terms.storageMapping']}`,
+    'routeTitle.admin.settings': `Settings`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
+    'routeTitle.collectionCreate': `Create Transformation`,
     'routeTitle.collectionDetails': `Collection Details`,
     'routeTitle.dataPlaneAuthReq': `Data-plane authorization check`,
     'routeTitle.directives': `Directives`,
@@ -205,34 +217,6 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,
     'routeTitle.passwordReset': `Password Reset`,
-};
-
-const BrowserTitles: ResolvedIntlConfig['messages'] = {
-    'browserTitle.home': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.home']}`,
-    'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dashboard']}`,
-    'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
-    'browserTitle.admin.accessGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.accessGrants']}`,
-    'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
-    'browserTitle.admin.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.connectors']}`,
-    'browserTitle.admin.cookies': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.cookies']}`,
-    'browserTitle.admin.storageMappings': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.storageMappings']}`,
-    'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
-    'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
-    'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
-    'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
-    'browserTitle.details': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.details']}`,
-    'browserTitle.dataPlaneAuthReq': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dataPlaneAuthReq']}`,
-    'browserTitle.error.entityNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.entityNotFound']}`,
-    'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
-    'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
-    'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
-    'browserTitle.legal': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.legal']}`,
-    'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
-    'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
-    'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationEdit']}`,
-    'browserTitle.materializations': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializations']}`,
-    'browserTitle.registration': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.registration']}`,
-    'browserTitle.passwordReset': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.passwordReset']}`,
 };
 
 const Header: ResolvedIntlConfig['messages'] = {
@@ -369,6 +353,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.connectorType': `Type`,
     'entityTable.data.lastUpdated': `Last Updated`,
     'entityTable.data.lastUpdatedWithColon': `Last Updated:`,
+    'entityTable.data.specTypeWithColon': `Type:`,
     'entityTable.data.lastPublished': `Published`,
     'entityTable.data.actions': `Actions`,
     'entityTable.data.writesTo': `Writes To`,
@@ -430,13 +415,57 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
     'admin.accessToken': `Access Token`,
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
-    'admin.cookies': `Cookie Preference Management`,
-    'admin.cookies.message': `Click below to manage your preferences.`,
+
+    'admin.billing.header': `Billing`,
+    'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and {gbFree}GB every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
+    'admin.billing.error.paymentMethodsError': `There was an error connecting with our payment provider.  Please try again later.`,
+    'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
+    'admin.billing.error.undefinedPricingTier.docLink': `contact support`,
+    'admin.billing.error.undefinedPricingTier.docPath': `mailto:support@estuary.dev`,
+    'admin.billing.label.tiers': `Pricing Tier`,
+    'admin.billing.tier.free': `Open Source`,
+    'admin.billing.tier.personal': `Cloud`,
+    'admin.billing.tier.enterprise': `Enterprise`,
+    'admin.billing.graph.dataByMonth.header': `Data Volume by Month`,
+    'admin.billing.graph.tasksByMonth.header': `Tasks by Month`,
+    'admin.billing.graph.dataByTask.header': `Data Volume by Task`,
+    'admin.billing.graph.dataByTask.tooltip': `This graph displays the three, largest data processing tasks over the set interval.`,
+    'admin.billing.table.history.header': `Recent History`,
+    'admin.billing.table.history.label.dataVolume': `Data Volume`,
+    'admin.billing.table.history.label.details': `Pricing Tier`,
+    'admin.billing.table.history.label.month': `Month`,
+    'admin.billing.table.history.label.tasks': `Tasks`,
+    'admin.billing.table.history.label.totalCost': `Total Cost`,
+    'admin.billing.table.history.tooltip.month': `This billing period began on {timestamp}`,
+    'admin.billing.table.history.tooltip.dataVolume': `bytes of data processed by tasks`,
+    'admin.billing.table.history.emptyTableDefault.header': `No information found.`,
+    'admin.billing.table.history.emptyTableDefault.message': `We couldn't find any billing information on file. Only administrators of a tenant are able to review billing information.`,
+
+    'admin.billing.paymentMethods.header': `Payment Information`,
+    'admin.billing.paymentMethods.description': `Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.`,
+    'admin.billing.paymentMethods.cta.addPaymentMethod': `Add Payment Method`,
+    'admin.billing.paymentMethods.table.label.cardType': `Type`,
+    'admin.billing.paymentMethods.table.label.name': `Name`,
+    'admin.billing.paymentMethods.table.label.lastFour': `Last 4 Digits`,
+    'admin.billing.paymentMethods.table.label.details': `Details`,
+    'admin.billing.paymentMethods.table.label.primary': `Primary`,
+    'admin.billing.paymentMethods.table.label.actions': `Actions`,
+    'admin.billing.paymentMethods.table.emptyTableDefault.message': `No payment methods available.`,
+
+    'admin.users.cta.sharePrefix': `Manage Invitations`,
+    'admin.users.sharePrefix.header': `Manage Invitations`,
+    'admin.users.sharePrefix.message': `This is a placeholder for a description.`,
+    'admin.users.sharePrefix.label.capability': `Capability`,
+    'admin.users.sharePrefix.label.type': `Type`,
+    'admin.users.sharePrefix.cta.generateLink': `Generate Invitation`,
+
+    'admin.cookies': `Cookie Preferences`,
+    'admin.cookies.message': `Click below to configure your cookie preferences.`,
     'admin.tabs.users': `Users`,
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
-    'admin.tabs.cookies': `Cookie Preferences`,
-    'admin.tabs.storageMappings': `${CommonMessages['terms.storageMapping']}`,
+    'admin.tabs.billing': `Billing`,
+    'admin.tabs.settings': `Settings`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
@@ -452,6 +481,18 @@ const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrantsTable.prefixes.filterLabel': `Filter Prefix or Object`,
     'accessGrants.message1': `No results found.`,
     'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
+
+    'accessGrants.table.accessLinks.title': `Active Invitations`,
+    'accessGrants.table.accessLinks.cta.generate': `Create Links`,
+    'accessGrants.table.accessLinks.header.noData': `No active invitations found.`,
+    'accessGrants.table.accessLinks.message.noData': `To create an invitation, click the "Generate Invitation" button above. Invitations will be listed here while they are live.`,
+    'accessGrants.table.accessLinks.label.filter': `Filter Prefix or Capability`,
+    'accessGrants.table.accessLinks.label.provisioningPrefix': `Provisioner`,
+    'accessGrants.table.accessLinks.label.grantedPrefix': `Prefix`,
+    'accessGrants.table.accessLinks.label.capability': `Capability`,
+    'accessGrants.table.accessLinks.label.url': `URL`,
+    'accessGrants.table.accessLinks.label.lastUpdated': `Last Updated`,
+    'accessGrants.table.accessLinks.label.actions': `Actions`,
 };
 
 const StorageMappings: ResolvedIntlConfig['messages'] = {
@@ -528,6 +569,7 @@ const Materializations: ResolvedIntlConfig['messages'] = {
 
 const Collections: ResolvedIntlConfig['messages'] = {
     'collectionsTable.title': `Collections`,
+    'collectionsTable.cta.new': `New Transformation`,
     'collectionsTable.detailsCTA': `Details`,
     'collectionsTable.filterLabel': `Filter collections`,
     'collections.message1': `You currently have no collections. Click the Captures icon on the menu bar to get started.`,
@@ -546,7 +588,7 @@ const Collections: ResolvedIntlConfig['messages'] = {
 
 const endpointConfigHeader = `Endpoint Config`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
-    'entityCreate.catalogEditor.heading': `Specification Editor`,
+    'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,
     'entityCreate.docs.header': `Connector Help`,
     'entityCreate.cta.docs': `Connector Help`,
     'entityCreate.errors.collapseTitle': `View logs`,
@@ -571,17 +613,20 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
 
     'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
 
-    'entityCreate.bindingsConfig.collectionsLabel': `Available ${CommonMessages['terms.collections']}`,
-    'entityCreate.bindingsConfig.noRows': `Please select from the ${CommonMessages['terms.collections']} above to begin.`,
+    'entityCreate.bindingsConfig.collectionsLabel': `Available {items}`,
+    'entityCreate.bindingsConfig.noRows': `Please select from the list above to begin.`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
 
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
     'entityCreate.errors.missingDraftId': `Missing Draft ID.`,
+
+    'discovery.failed.title': `Generating Specification Failed`,
+    'discovery.failed.message': `There was an issue attempting to discover your endpoint. Please review details below.`,
 };
 
 const EntityEdit: ResolvedIntlConfig['messages'] = {
     'entityEdit.alert.detailsFormDisabled': `The details form cannot be edited at this time.`,
-    'entityEdit.alert.endpointConfigDisabled': `We are working to enable editing of the endpoint configuration form. In the meantime, edits can be made in the Specification Editor below.`,
+    'entityEdit.alert.endpointConfigDisabled': `Editing of the endpoint configuration form disabled.`,
 };
 
 const MonacoEditor: ResolvedIntlConfig['messages'] = {
@@ -601,11 +646,11 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.config.source.homepage': `Home`,
     'captureCreate.save.failed': `Capture creation failed. See below for details:`,
     'captureCreate.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
-    'captureCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the specification file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
+    'captureCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the specification file directly below. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
     'captureCreate.collections.heading': `Output Collections`,
     'captureCreate.collectionSelector.heading': `Collection Selector`,
-    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To make changes, you can enter new values in the this section of the form or edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
+    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
     'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -641,7 +686,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
 
     'captureEdit.collections.heading': `Output Collections`,
     'captureEdit.collectionSelector.heading': `Collection Selector`,
-    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To make changes, you can enter new values in the this section of the form or edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
+    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
     'captureEdit.test.failedErrorTitle': `Configuration Test Failed`,
     'captureEdit.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -736,7 +781,7 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.test.inProgress': `Please wait while we try to connect to the destination.`,
 
     'materializationEdit.collectionSelector.heading': `Collection Selector`,
-    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To make changes, you can enter new values in the this section of the form or edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
+    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
     'materializationEdit.resourceConfig.heading': `Resource Configuration`,
     'materializationEdit.save.failedErrorTitle': `Materialization Save Failed`,
@@ -788,11 +833,11 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.error.title.missingCollectionSchema': `Failed to fetch collection specification`,
     'workflows.collectionSelector.error.message.invalidPubId': `This specification may have diverged from the latest, published record of the collection. Your unpublished changes can be found in the editor.`,
     'workflows.collectionSelector.error.message.draftCreationFailed': `The latest, published record of the collection can be found in the editor. It is read-only.`,
-    'workflows.collectionSelector.header.collectionSchema': `Collection Specification`,
+    'workflows.collectionSelector.header.collectionSchema': `Collection Schema`,
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
     'workflows.collectionSelector.label.listHeader': `Collections`,
-    'workflows.collectionSelector.tab.collectionSchema': `Specification`,
+    'workflows.collectionSelector.tab.collectionSchema': `Collection`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
@@ -849,7 +894,8 @@ const OAuth: ResolvedIntlConfig['messages'] = {
 };
 
 const Supabase: ResolvedIntlConfig['messages'] = {
-    'supabase.poller.failed': `We encountered a problem retrieving the status of this action. Please check your network connection and try again.`,
+    'supabase.poller.failed.title': `Unable To Reach Server`,
+    'supabase.poller.failed.message': `We encountered a problem retrieving the status of this action. Please check your network connection and try again.`,
 };
 
 const Legal: ResolvedIntlConfig['messages'] = {
@@ -866,17 +912,37 @@ const Legal: ResolvedIntlConfig['messages'] = {
 };
 
 const Tenant: ResolvedIntlConfig['messages'] = {
-    'tenant.heading': `Organization Name`,
+    'tenant.heading': `Let's get started`,
     'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary.  It will only be public if you share data with other organizations.`,
 
     'tenant.expectations': `You can use letters, numbers, periods, underscores, and hyphens`,
     'tenant.expectations.error': `Sorry, only letters(a-z), numbers(0-9), periods(.), underscores(_), and hyphens(-) allowed.`,
 
+    'tenant.input.label': `Organization Name`,
     'tenant.input.placeholder': `acmeCo`,
     'tenant.errorMessage.empty': `You must provide a name before continuing.`,
 
     'tenant.docs.message': `To see a detailed explanation please view our {link}`,
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
+
+    'tenant.origin.radioGroup.label': `How'd you hear about us?`,
+    'tenant.origin.radio.browserSearch.label': `Search (Google, Bing, etc.)`,
+    'tenant.origin.radio.linkedIn.label': `LinkedIn`,
+    'tenant.origin.radio.referral.label': `Referral by a Partner`,
+    'tenant.origin.radio.youTube.label': `YouTube`,
+    'tenant.origin.radio.email.label': `Email`,
+    'tenant.origin.radio.gitHub.label': `GitHub`,
+    'tenant.origin.radio.paidAdvertising.label': `Paid Advertising`,
+    'tenant.origin.radio.other.label': `Other`,
+
+    'tenant.grantDirective.header': `Tenant shared with you`,
+    'tenant.grantDirective.message': `You have been provisioned {grantedCapability} access to the following tenant:`,
+
+    'tenant.grantDirective.error.header': `Unable to Provision Access`,
+    'tenant.grantDirective.error.message': `A problem was encountered provisioning access to the requested tenant. The access link could have been single-use or revoked by an administrator of the tenant.`,
+    'tenant.grantDirective.error.message.help': `For additional context, please {docLink}.`,
+    'tenant.grantDirective.error.message.help.docLink': `contact support`,
+    'tenant.grantDirective.error.message.help.docPath': `mailto:support@estuary.dev`,
 };
 
 const Details: ResolvedIntlConfig['messages'] = {
@@ -896,7 +962,34 @@ const Docs: ResolvedIntlConfig['messages'] = {
     'docs.cta.expand.disabled': `Open 3rd party docs in new window`,
 };
 
+const NewTransform: ResolvedIntlConfig['messages'] = {
+    'newTransform.modal.title': `Derive A New Collection`,
+    'newTransform.language.title': `Language`,
+    'newTransform.language.sql': `SQL`,
+    'newTransform.language.ts': `Typescript`,
+    'newTransform.collection.label': `Derived Collection Name`,
+    'newTransform.errors.collection': `Select source collections`,
+    'newTransform.errors.name': `Name your Derived Collection`,
+    'newTransform.errors.prefixMissing': `No prefix selected`,
+    'newTransform.errors.namePattern': `Name does not match pattern`,
+    'newTransform.errors.nameInvalid': `Invalid entity name`,
+    'newTransform.errors.nameMissing': `Missing entity name`,
+    'newTransform.errors.urlNotGenerated': `We failed to generate the proper URL to start GitPod. ${Error['error.tryAgain']}`,
+    'newTransform.errors.gitPodWindow': `Failed to open GitPod. Your browser may be blocking it from opening. Please ensure your browser allows pop-ups.`,
+    'newTransform.info.gitPodWindowTitle': `GitPod should be opened in a new tab or window`,
+    'newTransform.info.gitPodWindowMessage': `To develop your transformation please use GitPod.`,
+    'newTransform.stepper.step1.label': `Select source collections`,
+    'newTransform.stepper.step2.label': `Transformation Language`,
+    'newTransform.stepper.step3.label': `Write transformations`,
+    'newTransform.instructions1': `You will be set up with an environment to create a
+                            transformation.`,
+    'newTransform.instructions2': `Create your query and use the CLI to
+                            continue, e.g`,
+    'newTransform.button.cta': `Proceed to GitPod`,
+};
+
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
+    'oauth.error.credentialsMissing': `need to complete OAuth`,
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
     'timePicker.button.ariaLabel': `Open time picker for {label}`,
@@ -920,12 +1013,42 @@ const DataPlaneAuthReq: ResolvedIntlConfig['messages'] = {
     'dataPlaneAuthReq.waiting.message': `Please wait while we authorize access to {catalogPrefix}. You will be redirected shortly.`,
 };
 
+const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
+    'schemaEditor.fields.label': `Schema`,
+    'schemaEditor.key.label': `Key`,
+    'schemaEditor.key.helper': `Ordered JSON Pointers that define how a composite key may be extracted from a collection document.`,
+    'schemaEditor.table.empty.header': `No fields to display.`,
+    'schemaEditor.table.empty.message': `We were unable to generate a table from the current schema. Please update the schema.`,
+    'schemaEditor.error.title': `Schema Invalid`,
+    'keyAutoComplete.keys.invalid.message': `Field is not a valid key. Please remove or update the schema.`,
+    'keyAutoComplete.keys.invalid.message.readOnly': `Field is not a valid key. Please update the schema.`,
+    'keyAutoComplete.keys.missing.title': `Key is empty`,
+    'keyAutoComplete.keys.missing.message': `All collections require a key. Please provide a key to continue.`,
+    'keyAutoComplete.noOptions.message': `Without a valid schema we cannot provide options for the key. Please fix schema.`,
+    'keyAutoComplete.noUsableKeys.message': `No fields in the schema are valid keys. Please update schema.`,
+};
+
+const EntityEvolution: ResolvedIntlConfig['messages'] = {
+    'entityEvolution.failure.errorTitle': `Update Failed`,
+    'entityEvolution.serverUnreachable': `Unable to reach server while trying to update collections`,
+    'entityEvolution.error.title': `Changes Rejected Due to Incompatible Schema Updates`,
+    'entityEvolution.error.message': `Schema changes will break downstream tasks. To avoid this, click below and then publish a new version of the affected collections.`,
+    'entityEvolution.error.note': `Note: This may result in additional cost as new collection versions are backfilled.`,
+};
+
+const DraftErrors: ResolvedIntlConfig['messages'] = {
+    'draftErrors.totalCount': `Displaying {displaying} of {total, plural, one {# error} other {# errors}} `,
+};
+
+const UpdateEntity: ResolvedIntlConfig['messages'] = {
+    'updateEntity.noLiveSpecs': `Unable to find entity on server.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
     ...Data,
     ...ErrorBoundry,
-    ...BrowserTitles,
     ...RouteTitles,
     ...FullPage,
     ...Header,
@@ -968,8 +1091,13 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...Details,
     ...ExistingEntityCheck,
     ...Docs,
+    ...NewTransform,
     ...TaskEndpoints,
     ...DataPlaneAuthReq,
+    ...SchemaEditor_Collection,
+    ...EntityEvolution,
+    ...DraftErrors,
+    ...UpdateEntity,
 };
 
 export default enUSMessages;

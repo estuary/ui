@@ -14,12 +14,12 @@ import {
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
+import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
     useDetailsForm_connectorImage_imagePath,
-    useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
     useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm/hooks';
@@ -57,12 +57,10 @@ function MaterializeGenerateButton({
     mutateDraftSpecs,
 }: Props) {
     // Details Form Store
-    const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imagePath = useDetailsForm_connectorImage_imagePath();
-
     const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
 
     // Draft Editor Store
@@ -103,6 +101,11 @@ function MaterializeGenerateButton({
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
 
+    // Add the image name to the end unless there is already a persisted
+    //  draftID. Because after the first generation we already have a name
+    //  with the image name suffix
+    const processedEntityName = useEntityNameSuffix(!persistedDraftId);
+
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         updateFormStatus(FormStatus.GENERATING);
@@ -139,7 +142,7 @@ function MaterializeGenerateButton({
                 const existingDraftSpecResponse =
                     await getDraftSpecsByCatalogName(
                         persistedDraftId,
-                        entityName,
+                        processedEntityName,
                         'materialization'
                     );
 
@@ -157,7 +160,9 @@ function MaterializeGenerateButton({
                     existingTaskData = existingDraftSpecResponse.data[0];
                 }
             } else {
-                const draftsResponse = await createEntityDraft(entityName);
+                const draftsResponse = await createEntityDraft(
+                    processedEntityName
+                );
 
                 if (draftsResponse.error) {
                     return callFailed({
@@ -182,12 +187,12 @@ function MaterializeGenerateButton({
                 persistedDraftId && existingTaskData
                     ? await modifyDraftSpec(draftSpec, {
                           draft_id: evaluatedDraftId,
-                          catalog_name: entityName,
+                          catalog_name: processedEntityName,
                           spec_type: 'materialization',
                       })
                     : await createDraftSpec(
                           evaluatedDraftId,
-                          entityName,
+                          processedEntityName,
                           draftSpec,
                           'materialization'
                       );

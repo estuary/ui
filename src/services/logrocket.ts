@@ -37,6 +37,8 @@ export enum CustomEvents {
     MATERIALIZATION_TEST = 'Materialization_Test',
     MATERIALIZATION_EDIT = 'Materialization_Edit',
     DIRECTIVE = 'Directive',
+    ERROR_BOUNDARY_DISPLAYED = 'Error_Boundary_Displayed',
+    ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
 }
 
 const logRocketSettings = getLogRocketSettings();
@@ -67,8 +69,8 @@ const allowedKeys = [
     'title',
 ];
 
-// This is the main function tha twill go through the parsed body and handle the keys.
-//      You provied a parsed body, the keys you want to process, and the action
+// This is the main function that will go through the parsed body and handle the keys.
+//      You provide a parsed body, the keys you want to process, and the action
 //      'mask'   - the keys you provided will be masked out
 //      'filter' - the keys you provided will be put into a new object
 const processBody = (
@@ -101,26 +103,27 @@ const processBody = (
     return originalIsArray ? response : response[0];
 };
 
+// DISABLE BODY FILTERING
 // Used to parse the body of a request/response. Will handle very basic use of just
 //  a string or object body. To keep stuff safe if we cannot parse the string we
 //  set everything to masked.
-const parseBody = (body: any): ParsedBody => {
-    let formattedContent;
+// const parseBody = (body: any): ParsedBody => {
+//     let formattedContent;
 
-    if (typeof body === 'string') {
-        try {
-            // If the body has length parse it otherwise leave it as a blank string
-            formattedContent = body.length > 0 ? JSON.parse(body) : '';
-        } catch (error: unknown) {
-            // If the JSON messes up getting parsed just be safe and mask everything
-            formattedContent = MASKED;
-        }
-    } else if (typeof body === 'object') {
-        formattedContent = body;
-    }
+//     if (typeof body === 'string') {
+//         try {
+//             // If the body has length parse it otherwise leave it as a blank string
+//             formattedContent = body.length > 0 ? JSON.parse(body) : '';
+//         } catch (error: unknown) {
+//             // If the JSON messes up getting parsed just be safe and mask everything
+//             formattedContent = MASKED;
+//         }
+//     } else if (typeof body === 'object') {
+//         formattedContent = body;
+//     }
 
-    return formattedContent;
-};
+//     return formattedContent;
+// };
 
 // Go through the request and handle the skipping, masking, filtering
 const maskContent = (requestResponse: any) => {
@@ -136,14 +139,18 @@ const maskContent = (requestResponse: any) => {
         return requestResponse;
     }
 
+    //  DISABLE BODY FILTERING
+    //  Now that we have SOPs encryption we should be safe to not clean out the request body
+    //  as the fields that need to stay private should always be encrypted
     // If there is a body filter the objecy so only specific values make it through
-    if (requestResponse?.body && !isEmpty(requestResponse.body)) {
-        requestResponse.body = processBody(
-            parseBody(requestResponse.body),
-            allowedKeys,
-            'filter'
-        );
-    }
+    // if (requestResponse?.body && !isEmpty(requestResponse.body)) {
+    //     requestResponse.body = processBody(
+    //         parseBody(requestResponse.body),
+    //         allowedKeys,
+    //         'filter'
+    //     );
+    // }
+    //  DISABLE BODY FILTERING
 
     // If there are headers go ahead and mask the values.
     if (requestResponse?.headers && !isEmpty(requestResponse.headers)) {
@@ -209,6 +216,29 @@ export const identifyUser = (user: User) => {
             traits.email = userDetails.email;
         }
 
-        LogRocket.identify(user.id, traits);
+        // Just want to be very very safe
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (LogRocket) {
+            LogRocket.identify(user.id, traits);
+        }
+    }
+};
+
+export const logRocketEvent = (
+    event: CustomEvents | string,
+    eventProperties?: any
+) => {
+    // Just want to be very very safe
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (LogRocket?.track) {
+        LogRocket.track(event, eventProperties);
+    }
+};
+
+export const logRocketConsole = (message: string, ...props: any[]) => {
+    // Just want to be very very safe
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (LogRocket?.log) {
+        LogRocket.log(message, props);
     }
 };

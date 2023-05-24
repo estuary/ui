@@ -203,6 +203,108 @@ export const useBindingsEditorStore_setSchemaUpdateErrored = () => {
     >(getStoreName(entityType), (state) => state.setSchemaUpdateErrored);
 };
 
+export const useBindingsEditorStore_incompatibleCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['incompatibleCollections']
+    >(getStoreName(entityType), (state) => state.incompatibleCollections);
+};
+
+export const useBindingsEditorStore_hasIncompatibleCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['hasIncompatibleCollections']
+    >(getStoreName(entityType), (state) => state.hasIncompatibleCollections);
+};
+
+export const useBindingsEditorStore_setIncompatibleCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setIncompatibleCollections']
+    >(getStoreName(entityType), (state) => state.setIncompatibleCollections);
+};
+
+export const useBindingsEditorStore_editModeEnabled = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['editModeEnabled']
+    >(getStoreName(entityType), (state) => state.editModeEnabled);
+};
+
+export const useBindingsEditorStore_setEditModeEnabled = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setEditModeEnabled']
+    >(getStoreName(entityType), (state) => state.setEditModeEnabled);
+};
+
+export const useBindingsEditorStore_inferSchemaResponse = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['inferSchemaResponse']
+    >(getStoreName(entityType), (state) => state.inferSchemaResponse);
+};
+
+export const useBindingsEditorStore_inferSchemaResponse_Keys = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['inferSchemaResponse_Keys']
+    >(getStoreName(entityType), (state) => state.inferSchemaResponse_Keys);
+};
+
+export const useBindingsEditorStore_inferSchemaResponseDoneProcessing = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['inferSchemaResponseDoneProcessing']
+    >(
+        getStoreName(entityType),
+        (state) => state.inferSchemaResponseDoneProcessing
+    );
+};
+
+export const useBindingsEditorStore_inferSchemaResponseEmpty = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['inferSchemaResponseEmpty']
+    >(getStoreName(entityType), (state) => state.inferSchemaResponseEmpty);
+};
+
+export const useBindingsEditorStore_inferSchemaResponseError = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['inferSchemaResponseError']
+    >(getStoreName(entityType), (state) => state.inferSchemaResponseError);
+};
+
+export const useBindingsEditorStore_populateInferSchemaResponse = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['populateInferSchemaResponse']
+    >(getStoreName(entityType), (state) => state.populateInferSchemaResponse);
+};
+
 export const useBindingsEditorStore_resetState = () => {
     const entityType = useEntityType();
 

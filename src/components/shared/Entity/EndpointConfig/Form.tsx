@@ -10,17 +10,14 @@ import { FormattedMessage } from 'react-intl';
 import { setDefaultsValidator } from 'services/ajv';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
-import { defaultOptions, showValidation } from 'services/jsonforms/shared';
+import { defaultOptions } from 'services/jsonforms/shared';
 import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfig_endpointCanBeEmpty,
 } from 'stores/EndpointConfig/hooks';
-import {
-    useFormStateStore_displayValidation,
-    useFormStateStore_isActive,
-} from 'stores/FormState/hooks';
+import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
@@ -38,7 +35,6 @@ function EndpointConfigForm({ readOnly }: Props) {
     const endpointCanBeEmpty = useEndpointConfig_endpointCanBeEmpty();
 
     // Form State Store
-    const displayValidation = useFormStateStore_displayValidation();
     const isActive = useFormStateStore_isActive();
 
     const categoryLikeSchema = useMemo(() => {
@@ -48,8 +44,6 @@ function EndpointConfigForm({ readOnly }: Props) {
             return null;
         }
     }, [endpointSchema]);
-
-    const showValidationVal = showValidation(displayValidation);
 
     if (categoryLikeSchema === null) {
         return null;
@@ -77,7 +71,7 @@ function EndpointConfigForm({ readOnly }: Props) {
                     cells={materialCells}
                     config={defaultOptions}
                     readonly={readOnly || isActive}
-                    validationMode={showValidationVal}
+                    validationMode="ValidateAndShow"
                     onChange={setEndpointConfig}
                     ajv={setDefaultsValidator}
                 />

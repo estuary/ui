@@ -47,6 +47,7 @@ export enum TABLES {
     DRAFT_SPECS_EXT = 'draft_specs_ext',
     DRAFTS = 'drafts',
     DRAFTS_EXT = 'drafts_ext',
+    EVOLUTIONS = 'evolutions',
     LIVE_SPEC_FLOW = 'live_spec_flow',
     LIVE_SPECS = 'live_specs',
     LIVE_SPECS_EXT = 'live_specs_ext',
@@ -65,10 +66,14 @@ export enum TABLES {
 export enum RPCS {
     EXCHANGE_DIRECTIVES = 'exchange_directive_token',
     VIEW_LOGS = 'view_logs',
+    CREATE_REFRESH_TOKEN = 'create_refresh_token',
+    BILLING_REPORT = 'billing_report',
+    AUTH_ROLES = 'auth_roles',
 }
 
 export enum FUNCTIONS {
     OAUTH = 'oauth',
+    BILLING = 'billing',
 }
 
 export const supabaseClient = createClient(
@@ -287,6 +292,15 @@ export const jobSucceeded = (jobStatus?: JobStatus) => {
 type PollerTimeout = number | undefined;
 
 export const JOB_STATUS_POLLER_ERROR = 'supabase.poller.failed';
+export const DEFAULT_POLLER_ERROR_TITLE_KEY = 'supabase.poller.failed.title';
+export const DEFAULT_POLLER_ERROR_MESSAGE_KEY =
+    'supabase.poller.failed.message';
+export const DEFAULT_POLLER_ERROR = {
+    title: DEFAULT_POLLER_ERROR_TITLE_KEY,
+    error: {
+        message: DEFAULT_POLLER_ERROR_MESSAGE_KEY,
+    },
+};
 
 // These columns are not always what you want... but okay for a "default" constant
 export const JOB_STATUS_COLUMNS = `job_status, logs_token, id`;

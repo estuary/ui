@@ -91,6 +91,38 @@ export interface JoinedAppliedDirective extends AppliedDirective<any> {
     ['directives.spec->>type']: undefined;
 }
 
+export interface GrantDirectiveSpec {
+    type: string;
+    capability: string;
+    grantedPrefix: string;
+}
+
+export interface GrantDirective {
+    created_at: string;
+    detail: string | null;
+    id: string;
+    updated_at: string;
+    catalog_prefix: string;
+    uses_remaining: number | null;
+    spec: GrantDirectiveSpec;
+    token: string;
+}
+
+export interface GrantDirective_AccessLinks {
+    id: string;
+    updated_at: string;
+    catalog_prefix: string;
+    uses_remaining: number | null;
+    spec: {
+        type: string;
+        capability: string;
+        grantedPrefix: string;
+    };
+    token: string;
+    ['spec->>capability']: undefined;
+    ['spec->>grantedPrefix']: undefined;
+}
+
 export interface StorageMappingStore {
     provider: string;
     bucket: string;
@@ -130,6 +162,15 @@ export interface CatalogStats {
     flow_document: any;
 }
 
+export interface CatalogStats_Billing {
+    catalog_name: string;
+    grain: string;
+    ts: string;
+    bytes_written_by_me: number;
+    bytes_read_by_me: number;
+    flow_document: any;
+}
+
 export interface Directive {
     created_at: Date;
     detail: null;
@@ -139,6 +180,14 @@ export interface Directive {
     single_use: boolean;
     spec: JobStatus;
     token: string;
+}
+
+export interface UserGrants {
+    capability: string;
+    object_role: string;
+    user_id: string;
+    id: string;
+    detail: string | null;
 }
 
 export interface Grants {
@@ -181,7 +230,8 @@ export type EntityWorkflow =
     | 'capture_create'
     | 'capture_edit'
     | 'materialization_create'
-    | 'materialization_edit';
+    | 'materialization_edit'
+    | 'test_json_forms';
 
 export type SortDirection = 'asc' | 'desc';
 
@@ -196,6 +246,7 @@ export enum TableStatuses {
 export interface TableColumns {
     field: string | null;
     headerIntlKey?: string | null;
+    width?: number;
 }
 
 export interface TableState {

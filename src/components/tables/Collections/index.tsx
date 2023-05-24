@@ -4,10 +4,13 @@ import Rows from 'components/tables/Collections/Rows';
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
+import useTableState from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
-import StatsHydrator from '../Captures/StatsHydrator';
-import useTableState from '../hooks';
+import StatsHydrator from 'stores/Tables/StatsHydrator';
+import RowSelector from '../RowActions/RowSelector';
 import useCollectionColumns from './useCollectionColumns';
+
+const selectableTableStoreName = SelectTableStoreNames.COLLECTION;
 
 function CollectionsTable() {
     const {
@@ -35,10 +38,10 @@ function CollectionsTable() {
         <Box>
             <TableHydrator
                 query={query}
-                selectableTableStoreName={SelectTableStoreNames.COLLECTION}
+                selectableTableStoreName={selectableTableStoreName}
             >
                 <StatsHydrator
-                    selectableTableStoreName={SelectTableStoreNames.COLLECTION}
+                    selectableTableStoreName={selectableTableStoreName}
                 >
                     <EntityTable
                         noExistingDataContentIds={{
@@ -62,10 +65,17 @@ function CollectionsTable() {
                         setColumnToSort={setColumnToSort}
                         header="collectionsTable.title"
                         filterLabel="collectionsTable.filterLabel"
-                        selectableTableStoreName={
-                            SelectTableStoreNames.COLLECTION
-                        }
+                        selectableTableStoreName={selectableTableStoreName}
                         showEntityStatus
+                        showToolbar
+                        toolbar={
+                            <RowSelector
+                                selectableTableStoreName={
+                                    selectableTableStoreName
+                                }
+                                showMaterialize={false}
+                            />
+                        }
                     />
                 </StatsHydrator>
             </TableHydrator>

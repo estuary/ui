@@ -1,5 +1,6 @@
 import { useDebugValue } from 'react';
 import { TABLES } from 'services/supabase';
+import { Entity } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { useQuery, useSelect } from './supabase-swr/';
 
@@ -14,20 +15,34 @@ const queryColumns = ['catalog_name', 'spec_type'];
 
 const defaultResponse: LiveSpecsQuery[] = [];
 
-function useLiveSpecs(specType: string) {
+function useLiveSpecs(specType?: Entity, matchName?: string) {
     const draftSpecQuery = useQuery<LiveSpecsQuery>(
         TABLES.LIVE_SPECS_EXT,
         {
             columns: queryColumns,
-            filter: (query) =>
-                query.eq('spec_type', specType).order('updated_at', {
-                    ascending: false,
-                }),
+            filter: (query) => {
+                let queryBuilder = query
+                    .eq('spec_type', specType)
+                    .order('updated_at', {
+                        ascending: false,
+                    });
+
+                if (matchName) {
+                    queryBuilder = queryBuilder.like(
+                        'catalog_name',
+                        `${matchName}%`
+                    );
+                }
+
+                return queryBuilder;
+            },
         },
-        [specType]
+        [specType, matchName]
     );
 
-    const { data, error, isValidating } = useSelect(draftSpecQuery);
+    const { data, error, isValidating } = useSelect(
+        specType ? draftSpecQuery : null
+    );
 
     return {
         liveSpecs: data ? data.data : defaultResponse,

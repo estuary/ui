@@ -212,7 +212,15 @@ export const getInitialState = (
                 } else {
                     setHydrationErrorsExist(true);
                 }
-            } else {
+            } else if (workflow === 'test_json_forms') {
+                const { setDetails_connector } = get();
+                setDetails_connector({
+                    id: connectorId,
+                    iconPath: '',
+                    imageName: '',
+                    imagePath: '',
+                    connectorId,
+                });
                 setHydrationErrorsExist(true);
             }
         }

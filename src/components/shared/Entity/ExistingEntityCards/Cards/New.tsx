@@ -8,9 +8,8 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { Plus } from 'iconoir-react';
-import LogRocket from 'logrocket';
 import { FormattedMessage } from 'react-intl';
-import { CustomEvents } from 'services/logrocket';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import { DEFAULT_FILTER } from 'services/supabase';
 import { EntityWithCreateWorkflow } from 'types';
 
@@ -23,7 +22,7 @@ const trackEvent = (
             ? CustomEvents.CAPTURE_CREATE_CONFIG_CREATE
             : CustomEvents.MATERIALIZATION_CREATE_CONFIG_CREATE;
 
-    LogRocket.track(logEvent, {
+    logRocketEvent(logEvent, {
         connector_id: connectorId ?? DEFAULT_FILTER,
     });
 };

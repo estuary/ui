@@ -3,25 +3,22 @@ import { createEntityDraft } from 'api/drafts';
 import {
     DraftSpecsExtQuery_ByCatalogName,
     getDraftSpecsByCatalogName,
-    getDraftSpecsBySpecType,
 } from 'api/draftSpecs';
 import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
+    useEditorStore_setDiscoveredDraftId,
     useEditorStore_setId,
-    useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
-import { useEntityWorkflow } from 'context/Workflow';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
-import LogRocket from 'logrocket';
+import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
+import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback, useMemo } from 'react';
-import { CustomEvents } from 'services/logrocket';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
     DEFAULT_FILTER,
+    DEFAULT_POLLER_ERROR,
     jobStatusPoller,
     JOB_STATUS_POLLER_ERROR,
     TABLES,
@@ -29,10 +26,8 @@ import {
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
-    useDetailsForm_connectorImage_imageName,
     useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
-    useDetailsForm_draftedEntityName,
     useDetailsForm_errorsExist,
     useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm/hooks';
@@ -47,29 +42,20 @@ import {
 } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
-    useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import {
-    useResourceConfig_evaluateDiscoveredCollections,
-    useResourceConfig_resetConfigAndCollections,
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
-    useResourceConfig_setDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
 import { Entity } from 'types';
-import { hasLength, stripPathing } from 'utils/misc-utils';
 import { encryptEndpointConfig } from 'utils/sops-utils';
-import {
-    modifyDiscoveredDraftSpec,
-    modifyExistingCaptureDraftSpec,
-    SupabaseConfig,
-} from 'utils/workflow-utils';
+import { modifyExistingCaptureDraftSpec } from 'utils/workflow-utils';
 
 const trackEvent = (payload: any) => {
-    LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
+    logRocketEvent(CustomEvents.CAPTURE_DISCOVER, {
         name: payload.capture_name ?? DEFAULT_FILTER,
         id: payload.id ?? DEFAULT_FILTER,
         draft_id: payload.draft_id ?? DEFAULT_FILTER,
@@ -86,15 +72,10 @@ function useDiscoverCapture(
 ) {
     const supabaseClient = useClient();
 
-    const [lastPubId] = useGlobalSearchParams([GlobalSearchParams.LAST_PUB_ID]);
-
-    const workflow = useEntityWorkflow();
-    const editWorkflow = workflow === 'capture_edit';
-
     // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
-    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
     const setDraftId = useEditorStore_setId();
+    const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
 
     const isSaving = useEditorStore_isSaving();
     const resetEditorState = useEditorStore_resetState();
@@ -103,7 +84,6 @@ function useDiscoverCapture(
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
     const updateFormStatus = useFormStateStore_updateStatus();
-    const messagePrefix = useFormStateStore_messagePrefix();
 
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
@@ -111,9 +91,7 @@ function useDiscoverCapture(
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
     const imagePath = useDetailsForm_connectorImage_imagePath();
-    const imageName = useDetailsForm_connectorImage_imageName();
     const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
-    const draftedEntityName = useDetailsForm_draftedEntityName();
 
     // Endpoint Config Store
     const setEncryptedEndpointConfig =
@@ -129,94 +107,23 @@ function useDiscoverCapture(
 
     // Resource Config Store
     const resourceConfig = useResourceConfig_resourceConfig();
-    const setDiscoveredCollections =
-        useResourceConfig_setDiscoveredCollections();
-    const evaluateDiscoveredCollections =
-        useResourceConfig_evaluateDiscoveredCollections();
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
-    const resetCollections = useResourceConfig_resetConfigAndCollections();
 
-    const storeDiscoveredCollections = useCallback(
-        async (newDraftId: string) => {
-            // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
-            //   More columns are selected than required to appease the typing of the editor store.
-            const draftSpecsResponse = await getDraftSpecsBySpecType(
-                newDraftId,
-                entityType
-            );
+    const storeDiscoveredCollections = useStoreDiscoveredCaptures();
 
-            if (draftSpecsResponse.error) {
-                return callFailed({
-                    error: {
-                        title: 'captureCreate.generate.failedErrorTitle',
-                        error: draftSpecsResponse.error,
-                    },
-                });
-            }
-
-            if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
-                resetCollections();
-
-                setDiscoveredCollections(draftSpecsResponse.data[0]);
-
-                const supabaseConfig: SupabaseConfig | null =
-                    editWorkflow && lastPubId
-                        ? { catalogName: entityName, lastPubId }
-                        : null;
-
-                const updatedDraftSpecsResponse =
-                    await modifyDiscoveredDraftSpec(
-                        draftSpecsResponse,
-                        supabaseConfig
-                    );
-
-                if (updatedDraftSpecsResponse.error) {
-                    return callFailed({
-                        error: {
-                            title: 'captureCreate.generate.failedErrorTitle',
-                            error: updatedDraftSpecsResponse.error,
-                        },
-                    });
-                }
-
-                if (
-                    updatedDraftSpecsResponse.data &&
-                    updatedDraftSpecsResponse.data.length > 0
-                ) {
-                    evaluateDiscoveredCollections(updatedDraftSpecsResponse);
-
-                    setEncryptedEndpointConfig({
-                        data: updatedDraftSpecsResponse.data[0].spec.endpoint
-                            .connector.config,
-                    });
-                }
-
-                setDraftId(newDraftId);
-                setPersistedDraftId(newDraftId);
-            }
-        },
-        [
-            callFailed,
-            editWorkflow,
-            entityName,
-            entityType,
-            evaluateDiscoveredCollections,
-            lastPubId,
-            resetCollections,
-            setDiscoveredCollections,
-            setDraftId,
-            setEncryptedEndpointConfig,
-            setPersistedDraftId,
-        ]
-    );
+    // If we are doing an initial discovery add the name name to the name
+    // If not we are either refreshing collections during create OR during edit
+    //  Refreshing during:
+    //    create requires draftedEntityName because it has the connector image added to it
+    //    edit   requires entityName        because it is the name already in the system and
+    //                                        we do not have a draftedEntityName yet
+    const processedEntityName = useEntityNameSuffix(options?.initiateDiscovery);
 
     const jobFailed = useCallback(
-        (errorTitle: string) => {
+        (error) => {
             setFormState({
-                error: {
-                    title: errorTitle,
-                },
+                error,
                 status: FormStatus.FAILED,
             });
         },
@@ -229,6 +136,7 @@ function useDiscoverCapture(
             existingEndpointConfig: any // JsonFormsData,
         ) => {
             setDraftId(null);
+            setDiscoveredDraftId(discoverDraftId);
 
             jobStatusPoller(
                 supabaseClient
@@ -246,7 +154,11 @@ function useDiscoverCapture(
                     })
                     .order('created_at', { ascending: false }),
                 async (payload: any) => {
-                    await storeDiscoveredCollections(payload.draft_id);
+                    await storeDiscoveredCollections(
+                        payload.draft_id,
+                        entityType,
+                        callFailed
+                    );
 
                     void postGenerateMutate();
 
@@ -262,22 +174,29 @@ function useDiscoverCapture(
                 },
                 (payload: any) => {
                     if (payload.error === JOB_STATUS_POLLER_ERROR) {
-                        jobFailed(payload.error);
+                        jobFailed(DEFAULT_POLLER_ERROR);
                     } else {
-                        jobFailed(`${messagePrefix}.test.failedErrorTitle`);
+                        jobFailed({
+                            title: 'discovery.failed.title',
+                            error: {
+                                message: 'discovery.failed.message',
+                            },
+                        });
                     }
                 }
             );
         },
         [
+            callFailed,
+            entityType,
             jobFailed,
+            postGenerateMutate,
+            setDiscoveredDraftId,
             setDraftId,
             setDraftedEntityName,
             setFormState,
             setPreviousEndpointConfig,
             storeDiscoveredCollections,
-            messagePrefix,
-            postGenerateMutate,
             supabaseClient,
         ]
     );
@@ -317,18 +236,6 @@ function useDiscoverCapture(
                     options?.initiateRediscovery ||
                     options?.initiateDiscovery
                 ) {
-                    // If we are doing an initial discovery add the name name to the name
-                    // If not we are either refreshing collections during create OR during edit
-                    //  Refreshing during:
-                    //    create requires draftedEntityName because it has the connector image added to it
-                    //    edit   requires entityName        because it is the name already in the system and
-                    //                                        we do not have a draftedEntityName yet
-                    const processedEntityName = options.initiateDiscovery
-                        ? `${entityName}/${stripPathing(imageName)}`
-                        : hasLength(draftedEntityName)
-                        ? draftedEntityName
-                        : entityName;
-
                     const draftsResponse = await createEntityDraft(
                         processedEntityName
                     );
@@ -426,32 +333,31 @@ function useDiscoverCapture(
             }
         },
         [
-            callFailed,
-            createDiscoversSubscription,
-            postGenerateMutate,
-            resetEditorState,
-            setDraftId,
-            setEncryptedEndpointConfig,
-            setFormState,
-            setPreviousEndpointConfig,
             updateFormStatus,
             detailsFormsHasErrors,
-            draftedEntityName,
-            endpointConfigData,
             endpointConfigErrorsExist,
+            resourceConfigHasErrors,
+            setFormState,
+            resetEditorState,
+            serverUpdateRequired,
+            endpointConfigData,
+            serverEndpointConfigData,
             endpointSchema,
-            entityName,
             imageConnectorId,
             imageConnectorTagId,
-            imageName,
-            imagePath,
+            callFailed,
             options?.initiateRediscovery,
             options?.initiateDiscovery,
             persistedDraftId,
+            processedEntityName,
+            createDiscoversSubscription,
+            entityName,
+            imagePath,
             resourceConfig,
-            resourceConfigHasErrors,
-            serverEndpointConfigData,
-            serverUpdateRequired,
+            setEncryptedEndpointConfig,
+            setPreviousEndpointConfig,
+            setDraftId,
+            postGenerateMutate,
         ]
     );
 

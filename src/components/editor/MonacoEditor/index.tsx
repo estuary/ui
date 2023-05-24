@@ -20,13 +20,22 @@ import {
     DEFAULT_TOOLBAR_HEIGHT,
     ICON_SIZE,
 } from 'utils/editor-utils';
+import { AllowedScopes } from './types';
 
-export interface Props {
+type onChange = (
+    newVal: any,
+    path: string,
+    specType: string,
+    scope?: AllowedScopes
+) => any;
+
+export interface MonacoEditorProps {
     localZustandScope: boolean;
     disabled?: boolean;
-    onChange?: (newVal: any, path: string, specType: string) => any;
+    onChange?: onChange;
     height?: number;
     toolbarHeight?: number;
+    editorSchemaScope?: AllowedScopes; // Used to scop the schema editor
 }
 
 function MonacoEditor({
@@ -35,7 +44,8 @@ function MonacoEditor({
     height = DEFAULT_HEIGHT,
     onChange,
     toolbarHeight = DEFAULT_TOOLBAR_HEIGHT,
-}: Props) {
+    editorSchemaScope,
+}: MonacoEditorProps) {
     const theme = useTheme();
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
@@ -61,25 +71,6 @@ function MonacoEditor({
 
     const [showServerDiff, setShowServerDiff] = useState(false);
 
-    // TODO (sync editing)
-    // useEffect(() => {
-    //     if (editorRef.current) {
-    //         const currentStringValue = editorRef.current.getValue();
-
-    //         if (currentStringValue) {
-    //             const currentEditorValue = JSON.parse(currentStringValue);
-
-    //             if (!isEqual(currentEditorValue, serverUpdate)) {
-    //                 setHasServerChanges(serverUpdate);
-    //             } else {
-    //                 setHasServerChanges(null);
-    //             }
-    //         }
-    //     }
-
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [serverUpdate]);
-
     const updateValue = () => {
         console.log('editor:update');
         const currentValue = editorRef.current?.getValue();
@@ -104,15 +95,36 @@ function MonacoEditor({
                     catalogType,
                 });
                 setStatus(EditorStatus.SAVING);
-                onChange(parsedVal, catalogName, catalogType)
-                    .then(() => {
-                        console.log('editor:update:saving:success');
-                        setStatus(EditorStatus.SAVED);
-                    })
-                    .catch(() => {
-                        console.log('editor:update:saving:failed');
-                        setStatus(EditorStatus.SAVE_FAILED);
+
+                if (editorSchemaScope) {
+                    console.log('editor:update:saving:scoped', {
+                        nestedProperty: editorSchemaScope,
                     });
+                    onChange(
+                        parsedVal,
+                        catalogName,
+                        catalogType,
+                        editorSchemaScope
+                    )
+                        .then(() => {
+                            console.log('editor:update:saving:scoped:success');
+                            setStatus(EditorStatus.SAVED);
+                        })
+                        .catch(() => {
+                            console.log('editor:update:saving:scoped:failed');
+                            setStatus(EditorStatus.SAVE_FAILED);
+                        });
+                } else {
+                    onChange(parsedVal, catalogName, catalogType)
+                        .then(() => {
+                            console.log('editor:update:saving:success');
+                            setStatus(EditorStatus.SAVED);
+                        })
+                        .catch(() => {
+                            console.log('editor:update:saving:failed');
+                            setStatus(EditorStatus.SAVE_FAILED);
+                        });
+                }
             } else {
                 console.log('editor:update:invalid', {
                     parsedVal,
@@ -134,10 +146,22 @@ function MonacoEditor({
         catalogName,
     ]);
 
-    const specAsString = useMemo(
-        () => stringifyJSON(catalogSpec),
-        [catalogSpec]
-    );
+    const specAsString = useMemo(() => {
+        let spec: any;
+        if (editorSchemaScope) {
+            // If there is a schema sdcope make sure it exists first
+            //  otherwise we will fall back to the schema prop
+            // This is just being super safe
+            if (catalogSpec[editorSchemaScope]) {
+                spec = catalogSpec[editorSchemaScope];
+            } else {
+                spec = catalogSpec.schema;
+            }
+        } else {
+            spec = catalogSpec;
+        }
+        return stringifyJSON(spec);
+    }, [catalogSpec, editorSchemaScope]);
 
     const handlers = {
         change: (value: any, ev: any) => {

@@ -38,7 +38,7 @@ import {
     toDataPath,
     UISchemaElement,
 } from '@jsonforms/core';
-import { concat, includes, orderBy } from 'lodash';
+import { concat, includes, isPlainObject, orderBy } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
@@ -334,70 +334,76 @@ const generateUISchema = (
     // Check if the current schema is one of the required props
     const isRequired = isRequiredField(schemaName, rootSchema);
 
-    if (isCombinator(jsonSchema) && isAdvancedConfig(jsonSchema)) {
-        // Always create a Group for "advanced" configuration objects, so that we can collapse it and
-        // see the label.
+    if (isPlainObject(jsonSchema)) {
+        if (isCombinator(jsonSchema) && isAdvancedConfig(jsonSchema)) {
+            // Always create a Group for "advanced" configuration objects, so that we can collapse it and
+            // see the label.
 
-        const group: GroupLayout = {
-            type: 'Group',
-            elements: [createControlElement(currentRef)],
-        };
-        copyAdvancedOption(group, jsonSchema);
+            const group: GroupLayout = {
+                type: 'Group',
+                elements: [createControlElement(currentRef)],
+            };
+            copyAdvancedOption(group, jsonSchema);
 
-        if (isRequired) {
-            addRequiredGroupOptions(group);
+            if (isRequired) {
+                addRequiredGroupOptions(group);
+            }
+
+            return addTitle(group, jsonSchema, schemaName);
+        } else if (isCombinator(jsonSchema)) {
+            // For oneOf/allOf, we just create a control element. This is where things get weird in json
+            // forms, because the _control_ is what causes the tabs to render. Since it's a control and not
+            // a layout, it means we lose the ability to have uischemas that apply to the nested elements.
+
+            const controlObject = createControlElement(currentRef);
+
+            if (jsonSchema.title) {
+                controlObject.label = jsonSchema.title;
+            }
+
+            schemaElements.push(controlObject);
+
+            if (isRequired) {
+                addRequiredGroupOptions(controlObject);
+            }
+
+            return controlObject;
+        } else if (isOAuthConfig(jsonSchema)) {
+            // Handle OAuth specifically as we need to show an "OAuth CTA" to allow
+            //  users to sign in with the provider. This includes injecting our own
+            //  control in place of the actual properties that would normally be
+            //  displayed. Since we are displaying a custom object control
+            //  we fetch the "path to fields" so we can properly fire the change event
+
+            const oAuthCTAControl = createControlElement(currentRef);
+
+            addOption(
+                oAuthCTAControl,
+                Options.oauthProvider,
+                jsonSchema[Annotations.oAuthProvider]
+            );
+            addOption(
+                oAuthCTAControl,
+                Options.oauthFields,
+                jsonSchema.required
+            );
+            addOption(
+                oAuthCTAControl,
+                Options.oauthPathToFields,
+                toDataPath(currentRef)
+            );
+
+            if (jsonSchema.title) {
+                oAuthCTAControl.label = jsonSchema.title;
+            }
+
+            if (isRequired) {
+                addRequiredGroupOptions(oAuthCTAControl);
+            }
+
+            schemaElements.push(oAuthCTAControl);
+            return oAuthCTAControl;
         }
-
-        return addTitle(group, jsonSchema, schemaName);
-    } else if (isCombinator(jsonSchema)) {
-        // For oneOf/allOf, we just create a control element. This is where things get weird in json
-        // forms, because the _control_ is what causes the tabs to render. Since it's a control and not
-        // a layout, it means we lose the ability to have uischemas that apply to the nested elements.
-
-        const controlObject = createControlElement(currentRef);
-
-        if (jsonSchema.title) {
-            controlObject.label = jsonSchema.title;
-        }
-
-        schemaElements.push(controlObject);
-
-        if (isRequired) {
-            addRequiredGroupOptions(controlObject);
-        }
-
-        return controlObject;
-    } else if (isOAuthConfig(jsonSchema)) {
-        // Handle OAuth specifically as we need to show an "OAuth CTA" to allow
-        //  users to sign in with the provider. This includes injecting our own
-        //  control in place of the actual properties that would normally be
-        //  displayed. Since we are displaying a custom object control
-        //  we fetch the "path to fields" so we can properly fire the change event
-
-        const oAuthCTAControl = createControlElement(currentRef);
-
-        addOption(
-            oAuthCTAControl,
-            Options.oauthProvider,
-            jsonSchema[Annotations.oAuthProvider]
-        );
-        addOption(oAuthCTAControl, Options.oauthFields, jsonSchema.required);
-        addOption(
-            oAuthCTAControl,
-            Options.oauthPathToFields,
-            toDataPath(currentRef)
-        );
-
-        if (jsonSchema.title) {
-            oAuthCTAControl.label = jsonSchema.title;
-        }
-
-        if (isRequired) {
-            addRequiredGroupOptions(oAuthCTAControl);
-        }
-
-        schemaElements.push(oAuthCTAControl);
-        return oAuthCTAControl;
     }
 
     const types = deriveTypes(jsonSchema);

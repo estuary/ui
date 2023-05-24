@@ -4,16 +4,17 @@ import {
     getDraftSpecsBySpecTypeReduced,
 } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
+import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
+    useEditorStore_setDiscoveredDraftId,
     useEditorStore_setPubId,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { useClient } from 'hooks/supabase-swr';
-import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { CustomEvents } from 'services/logrocket';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
     DEFAULT_FILTER,
     jobStatusPoller,
@@ -32,6 +33,7 @@ import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
 import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     disabled: boolean;
@@ -41,7 +43,7 @@ interface Props {
 }
 
 const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
-    LogRocket.track(logEvent, {
+    logRocketEvent(logEvent, {
         id: payload.id ?? DEFAULT_FILTER,
         draft_id: payload.draft_id ?? DEFAULT_FILTER,
         dry_run: payload.dry_run ?? DEFAULT_FILTER,
@@ -58,21 +60,21 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
-
     const setPubId = useEditorStore_setPubId();
-
     const isSaving = useEditorStore_isSaving();
+
+    const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
 
     // Details Form Store
     const entityDescription = useDetailsForm_details_description();
 
+    const setIncompatibleCollections =
+        useBindingsEditorStore_setIncompatibleCollections();
+
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
-
     const setFormState = useFormStateStore_setFormState();
-
     const updateFormStatus = useFormStateStore_updateStatus();
-
     const formActive = useFormStateStore_isActive();
 
     // Notification Store
@@ -88,6 +90,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
         draftIdVal: string
     ) => {
         updateFormStatus(status);
+        setIncompatibleCollections([]);
 
         jobStatusPoller(
             supabaseClient
@@ -133,6 +136,12 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
             async (payload: any) => {
                 trackEvent(logEvent, payload);
 
+                const imcompatibleCollections =
+                    payload?.job_status?.incompatible_collections;
+                if (hasLength(imcompatibleCollections)) {
+                    setIncompatibleCollections(imcompatibleCollections);
+                }
+
                 onFailure({
                     error: {
                         title: dryRun
@@ -167,6 +176,10 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
                     draftSpecResponse.data &&
                     draftSpecResponse.data.length > 0
                 ) {
+                    // Now that we are making a call we can delete the
+                    //  draftId used for showing discovery errors
+                    setDiscoveredDraftId(null);
+
                     const unboundCollections = draftSpecResponse.data
                         .map((query) => query.catalog_name)
                         .filter(
@@ -210,7 +223,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
                 });
             }
         } else {
-            LogRocket.track('Entity:Create:Missing draftId');
+            logRocketEvent('Entity:Create:Missing draftId');
             onFailure({
                 error: {
                     title: `${messagePrefix}.save.failure.errorTitle`,

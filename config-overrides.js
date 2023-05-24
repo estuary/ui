@@ -36,5 +36,28 @@ module.exports = function override(config) {
             ],
         })
     );
+
+    // This is here to get WASM modules working. It was adapted from this comment:
+    // https://github.com/Emurgo/cardano-serialization-lib/issues/295#issuecomment-995943141
+    // I do not actually understand all of this.
+    // We do not use the WasmPack Plugin because that would compile the Rust code to WASM dynamically,
+    // complicating the build process significantly.
+    const assetType = 'asset/resource';
+    const wasmExtensionRegExp = /\.wasm$/;
+    config.resolve.extensions.push('.wasm');
+
+    config.experiments = {
+        asyncWebAssembly: true, // supports new WebAssembly
+        syncWebAssembly: false, //supports old WebAssembly
+    };
+
+    config.module.rules.forEach((rule) => {
+        (rule.oneOf || []).forEach((oneOf) => {
+            if (oneOf.type === assetType) {
+                oneOf.exclude.push(wasmExtensionRegExp);
+            }
+        });
+    });
+
     return config;
 };

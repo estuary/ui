@@ -3,7 +3,7 @@ import { formatDistanceToNow, formatRelative } from 'date-fns';
 import { FormattedDate } from 'react-intl';
 
 interface Props {
-    time: string;
+    time: string | Date;
     enableRelative?: boolean;
 }
 

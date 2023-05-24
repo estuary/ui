@@ -1,6 +1,5 @@
 import { isEmpty } from 'lodash';
-import LogRocket from 'logrocket';
-import { CustomEvents } from 'services/logrocket';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import { JOB_STATUS_COLUMNS, supabaseClient, TABLES } from 'services/supabase';
 import { AppliedDirective } from 'types';
 import { Directives, UserClaims } from './types';
@@ -37,7 +36,10 @@ export const DIRECTIVES: Directives = {
             return queryBuilder;
         },
         generateUserClaim: (args: any[]) => {
-            return { requestedTenant: args[0] };
+            return {
+                requestedTenant: args[0],
+                survey: args.length > 1 ? args[1] : null,
+            };
         },
         calculateStatus: (appliedDirective) => {
             // If there is no directive to check it is unfulfilled
@@ -114,6 +116,39 @@ export const DIRECTIVES: Directives = {
             return 'unfulfilled';
         },
     },
+    grant: {
+        token: '',
+        queryFilter: (queryBuilder) => {
+            return queryBuilder;
+        },
+        generateUserClaim: (args: any[]) => {
+            return {
+                requestedPrefix: args[0],
+            };
+        },
+        calculateStatus: (appliedDirective?) => {
+            // If there is no directive to check it is unfulfilled
+            if (!appliedDirective || isEmpty(appliedDirective)) {
+                return 'unfulfilled';
+            }
+
+            // If directive already queued and no claim is there we can just use that directive again
+            if (
+                appliedDirective.job_status.type === 'queued' &&
+                !appliedDirective.user_claims
+            ) {
+                return 'in progress';
+            }
+
+            // If it was success and passed all the other checks we're good
+            if (appliedDirective.job_status.type === 'success') {
+                return 'fulfilled';
+            }
+
+            // Catch all for edge cases like a "invalidClaim" status
+            return 'unfulfilled';
+        },
+    },
 };
 export type DirectivesList = (keyof typeof DIRECTIVES)[];
 
@@ -121,7 +156,7 @@ export const trackEvent = (
     type: string,
     directive?: AppliedDirective<UserClaims>
 ) => {
-    LogRocket.track(
+    logRocketEvent(
         `${CustomEvents.DIRECTIVE}:${type}`,
         directive
             ? {

@@ -1,5 +1,6 @@
 import { Button, Stack } from '@mui/material';
 import MagicLinkInputs from 'components/login/MagicLinkInputs';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useLoginRedirectPath from 'hooks/useLoginRedirectPath';
 import { useState } from 'react';
@@ -8,6 +9,10 @@ import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import useConstant from 'use-constant';
 import { getLoginSettings } from 'utils/env-utils';
 
+interface Props {
+    grantToken?: string;
+}
+
 // TODO (routes) This is hardcoded because unauthenticated routes is not yet invoked
 //   need to move the routes to a single location. Also... just need to make the route
 //   settings in all JSON probably.
@@ -15,7 +20,7 @@ const redirectToBase = `${window.location.origin}/auth`;
 
 const loginSettings = getLoginSettings();
 
-const MagicLink = () => {
+const MagicLink = ({ grantToken }: Props) => {
     const [showTokenValidation, setShowTokenValidation] = useState(false);
 
     const supabaseClient = useClient();
@@ -84,7 +89,9 @@ const MagicLink = () => {
                                 type: 'magiclink',
                             },
                             {
-                                redirectTo,
+                                redirectTo: grantToken
+                                    ? `${redirectTo}?${GlobalSearchParams.GRANT_TOKEN}=${grantToken}`
+                                    : redirectTo,
                             }
                         );
                     }}
@@ -99,7 +106,9 @@ const MagicLink = () => {
                                 email: formData.email,
                             },
                             {
-                                redirectTo,
+                                redirectTo: grantToken
+                                    ? `${redirectTo}?${GlobalSearchParams.GRANT_TOKEN}=${grantToken}`
+                                    : redirectTo,
                                 shouldCreateUser:
                                     loginSettings.enableEmailRegister,
                             }

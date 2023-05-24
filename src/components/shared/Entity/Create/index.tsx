@@ -15,8 +15,6 @@ import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useBrowserTitle from 'hooks/useBrowserTitle';
-import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
@@ -41,7 +39,6 @@ import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
 
 interface Props {
-    title: string;
     entityType: EntityWithCreateWorkflow;
     draftSpecMetadata: Pick<
         DraftSpecSwrMetadata,
@@ -54,7 +51,6 @@ interface Props {
 }
 
 function EntityCreate({
-    title,
     entityType,
     draftSpecMetadata,
     resetState,
@@ -62,14 +58,7 @@ function EntityCreate({
     toolbar,
     RediscoverButton,
 }: Props) {
-    useBrowserTitle(title);
-
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
-
-    // Supabase stuff
-    const { combinedGrants } = useCombinedGrantsExt({
-        adminOnly: true,
-    });
 
     const {
         connectorTags,
@@ -182,7 +171,6 @@ function EntityCreate({
                 <ErrorBoundryWrapper>
                     <DetailsForm
                         connectorTags={connectorTags}
-                        accessGrants={combinedGrants}
                         entityType={entityType}
                     />
                 </ErrorBoundryWrapper>
@@ -207,11 +195,9 @@ function EntityCreate({
                 </ErrorBoundryWrapper>
             ) : null}
 
-            <ErrorBoundryWrapper>
-                <CatalogEditor
-                    messageId={`${messagePrefix}.finalReview.instructions`}
-                />
-            </ErrorBoundryWrapper>
+            <CatalogEditor
+                messageId={`${messagePrefix}.finalReview.instructions`}
+            />
         </>
     );
 }

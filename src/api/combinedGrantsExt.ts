@@ -1,5 +1,6 @@
 import {
     defaultTableFilter,
+    RPCS,
     SortingProps,
     supabaseClient,
     TABLES,
@@ -92,6 +93,14 @@ const getGrantsForAuthToken = () => {
     return supabaseClient
         .from<Grants>(TABLES.COMBINED_GRANTS_EXT)
         .select(`id, object_role`);
+};
+
+export const getAuthRoles = async (capability: string) => {
+    return supabaseClient
+        .rpc<{ role_prefix: string; capability: string }>(RPCS.AUTH_ROLES, {
+            min_capability: capability,
+        })
+        .throwOnError();
 };
 
 export { getGrantsForAuthToken, getGrants, getGrants_Users, getGrantsForUser };

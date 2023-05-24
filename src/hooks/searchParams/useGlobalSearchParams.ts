@@ -5,6 +5,7 @@ export enum GlobalSearchParams {
     CATALOG_NAME = 'catalogName',
     CONNECTOR_ID = 'connectorId',
     DRAFT_ID = 'draftId',
+    GRANT_TOKEN = 'grantToken',
     HIDDEN_SHOW_BETA = 'showBetaOnboard',
     LAST_PUB_ID = 'lastPubId',
     LIVE_SPEC_ID = 'liveSpecId',
