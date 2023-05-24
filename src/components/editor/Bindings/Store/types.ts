@@ -1,4 +1,5 @@
 import { AlertColor } from '@mui/material';
+import { IncompatibleCollections } from 'api/evolutions';
 import { CollectionData } from 'components/editor/Bindings/types';
 import { Dispatch, SetStateAction } from 'react';
 import { Schema } from 'types';
@@ -56,6 +57,26 @@ export interface BindingsEditorState {
         persistedDraftId: string | null,
         setOpen: Dispatch<SetStateAction<boolean>>
     ) => void;
+
+    // Read/Write mode for collection schema
+    editModeEnabled: boolean;
+    setEditModeEnabled: (value: BindingsEditorState['editModeEnabled']) => void;
+
+    inferSchemaResponse: Schema | null;
+    inferSchemaResponse_Keys: string[];
+    inferSchemaResponseError: string | null;
+    inferSchemaResponseDoneProcessing: boolean;
+    inferSchemaResponseEmpty: boolean;
+    populateInferSchemaResponse: (
+        value: BindingsEditorState['inferSchemaResponse']
+    ) => void;
+
+    // Schema Evolution
+    incompatibleCollections: IncompatibleCollections[];
+    setIncompatibleCollections: (
+        value: BindingsEditorState['incompatibleCollections']
+    ) => void;
+    hasIncompatibleCollections: boolean;
 
     // Misc.
     resetState: () => void;

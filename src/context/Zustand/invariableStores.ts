@@ -1,12 +1,13 @@
 import { createBindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import { createEditorStore } from 'components/editor/Store/create';
 import { createExistingEntityStore } from 'components/shared/Entity/ExistingEntityCards/Store/create';
-import { createSelectableTableStore } from 'components/tables/Store';
+import { createBillingStore } from 'stores/Billing/Store';
 import { createDetailsFormStore } from 'stores/DetailsForm/Store';
 import { createEndpointConfigStore } from 'stores/EndpointConfig/Store';
 import { createFormStateStore } from 'stores/FormState/Store';
 import {
     AdminStoreNames,
+    BillingStoreNames,
     BindingsEditorStoreNames,
     DetailsFormStoreNames,
     EditorStoreNames,
@@ -22,9 +23,15 @@ import { createResourceConfigStore } from 'stores/ResourceConfig/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
 import { createSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
+import { createBillingTableStore } from 'stores/Tables/Billing/Store';
+import { createSelectableTableStore } from 'stores/Tables/Store';
+import { createTopBarStore } from 'stores/TopBar/Store';
 import { MessagePrefixes } from 'types';
 
 const invariableStores = {
+    // Billing Store
+    [BillingStoreNames.GENERAL]: createBillingStore(BillingStoreNames.GENERAL),
+
     // Bindings Editor Store
     [BindingsEditorStoreNames.GENERAL]: createBindingsEditorStore(
         BindingsEditorStoreNames.GENERAL
@@ -78,11 +85,17 @@ const invariableStores = {
     ),
 
     // Select Table Store
+    [SelectTableStoreNames.ACCESS_GRANTS_LINKS]: createSelectableTableStore(
+        SelectTableStoreNames.ACCESS_GRANTS_LINKS
+    ),
     [SelectTableStoreNames.ACCESS_GRANTS_PREFIXES]: createSelectableTableStore(
         SelectTableStoreNames.ACCESS_GRANTS_PREFIXES
     ),
     [SelectTableStoreNames.ACCESS_GRANTS_USERS]: createSelectableTableStore(
         SelectTableStoreNames.ACCESS_GRANTS_USERS
+    ),
+    [SelectTableStoreNames.BILLING]: createBillingTableStore(
+        SelectTableStoreNames.BILLING
     ),
     [SelectTableStoreNames.CAPTURE]: createSelectableTableStore(
         SelectTableStoreNames.CAPTURE
@@ -119,10 +132,18 @@ const invariableStores = {
         AdminStoreNames.STORAGE_MAPPINGS
     ),
 
+    // Transformation Create
+    // TODO (transform create)
+    // [TransformCreateStoreNames.TRANSFORM_CREATE]:
+    //     createTransformationCreateStore(
+    //         TransformCreateStoreNames.TRANSFORM_CREATE
+    //     ),
+
     // Global App Stores
     [GlobalStoreNames.SIDE_PANEL_DOCS]: createSidePanelDocsStore(
         GlobalStoreNames.SIDE_PANEL_DOCS
     ),
+    [GlobalStoreNames.TOP_BAR]: createTopBarStore(GlobalStoreNames.TOP_BAR),
 };
 
 export default invariableStores;

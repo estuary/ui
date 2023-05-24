@@ -1,18 +1,15 @@
 import { authenticatedRoutes } from 'app/routes';
 import EntityDetails from 'components/shared/Entity/Details';
-import PageContainer from 'components/shared/PageContainer';
 import { EntityContextProvider } from 'context/EntityContext';
+import usePageTitle from 'hooks/usePageTitle';
 
 function CollectionDetails() {
+    usePageTitle({
+        header: authenticatedRoutes.collections.details.title,
+    });
     return (
         <EntityContextProvider value="collection">
-            <PageContainer
-                pageTitleProps={{
-                    header: authenticatedRoutes.collections.details.title,
-                }}
-            >
-                <EntityDetails />
-            </PageContainer>
+            <EntityDetails />
         </EntityContextProvider>
     );
 }

@@ -42,7 +42,7 @@ const populateResourceConfigErrors = (
         });
     } else {
         // TODO (errors) Need to populate this object with something?
-        resourceConfigErrors = [{}];
+        resourceConfigErrors = [];
     }
 
     state.resourceConfigErrors = resourceConfigErrors;
@@ -65,6 +65,46 @@ const whatChanged = (
     return [removedCollections, newCollections];
 };
 
+const getInitialCollectionStateData = (): Pick<
+    ResourceConfigState,
+    | 'collections'
+    | 'collectionErrorsExist'
+    | 'collectionRemovalMetadata'
+    | 'currentCollection'
+> => ({
+    collections: [],
+    collectionErrorsExist: true,
+    collectionRemovalMetadata: {
+        selectedCollection: null,
+        removedCollection: '',
+        index: -1,
+    },
+    currentCollection: null,
+});
+
+const getInitialMiscStoreData = (): Pick<
+    ResourceConfigState,
+    | 'discoveredCollections'
+    | 'hydrated'
+    | 'hydrationErrorsExist'
+    | 'resourceConfig'
+    | 'resourceConfigErrorsExist'
+    | 'resourceConfigErrors'
+    | 'resourceSchema'
+    | 'restrictedDiscoveredCollections'
+    | 'serverUpdateRequired'
+> => ({
+    discoveredCollections: null,
+    hydrated: false,
+    hydrationErrorsExist: false,
+    resourceConfig: {},
+    resourceConfigErrorsExist: false,
+    resourceConfigErrors: [],
+    resourceSchema: {},
+    restrictedDiscoveredCollections: [],
+    serverUpdateRequired: false,
+});
+
 const getInitialStateData = (): Pick<
     ResourceConfigState,
     | 'collections'
@@ -81,23 +121,8 @@ const getInitialStateData = (): Pick<
     | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
 > => ({
-    collections: [],
-    collectionErrorsExist: true,
-    collectionRemovalMetadata: {
-        selectedCollection: null,
-        removedCollection: '',
-        index: -1,
-    },
-    currentCollection: null,
-    discoveredCollections: null,
-    hydrated: false,
-    hydrationErrorsExist: false,
-    resourceConfig: {},
-    resourceConfigErrorsExist: false,
-    resourceConfigErrors: [],
-    resourceSchema: {},
-    restrictedDiscoveredCollections: [],
-    serverUpdateRequired: false,
+    ...getInitialCollectionStateData(),
+    ...getInitialMiscStoreData(),
 });
 
 const getInitialState = (
@@ -106,23 +131,24 @@ const getInitialState = (
 ): ResourceConfigState => ({
     ...getInitialStateData(),
 
-    preFillEmptyCollections: (value) => {
+    preFillEmptyCollections: (value, rehydrating) => {
         set(
             produce((state: ResourceConfigState) => {
                 const { resourceConfig, resourceSchema, collections } = get();
 
-                const emptyCollections: string[] = [];
+                const emptyCollections: string[] =
+                    rehydrating && collections ? collections : [];
                 const modifiedResourceConfig = resourceConfig;
 
                 value.forEach((capture) => {
-                    capture.writes_to.forEach((collection) => {
-                        emptyCollections.push(collection);
-
-                        modifiedResourceConfig[collection] =
-                            createJSONFormDefaults(resourceSchema, collection);
+                    capture?.writes_to.forEach((collection) => {
+                        if (!emptyCollections.includes(collection)) {
+                            emptyCollections.push(collection);
+                        }
                     });
                 });
 
+                // Filter out any collections that are not in the emptyCollections list
                 state.collections = collections
                     ? [
                           ...collections.filter(
@@ -132,6 +158,14 @@ const getInitialState = (
                           ...emptyCollections,
                       ]
                     : emptyCollections;
+
+                // Run through and make sure all collections have a corresponding resource config
+                state.collections.forEach((collection) => {
+                    modifiedResourceConfig[collection] = createJSONFormDefaults(
+                        resourceSchema,
+                        collection
+                    );
+                });
 
                 state.currentCollection = state.collections[0];
 
@@ -213,6 +247,7 @@ const getInitialState = (
                     ) as ResourceConfigDictionary;
 
                     state.resourceConfig = updatedResourceConfig;
+                    populateResourceConfigErrors(updatedResourceConfig, state);
                 }
             }),
             false,
@@ -263,7 +298,9 @@ const getInitialState = (
                     ...additionalRestrictedCollections,
                 ];
 
-                state.resourceConfig = {};
+                const emptyResourceConfig = {};
+                state.resourceConfig = emptyResourceConfig;
+                populateResourceConfigErrors(emptyResourceConfig, state);
             }),
             false,
             'Removed All Selected Collections'
@@ -460,6 +497,7 @@ const getInitialState = (
                     });
 
                     state.resourceConfig = reducedResourceConfig;
+                    populateResourceConfigErrors(reducedResourceConfig, state);
                 }
             }),
             false,
@@ -497,7 +535,7 @@ const getInitialState = (
         );
     },
 
-    hydrateState: async (editWorkflow, entityType) => {
+    hydrateState: async (editWorkflow, entityType, rehydrating) => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
@@ -507,17 +545,19 @@ const getInitialState = (
         const liveSpecIds = searchParams.getAll(
             GlobalSearchParams.LIVE_SPEC_ID
         );
+        const materializationHydrating = entityType === 'materialization';
+        const materializationReydrating =
+            materializationHydrating && rehydrating;
 
-        const { setHydrationErrorsExist } = get();
+        const { resetState, setHydrationErrorsExist } = get();
+        resetState(materializationReydrating);
 
         if (connectorId) {
             const { data, error } = await getSchema_Resource(connectorId);
 
             if (error) {
                 setHydrationErrorsExist(true);
-            }
-
-            if (data && data.length > 0) {
+            } else if (data && data.length > 0) {
                 const { setResourceSchema } = get();
 
                 setResourceSchema(
@@ -533,13 +573,12 @@ const getInitialState = (
 
             if (error) {
                 setHydrationErrorsExist(true);
-            }
-
-            if (data && data.length > 0) {
+            } else if (data && data.length > 0) {
                 const { setResourceConfig, preFillCollections } = get();
 
-                const collectionNameProp =
-                    entityType === 'materialization' ? 'source' : 'target';
+                const collectionNameProp = materializationHydrating
+                    ? 'source'
+                    : 'target';
 
                 const sortedBindings = sortBy(data[0].spec.bindings, [
                     collectionNameProp,
@@ -566,13 +605,18 @@ const getInitialState = (
 
             if (error) {
                 setHydrationErrorsExist(true);
-            }
-
-            if (data && data.length > 0) {
+            } else if (data && data.length > 0) {
                 const { preFillEmptyCollections } = get();
 
-                preFillEmptyCollections(data);
+                preFillEmptyCollections(data, rehydrating);
             }
+        } else if (materializationReydrating) {
+            // If there is nothign to prefill but we are rehydrating we want to make sure
+            //  we prefill any collections the user already selected but only for materializations
+            //  because for a Capture the collections are discovered and if the hydration is kicked
+            //  off then they will need to rediscover everything again
+            const { preFillEmptyCollections } = get();
+            preFillEmptyCollections([], rehydrating);
         }
     },
 
@@ -654,8 +698,17 @@ const getInitialState = (
         return !isEqual(resourceConfig.data, initialResourceConfig.data);
     },
 
-    resetState: () => {
-        set(getInitialStateData(), false, 'Resource Config State Reset');
+    resetState: (keepCollections) => {
+        const currentState = get();
+        const initState = keepCollections
+            ? getInitialMiscStoreData()
+            : getInitialStateData();
+        const newState = {
+            ...currentState,
+            ...initState,
+        };
+
+        set(newState, false, 'Resource Config State Reset');
     },
 });
 

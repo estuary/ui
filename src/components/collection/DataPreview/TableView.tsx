@@ -32,8 +32,6 @@ function TableView({
     journalData: { data, error },
     spec,
 }: PreviewTableModeProps) {
-    console.log('spec', spec);
-
     const specEntries = useMemo(
         // TODO (typing) we need to fix typing
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -62,11 +60,6 @@ function TableView({
     );
 
     const tableBody = useMemo(() => {
-        console.log('making table body', {
-            docs: data?.documents,
-            specEntries,
-        });
-
         return (
             <TableBody
                 sx={{

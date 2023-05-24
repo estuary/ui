@@ -120,9 +120,6 @@ const lightMode: PaletteOptions = {
         secondary: sample_blue[800],
     },
     tonalOffset,
-    warning: {
-        main: warningMain,
-    },
 };
 
 const darkMode: PaletteOptions = {
@@ -154,6 +151,9 @@ const buttonHoverIndex = zIndexIncrement * 4;
 // To make the delete in a multi select to work
 const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
 
+// To make the sortable chip list work
+export const chipDraggableIndex = buttonHoverIndex + zIndexIncrement;
+
 // JSONForms accordion is hardcoded to 20 so making this "1 higher"
 const accordionButton = zIndexIncrement * 5;
 
@@ -171,6 +171,11 @@ export const defaultOutline = {
     dark: `1px solid rgba(247, 249, 252, 0.12)`,
 };
 
+export const defaultOutlineColor = {
+    light: `rgba(11, 19, 30, 0.12)`,
+    dark: `rgba(247, 249, 252, 0.12)`,
+};
+
 // Styles
 
 export const tableAlternateRowsSx: SxProps<Theme> = {
@@ -185,6 +190,19 @@ export const typographyTruncation: TypographyProps = {
         minWidth: 0,
     },
 };
+
+export const draggableChipIconSx: SxProps<Theme> = {
+    '& .MuiChip-icon': {
+        borderTopRightRadius: 0,
+        borderBottomRightRadius: 0,
+        cursor: 'grab',
+        ml: 0,
+        zIndex: chipDraggableIndex,
+    },
+};
+
+export const defaultBoxShadow =
+    'rgb(50 50 93 / 7%) 0px 3px 6px -1px, rgb(0 0 0 / 10%) 0px -2px 4px -1px, rgb(0 0 0 / 10%) 0px 2px 4px -1px';
 
 // TODO (Colors) need to follow a pattern where all colors are in the theme file.
 //      this is one way to handle the light/dark mode:
@@ -352,6 +370,8 @@ export const alternateConnectorImageBackgroundSx: SxProps<Theme> = {
     borderRadius: connectorImageBackgroundRadius,
     background: (theme) => connectorCardLogoBackground[theme.palette.mode],
 };
+
+export const autoCompleteListPadding = 8;
 
 export const dataGridListStyling: SxProps<Theme> = {
     'borderBottom': 'none',

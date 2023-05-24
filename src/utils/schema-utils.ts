@@ -1,0 +1,104 @@
+import { AllowedScopes } from 'components/editor/MonacoEditor/types';
+import { isEmpty } from 'lodash';
+import { Schema } from 'types';
+import { hasLength } from './misc-utils';
+
+const typesAllowedAsKeys = ['string', 'integer', 'boolean'];
+
+const hasWriteSchema = (spec: any) => {
+    return spec.hasOwnProperty('writeSchema');
+};
+
+const hasReadSchema = (spec: any) => {
+    return spec.hasOwnProperty('readSchema');
+};
+
+const getProperSchemaScope = (spec: any) => {
+    const readSchemaExists = hasReadSchema(spec);
+
+    let key: AllowedScopes;
+    if (readSchemaExists) {
+        key = 'readSchema';
+    } else {
+        key = 'schema';
+    }
+
+    return [key, readSchemaExists];
+};
+
+const filterInferSchemaResponse = (schema: any) => {
+    let fields: any | null = null;
+    const validKeys: string[] = [];
+
+    if (schema) {
+        const { properties } = schema;
+
+        fields = properties
+            ?.filter((inferredProperty: any) => {
+                // If there is a blank pointer it cannot be used
+                return hasLength(inferredProperty.pointer);
+            })
+            .map((inferredProperty: any) => {
+                const interrefPropertyTypes = inferredProperty.types;
+                const isValidKey = Boolean(
+                    inferredProperty.exists === 'must' &&
+                        interrefPropertyTypes.length === 1 &&
+                        typesAllowedAsKeys.some((key) =>
+                            interrefPropertyTypes.includes(key)
+                        )
+                );
+
+                if (isValidKey) {
+                    validKeys.push(inferredProperty.pointer);
+                }
+
+                inferredProperty.allowedToBeKey = isValidKey;
+                return inferredProperty;
+            });
+    }
+
+    return {
+        fields,
+        validKeys,
+    };
+};
+
+const moveUpdatedSchemaToReadSchema = (
+    original: any,
+    updatedSchema: Schema
+) => {
+    let newSpec = null;
+
+    if (hasWriteSchema(original.spec)) {
+        const { ...additionalSpecKeys } = original.spec;
+
+        newSpec = !isEmpty(updatedSchema)
+            ? {
+                  ...additionalSpecKeys,
+                  writeSchema: original.spec.writeSchema,
+                  readSchema: updatedSchema,
+              }
+            : null;
+    } else {
+        // Removing schema from the object
+        const { schema, ...additionalSpecKeys } = original.spec;
+
+        newSpec = !isEmpty(updatedSchema)
+            ? {
+                  ...additionalSpecKeys,
+                  writeSchema: original.spec.schema,
+                  readSchema: updatedSchema,
+              }
+            : null;
+    }
+
+    return newSpec;
+};
+
+export {
+    getProperSchemaScope,
+    filterInferSchemaResponse,
+    hasReadSchema,
+    hasWriteSchema,
+    moveUpdatedSchemaToReadSchema,
+};

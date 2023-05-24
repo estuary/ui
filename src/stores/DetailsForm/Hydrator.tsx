@@ -1,7 +1,7 @@
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
-import LogRocket from 'logrocket';
 import { useEffectOnce } from 'react-use';
+import { logRocketConsole } from 'services/logrocket';
 import {
     useDetailsForm_hydrated,
     useDetailsForm_hydrateState,
@@ -34,7 +34,7 @@ export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
                     setHydrated(true);
                     setHydrationErrorsExist(true);
 
-                    LogRocket.log('Failed to hydrate details form', error);
+                    logRocketConsole('Failed to hydrate details form', error);
                 }
             );
         }

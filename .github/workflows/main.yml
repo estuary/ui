@@ -1,4 +1,4 @@
-name: UI Quality Check
+name: UI Build
 
 on:
     push:
@@ -7,9 +7,8 @@ on:
         branches: [main]
 
 jobs:
-    prettier:
-        name: Prettier
-
+    setup:
+        name: Setup Node/NPM
         runs-on: ubuntu-latest
         steps:
             - name: Stop previous
@@ -22,16 +21,19 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
+                  cache: 'npm'
+                  cache-dependency-path: '**/package-lock.json'
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '@estuary'
 
             - name: Get Deps
               run: npm install
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Prettier...ing
-              run: npm run format
-
-    lint:
-        name: ESLint
-
+    quality:
+        name: Check Quality
+        needs: setup
         runs-on: ubuntu-latest
         steps:
             - name: Stop previous
@@ -44,59 +46,28 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
+                  cache: 'npm'
+                  cache-dependency-path: '**/package-lock.json'
 
             - name: Get Deps
               run: npm install
+
+            - name: Typecheck
+              run: npm run typecheck
 
             - name: Linting
               run: npm run lint
 
-    typecheck:
-        name: TypeScript
+            - name: Prettier
+              run: npm run format
 
-        runs-on: ubuntu-latest
-        steps:
-            - name: Stop previous
-              uses: styfle/cancel-workflow-action@0.11.0
-
-            - name: Checkout
-              uses: actions/checkout@v3
-
-            - name: Setup Node
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 16
-
-            - name: Get Deps
-              run: npm install
-
-            - name: Type Checking
-              run: npm run typecheck
-
-    test:
-        name: Tests
-        runs-on: ubuntu-latest
-        steps:
-            - name: Stop previous
-              uses: styfle/cancel-workflow-action@0.11.0
-
-            - name: Checkout
-              uses: actions/checkout@v3
-
-            - name: Setup Node
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 16
-
-            - name: Get Deps
-              run: npm install
-
-            - name: Run jest
+            - name: Jest
               run: npm run test
 
     # Deployment steps undertaken on a merge to `main`.
     deploy:
         name: Deploy
+        needs: quality
         runs-on: ubuntu-latest
         if: ${{ github.ref == 'refs/heads/main' }}
 
@@ -117,6 +88,8 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16
+                  cache: 'npm'
+                  cache-dependency-path: '**/package-lock.json'
 
             - name: Get Deps
               run: npm install

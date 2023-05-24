@@ -5,12 +5,7 @@ import { Props } from 'components/shared/Entity/DetailsForm/types';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 
-function DetailsForm({
-    connectorTags,
-    accessGrants,
-    entityType,
-    readOnly,
-}: Props) {
+function DetailsForm({ connectorTags, entityType, readOnly }: Props) {
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
 
@@ -24,7 +19,6 @@ function DetailsForm({
         >
             <DetailsFormForm
                 connectorTags={connectorTags}
-                accessGrants={accessGrants}
                 entityType={entityType}
                 readOnly={readOnly}
             />

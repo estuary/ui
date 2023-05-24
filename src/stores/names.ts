@@ -1,3 +1,7 @@
+export enum BillingStoreNames {
+    GENERAL = 'general_billing',
+}
+
 export enum BindingsEditorStoreNames {
     GENERAL = 'general_bindings_editor',
 }
@@ -10,6 +14,7 @@ export enum DetailsFormStoreNames {
 export enum EditorStoreNames {
     CAPTURE = 'capture_editor_store',
     GENERAL = 'general_editor_store',
+    BINDINGS = 'bindings_editor_store',
     MATERIALIZATION = 'materialization_editor_store',
 }
 
@@ -28,13 +33,19 @@ export enum FormStateStoreNames {
     MATERIALIZATION_EDIT = 'Materialization-Edit-Form-State',
 }
 
+export enum OnboardingStoreNames {
+    GENERAL = 'Onboarding',
+}
+
 export enum ResourceConfigStoreNames {
     GENERAL = 'general-resource-config',
 }
 
 export enum SelectTableStoreNames {
+    ACCESS_GRANTS_LINKS = 'AccessGrants-Selectable-Table-Links',
     ACCESS_GRANTS_USERS = 'AccessGrants-Selectable-Table-Users',
     ACCESS_GRANTS_PREFIXES = 'AccessGrants-Selectable-Table-Prefixes',
+    BILLING = 'Billing-Selectable-Table',
     CAPTURE = 'Captures-Selectable-Table',
     COLLECTION = 'Collections-Selectable-Table',
     CONNECTOR = 'Connectors-Selectable-Table',
@@ -54,17 +65,25 @@ export enum AdminStoreNames {
 
 export enum GlobalStoreNames {
     SIDE_PANEL_DOCS = 'Side-Panel-Docs',
+    TOP_BAR = 'Top-Bar',
+}
+
+export enum TransformCreateStoreNames {
+    TRANSFORM_CREATE = 'Transform-Create',
 }
 
 export type StoreName =
+    | BillingStoreNames
     | BindingsEditorStoreNames
     | DetailsFormStoreNames
     | EditorStoreNames
     | EndpointConfigStoreNames
     | ExistingEntityStoreNames
     | FormStateStoreNames
+    | OnboardingStoreNames
     | ResourceConfigStoreNames
     | SelectTableStoreNames
     | ShardDetailStoreNames
     | AdminStoreNames
+    | TransformCreateStoreNames
     | GlobalStoreNames;

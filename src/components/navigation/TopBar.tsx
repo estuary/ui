@@ -4,15 +4,11 @@ import { useTheme } from '@mui/material/styles';
 import CompanyLogo from 'components/graphics/CompanyLogo';
 import HelpMenu from 'components/menus/HelpMenu';
 import UserMenu from 'components/menus/UserMenu';
-import PageTitle, { PageTitleProps } from 'components/navigation/PageTitle';
+import PageTitle from 'components/navigation/PageTitle';
 import SidePanelDocsOpenButton from 'components/sidePanelDocs/OpenButton';
 import { zIndexIncrement } from 'context/Theme';
 
-interface Props {
-    pageTitleProps?: PageTitleProps;
-}
-
-const Topbar = ({ pageTitleProps }: Props) => {
+const Topbar = () => {
     const theme = useTheme();
 
     return (
@@ -38,12 +34,7 @@ const Topbar = ({ pageTitleProps }: Props) => {
                 >
                     <CompanyLogo />
 
-                    {pageTitleProps ? (
-                        <PageTitle
-                            header={pageTitleProps.header}
-                            headerLink={pageTitleProps.headerLink}
-                        />
-                    ) : null}
+                    <PageTitle />
                 </Stack>
 
                 <Stack direction="row" sx={{ alignItems: 'center' }}>

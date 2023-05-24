@@ -10,7 +10,8 @@ const formActive = (status: FormStatus) => {
     return (
         status === FormStatus.TESTING ||
         status === FormStatus.GENERATING ||
-        status === FormStatus.SAVING
+        status === FormStatus.SAVING ||
+        status === FormStatus.SCHEMA_EVOLVING
     );
 };
 
@@ -19,7 +20,8 @@ const formIdle = (status: FormStatus) => {
         status === FormStatus.TESTED ||
         status === FormStatus.INIT ||
         status === FormStatus.SAVED ||
-        status === FormStatus.GENERATED
+        status === FormStatus.GENERATED ||
+        status === FormStatus.SCHEMA_EVOLVED
     );
 };
 

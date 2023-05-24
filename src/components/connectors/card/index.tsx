@@ -1,4 +1,4 @@
-import { Box, Grid, Stack } from '@mui/material';
+import { Box, Grid, Stack, Typography } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
 import Tile from 'components/shared/Tile';
 import {
@@ -12,11 +12,13 @@ import { FormattedMessage } from 'react-intl';
 interface Props {
     logo: ReactNode;
     details: ReactNode;
-    cta: ReactNode;
     title: ReactNode;
-
+    clickHandler?: () => void;
+    cta?: ReactNode;
     docsUrl?: string;
+    externalLink?: { href: string; target: string; rel: string };
     recommended?: boolean;
+    specType?: string;
 }
 function ConnectorCard({
     cta,
@@ -25,10 +27,13 @@ function ConnectorCard({
     title,
     details,
     recommended,
+    clickHandler,
+    externalLink,
+    specType,
 }: Props) {
     return (
-        <Grid item xs={2} md={4} lg={2} xl={2} sx={{ maxWidth: 275 }}>
-            <Tile>
+        <Grid item xs={2} md={4} lg={2} xl={2}>
+            <Tile clickHandler={clickHandler} externalLink={externalLink}>
                 <Stack
                     sx={{
                         mb: 3,
@@ -92,6 +97,25 @@ function ConnectorCard({
 
                         {details}
                     </Box>
+
+                    {specType ? (
+                        <Typography
+                            component="div"
+                            sx={{
+                                p: 1,
+                                fontSize: 16,
+                                color: (theme) =>
+                                    theme.palette.mode === 'light'
+                                        ? sample_grey[100]
+                                        : sample_grey[900],
+                                backgroundColor: (theme) =>
+                                    theme.palette.primary.main,
+                                borderRadius: 2,
+                            }}
+                        >
+                            <FormattedMessage id={`terms.${specType}`} />
+                        </Typography>
+                    ) : null}
 
                     {cta}
                 </Stack>

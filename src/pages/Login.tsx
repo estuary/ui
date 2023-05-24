@@ -2,6 +2,9 @@ import { Box, Divider, Stack, Tab, Tabs, Typography } from '@mui/material';
 import FullPageDialog from 'components/fullPage/Dialog';
 import MagicLink from 'components/login/MagicLink';
 import OIDCs from 'components/login/OIDCs';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -24,7 +27,9 @@ interface Props {
 const bodyClass = 'loginPage';
 
 const Login = ({ showRegistration }: Props) => {
-    useBrowserTitle('browserTitle.login');
+    useBrowserTitle('routeTitle.login');
+
+    const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
 
     const { 2: clearGatewayConfig } = useLocalStorage(LocalStorageKeys.GATEWAY);
     useEffectOnce(() => clearGatewayConfig());
@@ -79,7 +84,10 @@ const Login = ({ showRegistration }: Props) => {
 
                 <Stack direction="column" spacing={2}>
                     <Box>
-                        <OIDCs isRegister={isRegister} />
+                        <OIDCs
+                            isRegister={isRegister}
+                            grantToken={grantToken}
+                        />
                     </Box>
 
                     {!isRegister && loginSettings.showEmail ? (
@@ -89,7 +97,7 @@ const Login = ({ showRegistration }: Props) => {
                             </Divider>
 
                             <Box>
-                                <MagicLink />
+                                <MagicLink grantToken={grantToken} />
                             </Box>
                         </>
                     ) : null}
