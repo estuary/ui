@@ -1,5 +1,8 @@
+import { singleCallSettings } from 'context/SWR';
 import { useZustandStore } from 'context/Zustand/provider';
+import { useEffect } from 'react';
 import { GlobalStoreNames } from 'stores/names';
+import useSWR from 'swr';
 import { Schema } from 'types';
 import { EntitiesState } from './types';
 
@@ -87,4 +90,40 @@ export const useSidePanelDocsStore_resetState = () => {
         GlobalStoreNames.ENTITIES,
         (state) => state.resetState
     );
+};
+
+// We hardcode the key here as we only call once
+export const useHydrateState = () => {
+    const hydrateState = useEntitiesStore_hydrateState();
+
+    const response = useSWR(
+        'entities_hydrator',
+        () => {
+            return hydrateState();
+        },
+        singleCallSettings
+    );
+
+    // The rest of the stuff we need to handle hydration
+    const setHydrationErrors = useEntitiesStore_setHydrationErrors();
+    const setCapabilities = useEntitiesStore_setCapabilities();
+    const setHydrated = useEntitiesStore_setHydrated();
+
+    // Once we are done validating update all the settings
+    useEffect(() => {
+        if (!response.isValidating) {
+            setHydrationErrors(response.error);
+            setCapabilities(response.data?.data ?? null);
+            setHydrated(true);
+        }
+    }, [
+        response.data?.data,
+        response.error,
+        response.isValidating,
+        setCapabilities,
+        setHydrated,
+        setHydrationErrors,
+    ]);
+
+    return response;
 };
