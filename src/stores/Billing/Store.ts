@@ -8,7 +8,7 @@ import {
 import { BillingStoreNames } from 'stores/names';
 import {
     evaluateSpecType,
-    formatBillingCatalogStats,
+    formatBillingRecords,
     stripTimeFromDate,
 } from 'utils/billing-utils';
 import { devtoolsOptions } from 'utils/store-utils';
@@ -50,7 +50,7 @@ export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
         setBillingHistory: (value) => {
             set(
                 produce((state: BillingState) => {
-                    state.billingHistory = formatBillingCatalogStats(value);
+                    state.billingHistory = formatBillingRecords(value);
                 }),
                 false,
                 'Billing Details Set'

@@ -1,4 +1,5 @@
 import { Divider, Grid, Typography } from '@mui/material';
+import { BillingRecord, getBillingHistory } from 'api/billing';
 import { authenticatedRoutes } from 'app/routes';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import DataByMonthGraph from 'components/admin/Billing/graphs/DataByMonthGraph';
@@ -11,9 +12,10 @@ import TenantOptions from 'components/admin/Billing/TenantOptions';
 import AdminTabs from 'components/admin/Tabs';
 import AlertBox from 'components/shared/AlertBox';
 import BillingHistoryTable from 'components/tables/Billing';
+import { eachMonthOfInterval, format, startOfMonth, subMonths } from 'date-fns';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
 import usePageTitle from 'hooks/usePageTitle';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
@@ -21,11 +23,13 @@ import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
     useBilling_hydrated,
     useBilling_resetState,
+    useBilling_selectedTenant,
     useBilling_setBillingHistory,
     useBilling_setDataByTaskGraphDetails,
     useBilling_setHydrated,
     useBilling_setHydrationErrorsExist,
 } from 'stores/Billing/hooks';
+import useConstant from 'use-constant';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
@@ -40,6 +44,64 @@ function AdminBilling() {
 
     const resetBillingState = useBilling_resetState();
 
+    const [billingHistoryFetched, setBillingHistoryFetched] =
+        useState<boolean>(false);
+
+    const today = useConstant(() => new Date());
+
+    const dateRange = useMemo(() => {
+        const currentMonth = startOfMonth(today);
+        const startMonth = startOfMonth(subMonths(currentMonth, 5));
+
+        return eachMonthOfInterval({
+            start: startMonth,
+            end: currentMonth,
+        }).map((date) => format(date, "yyyy-MM-dd' 00:00:00+00'"));
+    }, [today]);
+
+    const selectedTenant = useBilling_selectedTenant();
+
+    useEffect(() => {
+        if (
+            selectedTenant &&
+            dateRange.length > 0 &&
+            !hydrated &&
+            !billingHistoryFetched
+        ) {
+            setBillingHistoryFetched(true);
+
+            void getBillingHistory(selectedTenant, dateRange).then(
+                (responses) => {
+                    const data: BillingRecord[] = [];
+
+                    responses.forEach((response) => {
+                        if (response.error) {
+                            throw new Error(response.error.message);
+                        }
+
+                        data.push(response.data);
+                    });
+
+                    setBillingHistory(data);
+                    setHydrated(true);
+                },
+                () => {
+                    setHydrationErrorsExist(true);
+                    setHydrated(true);
+                }
+            );
+        }
+    }, [
+        setBillingHistory,
+        setBillingHistoryFetched,
+        setHydrated,
+        setHydrationErrorsExist,
+        billingHistoryFetched,
+        dateRange,
+        hydrated,
+        selectedTenant,
+    ]);
+
     const {
         billingStats,
         error,
@@ -48,12 +110,7 @@ function AdminBilling() {
 
     useEffect(() => {
         if (!isValidatingStats && billingStats) {
-            setBillingHistory(billingStats);
             setDataByTaskGraphDetails(billingStats);
-
-            if (!hydrated) {
-                setHydrated(true);
-            }
         }
 
         if (error) {
@@ -67,7 +124,6 @@ function AdminBilling() {
         setHydrationErrorsExist,
         billingStats,
         error,
-        hydrated,
         isValidatingStats,
     ]);
 

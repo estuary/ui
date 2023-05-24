@@ -3,14 +3,14 @@ import TimeStamp from 'components/tables/cells/billing/TimeStamp';
 import MonetaryValue from 'components/tables/cells/MonetaryValue';
 import Bytes from 'components/tables/cells/stats/Bytes';
 import { FormattedMessage } from 'react-intl';
-import { BillingRecord } from 'stores/Billing/types';
+import { FormattedBillingRecord } from 'stores/Billing/types';
 
 interface RowProps {
-    row: BillingRecord;
+    row: FormattedBillingRecord;
 }
 
 interface RowsProps {
-    data: BillingRecord[];
+    data: FormattedBillingRecord[];
 }
 
 // TODO: Determine if the details table column is necessary and, if so,

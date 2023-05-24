@@ -1,7 +1,8 @@
+import { BillingRecord } from 'api/billing';
 import { StoreWithHydration } from 'stores/Hydration';
 import { CatalogStats_Billing, Entity } from 'types';
 
-export interface BillingRecord {
+export interface FormattedBillingRecord {
     date: Date;
     timestamp: string;
     dataVolume: number;
@@ -31,8 +32,8 @@ export interface BillingState extends StoreWithHydration {
     dataByTaskGraphDetails: DataVolumeByTask[];
     setDataByTaskGraphDetails: (value: CatalogStats_Billing[]) => void;
 
-    billingHistory: BillingRecord[];
-    setBillingHistory: (value: CatalogStats_Billing[]) => void;
+    billingHistory: FormattedBillingRecord[];
+    setBillingHistory: (value: BillingRecord[]) => void;
 
     resetState: () => void;
 }

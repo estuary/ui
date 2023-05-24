@@ -1,7 +1,8 @@
+import { BillingRecord } from 'api/billing';
 import { isEqual, parseISO } from 'date-fns';
 import { isEmpty, sum } from 'lodash';
 import prettyBytes from 'pretty-bytes';
-import { BillingRecord } from 'stores/Billing/types';
+import { FormattedBillingRecord } from 'stores/Billing/types';
 import { CatalogStats_Billing, Entity } from 'types';
 
 export const TOTAL_CARD_HEIGHT = 300;
@@ -65,7 +66,7 @@ export const stripTimeFromDate = (date: string) => {
     return parseISO(truncatedDateStr);
 };
 
-const getInitialBillingRecord = (date: string): BillingRecord => {
+const getInitialBillingRecord = (date: string): FormattedBillingRecord => {
     const truncatedDate = stripTimeFromDate(date);
 
     return {
@@ -83,9 +84,27 @@ const getInitialBillingRecord = (date: string): BillingRecord => {
 
 // TODO (billing): Remove this helper function to translate data returned from
 //   the new RPC when available.
+export const formatBillingRecords = (
+    value: BillingRecord[]
+): FormattedBillingRecord[] => {
+    const billingHistory: FormattedBillingRecord[] = value.map((record) => ({
+        date: new Date(record.billed_month),
+        timestamp: record.billed_month,
+        dataVolume: record.total_processed_data_gb * BYTES_PER_GB,
+        taskCount: record.max_concurrent_tasks,
+        totalCost: record.subtotal / 100,
+        pricingTier: 'personal',
+        taskRate: 20,
+        gbFree: FREE_GB_BY_TIER.PERSONAL,
+        includedTasks: 2,
+    }));
+
+    return billingHistory;
+};
+
 export const formatBillingCatalogStats = (
     value: CatalogStats_Billing[]
-): BillingRecord[] => {
+): FormattedBillingRecord[] => {
     const taskStatData = value.filter((query) =>
         Object.hasOwn(query.flow_document, 'taskStats')
     );
@@ -105,7 +124,7 @@ export const formatBillingCatalogStats = (
         }
     });
 
-    const billingHistory: BillingRecord[] = [];
+    const billingHistory: FormattedBillingRecord[] = [];
 
     if (!isEmpty(sortedStats)) {
         Object.entries(sortedStats).forEach(([ts, stats]) => {

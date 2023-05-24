@@ -1,3 +1,4 @@
+import { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import {
     FUNCTIONS,
     invokeSupabase,
@@ -42,16 +43,44 @@ export const setTenantPrimaryPaymentMethod = (tenant: string, id: string) => {
     });
 };
 
-// TODO (billing): Add return type annotation.
-export const getBillingHistory = (
+interface InvoiceLineItem {
+    description: 'string';
+    count: number;
+    rate: number;
+    subtotal: number;
+}
+
+export interface BillingRecord {
+    billed_prefix: string;
+    billed_month: string; // Timestamp
+    total_processed_data_gb: number;
+    max_concurrent_tasks: number;
+    max_concurrent_tasks_at: string; // Timestamp
+    line_items: InvoiceLineItem[];
+    subtotal: number;
+}
+
+export const getBillingRecord = (
     billed_prefix: string,
     billed_month: string
 ) => {
     return supabaseClient
-        .rpc(RPCS.BILLING_REPORT, {
+        .rpc<BillingRecord>(RPCS.BILLING_REPORT, {
             billed_prefix,
             billed_month,
         })
         .throwOnError()
         .single();
+};
+
+export const getBillingHistory = async (
+    tenant: string,
+    dateRange: string[]
+): Promise<PostgrestSingleResponse<BillingRecord>[]> => {
+    const promises: PromiseLike<PostgrestSingleResponse<BillingRecord>>[] =
+        dateRange.map((date) => getBillingRecord(tenant, date));
+
+    const res = await Promise.all(promises);
+
+    return res;
 };

@@ -6,7 +6,7 @@ import {
     useBilling_billingHistory,
     useBilling_hydrated,
 } from 'stores/Billing/hooks';
-import { BillingRecord } from 'stores/Billing/types';
+import { FormattedBillingRecord } from 'stores/Billing/types';
 import useConstant from 'use-constant';
 import { FREE_GB_BY_TIER } from 'utils/billing-utils';
 
@@ -19,19 +19,20 @@ function PricingTierDetails() {
     const billingStoreHydrated = useBilling_hydrated();
     const billingHistory = useBilling_billingHistory();
 
-    const latestBillingRecord: BillingRecord | undefined = useMemo(() => {
-        if (billingHistory.length > 0) {
-            const evaluatedBillingRecord = billingHistory.find((record) =>
-                isSameMonth(record.date, today)
-            );
+    const latestBillingRecord: FormattedBillingRecord | undefined =
+        useMemo(() => {
+            if (billingHistory.length > 0) {
+                const evaluatedBillingRecord = billingHistory.find((record) =>
+                    isSameMonth(record.date, today)
+                );
 
-            return evaluatedBillingRecord
-                ? evaluatedBillingRecord
-                : billingHistory[0];
-        } else {
-            return undefined;
-        }
-    }, [billingHistory, today]);
+                return evaluatedBillingRecord
+                    ? evaluatedBillingRecord
+                    : billingHistory[0];
+            } else {
+                return undefined;
+            }
+        }, [billingHistory, today]);
 
     if (
         latestBillingRecord?.pricingTier &&

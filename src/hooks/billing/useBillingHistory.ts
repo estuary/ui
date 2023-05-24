@@ -1,7 +1,7 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { useBilling_selectedTenant } from 'stores/Billing/hooks';
-import { BillingRecord } from 'stores/Billing/types';
+import { FormattedBillingRecord } from 'stores/Billing/types';
 import { CatalogStats_Billing } from 'types';
 import { formatBillingCatalogStats } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
@@ -12,7 +12,7 @@ interface Props {
 
 const INTERVAL = 30000;
 
-const defaultResponse: BillingRecord[] = [];
+const defaultResponse: FormattedBillingRecord[] = [];
 
 function useBillingHistory({ query }: Props) {
     const selectedTenant = useBilling_selectedTenant();
