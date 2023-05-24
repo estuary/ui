@@ -10,41 +10,42 @@ export const useEntitiesStore_setCapabilities = () => {
     );
 };
 
-export const useEntitiesStore_prefixes = (
-    kind: keyof EntitiesState['prefixes']
+export const useEntitiesStore_capabilities = (
+    kind: keyof EntitiesState['capabilities']
 ) => {
     return useZustandStore<EntitiesState, Schema>(
         GlobalStoreNames.ENTITIES,
-        (state) => state.prefixes[kind]
+        (state) => state.capabilities[kind]
     );
 };
 
-export const useEntitiesStore_prefixes_admin = () => {
+export const useEntitiesStore_capabilities_adminable = () => {
     return useZustandStore<EntitiesState, Schema>(
         GlobalStoreNames.ENTITIES,
-        (state) => state.prefixes.admin
+        (state) => state.capabilities.admin
     );
 };
 
-export const useEntitiesStore_prefixes_readable = () => {
+export const useEntitiesStore_capabilities_readable = () => {
     return useZustandStore<EntitiesState, Schema>(
         GlobalStoreNames.ENTITIES,
         (state) => {
             return {
-                ...state.prefixes.admin,
-                ...state.prefixes.read,
+                ...state.capabilities.admin,
+                ...state.capabilities.write,
+                ...state.capabilities.read,
             };
         }
     );
 };
 
-export const useEntitiesStore_prefixes_writable = () => {
+export const useEntitiesStore_capabilities_writable = () => {
     return useZustandStore<EntitiesState, Schema>(
         GlobalStoreNames.ENTITIES,
         (state) => {
             return {
-                ...state.prefixes.admin,
-                ...state.prefixes.write,
+                ...state.capabilities.admin,
+                ...state.capabilities.write,
             };
         }
     );

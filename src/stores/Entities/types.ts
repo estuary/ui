@@ -1,7 +1,7 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
 import { AuthRoles, Schema } from 'types';
 
-interface PrefixProps {
+interface Capability {
     [key: string]: {
         token?: string;
     };
@@ -9,13 +9,12 @@ interface PrefixProps {
 
 export interface EntitiesState {
     // Storing what the user has access to
-    setCapabilities: (capabilities: AuthRoles[] | null) => void;
-
-    prefixes: {
-        admin: PrefixProps | Schema | {};
-        read: PrefixProps | Schema | {};
-        write: PrefixProps | Schema | {};
+    capabilities: {
+        admin: Capability | Schema | {};
+        read: Capability | Schema | {};
+        write: Capability | Schema | {};
     };
+    setCapabilities: (capabilities: AuthRoles[] | null) => void;
 
     hydrateState: () => Promise<PostgrestResponse<AuthRoles>>;
     hydrated: boolean;

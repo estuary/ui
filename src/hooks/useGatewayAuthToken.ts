@@ -3,7 +3,7 @@ import { isBefore } from 'date-fns';
 import { decodeJwt, JWTPayload } from 'jose';
 import { isEmpty } from 'lodash';
 import { client } from 'services/client';
-import { useEntitiesStore_prefixes_readable } from 'stores/Entities/hooks';
+import { useEntitiesStore_capabilities_readable } from 'stores/Entities/hooks';
 import useSWR from 'swr';
 import { GatewayAuthTokenResponse } from 'types';
 import {
@@ -40,8 +40,8 @@ export const gatewayFetcher = (
 const useGatewayAuthToken = (prefixes: string[] | null) => {
     const { session } = Auth.useUser();
 
-    const readablePrefixes = useEntitiesStore_prefixes_readable();
-    const grants = Object.keys(readablePrefixes);
+    const readable = useEntitiesStore_capabilities_readable();
+    const grants = Object.keys(readable);
 
     const allowed_prefixes: string[] = !isEmpty(grants)
         ? grants.map((grant) => grant)

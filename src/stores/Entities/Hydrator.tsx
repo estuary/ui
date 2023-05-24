@@ -1,5 +1,6 @@
 import FullPageError from 'components/fullPage/Error';
 import FullPageSpinner from 'components/fullPage/Spinner';
+import { singleCallSettings } from 'context/SWR';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import useSWR from 'swr';
@@ -16,9 +17,13 @@ import {
 export const EntitiesHydrator = ({ children }: BaseComponentProps) => {
     // Start fetching the prefixes they have access to
     const hydrateState = useEntitiesStore_hydrateState();
-    const { data, error, isValidating } = useSWR('entities_hydrator', () => {
-        return hydrateState();
-    });
+    const { data, error, isValidating } = useSWR(
+        'entities_hydrator',
+        () => {
+            return hydrateState();
+        },
+        singleCallSettings
+    );
 
     // The rest of the stuff we need to handle hydration
     const hydrated = useEntitiesStore_hydrated();

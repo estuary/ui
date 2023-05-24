@@ -8,11 +8,11 @@ import { EntitiesState } from './types';
 
 const getInitialStateData = (): Pick<
     EntitiesState,
-    'prefixes' | 'hydrated' | 'hydrationErrors'
+    'capabilities' | 'hydrated' | 'hydrationErrors'
 > => ({
     hydrated: false,
     hydrationErrors: null,
-    prefixes: {
+    capabilities: {
         admin: {},
         read: {},
         write: {},
@@ -26,13 +26,6 @@ const getInitialState = (
     ...getInitialStateData(),
 
     hydrateState: async () => {
-        // Reset the hydrated flag before kicking off a new fetch
-        set(
-            produce((state: EntitiesState) => {
-                state.hydrated = false;
-            })
-        );
-
         // Fetch everything the user can read
         return getAuthRoles('read');
     },
@@ -61,13 +54,13 @@ const getInitialState = (
         set(
             produce((state: EntitiesState) => {
                 if (!val) {
-                    state.prefixes = getInitialStateData().prefixes;
+                    state.capabilities = getInitialStateData().capabilities;
                     return;
                 }
 
                 val.forEach(async (authRole) => {
-                    state.prefixes[authRole.capability] = {
-                        ...state.prefixes[authRole.capability],
+                    state.capabilities[authRole.capability] = {
+                        ...state.capabilities[authRole.capability],
                         [authRole.role_prefix]: {},
                     };
                 });
