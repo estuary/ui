@@ -19,6 +19,13 @@ export const useEntitiesStore_prefixes = (
     );
 };
 
+export const useEntitiesStore_prefixes_admin = () => {
+    return useZustandStore<EntitiesState, Schema>(
+        GlobalStoreNames.ENTITIES,
+        (state) => state.prefixes.admin
+    );
+};
+
 export const useEntitiesStore_prefixes_readable = () => {
     return useZustandStore<EntitiesState, Schema>(
         GlobalStoreNames.ENTITIES,
