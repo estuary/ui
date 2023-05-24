@@ -43,7 +43,7 @@ export const useEntitiesStore_prefixes_writable = () => {
     );
 };
 
-export const useEntitiesStore_hydrate = () => {
+export const useEntitiesStore_hydrateState = () => {
     return useZustandStore<EntitiesState, EntitiesState['hydrateState']>(
         GlobalStoreNames.ENTITIES,
         (state) => state.hydrateState
