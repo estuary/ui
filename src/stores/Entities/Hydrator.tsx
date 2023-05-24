@@ -1,6 +1,6 @@
+import MessageWithLink from 'components/content/MessageWithLink';
 import FullPageError from 'components/fullPage/Error';
 import FullPageSpinner from 'components/fullPage/Spinner';
-import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
 import {
     useEntitiesStore_hydrated,
@@ -24,7 +24,7 @@ export const EntitiesHydrator = ({ children }: BaseComponentProps) => {
         return (
             <FullPageError
                 error={hydrationErrors}
-                title={<FormattedMessage id="fullpage.error" />}
+                title={<MessageWithLink messageID="entitiesHydrator.error" />}
             />
         );
     }
