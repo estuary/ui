@@ -13,9 +13,9 @@ interface RowsProps {
     data: BillingRecord[];
 }
 
-// TODO: Determine if the details table column is necessary and, if so,
-//   what data should be displayed in that column. My proposition is that
-//   the tier evaluation for that month should be identified in that column.
+// TODO: Determine if it is intentional for max concurrent tasks to be zero when
+//   the billing_report RPC clearly reports a data volume surplus. Falling back on the
+//   tracked included task count in the interim.
 function Row({ row }: RowProps) {
     return (
         <TableRow hover>
@@ -24,7 +24,11 @@ function Row({ row }: RowProps) {
             <DataVolume volumeInGB={row.total_processed_data_gb} />
 
             <TableCell>
-                <Typography>{row.max_concurrent_tasks}</Typography>
+                <Typography>
+                    {row.max_concurrent_tasks > 0
+                        ? row.max_concurrent_tasks
+                        : row.line_items[0].count}
+                </Typography>
             </TableCell>
 
             <TableCell>
@@ -42,9 +46,12 @@ function Row({ row }: RowProps) {
 function Rows({ data }: RowsProps) {
     return (
         <>
-            {data.slice(0, 4).map((record, index) => (
-                <Row row={record} key={index} />
-            ))}
+            {data
+                .slice(data.length - 4, data.length)
+                .reverse()
+                .map((record, index) => (
+                    <Row row={record} key={index} />
+                ))}
         </>
     );
 }
