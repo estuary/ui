@@ -8,7 +8,7 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { defaultOutline, intensifiedOutlineThick } from 'context/Theme';
+import { defaultOutline, intensifiedOutline } from 'context/Theme';
 import { HelpCircle, NavArrowDown } from 'iconoir-react';
 
 function ShuffleKeys() {
@@ -17,9 +17,9 @@ function ShuffleKeys() {
     return (
         <Accordion
             sx={{
-                'borderLeft': intensifiedOutlineThick[theme.palette.mode],
-                'borderRight': intensifiedOutlineThick[theme.palette.mode],
-                'borderBottom': intensifiedOutlineThick[theme.palette.mode],
+                'borderLeft': intensifiedOutline[theme.palette.mode],
+                'borderRight': intensifiedOutline[theme.palette.mode],
+                'borderBottom': intensifiedOutline[theme.palette.mode],
                 ':last-of-type': {
                     borderRadius: 0,
                 },

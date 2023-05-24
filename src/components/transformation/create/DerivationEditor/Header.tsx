@@ -7,7 +7,11 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { intensifiedOutline, intensifiedOutlineThick } from 'context/Theme';
+import { intensifiedOutline } from 'context/Theme';
+import {
+    useTransformationCreate_previewActive,
+    useTransformationCreate_setPreviewActive,
+} from 'stores/TransformationCreate/hooks';
 import { BaseComponentProps } from 'types';
 
 interface WrapperProps extends BaseComponentProps {
@@ -27,9 +31,9 @@ function Wrapper({ children, gridSize }: WrapperProps) {
                 pb: 1,
                 px: 1,
                 borderBottom: intensifiedOutline[theme.palette.mode],
-                borderTop: intensifiedOutlineThick[theme.palette.mode],
-                borderRight: intensifiedOutlineThick[theme.palette.mode],
-                borderLeft: intensifiedOutlineThick[theme.palette.mode],
+                borderTop: intensifiedOutline[theme.palette.mode],
+                borderRight: intensifiedOutline[theme.palette.mode],
+                borderLeft: intensifiedOutline[theme.palette.mode],
             }}
         >
             {children}
@@ -40,6 +44,13 @@ function Wrapper({ children, gridSize }: WrapperProps) {
 const headerStyle = { mb: 0.5, fontSize: 16, fontWeight: 500 };
 
 function DerivationEditorHeader() {
+    const previewActive = useTransformationCreate_previewActive();
+    const setPreviewActive = useTransformationCreate_setPreviewActive();
+
+    const generateDataPreview = () => {
+        setPreviewActive(true);
+    };
+
     return (
         <Grid container>
             <Wrapper gridSize={3}>
@@ -65,7 +76,13 @@ function DerivationEditorHeader() {
                     </Box>
 
                     <Box>
-                        <Button variant="outlined">Preview</Button>
+                        <Button
+                            variant="outlined"
+                            disabled={previewActive}
+                            onClick={generateDataPreview}
+                        >
+                            Preview
+                        </Button>
                     </Box>
                 </Stack>
             </Wrapper>

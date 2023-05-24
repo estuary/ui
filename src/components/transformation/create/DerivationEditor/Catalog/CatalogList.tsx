@@ -32,7 +32,7 @@ function CatalogList({
     content,
     addButtonClickHandler,
     borderBottom,
-    minHeight = 400,
+    minHeight,
 }: Props) {
     const theme = useTheme();
 
@@ -71,7 +71,7 @@ function CatalogList({
                 </Stack>
             }
             sx={{
-                minHeight,
+                minHeight: minHeight ?? '400.5px',
                 borderBottom,
             }}
         >

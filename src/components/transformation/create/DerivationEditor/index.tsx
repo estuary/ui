@@ -1,10 +1,11 @@
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Button, Grid } from '@mui/material';
 import MigrationList from 'components/transformation/create/DerivationEditor/Catalog/MigrationList';
 import TransformList from 'components/transformation/create/DerivationEditor/Catalog/TransformList';
 import DerivationEditorHeader from 'components/transformation/create/DerivationEditor/Header';
 import ShuffleKeys from 'components/transformation/create/DerivationEditor/ShuffleKeys';
+import SQLDataPreview from 'components/transformation/create/DerivationEditor/SQLDataPreview';
 import SQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor';
-import { intensifiedOutline, intensifiedOutlineThick } from 'context/Theme';
+import { intensifiedOutline } from 'context/Theme';
 import { isEmpty } from 'lodash';
 import {
     useTransformationCreate_catalogName,
@@ -12,8 +13,6 @@ import {
 } from 'stores/TransformationCreate/hooks';
 
 function DerivationEditor() {
-    // const theme = useTheme();
-
     const catalogName = useTransformationCreate_catalogName();
     const transformConfigs = useTransformationCreate_transformConfigs();
 
@@ -34,9 +33,9 @@ function DerivationEditor() {
                             borderBottom: (theme) =>
                                 intensifiedOutline[theme.palette.mode],
                             borderRight: (theme) =>
-                                intensifiedOutlineThick[theme.palette.mode],
+                                intensifiedOutline[theme.palette.mode],
                             borderLeft: (theme) =>
-                                intensifiedOutlineThick[theme.palette.mode],
+                                intensifiedOutline[theme.palette.mode],
                         }}
                     >
                         <SQLEditor
@@ -52,20 +51,19 @@ function DerivationEditor() {
             </Grid>
 
             <Grid item xs={4} sx={{ display: 'flex', flexDirection: 'column' }}>
-                <Box
-                    sx={{
-                        p: 1,
-                        flexGrow: 1,
-                        borderBottom: (theme) =>
-                            intensifiedOutlineThick[theme.palette.mode],
-                        borderRight: (theme) =>
-                            intensifiedOutlineThick[theme.palette.mode],
-                        borderLeft: (theme) =>
-                            intensifiedOutlineThick[theme.palette.mode],
-                    }}
-                >
-                    <Typography>Click RUN to execute your query.</Typography>
-                </Box>
+                <SQLDataPreview />
+            </Grid>
+
+            <Grid
+                item
+                xs={12}
+                sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}
+            >
+                <Button variant="outlined" sx={{ mr: 2 }}>
+                    Proceed to GitPod
+                </Button>
+
+                <Button>Publish</Button>
             </Grid>
         </Grid>
     );

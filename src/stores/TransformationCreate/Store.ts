@@ -14,6 +14,7 @@ const getInitialStateData = (): Pick<
     | 'migrations'
     | 'name'
     | 'prefix'
+    | 'previewActive'
     | 'selectedAttribute'
     | 'sourceCollections'
     | 'transformConfigs'
@@ -25,6 +26,7 @@ const getInitialStateData = (): Pick<
     migrations: {},
     name: '',
     prefix: '',
+    previewActive: false,
     selectedAttribute: '',
     sourceCollections: [],
     transformConfigs: {},
@@ -179,6 +181,16 @@ const getInitialState = (
             }),
             false,
             'Attribute Type Set'
+        );
+    },
+
+    setPreviewActive: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                state.previewActive = value;
+            }),
+            false,
+            'Preview Active Set'
         );
     },
 

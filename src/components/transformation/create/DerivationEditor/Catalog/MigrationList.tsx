@@ -8,7 +8,7 @@ import {
 import CatalogList, {
     CatalogListContent,
 } from 'components/transformation/create/DerivationEditor/Catalog/CatalogList';
-import { defaultOutline, intensifiedOutlineThick } from 'context/Theme';
+import { defaultOutline, intensifiedOutline } from 'context/Theme';
 import { NavArrowDown } from 'iconoir-react';
 import { useMemo } from 'react';
 import {
@@ -40,9 +40,9 @@ function MigrationList() {
     return (
         <Accordion
             sx={{
-                'borderLeft': intensifiedOutlineThick[theme.palette.mode],
-                'borderRight': intensifiedOutlineThick[theme.palette.mode],
-                'borderBottom': intensifiedOutlineThick[theme.palette.mode],
+                'borderLeft': intensifiedOutline[theme.palette.mode],
+                'borderRight': intensifiedOutline[theme.palette.mode],
+                'borderBottom': intensifiedOutline[theme.palette.mode],
                 ':last-of-type': {
                     borderRadius: 0,
                 },

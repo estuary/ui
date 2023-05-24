@@ -17,7 +17,7 @@ import CatalogList, {
 import UpdateDraftButton from 'components/transformation/create/DerivationEditor/Catalog/UpdateDraftButton';
 import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
-import { intensifiedOutline, intensifiedOutlineThick } from 'context/Theme';
+import { intensifiedOutline } from 'context/Theme';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -70,8 +70,8 @@ function TransformList() {
     return (
         <Box
             sx={{
-                borderLeft: intensifiedOutlineThick[theme.palette.mode],
-                borderRight: intensifiedOutlineThick[theme.palette.mode],
+                borderLeft: intensifiedOutline[theme.palette.mode],
+                borderRight: intensifiedOutline[theme.palette.mode],
             }}
         >
             <CatalogList

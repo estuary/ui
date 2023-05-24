@@ -171,6 +171,26 @@ export const useTransformationCreate_setAttributeType = () => {
     );
 };
 
+export const useTransformationCreate_previewActive = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['previewActive']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.previewActive
+    );
+};
+
+export const useTransformationCreate_setPreviewActive = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['setPreviewActive']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.setPreviewActive
+    );
+};
+
 export const useTransformationCreate_catalogName = () => {
     return useLocalZustandStore<
         TransformCreateState,

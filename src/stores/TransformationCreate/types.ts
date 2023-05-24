@@ -55,5 +55,8 @@ export interface TransformCreateState {
     attributeType: DerivationAttribute;
     setAttributeType: (value: TransformCreateState['attributeType']) => void;
 
+    previewActive: boolean;
+    setPreviewActive: (value: TransformCreateState['previewActive']) => void;
+
     resetState: () => void;
 }
