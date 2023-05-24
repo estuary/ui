@@ -1,16 +1,16 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
+import { BillingRecord } from 'api/billing';
+import DataVolume from 'components/tables/cells/billing/DataVolume';
 import TimeStamp from 'components/tables/cells/billing/TimeStamp';
 import MonetaryValue from 'components/tables/cells/MonetaryValue';
-import Bytes from 'components/tables/cells/stats/Bytes';
 import { FormattedMessage } from 'react-intl';
-import { FormattedBillingRecord } from 'stores/Billing/types';
 
 interface RowProps {
-    row: FormattedBillingRecord;
+    row: BillingRecord;
 }
 
 interface RowsProps {
-    data: FormattedBillingRecord[];
+    data: BillingRecord[];
 }
 
 // TODO: Determine if the details table column is necessary and, if so,
@@ -19,26 +19,21 @@ interface RowsProps {
 function Row({ row }: RowProps) {
     return (
         <TableRow hover>
-            <TimeStamp date={row.date} timestamp={row.timestamp} />
+            <TimeStamp date={row.billed_month} />
 
-            <Bytes
-                val={row.dataVolume}
-                messageId="admin.billing.table.history.tooltip.dataVolume"
-            />
+            <DataVolume volumeInGB={row.total_processed_data_gb} />
 
             <TableCell>
-                <Typography>{row.taskCount}</Typography>
+                <Typography>{row.max_concurrent_tasks}</Typography>
             </TableCell>
 
             <TableCell>
                 <Typography>
-                    <FormattedMessage
-                        id={`admin.billing.tier.${row.pricingTier}`}
-                    />
+                    <FormattedMessage id="admin.billing.tier.personal" />
                 </Typography>
             </TableCell>
 
-            <MonetaryValue amount={row.totalCost} />
+            <MonetaryValue amount={row.subtotal / 100} />
         </TableRow>
     );
 }

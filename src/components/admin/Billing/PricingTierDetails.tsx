@@ -1,4 +1,5 @@
 import { Skeleton, Typography } from '@mui/material';
+import { BillingRecord } from 'api/billing';
 import { isSameMonth } from 'date-fns';
 import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -6,7 +7,6 @@ import {
     useBilling_billingHistory,
     useBilling_hydrated,
 } from 'stores/Billing/hooks';
-import { FormattedBillingRecord } from 'stores/Billing/types';
 import useConstant from 'use-constant';
 import { FREE_GB_BY_TIER } from 'utils/billing-utils';
 
@@ -19,27 +19,24 @@ function PricingTierDetails() {
     const billingStoreHydrated = useBilling_hydrated();
     const billingHistory = useBilling_billingHistory();
 
-    const latestBillingRecord: FormattedBillingRecord | undefined =
-        useMemo(() => {
-            if (billingHistory.length > 0) {
-                const evaluatedBillingRecord = billingHistory.find((record) =>
-                    isSameMonth(record.date, today)
-                );
+    const latestBillingRecord: BillingRecord | undefined = useMemo(() => {
+        if (billingHistory.length > 0) {
+            const evaluatedBillingRecord = billingHistory.find((record) => {
+                const billedMonth = new Date(record.billed_month);
 
-                return evaluatedBillingRecord
-                    ? evaluatedBillingRecord
-                    : billingHistory[0];
-            } else {
-                return undefined;
-            }
-        }, [billingHistory, today]);
+                return isSameMonth(billedMonth, today);
+            });
 
-    if (
-        latestBillingRecord?.pricingTier &&
-        latestBillingRecord.gbFree &&
-        latestBillingRecord.taskRate
-    ) {
-        const { pricingTier, gbFree, taskRate } = latestBillingRecord;
+            return evaluatedBillingRecord
+                ? evaluatedBillingRecord
+                : billingHistory[0];
+        } else {
+            return undefined;
+        }
+    }, [billingHistory, today]);
+
+    if (latestBillingRecord) {
+        const { line_items } = latestBillingRecord;
 
         return (
             <Typography>
@@ -47,10 +44,10 @@ function PricingTierDetails() {
                     id="admin.billing.message.paidTier"
                     values={{
                         pricingTier: intl.formatMessage({
-                            id: `admin.billing.tier.${pricingTier}`,
+                            id: 'admin.billing.tier.personal',
                         }),
-                        gbFree,
-                        taskRate,
+                        gbFree: FREE_GB_BY_TIER.PERSONAL,
+                        taskRate: line_items[1].rate / 100,
                     }}
                 />
             </Typography>

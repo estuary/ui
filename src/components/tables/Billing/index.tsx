@@ -1,17 +1,15 @@
-import { Box } from '@mui/material';
-import { getStatsForBillingHistoryTable } from 'api/stats';
+import { Box, Table, TableContainer } from '@mui/material';
 import Rows from 'components/tables/Billing/Rows';
-import EntityTable from 'components/tables/EntityTable';
+import EntityTableBody from 'components/tables/EntityTable/TableBody';
+import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import { useMemo } from 'react';
-import { useBilling_selectedTenant } from 'stores/Billing/hooks';
-import { SelectTableStoreNames } from 'stores/names';
-import BillingHistoryTableHydrator from 'stores/Tables/Billing/Hydrator';
-import useTableState from 'stores/Tables/hooks';
-import { TableColumns } from 'types';
+import { useIntl } from 'react-intl';
+import {
+    useBilling_billingHistory,
+    useBilling_hydrated,
+} from 'stores/Billing/hooks';
+import { TableColumns, TableStatuses } from 'types';
 
-// TODO: Determine if the details table column is necessary and, if so,
-//   what data should be displayed in that column. My proposition is that
-//   the tier evaluation for that month should be identified in that column.
 export const columns: TableColumns[] = [
     {
         field: 'month',
@@ -35,64 +33,48 @@ export const columns: TableColumns[] = [
     },
 ];
 
-const selectableTableStoreName = SelectTableStoreNames.BILLING;
-
-// TODO (billing): Enable pagination when the new RPC is available.
+// TODO (billing): Enable pagination when a database table containing historic billing data is available.
 function BillingHistoryTable() {
-    const selectedTenant = useBilling_selectedTenant();
+    const intl = useIntl();
 
-    const {
-        pagination,
-        setPagination,
-        searchQuery,
-        setSearchQuery,
-        sortDirection,
-        setSortDirection,
-        columnToSort,
-        setColumnToSort,
-    } = useTableState('bil', 'ts', 'desc', 4);
+    const hydrated = useBilling_hydrated();
+    const billingHistory = useBilling_billingHistory();
 
-    const query = useMemo(() => {
-        return getStatsForBillingHistoryTable([selectedTenant], searchQuery, [
-            {
-                col: columnToSort,
-                direction: sortDirection,
-            },
-        ]);
-    }, [columnToSort, selectedTenant, searchQuery, sortDirection]);
-
-    const headerKey = 'accessGrantsTable.prefixes.title';
-    const filterKey = 'accessGrantsTable.prefixes.filterLabel';
+    const dataRows = useMemo(
+        () =>
+            billingHistory.length > 0 ? <Rows data={billingHistory} /> : null,
+        [billingHistory]
+    );
 
     return (
-        <Box>
-            <BillingHistoryTableHydrator query={query}>
-                <EntityTable
+        <TableContainer component={Box}>
+            <Table
+                aria-label={intl.formatMessage({
+                    id: 'entityTable.title',
+                })}
+                size="small"
+                sx={{ minWidth: 350 }}
+            >
+                <EntityTableHeader columns={columns} noBackgroundColor />
+
+                <EntityTableBody
+                    columns={columns}
                     noExistingDataContentIds={{
                         header: 'admin.billing.table.history.emptyTableDefault.header',
                         message:
                             'admin.billing.table.history.emptyTableDefault.message',
                         disableDoclink: true,
                     }}
-                    columns={columns}
-                    renderTableRows={(data) => <Rows data={data} />}
-                    pagination={pagination}
-                    setPagination={setPagination}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    sortDirection={sortDirection}
-                    setSortDirection={setSortDirection}
-                    columnToSort={columnToSort}
-                    setColumnToSort={setColumnToSort}
-                    header={headerKey}
-                    filterLabel={filterKey}
-                    selectableTableStoreName={selectableTableStoreName}
-                    hideHeaderAndFooter={true}
-                    rowsPerPageOptions={[4, 6, 12]}
-                    minWidth={500}
+                    tableState={
+                        billingHistory.length > 0
+                            ? { status: TableStatuses.DATA_FETCHED }
+                            : { status: TableStatuses.NO_EXISTING_DATA }
+                    }
+                    loading={!hydrated}
+                    rows={dataRows}
                 />
-            </BillingHistoryTableHydrator>
-        </Box>
+            </Table>
+        </TableContainer>
     );
 }
 

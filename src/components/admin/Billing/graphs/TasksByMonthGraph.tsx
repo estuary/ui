@@ -55,59 +55,40 @@ function DataByMonthGraph() {
 
         const scopedDataSet: {
             month: string;
-            taskCount: number;
-            includedTasks: number | null;
+            includedTasks: number;
+            surplusTasks: number;
         }[] = billingHistory
-            .filter(({ date }) =>
-                isWithinInterval(date, {
+            .filter(({ billed_month }) => {
+                const billedMonth = new Date(billed_month);
+
+                return isWithinInterval(billedMonth, {
                     start: startDate,
                     end: today,
-                })
-            )
-            .map(({ date, taskCount, includedTasks }) => ({
-                month: intl.formatDate(date, { month: 'short' }),
-                taskCount,
-                includedTasks,
+                });
+            })
+            .map(({ billed_month, line_items }) => ({
+                month: intl.formatDate(billed_month, { month: 'short' }),
+                includedTasks: line_items[0].count,
+                surplusTasks: line_items[1].count,
             }));
 
         return scopedDataSet.flatMap(
             ({
                 month,
-                taskCount,
                 includedTasks,
-            }): SeriesConfig | SeriesConfig[] => {
-                const freeTasks = includedTasks ?? 2;
-
-                if (taskCount > freeTasks) {
-                    const taskSurplus = taskCount - freeTasks;
-
-                    return [
-                        {
-                            seriesName: SeriesNames.INCLUDED,
-                            stack: stackId,
-                            data: [[month, freeTasks]],
-                        },
-                        {
-                            seriesName: SeriesNames.SURPLUS,
-                            stack: stackId,
-                            data: [[month, taskSurplus]],
-                        },
-                    ];
-                } else {
-                    return [
-                        {
-                            seriesName: SeriesNames.INCLUDED,
-                            stack: stackId,
-                            data: [[month, taskCount]],
-                        },
-                        {
-                            seriesName: SeriesNames.SURPLUS,
-                            stack: stackId,
-                            data: [[month, 0]],
-                        },
-                    ];
-                }
-            }
+                surplusTasks,
+            }): SeriesConfig | SeriesConfig[] => [
+                {
+                    seriesName: SeriesNames.INCLUDED,
+                    stack: stackId,
+                    data: [[month, includedTasks]],
+                },
+                {
+                    seriesName: SeriesNames.SURPLUS,
+                    stack: stackId,
+                    data: [[month, surplusTasks]],
+                },
+            ]
         );
     }, [billingHistory, intl, today]);
 
@@ -189,8 +170,8 @@ function DataByMonthGraph() {
                             } else {
                                 const tooltipTitle =
                                     billingHistory
-                                        .map(({ date }) =>
-                                            intl.formatDate(date, {
+                                        .map(({ billed_month }) =>
+                                            intl.formatDate(billed_month, {
                                                 month: 'short',
                                                 year: 'numeric',
                                             })

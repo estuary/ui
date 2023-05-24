@@ -23,10 +23,8 @@ import {
 } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
 import {
-    BYTES_PER_GB,
     CARD_AREA_HEIGHT,
     formatDataVolumeForDisplay,
-    FREE_GB_BY_TIER,
     SeriesConfig,
     SeriesNames,
 } from 'utils/billing-utils';
@@ -58,56 +56,40 @@ function DataByMonthGraph() {
 
         const scopedDataSet: {
             month: string;
-            dataVolume: number;
-            gbFree: number | null;
+            includedDataVolume: number;
+            surplusDataVolume: number;
         }[] = billingHistory
-            .filter(({ date }) =>
-                isWithinInterval(date, {
+            .filter(({ billed_month }) => {
+                const billedMonth = new Date(billed_month);
+
+                return isWithinInterval(billedMonth, {
                     start: startDate,
                     end: today,
-                })
-            )
-            .map(({ date, dataVolume, gbFree }) => ({
-                month: intl.formatDate(date, { month: 'short' }),
-                dataVolume,
-                gbFree,
+                });
+            })
+            .map(({ billed_month, line_items }) => ({
+                month: intl.formatDate(billed_month, { month: 'short' }),
+                includedDataVolume: line_items[2].count,
+                surplusDataVolume: line_items[3].count,
             }));
 
         return scopedDataSet.flatMap(
-            ({ month, dataVolume, gbFree }): SeriesConfig | SeriesConfig[] => {
-                const freeBytes =
-                    (gbFree ?? FREE_GB_BY_TIER.PERSONAL) * BYTES_PER_GB;
-
-                if (dataVolume > freeBytes) {
-                    const byteSurplus = dataVolume - freeBytes;
-
-                    return [
-                        {
-                            seriesName: SeriesNames.INCLUDED,
-                            stack: stackId,
-                            data: [[month, freeBytes]],
-                        },
-                        {
-                            seriesName: SeriesNames.SURPLUS,
-                            stack: stackId,
-                            data: [[month, byteSurplus]],
-                        },
-                    ];
-                } else {
-                    return [
-                        {
-                            seriesName: SeriesNames.INCLUDED,
-                            stack: stackId,
-                            data: [[month, dataVolume]],
-                        },
-                        {
-                            seriesName: SeriesNames.SURPLUS,
-                            stack: stackId,
-                            data: [[month, 0]],
-                        },
-                    ];
-                }
-            }
+            ({
+                month,
+                includedDataVolume,
+                surplusDataVolume,
+            }): SeriesConfig | SeriesConfig[] => [
+                {
+                    seriesName: SeriesNames.INCLUDED,
+                    stack: stackId,
+                    data: [[month, includedDataVolume]],
+                },
+                {
+                    seriesName: SeriesNames.SURPLUS,
+                    stack: stackId,
+                    data: [[month, surplusDataVolume]],
+                },
+            ]
         );
     }, [billingHistory, intl, today]);
 
@@ -156,7 +138,7 @@ function DataByMonthGraph() {
                     barMinHeight: seriesName === SeriesNames.INCLUDED ? 3 : 0,
                     data: data.map(([month, dataVolume]) => [
                         month,
-                        (dataVolume / BYTES_PER_GB).toFixed(3),
+                        dataVolume.toFixed(3),
                     ]),
                 })),
                 textStyle: {
@@ -194,8 +176,8 @@ function DataByMonthGraph() {
                             } else {
                                 const tooltipTitle =
                                     billingHistory
-                                        .map(({ date }) =>
-                                            intl.formatDate(date, {
+                                        .map(({ billed_month }) =>
+                                            intl.formatDate(billed_month, {
                                                 month: 'short',
                                                 year: 'numeric',
                                             })

@@ -1,10 +1,10 @@
 import { PostgrestError } from '@supabase/postgrest-js';
-import { FormattedBillingRecord } from 'stores/Billing/types';
+import { BillingRecord } from 'api/billing';
 import { SelectableTableStore } from 'stores/Tables/Store';
 
 export interface BillingTableState extends SelectableTableStore {
     hydrateContinuously: (
-        data: FormattedBillingRecord[],
+        data: BillingRecord[],
         error?: PostgrestError
     ) => void;
 }

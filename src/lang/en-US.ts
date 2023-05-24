@@ -437,7 +437,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.table.history.label.tasks': `Tasks`,
     'admin.billing.table.history.label.totalCost': `Total Cost`,
     'admin.billing.table.history.tooltip.month': `This billing period began on {timestamp}`,
-    'admin.billing.table.history.tooltip.dataVolume': `bytes of data processed by tasks`,
+    'admin.billing.table.history.tooltip.dataVolume': `GB of data processed by tasks`,
     'admin.billing.table.history.emptyTableDefault.header': `No information found.`,
     'admin.billing.table.history.emptyTableDefault.message': `We couldn't find any billing information on file. Only administrators of a tenant are able to review billing information.`,
 

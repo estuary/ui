@@ -1,4 +1,5 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import { format } from 'date-fns';
 import {
     FUNCTIONS,
     invokeSupabase,
@@ -62,12 +63,17 @@ export interface BillingRecord {
 
 export const getBillingRecord = (
     billed_prefix: string,
-    billed_month: string
+    month: string | Date
 ) => {
+    const formattedMonth: string =
+        typeof month === 'string'
+            ? month
+            : format(month, "yyyy-MM-dd' 00:00:00+00'");
+
     return supabaseClient
         .rpc<BillingRecord>(RPCS.BILLING_REPORT, {
             billed_prefix,
-            billed_month,
+            billed_month: formattedMonth,
         })
         .throwOnError()
         .single();

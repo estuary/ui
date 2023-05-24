@@ -14,6 +14,7 @@ import AlertBox from 'components/shared/AlertBox';
 import BillingHistoryTable from 'components/tables/Billing';
 import { eachMonthOfInterval, format, startOfMonth, subMonths } from 'date-fns';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
+import useBillingHistory from 'hooks/billing/useBillingHistory';
 import usePageTitle from 'hooks/usePageTitle';
 import { useEffect, useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -28,8 +29,10 @@ import {
     useBilling_setDataByTaskGraphDetails,
     useBilling_setHydrated,
     useBilling_setHydrationErrorsExist,
+    useBilling_updateBillingHistory,
 } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
+import { hasLength } from 'utils/misc-utils';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
@@ -39,36 +42,67 @@ function AdminBilling() {
     const setHydrated = useBilling_setHydrated();
     const setHydrationErrorsExist = useBilling_setHydrationErrorsExist();
 
+    const selectedTenant = useBilling_selectedTenant();
     const setBillingHistory = useBilling_setBillingHistory();
+    const updateBillingHistory = useBilling_updateBillingHistory();
     const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
 
     const resetBillingState = useBilling_resetState();
 
-    const [billingHistoryFetched, setBillingHistoryFetched] =
+    const [historyInitialized, setHistoryInitialized] =
         useState<boolean>(false);
 
-    const today = useConstant(() => new Date());
+    const currentMonth = useConstant(() => {
+        const today = new Date();
+
+        return startOfMonth(today);
+    });
 
     const dateRange = useMemo(() => {
-        const currentMonth = startOfMonth(today);
         const startMonth = startOfMonth(subMonths(currentMonth, 5));
 
         return eachMonthOfInterval({
             start: startMonth,
             end: currentMonth,
         }).map((date) => format(date, "yyyy-MM-dd' 00:00:00+00'"));
-    }, [today]);
+    }, [currentMonth]);
 
-    const selectedTenant = useBilling_selectedTenant();
+    const {
+        billingStats,
+        error,
+        isValidating: isValidatingStats,
+    } = useBillingCatalogStats();
+
+    const { billingHistory, isValidating: isValidatingHistory } =
+        useBillingHistory(currentMonth);
+
+    useEffect(() => {
+        if (!isValidatingStats && billingStats) {
+            setDataByTaskGraphDetails(billingStats);
+        }
+
+        if (error) {
+            setHydrationErrorsExist(true);
+            setHydrated(true);
+        }
+    }, [
+        setBillingHistory,
+        setDataByTaskGraphDetails,
+        setHydrated,
+        setHydrationErrorsExist,
+        billingStats,
+        error,
+        isValidatingStats,
+    ]);
 
     useEffect(() => {
         if (
             selectedTenant &&
             dateRange.length > 0 &&
             !hydrated &&
-            !billingHistoryFetched
+            !historyInitialized
         ) {
-            setBillingHistoryFetched(true);
+            setHistoryInitialized(true);
 
             void getBillingHistory(selectedTenant, dateRange).then(
                 (responses) => {
@@ -93,38 +127,28 @@ function AdminBilling() {
         }
     }, [
         setBillingHistory,
-        setBillingHistoryFetched,
+        setHistoryInitialized,
         setHydrated,
         setHydrationErrorsExist,
-        billingHistoryFetched,
         dateRange,
+        historyInitialized,
         hydrated,
         selectedTenant,
     ]);
 
-    const {
-        billingStats,
-        error,
-        isValidating: isValidatingStats,
-    } = useBillingCatalogStats();
-
     useEffect(() => {
-        if (!isValidatingStats && billingStats) {
-            setDataByTaskGraphDetails(billingStats);
-        }
-
-        if (error) {
-            setHydrationErrorsExist(true);
-            setHydrated(true);
+        if (
+            historyInitialized &&
+            !isValidatingHistory &&
+            hasLength(billingHistory)
+        ) {
+            updateBillingHistory(billingHistory);
         }
     }, [
-        setBillingHistory,
-        setDataByTaskGraphDetails,
-        setHydrated,
-        setHydrationErrorsExist,
-        billingStats,
-        error,
-        isValidatingStats,
+        updateBillingHistory,
+        billingHistory,
+        historyInitialized,
+        isValidatingHistory,
     ]);
 
     useUnmount(() => resetBillingState());

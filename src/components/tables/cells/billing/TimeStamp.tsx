@@ -4,10 +4,9 @@ import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {
     date: string | Date;
-    timestamp: string;
 }
 
-function TimeStamp({ date, timestamp }: Props) {
+function TimeStamp({ date }: Props) {
     const intl = useIntl();
 
     return (
@@ -17,7 +16,7 @@ function TimeStamp({ date, timestamp }: Props) {
                     <FormattedMessage
                         id="admin.billing.table.history.tooltip.month"
                         values={{
-                            timestamp: intl.formatDate(timestamp, {
+                            timestamp: intl.formatDate(date, {
                                 day: 'numeric',
                                 month: 'short',
                                 year: 'numeric',

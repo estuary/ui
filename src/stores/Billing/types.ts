@@ -2,18 +2,6 @@ import { BillingRecord } from 'api/billing';
 import { StoreWithHydration } from 'stores/Hydration';
 import { CatalogStats_Billing, Entity } from 'types';
 
-export interface FormattedBillingRecord {
-    date: Date;
-    timestamp: string;
-    dataVolume: number;
-    taskCount: number;
-    totalCost: number;
-    pricingTier: string | null;
-    taskRate: number | null;
-    gbFree: number | null;
-    includedTasks: number | null;
-}
-
 export interface DataVolumeByTask {
     catalogName: string;
     date: Date;
@@ -32,8 +20,9 @@ export interface BillingState extends StoreWithHydration {
     dataByTaskGraphDetails: DataVolumeByTask[];
     setDataByTaskGraphDetails: (value: CatalogStats_Billing[]) => void;
 
-    billingHistory: FormattedBillingRecord[];
+    billingHistory: BillingRecord[];
     setBillingHistory: (value: BillingRecord[]) => void;
+    updateBillingHistory: (value: BillingRecord[]) => void;
 
     resetState: () => void;
 }

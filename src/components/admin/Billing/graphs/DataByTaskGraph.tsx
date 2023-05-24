@@ -212,7 +212,8 @@ function DataByTaskGraph() {
                         tooltipConfigs.forEach((config) => {
                             const dataVolume = formatDataVolumeForDisplay(
                                 seriesConfig,
-                                config
+                                config,
+                                true
                             );
 
                             if (content) {

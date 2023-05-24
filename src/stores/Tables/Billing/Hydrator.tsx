@@ -11,7 +11,10 @@ import {
 } from 'stores/Tables/Store';
 import { BaseComponentProps, CatalogStats_Billing } from 'types';
 
-// Hydrator
+// TODO (billing): Use this method to hydrate the billing select table store when
+//   a database table containing billing history is available. Currently, this component is
+//   is no longer in use since the billing history table in the UI must source data from
+//   the billing_report RPC.
 interface TableHydratorProps extends BaseComponentProps {
     query: PostgrestFilterBuilder<CatalogStats_Billing>;
 }
@@ -32,9 +35,7 @@ export const BillingHistoryTableHydrator = ({
 
     const hydrateState = useBillingTable_hydrateContinuously();
 
-    const { billingHistory, error, isValidating } = useBillingHistory({
-        query,
-    });
+    const { billingHistory, error, isValidating } = useBillingHistory('');
 
     useEffect(() => {
         setQuery(query);

@@ -17,6 +17,13 @@ export const useBilling_setBillingHistory = () => {
     );
 };
 
+export const useBilling_updateBillingHistory = () => {
+    return useZustandStore<BillingState, BillingState['updateBillingHistory']>(
+        BillingStoreNames.GENERAL,
+        (state) => state.updateBillingHistory
+    );
+};
+
 export const useBilling_dataByTaskGraphDetails = () => {
     return useZustandStore<
         BillingState,
