@@ -1,5 +1,5 @@
 import useClient from 'hooks/supabase-swr/hooks/useClient';
-import LRU from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 import { ERROR_MESSAGES } from 'services/supabase';
@@ -20,7 +20,7 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
     const { enqueueSnackbar } = useSnackbar();
 
     const cache = () => {
-        return new LRU({
+        return new LRUCache({
             max: 500,
         });
     };

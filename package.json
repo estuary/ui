@@ -61,7 +61,7 @@
         "lodash": "^4.17.21",
         "logrocket": "^3.0.1",
         "logrocket-react": "^5.0.1",
-        "lru-cache": "^7.14.1",
+        "lru-cache": "^9.1.1",
         "madge": "^5.0.1",
         "material-ui-popup-state": "^5.0.4",
         "monaco-editor": "^0.34.1",
