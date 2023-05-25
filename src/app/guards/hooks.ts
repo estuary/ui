@@ -17,7 +17,7 @@ const useDirectiveGuard = (
 
     const [serverError, setServerError] = useState<PostgrestError | null>(null);
 
-    const { appliedDirective, isValidating, mutate } =
+    const { appliedDirective, isValidating, mutate, error } =
         useAppliedDirectives(selectedDirective);
 
     const calculateStatus = useMemo(
@@ -30,12 +30,18 @@ const useDirectiveGuard = (
             return null;
         }
 
+        if (error) {
+            setServerError(error);
+            return 'errored';
+        }
+
         if (options?.token && serverError) {
             return 'errored';
         }
 
         return calculateStatus(appliedDirective);
     }, [
+        error,
         calculateStatus,
         appliedDirective,
         isValidating,
@@ -47,67 +53,68 @@ const useDirectiveGuard = (
         useState<AppliedDirective<UserClaims> | null>(null);
 
     useEffect(() => {
-        // Need to exchange for a fresh directive because:
-        //   new&fulfilled : user has submitted a tenant but wants to try to submit another
-        //      The backend checks if they are allowed to create multiple tenants
-        //   unfulfilled : user never exchanged a token before
-        //   outdated    : user has exchanged AND submitted something before
-        if (
-            (options?.forceNew && directiveState === 'fulfilled') ||
-            directiveState === 'unfulfilled' ||
-            directiveState === 'outdated'
-        ) {
-            if (options?.token) {
-                DIRECTIVES[selectedDirective].token = options.token;
-            }
+        const tryToFetchDirective = async () => {
+            // Need to exchange for a fresh directive because:
+            //   new&fulfilled : user has submitted a tenant but wants to try to submit another
+            //      The backend checks if they are allowed to create multiple tenants
+            //   unfulfilled : user never exchanged a token before
+            //   outdated    : user has exchanged AND submitted something before
+            if (
+                (options?.forceNew && directiveState === 'fulfilled') ||
+                directiveState === 'unfulfilled' ||
+                directiveState === 'outdated'
+            ) {
+                if (options?.token) {
+                    DIRECTIVES[selectedDirective].token = options.token;
+                }
 
-            if (DIRECTIVES[selectedDirective].token) {
-                const fetchDirective = async () => {
-                    return exchangeBearerToken(
-                        DIRECTIVES[selectedDirective].token
+                if (DIRECTIVES[selectedDirective].token) {
+                    const fetchDirective = async () => {
+                        return exchangeBearerToken(
+                            DIRECTIVES[selectedDirective].token
+                        );
+                    };
+
+                    const fetchDirectiveResponse = await fetchDirective();
+
+                    setFreshDirective(
+                        fetchDirectiveResponse.data?.applied_directive ?? null
                     );
-                };
-
-                fetchDirective()
-                    .then((response) => {
-                        if (response.data) {
-                            setFreshDirective(response.data.applied_directive);
-                        }
-                    })
-                    .catch((error) => {
-                        setServerError(error);
-                    });
+                    setServerError(fetchDirectiveResponse.error);
+                }
             }
-        }
 
-        // Show a message to remind the user why they are seeing the directive page
-        if (directiveState === 'in progress') {
-            enqueueSnackbar(
-                intl.formatMessage({
-                    id: 'directives.returning',
-                }),
-                {
+            // Show a message to remind the user why they are seeing the directive page
+            if (directiveState === 'in progress') {
+                enqueueSnackbar(
+                    intl.formatMessage({
+                        id: 'directives.returning',
+                    }),
+                    {
+                        anchorOrigin: {
+                            vertical: 'top',
+                            horizontal: 'center',
+                        },
+                        preventDuplicate: true,
+                        variant: 'info',
+                    }
+                );
+            }
+
+            // Show a message to remind the user why they are seeing the directive page
+            if (directiveState === 'errored' && serverError?.message) {
+                enqueueSnackbar(serverError.message, {
                     anchorOrigin: {
                         vertical: 'top',
                         horizontal: 'center',
                     },
                     preventDuplicate: true,
-                    variant: 'info',
-                }
-            );
-        }
+                    variant: 'error',
+                });
+            }
+        };
 
-        // Show a message to remind the user why they are seeing the directive page
-        if (directiveState === 'errored' && serverError?.message) {
-            enqueueSnackbar(serverError.message, {
-                anchorOrigin: {
-                    vertical: 'top',
-                    horizontal: 'center',
-                },
-                preventDuplicate: true,
-                variant: 'error',
-            });
-        }
+        void tryToFetchDirective();
     }, [
         directiveState,
         enqueueSnackbar,
