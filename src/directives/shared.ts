@@ -2,6 +2,7 @@ import { isEmpty } from 'lodash';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import { JOB_STATUS_COLUMNS, supabaseClient, TABLES } from 'services/supabase';
 import { AppliedDirective } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import { Directives, UserClaims } from './types';
 
 export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v2';
@@ -42,17 +43,26 @@ export const DIRECTIVES: Directives = {
             };
         },
         calculateStatus: (appliedDirective) => {
+            const stillNeeded = () => {
+                return !hasLength(
+                    appliedDirective?.user_claims?.requestedTenant
+                );
+            };
+
             // If there is no directive to check it is unfulfilled
             if (!appliedDirective || isEmpty(appliedDirective)) {
                 return 'unfulfilled';
             }
 
             // If directive already queued and no claim is there we can just use that directive again
-            if (
-                appliedDirective.job_status.type === 'queued' &&
-                !appliedDirective.user_claims
-            ) {
-                return 'in progress';
+            if (appliedDirective.job_status.type === 'queued') {
+                // no claim is there we can just use that directive again
+                if (stillNeeded()) {
+                    return 'in progress';
+                }
+
+                // queued claim is current
+                return 'waiting';
             }
 
             // If the status is not success AND they submitted something... we need a new directive
@@ -85,7 +95,7 @@ export const DIRECTIVES: Directives = {
             };
         },
         calculateStatus: (appliedDirective?) => {
-            const isOutdated = () => {
+            const stillNeeded = () => {
                 return (
                     appliedDirective?.user_claims?.version &&
                     appliedDirective.user_claims.version !==
@@ -106,7 +116,7 @@ export const DIRECTIVES: Directives = {
                 }
 
                 // queued claim is outdate
-                if (isOutdated()) {
+                if (stillNeeded()) {
                     return 'outdated';
                 }
 
@@ -115,7 +125,7 @@ export const DIRECTIVES: Directives = {
             }
 
             // If previous claim is outdate then we need a new directive
-            if (isOutdated()) {
+            if (stillNeeded()) {
                 return 'outdated';
             }
 

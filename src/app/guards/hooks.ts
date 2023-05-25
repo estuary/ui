@@ -93,18 +93,11 @@ const useDirectiveGuard = (
                 }
             }
 
-            // Show message to tell user we are still waiting
-            if (directiveState === 'waiting') {
-                enqueueSnackbar(
-                    intl.formatMessage({
-                        id: 'directives.waiting',
-                    }),
-                    snackbarSettings
-                );
-            }
-
             // Show a message to remind the user why they are seeing the directive page
-            if (directiveState === 'in progress') {
+            if (
+                directiveState === 'in progress' ||
+                directiveState === 'waiting'
+            ) {
                 enqueueSnackbar(
                     intl.formatMessage({
                         id: 'directives.returning',
