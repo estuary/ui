@@ -1,43 +1,76 @@
 import { LoadingButton } from '@mui/lab';
-import { Stack, TextField, Toolbar, Typography } from '@mui/material';
+import {
+    Box,
+    Stack,
+    Toolbar,
+    Typography,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
-import ExternalLink from 'components/shared/ExternalLink';
+import CustomerQuote from 'directives/Onboard/CustomerQuote';
+import OrganizationNameField from 'directives/Onboard/OrganizationName';
+import {
+    useOnboardingStore_nameInvalid,
+    useOnboardingStore_nameMissing,
+    useOnboardingStore_requestedTenant,
+    useOnboardingStore_resetState,
+    useOnboardingStore_setNameMissing,
+    useOnboardingStore_surveyResponse,
+} from 'directives/Onboard/Store/hooks';
+import OnboardingSurvey from 'directives/Onboard/Survey';
 import { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
+import { useUnmount } from 'react-use';
 import { fireGtmEvent } from 'services/gtm';
 import { jobStatusPoller } from 'services/supabase';
-import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
 import { jobStatusQuery, trackEvent } from './shared';
 import { DirectiveProps } from './types';
 
 const directiveName = 'betaOnboard';
 
-const submit_onboard = async (requestedTenant: string, directive: any) => {
-    return submitDirective(directiveName, directive, requestedTenant);
+const submit_onboard = async (
+    requestedTenant: string,
+    directive: any,
+    surveyResponse: any
+) => {
+    return submitDirective(
+        directiveName,
+        directive,
+        requestedTenant,
+        surveyResponse
+    );
 };
 
 const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     trackEvent(`${directiveName}:Viewed`);
 
-    const intl = useIntl();
-    const [requestedTenant, setRequestedTenant] = useState<string>('');
+    const theme = useTheme();
+    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
+
+    // Onboarding Store
+    const requestedTenant = useOnboardingStore_requestedTenant();
+    const nameInvalid = useOnboardingStore_nameInvalid();
+    const nameMissing = useOnboardingStore_nameMissing();
+    const setNameMissing = useOnboardingStore_setNameMissing();
+    const surveyResponse = useOnboardingStore_surveyResponse();
+    const resetOnboardingState = useOnboardingStore_resetState();
+
     const [saving, setSaving] = useState(false);
-    const [nameMissing, setNameMissing] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
     const handlers = {
-        update: (updatedValue: string) => {
-            setRequestedTenant(updatedValue);
-
-            if (nameMissing) setNameMissing(!hasLength(updatedValue));
-        },
         submit: async (event: any) => {
             event.preventDefault();
 
-            if (!hasLength(requestedTenant)) {
-                setNameMissing(true);
+            if (nameInvalid || !hasLength(requestedTenant)) {
+                if (!hasLength(requestedTenant)) {
+                    setNameMissing(true);
+                }
+
                 setServerError(null);
             } else {
                 setServerError(null);
@@ -46,7 +79,8 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
 
                 const clickToAcceptResponse = await submit_onboard(
                     requestedTenant,
-                    directive
+                    directive,
+                    surveyResponse
                 );
 
                 if (clickToAcceptResponse.error) {
@@ -77,112 +111,91 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
         },
     };
 
+    useUnmount(() => resetOnboardingState());
+
     return (
-        <>
-            <Stack
-                spacing={2}
-                sx={{
-                    mt: 1,
-                    mb: 2,
-                    display: 'flex',
-                    alignItems: 'left',
-                }}
-            >
-                <Typography variant="h5" align="center" sx={{ mb: 1.5 }}>
-                    <FormattedMessage id="tenant.heading" />
-                </Typography>
+        <Stack direction="row">
+            <CustomerQuote hideQuote={belowMd} />
 
-                {nameMissing ? (
-                    <AlertBox
-                        short
-                        severity="error"
-                        title={<FormattedMessage id="error.title" />}
-                    >
-                        <FormattedMessage id="tenant.errorMessage.empty" />
-                    </AlertBox>
-                ) : null}
-
-                {serverError ? (
-                    <AlertBox
-                        severity="error"
-                        short
-                        title={<FormattedMessage id="common.fail" />}
-                    >
-                        {serverError}
-                    </AlertBox>
-                ) : null}
-
-                <Typography>
-                    <FormattedMessage id="tenant.message.1" />
-                </Typography>
-
-                <Typography>
-                    <FormattedMessage
-                        id="tenant.docs.message"
-                        values={{
-                            link: (
-                                <ExternalLink
-                                    link={intl.formatMessage({
-                                        id: 'tenant.docs.message.link',
-                                    })}
-                                >
-                                    <FormattedMessage id="terms.documentation" />
-                                </ExternalLink>
-                            ),
-                        }}
-                    />
-                </Typography>
-            </Stack>
-
-            <form noValidate onSubmit={handlers.submit}>
+            <Stack sx={{ width: belowMd ? '100%' : '50%' }}>
                 <Stack
                     spacing={2}
                     sx={{
-                        width: '100%',
+                        mt: 1,
+                        mb: 2,
                         display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        alignItems: 'left',
                     }}
                 >
-                    <TextField
-                        fullWidth
-                        placeholder={intl.formatMessage({
-                            id: 'tenant.input.placeholder',
-                        })}
-                        helperText={intl.formatMessage({
-                            id: nameMissing
-                                ? 'tenant.expectations.error'
-                                : 'tenant.expectations',
-                        })}
-                        error={nameMissing}
-                        id="requestedTenant"
-                        label={
-                            <FormattedMessage id="common.tenant.creationForm" />
-                        }
-                        value={requestedTenant}
-                        onChange={(event) =>
-                            handlers.update(event.target.value)
-                        }
-                        required
-                        inputProps={{
-                            pattern: PREFIX_NAME_PATTERN,
-                        }}
-                    />
+                    <Typography
+                        variant="h5"
+                        align={belowMd ? 'center' : 'left'}
+                        sx={{ mb: 1.5 }}
+                    >
+                        <FormattedMessage id="tenant.heading" />
+                    </Typography>
 
-                    <Toolbar>
-                        <LoadingButton
-                            type="submit"
-                            variant="contained"
-                            loading={saving}
-                            disabled={saving}
-                        >
-                            <FormattedMessage id="cta.continue" />
-                        </LoadingButton>
-                    </Toolbar>
+                    {nameMissing ? (
+                        <Box sx={{ maxWidth: 424 }}>
+                            <AlertBox
+                                short
+                                severity="error"
+                                title={<FormattedMessage id="error.title" />}
+                            >
+                                <FormattedMessage id="tenant.errorMessage.empty" />
+                            </AlertBox>
+                        </Box>
+                    ) : null}
+
+                    {serverError ? (
+                        <Box sx={{ maxWidth: 424 }}>
+                            <AlertBox
+                                severity="error"
+                                short
+                                title={<FormattedMessage id="common.fail" />}
+                            >
+                                {serverError}
+                            </AlertBox>
+                        </Box>
+                    ) : null}
                 </Stack>
-            </form>
-        </>
+
+                <form noValidate onSubmit={handlers.submit}>
+                    <Stack
+                        spacing={3}
+                        sx={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'left',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <OrganizationNameField />
+
+                        <OnboardingSurvey />
+
+                        <Toolbar
+                            disableGutters
+                            sx={{
+                                justifyContent: belowMd
+                                    ? 'center'
+                                    : 'flex-start',
+                            }}
+                        >
+                            <LoadingButton
+                                type="submit"
+                                variant="contained"
+                                loading={saving}
+                                disabled={saving}
+                            >
+                                <FormattedMessage id="cta.continue" />
+                            </LoadingButton>
+                        </Toolbar>
+                    </Stack>
+                </form>
+            </Stack>
+        </Stack>
     );
 };
 

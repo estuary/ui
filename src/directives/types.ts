@@ -7,23 +7,30 @@ import { AppliedDirective, JoinedAppliedDirective } from 'types';
 export interface Directives {
     betaOnboard: DirectiveSettings<OnboardClaim>;
     clickToAccept: DirectiveSettings<ClickToAcceptClaim>;
+    grant: DirectiveSettings<GrantClaim>;
 }
 
 export type DirectiveStates =
     | 'unfulfilled'
     | 'in progress'
     | 'fulfilled'
-    | 'outdated';
+    | 'outdated'
+    | 'errored';
 
 export interface ClickToAcceptClaim {
     version: string;
 }
 
-export interface OnboardClaim {
-    requestedTenant: string;
+export interface GrantClaim {
+    requestedPrefix: string;
 }
 
-export type UserClaims = ClickToAcceptClaim | OnboardClaim;
+export interface OnboardClaim {
+    requestedTenant: string;
+    survey: any;
+}
+
+export type UserClaims = ClickToAcceptClaim | GrantClaim | OnboardClaim;
 
 export interface DirectiveSettings<T> {
     token: string;

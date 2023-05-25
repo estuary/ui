@@ -1,8 +1,9 @@
 import { Box, Stack, Typography } from '@mui/material';
 import ResourceConfig from 'components/collection/ResourceConfig';
+import CollectionSchemaEditor from 'components/collection/schema/Editor';
+import CollectionSchemaEditorSkeleton from 'components/collection/schema/Editor/Skeleton';
 import MessageWithLink from 'components/content/MessageWithLink';
 import ControlledEditor from 'components/editor/Bindings/ControlledEditor';
-import SchemaEditButton from 'components/editor/Bindings/SchemaEdit/Button';
 import SchemaInferenceButton from 'components/editor/Bindings/SchemaInference/Button';
 import {
     useBindingsEditorStore_collectionData,
@@ -10,26 +11,25 @@ import {
     useBindingsEditorStore_schemaUpdateErrored,
 } from 'components/editor/Bindings/Store/hooks';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
-import DraftSpecEditor from 'components/editor/DraftSpec';
-import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_setCurrentCatalog,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
+import ExternalLink from 'components/shared/ExternalLink';
 import useInitializeCollectionDraft from 'hooks/useInitializeCollectionDraft';
 import { ReactNode, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+import SchemaEditCLIButton from './SchemaEdit/CLIButton';
+import SchemaEditToggle from './SchemaEdit/Toggle';
 
 interface Props {
     loading: boolean;
     skeleton: ReactNode;
     readOnly?: boolean;
 }
-
-const EDITOR_HEIGHT = 404;
 
 function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const initializeCollectionDraft = useInitializeCollectionDraft();
@@ -125,12 +125,17 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 >
                                     <Typography variant="h6" sx={{ mr: 1 }}>
                                         <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
+                                        <ExternalLink link="https://docs.estuary.dev/concepts/collections/#schemas">
+                                            <FormattedMessage id="terms.documentation" />
+                                        </ExternalLink>
                                     </Typography>
 
                                     <Stack direction="row" spacing={1}>
                                         <SchemaInferenceButton />
 
-                                        <SchemaEditButton />
+                                        <SchemaEditCLIButton />
+
+                                        <SchemaEditToggle />
                                     </Stack>
                                 </Box>
                             ) : (
@@ -141,19 +146,14 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
 
                             {collectionData ? (
                                 collectionData.belongsToDraft ? (
-                                    <DraftSpecEditor
-                                        entityType="collection"
-                                        localZustandScope={true}
-                                        editorHeight={EDITOR_HEIGHT}
+                                    <CollectionSchemaEditor
                                         entityName={currentCollection}
                                     />
                                 ) : (
                                     <ControlledEditor />
                                 )
                             ) : (
-                                <MonacoEditorSkeleton
-                                    editorHeight={EDITOR_HEIGHT}
-                                />
+                                <CollectionSchemaEditorSkeleton />
                             )}
                         </Stack>
                     ) : (

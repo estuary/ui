@@ -1,12 +1,10 @@
-import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
 import { cloneDeep } from 'lodash';
 import { useEffect, useMemo, useRef } from 'react';
-import { setDefaultsValidator } from 'services/ajv';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
-import defaultRenderers from 'services/jsonforms/defaultRenderers';
-import { defaultOptions, showValidation } from 'services/jsonforms/shared';
+import { jsonFormsDefaults } from 'services/jsonforms/defaults';
+import { showValidation } from 'services/jsonforms/shared';
 import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
@@ -88,18 +86,15 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
     return (
         <StyledEngineProvider injectFirst>
             <JsonForms
+                {...jsonFormsDefaults}
                 schema={preparedResourceSchema}
                 uischema={uiSchema}
                 data={formData}
-                renderers={defaultRenderers}
-                cells={materialCells}
-                config={defaultOptions}
                 readonly={readOnly || isActive}
                 validationMode={showValidationVal}
                 onChange={(state) => {
                     handlers.onChange(name.current, state);
                 }}
-                ajv={setDefaultsValidator}
             />
         </StyledEngineProvider>
     );

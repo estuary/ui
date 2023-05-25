@@ -1,10 +1,11 @@
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
 import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
+import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityWorkflow } from 'context/Workflow';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { isEmpty, isEqual } from 'lodash';
@@ -16,6 +17,7 @@ import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_previousEndpointConfig_data,
+    useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
     useEndpointConfigStore_setPreviousEndpointConfig,
@@ -34,6 +36,8 @@ interface Props {
     hideBorder?: boolean;
 }
 
+const DOCUSAURUS_THEME = 'docusaurus-theme';
+
 function EndpointConfig({
     connectorImage,
     readOnly = false,
@@ -41,6 +45,7 @@ function EndpointConfig({
 }: Props) {
     // General hooks
     const intl = useIntl();
+    const theme = useTheme();
 
     // The useConnectorTag hook can accept a connector ID or a connector tag ID.
     const { connectorTag, error } = useConnectorTag(connectorImage);
@@ -59,6 +64,8 @@ function EndpointConfig({
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
     const setEndpointCanBeEmpty = useEndpointConfig_setEndpointCanBeEmpty();
+    const setEncryptedEndpointConfig =
+        useEndpointConfigStore_setEncryptedEndpointConfig();
 
     // Workflow related props
     const workflow = useEntityWorkflow();
@@ -97,15 +104,21 @@ function EndpointConfig({
 
             const defaultConfig = createJSONFormDefaults(schema);
 
+            setServerUpdateRequired(true);
+            setEncryptedEndpointConfig({
+                data: {},
+            });
             setEndpointConfig(defaultConfig);
             setPreviousEndpointConfig(defaultConfig);
         }
     }, [
+        setServerUpdateRequired,
         setEndpointConfig,
         setEndpointSchema,
         setPreviousEndpointConfig,
         connectorTag?.endpoint_spec_schema,
         endpointSchemaChanged,
+        setEncryptedEndpointConfig,
     ]);
 
     // Controlling if we need to show the generate button again
@@ -126,8 +139,18 @@ function EndpointConfig({
     });
     useEffect(() => {
         if (connectorTag) {
-            setDocsURL(connectorTag.documentation_url);
+            const concatSymbol = connectorTag.documentation_url.includes('?')
+                ? '&'
+                : '?';
+
+            setDocsURL(
+                `${connectorTag.documentation_url}${concatSymbol}${DOCUSAURUS_THEME}=${theme.palette.mode}`
+            );
         }
+
+        // We do not want to trigger this if the theme changes so we just use the theme at load
+        //  because we fire a message to the docs when the theme changes
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [connectorTag, setDocsURL]);
 
     if (error) {
@@ -141,17 +164,19 @@ function EndpointConfig({
                 hideBorder={hideBorder}
                 header={<EndpointConfigHeader />}
             >
-                {readOnly ? (
-                    <Box sx={{ mb: 3 }}>
-                        <AlertBox severity="info" short>
-                            {intl.formatMessage({
-                                id: 'entityEdit.alert.endpointConfigDisabled',
-                            })}
-                        </AlertBox>
-                    </Box>
-                ) : null}
+                <ErrorBoundryWrapper>
+                    {readOnly ? (
+                        <Box sx={{ mb: 3 }}>
+                            <AlertBox severity="info" short>
+                                {intl.formatMessage({
+                                    id: 'entityEdit.alert.endpointConfigDisabled',
+                                })}
+                            </AlertBox>
+                        </Box>
+                    ) : null}
 
-                <EndpointConfigForm readOnly={readOnly} />
+                    <EndpointConfigForm readOnly={readOnly} />
+                </ErrorBoundryWrapper>
             </WrapperWithHeader>
         );
     } else {

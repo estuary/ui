@@ -1,5 +1,5 @@
 import { AlertColor } from '@mui/material';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { DraftSpec } from 'hooks/useDraftSpecs';
 
 export enum EditorStatus {
     IDLE = 'nothing happened since load',
@@ -20,12 +20,17 @@ export interface EditorStoreState<T> {
         newVal: EditorStoreState<T>['persistedDraftId']
     ) => void;
 
+    discoveredDraftId: string | null;
+    setDiscoveredDraftId: (
+        newVal: EditorStoreState<T>['discoveredDraftId']
+    ) => void;
+
     pubId: string | null;
     setPubId: (newVal: EditorStoreState<T>['pubId']) => void;
 
     // TODO: Resolve conflicting type. Determine whether current catalog can be a DraftSpecQuery, LiveSpecsQuery_spec, or null.
     //   See the FileSelector component for reference.
-    currentCatalog: DraftSpecQuery | null;
+    currentCatalog: DraftSpec;
     setCurrentCatalog: (newVal: EditorStoreState<T>['currentCatalog']) => void;
 
     specs: T[] | null;

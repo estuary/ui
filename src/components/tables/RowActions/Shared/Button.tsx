@@ -1,15 +1,15 @@
 import { Button, Dialog } from '@mui/material';
 import ProgressDialog from 'components/tables/RowActions/ProgressDialog';
 import RowActionConfirmation from 'components/tables/RowActions/Shared/Confirmation';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'components/tables/Store';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useZustandStore } from 'context/Zustand/provider';
 import { ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'stores/Tables/Store';
 
 interface Props {
     confirmationMessage?: ReactNode;
@@ -21,6 +21,7 @@ interface Props {
     messageID: string;
     selectableTableStoreName:
         | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.COLLECTION
         | SelectTableStoreNames.MATERIALIZATION;
 }
 

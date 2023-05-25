@@ -2,12 +2,15 @@ import { Box } from '@mui/material';
 import { getLiveSpecs_captures } from 'api/liveSpecsExt';
 import Rows from 'components/tables/Captures/Rows';
 import EntityTable from 'components/tables/EntityTable';
+import RowSelector from 'components/tables/RowActions/RowSelector';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
+import useTableState from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
-import useTableState from '../hooks';
-import StatsHydrator from './StatsHydrator';
+import StatsHydrator from 'stores/Tables/StatsHydrator';
 import useCaptureColumns from './useCaptureColumns';
+
+const selectableTableStoreName = SelectTableStoreNames.CAPTURE;
 
 function CapturesTable() {
     const {
@@ -35,13 +38,12 @@ function CapturesTable() {
         <Box>
             <TableHydrator
                 query={query}
-                selectableTableStoreName={SelectTableStoreNames.CAPTURE}
+                selectableTableStoreName={selectableTableStoreName}
             >
                 <StatsHydrator
-                    selectableTableStoreName={SelectTableStoreNames.CAPTURE}
+                    selectableTableStoreName={selectableTableStoreName}
                 >
                     <EntityTable
-                        enableSelection
                         noExistingDataContentIds={{
                             header: 'captures.message1',
                             message: 'captures.message2',
@@ -63,13 +65,17 @@ function CapturesTable() {
                         setColumnToSort={setColumnToSort}
                         header="captureTable.header"
                         filterLabel="capturesTable.filterLabel"
-                        rowSelectorProps={{
-                            selectableTableStoreName:
-                                SelectTableStoreNames.CAPTURE,
-                            showMaterialize: true,
-                        }}
                         showEntityStatus={true}
-                        selectableTableStoreName={SelectTableStoreNames.CAPTURE}
+                        selectableTableStoreName={selectableTableStoreName}
+                        showToolbar
+                        toolbar={
+                            <RowSelector
+                                selectableTableStoreName={
+                                    selectableTableStoreName
+                                }
+                                showMaterialize={true}
+                            />
+                        }
                     />
                 </StatsHydrator>
             </TableHydrator>

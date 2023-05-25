@@ -2,9 +2,13 @@ import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useMemo } from 'react';
 import { hasLength } from 'utils/misc-utils';
 import StatsHeader from '../cells/stats/Header';
-import { ColumnProps } from '../EntityTable';
+import { ColumnProps } from '../EntityTable/types';
 
 const defaultColumns: ColumnProps[] = [
+    {
+        field: null,
+        headerIntlKey: '',
+    },
     {
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.entity',
@@ -40,7 +44,7 @@ const useCollectionColumns = (): ColumnProps[] => {
     return useMemo(() => {
         if (hasDetails) {
             const response = [...defaultColumns];
-            response.splice(1, 0, statsHeader);
+            response.splice(2, 0, statsHeader);
             return response;
         } else {
             return defaultColumns;

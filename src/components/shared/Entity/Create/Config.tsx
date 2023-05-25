@@ -10,19 +10,15 @@ import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCre
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { EntityWithCreateWorkflow } from 'types';
 
 interface Props {
-    title: string;
     entityType: EntityWithCreateWorkflow;
 }
 
-function EntityCreateConfig({ title, entityType }: Props) {
-    useBrowserTitle(title);
-
+function EntityCreateConfig({ entityType }: Props) {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const navigateToCreate = useEntityCreateNavigate();

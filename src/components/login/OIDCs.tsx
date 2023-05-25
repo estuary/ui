@@ -1,5 +1,6 @@
 import { Box, Stack } from '@mui/material';
 import { Provider } from '@supabase/supabase-js';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useLoginRedirectPath from 'hooks/useLoginRedirectPath';
 import { useSnackbar } from 'notistack';
@@ -12,9 +13,10 @@ const redirectToBase = `${window.location.origin}/auth`;
 
 interface Props {
     isRegister?: boolean;
+    grantToken?: string;
 }
 
-function OIDCs({ isRegister }: Props) {
+function OIDCs({ isRegister, grantToken }: Props) {
     const supabaseClient = useClient();
     const intl = useIntl();
 
@@ -40,15 +42,19 @@ function OIDCs({ isRegister }: Props) {
     };
 
     const login = async (provider: Provider) => {
+        const redirectBaseURL = isRegister
+            ? window.location.origin
+            : redirectTo;
+
         try {
             const { error } = await supabaseClient.auth.signIn(
                 {
                     provider,
                 },
                 {
-                    redirectTo: isRegister
-                        ? window.location.origin
-                        : redirectTo,
+                    redirectTo: grantToken
+                        ? `${redirectBaseURL}?${GlobalSearchParams.GRANT_TOKEN}=${grantToken}`
+                        : redirectBaseURL,
                     shouldCreateUser: isRegister,
                 }
             );

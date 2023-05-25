@@ -1,37 +1,42 @@
-import { Divider, Stack, Typography } from '@mui/material';
+import { Box, Divider, Stack, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
 import MessageWithLink from 'components/content/MessageWithLink';
-import PageContainer from 'components/shared/PageContainer';
 import AccessGrantsTable from 'components/tables/AccessGrants';
-import useBrowserTitle from 'hooks/useBrowserTitle';
+import AccessLinksButton from 'components/tables/AccessGrants/AccessLinks/Dialog/Button';
+import usePageTitle from 'hooks/usePageTitle';
 import { FormattedMessage } from 'react-intl';
 
 function AccessGrants() {
-    useBrowserTitle('browserTitle.admin.accessGrants');
+    usePageTitle({
+        header: authenticatedRoutes.admin.accessGrants.title,
+        headerLink: 'https://docs.estuary.dev/reference/authentication/',
+    });
 
     return (
-        <PageContainer
-            pageTitleProps={{
-                header: authenticatedRoutes.admin.accessGrants.title,
-                headerLink:
-                    'https://docs.estuary.dev/reference/authentication/',
-            }}
-        >
+        <>
             <AdminTabs />
 
-            <Stack direction="column" spacing={2} sx={{ m: 2 }}>
-                <Typography
-                    component="span"
-                    variant="h6"
-                    sx={{
-                        alignItems: 'center',
-                    }}
+            <Stack spacing={2} sx={{ m: 2 }}>
+                <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{ justifyContent: 'space-between' }}
                 >
-                    <FormattedMessage id="terms.permissions" />
-                </Typography>
+                    <Box>
+                        <Typography
+                            component="div"
+                            variant="h6"
+                            sx={{ mb: 0.5 }}
+                        >
+                            <FormattedMessage id="terms.permissions" />
+                        </Typography>
 
-                <MessageWithLink messageID="admin.roles.message" />
+                        <MessageWithLink messageID="admin.roles.message" />
+                    </Box>
+
+                    <AccessLinksButton />
+                </Stack>
 
                 <Divider />
             </Stack>
@@ -39,7 +44,7 @@ function AccessGrants() {
             <AccessGrantsTable tablePrefix="ag" showUser />
 
             <AccessGrantsTable tablePrefix="pr" />
-        </PageContainer>
+        </>
     );
 }
 

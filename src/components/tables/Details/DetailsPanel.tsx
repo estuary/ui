@@ -41,6 +41,11 @@ function DetailsPanel({
 }: Props) {
     const theme = useTheme();
 
+    const localStore = useMemo(
+        () => createEditorStore(EditorStoreNames.GENERAL),
+        []
+    );
+
     const fullList = useMemo(
         () => concat([entityName], collectionNames),
         [collectionNames, entityName]
@@ -82,11 +87,7 @@ function DetailsPanel({
                     unmountOnExit
                 >
                     <Box sx={{ margin: 2 }}>
-                        <LocalZustandProvider
-                            createStore={createEditorStore(
-                                EditorStoreNames.GENERAL
-                            )}
-                        >
+                        <LocalZustandProvider createStore={localStore}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} sx={{ mx: 2 }}>
                                     <ShardInformation entityType={entityType} />

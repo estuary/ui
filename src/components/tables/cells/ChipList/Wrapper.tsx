@@ -21,7 +21,12 @@ const chipListHoverStyling = {
 function ChipWrapper({ disabled, onClick, stripPath, title, val }: Props) {
     return (
         <ListItem>
-            <Tooltip title={title ?? val}>
+            <Tooltip
+                title={title ?? val}
+                disableFocusListener={!stripPath}
+                disableHoverListener={!stripPath}
+                disableTouchListener={!stripPath}
+            >
                 <MuiChip
                     label={
                         stripPath ? (

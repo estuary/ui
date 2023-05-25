@@ -1,6 +1,7 @@
 import { Box, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import Navigation from 'components/navigation/Navigation';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import PageContainer from 'components/shared/PageContainer';
 import DocsSidePanel from 'components/sidePanelDocs/SidePanel';
 import { NavWidths } from 'context/Theme';
 import { useEffect, useState } from 'react';
@@ -89,7 +90,9 @@ function AppLayout() {
                         <Box className="pane-content">
                             <ErrorBoundryWrapper>
                                 <Toolbar />
-                                <Outlet />
+                                <PageContainer>
+                                    <Outlet />
+                                </PageContainer>
                             </ErrorBoundryWrapper>
                         </Box>
                     </ReflexElement>

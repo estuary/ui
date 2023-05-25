@@ -1,7 +1,7 @@
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
-import LogRocket from 'logrocket';
 import { useEffectOnce } from 'react-use';
+import { logRocketConsole } from 'services/logrocket';
 import {
     useEndpointConfig_hydrated,
     useEndpointConfig_hydrateState,
@@ -32,7 +32,10 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
                     setHydrated(true);
                     setHydrationErrorsExist(true);
 
-                    LogRocket.log('Failed to hydrate endpoint config', error);
+                    logRocketConsole(
+                        'Failed to hydrate endpoint config',
+                        error
+                    );
                 }
             );
         }

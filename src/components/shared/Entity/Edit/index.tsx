@@ -15,7 +15,6 @@ import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedCh
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import useBrowserTitle from 'hooks/useBrowserTitle';
-import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
@@ -42,6 +41,7 @@ import {
 import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
+import IncompatibleCollections from '../IncompatibleCollections';
 
 interface Props {
     title: string;
@@ -74,11 +74,6 @@ function EntityEdit({
     RediscoverButton,
 }: Props) {
     useBrowserTitle(title);
-
-    // Supabase stuff
-    const { combinedGrants } = useCombinedGrantsExt({
-        adminOnly: true,
-    });
 
     const {
         connectorTags,
@@ -168,6 +163,8 @@ function EntityEdit({
                         ) : null}
                     </Collapse>
 
+                    <IncompatibleCollections />
+
                     {draftInitializationError ? (
                         <Box sx={{ mb: 2 }}>
                             <AlertBox
@@ -190,7 +187,6 @@ function EntityEdit({
                         <ErrorBoundryWrapper>
                             <DetailsForm
                                 connectorTags={connectorTags}
-                                accessGrants={combinedGrants}
                                 readOnly={readOnly.detailsForm}
                                 entityType={entityType}
                             />
@@ -218,11 +214,9 @@ function EntityEdit({
                         </ErrorBoundryWrapper>
                     ) : null}
 
-                    <ErrorBoundryWrapper>
-                        <CatalogEditor
-                            messageId={`${messagePrefix}.finalReview.instructions`}
-                        />
-                    </ErrorBoundryWrapper>
+                    <CatalogEditor
+                        messageId={`${messagePrefix}.finalReview.instructions`}
+                    />
                 </>
             )}
         </>
