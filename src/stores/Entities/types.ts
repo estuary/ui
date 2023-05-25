@@ -2,7 +2,7 @@ import { PostgrestResponse } from '@supabase/postgrest-js';
 import { StoreWithHydration } from 'stores/Hydration';
 import { AuthRoles, Schema } from 'types';
 
-interface Capability {
+interface ObjectRoleMetadata {
     [key: string]: {
         token?: string;
     };
@@ -11,9 +11,9 @@ interface Capability {
 export interface EntitiesState extends StoreWithHydration {
     // Storing what the user has access to
     capabilities: {
-        admin: Capability | Schema | {};
-        read: Capability | Schema | {};
-        write: Capability | Schema | {};
+        admin: ObjectRoleMetadata | Schema | {};
+        read: ObjectRoleMetadata | Schema | {};
+        write: ObjectRoleMetadata | Schema | {};
     };
     setCapabilities: (capabilities: AuthRoles[] | null) => void;
 
