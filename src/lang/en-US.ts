@@ -184,7 +184,7 @@ const FullPage: ResolvedIntlConfig['messages'] = {
 };
 
 const EntitiesHydrator: ResolvedIntlConfig['messages'] = {
-    'entitiesHydrator.error': `Unable to load auth roles.`,
+    'entitiesHydrator.error.failedToFetch': `There was an issue while checking if you have any roles.`,
 };
 
 const Navigation: ResolvedIntlConfig['messages'] = {

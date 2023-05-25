@@ -1,4 +1,3 @@
-import { singleCallSettings } from 'context/SWR';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useEffect } from 'react';
 import { GlobalStoreNames } from 'stores/names';
@@ -96,13 +95,9 @@ export const useSidePanelDocsStore_resetState = () => {
 export const useHydrateState = () => {
     const hydrateState = useEntitiesStore_hydrateState();
 
-    const response = useSWR(
-        'entities_hydrator',
-        () => {
-            return hydrateState();
-        },
-        singleCallSettings
-    );
+    const response = useSWR('entities_hydrator', () => {
+        return hydrateState();
+    });
 
     // The rest of the stuff we need to handle hydration
     const setHydrationErrors = useEntitiesStore_setHydrationErrors();
