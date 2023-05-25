@@ -85,25 +85,37 @@ export const DIRECTIVES: Directives = {
             };
         },
         calculateStatus: (appliedDirective?) => {
+            const isOutdated = () => {
+                return (
+                    appliedDirective?.user_claims?.version &&
+                    appliedDirective.user_claims.version !==
+                        CLICK_TO_ACCEPT_LATEST_VERSION
+                );
+            };
+
             // If there is no directive to check it is unfulfilled
             if (!appliedDirective || isEmpty(appliedDirective)) {
                 return 'unfulfilled';
             }
 
-            // If directive already queued and no claim is there we can just use that directive again
-            if (
-                appliedDirective.job_status.type === 'queued' &&
-                !appliedDirective.user_claims
-            ) {
-                return 'in progress';
+            // If directive already queued and ...
+            if (appliedDirective.job_status.type === 'queued') {
+                // no claim is there we can just use that directive again
+                if (!appliedDirective.user_claims) {
+                    return 'in progress';
+                }
+
+                // queued claim is outdate
+                if (isOutdated()) {
+                    return 'outdated';
+                }
+
+                // queued claim is current
+                return 'waiting';
             }
 
             // If previous claim is outdate then we need a new directive
-            if (
-                appliedDirective.user_claims?.version &&
-                appliedDirective.user_claims.version !==
-                    CLICK_TO_ACCEPT_LATEST_VERSION
-            ) {
+            if (isOutdated()) {
                 return 'outdated';
             }
 

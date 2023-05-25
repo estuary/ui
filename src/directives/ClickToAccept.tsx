@@ -14,6 +14,7 @@ import { Square } from 'iconoir-react';
 import CheckSquare from 'icons/CheckSquare';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useEffectOnce } from 'react-use';
 import { jobStatusPoller } from 'services/supabase';
 import { getUrls } from 'utils/env-utils';
 import {
@@ -37,9 +38,14 @@ const submit_clickToAccept = async (directive: any) => {
 const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
     trackEvent(`${directiveName}:Viewed`);
 
+    // If the user is waiting
+    //  Preselect the acknolwedgment
+    //  Show the form as saving
+    const waiting = status === 'waiting';
     const [acknowledgedDocuments, setAcknowledgedDocuments] =
-        useState<boolean>(false);
-    const [saving, setSaving] = useState(false);
+        useState<boolean>(waiting);
+    const [saving, setSaving] = useState(waiting);
+
     const [showErrors, setShowErrors] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
@@ -51,8 +57,8 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
 
             if (showErrors) setShowErrors(!checked);
         },
-        submit: async (event: any) => {
-            event.preventDefault();
+        submit: async (event?: any) => {
+            event?.preventDefault();
 
             if (!acknowledgedDocuments) {
                 setShowErrors(true);
@@ -87,6 +93,12 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
             }
         },
     };
+
+    useEffectOnce(() => {
+        if (waiting) {
+            void handlers.submit();
+        }
+    });
 
     return (
         <>
@@ -166,6 +178,8 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                     <FormControlLabel
                         control={
                             <Checkbox
+                                disabled={waiting}
+                                checked={acknowledgedDocuments}
                                 value={acknowledgedDocuments}
                                 required
                                 icon={<Square style={{ fontSize: 14 }} />}

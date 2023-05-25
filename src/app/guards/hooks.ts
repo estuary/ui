@@ -3,10 +3,19 @@ import { exchangeBearerToken } from 'api/directives';
 import { DIRECTIVES } from 'directives/shared';
 import { UserClaims } from 'directives/types';
 import useAppliedDirectives from 'hooks/useAppliedDirectives';
-import { useSnackbar } from 'notistack';
+import { OptionsObject, useSnackbar } from 'notistack';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { AppliedDirective } from 'types';
+
+const snackbarSettings: OptionsObject = {
+    anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'center',
+    },
+    preventDuplicate: true,
+    variant: 'info',
+};
 
 const useDirectiveGuard = (
     selectedDirective: keyof typeof DIRECTIVES,
@@ -84,20 +93,23 @@ const useDirectiveGuard = (
                 }
             }
 
+            // Show message to tell user we are still waiting
+            if (directiveState === 'waiting') {
+                enqueueSnackbar(
+                    intl.formatMessage({
+                        id: 'directives.waiting',
+                    }),
+                    snackbarSettings
+                );
+            }
+
             // Show a message to remind the user why they are seeing the directive page
             if (directiveState === 'in progress') {
                 enqueueSnackbar(
                     intl.formatMessage({
                         id: 'directives.returning',
                     }),
-                    {
-                        anchorOrigin: {
-                            vertical: 'top',
-                            horizontal: 'center',
-                        },
-                        preventDuplicate: true,
-                        variant: 'info',
-                    }
+                    snackbarSettings
                 );
             }
 
@@ -119,6 +131,7 @@ const useDirectiveGuard = (
         directiveState,
         enqueueSnackbar,
         intl,
+        options,
         options?.forceNew,
         options?.token,
         selectedDirective,

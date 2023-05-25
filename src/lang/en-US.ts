@@ -82,6 +82,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 
     // Used in directives
     'directives.returning': `Welcome back. You still need to provide some information before using the application.`,
+    'directives.waiting': `Welcome back. You have already provided the required information and are waiting on a response.`,
 
     // User in filters for tables
     'filter.time.today': `Today`,
