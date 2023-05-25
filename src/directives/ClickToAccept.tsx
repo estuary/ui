@@ -52,8 +52,8 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
 
             if (showErrors) setShowErrors(!checked);
         },
-        submit: async (event?: any) => {
-            event?.preventDefault();
+        submit: async (event: any) => {
+            event.preventDefault();
 
             if (!acknowledgedDocuments) {
                 setShowErrors(true);
@@ -167,7 +167,6 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                     <FormControlLabel
                         control={
                             <Checkbox
-                                checked={acknowledgedDocuments}
                                 value={acknowledgedDocuments}
                                 required
                                 icon={<Square style={{ fontSize: 14 }} />}
