@@ -178,7 +178,7 @@ const ConfirmationDialog: ResolvedIntlConfig['messages'] = {
 };
 
 const FullPage: ResolvedIntlConfig['messages'] = {
-    'fullPage.instructions': `Please try again and, if the error persists {docLink}`,
+    'fullPage.instructions': `Please reload the page and, if the error persists {docLink}`,
     'fullPage.instructions.docLink': `contact support`,
     'fullPage.instructions.docPath': `mailto:support@estuary.dev`,
 };
