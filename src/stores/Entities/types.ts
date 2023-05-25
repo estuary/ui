@@ -1,4 +1,5 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
+import { StoreWithHydration } from 'stores/Hydration';
 import { AuthRoles, Schema } from 'types';
 
 interface Capability {
@@ -7,7 +8,7 @@ interface Capability {
     };
 }
 
-export interface EntitiesState {
+export interface EntitiesState extends StoreWithHydration {
     // Storing what the user has access to
     capabilities: {
         admin: Capability | Schema | {};
@@ -17,11 +18,8 @@ export interface EntitiesState {
     setCapabilities: (capabilities: AuthRoles[] | null) => void;
 
     hydrateState: () => Promise<PostgrestResponse<AuthRoles>>;
-    hydrated: boolean;
-    setHydrated: (val: EntitiesState['hydrated']) => void;
+    resetState: () => void;
 
     hydrationErrors: any;
     setHydrationErrors: (val: EntitiesState['hydrationErrors']) => void;
-
-    resetState: () => void;
 }

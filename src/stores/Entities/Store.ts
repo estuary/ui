@@ -1,5 +1,6 @@
 import { getAuthRoles } from 'api/combinedGrantsExt';
 import produce from 'immer';
+import { getStoreWithHydrationSettings } from 'stores/Hydration';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -8,10 +9,11 @@ import { EntitiesState } from './types';
 
 const getInitialStateData = (): Pick<
     EntitiesState,
-    'capabilities' | 'hydrated' | 'hydrationErrors'
+    'capabilities' | 'hydrated' | 'hydrationErrors' | 'hydrationErrorsExist'
 > => ({
     hydrated: false,
     hydrationErrors: null,
+    hydrationErrorsExist: false,
     capabilities: {
         admin: {},
         read: {},
@@ -24,6 +26,7 @@ const getInitialState = (
     // get: StoreApi<EntitiesState>['getState']
 ): EntitiesState => ({
     ...getInitialStateData(),
+    ...getStoreWithHydrationSettings('Entities', set),
 
     hydrateState: async () => {
         // Fetch everything the user can read
@@ -71,7 +74,7 @@ const getInitialState = (
     },
 
     resetState: () => {
-        set(getInitialStateData(), false, 'Top Bar State Reset');
+        set(getInitialStateData(), false, 'Entities Reset');
     },
 });
 
