@@ -153,7 +153,7 @@ const getDirectiveByToken = async (token: string) => {
     return data;
 };
 
-const getDirectiveByCatalogPrefix = (
+const getDirectivesByType = (
     directiveType: keyof typeof DIRECTIVES,
     pagination: any,
     searchQuery: any,
@@ -191,7 +191,7 @@ export {
     exchangeBearerToken,
     generateGrantDirective,
     getAppliedDirectives,
-    getDirectiveByCatalogPrefix,
+    getDirectivesByType,
     getDirectiveByToken,
     submitDirective,
 };

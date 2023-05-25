@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { getDirectiveByCatalogPrefix } from 'api/directives';
+import { getDirectivesByType } from 'api/directives';
 import Rows from 'components/tables/AccessGrants/AccessLinks/Rows';
 import EntityTable from 'components/tables/EntityTable';
 import RowSelector from 'components/tables/RowActions/AccessLinks/RowSelector';
@@ -52,7 +52,7 @@ function AccessLinksTable() {
     } = useTableState('ali', 'updated_at', 'desc');
 
     const query = useMemo(() => {
-        return getDirectiveByCatalogPrefix('grant', pagination, searchQuery, [
+        return getDirectivesByType('grant', pagination, searchQuery, [
             {
                 col: columnToSort,
                 direction: sortDirection,
