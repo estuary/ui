@@ -26,6 +26,7 @@ import {
     CARD_AREA_HEIGHT,
     SeriesConfig,
     SeriesNames,
+    stripTimeFromDate,
 } from 'utils/billing-utils';
 
 const stackId = 'Task Count';
@@ -59,18 +60,22 @@ function DataByMonthGraph() {
             surplusTasks: number;
         }[] = billingHistory
             .filter(({ billed_month }) => {
-                const billedMonth = new Date(billed_month);
+                const billedMonth = stripTimeFromDate(billed_month);
 
                 return isWithinInterval(billedMonth, {
                     start: startDate,
                     end: today,
                 });
             })
-            .map(({ billed_month, line_items }) => ({
-                month: intl.formatDate(billed_month, { month: 'short' }),
-                includedTasks: line_items[0].count,
-                surplusTasks: line_items[1].count,
-            }));
+            .map(({ billed_month, line_items }) => {
+                const billedMonth = stripTimeFromDate(billed_month);
+
+                return {
+                    month: intl.formatDate(billedMonth, { month: 'short' }),
+                    includedTasks: line_items[0].count,
+                    surplusTasks: line_items[1].count,
+                };
+            });
 
         return scopedDataSet.flatMap(
             ({

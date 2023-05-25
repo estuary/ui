@@ -27,6 +27,7 @@ import {
     formatDataVolumeForDisplay,
     SeriesConfig,
     SeriesNames,
+    stripTimeFromDate,
 } from 'utils/billing-utils';
 
 const stackId = 'Data Volume';
@@ -60,18 +61,24 @@ function DataByMonthGraph() {
             surplusDataVolume: number;
         }[] = billingHistory
             .filter(({ billed_month }) => {
-                const billedMonth = new Date(billed_month);
+                const billedMonth = stripTimeFromDate(billed_month);
+
+                console.log(billedMonth);
 
                 return isWithinInterval(billedMonth, {
                     start: startDate,
                     end: today,
                 });
             })
-            .map(({ billed_month, line_items }) => ({
-                month: intl.formatDate(billed_month, { month: 'short' }),
-                includedDataVolume: line_items[2].count,
-                surplusDataVolume: line_items[3].count,
-            }));
+            .map(({ billed_month, line_items }) => {
+                const billedMonth = stripTimeFromDate(billed_month);
+
+                return {
+                    month: intl.formatDate(billedMonth, { month: 'short' }),
+                    includedDataVolume: line_items[2].count,
+                    surplusDataVolume: line_items[3].count,
+                };
+            });
 
         return scopedDataSet.flatMap(
             ({

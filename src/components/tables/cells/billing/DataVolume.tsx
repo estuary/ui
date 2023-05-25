@@ -5,7 +5,6 @@ interface Props {
     volumeInGB: number;
 }
 
-// TODO (stats) we can combine this with the Docs component.
 const DataVolume = ({ volumeInGB }: Props) => {
     const intl = useIntl();
 
