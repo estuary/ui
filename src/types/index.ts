@@ -147,6 +147,12 @@ export interface Tenants {
     updated_at: string;
 }
 
+export type Capability = 'admin' | 'read' | 'write';
+export interface AuthRoles {
+    capability: Capability;
+    role_prefix: string;
+}
+
 export interface CatalogStats {
     catalog_name: string;
     grain: string;

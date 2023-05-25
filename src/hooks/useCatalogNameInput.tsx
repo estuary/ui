@@ -1,26 +1,22 @@
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
-import useCombinedGrantsExt from './useCombinedGrantsExt';
 
 function useCatalogNameInput() {
     const intl = useIntl();
 
-    const { combinedGrants } = useCombinedGrantsExt({
-        adminOnly: true,
-    });
+    const adminableCapabilities = useEntitiesStore_capabilities_adminable();
 
     const accessGrantsOneOf = useMemo(() => {
         const response = [] as string[];
 
-        if (combinedGrants.length > 0) {
-            combinedGrants.forEach((accessGrant) => {
-                response.push(accessGrant.object_role);
-            });
-        }
+        Object.keys(adminableCapabilities).forEach((objectRole) => {
+            response.push(objectRole);
+        });
 
         return response;
-    }, [combinedGrants]);
+    }, [adminableCapabilities]);
 
     const catalogNameSchema = useMemo(() => {
         return {

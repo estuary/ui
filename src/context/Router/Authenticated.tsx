@@ -1,10 +1,13 @@
 import AppLayout from 'app/Layout';
 import { AuthenticatedOnlyContext } from 'context/Authenticated';
+import AuthenticatedHydrators from 'context/AuthenticatedHydrators';
 
 function Authenticated() {
     return (
         <AuthenticatedOnlyContext>
-            <AppLayout />
+            <AuthenticatedHydrators>
+                <AppLayout />
+            </AuthenticatedHydrators>
         </AuthenticatedOnlyContext>
     );
 }

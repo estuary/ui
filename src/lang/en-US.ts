@@ -176,8 +176,10 @@ const ConfirmationDialog: ResolvedIntlConfig['messages'] = {
     'confirm.loseData': `You have unsaved work. If you continue, you will lose your changes.`,
 };
 
-const FullPage: ResolvedIntlConfig['messages'] = {
-    'fullpage.error': `Major Error`,
+const EntitiesHydrator: ResolvedIntlConfig['messages'] = {
+    'entitiesHydrator.error': `Unable to load auth roles. Please try again and, if the error persists {docLink}`,
+    'entitiesHydrator.error.docLink': `contact support`,
+    'entitiesHydrator.error.docPath': `mailto:support@estuary.dev`,
 };
 
 const Navigation: ResolvedIntlConfig['messages'] = {
@@ -1050,7 +1052,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...Data,
     ...ErrorBoundry,
     ...RouteTitles,
-    ...FullPage,
+    ...EntitiesHydrator,
     ...Header,
     ...Navigation,
     ...ConfirmationDialog,
