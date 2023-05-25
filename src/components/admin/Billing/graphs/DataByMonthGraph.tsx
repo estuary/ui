@@ -63,8 +63,6 @@ function DataByMonthGraph() {
             .filter(({ billed_month }) => {
                 const billedMonth = stripTimeFromDate(billed_month);
 
-                console.log(billedMonth);
-
                 return isWithinInterval(billedMonth, {
                     start: startDate,
                     end: today,
