@@ -7,7 +7,7 @@ const INTERVAL = 30000;
 
 const defaultResponse: BillingRecord[] = [];
 
-function useBillingHistory(currentMonth: string | Date) {
+function useBillingRecord(currentMonth: string | Date) {
     const selectedTenant = useBilling_selectedTenant();
 
     const { data, error, mutate, isValidating } = useSelectNew<BillingRecord>(
@@ -23,11 +23,11 @@ function useBillingHistory(currentMonth: string | Date) {
     );
 
     return {
-        billingHistory: data ? data.data : defaultResponse,
+        billingRecord: data ? data.data : defaultResponse,
         error,
         mutate,
         isValidating,
     };
 }
 
-export default useBillingHistory;
+export default useBillingRecord;

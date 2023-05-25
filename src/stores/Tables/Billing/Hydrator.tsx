@@ -1,6 +1,6 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { useZustandStore } from 'context/Zustand/provider';
-import useBillingHistory from 'hooks/billing/useBillingHistory';
+import useBillingRecord from 'hooks/billing/useBillingRecord';
 import { useEffect } from 'react';
 import { useUnmount } from 'react-use';
 import { SelectTableStoreNames } from 'stores/names';
@@ -35,7 +35,11 @@ export const BillingHistoryTableHydrator = ({
 
     const hydrateState = useBillingTable_hydrateContinuously();
 
-    const { billingHistory, error, isValidating } = useBillingHistory('');
+    const {
+        billingRecord: billingHistory,
+        error,
+        isValidating,
+    } = useBillingRecord('');
 
     useEffect(() => {
         setQuery(query);

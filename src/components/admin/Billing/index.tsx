@@ -14,7 +14,7 @@ import AlertBox from 'components/shared/AlertBox';
 import BillingHistoryTable from 'components/tables/Billing';
 import { eachMonthOfInterval, format, startOfMonth, subMonths } from 'date-fns';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
-import useBillingHistory from 'hooks/billing/useBillingHistory';
+import useBillingRecord from 'hooks/billing/useBillingRecord';
 import usePageTitle from 'hooks/usePageTitle';
 import { useEffect, useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -73,8 +73,8 @@ function AdminBilling() {
         isValidating: isValidatingStats,
     } = useBillingCatalogStats();
 
-    const { billingHistory, isValidating: isValidatingHistory } =
-        useBillingHistory(currentMonth);
+    const { billingRecord, isValidating: isValidatingRecord } =
+        useBillingRecord(currentMonth);
 
     useEffect(() => {
         if (!isValidatingStats && billingStats) {
@@ -139,16 +139,16 @@ function AdminBilling() {
     useEffect(() => {
         if (
             historyInitialized &&
-            !isValidatingHistory &&
-            hasLength(billingHistory)
+            !isValidatingRecord &&
+            hasLength(billingRecord)
         ) {
-            updateBillingHistory(billingHistory);
+            updateBillingHistory(billingRecord);
         }
     }, [
         updateBillingHistory,
-        billingHistory,
+        billingRecord,
         historyInitialized,
-        isValidatingHistory,
+        isValidatingRecord,
     ]);
 
     useUnmount(() => resetBillingState());
