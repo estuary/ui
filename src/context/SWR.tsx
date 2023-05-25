@@ -57,7 +57,7 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                     },
 
                     // Start with a quick retry in case the problem was ephemeral
-                    errorRetryInterval: 1000,
+                    errorRetryInterval: 2500,
 
                     // TODO (SWR) this is nice but we need some UX built out before turning it back on
                     revalidateOnFocus: false,
