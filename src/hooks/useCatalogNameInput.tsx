@@ -11,8 +11,8 @@ function useCatalogNameInput() {
     const accessGrantsOneOf = useMemo(() => {
         const response = [] as string[];
 
-        Object.keys(adminableCapabilities).forEach((adminPrefix) => {
-            response.push(adminPrefix);
+        Object.keys(adminableCapabilities).forEach((objectRole) => {
+            response.push(objectRole);
         });
 
         return response;
