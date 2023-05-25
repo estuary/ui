@@ -175,12 +175,18 @@ function DataByMonthGraph() {
                             } else {
                                 const tooltipTitle =
                                     billingHistory
-                                        .map(({ billed_month }) =>
-                                            intl.formatDate(billed_month, {
-                                                month: 'short',
-                                                year: 'numeric',
-                                            })
-                                        )
+                                        .map(({ billed_month }) => {
+                                            const billedMonth =
+                                                stripTimeFromDate(billed_month);
+
+                                            return intl.formatDate(
+                                                billedMonth,
+                                                {
+                                                    month: 'short',
+                                                    year: 'numeric',
+                                                }
+                                            );
+                                        })
                                         .find((date) =>
                                             date.includes(config.axisValueLabel)
                                         ) ?? config.axisValueLabel;
