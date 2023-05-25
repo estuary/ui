@@ -131,7 +131,13 @@ function UpdateEntity({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [liveSpecs, liveSpecsError, liveSpecsValidating]);
 
-    const { publication } = usePublications(pubID, true);
+    // Start fetching publication status.
+    //  If update is running keep checking
+    //  If update is done stop checking
+    const { publication } = usePublications(
+        pubID,
+        state === ProgressStates.RUNNING
+    );
     useEffect(() => {
         const success = jobSucceeded(publication?.job_status);
 
@@ -158,6 +164,7 @@ function UpdateEntity({
             name={entity.catalog_name}
             error={error}
             logToken={logToken}
+            renderLogs
             renderError={(errorProvided: any) => {
                 return (
                     <>
