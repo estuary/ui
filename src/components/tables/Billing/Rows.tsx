@@ -13,9 +13,6 @@ interface RowsProps {
     data: BillingRecord[];
 }
 
-// TODO: Determine if it is intentional for max concurrent tasks to be zero when
-//   the billing_report RPC clearly reports a data volume surplus. Falling back on the
-//   tracked included task count in the interim.
 function Row({ row }: RowProps) {
     return (
         <TableRow hover>
@@ -24,11 +21,7 @@ function Row({ row }: RowProps) {
             <DataVolume volumeInGB={row.total_processed_data_gb} />
 
             <TableCell>
-                <Typography>
-                    {row.max_concurrent_tasks > 0
-                        ? row.max_concurrent_tasks
-                        : row.line_items[0].count}
-                </Typography>
+                <Typography>{row.max_concurrent_tasks}</Typography>
             </TableCell>
 
             <TableCell>

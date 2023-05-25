@@ -67,12 +67,13 @@ function DataByMonthGraph() {
                     end: today,
                 });
             })
-            .map(({ billed_month, line_items }) => {
+            .map(({ billed_month, line_items, max_concurrent_tasks }) => {
                 const billedMonth = stripTimeFromDate(billed_month);
 
                 return {
                     month: intl.formatDate(billedMonth, { month: 'short' }),
-                    includedTasks: line_items[0].count,
+                    includedTasks:
+                        max_concurrent_tasks > 0 ? line_items[0].count : 0,
                     surplusTasks: line_items[1].count,
                 };
             });
