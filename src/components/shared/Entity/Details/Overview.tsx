@@ -5,6 +5,7 @@ import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
+import { specContainsDerivation } from 'utils/misc-utils';
 import ShardInformation from '../Shard/Information';
 import Endpoints from './Endpoints';
 
@@ -23,9 +24,7 @@ function Overview({ name }: Props) {
         localScope: true,
     });
     const catalogSpec = currentCatalog?.spec ?? null;
-    const isDerivation = Boolean(
-        catalogSpec?.derivation || catalogSpec?.derive
-    );
+    const { isDerivation } = specContainsDerivation(catalogSpec);
 
     const entityName = name ?? catalogName;
 

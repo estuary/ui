@@ -22,11 +22,6 @@ function RowSelector({
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
-    // Only specs that contain shards should allow eanble/disable
-    const specHasShards =
-        selectableTableStoreName === SelectTableStoreNames.CAPTURE ||
-        selectableTableStoreName === SelectTableStoreNames.MATERIALIZATION;
-
     const selectedRows = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['selected']
@@ -82,18 +77,15 @@ function RowSelector({
                 disableElevation
                 disabled={!hasSelections}
             >
-                {!specHasShards ? null : (
-                    <>
-                        <DisableEnableButton
-                            selectableTableStoreName={selectableTableStoreName}
-                            enabling={true}
-                        />
-                        <DisableEnableButton
-                            selectableTableStoreName={selectableTableStoreName}
-                            enabling={false}
-                        />
-                    </>
-                )}
+                <DisableEnableButton
+                    selectableTableStoreName={selectableTableStoreName}
+                    enabling={true}
+                />
+
+                <DisableEnableButton
+                    selectableTableStoreName={selectableTableStoreName}
+                    enabling={false}
+                />
 
                 <DeleteButton
                     selectableTableStoreName={selectableTableStoreName}
