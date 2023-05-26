@@ -68,7 +68,7 @@ export const unescapeString = (stringVal: string) => {
 };
 
 // For awhile we need to support the old (pre sql) derivation key
-const derivationKeys = ['derivation', 'dervie'];
+const derivationKeys = ['derivation', 'derive'];
 
 type SpecContainsDerivationResponse =
     | {

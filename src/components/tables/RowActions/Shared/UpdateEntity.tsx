@@ -38,6 +38,7 @@ export interface UpdateEntityProps {
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
         | SelectTableStoreNames.MATERIALIZATION;
+    validateNewSpec?: boolean;
 }
 
 function UpdateEntity({
@@ -49,6 +50,7 @@ function UpdateEntity({
     skippedMessageID,
     successMessageID,
     selectableStoreName,
+    validateNewSpec,
 }: UpdateEntityProps) {
     const [state, setState] = useState<ProgressStates>(ProgressStates.RUNNING);
     const [error, setError] = useState<any | null>(null);
@@ -105,7 +107,7 @@ function UpdateEntity({
             // We want to make sure there is a new spec to update before
             //  calling anything on
             const newSpec = generateNewSpec(spec);
-            if (!newSpec) {
+            if (validateNewSpec && !newSpec) {
                 // If we have a skipped message ID set it to the error
                 if (skippedMessageID) {
                     setError({

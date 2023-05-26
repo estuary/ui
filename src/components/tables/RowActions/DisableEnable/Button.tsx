@@ -33,6 +33,7 @@ function DisableEnableButton({
                     key={`Item-disable_enable-${index}`}
                     entity={item}
                     onFinish={onFinish}
+                    validateNewSpec
                     skippedMessageID="updateEntity.collection.skipped"
                     successMessageID={messages.success}
                     runningMessageID={messages.running}
