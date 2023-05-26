@@ -6,6 +6,11 @@ import { SelectTableStoreNames } from 'stores/names';
 import { specContainsDerivation } from 'utils/misc-utils';
 import { DisableEnableButtonProps } from './types';
 
+const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
+    draftSpec.shards = draftSpec.shards ?? {};
+    draftSpec.shards.disable = !enabling;
+};
+
 function DisableEnableButton({
     enabling,
     selectableTableStoreName,
@@ -51,11 +56,10 @@ function DisableEnableButton({
                                     return produce<typeof spec>(
                                         spec,
                                         (draftSpec) => {
-                                            draftSpec[derivationKey].shards =
-                                                draftSpec.shards ?? {};
-                                            draftSpec[
-                                                derivationKey
-                                            ].shards.disable = !enabling;
+                                            updateShardDisabled(
+                                                draftSpec[derivationKey],
+                                                enabling
+                                            );
                                         }
                                     );
                                 }
@@ -64,9 +68,10 @@ function DisableEnableButton({
                                 return produce<typeof spec>(
                                     spec,
                                     (draftSpec) => {
-                                        draftSpec.shards =
-                                            draftSpec.shards ?? {};
-                                        draftSpec.shards.disable = !enabling;
+                                        updateShardDisabled(
+                                            draftSpec,
+                                            enabling
+                                        );
                                     }
                                 );
                             }
