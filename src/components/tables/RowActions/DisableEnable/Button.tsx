@@ -17,6 +17,7 @@ function DisableEnableButton({
 }: DisableEnableButtonProps) {
     const messages = {
         running: enabling ? 'common.enabling' : 'common.disabling',
+        skipped: 'updateEntity.collection.skipped',
         success: enabling ? 'common.enabled' : 'common.disabled',
     };
 
@@ -39,7 +40,7 @@ function DisableEnableButton({
                     entity={item}
                     onFinish={onFinish}
                     validateNewSpec
-                    skippedMessageID="updateEntity.collection.skipped"
+                    skippedMessageID={messages.skipped}
                     successMessageID={messages.success}
                     runningMessageID={messages.running}
                     generateNewSpec={(spec) => {
