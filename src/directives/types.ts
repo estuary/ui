@@ -13,6 +13,7 @@ export interface Directives {
 export type DirectiveStates =
     | 'unfulfilled'
     | 'in progress'
+    | 'waiting'
     | 'fulfilled'
     | 'outdated'
     | 'errored';

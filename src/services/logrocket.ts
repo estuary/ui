@@ -39,6 +39,7 @@ export enum CustomEvents {
     DIRECTIVE = 'Directive',
     ERROR_BOUNDARY_DISPLAYED = 'Error_Boundary_Displayed',
     ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
+    FULL_PAGE_ERROR_DISPLAYED = 'Full_Page_Error_Displayed',
 }
 
 const logRocketSettings = getLogRocketSettings();

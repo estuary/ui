@@ -1,9 +1,11 @@
+import FullPageError from 'components/fullPage/Error';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useUserGrants from 'hooks/useUserGrants';
 import { useMemo } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
 import OnboardGuard from './OnboardGuard';
 
@@ -24,13 +26,27 @@ function TenantGuard({ children }: BaseComponentProps) {
         userGrants,
         isValidating: checkingGrants,
         mutate,
+        error,
     } = useUserGrants({
         singleCall: true,
     });
 
     if (checkingGrants) {
         return <FullPageSpinner />;
-    } else if (userGrants.length === 0 || showBeta) {
+    }
+
+    if (error) {
+        return (
+            <FullPageError
+                error={error}
+                message={
+                    <FormattedMessage id="tenant.error.failedToFetch.message" />
+                }
+            />
+        );
+    }
+
+    if (userGrants.length === 0 || showBeta) {
         return <OnboardGuard grantsMutate={mutate} forceDisplay={showBeta} />;
     } else {
         // eslint-disable-next-line react/jsx-no-useless-fragment
