@@ -49,8 +49,6 @@ function SharedProgress({
     const showErrors =
         (state === ProgressStates.FAILED || skipped) && error !== null;
 
-    console.log('state', state);
-
     return (
         <Box
             sx={{

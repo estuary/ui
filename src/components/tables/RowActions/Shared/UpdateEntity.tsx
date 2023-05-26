@@ -16,7 +16,6 @@ import {
 } from 'hooks/useLiveSpecsExt';
 import usePublications from 'hooks/usePublications';
 import { useEffect, useState } from 'react';
-import { useIntl } from 'react-intl';
 import { jobSucceeded } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import {
@@ -51,8 +50,6 @@ function UpdateEntity({
     successMessageID,
     selectableStoreName,
 }: UpdateEntityProps) {
-    const intl = useIntl();
-
     const [state, setState] = useState<ProgressStates>(ProgressStates.RUNNING);
     const [error, setError] = useState<any | null>(null);
     const [draftId, setDraftId] = useState<string | null>(null);
@@ -112,9 +109,7 @@ function UpdateEntity({
                 // If we have a skipped message ID set it to the error
                 if (skippedMessageID) {
                     setError({
-                        message: intl.formatMessage({
-                            id: skippedMessageID,
-                        }),
+                        message: skippedMessageID,
                     });
                 }
                 return done(ProgressStates.SKIPPED, {});
@@ -191,7 +186,6 @@ function UpdateEntity({
             logToken={logToken}
             renderLogs
             renderError={(renderError_error, renderError_state) => {
-                console.log('draftId', { draftId, renderError_state });
                 const skipped = renderError_state === ProgressStates.SKIPPED;
 
                 return (
