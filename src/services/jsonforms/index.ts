@@ -324,7 +324,6 @@ const generateUISchema = (
     rootGenerating: boolean,
     rootSchema?: JsonSchema
 ): UISchemaElement => {
-    console.log(`generateUISchema ${currentRef}`);
     if (!isEmpty(jsonSchema) && jsonSchema.$ref !== undefined) {
         return generateUISchema(
             resolveSchema(
