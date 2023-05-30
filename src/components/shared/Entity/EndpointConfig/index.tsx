@@ -11,7 +11,7 @@ import useConnectorTag from 'hooks/useConnectorTag';
 import { isEmpty, isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useUnmount } from 'react-use';
+import { useMount, useUnmount } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     useEndpointConfigStore_endpointConfig_data,
@@ -152,6 +152,16 @@ function EndpointConfig({
         //  because we fire a message to the docs when the theme changes
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [connectorTag, setDocsURL]);
+
+    // Default serverUpdateRequired for Create
+    //  This prevents us from sending the empty object to get encrypted
+    //  Handles an edgecase where the user submits the endpoint config
+    //      with all the default properties (hello world).
+    useMount(() => {
+        if (!editWorkflow) {
+            setServerUpdateRequired(true);
+        }
+    });
 
     if (error) {
         return <Error error={error} />;
