@@ -32,11 +32,13 @@ export interface UpdateEntityProps {
     ) => any | Promise<void>;
     generateNewSpecType: (entity: CaptureQuery) => Entity | null;
     runningMessageID: SharedProgressProps['runningMessageID'];
+    skippedMessageID?: SharedProgressProps['skippedMessageID'];
     successMessageID: SharedProgressProps['successMessageID'];
     selectableStoreName:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
         | SelectTableStoreNames.MATERIALIZATION;
+    validateNewSpec?: boolean;
 }
 
 function UpdateEntity({
@@ -45,8 +47,10 @@ function UpdateEntity({
     entity,
     onFinish,
     runningMessageID,
+    skippedMessageID,
     successMessageID,
     selectableStoreName,
+    validateNewSpec,
 }: UpdateEntityProps) {
     const [state, setState] = useState<ProgressStates>(ProgressStates.RUNNING);
     const [error, setError] = useState<any | null>(null);
@@ -71,10 +75,13 @@ function UpdateEntity({
     const liveSpecsValidating = liveSpecsResponse.isValidating;
 
     useEffect(() => {
-        const failed = (response: any) => {
-            setState(ProgressStates.FAILED);
-            setError(response.error ?? response);
+        const done = (progressState: ProgressStates, response: any) => {
+            setState(progressState);
             onFinish(response);
+        };
+        const failed = (response: any) => {
+            setError(response.error ?? response);
+            done(ProgressStates.FAILED, response);
         };
 
         if (liveSpecsValidating) {
@@ -97,26 +104,41 @@ function UpdateEntity({
             targetEntity: CaptureQuery,
             spec: LiveSpecsExtQueryWithSpec['spec']
         ) => {
-            const entityName = targetEntity.catalog_name;
+            // We want to make sure there is a new spec to update before
+            //  calling anything on
+            const newSpec = generateNewSpec(spec);
+            if (validateNewSpec && !newSpec) {
+                // If we have a skipped message ID set it to the error
+                if (skippedMessageID) {
+                    setError({
+                        message: skippedMessageID,
+                    });
+                }
+                return done(ProgressStates.SKIPPED, {});
+            }
 
+            // Start by creating a draft we can update and publish
+            const entityName = targetEntity.catalog_name;
             const draftsResponse = await createEntityDraft(entityName);
             if (draftsResponse.error) {
                 return failed(draftsResponse);
             }
 
+            // Add the specific entity to the draft and make a spec
+            //  with the changed
             const newDraftId = draftsResponse.data[0].id;
             setDraftId(newDraftId);
-
             const draftSpecsResponse = await createDraftSpec(
                 newDraftId,
                 entityName,
-                generateNewSpec(spec),
+                newSpec,
                 generateNewSpecType(targetEntity)
             );
             if (draftSpecsResponse.error) {
                 return failed(draftSpecsResponse);
             }
 
+            // Try to publish the changes
             const publishResponse = await createPublication(newDraftId, false);
             if (publishResponse.error) {
                 return failed(publishResponse);
@@ -165,14 +187,25 @@ function UpdateEntity({
             error={error}
             logToken={logToken}
             renderLogs
-            renderError={(errorProvided: any) => {
+            renderError={(renderError_error, renderError_state) => {
+                const skipped = renderError_state === ProgressStates.SKIPPED;
+
                 return (
                     <>
-                        <AlertBox short hideIcon severity="error">
-                            <DraftErrors draftId={draftId} />
-                        </AlertBox>
-                        {errorProvided?.message ? (
-                            <Error error={errorProvided} condensed />
+                        {draftId ? (
+                            <AlertBox short hideIcon severity="error">
+                                <DraftErrors draftId={draftId} />
+                            </AlertBox>
+                        ) : null}
+
+                        {renderError_error?.message ? (
+                            <Error
+                                error={renderError_error}
+                                severity={skipped ? 'info' : undefined}
+                                hideIcon={skipped}
+                                condensed
+                                hideTitle
+                            />
                         ) : null}
                     </>
                 );

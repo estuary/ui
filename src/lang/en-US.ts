@@ -19,6 +19,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.testing': `Testing`,
     'common.invalid': `Invalid`,
     'common.fail': `Failed`,
+    'common.skipped': `Skipped`,
     'common.publishing': `Publishing...`,
     'common.success': `Success`,
     'common.errors.heading': `Error`,
@@ -1052,6 +1053,7 @@ const DraftErrors: ResolvedIntlConfig['messages'] = {
 
 const UpdateEntity: ResolvedIntlConfig['messages'] = {
     'updateEntity.noLiveSpecs': `Unable to find entity on server.`,
+    'updateEntity.collection.skipped': `${CTAs['cta.enable']} and ${CTAs['cta.disable']} only work on derivations`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
