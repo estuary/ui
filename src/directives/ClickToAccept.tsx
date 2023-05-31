@@ -40,6 +40,7 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
     const [acknowledgedDocuments, setAcknowledgedDocuments] =
         useState<boolean>(false);
     const [saving, setSaving] = useState(false);
+
     const [showErrors, setShowErrors] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 

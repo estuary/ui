@@ -12,6 +12,12 @@ export const stripPathing = (stringVal: string) => {
     );
 };
 
+export const stripName = (stringVal: string) => {
+    if (!stringVal) return stringVal;
+
+    return stringVal.substring(0, stringVal.lastIndexOf('/') + 1);
+};
+
 export const hasLength = (val: string | any[] | null | undefined): boolean => {
     return Boolean(val && val.length > 0);
 };
@@ -59,4 +65,35 @@ export const arrayToMatrix = (arr: any[], width: number) =>
 
 export const unescapeString = (stringVal: string) => {
     return stringVal.replaceAll(/\\"/g, '"');
+};
+
+// For awhile we need to support the old (pre sql) derivation key
+const derivationKeys = ['derivation', 'derive'];
+
+type SpecContainsDerivationResponse =
+    | {
+          isDerivation: false;
+          derivationKey: null;
+      }
+    | {
+          isDerivation: true;
+          derivationKey: string;
+      };
+export const specContainsDerivation = (
+    spec?: any
+): SpecContainsDerivationResponse => {
+    let isDerivation = false;
+    let derivationKey = null;
+
+    derivationKeys.some((key) => {
+        if (spec?.[key]) {
+            isDerivation = true;
+            derivationKey = key;
+            return true;
+        }
+
+        return false;
+    });
+
+    return { isDerivation, derivationKey };
 };

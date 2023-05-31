@@ -19,8 +19,9 @@ interface Props {
     options: any[];
     onChange: (collections: string[], reason: AutocompleteChangeReason) => void;
     selectedCollections: string[] | CollectionData[];
-    readOnly?: boolean;
+    itemType?: string;
     getValue?: (option: any) => string;
+    readOnly?: boolean;
     AutocompleteProps?: any; // TODO (typing) - need to typ as props
 }
 
@@ -29,13 +30,19 @@ function CollectionSelectorSearch({
     onChange,
     selectedCollections,
     readOnly = false,
+    itemType,
     getValue,
     AutocompleteProps,
 }: Props) {
     const intl = useIntl();
-    const collectionsLabel = intl.formatMessage({
-        id: 'entityCreate.bindingsConfig.collectionsLabel',
-    });
+    const collectionsLabel = intl.formatMessage(
+        {
+            id: 'entityCreate.bindingsConfig.collectionsLabel',
+        },
+        {
+            items: itemType ?? intl.formatMessage({ id: 'terms.collections' }),
+        }
+    );
 
     const [missingInput, setMissingInput] = useState(false);
     const [inputValue, setInputValue] = useState('');

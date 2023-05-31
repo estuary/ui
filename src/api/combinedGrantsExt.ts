@@ -5,7 +5,7 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { Grants } from 'types';
+import { AuthRoles, Grants } from 'types';
 
 // Used to display prefix grants in admin page
 const getGrants = (
@@ -97,7 +97,7 @@ const getGrantsForAuthToken = () => {
 
 export const getAuthRoles = async (capability: string) => {
     return supabaseClient
-        .rpc<{ role_prefix: string; capability: string }>(RPCS.AUTH_ROLES, {
+        .rpc<AuthRoles>(RPCS.AUTH_ROLES, {
             min_capability: capability,
         })
         .throwOnError();

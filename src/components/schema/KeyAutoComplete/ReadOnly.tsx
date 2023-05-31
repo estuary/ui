@@ -31,12 +31,6 @@ function ReadOnly({ value }: Props) {
     // TODO (collection editor) move these helper vars into the store
     const noUsableKeys = !hasLength(keys);
 
-    console.log('read only', {
-        keys,
-        noUsableKeys,
-        inferSchemaResponseEmpty,
-    });
-
     return (
         <Grid item xs={12}>
             <Stack
@@ -79,6 +73,7 @@ function ReadOnly({ value }: Props) {
                         flexFlow: 'wrap',
                         overflowY: 'wr',
                         pl: 0,
+                        mt: 0,
                     }}
                 >
                     {value.map((key: string) => {

@@ -3,6 +3,8 @@ import produce from 'immer';
 import { NamedSet } from 'zustand/middleware';
 
 export interface StoreWithHydration {
+    hydrateState: unknown;
+
     hydrated: boolean;
     setHydrated: (value: boolean) => void;
 
@@ -24,6 +26,10 @@ export const getStoreWithHydrationSettings = (
 ): StoreWithHydration => {
     return {
         ...getInitialHydrationData(),
+
+        hydrateState: () => {
+            console.error(`${key} : missing implementation of : hydrateState`);
+        },
 
         setHydrated: (value) => {
             set(

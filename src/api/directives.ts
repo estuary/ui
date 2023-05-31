@@ -153,23 +153,17 @@ const getDirectiveByToken = async (token: string) => {
     return data;
 };
 
-const getDirectiveByCatalogPrefix = (
+const getDirectivesByType = (
     directiveType: keyof typeof DIRECTIVES,
-    prefixes: string[],
     pagination: any,
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    const prefixFilters = prefixes
-        .map((prefix) => `catalog_prefix.ilike.${prefix}%`)
-        .join(',');
-
     let queryBuilder = supabaseClient
         .from(TABLES.DIRECTIVES)
         .select(`id,catalog_prefix,uses_remaining,spec,token,updated_at`, {
             count: 'exact',
         })
-        .or(prefixFilters)
         .eq('spec->>type', directiveType)
         .or(`uses_remaining.eq.1,uses_remaining.is.null`);
 
@@ -197,7 +191,7 @@ export {
     exchangeBearerToken,
     generateGrantDirective,
     getAppliedDirectives,
-    getDirectiveByCatalogPrefix,
+    getDirectivesByType,
     getDirectiveByToken,
     submitDirective,
 };

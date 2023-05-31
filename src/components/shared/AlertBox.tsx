@@ -72,7 +72,7 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
         [severity, short]
     );
 
-    const iconProps = hideIcon ? { icon: hideIcon } : {};
+    const iconProps = hideIcon ? { icon: false } : {};
 
     return (
         <Alert
@@ -92,6 +92,7 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
                 'color': alertTextPrimary[theme.palette.mode],
                 'borderColor': theme.palette[severity][theme.palette.mode],
                 'padding': 0,
+                'pl': hideIcon ? 2 : undefined,
                 '& > .MuiAlert-message': {
                     p: 1,
                     pl: 0,

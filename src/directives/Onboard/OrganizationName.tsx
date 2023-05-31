@@ -3,35 +3,23 @@ import {
     useOnboardingStore_nameInvalid,
     useOnboardingStore_nameMissing,
     useOnboardingStore_requestedTenant,
-    useOnboardingStore_setNameInvalid,
-    useOnboardingStore_setNameMissing,
     useOnboardingStore_setRequestedTenant,
 } from 'directives/Onboard/Store/hooks';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 
 function OrganizationNameField() {
     const intl = useIntl();
 
     // Onboarding Store
     const nameInvalid = useOnboardingStore_nameInvalid();
-    const setNameInvalid = useOnboardingStore_setNameInvalid();
-
     const nameMissing = useOnboardingStore_nameMissing();
-    const setNameMissing = useOnboardingStore_setNameMissing();
-
     const requestedTenant = useOnboardingStore_requestedTenant();
     const setRequestedTenant = useOnboardingStore_setRequestedTenant();
 
     const handlers = {
         update: (updatedValue: string) => {
-            const pattern = new RegExp(`^${PREFIX_NAME_PATTERN}$`);
-
-            setNameInvalid(!pattern.test(updatedValue));
-
             setRequestedTenant(updatedValue);
-
-            if (nameMissing) setNameMissing(!hasLength(updatedValue));
         },
     };
 
@@ -42,6 +30,7 @@ function OrganizationNameField() {
             </FormLabel>
 
             <TextField
+                value={requestedTenant}
                 size="small"
                 placeholder={intl.formatMessage({
                     id: 'tenant.input.placeholder',
@@ -55,7 +44,6 @@ function OrganizationNameField() {
                 error={nameMissing || nameInvalid}
                 id="requestedTenant"
                 label={<FormattedMessage id="common.tenant.creationForm" />}
-                value={requestedTenant}
                 onChange={(event) => handlers.update(event.target.value)}
                 required
                 inputProps={{

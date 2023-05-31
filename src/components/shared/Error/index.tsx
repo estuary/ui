@@ -1,4 +1,4 @@
-import { AlertTitle, Box } from '@mui/material';
+import { AlertColor, AlertTitle, Box } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import AlertBox from '../AlertBox';
 import Message from './Message';
@@ -7,11 +7,20 @@ import { ErrorDetails } from './types';
 export interface ErrorProps {
     condensed?: boolean;
     error?: ErrorDetails;
+    hideIcon?: boolean;
     hideTitle?: boolean;
     noAlertBox?: boolean;
+    severity?: AlertColor;
 }
 
-function Error({ condensed, error, hideTitle, noAlertBox }: ErrorProps) {
+function Error({
+    condensed,
+    error,
+    hideIcon,
+    hideTitle,
+    noAlertBox,
+    severity,
+}: ErrorProps) {
     if (!error) {
         return null;
     }
@@ -27,8 +36,9 @@ function Error({ condensed, error, hideTitle, noAlertBox }: ErrorProps) {
     return (
         <Box sx={{ width: '100%' }}>
             <AlertBox
-                severity="error"
+                severity={severity ?? 'error'}
                 short={condensed}
+                hideIcon={hideIcon}
                 title={
                     !hideTitle ? (
                         <AlertTitle>

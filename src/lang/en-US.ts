@@ -19,6 +19,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.testing': `Testing`,
     'common.invalid': `Invalid`,
     'common.fail': `Failed`,
+    'common.skipped': `Skipped`,
     'common.publishing': `Publishing...`,
     'common.success': `Success`,
     'common.errors.heading': `Error`,
@@ -38,6 +39,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.synchronized': `Synchronized`,
     'common.outOfSync': `Out of Sync`,
     'common.readOnly': `Read-Only`,
+    'common.failedFetch': `Unable to reach server`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -46,6 +48,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     // Terms
     'terms.connectors': `Connectors`,
     'terms.collections': `Collections`,
+    'terms.bindings': `Bindings`,
     'terms.permissions': `Access Grants`,
     'terms.materialization': `Materialization`,
     'terms.capture': `Capture`,
@@ -177,7 +180,13 @@ const ConfirmationDialog: ResolvedIntlConfig['messages'] = {
 };
 
 const FullPage: ResolvedIntlConfig['messages'] = {
-    'fullpage.error': `Major Error`,
+    'fullPage.instructions': `Please try again. If the error persists, {docLink}`,
+    'fullPage.instructions.docLink': `contact support`,
+    'fullPage.instructions.docPath': `mailto:support@estuary.dev`,
+};
+
+const EntitiesHydrator: ResolvedIntlConfig['messages'] = {
+    'entitiesHydrator.error.failedToFetch': `There was an issue while checking if you have any roles.`,
 };
 
 const Navigation: ResolvedIntlConfig['messages'] = {
@@ -194,8 +203,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin.api': `CLI - API`,
     'routeTitle.admin.billing': `Billing`,
     'routeTitle.admin.connectors': `Connectors`,
-    'routeTitle.admin.cookies': `Cookie Preferences`,
-    'routeTitle.admin.storageMappings': `${CommonMessages['terms.storageMapping']}`,
+    'routeTitle.admin.settings': `Settings`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captureEdit': `Edit Capture`,
@@ -419,7 +427,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
 
     'admin.billing.header': `Billing`,
     'admin.billing.message.paidTier': `The {pricingTier} tier includes two tasks and {gbFree}GB every month. Thereafter you pay $0.75/GB with a \${taskRate} minimum per task.`,
-    'admin.billing.error.paymentMethodsError': `There was an error connecting with our payment provider.  Please try again later.`,
+    'admin.billing.error.paymentMethodsError': `There was an error connecting with our payment provider. Please try again later.`,
     'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
     'admin.billing.error.undefinedPricingTier.docLink': `contact support`,
     'admin.billing.error.undefinedPricingTier.docPath': `mailto:support@estuary.dev`,
@@ -460,14 +468,13 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.users.sharePrefix.label.type': `Type`,
     'admin.users.sharePrefix.cta.generateLink': `Generate Invitation`,
 
-    'admin.cookies': `Cookie Preference Management`,
-    'admin.cookies.message': `Click below to manage your preferences.`,
+    'admin.cookies': `Cookie Preferences`,
+    'admin.cookies.message': `Click below to configure your cookie preferences.`,
     'admin.tabs.users': `Users`,
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
-    'admin.tabs.cookies': `Cookie Preferences`,
     'admin.tabs.billing': `Billing`,
-    'admin.tabs.storageMappings': `${CommonMessages['terms.storageMapping']}`,
+    'admin.tabs.settings': `Settings`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
@@ -615,8 +622,8 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
 
     'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
 
-    'entityCreate.bindingsConfig.collectionsLabel': `Available ${CommonMessages['terms.collections']}`,
-    'entityCreate.bindingsConfig.noRows': `Please select from the ${CommonMessages['terms.collections']} above to begin.`,
+    'entityCreate.bindingsConfig.collectionsLabel': `Available {items}`,
+    'entityCreate.bindingsConfig.noRows': `Please select from the list above to begin.`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
 
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
@@ -652,14 +659,14 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
     'captureCreate.collections.heading': `Output Collections`,
     'captureCreate.collectionSelector.heading': `Collection Selector`,
-    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Specification tab.`,
+    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
-    'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
+    'captureCreate.test.serverUnreachable': `${CommonMessages['common.failedFetch']} while testing configuration.`,
 
     'captureCreate.save.failedErrorTitle': `Capture Save Failed`,
     'captureCreate.save.failure.errorTitle': `Capture Save Failed`,
-    'captureCreate.save.serverUnreachable': `Unable to reach server while saving capture`,
+    'captureCreate.save.serverUnreachable': `${CommonMessages['common.failedFetch']} while saving capture`,
     'captureCreate.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
 
     'captureCreate.generate.failedErrorTitle': `Generating Specification Failed`,
@@ -688,14 +695,14 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
 
     'captureEdit.collections.heading': `Output Collections`,
     'captureEdit.collectionSelector.heading': `Collection Selector`,
-    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Specification tab.`,
+    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
     'captureEdit.test.failedErrorTitle': `Configuration Test Failed`,
-    'captureEdit.test.serverUnreachable': `Unable to reach server while testing configuration.`,
+    'captureEdit.test.serverUnreachable': `${CommonMessages['common.failedFetch']} while testing configuration.`,
 
     'captureEdit.save.failedErrorTitle': `Capture Save Failed`,
     'captureEdit.save.failure.errorTitle': `Capture Save Failed`,
-    'captureEdit.save.serverUnreachable': `Unable to reach server while saving capture`,
+    'captureEdit.save.serverUnreachable': `${CommonMessages['common.failedFetch']} while saving capture`,
     'captureEdit.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
 
     'captureEdit.generate.failedErrorTitle': `Generating Specification Failed`,
@@ -737,12 +744,12 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a materialization. Please contact an administrator.`,
     'materializationCreate.save.failure': `Materialization creation failed. See below for details:`,
     'materializationCreate.save.failure.errorTitle': `Materialization Save Failed`,
-    'materializationCreate.save.serverUnreachable': `Unable to reach server while saving materialization`,
+    'materializationCreate.save.serverUnreachable': `${CommonMessages['common.failedFetch']} while saving materialization`,
     'materializationCreate.tenant.label': `Prefix`,
 
     'materializationCreate.generate.failure.errorTitle': `Materialization Preparation Failed`,
 
-    'materializationCreate.test.serverUnreachable': `Unable to reach server while testing configuration`,
+    'materializationCreate.test.serverUnreachable': `${CommonMessages['common.failedFetch']} while testing configuration`,
     'materializationCreate.test.inProgress': `Please wait while we try to connect to the destination.`,
 
     'materializationCreate.collectionSelector.heading': `Collection Selector`,
@@ -774,16 +781,16 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to edit a materialization. Please contact an administrator.`,
     'materializationEdit.save.failure': `Materialization edit failed. See below for details:`,
     'materializationEdit.save.failure.errorTitle': `Materialization Save Failed`,
-    'materializationEdit.save.serverUnreachable': `Unable to reach server while saving materialization`,
+    'materializationEdit.save.serverUnreachable': `${CommonMessages['common.failedFetch']} while saving materialization`,
     'materializationEdit.tenant.label': `Prefix`,
 
     'materializationEdit.generate.failure.errorTitle': `Materialization Preparation Failed`,
 
-    'materializationEdit.test.serverUnreachable': `Unable to reach server while testing configuration`,
+    'materializationEdit.test.serverUnreachable': `${CommonMessages['common.failedFetch']} while testing configuration`,
     'materializationEdit.test.inProgress': `Please wait while we try to connect to the destination.`,
 
     'materializationEdit.collectionSelector.heading': `Collection Selector`,
-    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Specification tab.`,
+    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
     'materializationEdit.resourceConfig.heading': `Resource Configuration`,
     'materializationEdit.save.failedErrorTitle': `Materialization Save Failed`,
@@ -839,7 +846,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
     'workflows.collectionSelector.label.listHeader': `Collections`,
-    'workflows.collectionSelector.tab.collectionSchema': `Schema`,
+    'workflows.collectionSelector.tab.collectionSchema': `Collection`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
@@ -865,7 +872,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.schemaInference.alert.lowDocumentCount.message': `Fewer documents than desired were found. This could mean that your collection isn't seeing very much data.`,
     'workflows.collectionSelector.schemaInference.alert.generalError.header': `Server Error`,
     'workflows.collectionSelector.schemaInference.alert.inferenceService.message': `This is not something you did wrong. An error was encountered while inferring the shape of the documents in this collection.`,
-    'workflows.collectionSelector.schemaInference.alert.patchService.message': `This is not something you did wrong. An error was encountered while applying the inferred schema. Please try again and, if the error persists {docLink}`,
+    'workflows.collectionSelector.schemaInference.alert.patchService.message': `This is not something you did wrong. An error was encountered while applying the inferred schema. Please try again. If the error persists, {docLink}`,
     'workflows.collectionSelector.schemaInference.alert.patchService.message.docLink': `contact support`,
     'workflows.collectionSelector.schemaInference.alert.patchService.message.docPath': `mailto:support@estuary.dev`,
     'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
@@ -896,7 +903,7 @@ const OAuth: ResolvedIntlConfig['messages'] = {
 };
 
 const Supabase: ResolvedIntlConfig['messages'] = {
-    'supabase.poller.failed.title': `Unable To Reach Server`,
+    'supabase.poller.failed.title': `${CommonMessages['common.failedFetch']}`,
     'supabase.poller.failed.message': `We encountered a problem retrieving the status of this action. Please check your network connection and try again.`,
 };
 
@@ -911,6 +918,7 @@ const Legal: ResolvedIntlConfig['messages'] = {
     'legal.docs.errorTitle': 'Please accept',
     'legal.docs.errorMessage':
         'Before you can continue using the application you must accept the listed documents.',
+    'legal.error.failedToFetch.message': `There was an issue while checking if you have accepted the latest {privacy} and {terms}.`,
 };
 
 const Tenant: ResolvedIntlConfig['messages'] = {
@@ -945,6 +953,8 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.grantDirective.error.message.help': `For additional context, please {docLink}.`,
     'tenant.grantDirective.error.message.help.docLink': `contact support`,
     'tenant.grantDirective.error.message.help.docPath': `mailto:support@estuary.dev`,
+
+    'tenant.error.failedToFetch.message': `There was an issue while checking if you have access to a tenant.`,
 };
 
 const Details: ResolvedIntlConfig['messages'] = {
@@ -1038,7 +1048,7 @@ const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
 
 const EntityEvolution: ResolvedIntlConfig['messages'] = {
     'entityEvolution.failure.errorTitle': `Update Failed`,
-    'entityEvolution.serverUnreachable': `Unable to reach server while trying to update collections`,
+    'entityEvolution.serverUnreachable': `${CommonMessages['common.failedFetch']} while trying to update collections`,
     'entityEvolution.error.title': `Changes Rejected Due to Incompatible Schema Updates`,
     'entityEvolution.error.message': `Schema changes will break downstream tasks. To avoid this, click below and then publish a new version of the affected collections.`,
     'entityEvolution.error.note': `Note: This may result in additional cost as new collection versions are backfilled.`,
@@ -1050,6 +1060,7 @@ const DraftErrors: ResolvedIntlConfig['messages'] = {
 
 const UpdateEntity: ResolvedIntlConfig['messages'] = {
     'updateEntity.noLiveSpecs': `Unable to find entity on server.`,
+    'updateEntity.collection.skipped': `${CTAs['cta.enable']} and ${CTAs['cta.disable']} only work on derivations`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
@@ -1058,6 +1069,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...Data,
     ...ErrorBoundry,
     ...RouteTitles,
+    ...EntitiesHydrator,
     ...FullPage,
     ...Header,
     ...Navigation,

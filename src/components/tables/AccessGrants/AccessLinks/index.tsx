@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { getDirectiveByCatalogPrefix } from 'api/directives';
+import { getDirectivesByType } from 'api/directives';
 import Rows from 'components/tables/AccessGrants/AccessLinks/Rows';
 import EntityTable from 'components/tables/EntityTable';
 import RowSelector from 'components/tables/RowActions/AccessLinks/RowSelector';
@@ -8,10 +8,6 @@ import { SelectTableStoreNames } from 'stores/names';
 import useTableState from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import { TableColumns } from 'types';
-
-interface Props {
-    prefixes: string[];
-}
 
 export const columns: TableColumns[] = [
     {
@@ -43,7 +39,7 @@ export const columns: TableColumns[] = [
 
 const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
 
-function AccessLinksTable({ prefixes }: Props) {
+function AccessLinksTable() {
     const {
         pagination,
         setPagination,
@@ -56,19 +52,13 @@ function AccessLinksTable({ prefixes }: Props) {
     } = useTableState('ali', 'updated_at', 'desc');
 
     const query = useMemo(() => {
-        return getDirectiveByCatalogPrefix(
-            'grant',
-            prefixes,
-            pagination,
-            searchQuery,
-            [
-                {
-                    col: columnToSort,
-                    direction: sortDirection,
-                },
-            ]
-        );
-    }, [columnToSort, pagination, prefixes, searchQuery, sortDirection]);
+        return getDirectivesByType('grant', pagination, searchQuery, [
+            {
+                col: columnToSort,
+                direction: sortDirection,
+            },
+        ]);
+    }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     const headerKey = 'accessGrants.table.accessLinks.title';
     const filterKey = 'accessGrants.table.accessLinks.label.filter';

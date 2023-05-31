@@ -86,7 +86,7 @@ function SharePrefixDialog({ objectRoles, open, setOpen }: Props) {
                     setServerError={setServerError}
                 />
 
-                <AccessLinksTable prefixes={objectRoles} />
+                <AccessLinksTable />
             </DialogContent>
         </Dialog>
     );

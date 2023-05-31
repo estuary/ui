@@ -8,12 +8,7 @@ import {
 import Error from 'components/shared/Error';
 import { CheckCircle, WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-
-export enum ProgressStates {
-    RUNNING = 1,
-    FAILED = 2,
-    SUCCESS = 3,
-}
+import { ProgressStates } from '../Shared/Progress';
 
 interface Props {
     progress: ProgressStates;

@@ -12,6 +12,7 @@ import {
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
 import { useClient } from 'hooks/supabase-swr';
+import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback, useMemo } from 'react';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
@@ -25,10 +26,8 @@ import {
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
-    useDetailsForm_connectorImage_imageName,
     useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
-    useDetailsForm_draftedEntityName,
     useDetailsForm_errorsExist,
     useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm/hooks';
@@ -52,7 +51,6 @@ import {
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
 import { Entity } from 'types';
-import { hasLength, stripPathing } from 'utils/misc-utils';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { modifyExistingCaptureDraftSpec } from 'utils/workflow-utils';
 
@@ -93,9 +91,7 @@ function useDiscoverCapture(
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
     const imagePath = useDetailsForm_connectorImage_imagePath();
-    const imageName = useDetailsForm_connectorImage_imageName();
     const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
-    const draftedEntityName = useDetailsForm_draftedEntityName();
 
     // Endpoint Config Store
     const setEncryptedEndpointConfig =
@@ -115,6 +111,14 @@ function useDiscoverCapture(
         useResourceConfig_resourceConfigErrorsExist();
 
     const storeDiscoveredCollections = useStoreDiscoveredCaptures();
+
+    // If we are doing an initial discovery add the name name to the name
+    // If not we are either refreshing collections during create OR during edit
+    //  Refreshing during:
+    //    create requires draftedEntityName because it has the connector image added to it
+    //    edit   requires entityName        because it is the name already in the system and
+    //                                        we do not have a draftedEntityName yet
+    const processedEntityName = useEntityNameSuffix(options?.initiateDiscovery);
 
     const jobFailed = useCallback(
         (error) => {
@@ -232,18 +236,6 @@ function useDiscoverCapture(
                     options?.initiateRediscovery ||
                     options?.initiateDiscovery
                 ) {
-                    // If we are doing an initial discovery add the name name to the name
-                    // If not we are either refreshing collections during create OR during edit
-                    //  Refreshing during:
-                    //    create requires draftedEntityName because it has the connector image added to it
-                    //    edit   requires entityName        because it is the name already in the system and
-                    //                                        we do not have a draftedEntityName yet
-                    const processedEntityName = options.initiateDiscovery
-                        ? `${entityName}/${stripPathing(imageName)}`
-                        : hasLength(draftedEntityName)
-                        ? draftedEntityName
-                        : entityName;
-
                     const draftsResponse = await createEntityDraft(
                         processedEntityName
                     );
@@ -341,32 +333,31 @@ function useDiscoverCapture(
             }
         },
         [
-            callFailed,
-            createDiscoversSubscription,
-            postGenerateMutate,
-            resetEditorState,
-            setDraftId,
-            setEncryptedEndpointConfig,
-            setFormState,
-            setPreviousEndpointConfig,
             updateFormStatus,
             detailsFormsHasErrors,
-            draftedEntityName,
-            endpointConfigData,
             endpointConfigErrorsExist,
+            resourceConfigHasErrors,
+            setFormState,
+            resetEditorState,
+            serverUpdateRequired,
+            endpointConfigData,
+            serverEndpointConfigData,
             endpointSchema,
-            entityName,
             imageConnectorId,
             imageConnectorTagId,
-            imageName,
-            imagePath,
+            callFailed,
             options?.initiateRediscovery,
             options?.initiateDiscovery,
             persistedDraftId,
+            processedEntityName,
+            createDiscoversSubscription,
+            entityName,
+            imagePath,
             resourceConfig,
-            resourceConfigHasErrors,
-            serverEndpointConfigData,
-            serverUpdateRequired,
+            setEncryptedEndpointConfig,
+            setPreviousEndpointConfig,
+            setDraftId,
+            postGenerateMutate,
         ]
     );
 

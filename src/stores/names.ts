@@ -65,6 +65,7 @@ export enum AdminStoreNames {
 }
 
 export enum GlobalStoreNames {
+    ENTITIES = 'Entities',
     SIDE_PANEL_DOCS = 'Side-Panel-Docs',
     TOP_BAR = 'Top-Bar',
 }

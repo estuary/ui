@@ -147,6 +147,12 @@ export interface Tenants {
     updated_at: string;
 }
 
+export type Capability = 'admin' | 'read' | 'write';
+export interface AuthRoles {
+    capability: Capability;
+    role_prefix: string;
+}
+
 export interface CatalogStats {
     catalog_name: string;
     grain: string;
@@ -230,7 +236,8 @@ export type EntityWorkflow =
     | 'capture_create'
     | 'capture_edit'
     | 'materialization_create'
-    | 'materialization_edit';
+    | 'materialization_edit'
+    | 'test_json_forms';
 
 export type SortDirection = 'asc' | 'desc';
 

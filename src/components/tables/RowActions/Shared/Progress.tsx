@@ -8,23 +8,26 @@ import {
 } from '@mui/material';
 import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import Error from 'components/shared/Error';
-import { CheckCircle, WarningCircle } from 'iconoir-react';
+import { CheckCircle, InfoEmpty, WarningCircle } from 'iconoir-react';
+import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 export enum ProgressStates {
     RUNNING = 1,
-    FAILED = 2,
-    SUCCESS = 3,
+    SKIPPED = 2,
+    FAILED = 3,
+    SUCCESS = 4,
 }
 
 export interface SharedProgressProps {
     name: string;
     error: any | null;
     logToken?: string | null;
-    renderError?: Function;
+    renderError?: (error: any, progressState: ProgressStates) => ReactNode;
     renderLogs?: Function | boolean;
-    successMessageID: string;
+    skippedMessageID?: string;
     runningMessageID: string;
+    successMessageID: string;
     state: ProgressStates;
 }
 
@@ -42,7 +45,9 @@ function SharedProgress({
 }: SharedProgressProps) {
     const theme = useTheme();
 
-    const showErrors = state === ProgressStates.FAILED && error !== null;
+    const skipped = state === ProgressStates.SKIPPED;
+    const showErrors =
+        (state === ProgressStates.FAILED || skipped) && error !== null;
 
     return (
         <Box
@@ -59,6 +64,8 @@ function SharedProgress({
                     <CheckCircle
                         style={{ color: theme.palette.success.main }}
                     />
+                ) : state === ProgressStates.SKIPPED ? (
+                    <InfoEmpty style={{ color: theme.palette.info.main }} />
                 ) : (
                     <CircularProgress color="info" size={18} />
                 )}
@@ -74,6 +81,8 @@ function SharedProgress({
                             id={
                                 state === ProgressStates.SUCCESS
                                     ? successMessageID
+                                    : state === ProgressStates.SKIPPED
+                                    ? 'common.skipped'
                                     : state === ProgressStates.FAILED
                                     ? 'common.fail'
                                     : runningMessageID
@@ -86,9 +95,14 @@ function SharedProgress({
             <Box sx={wrapperStyling}>
                 {showErrors ? (
                     renderError ? (
-                        renderError(error)
+                        renderError(error, state)
                     ) : (
-                        <Error error={error} hideTitle={true} />
+                        <Error
+                            error={error}
+                            hideTitle
+                            condensed
+                            noAlertBox={skipped}
+                        />
                     )
                 ) : null}
             </Box>
