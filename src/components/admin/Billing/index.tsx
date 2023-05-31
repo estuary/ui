@@ -17,16 +17,18 @@ import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
 import useBillingRecord from 'hooks/billing/useBillingRecord';
 import usePageTitle from 'hooks/usePageTitle';
 import { isArray, isEmpty } from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
+    useBilling_billingHistoryInitialized,
     useBilling_hydrated,
     useBilling_resetState,
     useBilling_selectedTenant,
     useBilling_setBillingHistory,
+    useBilling_setBillingHistoryInitialized,
     useBilling_setDataByTaskGraphDetails,
     useBilling_setHydrated,
     useBilling_setHydrationErrorsExist,
@@ -42,14 +44,15 @@ function AdminBilling() {
     const setHydrated = useBilling_setHydrated();
     const setHydrationErrorsExist = useBilling_setHydrationErrorsExist();
 
-    const selectedTenant = useBilling_selectedTenant();
+    const historyInitialized = useBilling_billingHistoryInitialized();
+    const setHistoryInitialized = useBilling_setBillingHistoryInitialized();
     const setBillingHistory = useBilling_setBillingHistory();
     const updateBillingHistory = useBilling_updateBillingHistory();
+
+    const selectedTenant = useBilling_selectedTenant();
     const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
 
     const resetBillingState = useBilling_resetState();
-
-    const [historyInitialized, setHistoryInitialized] = useState(false);
 
     const currentMonth = useConstant(() => {
         const today = new Date();
@@ -82,29 +85,29 @@ function AdminBilling() {
             !hydrated &&
             !historyInitialized
         ) {
-            setHistoryInitialized(true);
+            getBillingHistory(selectedTenant, dateRange)
+                .then(
+                    (responses) => {
+                        const data: BillingRecord[] = [];
 
-            getBillingHistory(selectedTenant, dateRange).then(
-                (responses) => {
-                    const data: BillingRecord[] = [];
+                        responses.forEach((response) => {
+                            if (response.error) {
+                                throw new Error(response.error.message);
+                            }
 
-                    responses.forEach((response) => {
-                        if (response.error) {
-                            throw new Error(response.error.message);
-                        }
+                            if (response.data.max_concurrent_tasks > 0) {
+                                data.push(response.data);
+                            }
+                        });
 
-                        if (response.data.max_concurrent_tasks > 0) {
-                            data.push(response.data);
-                        }
-                    });
-
-                    setBillingHistory(data);
-                },
-                () => {
-                    setHydrationErrorsExist(true);
-                    setHydrated(true);
-                }
-            );
+                        setBillingHistory(data);
+                    },
+                    () => {
+                        setHydrationErrorsExist(true);
+                        setHydrated(true);
+                    }
+                )
+                .finally(() => setHistoryInitialized(true));
         }
     }, [
         setBillingHistory,

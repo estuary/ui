@@ -3,6 +3,20 @@ import { BillingState } from 'stores/Billing/types';
 import { BillingStoreNames } from 'stores/names';
 
 // Selector Hooks
+export const useBilling_billingHistoryInitialized = () => {
+    return useZustandStore<
+        BillingState,
+        BillingState['billingHistoryInitialized']
+    >(BillingStoreNames.GENERAL, (state) => state.billingHistoryInitialized);
+};
+
+export const useBilling_setBillingHistoryInitialized = () => {
+    return useZustandStore<
+        BillingState,
+        BillingState['setBillingHistoryInitialized']
+    >(BillingStoreNames.GENERAL, (state) => state.setBillingHistoryInitialized);
+};
+
 export const useBilling_billingHistory = () => {
     return useZustandStore<BillingState, BillingState['billingHistory']>(
         BillingStoreNames.GENERAL,

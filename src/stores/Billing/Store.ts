@@ -13,10 +13,14 @@ import { devtools, NamedSet } from 'zustand/middleware';
 
 const getInitialStateData = (): Pick<
     BillingState,
-    'billingHistory' | 'dataByTaskGraphDetails' | 'selectedTenant'
+    | 'billingHistory'
+    | 'billingHistoryInitialized'
+    | 'dataByTaskGraphDetails'
+    | 'selectedTenant'
 > => {
     return {
         billingHistory: [],
+        billingHistoryInitialized: false,
         dataByTaskGraphDetails: [],
         selectedTenant: '',
     };
@@ -56,19 +60,31 @@ export const getInitialState = (
             );
         },
 
+        setBillingHistoryInitialized: (value) => {
+            set(
+                produce((state: BillingState) => {
+                    state.billingHistoryInitialized = value;
+                }),
+                false,
+                'Billing History Initialized'
+            );
+        },
+
         updateBillingHistory: (value) => {
             set(
                 produce((state: BillingState) => {
-                    const { billingHistory } = get();
+                    if (value[0].max_concurrent_tasks > 0) {
+                        const { billingHistory } = get();
 
-                    const evaluatedBillingHistory = billingHistory.filter(
-                        (record) =>
-                            record.billed_month !== value[0].billed_month
-                    );
+                        const evaluatedBillingHistory = billingHistory.filter(
+                            (record) =>
+                                record.billed_month !== value[0].billed_month
+                        );
 
-                    evaluatedBillingHistory.push(value[0]);
+                        evaluatedBillingHistory.push(value[0]);
 
-                    state.billingHistory = evaluatedBillingHistory;
+                        state.billingHistory = evaluatedBillingHistory;
+                    }
                 }),
                 false,
                 'Billing Details Updated'

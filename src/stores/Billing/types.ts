@@ -20,6 +20,9 @@ export interface BillingState extends StoreWithHydration {
     dataByTaskGraphDetails: DataVolumeByTask[];
     setDataByTaskGraphDetails: (value: CatalogStats_Billing[]) => void;
 
+    billingHistoryInitialized: boolean;
+    setBillingHistoryInitialized: (value: boolean) => void;
+
     billingHistory: BillingRecord[];
     setBillingHistory: (value: BillingRecord[]) => void;
     updateBillingHistory: (value: BillingRecord[]) => void;
