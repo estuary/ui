@@ -21,8 +21,9 @@ const copyEncryptedEndpointConfig = (
         // Check if key is a sops key.
         const encryptedSuffixIndex = key.lastIndexOf(encryptedSuffix);
 
-        // If a sops key we need to strip the "_sops" off the end so the cloned
-        //  object has the proper keys
+        // If a sops key we need to strip the suffix off the end so the cloned
+        //  object has the proper keys. Otherwise the ajv/json forms would throw
+        //  errors for properties not in the schema being in the data
         const truncatedKey =
             encryptedSuffixIndex !== -1
                 ? key.slice(0, encryptedSuffixIndex)
