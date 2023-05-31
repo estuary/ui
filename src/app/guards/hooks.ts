@@ -3,10 +3,19 @@ import { exchangeBearerToken } from 'api/directives';
 import { DIRECTIVES } from 'directives/shared';
 import { UserClaims } from 'directives/types';
 import useAppliedDirectives from 'hooks/useAppliedDirectives';
-import { useSnackbar } from 'notistack';
+import { OptionsObject, useSnackbar } from 'notistack';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { AppliedDirective } from 'types';
+
+const snackbarSettings: OptionsObject = {
+    anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'center',
+    },
+    preventDuplicate: true,
+    variant: 'info',
+};
 
 const useDirectiveGuard = (
     selectedDirective: keyof typeof DIRECTIVES,
@@ -15,9 +24,10 @@ const useDirectiveGuard = (
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
+    // const [fetching, setFetching] = useState(false);
     const [serverError, setServerError] = useState<PostgrestError | null>(null);
 
-    const { appliedDirective, isValidating, mutate } =
+    const { appliedDirective, isValidating, mutate, error } =
         useAppliedDirectives(selectedDirective);
 
     const calculateStatus = useMemo(
@@ -30,12 +40,18 @@ const useDirectiveGuard = (
             return null;
         }
 
+        if (error) {
+            setServerError(error);
+            return 'errored';
+        }
+
         if (options?.token && serverError) {
             return 'errored';
         }
 
         return calculateStatus(appliedDirective);
     }, [
+        error,
         calculateStatus,
         appliedDirective,
         isValidating,
@@ -73,38 +89,30 @@ const useDirectiveGuard = (
                         if (response.data) {
                             setFreshDirective(response.data.applied_directive);
                         }
+
+                        setServerError(response.error ?? null);
                     })
-                    .catch((error) => {
-                        setServerError(error);
+                    .catch((fetchError) => {
+                        setFreshDirective(null);
+                        setServerError(fetchError);
                     });
             }
         }
 
         // Show a message to remind the user why they are seeing the directive page
-        if (directiveState === 'in progress') {
+        if (directiveState === 'in progress' || directiveState === 'waiting') {
             enqueueSnackbar(
                 intl.formatMessage({
                     id: 'directives.returning',
                 }),
-                {
-                    anchorOrigin: {
-                        vertical: 'top',
-                        horizontal: 'center',
-                    },
-                    preventDuplicate: true,
-                    variant: 'info',
-                }
+                snackbarSettings
             );
         }
 
         // Show a message to remind the user why they are seeing the directive page
         if (directiveState === 'errored' && serverError?.message) {
             enqueueSnackbar(serverError.message, {
-                anchorOrigin: {
-                    vertical: 'top',
-                    horizontal: 'center',
-                },
-                preventDuplicate: true,
+                ...snackbarSettings,
                 variant: 'error',
             });
         }

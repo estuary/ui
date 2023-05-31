@@ -66,3 +66,34 @@ export const arrayToMatrix = (arr: any[], width: number) =>
 export const unescapeString = (stringVal: string) => {
     return stringVal.replaceAll(/\\"/g, '"');
 };
+
+// For awhile we need to support the old (pre sql) derivation key
+const derivationKeys = ['derivation', 'derive'];
+
+type SpecContainsDerivationResponse =
+    | {
+          isDerivation: false;
+          derivationKey: null;
+      }
+    | {
+          isDerivation: true;
+          derivationKey: string;
+      };
+export const specContainsDerivation = (
+    spec?: any
+): SpecContainsDerivationResponse => {
+    let isDerivation = false;
+    let derivationKey = null;
+
+    derivationKeys.some((key) => {
+        if (spec?.[key]) {
+            isDerivation = true;
+            derivationKey = key;
+            return true;
+        }
+
+        return false;
+    });
+
+    return { isDerivation, derivationKey };
+};
