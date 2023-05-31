@@ -14,6 +14,15 @@ export const singleCallSettings = {
 
 export const DEFAULT_POLLING = 2500;
 
+export const EXTENDED_POLL_INTERVAL = 30000;
+
+export const extendedPollSettings = {
+    errorRetryCount: 3,
+    errorRetryInterval: EXTENDED_POLL_INTERVAL / 2,
+    refreshInterval: EXTENDED_POLL_INTERVAL,
+    revalidateOnFocus: false,
+};
+
 const SwrConfigProvider = ({ children }: BaseComponentProps) => {
     const supabaseClient = useClient();
     const intl = useIntl();

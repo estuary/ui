@@ -1,14 +1,16 @@
 import { Box, TableCell } from '@mui/material';
 import CustomWidthTooltip from 'components/shared/CustomWidthTooltip';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
+import { stripTimeFromDate } from 'utils/billing-utils';
 
 interface Props {
-    date: string | Date;
-    timestamp: string;
+    date: string;
 }
 
-function TimeStamp({ date, timestamp }: Props) {
+function TimeStamp({ date }: Props) {
     const intl = useIntl();
+
+    const strippedDate = stripTimeFromDate(date);
 
     return (
         <TableCell>
@@ -17,7 +19,7 @@ function TimeStamp({ date, timestamp }: Props) {
                     <FormattedMessage
                         id="admin.billing.table.history.tooltip.month"
                         values={{
-                            timestamp: intl.formatDate(timestamp, {
+                            timestamp: intl.formatDate(date, {
                                 day: 'numeric',
                                 month: 'short',
                                 year: 'numeric',
@@ -32,7 +34,11 @@ function TimeStamp({ date, timestamp }: Props) {
                 placement="bottom-start"
             >
                 <Box>
-                    <FormattedDate month="long" year="numeric" value={date} />
+                    <FormattedDate
+                        month="long"
+                        year="numeric"
+                        value={strippedDate}
+                    />
                 </Box>
             </CustomWidthTooltip>
         </TableCell>
