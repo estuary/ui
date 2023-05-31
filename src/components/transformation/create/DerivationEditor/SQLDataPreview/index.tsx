@@ -1,6 +1,7 @@
 import { Box, Divider, Typography } from '@mui/material';
 import DataPreview from 'components/transformation/create/DerivationEditor/SQLDataPreview/DataPreview';
 import { intensifiedOutline } from 'context/Theme';
+import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import {
     useTransformationCreate_attributeType,
@@ -17,7 +18,11 @@ function SQLDataPreview() {
 
     const [filename, collection]: [string | null, string | null] =
         useMemo(() => {
-            if (attributeType === 'transform' && selectedAttribute) {
+            if (
+                attributeType === 'transform' &&
+                selectedAttribute &&
+                !isEmpty(transformConfigs)
+            ) {
                 return [
                     transformConfigs[selectedAttribute].filename.replace(
                         'lambda',

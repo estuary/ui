@@ -78,9 +78,11 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
 
                 const transformIds = Object.keys(evaluatedTransformConfigs);
 
-                if (hasLength(transformIds)) {
-                    setSelectedAttribute(transformIds[0]);
-                }
+                const evaluatedAttribute = hasLength(transformIds)
+                    ? transformIds[0]
+                    : '';
+
+                setSelectedAttribute(evaluatedAttribute);
 
                 setDraftId(draftId);
                 setPersistedDraftId(draftId);

@@ -1,4 +1,4 @@
-import { Box, Button, Grid } from '@mui/material';
+import { Box, Button, Divider, Grid, Typography } from '@mui/material';
 import MigrationList from 'components/transformation/create/DerivationEditor/Catalog/MigrationList';
 import TransformList from 'components/transformation/create/DerivationEditor/Catalog/TransformList';
 import DerivationEditorHeader from 'components/transformation/create/DerivationEditor/Header';
@@ -9,12 +9,16 @@ import { intensifiedOutline } from 'context/Theme';
 import { isEmpty } from 'lodash';
 import {
     useTransformationCreate_catalogName,
+    useTransformationCreate_migrations,
     useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
+
+const EDITOR_HEIGHT = 362;
 
 function DerivationEditor() {
     const catalogName = useTransformationCreate_catalogName();
     const transformConfigs = useTransformationCreate_transformConfigs();
+    const migrations = useTransformationCreate_migrations();
 
     return (
         <Grid container>
@@ -27,25 +31,34 @@ function DerivationEditor() {
             </Grid>
 
             <Grid item xs={5} sx={{ display: 'flex', flexDirection: 'column' }}>
-                {catalogName && !isEmpty(transformConfigs) ? (
-                    <Box
-                        sx={{
-                            borderBottom: (theme) =>
-                                intensifiedOutline[theme.palette.mode],
-                            borderRight: (theme) =>
-                                intensifiedOutline[theme.palette.mode],
-                            borderLeft: (theme) =>
-                                intensifiedOutline[theme.palette.mode],
-                        }}
-                    >
+                <Box
+                    sx={{
+                        borderBottom: (theme) =>
+                            intensifiedOutline[theme.palette.mode],
+                        borderRight: (theme) =>
+                            intensifiedOutline[theme.palette.mode],
+                        borderLeft: (theme) =>
+                            intensifiedOutline[theme.palette.mode],
+                    }}
+                >
+                    {catalogName &&
+                    !(isEmpty(transformConfigs) && isEmpty(migrations)) ? (
                         <SQLEditor
                             entityName={catalogName}
-                            editorHeight={362}
+                            editorHeight={EDITOR_HEIGHT}
                         />
-                    </Box>
-                ) : (
-                    <span>Failure</span>
-                )}
+                    ) : (
+                        <>
+                            <Box sx={{ height: 37 }} />
+
+                            <Divider />
+
+                            <Box sx={{ height: EDITOR_HEIGHT, p: 1 }}>
+                                <Typography>No SQL file selected.</Typography>
+                            </Box>
+                        </>
+                    )}
+                </Box>
 
                 <ShuffleKeys />
             </Grid>
