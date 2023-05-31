@@ -33,7 +33,8 @@ export const columns: TableColumns[] = [
     },
 ];
 
-// TODO (billing): Enable pagination when a database table containing historic billing data is available.
+// TODO (billing): Use the getStatsForBillingHistoryTable query function as the primary source of data for this view
+//   when a database table containing historic billing data is available.
 function BillingHistoryTable() {
     const intl = useIntl();
 

@@ -49,8 +49,7 @@ function AdminBilling() {
 
     const resetBillingState = useBilling_resetState();
 
-    const [historyInitialized, setHistoryInitialized] =
-        useState<boolean>(false);
+    const [historyInitialized, setHistoryInitialized] = useState(false);
 
     const currentMonth = useConstant(() => {
         const today = new Date();
@@ -69,31 +68,12 @@ function AdminBilling() {
 
     const {
         billingStats,
-        error,
+        error: billingStatsError,
         isValidating: isValidatingStats,
     } = useBillingCatalogStats();
 
     const { billingRecord, isValidating: isValidatingRecord } =
         useBillingRecord(currentMonth);
-
-    useEffect(() => {
-        if (!isValidatingStats && billingStats) {
-            setDataByTaskGraphDetails(billingStats);
-        }
-
-        if (error) {
-            setHydrationErrorsExist(true);
-            setHydrated(true);
-        }
-    }, [
-        setBillingHistory,
-        setDataByTaskGraphDetails,
-        setHydrated,
-        setHydrationErrorsExist,
-        billingStats,
-        error,
-        isValidatingStats,
-    ]);
 
     useEffect(() => {
         if (
@@ -104,7 +84,7 @@ function AdminBilling() {
         ) {
             setHistoryInitialized(true);
 
-            void getBillingHistory(selectedTenant, dateRange).then(
+            getBillingHistory(selectedTenant, dateRange).then(
                 (responses) => {
                     const data: BillingRecord[] = [];
 
@@ -113,11 +93,12 @@ function AdminBilling() {
                             throw new Error(response.error.message);
                         }
 
-                        data.push(response.data);
+                        if (response.data.max_concurrent_tasks > 0) {
+                            data.push(response.data);
+                        }
                     });
 
                     setBillingHistory(data);
-                    setHydrated(true);
                 },
                 () => {
                     setHydrationErrorsExist(true);
@@ -134,6 +115,29 @@ function AdminBilling() {
         historyInitialized,
         hydrated,
         selectedTenant,
+    ]);
+
+    useEffect(() => {
+        if (!isValidatingStats && billingStats) {
+            setDataByTaskGraphDetails(billingStats);
+
+            if (!hydrated) {
+                setHydrated(true);
+            }
+        }
+
+        if (billingStatsError) {
+            setHydrationErrorsExist(true);
+            setHydrated(true);
+        }
+    }, [
+        setDataByTaskGraphDetails,
+        setHydrated,
+        setHydrationErrorsExist,
+        billingStats,
+        billingStatsError,
+        hydrated,
+        isValidatingStats,
     ]);
 
     useEffect(() => {

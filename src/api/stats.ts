@@ -108,14 +108,12 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
     return queryBuilder.then(handleSuccess<CatalogStats[]>, handleFailure);
 };
 
-const getStatsForBilling = (tenants: string[]) => {
+const getStatsForBilling = (tenants: string[], startDate: string) => {
     const subjectRoleFilters = tenants
         .map((tenant) => `catalog_name.ilike.${tenant}%`)
         .join(',');
 
     const today = new Date();
-    const currentMonth = startOfMonth(today);
-    const startMonth = subMonths(currentMonth, 5);
 
     return supabaseClient
         .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
@@ -130,13 +128,15 @@ const getStatsForBilling = (tenants: string[]) => {
         `
         )
         .eq('grain', 'monthly')
-        .gte('ts', formatToGMT(startMonth))
+        .gte('ts', formatToGMT(startDate))
         .lt('ts', formatToGMT(today))
         .or(subjectRoleFilters)
         .order('ts', { ascending: false });
 };
 
-// TODO (billing): Enable pagination when the new RPC is available.
+// TODO (billing): Enable pagination when a database table containing historic billing data is available.
+//   This function is temporarily unused since the billing history table component is using filtered data
+//   returned by the billing_report RPC to populate the contents of its rows.
 const getStatsForBillingHistoryTable = (
     tenants: string[],
     // pagination: any,
