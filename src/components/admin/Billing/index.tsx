@@ -16,6 +16,7 @@ import { eachMonthOfInterval, format, startOfMonth, subMonths } from 'date-fns';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
 import useBillingRecord from 'hooks/billing/useBillingRecord';
 import usePageTitle from 'hooks/usePageTitle';
+import { isArray, isEmpty } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage } from 'react-intl';
@@ -32,7 +33,6 @@ import {
     useBilling_updateBillingHistory,
 } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
-import { hasLength } from 'utils/misc-utils';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
@@ -144,9 +144,11 @@ function AdminBilling() {
         if (
             historyInitialized &&
             !isValidatingRecord &&
-            hasLength(billingRecord)
+            !isEmpty(billingRecord)
         ) {
-            updateBillingHistory(billingRecord);
+            updateBillingHistory(
+                isArray(billingRecord) ? billingRecord : [billingRecord]
+            );
         }
     }, [
         updateBillingHistory,

@@ -1,12 +1,12 @@
 import { BillingRecord, getBillingRecord } from 'api/billing';
+import { extendedPollSettings } from 'context/SWR';
 import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { useBilling_selectedTenant } from 'stores/Billing/hooks';
 import { hasLength } from 'utils/misc-utils';
 
-const INTERVAL = 30000;
-
 const defaultResponse: BillingRecord[] = [];
 
+// TODO (typing): Correct the return type of useSelectNew. In this instance, data is an object and not an array.
 function useBillingRecord(currentMonth: string | Date) {
     const selectedTenant = useBilling_selectedTenant();
 
@@ -14,12 +14,7 @@ function useBillingRecord(currentMonth: string | Date) {
         hasLength(selectedTenant)
             ? getBillingRecord(selectedTenant, currentMonth)
             : null,
-        {
-            errorRetryCount: 3,
-            errorRetryInterval: INTERVAL / 2,
-            refreshInterval: INTERVAL,
-            revalidateOnFocus: false,
-        }
+        extendedPollSettings
     );
 
     return {
