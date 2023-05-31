@@ -1,4 +1,5 @@
 import { Divider, Grid, Typography } from '@mui/material';
+import { BillingRecord, getBillingHistory } from 'api/billing';
 import { authenticatedRoutes } from 'app/routes';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import DataByMonthGraph from 'components/admin/Billing/graphs/DataByMonthGraph';
@@ -11,21 +12,29 @@ import TenantOptions from 'components/admin/Billing/TenantOptions';
 import AdminTabs from 'components/admin/Tabs';
 import AlertBox from 'components/shared/AlertBox';
 import BillingHistoryTable from 'components/tables/Billing';
+import { eachMonthOfInterval, format, startOfMonth, subMonths } from 'date-fns';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
+import useBillingRecord from 'hooks/billing/useBillingRecord';
 import usePageTitle from 'hooks/usePageTitle';
-import { useEffect } from 'react';
+import { isArray, isEmpty } from 'lodash';
+import { useEffect, useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
+    useBilling_billingHistoryInitialized,
     useBilling_hydrated,
     useBilling_resetState,
+    useBilling_selectedTenant,
     useBilling_setBillingHistory,
+    useBilling_setBillingHistoryInitialized,
     useBilling_setDataByTaskGraphDetails,
     useBilling_setHydrated,
     useBilling_setHydrationErrorsExist,
+    useBilling_updateBillingHistory,
 } from 'stores/Billing/hooks';
+import useConstant from 'use-constant';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
@@ -35,20 +44,84 @@ function AdminBilling() {
     const setHydrated = useBilling_setHydrated();
     const setHydrationErrorsExist = useBilling_setHydrationErrorsExist();
 
+    const historyInitialized = useBilling_billingHistoryInitialized();
+    const setHistoryInitialized = useBilling_setBillingHistoryInitialized();
     const setBillingHistory = useBilling_setBillingHistory();
+    const updateBillingHistory = useBilling_updateBillingHistory();
+
+    const selectedTenant = useBilling_selectedTenant();
     const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
 
     const resetBillingState = useBilling_resetState();
 
+    const currentMonth = useConstant(() => {
+        const today = new Date();
+
+        return startOfMonth(today);
+    });
+
+    const dateRange = useMemo(() => {
+        const startMonth = startOfMonth(subMonths(currentMonth, 5));
+
+        return eachMonthOfInterval({
+            start: startMonth,
+            end: currentMonth,
+        }).map((date) => format(date, "yyyy-MM-dd' 00:00:00+00'"));
+    }, [currentMonth]);
+
     const {
         billingStats,
-        error,
+        error: billingStatsError,
         isValidating: isValidatingStats,
     } = useBillingCatalogStats();
 
+    const { billingRecord, isValidating: isValidatingRecord } =
+        useBillingRecord(currentMonth);
+
+    useEffect(() => {
+        if (
+            selectedTenant &&
+            dateRange.length > 0 &&
+            !hydrated &&
+            !historyInitialized
+        ) {
+            getBillingHistory(selectedTenant, dateRange)
+                .then(
+                    (responses) => {
+                        const data: BillingRecord[] = [];
+
+                        responses.forEach((response) => {
+                            if (response.error) {
+                                throw new Error(response.error.message);
+                            }
+
+                            if (response.data.max_concurrent_tasks > 0) {
+                                data.push(response.data);
+                            }
+                        });
+
+                        setBillingHistory(data);
+                    },
+                    () => {
+                        setHydrationErrorsExist(true);
+                        setHydrated(true);
+                    }
+                )
+                .finally(() => setHistoryInitialized(true));
+        }
+    }, [
+        setBillingHistory,
+        setHistoryInitialized,
+        setHydrated,
+        setHydrationErrorsExist,
+        dateRange,
+        historyInitialized,
+        hydrated,
+        selectedTenant,
+    ]);
+
     useEffect(() => {
         if (!isValidatingStats && billingStats) {
-            setBillingHistory(billingStats);
             setDataByTaskGraphDetails(billingStats);
 
             if (!hydrated) {
@@ -56,19 +129,35 @@ function AdminBilling() {
             }
         }
 
-        if (error) {
+        if (billingStatsError) {
             setHydrationErrorsExist(true);
             setHydrated(true);
         }
     }, [
-        setBillingHistory,
         setDataByTaskGraphDetails,
         setHydrated,
         setHydrationErrorsExist,
         billingStats,
-        error,
+        billingStatsError,
         hydrated,
         isValidatingStats,
+    ]);
+
+    useEffect(() => {
+        if (
+            historyInitialized &&
+            !isValidatingRecord &&
+            !isEmpty(billingRecord)
+        ) {
+            updateBillingHistory(
+                isArray(billingRecord) ? billingRecord : [billingRecord]
+            );
+        }
+    }, [
+        updateBillingHistory,
+        billingRecord,
+        historyInitialized,
+        isValidatingRecord,
     ]);
 
     useUnmount(() => resetBillingState());

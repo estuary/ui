@@ -26,6 +26,7 @@ import {
     CARD_AREA_HEIGHT,
     SeriesConfig,
     SeriesNames,
+    stripTimeFromDate,
 } from 'utils/billing-utils';
 
 const stackId = 'Task Count';
@@ -55,59 +56,45 @@ function DataByMonthGraph() {
 
         const scopedDataSet: {
             month: string;
-            taskCount: number;
-            includedTasks: number | null;
+            includedTasks: number;
+            surplusTasks: number;
         }[] = billingHistory
-            .filter(({ date }) =>
-                isWithinInterval(date, {
+            .filter(({ billed_month }) => {
+                const billedMonth = stripTimeFromDate(billed_month);
+
+                return isWithinInterval(billedMonth, {
                     start: startDate,
                     end: today,
-                })
-            )
-            .map(({ date, taskCount, includedTasks }) => ({
-                month: intl.formatDate(date, { month: 'short' }),
-                taskCount,
-                includedTasks,
-            }));
+                });
+            })
+            .map(({ billed_month, line_items, max_concurrent_tasks }) => {
+                const billedMonth = stripTimeFromDate(billed_month);
+
+                return {
+                    month: intl.formatDate(billedMonth, { month: 'short' }),
+                    includedTasks:
+                        max_concurrent_tasks > 0 ? line_items[0].count : 0,
+                    surplusTasks: line_items[1].count,
+                };
+            });
 
         return scopedDataSet.flatMap(
             ({
                 month,
-                taskCount,
                 includedTasks,
-            }): SeriesConfig | SeriesConfig[] => {
-                const freeTasks = includedTasks ?? 2;
-
-                if (taskCount > freeTasks) {
-                    const taskSurplus = taskCount - freeTasks;
-
-                    return [
-                        {
-                            seriesName: SeriesNames.INCLUDED,
-                            stack: stackId,
-                            data: [[month, freeTasks]],
-                        },
-                        {
-                            seriesName: SeriesNames.SURPLUS,
-                            stack: stackId,
-                            data: [[month, taskSurplus]],
-                        },
-                    ];
-                } else {
-                    return [
-                        {
-                            seriesName: SeriesNames.INCLUDED,
-                            stack: stackId,
-                            data: [[month, taskCount]],
-                        },
-                        {
-                            seriesName: SeriesNames.SURPLUS,
-                            stack: stackId,
-                            data: [[month, 0]],
-                        },
-                    ];
-                }
-            }
+                surplusTasks,
+            }): SeriesConfig | SeriesConfig[] => [
+                {
+                    seriesName: SeriesNames.INCLUDED,
+                    stack: stackId,
+                    data: [[month, includedTasks]],
+                },
+                {
+                    seriesName: SeriesNames.SURPLUS,
+                    stack: stackId,
+                    data: [[month, surplusTasks]],
+                },
+            ]
         );
     }, [billingHistory, intl, today]);
 
@@ -189,12 +176,18 @@ function DataByMonthGraph() {
                             } else {
                                 const tooltipTitle =
                                     billingHistory
-                                        .map(({ date }) =>
-                                            intl.formatDate(date, {
-                                                month: 'short',
-                                                year: 'numeric',
-                                            })
-                                        )
+                                        .map(({ billed_month }) => {
+                                            const billedMonth =
+                                                stripTimeFromDate(billed_month);
+
+                                            return intl.formatDate(
+                                                billedMonth,
+                                                {
+                                                    month: 'short',
+                                                    year: 'numeric',
+                                                }
+                                            );
+                                        })
                                         .find((date) =>
                                             date.includes(config.axisValueLabel)
                                         ) ?? config.axisValueLabel;

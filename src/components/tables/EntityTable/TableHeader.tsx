@@ -13,6 +13,7 @@ interface Props {
     selectData?: any;
     selectableTableStoreName?: SelectTableStoreNames;
     sortDirection?: SortDirection;
+    noBackgroundColor?: boolean;
 }
 
 function EntityTableHeader({
@@ -23,6 +24,7 @@ function EntityTableHeader({
     selectData,
     selectableTableStoreName,
     sortDirection,
+    noBackgroundColor,
 }: Props) {
     const enableSort = columnToSort && headerClick && sortDirection;
 
@@ -30,7 +32,9 @@ function EntityTableHeader({
         <TableHead>
             <TableRow
                 sx={{
-                    background: (theme) => theme.palette.background.default,
+                    background: noBackgroundColor
+                        ? undefined
+                        : (theme) => theme.palette.background.default,
                 }}
             >
                 {columns.map((column, index) => {

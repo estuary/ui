@@ -6,27 +6,30 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/Hydration';
 import { BillingStoreNames } from 'stores/names';
-import {
-    evaluateSpecType,
-    formatBillingCatalogStats,
-    stripTimeFromDate,
-} from 'utils/billing-utils';
+import { evaluateSpecType, stripTimeFromDate } from 'utils/billing-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create } from 'zustand';
+import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
 const getInitialStateData = (): Pick<
     BillingState,
-    'billingHistory' | 'dataByTaskGraphDetails' | 'selectedTenant'
+    | 'billingHistory'
+    | 'billingHistoryInitialized'
+    | 'dataByTaskGraphDetails'
+    | 'selectedTenant'
 > => {
     return {
         billingHistory: [],
+        billingHistoryInitialized: false,
         dataByTaskGraphDetails: [],
         selectedTenant: '',
     };
 };
 
-export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
+export const getInitialState = (
+    set: NamedSet<BillingState>,
+    get: StoreApi<BillingState>['getState']
+): BillingState => {
     return {
         ...getInitialStateData(),
         ...getStoreWithHydrationSettings('Billing', set),
@@ -50,10 +53,41 @@ export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
         setBillingHistory: (value) => {
             set(
                 produce((state: BillingState) => {
-                    state.billingHistory = formatBillingCatalogStats(value);
+                    state.billingHistory = value;
                 }),
                 false,
                 'Billing Details Set'
+            );
+        },
+
+        setBillingHistoryInitialized: (value) => {
+            set(
+                produce((state: BillingState) => {
+                    state.billingHistoryInitialized = value;
+                }),
+                false,
+                'Billing History Initialized'
+            );
+        },
+
+        updateBillingHistory: (value) => {
+            set(
+                produce((state: BillingState) => {
+                    if (value[0].max_concurrent_tasks > 0) {
+                        const { billingHistory } = get();
+
+                        const evaluatedBillingHistory = billingHistory.filter(
+                            (record) =>
+                                record.billed_month !== value[0].billed_month
+                        );
+
+                        evaluatedBillingHistory.push(value[0]);
+
+                        state.billingHistory = evaluatedBillingHistory;
+                    }
+                }),
+                false,
+                'Billing Details Updated'
             );
         },
 
@@ -109,6 +143,6 @@ export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
 
 export const createBillingStore = (key: BillingStoreNames.GENERAL) => {
     return create<BillingState>()(
-        devtools((set) => getInitialState(set), devtoolsOptions(key))
+        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
     );
 };
