@@ -18,16 +18,27 @@ const copyEncryptedEndpointConfig = (
     overrideJsonFormDefaults?: boolean
 ) => {
     Object.entries(encryptedEndpointConfig).forEach(([key, value]) => {
+        // Check if key is a sops key.
         const encryptedSuffixIndex = key.lastIndexOf(encryptedSuffix);
 
+        // If a sops key we need to strip the "_sops" off the end so the cloned
+        //  object has the proper keys
         const truncatedKey =
             encryptedSuffixIndex !== -1
                 ? key.slice(0, encryptedSuffixIndex)
-                : '';
+                : null;
 
         if (isPlainObject(value)) {
+            // Check which key to use
+            const keyToUse = truncatedKey ?? key;
+
+            // Make sure the nested element is populated
+            endpointConfigTemplate[keyToUse] =
+                endpointConfigTemplate[keyToUse] ?? {};
+
+            // start recursion so we can clone deeply
             copyEncryptedEndpointConfig(
-                endpointConfigTemplate[truncatedKey || key] ?? {},
+                endpointConfigTemplate[keyToUse],
                 encryptedEndpointConfig[key],
                 encryptedSuffix
             );
