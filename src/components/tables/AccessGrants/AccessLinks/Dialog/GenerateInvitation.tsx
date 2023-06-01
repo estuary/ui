@@ -1,4 +1,10 @@
-import { Button, Grid } from '@mui/material';
+import {
+    Autocomplete,
+    AutocompleteRenderInputParams,
+    Button,
+    Grid,
+    TextField,
+} from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { generateGrantDirective } from 'api/directives';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
@@ -17,6 +23,8 @@ interface Props {
     serverError: PostgrestError | null;
     setServerError: React.Dispatch<React.SetStateAction<PostgrestError | null>>;
 }
+
+const namePattern = new RegExp(`^[a-zA-Z0-9-_./]+$`);
 
 // The write capability should be obscured to the user. It is more challenging
 // for a user to understand the nuances of this grant and likely will not be used
@@ -42,6 +50,9 @@ function GenerateInvitation({
     );
 
     const [prefix, setPrefix] = useState<string>(objectRoles[0]);
+    const [prefixMissing, setPrefixMissing] = useState(false);
+    const [prefixInvalid, setPrefixInvalid] = useState(false);
+
     const [capability, setCapability] = useState<string>(capabilityOptions[0]);
     const [reusability, setReusability] = useState<string>(typeOptions[0]);
 
@@ -51,7 +62,12 @@ function GenerateInvitation({
                 setServerError(null);
             }
 
-            setPrefix(value);
+            setPrefixMissing(!hasLength(value));
+            setPrefixInvalid(!namePattern.test(value));
+
+            const processedValue = value.endsWith('/') ? value : `${value}/`;
+
+            setPrefix(processedValue);
         },
         setGrantCapability: (_event: React.SyntheticEvent, value: string) => {
             if (serverError) {
@@ -94,14 +110,40 @@ function GenerateInvitation({
     return (
         <Grid container spacing={2} sx={{ mb: 5, pt: 1 }}>
             <Grid item xs={12} md={5}>
-                <AutocompletedField
+                <Autocomplete
+                    options={objectRoles}
+                    renderInput={({
+                        InputProps,
+                        ...params
+                    }: AutocompleteRenderInputParams) => (
+                        <TextField
+                            {...params}
+                            InputProps={{
+                                ...InputProps,
+                                sx: { borderRadius: 3 },
+                            }}
+                            label={intl.formatMessage({
+                                id: 'common.tenant',
+                            })}
+                            variant="outlined"
+                            size="small"
+                            error={prefixMissing || prefixInvalid}
+                        />
+                    )}
+                    defaultValue={objectRoles[0]}
+                    freeSolo
+                    disableClearable
+                    onInputChange={handlers.setGrantPrefix}
+                />
+
+                {/* <AutocompletedField
                     label={intl.formatMessage({
                         id: 'common.tenant',
                     })}
                     options={objectRoles}
                     defaultValue={objectRoles[0]}
                     changeHandler={handlers.setGrantPrefix}
-                />
+                /> */}
             </Grid>
 
             <Grid item xs={4} md={2}>
