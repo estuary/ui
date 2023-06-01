@@ -97,25 +97,30 @@ function EndpointConfig({
 
     useEffect(() => {
         if (connectorTag?.endpoint_spec_schema && endpointSchemaChanged) {
-            const schema =
-                connectorTag.endpoint_spec_schema as unknown as Schema;
-
-            setEndpointSchema(schema);
-
-            const defaultConfig = createJSONFormDefaults(schema);
-
+            // force some new data in
             setServerUpdateRequired(true);
             setEncryptedEndpointConfig({
                 data: {},
             });
+
+            // Update the schema
+            const schema =
+                connectorTag.endpoint_spec_schema as unknown as Schema;
+            setEndpointSchema(schema);
+
+            // Generate the defaults and populate the data/errors
+            const defaultConfig = createJSONFormDefaults(schema);
             setEndpointConfig(defaultConfig);
             setPreviousEndpointConfig(defaultConfig);
+        } else if (!connectorTag) {
+            setEndpointSchema({});
         }
     }, [
         setServerUpdateRequired,
         setEndpointConfig,
         setEndpointSchema,
         setPreviousEndpointConfig,
+        connectorTag,
         connectorTag?.endpoint_spec_schema,
         endpointSchemaChanged,
         setEncryptedEndpointConfig,
