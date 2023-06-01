@@ -2,10 +2,12 @@ import { Box } from '@mui/material';
 import { getGrants, getGrants_Users } from 'api/combinedGrantsExt';
 import AccessLinksButton from 'components/tables/AccessGrants/AccessLinks/Dialog/Button';
 import DataShareButton from 'components/tables/AccessGrants/DataSharing/Dialog/Button';
-import Rows, {
+import PrefixRows, {
     prefixTableColumns,
+} from 'components/tables/AccessGrants/PrefixRows';
+import UserRows, {
     userTableColumns,
-} from 'components/tables/AccessGrants/Rows';
+} from 'components/tables/AccessGrants/UserRows';
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
@@ -27,10 +29,7 @@ function AccessGrantsTable({ tablePrefix, showUser }: Props) {
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState(
-        tablePrefix,
-        showUser ? 'user_full_name' : 'subject_role'
-    );
+    } = useTableState(tablePrefix, showUser ? 'user_full_name' : 'object_role');
 
     const query = useMemo(() => {
         if (showUser) {
@@ -74,9 +73,13 @@ function AccessGrantsTable({ tablePrefix, showUser }: Props) {
                         disableDoclink: true,
                     }}
                     columns={showUser ? userTableColumns : prefixTableColumns}
-                    renderTableRows={(data) => (
-                        <Rows data={data} showUser={showUser} />
-                    )}
+                    renderTableRows={(data) =>
+                        showUser ? (
+                            <UserRows data={data} />
+                        ) : (
+                            <PrefixRows data={data} />
+                        )
+                    }
                     pagination={pagination}
                     setPagination={setPagination}
                     searchQuery={searchQuery}

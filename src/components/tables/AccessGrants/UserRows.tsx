@@ -8,7 +8,6 @@ interface RowProps {
 
 interface RowsProps {
     data: any[];
-    showUser?: boolean;
 }
 
 export const userTableColumns = [
@@ -23,25 +22,6 @@ export const userTableColumns = [
     {
         field: 'object_role',
         headerIntlKey: 'entityTable.data.objectRole',
-    },
-    {
-        field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastUpdated',
-    },
-];
-
-export const prefixTableColumns = [
-    {
-        field: 'subject_role',
-        headerIntlKey: 'entityTable.data.sharedEntity',
-    },
-    {
-        field: 'capability',
-        headerIntlKey: 'entityTable.data.capability',
-    },
-    {
-        field: 'object_role',
-        headerIntlKey: 'entityTable.data.sharedWith',
     },
     {
         field: 'updated_at',
@@ -75,25 +55,16 @@ function Row({ row }: RowProps) {
     );
 }
 
-function Rows({ data, showUser }: RowsProps) {
+function UserRows({ data }: RowsProps) {
     return (
         <>
             {data.map((row) => {
                 const isUser = row.user_full_name || row.user_email;
-                if (showUser) {
-                    if (isUser) {
-                        return <Row row={row} key={row.id} />;
-                    } else {
-                        return null;
-                    }
-                } else if (isUser) {
-                    return null;
-                } else {
-                    return <Row row={row} key={row.id} />;
-                }
+
+                return isUser ? <Row row={row} key={row.id} /> : null;
             })}
         </>
     );
 }
 
-export default Rows;
+export default UserRows;
