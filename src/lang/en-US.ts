@@ -470,6 +470,12 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.users.prefixInvitation.cta.generateLink': `Generate Invitation`,
 
     'admin.prefix.cta.issueGrant': `Grant Access`,
+    'admin.prefix.issueGrant.header': `Share Data`,
+    'admin.prefix.issueGrant.message': `This is a placeholder for a description.`,
+    'admin.prefix.issueGrant.label.capability': `Capability`,
+    'admin.prefix.issueGrant.label.sharedEntity': `Shared Entity`,
+    'admin.prefix.issueGrant.label.sharedWith': `Shared With`,
+    'admin.prefix.issueGrant.cta.generateGrant': `Grant Access`,
 
     'admin.cookies': `Cookie Preferences`,
     'admin.cookies.message': `Click below to configure your cookie preferences.`,

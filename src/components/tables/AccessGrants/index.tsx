@@ -1,13 +1,13 @@
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import { getGrants, getGrants_Users } from 'api/combinedGrantsExt';
 import AccessLinksButton from 'components/tables/AccessGrants/AccessLinks/Dialog/Button';
+import DataShareButton from 'components/tables/AccessGrants/DataSharing/Dialog/Button';
 import Rows, {
     prefixTableColumns,
     userTableColumns,
 } from 'components/tables/AccessGrants/Rows';
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import useTableState, { TablePrefix } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
@@ -94,13 +94,7 @@ function AccessGrantsTable({ tablePrefix, showUser }: Props) {
                     }
                     showToolbar
                     toolbar={
-                        showUser ? (
-                            <AccessLinksButton />
-                        ) : (
-                            <Button variant="outlined">
-                                <FormattedMessage id="admin.prefix.cta.issueGrant" />
-                            </Button>
-                        )
+                        showUser ? <AccessLinksButton /> : <DataShareButton />
                     }
                 />
             </TableHydrator>
