@@ -23,7 +23,7 @@ interface Props {
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-function SharePrefixDialog({ objectRoles, open, setOpen }: Props) {
+function PrefixInvitationDialog({ objectRoles, open, setOpen }: Props) {
     const theme = useTheme();
 
     const [serverError, setServerError] = useState<PostgrestError | null>(null);
@@ -52,7 +52,7 @@ function SharePrefixDialog({ objectRoles, open, setOpen }: Props) {
                 }}
             >
                 <Typography variant="h6">
-                    <FormattedMessage id="admin.users.sharePrefix.header" />
+                    <FormattedMessage id="admin.users.prefixInvitation.header" />
                 </Typography>
 
                 <IconButton onClick={closeDialog}>
@@ -67,7 +67,7 @@ function SharePrefixDialog({ objectRoles, open, setOpen }: Props) {
 
             <DialogContent>
                 {/* <Typography sx={{ mb: 3 }}>
-                    <FormattedMessage id="admin.users.sharePrefix.message" />
+                    <FormattedMessage id="admin.users.prefixInvitation.message" />
                 </Typography> */}
 
                 {serverError ? (
@@ -92,4 +92,4 @@ function SharePrefixDialog({ objectRoles, open, setOpen }: Props) {
     );
 }
 
-export default SharePrefixDialog;
+export default PrefixInvitationDialog;

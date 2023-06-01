@@ -1,5 +1,5 @@
 import { Box, Button } from '@mui/material';
-import SharePrefixDialog from 'components/tables/AccessGrants/AccessLinks/Dialog';
+import PrefixInvitationDialog from 'components/tables/AccessGrants/AccessLinks/Dialog';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
@@ -21,10 +21,10 @@ function AccessLinksButton() {
                 }}
                 sx={{ whiteSpace: 'nowrap' }}
             >
-                <FormattedMessage id="admin.users.cta.sharePrefix" />
+                <FormattedMessage id="admin.users.cta.prefixInvitation" />
             </Button>
 
-            <SharePrefixDialog
+            <PrefixInvitationDialog
                 objectRoles={objectRoles}
                 open={open}
                 setOpen={setOpen}

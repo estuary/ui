@@ -107,7 +107,7 @@ function GenerateInvitation({
             <Grid item xs={4} md={2}>
                 <AutocompletedField
                     label={intl.formatMessage({
-                        id: 'admin.users.sharePrefix.label.capability',
+                        id: 'admin.users.prefixInvitation.label.capability',
                     })}
                     options={capabilityOptions}
                     defaultValue={capabilityOptions[0]}
@@ -118,7 +118,7 @@ function GenerateInvitation({
             <Grid item xs={4} md={2}>
                 <AutocompletedField
                     label={intl.formatMessage({
-                        id: 'admin.users.sharePrefix.label.type',
+                        id: 'admin.users.prefixInvitation.label.type',
                     })}
                     options={typeOptions}
                     defaultValue={typeOptions[0]}
@@ -131,7 +131,7 @@ function GenerateInvitation({
                     onClick={handlers.generateInvitation}
                     sx={{ flexGrow: 1 }}
                 >
-                    <FormattedMessage id="admin.users.sharePrefix.cta.generateLink" />
+                    <FormattedMessage id="admin.users.prefixInvitation.cta.generateLink" />
                 </Button>
             </Grid>
         </Grid>

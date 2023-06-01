@@ -376,6 +376,8 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.bucket': `Bucket`,
     'entityTable.data.prefix': `Prefix`,
     'entityTable.data.storagePrefix': `Prefix`,
+    'entityTable.data.sharedEntity': `Shared Entity`,
+    'entityTable.data.sharedWith': `Shared With`,
 
     'entityTable.stats.bytes_read': `Bytes Read`,
     'entityTable.stats.docs_read': `Docs Read`,
@@ -460,16 +462,18 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.paymentMethods.table.label.actions': `Actions`,
     'admin.billing.paymentMethods.table.emptyTableDefault.message': `No payment methods available.`,
 
-    'admin.users.cta.sharePrefix': `Manage Invitations`,
-    'admin.users.sharePrefix.header': `Manage Invitations`,
-    'admin.users.sharePrefix.message': `This is a placeholder for a description.`,
-    'admin.users.sharePrefix.label.capability': `Capability`,
-    'admin.users.sharePrefix.label.type': `Type`,
-    'admin.users.sharePrefix.cta.generateLink': `Generate Invitation`,
+    'admin.users.cta.prefixInvitation': `Manage Invitations`,
+    'admin.users.prefixInvitation.header': `Manage Invitations`,
+    'admin.users.prefixInvitation.message': `This is a placeholder for a description.`,
+    'admin.users.prefixInvitation.label.capability': `Capability`,
+    'admin.users.prefixInvitation.label.type': `Type`,
+    'admin.users.prefixInvitation.cta.generateLink': `Generate Invitation`,
+
+    'admin.prefix.cta.issueGrant': `Grant Access`,
 
     'admin.cookies': `Cookie Preferences`,
     'admin.cookies.message': `Click below to configure your cookie preferences.`,
-    'admin.tabs.users': `Users`,
+    'admin.tabs.users': `Account Access`,
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.billing': `Billing`,
@@ -483,10 +487,10 @@ const Welcome: ResolvedIntlConfig['messages'] = {
 
 const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrantsTable.header': `Captures`,
-    'accessGrantsTable.users.title': `Users`,
-    'accessGrantsTable.prefixes.title': `Prefixes`,
+    'accessGrantsTable.users.title': `Organization Membership`,
+    'accessGrantsTable.prefixes.title': `Data Sharing`,
     'accessGrantsTable.users.filterLabel': `Filter User or Object`,
-    'accessGrantsTable.prefixes.filterLabel': `Filter Prefix or Object`,
+    'accessGrantsTable.prefixes.filterLabel': `Filter Namespace`,
     'accessGrants.message1': `No results found.`,
     'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
 

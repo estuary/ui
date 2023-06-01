@@ -11,7 +11,11 @@ interface RowsProps {
     showUser?: boolean;
 }
 
-const commonTableColumns = [
+export const userTableColumns = [
+    {
+        field: 'user_full_name',
+        headerIntlKey: 'entityTable.data.userFullName',
+    },
     {
         field: 'capability',
         headerIntlKey: 'entityTable.data.capability',
@@ -26,19 +30,24 @@ const commonTableColumns = [
     },
 ];
 
-export const userTableColumns = [
-    {
-        field: 'user_full_name',
-        headerIntlKey: 'entityTable.data.userFullName',
-    },
-].concat(commonTableColumns);
-
 export const prefixTableColumns = [
     {
         field: 'subject_role',
-        headerIntlKey: 'entityTable.data.catalogPrefix',
+        headerIntlKey: 'entityTable.data.sharedEntity',
     },
-].concat(commonTableColumns);
+    {
+        field: 'capability',
+        headerIntlKey: 'entityTable.data.capability',
+    },
+    {
+        field: 'object_role',
+        headerIntlKey: 'entityTable.data.sharedWith',
+    },
+    {
+        field: 'updated_at',
+        headerIntlKey: 'entityTable.data.lastUpdated',
+    },
+];
 
 function Row({ row }: RowProps) {
     return (
