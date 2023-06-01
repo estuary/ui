@@ -25,6 +25,8 @@ interface Props {
     setServerError: React.Dispatch<React.SetStateAction<PostgrestError | null>>;
 }
 
+const namePattern = new RegExp(`^[a-zA-Z0-9-_./]+$`);
+
 // The write capability should be obscured to the user. It is more challenging
 // for a user to understand the nuances of this grant and likely will not be used
 // outside of advanced cases.
@@ -42,6 +44,12 @@ function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
         selectableTableStoreSelectors.query.hydrate
     );
 
+    const [objectMissing, setObjectMissing] = useState(false);
+    const [objectInvalid, setObjectInvalid] = useState(false);
+
+    const [subjectMissing, setSubjectMissing] = useState(false);
+    const [subjectInvalid, setSubjectInvalid] = useState(false);
+
     const [objectRole, setObjectRole] = useState<string>('');
     const [subjectRole, setSubjectRole] = useState<string>('');
     const [capability, setCapability] = useState<Capability>(
@@ -53,6 +61,9 @@ function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
             if (serverError) {
                 setServerError(null);
             }
+
+            setObjectMissing(!hasLength(value));
+            setObjectInvalid(!namePattern.test(value));
 
             const processedValue = value.endsWith('/') ? value : `${value}/`;
 
@@ -66,6 +77,10 @@ function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
             }
 
             const value = event.target.value;
+
+            setSubjectMissing(!hasLength(value));
+            setSubjectInvalid(!namePattern.test(value));
+
             const processedValue = value.endsWith('/') ? value : `${value}/`;
 
             setSubjectRole(processedValue);
@@ -117,6 +132,7 @@ function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
                             })}
                             variant="outlined"
                             size="small"
+                            error={objectMissing || objectInvalid}
                         />
                     )}
                     freeSolo
@@ -136,6 +152,7 @@ function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
                     InputProps={{
                         sx: { borderRadius: 3 },
                     }}
+                    error={subjectMissing || subjectInvalid}
                     onChange={handlers.evaluateSubjectRole}
                     sx={{ flexGrow: 1 }}
                 />
@@ -154,6 +171,12 @@ function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
 
             <Grid item xs={4} md={3} sx={{ display: 'flex' }}>
                 <Button
+                    disabled={
+                        objectMissing ||
+                        objectInvalid ||
+                        subjectMissing ||
+                        subjectInvalid
+                    }
                     onClick={handlers.generateRoleGrant}
                     sx={{ flexGrow: 1 }}
                 >

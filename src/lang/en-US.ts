@@ -469,7 +469,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.users.prefixInvitation.label.type': `Type`,
     'admin.users.prefixInvitation.cta.generateLink': `Generate Invitation`,
 
-    'admin.prefix.cta.issueGrant': `Grant Access`,
+    'admin.prefix.cta.issueGrant': `Share Data`,
     'admin.prefix.issueGrant.header': `Share Data`,
     'admin.prefix.issueGrant.message': `This is a placeholder for a description.`,
     'admin.prefix.issueGrant.label.capability': `Capability`,
