@@ -12,7 +12,7 @@ interface RowsProps {
 export const prefixTableColumns = [
     {
         field: 'object_role',
-        headerIntlKey: 'entityTable.data.sharedEntity',
+        headerIntlKey: 'entityTable.data.sharedPrefix',
     },
     {
         field: 'subject_role',

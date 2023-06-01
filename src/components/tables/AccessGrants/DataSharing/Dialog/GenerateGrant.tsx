@@ -128,7 +128,7 @@ function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
                                 sx: { borderRadius: 3 },
                             }}
                             label={intl.formatMessage({
-                                id: 'admin.prefix.issueGrant.label.sharedEntity',
+                                id: 'admin.prefix.issueGrant.label.sharedPrefix',
                             })}
                             variant="outlined"
                             size="small"
@@ -148,7 +148,6 @@ function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
                     label={intl.formatMessage({
                         id: 'admin.prefix.issueGrant.label.sharedWith',
                     })}
-                    placeholder="acmeCo/"
                     InputProps={{
                         sx: { borderRadius: 3 },
                     }}

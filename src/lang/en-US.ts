@@ -367,7 +367,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.writesTo': `Writes To`,
     'entityTable.data.readsFrom': `Reads From`,
     'entityTable.data.status': `Status`,
-    'entityTable.data.userFullName': `User`,
+    'entityTable.data.userFullName': `Name`,
     'entityTable.data.capability': `Capability`,
     'entityTable.data.objectRole': `Object`,
     'entityTable.data.lastPubUserFullName': `Last Updated By`,
@@ -376,7 +376,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.bucket': `Bucket`,
     'entityTable.data.prefix': `Prefix`,
     'entityTable.data.storagePrefix': `Prefix`,
-    'entityTable.data.sharedEntity': `Shared Entity`,
+    'entityTable.data.sharedPrefix': `Shared Prefix`,
     'entityTable.data.sharedWith': `Shared With`,
 
     'entityTable.stats.bytes_read': `Bytes Read`,
@@ -469,11 +469,11 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.users.prefixInvitation.label.type': `Type`,
     'admin.users.prefixInvitation.cta.generateLink': `Generate Invitation`,
 
-    'admin.prefix.cta.issueGrant': `Share Data`,
+    'admin.prefix.cta.issueGrant': `Grant Access`,
     'admin.prefix.issueGrant.header': `Share Data`,
     'admin.prefix.issueGrant.message': `This is a placeholder for a description.`,
     'admin.prefix.issueGrant.label.capability': `Capability`,
-    'admin.prefix.issueGrant.label.sharedEntity': `Shared Entity`,
+    'admin.prefix.issueGrant.label.sharedPrefix': `Shared Prefix`,
     'admin.prefix.issueGrant.label.sharedWith': `Shared With`,
     'admin.prefix.issueGrant.cta.generateGrant': `Grant Access`,
 
@@ -496,7 +496,7 @@ const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrantsTable.users.title': `Organization Membership`,
     'accessGrantsTable.prefixes.title': `Data Sharing`,
     'accessGrantsTable.users.filterLabel': `Filter User or Object`,
-    'accessGrantsTable.prefixes.filterLabel': `Filter Namespace`,
+    'accessGrantsTable.prefixes.filterLabel': `Filter Prefixes`,
     'accessGrants.message1': `No results found.`,
     'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
 
