@@ -100,13 +100,18 @@ export function createJSONFormDefaults(
     // schema.
     const data = {};
 
+    // Get the schema we want.
+    //  If collection then we want to generate a Resource Schema
+    //  Stick with schema passed in otherwise as it should be an Endpoint Schema
     const processedSchema =
         collection && !isEmpty(jsonSchema.properties)
             ? defaultResourceSchema(jsonSchema, collection)
             : jsonSchema;
 
+    // Get the default values
     const ajvResponse = setJSONFormDefaults(processedSchema, data);
 
+    // See if there are any errors
     const errors =
         ajvResponse.errors && ajvResponse.errors.length > 0
             ? ajvResponse.errors
