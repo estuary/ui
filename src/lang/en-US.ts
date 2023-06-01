@@ -267,6 +267,10 @@ const Home: ResolvedIntlConfig['messages'] = {
     'home.hero.companyDetails.step1': `Set up real-time data ingestion from your sources. Click “New Capture” to get started.`,
     'home.hero.companyDetails.step2': `Keep destination systems up to date with Materializations: low latency views of your data.`,
 
+    'home.hero.demo.alert.demoTenant.header': `Testing out Flow just got easier`,
+    'home.hero.demo.alert.demoTenant': `Estuary has shared a demo tenant with you to help you see Flow in action while you get set up. To accept it, {button}. You can undo this anytime through data sharing on the Admin page.`,
+    'home.hero.demo.alert.demoTenant.button': `click here`,
+
     'home.hero.1.title': `Wikipedia Data`,
     'home.hero.1.message': `Flow {emphasis} about 100 events per second from the Wikipedia’s API.`,
     'home.hero.1.message.emphasis': `captures`,
