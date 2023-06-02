@@ -32,8 +32,7 @@ const getInitialState = (
     setRequestedTenant: (value) => {
         set(
             produce((state: OnboardingState) => {
-                // Replace any spaces with underscores
-                const formattedValue = value.replaceAll(' ', '_');
+                const formattedValue = value.replaceAll(/\s/, '_');
 
                 state.nameMissing = !hasLength(formattedValue);
                 state.nameInvalid = !namePattern.test(formattedValue);
