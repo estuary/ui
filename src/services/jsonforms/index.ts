@@ -135,7 +135,7 @@ const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
     }
 };
 
-const isRequiredField = (propName: string, rootSchema?: JsonSchema) => {
+export const isRequiredField = (propName: string, rootSchema?: JsonSchema) => {
     const requiredFields = rootSchema?.required;
 
     return includes(requiredFields, propName);
@@ -234,6 +234,36 @@ export const generateCategoryUiSchema = (uiSchema: any) => {
 
     return categoryUiSchema;
 };
+
+/*
+Not used right now. May be useful in the future (June 2023)
+export const generateDefaultArray = (jsonSchema: JsonSchema) => {
+    console.log('generateDefaultArray');
+    const defaultValueArray = [];
+
+    if (
+        // See if there are items
+        jsonSchema.items &&
+        // See if it is an object that can contain settings
+        isPlainObject(jsonSchema.items) &&
+        // Have not seen this in real world just part of the typing
+        !Array.isArray(jsonSchema.items)
+    ) {
+        // Generate the defaults based on the items
+        //  Items will be an object with just type when an array of single type
+        //  or
+        //  Items will be a nested schema when an array of objects
+        const defaultValue = createDefaultValue(jsonSchema.items);
+
+        console.log('defaultValue', defaultValue);
+
+        // Put the default value into an array
+        defaultValueArray.push(defaultValue);
+    }
+
+    return defaultValueArray;
+};
+*/
 
 /////////////////////////////////////////////////////////
 //  CUSTOM FUNCTIONS AND SETTINGS
