@@ -29,6 +29,10 @@ function DemoDialog({ objectRoles, open, setOpen, goToFilteredTable }: Props) {
             onClose={closeDialog}
         >
             <DialogContent sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ mr: 3 }}>
+                    <Logo width={50} />
+                </Box>
+
                 {objectRoles.length > 0 ? (
                     <AcceptDemoInvitation
                         tenant={objectRoles[0]}
@@ -40,10 +44,6 @@ function DemoDialog({ objectRoles, open, setOpen, goToFilteredTable }: Props) {
                         <FormattedMessage id="admin.users.prefixInvitation.header" />
                     </Typography>
                 )}
-
-                <Box sx={{ ml: 3 }}>
-                    <Logo width={50} />
-                </Box>
             </DialogContent>
         </Dialog>
     );
