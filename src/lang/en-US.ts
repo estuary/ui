@@ -270,7 +270,7 @@ const Home: ResolvedIntlConfig['messages'] = {
     'home.hero.companyDetails.step2': `Keep destination systems up to date with Materializations: low latency views of your data.`,
 
     'home.hero.demo.demoTenant.header': `Testing out Flow just got easier`,
-    'home.hero.demo.demoTenant': `Estuary has a public {sharableTenant} tenant that can help you see Flow in action while you get set up. To give your tenant, {userTenant}, read access to it, {button}. You can undo this anytime through data sharing on the Admin page.`,
+    'home.hero.demo.demoTenant': `Estuary has a public {sharableTenant} tenant that can help you see Flow in action while you get set up. To give your tenant, {userTenant}, read access to it, {button}.`,
     'home.hero.demo.demoTenant.button': `click here`,
 
     'home.hero.1.title': `Wikipedia Data`,
