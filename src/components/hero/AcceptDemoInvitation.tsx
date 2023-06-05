@@ -49,7 +49,7 @@ function AcceptDemoInvitation({ tenant, setOpen, goToFilteredTable }: Props) {
 
                     void mutate().finally(() => {
                         if (mutateAuthRoles) {
-                            mutateAuthRoles();
+                            void mutateAuthRoles();
                         }
 
                         setOpen(false);
