@@ -97,25 +97,33 @@ function EndpointConfig({
 
     useEffect(() => {
         if (connectorTag?.endpoint_spec_schema && endpointSchemaChanged) {
-            const schema =
-                connectorTag.endpoint_spec_schema as unknown as Schema;
-
-            setEndpointSchema(schema);
-
-            const defaultConfig = createJSONFormDefaults(schema);
-
+            // force some new data in
             setServerUpdateRequired(true);
             setEncryptedEndpointConfig({
                 data: {},
             });
+
+            // Update the schema
+            const schema =
+                connectorTag.endpoint_spec_schema as unknown as Schema;
+            setEndpointSchema(schema);
+
+            // Generate the defaults and populate the data/errors
+            const defaultConfig = createJSONFormDefaults(schema);
             setEndpointConfig(defaultConfig);
             setPreviousEndpointConfig(defaultConfig);
+        } else if (!connectorTag) {
+            // This will reset the schema so the form is re-rendered correctly
+            //  without this the form would do a quick rendering of the previous
+            //  connector and then immedietly replace that with the new connector
+            setEndpointSchema({});
         }
     }, [
         setServerUpdateRequired,
         setEndpointConfig,
         setEndpointSchema,
         setPreviousEndpointConfig,
+        connectorTag,
         connectorTag?.endpoint_spec_schema,
         endpointSchemaChanged,
         setEncryptedEndpointConfig,
