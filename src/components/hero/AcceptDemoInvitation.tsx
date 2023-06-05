@@ -12,12 +12,18 @@ import { useEntitiesStore_mutate } from 'stores/Entities/hooks';
 interface Props {
     tenant: string;
     setOpen: Dispatch<SetStateAction<boolean>>;
+    setLoading: Dispatch<SetStateAction<boolean>>;
     goToFilteredTable: () => void;
 }
 
 const directiveName = 'acceptDemoTenant';
 
-function AcceptDemoInvitation({ tenant, setOpen, goToFilteredTable }: Props) {
+function AcceptDemoInvitation({
+    tenant,
+    setOpen,
+    setLoading,
+    goToFilteredTable,
+}: Props) {
     const { directive, mutate } = useDirectiveGuard(directiveName, {
         hideAlert: true,
     });
@@ -28,6 +34,8 @@ function AcceptDemoInvitation({ tenant, setOpen, goToFilteredTable }: Props) {
 
     const applyDirective = async (): Promise<void> => {
         if (directive) {
+            setLoading(true);
+
             const response = await submitDirective(
                 directiveName,
                 directive,
@@ -35,6 +43,7 @@ function AcceptDemoInvitation({ tenant, setOpen, goToFilteredTable }: Props) {
             );
 
             if (response.error) {
+                setLoading(false);
                 return setServerError(response.error as PostgrestError);
             }
 
@@ -52,6 +61,7 @@ function AcceptDemoInvitation({ tenant, setOpen, goToFilteredTable }: Props) {
                             void mutateAuthRoles();
                         }
 
+                        setLoading(false);
                         setOpen(false);
                         goToFilteredTable();
                     });
@@ -59,6 +69,7 @@ function AcceptDemoInvitation({ tenant, setOpen, goToFilteredTable }: Props) {
                 async (payload: any) => {
                     trackEvent(`${directiveName}:Error`, directive);
 
+                    setLoading(false);
                     setServerError(payload.job_status.error);
                 }
             );

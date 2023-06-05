@@ -1,7 +1,15 @@
-import { Box, Dialog, DialogContent, Typography } from '@mui/material';
+import {
+    Box,
+    Collapse,
+    Dialog,
+    DialogContent,
+    LinearProgress,
+    Stack,
+    Typography,
+} from '@mui/material';
 import AcceptDemoInvitation from 'components/hero/AcceptDemoInvitation';
 import Logo from 'components/navigation/Logo';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 const TITLE_ID = 'accept-demo-tenant-dialog-title';
@@ -14,6 +22,8 @@ interface Props {
 }
 
 function DemoDialog({ objectRoles, open, setOpen, goToFilteredTable }: Props) {
+    const [loading, setLoading] = useState(false);
+
     const closeDialog = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
@@ -28,22 +38,34 @@ function DemoDialog({ objectRoles, open, setOpen, goToFilteredTable }: Props) {
             aria-labelledby={TITLE_ID}
             onClose={closeDialog}
         >
-            <DialogContent sx={{ display: 'flex', alignItems: 'center' }}>
-                <Box sx={{ mr: 3 }}>
-                    <Logo width={50} />
-                </Box>
+            <DialogContent
+                sx={{ p: 0, display: 'flex', flexDirection: 'column' }}
+            >
+                <Collapse in={loading}>
+                    <LinearProgress sx={{ flexGrow: 1 }} />
+                </Collapse>
 
-                {objectRoles.length > 0 ? (
-                    <AcceptDemoInvitation
-                        tenant={objectRoles[0]}
-                        setOpen={setOpen}
-                        goToFilteredTable={goToFilteredTable}
-                    />
-                ) : (
-                    <Typography>
-                        <FormattedMessage id="admin.users.prefixInvitation.header" />
-                    </Typography>
-                )}
+                <Stack
+                    direction="row"
+                    sx={{ px: 3, py: 2, alignItems: 'center' }}
+                >
+                    <Box sx={{ mr: 3 }}>
+                        <Logo width={50} />
+                    </Box>
+
+                    {objectRoles.length > 0 ? (
+                        <AcceptDemoInvitation
+                            tenant={objectRoles[0]}
+                            setOpen={setOpen}
+                            setLoading={setLoading}
+                            goToFilteredTable={goToFilteredTable}
+                        />
+                    ) : (
+                        <Typography>
+                            <FormattedMessage id="admin.users.prefixInvitation.header" />
+                        </Typography>
+                    )}
+                </Stack>
             </DialogContent>
         </Dialog>
     );
