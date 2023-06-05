@@ -1,8 +1,10 @@
 import {
-    Autocomplete,
-    AutocompleteRenderInputParams,
     Button,
     Grid,
+    InputAdornment,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
     TextField,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
@@ -50,24 +52,41 @@ function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
     const [subjectMissing, setSubjectMissing] = useState(false);
     const [subjectInvalid, setSubjectInvalid] = useState(false);
 
-    const [objectRole, setObjectRole] = useState<string>('');
+    const [objectPrefix, setObjectPrefix] = useState<string>(objectRoles[0]);
+    const [objectSuffix, setObjectSuffix] = useState<string>('');
     const [subjectRole, setSubjectRole] = useState<string>('');
     const [capability, setCapability] = useState<Capability>(
         capabilityOptions[0]
     );
 
     const handlers = {
-        evaluateObjectRole: (_event: React.SyntheticEvent, value: string) => {
+        evaluateObjectRolePrefix: (event: SelectChangeEvent<string>) => {
             if (serverError) {
                 setServerError(null);
             }
 
+            const value = event.target.value;
+
             setObjectMissing(!hasLength(value));
             setObjectInvalid(!namePattern.test(value));
 
-            const processedValue = value.endsWith('/') ? value : `${value}/`;
+            setObjectPrefix(value);
+        },
+        evaluateObjectRoleSuffix: (
+            event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => {
+            if (serverError) {
+                setServerError(null);
+            }
 
-            setObjectRole(processedValue);
+            const value = event.target.value.replaceAll(/\s/g, '_');
+
+            setObjectInvalid(hasLength(value) && !namePattern.test(value));
+
+            const processedValue =
+                hasLength(value) && !value.endsWith('/') ? `${value}/` : value;
+
+            setObjectSuffix(processedValue);
         },
         evaluateSubjectRole: (
             event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -76,7 +95,7 @@ function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
                 setServerError(null);
             }
 
-            const value = event.target.value;
+            const value = event.target.value.replaceAll(/\s/g, '_');
 
             setSubjectMissing(!hasLength(value));
             setSubjectInvalid(!namePattern.test(value));
@@ -95,7 +114,11 @@ function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
         generateRoleGrant: (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            createRoleGrant(subjectRole, objectRole, capability).then(
+            createRoleGrant(
+                subjectRole,
+                `${objectPrefix}${objectSuffix}`,
+                capability
+            ).then(
                 (response) => {
                     if (response.error) {
                         setServerError(response.error);
@@ -115,29 +138,48 @@ function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
     return (
         <Grid container spacing={2} sx={{ mb: 5, pt: 1 }}>
             <Grid item xs={12} md={4}>
-                <Autocomplete
-                    options={objectRoles}
-                    renderInput={({
-                        InputProps,
-                        ...params
-                    }: AutocompleteRenderInputParams) => (
-                        <TextField
-                            {...params}
-                            InputProps={{
-                                ...InputProps,
-                                sx: { borderRadius: 3 },
-                            }}
-                            label={intl.formatMessage({
-                                id: 'admin.prefix.issueGrant.label.sharedPrefix',
-                            })}
-                            variant="outlined"
-                            size="small"
-                            error={objectMissing || objectInvalid}
-                        />
-                    )}
-                    freeSolo
-                    disableClearable
-                    onInputChange={handlers.evaluateObjectRole}
+                <TextField
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                {objectRoles.length === 1 ? (
+                                    objectRoles[0]
+                                ) : (
+                                    <Select
+                                        size="small"
+                                        variant="standard"
+                                        value={objectPrefix}
+                                        disableUnderline
+                                        onChange={
+                                            handlers.evaluateObjectRolePrefix
+                                        }
+                                        sx={{
+                                            '& .MuiSelect-select': {
+                                                paddingBottom: 0.2,
+                                            },
+                                        }}
+                                    >
+                                        {objectRoles.map((prefix) => (
+                                            <MenuItem
+                                                key={prefix}
+                                                value={prefix}
+                                            >
+                                                {prefix}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                )}
+                            </InputAdornment>
+                        ),
+                        sx: { borderRadius: 3 },
+                    }}
+                    label={intl.formatMessage({
+                        id: 'admin.prefix.issueGrant.label.sharedPrefix',
+                    })}
+                    variant="outlined"
+                    size="small"
+                    error={objectMissing || objectInvalid}
+                    onChange={handlers.evaluateObjectRoleSuffix}
                 />
             </Grid>
 
@@ -174,6 +216,7 @@ function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
                         objectMissing ||
                         objectInvalid ||
                         subjectMissing ||
+                        !hasLength(subjectRole) ||
                         subjectInvalid
                     }
                     onClick={handlers.generateRoleGrant}

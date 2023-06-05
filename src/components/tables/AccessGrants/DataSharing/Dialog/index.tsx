@@ -8,6 +8,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
+import AlertBox from 'components/shared/AlertBox';
 import Error from 'components/shared/Error';
 import GenerateGrant from 'components/tables/AccessGrants/DataSharing/Dialog/GenerateGrant';
 import { Cancel } from 'iconoir-react';
@@ -71,11 +72,19 @@ function ShareDataDialog({ objectRoles, open, setOpen }: Props) {
 
                 {serverError ? (
                     <Box sx={{ mb: 3 }}>
-                        <Error
-                            error={serverError}
-                            condensed={true}
-                            hideTitle={true}
-                        />
+                        {serverError.code === '42501' ? (
+                            <AlertBox severity="error" short>
+                                <Typography>
+                                    <FormattedMessage id="admin.prefix.issueGrant.error.invalidPrefix" />
+                                </Typography>
+                            </AlertBox>
+                        ) : (
+                            <Error
+                                error={serverError}
+                                condensed={true}
+                                hideTitle={true}
+                            />
+                        )}
                     </Box>
                 ) : null}
 
