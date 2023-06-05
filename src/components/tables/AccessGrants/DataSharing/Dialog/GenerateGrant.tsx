@@ -83,7 +83,6 @@ function GenerateGrant({
             const value = event.target.value;
 
             setObjectMissing(!hasLength(value));
-            setObjectInvalid(!namePattern.test(value));
 
             setObjectPrefix(value);
         },

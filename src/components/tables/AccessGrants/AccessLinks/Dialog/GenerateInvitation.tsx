@@ -1,15 +1,17 @@
 import {
-    Autocomplete,
-    AutocompleteRenderInputParams,
     Button,
     Grid,
+    InputAdornment,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
     TextField,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { generateGrantDirective } from 'api/directives';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import { useZustandStore } from 'context/Zustand/provider';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import {
@@ -51,23 +53,41 @@ function GenerateInvitation({
 
     const [prefix, setPrefix] = useState<string>(objectRoles[0]);
     const [prefixMissing, setPrefixMissing] = useState(false);
-    const [prefixInvalid, setPrefixInvalid] = useState(false);
+
+    const [suffix, setSuffix] = useState<string>('');
+    const [suffixInvalid, setSuffixInvalid] = useState(false);
 
     const [capability, setCapability] = useState<string>(capabilityOptions[0]);
     const [reusability, setReusability] = useState<string>(typeOptions[0]);
 
     const handlers = {
-        setGrantPrefix: (_event: React.SyntheticEvent, value: string) => {
+        setGrantPrefix: (event: SelectChangeEvent<string>) => {
             if (serverError) {
                 setServerError(null);
             }
 
+            const value = event.target.value;
+
             setPrefixMissing(!hasLength(value));
-            setPrefixInvalid(!namePattern.test(value));
 
             const processedValue = value.endsWith('/') ? value : `${value}/`;
 
             setPrefix(processedValue);
+        },
+        setGrantSuffix: (
+            event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => {
+            if (serverError) {
+                setServerError(null);
+            }
+
+            const value = event.target.value.replaceAll(/\s/g, '_');
+
+            setSuffixInvalid(hasLength(value) && !namePattern.test(value));
+
+            const processedValue = value.endsWith('/') ? value : `${value}/`;
+
+            setSuffix(processedValue);
         },
         setGrantCapability: (_event: React.SyntheticEvent, value: string) => {
             if (serverError) {
@@ -87,7 +107,7 @@ function GenerateInvitation({
             event.preventDefault();
 
             generateGrantDirective(
-                prefix,
+                `${prefix}${suffix}`,
                 capability,
                 reusability === 'single-use'
             ).then(
@@ -109,41 +129,46 @@ function GenerateInvitation({
 
     return (
         <Grid container spacing={2} sx={{ mb: 5, pt: 1 }}>
-            <Grid item xs={12} md={5}>
-                <Autocomplete
-                    options={objectRoles}
-                    renderInput={({
-                        InputProps,
-                        ...params
-                    }: AutocompleteRenderInputParams) => (
-                        <TextField
-                            {...params}
-                            InputProps={{
-                                ...InputProps,
-                                sx: { borderRadius: 3 },
-                            }}
-                            label={intl.formatMessage({
-                                id: 'common.tenant',
-                            })}
-                            variant="outlined"
-                            size="small"
-                            error={prefixMissing || prefixInvalid}
-                        />
-                    )}
-                    defaultValue={objectRoles[0]}
-                    freeSolo
-                    disableClearable
-                    onInputChange={handlers.setGrantPrefix}
-                />
-
-                {/* <AutocompletedField
+            <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
+                <TextField
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                {objectRoles.length === 1 ? (
+                                    objectRoles[0]
+                                ) : (
+                                    <Select
+                                        size="small"
+                                        variant="standard"
+                                        value={prefix}
+                                        disableUnderline
+                                        onChange={handlers.setGrantPrefix}
+                                        sx={{
+                                            '& .MuiSelect-select': {
+                                                paddingBottom: 0.2,
+                                            },
+                                        }}
+                                    >
+                                        {objectRoles.map((role) => (
+                                            <MenuItem key={role} value={role}>
+                                                {role}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                )}
+                            </InputAdornment>
+                        ),
+                        sx: { borderRadius: 3 },
+                    }}
                     label={intl.formatMessage({
-                        id: 'common.tenant',
+                        id: 'admin.prefix.issueGrant.label.sharedPrefix',
                     })}
-                    options={objectRoles}
-                    defaultValue={objectRoles[0]}
-                    changeHandler={handlers.setGrantPrefix}
-                /> */}
+                    variant="outlined"
+                    size="small"
+                    error={prefixMissing || suffixInvalid}
+                    onChange={handlers.setGrantSuffix}
+                    sx={{ flexGrow: 1 }}
+                />
             </Grid>
 
             <Grid item xs={4} md={2}>
@@ -170,6 +195,7 @@ function GenerateInvitation({
 
             <Grid item xs={4} md={3} sx={{ display: 'flex' }}>
                 <Button
+                    disabled={prefixMissing || suffixInvalid}
                     onClick={handlers.generateInvitation}
                     sx={{ flexGrow: 1 }}
                 >
