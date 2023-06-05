@@ -6,6 +6,7 @@ interface Props {
     messageId: string;
     clickHandler: MouseEventHandler<HTMLButtonElement>;
     buttonVariant?: ButtonProps['variant'];
+    disabled?: boolean;
     messageValues?: { [key: string]: any };
 }
 
@@ -13,6 +14,7 @@ function MessageWithButton({
     messageId,
     clickHandler,
     buttonVariant = 'text',
+    disabled,
     messageValues,
 }: Props) {
     return (
@@ -25,6 +27,7 @@ function MessageWithButton({
                         <Button
                             variant={buttonVariant}
                             size="small"
+                            disabled={disabled}
                             onClick={clickHandler}
                         >
                             <FormattedMessage id={`${messageId}.button`} />

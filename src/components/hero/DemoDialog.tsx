@@ -56,8 +56,9 @@ function DemoDialog({ objectRoles, open, setOpen, goToFilteredTable }: Props) {
                     {objectRoles.length > 0 ? (
                         <AcceptDemoInvitation
                             tenant={objectRoles[0]}
-                            setOpen={setOpen}
+                            loading={loading}
                             setLoading={setLoading}
+                            setOpen={setOpen}
                             goToFilteredTable={goToFilteredTable}
                         />
                     ) : (

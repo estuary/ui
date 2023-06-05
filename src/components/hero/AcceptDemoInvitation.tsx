@@ -11,8 +11,9 @@ import { useEntitiesStore_mutate } from 'stores/Entities/hooks';
 
 interface Props {
     tenant: string;
-    setOpen: Dispatch<SetStateAction<boolean>>;
+    loading: boolean;
     setLoading: Dispatch<SetStateAction<boolean>>;
+    setOpen: Dispatch<SetStateAction<boolean>>;
     goToFilteredTable: () => void;
 }
 
@@ -20,8 +21,9 @@ const directiveName = 'acceptDemoTenant';
 
 function AcceptDemoInvitation({
     tenant,
-    setOpen,
+    loading,
     setLoading,
+    setOpen,
     goToFilteredTable,
 }: Props) {
     const { directive, mutate } = useDirectiveGuard(directiveName, {
@@ -95,6 +97,7 @@ function AcceptDemoInvitation({
                     userTenant: <b>{tenant}</b>,
                 }}
                 clickHandler={applyDirective}
+                disabled={loading}
             />
         </>
     );
