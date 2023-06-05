@@ -91,6 +91,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'filter.time.thisWeek': `This Week`,
     'filter.time.lastMonth': `Last Month`,
     'filter.time.thisMonth': `This Month`,
+
+    'catalogName.limitations': `letters, numbers, periods, underscores, and hyphens`,
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -941,7 +943,7 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.heading': `Let's get started`,
     'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary.  It will only be public if you share data with other organizations.`,
 
-    'tenant.expectations': `You can use letters, numbers, periods, underscores, and hyphens`,
+    'tenant.expectations': `You can use ${CommonMessages['catalogName.limitations']}`,
     'tenant.expectations.error': `Sorry, only letters(a-z), numbers(0-9), periods(.), underscores(_), and hyphens(-) allowed.`,
 
     'tenant.input.label': `Organization Name`,
@@ -1073,6 +1075,10 @@ const UpdateEntity: ResolvedIntlConfig['messages'] = {
     'updateEntity.collection.skipped': `${CTAs['cta.enable']} and ${CTAs['cta.disable']} only work on derivations`,
 };
 
+const CustomErrors: ResolvedIntlConfig['messages'] = {
+    'custom.catalogName.pattern': `must match pattern "organization/name"\nwhich may include ${CommonMessages['catalogName.limitations']}`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1095,6 +1101,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...MonacoEditor,
     ...ConnectorsPage,
     ...Error,
+    ...CustomErrors,
     ...NoGrants,
     ...LoginPage,
     ...AccessGrants,
