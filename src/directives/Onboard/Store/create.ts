@@ -32,9 +32,11 @@ const getInitialState = (
     setRequestedTenant: (value) => {
         set(
             produce((state: OnboardingState) => {
-                state.nameMissing = !hasLength(value);
-                state.nameInvalid = !namePattern.test(value);
-                state.requestedTenant = value;
+                const formattedValue = value.replaceAll(/\s/g, '_');
+
+                state.nameMissing = !hasLength(formattedValue);
+                state.nameInvalid = !namePattern.test(formattedValue);
+                state.requestedTenant = formattedValue;
             }),
             false,
             'Requested Tenant Set'
