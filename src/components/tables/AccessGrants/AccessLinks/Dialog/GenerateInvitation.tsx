@@ -1,15 +1,8 @@
-import {
-    Button,
-    Grid,
-    InputAdornment,
-    MenuItem,
-    Select,
-    SelectChangeEvent,
-    TextField,
-} from '@mui/material';
+import { Button, Grid, SelectChangeEvent } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { generateGrantDirective } from 'api/directives';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
+import SelectTextField from 'components/shared/toolbar/SelectTextField';
 import { useZustandStore } from 'context/Zustand/provider';
 import { ChangeEvent, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -130,44 +123,15 @@ function GenerateInvitation({
     return (
         <Grid container spacing={2} sx={{ mb: 5, pt: 1 }}>
             <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
-                <TextField
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                {objectRoles.length === 1 ? (
-                                    objectRoles[0]
-                                ) : (
-                                    <Select
-                                        size="small"
-                                        variant="standard"
-                                        value={prefix}
-                                        disableUnderline
-                                        onChange={handlers.setGrantPrefix}
-                                        sx={{
-                                            '& .MuiSelect-select': {
-                                                paddingBottom: 0.2,
-                                            },
-                                        }}
-                                    >
-                                        {objectRoles.map((role) => (
-                                            <MenuItem key={role} value={role}>
-                                                {role}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                )}
-                            </InputAdornment>
-                        ),
-                        sx: { borderRadius: 3 },
-                    }}
+                <SelectTextField
                     label={intl.formatMessage({
-                        id: 'admin.prefix.issueGrant.label.sharedPrefix',
+                        id: 'admin.users.prefixInvitation.label.prefix',
                     })}
-                    variant="outlined"
-                    size="small"
-                    error={prefixMissing || suffixInvalid}
-                    onChange={handlers.setGrantSuffix}
-                    sx={{ flexGrow: 1 }}
+                    defaultSelectValue={prefix}
+                    selectValues={objectRoles}
+                    selectChangeHandler={handlers.setGrantPrefix}
+                    textChangeHandler={handlers.setGrantSuffix}
+                    errorExists={prefixMissing || suffixInvalid}
                 />
             </Grid>
 
