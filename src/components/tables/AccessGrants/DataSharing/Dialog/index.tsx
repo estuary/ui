@@ -92,6 +92,7 @@ function ShareDataDialog({ objectRoles, open, setOpen }: Props) {
                     objectRoles={objectRoles}
                     serverError={serverError}
                     setServerError={setServerError}
+                    setOpen={setOpen}
                 />
             </DialogContent>
         </Dialog>

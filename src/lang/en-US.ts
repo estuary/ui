@@ -480,6 +480,8 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.prefix.issueGrant.label.sharedPrefix': `Shared Prefix`,
     'admin.prefix.issueGrant.label.sharedWith': `Shared With`,
     'admin.prefix.issueGrant.cta.generateGrant': `Grant Access`,
+    'admin.prefix.issueGrant.notification.success.title': `Grant Created Successfully`,
+    'admin.prefix.issueGrant.notification.success.message': `{objectRole} has been shared with {subjectRole}.`,
     'admin.prefix.issueGrant.error.invalidPrefix': `The value entered in the Shared Prefix text field is not an extension of an existing prefix.`,
 
     'admin.cookies': `Cookie Preferences`,

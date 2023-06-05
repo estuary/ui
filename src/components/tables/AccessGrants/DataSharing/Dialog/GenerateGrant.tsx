@@ -11,9 +11,12 @@ import { PostgrestError } from '@supabase/postgrest-js';
 import { createRoleGrant } from 'api/roleGrants';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import { useZustandStore } from 'context/Zustand/provider';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
+import useNotificationStore, {
+    notificationStoreSelectors,
+} from 'stores/NotificationStore';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -25,6 +28,7 @@ interface Props {
     objectRoles: string[];
     serverError: PostgrestError | null;
     setServerError: React.Dispatch<React.SetStateAction<PostgrestError | null>>;
+    setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const namePattern = new RegExp(`^[a-zA-Z0-9-_./]+$`);
@@ -35,15 +39,26 @@ const namePattern = new RegExp(`^[a-zA-Z0-9-_./]+$`);
 
 const capabilityOptions: Capability[] = ['read', 'admin'];
 
-function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
+function GenerateGrant({
+    objectRoles,
+    serverError,
+    setServerError,
+    setOpen,
+}: Props) {
     const intl = useIntl();
 
+    // Access Grant Select Table Store
     const hydrate = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['hydrate']
     >(
         SelectTableStoreNames.ACCESS_GRANTS_PREFIXES,
         selectableTableStoreSelectors.query.hydrate
+    );
+
+    // Notification Store
+    const showNotification = useNotificationStore(
+        notificationStoreSelectors.showNotification
     );
 
     const [objectMissing, setObjectMissing] = useState(false);
@@ -114,11 +129,9 @@ function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
         generateRoleGrant: (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            createRoleGrant(
-                subjectRole,
-                `${objectPrefix}${objectSuffix}`,
-                capability
-            ).then(
+            const objectRole = `${objectPrefix}${objectSuffix}`;
+
+            createRoleGrant(subjectRole, objectRole, capability).then(
                 (response) => {
                     if (response.error) {
                         setServerError(response.error);
@@ -127,7 +140,22 @@ function GenerateGrant({ objectRoles, serverError, setServerError }: Props) {
                             setServerError(null);
                         }
 
+                        showNotification({
+                            description: intl.formatMessage(
+                                {
+                                    id: 'admin.prefix.issueGrant.notification.success.message',
+                                },
+                                { objectRole, subjectRole }
+                            ),
+                            severity: 'success',
+                            title: intl.formatMessage({
+                                id: 'admin.prefix.issueGrant.notification.success.title',
+                            }),
+                        });
+
                         hydrate();
+
+                        setOpen(false);
                     }
                 },
                 (error) => setServerError(error)
