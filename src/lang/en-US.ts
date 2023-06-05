@@ -132,7 +132,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.configure': `Configure`,
     'cta.showAll': `Show All`,
     'cta.reload': `Reload`,
-    'cta.evolve': `Create New Collection Versions`,
+    'cta.evolve': `Create new versions`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -1045,8 +1045,8 @@ const EntityEvolution: ResolvedIntlConfig['messages'] = {
     'entityEvolution.failure.errorTitle': `Update Failed`,
     'entityEvolution.serverUnreachable': `${CommonMessages['common.failedFetch']} while trying to update collections`,
     'entityEvolution.error.title': `Changes Rejected Due to Incompatible Schema Updates`,
-    'entityEvolution.error.message': `Schema changes will break downstream tasks. To avoid this, click below and then publish a new version of the affected collections.`,
-    'entityEvolution.error.note': `Note: This may result in additional cost as new collection versions are backfilled.`,
+    'entityEvolution.error.message': `Schema changes will break downstream tasks. To avoid this, click below to create new versions.`,
+    'entityEvolution.error.note': `Note: This may result in additional cost as new versions are backfilled.`,
 };
 
 const DraftErrors: ResolvedIntlConfig['messages'] = {
