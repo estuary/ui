@@ -6,15 +6,17 @@ interface Props {
     messageId: string;
     clickHandler: MouseEventHandler<HTMLButtonElement>;
     buttonVariant?: ButtonProps['variant'];
+    messageValues?: { [key: string]: any };
 }
 
 function MessageWithButton({
     messageId,
     clickHandler,
     buttonVariant = 'text',
+    messageValues,
 }: Props) {
     return (
-        <Typography component="div" sx={{ lineHeight: 1 }}>
+        <Typography component="div">
             <FormattedMessage
                 id={messageId}
                 tagName={Box}
@@ -28,6 +30,7 @@ function MessageWithButton({
                             <FormattedMessage id={`${messageId}.button`} />
                         </Button>
                     ),
+                    ...messageValues,
                 }}
             />
         </Typography>
