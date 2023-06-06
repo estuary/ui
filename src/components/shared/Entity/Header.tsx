@@ -1,12 +1,6 @@
-import {
-    Collapse,
-    LinearProgress,
-    Stack,
-    SxProps,
-    Theme,
-    Toolbar,
-} from '@mui/material';
+import { Collapse, Stack, SxProps, Theme, Toolbar } from '@mui/material';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
+import LinearProgressTimed from 'components/progress/LinearProgressTimed';
 import { ReactNode } from 'react';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 
@@ -54,7 +48,7 @@ function EntityToolbar({ GenerateButton, TestButton, SaveButton }: Props) {
             </Toolbar>
 
             <Collapse in={formActive} unmountOnExit>
-                <LinearProgress />
+                <LinearProgressTimed secondsToWait={30} />
             </Collapse>
         </Stack>
     );
