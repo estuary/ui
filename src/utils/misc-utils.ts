@@ -1,6 +1,7 @@
 import { createSearchParams } from 'react-router-dom';
 
 export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
+export const MAX_DISCOVER_TIME = 30000;
 
 // TODO (optimization): Combine the stripPathing and truncateCatalogName utility functions.
 export const stripPathing = (stringVal: string) => {

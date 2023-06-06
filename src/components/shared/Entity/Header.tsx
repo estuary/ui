@@ -2,22 +2,40 @@ import { Collapse, Stack, SxProps, Theme, Toolbar } from '@mui/material';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import LinearProgressTimed from 'components/progress/LinearProgressTimed';
 import { ReactNode } from 'react';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import {
+    useFormStateStore_isActive,
+    useFormStateStore_status,
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 
 interface Props {
     GenerateButton: ReactNode;
     TestButton: ReactNode;
     SaveButton: ReactNode;
+    waitTimes?: {
+        generate?: number;
+    };
 }
 
 export const buttonSx: SxProps<Theme> = { ml: 1 };
 
-function EntityToolbar({ GenerateButton, TestButton, SaveButton }: Props) {
+function EntityToolbar({
+    GenerateButton,
+    TestButton,
+    SaveButton,
+    waitTimes,
+}: Props) {
+    const generateWaitTime = waitTimes?.generate;
+
     // Editor Store
     const draftId = useEditorStore_id();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
+    const formStatus = useFormStateStore_status();
+    const discovering = !draftId && formStatus === FormStatus.GENERATING;
+
+    console.log('discovering', discovering);
 
     return (
         <Stack spacing={2} sx={{ mb: 1 }}>
@@ -48,7 +66,9 @@ function EntityToolbar({ GenerateButton, TestButton, SaveButton }: Props) {
             </Toolbar>
 
             <Collapse in={formActive} unmountOnExit>
-                <LinearProgressTimed secondsToWait={30} />
+                <LinearProgressTimed
+                    wait={discovering ? generateWaitTime : undefined}
+                />
             </Collapse>
         </Stack>
     );
