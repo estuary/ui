@@ -1,13 +1,16 @@
-import { Box, Button, Divider, Grid, Typography } from '@mui/material';
+import { Box, Button, Grid } from '@mui/material';
 import MigrationList from 'components/transformation/create/DerivationEditor/Catalog/MigrationList';
 import TransformList from 'components/transformation/create/DerivationEditor/Catalog/TransformList';
 import DerivationEditorHeader from 'components/transformation/create/DerivationEditor/Header';
 import ShuffleKeys from 'components/transformation/create/DerivationEditor/ShuffleKeys';
 import SQLDataPreview from 'components/transformation/create/DerivationEditor/SQLDataPreview';
 import SQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor';
+import EmptySQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor/Empty';
 import { intensifiedOutline } from 'context/Theme';
 import { isEmpty } from 'lodash';
+import { useMemo } from 'react';
 import {
+    useTransformationCreate_attributeType,
     useTransformationCreate_catalogName,
     useTransformationCreate_migrations,
     useTransformationCreate_transformConfigs,
@@ -19,6 +22,15 @@ function DerivationEditor() {
     const catalogName = useTransformationCreate_catalogName();
     const transformConfigs = useTransformationCreate_transformConfigs();
     const migrations = useTransformationCreate_migrations();
+    const attributeType = useTransformationCreate_attributeType();
+
+    const showEditor = useMemo(
+        () =>
+            attributeType === 'transform'
+                ? !isEmpty(transformConfigs)
+                : !isEmpty(migrations),
+        [attributeType, migrations, transformConfigs]
+    );
 
     return (
         <Grid container>
@@ -41,22 +53,13 @@ function DerivationEditor() {
                             intensifiedOutline[theme.palette.mode],
                     }}
                 >
-                    {catalogName &&
-                    !(isEmpty(transformConfigs) && isEmpty(migrations)) ? (
+                    {catalogName && showEditor ? (
                         <SQLEditor
                             entityName={catalogName}
                             editorHeight={EDITOR_HEIGHT}
                         />
                     ) : (
-                        <>
-                            <Box sx={{ height: 37 }} />
-
-                            <Divider />
-
-                            <Box sx={{ height: EDITOR_HEIGHT, p: 1 }}>
-                                <Typography>No SQL file selected.</Typography>
-                            </Box>
-                        </>
+                        <EmptySQLEditor editorHeight={EDITOR_HEIGHT} />
                     )}
                 </Box>
 

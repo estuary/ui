@@ -1,4 +1,5 @@
 import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
+import EmptySQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor/Empty';
 import MonacoEditor from 'components/transformation/create/DerivationEditor/SQLEditor/MonacoEditor';
 import useSQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor/useSQLEditor';
 import { useMemo } from 'react';
@@ -53,7 +54,7 @@ function SQLEditor({ entityName, disabled, editorHeight }: Props) {
     } else if (isValidating) {
         return <MonacoEditorSkeleton editorHeight={editorHeight} />;
     } else {
-        return null;
+        return <EmptySQLEditor editorHeight={editorHeight} />;
     }
 }
 
