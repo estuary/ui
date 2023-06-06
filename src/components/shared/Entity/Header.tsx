@@ -35,8 +35,6 @@ function EntityToolbar({
     const formStatus = useFormStateStore_status();
     const discovering = !draftId && formStatus === FormStatus.GENERATING;
 
-    console.log('discovering', discovering);
-
     return (
         <Stack spacing={2} sx={{ mb: 1 }}>
             <Toolbar disableGutters>
