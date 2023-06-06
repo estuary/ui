@@ -667,7 +667,6 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.ctas.materialize': `Materialize Collections`,
     'captureCreate.instructions': `Provide a unique name and specify a source system for your capture. Fill in the required details and click "${CTAs['cta.generateCatalog.capture']}" to test the connection.`,
     'captureCreate.missingConnectors': `No connectors are installed. You must install a source connector to create a capture.`,
-    'captureCreate.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a capture. Please contact an administrator.`,
     'captureCreate.tenant.label': `Prefix`,
     'captureCreate.config.source.doclink': `Connector Help`,
     'captureCreate.config.source.homepage': `Home`,
@@ -703,7 +702,6 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
     'captureEdit.ctas.materialize': `Materialize Collections`,
     'captureEdit.instructions': `The name and destination of your existing capture.`,
     'captureEdit.missingConnectors': `No connectors are installed. You must install a source connector to edit a capture.`,
-    'captureEdit.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to edit this capture. Please contact an administrator.`,
     'captureEdit.tenant.label': `Prefix`,
     'captureEdit.config.source.doclink': `Connector Help`,
     'captureEdit.config.source.homepage': `Home`,
@@ -759,7 +757,6 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.heading': `New Materialization`,
     'materializationCreate.instructions': `Provide a unique name and specify a destination system for your materialization. Fill in the required details and click "${CTAs['cta.generateCatalog.materialization']}".`,
     'materializationCreate.missingConnectors': `No connectors installed. A materialization connector must be installed before a materialization can be created.`,
-    'materializationCreate.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a materialization. Please contact an administrator.`,
     'materializationCreate.save.failure': `Materialization creation failed. See below for details:`,
     'materializationCreate.save.failure.errorTitle': `Materialization Save Failed`,
     'materializationCreate.save.serverUnreachable': `${CommonMessages['common.failedFetch']} while saving materialization`,
@@ -796,7 +793,6 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.heading': `Edit Materialization`,
     'materializationEdit.instructions': `The name and destination of your existing materialization.`,
     'materializationEdit.missingConnectors': `No connectors installed. A materialization connector must be installed before a materialization can be edited.`,
-    'materializationEdit.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to edit a materialization. Please contact an administrator.`,
     'materializationEdit.save.failure': `Materialization edit failed. See below for details:`,
     'materializationEdit.save.failure.errorTitle': `Materialization Save Failed`,
     'materializationEdit.save.serverUnreachable': `${CommonMessages['common.failedFetch']} while saving materialization`,
@@ -1076,6 +1072,7 @@ const UpdateEntity: ResolvedIntlConfig['messages'] = {
 };
 
 const CustomErrors: ResolvedIntlConfig['messages'] = {
+    'custom.prefixedName.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']}. Please contact an administrator.`,
     'custom.catalogName.pattern': `must match pattern "organization/name"\nwhich may include ${CommonMessages['catalogName.limitations']}`,
 };
 
