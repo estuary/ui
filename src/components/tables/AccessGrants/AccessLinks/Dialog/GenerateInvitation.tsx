@@ -11,7 +11,11 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+import {
+    appendWithForwardSlash,
+    hasLength,
+    PREFIX_NAME_PATTERN,
+} from 'utils/misc-utils';
 
 interface Props {
     objectRoles: string[];
@@ -63,7 +67,7 @@ function GenerateInvitation({
 
             setPrefixMissing(!hasLength(value));
 
-            const processedValue = value.endsWith('/') ? value : `${value}/`;
+            const processedValue = appendWithForwardSlash(value);
 
             setPrefix(processedValue);
         },
@@ -76,7 +80,7 @@ function GenerateInvitation({
 
             const value = event.target.value.replaceAll(/\s/g, '_');
 
-            const processedValue = value.endsWith('/') ? value : `${value}/`;
+            const processedValue = appendWithForwardSlash(value);
 
             setSuffixInvalid(
                 hasLength(processedValue) && !namePattern.test(processedValue)

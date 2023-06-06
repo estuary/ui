@@ -21,7 +21,11 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { Capability } from 'types';
-import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+import {
+    appendWithForwardSlash,
+    hasLength,
+    PREFIX_NAME_PATTERN,
+} from 'utils/misc-utils';
 
 interface Props {
     objectRoles: string[];
@@ -94,8 +98,7 @@ function GenerateGrant({
 
             const value = event.target.value.replaceAll(/\s/g, '_');
 
-            const processedValue =
-                hasLength(value) && !value.endsWith('/') ? `${value}/` : value;
+            const processedValue = appendWithForwardSlash(value);
 
             setObjectInvalid(
                 hasLength(processedValue) && !namePattern.test(processedValue)
@@ -112,7 +115,7 @@ function GenerateGrant({
 
             const value = event.target.value.replaceAll(/\s/g, '_');
 
-            const processedValue = value.endsWith('/') ? value : `${value}/`;
+            const processedValue = appendWithForwardSlash(value);
 
             setSubjectMissing(!hasLength(processedValue));
             setSubjectInvalid(!namePattern.test(processedValue));
