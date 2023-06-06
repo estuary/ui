@@ -22,6 +22,9 @@ export const hasLength = (val: string | any[] | null | undefined): boolean => {
     return Boolean(val && val.length > 0);
 };
 
+export const appendWithForwardSlash = (value: string): string =>
+    hasLength(value) && !value.endsWith('/') ? `${value}/` : value;
+
 export const getPathWithParams = (
     baseURL: string,
     params: { [key: string]: string | string[] } | URLSearchParams

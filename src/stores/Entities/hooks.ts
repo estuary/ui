@@ -84,6 +84,18 @@ export const useEntitiesStore_setHydrationErrors = () => {
         (state) => state.setHydrationErrors
     );
 };
+export const useEntitiesStore_mutate = () => {
+    return useZustandStore<EntitiesState, EntitiesState['mutate']>(
+        GlobalStoreNames.ENTITIES,
+        (state) => state.mutate
+    );
+};
+const useEntitiesStore_setMutate = () => {
+    return useZustandStore<EntitiesState, EntitiesState['setMutate']>(
+        GlobalStoreNames.ENTITIES,
+        (state) => state.setMutate
+    );
+};
 
 export const useSidePanelDocsStore_resetState = () => {
     return useZustandStore<EntitiesState, EntitiesState['resetState']>(
@@ -108,21 +120,25 @@ export const useHydrateState = () => {
     const setHydrationErrors = useEntitiesStore_setHydrationErrors();
     const setCapabilities = useEntitiesStore_setCapabilities();
     const setHydrated = useEntitiesStore_setHydrated();
+    const setMutate = useEntitiesStore_setMutate();
 
     // Once we are done validating update all the settings
     useEffect(() => {
         if (!response.isValidating) {
             setHydrationErrors(response.error);
             setCapabilities(response.data?.data ?? null);
+            setMutate(response.mutate);
             setHydrated(true);
         }
     }, [
         response.data?.data,
         response.error,
         response.isValidating,
+        response.mutate,
         setCapabilities,
         setHydrated,
         setHydrationErrors,
+        setMutate,
     ]);
 
     return response;
