@@ -8,14 +8,14 @@ import {
     useTheme,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
+import AlertBox from 'components/shared/AlertBox';
 import Error from 'components/shared/Error';
-import AccessLinksTable from 'components/tables/AccessGrants/AccessLinks';
-import GenerateInvitation from 'components/tables/AccessGrants/AccessLinks/Dialog/GenerateInvitation';
+import GenerateGrant from 'components/tables/AccessGrants/DataSharing/Dialog/GenerateGrant';
 import { Cancel } from 'iconoir-react';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-const TITLE_ID = 'share-prefix-dialog-title';
+const TITLE_ID = 'share-data-dialog-title';
 
 interface Props {
     objectRoles: string[];
@@ -23,7 +23,7 @@ interface Props {
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-function PrefixInvitationDialog({ objectRoles, open, setOpen }: Props) {
+function ShareDataDialog({ objectRoles, open, setOpen }: Props) {
     const theme = useTheme();
 
     const [serverError, setServerError] = useState<PostgrestError | null>(null);
@@ -52,7 +52,7 @@ function PrefixInvitationDialog({ objectRoles, open, setOpen }: Props) {
                 }}
             >
                 <Typography variant="h6">
-                    <FormattedMessage id="admin.users.prefixInvitation.header" />
+                    <FormattedMessage id="admin.prefix.issueGrant.header" />
                 </Typography>
 
                 <IconButton onClick={closeDialog}>
@@ -67,29 +67,36 @@ function PrefixInvitationDialog({ objectRoles, open, setOpen }: Props) {
 
             <DialogContent>
                 {/* <Typography sx={{ mb: 3 }}>
-                    <FormattedMessage id="admin.users.prefixInvitation.message" />
+                    <FormattedMessage id="admin.prefix.issueGrant.message" />
                 </Typography> */}
 
                 {serverError ? (
                     <Box sx={{ mb: 3 }}>
-                        <Error
-                            error={serverError}
-                            condensed={true}
-                            hideTitle={true}
-                        />
+                        {serverError.code === '42501' ? (
+                            <AlertBox severity="error" short>
+                                <Typography>
+                                    <FormattedMessage id="admin.prefix.issueGrant.error.invalidPrefix" />
+                                </Typography>
+                            </AlertBox>
+                        ) : (
+                            <Error
+                                error={serverError}
+                                condensed={true}
+                                hideTitle={true}
+                            />
+                        )}
                     </Box>
                 ) : null}
 
-                <GenerateInvitation
+                <GenerateGrant
                     objectRoles={objectRoles}
                     serverError={serverError}
                     setServerError={setServerError}
+                    setOpen={setOpen}
                 />
-
-                <AccessLinksTable />
             </DialogContent>
         </Dialog>
     );
 }
 
-export default PrefixInvitationDialog;
+export default ShareDataDialog;

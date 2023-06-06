@@ -112,11 +112,6 @@ function EndpointConfig({
             const defaultConfig = createJSONFormDefaults(schema);
             setEndpointConfig(defaultConfig);
             setPreviousEndpointConfig(defaultConfig);
-        } else if (!connectorTag) {
-            // This will reset the schema so the form is re-rendered correctly
-            //  without this the form would do a quick rendering of the previous
-            //  connector and then immedietly replace that with the new connector
-            setEndpointSchema({});
         }
     }, [
         setServerUpdateRequired,

@@ -19,7 +19,7 @@ const snackbarSettings: OptionsObject = {
 
 const useDirectiveGuard = (
     selectedDirective: keyof typeof DIRECTIVES,
-    options?: { forceNew?: boolean; token?: string }
+    options?: { forceNew?: boolean; token?: string; hideAlert?: boolean }
 ) => {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -100,7 +100,10 @@ const useDirectiveGuard = (
         }
 
         // Show a message to remind the user why they are seeing the directive page
-        if (directiveState === 'in progress' || directiveState === 'waiting') {
+        if (
+            !options?.hideAlert &&
+            (directiveState === 'in progress' || directiveState === 'waiting')
+        ) {
             enqueueSnackbar(
                 intl.formatMessage({
                     id: 'directives.returning',
@@ -122,6 +125,7 @@ const useDirectiveGuard = (
         intl,
         options?.forceNew,
         options?.token,
+        options?.hideAlert,
         selectedDirective,
         serverError,
     ]);

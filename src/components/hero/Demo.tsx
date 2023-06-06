@@ -15,11 +15,13 @@ function HeroDemo() {
                 <DemoStep step={2} />
                 <DemoStep step={3} />
             </Grid>
+
             <Grid container>
                 <DemoButton step={1} type="captures" />
                 <DemoButton step={2} type="collections" />
                 <DemoButton step={3} type="materializations" />
             </Grid>
+
             <Grid
                 item
                 xs={12}

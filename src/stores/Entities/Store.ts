@@ -9,7 +9,11 @@ import { EntitiesState } from './types';
 
 const getInitialStateData = (): Pick<
     EntitiesState,
-    'capabilities' | 'hydrated' | 'hydrationErrors' | 'hydrationErrorsExist'
+    | 'capabilities'
+    | 'hydrated'
+    | 'hydrationErrors'
+    | 'hydrationErrorsExist'
+    | 'mutate'
 > => ({
     hydrated: false,
     hydrationErrors: null,
@@ -19,6 +23,7 @@ const getInitialStateData = (): Pick<
         read: {},
         write: {},
     },
+    mutate: null,
 });
 
 const getInitialState = (
@@ -50,6 +55,16 @@ const getInitialState = (
             }),
             false,
             'Entities hydration errors'
+        );
+    },
+
+    setMutate: (value) => {
+        set(
+            produce((state: EntitiesState) => {
+                state.mutate = value;
+            }),
+            false,
+            'Entities mutator set'
         );
     },
 
