@@ -58,5 +58,10 @@ export interface TransformCreateState {
     previewActive: boolean;
     setPreviewActive: (value: TransformCreateState['previewActive']) => void;
 
+    catalogUpdating: boolean;
+    setCatalogUpdating: (
+        value: TransformCreateState['catalogUpdating']
+    ) => void;
+
     resetState: () => void;
 }

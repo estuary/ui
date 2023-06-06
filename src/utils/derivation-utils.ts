@@ -4,16 +4,8 @@ import {
     TransformConfig,
     TransformConfigDictionary,
 } from 'stores/TransformationCreate/types';
+import { Transform } from 'types';
 import { stripPathing } from 'utils/misc-utils';
-
-interface Transform {
-    name: string;
-    source: string;
-    lambda: string;
-    shuffle?: {
-        key: string[];
-    };
-}
 
 export const updateTransforms = (
     transformSource: string,

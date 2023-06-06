@@ -191,6 +191,26 @@ export const useTransformationCreate_setPreviewActive = () => {
     );
 };
 
+export const useTransformationCreate_catalogUpdating = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['catalogUpdating']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.catalogUpdating
+    );
+};
+
+export const useTransformationCreate_setCatalogUpdating = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['setCatalogUpdating']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.setCatalogUpdating
+    );
+};
+
 export const useTransformationCreate_catalogName = () => {
     return useLocalZustandStore<
         TransformCreateState,

@@ -5,6 +5,7 @@ import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import {
     useTransformationCreate_attributeType,
+    useTransformationCreate_catalogUpdating,
     useTransformationCreate_name,
     useTransformationCreate_selectedAttribute,
     useTransformationCreate_transformConfigs,
@@ -15,11 +16,13 @@ function SQLDataPreview() {
     const selectedAttribute = useTransformationCreate_selectedAttribute();
     const attributeType = useTransformationCreate_attributeType();
     const entityName = useTransformationCreate_name();
+    const catalogUpdating = useTransformationCreate_catalogUpdating();
 
     const [filename, collection]: [string | null, string | null] =
         useMemo(() => {
             if (
                 attributeType === 'transform' &&
+                !catalogUpdating &&
                 selectedAttribute &&
                 !isEmpty(transformConfigs)
             ) {
@@ -33,7 +36,12 @@ function SQLDataPreview() {
             } else {
                 return [null, null];
             }
-        }, [attributeType, selectedAttribute, transformConfigs]);
+        }, [
+            attributeType,
+            catalogUpdating,
+            selectedAttribute,
+            transformConfigs,
+        ]);
 
     return (
         <Box

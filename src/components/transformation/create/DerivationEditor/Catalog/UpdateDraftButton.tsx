@@ -6,19 +6,22 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useTransformationCreate_catalogName,
+    useTransformationCreate_catalogUpdating,
     useTransformationCreate_name,
+    useTransformationCreate_setCatalogUpdating,
     useTransformationCreate_setSelectedAttribute,
     useTransformationCreate_setSourceCollections,
     useTransformationCreate_transformConfigs,
     useTransformationCreate_transformCount,
     useTransformationCreate_updateTransformConfigs,
 } from 'stores/TransformationCreate/hooks';
+import { Transform } from 'types';
 import { evaluateTransformConfigs } from 'utils/derivation-utils';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength, stripPathing } from 'utils/misc-utils';
 
 interface Props {
     selectedCollections: Set<string>;
@@ -37,16 +40,17 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
     const catalogName = useTransformationCreate_catalogName();
     const setSelectedAttribute = useTransformationCreate_setSelectedAttribute();
 
+    const catalogUpdating = useTransformationCreate_catalogUpdating();
+    const setCatalogUpdating = useTransformationCreate_setCatalogUpdating();
+
     const transformCount = useTransformationCreate_transformCount();
     const transformConfigs = useTransformationCreate_transformConfigs();
     const updateTransformConfigs =
         useTransformationCreate_updateTransformConfigs();
     const setSourceCollections = useTransformationCreate_setSourceCollections();
 
-    const [saving, setSaving] = useState(false);
-
     const updateDerivationSpec = useCallback(async (): Promise<void> => {
-        setSaving(true);
+        setCatalogUpdating(true);
 
         if (draftId && catalogName && currentCatalog) {
             const collections = Array.from(selectedCollections);
@@ -58,11 +62,19 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
                 entityName
             );
 
+            const evaluatedTransforms = Object.values(
+                evaluatedTransformConfigs
+            ).map(
+                ({ collection, lambda }): Transform => ({
+                    name: stripPathing(collection),
+                    source: collection,
+                    lambda,
+                })
+            );
+
             const draftSpec = { ...currentCatalog.spec };
 
-            draftSpec.derive.transforms = Object.values(
-                evaluatedTransformConfigs
-            );
+            draftSpec.derive.transforms = Object.values(evaluatedTransforms);
 
             const draftSpecResponse = await modifyDraftSpec(draftSpec, {
                 draft_id: draftId,
@@ -70,7 +82,7 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
             });
 
             if (draftSpecResponse.error) {
-                setSaving(false);
+                setCatalogUpdating(false);
                 // Set error state
             } else {
                 setSourceCollections(collections);
@@ -87,14 +99,15 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
                 setDraftId(draftId);
                 setPersistedDraftId(draftId);
 
-                setSaving(false);
+                setCatalogUpdating(false);
                 setDialogOpen(false);
             }
         } else {
-            setSaving(false);
+            setCatalogUpdating(false);
             // Set error state
         }
     }, [
+        setCatalogUpdating,
         setDialogOpen,
         setDraftId,
         setPersistedDraftId,
@@ -113,8 +126,8 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
     return (
         <LoadingButton
             variant="contained"
-            loading={saving}
-            disabled={saving}
+            loading={catalogUpdating}
+            disabled={catalogUpdating}
             onClick={updateDerivationSpec}
         >
             <FormattedMessage id="cta.continue" />

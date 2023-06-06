@@ -10,6 +10,7 @@ const getInitialStateData = (): Pick<
     TransformCreateState,
     | 'attributeType'
     | 'catalogName'
+    | 'catalogUpdating'
     | 'language'
     | 'migrations'
     | 'name'
@@ -22,6 +23,7 @@ const getInitialStateData = (): Pick<
 > => ({
     attributeType: 'transform',
     catalogName: null,
+    catalogUpdating: false,
     language: 'sql',
     migrations: {},
     name: '',
@@ -191,6 +193,16 @@ const getInitialState = (
             }),
             false,
             'Preview Active Set'
+        );
+    },
+
+    setCatalogUpdating: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                state.catalogUpdating = value;
+            }),
+            false,
+            'Catalog Updating Set'
         );
     },
 

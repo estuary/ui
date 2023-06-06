@@ -22,6 +22,7 @@ import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import {
     useTransformationCreate_attributeType,
+    useTransformationCreate_catalogUpdating,
     useTransformationCreate_patchSelectedAttribute,
     useTransformationCreate_selectedAttribute,
     useTransformationCreate_transformConfigs,
@@ -67,6 +68,7 @@ function MonacoEditor({
     });
 
     // Transformation Create Store
+    const catalogUpdating = useTransformationCreate_catalogUpdating();
     const transformConfigs = useTransformationCreate_transformConfigs();
 
     const attributeType = useTransformationCreate_attributeType();
@@ -149,10 +151,10 @@ function MonacoEditor({
 
     const filename = useMemo(
         () =>
-            attributeType === 'transform'
+            attributeType === 'transform' && !catalogUpdating
                 ? transformConfigs[attributeId].filename
                 : attributeId,
-        [attributeId, attributeType, transformConfigs]
+        [attributeId, attributeType, catalogUpdating, transformConfigs]
     );
 
     if (attributeId) {
