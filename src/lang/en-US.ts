@@ -471,7 +471,6 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.users.cta.prefixInvitation': `Manage Invitations`,
     'admin.users.prefixInvitation.header': `Manage Invitations`,
     'admin.users.prefixInvitation.message': `This is a placeholder for a description.`,
-    'admin.users.prefixInvitation.label.prefix': `Prefix`,
     'admin.users.prefixInvitation.label.capability': `Capability`,
     'admin.users.prefixInvitation.label.type': `Type`,
     'admin.users.prefixInvitation.cta.generateLink': `Generate Invitation`,

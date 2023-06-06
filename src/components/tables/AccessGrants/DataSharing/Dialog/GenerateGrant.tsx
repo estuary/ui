@@ -4,7 +4,13 @@ import { createRoleGrant } from 'api/roleGrants';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import SelectTextField from 'components/shared/toolbar/SelectTextField';
 import { useZustandStore } from 'context/Zustand/provider';
-import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
+import {
+    ChangeEvent,
+    Dispatch,
+    SetStateAction,
+    useMemo,
+    useState,
+} from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import useNotificationStore, {
@@ -15,7 +21,7 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { Capability } from 'types';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 
 interface Props {
     objectRoles: string[];
@@ -24,7 +30,7 @@ interface Props {
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const namePattern = new RegExp(`^[a-zA-Z0-9-_./]+$`);
+const namePattern = new RegExp(`^${PREFIX_NAME_PATTERN}[/]$`);
 
 // The write capability should be obscured to the user. It is more challenging
 // for a user to understand the nuances of this grant and likely will not be used
@@ -88,10 +94,12 @@ function GenerateGrant({
 
             const value = event.target.value.replaceAll(/\s/g, '_');
 
-            setObjectInvalid(hasLength(value) && !namePattern.test(value));
-
             const processedValue =
                 hasLength(value) && !value.endsWith('/') ? `${value}/` : value;
+
+            setObjectInvalid(
+                hasLength(processedValue) && !namePattern.test(processedValue)
+            );
 
             setObjectSuffix(processedValue);
         },
@@ -104,10 +112,10 @@ function GenerateGrant({
 
             const value = event.target.value.replaceAll(/\s/g, '_');
 
-            setSubjectMissing(!hasLength(value));
-            setSubjectInvalid(!namePattern.test(value));
-
             const processedValue = value.endsWith('/') ? value : `${value}/`;
+
+            setSubjectMissing(!hasLength(processedValue));
+            setSubjectInvalid(!namePattern.test(processedValue));
 
             setSubjectRole(processedValue);
         },
@@ -155,6 +163,22 @@ function GenerateGrant({
         },
     };
 
+    const formInvalid = useMemo(
+        () =>
+            objectMissing ||
+            objectInvalid ||
+            subjectMissing ||
+            !hasLength(subjectRole) ||
+            subjectInvalid,
+        [
+            objectInvalid,
+            objectMissing,
+            subjectInvalid,
+            subjectMissing,
+            subjectRole,
+        ]
+    );
+
     return (
         <Grid container spacing={2} sx={{ mb: 5, pt: 1 }}>
             <Grid item xs={12} md={4} sx={{ display: 'flex' }}>
@@ -199,13 +223,7 @@ function GenerateGrant({
 
             <Grid item xs={4} md={3} sx={{ display: 'flex' }}>
                 <Button
-                    disabled={
-                        objectMissing ||
-                        objectInvalid ||
-                        subjectMissing ||
-                        !hasLength(subjectRole) ||
-                        subjectInvalid
-                    }
+                    disabled={formInvalid}
                     onClick={handlers.generateRoleGrant}
                     sx={{ flexGrow: 1 }}
                 >

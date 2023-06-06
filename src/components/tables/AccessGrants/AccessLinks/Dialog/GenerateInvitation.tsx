@@ -11,7 +11,7 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 
 interface Props {
     objectRoles: string[];
@@ -19,7 +19,7 @@ interface Props {
     setServerError: React.Dispatch<React.SetStateAction<PostgrestError | null>>;
 }
 
-const namePattern = new RegExp(`^[a-zA-Z0-9-_./]+$`);
+const namePattern = new RegExp(`^${PREFIX_NAME_PATTERN}[/]$`);
 
 // The write capability should be obscured to the user. It is more challenging
 // for a user to understand the nuances of this grant and likely will not be used
@@ -76,9 +76,11 @@ function GenerateInvitation({
 
             const value = event.target.value.replaceAll(/\s/g, '_');
 
-            setSuffixInvalid(hasLength(value) && !namePattern.test(value));
-
             const processedValue = value.endsWith('/') ? value : `${value}/`;
+
+            setSuffixInvalid(
+                hasLength(processedValue) && !namePattern.test(processedValue)
+            );
 
             setSuffix(processedValue);
         },
@@ -125,7 +127,7 @@ function GenerateInvitation({
             <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
                 <SelectTextField
                     label={intl.formatMessage({
-                        id: 'admin.users.prefixInvitation.label.prefix',
+                        id: 'common.tenant',
                     })}
                     defaultSelectValue={prefix}
                     selectValues={objectRoles}

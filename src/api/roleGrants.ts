@@ -10,6 +10,5 @@ export const createRoleGrant = (
         subject_role,
         object_role,
         capability,
-        detail: 'Applied via UI',
     });
 };

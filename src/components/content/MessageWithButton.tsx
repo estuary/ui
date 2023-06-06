@@ -1,4 +1,4 @@
-import { Box, Button, ButtonProps, Typography } from '@mui/material';
+import { Button, ButtonProps, Typography } from '@mui/material';
 import { MouseEventHandler } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -18,10 +18,9 @@ function MessageWithButton({
     messageValues,
 }: Props) {
     return (
-        <Typography component="div">
+        <Typography>
             <FormattedMessage
                 id={messageId}
-                tagName={Box}
                 values={{
                     button: (
                         <Button
