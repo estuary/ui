@@ -1,8 +1,8 @@
 import { Button, Grid, SelectChangeEvent } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { generateGrantDirective } from 'api/directives';
+import SelectTextField from 'components/inputs/SelectTextField';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import SelectTextField from 'components/shared/toolbar/SelectTextField';
 import { useZustandStore } from 'context/Zustand/provider';
 import { ChangeEvent, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
