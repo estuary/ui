@@ -64,10 +64,7 @@ export const DIRECTIVES: Directives = {
 
             // If the status is not success AND they submitted something... we need a new directive
             if (appliedDirective.job_status.type !== 'success') {
-                if (
-                    appliedDirective.user_claims?.tenant &&
-                    appliedDirective.user_claims.tenant.length > 0
-                ) {
+                if (!stillNeeded()) {
                     return 'outdated';
                 }
             }
