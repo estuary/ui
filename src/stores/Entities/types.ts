@@ -1,5 +1,6 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
 import { StoreWithHydration } from 'stores/Hydration';
+import { KeyedMutator } from 'swr';
 import { AuthRoles, Schema } from 'types';
 
 interface ObjectRoleMetadata {
@@ -22,4 +23,7 @@ export interface EntitiesState extends StoreWithHydration {
 
     hydrationErrors: any;
     setHydrationErrors: (val: EntitiesState['hydrationErrors']) => void;
+
+    mutate: KeyedMutator<PostgrestResponse<AuthRoles>> | null;
+    setMutate: (value: EntitiesState['mutate']) => void;
 }

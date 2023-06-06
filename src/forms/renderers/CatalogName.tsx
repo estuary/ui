@@ -33,7 +33,10 @@ import {
 import { MaterialInputControl } from '@jsonforms/material-renderers';
 import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
+import { Box } from '@mui/material';
 import { CatalogNameAutoComplete } from 'forms/renderers/CatalogName/AutoComplete';
+import { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 
 export const CATALOG_NAME_SCOPE = 'entityName';
 
@@ -45,7 +48,34 @@ export const catalogNameTypeTester: RankedTester = rankWith(
 const CatalogNameTypeRenderer = (
     props: ControlProps & OwnPropsOfEnum & WithOptionLabel
 ) => {
-    return <MaterialInputControl {...props} input={CatalogNameAutoComplete} />;
+    const { errors, schema } = props;
+
+    // Get custom error message for catalog name issues so they
+    //  are more readable for users
+    const intl = useIntl();
+    const customErrors = useMemo(() => {
+        if (schema.pattern && errors.includes(schema.pattern)) {
+            return intl.formatMessage({ id: 'custom.catalogName.pattern' });
+        }
+
+        return errors;
+    }, [errors, intl, schema.pattern]);
+
+    return (
+        <Box
+            sx={{
+                '& .MuiFormHelperText-root.Mui-error': {
+                    whiteSpace: 'break-spaces',
+                },
+            }}
+        >
+            <MaterialInputControl
+                {...props}
+                errors={customErrors}
+                input={CatalogNameAutoComplete}
+            />
+        </Box>
+    );
 };
 
 export const CatalogName = withJsonFormsOneOfEnumProps(CatalogNameTypeRenderer);

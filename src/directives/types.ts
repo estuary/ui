@@ -5,6 +5,7 @@ import { AppliedDirective, JoinedAppliedDirective } from 'types';
 
 // THESE MUST STAY IN SYNC WITH THE DB
 export interface Directives {
+    acceptDemoTenant: DirectiveSettings<AcceptDemoTenantClaim>;
     betaOnboard: DirectiveSettings<OnboardClaim>;
     clickToAccept: DirectiveSettings<ClickToAcceptClaim>;
     grant: DirectiveSettings<GrantClaim>;
@@ -17,6 +18,10 @@ export type DirectiveStates =
     | 'fulfilled'
     | 'outdated'
     | 'errored';
+
+export interface AcceptDemoTenantClaim {
+    tenant: string;
+}
 
 export interface ClickToAcceptClaim {
     version: string;
@@ -31,7 +36,11 @@ export interface OnboardClaim {
     survey: any;
 }
 
-export type UserClaims = ClickToAcceptClaim | GrantClaim | OnboardClaim;
+export type UserClaims =
+    | AcceptDemoTenantClaim
+    | ClickToAcceptClaim
+    | GrantClaim
+    | OnboardClaim;
 
 export interface DirectiveSettings<T> {
     token: string;

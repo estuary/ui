@@ -1,10 +1,10 @@
 import { Box, Button } from '@mui/material';
-import PrefixInvitationDialog from 'components/tables/AccessGrants/AccessLinks/Dialog';
+import ShareDataDialog from 'components/tables/AccessGrants/DataSharing/Dialog';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 
-function AccessLinksButton() {
+function DataShareButton() {
     const [open, setOpen] = useState<boolean>(false);
 
     const adminCapabilities = useEntitiesStore_capabilities_adminable();
@@ -21,10 +21,10 @@ function AccessLinksButton() {
                 }}
                 sx={{ whiteSpace: 'nowrap' }}
             >
-                <FormattedMessage id="admin.users.cta.prefixInvitation" />
+                <FormattedMessage id="admin.prefix.cta.issueGrant" />
             </Button>
 
-            <PrefixInvitationDialog
+            <ShareDataDialog
                 objectRoles={objectRoles}
                 open={open}
                 setOpen={setOpen}
@@ -33,4 +33,4 @@ function AccessLinksButton() {
     ) : null;
 }
 
-export default AccessLinksButton;
+export default DataShareButton;

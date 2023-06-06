@@ -91,6 +91,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'filter.time.thisWeek': `This Week`,
     'filter.time.lastMonth': `Last Month`,
     'filter.time.thisMonth': `This Month`,
+
+    'catalogName.limitations': `letters, numbers, periods, underscores, and hyphens`,
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -268,6 +270,10 @@ const Home: ResolvedIntlConfig['messages'] = {
     'home.hero.companyDetails.step1': `Set up real-time data ingestion from your sources. Click “New Capture” to get started.`,
     'home.hero.companyDetails.step2': `Keep destination systems up to date with Materializations: low latency views of your data.`,
 
+    'home.hero.demo.demoTenant.header': `Testing out Flow just got easier`,
+    'home.hero.demo.demoTenant': `Estuary has a public {sharableTenant} tenant that can help you see Flow in action while you get set up. To give your tenant, {userTenant}, read access to it, {button}.`,
+    'home.hero.demo.demoTenant.button': `click here`,
+
     'home.hero.1.title': `Wikipedia Data`,
     'home.hero.1.message': `Flow {emphasis} about 100 events per second from the Wikipedia’s API.`,
     'home.hero.1.message.emphasis': `captures`,
@@ -368,7 +374,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.writesTo': `Writes To`,
     'entityTable.data.readsFrom': `Reads From`,
     'entityTable.data.status': `Status`,
-    'entityTable.data.userFullName': `User`,
+    'entityTable.data.userFullName': `Name`,
     'entityTable.data.capability': `Capability`,
     'entityTable.data.objectRole': `Object`,
     'entityTable.data.lastPubUserFullName': `Last Updated By`,
@@ -377,6 +383,8 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.bucket': `Bucket`,
     'entityTable.data.prefix': `Prefix`,
     'entityTable.data.storagePrefix': `Prefix`,
+    'entityTable.data.sharedPrefix': `Shared Prefix`,
+    'entityTable.data.sharedWith': `Shared With`,
 
     'entityTable.stats.bytes_read': `Bytes Read`,
     'entityTable.stats.docs_read': `Docs Read`,
@@ -446,7 +454,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.table.history.label.tasks': `Tasks`,
     'admin.billing.table.history.label.totalCost': `Total Cost`,
     'admin.billing.table.history.tooltip.month': `This billing period began on {timestamp}`,
-    'admin.billing.table.history.tooltip.dataVolume': `bytes of data processed by tasks`,
+    'admin.billing.table.history.tooltip.dataVolume': `GB of data processed by tasks`,
     'admin.billing.table.history.emptyTableDefault.header': `No information found.`,
     'admin.billing.table.history.emptyTableDefault.message': `We couldn't find any billing information on file. Only administrators of a tenant are able to review billing information.`,
 
@@ -461,16 +469,27 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.paymentMethods.table.label.actions': `Actions`,
     'admin.billing.paymentMethods.table.emptyTableDefault.message': `No payment methods available.`,
 
-    'admin.users.cta.sharePrefix': `Manage Invitations`,
-    'admin.users.sharePrefix.header': `Manage Invitations`,
-    'admin.users.sharePrefix.message': `This is a placeholder for a description.`,
-    'admin.users.sharePrefix.label.capability': `Capability`,
-    'admin.users.sharePrefix.label.type': `Type`,
-    'admin.users.sharePrefix.cta.generateLink': `Generate Invitation`,
+    'admin.users.cta.prefixInvitation': `Manage Invitations`,
+    'admin.users.prefixInvitation.header': `Manage Invitations`,
+    'admin.users.prefixInvitation.message': `This is a placeholder for a description.`,
+    'admin.users.prefixInvitation.label.capability': `Capability`,
+    'admin.users.prefixInvitation.label.type': `Type`,
+    'admin.users.prefixInvitation.cta.generateLink': `Generate Invitation`,
+
+    'admin.prefix.cta.issueGrant': `Grant Access`,
+    'admin.prefix.issueGrant.header': `Share Data`,
+    'admin.prefix.issueGrant.message': `This is a placeholder for a description.`,
+    'admin.prefix.issueGrant.label.capability': `Capability`,
+    'admin.prefix.issueGrant.label.sharedPrefix': `Shared Prefix`,
+    'admin.prefix.issueGrant.label.sharedWith': `Shared With`,
+    'admin.prefix.issueGrant.cta.generateGrant': `Grant Access`,
+    'admin.prefix.issueGrant.notification.success.title': `Grant Created Successfully`,
+    'admin.prefix.issueGrant.notification.success.message': `{objectRole} has been shared with {subjectRole}.`,
+    'admin.prefix.issueGrant.error.invalidPrefix': `The value entered in the Shared Prefix text field is not an extension of an existing prefix.`,
 
     'admin.cookies': `Cookie Preferences`,
     'admin.cookies.message': `Click below to configure your cookie preferences.`,
-    'admin.tabs.users': `Users`,
+    'admin.tabs.users': `Account Access`,
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.billing': `Billing`,
@@ -484,10 +503,10 @@ const Welcome: ResolvedIntlConfig['messages'] = {
 
 const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrantsTable.header': `Captures`,
-    'accessGrantsTable.users.title': `Users`,
-    'accessGrantsTable.prefixes.title': `Prefixes`,
+    'accessGrantsTable.users.title': `Organization Membership`,
+    'accessGrantsTable.prefixes.title': `Data Sharing`,
     'accessGrantsTable.users.filterLabel': `Filter User or Object`,
-    'accessGrantsTable.prefixes.filterLabel': `Filter Prefix or Object`,
+    'accessGrantsTable.prefixes.filterLabel': `Filter Prefixes`,
     'accessGrants.message1': `No results found.`,
     'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
 
@@ -925,7 +944,7 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.heading': `Let's get started`,
     'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary.  It will only be public if you share data with other organizations.`,
 
-    'tenant.expectations': `You can use letters, numbers, periods, underscores, and hyphens`,
+    'tenant.expectations': `You can use ${CommonMessages['catalogName.limitations']}`,
     'tenant.expectations.error': `Sorry, only letters(a-z), numbers(0-9), periods(.), underscores(_), and hyphens(-) allowed.`,
 
     'tenant.input.label': `Organization Name`,
@@ -1063,6 +1082,10 @@ const UpdateEntity: ResolvedIntlConfig['messages'] = {
     'updateEntity.collection.skipped': `${CTAs['cta.enable']} and ${CTAs['cta.disable']} only work on derivations`,
 };
 
+const CustomErrors: ResolvedIntlConfig['messages'] = {
+    'custom.catalogName.pattern': `must match pattern "organization/name"\nwhich may include ${CommonMessages['catalogName.limitations']}`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1085,6 +1108,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...MonacoEditor,
     ...ConnectorsPage,
     ...Error,
+    ...CustomErrors,
     ...NoGrants,
     ...LoginPage,
     ...AccessGrants,

@@ -135,7 +135,7 @@ const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
     }
 };
 
-const isRequiredField = (propName: string, rootSchema?: JsonSchema) => {
+export const isRequiredField = (propName: string, rootSchema?: JsonSchema) => {
     const requiredFields = rootSchema?.required;
 
     return includes(requiredFields, propName);
@@ -146,6 +146,18 @@ const addRequiredGroupOptions = (
 ) => {
     if (!Object.hasOwn(elem.options ?? {}, CONTAINS_REQUIRED_FIELDS)) {
         addOption(elem, CONTAINS_REQUIRED_FIELDS, true);
+    }
+};
+
+const copyRequiredOption = (
+    isRequired: boolean,
+    elem: Layout | ControlElement | GroupLayout
+) => {
+    // If we are generating a group then add the required
+    //  props if needed so it defaults the group to display
+    //  expanded so the user can see the required fields
+    if (isRequired) {
+        addRequiredGroupOptions(elem);
     }
 };
 
@@ -222,6 +234,36 @@ export const generateCategoryUiSchema = (uiSchema: any) => {
 
     return categoryUiSchema;
 };
+
+/*
+Not used right now. May be useful in the future (June 2023)
+export const generateDefaultArray = (jsonSchema: JsonSchema) => {
+    console.log('generateDefaultArray');
+    const defaultValueArray = [];
+
+    if (
+        // See if there are items
+        jsonSchema.items &&
+        // See if it is an object that can contain settings
+        isPlainObject(jsonSchema.items) &&
+        // Have not seen this in real world just part of the typing
+        !Array.isArray(jsonSchema.items)
+    ) {
+        // Generate the defaults based on the items
+        //  Items will be an object with just type when an array of single type
+        //  or
+        //  Items will be a nested schema when an array of objects
+        const defaultValue = createDefaultValue(jsonSchema.items);
+
+        console.log('defaultValue', defaultValue);
+
+        // Put the default value into an array
+        defaultValueArray.push(defaultValue);
+    }
+
+    return defaultValueArray;
+};
+*/
 
 /////////////////////////////////////////////////////////
 //  CUSTOM FUNCTIONS AND SETTINGS
@@ -345,9 +387,7 @@ const generateUISchema = (
             };
             copyAdvancedOption(group, jsonSchema);
 
-            if (isRequired) {
-                addRequiredGroupOptions(group);
-            }
+            copyRequiredOption(isRequired, group);
 
             return addTitle(group, jsonSchema, schemaName);
         } else if (isCombinator(jsonSchema)) {
@@ -363,9 +403,7 @@ const generateUISchema = (
 
             schemaElements.push(controlObject);
 
-            if (isRequired) {
-                addRequiredGroupOptions(controlObject);
-            }
+            copyRequiredOption(isRequired, controlObject);
 
             return controlObject;
         } else if (isOAuthConfig(jsonSchema)) {
@@ -397,9 +435,7 @@ const generateUISchema = (
                 oAuthCTAControl.label = jsonSchema.title;
             }
 
-            if (isRequired) {
-                addRequiredGroupOptions(oAuthCTAControl);
-            }
+            copyRequiredOption(isRequired, oAuthCTAControl);
 
             schemaElements.push(oAuthCTAControl);
             return oAuthCTAControl;
@@ -437,12 +473,14 @@ const generateUISchema = (
                 layout = createLayout(layoutType);
             } else {
                 layout = createLayout('Group');
+
+                copyRequiredOption(isRequired, layout);
             }
         } else {
             layout = createLayout(layoutType);
         }
 
-        // Add the advanced option to the layout, if required
+        // potentially add the advanced option to the layout
         copyAdvancedOption(layout, jsonSchema);
 
         // Prefer using the schema's title, if provided, but fall back to a generated name if not.

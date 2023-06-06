@@ -10,7 +10,6 @@ function AdminTabs() {
     const { pathname } = useLocation();
     const [selectedTab, setSelectedTab] = useState(0);
 
-    // TODO (billing): Enable the billing tab when the work needed on the control-plane is complete.
     const tabProps = useConstant(() => {
         const response = [
             {

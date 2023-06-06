@@ -1,22 +1,29 @@
-import { Button, Grid } from '@mui/material';
+import { Button, Grid, SelectChangeEvent } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { generateGrantDirective } from 'api/directives';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
+import SelectTextField from 'components/shared/toolbar/SelectTextField';
 import { useZustandStore } from 'context/Zustand/provider';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { hasLength } from 'utils/misc-utils';
+import {
+    appendWithForwardSlash,
+    hasLength,
+    PREFIX_NAME_PATTERN,
+} from 'utils/misc-utils';
 
 interface Props {
     objectRoles: string[];
     serverError: PostgrestError | null;
     setServerError: React.Dispatch<React.SetStateAction<PostgrestError | null>>;
 }
+
+const namePattern = new RegExp(`^${PREFIX_NAME_PATTERN}[/]$`);
 
 // The write capability should be obscured to the user. It is more challenging
 // for a user to understand the nuances of this grant and likely will not be used
@@ -42,16 +49,44 @@ function GenerateInvitation({
     );
 
     const [prefix, setPrefix] = useState<string>(objectRoles[0]);
+    const [prefixMissing, setPrefixMissing] = useState(false);
+
+    const [suffix, setSuffix] = useState<string>('');
+    const [suffixInvalid, setSuffixInvalid] = useState(false);
+
     const [capability, setCapability] = useState<string>(capabilityOptions[0]);
     const [reusability, setReusability] = useState<string>(typeOptions[0]);
 
     const handlers = {
-        setGrantPrefix: (_event: React.SyntheticEvent, value: string) => {
+        setGrantPrefix: (event: SelectChangeEvent<string>) => {
             if (serverError) {
                 setServerError(null);
             }
 
-            setPrefix(value);
+            const value = event.target.value;
+
+            setPrefixMissing(!hasLength(value));
+
+            const processedValue = appendWithForwardSlash(value);
+
+            setPrefix(processedValue);
+        },
+        setGrantSuffix: (
+            event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => {
+            if (serverError) {
+                setServerError(null);
+            }
+
+            const value = event.target.value.replaceAll(/\s/g, '_');
+
+            const processedValue = appendWithForwardSlash(value);
+
+            setSuffixInvalid(
+                hasLength(processedValue) && !namePattern.test(processedValue)
+            );
+
+            setSuffix(processedValue);
         },
         setGrantCapability: (_event: React.SyntheticEvent, value: string) => {
             if (serverError) {
@@ -71,7 +106,7 @@ function GenerateInvitation({
             event.preventDefault();
 
             generateGrantDirective(
-                prefix,
+                `${prefix}${suffix}`,
                 capability,
                 reusability === 'single-use'
             ).then(
@@ -93,21 +128,23 @@ function GenerateInvitation({
 
     return (
         <Grid container spacing={2} sx={{ mb: 5, pt: 1 }}>
-            <Grid item xs={12} md={5}>
-                <AutocompletedField
+            <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
+                <SelectTextField
                     label={intl.formatMessage({
                         id: 'common.tenant',
                     })}
-                    options={objectRoles}
-                    defaultValue={objectRoles[0]}
-                    changeHandler={handlers.setGrantPrefix}
+                    defaultSelectValue={prefix}
+                    selectValues={objectRoles}
+                    selectChangeHandler={handlers.setGrantPrefix}
+                    textChangeHandler={handlers.setGrantSuffix}
+                    errorExists={prefixMissing || suffixInvalid}
                 />
             </Grid>
 
             <Grid item xs={4} md={2}>
                 <AutocompletedField
                     label={intl.formatMessage({
-                        id: 'admin.users.sharePrefix.label.capability',
+                        id: 'admin.users.prefixInvitation.label.capability',
                     })}
                     options={capabilityOptions}
                     defaultValue={capabilityOptions[0]}
@@ -118,7 +155,7 @@ function GenerateInvitation({
             <Grid item xs={4} md={2}>
                 <AutocompletedField
                     label={intl.formatMessage({
-                        id: 'admin.users.sharePrefix.label.type',
+                        id: 'admin.users.prefixInvitation.label.type',
                     })}
                     options={typeOptions}
                     defaultValue={typeOptions[0]}
@@ -128,10 +165,11 @@ function GenerateInvitation({
 
             <Grid item xs={4} md={3} sx={{ display: 'flex' }}>
                 <Button
+                    disabled={prefixMissing || suffixInvalid}
                     onClick={handlers.generateInvitation}
                     sx={{ flexGrow: 1 }}
                 >
-                    <FormattedMessage id="admin.users.sharePrefix.cta.generateLink" />
+                    <FormattedMessage id="admin.users.prefixInvitation.cta.generateLink" />
                 </Button>
             </Grid>
         </Grid>

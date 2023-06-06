@@ -3,6 +3,7 @@ import { LocalZustandProvider } from 'context/LocalZustand';
 import BetaOnboard from 'directives/BetaOnboard';
 import FullPageWrapper from 'directives/FullPageWrapper';
 import { createOnboardingStore } from 'directives/Onboard/Store/create';
+import { useMemo } from 'react';
 import { OnboardingStoreNames } from 'stores/names';
 import { BaseComponentProps } from 'types';
 import useDirectiveGuard from './hooks';
@@ -25,16 +26,17 @@ function OnboardGuard({ children, forceDisplay, grantsMutate }: Props) {
         { forceNew: forceDisplay }
     );
 
+    const localStore = useMemo(
+        () => createOnboardingStore(OnboardingStoreNames.GENERAL),
+        []
+    );
+
     if (loading || status === null) {
         return <FullPageSpinner />;
     } else if (forceDisplay || status !== 'fulfilled') {
         return (
             <FullPageWrapper fullWidth={true}>
-                <LocalZustandProvider
-                    createStore={createOnboardingStore(
-                        OnboardingStoreNames.GENERAL
-                    )}
-                >
+                <LocalZustandProvider createStore={localStore}>
                     <BetaOnboard
                         directive={directive}
                         status={status}

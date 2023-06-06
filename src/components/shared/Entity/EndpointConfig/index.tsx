@@ -11,7 +11,7 @@ import useConnectorTag from 'hooks/useConnectorTag';
 import { isEmpty, isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useUnmount } from 'react-use';
+import { useMount, useUnmount } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     useEndpointConfigStore_endpointConfig_data,
@@ -97,17 +97,19 @@ function EndpointConfig({
 
     useEffect(() => {
         if (connectorTag?.endpoint_spec_schema && endpointSchemaChanged) {
-            const schema =
-                connectorTag.endpoint_spec_schema as unknown as Schema;
-
-            setEndpointSchema(schema);
-
-            const defaultConfig = createJSONFormDefaults(schema);
-
+            // force some new data in
             setServerUpdateRequired(true);
             setEncryptedEndpointConfig({
                 data: {},
             });
+
+            // Update the schema
+            const schema =
+                connectorTag.endpoint_spec_schema as unknown as Schema;
+            setEndpointSchema(schema);
+
+            // Generate the defaults and populate the data/errors
+            const defaultConfig = createJSONFormDefaults(schema);
             setEndpointConfig(defaultConfig);
             setPreviousEndpointConfig(defaultConfig);
         }
@@ -116,6 +118,7 @@ function EndpointConfig({
         setEndpointConfig,
         setEndpointSchema,
         setPreviousEndpointConfig,
+        connectorTag,
         connectorTag?.endpoint_spec_schema,
         endpointSchemaChanged,
         setEncryptedEndpointConfig,
@@ -152,6 +155,16 @@ function EndpointConfig({
         //  because we fire a message to the docs when the theme changes
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [connectorTag, setDocsURL]);
+
+    // Default serverUpdateRequired for Create
+    //  This prevents us from sending the empty object to get encrypted
+    //  Handles an edgecase where the user submits the endpoint config
+    //      with all the default properties (hello world).
+    useMount(() => {
+        if (!editWorkflow) {
+            setServerUpdateRequired(true);
+        }
+    });
 
     if (error) {
         return <Error error={error} />;

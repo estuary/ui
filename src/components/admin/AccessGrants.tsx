@@ -3,7 +3,6 @@ import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
 import MessageWithLink from 'components/content/MessageWithLink';
 import AccessGrantsTable from 'components/tables/AccessGrants';
-import AccessLinksButton from 'components/tables/AccessGrants/AccessLinks/Dialog/Button';
 import usePageTitle from 'hooks/usePageTitle';
 import { FormattedMessage } from 'react-intl';
 
@@ -18,25 +17,13 @@ function AccessGrants() {
             <AdminTabs />
 
             <Stack spacing={2} sx={{ m: 2 }}>
-                <Stack
-                    direction="row"
-                    spacing={2}
-                    sx={{ justifyContent: 'space-between' }}
-                >
-                    <Box>
-                        <Typography
-                            component="div"
-                            variant="h6"
-                            sx={{ mb: 0.5 }}
-                        >
-                            <FormattedMessage id="terms.permissions" />
-                        </Typography>
+                <Box>
+                    <Typography component="div" variant="h6" sx={{ mb: 0.5 }}>
+                        <FormattedMessage id="terms.permissions" />
+                    </Typography>
 
-                        <MessageWithLink messageID="admin.roles.message" />
-                    </Box>
-
-                    <AccessLinksButton />
-                </Stack>
+                    <MessageWithLink messageID="admin.roles.message" />
+                </Box>
 
                 <Divider />
             </Stack>

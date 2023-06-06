@@ -12,31 +12,47 @@ type SupabaseInvokeResponse =
 const sopsKey = 'sops';
 
 const copyEncryptedEndpointConfig = (
-    endpointConfigTemplate: { [key: string]: any },
     encryptedEndpointConfig: { [key: string]: any },
     encryptedSuffix: string,
     overrideJsonFormDefaults?: boolean
 ) => {
+    const response = {};
     Object.entries(encryptedEndpointConfig).forEach(([key, value]) => {
+        // Check if key is a sops key.
         const encryptedSuffixIndex = key.lastIndexOf(encryptedSuffix);
 
+        // If a sops key we need to strip the suffix off the end so the cloned
+        //  object has the proper keys. Otherwise the ajv/json forms would throw
+        //  errors for properties not in the schema being in the data
         const truncatedKey =
             encryptedSuffixIndex !== -1
                 ? key.slice(0, encryptedSuffixIndex)
-                : '';
+                : null;
 
         if (isPlainObject(value)) {
-            copyEncryptedEndpointConfig(
-                endpointConfigTemplate[truncatedKey || key] ?? {},
+            // Handle nested objects
+
+            // Check which key to use
+            const keyToUse = truncatedKey ?? key;
+
+            // Make sure the nested element is populated
+            response[keyToUse] = response[keyToUse] ?? {};
+
+            // start recursion so we can clone deeply
+            response[keyToUse] = copyEncryptedEndpointConfig(
                 encryptedEndpointConfig[key],
                 encryptedSuffix
             );
         } else if (overrideJsonFormDefaults && truncatedKey) {
-            endpointConfigTemplate[truncatedKey] = value;
+            // handle populating encrypted keys/props
+            response[truncatedKey] = value;
         } else if (!truncatedKey) {
-            endpointConfigTemplate[key] = value;
+            // handle populating unencrypted keys/props
+            response[key] = value;
         }
     });
+
+    return response;
 };
 
 export const parseEncryptedEndpointConfig = (
@@ -52,10 +68,9 @@ export const parseEncryptedEndpointConfig = (
             ...encryptedEndpointConfig
         } = endpointConfig;
 
+        // Generate template and populate data
         const endpointConfigTemplate = createJSONFormDefaults(endpointSchema);
-
-        copyEncryptedEndpointConfig(
-            endpointConfigTemplate.data,
+        endpointConfigTemplate.data = copyEncryptedEndpointConfig(
             encryptedEndpointConfig,
             encrypted_suffix,
             overrideJsonFormDefaults
