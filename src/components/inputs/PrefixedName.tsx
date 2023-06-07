@@ -27,7 +27,7 @@ interface Props {
 const NAME_RE = new RegExp(`^(${PREFIX_NAME_PATTERN}/?)*$`);
 
 const validateInput = (value: string, allowBlank?: boolean): Errors => {
-    if (allowBlank && !hasLength(value)) {
+    if (!allowBlank && !hasLength(value)) {
         return ['missing'];
     }
 
@@ -86,7 +86,10 @@ function PrefixedName({
     };
 
     useEffect(() => {
-        onChange(prefix + name, concat([], nameError ?? [], prefixError ?? []));
+        onChange(
+            `${prefix}${name}`,
+            concat([], nameError ?? [], prefixError ?? [])
+        );
     }, [onChange, name, prefix, nameError, prefixError]);
 
     if (!hasLength(objectRoles)) {
