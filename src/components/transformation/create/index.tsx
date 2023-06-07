@@ -3,11 +3,8 @@ import {
     Box,
     Divider,
     FormControlLabel,
-    InputAdornment,
-    MenuItem,
     Radio,
     RadioGroup,
-    Select,
     Stack,
     Step,
     StepConnector,
@@ -15,7 +12,6 @@ import {
     StepLabel,
     Stepper,
     styled,
-    TextField,
     Theme,
     Typography,
     useMediaQuery,
@@ -26,14 +22,14 @@ import { createRefreshToken } from 'api/tokens';
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
 import SingleLineCode from 'components/content/SingleLineCode';
-import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
+import PrefixedName from 'components/inputs/PrefixedName';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useSnackbar } from 'notistack';
 import { useCallback, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSet } from 'react-use';
 import { generateGitPodURL } from 'services/gitpod';
-import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
 import generateTransformSpec, {
     DerivationLanguage,
 } from './generateTransformSpec';
@@ -47,8 +43,6 @@ const StyledStepConnector = styled(StepConnector)(() => ({
         height: 2,
     },
 }));
-
-const NAME_RE = new RegExp(`^(${PREFIX_NAME_PATTERN}/?)*$`);
 
 interface Props {
     postWindowOpen: (window: Window | null) => void;
@@ -64,51 +58,17 @@ function TransformationCreate({ postWindowOpen }: Props) {
     );
     const [derivationLanguage, setDerivationLanguage] =
         useState<DerivationLanguage>('sql');
+
     const [entityName, setEntityName] = useState<string>('');
-    const [entityPrefix, setEntityPrefix] = useState<string>('');
+    const [entityNameError, setEntityNameError] = useState<string | null>(null);
 
     const [urlLoading, setUrlLoading] = useState(false);
     const isSmall = useMediaQuery<Theme>((theme) =>
         theme.breakpoints.down('sm')
     );
 
-    const grants = useCombinedGrantsExt({ adminOnly: true });
-
-    const allowedPrefixes = useMemo(
-        () => grants.combinedGrants.map((grant) => grant.object_role),
-        [grants]
-    );
-
-    const computedEntityName = useMemo(() => {
-        if (entityName) {
-            if (allowedPrefixes.length === 1) {
-                return `${allowedPrefixes[0]}${entityName}`;
-            } else if (entityPrefix) {
-                return `${entityPrefix}${entityName}`;
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }, [allowedPrefixes, entityName, entityPrefix]);
-
-    const entityNameError = useMemo(() => {
-        if (entityName) {
-            if (allowedPrefixes.length > 1 && !entityPrefix) {
-                return intl.formatMessage({
-                    id: 'newTransform.errors.prefixMissing',
-                });
-            }
-            if (!NAME_RE.test(entityName)) {
-                // TODO: be more descriptive
-                return intl.formatMessage({
-                    id: 'newTransform.errors.namePattern',
-                });
-            }
-        }
-        return null;
-    }, [intl, allowedPrefixes, entityName, entityPrefix]);
+    console.log('entityName', entityName);
+    console.log('entityNameError', entityNameError);
 
     const submitButtonError = useMemo(() => {
         if (selectedCollectionSet.size < 1) {
@@ -136,14 +96,14 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
     const generateDraftWithSpecs = useMemo(
         () => async () => {
-            if (!computedEntityName) {
+            if (!hasLength(entityName)) {
                 throw new Error(
                     intl.formatMessage({
                         id: 'newTransform.errors.nameInvalid',
                     })
                 );
             }
-            const draft = await createEntityDraft(computedEntityName);
+            const draft = await createEntityDraft(entityName);
             if (draft.error) {
                 throw new Error(
                     `[${draft.error.code}]: ${draft.error.message}, ${draft.error.details}, ${draft.error.hint}`
@@ -153,37 +113,26 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
             const spec = generateTransformSpec(
                 derivationLanguage,
-                computedEntityName,
+                entityName,
                 selectedCollectionSet
             );
 
             await createDraftSpec(
                 draftId,
-                computedEntityName,
+                entityName,
                 spec,
                 'collection',
                 null
             );
             return draftId;
         },
-        [computedEntityName, derivationLanguage, intl, selectedCollectionSet]
+        [entityName, derivationLanguage, intl, selectedCollectionSet]
     );
 
     const generateUrl = useMemo(
         () => async () => {
             try {
                 setUrlLoading(true);
-
-                // This is really just here to make Typescript happy,
-                // we know that computedEntityName will exist because
-                // generateDraftWithSpecs() checks it and throws otherwise
-                if (!computedEntityName) {
-                    throw new Error(
-                        intl.formatMessage({
-                            id: 'newTransform.errors.nameMissing',
-                        })
-                    );
-                }
 
                 const [token, draftId] = await Promise.all([
                     createRefreshToken(false, '1 day'),
@@ -195,7 +144,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
                     token,
                     derivationLanguage,
                     selectedCollectionSet,
-                    computedEntityName
+                    entityName
                 );
             } catch (e: unknown) {
                 displayError(
@@ -210,9 +159,9 @@ function TransformationCreate({ postWindowOpen }: Props) {
             }
         },
         [
-            computedEntityName,
             derivationLanguage,
             displayError,
+            entityName,
             generateDraftWithSpecs,
             intl,
             selectedCollectionSet,
@@ -321,51 +270,13 @@ function TransformationCreate({ postWindowOpen }: Props) {
                                 <FormattedMessage id="newTransform.stepper.step3.label" />
                             </Typography>
                         </SingleStep>
-                        <TextField
-                            sx={{ marginBottom: 2 }}
+                        <PrefixedName
                             label={intl.formatMessage({
                                 id: 'newTransform.collection.label',
                             })}
-                            required
-                            fullWidth
-                            error={!!entityNameError}
-                            helperText={entityNameError}
-                            value={entityName}
-                            onChange={(event) =>
-                                setEntityName(event.target.value)
-                            }
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        {allowedPrefixes.length === 1 ? (
-                                            allowedPrefixes[0]
-                                        ) : (
-                                            <>
-                                                <Select
-                                                    variant="standard"
-                                                    value={entityPrefix}
-                                                    onChange={(evt) => {
-                                                        setEntityPrefix(
-                                                            evt.target.value
-                                                        );
-                                                    }}
-                                                >
-                                                    {allowedPrefixes.map(
-                                                        (prefix) => (
-                                                            <MenuItem
-                                                                key={prefix}
-                                                                value={prefix}
-                                                            >
-                                                                {prefix}
-                                                            </MenuItem>
-                                                        )
-                                                    )}
-                                                </Select>
-                                                <Divider orientation="vertical" />
-                                            </>
-                                        )}
-                                    </InputAdornment>
-                                ),
+                            onChange={(newName, errors) => {
+                                setEntityName(newName);
+                                setEntityNameError(errors);
                             }}
                         />
                         <LoadingButton

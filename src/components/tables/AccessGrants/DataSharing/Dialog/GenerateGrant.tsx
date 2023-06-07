@@ -150,13 +150,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                     })}
                     onChange={(value, errors) => {
                         setObjectRole(value);
-                        setObjectRoleHasErrors(hasLength(errors));
-                    }}
-                    formControlProps={{
-                        sx: {
-                            flexGrow: 1,
-                        },
-                        variant: 'outlined',
+                        setObjectRoleHasErrors(Boolean(errors));
                     }}
                 />
             </Grid>

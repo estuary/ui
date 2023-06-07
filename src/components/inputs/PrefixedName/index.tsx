@@ -1,6 +1,6 @@
 import {
+    Box,
     FormControl,
-    FormControlProps,
     FormHelperText,
     Input,
     InputAdornment,
@@ -14,6 +14,7 @@ import AlertBox from 'components/shared/AlertBox';
 import { concat } from 'lodash';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useMount } from 'react-use';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 
@@ -22,7 +23,11 @@ type Errors = ErrorStates[] | null;
 
 interface Props {
     label: string;
-    onChange: (prefixedName: string, errors: Errors) => void;
+    onChange: (
+        prefixedName: string,
+        errorString: string | null,
+        errorTypes: Errors
+    ) => void;
     onNameChange?: (name: string, errors: Errors) => void;
     onPrefixChange?: (prefix: string, errors: Errors) => void;
     allowBlankName?: boolean;
@@ -30,7 +35,6 @@ interface Props {
     description?: string;
     required?: boolean;
     standardVariant?: boolean;
-    formControlProps?: FormControlProps;
 }
 
 const NAME_RE = new RegExp(`^(${PREFIX_NAME_PATTERN}/?)*$`);
@@ -71,7 +75,6 @@ function PrefixedName({
     defaultPrefix,
     required,
     standardVariant,
-    formControlProps,
 }: Props) {
     const InputComponent = standardVariant ? Input : OutlinedInput;
 
@@ -81,20 +84,27 @@ function PrefixedName({
     const objectRoles = Object.keys(adminCapabilities);
     const singleOption = objectRoles.length === 1;
 
-    const [prefix, setPrefix] = useState(
-        singleOption || defaultPrefix ? objectRoles[0] : ''
-    );
+    const [prefix, setPrefix] = useState('');
     const [prefixError, setPrefixError] = useState<Errors>(null);
     const [name, setName] = useState('');
     const [nameError, setNameError] = useState<Errors>(null);
     const [errors, setErrors] = useState<string | null>(null);
 
+    const updateErrors = (prefixValue: string, nameValue: string) => {
+        const prefixErrors = validateInput(prefixValue, false);
+        const nameErrors = validateInput(nameValue, allowBlankName);
+
+        setPrefixError(prefixErrors);
+        setNameError(nameErrors);
+
+        return [prefixErrors, nameErrors];
+    };
+
     const handlers = {
         setPrefix: (event: SelectChangeEvent<string>) => {
             const value = event.target.value;
-            const error = validateInput(value, false);
+            const { 0: error } = updateErrors(value, name);
 
-            setPrefixError(error);
             setPrefix(value);
             if (onNameChange) {
                 onNameChange(value, error);
@@ -105,16 +115,20 @@ function PrefixedName({
         ) => {
             const value = event.target.value;
             const processedValue = value.replaceAll(/\s/g, '_');
-            const error = validateInput(processedValue, allowBlankName);
+            const { 1: error } = updateErrors(prefix, processedValue);
 
-            setNameError(error);
             setName(processedValue);
-
             if (onPrefixChange) {
                 onPrefixChange(processedValue, error);
             }
         },
     };
+
+    useMount(() => {
+        if (singleOption || defaultPrefix) {
+            setPrefix(objectRoles[0]);
+        }
+    });
 
     useEffect(() => {
         const updatedErrors: string[] = [];
@@ -133,13 +147,17 @@ function PrefixedName({
         }
 
         if (prefixError) {
-            generateErrorList('prefix', nameError);
+            generateErrorList('prefix', prefixError);
         }
 
-        setErrors(hasLength(updatedErrors) ? updatedErrors.join(' ') : null);
+        const errorString = hasLength(updatedErrors)
+            ? updatedErrors.join(' ')
+            : null;
+        setErrors(errorString);
 
         onChange(
             `${prefix}${name}`,
+            errorString,
             concat([], nameError ?? [], prefixError ?? [])
         );
     }, [onChange, name, prefix, nameError, prefixError, intl]);
@@ -158,8 +176,6 @@ function PrefixedName({
             </AlertBox>
         );
     }
-
-    console.log('formControlProps', formControlProps);
 
     return (
         <FormControl fullWidth error={Boolean(errors)} variant="outlined">
@@ -184,7 +200,7 @@ function PrefixedName({
                 startAdornment={
                     <InputAdornment position="start">
                         {singleOption ? (
-                            prefix
+                            <Box>{prefix}</Box>
                         ) : (
                             <Select
                                 size="small"
