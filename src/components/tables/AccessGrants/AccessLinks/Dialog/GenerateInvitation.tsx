@@ -92,6 +92,7 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
                 <PrefixedName
                     allowBlankName
                     defaultPrefix
+                    required
                     label={intl.formatMessage({
                         id: 'common.tenant',
                     })}

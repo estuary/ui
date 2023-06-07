@@ -144,6 +144,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                 <PrefixedName
                     allowBlankName
                     defaultPrefix
+                    required
                     label={intl.formatMessage({
                         id: 'admin.prefix.issueGrant.label.sharedPrefix',
                     })}

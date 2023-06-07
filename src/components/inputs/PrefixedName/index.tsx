@@ -6,6 +6,7 @@ import {
     InputAdornment,
     InputLabel,
     MenuItem,
+    OutlinedInput,
     Select,
     SelectChangeEvent,
 } from '@mui/material';
@@ -28,6 +29,7 @@ interface Props {
     defaultPrefix?: boolean;
     description?: string;
     required?: boolean;
+    standardVariant?: boolean;
     formControlProps?: FormControlProps;
 }
 
@@ -68,8 +70,11 @@ function PrefixedName({
     onPrefixChange,
     defaultPrefix,
     required,
+    standardVariant,
     formControlProps,
 }: Props) {
+    const InputComponent = standardVariant ? Input : OutlinedInput;
+
     const intl = useIntl();
 
     const adminCapabilities = useEntitiesStore_capabilities_adminable();
@@ -80,10 +85,8 @@ function PrefixedName({
         singleOption || defaultPrefix ? objectRoles[0] : ''
     );
     const [prefixError, setPrefixError] = useState<Errors>(null);
-
     const [name, setName] = useState('');
     const [nameError, setNameError] = useState<Errors>(null);
-
     const [errors, setErrors] = useState<string | null>(null);
 
     const handlers = {
@@ -159,17 +162,25 @@ function PrefixedName({
     console.log('formControlProps', formControlProps);
 
     return (
-        <FormControl fullWidth variant="outlined" error={Boolean(errors)}>
-            <InputLabel required={required} htmlFor={INPUT_ID}>
+        <FormControl fullWidth error={Boolean(errors)} variant="outlined">
+            <InputLabel
+                focused
+                required={required}
+                htmlFor={INPUT_ID}
+                variant="outlined"
+            >
                 {label}
             </InputLabel>
-            <Input
+            <InputComponent
                 aria-describedby={description ? DESCRIPTION_ID : undefined}
                 id={INPUT_ID}
-                value={name}
-                size="small"
+                label={label}
+                notched
                 onChange={handlers.setName}
+                required={!allowBlankName}
+                size="small"
                 sx={{ borderRadius: 3 }}
+                value={name}
                 startAdornment={
                     <InputAdornment position="start">
                         {singleOption ? (
@@ -182,6 +193,7 @@ function PrefixedName({
                                 disableUnderline
                                 error={Boolean(prefixError)}
                                 onChange={handlers.setPrefix}
+                                required
                                 sx={{
                                     '& .MuiSelect-select': {
                                         paddingBottom: 0.2,
