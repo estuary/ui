@@ -1,12 +1,8 @@
-import { Box, Grid, useTheme } from '@mui/material';
-import { DataGrid, GridSelectionModel } from '@mui/x-data-grid';
-import ListAndDetails from 'components/editor/ListAndDetails';
+import { DataGrid } from '@mui/x-data-grid';
 import { dataGridListStyling } from 'context/Theme';
 import { JournalRecord } from 'hooks/useJournalData';
 import { JsonPointer } from 'json-ptr';
-import { isEmpty } from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import ReactJson from 'react-json-view';
+import { useCallback, useMemo } from 'react';
 
 const sampleSpec = {
     catalog_name: 'estuary/kjt/milk_types',
@@ -205,15 +201,6 @@ const sampleJournalData = {
 };
 
 function DataPreview() {
-    const [selectedKey, setSelectedKey] = useState<string>('');
-    const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
-        []
-    );
-
-    const theme = useTheme();
-    const jsonTheme =
-        theme.palette.mode === 'dark' ? 'bright' : 'bright:inverted';
-
     const buildRecordKey = useCallback(
         (record: Record<string, any>) => {
             return sampleSpec.spec.key
@@ -232,63 +219,29 @@ function DataPreview() {
         ) as Record<string, JournalRecord<Record<string, any>>>;
     }, [buildRecordKey, sampleJournalData.data, sampleJournalData.error]);
 
-    useEffect(() => {
-        if (!isEmpty(rowsByKey)) {
-            const firstKey = Object.keys(rowsByKey)[0];
-            setSelectedKey(firstKey);
-            setSelectionModel([firstKey]);
-        }
-    }, [rowsByKey]);
-
     return (
-        <Grid item xs={12} data-private>
-            <ListAndDetails
-                codeEditorDetails
-                removeMargin
-                height={389}
-                list={
-                    <DataGrid
-                        columns={[{ field: 'key', headerName: 'Key', flex: 1 }]}
-                        rows={Object.entries(rowsByKey).map(([k]) => ({
-                            key: k,
-                            id: k,
-                        }))}
-                        hideFooter
-                        disableColumnSelector
-                        headerHeight={40}
-                        rowCount={sampleJournalData.data.documents.length}
-                        onRowClick={(params) => setSelectedKey(params.row.key)}
-                        selectionModel={selectionModel}
-                        onSelectionModelChange={(newSelectionModel) => {
-                            setSelectionModel(newSelectionModel);
-                        }}
-                        sx={dataGridListStyling}
-                    />
-                }
-                backgroundColor={
-                    theme.palette.mode === 'light' ? 'white' : undefined
-                }
-                details={
-                    <Box
-                        sx={{
-                            'm': 2,
-                            '& .react-json-view': {
-                                backgroundColor: 'transparent !important',
-                            },
-                        }}
-                    >
-                        <ReactJson
-                            style={{ wordBreak: 'break-all' }}
-                            quotesOnKeys={false}
-                            src={rowsByKey[selectedKey]}
-                            theme={jsonTheme}
-                            displayObjectSize={false}
-                            displayDataTypes={false}
-                        />
-                    </Box>
-                }
-            />
-        </Grid>
+        <DataGrid
+            columns={[
+                { field: 'id', headerName: 'ID', flex: 1 },
+                {
+                    field: 'flavor_profile',
+                    headerName: 'Flavor Profile',
+                    flex: 1,
+                },
+                { field: 'type', headerName: 'Type', flex: 1 },
+            ]}
+            rows={Object.entries(rowsByKey).map(([key, value]) => ({
+                id: key,
+                flavor_profile: value.flavor_profile,
+                type: value.type,
+            }))}
+            hideFooter
+            disableColumnSelector
+            density="compact"
+            headerHeight={40}
+            rowCount={sampleJournalData.data.documents.length}
+            sx={dataGridListStyling}
+        />
     );
 }
 
