@@ -83,7 +83,11 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
     };
 
     return (
-        <Grid container spacing={2} sx={{ mb: 5, pt: 1 }}>
+        <Grid
+            container
+            spacing={2}
+            sx={{ mb: 5, pt: 1, alignItems: 'flex-start' }}
+        >
             <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
                 <PrefixedName
                     allowBlankName

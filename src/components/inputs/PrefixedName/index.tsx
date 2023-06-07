@@ -11,13 +11,12 @@ import {
 } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
 import { concat } from 'lodash';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useUpdateEffect } from 'react-use';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 
-type ErrorStates = 'missing' | 'invalid';
+type ErrorStates = 'missing' | 'invalid' | 'unclean';
 type Errors = ErrorStates[] | null;
 
 interface Props {
@@ -33,6 +32,7 @@ interface Props {
 }
 
 const NAME_RE = new RegExp(`^(${PREFIX_NAME_PATTERN}/?)*$`);
+// const UNCLEAN_PATH_RE = new RegExp(/[^a-zA-Z0-9-_.]\.{1,2}\/?/g);
 const DESCRIPTION_ID = 'prefixed-name-description';
 const INPUT_ID = 'prefixed-name-input';
 
@@ -44,6 +44,17 @@ const validateInput = (value: string, allowBlank?: boolean): Errors => {
     if (!NAME_RE.test(value)) {
         return ['invalid'];
     }
+
+    // TODO (naming) need to check for unclean paths
+    // if (
+    //     value === '.' ||
+    //     value === './' ||
+    //     value === '..' ||
+    //     value === '../' ||
+    //     UNCLEAN_PATH_RE.test(value)
+    // ) {
+    //     return ['unclean'];
+    // }
 
     return null;
 };
@@ -102,7 +113,7 @@ function PrefixedName({
         },
     };
 
-    useUpdateEffect(() => {
+    useEffect(() => {
         const updatedErrors: string[] = [];
         const generateErrorList = (inputName: string, inputErrors: Errors) => {
             inputErrors?.forEach((inputError) => {
@@ -145,13 +156,11 @@ function PrefixedName({
         );
     }
 
+    console.log('formControlProps', formControlProps);
+
     return (
-        <FormControl fullWidth {...formControlProps} variant="outlined">
-            <InputLabel
-                error={Boolean(errors)}
-                required={required}
-                htmlFor={INPUT_ID}
-            >
+        <FormControl fullWidth variant="outlined" error={Boolean(errors)}>
+            <InputLabel required={required} htmlFor={INPUT_ID}>
                 {label}
             </InputLabel>
             <Input
@@ -159,7 +168,6 @@ function PrefixedName({
                 id={INPUT_ID}
                 value={name}
                 size="small"
-                error={Boolean(errors)}
                 onChange={handlers.setName}
                 sx={{ borderRadius: 3 }}
                 startAdornment={

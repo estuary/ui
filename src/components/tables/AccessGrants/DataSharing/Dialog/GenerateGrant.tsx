@@ -135,12 +135,15 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
     );
 
     return (
-        <Grid container spacing={2} sx={{ mb: 5, pt: 1 }}>
+        <Grid
+            container
+            spacing={2}
+            sx={{ mb: 5, pt: 1, alignItems: 'flex-start' }}
+        >
             <Grid item xs={12} md={4} sx={{ display: 'flex' }}>
                 <PrefixedName
                     allowBlankName
                     defaultPrefix
-                    description="this is desc"
                     label={intl.formatMessage({
                         id: 'admin.prefix.issueGrant.label.sharedPrefix',
                     })}
