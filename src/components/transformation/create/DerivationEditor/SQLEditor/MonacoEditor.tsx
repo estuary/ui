@@ -19,13 +19,11 @@ import {
 import { EditorStatus } from 'components/editor/Store/types';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
-    useTransformationCreate_attributeType,
-    useTransformationCreate_catalogUpdating,
+    useTransformationCreate_catalogName,
     useTransformationCreate_patchSelectedAttribute,
     useTransformationCreate_selectedAttribute,
-    useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
 import {
     DEFAULT_HEIGHT,
@@ -68,10 +66,7 @@ function MonacoEditor({
     });
 
     // Transformation Create Store
-    const catalogUpdating = useTransformationCreate_catalogUpdating();
-    const transformConfigs = useTransformationCreate_transformConfigs();
-
-    const attributeType = useTransformationCreate_attributeType();
+    const catalogName = useTransformationCreate_catalogName();
     const attributeId = useTransformationCreate_selectedAttribute();
     const patchSelectedAttribute =
         useTransformationCreate_patchSelectedAttribute();
@@ -149,14 +144,6 @@ function MonacoEditor({
         },
     };
 
-    const filename = useMemo(
-        () =>
-            attributeType === 'transform' && !catalogUpdating
-                ? transformConfigs[attributeId].filename
-                : attributeId,
-        [attributeId, attributeType, catalogUpdating, transformConfigs]
-    );
-
     if (attributeId) {
         return (
             <Paper sx={{ width: '100%', boxShadow: 'unset' }}>
@@ -169,7 +156,9 @@ function MonacoEditor({
                         alignItems: 'center',
                     }}
                 >
-                    <Typography sx={{ fontWeight: 500 }}>{filename}</Typography>
+                    <Typography
+                        sx={{ fontWeight: 500 }}
+                    >{`${catalogName}.query`}</Typography>
 
                     <Stack
                         spacing={1}
