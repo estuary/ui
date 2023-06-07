@@ -1,88 +1,294 @@
-import { AlertTitle, Box } from '@mui/material';
-import ListView from 'components/collection/DataPreview/ListView';
-import AlertBox from 'components/shared/AlertBox';
-import { useJournalData, useJournalsForCollection } from 'hooks/useJournalData';
-import { LiveSpecsQuery_spec, useLiveSpecs_spec } from 'hooks/useLiveSpecs';
-import { useEffect, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { useTransformationCreate_setPreviewActive } from 'stores/TransformationCreate/hooks';
-import { hasLength } from 'utils/misc-utils';
+import { Box, Grid, useTheme } from '@mui/material';
+import { DataGrid, GridSelectionModel } from '@mui/x-data-grid';
+import ListAndDetails from 'components/editor/ListAndDetails';
+import { dataGridListStyling } from 'context/Theme';
+import { JournalRecord } from 'hooks/useJournalData';
+import { JsonPointer } from 'json-ptr';
+import { isEmpty } from 'lodash';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import ReactJson from 'react-json-view';
 
-interface Props {
-    collectionName: string;
-}
+const sampleSpec = {
+    catalog_name: 'estuary/kjt/milk_types',
+    spec_type: 'collection',
+    id: '08:e9:e2:d9:50:22:0c:00',
+    updated_at: undefined,
+    spec: {
+        schema: {
+            $schema: 'http://json-schema.org/draft-07/schema#',
+            properties: {
+                flavor_profile: {
+                    type: 'string',
+                },
+                row_id: {
+                    type: 'integer',
+                },
+                type: {
+                    type: 'string',
+                },
+            },
+            required: ['row_id'],
+            type: 'object',
+        },
+        key: ['/row_id'],
+    },
+};
 
-function DataPreview({ collectionName }: Props) {
-    const setPreviewActive = useTransformationCreate_setPreviewActive();
+const sampleJournalData = {
+    data: {
+        documents: [
+            {
+                _meta: {
+                    uuid: 'f6f148e9-ae2e-11ed-8401-75f5912b4b26',
+                },
+                flavor_profile: 'sweet',
+                row_id: 203,
+                type: 'oat',
+            },
+            {
+                _meta: {
+                    uuid: 'f6f148e9-ae2e-11ed-8801-75f5912b4b26',
+                },
+                flavor_profile: 'neutral',
+                row_id: 204,
+                type: 'almond',
+            },
+            {
+                _meta: {
+                    uuid: 'f6f148e9-ae2e-11ed-8c01-75f5912b4b26',
+                },
+                flavor_profile: 'bitter',
+                row_id: 205,
+                type: 'soy',
+            },
+            {
+                _meta: {
+                    uuid: 'f6f148e9-ae2e-11ed-9001-75f5912b4b26',
+                },
+                flavor_profile: 'neutral',
+                row_id: 206,
+                type: 'cow',
+            },
+            {
+                _meta: {
+                    uuid: 'f6f148e9-ae2e-11ed-9401-75f5912b4b26',
+                },
+                flavor_profile: 'bitter',
+                row_id: 207,
+                type: 'goat',
+            },
+            {
+                _meta: {
+                    uuid: 'a9eb086d-ae2f-11ed-8401-75f5912b4b26',
+                },
+                flavor_profile: 'sweet',
+                row_id: 203,
+                type: 'oat',
+            },
+            {
+                _meta: {
+                    uuid: 'a9eb086d-ae2f-11ed-8801-75f5912b4b26',
+                },
+                flavor_profile: 'neutral',
+                row_id: 204,
+                type: 'almond',
+            },
+            {
+                _meta: {
+                    uuid: 'a9eb086d-ae2f-11ed-8c01-75f5912b4b26',
+                },
+                flavor_profile: 'bitter',
+                row_id: 205,
+                type: 'soy',
+            },
+            {
+                _meta: {
+                    uuid: 'a9eb086d-ae2f-11ed-9001-75f5912b4b26',
+                },
+                flavor_profile: 'neutral',
+                row_id: 206,
+                type: 'cow',
+            },
+            {
+                _meta: {
+                    uuid: 'a9eb086d-ae2f-11ed-9401-75f5912b4b26',
+                },
+                flavor_profile: 'bitter',
+                row_id: 207,
+                type: 'goat',
+            },
+            {
+                _meta: {
+                    uuid: '5ca797a9-ae30-11ed-8401-75f5912b4b26',
+                },
+                flavor_profile: 'sweet',
+                row_id: 203,
+                type: 'oat',
+            },
+            {
+                _meta: {
+                    uuid: '5ca797a9-ae30-11ed-8801-75f5912b4b26',
+                },
+                flavor_profile: 'neutral',
+                row_id: 204,
+                type: 'almond',
+            },
+            {
+                _meta: {
+                    uuid: '5ca797a9-ae30-11ed-8c01-75f5912b4b26',
+                },
+                flavor_profile: 'bitter',
+                row_id: 205,
+                type: 'soy',
+            },
+            {
+                _meta: {
+                    uuid: '5ca797a9-ae30-11ed-9001-75f5912b4b26',
+                },
+                flavor_profile: 'neutral',
+                row_id: 206,
+                type: 'cow',
+            },
+            {
+                _meta: {
+                    uuid: '5ca797a9-ae30-11ed-9401-75f5912b4b26',
+                },
+                flavor_profile: 'bitter',
+                row_id: 207,
+                type: 'goat',
+            },
+            {
+                _meta: {
+                    uuid: '22d86ce8-c753-11ed-8401-3dc2af2abc77',
+                },
+                flavor_profile: 'sweet',
+                row_id: 203,
+                type: 'oat',
+            },
+            {
+                _meta: {
+                    uuid: '22d86ce8-c753-11ed-8801-3dc2af2abc77',
+                },
+                flavor_profile: 'neutral',
+                row_id: 204,
+                type: 'almond',
+            },
+            {
+                _meta: {
+                    uuid: '22d86ce8-c753-11ed-8c01-3dc2af2abc77',
+                },
+                flavor_profile: 'bitter',
+                row_id: 205,
+                type: 'soy',
+            },
+            {
+                _meta: {
+                    uuid: '22d86ce8-c753-11ed-9001-3dc2af2abc77',
+                },
+                flavor_profile: 'neutral',
+                row_id: 206,
+                type: 'cow',
+            },
+            {
+                _meta: {
+                    uuid: '22d86ce8-c753-11ed-9401-3dc2af2abc77',
+                },
+                flavor_profile: 'bitter',
+                row_id: 207,
+                type: 'goat',
+            },
+        ],
+        tooFewDocuments: true,
+        tooManyBytes: false,
+    },
+    error: null,
+};
 
-    const { liveSpecs: publicationSpecs } = useLiveSpecs_spec(
-        `data-preview-${collectionName}`,
-        [collectionName]
+function DataPreview() {
+    const [selectedKey, setSelectedKey] = useState<string>('');
+    const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
+        []
     );
-    const spec = useMemo(
-        () => publicationSpecs[0] as LiveSpecsQuery_spec | undefined,
-        [publicationSpecs]
+
+    const theme = useTheme();
+    const jsonTheme =
+        theme.palette.mode === 'dark' ? 'bright' : 'bright:inverted';
+
+    const buildRecordKey = useCallback(
+        (record: Record<string, any>) => {
+            return sampleSpec.spec.key
+                .map((k: string) => JsonPointer.get(record, k))
+                .join('_');
+        },
+        [sampleSpec.spec.key]
     );
 
-    const journals = useJournalsForCollection(spec?.catalog_name);
-    const { data: journalsData, isValidating: journalsLoading } = journals;
-
-    // TODO (typing) we need to fix typing
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const journal = useMemo(() => journalsData?.journals?.[0], [journalsData]);
-    const journalData = useJournalData(journal?.name, 20, collectionName);
-    const isLoading = journalsLoading || journalData.loading;
+    const rowsByKey = useMemo(() => {
+        return Object.assign(
+            {},
+            ...sampleJournalData.data.documents.map((record) => ({
+                [buildRecordKey(record)]: record,
+            }))
+        ) as Record<string, JournalRecord<Record<string, any>>>;
+    }, [buildRecordKey, sampleJournalData.data, sampleJournalData.error]);
 
     useEffect(() => {
-        if (!isLoading) {
-            setPreviewActive(false);
+        if (!isEmpty(rowsByKey)) {
+            const firstKey = Object.keys(rowsByKey)[0];
+            setSelectedKey(firstKey);
+            setSelectionModel([firstKey]);
         }
-    }, [setPreviewActive, isLoading]);
+    }, [rowsByKey]);
 
     return (
-        <>
-            {journalsData && !hasLength(journalsData.journals) ? (
-                <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning" short>
-                        <AlertTitle>
-                            <FormattedMessage id="collectionsPreview.notFound.title" />
-                        </AlertTitle>
-                        <FormattedMessage id="collectionsPreview.notFound.message" />
-                    </AlertBox>
-                </Box>
-            ) : journalData.data?.tooManyBytes &&
-              journalData.data.documents.length === 0 ? (
-                <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning" short>
-                        <AlertTitle>
-                            <FormattedMessage id="collectionsPreview.tooManyBytesAndNoDocuments.title" />
-                        </AlertTitle>
-                        <FormattedMessage id="collectionsPreview.tooManyBytesAndNoDocuments.message" />
-                    </AlertBox>
-                </Box>
-            ) : journalData.data?.tooFewDocuments ? (
-                <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning" short>
-                        <AlertTitle>
-                            <FormattedMessage id="collectionsPreview.tooFewDocuments.title" />
-                        </AlertTitle>
-                        <FormattedMessage id="collectionsPreview.tooFewDocuments.message" />
-                    </AlertBox>
-                </Box>
-            ) : journalData.data?.tooManyBytes ? (
-                <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning" short>
-                        <AlertTitle>
-                            <FormattedMessage id="collectionsPreview.tooManyBytes.title" />
-                        </AlertTitle>
-                        <FormattedMessage id="collectionsPreview.tooManyBytes.message" />
-                    </AlertBox>
-                </Box>
-            ) : null}
-            {(journalData.data?.documents.length ?? 0) > 0 && spec ? (
-                <ListView journalData={journalData} spec={spec} />
-            ) : null}
-        </>
+        <Grid item xs={12} data-private>
+            <ListAndDetails
+                codeEditorDetails
+                removeMargin
+                height={389}
+                list={
+                    <DataGrid
+                        columns={[{ field: 'key', headerName: 'Key', flex: 1 }]}
+                        rows={Object.entries(rowsByKey).map(([k]) => ({
+                            key: k,
+                            id: k,
+                        }))}
+                        hideFooter
+                        disableColumnSelector
+                        headerHeight={40}
+                        rowCount={sampleJournalData.data.documents.length}
+                        onRowClick={(params) => setSelectedKey(params.row.key)}
+                        selectionModel={selectionModel}
+                        onSelectionModelChange={(newSelectionModel) => {
+                            setSelectionModel(newSelectionModel);
+                        }}
+                        sx={dataGridListStyling}
+                    />
+                }
+                backgroundColor={
+                    theme.palette.mode === 'light' ? 'white' : undefined
+                }
+                details={
+                    <Box
+                        sx={{
+                            'm': 2,
+                            '& .react-json-view': {
+                                backgroundColor: 'transparent !important',
+                            },
+                        }}
+                    >
+                        <ReactJson
+                            style={{ wordBreak: 'break-all' }}
+                            quotesOnKeys={false}
+                            src={rowsByKey[selectedKey]}
+                            theme={jsonTheme}
+                            displayObjectSize={false}
+                            displayDataTypes={false}
+                        />
+                    </Box>
+                }
+            />
+        </Grid>
     );
 }
 

@@ -7,7 +7,7 @@ import {
     useTheme,
 } from '@mui/material';
 import CatalogListItem from 'components/transformation/create/DerivationEditor/Catalog/CatalogListItem';
-import { EditPencil, Plus } from 'iconoir-react';
+import { EditPencil } from 'iconoir-react';
 import { CSSProperties, MouseEventHandler } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { DerivationAttribute } from 'stores/TransformationCreate/types';
@@ -58,15 +58,9 @@ function CatalogList({
                         onClick={addButtonClickHandler}
                         sx={{ borderRadius: 0 }}
                     >
-                        {fixedAttributeType === 'transform' ? (
-                            <EditPencil
-                                style={{ color: theme.palette.primary.main }}
-                            />
-                        ) : (
-                            <Plus
-                                style={{ color: theme.palette.primary.main }}
-                            />
-                        )}
+                        <EditPencil
+                            style={{ color: theme.palette.primary.main }}
+                        />
                     </IconButton>
                 </Stack>
             }

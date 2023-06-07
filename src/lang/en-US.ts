@@ -1022,7 +1022,7 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
 
     'newTransform.editor.catalog.transform.header': `Transforms`,
     'newTransform.editor.catalog.migration.header': `Migrations`,
-    'newTransform.editor.catalog.message.empty': `Click on the plus sign above to create a {contentType}.`,
+    'newTransform.editor.catalog.message.empty': `Click on the edit pencil above to add or remove a {contentType}.`,
 };
 
 const CustomRenderers: ResolvedIntlConfig['messages'] = {

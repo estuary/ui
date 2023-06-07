@@ -8,10 +8,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { intensifiedOutline } from 'context/Theme';
-import {
-    useTransformationCreate_previewActive,
-    useTransformationCreate_setPreviewActive,
-} from 'stores/TransformationCreate/hooks';
+import { useTransformationCreate_setPreviewActive } from 'stores/TransformationCreate/hooks';
 import { BaseComponentProps } from 'types';
 
 interface WrapperProps extends BaseComponentProps {
@@ -44,7 +41,7 @@ function Wrapper({ children, gridSize }: WrapperProps) {
 const headerStyle = { mb: 0.5, fontSize: 16, fontWeight: 500 };
 
 function DerivationEditorHeader() {
-    const previewActive = useTransformationCreate_previewActive();
+    // const previewActive = useTransformationCreate_previewActive();
     const setPreviewActive = useTransformationCreate_setPreviewActive();
 
     const generateDataPreview = () => {
@@ -78,7 +75,7 @@ function DerivationEditorHeader() {
                     <Box>
                         <Button
                             variant="outlined"
-                            disabled={previewActive}
+                            // disabled={previewActive}
                             onClick={generateDataPreview}
                         >
                             Preview
