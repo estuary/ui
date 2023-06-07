@@ -1,14 +1,19 @@
 import {
+    FormControl,
+    FormControlProps,
+    FormHelperText,
+    Input,
     InputAdornment,
+    InputLabel,
     MenuItem,
     Select,
     SelectChangeEvent,
-    TextField,
 } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
 import { concat } from 'lodash';
-import { ChangeEvent, useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { ChangeEvent, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { useUpdateEffect } from 'react-use';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 
@@ -22,9 +27,14 @@ interface Props {
     onPrefixChange?: (prefix: string, errors: Errors) => void;
     allowBlankName?: boolean;
     defaultPrefix?: boolean;
+    description?: string;
+    required?: boolean;
+    formControlProps?: FormControlProps;
 }
 
 const NAME_RE = new RegExp(`^(${PREFIX_NAME_PATTERN}/?)*$`);
+const DESCRIPTION_ID = 'prefixed-name-description';
+const INPUT_ID = 'prefixed-name-input';
 
 const validateInput = (value: string, allowBlank?: boolean): Errors => {
     if (!allowBlank && !hasLength(value)) {
@@ -40,12 +50,17 @@ const validateInput = (value: string, allowBlank?: boolean): Errors => {
 
 function PrefixedName({
     label,
+    description,
     allowBlankName,
     onChange,
     onNameChange,
     onPrefixChange,
     defaultPrefix,
+    required,
+    formControlProps,
 }: Props) {
+    const intl = useIntl();
+
     const adminCapabilities = useEntitiesStore_capabilities_adminable();
     const objectRoles = Object.keys(adminCapabilities);
     const singleOption = objectRoles.length === 1;
@@ -57,6 +72,8 @@ function PrefixedName({
 
     const [name, setName] = useState('');
     const [nameError, setNameError] = useState<Errors>(null);
+
+    const [errors, setErrors] = useState<string | null>(null);
 
     const handlers = {
         setPrefix: (event: SelectChangeEvent<string>) => {
@@ -85,12 +102,40 @@ function PrefixedName({
         },
     };
 
-    useEffect(() => {
+    useUpdateEffect(() => {
+        const updatedErrors: string[] = [];
+        const generateErrorList = (inputName: string, inputErrors: Errors) => {
+            inputErrors?.forEach((inputError) => {
+                updatedErrors.push(
+                    intl.formatMessage({
+                        id: `custom.prefixedName.${inputName}.${inputError}`,
+                    })
+                );
+            });
+        };
+
+        if (nameError) {
+            generateErrorList('name', nameError);
+        }
+
+        if (prefixError) {
+            generateErrorList('prefix', nameError);
+        }
+
+        setErrors(hasLength(updatedErrors) ? updatedErrors.join(' ') : null);
+
         onChange(
             `${prefix}${name}`,
             concat([], nameError ?? [], prefixError ?? [])
         );
-    }, [onChange, name, prefix, nameError, prefixError]);
+    }, [onChange, name, prefix, nameError, prefixError, intl]);
+
+    const firstFormHelperText = description
+        ? description
+        : errors
+        ? errors
+        : null;
+    const secondFormHelperText = description && errors ? errors : null;
 
     if (!hasLength(objectRoles)) {
         return (
@@ -101,9 +146,23 @@ function PrefixedName({
     }
 
     return (
-        <TextField
-            InputProps={{
-                startAdornment: (
+        <FormControl fullWidth {...formControlProps} variant="outlined">
+            <InputLabel
+                error={Boolean(errors)}
+                required={required}
+                htmlFor={INPUT_ID}
+            >
+                {label}
+            </InputLabel>
+            <Input
+                aria-describedby={description ? DESCRIPTION_ID : undefined}
+                id={INPUT_ID}
+                value={name}
+                size="small"
+                error={Boolean(errors)}
+                onChange={handlers.setName}
+                sx={{ borderRadius: 3 }}
+                startAdornment={
                     <InputAdornment position="start">
                         {singleOption ? (
                             prefix
@@ -129,17 +188,18 @@ function PrefixedName({
                             </Select>
                         )}
                     </InputAdornment>
-                ),
-                sx: { borderRadius: 3 },
-            }}
-            label={label}
-            value={name}
-            variant="outlined"
-            size="small"
-            error={Boolean(nameError)}
-            onChange={handlers.setName}
-            sx={{ flexGrow: 1 }}
-        />
+                }
+            />
+            <FormHelperText
+                id={DESCRIPTION_ID}
+                error={Boolean(errors) ? !description : undefined}
+            >
+                {firstFormHelperText}
+            </FormHelperText>
+            <FormHelperText error={Boolean(errors)}>
+                {secondFormHelperText}
+            </FormHelperText>
+        </FormControl>
     );
 }
 

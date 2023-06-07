@@ -1073,6 +1073,10 @@ const UpdateEntity: ResolvedIntlConfig['messages'] = {
 
 const CustomErrors: ResolvedIntlConfig['messages'] = {
     'custom.prefixedName.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']}. Please contact an administrator.`,
+    'custom.prefixedName.prefix.missing': `please select an organization`,
+    'custom.prefixedName.name.missing': `please provide a name`,
+    'custom.prefixedName.name.invalid': `may only include ${CommonMessages['catalogName.limitations']}`,
+    'custom.prefixedName.invalid': `You do not have the necessary ${CommonMessages['terms.permissions']}. Please contact an administrator.`,
     'custom.catalogName.pattern': `must match pattern "organization/name"\nwhich may include ${CommonMessages['catalogName.limitations']}`,
 };
 

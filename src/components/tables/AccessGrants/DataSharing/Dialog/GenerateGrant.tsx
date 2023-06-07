@@ -140,12 +140,19 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                 <PrefixedName
                     allowBlankName
                     defaultPrefix
+                    description="this is desc"
                     label={intl.formatMessage({
                         id: 'admin.prefix.issueGrant.label.sharedPrefix',
                     })}
                     onChange={(value, errors) => {
                         setObjectRole(value);
                         setObjectRoleHasErrors(hasLength(errors));
+                    }}
+                    formControlProps={{
+                        sx: {
+                            flexGrow: 1,
+                        },
+                        variant: 'outlined',
                     }}
                 />
             </Grid>

@@ -95,6 +95,12 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
                         setObjectRole(value);
                         setObjectRoleHasErrors(hasLength(errors));
                     }}
+                    formControlProps={{
+                        sx: {
+                            flexGrow: 1,
+                        },
+                        variant: 'outlined',
+                    }}
                 />
             </Grid>
 
