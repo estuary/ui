@@ -117,8 +117,8 @@ function PrefixedName({
     const description = showDescription
         ? intl.formatMessage({
               id: singleOption
-                  ? 'entityName.description.singlePrefix'
-                  : 'entityName.description',
+                  ? 'prefixedName.description.singlePrefix'
+                  : 'prefixedName.description',
           })
         : null;
     const firstFormHelperText = description

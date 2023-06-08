@@ -60,8 +60,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'entityPrefix.label': `Prefix`,
     'entityPrefix.description': `Prefix for the entity name.`,
     'entityName.label': `Name`,
-    'entityName.description': `Select a prefix from the drop-down and add a unique name. (ex: acmeCo/marketing_data)`,
-    'entityName.description.singlePrefix': `Prefix already selected. Please add a unique name. (ex: marketing_data)`,
     'connector.label': `Connector`,
     'connector.description': `Choose the external system you're connecting to.`,
     'description.label': `Details`,
@@ -1073,6 +1071,11 @@ const UpdateEntity: ResolvedIntlConfig['messages'] = {
     'updateEntity.collection.skipped': `${CTAs['cta.enable']} and ${CTAs['cta.disable']} only work on derivations`,
 };
 
+const PrefixedName: ResolvedIntlConfig['messages'] = {
+    'prefixedName.description': `Select a prefix from the drop-down and add a unique name. (ex: acmeCo/marketing_data)`,
+    'prefixedName.description.singlePrefix': `Prefix already selected. Please add a unique name. (ex: marketing_data)`,
+};
+
 const CustomErrors: ResolvedIntlConfig['messages'] = {
     'custom.prefixedName.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']}. Please contact an administrator.`,
     'custom.prefixedName.prefix.missing': `please select an organization`,
@@ -1139,6 +1142,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...EntityEvolution,
     ...DraftErrors,
     ...UpdateEntity,
+    ...PrefixedName,
 };
 
 export default enUSMessages;
