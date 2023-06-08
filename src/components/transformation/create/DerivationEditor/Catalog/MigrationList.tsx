@@ -10,17 +10,21 @@ import CatalogList, {
 } from 'components/transformation/create/DerivationEditor/Catalog/CatalogList';
 import { defaultOutline, intensifiedOutline } from 'context/Theme';
 import { NavArrowDown } from 'iconoir-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
     useTransformationCreate_addMigrations,
     useTransformationCreate_migrations,
+    useTransformationCreate_selectedAttribute,
 } from 'stores/TransformationCreate/hooks';
 
 function MigrationList() {
     const theme = useTheme();
 
+    const selectedAttribute = useTransformationCreate_selectedAttribute();
     const migrations = useTransformationCreate_migrations();
     const addMigrations = useTransformationCreate_addMigrations();
+
+    const [expanded, setExpanded] = useState(false);
 
     const content: CatalogListContent[] = useMemo(
         () =>
@@ -31,14 +35,24 @@ function MigrationList() {
         [migrations]
     );
 
+    const migrationSelected = useMemo(
+        () => selectedAttribute.includes('migration'),
+        [selectedAttribute]
+    );
+
     const handlers = {
         insertBlankMigration: () => {
             addMigrations(['']);
+        },
+        toggleAccordion: () => {
+            setExpanded(!expanded);
         },
     };
 
     return (
         <Accordion
+            expanded={expanded}
+            onChange={handlers.toggleAccordion}
             sx={{
                 'borderLeft': intensifiedOutline[theme.palette.mode],
                 'borderRight': intensifiedOutline[theme.palette.mode],
@@ -56,7 +70,10 @@ function MigrationList() {
                 expandIcon={
                     <NavArrowDown
                         style={{
-                            color: theme.palette.text.primary,
+                            color:
+                                migrationSelected && !expanded
+                                    ? theme.palette.primary.main
+                                    : theme.palette.text.primary,
                         }}
                     />
                 }
@@ -64,8 +81,12 @@ function MigrationList() {
                     'px': 1,
                     '& .MuiAccordionSummary-content': {
                         'my': 0,
+                        'color': migrationSelected
+                            ? theme.palette.primary.main
+                            : theme.palette.text.primary,
                         '&.Mui-expanded': {
                             my: 0,
+                            color: theme.palette.text.primary,
                         },
                     },
                     '&.Mui-expanded': {
