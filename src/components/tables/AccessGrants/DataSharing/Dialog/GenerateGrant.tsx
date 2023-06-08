@@ -8,6 +8,7 @@ import {
     ChangeEvent,
     Dispatch,
     SetStateAction,
+    useCallback,
     useMemo,
     useState,
 } from 'react';
@@ -134,6 +135,11 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
         [objectRoleHasErrors, subjectInvalid, subjectMissing, subjectRole]
     );
 
+    const onChange = useCallback((value: string, errors: string | null) => {
+        setObjectRole(value);
+        setObjectRoleHasErrors(Boolean(errors));
+    }, []);
+
     return (
         <Grid
             container
@@ -148,10 +154,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                     label={intl.formatMessage({
                         id: 'admin.prefix.issueGrant.label.sharedPrefix',
                     })}
-                    onChange={(value, errors) => {
-                        setObjectRole(value);
-                        setObjectRoleHasErrors(Boolean(errors));
-                    }}
+                    onChange={onChange}
                 />
             </Grid>
 

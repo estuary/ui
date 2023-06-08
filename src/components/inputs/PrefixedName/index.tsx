@@ -8,11 +8,9 @@ import {
     MenuItem,
     OutlinedInput,
     Select,
-    SelectChangeEvent,
 } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
-import { concat } from 'lodash';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
@@ -33,8 +31,10 @@ interface Props {
     allowBlankName?: boolean;
     defaultPrefix?: boolean;
     description?: string;
+    hideErrorMessage?: boolean;
     required?: boolean;
     standardVariant?: boolean;
+    validateOnLoad?: boolean;
 }
 
 const NAME_RE = new RegExp(`^(${PREFIX_NAME_PATTERN}/?)*$`);
@@ -66,71 +66,52 @@ const validateInput = (value: string, allowBlank?: boolean): Errors => {
 };
 
 function PrefixedName({
-    label,
-    description,
     allowBlankName,
+    defaultPrefix,
+    description,
+    hideErrorMessage,
+    label,
     onChange,
     onNameChange,
     onPrefixChange,
-    defaultPrefix,
     required,
     standardVariant,
+    validateOnLoad,
 }: Props) {
-    const InputComponent = standardVariant ? Input : OutlinedInput;
-
+    // Hooks
     const intl = useIntl();
 
+    // Store stuff
     const adminCapabilities = useEntitiesStore_capabilities_adminable();
     const objectRoles = Object.keys(adminCapabilities);
     const singleOption = objectRoles.length === 1;
 
-    const [prefix, setPrefix] = useState('');
-    const [prefixError, setPrefixError] = useState<Errors>(null);
+    // Local State
+    const [errors, setErrors] = useState<string | null>(null);
     const [name, setName] = useState('');
     const [nameError, setNameError] = useState<Errors>(null);
-    const [errors, setErrors] = useState<string | null>(null);
+    const [prefix, setPrefix] = useState(
+        singleOption || defaultPrefix ? objectRoles[0] : ''
+    );
+    const [prefixError, setPrefixError] = useState<Errors>(null);
+
+    // Local vars for rendering
+    const InputComponent = standardVariant ? Input : OutlinedInput;
+    const showErrors = !hideErrorMessage && Boolean(errors);
+    const firstFormHelperText = description
+        ? description
+        : showErrors
+        ? errors
+        : null;
+    const secondFormHelperText = description && showErrors ? errors : null;
 
     const updateErrors = (prefixValue: string, nameValue: string) => {
+        // Validate both inputs
         const prefixErrors = validateInput(prefixValue, false);
         const nameErrors = validateInput(nameValue, allowBlankName);
 
-        setPrefixError(prefixErrors);
-        setNameError(nameErrors);
-
-        return [prefixErrors, nameErrors];
-    };
-
-    const handlers = {
-        setPrefix: (event: SelectChangeEvent<string>) => {
-            const value = event.target.value;
-            const { 0: error } = updateErrors(value, name);
-
-            setPrefix(value);
-            if (onNameChange) {
-                onNameChange(value, error);
-            }
-        },
-        setName: (
-            event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-        ) => {
-            const value = event.target.value;
-            const processedValue = value.replaceAll(/\s/g, '_');
-            const { 1: error } = updateErrors(prefix, processedValue);
-
-            setName(processedValue);
-            if (onPrefixChange) {
-                onPrefixChange(processedValue, error);
-            }
-        },
-    };
-
-    useMount(() => {
-        if (singleOption || defaultPrefix) {
-            setPrefix(objectRoles[0]);
-        }
-    });
-
-    useEffect(() => {
+        // Array to keep list of errors in by going through each returned
+        //  error and populating with the translated message
         const updatedErrors: string[] = [];
         const generateErrorList = (inputName: string, inputErrors: Errors) => {
             inputErrors?.forEach((inputError) => {
@@ -142,32 +123,60 @@ function PrefixedName({
             });
         };
 
-        if (nameError) {
-            generateErrorList('name', nameError);
+        // If there are any errors then populate the list
+        if (nameErrors) {
+            generateErrorList('name', nameErrors);
+        }
+        if (prefixErrors) {
+            generateErrorList('prefix', prefixErrors);
         }
 
-        if (prefixError) {
-            generateErrorList('prefix', prefixError);
-        }
-
+        // Generate the string by concat with space.
+        //  Follows the style of JSONForms
         const errorString = hasLength(updatedErrors)
             ? updatedErrors.join(' ')
             : null;
+
+        // Set the local state
         setErrors(errorString);
+        setPrefixError(prefixErrors);
+        setNameError(nameErrors);
 
-        onChange(
-            `${prefix}${name}`,
-            errorString,
-            concat([], nameError ?? [], prefixError ?? [])
-        );
-    }, [onChange, name, prefix, nameError, prefixError, intl]);
+        return [prefixErrors, nameErrors];
+    };
 
-    const firstFormHelperText = description
-        ? description
-        : errors
-        ? errors
-        : null;
-    const secondFormHelperText = description && errors ? errors : null;
+    const handlers = {
+        setPrefix: (value: string) => {
+            console.log('setPrefix');
+            const { 0: error } = updateErrors(value, name);
+
+            setPrefix(value);
+            if (onPrefixChange) {
+                onPrefixChange(value, error);
+            }
+        },
+        setName: (value: string) => {
+            console.log('setName');
+            const processedValue = value.replaceAll(/\s/g, '_');
+            const { 1: error } = updateErrors(prefix, processedValue);
+
+            setName(processedValue);
+            if (onNameChange) {
+                onNameChange(processedValue, error);
+            }
+        },
+    };
+
+    useEffect(() => {
+        onChange(`${prefix}${name}`, errors, []);
+    }, [errors, name, onChange, prefix]);
+
+    useMount(() => {
+        if (validateOnLoad) {
+            console.log('updating error');
+            updateErrors(prefix, name);
+        }
+    });
 
     if (!hasLength(objectRoles)) {
         return (
@@ -189,10 +198,12 @@ function PrefixedName({
             </InputLabel>
             <InputComponent
                 aria-describedby={description ? DESCRIPTION_ID : undefined}
+                error={Boolean(nameError)}
                 id={INPUT_ID}
                 label={label}
-                notched
-                onChange={handlers.setName}
+                onChange={(event) => {
+                    handlers.setName(event.target.value);
+                }}
                 required={!allowBlankName}
                 size="small"
                 sx={{ borderRadius: 3 }}
@@ -208,7 +219,9 @@ function PrefixedName({
                                 value={prefix}
                                 disableUnderline
                                 error={Boolean(prefixError)}
-                                onChange={handlers.setPrefix}
+                                onChange={(event) => {
+                                    handlers.setPrefix(event.target.value);
+                                }}
                                 required
                                 sx={{
                                     '& .MuiSelect-select': {
@@ -228,11 +241,11 @@ function PrefixedName({
             />
             <FormHelperText
                 id={DESCRIPTION_ID}
-                error={Boolean(errors) ? !description : undefined}
+                error={showErrors ? !description : undefined}
             >
                 {firstFormHelperText}
             </FormHelperText>
-            <FormHelperText error={Boolean(errors)}>
+            <FormHelperText error={showErrors}>
                 {secondFormHelperText}
             </FormHelperText>
         </FormControl>

@@ -22,19 +22,12 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
+import { EnumOption } from '@jsonforms/core';
 import {
-    EnumCellProps,
-    EnumOption,
-    JsonSchema7,
-    WithClassname,
-} from '@jsonforms/core';
-import {
-    Autocomplete,
     AutocompleteRenderOptionState,
     FilterOptionsState,
-    Input,
 } from '@mui/material';
-import merge from 'lodash/merge';
+import PrefixedName from 'components/inputs/PrefixedName';
 import React, { ReactNode } from 'react';
 
 export interface WithOptionLabel {
@@ -49,93 +42,85 @@ export interface WithOptionLabel {
     ): EnumOption[];
 }
 
-const generateOptionsArray = (rootSchema: JsonSchema7, path: string) => {
-    return (
-        rootSchema.properties?.[path].examples?.map((pathVal) => {
-            return {
-                const: pathVal,
-                label: pathVal,
-            };
-        }) ?? []
-    );
-};
-
-const getStringValue = (val: any) => {
-    return typeof val === 'string' ? val : val?.label ?? '';
-};
-
-export const CatalogNameAutoComplete = (
-    props: EnumCellProps & WithClassname & WithOptionLabel
-) => {
+export const CatalogNameAutoComplete = (props: any) => {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const {
-        data,
-        className,
-        id,
-        isValid,
-        enabled,
+        // data,
+        // className,
+        // id,
+        // isValid,
+        // enabled,
         path,
         handleChange,
-        config,
-        rootSchema,
-        renderOption,
-        filterOptions,
+        uischema,
+        // config,
+        // rootSchema,
+        // renderOption,
+        // filterOptions,
     } = props;
 
-    const options = generateOptionsArray(rootSchema as JsonSchema7, path);
-    const appliedUiSchemaOptions = merge({}, config, options);
-    const singleOption = options.length === 1;
-    const singleOptionString = getStringValue(options[0]);
+    // const options = generateOptionsArray(rootSchema as JsonSchema7, path);
+    // const appliedUiSchemaOptions = merge({}, config, options);
+    // const singleOption = options.length === 1;
+    // const singleOptionString = getStringValue(options[0]);
 
     // Attempt to set the input value to:
     //  The data provided
     //  The only option
     //  Default to blank
-    const [inputValue, setInputValue] = React.useState(
-        data ? data : singleOption ? singleOptionString : ''
-    );
-    const inputEmpty = inputValue.length === 0;
+    // const [inputValue, setInputValue] = React.useState(
+    //     data ? data : singleOption ? singleOptionString : ''
+    // );
 
     return (
-        <Autocomplete
-            autoComplete
-            autoHighlight
-            className={className}
-            disableClearable
-            disabled={!enabled}
-            freeSolo
-            fullWidth
-            selectOnFocus={false}
-            getOptionLabel={getStringValue}
-            id={id}
-            inputValue={inputValue}
-            openOnFocus={!isValid || inputEmpty}
-            options={options}
-            style={{ marginTop: 16 }}
-            value={inputValue}
-            isOptionEqualToValue={(option, value) =>
-                getStringValue(option) === value
-            }
-            onChange={(_event: any, newValue: any) => {
-                handleChange(path, getStringValue(newValue));
+        <PrefixedName
+            hideErrorMessage
+            standardVariant
+            label={`${uischema.label}`}
+            onChange={(prefixedName) => {
+                handleChange(path, prefixedName);
             }}
-            onInputChange={(_event, newInputValue) => {
-                setInputValue(newInputValue);
-                handleChange(path, newInputValue);
-            }}
-            renderInput={(params) => (
-                <Input
-                    style={{ width: '100%' }}
-                    type="text"
-                    inputProps={params.inputProps}
-                    inputRef={params.InputProps.ref}
-                    autoFocus={appliedUiSchemaOptions.focus}
-                    disabled={!enabled}
-                    value={inputValue}
-                />
-            )}
-            renderOption={renderOption}
-            filterOptions={filterOptions}
         />
+
+        // <Autocomplete
+        //     autoComplete
+        //     autoHighlight
+        //     className={className}
+        //     disableClearable
+        //     disabled={!enabled}
+        //     freeSolo
+        //     fullWidth
+        //     selectOnFocus={false}
+        //     getOptionLabel={getStringValue}
+        //     id={id}
+        //     inputValue={inputValue}
+        //     openOnFocus={!isValid || inputEmpty}
+        //     options={options}
+        //     style={{ marginTop: 16 }}
+        //     value={inputValue}
+        //     isOptionEqualToValue={(option, value) =>
+        //         getStringValue(option) === value
+        //     }
+        //     onChange={(_event: any, newValue: any) => {
+        //         handleChange(path, getStringValue(newValue));
+        //     }}
+        //     onInputChange={(_event, newInputValue) => {
+        //         setInputValue(newInputValue);
+        //         handleChange(path, newInputValue);
+        //     }}
+        //     renderInput={(params) => (
+        //         <Input
+        //             style={{ width: '100%' }}
+        //             type="text"
+        //             inputProps={params.inputProps}
+        //             inputRef={params.InputProps.ref}
+        //             autoFocus={appliedUiSchemaOptions.focus}
+        //             disabled={!enabled}
+        //             value={inputValue}
+        //         />
+        //     )}
+        //     renderOption={renderOption}
+        //     filterOptions={filterOptions}
+        // />
     );
 };

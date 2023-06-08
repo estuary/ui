@@ -4,7 +4,7 @@ import { generateGrantDirective } from 'api/directives';
 import PrefixedName from 'components/inputs/PrefixedName';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import { useZustandStore } from 'context/Zustand/provider';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import {
@@ -82,6 +82,11 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
         },
     };
 
+    const onChange = useCallback((value: string, errors: string | null) => {
+        setObjectRole(value);
+        setObjectRoleHasErrors(Boolean(errors));
+    }, []);
+
     return (
         <Grid
             container
@@ -96,10 +101,7 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
                     label={intl.formatMessage({
                         id: 'common.tenant',
                     })}
-                    onChange={(value, errors) => {
-                        setObjectRole(value);
-                        setObjectRoleHasErrors(Boolean(errors));
-                    }}
+                    onChange={onChange}
                 />
             </Grid>
 

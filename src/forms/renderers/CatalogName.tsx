@@ -30,13 +30,12 @@ import {
     rankWith,
     scopeEndsWith,
 } from '@jsonforms/core';
-import { MaterialInputControl } from '@jsonforms/material-renderers';
 import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 import { Box } from '@mui/material';
-import { CatalogNameAutoComplete } from 'forms/renderers/CatalogName/AutoComplete';
-import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
+import PrefixedName from 'components/inputs/PrefixedName';
+import { useCallback } from 'react';
+import { useEndpointConfigStore_setEndpointCustomErrors } from 'stores/EndpointConfig/hooks';
 
 export const CATALOG_NAME_SCOPE = 'entityName';
 
@@ -48,19 +47,27 @@ export const catalogNameTypeTester: RankedTester = rankWith(
 const CatalogNameTypeRenderer = (
     props: ControlProps & OwnPropsOfEnum & WithOptionLabel
 ) => {
-    const { errors, schema } = props;
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const { description, handleChange, uischema, path } = props;
 
-    // Get custom error message for catalog name issues so they
-    //  are more readable for users
-    const intl = useIntl();
-    const customErrors = useMemo(() => {
-        if (schema.pattern && errors.includes(schema.pattern)) {
-            return intl.formatMessage({ id: 'custom.catalogName.pattern' });
-        }
+    const setCustomErrors = useEndpointConfigStore_setEndpointCustomErrors();
 
-        return errors;
-    }, [errors, intl, schema.pattern]);
-
+    const updateFunction = useCallback(
+        (prefixedName: string, errors: string | null) => {
+            console.log(`prefixedName = ${path}`, { prefixedName, errors });
+            handleChange(path, prefixedName);
+            setCustomErrors([
+                {
+                    instancePath: path,
+                    message: errors,
+                    schemaPath: '',
+                    keyword: '',
+                    params: {},
+                },
+            ]);
+        },
+        [handleChange, path, setCustomErrors]
+    );
     return (
         <Box
             sx={{
@@ -69,10 +76,12 @@ const CatalogNameTypeRenderer = (
                 },
             }}
         >
-            <MaterialInputControl
-                {...props}
-                errors={customErrors}
-                input={CatalogNameAutoComplete}
+            <PrefixedName
+                validateOnLoad
+                standardVariant
+                description={description}
+                label={`${uischema.label}`}
+                onChange={updateFunction}
             />
         </Box>
     );
