@@ -103,11 +103,18 @@ function MaterializeGenerateButton({
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
 
-    // Add the image name to the end unless there is already a persisted
-    //  draftID. Because after the first generation we already have a name
-    //  with the image name suffix
+    // After the first generation we already have a name with the
+    //  image name suffix (unless name changed)
+
+    // The order of the OR statement below is SUPER important
+    //      If there is NO persisted draft ID
+    //          - need to process the name
+    //      If there is NO persisted draft ID BUT the name changed
+    //          - need to process the name
+    //      If there is persisted draft ID
+    //          - need to process the name
     const processedEntityName = useEntityNameSuffix(
-        entityNameChanged || !persistedDraftId
+        !persistedDraftId || entityNameChanged
     );
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
