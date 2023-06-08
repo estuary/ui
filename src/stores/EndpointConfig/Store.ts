@@ -29,7 +29,7 @@ const fetchErrors = ({ errors }: JsonFormsData): JsonFormsData['errors'] => {
 const filterErrors = (list: JsonFormsData['errors']): (string | undefined)[] =>
     map(list, 'message');
 
-const populateEndpointConfigErrors = (
+const populateErrors = (
     endpointConfig: JsonFormsData,
     customErrors: any[],
     state: EndpointConfigState
@@ -89,7 +89,7 @@ const getInitialState = (
 
                 // Setting this so that if there is a custom error then the
                 //  generate button will not proceed
-                populateEndpointConfigErrors(endpointConfig, val, state);
+                populateErrors(endpointConfig, val, state);
             }),
             false,
             'Endpoint Custom Errors Set'
@@ -103,11 +103,7 @@ const getInitialState = (
 
                 const { endpointConfig, customErrors } = get();
 
-                populateEndpointConfigErrors(
-                    endpointConfig,
-                    customErrors,
-                    state
-                );
+                populateErrors(endpointConfig, customErrors, state);
             }),
             false,
             'Endpoint Schema Set'
@@ -137,11 +133,7 @@ const getInitialState = (
                     ? createJSONFormDefaults(endpointSchema)
                     : encryptedEndpointConfig;
 
-                populateEndpointConfigErrors(
-                    encryptedEndpointConfig,
-                    customErrors,
-                    state
-                );
+                populateErrors(encryptedEndpointConfig, customErrors, state);
             }),
             false,
             'Encrypted Endpoint Config Set'
@@ -171,11 +163,7 @@ const getInitialState = (
                     ? createJSONFormDefaults(endpointSchema)
                     : endpointConfig;
 
-                populateEndpointConfigErrors(
-                    state.endpointConfig,
-                    customErrors,
-                    state
-                );
+                populateErrors(state.endpointConfig, customErrors, state);
             }),
             false,
             'Endpoint Config Changed'
@@ -189,11 +177,7 @@ const getInitialState = (
 
                 state.serverUpdateRequired = updateRequired;
 
-                populateEndpointConfigErrors(
-                    endpointConfig,
-                    customErrors,
-                    state
-                );
+                populateErrors(endpointConfig, customErrors, state);
             }),
             false,
             'Server Update Required Flag Changed'
