@@ -45,6 +45,7 @@ function CatalogListItem({
                     selected={selectedAttribute === attributeId}
                     onClick={handlers.toggleList}
                     sx={{
+                        'width': '100%',
                         'px': 1,
                         '&.Mui-selected': {
                             backgroundColor: open

@@ -16,7 +16,7 @@ import {
     useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
 
-const EDITOR_HEIGHT = 362;
+const EDITOR_HEIGHT = 363;
 
 function DerivationEditor() {
     const catalogName = useTransformationCreate_catalogName();
@@ -36,38 +36,64 @@ function DerivationEditor() {
         <Grid container>
             <DerivationEditorHeader />
 
-            <Grid item xs={3} sx={{ display: 'flex', flexDirection: 'column' }}>
-                <TransformList />
-
-                <MigrationList />
-            </Grid>
-
-            <Grid item xs={5} sx={{ display: 'flex', flexDirection: 'column' }}>
-                <Box
+            <Grid container wrap="nowrap">
+                <Grid
+                    item
+                    xs={3}
                     sx={{
-                        borderBottom: (theme) =>
-                            intensifiedOutline[theme.palette.mode],
-                        borderRight: (theme) =>
-                            intensifiedOutline[theme.palette.mode],
-                        borderLeft: (theme) =>
-                            intensifiedOutline[theme.palette.mode],
+                        minWidth: 200,
+                        display: 'flex',
+                        flexDirection: 'column',
                     }}
                 >
-                    {catalogName && showEditor ? (
-                        <SQLEditor
-                            entityName={catalogName}
-                            editorHeight={EDITOR_HEIGHT}
-                        />
-                    ) : (
-                        <EmptySQLEditor editorHeight={EDITOR_HEIGHT} />
-                    )}
-                </Box>
+                    <TransformList />
 
-                <ShuffleKeys />
-            </Grid>
+                    <MigrationList />
+                </Grid>
 
-            <Grid item xs={4} sx={{ display: 'flex', flexDirection: 'column' }}>
-                <SQLDataPreview />
+                <Grid
+                    item
+                    xs={5}
+                    sx={{
+                        minWidth: 300,
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <Box
+                        sx={{
+                            borderBottom: (theme) =>
+                                intensifiedOutline[theme.palette.mode],
+                            borderRight: (theme) =>
+                                intensifiedOutline[theme.palette.mode],
+                            borderLeft: (theme) =>
+                                intensifiedOutline[theme.palette.mode],
+                        }}
+                    >
+                        {catalogName && showEditor ? (
+                            <SQLEditor
+                                entityName={catalogName}
+                                editorHeight={EDITOR_HEIGHT}
+                            />
+                        ) : (
+                            <EmptySQLEditor editorHeight={EDITOR_HEIGHT} />
+                        )}
+                    </Box>
+
+                    <ShuffleKeys />
+                </Grid>
+
+                <Grid
+                    item
+                    xs={4}
+                    sx={{
+                        minWidth: 300,
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <SQLDataPreview />
+                </Grid>
             </Grid>
 
             <Grid

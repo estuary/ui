@@ -101,7 +101,7 @@ function MigrationList() {
                 </Typography>
             </AccordionSummary>
 
-            <AccordionDetails sx={{ pt: 0, px: 0, borderBottomLeftRadius: 4 }}>
+            <AccordionDetails sx={{ p: 0, borderBottomLeftRadius: 4 }}>
                 <CatalogList
                     fixedAttributeType="migration"
                     content={content}

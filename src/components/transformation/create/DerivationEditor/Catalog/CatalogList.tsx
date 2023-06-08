@@ -66,19 +66,22 @@ function CatalogList({
             }
             sx={{
                 minHeight: minHeight ?? '400.5px',
+                overflowX: 'auto',
                 borderBottom,
             }}
         >
             {hasLength(content) ? (
-                content.map(({ attributeId, value, nestedValue }) => (
-                    <CatalogListItem
-                        key={attributeId}
-                        attributeId={attributeId}
-                        fixedAttributeType={fixedAttributeType}
-                        itemLabel={value}
-                        nestedItemLabel={nestedValue}
-                    />
-                ))
+                <Stack sx={{ width: '100%' }}>
+                    {content.map(({ attributeId, value, nestedValue }) => (
+                        <CatalogListItem
+                            key={attributeId}
+                            attributeId={attributeId}
+                            fixedAttributeType={fixedAttributeType}
+                            itemLabel={value}
+                            nestedItemLabel={nestedValue}
+                        />
+                    ))}
+                </Stack>
             ) : (
                 <ListItem>
                     <Typography sx={{ mt: 1 }}>

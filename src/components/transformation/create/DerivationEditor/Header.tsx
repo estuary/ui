@@ -13,10 +13,10 @@ import { BaseComponentProps } from 'types';
 
 interface WrapperProps extends BaseComponentProps {
     gridSize: GridSize;
-    hideBorderRight?: boolean;
+    minWidth?: number;
 }
 
-function Wrapper({ children, gridSize }: WrapperProps) {
+function Wrapper({ children, gridSize, minWidth }: WrapperProps) {
     const theme = useTheme();
 
     return (
@@ -24,6 +24,7 @@ function Wrapper({ children, gridSize }: WrapperProps) {
             item
             xs={gridSize}
             sx={{
+                minWidth,
                 pt: 1.5,
                 pb: 1,
                 px: 1,
@@ -49,8 +50,8 @@ function DerivationEditorHeader() {
     };
 
     return (
-        <Grid container>
-            <Wrapper gridSize={3}>
+        <Grid container wrap="nowrap">
+            <Wrapper gridSize={3} minWidth={200}>
                 <Typography sx={headerStyle}>Catalog</Typography>
 
                 <Typography variant="caption">
@@ -58,7 +59,7 @@ function DerivationEditorHeader() {
                 </Typography>
             </Wrapper>
 
-            <Wrapper gridSize={5}>
+            <Wrapper gridSize={5} minWidth={300}>
                 <Stack
                     spacing={1}
                     direction="row"
@@ -84,7 +85,7 @@ function DerivationEditorHeader() {
                 </Stack>
             </Wrapper>
 
-            <Wrapper gridSize={4} hideBorderRight>
+            <Wrapper gridSize={4} minWidth={300}>
                 <Typography sx={headerStyle}>Data Preview</Typography>
 
                 <Typography variant="caption">
