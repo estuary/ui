@@ -118,14 +118,12 @@ export const useDetailsForm_setDetails_connector = () => {
     >(getStoreName(entityType), (state) => state.setDetails_connector);
 };
 
-const errorsExistSelector = (state: DetailsFormState) =>
-    state.detailsFormErrorsExist;
 export const useDetailsForm_errorsExist = () => {
     const entityType = useEntityType();
-    return useZustandStore<
-        DetailsFormState,
-        DetailsFormState['detailsFormErrorsExist']
-    >(getStoreName(entityType), errorsExistSelector);
+    return useZustandStore<DetailsFormState, DetailsFormState['errorsExist']>(
+        getStoreName(entityType),
+        (state: DetailsFormState) => state.errorsExist
+    );
 };
 
 export const useDetailsForm_setDraftedEntityName = () => {

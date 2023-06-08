@@ -3,6 +3,7 @@ import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
+import { getStoreWithCustomErrorsSettings } from 'stores/CustomErrors';
 import { Details, DetailsFormState } from 'stores/DetailsForm/types';
 import {
     getInitialHydrationData,
@@ -12,6 +13,8 @@ import { DetailsFormStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
 import { createStore, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
+
+const STORE_KEY = 'Details Form';
 
 const initialDetails: Details = {
     data: {
@@ -31,7 +34,7 @@ const getInitialStateData = (): Pick<
     DetailsFormState,
     | 'connectors'
     | 'details'
-    | 'detailsFormErrorsExist'
+    | 'errorsExist'
     | 'draftedEntityName'
     | 'entityNameChanged'
     | 'previousDetails'
@@ -39,7 +42,7 @@ const getInitialStateData = (): Pick<
     connectors: [],
 
     details: initialDetails,
-    detailsFormErrorsExist: true,
+    errorsExist: true,
 
     draftedEntityName: '',
     entityNameChanged: false,
@@ -52,7 +55,18 @@ export const getInitialState = (
     get: StoreApi<DetailsFormState>['getState']
 ): DetailsFormState => ({
     ...getInitialStateData(),
-    ...getStoreWithHydrationSettings('Details Form', set),
+    ...getStoreWithHydrationSettings(STORE_KEY, set),
+    ...getStoreWithCustomErrorsSettings(STORE_KEY),
+
+    setCustomErrors: (val) => {
+        set(
+            produce((state: DetailsFormState) => {
+                state.customErrors = val;
+            }),
+            false,
+            'Endpoint Custom Errors Set'
+        );
+    },
 
     setDetails: (details) => {
         set(
@@ -64,7 +78,7 @@ export const getInitialState = (
 
                 state.details = details;
 
-                state.detailsFormErrorsExist = !isEmpty(
+                state.errorsExist = !isEmpty(
                     details.errors ?? get().details.errors
                 );
             }),

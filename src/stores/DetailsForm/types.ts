@@ -1,4 +1,5 @@
 import { JsonFormsCore } from '@jsonforms/core';
+import { StoreWithCustomErrors } from 'stores/CustomErrors';
 import { StoreWithHydration } from 'stores/Hydration';
 import { EntityWithCreateWorkflow, EntityWorkflow } from 'types';
 
@@ -16,7 +17,9 @@ export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     };
 }
 
-export interface DetailsFormState extends StoreWithHydration {
+export interface DetailsFormState
+    extends StoreWithHydration,
+        StoreWithCustomErrors {
     // Form Data
     details: Details;
     setDetails: (details: Details) => void;
@@ -24,7 +27,7 @@ export interface DetailsFormState extends StoreWithHydration {
         connector: Details['data']['connectorImage']
     ) => void;
 
-    detailsFormErrorsExist: boolean;
+    errorsExist: boolean;
 
     // Connectors
     connectors: { [key: string]: any }[];

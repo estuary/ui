@@ -4,6 +4,7 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual, map } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
+import { getStoreWithCustomErrorsSettings } from 'stores/CustomErrors';
 import { getStoreWithHydrationSettings } from 'stores/Hydration';
 import { EndpointConfigStoreNames } from 'stores/names';
 import { JsonFormsData, Schema } from 'types';
@@ -12,6 +13,8 @@ import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { EndpointConfigState } from './types';
+
+const STORE_KEY = 'Endpoint Config';
 
 const fetchErrors = ({ errors }: JsonFormsData): JsonFormsData['errors'] => {
     let response: JsonFormsData['errors'] = [];
@@ -28,7 +31,7 @@ const filterErrors = (list: JsonFormsData['errors']): (string | undefined)[] =>
 
 const populateEndpointConfigErrors = (
     endpointConfig: JsonFormsData,
-    endpointCustomErrors: any[],
+    customErrors: any[],
     state: EndpointConfigState
 ): void => {
     const endpointConfigErrors = filterErrors(fetchErrors(endpointConfig));
@@ -37,16 +40,16 @@ const populateEndpointConfigErrors = (
         message,
     }));
 
-    state.endpointConfigErrorsExist = !state.serverUpdateRequired
+    state.errorsExist = !state.serverUpdateRequired
         ? false
-        : !isEmpty(endpointConfigErrors) || !isEmpty(endpointCustomErrors);
+        : !isEmpty(endpointConfigErrors) || !isEmpty(customErrors);
 };
 
 const getInitialStateData = (): Pick<
     EndpointConfigState,
     | 'encryptedEndpointConfig'
     | 'endpointConfig'
-    | 'endpointConfigErrorsExist'
+    | 'errorsExist'
     | 'endpointConfigErrors'
     | 'endpointSchema'
     | 'hydrated'
@@ -54,19 +57,17 @@ const getInitialStateData = (): Pick<
     | 'previousEndpointConfig'
     | 'publishedEndpointConfig'
     | 'serverUpdateRequired'
-    | 'endpointCustomErrors'
     | 'endpointCanBeEmpty'
 > => ({
     encryptedEndpointConfig: { data: {}, errors: [] },
     endpointConfig: { data: {}, errors: [] },
-    endpointConfigErrorsExist: true,
+    errorsExist: true,
     endpointConfigErrors: [],
     endpointSchema: {},
     hydrated: false,
     hydrationErrorsExist: false,
     previousEndpointConfig: { data: {}, errors: [] },
     publishedEndpointConfig: { data: {}, errors: [] },
-    endpointCustomErrors: [],
     serverUpdateRequired: false,
     endpointCanBeEmpty: false,
 });
@@ -76,12 +77,13 @@ const getInitialState = (
     get: StoreApi<EndpointConfigState>['getState']
 ): EndpointConfigState => ({
     ...getInitialStateData(),
-    ...getStoreWithHydrationSettings('Endpoint Config', set),
+    ...getStoreWithHydrationSettings(STORE_KEY, set),
+    ...getStoreWithCustomErrorsSettings(STORE_KEY),
 
-    setEndpointCustomErrors: (val) => {
+    setCustomErrors: (val) => {
         set(
             produce((state: EndpointConfigState) => {
-                state.endpointCustomErrors = val;
+                state.customErrors = val;
 
                 const { endpointConfig } = get();
 
@@ -99,11 +101,11 @@ const getInitialState = (
             produce((state: EndpointConfigState) => {
                 state.endpointSchema = val;
 
-                const { endpointConfig, endpointCustomErrors } = get();
+                const { endpointConfig, customErrors } = get();
 
                 populateEndpointConfigErrors(
                     endpointConfig,
-                    endpointCustomErrors,
+                    customErrors,
                     state
                 );
             }),
@@ -129,7 +131,7 @@ const getInitialState = (
     setEncryptedEndpointConfig: (encryptedEndpointConfig) => {
         set(
             produce((state: EndpointConfigState) => {
-                const { endpointSchema, endpointCustomErrors } = get();
+                const { endpointSchema, customErrors } = get();
 
                 state.encryptedEndpointConfig = isEmpty(encryptedEndpointConfig)
                     ? createJSONFormDefaults(endpointSchema)
@@ -137,7 +139,7 @@ const getInitialState = (
 
                 populateEndpointConfigErrors(
                     encryptedEndpointConfig,
-                    endpointCustomErrors,
+                    customErrors,
                     state
                 );
             }),
@@ -163,7 +165,7 @@ const getInitialState = (
     setEndpointConfig: (endpointConfig) => {
         set(
             produce((state: EndpointConfigState) => {
-                const { endpointSchema, endpointCustomErrors } = get();
+                const { endpointSchema, customErrors } = get();
 
                 state.endpointConfig = isEmpty(endpointConfig)
                     ? createJSONFormDefaults(endpointSchema)
@@ -171,7 +173,7 @@ const getInitialState = (
 
                 populateEndpointConfigErrors(
                     state.endpointConfig,
-                    endpointCustomErrors,
+                    customErrors,
                     state
                 );
             }),
@@ -183,13 +185,13 @@ const getInitialState = (
     setServerUpdateRequired: (updateRequired) => {
         set(
             produce((state: EndpointConfigState) => {
-                const { endpointConfig, endpointCustomErrors } = get();
+                const { endpointConfig, customErrors } = get();
 
                 state.serverUpdateRequired = updateRequired;
 
                 populateEndpointConfigErrors(
                     endpointConfig,
-                    endpointCustomErrors,
+                    customErrors,
                     state
                 );
             }),
@@ -287,7 +289,14 @@ const getInitialState = (
     },
 
     resetState: () => {
-        set(getInitialStateData(), false, 'Endpoint Config State Reset');
+        set(
+            {
+                ...getInitialStateData(),
+                ...getStoreWithCustomErrorsSettings(STORE_KEY),
+            },
+            false,
+            'Endpoint Config State Reset'
+        );
     },
 });
 
