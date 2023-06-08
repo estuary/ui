@@ -262,7 +262,7 @@ function PrefixedName({
                 focused
                 required={required}
                 htmlFor={INPUT_ID}
-                variant="outlined"
+                variant={variantString}
             >
                 {label}
             </InputLabel>
