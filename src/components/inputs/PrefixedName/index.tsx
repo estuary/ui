@@ -8,28 +8,31 @@ import {
     MenuItem,
     OutlinedInput,
     Select,
+    TextField,
 } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
-import { PrefixedName_Errors, PrefixedName_OnChange } from './types';
+import { PrefixedName_Change, PrefixedName_Errors } from './types';
 
 export interface Props {
     label: string;
-    onChange: PrefixedName_OnChange;
-    onNameChange?: (name: string, errors: PrefixedName_Errors) => void;
-    onPrefixChange?: (prefix: string, errors: PrefixedName_Errors) => void;
+    onChange: PrefixedName_Change;
     allowBlankName?: boolean;
     allowEndSlash?: boolean;
     defaultPrefix?: boolean;
     description?: string;
+    disabled?: boolean;
     hideErrorMessage?: boolean;
+    onNameChange?: PrefixedName_Change;
+    onPrefixChange?: PrefixedName_Change;
     required?: boolean;
     standardVariant?: boolean;
     validateOnLoad?: boolean;
+    value?: string;
 }
 
 // const UNCLEAN_PATH_RE = new RegExp(/[^a-zA-Z0-9-_.]\.{1,2}\/?/g);
@@ -78,9 +81,11 @@ function PrefixedName({
     onChange,
     onNameChange,
     onPrefixChange,
+    disabled: readOnly,
     required,
     standardVariant,
     validateOnLoad,
+    value,
 }: Props) {
     // Hooks
     const intl = useIntl();
@@ -90,7 +95,7 @@ function PrefixedName({
     const objectRoles = Object.keys(adminCapabilities);
     const singleOption = objectRoles.length === 1;
 
-    // Local State
+    // Local State for editing
     const [errors, setErrors] = useState<string | null>(null);
     const [name, setName] = useState('');
     const [nameError, setNameError] = useState<PrefixedName_Errors>(null);
@@ -99,9 +104,12 @@ function PrefixedName({
     );
     const [prefixError, setPrefixError] = useState<PrefixedName_Errors>(null);
 
-    // Local vars for rendering
+    // For rendering input as MUI splits up variants between components
     const InputComponent = standardVariant ? Input : OutlinedInput;
     const showErrors = !hideErrorMessage && Boolean(errors);
+    const variantString = standardVariant ? 'standard' : 'outlined';
+
+    // For rendering help and errors - based on JSONForms approach
     const firstFormHelperText = description
         ? description
         : showErrors
@@ -153,45 +161,83 @@ function PrefixedName({
         setPrefixError(prefixErrors);
         setNameError(nameErrors);
 
-        return [prefixErrors, nameErrors];
+        return { prefixErrors, nameErrors, errorString };
     };
 
     const handlers = {
-        setPrefix: (value: string) => {
-            console.log('setPrefix');
-            const { 0: error } = updateErrors(value, name);
+        setPrefix: (prefixValue: string) => {
+            const { nameErrors, prefixErrors, errorString } = updateErrors(
+                prefixValue,
+                name
+            );
 
-            setPrefix(value);
+            setPrefix(prefixValue);
+            onChange(`${prefixValue}${name}`, errorString, {
+                prefix: prefixErrors,
+                name: nameErrors,
+            });
             if (onPrefixChange) {
-                onPrefixChange(value, error);
+                onPrefixChange(prefixValue, errorString, {
+                    prefix: prefixErrors,
+                    name: nameError,
+                });
             }
         },
-        setName: (value: string) => {
-            console.log('setName');
-            const processedValue = value.replaceAll(/\s/g, '_');
-            const { 1: error } = updateErrors(prefix, processedValue);
+        setName: (nameValue: string) => {
+            // We don't allow spaces in names but users keep trying
+            //      so making it easier on them and just replacing
+            const processedValue = nameValue.replaceAll(/\s/g, '_');
+            const { nameErrors, prefixErrors, errorString } = updateErrors(
+                prefix,
+                processedValue
+            );
 
             setName(processedValue);
+            onChange(`${prefix}${processedValue}`, errorString, {
+                prefix: prefixErrors,
+                name: nameErrors,
+            });
+
             if (onNameChange) {
-                onNameChange(processedValue, error);
+                onNameChange(processedValue, errorString, {
+                    prefix: prefixError,
+                    name: nameError,
+                });
             }
         },
     };
 
-    useEffect(() => {
-        onChange(`${prefix}${name}`, errors, {
-            prefix: prefixError,
-            name: nameError,
-        });
-    }, [errors, name, nameError, onChange, prefix, prefixError]);
-
+    // If needed we will validate on load. This is mainly just for
+    //      the details form right now
     useMount(() => {
-        if (validateOnLoad) {
-            console.log('updating error');
-            updateErrors(prefix, name);
+        if (!readOnly && validateOnLoad) {
+            const { nameErrors, prefixErrors, errorString } = updateErrors(
+                prefix,
+                name
+            );
+            onChange(`${prefix}${name}`, errorString, {
+                prefix: prefixErrors,
+                name: nameErrors,
+            });
         }
     });
 
+    // If in read only mode then just display the value in a normal input
+    //      This makes it easier on the UI as we do not need to parse the
+    //      value and figure out what portion is an object role
+    if (readOnly && value) {
+        return (
+            <TextField
+                disabled
+                variant={variantString}
+                label={label}
+                helperText={description}
+                value={value}
+            />
+        );
+    }
+
+    // Let the user know they cannot enter a name due to not having access
     if (!hasLength(objectRoles)) {
         return (
             <AlertBox short severity="warning">
@@ -201,8 +247,18 @@ function PrefixedName({
     }
 
     return (
-        <FormControl fullWidth error={Boolean(errors)} variant="outlined">
+        <FormControl
+            error={Boolean(errors)}
+            fullWidth
+            variant={variantString}
+            sx={{
+                '& .MuiFormHelperText-root.Mui-error': {
+                    whiteSpace: 'break-spaces',
+                },
+            }}
+        >
             <InputLabel
+                disabled={readOnly}
                 focused
                 required={required}
                 htmlFor={INPUT_ID}
@@ -212,40 +268,46 @@ function PrefixedName({
             </InputLabel>
             <InputComponent
                 aria-describedby={description ? DESCRIPTION_ID : undefined}
+                disabled={readOnly}
                 error={Boolean(nameError)}
                 id={INPUT_ID}
                 label={label}
+                required={!allowBlankName}
+                size="small"
+                value={name}
+                sx={{ borderRadius: 3 }}
                 onChange={(event) => {
                     handlers.setName(event.target.value);
                 }}
-                required={!allowBlankName}
-                size="small"
-                sx={{ borderRadius: 3 }}
-                value={name}
                 startAdornment={
                     <InputAdornment position="start">
                         {singleOption ? (
                             <Box>{prefix}</Box>
                         ) : (
                             <Select
-                                size="small"
-                                variant="standard"
-                                value={prefix}
+                                disabled={readOnly}
                                 disableUnderline
                                 error={Boolean(prefixError)}
-                                onChange={(event) => {
-                                    handlers.setPrefix(event.target.value);
-                                }}
                                 required
+                                size="small"
+                                value={prefix}
+                                variant="standard"
                                 sx={{
+                                    'minWidth': 75,
                                     '& .MuiSelect-select': {
                                         paddingBottom: 0.2,
                                     },
                                 }}
+                                onChange={(event) => {
+                                    handlers.setPrefix(event.target.value);
+                                }}
                             >
-                                {objectRoles.map((value) => (
-                                    <MenuItem key={value} value={value}>
-                                        {value}
+                                {objectRoles.map((objectRole) => (
+                                    <MenuItem
+                                        key={objectRole}
+                                        value={objectRole}
+                                    >
+                                        {objectRole}
                                     </MenuItem>
                                 ))}
                             </Select>

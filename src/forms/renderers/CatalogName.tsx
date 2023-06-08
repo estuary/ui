@@ -32,9 +32,9 @@ import {
 } from '@jsonforms/core';
 import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
-import { Box } from '@mui/material';
 import PrefixedName from 'components/inputs/PrefixedName';
-import { PrefixedName_OnChange } from 'components/inputs/PrefixedName/types';
+import { PrefixedName_Change } from 'components/inputs/PrefixedName/types';
+import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useDetailsForm_setCustomErrors } from 'stores/DetailsForm/hooks';
@@ -47,21 +47,27 @@ export const catalogNameTypeTester: RankedTester = rankWith(
     scopeEndsWith(CATALOG_NAME_SCOPE)
 );
 
-const CatalogNameTypeRenderer = (
-    props: ControlProps & OwnPropsOfEnum & WithOptionLabel
-) => {
+const CatalogNameTypeRenderer = ({
+    data,
+    description,
+    enabled,
+    handleChange,
+    path,
+    required,
+    uischema,
+}: ControlProps & OwnPropsOfEnum & WithOptionLabel) => {
     const intl = useIntl();
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    const { description, handleChange, uischema, path } = props;
 
+    const isEdit = useEntityWorkflow_Editing();
     const setCustomErrors = useDetailsForm_setCustomErrors();
 
-    const updateFunction = useCallback<PrefixedName_OnChange>(
-        (prefixedName, errors) => {
+    const updateFunction = useCallback<PrefixedName_Change>(
+        (prefixedName, errorString) => {
+            console.log('updateFunction', { prefixedName });
             const customErrors = [];
 
             // Just replace all specific errors with a simple "invalid" error
-            if (errors) {
+            if (errorString) {
                 customErrors.push(
                     generateCustomError(
                         path,
@@ -77,22 +83,18 @@ const CatalogNameTypeRenderer = (
         },
         [handleChange, intl, path, setCustomErrors]
     );
+
     return (
-        <Box
-            sx={{
-                '& .MuiFormHelperText-root.Mui-error': {
-                    whiteSpace: 'break-spaces',
-                },
-            }}
-        >
-            <PrefixedName
-                validateOnLoad
-                standardVariant
-                description={description}
-                label={`${uischema.label}`}
-                onChange={updateFunction}
-            />
-        </Box>
+        <PrefixedName
+            description={description}
+            label={`${uischema.label}`}
+            onChange={updateFunction}
+            disabled={!enabled}
+            value={isEdit ? data : undefined}
+            required={required}
+            standardVariant
+            validateOnLoad={!isEdit}
+        />
     );
 };
 
