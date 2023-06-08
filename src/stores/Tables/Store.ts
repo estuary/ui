@@ -8,7 +8,7 @@ import {
     getAsyncDefault,
     getStoreWithHydrationSettings,
     StoreWithHydration,
-} from 'stores/Hydration';
+} from 'stores/extensions/Hydration';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';

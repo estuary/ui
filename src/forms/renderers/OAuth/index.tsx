@@ -9,8 +9,8 @@ import { useEffect, useMemo } from 'react';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
-import { generateCustomError } from 'stores/CustomErrors';
 import { useEndpointConfigStore_setEndpointCustomErrors } from 'stores/EndpointConfig/hooks';
+import { generateCustomError } from 'stores/extensions/CustomErrors';
 import { Options } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
 import {

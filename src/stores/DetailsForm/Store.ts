@@ -3,12 +3,12 @@ import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
-import { getStoreWithCustomErrorsSettings } from 'stores/CustomErrors';
 import { Details, DetailsFormState } from 'stores/DetailsForm/types';
+import { getStoreWithCustomErrorsSettings } from 'stores/extensions/CustomErrors';
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
-} from 'stores/Hydration';
+} from 'stores/extensions/Hydration';
 import { DetailsFormStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
 import { createStore, StoreApi } from 'zustand';

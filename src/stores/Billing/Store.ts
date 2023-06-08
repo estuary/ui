@@ -4,7 +4,7 @@ import { BillingState, DataVolumeByTask } from 'stores/Billing/types';
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
-} from 'stores/Hydration';
+} from 'stores/extensions/Hydration';
 import { BillingStoreNames } from 'stores/names';
 import { evaluateSpecType, stripTimeFromDate } from 'utils/billing-utils';
 import { devtoolsOptions } from 'utils/store-utils';

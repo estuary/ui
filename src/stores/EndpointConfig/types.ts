@@ -1,5 +1,5 @@
-import { StoreWithCustomErrors } from 'stores/CustomErrors';
-import { StoreWithHydration } from 'stores/Hydration';
+import { StoreWithCustomErrors } from 'stores/extensions/CustomErrors';
+import { StoreWithHydration } from 'stores/extensions/Hydration';
 import {
     EntityWithCreateWorkflow,
     EntityWorkflow,

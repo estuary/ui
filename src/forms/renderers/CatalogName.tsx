@@ -37,8 +37,8 @@ import PrefixedName from 'components/inputs/PrefixedName';
 import { PrefixedName_OnChange } from 'components/inputs/PrefixedName/types';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
-import { generateCustomError } from 'stores/CustomErrors';
 import { useEndpointConfigStore_setEndpointCustomErrors } from 'stores/EndpointConfig/hooks';
+import { generateCustomError } from 'stores/extensions/CustomErrors';
 
 export const CATALOG_NAME_SCOPE = 'entityName';
 
