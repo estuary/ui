@@ -37,7 +37,7 @@ import PrefixedName from 'components/inputs/PrefixedName';
 import { PrefixedName_OnChange } from 'components/inputs/PrefixedName/types';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
-import { useEndpointConfigStore_setEndpointCustomErrors } from 'stores/EndpointConfig/hooks';
+import { useDetailsForm_setCustomErrors } from 'stores/DetailsForm/hooks';
 import { generateCustomError } from 'stores/extensions/CustomErrors';
 
 export const CATALOG_NAME_SCOPE = 'entityName';
@@ -54,7 +54,7 @@ const CatalogNameTypeRenderer = (
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const { description, handleChange, uischema, path } = props;
 
-    const setCustomErrors = useEndpointConfigStore_setEndpointCustomErrors();
+    const setCustomErrors = useDetailsForm_setCustomErrors();
 
     const updateFunction = useCallback<PrefixedName_OnChange>(
         (prefixedName, errors) => {

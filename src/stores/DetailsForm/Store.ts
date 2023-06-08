@@ -4,12 +4,18 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
 import { Details, DetailsFormState } from 'stores/DetailsForm/types';
-import { getStoreWithCustomErrorsSettings } from 'stores/extensions/CustomErrors';
+import {
+    fetchErrors,
+    filterErrors,
+    getStoreWithCustomErrorsSettings,
+} from 'stores/extensions/CustomErrors';
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { DetailsFormStoreNames } from 'stores/names';
+import { JsonFormsData } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { createStore, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -28,6 +34,21 @@ const initialDetails: Details = {
         entityName: '',
     },
     errors: [],
+};
+
+const populateErrors = (
+    endpointConfig: JsonFormsData,
+    customErrors: any[],
+    state: DetailsFormState
+): void => {
+    const endpointConfigErrors = filterErrors(fetchErrors(endpointConfig)).map(
+        (message) => ({
+            message,
+        })
+    );
+
+    state.errorsExist =
+        !isEmpty(endpointConfigErrors) || !isEmpty(customErrors);
 };
 
 const getInitialStateData = (): Pick<
@@ -62,25 +83,31 @@ export const getInitialState = (
         set(
             produce((state: DetailsFormState) => {
                 state.customErrors = val;
+                state.customErrorsExist = hasLength(val);
+
+                const { details } = get();
+
+                // Setting this so that if there is a custom error then the
+                //  generate button will not proceed
+                populateErrors(details, val, state);
             }),
             false,
             'Endpoint Custom Errors Set'
         );
     },
 
-    setDetails: (details) => {
+    setDetails: (val) => {
         set(
             produce((state: DetailsFormState) => {
-                if (details.data.connectorImage.id === '') {
+                if (val.data.connectorImage.id === '') {
                     state.details.data.connectorImage =
                         getInitialStateData().details.data.connectorImage;
                 }
 
-                state.details = details;
+                state.details = val;
 
-                state.errorsExist = !isEmpty(
-                    details.errors ?? get().details.errors
-                );
+                const { customErrors } = get();
+                populateErrors(val, customErrors, state);
             }),
             false,
             'Details Changed'

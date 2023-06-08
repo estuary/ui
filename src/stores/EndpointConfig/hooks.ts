@@ -57,7 +57,7 @@ export const useEndpointConfigStore_endpointSchema = () => {
     >(getStoreName(entityType), (state) => state.endpointSchema);
 };
 
-export const useEndpointConfigStore_endpointCustomErrors = () => {
+export const useEndpointConfigStore_customErrors = () => {
     const entityType = useEntityType();
 
     return useZustandStore<
@@ -66,7 +66,7 @@ export const useEndpointConfigStore_endpointCustomErrors = () => {
     >(getStoreName(entityType), (state) => state.customErrors);
 };
 
-export const useEndpointConfigStore_setEndpointCustomErrors = () => {
+export const useEndpointConfigStore_setCustomErrors = () => {
     const entityType = useEntityType();
 
     return useZustandStore<

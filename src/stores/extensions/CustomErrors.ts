@@ -1,4 +1,5 @@
-import { Schema } from 'types';
+import { map } from 'lodash';
+import { JsonFormsData, Schema } from 'types';
 
 export interface CustomError {
     instancePath: string;
@@ -43,3 +44,19 @@ export const getStoreWithCustomErrorsSettings = (
         },
     };
 };
+
+export const fetchErrors = ({
+    errors,
+}: JsonFormsData): JsonFormsData['errors'] => {
+    let response: JsonFormsData['errors'] = [];
+
+    if (errors && errors.length > 0) {
+        response = response.concat(errors);
+    }
+
+    return response;
+};
+
+export const filterErrors = (
+    list: JsonFormsData['errors']
+): (string | undefined)[] => map(list, 'message');

@@ -225,6 +225,24 @@ export const useDetailsForm_changed = () => {
     );
 };
 
+export const useDetailsForm_customErrors = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<DetailsFormState, DetailsFormState['customErrors']>(
+        getStoreName(entityType),
+        (state) => state.customErrors
+    );
+};
+
+export const useDetailsForm_setCustomErrors = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        DetailsFormState,
+        DetailsFormState['setCustomErrors']
+    >(getStoreName(entityType), (state) => state.setCustomErrors);
+};
+
 export const useDetailsForm_resetState = () => {
     const entityType = useEntityType();
     return useZustandStore<DetailsFormState, DetailsFormState['resetState']>(

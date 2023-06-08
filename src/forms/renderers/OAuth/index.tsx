@@ -9,7 +9,7 @@ import { useEffect, useMemo } from 'react';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
-import { useEndpointConfigStore_setEndpointCustomErrors } from 'stores/EndpointConfig/hooks';
+import { useEndpointConfigStore_setCustomErrors } from 'stores/EndpointConfig/hooks';
 import { generateCustomError } from 'stores/extensions/CustomErrors';
 import { Options } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
@@ -40,7 +40,7 @@ const OAuthproviderRenderer = ({
     const intl = useIntl();
 
     // Fetch what we need from stores
-    const setCustomErrors = useEndpointConfigStore_setEndpointCustomErrors();
+    const setCustomErrors = useEndpointConfigStore_setCustomErrors();
 
     // Used to make a better UX for users editing a config
     const isEdit = useEntityWorkflow_Editing();
