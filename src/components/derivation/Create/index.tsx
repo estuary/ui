@@ -4,13 +4,14 @@ import AlertBox from 'components/shared/AlertBox';
 import DialogTitleWithClose from 'components/shared/Dialog/TitleWithClose';
 import TransformationCreate from 'components/transformation/create';
 import { LocalZustandProvider } from 'context/LocalZustand';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { TransformCreateStoreNames } from 'stores/names';
 import { createTransformationCreateStore } from 'stores/TransformationCreate/Store';
 
 const ARIA_LABEL_ID = 'derivation-create-dialog';
+
 function DerivationCreate() {
     const navigate = useNavigate();
 
@@ -26,6 +27,14 @@ function DerivationCreate() {
         setShowConfirmation(false);
         setNewCollectionKey((k) => k + 1);
     };
+
+    const createLocalStore = useMemo(
+        () =>
+            createTransformationCreateStore(
+                TransformCreateStoreNames.TRANSFORM_CREATE
+            ),
+        []
+    );
 
     return (
         <Dialog
@@ -55,11 +64,7 @@ function DerivationCreate() {
                 </Collapse>
 
                 <Collapse in={!showConfirmation}>
-                    <LocalZustandProvider
-                        createStore={createTransformationCreateStore(
-                            TransformCreateStoreNames.TRANSFORM_CREATE
-                        )}
-                    >
+                    <LocalZustandProvider createStore={createLocalStore}>
                         <TransformationCreate
                             key={newCollectionKey}
                             postWindowOpen={(gitPodWindow) => {
