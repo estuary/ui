@@ -273,7 +273,6 @@ function PrefixedName({
                 id={INPUT_ID}
                 label={label}
                 required={!allowBlankName}
-                size="small"
                 value={name}
                 sx={{ borderRadius: 3 }}
                 onChange={(event) => {
