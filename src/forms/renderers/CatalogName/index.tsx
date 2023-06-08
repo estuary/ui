@@ -62,7 +62,6 @@ const CatalogNameTypeRenderer = ({
 
     const updateFunction = useCallback<PrefixedName_Change>(
         (prefixedName, errorString) => {
-            console.log('updateFunction', { prefixedName });
             const customErrors = [];
 
             // Just replace all specific errors with a simple "invalid" error
