@@ -15,20 +15,15 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+import { PrefixedName_Errors, PrefixedName_OnChange } from './types';
 
-type ErrorStates = 'missing' | 'invalid' | 'unclean';
-type Errors = ErrorStates[] | null;
-
-interface Props {
+export interface Props {
     label: string;
-    onChange: (
-        prefixedName: string,
-        errorString: string | null,
-        errorTypes: Errors
-    ) => void;
-    onNameChange?: (name: string, errors: Errors) => void;
-    onPrefixChange?: (prefix: string, errors: Errors) => void;
+    onChange: PrefixedName_OnChange;
+    onNameChange?: (name: string, errors: PrefixedName_Errors) => void;
+    onPrefixChange?: (prefix: string, errors: PrefixedName_Errors) => void;
     allowBlankName?: boolean;
+    allowEndSlash?: boolean;
     defaultPrefix?: boolean;
     description?: string;
     hideErrorMessage?: boolean;
@@ -37,16 +32,24 @@ interface Props {
     validateOnLoad?: boolean;
 }
 
-const NAME_RE = new RegExp(`^(${PREFIX_NAME_PATTERN}/?)*$`);
 // const UNCLEAN_PATH_RE = new RegExp(/[^a-zA-Z0-9-_.]\.{1,2}\/?/g);
 const DESCRIPTION_ID = 'prefixed-name-description';
 const INPUT_ID = 'prefixed-name-input';
 
-const validateInput = (value: string, allowBlank?: boolean): Errors => {
+const validateInput = (
+    value: string,
+    allowBlank?: boolean,
+    allowEndSlash?: boolean
+): PrefixedName_Errors => {
     if (!allowBlank && !hasLength(value)) {
         return ['missing'];
     }
 
+    const NAME_RE = new RegExp(
+        `^(${PREFIX_NAME_PATTERN}/)*${PREFIX_NAME_PATTERN}${
+            allowEndSlash ? '/?' : ''
+        }$`
+    );
     if (!NAME_RE.test(value)) {
         return ['invalid'];
     }
@@ -67,6 +70,7 @@ const validateInput = (value: string, allowBlank?: boolean): Errors => {
 
 function PrefixedName({
     allowBlankName,
+    allowEndSlash,
     defaultPrefix,
     description,
     hideErrorMessage,
@@ -89,11 +93,11 @@ function PrefixedName({
     // Local State
     const [errors, setErrors] = useState<string | null>(null);
     const [name, setName] = useState('');
-    const [nameError, setNameError] = useState<Errors>(null);
+    const [nameError, setNameError] = useState<PrefixedName_Errors>(null);
     const [prefix, setPrefix] = useState(
         singleOption || defaultPrefix ? objectRoles[0] : ''
     );
-    const [prefixError, setPrefixError] = useState<Errors>(null);
+    const [prefixError, setPrefixError] = useState<PrefixedName_Errors>(null);
 
     // Local vars for rendering
     const InputComponent = standardVariant ? Input : OutlinedInput;
@@ -107,13 +111,20 @@ function PrefixedName({
 
     const updateErrors = (prefixValue: string, nameValue: string) => {
         // Validate both inputs
-        const prefixErrors = validateInput(prefixValue, false);
-        const nameErrors = validateInput(nameValue, allowBlankName);
+        const prefixErrors = validateInput(prefixValue, false, true);
+        const nameErrors = validateInput(
+            nameValue,
+            allowBlankName,
+            allowEndSlash
+        );
 
         // Array to keep list of errors in by going through each returned
         //  error and populating with the translated message
         const updatedErrors: string[] = [];
-        const generateErrorList = (inputName: string, inputErrors: Errors) => {
+        const generateErrorList = (
+            inputName: string,
+            inputErrors: PrefixedName_Errors
+        ) => {
             inputErrors?.forEach((inputError) => {
                 updatedErrors.push(
                     intl.formatMessage({
@@ -124,17 +135,17 @@ function PrefixedName({
         };
 
         // If there are any errors then populate the list
-        if (nameErrors) {
-            generateErrorList('name', nameErrors);
-        }
         if (prefixErrors) {
             generateErrorList('prefix', prefixErrors);
+        }
+        if (nameErrors) {
+            generateErrorList('name', nameErrors);
         }
 
         // Generate the string by concat with space.
         //  Follows the style of JSONForms
         const errorString = hasLength(updatedErrors)
-            ? updatedErrors.join(' ')
+            ? updatedErrors.join(' \n')
             : null;
 
         // Set the local state
@@ -168,8 +179,11 @@ function PrefixedName({
     };
 
     useEffect(() => {
-        onChange(`${prefix}${name}`, errors, []);
-    }, [errors, name, onChange, prefix]);
+        onChange(`${prefix}${name}`, errors, {
+            prefix: prefixError,
+            name: nameError,
+        });
+    }, [errors, name, nameError, onChange, prefix, prefixError]);
 
     useMount(() => {
         if (validateOnLoad) {

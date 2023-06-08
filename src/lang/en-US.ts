@@ -92,7 +92,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'filter.time.lastMonth': `Last Month`,
     'filter.time.thisMonth': `This Month`,
 
-    'catalogName.limitations': `letters, numbers, periods, underscores, and hyphens`,
+    'catalogName.limitations': `letters, numbers(0-9), periods(.), underscores(_), and hyphens(-)`,
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -633,6 +633,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.endpointConfig.noConnectorSelected': `To start the creation process you must select a Connector. You can change this later.`,
 
     'entityCreate.endpointConfig.entityNameMissing': `Name missing`,
+    'entityCreate.endpointConfig.entityNameInvalid': `Name invalid`,
     'entityCreate.endpointConfig.connectorMissing': `Connector missing`,
     'entityCreate.endpointConfig.endpointConfigMissing': `${endpointConfigHeader} empty`,
     'entityCreate.endpointConfig.collectionsMissing': `${CommonMessages['terms.collections']} missing`,
@@ -1076,7 +1077,7 @@ const CustomErrors: ResolvedIntlConfig['messages'] = {
     'custom.prefixedName.prefix.missing': `please select an organization`,
     'custom.prefixedName.name.missing': `please provide a name`,
     'custom.prefixedName.name.unclean': `name cannot contain ./ or ../`,
-    'custom.prefixedName.name.invalid': `may only include ${CommonMessages['catalogName.limitations']} separated by /`,
+    'custom.prefixedName.name.invalid': `may only include ${CommonMessages['catalogName.limitations']} separated by forward slashes(/)`,
     'custom.prefixedName.invalid': `You do not have the necessary ${CommonMessages['terms.permissions']}. Please contact an administrator.`,
     'custom.catalogName.pattern': `must match pattern "organization/name"\nwhich may include ${CommonMessages['catalogName.limitations']}`,
 };

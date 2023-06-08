@@ -149,6 +149,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
             <Grid item xs={12} md={4} sx={{ display: 'flex' }}>
                 <PrefixedName
                     allowBlankName
+                    allowEndSlash
                     defaultPrefix
                     required
                     label={intl.formatMessage({

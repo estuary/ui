@@ -96,6 +96,7 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
             <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
                 <PrefixedName
                     allowBlankName
+                    allowEndSlash
                     defaultPrefix
                     required
                     label={intl.formatMessage({

@@ -34,7 +34,10 @@ import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 import { Box } from '@mui/material';
 import PrefixedName from 'components/inputs/PrefixedName';
+import { PrefixedName_OnChange } from 'components/inputs/PrefixedName/types';
 import { useCallback } from 'react';
+import { useIntl } from 'react-intl';
+import generateCustomError from 'services/jsonforms/customErrors';
 import { useEndpointConfigStore_setEndpointCustomErrors } from 'stores/EndpointConfig/hooks';
 
 export const CATALOG_NAME_SCOPE = 'entityName';
@@ -47,26 +50,32 @@ export const catalogNameTypeTester: RankedTester = rankWith(
 const CatalogNameTypeRenderer = (
     props: ControlProps & OwnPropsOfEnum & WithOptionLabel
 ) => {
+    const intl = useIntl();
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const { description, handleChange, uischema, path } = props;
 
     const setCustomErrors = useEndpointConfigStore_setEndpointCustomErrors();
 
-    const updateFunction = useCallback(
-        (prefixedName: string, errors: string | null) => {
-            console.log(`prefixedName = ${path}`, { prefixedName, errors });
+    const updateFunction = useCallback<PrefixedName_OnChange>(
+        (prefixedName, errors) => {
+            const customErrors = [];
+
+            // Just replace all specific errors with a simple "invalid" error
+            if (errors) {
+                customErrors.push(
+                    generateCustomError(
+                        path,
+                        intl.formatMessage({
+                            id: 'entityCreate.endpointConfig.entityNameInvalid',
+                        })
+                    )
+                );
+            }
+
+            setCustomErrors(customErrors);
             handleChange(path, prefixedName);
-            setCustomErrors([
-                {
-                    instancePath: path,
-                    message: errors,
-                    schemaPath: '',
-                    keyword: '',
-                    params: {},
-                },
-            ]);
         },
-        [handleChange, path, setCustomErrors]
+        [handleChange, intl, path, setCustomErrors]
     );
     return (
         <Box

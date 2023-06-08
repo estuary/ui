@@ -55,7 +55,6 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
 
     const setDetails = useDetailsForm_setDetails();
     const setDetails_connector = useDetailsForm_setDetails_connector();
-
     const setEntityNameChanged = useDetailsForm_setEntityNameChanged();
 
     // Draft Editor Store
@@ -199,26 +198,17 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
 
             <Stack direction="row" spacing={2}>
                 {schema.properties[CONNECTOR_IMAGE_SCOPE].oneOf.length > 0 ? (
-                    schema.properties[CATALOG_NAME_SCOPE].examples.length >
-                    0 ? (
-                        <JsonForms
-                            schema={schema}
-                            uischema={uiSchema}
-                            data={formData}
-                            renderers={defaultRenderers}
-                            cells={materialCells}
-                            config={defaultOptions}
-                            readonly={readOnly ?? (isSaving || isActive)}
-                            validationMode={showValidation(displayValidation)}
-                            onChange={updateDetails}
-                        />
-                    ) : (
-                        <AlertBox severity="warning" short>
-                            <FormattedMessage
-                                id={`${messagePrefix}.noAccessGrants`}
-                            />
-                        </AlertBox>
-                    )
+                    <JsonForms
+                        schema={schema}
+                        uischema={uiSchema}
+                        data={formData}
+                        renderers={defaultRenderers}
+                        cells={materialCells}
+                        config={defaultOptions}
+                        readonly={readOnly ?? (isSaving || isActive)}
+                        validationMode={showValidation(displayValidation)}
+                        onChange={updateDetails}
+                    />
                 ) : (
                     <AlertBox severity="warning" short>
                         <FormattedMessage
