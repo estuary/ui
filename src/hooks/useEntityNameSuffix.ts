@@ -14,6 +14,8 @@ function useEntityNameSuffix(when: boolean | undefined) {
     const imageName = useDetailsForm_connectorImage_imageName();
     const draftedEntityName = useDetailsForm_draftedEntityName();
 
+    console.log('entityName', entityName);
+
     return useMemo(
         () =>
             when

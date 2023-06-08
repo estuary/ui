@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
     useDetailsForm_connectorImage,
+    useDetailsForm_entityNameChanged,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm/hooks';
@@ -59,6 +60,7 @@ function CaptureCreate() {
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
     const resetDetailsForm = useDetailsForm_resetState();
+    const entityNameChanged = useDetailsForm_entityNameChanged();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
@@ -88,6 +90,13 @@ function CaptureCreate() {
         setDraftId(null);
         setInitiateDiscovery(true);
     }, [setDraftId, setInitiateDiscovery, imageTag]);
+
+    // If the name changed we need to make sure we run discovery again
+    useEffect(() => {
+        if (entityNameChanged) {
+            setInitiateDiscovery(true);
+        }
+    }, [entityNameChanged]);
 
     const resetState = () => {
         resetDetailsForm();

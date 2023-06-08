@@ -88,8 +88,8 @@ const CatalogNameTypeRenderer = ({
             label={`${uischema.label}`}
             onChange={updateFunction}
             required={required}
-            size="medium"
             showDescription
+            size="medium"
             standardVariant
             validateOnLoad={!isEdit}
             value={isEdit ? data : undefined}

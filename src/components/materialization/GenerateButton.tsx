@@ -20,6 +20,7 @@ import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
     useDetailsForm_connectorImage_imagePath,
+    useDetailsForm_entityNameChanged,
     useDetailsForm_errorsExist,
     useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm/hooks';
@@ -62,6 +63,7 @@ function MaterializeGenerateButton({
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imagePath = useDetailsForm_connectorImage_imagePath();
     const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
+    const entityNameChanged = useDetailsForm_entityNameChanged();
 
     // Draft Editor Store
     const isSaving = useEditorStore_isSaving();
@@ -104,7 +106,9 @@ function MaterializeGenerateButton({
     // Add the image name to the end unless there is already a persisted
     //  draftID. Because after the first generation we already have a name
     //  with the image name suffix
-    const processedEntityName = useEntityNameSuffix(!persistedDraftId);
+    const processedEntityName = useEntityNameSuffix(
+        entityNameChanged || !persistedDraftId
+    );
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
