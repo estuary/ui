@@ -1081,6 +1081,7 @@ const CustomErrors: ResolvedIntlConfig['messages'] = {
     'custom.prefixedName.prefix.missing': `please select an organization`,
     'custom.prefixedName.name.missing': `please provide a name`,
     'custom.prefixedName.name.unclean': `name cannot contain ./ or ../`,
+    'custom.prefixedName.name.endingSlash': `name cannot end with /`,
     'custom.prefixedName.name.invalid': `name may only include ${CommonMessages['catalogName.limitations']} separated by forward slashes(/)`,
     'custom.prefixedName.invalid': `You do not have the necessary ${CommonMessages['terms.permissions']}. Please contact an administrator.`,
     'custom.catalogName.pattern': `must match pattern "organization/name"\nwhich may include ${CommonMessages['catalogName.limitations']}`,
