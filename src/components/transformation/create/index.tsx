@@ -271,6 +271,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
                             </Typography>
                         </SingleStep>
                         <PrefixedName
+                            size="medium"
                             label={intl.formatMessage({
                                 id: 'newTransform.collection.label',
                             })}
