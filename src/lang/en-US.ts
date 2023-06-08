@@ -61,6 +61,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'entityPrefix.description': `Prefix for the entity name.`,
     'entityName.label': `Name`,
     'entityName.description': `Select a prefix from the drop-down and add a unique name. (ex: acmeCo/marketing_data)`,
+    'entityName.description.singlePrefix': `Prefix already selected. Please add a unique name. (ex: marketing_data)`,
     'connector.label': `Connector`,
     'connector.description': `Choose the external system you're connecting to.`,
     'description.label': `Details`,

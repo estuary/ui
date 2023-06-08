@@ -49,7 +49,6 @@ export const catalogNameTypeTester: RankedTester = rankWith(
 
 const CatalogNameTypeRenderer = ({
     data,
-    description,
     enabled,
     handleChange,
     path,
@@ -86,12 +85,12 @@ const CatalogNameTypeRenderer = ({
 
     return (
         <PrefixedName
-            description={description}
             disabled={!enabled}
             label={`${uischema.label}`}
             onChange={updateFunction}
             required={required}
             size="medium"
+            showDescription
             standardVariant
             validateOnLoad={!isEdit}
             value={isEdit ? data : undefined}

@@ -24,7 +24,7 @@ export interface Props {
     allowBlankName?: boolean;
     allowEndSlash?: boolean;
     defaultPrefix?: boolean;
-    description?: string;
+    showDescription?: boolean;
     disabled?: boolean;
     hideErrorMessage?: boolean;
     onNameChange?: PrefixedName_Change;
@@ -78,14 +78,14 @@ function PrefixedName({
     allowBlankName,
     allowEndSlash,
     defaultPrefix,
-    description,
+    disabled: readOnly,
     hideErrorMessage,
     label,
     onChange,
     onNameChange,
     onPrefixChange,
-    disabled: readOnly,
     required,
+    showDescription,
     size,
     standardVariant,
     validateOnLoad,
@@ -114,6 +114,13 @@ function PrefixedName({
     const variantString = standardVariant ? 'standard' : 'outlined';
 
     // For rendering help and errors - based on JSONForms approach
+    const description = showDescription
+        ? intl.formatMessage({
+              id: singleOption
+                  ? 'entityName.description.singlePrefix'
+                  : 'entityName.description',
+          })
+        : null;
     const firstFormHelperText = description
         ? description
         : showErrors

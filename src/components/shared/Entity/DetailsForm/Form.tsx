@@ -10,7 +10,6 @@ import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useCatalogNameInput from 'hooks/useCatalogNameInput';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -66,8 +65,6 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
 
     const isActive = useFormStateStore_isActive();
 
-    const { catalogNameSchema } = useCatalogNameInput();
-
     useEffect(() => {
         if (connectorId && hasLength(connectorTags)) {
             connectorTags.find((connector) => {
@@ -100,7 +97,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const schema = useMemo(() => {
         return {
             properties: {
-                [CATALOG_NAME_SCOPE]: { ...catalogNameSchema },
+                [CATALOG_NAME_SCOPE]: { type: 'string' },
                 [CONNECTOR_IMAGE_SCOPE]: {
                     description: intl.formatMessage({
                         id: 'connector.description',
@@ -118,7 +115,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
             required: [CATALOG_NAME_SCOPE, CONNECTOR_IMAGE_SCOPE],
             type: 'object',
         };
-    }, [catalogNameSchema, connectorsOneOf, intl]);
+    }, [connectorsOneOf, intl]);
 
     const uiSchema = {
         elements: [

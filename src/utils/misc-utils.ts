@@ -1,5 +1,6 @@
 import { createSearchParams } from 'react-router-dom';
 
+// This pattern needs to match https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
 export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
 
 // TODO (optimization): Combine the stripPathing and truncateCatalogName utility functions.
