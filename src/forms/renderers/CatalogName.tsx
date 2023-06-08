@@ -87,13 +87,14 @@ const CatalogNameTypeRenderer = ({
     return (
         <PrefixedName
             description={description}
+            disabled={!enabled}
             label={`${uischema.label}`}
             onChange={updateFunction}
-            disabled={!enabled}
-            value={isEdit ? data : undefined}
             required={required}
+            size="medium"
             standardVariant
             validateOnLoad={!isEdit}
+            value={isEdit ? data : undefined}
         />
     );
 };

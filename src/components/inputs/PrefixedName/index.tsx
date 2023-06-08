@@ -30,6 +30,7 @@ export interface Props {
     onNameChange?: PrefixedName_Change;
     onPrefixChange?: PrefixedName_Change;
     required?: boolean;
+    size?: 'small' | 'medium';
     standardVariant?: boolean;
     validateOnLoad?: boolean;
     value?: string;
@@ -83,6 +84,7 @@ function PrefixedName({
     onPrefixChange,
     disabled: readOnly,
     required,
+    size,
     standardVariant,
     validateOnLoad,
     value,
@@ -274,6 +276,7 @@ function PrefixedName({
                 label={label}
                 required={!allowBlankName}
                 value={name}
+                size={size ?? 'small'}
                 sx={{ borderRadius: 3 }}
                 onChange={(event) => {
                     handlers.setName(event.target.value);
