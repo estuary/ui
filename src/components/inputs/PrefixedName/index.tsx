@@ -45,7 +45,9 @@ const validateInput = (
     allowBlank?: boolean,
     allowEndSlash?: boolean
 ): PrefixedName_Errors => {
-    if (!allowBlank && !hasLength(value)) {
+    const isBlank = !hasLength(value);
+
+    if (!allowBlank && isBlank) {
         return ['missing'];
     }
 
@@ -54,7 +56,7 @@ const validateInput = (
             allowEndSlash ? '/?' : ''
         }$`
     );
-    if (!NAME_RE.test(value)) {
+    if (!isBlank && !NAME_RE.test(value)) {
         return ['invalid'];
     }
 
