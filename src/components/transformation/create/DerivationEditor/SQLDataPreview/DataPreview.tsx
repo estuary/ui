@@ -2,7 +2,6 @@ import { DataGrid } from '@mui/x-data-grid';
 import { dataGridListStyling } from 'context/Theme';
 import { JournalRecord } from 'hooks/useJournalData';
 import { JsonPointer } from 'json-ptr';
-import { useCallback, useMemo } from 'react';
 
 const sampleSpec = {
     catalog_name: 'estuary/kjt/milk_types',
@@ -200,25 +199,20 @@ const sampleJournalData = {
     error: null,
 };
 
+const buildRecordKey = (record: Record<string, any>) => {
+    return sampleSpec.spec.key
+        .map((k: string) => JsonPointer.get(record, k))
+        .join('_');
+};
+
+const rowsByKey = Object.assign(
+    {},
+    ...sampleJournalData.data.documents.map((record) => ({
+        [buildRecordKey(record)]: record,
+    }))
+) as Record<string, JournalRecord<Record<string, any>>>;
+
 function DataPreview() {
-    const buildRecordKey = useCallback(
-        (record: Record<string, any>) => {
-            return sampleSpec.spec.key
-                .map((k: string) => JsonPointer.get(record, k))
-                .join('_');
-        },
-        [sampleSpec.spec.key]
-    );
-
-    const rowsByKey = useMemo(() => {
-        return Object.assign(
-            {},
-            ...sampleJournalData.data.documents.map((record) => ({
-                [buildRecordKey(record)]: record,
-            }))
-        ) as Record<string, JournalRecord<Record<string, any>>>;
-    }, [buildRecordKey, sampleJournalData.data, sampleJournalData.error]);
-
     return (
         <DataGrid
             columns={[
