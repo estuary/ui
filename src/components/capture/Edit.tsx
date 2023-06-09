@@ -14,7 +14,6 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
 import DraftInitializer from 'components/shared/Entity/Edit/DraftInitializer';
 import EntityToolbar from 'components/shared/Entity/Header';
-import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -25,10 +24,7 @@ import usePageTitle from 'hooks/usePageTitle';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
-import {
-    useDetailsForm_errorsExist,
-    useDetailsForm_resetState,
-} from 'stores/DetailsForm/hooks';
+import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig/hooks';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
@@ -62,7 +58,6 @@ function CaptureEdit() {
     const resetBindingsEditorStore = useBindingsEditorStore_resetState();
 
     // Details Form Store
-    const detailsFormErrorsExist = useDetailsForm_errorsExist();
     const resetDetailsForm = useDetailsForm_resetState();
 
     // Draft Editor Store
@@ -173,11 +168,6 @@ function CaptureEdit() {
                             draftSpecMetadata={draftSpecsMetadata}
                             callFailed={helpers.callFailed}
                             resetState={resetState}
-                            errorSummary={
-                                <ValidationErrorSummary
-                                    errorsExist={detailsFormErrorsExist}
-                                />
-                            }
                             toolbar={
                                 <EntityToolbar
                                     GenerateButton={
