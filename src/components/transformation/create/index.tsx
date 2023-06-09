@@ -67,9 +67,6 @@ function TransformationCreate({ postWindowOpen }: Props) {
         theme.breakpoints.down('sm')
     );
 
-    console.log('entityName', entityName);
-    console.log('entityNameError', entityNameError);
-
     const submitButtonError = useMemo(() => {
         if (selectedCollectionSet.size < 1) {
             return intl.formatMessage({ id: 'newTransform.errors.collection' });

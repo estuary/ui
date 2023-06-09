@@ -112,8 +112,6 @@ function EntityCreate({
             endpointConfigServerUpdateRequired ||
             resourceConfigServerUpdateRequired;
 
-        console.log('Resetting draft id', resetDraftIdFlag);
-
         setDraftId(resetDraftIdFlag ? null : persistedDraftId);
     }, [
         setDraftId,
