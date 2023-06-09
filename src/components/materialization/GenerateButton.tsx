@@ -106,13 +106,14 @@ function MaterializeGenerateButton({
     // After the first generation we already have a name with the
     //  image name suffix (unless name changed)
 
-    // The order of the OR statement below is SUPER important
+    // The order of the OR statement below is SUPER important because the
+    //  entity name change variable will flip to true more often
     //      If there is NO persisted draft ID
-    //          - need to process the name
-    //      If there is NO persisted draft ID BUT the name changed
-    //          - need to process the name
+    //          - process the name
+    //      If there is a persisted draft ID BUT the name changed
+    //          - process the name
     //      If there is persisted draft ID
-    //          - need to process the name
+    //          - get the draft name
     const processedEntityName = useEntityNameSuffix(
         !persistedDraftId || entityNameChanged
     );
@@ -149,7 +150,11 @@ function MaterializeGenerateButton({
             let existingTaskData: DraftSpecsExtQuery_ByCatalogName | null =
                 null;
 
-            if (persistedDraftId) {
+            // Similar to processing we need to see if the name changed
+            //  that way we don't create multiple "materializations" with different names
+            //  all under the same draft. Otherwise we would then try to publish
+            //  all of those documents and not just the final name
+            if (persistedDraftId && !entityNameChanged) {
                 const existingDraftSpecResponse =
                     await getDraftSpecsByCatalogName(
                         persistedDraftId,
