@@ -67,7 +67,7 @@ function ShuffleKeys() {
                         sx={{ mb: 3, alignItems: 'center' }}
                     >
                         <Typography sx={{ fontWeight: 500 }}>
-                            Shuffle Keys
+                            <FormattedMessage id="newTransform.editor.streaming.shuffleKeys.header" />
                         </Typography>
 
                         <Tooltip
