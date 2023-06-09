@@ -10,9 +10,11 @@ import {
 } from '@mui/material';
 import { defaultOutline, intensifiedOutline } from 'context/Theme';
 import { HelpCircle, NavArrowDown } from 'iconoir-react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 function ShuffleKeys() {
     const theme = useTheme();
+    const intl = useIntl();
 
     return (
         <Accordion
@@ -53,7 +55,7 @@ function ShuffleKeys() {
                 }}
             >
                 <Typography sx={{ fontWeight: 500 }}>
-                    Advanced Streaming Settings
+                    <FormattedMessage id="newTransform.editor.streaming.advancedSettings" />
                 </Typography>
             </AccordionSummary>
 
@@ -69,7 +71,9 @@ function ShuffleKeys() {
                         </Typography>
 
                         <Tooltip
-                            title="Select a key from your source collection schemas to help scale joins"
+                            title={intl.formatMessage({
+                                id: 'newTransform.editor.streaming.shuffleKeys.tooltip',
+                            })}
                             placement="right"
                         >
                             <HelpCircle

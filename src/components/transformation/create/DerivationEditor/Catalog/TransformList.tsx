@@ -82,7 +82,9 @@ function TransformList() {
             />
 
             <Dialog open={open} fullWidth maxWidth="md">
-                <DialogTitle>Add or Remove Transforms</DialogTitle>
+                <DialogTitle>
+                    <FormattedMessage id="newTransform.editor.catalog.transform.addDialog.header" />
+                </DialogTitle>
 
                 <DialogContent>
                     <Stack spacing={3} sx={{ pt: 2 }}>

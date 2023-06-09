@@ -11,6 +11,7 @@ import CatalogList, {
 import { defaultOutline, intensifiedOutline } from 'context/Theme';
 import { NavArrowDown } from 'iconoir-react';
 import { useMemo, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 import {
     useTransformationCreate_addMigrations,
     useTransformationCreate_migrations,
@@ -97,7 +98,7 @@ function MigrationList() {
                 }}
             >
                 <Typography sx={{ fontWeight: 500 }}>
-                    Advanced Catalog Settings
+                    <FormattedMessage id="newTransform.editor.catalog.advancedSettings" />
                 </Typography>
             </AccordionSummary>
 

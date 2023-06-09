@@ -1020,9 +1020,24 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
                             continue, e.g`,
     'newTransform.button.cta': `Proceed to GitPod`,
 
+    'newTransform.editor.catalog.header': `Catalog`,
+    'newTransform.editor.catalog.description': `This is a placeholder for a section description`,
+    'newTransform.editor.catalog.advancedSettings': `Advanced Catalog Settings`,
     'newTransform.editor.catalog.transform.header': `Transforms`,
+    'newTransform.editor.catalog.transform.addDialog.header': `Add or Remove Transforms`,
     'newTransform.editor.catalog.migration.header': `Migrations`,
     'newTransform.editor.catalog.message.empty': `Click on the edit pencil above to add or remove a {contentType}.`,
+
+    'newTransform.editor.streaming.header': `Streaming`,
+    'newTransform.editor.streaming.description': `Used for selecting columns and creating aggregations`,
+    'newTransform.editor.streaming.cta.generatePreview': `Preview`,
+    'newTransform.editor.streaming.advancedSettings': `Advanced Streaming Settings`,
+    'newTransform.editor.streaming.monaco.empty': `No SQL file selected.`,
+    'newTransform.editor.streaming.shuffleKeys.tooltip': `Select a key from your source collection schemas to help scale joins`,
+
+    'newTransform.editor.preview.header': `Data Preview`,
+    'newTransform.editor.preview.description': `This is a placeholder for a section description`,
+    'newTransform.editor.preview.noPreviewGenerated': `Click PREVIEW to execute your query.`,
 };
 
 const CustomRenderers: ResolvedIntlConfig['messages'] = {

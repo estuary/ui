@@ -8,6 +8,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { intensifiedOutline } from 'context/Theme';
+import { FormattedMessage } from 'react-intl';
 import { useTransformationCreate_setPreviewActive } from 'stores/TransformationCreate/hooks';
 import { BaseComponentProps } from 'types';
 
@@ -52,10 +53,12 @@ function DerivationEditorHeader() {
     return (
         <Grid container wrap="nowrap">
             <Wrapper gridSize={3} minWidth={200}>
-                <Typography sx={headerStyle}>Catalog</Typography>
+                <Typography sx={headerStyle}>
+                    <FormattedMessage id="newTransform.editor.catalog.header" />
+                </Typography>
 
                 <Typography variant="caption">
-                    This is a placeholder for a section description
+                    <FormattedMessage id="newTransform.editor.catalog.description" />
                 </Typography>
             </Wrapper>
 
@@ -66,10 +69,12 @@ function DerivationEditorHeader() {
                     sx={{ justifyContent: 'space-between' }}
                 >
                     <Box>
-                        <Typography sx={headerStyle}>Streaming</Typography>
+                        <Typography sx={headerStyle}>
+                            <FormattedMessage id="newTransform.editor.streaming.header" />
+                        </Typography>
 
                         <Typography variant="caption">
-                            Used for selecting columns and creating aggregations
+                            <FormattedMessage id="newTransform.editor.streaming.description" />
                         </Typography>
                     </Box>
 
@@ -79,17 +84,19 @@ function DerivationEditorHeader() {
                             // disabled={previewActive}
                             onClick={generateDataPreview}
                         >
-                            Preview
+                            <FormattedMessage id="newTransform.editor.streaming.cta.generatePreview" />
                         </Button>
                     </Box>
                 </Stack>
             </Wrapper>
 
             <Wrapper gridSize={4} minWidth={300}>
-                <Typography sx={headerStyle}>Data Preview</Typography>
+                <Typography sx={headerStyle}>
+                    <FormattedMessage id="newTransform.editor.preview.header" />
+                </Typography>
 
                 <Typography variant="caption">
-                    This is a placeholder for a section description
+                    <FormattedMessage id="newTransform.editor.preview.description" />
                 </Typography>
             </Wrapper>
         </Grid>

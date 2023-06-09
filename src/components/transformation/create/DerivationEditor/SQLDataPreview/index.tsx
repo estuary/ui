@@ -1,6 +1,7 @@
 import { Box, Divider, Typography } from '@mui/material';
 import DataPreview from 'components/transformation/create/DerivationEditor/SQLDataPreview/DataPreview';
 import { intensifiedOutline } from 'context/Theme';
+import { FormattedMessage } from 'react-intl';
 import {
     useTransformationCreate_name,
     useTransformationCreate_previewActive,
@@ -33,7 +34,7 @@ function SQLDataPreview() {
                     <DataPreview />
                 ) : (
                     <Typography>
-                        Click PREVIEW to execute your query.
+                        <FormattedMessage id="newTransform.editor.preview.noPreviewGenerated" />
                     </Typography>
                 )}
             </Box>
