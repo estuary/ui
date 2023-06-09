@@ -1,6 +1,13 @@
 import { createSearchParams } from 'react-router-dom';
 
+// Based on pattern taken from
+//  https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
 export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
+
+// Max time stored in
+//  go/flowctl-go/cmd-api-discover.go
+//  go/flowctl-go/cmd-discover.go
+export const MAX_DISCOVER_TIME = 30000;
 
 // TODO (optimization): Combine the stripPathing and truncateCatalogName utility functions.
 export const stripPathing = (stringVal: string) => {

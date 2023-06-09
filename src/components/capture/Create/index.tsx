@@ -37,7 +37,7 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
-import { getPathWithParams } from 'utils/misc-utils';
+import { getPathWithParams, MAX_DISCOVER_TIME } from 'utils/misc-utils';
 
 function CaptureCreate() {
     usePageTitle({
@@ -162,6 +162,7 @@ function CaptureCreate() {
                         }
                         toolbar={
                             <EntityToolbar
+                                waitTimes={{ generate: MAX_DISCOVER_TIME }}
                                 GenerateButton={
                                     <CaptureGenerateButton
                                         entityType={entityType}
