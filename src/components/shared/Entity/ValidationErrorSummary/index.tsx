@@ -8,6 +8,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { FormattedMessage } from 'react-intl';
+import { useDetailsForm_errorsExist } from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_errorsExist,
     useEndpointConfig_hydrationErrorsExist,
@@ -20,7 +21,6 @@ import {
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
-    errorsExist: boolean;
     ErrorComponent?: any | boolean;
     hideIcon?: boolean;
     headerMessageId?: string;
@@ -30,9 +30,11 @@ function ValidationErrorSummary({
     headerMessageId,
     hideIcon,
     ErrorComponent,
-    errorsExist,
 }: Props) {
     const connectorID = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
+
+    // Details form
+    const detailsFormErrorsExist = useDetailsForm_errorsExist();
 
     // Endpoint Config Store
     const endpointConfigHydrationErrorsExist =
@@ -55,7 +57,9 @@ function ValidationErrorSummary({
         resourceConfigHydrationErrorsExist;
 
     const formErrorsExist =
-        errorsExist || endpointConfigErrorsExist || resourceConfigErrorsExist;
+        detailsFormErrorsExist ||
+        endpointConfigErrorsExist ||
+        resourceConfigErrorsExist;
 
     const defaultHeaderMessageId = hydrationErrorsExist
         ? 'workflows.error.initForm'
