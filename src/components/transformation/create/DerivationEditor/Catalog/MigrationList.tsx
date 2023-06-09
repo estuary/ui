@@ -106,7 +106,7 @@ function MigrationList() {
                     fixedAttributeType="migration"
                     content={content}
                     addButtonClickHandler={handlers.insertBlankMigration}
-                    minHeight={200}
+                    height={200}
                 />
             </AccordionDetails>
         </Accordion>

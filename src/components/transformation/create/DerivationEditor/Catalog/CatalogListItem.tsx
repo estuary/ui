@@ -66,12 +66,18 @@ function CatalogListItem({
                             'ml': 0.5,
                             '& .MuiListItemText-primary': {
                                 fontWeight: 500,
+                                whiteSpace: 'nowrap',
                             },
                         }}
                     />
                 </ListItemButton>
 
-                <Collapse in={open} timeout="auto" unmountOnExit>
+                <Collapse
+                    in={open}
+                    timeout="auto"
+                    unmountOnExit
+                    sx={{ width: '100%' }}
+                >
                     <List component="div" disablePadding>
                         <ListItemButton
                             dense
