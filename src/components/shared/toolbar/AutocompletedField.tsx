@@ -9,31 +9,37 @@ import {
 } from '@mui/material';
 
 interface Props {
+    defaultValue: string;
     label: string;
     options: string[];
-    defaultValue: string;
     changeHandler: (
         event: React.SyntheticEvent<Element, Event>,
         value: string,
         reason: AutocompleteChangeReason,
         details?: AutocompleteChangeDetails<string> | undefined
     ) => void;
-    id?: string;
     autocompleteSx?: SxProps<Theme>;
+    id?: string;
+    required?: boolean;
 }
 
 function AutocompletedField({
+    autocompleteSx,
+    changeHandler,
+    defaultValue,
+    id,
     label,
     options,
-    defaultValue,
-    changeHandler,
-    id,
-    autocompleteSx,
+    required,
 }: Props) {
     return (
         <Autocomplete
+            defaultValue={defaultValue}
+            disableClearable
             id={id}
+            onChange={changeHandler}
             options={options}
+            sx={autocompleteSx}
             renderInput={({
                 InputProps,
                 ...params
@@ -45,14 +51,11 @@ function AutocompletedField({
                         sx: { borderRadius: 3 },
                     }}
                     label={label}
-                    variant="outlined"
+                    required={required}
                     size="small"
+                    variant="outlined"
                 />
             )}
-            defaultValue={defaultValue}
-            disableClearable
-            sx={autocompleteSx}
-            onChange={changeHandler}
         />
     );
 }
