@@ -39,7 +39,7 @@ export interface Props {
 const DESCRIPTION_ID = 'prefixed-name-description';
 const INPUT_ID = 'prefixed-name-input';
 
-const validateInput = (
+export const validateInput = (
     value: string,
     allowBlank?: boolean,
     allowEndSlash?: boolean
@@ -84,7 +84,7 @@ function PrefixedName({
     allowBlankName,
     allowEndSlash,
     defaultPrefix,
-    disabled: readOnly,
+    disabled,
     hideErrorMessage,
     label,
     onChange,
@@ -234,7 +234,7 @@ function PrefixedName({
     // If needed we will validate on load. This is mainly just for
     //      the details form right now
     useMount(() => {
-        if (!readOnly && validateOnLoad) {
+        if (!disabled && validateOnLoad) {
             const { nameErrors, prefixErrors, errorString } = updateErrors(
                 prefix,
                 name
@@ -251,7 +251,7 @@ function PrefixedName({
     // If in read only mode then just display the value in a normal input
     //      This makes it easier on the UI as we do not need to parse the
     //      value and figure out what portion is an object role
-    if (readOnly && value) {
+    if (disabled && value) {
         return (
             <TextField
                 disabled
@@ -284,7 +284,7 @@ function PrefixedName({
             }}
         >
             <InputLabel
-                disabled={readOnly}
+                disabled={disabled}
                 focused
                 required={required}
                 htmlFor={INPUT_ID}
@@ -294,7 +294,7 @@ function PrefixedName({
             </InputLabel>
             <InputComponent
                 aria-describedby={description ? DESCRIPTION_ID : undefined}
-                disabled={readOnly}
+                disabled={disabled}
                 error={Boolean(nameError)}
                 id={INPUT_ID}
                 label={label}
@@ -311,7 +311,7 @@ function PrefixedName({
                             prefix
                         ) : (
                             <Select
-                                disabled={readOnly}
+                                disabled={disabled}
                                 disableUnderline
                                 error={Boolean(prefixError)}
                                 required
