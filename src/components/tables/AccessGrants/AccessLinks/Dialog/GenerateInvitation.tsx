@@ -111,6 +111,7 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
                     label={intl.formatMessage({
                         id: 'admin.users.prefixInvitation.label.capability',
                     })}
+                    required
                     options={capabilityOptions}
                     defaultValue={capabilityOptions[0]}
                     changeHandler={handlers.setGrantCapability}
@@ -122,6 +123,7 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
                     label={intl.formatMessage({
                         id: 'admin.users.prefixInvitation.label.type',
                     })}
+                    required
                     options={typeOptions}
                     defaultValue={typeOptions[0]}
                     changeHandler={handlers.setGrantReusability}

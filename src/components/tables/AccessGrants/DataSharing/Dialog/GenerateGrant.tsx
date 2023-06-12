@@ -172,6 +172,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                     error={subjectMissing || subjectInvalid}
                     onChange={handlers.evaluateSubjectRole}
                     sx={{ flexGrow: 1 }}
+                    required
                 />
             </Grid>
 
@@ -183,6 +184,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                     options={capabilityOptions}
                     defaultValue={capabilityOptions[0]}
                     changeHandler={handlers.setGrantCapability}
+                    required
                 />
             </Grid>
 
