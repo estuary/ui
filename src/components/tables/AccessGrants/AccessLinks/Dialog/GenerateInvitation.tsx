@@ -11,7 +11,7 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { hasLength } from 'utils/misc-utils';
+import { appendWithForwardSlash, hasLength } from 'utils/misc-utils';
 
 interface Props {
     serverError: PostgrestError | null;
@@ -61,8 +61,10 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
         generateInvitation: (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
+            const processedObject = appendWithForwardSlash(objectRole);
+
             generateGrantDirective(
-                objectRole,
+                processedObject,
                 capability,
                 reusability === 'single-use'
             ).then(
