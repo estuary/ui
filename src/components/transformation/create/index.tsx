@@ -127,7 +127,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
                                 label={intl.formatMessage({
                                     id: 'newTransform.collection.label',
                                 })}
-                                onChange={(newName, errors) => {
+                                onNameChange={(newName, errors) => {
                                     setDerivationName(newName);
                                     setEntityNameError(errors);
                                 }}
