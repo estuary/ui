@@ -94,7 +94,10 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
         generateRoleGrant: (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            createRoleGrant(subjectRole, objectRole, capability).then(
+            const processedSubject = appendWithForwardSlash(subjectRole);
+            const processedObject = appendWithForwardSlash(objectRole);
+
+            createRoleGrant(processedSubject, processedObject, capability).then(
                 (response) => {
                     if (response.error) {
                         setServerError(response.error);
@@ -108,7 +111,10 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                                 {
                                     id: 'admin.prefix.issueGrant.notification.success.message',
                                 },
-                                { objectRole, subjectRole }
+                                {
+                                    objectRole: processedObject,
+                                    subjectRole: processedSubject,
+                                }
                             ),
                             severity: 'success',
                             title: intl.formatMessage({
