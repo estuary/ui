@@ -18,7 +18,7 @@ import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 import { PrefixedName_Change, PrefixedName_Errors } from './types';
 
 export interface Props {
-    label: string;
+    label: string | null;
     onChange?: PrefixedName_Change;
     allowBlankName?: boolean;
     allowEndSlash?: boolean;
@@ -283,15 +283,18 @@ function PrefixedName({
                 },
             }}
         >
-            <InputLabel
-                disabled={disabled}
-                focused
-                required={required}
-                htmlFor={INPUT_ID}
-                variant={variantString}
-            >
-                {label}
-            </InputLabel>
+            {label ? (
+                <InputLabel
+                    disabled={disabled}
+                    focused
+                    required={required}
+                    htmlFor={INPUT_ID}
+                    variant={variantString}
+                >
+                    {label}
+                </InputLabel>
+            ) : null}
+
             <InputComponent
                 aria-describedby={description ? DESCRIPTION_ID : undefined}
                 disabled={disabled}

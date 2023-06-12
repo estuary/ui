@@ -122,20 +122,25 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
                             <Divider />
 
-                            <PrefixedName
-                                size="medium"
-                                label={intl.formatMessage({
-                                    id: 'newTransform.collection.label',
-                                })}
-                                onNameChange={(newName, errors) => {
-                                    setDerivationName(newName);
-                                    setEntityNameError(errors);
+                            <Box
+                                sx={{
+                                    p: 2,
                                 }}
-                                onPrefixChange={(prefix, errors) => {
-                                    setCatalogPrefix(prefix);
-                                    setEntityNameError(errors);
-                                }}
-                            />
+                            >
+                                <PrefixedName
+                                    standardVariant
+                                    size="medium"
+                                    label={null}
+                                    onNameChange={(newName, errors) => {
+                                        setDerivationName(newName);
+                                        setEntityNameError(errors);
+                                    }}
+                                    onPrefixChange={(prefix, errors) => {
+                                        setCatalogPrefix(prefix);
+                                        setEntityNameError(errors);
+                                    }}
+                                />
+                            </Box>
                         </StepWrapper>
 
                         <Box
