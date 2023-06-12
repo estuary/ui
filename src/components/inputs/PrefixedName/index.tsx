@@ -1,5 +1,4 @@
 import {
-    Box,
     FormControl,
     FormHelperText,
     Input,
@@ -20,7 +19,7 @@ import { PrefixedName_Change, PrefixedName_Errors } from './types';
 
 export interface Props {
     label: string;
-    onChange: PrefixedName_Change;
+    onChange?: PrefixedName_Change;
     allowBlankName?: boolean;
     allowEndSlash?: boolean;
     defaultPrefix?: boolean;
@@ -190,14 +189,18 @@ function PrefixedName({
             );
 
             setPrefix(prefixValue);
-            onChange(`${prefixValue}${name}`, errorString, {
-                prefix: prefixErrors,
-                name: nameErrors,
-            });
+
             if (onPrefixChange) {
                 onPrefixChange(prefixValue, errorString, {
                     prefix: prefixErrors,
                     name: nameError,
+                });
+            }
+
+            if (onChange) {
+                onChange(`${prefixValue}${name}`, errorString, {
+                    prefix: prefixErrors,
+                    name: nameErrors,
                 });
             }
         },
@@ -211,15 +214,18 @@ function PrefixedName({
             );
 
             setName(processedValue);
-            onChange(`${prefix}${processedValue}`, errorString, {
-                prefix: prefixErrors,
-                name: nameErrors,
-            });
 
             if (onNameChange) {
                 onNameChange(processedValue, errorString, {
                     prefix: prefixError,
                     name: nameError,
+                });
+            }
+
+            if (onChange) {
+                onChange(`${prefix}${processedValue}`, errorString, {
+                    prefix: prefixErrors,
+                    name: nameErrors,
                 });
             }
         },
@@ -233,10 +239,12 @@ function PrefixedName({
                 prefix,
                 name
             );
-            onChange(`${prefix}${name}`, errorString, {
-                prefix: prefixErrors,
-                name: nameErrors,
-            });
+            if (onChange) {
+                onChange(`${prefix}${name}`, errorString, {
+                    prefix: prefixErrors,
+                    name: nameErrors,
+                });
+            }
         }
     });
 
@@ -300,7 +308,7 @@ function PrefixedName({
                 startAdornment={
                     <InputAdornment position="start">
                         {singleOption ? (
-                            <Box>{prefix}</Box>
+                            prefix
                         ) : (
                             <Select
                                 disabled={readOnly}
