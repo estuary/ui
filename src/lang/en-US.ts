@@ -99,6 +99,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.close': `Close`,
     'cta.dismiss': `Dismiss`,
     'cta.continue': `Continue`,
+    'cta.next': `Next`,
     'cta.delete': `Delete`,
     'cta.download': `Download`,
     'cta.edit': `Edit`,
@@ -993,6 +994,8 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.language.title': `Language`,
     'newTransform.language.sql': `SQL`,
     'newTransform.language.ts': `Typescript`,
+    'newTransform.baseConfig.sourceCollections.label': `Source Collections`,
+    'newTransform.baseConfig.sqlTemplates.label': `SQL Templates`,
     'newTransform.collection.label': `Derived Collection Name`,
     'newTransform.errors.collection': `Select source collections`,
     'newTransform.errors.name': `Name your Derived Collection`,
@@ -1012,6 +1015,26 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.instructions2': `Create your query and use the CLI to
                             continue, e.g`,
     'newTransform.button.cta': `Proceed to GitPod`,
+
+    'newTransform.editor.catalog.header': `Catalog`,
+    'newTransform.editor.catalog.description': `This is a placeholder for a section description`,
+    'newTransform.editor.catalog.advancedSettings': `Advanced Catalog Settings`,
+    'newTransform.editor.catalog.transform.header': `Transforms`,
+    'newTransform.editor.catalog.transform.addDialog.header': `Add or Remove Transforms`,
+    'newTransform.editor.catalog.migration.header': `Migrations`,
+    'newTransform.editor.catalog.message.empty': `Click on the edit pencil above to add or remove a {contentType}.`,
+
+    'newTransform.editor.streaming.header': `Streaming`,
+    'newTransform.editor.streaming.description': `Used for selecting columns and creating aggregations`,
+    'newTransform.editor.streaming.cta.generatePreview': `Preview`,
+    'newTransform.editor.streaming.advancedSettings': `Advanced Streaming Settings`,
+    'newTransform.editor.streaming.monaco.empty': `No SQL file selected.`,
+    'newTransform.editor.streaming.shuffleKeys.header': `Shuffle Keys`,
+    'newTransform.editor.streaming.shuffleKeys.tooltip': `Select a key from your source collection schemas to help scale joins`,
+
+    'newTransform.editor.preview.header': `Data Preview`,
+    'newTransform.editor.preview.description': `This is a placeholder for a section description`,
+    'newTransform.editor.preview.noPreviewGenerated': `Click PREVIEW to execute your query.`,
 };
 
 const CustomRenderers: ResolvedIntlConfig['messages'] = {

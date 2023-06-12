@@ -1,23 +1,43 @@
 import produce from 'immer';
+import { intersection } from 'lodash';
 import { TransformCreateStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create } from 'zustand';
+import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { TransformCreateState } from './types';
 
-// TODO (transform create)
-
 const getInitialStateData = (): Pick<
     TransformCreateState,
-    'language' | 'name'
+    | 'attributeType'
+    | 'catalogName'
+    | 'catalogUpdating'
+    | 'language'
+    | 'migrations'
+    | 'name'
+    | 'prefix'
+    | 'previewActive'
+    | 'selectedAttribute'
+    | 'sourceCollections'
+    | 'transformConfigs'
+    | 'transformCount'
 > => ({
-    name: '',
+    attributeType: 'transform',
+    catalogName: null,
+    catalogUpdating: false,
     language: 'sql',
+    migrations: {},
+    name: '',
+    prefix: '',
+    previewActive: false,
+    selectedAttribute: '',
+    sourceCollections: [],
+    transformConfigs: {},
+    transformCount: 0,
 });
 
 const getInitialState = (
-    set: NamedSet<TransformCreateState>
-    // get: StoreApi<TransformCreateState>['getState']
+    set: NamedSet<TransformCreateState>,
+    get: StoreApi<TransformCreateState>['getState']
 ): TransformCreateState => ({
     ...getInitialStateData(),
 
@@ -31,18 +51,163 @@ const getInitialState = (
         );
     },
 
-    setName: (val) => {
+    setName: (value) => {
         set(
             produce((state: TransformCreateState) => {
-                state.name = val;
+                const { prefix } = get();
+
+                state.name = value;
+                state.catalogName = prefix ? `${prefix}${value}` : null;
             }),
             false,
             'Transform Create Name Set'
         );
     },
 
+    setPrefix: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                state.prefix = value;
+                state.catalogName = `${value}${state.name}`;
+            }),
+            false,
+            'Transform Create Prefix Set'
+        );
+    },
+
+    setSourceCollections: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                state.sourceCollections = value;
+            }),
+            false,
+            'Source Collections Set'
+        );
+    },
+
+    addTransformConfigs: (configs) => {
+        set(
+            produce((state: TransformCreateState) => {
+                const { transformCount, name } = get();
+
+                configs.forEach((config, index: number) => {
+                    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+                    const compositeIndex = transformCount + index;
+
+                    state.transformConfigs = {
+                        ...state.transformConfigs,
+                        [`${name}.lambda.${compositeIndex}.sql`]: config,
+                    };
+                });
+
+                state.transformCount += Object.keys(
+                    state.transformConfigs
+                ).length;
+            }),
+            false,
+            'Transform Configs Added'
+        );
+    },
+
+    updateTransformConfigs: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                const { sourceCollections, transformConfigs } = get();
+
+                const existingSourceCollections = Object.values(
+                    transformConfigs
+                ).map(({ collection }) => collection);
+
+                state.transformConfigs = value;
+
+                state.transformCount +=
+                    Object.keys(state.transformConfigs).length -
+                    intersection(existingSourceCollections, sourceCollections)
+                        .length;
+            }),
+            false,
+            'Transform Configs Updated'
+        );
+    },
+
+    addMigrations: (values) => {
+        set(
+            produce((state: TransformCreateState) => {
+                const { migrations, name } = get();
+
+                const originalKeyCount = Object.keys(migrations).length;
+
+                values.forEach((migration, index: number) => {
+                    state.migrations = {
+                        ...state.migrations,
+                        [`${name}.migration.${originalKeyCount + index}.sql`]:
+                            migration,
+                    };
+                });
+            }),
+            false,
+            'Migrations Added'
+        );
+    },
+
+    setSelectedAttribute: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                state.selectedAttribute = value;
+            }),
+            false,
+            'Selected Attribute Set'
+        );
+    },
+
+    patchSelectedAttribute: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                const { attributeType, selectedAttribute } = get();
+
+                if (attributeType === 'transform') {
+                    state.transformConfigs[selectedAttribute].lambda = value;
+                } else {
+                    state.migrations[selectedAttribute] = value;
+                }
+            }),
+            false,
+            'Selected Attribute Set'
+        );
+    },
+
+    setAttributeType: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                state.attributeType = value;
+            }),
+            false,
+            'Attribute Type Set'
+        );
+    },
+
+    setPreviewActive: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                state.previewActive = value;
+            }),
+            false,
+            'Preview Active Set'
+        );
+    },
+
+    setCatalogUpdating: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                state.catalogUpdating = value;
+            }),
+            false,
+            'Catalog Updating Set'
+        );
+    },
+
     resetState: () => {
-        set(getInitialStateData(), false, 'ransform Create State Reset');
+        set(getInitialStateData(), false, 'Transform Create State Reset');
     },
 });
 
@@ -50,6 +215,6 @@ export const createTransformationCreateStore = (
     key: TransformCreateStoreNames
 ) => {
     return create<TransformCreateState>()(
-        devtools((set, _get) => getInitialState(set), devtoolsOptions(key))
+        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
     );
 };

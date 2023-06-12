@@ -7,6 +7,7 @@ export enum GlobalSearchParams {
     DRAFT_ID = 'draftId',
     GRANT_TOKEN = 'grantToken',
     HIDDEN_SHOW_BETA = 'showBetaOnboard',
+    HIDDEN_TRANSFORM_WORKFLOW = 'newTransformWorkflow',
     LAST_PUB_ID = 'lastPubId',
     LIVE_SPEC_ID = 'liveSpecId',
     PREFILL_PUB_ID = 'prefillPubId',
