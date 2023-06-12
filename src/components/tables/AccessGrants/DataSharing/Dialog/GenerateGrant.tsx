@@ -162,6 +162,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                         id: 'admin.prefix.issueGrant.label.sharedPrefix',
                     })}
                     onChange={onChange}
+                    validateOnLoad
                 />
             </Grid>
 

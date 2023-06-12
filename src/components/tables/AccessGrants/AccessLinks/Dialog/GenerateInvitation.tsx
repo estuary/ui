@@ -100,11 +100,12 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
                     allowBlankName
                     allowEndSlash
                     defaultPrefix
-                    required
                     label={intl.formatMessage({
                         id: 'common.tenant',
                     })}
                     onChange={onChange}
+                    required
+                    validateOnLoad
                 />
             </Grid>
 
