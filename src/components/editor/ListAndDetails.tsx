@@ -13,6 +13,7 @@ export interface Props {
     backgroundColor?: string;
     displayBorder?: boolean;
     codeEditorDetails?: boolean;
+    removeMargin?: boolean;
 }
 
 const MIN_RESIZE_WIDTH = 25;
@@ -25,6 +26,7 @@ function ListAndDetails({
     height,
     displayBorder,
     codeEditorDetails = false,
+    removeMargin,
 }: Props) {
     const theme = useTheme();
 
@@ -36,7 +38,7 @@ function ListAndDetails({
                 bgcolor: backgroundColor ?? 'background.paper',
                 height: `${heightVal}px`,
                 overflow: 'hidden',
-                mb: 2,
+                mb: removeMargin ? undefined : 2,
             }}
         >
             <ReflexContainer orientation="vertical">

@@ -176,6 +176,17 @@ export const defaultOutlineColor = {
     dark: `rgba(247, 249, 252, 0.12)`,
 };
 
+// Light is an RGB translation of #0B131E; Dark is an RGB translation of #F7F9FC.
+export const intensifiedOutline = {
+    light: `1px solid rgba(11, 19, 30, 0.25)`,
+    dark: `1px solid rgba(247, 249, 252, 0.25)`,
+};
+
+export const intensifiedOutlineThick = {
+    light: `2px solid rgba(11, 19, 30, 0.25)`,
+    dark: `2px solid rgba(247, 249, 252, 0.25)`,
+};
+
 // Styles
 
 export const tableAlternateRowsSx: SxProps<Theme> = {
@@ -374,6 +385,7 @@ export const alternateConnectorImageBackgroundSx: SxProps<Theme> = {
 export const autoCompleteListPadding = 8;
 
 export const dataGridListStyling: SxProps<Theme> = {
+    'borderRadius': 0,
     'borderBottom': 'none',
     '& .MuiDataGrid-row ': {
         cursor: 'pointer',
@@ -385,7 +397,6 @@ export const dataGridListStyling: SxProps<Theme> = {
         display: 'none',
     },
     '& .MuiDataGrid-columnHeaders': {
-        borderTop: (theme) => defaultOutline[theme.palette.mode],
         borderBottom: (theme) => defaultOutline[theme.palette.mode],
         bgcolor: (theme) => alternativeDataGridHeader[theme.palette.mode],
     },

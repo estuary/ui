@@ -1,6 +1,8 @@
 import { Box, BoxProps, styled } from '@mui/material';
 
-export const StepBox = styled(Box)<BoxProps & { last?: boolean }>(
+// TODO (transform): Remove this component when the new transform create workflow can be released
+//   because it is only used in the legacy workflow.
+export const LegacyStepWrapper = styled(Box)<BoxProps & { last?: boolean }>(
     ({ theme, last }) => ({
         border: '1px solid #9AB5CB',
         borderRadius: 3,

@@ -239,6 +239,15 @@ export type EntityWorkflow =
     | 'materialization_edit'
     | 'test_json_forms';
 
+export interface Transform {
+    name: string;
+    source: string;
+    lambda: string;
+    shuffle?: {
+        key: string[];
+    };
+}
+
 export type SortDirection = 'asc' | 'desc';
 
 export enum TableStatuses {
