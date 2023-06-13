@@ -82,16 +82,11 @@ function TransformationCreate({ postWindowOpen }: Props) {
     // Draft Editor Store
     const draftId = useEditorStore_id();
 
-    // Entity Store
-    const adminCapabilities = useEntitiesStore_capabilities_adminable();
-    const prefixOptions = Object.keys(adminCapabilities);
-
     // Form State Store
     const logToken = useFormStateStore_logToken();
     const publicationError = useFormStateStore_error();
 
     // Transformation Create Store
-    const derivationName = useTransformationCreate_name();
     const setDerivationName = useTransformationCreate_setName();
     const setCatalogPrefix = useTransformationCreate_setPrefix();
     const language = useTransformationCreate_language();
@@ -141,14 +136,9 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
                             <Divider />
 
-                            <Box
-                                sx={{
-                                    p: 2,
-                                }}
-                            >
+                            <Box sx={{ py: 1, px: 2 }}>
                                 <PrefixedName
                                     standardVariant
-                                    size="medium"
                                     label={null}
                                     onNameChange={(newName, errors) => {
                                         setDerivationName(newName);
