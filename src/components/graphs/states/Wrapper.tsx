@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
-import EmptyGraphState from 'components/admin/Billing/graphs/states/Empty';
-import GraphLoadingState from 'components/admin/Billing/graphs/states/Loading';
+import EmptyGraphState from 'components/graphs/states/Empty';
+import GraphLoadingState from 'components/graphs/states/Loading';
 import {
     useBilling_billingHistory,
     useBilling_dataByTaskGraphDetails,

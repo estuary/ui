@@ -43,6 +43,10 @@ function Overview({ name }: Props) {
                     <DataPreview collectionName={entityName} />
                 </Grid>
             ) : null}
+
+            <Grid item xs={12}>
+                Data usage graph
+            </Grid>
         </Grid>
     );
 }

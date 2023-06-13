@@ -4,6 +4,7 @@ import {
     startOfMonth,
     startOfWeek,
     subDays,
+    subHours,
     subMonths,
     subWeeks,
 } from 'date-fns';
@@ -26,6 +27,20 @@ export type StatsFilter =
     | 'lastMonth'
     | 'thisMonth';
 
+const DEFAULT_QUERY = `    
+            catalog_name,
+            grain,
+            bytes_written_by_me,
+            docs_written_by_me,
+            bytes_read_by_me,
+            docs_read_by_me,
+            bytes_written_to_me,
+            docs_written_to_me,
+            bytes_read_from_me,
+            docs_read_from_me,
+            ts
+        `;
+
 // This will format the date so that it just gets the month, day, year
 //  We do not need the full minute/hour/offset because the backend is not saving those
 export const formatToGMT = (date: any) =>
@@ -38,21 +53,7 @@ export const formatToGMT = (date: any) =>
 const getStatsByName = (names: string[], filter?: StatsFilter) => {
     let queryBuilder = supabaseClient
         .from<CatalogStats>(TABLES.CATALOG_STATS)
-        .select(
-            `    
-            catalog_name,
-            grain,
-            bytes_written_by_me,
-            docs_written_by_me,
-            bytes_read_by_me,
-            docs_read_by_me,
-            bytes_written_to_me,
-            docs_written_to_me,
-            bytes_read_from_me,
-            docs_read_from_me,
-            ts
-        `
-        )
+        .select(DEFAULT_QUERY)
         .in('catalog_name', names)
         .order('catalog_name');
 
@@ -134,6 +135,20 @@ const getStatsForBilling = (tenants: string[], startDate: string) => {
         .order('ts', { ascending: false });
 };
 
+const getStatsForDetails = (catalogName: string) => {
+    const today = new Date();
+    const past = subHours(today, 12);
+
+    return supabaseClient
+        .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
+        .select(DEFAULT_QUERY)
+        .eq('catalog_name', catalogName)
+        .eq('grain', 'hourly')
+        .gte('ts', formatToGMT(past))
+        .lt('ts', formatToGMT(today))
+        .order('ts', { ascending: false });
+};
+
 // TODO (billing): Enable pagination when a database table containing historic billing data is available.
 //   This function is temporarily unused since the billing history table component is using filtered data
 //   returned by the billing_report RPC to populate the contents of its rows.
@@ -180,4 +195,9 @@ const getStatsForBillingHistoryTable = (
     return queryBuilder;
 };
 
-export { getStatsForBilling, getStatsForBillingHistoryTable, getStatsByName };
+export {
+    getStatsByName,
+    getStatsForBilling,
+    getStatsForBillingHistoryTable,
+    getStatsForDetails,
+};
