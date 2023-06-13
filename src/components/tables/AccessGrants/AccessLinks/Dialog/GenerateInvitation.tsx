@@ -4,7 +4,7 @@ import { generateGrantDirective } from 'api/directives';
 import PrefixedName from 'components/inputs/PrefixedName';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import { useZustandStore } from 'context/Zustand/provider';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import {
@@ -84,10 +84,12 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
         },
     };
 
-    const onChange = useCallback((value: string, errors: string | null) => {
+    const onChange = (value: string, errors: string | null) => {
+        console.log('onchange2');
+
         setObjectRole(value);
         setObjectRoleHasErrors(Boolean(errors));
-    }, []);
+    };
 
     return (
         <Grid

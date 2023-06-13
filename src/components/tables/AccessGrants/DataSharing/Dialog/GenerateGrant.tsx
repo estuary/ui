@@ -8,7 +8,6 @@ import {
     ChangeEvent,
     Dispatch,
     SetStateAction,
-    useCallback,
     useMemo,
     useState,
 } from 'react';
@@ -143,10 +142,11 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
         [objectRoleHasErrors, subjectInvalid, subjectMissing, subjectRole]
     );
 
-    const onChange = useCallback((value: string, errors: string | null) => {
+    const onChange = (value: string, errors: string | null) => {
+        console.log('onchange1');
         setObjectRole(value);
         setObjectRoleHasErrors(Boolean(errors));
-    }, []);
+    };
 
     return (
         <Grid
