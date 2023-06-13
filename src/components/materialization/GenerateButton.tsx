@@ -14,6 +14,7 @@ import {
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
+import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -57,6 +58,8 @@ function MaterializeGenerateButton({
     callFailed,
     mutateDraftSpecs,
 }: Props) {
+    const isEdit = useEntityWorkflow_Editing();
+
     // Details Form Store
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
@@ -115,7 +118,7 @@ function MaterializeGenerateButton({
     //      If there is persisted draft ID
     //          - get the draft name
     const processedEntityName = useEntityNameSuffix(
-        !persistedDraftId || entityNameChanged
+        !isEdit && (!persistedDraftId || entityNameChanged)
     );
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
