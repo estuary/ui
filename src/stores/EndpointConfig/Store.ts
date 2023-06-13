@@ -5,6 +5,7 @@ import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
+    CustomError,
     fetchErrors,
     filterErrors,
     getStoreWithCustomErrorsSettings,
@@ -23,7 +24,7 @@ const STORE_KEY = 'Endpoint Config';
 
 const populateErrors = (
     endpointConfig: JsonFormsData,
-    customErrors: any[],
+    customErrors: CustomError[],
     state: EndpointConfigState
 ): void => {
     const endpointConfigErrors = filterErrors(fetchErrors(endpointConfig));

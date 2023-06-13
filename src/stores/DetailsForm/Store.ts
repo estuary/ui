@@ -5,6 +5,7 @@ import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
 import { Details, DetailsFormState } from 'stores/DetailsForm/types';
 import {
+    CustomError,
     fetchErrors,
     filterErrors,
     getStoreWithCustomErrorsSettings,
@@ -38,7 +39,7 @@ const initialDetails: Details = {
 
 const populateErrors = (
     endpointConfig: JsonFormsData,
-    customErrors: any[],
+    customErrors: CustomError[],
     state: DetailsFormState
 ): void => {
     const endpointConfigErrors = filterErrors(fetchErrors(endpointConfig)).map(
