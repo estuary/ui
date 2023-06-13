@@ -34,7 +34,7 @@ interface Props {
 }
 
 const namePattern = new RegExp(
-    `^(${PREFIX_NAME_PATTERN}/)*${PREFIX_NAME_PATTERN}[/]$`
+    `^(${PREFIX_NAME_PATTERN}/)*${PREFIX_NAME_PATTERN}/?$`
 );
 
 // The write capability should be obscured to the user. It is more challenging
@@ -78,12 +78,9 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
 
             const value = event.target.value.replaceAll(/\s/g, '_');
 
-            const processedValue = appendWithForwardSlash(value);
-
-            setSubjectMissing(!hasLength(processedValue));
-            setSubjectInvalid(!namePattern.test(processedValue));
-
-            setSubjectRole(processedValue);
+            setSubjectMissing(!hasLength(value));
+            setSubjectInvalid(!namePattern.test(value));
+            setSubjectRole(value);
         },
         setGrantCapability: (_event: React.SyntheticEvent, value: string) => {
             if (serverError) {
@@ -181,6 +178,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                     onChange={handlers.evaluateSubjectRole}
                     sx={{ flexGrow: 1 }}
                     required
+                    value={subjectRole}
                 />
             </Grid>
 
