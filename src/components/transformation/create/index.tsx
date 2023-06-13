@@ -39,8 +39,8 @@ import {
 } from 'stores/FormState/hooks';
 import {
     useTransformationCreate_language,
+    useTransformationCreate_setCatalogName,
     useTransformationCreate_setName,
-    useTransformationCreate_setPrefix,
 } from 'stores/TransformationCreate/hooks';
 import SingleStep from './SingleStep';
 import StepWrapper from './Wrapper';
@@ -88,7 +88,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
     // Transformation Create Store
     const setDerivationName = useTransformationCreate_setName();
-    const setCatalogPrefix = useTransformationCreate_setPrefix();
+    const setCatalogName = useTransformationCreate_setCatalogName();
     const language = useTransformationCreate_language();
 
     const [entityNameError, setEntityNameError] = useState<string | null>(null);
@@ -140,12 +140,12 @@ function TransformationCreate({ postWindowOpen }: Props) {
                                 <PrefixedName
                                     standardVariant
                                     label={null}
-                                    onNameChange={(newName, errors) => {
-                                        setDerivationName(newName);
+                                    onChange={(newName, errors) => {
+                                        setCatalogName(newName);
                                         setEntityNameError(errors);
                                     }}
-                                    onPrefixChange={(prefix, errors) => {
-                                        setCatalogPrefix(prefix);
+                                    onNameChange={(newName, errors) => {
+                                        setDerivationName(newName);
                                         setEntityNameError(errors);
                                     }}
                                 />
@@ -269,11 +269,11 @@ function TransformationCreate({ postWindowOpen }: Props) {
                                     id: 'newTransform.collection.label',
                                 })}
                                 onChange={(newName, errors) => {
-                                    setDerivationName(newName);
+                                    setCatalogName(newName);
                                     setEntityNameError(errors);
                                 }}
-                                onPrefixChange={(prefix, errors) => {
-                                    setCatalogPrefix(prefix);
+                                onNameChange={(newName, errors) => {
+                                    setDerivationName(newName);
                                     setEntityNameError(errors);
                                 }}
                             />

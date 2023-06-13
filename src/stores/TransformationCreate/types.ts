@@ -26,10 +26,8 @@ export interface TransformCreateState {
     name: string;
     setName: (val: TransformCreateState['name']) => void;
 
-    prefix: string;
-    setPrefix: (value: TransformCreateState['prefix']) => void;
-
-    catalogName: string | null;
+    catalogName: string;
+    setCatalogName: (val: TransformCreateState['catalogName']) => void;
 
     // Transformation Config
     sourceCollections: string[];

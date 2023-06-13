@@ -14,7 +14,6 @@ const getInitialStateData = (): Pick<
     | 'language'
     | 'migrations'
     | 'name'
-    | 'prefix'
     | 'previewActive'
     | 'selectedAttribute'
     | 'sourceCollections'
@@ -22,12 +21,11 @@ const getInitialStateData = (): Pick<
     | 'transformCount'
 > => ({
     attributeType: 'transform',
-    catalogName: null,
+    catalogName: '',
     catalogUpdating: false,
     language: 'sql',
     migrations: {},
     name: '',
-    prefix: '',
     previewActive: false,
     selectedAttribute: '',
     sourceCollections: [],
@@ -54,24 +52,20 @@ const getInitialState = (
     setName: (value) => {
         set(
             produce((state: TransformCreateState) => {
-                const { prefix } = get();
-
                 state.name = value;
-                state.catalogName = prefix ? `${prefix}${value}` : null;
             }),
             false,
-            'Transform Create Name Set'
+            'Transform Create Derivation Name Set'
         );
     },
 
-    setPrefix: (value) => {
+    setCatalogName: (value) => {
         set(
             produce((state: TransformCreateState) => {
-                state.prefix = value;
-                state.catalogName = `${value}${state.name}`;
+                state.catalogName = value;
             }),
             false,
-            'Transform Create Prefix Set'
+            'Transform Create Catalog Name Set'
         );
     },
 
