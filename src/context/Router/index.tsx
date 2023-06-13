@@ -148,70 +148,71 @@ const router = createBrowserRouter(
                         element={<DataPlaneAuthReq />}
                     />
 
-                    <Route
-                        path={`${authenticatedRoutes.collections.path}/*`}
-                        element={
-                            <EntityContextProvider value="collection">
-                                <Collections />
-                                <Routes>
-                                    <Route
-                                        path={
-                                            authenticatedRoutes.collections
-                                                .create.new.path
-                                        }
-                                        element={
-                                            <Suspense fallback={null}>
-                                                <DerivationCreateComponent />
-                                            </Suspense>
-                                        }
-                                    />
+                    <Route path={`${authenticatedRoutes.collections.path}/*`}>
+                        {/*Check details first as collections create opens as dialog
+                            meaning we include the collections table in the element*/}
+                        <Route
+                            path={authenticatedRoutes.collections.details.path}
+                        >
+                            <Route
+                                path={
+                                    authenticatedRoutes.collections.details
+                                        .overview.path
+                                }
+                                element={
+                                    <Suspense fallback={null}>
+                                        <CollectionDetailsRoute tab="overview" />
+                                    </Suspense>
+                                }
+                            />
 
-                                    <Route
-                                        path={
-                                            authenticatedRoutes.collections
-                                                .details.path
-                                        }
-                                    >
+                            <Route
+                                path={
+                                    authenticatedRoutes.collections.details.spec
+                                        .path
+                                }
+                                element={
+                                    <Suspense fallback={null}>
+                                        <CollectionDetailsRoute tab="spec" />
+                                    </Suspense>
+                                }
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.collections.details
+                                        .history.path
+                                }
+                                element={
+                                    <Suspense fallback={null}>
+                                        <CollectionDetailsRoute tab="history" />
+                                    </Suspense>
+                                }
+                            />
+                        </Route>
+
+                        <Route
+                            path="*"
+                            element={
+                                <EntityContextProvider value="collection">
+                                    <Collections />
+                                    <Routes>
                                         <Route
                                             path={
                                                 authenticatedRoutes.collections
-                                                    .details.overview.path
+                                                    .create.new.path
                                             }
                                             element={
                                                 <Suspense fallback={null}>
-                                                    <CollectionDetailsRoute tab="overview" />
+                                                    <DerivationCreateComponent />
                                                 </Suspense>
                                             }
                                         />
-
-                                        <Route
-                                            path={
-                                                authenticatedRoutes.collections
-                                                    .details.spec.path
-                                            }
-                                            element={
-                                                <Suspense fallback={null}>
-                                                    <CollectionDetailsRoute tab="spec" />
-                                                </Suspense>
-                                            }
-                                        />
-
-                                        <Route
-                                            path={
-                                                authenticatedRoutes.collections
-                                                    .details.history.path
-                                            }
-                                            element={
-                                                <Suspense fallback={null}>
-                                                    <CollectionDetailsRoute tab="history" />
-                                                </Suspense>
-                                            }
-                                        />
-                                    </Route>
-                                </Routes>
-                            </EntityContextProvider>
-                        }
-                    />
+                                    </Routes>
+                                </EntityContextProvider>
+                            }
+                        />
+                    </Route>
 
                     <Route path={authenticatedRoutes.captures.path}>
                         <Route

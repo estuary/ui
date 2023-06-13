@@ -1,14 +1,13 @@
 import { TableRow, useTheme } from '@mui/material';
 import { CollectionQueryWithStats } from 'api/liveSpecsExt';
-import Actions from 'components/tables/cells/Actions';
-import ExpandDetails from 'components/tables/cells/ExpandDetails';
+import { authenticatedRoutes } from 'app/routes';
 import TimeStamp from 'components/tables/cells/TimeStamp';
-import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
+import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import useShardsList from 'hooks/useShardsList';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     useShardDetail_setError,
@@ -20,11 +19,10 @@ import {
     StatsResponse,
 } from 'stores/Tables/Store';
 import { hasLength } from 'utils/misc-utils';
-import EntityName from '../cells/EntityName';
+import EntityNameLink from '../cells/EntityNameLink';
 import RowSelect from '../cells/RowSelect';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
-import useCollectionColumns from './useCollectionColumns';
 
 interface RowProps {
     isSelected: boolean;
@@ -42,9 +40,10 @@ interface RowsProps {
 function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const theme = useTheme();
     const tenantDetails = useTenantDetails();
-    const tableColumns = useCollectionColumns();
 
-    const [detailsExpanded, setDetailsExpanded] = useState(false);
+    const { generatePath } = useDetailsNavigator(
+        authenticatedRoutes.collections.details.overview.fullPath
+    );
 
     const calculatedBytes = useMemo(() => {
         if (stats) {
@@ -69,49 +68,30 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     }, [row.catalog_name, stats]);
 
     return (
-        <>
-            <TableRow
-                key={`Entity-${row.id}`}
-                selected={isSelected}
-                onClick={() => setRow(row.id, row.last_pub_id, !isSelected)}
-                sx={getEntityTableRowSx(theme, detailsExpanded)}
-            >
-                <RowSelect isSelected={isSelected} name={row.catalog_name} />
+        <TableRow
+            key={`Entity-${row.id}`}
+            selected={isSelected}
+            onClick={() => setRow(row.id, row.last_pub_id, !isSelected)}
+            sx={getEntityTableRowSx(theme, false)}
+        >
+            <RowSelect isSelected={isSelected} name={row.catalog_name} />
 
-                <EntityName
-                    name={row.catalog_name}
-                    showEntityStatus={showEntityStatus}
-                />
-
-                {hasLength(tenantDetails) ? (
-                    <>
-                        <Bytes val={stats ? calculatedBytes : null} />
-
-                        <Docs val={stats ? calculatedDocs : null} />
-                    </>
-                ) : null}
-
-                <TimeStamp time={row.updated_at} />
-
-                <Actions>
-                    <ExpandDetails
-                        onClick={() => {
-                            setDetailsExpanded(!detailsExpanded);
-                        }}
-                        expanded={detailsExpanded}
-                    />
-                </Actions>
-            </TableRow>
-
-            <DetailsPanel
-                detailsExpanded={detailsExpanded}
-                lastPubId={row.last_pub_id}
-                colSpan={tableColumns.length + 1}
-                entityType="collection"
-                entityName={row.catalog_name}
-                disableLogs
+            <EntityNameLink
+                name={row.catalog_name}
+                showEntityStatus={showEntityStatus}
+                detailsLink={generatePath(row)}
             />
-        </>
+
+            {hasLength(tenantDetails) ? (
+                <>
+                    <Bytes val={stats ? calculatedBytes : null} />
+
+                    <Docs val={stats ? calculatedDocs : null} />
+                </>
+            ) : null}
+
+            <TimeStamp time={row.updated_at} />
+        </TableRow>
     );
 }
 

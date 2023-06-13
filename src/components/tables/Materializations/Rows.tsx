@@ -3,16 +3,15 @@ import { MaterializationQueryWithStats } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
-import EntityName from 'components/tables/cells/EntityName';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
-import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import useShardsList from 'hooks/useShardsList';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { SelectTableStoreNames } from 'stores/names';
 import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
@@ -22,10 +21,10 @@ import {
     StatsResponse,
 } from 'stores/Tables/Store';
 import { getPathWithParams, hasLength } from 'utils/misc-utils';
+import EntityNameLink from '../cells/EntityNameLink';
 import OptionsMenu from '../cells/OptionsMenu';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
-import useMaterializationColumns from './useMaterializationColumns';
 
 interface RowsProps {
     data: MaterializationQueryWithStats[];
@@ -43,10 +42,11 @@ interface RowProps {
 function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const navigate = useNavigate();
     const theme = useTheme();
-    const tableColumns = useMaterializationColumns();
     const tenantDetails = useTenantDetails();
 
-    const [detailsExpanded, setDetailsExpanded] = useState(false);
+    const { generatePath } = useDetailsNavigator(
+        authenticatedRoutes.materializations.details.overview.fullPath
+    );
 
     const handlers = {
         clickRow: (rowId: string, lastPubId: string) => {
@@ -64,72 +64,57 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                 )
             );
         },
-        toggleDetailsPanel: () => setDetailsExpanded(!detailsExpanded),
     };
 
     return (
-        <>
-            <TableRow
-                hover
-                onClick={() => handlers.clickRow(row.id, row.last_pub_id)}
-                selected={isSelected}
-                sx={getEntityTableRowSx(theme, detailsExpanded)}
-            >
-                <RowSelect isSelected={isSelected} name={row.catalog_name} />
+        <TableRow
+            hover
+            onClick={() => handlers.clickRow(row.id, row.last_pub_id)}
+            selected={isSelected}
+            sx={getEntityTableRowSx(theme, false)}
+        >
+            <RowSelect isSelected={isSelected} name={row.catalog_name} />
 
-                <EntityName
-                    name={row.catalog_name}
-                    showEntityStatus={showEntityStatus}
-                />
-
-                <Connector
-                    connectorImage={row.image}
-                    connectorName={row.title}
-                    imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
-                />
-
-                {hasLength(tenantDetails) ? (
-                    <>
-                        <Bytes
-                            read
-                            val={
-                                stats
-                                    ? stats[row.catalog_name]?.bytes_read_by_me
-                                    : null
-                            }
-                        />
-
-                        <Docs
-                            read
-                            val={
-                                stats
-                                    ? stats[row.catalog_name]?.docs_read_by_me
-                                    : null
-                            }
-                        />
-                    </>
-                ) : null}
-
-                <ChipList strings={row.reads_from} maxChips={5} />
-
-                <TimeStamp time={row.updated_at} />
-
-                <OptionsMenu
-                    detailsExpanded={detailsExpanded}
-                    toggleDetailsPanel={handlers.toggleDetailsPanel}
-                    editTask={handlers.editTask}
-                />
-            </TableRow>
-
-            <DetailsPanel
-                collectionNames={row.reads_from}
-                detailsExpanded={detailsExpanded}
-                lastPubId={row.last_pub_id}
-                colSpan={tableColumns.length + 1}
-                entityType="materialization"
-                entityName={row.catalog_name}
+            <EntityNameLink
+                name={row.catalog_name}
+                showEntityStatus={showEntityStatus}
+                detailsLink={generatePath(row)}
             />
-        </>
+
+            <Connector
+                connectorImage={row.image}
+                connectorName={row.title}
+                imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
+            />
+
+            {hasLength(tenantDetails) ? (
+                <>
+                    <Bytes
+                        read
+                        val={
+                            stats
+                                ? stats[row.catalog_name]?.bytes_read_by_me
+                                : null
+                        }
+                    />
+
+                    <Docs
+                        read
+                        val={
+                            stats
+                                ? stats[row.catalog_name]?.docs_read_by_me
+                                : null
+                        }
+                    />
+                </>
+            ) : null}
+
+            <ChipList strings={row.reads_from} maxChips={5} />
+
+            <TimeStamp time={row.updated_at} />
+
+            <OptionsMenu editTask={handlers.editTask} />
+        </TableRow>
     );
 }
 
