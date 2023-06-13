@@ -1,4 +1,4 @@
-import { LoadingButton } from '@mui/lab';
+import { LoadingButton, LoadingButtonProps } from '@mui/lab';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { createRefreshToken } from 'api/tokens';
@@ -19,12 +19,14 @@ interface Props {
     postWindowOpen: (window: Window | null) => void;
     entityNameError?: string | null;
     sourceCollectionSet?: Set<string>;
+    buttonVariant?: LoadingButtonProps['variant'];
 }
 
 function GitPodButton({
     postWindowOpen,
     entityNameError,
     sourceCollectionSet,
+    buttonVariant,
 }: Props) {
     const intl = useIntl();
 
@@ -164,7 +166,7 @@ function GitPodButton({
 
     return (
         <LoadingButton
-            variant="contained"
+            variant={buttonVariant ?? 'contained'}
             loading={urlLoading}
             disabled={!!entityNameError || !!submitButtonError || urlLoading}
             onClick={async () => {

@@ -1,4 +1,4 @@
-import { Box, Button, Grid } from '@mui/material';
+import { Box, Button, Grid, Stack } from '@mui/material';
 import MigrationList from 'components/transformation/create/DerivationEditor/Catalog/MigrationList';
 import TransformList from 'components/transformation/create/DerivationEditor/Catalog/TransformList';
 import DerivationEditorHeader from 'components/transformation/create/DerivationEditor/Header';
@@ -101,14 +101,19 @@ function DerivationEditor({ postWindowOpen }: Props) {
                 </Grid>
             </Grid>
 
-            <Grid
-                item
-                xs={12}
-                sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}
-            >
-                <GitPodButton postWindowOpen={postWindowOpen} />
+            <Grid item xs={12} sx={{ mt: 2 }}>
+                <Stack
+                    spacing={2}
+                    direction="row"
+                    sx={{ justifyContent: 'flex-end' }}
+                >
+                    <GitPodButton
+                        postWindowOpen={postWindowOpen}
+                        buttonVariant="outlined"
+                    />
 
-                <Button>Publish</Button>
+                    <Button>Publish</Button>
+                </Stack>
             </Grid>
         </Grid>
     );
