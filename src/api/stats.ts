@@ -43,8 +43,12 @@ const DEFAULT_QUERY = `
 
 // This will format the date so that it just gets the month, day, year
 //  We do not need the full minute/hour/offset because the backend is not saving those
-export const formatToGMT = (date: any) =>
-    formatInTimeZone(date, 'GMT', "yyyy-MM-dd' 00:00:00+00'");
+export const formatToGMT = (date: any, includeHour?: boolean) =>
+    formatInTimeZone(
+        date,
+        'GMT',
+        `yyyy-MM-dd${includeHour ? ' HH:00:00' : "' 00:00:00+00'"}`
+    );
 
 // TODO (stats) add support for which stats columns each entity wants
 //  Right now all tables run the same query even though they only need
@@ -137,15 +141,15 @@ const getStatsForBilling = (tenants: string[], startDate: string) => {
 
 const getStatsForDetails = (catalogName: string) => {
     const today = new Date();
-    const past = subHours(today, 12);
+    const past = subHours(today, 6);
 
     return supabaseClient
         .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
         .select(DEFAULT_QUERY)
         .eq('catalog_name', catalogName)
         .eq('grain', 'hourly')
-        .gte('ts', formatToGMT(past))
-        .lt('ts', formatToGMT(today))
+        .gte('ts', formatToGMT(past, true))
+        .lt('ts', formatToGMT(today, true))
         .order('ts', { ascending: false });
 };
 
