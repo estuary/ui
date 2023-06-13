@@ -143,7 +143,6 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
     );
 
     const onChange = (value: string, errors: string | null) => {
-        console.log('onchange1');
         setObjectRole(value);
         setObjectRoleHasErrors(Boolean(errors));
     };

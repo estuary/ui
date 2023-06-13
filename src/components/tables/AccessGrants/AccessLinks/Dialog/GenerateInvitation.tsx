@@ -85,8 +85,6 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
     };
 
     const onChange = (value: string, errors: string | null) => {
-        console.log('onchange2');
-
         setObjectRole(value);
         setObjectRoleHasErrors(Boolean(errors));
     };
