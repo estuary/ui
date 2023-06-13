@@ -13,15 +13,25 @@ function useEntityNameSuffix(when: boolean | undefined) {
     const entityName = useDetailsForm_details_entityName();
     const imageName = useDetailsForm_connectorImage_imageName();
     const draftedEntityName = useDetailsForm_draftedEntityName();
+    const strippedImageName = stripPathing(imageName);
+    const nameEndsInImage = entityName.endsWith(strippedImageName);
 
     return useMemo(
         () =>
             when
-                ? `${entityName}/${stripPathing(imageName)}`
+                ? !nameEndsInImage
+                    ? `${entityName}/${strippedImageName}`
+                    : entityName
                 : hasLength(draftedEntityName)
                 ? draftedEntityName
                 : entityName,
-        [draftedEntityName, entityName, imageName, when]
+        [
+            draftedEntityName,
+            entityName,
+            nameEndsInImage,
+            strippedImageName,
+            when,
+        ]
     );
 }
 
