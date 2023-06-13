@@ -20,6 +20,8 @@ import {
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
 import SingleLineCode from 'components/content/SingleLineCode';
+import { useEditorStore_id } from 'components/editor/Store/hooks';
+import EntityError from 'components/shared/Entity/Error';
 import DerivationEditor from 'components/transformation/create/DerivationEditor';
 import GitPodButton from 'components/transformation/create/GitPodButton';
 import InitializeDraftButton from 'components/transformation/create/InitializeDraftButton';
@@ -35,6 +37,10 @@ import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useEffectOnce, useSet } from 'react-use';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
+import {
+    useFormStateStore_error,
+    useFormStateStore_logToken,
+} from 'stores/FormState/hooks';
 import {
     useTransformationCreate_language,
     useTransformationCreate_name,
@@ -82,9 +88,18 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
     const collections = useLiveSpecs('collection');
 
+    // Draft Editor Store
+    const draftId = useEditorStore_id();
+
+    // Entity Store
     const adminCapabilities = useEntitiesStore_capabilities_adminable();
     const prefixOptions = Object.keys(adminCapabilities);
 
+    // Form State Store
+    const logToken = useFormStateStore_logToken();
+    const publicationError = useFormStateStore_error();
+
+    // Transformation Create Store
     const derivationName = useTransformationCreate_name();
     const setDerivationName = useTransformationCreate_setName();
 
@@ -243,6 +258,16 @@ function TransformationCreate({ postWindowOpen }: Props) {
                 </Collapse>
 
                 <Collapse in={sqlEditorOpen}>
+                    <Collapse in={publicationError !== null} unmountOnExit>
+                        {publicationError ? (
+                            <EntityError
+                                title={publicationError.title}
+                                error={publicationError.error}
+                                logToken={logToken}
+                                draftId={draftId}
+                            />
+                        ) : null}
+                    </Collapse>
                     <DerivationEditor postWindowOpen={postWindowOpen} />
                 </Collapse>
             </>

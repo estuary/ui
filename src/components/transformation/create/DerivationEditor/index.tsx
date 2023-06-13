@@ -1,4 +1,5 @@
-import { Box, Button, Grid, Stack } from '@mui/material';
+import { Box, Grid, Stack } from '@mui/material';
+import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import MigrationList from 'components/transformation/create/DerivationEditor/Catalog/MigrationList';
 import TransformList from 'components/transformation/create/DerivationEditor/Catalog/TransformList';
 import DerivationEditorHeader from 'components/transformation/create/DerivationEditor/Header';
@@ -10,6 +11,13 @@ import GitPodButton from 'components/transformation/create/GitPodButton';
 import { intensifiedOutline } from 'context/Theme';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
+import { CustomEvents } from 'services/logrocket';
+import {
+    useFormStateStore_exitWhenLogsClose,
+    useFormStateStore_resetState,
+    useFormStateStore_setFormState,
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import {
     useTransformationCreate_attributeType,
     useTransformationCreate_catalogName,
@@ -24,10 +32,41 @@ interface Props {
 const EDITOR_HEIGHT = 363;
 
 function DerivationEditor({ postWindowOpen }: Props) {
+    // Form State Store
+    const setFormState = useFormStateStore_setFormState();
+    const resetFormState = useFormStateStore_resetState();
+    const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
+
+    // Transformation Create Store
     const catalogName = useTransformationCreate_catalogName();
     const transformConfigs = useTransformationCreate_transformConfigs();
     const migrations = useTransformationCreate_migrations();
     const attributeType = useTransformationCreate_attributeType();
+
+    const helpers = {
+        callFailed: (formState: any) => {
+            setFormState({
+                status: FormStatus.FAILED,
+                exitWhenLogsClose: false,
+                ...formState,
+            });
+        },
+        exit: () => {
+            resetFormState();
+        },
+    };
+
+    const handlers = {
+        closeLogs: () => {
+            setFormState({
+                showLogs: false,
+            });
+
+            if (exitWhenLogsClose) {
+                helpers.exit();
+            }
+        },
+    };
 
     const showEditor = useMemo(
         () =>
@@ -112,7 +151,16 @@ function DerivationEditor({ postWindowOpen }: Props) {
                         buttonVariant="outlined"
                     />
 
-                    <Button>Publish</Button>
+                    <EntitySaveButton
+                        callFailed={helpers.callFailed}
+                        taskNames={
+                            typeof catalogName === 'string'
+                                ? [catalogName]
+                                : undefined
+                        }
+                        closeLogs={handlers.closeLogs}
+                        logEvent={CustomEvents.DERIVATION_CREATE}
+                    />
                 </Stack>
             </Grid>
         </Grid>

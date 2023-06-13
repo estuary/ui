@@ -1039,6 +1039,11 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.editor.preview.header': `Data Preview`,
     'newTransform.editor.preview.description': `This is a placeholder for a section description`,
     'newTransform.editor.preview.noPreviewGenerated': `Click PREVIEW to execute your query.`,
+
+    'newTransform.editor.save.failedErrorTitle': `Derivation Save Failed`,
+    'newTransform.editor.save.failure.errorTitle': `Derivation Save Failed`,
+    'newTransform.editor.save.serverUnreachable': `${CommonMessages['common.failedFetch']} while saving derivation`,
+    'newTransform.editor.save.waitMessage': `Please wait while we test, save, and publish your derivation.`,
 };
 
 const CustomRenderers: ResolvedIntlConfig['messages'] = {

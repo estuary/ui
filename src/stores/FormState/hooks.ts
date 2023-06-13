@@ -10,6 +10,8 @@ const storeName = (workflow: EntityWorkflow | null): FormStateStoreNames => {
             return FormStateStoreNames.CAPTURE_CREATE;
         case 'capture_edit':
             return FormStateStoreNames.CAPTURE_EDIT;
+        case 'derivation_create':
+            return FormStateStoreNames.COLLECTION_CREATE;
         case 'materialization_create':
             return FormStateStoreNames.MATERIALIZATION_CREATE;
         case 'materialization_edit':

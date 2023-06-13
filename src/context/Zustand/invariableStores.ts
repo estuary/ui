@@ -42,6 +42,9 @@ const invariableStores = {
     [DetailsFormStoreNames.CAPTURE]: createDetailsFormStore(
         DetailsFormStoreNames.CAPTURE
     ),
+    [DetailsFormStoreNames.COLLECTION]: createDetailsFormStore(
+        DetailsFormStoreNames.COLLECTION
+    ),
     [DetailsFormStoreNames.MATERIALIZATION]: createDetailsFormStore(
         DetailsFormStoreNames.MATERIALIZATION
     ),
@@ -73,6 +76,10 @@ const invariableStores = {
     [FormStateStoreNames.CAPTURE_EDIT]: createFormStateStore(
         FormStateStoreNames.CAPTURE_EDIT,
         MessagePrefixes.CAPTURE_EDIT
+    ),
+    [FormStateStoreNames.COLLECTION_CREATE]: createFormStateStore(
+        FormStateStoreNames.COLLECTION_CREATE,
+        MessagePrefixes.DERIVATION_CREATE
     ),
     [FormStateStoreNames.MATERIALIZATION_CREATE]: createFormStateStore(
         FormStateStoreNames.MATERIALIZATION_CREATE,

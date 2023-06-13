@@ -1,6 +1,7 @@
 import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
 import { AuthenticatedOnlyContext } from 'context/Authenticated';
 import { EntityContextProvider } from 'context/EntityContext';
+import { WorkflowContextProvider } from 'context/Workflow';
 import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import Auth from 'pages/Auth';
@@ -161,7 +162,9 @@ const router = createBrowserRouter(
                                         }
                                         element={
                                             <Suspense fallback={null}>
-                                                <DerivationCreateComponent />
+                                                <WorkflowContextProvider value="derivation_create">
+                                                    <DerivationCreateComponent />
+                                                </WorkflowContextProvider>
                                             </Suspense>
                                         }
                                     />
