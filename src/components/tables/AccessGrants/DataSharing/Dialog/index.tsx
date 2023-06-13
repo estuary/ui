@@ -18,12 +18,11 @@ import { FormattedMessage } from 'react-intl';
 const TITLE_ID = 'share-data-dialog-title';
 
 interface Props {
-    objectRoles: string[];
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-function ShareDataDialog({ objectRoles, open, setOpen }: Props) {
+function ShareDataDialog({ open, setOpen }: Props) {
     const theme = useTheme();
 
     const [serverError, setServerError] = useState<PostgrestError | null>(null);
@@ -89,7 +88,6 @@ function ShareDataDialog({ objectRoles, open, setOpen }: Props) {
                 ) : null}
 
                 <GenerateGrant
-                    objectRoles={objectRoles}
                     serverError={serverError}
                     setServerError={setServerError}
                     setOpen={setOpen}

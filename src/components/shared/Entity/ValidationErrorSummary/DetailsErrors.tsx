@@ -2,6 +2,7 @@ import KeyValueList from 'components/shared/KeyValueList';
 import { useIntl } from 'react-intl';
 import {
     useDetailsForm_connectorImage_id,
+    useDetailsForm_customErrors,
     useDetailsForm_details_entityName,
 } from 'stores/DetailsForm/hooks';
 import { hasLength } from 'utils/misc-utils';
@@ -9,6 +10,7 @@ import { hasLength } from 'utils/misc-utils';
 function DetailsErrors() {
     const intl = useIntl();
 
+    const customErrors = useDetailsForm_customErrors();
     const entityName = useDetailsForm_details_entityName();
     const imageId = useDetailsForm_connectorImage_id();
 
@@ -29,6 +31,13 @@ function DetailsErrors() {
                 id: 'entityCreate.endpointConfig.connectorMissing',
             }),
         });
+    }
+
+    // If there are no other errors go ahead and show the custom ones
+    if (!hasLength(filteredErrorsList) && hasLength(customErrors)) {
+        customErrors.forEach((customError) =>
+            filteredErrorsList.push({ title: customError.message })
+        );
     }
 
     return (

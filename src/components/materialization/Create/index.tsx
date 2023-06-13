@@ -11,7 +11,6 @@ import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import EntityToolbar from 'components/shared/Entity/Header';
-import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
@@ -20,7 +19,6 @@ import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
     useDetailsForm_connectorImage,
-    useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm/hooks';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
@@ -54,7 +52,6 @@ function MaterializationCreate() {
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
-    const detailsFormErrorsExist = useDetailsForm_errorsExist();
     const resetDetailsForm = useDetailsForm_resetState();
 
     // Draft Editor Store
@@ -136,11 +133,6 @@ function MaterializationCreate() {
                         entityType={entityType}
                         draftSpecMetadata={draftSpecsMetadata}
                         resetState={resetState}
-                        errorSummary={
-                            <ValidationErrorSummary
-                                errorsExist={detailsFormErrorsExist}
-                            />
-                        }
                         toolbar={
                             <EntityToolbar
                                 GenerateButton={

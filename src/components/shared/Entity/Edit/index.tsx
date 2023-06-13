@@ -42,6 +42,7 @@ import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
 import IncompatibleCollections from '../IncompatibleCollections';
+import ValidationErrorSummary from '../ValidationErrorSummary';
 
 interface Props {
     title: string;
@@ -57,7 +58,6 @@ interface Props {
     >;
     callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
     resetState: () => void;
-    errorSummary: ReactNode;
     toolbar: ReactNode;
     RediscoverButton?: ReactNode;
 }
@@ -69,7 +69,6 @@ function EntityEdit({
     readOnly,
     draftSpecMetadata,
     resetState,
-    errorSummary,
     toolbar,
     RediscoverButton,
 }: Props) {
@@ -146,7 +145,9 @@ function EntityEdit({
         <>
             {toolbar}
 
-            <Box sx={{ mb: 4 }}>{errorSummary}</Box>
+            <Box sx={{ mb: 4 }}>
+                <ValidationErrorSummary />
+            </Box>
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />

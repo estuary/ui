@@ -18,12 +18,11 @@ import { FormattedMessage } from 'react-intl';
 const TITLE_ID = 'share-prefix-dialog-title';
 
 interface Props {
-    objectRoles: string[];
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-function PrefixInvitationDialog({ objectRoles, open, setOpen }: Props) {
+function PrefixInvitationDialog({ open, setOpen }: Props) {
     const theme = useTheme();
 
     const [serverError, setServerError] = useState<PostgrestError | null>(null);
@@ -81,7 +80,6 @@ function PrefixInvitationDialog({ objectRoles, open, setOpen }: Props) {
                 ) : null}
 
                 <GenerateInvitation
-                    objectRoles={objectRoles}
                     serverError={serverError}
                     setServerError={setServerError}
                 />

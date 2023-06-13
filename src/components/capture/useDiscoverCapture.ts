@@ -11,6 +11,7 @@ import {
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
+import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { useClient } from 'hooks/supabase-swr';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
@@ -72,6 +73,8 @@ function useDiscoverCapture(
 ) {
     const supabaseClient = useClient();
 
+    const isEdit = useEntityWorkflow_Editing();
+
     // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
     const setDraftId = useEditorStore_setId();
@@ -118,7 +121,9 @@ function useDiscoverCapture(
     //    create requires draftedEntityName because it has the connector image added to it
     //    edit   requires entityName        because it is the name already in the system and
     //                                        we do not have a draftedEntityName yet
-    const processedEntityName = useEntityNameSuffix(options?.initiateDiscovery);
+    const processedEntityName = useEntityNameSuffix(
+        !isEdit && options?.initiateDiscovery
+    );
 
     const jobFailed = useCallback(
         (error) => {
