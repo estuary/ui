@@ -24,11 +24,7 @@ function AccessLinksButton() {
                 <FormattedMessage id="admin.users.cta.prefixInvitation" />
             </Button>
 
-            <PrefixInvitationDialog
-                objectRoles={objectRoles}
-                open={open}
-                setOpen={setOpen}
-            />
+            <PrefixInvitationDialog open={open} setOpen={setOpen} />
         </Box>
     ) : null;
 }

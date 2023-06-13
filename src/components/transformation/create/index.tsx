@@ -2,9 +2,6 @@ import {
     Box,
     Collapse,
     Divider,
-    InputAdornment,
-    MenuItem,
-    Select,
     Stack,
     Step,
     StepConnector,
@@ -12,7 +9,6 @@ import {
     StepLabel,
     Stepper,
     styled,
-    TextField,
     Theme,
     Typography,
     useMediaQuery,
@@ -20,6 +16,7 @@ import {
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
 import SingleLineCode from 'components/content/SingleLineCode';
+import PrefixedName from 'components/inputs/PrefixedName';
 import DerivationEditor from 'components/transformation/create/DerivationEditor';
 import GitPodButton from 'components/transformation/create/GitPodButton';
 import InitializeDraftButton from 'components/transformation/create/InitializeDraftButton';
@@ -33,20 +30,14 @@ import useGlobalSearchParams, {
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useEffectOnce, useSet } from 'react-use';
-import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
+import { useSet } from 'react-use';
 import {
     useTransformationCreate_language,
-    useTransformationCreate_name,
-    useTransformationCreate_prefix,
     useTransformationCreate_setName,
     useTransformationCreate_setPrefix,
 } from 'stores/TransformationCreate/hooks';
-import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 import SingleStep from './SingleStep';
 import StepWrapper from './Wrapper';
-
-const NAME_RE = new RegExp(`^(${PREFIX_NAME_PATTERN}/?)*$`);
 
 // This is a way to very simply "hide" the flow where anyone
 //  can create a tenant but allow us to test it out in prod.
@@ -82,53 +73,16 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
     const collections = useLiveSpecs('collection');
 
-    const adminCapabilities = useEntitiesStore_capabilities_adminable();
-    const prefixOptions = Object.keys(adminCapabilities);
-
-    const derivationName = useTransformationCreate_name();
     const setDerivationName = useTransformationCreate_setName();
-
-    const catalogPrefix = useTransformationCreate_prefix();
     const setCatalogPrefix = useTransformationCreate_setPrefix();
-
     const language = useTransformationCreate_language();
 
+    const [entityNameError, setEntityNameError] = useState<string | null>(null);
     const [sqlEditorOpen, setSQLEditorOpen] = useState(false);
 
     const [selectedCollectionSet, selectedCollectionSetFunctions] = useSet(
         new Set<string>([])
     );
-
-    const entityNameError = useMemo(() => {
-        if (derivationName) {
-            if (prefixOptions.length > 1 && !catalogPrefix) {
-                return intl.formatMessage({
-                    id: 'newTransform.errors.prefixMissing',
-                });
-            }
-            if (!NAME_RE.test(derivationName)) {
-                // TODO: be more descriptive
-                return intl.formatMessage({
-                    id: 'newTransform.errors.namePattern',
-                });
-            }
-        }
-        return null;
-    }, [intl, catalogPrefix, derivationName, prefixOptions]);
-
-    const handlers = {
-        evaluateCatalogName: (
-            event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-        ) => {
-            setDerivationName(event.target.value);
-        },
-    };
-
-    useEffectOnce(() => {
-        if (prefixOptions.length > 0) {
-            setCatalogPrefix(prefixOptions[0]);
-        }
-    });
 
     if (showNewWorkflow) {
         return (
@@ -168,54 +122,25 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
                             <Divider />
 
-                            <TextField
-                                sx={{ mt: 1, mb: 2, px: 2 }}
-                                size="small"
-                                variant="standard"
-                                required
-                                fullWidth
-                                error={!!entityNameError}
-                                helperText={entityNameError}
-                                value={derivationName}
-                                onChange={handlers.evaluateCatalogName}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            {prefixOptions.length === 1 ? (
-                                                prefixOptions[0]
-                                            ) : (
-                                                <>
-                                                    <Select
-                                                        size="small"
-                                                        variant="standard"
-                                                        value={catalogPrefix}
-                                                        onChange={(evt) => {
-                                                            setCatalogPrefix(
-                                                                evt.target.value
-                                                            );
-                                                        }}
-                                                    >
-                                                        {prefixOptions.map(
-                                                            (prefix) => (
-                                                                <MenuItem
-                                                                    key={prefix}
-                                                                    value={
-                                                                        prefix
-                                                                    }
-                                                                >
-                                                                    {prefix}
-                                                                </MenuItem>
-                                                            )
-                                                        )}
-                                                    </Select>
-
-                                                    <Divider orientation="vertical" />
-                                                </>
-                                            )}
-                                        </InputAdornment>
-                                    ),
+                            <Box
+                                sx={{
+                                    p: 2,
                                 }}
-                            />
+                            >
+                                <PrefixedName
+                                    standardVariant
+                                    size="medium"
+                                    label={null}
+                                    onNameChange={(newName, errors) => {
+                                        setDerivationName(newName);
+                                        setEntityNameError(errors);
+                                    }}
+                                    onPrefixChange={(prefix, errors) => {
+                                        setCatalogPrefix(prefix);
+                                        setEntityNameError(errors);
+                                    }}
+                                />
+                            </Box>
                         </StepWrapper>
 
                         <Box
@@ -319,55 +244,18 @@ function TransformationCreate({ postWindowOpen }: Props) {
                                 </Typography>
                             </LegacySingleStep>
 
-                            <TextField
-                                sx={{ marginBottom: 2 }}
+                            <PrefixedName
+                                size="medium"
                                 label={intl.formatMessage({
                                     id: 'newTransform.collection.label',
                                 })}
-                                required
-                                fullWidth
-                                error={!!entityNameError}
-                                helperText={entityNameError}
-                                value={derivationName}
-                                onChange={(event) =>
-                                    setDerivationName(event.target.value)
-                                }
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            {prefixOptions.length === 1 ? (
-                                                prefixOptions[0]
-                                            ) : (
-                                                <>
-                                                    <Select
-                                                        size="small"
-                                                        variant="standard"
-                                                        value={catalogPrefix}
-                                                        onChange={(evt) => {
-                                                            setCatalogPrefix(
-                                                                evt.target.value
-                                                            );
-                                                        }}
-                                                    >
-                                                        {prefixOptions.map(
-                                                            (prefix) => (
-                                                                <MenuItem
-                                                                    key={prefix}
-                                                                    value={
-                                                                        prefix
-                                                                    }
-                                                                >
-                                                                    {prefix}
-                                                                </MenuItem>
-                                                            )
-                                                        )}
-                                                    </Select>
-
-                                                    <Divider orientation="vertical" />
-                                                </>
-                                            )}
-                                        </InputAdornment>
-                                    ),
+                                onChange={(newName, errors) => {
+                                    setDerivationName(newName);
+                                    setEntityNameError(errors);
+                                }}
+                                onPrefixChange={(prefix, errors) => {
+                                    setCatalogPrefix(prefix);
+                                    setEntityNameError(errors);
                                 }}
                             />
 

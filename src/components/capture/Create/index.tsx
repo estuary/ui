@@ -13,7 +13,6 @@ import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import EntityToolbar from 'components/shared/Entity/Header';
-import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
@@ -23,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
     useDetailsForm_connectorImage,
-    useDetailsForm_errorsExist,
+    useDetailsForm_entityNameChanged,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm/hooks';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
@@ -57,8 +56,8 @@ function CaptureCreate() {
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
-    const detailsFormErrorsExist = useDetailsForm_errorsExist();
     const resetDetailsForm = useDetailsForm_resetState();
+    const entityNameChanged = useDetailsForm_entityNameChanged();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
@@ -88,6 +87,13 @@ function CaptureCreate() {
         setDraftId(null);
         setInitiateDiscovery(true);
     }, [setDraftId, setInitiateDiscovery, imageTag]);
+
+    // If the name changed we need to make sure we run discovery again
+    useEffect(() => {
+        if (entityNameChanged) {
+            setInitiateDiscovery(true);
+        }
+    }, [entityNameChanged]);
 
     const resetState = () => {
         resetDetailsForm();
@@ -155,11 +161,6 @@ function CaptureCreate() {
                         entityType={entityType}
                         draftSpecMetadata={draftSpecsMetadata}
                         resetState={resetState}
-                        errorSummary={
-                            <ValidationErrorSummary
-                                errorsExist={detailsFormErrorsExist}
-                            />
-                        }
                         toolbar={
                             <EntityToolbar
                                 waitTimes={{ generate: MAX_DISCOVER_TIME }}

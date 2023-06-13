@@ -1,5 +1,5 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
-import { StoreWithHydration } from 'stores/Hydration';
+import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { KeyedMutator } from 'swr';
 import { AuthRoles, Schema } from 'types';
 

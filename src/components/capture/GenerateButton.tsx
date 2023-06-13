@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_connectorImage_connectorId,
+    useDetailsForm_entityNameChanged,
     useDetailsForm_previousConnectorImage_connectorId,
 } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
@@ -40,6 +41,7 @@ function CaptureGenerateButton({
     const selectedConnectorId = useDetailsForm_connectorImage_connectorId();
     const previousConnectorId =
         useDetailsForm_previousConnectorImage_connectorId();
+    const entityNameChanged = useDetailsForm_entityNameChanged();
 
     // Form State Store
     const formStatus = useFormStateStore_status();
@@ -47,6 +49,7 @@ function CaptureGenerateButton({
     useEffect(() => {
         if (createWorkflowMetadata?.initiateDiscovery) {
             if (
+                !entityNameChanged &&
                 formStatus === FormStatus.GENERATED &&
                 selectedConnectorId === previousConnectorId
             ) {
@@ -54,6 +57,7 @@ function CaptureGenerateButton({
             }
         }
     }, [
+        entityNameChanged,
         createWorkflowMetadata,
         formStatus,
         previousConnectorId,

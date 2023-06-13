@@ -1,5 +1,5 @@
 import { BillingRecord } from 'api/billing';
-import { StoreWithHydration } from 'stores/Hydration';
+import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { CatalogStats_Billing, Entity } from 'types';
 
 export interface DataVolumeByTask {

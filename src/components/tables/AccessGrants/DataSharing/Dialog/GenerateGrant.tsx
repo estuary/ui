@@ -1,8 +1,8 @@
-import { Button, Grid, SelectChangeEvent, TextField } from '@mui/material';
+import { Button, Grid, TextField } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { createRoleGrant } from 'api/roleGrants';
+import PrefixedName from 'components/inputs/PrefixedName';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import SelectTextField from 'components/shared/toolbar/SelectTextField';
 import { useZustandStore } from 'context/Zustand/provider';
 import {
     ChangeEvent,
@@ -28,13 +28,14 @@ import {
 } from 'utils/misc-utils';
 
 interface Props {
-    objectRoles: string[];
     serverError: PostgrestError | null;
     setServerError: React.Dispatch<React.SetStateAction<PostgrestError | null>>;
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const namePattern = new RegExp(`^${PREFIX_NAME_PATTERN}[/]$`);
+const namePattern = new RegExp(
+    `^(${PREFIX_NAME_PATTERN}/)*${PREFIX_NAME_PATTERN}/?$`
+);
 
 // The write capability should be obscured to the user. It is more challenging
 // for a user to understand the nuances of this grant and likely will not be used
@@ -42,12 +43,7 @@ const namePattern = new RegExp(`^${PREFIX_NAME_PATTERN}[/]$`);
 
 const capabilityOptions: Capability[] = ['read', 'admin'];
 
-function GenerateGrant({
-    objectRoles,
-    serverError,
-    setServerError,
-    setOpen,
-}: Props) {
+function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
     const intl = useIntl();
 
     // Access Grant Select Table Store
@@ -64,48 +60,15 @@ function GenerateGrant({
         notificationStoreSelectors.showNotification
     );
 
-    const [objectMissing, setObjectMissing] = useState(false);
-    const [objectInvalid, setObjectInvalid] = useState(false);
-
     const [subjectMissing, setSubjectMissing] = useState(false);
     const [subjectInvalid, setSubjectInvalid] = useState(false);
 
-    const [objectPrefix, setObjectPrefix] = useState<string>(objectRoles[0]);
-    const [objectSuffix, setObjectSuffix] = useState<string>('');
-    const [subjectRole, setSubjectRole] = useState<string>('');
-    const [capability, setCapability] = useState<Capability>(
-        capabilityOptions[0]
-    );
+    const [objectRole, setObjectRole] = useState('');
+    const [objectRoleHasErrors, setObjectRoleHasErrors] = useState(false);
+    const [subjectRole, setSubjectRole] = useState('');
+    const [capability, setCapability] = useState(capabilityOptions[0]);
 
     const handlers = {
-        evaluateObjectRolePrefix: (event: SelectChangeEvent<string>) => {
-            if (serverError) {
-                setServerError(null);
-            }
-
-            const value = event.target.value;
-
-            setObjectMissing(!hasLength(value));
-
-            setObjectPrefix(value);
-        },
-        evaluateObjectRoleSuffix: (
-            event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-        ) => {
-            if (serverError) {
-                setServerError(null);
-            }
-
-            const value = event.target.value.replaceAll(/\s/g, '_');
-
-            const processedValue = appendWithForwardSlash(value);
-
-            setObjectInvalid(
-                hasLength(processedValue) && !namePattern.test(processedValue)
-            );
-
-            setObjectSuffix(processedValue);
-        },
         evaluateSubjectRole: (
             event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
         ) => {
@@ -115,12 +78,9 @@ function GenerateGrant({
 
             const value = event.target.value.replaceAll(/\s/g, '_');
 
-            const processedValue = appendWithForwardSlash(value);
-
-            setSubjectMissing(!hasLength(processedValue));
-            setSubjectInvalid(!namePattern.test(processedValue));
-
-            setSubjectRole(processedValue);
+            setSubjectMissing(!hasLength(value));
+            setSubjectInvalid(!namePattern.test(value));
+            setSubjectRole(value);
         },
         setGrantCapability: (_event: React.SyntheticEvent, value: string) => {
             if (serverError) {
@@ -132,9 +92,10 @@ function GenerateGrant({
         generateRoleGrant: (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            const objectRole = `${objectPrefix}${objectSuffix}`;
+            const processedSubject = appendWithForwardSlash(subjectRole);
+            const processedObject = appendWithForwardSlash(objectRole);
 
-            createRoleGrant(subjectRole, objectRole, capability).then(
+            createRoleGrant(processedSubject, processedObject, capability).then(
                 (response) => {
                     if (response.error) {
                         setServerError(response.error);
@@ -148,7 +109,10 @@ function GenerateGrant({
                                 {
                                     id: 'admin.prefix.issueGrant.notification.success.message',
                                 },
-                                { objectRole, subjectRole }
+                                {
+                                    objectRole: processedObject,
+                                    subjectRole: processedSubject,
+                                }
                             ),
                             severity: 'success',
                             title: intl.formatMessage({
@@ -168,32 +132,35 @@ function GenerateGrant({
 
     const formInvalid = useMemo(
         () =>
-            objectMissing ||
-            objectInvalid ||
+            objectRoleHasErrors ||
             subjectMissing ||
             !hasLength(subjectRole) ||
             subjectInvalid,
-        [
-            objectInvalid,
-            objectMissing,
-            subjectInvalid,
-            subjectMissing,
-            subjectRole,
-        ]
+        [objectRoleHasErrors, subjectInvalid, subjectMissing, subjectRole]
     );
 
+    const onChange = (value: string, errors: string | null) => {
+        setObjectRole(value);
+        setObjectRoleHasErrors(Boolean(errors));
+    };
+
     return (
-        <Grid container spacing={2} sx={{ mb: 5, pt: 1 }}>
+        <Grid
+            container
+            spacing={2}
+            sx={{ mb: 5, pt: 1, alignItems: 'flex-start' }}
+        >
             <Grid item xs={12} md={4} sx={{ display: 'flex' }}>
-                <SelectTextField
+                <PrefixedName
+                    allowBlankName
+                    allowEndSlash
+                    defaultPrefix
+                    required
                     label={intl.formatMessage({
                         id: 'admin.prefix.issueGrant.label.sharedPrefix',
                     })}
-                    defaultSelectValue={objectPrefix}
-                    selectValues={objectRoles}
-                    selectChangeHandler={handlers.evaluateObjectRolePrefix}
-                    textChangeHandler={handlers.evaluateObjectRoleSuffix}
-                    errorExists={objectMissing || objectInvalid}
+                    onChange={onChange}
+                    validateOnLoad
                 />
             </Grid>
 
@@ -210,6 +177,8 @@ function GenerateGrant({
                     error={subjectMissing || subjectInvalid}
                     onChange={handlers.evaluateSubjectRole}
                     sx={{ flexGrow: 1 }}
+                    required
+                    value={subjectRole}
                 />
             </Grid>
 
@@ -221,6 +190,7 @@ function GenerateGrant({
                     options={capabilityOptions}
                     defaultValue={capabilityOptions[0]}
                     changeHandler={handlers.setGrantCapability}
+                    required
                 />
             </Grid>
 

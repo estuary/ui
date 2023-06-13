@@ -37,6 +37,7 @@ import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/ho
 import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
+import ValidationErrorSummary from '../ValidationErrorSummary';
 
 interface Props {
     entityType: EntityWithCreateWorkflow;
@@ -46,7 +47,6 @@ interface Props {
     >;
     resetState: () => void;
     toolbar: ReactNode;
-    errorSummary: ReactNode;
     RediscoverButton?: ReactNode;
 }
 
@@ -54,7 +54,6 @@ function EntityCreate({
     entityType,
     draftSpecMetadata,
     resetState,
-    errorSummary,
     toolbar,
     RediscoverButton,
 }: Props) {
@@ -148,7 +147,9 @@ function EntityCreate({
         <>
             {toolbar}
 
-            <Box sx={{ mb: 4 }}>{errorSummary}</Box>
+            <Box sx={{ mb: 4 }}>
+                <ValidationErrorSummary />
+            </Box>
 
             <Collapse in={formSubmitError !== null} unmountOnExit>
                 {formSubmitError ? (

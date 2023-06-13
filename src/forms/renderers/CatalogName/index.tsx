@@ -30,13 +30,15 @@ import {
     rankWith,
     scopeEndsWith,
 } from '@jsonforms/core';
-import { MaterialInputControl } from '@jsonforms/material-renderers';
 import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
-import { Box } from '@mui/material';
-import { CatalogNameAutoComplete } from 'forms/renderers/CatalogName/AutoComplete';
-import { useMemo } from 'react';
+import PrefixedName from 'components/inputs/PrefixedName';
+import { PrefixedName_Change } from 'components/inputs/PrefixedName/types';
+import { useEntityWorkflow_Editing } from 'context/Workflow';
+import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
+import { useDetailsForm_setCustomErrors } from 'stores/DetailsForm/hooks';
+import { generateCustomError } from 'stores/extensions/CustomErrors';
 
 export const CATALOG_NAME_SCOPE = 'entityName';
 
@@ -45,36 +47,53 @@ export const catalogNameTypeTester: RankedTester = rankWith(
     scopeEndsWith(CATALOG_NAME_SCOPE)
 );
 
-const CatalogNameTypeRenderer = (
-    props: ControlProps & OwnPropsOfEnum & WithOptionLabel
-) => {
-    const { errors, schema } = props;
-
-    // Get custom error message for catalog name issues so they
-    //  are more readable for users
+const CatalogNameTypeRenderer = ({
+    data,
+    enabled,
+    handleChange,
+    path,
+    required,
+    uischema,
+}: ControlProps & OwnPropsOfEnum & WithOptionLabel) => {
     const intl = useIntl();
-    const customErrors = useMemo(() => {
-        if (schema.pattern && errors.includes(schema.pattern)) {
-            return intl.formatMessage({ id: 'custom.catalogName.pattern' });
-        }
 
-        return errors;
-    }, [errors, intl, schema.pattern]);
+    const isEdit = useEntityWorkflow_Editing();
+    const setCustomErrors = useDetailsForm_setCustomErrors();
+
+    const updateFunction = useCallback<PrefixedName_Change>(
+        (prefixedName, errorString) => {
+            const customErrors = [];
+
+            // Just replace all specific errors with a simple "invalid" error
+            if (errorString) {
+                customErrors.push(
+                    generateCustomError(
+                        path,
+                        intl.formatMessage({
+                            id: 'entityCreate.endpointConfig.entityNameInvalid',
+                        })
+                    )
+                );
+            }
+
+            setCustomErrors(customErrors);
+            handleChange(path, prefixedName);
+        },
+        [handleChange, intl, path, setCustomErrors]
+    );
 
     return (
-        <Box
-            sx={{
-                '& .MuiFormHelperText-root.Mui-error': {
-                    whiteSpace: 'break-spaces',
-                },
-            }}
-        >
-            <MaterialInputControl
-                {...props}
-                errors={customErrors}
-                input={CatalogNameAutoComplete}
-            />
-        </Box>
+        <PrefixedName
+            disabled={!enabled}
+            label={`${uischema.label}`}
+            onChange={updateFunction}
+            required={required}
+            showDescription
+            size="medium"
+            standardVariant
+            validateOnLoad={!isEdit}
+            value={isEdit ? data : undefined}
+        />
     );
 };
 

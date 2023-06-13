@@ -20,6 +20,7 @@ import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
     useDetailsForm_connectorImage_imagePath,
+    useDetailsForm_entityNameChanged,
     useDetailsForm_errorsExist,
     useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm/hooks';
@@ -62,6 +63,7 @@ function MaterializeGenerateButton({
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imagePath = useDetailsForm_connectorImage_imagePath();
     const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
+    const entityNameChanged = useDetailsForm_entityNameChanged();
 
     // Draft Editor Store
     const isSaving = useEditorStore_isSaving();
@@ -101,10 +103,20 @@ function MaterializeGenerateButton({
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
 
-    // Add the image name to the end unless there is already a persisted
-    //  draftID. Because after the first generation we already have a name
-    //  with the image name suffix
-    const processedEntityName = useEntityNameSuffix(!persistedDraftId);
+    // After the first generation we already have a name with the
+    //  image name suffix (unless name changed)
+
+    // The order of the OR statement below is SUPER important because the
+    //  entity name change variable will flip to true more often
+    //      If there is NO persisted draft ID
+    //          - process the name
+    //      If there is a persisted draft ID BUT the name changed
+    //          - process the name
+    //      If there is persisted draft ID
+    //          - get the draft name
+    const processedEntityName = useEntityNameSuffix(
+        !persistedDraftId || entityNameChanged
+    );
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -138,7 +150,11 @@ function MaterializeGenerateButton({
             let existingTaskData: DraftSpecsExtQuery_ByCatalogName | null =
                 null;
 
-            if (persistedDraftId) {
+            // Similar to processing we need to see if the name changed
+            //  that way we don't create multiple "materializations" with different names
+            //  all under the same draft. Otherwise we would then try to publish
+            //  all of those documents and not just the final name
+            if (persistedDraftId && !entityNameChanged) {
                 const existingDraftSpecResponse =
                     await getDraftSpecsByCatalogName(
                         persistedDraftId,

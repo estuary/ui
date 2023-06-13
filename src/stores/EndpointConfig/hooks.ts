@@ -17,8 +17,8 @@ export const useEndpointConfigStore_errorsExist = () => {
 
     return useZustandStore<
         EndpointConfigState,
-        EndpointConfigState['endpointConfigErrorsExist']
-    >(getStoreName(entityType), (state) => state.endpointConfigErrorsExist);
+        EndpointConfigState['errorsExist']
+    >(getStoreName(entityType), (state) => state.errorsExist);
 };
 
 export const useEndpointConfigStore_endpointConfigErrors = () => {
@@ -57,22 +57,22 @@ export const useEndpointConfigStore_endpointSchema = () => {
     >(getStoreName(entityType), (state) => state.endpointSchema);
 };
 
-export const useEndpointConfigStore_endpointCustomErrors = () => {
+export const useEndpointConfigStore_customErrors = () => {
     const entityType = useEntityType();
 
     return useZustandStore<
         EndpointConfigState,
-        EndpointConfigState['endpointCustomErrors']
-    >(getStoreName(entityType), (state) => state.endpointCustomErrors);
+        EndpointConfigState['customErrors']
+    >(getStoreName(entityType), (state) => state.customErrors);
 };
 
-export const useEndpointConfigStore_setEndpointCustomErrors = () => {
+export const useEndpointConfigStore_setCustomErrors = () => {
     const entityType = useEntityType();
 
     return useZustandStore<
         EndpointConfigState,
-        EndpointConfigState['setEndpointCustomErrors']
-    >(getStoreName(entityType), (state) => state.setEndpointCustomErrors);
+        EndpointConfigState['setCustomErrors']
+    >(getStoreName(entityType), (state) => state.setCustomErrors);
 };
 
 export const useEndpointConfigStore_setEndpointSchema = () => {

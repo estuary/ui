@@ -24,11 +24,7 @@ function DataShareButton() {
                 <FormattedMessage id="admin.prefix.cta.issueGrant" />
             </Button>
 
-            <ShareDataDialog
-                objectRoles={objectRoles}
-                open={open}
-                setOpen={setOpen}
-            />
+            <ShareDataDialog open={open} setOpen={setOpen} />
         </Box>
     ) : null;
 }

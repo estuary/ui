@@ -10,7 +10,6 @@ import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useCatalogNameInput from 'hooks/useCatalogNameInput';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -55,7 +54,6 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
 
     const setDetails = useDetailsForm_setDetails();
     const setDetails_connector = useDetailsForm_setDetails_connector();
-
     const setEntityNameChanged = useDetailsForm_setEntityNameChanged();
 
     // Draft Editor Store
@@ -66,8 +64,6 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const displayValidation = useFormStateStore_displayValidation();
 
     const isActive = useFormStateStore_isActive();
-
-    const { catalogNameSchema } = useCatalogNameInput();
 
     useEffect(() => {
         if (connectorId && hasLength(connectorTags)) {
@@ -101,7 +97,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const schema = useMemo(() => {
         return {
             properties: {
-                [CATALOG_NAME_SCOPE]: { ...catalogNameSchema },
+                [CATALOG_NAME_SCOPE]: { type: 'string' },
                 [CONNECTOR_IMAGE_SCOPE]: {
                     description: intl.formatMessage({
                         id: 'connector.description',
@@ -119,7 +115,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
             required: [CATALOG_NAME_SCOPE, CONNECTOR_IMAGE_SCOPE],
             type: 'object',
         };
-    }, [catalogNameSchema, connectorsOneOf, intl]);
+    }, [connectorsOneOf, intl]);
 
     const uiSchema = {
         elements: [
@@ -199,26 +195,17 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
 
             <Stack direction="row" spacing={2}>
                 {schema.properties[CONNECTOR_IMAGE_SCOPE].oneOf.length > 0 ? (
-                    schema.properties[CATALOG_NAME_SCOPE].examples.length >
-                    0 ? (
-                        <JsonForms
-                            schema={schema}
-                            uischema={uiSchema}
-                            data={formData}
-                            renderers={defaultRenderers}
-                            cells={materialCells}
-                            config={defaultOptions}
-                            readonly={readOnly ?? (isSaving || isActive)}
-                            validationMode={showValidation(displayValidation)}
-                            onChange={updateDetails}
-                        />
-                    ) : (
-                        <AlertBox severity="warning" short>
-                            <FormattedMessage
-                                id={`${messagePrefix}.noAccessGrants`}
-                            />
-                        </AlertBox>
-                    )
+                    <JsonForms
+                        schema={schema}
+                        uischema={uiSchema}
+                        data={formData}
+                        renderers={defaultRenderers}
+                        cells={materialCells}
+                        config={defaultOptions}
+                        readonly={readOnly ?? (isSaving || isActive)}
+                        validationMode={showValidation(displayValidation)}
+                        onChange={updateDetails}
+                    />
                 ) : (
                     <AlertBox severity="warning" short>
                         <FormattedMessage

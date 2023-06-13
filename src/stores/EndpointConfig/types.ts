@@ -1,4 +1,5 @@
-import { StoreWithHydration } from 'stores/Hydration';
+import { StoreWithCustomErrors } from 'stores/extensions/CustomErrors';
+import { StoreWithHydration } from 'stores/extensions/Hydration';
 import {
     EntityWithCreateWorkflow,
     EntityWorkflow,
@@ -6,15 +7,11 @@ import {
     Schema,
 } from 'types';
 
-export interface EndpointConfigState extends StoreWithHydration {
+export interface EndpointConfigState
+    extends StoreWithHydration,
+        StoreWithCustomErrors {
     endpointSchema: Schema;
     setEndpointSchema: (val: EndpointConfigState['endpointSchema']) => void;
-
-    // Used to display custom errors in JsonForms
-    endpointCustomErrors: any[];
-    setEndpointCustomErrors: (
-        val: EndpointConfigState['endpointCustomErrors']
-    ) => void;
 
     // Encrypted Endpoint Configs
     publishedEndpointConfig: JsonFormsData;
@@ -36,7 +33,7 @@ export interface EndpointConfigState extends StoreWithHydration {
     endpointConfig: JsonFormsData;
     setEndpointConfig: (endpointConfig: JsonFormsData) => void;
 
-    endpointConfigErrorsExist: boolean;
+    errorsExist: boolean;
     endpointConfigErrors: { message: string | undefined }[];
 
     // Server-Form Alignment

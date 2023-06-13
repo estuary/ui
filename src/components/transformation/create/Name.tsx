@@ -1,7 +1,6 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
-import useCatalogNameInput from 'hooks/useCatalogNameInput';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
@@ -14,7 +13,6 @@ import {
 // TODO (transform create) This is not in use right now but should be wired up soon
 function TransformationCreateName() {
     const intl = useIntl();
-    const { catalogNameSchema } = useCatalogNameInput();
 
     const entityName = useTransformationCreate_name();
     const setName = useTransformationCreate_setName();
@@ -22,12 +20,12 @@ function TransformationCreateName() {
     const schema = useMemo(() => {
         return {
             properties: {
-                [CATALOG_NAME_SCOPE]: { ...catalogNameSchema },
+                [CATALOG_NAME_SCOPE]: { type: 'string' },
             },
             required: [CATALOG_NAME_SCOPE],
             type: 'object',
         };
-    }, [catalogNameSchema]);
+    }, []);
 
     const uiSchema = {
         elements: [
