@@ -234,7 +234,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
                             ) : (
                                 <GitPodButton
                                     entityNameError={entityNameError}
-                                    selectedCollections={selectedCollectionSet}
+                                    sourceCollectionSet={selectedCollectionSet}
                                     postWindowOpen={postWindowOpen}
                                 />
                             )}
@@ -243,7 +243,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
                 </Collapse>
 
                 <Collapse in={sqlEditorOpen}>
-                    <DerivationEditor />
+                    <DerivationEditor postWindowOpen={postWindowOpen} />
                 </Collapse>
             </>
         );
@@ -373,7 +373,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
                             <GitPodButton
                                 entityNameError={entityNameError}
-                                selectedCollections={selectedCollectionSet}
+                                sourceCollectionSet={selectedCollectionSet}
                                 postWindowOpen={postWindowOpen}
                             />
 

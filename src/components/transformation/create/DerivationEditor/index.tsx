@@ -6,6 +6,7 @@ import ShuffleKeys from 'components/transformation/create/DerivationEditor/Shuff
 import SQLDataPreview from 'components/transformation/create/DerivationEditor/SQLDataPreview';
 import SQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor';
 import EmptySQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor/Empty';
+import GitPodButton from 'components/transformation/create/GitPodButton';
 import { intensifiedOutline } from 'context/Theme';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
@@ -16,9 +17,13 @@ import {
     useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
 
+interface Props {
+    postWindowOpen: (window: Window | null) => void;
+}
+
 const EDITOR_HEIGHT = 363;
 
-function DerivationEditor() {
+function DerivationEditor({ postWindowOpen }: Props) {
     const catalogName = useTransformationCreate_catalogName();
     const transformConfigs = useTransformationCreate_transformConfigs();
     const migrations = useTransformationCreate_migrations();
@@ -101,9 +106,7 @@ function DerivationEditor() {
                 xs={12}
                 sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}
             >
-                <Button variant="outlined" sx={{ mr: 2 }}>
-                    Proceed to GitPod
-                </Button>
+                <GitPodButton postWindowOpen={postWindowOpen} />
 
                 <Button>Publish</Button>
             </Grid>

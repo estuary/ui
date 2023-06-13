@@ -2,6 +2,7 @@ import { LoadingButton } from '@mui/lab';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { createRefreshToken } from 'api/tokens';
+import { useEditorStore_id } from 'components/editor/Store/hooks';
 import generateTransformSpec from 'components/transformation/create/generateTransformSpec';
 import { useSnackbar } from 'notistack';
 import { useCallback, useMemo, useState } from 'react';
@@ -11,21 +12,27 @@ import {
     useTransformationCreate_catalogName,
     useTransformationCreate_language,
     useTransformationCreate_name,
+    useTransformationCreate_sourceCollections,
 } from 'stores/TransformationCreate/hooks';
 
 interface Props {
-    entityNameError: string | null;
-    selectedCollections: Set<string>;
     postWindowOpen: (window: Window | null) => void;
+    entityNameError?: string | null;
+    sourceCollectionSet?: Set<string>;
 }
 
 function GitPodButton({
-    entityNameError,
-    selectedCollections,
     postWindowOpen,
+    entityNameError,
+    sourceCollectionSet,
 }: Props) {
     const intl = useIntl();
 
+    // Draft Editor Store
+    const draftId = useEditorStore_id();
+
+    // Transform Create Store
+    const sourceCollectionArray = useTransformationCreate_sourceCollections();
     const language = useTransformationCreate_language();
 
     const entityName = useTransformationCreate_name();
@@ -34,14 +41,14 @@ function GitPodButton({
     const [urlLoading, setUrlLoading] = useState(false);
 
     const submitButtonError = useMemo(() => {
-        if (selectedCollections.size < 1) {
+        if (sourceCollectionSet && sourceCollectionSet.size < 1) {
             return intl.formatMessage({ id: 'newTransform.errors.collection' });
         } else if (!entityName) {
             return intl.formatMessage({ id: 'newTransform.errors.name' });
         } else {
             return null;
         }
-    }, [intl, entityName, selectedCollections]);
+    }, [intl, entityName, sourceCollectionSet]);
 
     const { enqueueSnackbar } = useSnackbar();
     const displayError = useCallback(
@@ -66,30 +73,40 @@ function GitPodButton({
                     })
                 );
             }
-            const draft = await createEntityDraft(catalogName);
-            if (draft.error) {
-                throw new Error(
-                    `[${draft.error.code}]: ${draft.error.message}, ${draft.error.details}, ${draft.error.hint}`
+
+            let evaluatedDraftId = '';
+
+            if (draftId) {
+                evaluatedDraftId = draftId;
+            } else if (sourceCollectionSet) {
+                const draft = await createEntityDraft(catalogName);
+
+                if (draft.error) {
+                    throw new Error(
+                        `[${draft.error.code}]: ${draft.error.message}, ${draft.error.details}, ${draft.error.hint}`
+                    );
+                }
+
+                evaluatedDraftId = draft.data[0].id;
+
+                const spec = generateTransformSpec(
+                    language,
+                    catalogName,
+                    sourceCollectionSet
+                );
+
+                await createDraftSpec(
+                    evaluatedDraftId,
+                    catalogName,
+                    spec,
+                    'collection',
+                    null
                 );
             }
-            const draftId: string = draft.data[0].id;
 
-            const spec = generateTransformSpec(
-                language,
-                catalogName,
-                selectedCollections
-            );
-
-            await createDraftSpec(
-                draftId,
-                catalogName,
-                spec,
-                'collection',
-                null
-            );
-            return draftId;
+            return evaluatedDraftId;
         },
-        [catalogName, intl, language, selectedCollections]
+        [catalogName, draftId, intl, language, sourceCollectionSet]
     );
 
     const generateUrl = useMemo(
@@ -108,16 +125,18 @@ function GitPodButton({
                     );
                 }
 
-                const [token, draftId] = await Promise.all([
+                const [token, evaluatedDraftId] = await Promise.all([
                     createRefreshToken(false, '1 day'),
                     generateDraftWithSpecs(),
                 ]);
 
+                // TODO (transform): Check the length of the draft ID and throw an error appropriately.
+
                 return generateGitPodURL(
-                    draftId,
+                    evaluatedDraftId,
                     token,
                     language,
-                    selectedCollections,
+                    sourceCollectionSet ?? sourceCollectionArray,
                     catalogName
                 );
             } catch (e: unknown) {
@@ -138,7 +157,8 @@ function GitPodButton({
             generateDraftWithSpecs,
             intl,
             language,
-            selectedCollections,
+            sourceCollectionArray,
+            sourceCollectionSet,
         ]
     );
 
