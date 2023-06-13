@@ -60,7 +60,17 @@ const getInitialState = (
                 state.catalogName = prefix ? `${prefix}${value}` : null;
             }),
             false,
-            'Transform Create Name Set'
+            'Transform Create Derivation Name Set'
+        );
+    },
+
+    setCatalogName: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                state.catalogName = value;
+            }),
+            false,
+            'Transform Create Catalog Name Set'
         );
     },
 

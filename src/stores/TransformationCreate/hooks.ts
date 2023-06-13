@@ -217,3 +217,13 @@ export const useTransformationCreate_catalogName = () => {
         TransformCreateState['catalogName']
     >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.catalogName);
 };
+
+export const useTransformationCreate_setCatalogName = () => {
+    return useLocalZustandStore<
+        TransformCreateState,
+        TransformCreateState['setCatalogName']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.setCatalogName
+    );
+};
