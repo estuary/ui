@@ -129,6 +129,8 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.register.google': `Register with Google`,
     'cta.login.github': `Sign in with GitHub`,
     'cta.register.github': `Register with GitHub`,
+    'cta.login.azure': `Sign in with Azure`,
+    'cta.register.azure': `Register with Azure`,
     'cta.configure': `Configure`,
     'cta.showAll': `Show All`,
     'cta.reload': `Reload`,

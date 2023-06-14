@@ -6,6 +6,7 @@ import useLoginRedirectPath from 'hooks/useLoginRedirectPath';
 import { useSnackbar } from 'notistack';
 import GoogleButton from 'react-google-button';
 import { useIntl } from 'react-intl';
+import AzureButton from './AzureButton';
 import GithubButton from './GithubButton';
 
 // TODO (routes) This is hardcoded because unauthenticated routes... (same as MagicLink)
@@ -66,17 +67,11 @@ function OIDCs({ isRegister, grantToken }: Props) {
 
     return (
         <Stack
-            spacing={3}
+            spacing={2}
             sx={{
                 alignItems: 'center',
             }}
         >
-            <Box>
-                <GithubButton
-                    isRegister={isRegister}
-                    login={() => login('github')}
-                />
-            </Box>
             <Box>
                 <GoogleButton
                     label={intl.formatMessage({
@@ -85,6 +80,18 @@ function OIDCs({ isRegister, grantToken }: Props) {
                             : 'cta.login.google',
                     })}
                     onClick={() => login('google')}
+                />
+            </Box>
+            <Box>
+                <GithubButton
+                    isRegister={isRegister}
+                    login={() => login('github')}
+                />
+            </Box>
+            <Box>
+                <AzureButton
+                    isRegister={isRegister}
+                    login={() => login('azure')}
                 />
             </Box>
         </Stack>
