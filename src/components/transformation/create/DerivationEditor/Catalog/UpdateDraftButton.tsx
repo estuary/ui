@@ -65,10 +65,11 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
             const evaluatedTransforms = Object.values(
                 evaluatedTransformConfigs
             ).map(
-                ({ collection, lambda }): Transform => ({
+                ({ collection, lambda, shuffle }): Transform => ({
                     name: stripPathing(collection),
                     source: collection,
                     lambda,
+                    shuffle,
                 })
             );
 

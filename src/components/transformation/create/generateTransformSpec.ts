@@ -1,3 +1,6 @@
+import { isArray } from 'lodash';
+import { TransformConfig } from 'stores/TransformationCreate/types';
+import { Transform, Transform_Shuffle } from 'types';
 import { stripPathing } from 'utils/misc-utils';
 
 export type DerivationLanguage = 'sql' | 'typescript';
@@ -10,20 +13,42 @@ const schema = {
     required: ['your_key'],
 };
 
+const formatSqlTransforms = (
+    source: string,
+    entityName: string,
+    lambda?: string,
+    shuffle?: Transform_Shuffle
+): Transform => {
+    const tableName = stripPathing(source);
+
+    return {
+        name: tableName,
+        source,
+        lambda: lambda ? lambda : `${entityName}.lambda.${tableName}.sql`,
+        shuffle: shuffle ?? 'any',
+    };
+};
+
 const generateSqlTemplate = (
     entityName: string,
-    selectedCollectionSet: Set<string>
+    sourceCollections: Set<string> | string[],
+    existingTransforms?: TransformConfig[]
 ) => {
-    const transforms = Array.from(selectedCollectionSet).map((source) => {
-        const baseName = stripPathing(source);
+    let transforms: Transform[] = [];
 
-        return {
-            name: `${baseName}`,
-            shuffle: 'any',
-            source,
-            lambda: `${entityName}.lambda.${baseName}.sql`,
-        };
-    });
+    if (existingTransforms && existingTransforms.length > 0) {
+        transforms = existingTransforms.map(({ collection, lambda, shuffle }) =>
+            formatSqlTransforms(collection, entityName, lambda, shuffle)
+        );
+    } else if (isArray(sourceCollections)) {
+        transforms = sourceCollections.map((source) =>
+            formatSqlTransforms(source, entityName)
+        );
+    } else {
+        transforms = Array.from(sourceCollections).map((source) =>
+            formatSqlTransforms(source, entityName)
+        );
+    }
 
     return {
         schema,
@@ -39,19 +64,23 @@ const generateSqlTemplate = (
     };
 };
 
+const formatTsTransforms = (source: string) => {
+    const baseName = stripPathing(source);
+
+    return {
+        name: `${baseName}`,
+        shuffle: 'any',
+        source,
+    };
+};
+
 const generateTsTemplate = (
     entityName: string,
-    selectedCollectionSet: Set<string>
+    sourceCollections: Set<string> | string[]
 ) => {
-    const transforms = Array.from(selectedCollectionSet).map((source) => {
-        const baseName = stripPathing(source);
-
-        return {
-            name: `${baseName}`,
-            shuffle: 'any',
-            source,
-        };
-    });
+    const transforms = isArray(sourceCollections)
+        ? sourceCollections.map(formatTsTransforms)
+        : Array.from(sourceCollections).map(formatTsTransforms);
 
     return {
         schema,
@@ -66,20 +95,19 @@ const generateTsTemplate = (
 const generateTransformSpec = (
     language: DerivationLanguage,
     entityName: string,
-    selectedCollectionSet: Set<string>
+    sourceCollections: Set<string> | string[],
+    existingTransforms?: TransformConfig[]
 ) => {
     const strippedEntityName = stripPathing(entityName);
 
     switch (language) {
         case 'typescript':
-            return generateTsTemplate(
-                strippedEntityName,
-                selectedCollectionSet
-            );
+            return generateTsTemplate(strippedEntityName, sourceCollections);
         default:
             return generateSqlTemplate(
                 strippedEntityName,
-                selectedCollectionSet
+                sourceCollections,
+                existingTransforms
             );
     }
 };

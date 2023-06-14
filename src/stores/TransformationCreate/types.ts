@@ -1,3 +1,5 @@
+import { Transform_Shuffle } from 'types';
+
 type DerivationLanguage = 'sql' | 'typescript';
 
 export type DerivationAttribute = 'transform' | 'migration';
@@ -7,6 +9,7 @@ export interface TransformConfig {
     lambda: string;
     sqlTemplate: string;
     collection: string;
+    shuffle: Transform_Shuffle;
 }
 
 export interface TransformConfigDictionary {

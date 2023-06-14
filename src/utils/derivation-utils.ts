@@ -13,10 +13,11 @@ export const updateTransforms = (
     existingConfigs: TransformConfigDictionary
 ): Transform[] =>
     Object.values(existingConfigs).map(
-        ({ collection, lambda }): Transform => ({
+        ({ collection, lambda, shuffle }): Transform => ({
             name: stripPathing(collection),
             source: collection,
             lambda: collection === transformSource ? newLambda : lambda,
+            shuffle,
         })
     );
 
@@ -31,14 +32,16 @@ export const updateMigrations = (
 
 export const templateTransformConfig = (
     source: string,
-    entityName: string
+    entityName: string,
+    shuffleKeys?: string[]
 ): TransformConfig => {
     const tableName = stripPathing(source);
 
     return {
         filename: `${entityName}.lambda.${tableName}.sql`,
-        lambda: `SELECT * FROM ${tableName};`,
+        lambda: '',
         sqlTemplate: 'Simple Select',
+        shuffle: shuffleKeys ? { key: shuffleKeys } : 'any',
         collection: source,
     };
 };

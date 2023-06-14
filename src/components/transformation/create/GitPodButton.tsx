@@ -1,6 +1,6 @@
 import { LoadingButton, LoadingButtonProps } from '@mui/lab';
 import { createEntityDraft } from 'api/drafts';
-import { createDraftSpec } from 'api/draftSpecs';
+import { createDraftSpec, modifyDraftSpec } from 'api/draftSpecs';
 import { createRefreshToken } from 'api/tokens';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import generateTransformSpec from 'components/transformation/create/generateTransformSpec';
@@ -13,6 +13,7 @@ import {
     useTransformationCreate_language,
     useTransformationCreate_name,
     useTransformationCreate_sourceCollections,
+    useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
 
 interface Props {
@@ -35,6 +36,7 @@ function GitPodButton({
 
     // Transform Create Store
     const sourceCollectionArray = useTransformationCreate_sourceCollections();
+    const transformConfigs = useTransformationCreate_transformConfigs();
     const language = useTransformationCreate_language();
 
     const entityName = useTransformationCreate_name();
@@ -80,6 +82,19 @@ function GitPodButton({
 
             if (draftId) {
                 evaluatedDraftId = draftId;
+
+                const spec = generateTransformSpec(
+                    language,
+                    catalogName,
+                    sourceCollectionArray,
+                    Object.values(transformConfigs)
+                );
+
+                await modifyDraftSpec(spec, {
+                    draft_id: evaluatedDraftId,
+                    catalog_name: catalogName,
+                    spec_type: 'collection',
+                });
             } else if (sourceCollectionSet) {
                 const draft = await createEntityDraft(catalogName);
 
@@ -108,7 +123,15 @@ function GitPodButton({
 
             return evaluatedDraftId;
         },
-        [catalogName, draftId, intl, language, sourceCollectionSet]
+        [
+            catalogName,
+            draftId,
+            intl,
+            language,
+            sourceCollectionArray,
+            sourceCollectionSet,
+            transformConfigs,
+        ]
     );
 
     const generateUrl = useMemo(

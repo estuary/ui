@@ -241,13 +241,12 @@ export type EntityWorkflow =
     | 'materialization_edit'
     | 'test_json_forms';
 
+export type Transform_Shuffle = 'any' | { key: string[] };
 export interface Transform {
     name: string;
     source: string;
     lambda: string;
-    shuffle?: {
-        key: string[];
-    };
+    shuffle: Transform_Shuffle;
 }
 
 export type SortDirection = 'asc' | 'desc';
