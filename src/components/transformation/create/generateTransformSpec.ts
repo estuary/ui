@@ -19,6 +19,7 @@ const generateSqlTemplate = (
 
         return {
             name: `${baseName}`,
+            shuffle: 'any',
             source,
             lambda: `${entityName}.lambda.${baseName}.sql`,
         };
@@ -47,6 +48,7 @@ const generateTsTemplate = (
 
         return {
             name: `${baseName}`,
+            shuffle: 'any',
             source,
         };
     });
