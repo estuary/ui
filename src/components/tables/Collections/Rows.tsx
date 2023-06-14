@@ -108,7 +108,11 @@ function Rows({ data, showEntityStatus }: RowsProps) {
     useEffect(() => {
         if (shardsData?.error) {
             setShardsError(shardsData.error);
-        } else if (shardsData && shardsData.shards.length > 0) {
+        } else {
+            setShardsError(null);
+        }
+
+        if (shardsData && shardsData.shards.length > 0) {
             setShards(shardsData.shards);
         }
     }, [setShards, setShardsError, shardsData]);

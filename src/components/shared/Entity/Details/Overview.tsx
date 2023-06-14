@@ -8,7 +8,7 @@ import useGlobalSearchParams, {
 import { specContainsDerivation } from 'utils/misc-utils';
 import ShardInformation from '../Shard/Information';
 import Endpoints from './Endpoints';
-import Stats from './Stats';
+import Usage from './Usage';
 
 // TODO (details page)
 // Temporary - allow to pass in the name
@@ -46,7 +46,7 @@ function Overview({ name }: Props) {
             ) : null}
 
             <Grid item xs={12}>
-                <Stats catalogName={entityName} />
+                <Usage catalogName={entityName} />
             </Grid>
         </Grid>
     );

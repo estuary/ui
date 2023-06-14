@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import EmptyGraphState from 'components/graphs/states/Empty';
 import GraphLoadingState from 'components/graphs/states/Loading';
+import { FormattedMessage } from 'react-intl';
 import {
     useBilling_billingHistory,
     useBilling_dataByTaskGraphDetails,
@@ -37,7 +38,11 @@ function GraphStateWrapper({ children }: BaseComponentProps) {
                 {children}
             </Box>
         ) : (
-            <EmptyGraphState />
+            <EmptyGraphState
+                message={
+                    <FormattedMessage id="admin.billing.table.history.emptyTableDefault.message" />
+                }
+            />
         );
     } else {
         return <GraphLoadingState />;

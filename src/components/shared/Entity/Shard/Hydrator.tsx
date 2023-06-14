@@ -30,9 +30,14 @@ function ShardHydrator({ catalogName, children, lastPubId }: Props) {
         if (data) {
             if (data.error || error) {
                 setError(data.error || error);
+            } else {
+                setError(null);
             }
+
             if (data.shards.length > 0) {
                 setShards(data.shards);
+            } else {
+                setShards([]);
             }
         }
     }, [data, error, setError, setShards]);

@@ -454,7 +454,6 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.table.history.label.totalCost': `Total Cost`,
     'admin.billing.table.history.tooltip.month': `This billing period began on {timestamp}`,
     'admin.billing.table.history.tooltip.dataVolume': `GB of data processed by tasks`,
-    'admin.billing.table.history.emptyTableDefault.header': `No information found.`,
     'admin.billing.table.history.emptyTableDefault.message': `We couldn't find any billing information on file. Only administrators of a tenant are able to review billing information.`,
 
     'admin.billing.paymentMethods.header': `Payment Information`,
@@ -747,6 +746,7 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
     'detailsPanel.specification.header': `Specification`,
     'detailsPanel.status.header': `Status`,
+    'detailsPanel.dataUsage.title': `Usage`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
@@ -1110,6 +1110,11 @@ const CustomErrors: ResolvedIntlConfig['messages'] = {
     'custom.catalogName.pattern': `must match pattern "organization/name"\nwhich may include ${CommonMessages['catalogName.limitations']}`,
 };
 
+const Graphs: ResolvedIntlConfig['messages'] = {
+    'graphs.empty.header': `No information found.`,
+    'graphs.entityDetails.empty.message': `Unable to fetch details for data usage graph.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1167,6 +1172,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...DraftErrors,
     ...UpdateEntity,
     ...PrefixedName,
+    ...Graphs,
 };
 
 export default enUSMessages;
