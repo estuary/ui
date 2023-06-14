@@ -27,7 +27,6 @@ export interface Props {
     disabled?: boolean;
     hideErrorMessage?: boolean;
     onNameChange?: PrefixedName_Change;
-    onPrefixChange?: PrefixedName_Change;
     required?: boolean;
     size?: 'small' | 'medium';
     standardVariant?: boolean;
@@ -89,7 +88,6 @@ function PrefixedName({
     label,
     onChange,
     onNameChange,
-    onPrefixChange,
     required,
     showDescription,
     size,
@@ -189,13 +187,6 @@ function PrefixedName({
             );
 
             setPrefix(prefixValue);
-
-            if (onPrefixChange) {
-                onPrefixChange(prefixValue, errorString, {
-                    prefix: prefixErrors,
-                    name: nameError,
-                });
-            }
 
             if (onChange) {
                 onChange(`${prefixValue}${name}`, errorString, {
