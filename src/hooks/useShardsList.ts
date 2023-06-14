@@ -62,34 +62,38 @@ const useShardsList = <T extends LiveSpecsExtBareMinimum>(specs: T[]) => {
         }
     };
 
-    return useSWR(
-        specs.length > 0
-            ? `shards-${
-                  gatewayConfig?.gateway_url ?? '__missing_gateway_url__'
-              }-${specs.map((spec) => spec.id).join('-')}`
-            : null,
-        fetcher,
-        {
-            errorRetryCount: 3,
-            errorRetryInterval: INTERVAL / 2,
-            refreshInterval: INTERVAL,
-            revalidateOnFocus: false, // We're already refreshing and these status do not change often
-            onError: async (error: string | Error) => {
-                if (typeof error === 'object') {
-                    return Promise.reject(error.message);
-                }
-
-                if (
-                    error.includes(ErrorFlags.TOKEN_INVALID) ||
-                    error.includes(ErrorFlags.TOKEN_NOT_FOUND)
-                ) {
-                    await refreshAccess();
-                }
-
-                return Promise.reject(error);
-            },
-        }
+    const swrKey = useMemo(
+        () =>
+            specs.length > 0
+                ? `shards-${
+                      gatewayConfig?.gateway_url ?? '__missing_gateway_url__'
+                  }-${specs.map((spec) => spec.id).join('-')}`
+                : null,
+        [gatewayConfig?.gateway_url, specs]
     );
+
+    console.log('swrKey', swrKey);
+
+    return useSWR(swrKey, fetcher, {
+        errorRetryCount: 3,
+        errorRetryInterval: INTERVAL / 2,
+        refreshInterval: INTERVAL,
+        revalidateOnFocus: false, // We're already refreshing and these status do not change often
+        onError: async (error: string | Error) => {
+            if (typeof error === 'object') {
+                return Promise.reject(error.message);
+            }
+
+            if (
+                error.includes(ErrorFlags.TOKEN_INVALID) ||
+                error.includes(ErrorFlags.TOKEN_NOT_FOUND)
+            ) {
+                await refreshAccess();
+            }
+
+            return Promise.reject(error);
+        },
+    });
 };
 
 export default useShardsList;

@@ -40,6 +40,7 @@ function DataByHourGraph({ stats }: Props) {
         });
 
         const option = {
+            animation: false,
             legend: {
                 data: ['Data', 'Docs'],
             },
