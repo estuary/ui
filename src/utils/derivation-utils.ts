@@ -21,14 +21,19 @@ export const updateTransforms = (
         })
     );
 
+// TODO (transforms): Only propagate migrations that contain at least one alphanumeric character.
+// It may be best to strict the editor value itself, removing all leading spaces and
+// trimming tailing spaces when more than one is present.
 export const updateMigrations = (
     migrationId: string,
     newMigration: string,
     existingMigrations: MigrationDictionary
 ): string[] =>
-    Object.entries(existingMigrations).map(([id, migration]) =>
-        id === migrationId ? newMigration : migration
-    );
+    Object.entries(existingMigrations)
+        .map(([id, migration]) =>
+            id === migrationId ? newMigration : migration
+        )
+        .filter((migration) => migration !== '');
 
 export const templateTransformConfig = (
     source: string,
