@@ -11,6 +11,7 @@ import { generateGitPodURL } from 'services/gitpod';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_language,
+    useTransformationCreate_migrations,
     useTransformationCreate_name,
     useTransformationCreate_sourceCollections,
     useTransformationCreate_transformConfigs,
@@ -37,8 +38,9 @@ function GitPodButton({
     // Transform Create Store
     const sourceCollectionArray = useTransformationCreate_sourceCollections();
     const transformConfigs = useTransformationCreate_transformConfigs();
-    const language = useTransformationCreate_language();
+    const migrations = useTransformationCreate_migrations();
 
+    const language = useTransformationCreate_language();
     const entityName = useTransformationCreate_name();
     const catalogName = useTransformationCreate_catalogName();
 
@@ -83,11 +85,18 @@ function GitPodButton({
             if (draftId) {
                 evaluatedDraftId = draftId;
 
+                const existingMigrations = Object.values(migrations);
+                const existingTransforms = Object.values(transformConfigs);
+
                 const spec = generateTransformSpec(
                     language,
                     catalogName,
                     sourceCollectionArray,
-                    Object.values(transformConfigs)
+                    {
+                        existingTransforms,
+                        existingMigrations,
+                        templateFiles: true,
+                    }
                 );
 
                 await modifyDraftSpec(spec, {
@@ -128,6 +137,7 @@ function GitPodButton({
             draftId,
             intl,
             language,
+            migrations,
             sourceCollectionArray,
             sourceCollectionSet,
             transformConfigs,

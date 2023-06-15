@@ -13,18 +13,33 @@ const schema = {
     required: ['your_key'],
 };
 
+interface TemplateOptions {
+    existingTransforms?: TransformConfig[];
+    existingMigrations?: string[];
+    templateFiles?: boolean;
+}
+
 const formatSqlTransforms = (
     source: string,
     entityName: string,
     lambda?: string,
-    shuffle?: Transform_Shuffle
+    shuffle?: Transform_Shuffle,
+    templateFiles?: boolean
 ): Transform => {
     const tableName = stripPathing(source);
+
+    let evaluatedLambda = '';
+
+    if (lambda) {
+        evaluatedLambda = lambda;
+    } else if (templateFiles) {
+        evaluatedLambda = `${entityName}.lambda.${tableName}.sql`;
+    }
 
     return {
         name: tableName,
         source,
-        lambda: lambda ? lambda : `${entityName}.lambda.${tableName}.sql`,
+        lambda: evaluatedLambda,
         shuffle: shuffle ?? 'any',
     };
 };
@@ -32,8 +47,13 @@ const formatSqlTransforms = (
 const generateSqlTemplate = (
     entityName: string,
     sourceCollections: Set<string> | string[],
-    existingTransforms?: TransformConfig[]
+    options?: TemplateOptions
 ) => {
+    const existingTransforms = options?.existingTransforms;
+
+    const existingMigrations = options?.existingMigrations;
+    const templateFiles = options?.templateFiles;
+
     let transforms: Transform[] = [];
 
     if (existingTransforms && existingTransforms.length > 0) {
@@ -50,15 +70,21 @@ const generateSqlTemplate = (
         );
     }
 
+    let sqlite: { migrations?: string[] } = {};
+
+    if (existingMigrations && existingMigrations.length > 0) {
+        sqlite = { migrations: existingMigrations };
+    } else if (templateFiles) {
+        sqlite = { migrations: [`${entityName}.migration.0.sql`] };
+    }
+
     return {
         schema,
         key,
         derive: {
             // TODO (GitPod) what do we make this base here?
             //  there could be multiple bases
-            using: {
-                sqlite: { migrations: [`${entityName}.migration.0.sql`] },
-            },
+            using: { sqlite },
             transforms,
         },
     };
@@ -96,7 +122,7 @@ const generateTransformSpec = (
     language: DerivationLanguage,
     entityName: string,
     sourceCollections: Set<string> | string[],
-    existingTransforms?: TransformConfig[]
+    options?: TemplateOptions
 ) => {
     const strippedEntityName = stripPathing(entityName);
 
@@ -107,7 +133,7 @@ const generateTransformSpec = (
             return generateSqlTemplate(
                 strippedEntityName,
                 sourceCollections,
-                existingTransforms
+                options
             );
     }
 };
