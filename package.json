@@ -46,7 +46,7 @@
         "@stripe/react-stripe-js": "^2.1.0",
         "@stripe/stripe-js": "^1.52.1",
         "@supabase/postgrest-js": "^0.37.4",
-        "@supabase/supabase-js": "^1.35.5",
+        "@supabase/supabase-js": "^1.35.7",
         "@supabase/ui": "^0.36.5",
         "ansicolor": "^1.1.100",
         "data-plane-gateway": "https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main",
