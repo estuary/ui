@@ -92,7 +92,7 @@ function OIDCs({ isRegister, grantToken }: Props) {
             <Box>
                 <AzureButton
                     isRegister={isRegister}
-                    login={() => login('azure', 'email profile user.read')}
+                    login={() => login('azure', 'openid profile email')}
                 />
             </Box>
         </Stack>
