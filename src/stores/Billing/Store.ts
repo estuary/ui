@@ -73,7 +73,10 @@ export const getInitialState = (
         updateBillingHistory: (value) => {
             set(
                 produce((state: BillingState) => {
-                    if (value[0].max_concurrent_tasks > 0) {
+                    if (
+                        value[0].max_concurrent_tasks > 0 &&
+                        value[0].billed_prefix === state.selectedTenant
+                    ) {
                         const { billingHistory } = get();
 
                         const evaluatedBillingHistory = billingHistory.filter(
