@@ -4,7 +4,10 @@ import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
-import { useBilling_setSelectedTenant } from 'stores/Billing/hooks';
+import {
+    useBilling_resetState,
+    useBilling_setSelectedTenant,
+} from 'stores/Billing/hooks';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     useBillingTable_setHydrated,
@@ -22,6 +25,7 @@ function TenantOptions() {
 
     // Billing Store
     const setSelectedTenant = useBilling_setSelectedTenant();
+    const resetBillingState = useBilling_resetState();
 
     // Billing Select Table Store
     const setHydrated = useBillingTable_setHydrated();
@@ -46,6 +50,7 @@ function TenantOptions() {
             options={tenants.map(({ tenant }) => tenant)}
             defaultValue={tenants[0].tenant}
             changeHandler={(_event, value) => {
+                resetBillingState();
                 setSelectedTenant(value);
 
                 resetBillingSelectTableState();

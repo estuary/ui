@@ -73,7 +73,13 @@ export const getInitialState = (
         updateBillingHistory: (value) => {
             set(
                 produce((state: BillingState) => {
-                    if (value[0].max_concurrent_tasks > 0) {
+                    // This action is used to update the record of the active billing cycle at a regular interval.
+                    // Since the selected tenant is subject to vary, the billed prefix of the record input must be
+                    // validated against the selected tenant before altering the billing history.
+                    if (
+                        value[0].max_concurrent_tasks > 0 &&
+                        value[0].billed_prefix === state.selectedTenant
+                    ) {
                         const { billingHistory } = get();
 
                         const evaluatedBillingHistory = billingHistory.filter(
