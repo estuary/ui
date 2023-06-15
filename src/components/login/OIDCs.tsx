@@ -42,7 +42,7 @@ function OIDCs({ isRegister, grantToken }: Props) {
         );
     };
 
-    const login = async (provider: Provider) => {
+    const login = async (provider: Provider, scopes?: string) => {
         const redirectBaseURL = isRegister
             ? window.location.origin
             : redirectTo;
@@ -57,6 +57,7 @@ function OIDCs({ isRegister, grantToken }: Props) {
                         ? `${redirectBaseURL}?${GlobalSearchParams.GRANT_TOKEN}=${grantToken}`
                         : redirectBaseURL,
                     shouldCreateUser: isRegister,
+                    scopes,
                 }
             );
             if (error) loginFailed(provider);
@@ -91,7 +92,7 @@ function OIDCs({ isRegister, grantToken }: Props) {
             <Box>
                 <AzureButton
                     isRegister={isRegister}
-                    login={() => login('azure')}
+                    login={() => login('azure', 'email profile user.read')}
                 />
             </Box>
         </Stack>
