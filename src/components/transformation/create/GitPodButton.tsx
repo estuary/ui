@@ -166,7 +166,13 @@ function GitPodButton({
                     generateDraftWithSpecs(),
                 ]);
 
-                // TODO (transform): Check the length of the draft ID and throw an error appropriately.
+                if (!evaluatedDraftId) {
+                    throw new Error(
+                        intl.formatMessage({
+                            id: 'newTransform.errors.urlNotGenerated',
+                        })
+                    );
+                }
 
                 return generateGitPodURL(
                     evaluatedDraftId,
