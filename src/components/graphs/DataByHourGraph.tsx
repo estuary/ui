@@ -13,12 +13,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import useConstant from 'use-constant';
 import { CARD_AREA_HEIGHT } from 'utils/billing-utils';
+import { DataByHourRange } from './types';
 
 interface Props {
     stats: any[];
+    range: DataByHourRange;
 }
 
-function DataByHourGraph({ stats }: Props) {
+function DataByHourGraph({ range, stats }: Props) {
     const intl = useIntl();
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
@@ -26,13 +28,13 @@ function DataByHourGraph({ stats }: Props) {
     const today = useConstant(() => new Date());
 
     const hours = useMemo(() => {
-        const startDate = sub(today, { hours: 5 });
+        const startDate = sub(today, { hours: range - 1 });
 
         return eachHourOfInterval({
             start: startDate,
             end: today,
         }).map((date) => intl.formatTime(date));
-    }, [intl, today]);
+    }, [intl, today, range]);
 
     console.log('hours', hours);
 
@@ -112,7 +114,7 @@ function DataByHourGraph({ stats }: Props) {
         };
 
         myChart?.setOption(option);
-    }, [myChart, stats]);
+    }, [hours, myChart, stats]);
 
     return <div id="data-by-hour" style={{ height: CARD_AREA_HEIGHT }} />;
 }

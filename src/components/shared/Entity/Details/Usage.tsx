@@ -1,10 +1,12 @@
-import { Stack, Typography } from '@mui/material';
+import { Button, ButtonGroup, Stack, Typography } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import DataByHourGraph from 'components/graphs/DataByHourGraph';
 import EmptyGraphState from 'components/graphs/states/Empty';
 import GraphLoadingState from 'components/graphs/states/Loading';
+import { DataByHourRange } from 'components/graphs/types';
 import Error from 'components/shared/Error';
 import useDetailsStats from 'hooks/useDetailsStats';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 
@@ -47,6 +49,7 @@ interface Props {
 
 function Usage({ catalogName }: Props) {
     const { isValidating, stats, error } = useDetailsStats(catalogName);
+    const [range, setRange] = useState<DataByHourRange>(6);
 
     console.log('stats', stats);
 
@@ -74,8 +77,31 @@ function Usage({ catalogName }: Props) {
                     }
                 />
             ) : (
-                <CardWrapper messageId="detailsPanel.recentUsage.title">
-                    <DataByHourGraph stats={stats} />
+                <CardWrapper
+                    message={
+                        <FormattedMessage
+                            id="detailsPanel.recentUsage.title"
+                            values={{
+                                range,
+                            }}
+                        />
+                    }
+                >
+                    <Typography>
+                        <FormattedMessage id="detailsPanel.recentUsage.range.label" />
+                    </Typography>
+                    <ButtonGroup>
+                        <Button size="small" onClick={() => setRange(6)}>
+                            6
+                        </Button>
+                        <Button size="small" onClick={() => setRange(12)}>
+                            12
+                        </Button>
+                        <Button size="small" onClick={() => setRange(24)}>
+                            24
+                        </Button>
+                    </ButtonGroup>
+                    <DataByHourGraph stats={stats} range={range} />
                 </CardWrapper>
             )}
         </Stack>

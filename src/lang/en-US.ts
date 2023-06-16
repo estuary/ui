@@ -747,7 +747,8 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.specification.header': `Specification`,
     'detailsPanel.status.header': `Status`,
     'detailsPanel.dataUsage.title': `Usage`,
-    'detailsPanel.recentUsage.title': `Past 6 hours`,
+    'detailsPanel.recentUsage.title': `Past {range} hours`,
+    'detailsPanel.recentUsage.range.label': `Timeframe`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {

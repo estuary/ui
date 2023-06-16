@@ -8,16 +8,17 @@ import {
 } from '@mui/material';
 import { defaultBoxShadow, semiTransparentBackground } from 'context/Theme';
 import { HelpCircle } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { ReactNode } from 'react';
+import { useIntl } from 'react-intl';
 import { BaseComponentProps } from 'types';
 import { TOTAL_CARD_HEIGHT } from 'utils/billing-utils';
 
 interface Props extends BaseComponentProps {
-    messageId: string;
+    message: string | ReactNode;
     tooltipMessageId?: string;
 }
 
-function CardWrapper({ children, messageId, tooltipMessageId }: Props) {
+function CardWrapper({ children, message, tooltipMessageId }: Props) {
     const theme = useTheme();
     const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
 
@@ -35,7 +36,7 @@ function CardWrapper({ children, messageId, tooltipMessageId }: Props) {
         >
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
                 <Typography sx={{ mb: 2, fontSize: 16, fontWeight: 300 }}>
-                    <FormattedMessage id={messageId} />
+                    {message}
                 </Typography>
 
                 {tooltipMessageId ? (

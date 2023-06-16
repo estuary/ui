@@ -192,13 +192,21 @@ function AdminBilling() {
 
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
                 <Grid item xs={12} md={6}>
-                    <CardWrapper messageId="admin.billing.table.history.header">
+                    <CardWrapper
+                        message={
+                            <FormattedMessage id="admin.billing.table.history.header" />
+                        }
+                    >
                         <BillingHistoryTable />
                     </CardWrapper>
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                    <CardWrapper messageId="admin.billing.graph.dataByMonth.header">
+                    <CardWrapper
+                        message={
+                            <FormattedMessage id="admin.billing.graph.dataByMonth.header" />
+                        }
+                    >
                         <GraphStateWrapper>
                             <DataByMonthGraph />
                         </GraphStateWrapper>
@@ -206,7 +214,11 @@ function AdminBilling() {
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                    <CardWrapper messageId="admin.billing.graph.tasksByMonth.header">
+                    <CardWrapper
+                        message={
+                            <FormattedMessage id="admin.billing.graph.tasksByMonth.header" />
+                        }
+                    >
                         <GraphStateWrapper>
                             <TasksByMonth />
                         </GraphStateWrapper>
@@ -215,7 +227,9 @@ function AdminBilling() {
 
                 <Grid item xs={12} md={6}>
                     <CardWrapper
-                        messageId="admin.billing.graph.dataByTask.header"
+                        message={
+                            <FormattedMessage id="admin.billing.graph.dataByTask.header" />
+                        }
                         tooltipMessageId="admin.billing.graph.dataByTask.tooltip"
                     >
                         <GraphStateWrapper>
