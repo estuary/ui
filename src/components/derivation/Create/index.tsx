@@ -74,6 +74,7 @@ function DerivationCreate() {
                                     setShowConfirmation(true);
                                 }
                             }}
+                            closeDialog={closeDialog}
                         />
                     </LocalZustandProvider>
                 </Collapse>

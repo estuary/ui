@@ -61,9 +61,10 @@ const StyledStepConnector = styled(StepConnector)(() => ({
 
 interface Props {
     postWindowOpen: (window: Window | null) => void;
+    closeDialog: () => void;
 }
 
-function TransformationCreate({ postWindowOpen }: Props) {
+function TransformationCreate({ postWindowOpen, closeDialog }: Props) {
     const newTransformWorkflow = useGlobalSearchParams(
         GlobalSearchParams.HIDDEN_TRANSFORM_WORKFLOW
     );
@@ -187,7 +188,10 @@ function TransformationCreate({ postWindowOpen }: Props) {
                             />
                         ) : null}
                     </Collapse>
-                    <DerivationEditor postWindowOpen={postWindowOpen} />
+                    <DerivationEditor
+                        postWindowOpen={postWindowOpen}
+                        closeDialog={closeDialog}
+                    />
                 </Collapse>
             </>
         );

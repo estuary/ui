@@ -27,11 +27,12 @@ import {
 
 interface Props {
     postWindowOpen: (window: Window | null) => void;
+    closeDialog: () => void;
 }
 
 const EDITOR_HEIGHT = 363;
 
-function DerivationEditor({ postWindowOpen }: Props) {
+function DerivationEditor({ postWindowOpen, closeDialog }: Props) {
     // Form State Store
     const setFormState = useFormStateStore_setFormState();
     const resetFormState = useFormStateStore_resetState();
@@ -53,6 +54,7 @@ function DerivationEditor({ postWindowOpen }: Props) {
         },
         exit: () => {
             resetFormState();
+            closeDialog();
         },
     };
 
