@@ -118,7 +118,8 @@ function GitPodButton({
                 const spec = generateTransformSpec(
                     language,
                     catalogName,
-                    sourceCollectionSet
+                    sourceCollectionSet,
+                    { templateFiles: true }
                 );
 
                 await createDraftSpec(

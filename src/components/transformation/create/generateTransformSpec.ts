@@ -22,9 +22,9 @@ interface TemplateOptions {
 const formatSqlTransforms = (
     source: string,
     entityName: string,
+    templateFiles?: boolean,
     lambda?: string,
-    shuffle?: Transform_Shuffle,
-    templateFiles?: boolean
+    shuffle?: Transform_Shuffle
 ): Transform => {
     const tableName = stripPathing(source);
 
@@ -58,15 +58,21 @@ const generateSqlTemplate = (
 
     if (existingTransforms && existingTransforms.length > 0) {
         transforms = existingTransforms.map(({ collection, lambda, shuffle }) =>
-            formatSqlTransforms(collection, entityName, lambda, shuffle)
+            formatSqlTransforms(
+                collection,
+                entityName,
+                templateFiles,
+                lambda,
+                shuffle
+            )
         );
     } else if (isArray(sourceCollections)) {
         transforms = sourceCollections.map((source) =>
-            formatSqlTransforms(source, entityName)
+            formatSqlTransforms(source, entityName, templateFiles)
         );
     } else {
         transforms = Array.from(sourceCollections).map((source) =>
-            formatSqlTransforms(source, entityName)
+            formatSqlTransforms(source, entityName, templateFiles)
         );
     }
 
