@@ -75,15 +75,7 @@ function Usage({ catalogName }: Props) {
                 />
             ) : (
                 <CardWrapper messageId="detailsPanel.recentUsage.title">
-                    <DataByHourGraph
-                        stats={stats.concat([
-                            {
-                                bytes_written_by_me: 10,
-                                docs_written_by_me: 1,
-                                ts: '12:00:00',
-                            },
-                        ])}
-                    />
+                    <DataByHourGraph stats={stats} />
                 </CardWrapper>
             )}
         </Stack>

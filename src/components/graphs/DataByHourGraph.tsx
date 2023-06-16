@@ -1,3 +1,4 @@
+import { eachHourOfInterval, sub } from 'date-fns';
 import { LineChart } from 'echarts/charts';
 import {
     GridComponent,
@@ -8,7 +9,9 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
+import useConstant from 'use-constant';
 import { CARD_AREA_HEIGHT } from 'utils/billing-utils';
 
 interface Props {
@@ -16,7 +19,22 @@ interface Props {
 }
 
 function DataByHourGraph({ stats }: Props) {
+    const intl = useIntl();
+
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
+
+    const today = useConstant(() => new Date());
+
+    const hours = useMemo(() => {
+        const startDate = sub(today, { hours: 5 });
+
+        return eachHourOfInterval({
+            start: startDate,
+            end: today,
+        }).map((date) => intl.formatTime(date));
+    }, [intl, today]);
+
+    console.log('hours', hours);
 
     useEffect(() => {
         if (!myChart) {
@@ -50,7 +68,7 @@ function DataByHourGraph({ stats }: Props) {
                 },
                 type: 'category',
                 boundaryGap: false,
-                data: stats.map((stat) => stat.ts),
+                data: hours,
             },
             yAxis: [
                 {
