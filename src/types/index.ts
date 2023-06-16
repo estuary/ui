@@ -241,6 +241,8 @@ export type EntityWorkflow =
     | 'materialization_edit'
     | 'test_json_forms';
 
+export type DerivationLanguage = 'sql' | 'typescript';
+
 export type Transform_Shuffle = 'any' | { key: string[] };
 export interface Transform {
     name: string;

@@ -3,7 +3,6 @@ import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, modifyDraftSpec } from 'api/draftSpecs';
 import { createRefreshToken } from 'api/tokens';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
-import generateTransformSpec from 'components/transformation/create/generateTransformSpec';
 import { useSnackbar } from 'notistack';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -16,6 +15,7 @@ import {
     useTransformationCreate_sourceCollections,
     useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
+import { generateInitialSpec } from 'utils/derivation-utils';
 
 interface Props {
     postWindowOpen: (window: Window | null) => void;
@@ -88,7 +88,7 @@ function GitPodButton({
                 const existingMigrations = Object.values(migrations);
                 const existingTransforms = Object.values(transformConfigs);
 
-                const spec = generateTransformSpec(
+                const spec = generateInitialSpec(
                     language,
                     catalogName,
                     sourceCollectionArray,
@@ -115,7 +115,7 @@ function GitPodButton({
 
                 evaluatedDraftId = draft.data[0].id;
 
-                const spec = generateTransformSpec(
+                const spec = generateInitialSpec(
                     language,
                     catalogName,
                     sourceCollectionSet,
