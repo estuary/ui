@@ -162,7 +162,7 @@ const router = createBrowserRouter(
                                         }
                                         element={
                                             <Suspense fallback={null}>
-                                                <WorkflowContextProvider value="derivation_create">
+                                                <WorkflowContextProvider value="collection_create">
                                                     <DerivationCreateComponent />
                                                 </WorkflowContextProvider>
                                             </Suspense>

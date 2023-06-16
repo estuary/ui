@@ -7,7 +7,7 @@ export type fake = 'fake';
 export enum MessagePrefixes {
     CAPTURE_CREATE = 'captureCreate',
     CAPTURE_EDIT = 'captureEdit',
-    DERIVATION_CREATE = 'newTransform.editor',
+    COLLECTION_CREATE = 'newTransform.editor',
     MATERIALIZATION_CREATE = 'materializationCreate',
     MATERIALIZATION_EDIT = 'materializationEdit',
 }
@@ -236,7 +236,7 @@ export type EntityWithCreateWorkflow = 'capture' | 'materialization';
 export type EntityWorkflow =
     | 'capture_create'
     | 'capture_edit'
-    | 'derivation_create'
+    | 'collection_create'
     | 'materialization_create'
     | 'materialization_edit'
     | 'test_json_forms';

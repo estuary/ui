@@ -17,7 +17,7 @@ interface Props {
     callFailed: Function;
     logEvent:
         | CustomEvents.CAPTURE_CREATE
-        | CustomEvents.DERIVATION_CREATE
+        | CustomEvents.COLLECTION_CREATE
         | CustomEvents.MATERIALIZATION_CREATE
         | CustomEvents.CAPTURE_EDIT
         | CustomEvents.MATERIALIZATION_EDIT;

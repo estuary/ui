@@ -79,7 +79,7 @@ const invariableStores = {
     ),
     [FormStateStoreNames.COLLECTION_CREATE]: createFormStateStore(
         FormStateStoreNames.COLLECTION_CREATE,
-        MessagePrefixes.DERIVATION_CREATE
+        MessagePrefixes.COLLECTION_CREATE
     ),
     [FormStateStoreNames.MATERIALIZATION_CREATE]: createFormStateStore(
         FormStateStoreNames.MATERIALIZATION_CREATE,

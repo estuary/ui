@@ -159,7 +159,7 @@ function DerivationEditor({ postWindowOpen }: Props) {
                                 : undefined
                         }
                         closeLogs={handlers.closeLogs}
-                        logEvent={CustomEvents.DERIVATION_CREATE}
+                        logEvent={CustomEvents.COLLECTION_CREATE}
                     />
                 </Stack>
             </Grid>
