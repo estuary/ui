@@ -134,7 +134,7 @@ const getStatsForBilling = (tenants: string[], startDate: string) => {
         )
         .eq('grain', 'monthly')
         .gte('ts', formatToGMT(startDate))
-        .lt('ts', formatToGMT(today))
+        .lte('ts', formatToGMT(today))
         .or(subjectRoleFilters)
         .order('ts', { ascending: false });
 };
@@ -185,7 +185,7 @@ const getStatsForBillingHistoryTable = (
         )
         .eq('grain', 'monthly')
         .gte('ts', formatToGMT(startMonth))
-        .lt('ts', formatToGMT(today))
+        .lte('ts', formatToGMT(today))
         .or(subjectRoleFilters);
 
     queryBuilder = defaultTableFilter<CatalogStats_Billing>(

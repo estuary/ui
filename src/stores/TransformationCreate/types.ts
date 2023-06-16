@@ -30,6 +30,7 @@ export interface TransformCreateState {
     setPrefix: (value: TransformCreateState['prefix']) => void;
 
     catalogName: string | null;
+    setCatalogName: (val: TransformCreateState['catalogName']) => void;
 
     // Transformation Config
     sourceCollections: string[];

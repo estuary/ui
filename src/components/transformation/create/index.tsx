@@ -33,6 +33,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useSet } from 'react-use';
 import {
     useTransformationCreate_language,
+    useTransformationCreate_setCatalogName,
     useTransformationCreate_setName,
     useTransformationCreate_setPrefix,
 } from 'stores/TransformationCreate/hooks';
@@ -73,6 +74,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
     const collections = useLiveSpecs('collection');
 
+    const setCatalogName = useTransformationCreate_setCatalogName();
     const setDerivationName = useTransformationCreate_setName();
     const setCatalogPrefix = useTransformationCreate_setPrefix();
     const language = useTransformationCreate_language();
@@ -131,6 +133,10 @@ function TransformationCreate({ postWindowOpen }: Props) {
                                     standardVariant
                                     size="medium"
                                     label={null}
+                                    onChange={(newName, errors) => {
+                                        setCatalogName(newName);
+                                        setEntityNameError(errors);
+                                    }}
                                     onNameChange={(newName, errors) => {
                                         setDerivationName(newName);
                                         setEntityNameError(errors);
@@ -250,6 +256,10 @@ function TransformationCreate({ postWindowOpen }: Props) {
                                     id: 'newTransform.collection.label',
                                 })}
                                 onChange={(newName, errors) => {
+                                    setCatalogName(newName);
+                                    setEntityNameError(errors);
+                                }}
+                                onNameChange={(newName, errors) => {
                                     setDerivationName(newName);
                                     setEntityNameError(errors);
                                 }}
