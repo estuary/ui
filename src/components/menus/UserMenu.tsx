@@ -7,7 +7,9 @@ import { Auth } from '@supabase/ui';
 import UserAvatar from 'components/shared/UserAvatar';
 import { useClient } from 'hooks/supabase-swr';
 import { LogOut, Mail, ProfileCircle } from 'iconoir-react';
+import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { logRocketConsole } from 'services/logrocket';
 import { getUserDetails } from 'services/supabase';
 import IconMenu from './IconMenu';
 
@@ -26,7 +28,10 @@ const UserMenu = ({ iconColor }: Props) => {
     const supabaseClient = useClient();
 
     const { user } = Auth.useUser();
-    const { userName, email, emailVerified, avatar } = getUserDetails(user);
+    const { userName, email, emailVerified, avatar } = useMemo(() => {
+        logRocketConsole('fetching user details for menu', user);
+        return getUserDetails(user);
+    }, [user]);
 
     const handlers = {
         logout: async () => {
