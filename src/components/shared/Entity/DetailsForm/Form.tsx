@@ -178,10 +178,10 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
         } else {
             setDetails(details);
 
-            // If editing we can set the Drafted Enity Name because the store sets the name
+            // For edit we can set the Drafted Enity Name because the store sets the name
             //  and then set the entityNameChanged flag to false. Then we can reference
-            //  the previous version (ex: bindings for Materialization)
-            // If create we just set the entity name changed flag set so we can keep an eye
+            //  the previous version to not lose settings (ex: bindings for Materialization)
+            // For create we set the entity name changed flag so we can keep an eye
             //  on if the name has changed and we need to run "generate" again
             if (isEdit) {
                 setDraftedEntityName(details.data.entityName);
