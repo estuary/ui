@@ -12,7 +12,8 @@ import {
 } from 'components/editor/Bindings/Store/hooks';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { useEntityType } from 'context/EntityContext';
-import { ReactNode, useEffect, useState } from 'react';
+import { orderBy } from 'lodash';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 import ReadOnly from './ReadOnly';
@@ -48,7 +49,17 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
         useBindingsEditorStore_inferSchemaResponseEmpty();
     // const keys = useBindingsEditorStore_inferSchemaResponse_Keys();
     const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
-    const keys = Object.values(inferSchemaResponse ?? {});
+    const keys = useMemo(
+        () =>
+            inferSchemaResponse
+                ? orderBy(
+                      Object.values(inferSchemaResponse),
+                      ['exists', 'pointer'],
+                      ['desc', 'asc']
+                  )
+                : [],
+        [inferSchemaResponse]
+    );
 
     // Make sure we keep our local copy up to date
     useEffect(() => {
