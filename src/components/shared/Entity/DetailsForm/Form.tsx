@@ -5,6 +5,7 @@ import { useEditorStore_isSaving } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
+import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import useGlobalSearchParams, {
@@ -19,6 +20,7 @@ import {
     useDetailsForm_details,
     useDetailsForm_setDetails,
     useDetailsForm_setDetails_connector,
+    useDetailsForm_setDraftedEntityName,
     useDetailsForm_setEntityNameChanged,
 } from 'stores/DetailsForm/hooks';
 import { Details } from 'stores/DetailsForm/types';
@@ -55,6 +57,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const setDetails = useDetailsForm_setDetails();
     const setDetails_connector = useDetailsForm_setDetails_connector();
     const setEntityNameChanged = useDetailsForm_setEntityNameChanged();
+    const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
 
     // Draft Editor Store
     const isSaving = useEditorStore_isSaving();
@@ -64,6 +67,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const displayValidation = useFormStateStore_displayValidation();
 
     const isActive = useFormStateStore_isActive();
+    const isEdit = useEntityWorkflow_Editing();
 
     useEffect(() => {
         if (connectorId && hasLength(connectorTags)) {
@@ -173,7 +177,17 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
             }
         } else {
             setDetails(details);
-            setEntityNameChanged(details.data.entityName);
+
+            // For edit we can set the Drafted Enity Name because the store sets the name
+            //  and then set the entityNameChanged flag to false. Then we can reference
+            //  the previous version to not lose settings (ex: bindings for Materialization)
+            // For create we set the entity name changed flag so we can keep an eye
+            //  on if the name has changed and we need to run "generate" again
+            if (isEdit) {
+                setDraftedEntityName(details.data.entityName);
+            } else {
+                setEntityNameChanged(details.data.entityName);
+            }
         }
     };
 

@@ -237,6 +237,15 @@ function useDiscoverCapture(
                     { overrideJsonFormDefaults: true }
                 );
 
+                if (encryptedEndpointConfig.error) {
+                    return callFailed({
+                        error: {
+                            title: 'captureCreate.generate.failedErrorTitle',
+                            error: encryptedEndpointConfig.error,
+                        },
+                    });
+                }
+
                 if (
                     options?.initiateRediscovery ||
                     options?.initiateDiscovery
