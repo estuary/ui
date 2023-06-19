@@ -47,7 +47,6 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
     // Need the response so we know the options
     const inferSchemaResponseEmpty =
         useBindingsEditorStore_inferSchemaResponseEmpty();
-    // const keys = useBindingsEditorStore_inferSchemaResponse_Keys();
     const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
     const keys = useMemo(
         () =>
