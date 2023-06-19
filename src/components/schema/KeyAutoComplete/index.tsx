@@ -108,17 +108,15 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 options={keys}
                 readOnly={disableInput}
                 value={localCopyValue}
-                renderGroup={(params) => {
-                    if (params.group === 'must') {
-                        params.group = intl.formatMessage({
-                            id: `keyAutoComplete.keys.group.must`,
-                        });
-                    } else {
-                        params.group = intl.formatMessage({
-                            id: `keyAutoComplete.keys.group.may`,
-                        });
-                    }
-                    return params as ReactNode;
+                renderGroup={({ key, group, children }) => {
+                    const readableGroup = intl.formatMessage({
+                        id:
+                            group === 'must'
+                                ? 'keyAutoComplete.keys.group.must'
+                                : 'keyAutoComplete.keys.group.may',
+                    });
+
+                    return { key, group: readableGroup, children } as ReactNode;
                 }}
                 renderOption={(renderOptionProps, option, state) => {
                     const RowContent = (
@@ -142,6 +140,7 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                     return [renderOptionProps, RowContent, state.selected];
                 }}
                 renderTags={(tagValues, getTagProps, ownerState) => {
+                    console.log('tagValues', tagValues);
                     return (
                         <SortableTags
                             validateOptions={!inferSchemaResponseEmpty}
