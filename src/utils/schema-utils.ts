@@ -41,8 +41,7 @@ const filterInferSchemaResponse = (schema: any) => {
             .map((inferredProperty: any) => {
                 const interrefPropertyTypes = inferredProperty.types;
                 const isValidKey = Boolean(
-                    inferredProperty.exists === 'must' &&
-                        interrefPropertyTypes.length === 1 &&
+                    interrefPropertyTypes.length === 1 &&
                         typesAllowedAsKeys.some((key) =>
                             interrefPropertyTypes.includes(key)
                         )

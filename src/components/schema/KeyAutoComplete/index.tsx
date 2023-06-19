@@ -1,13 +1,19 @@
 import { arrayMove } from '@dnd-kit/sortable';
-import { Autocomplete, Grid, TextField } from '@mui/material';
 import {
+    Autocomplete,
+    Grid,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material';
+import {
+    useBindingsEditorStore_inferSchemaResponse,
     useBindingsEditorStore_inferSchemaResponseEmpty,
-    useBindingsEditorStore_inferSchemaResponse_Keys,
 } from 'components/editor/Bindings/Store/hooks';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { useEntityType } from 'context/EntityContext';
-import { useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { ReactNode, useEffect, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 import ReadOnly from './ReadOnly';
 import SortableTags from './SortableTags';
@@ -22,7 +28,11 @@ interface Props {
     ) => PromiseLike<any>;
 }
 
+const getValue = (option: any) => option.pointer;
+
 function KeyAutoComplete({ disabled, onChange, value }: Props) {
+    const intl = useIntl();
+
     // We want a local copy so that the display is updated right away when the user
     //  is done dragging. Otherwise, the item being dragged kind flies around when
     //  put in a new location
@@ -36,7 +46,9 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
     // Need the response so we know the options
     const inferSchemaResponseEmpty =
         useBindingsEditorStore_inferSchemaResponseEmpty();
-    const keys = useBindingsEditorStore_inferSchemaResponse_Keys();
+    // const keys = useBindingsEditorStore_inferSchemaResponse_Keys();
+    const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
+    const keys = Object.values(inferSchemaResponse ?? {});
 
     // Make sure we keep our local copy up to date
     useEffect(() => {
@@ -70,13 +82,65 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 {...autoCompleteDefaults_Virtual_Multiple}
                 disabled={inferSchemaResponseEmpty}
                 inputValue={inputValue}
-                onChange={changeHandler}
+                onChange={async (event, newValues, reason) => {
+                    if (changeHandler) {
+                        await changeHandler(
+                            event,
+                            newValues.map((newValue) => {
+                                if (typeof newValue === 'string') {
+                                    return newValue;
+                                } else {
+                                    return getValue(newValue);
+                                }
+                            }),
+                            reason
+                        );
+                    }
+                }}
                 onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
+                }}
+                groupBy={(option) => option.exists}
+                getOptionLabel={getValue}
+                isOptionEqualToValue={(option, optionValue) => {
+                    return option.pointer === optionValue;
                 }}
                 options={keys}
                 readOnly={disableInput}
                 value={localCopyValue}
+                renderGroup={(params) => {
+                    if (params.group === 'must') {
+                        params.group = intl.formatMessage({
+                            id: `keyAutoComplete.keys.group.must`,
+                        });
+                    } else {
+                        params.group = intl.formatMessage({
+                            id: `keyAutoComplete.keys.group.may`,
+                        });
+                    }
+                    return params as ReactNode;
+                }}
+                renderOption={(renderOptionProps, option, state) => {
+                    const RowContent = (
+                        <Stack
+                            component="span"
+                            direction="row"
+                            spacing={1}
+                            sx={{
+                                background: 'red',
+                            }}
+                        >
+                            <Typography component="span">
+                                {option.pointer}
+                            </Typography>
+                            <Typography component="span" variant="body2">
+                                [{option.types.join(', ')}]
+                            </Typography>
+                        </Stack>
+                    );
+
+                    return [renderOptionProps, RowContent, state.selected];
+                }}
                 renderTags={(tagValues, getTagProps, ownerState) => {
                     return (
                         <SortableTags
