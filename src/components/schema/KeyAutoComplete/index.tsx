@@ -81,7 +81,15 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
             <Autocomplete
                 {...autoCompleteDefaults_Virtual_Multiple}
                 disabled={inferSchemaResponseEmpty}
+                getOptionLabel={getValue}
+                groupBy={(option) => option.exists}
                 inputValue={inputValue}
+                isOptionEqualToValue={(option, optionValue) => {
+                    return option.pointer === optionValue;
+                }}
+                options={keys}
+                readOnly={disableInput}
+                value={localCopyValue}
                 onChange={async (event, newValues, reason) => {
                     if (changeHandler) {
                         await changeHandler(
@@ -100,14 +108,6 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
                 }}
-                groupBy={(option) => option.exists}
-                getOptionLabel={getValue}
-                isOptionEqualToValue={(option, optionValue) => {
-                    return option.pointer === optionValue;
-                }}
-                options={keys}
-                readOnly={disableInput}
-                value={localCopyValue}
                 renderGroup={({ key, group, children }) => {
                     const readableGroup = intl.formatMessage({
                         id:
@@ -117,6 +117,28 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                     });
 
                     return { key, group: readableGroup, children } as ReactNode;
+                }}
+                renderInput={(params) => {
+                    return (
+                        <TextField
+                            {...params}
+                            disabled={inferSchemaResponseEmpty || disableInput}
+                            error={showEditErrorState}
+                            helperText={
+                                inferSchemaResponseEmpty ? (
+                                    <FormattedMessage id="keyAutoComplete.noOptions.message" />
+                                ) : noUsableKeys ? (
+                                    <FormattedMessage id="keyAutoComplete.noUsableKeys.message" />
+                                ) : (
+                                    <FormattedMessage id="schemaEditor.key.helper" />
+                                )
+                            }
+                            label={
+                                <FormattedMessage id="schemaEditor.key.label" />
+                            }
+                            variant="standard"
+                        />
+                    );
                 }}
                 renderOption={(renderOptionProps, option, state) => {
                     const RowContent = (
@@ -165,28 +187,6 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                                     'orderingUpdated'
                                 );
                             }}
-                        />
-                    );
-                }}
-                renderInput={(params) => {
-                    return (
-                        <TextField
-                            {...params}
-                            disabled={inferSchemaResponseEmpty || disableInput}
-                            error={showEditErrorState}
-                            helperText={
-                                inferSchemaResponseEmpty ? (
-                                    <FormattedMessage id="keyAutoComplete.noOptions.message" />
-                                ) : noUsableKeys ? (
-                                    <FormattedMessage id="keyAutoComplete.noUsableKeys.message" />
-                                ) : (
-                                    <FormattedMessage id="schemaEditor.key.helper" />
-                                )
-                            }
-                            label={
-                                <FormattedMessage id="schemaEditor.key.label" />
-                            }
-                            variant="standard"
                         />
                     );
                 }}
