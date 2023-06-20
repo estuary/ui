@@ -109,7 +109,6 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 isOptionEqualToValue={(option, optionValue) => {
                     return option.pointer === optionValue;
                 }}
-                open
                 options={keys}
                 readOnly={disableInput}
                 value={localCopyValue}
