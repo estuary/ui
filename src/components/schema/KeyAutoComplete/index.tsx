@@ -1,7 +1,6 @@
 import { arrayMove } from '@dnd-kit/sortable';
 import {
     Autocomplete,
-    Divider,
     Grid,
     Stack,
     TextField,
@@ -10,15 +9,18 @@ import {
 import {
     useBindingsEditorStore_inferSchemaResponse,
     useBindingsEditorStore_inferSchemaResponseEmpty,
+    useBindingsEditorStore_inferSchemaResponse_Keys,
 } from 'components/editor/Bindings/Store/hooks';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { useEntityType } from 'context/EntityContext';
-import { orderBy } from 'lodash';
+import { truncateTextSx } from 'context/Theme';
+import { filter, orderBy } from 'lodash';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 import BasicOption from './options/Basic';
 import ReadOnly from './ReadOnly';
+import { keyIsValidOption } from './shared';
 import SortableTags from './SortableTags';
 
 interface Props {
@@ -107,6 +109,7 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 isOptionEqualToValue={(option, optionValue) => {
                     return option.pointer === optionValue;
                 }}
+                open
                 options={keys}
                 readOnly={disableInput}
                 value={localCopyValue}
@@ -171,11 +174,17 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                             <Stack
                                 component="span"
                                 spacing={1}
-                                divider={<Divider />}
                                 x-react-window-item-height={tallHeight}
                             >
                                 <BasicOption pointer={pointer} types={types} />
-                                <Typography component="span">
+                                <Typography
+                                    component="span"
+                                    variant="caption"
+                                    sx={{
+                                        ...truncateTextSx,
+                                        pl: 1.5,
+                                    }}
+                                >
                                     {description}
                                 </Typography>
                             </Stack>

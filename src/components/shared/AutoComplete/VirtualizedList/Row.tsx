@@ -38,6 +38,7 @@ function Row(props: ListChildComponentProps) {
         <li {...dataSet[0]} style={inlineStyle} key={dataSet.key}>
             <Box
                 sx={{
+                    alignSelf: 'flex-start',
                     ml: -2,
                     mr: 0.5,
                 }}
