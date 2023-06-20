@@ -8,6 +8,7 @@ export enum BindingsEditorStoreNames {
 
 export enum DetailsFormStoreNames {
     CAPTURE = 'capture-details-form',
+    COLLECTION = 'collection-details-form',
     MATERIALIZATION = 'materialization-details-form',
 }
 
@@ -30,6 +31,7 @@ export enum ExistingEntityStoreNames {
 export enum FormStateStoreNames {
     CAPTURE_CREATE = 'Capture-Create-Form-State',
     CAPTURE_EDIT = 'Capture-Edit-Form-State',
+    COLLECTION_CREATE = 'Collection-Create-Form-State',
     MATERIALIZATION_CREATE = 'Materialization-Create-Form-State',
     MATERIALIZATION_EDIT = 'Materialization-Edit-Form-State',
 }
