@@ -53,16 +53,21 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
     const inferSchemaResponseEmpty =
         useBindingsEditorStore_inferSchemaResponseEmpty();
     const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
+    const validKeys = useBindingsEditorStore_inferSchemaResponse_Keys();
     const keys = useMemo(
         () =>
             inferSchemaResponse
                 ? orderBy(
-                      Object.values(inferSchemaResponse),
+                      // Filter so only valid keys are displayed
+                      filter(Object.values(inferSchemaResponse), (field) =>
+                          keyIsValidOption(validKeys, field.pointer)
+                      ),
+                      // Order first by exists so groups do not duplicate in the dropdown
                       ['exists', 'pointer'],
                       ['desc', 'asc']
                   )
                 : [],
-        [inferSchemaResponse]
+        [inferSchemaResponse, validKeys]
     );
 
     // Make sure we keep our local copy up to date
