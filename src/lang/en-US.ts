@@ -1024,7 +1024,7 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.editor.catalog.transform.header': `Transforms`,
     'newTransform.editor.catalog.transform.addDialog.header': `Add or Remove Transforms`,
     'newTransform.editor.catalog.migration.header': `Migrations`,
-    'newTransform.editor.catalog.message.empty': `Click on the edit pencil above to add or remove a {contentType}.`,
+    'newTransform.editor.catalog.message.empty': `Click on the edit pencil above to edit the list of {contentType}s.`,
 
     'newTransform.editor.streaming.header': `Streaming`,
     'newTransform.editor.streaming.description': `Used for selecting columns and creating aggregations`,
@@ -1036,7 +1036,15 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
 
     'newTransform.editor.preview.header': `Data Preview`,
     'newTransform.editor.preview.description': `This is a placeholder for a section description`,
-    'newTransform.editor.preview.noPreviewGenerated': `Click PREVIEW to execute your query.`,
+    'newTransform.editor.preview.noPreviewGenerated': `Click PREVIEW to sample your derivation.`,
+
+    'newTransform.editor.save.failedErrorTitle': `Derivation Save Failed`,
+    'newTransform.editor.save.failure.errorTitle': `Derivation Save Failed`,
+    'newTransform.editor.save.serverUnreachable': `${CommonMessages['common.failedFetch']} while saving derivation`,
+    'newTransform.editor.save.waitMessage': `Please wait while we test, save, and publish your derivation.`,
+
+    'newTransform.editor.createNotification.title': `New Derivation Created`,
+    'newTransform.editor.createNotification.desc': `Your new derivation is published and ready to be used.`,
 };
 
 const CustomRenderers: ResolvedIntlConfig['messages'] = {

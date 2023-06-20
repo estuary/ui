@@ -5,7 +5,6 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
-import generateTransformSpec from 'components/transformation/create/generateTransformSpec';
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -17,7 +16,10 @@ import {
     useTransformationCreate_setSourceCollections,
 } from 'stores/TransformationCreate/hooks';
 import { TransformConfig } from 'stores/TransformationCreate/types';
-import { templateTransformConfig } from 'utils/derivation-utils';
+import {
+    generateInitialSpec,
+    templateTransformConfig,
+} from 'utils/derivation-utils';
 
 interface Props {
     entityNameError: string | null;
@@ -80,7 +82,7 @@ function InitializeDraftButton({
                 addTransformConfigs(transformConfigs);
                 setSelectedAttribute(`${entityName}.lambda.0.sql`);
 
-                const spec = generateTransformSpec(
+                const spec = generateInitialSpec(
                     language,
                     catalogName,
                     selectedCollections

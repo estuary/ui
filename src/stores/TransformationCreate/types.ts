@@ -1,3 +1,5 @@
+import { Transform_Shuffle } from 'types';
+
 type DerivationLanguage = 'sql' | 'typescript';
 
 export type DerivationAttribute = 'transform' | 'migration';
@@ -7,6 +9,7 @@ export interface TransformConfig {
     lambda: string;
     sqlTemplate: string;
     collection: string;
+    shuffle: Transform_Shuffle;
 }
 
 export interface TransformConfigDictionary {
@@ -26,10 +29,7 @@ export interface TransformCreateState {
     name: string;
     setName: (val: TransformCreateState['name']) => void;
 
-    prefix: string;
-    setPrefix: (value: TransformCreateState['prefix']) => void;
-
-    catalogName: string | null;
+    catalogName: string;
     setCatalogName: (val: TransformCreateState['catalogName']) => void;
 
     // Transformation Config

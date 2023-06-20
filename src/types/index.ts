@@ -7,6 +7,7 @@ export type fake = 'fake';
 export enum MessagePrefixes {
     CAPTURE_CREATE = 'captureCreate',
     CAPTURE_EDIT = 'captureEdit',
+    COLLECTION_CREATE = 'newTransform.editor',
     MATERIALIZATION_CREATE = 'materializationCreate',
     MATERIALIZATION_EDIT = 'materializationEdit',
 }
@@ -235,17 +236,19 @@ export type EntityWithCreateWorkflow = 'capture' | 'materialization';
 export type EntityWorkflow =
     | 'capture_create'
     | 'capture_edit'
+    | 'collection_create'
     | 'materialization_create'
     | 'materialization_edit'
     | 'test_json_forms';
 
+export type DerivationLanguage = 'sql' | 'typescript';
+
+export type Transform_Shuffle = 'any' | { key: string[] };
 export interface Transform {
     name: string;
     source: string;
     lambda: string;
-    shuffle?: {
-        key: string[];
-    };
+    shuffle: Transform_Shuffle;
 }
 
 export type SortDirection = 'asc' | 'desc';
