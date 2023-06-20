@@ -1,6 +1,7 @@
 import { arrayMove } from '@dnd-kit/sortable';
 import {
     Autocomplete,
+    Divider,
     Grid,
     Stack,
     TextField,
@@ -16,6 +17,7 @@ import { orderBy } from 'lodash';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
+import BasicOption from './options/Basic';
 import ReadOnly from './ReadOnly';
 import SortableTags from './SortableTags';
 
@@ -29,6 +31,9 @@ interface Props {
     ) => PromiseLike<any>;
 }
 
+// Hardcoded and figured out by rendering the content and inspecting heigh
+//  due to virtualization we need to be specific here.
+const tallHeight = 71;
 const getValue = (option: any) => option.pointer;
 
 function KeyAutoComplete({ disabled, onChange, value }: Props) {
@@ -151,28 +156,38 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                     );
                 }}
                 renderOption={(renderOptionProps, option, state) => {
-                    const RowContent = (
-                        <Stack
-                            component="span"
-                            direction="row"
-                            spacing={1}
-                            sx={{
-                                background: 'red',
-                            }}
-                        >
-                            <Typography component="span">
-                                {option.pointer}
-                            </Typography>
-                            <Typography component="span" variant="body2">
-                                [{option.types.join(', ')}]
-                            </Typography>
-                        </Stack>
-                    );
+                    const { description, pointer, types } = option;
 
-                    return [renderOptionProps, RowContent, state.selected];
+                    // We do this logic here to pass the specific component (Stack with custom prop)
+                    //  into the virtualized renderer. That way we can easily read off the custom prop.
+                    let RowContent;
+                    if (description) {
+                        RowContent = (
+                            <Stack
+                                component="span"
+                                spacing={1}
+                                divider={<Divider />}
+                                x-react-window-item-height={tallHeight}
+                            >
+                                <BasicOption pointer={pointer} types={types} />
+                                <Typography component="span">
+                                    {description}
+                                </Typography>
+                            </Stack>
+                        );
+                    } else {
+                        RowContent = (
+                            <BasicOption pointer={pointer} types={types} />
+                        );
+                    }
+
+                    return [
+                        renderOptionProps,
+                        RowContent,
+                        state.selected,
+                    ] as ReactNode;
                 }}
                 renderTags={(tagValues, getTagProps, ownerState) => {
-                    console.log('tagValues', tagValues);
                     return (
                         <SortableTags
                             validateOptions={!inferSchemaResponseEmpty}

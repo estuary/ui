@@ -9,10 +9,11 @@ function Row(props: ListChildComponentProps) {
     const { data, index, style } = props;
     const dataSet = data[index];
     const isGroup = dataSet.hasOwnProperty('group');
+    const customHeight = dataSet.hasOwnProperty('customHeight');
 
     const inlineStyle = {
         ...style,
-
+        height: customHeight ? dataSet[0].customHeight : undefined,
         paddingLeft: isGroup ? 24 : undefined,
         top: (style.top as number) + LISTBOX_PADDING,
     };
@@ -49,6 +50,7 @@ function Row(props: ListChildComponentProps) {
                 />
             </Box>
             <Typography
+                component="span"
                 sx={{
                     ...truncateTextSx,
                 }}
