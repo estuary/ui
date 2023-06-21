@@ -192,15 +192,15 @@ function MonacoEditor({
 
     const handlers = {
         change: (value: any, ev: any) => {
-            // Safely grab if the user is undoing. That way we can skip the formatting
-            //  otherwise thye might get stuck undoing the formatting
-            const undoing = ev?.isUndoing ?? false;
-
             logRocketConsole('handlers:change', {
                 status,
                 value,
                 ev,
             });
+
+            // Safely grab if the user is undoing. That way we can skip the formatting
+            //  otherwise thye might get stuck undoing the formatting
+            const undoing = ev?.isUndoing ?? false;
 
             // Set the status to editing
             if (status !== EditorStatus.EDITING) {
