@@ -14,6 +14,7 @@ import { EditorStatus } from 'components/editor/Store/types';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { logRocketConsole } from 'services/logrocket';
 import { stringifyJSON } from 'services/stringify';
 import {
     DEFAULT_HEIGHT,
@@ -72,9 +73,9 @@ function MonacoEditor({
     const [showServerDiff, setShowServerDiff] = useState(false);
 
     const updateValue = () => {
-        console.log('editor:update');
+        logRocketConsole('editor:update');
         const currentValue = editorRef.current?.getValue();
-        console.log('editor:update:current', {
+        logRocketConsole('editor:update:current', {
             currentValue,
         });
         if (onChange && currentValue) {
@@ -83,13 +84,13 @@ function MonacoEditor({
             let parsedVal;
             try {
                 parsedVal = JSON.parse(currentValue);
-                console.log('editor:update:parsed');
+                logRocketConsole('editor:update:parsed');
             } catch {
                 setStatus(EditorStatus.INVALID);
             }
 
             if (parsedVal && catalogName && catalogType) {
-                console.log('editor:update:saving', {
+                logRocketConsole('editor:update:saving', {
                     parsedVal,
                     catalogName,
                     catalogType,
@@ -97,7 +98,7 @@ function MonacoEditor({
                 setStatus(EditorStatus.SAVING);
 
                 if (editorSchemaScope) {
-                    console.log('editor:update:saving:scoped', {
+                    logRocketConsole('editor:update:saving:scoped', {
                         nestedProperty: editorSchemaScope,
                     });
                     onChange(
@@ -107,26 +108,30 @@ function MonacoEditor({
                         editorSchemaScope
                     )
                         .then(() => {
-                            console.log('editor:update:saving:scoped:success');
+                            logRocketConsole(
+                                'editor:update:saving:scoped:success'
+                            );
                             setStatus(EditorStatus.SAVED);
                         })
                         .catch(() => {
-                            console.log('editor:update:saving:scoped:failed');
+                            logRocketConsole(
+                                'editor:update:saving:scoped:failed'
+                            );
                             setStatus(EditorStatus.SAVE_FAILED);
                         });
                 } else {
                     onChange(parsedVal, catalogName, catalogType)
                         .then(() => {
-                            console.log('editor:update:saving:success');
+                            logRocketConsole('editor:update:saving:success');
                             setStatus(EditorStatus.SAVED);
                         })
                         .catch(() => {
-                            console.log('editor:update:saving:failed');
+                            logRocketConsole('editor:update:saving:failed');
                             setStatus(EditorStatus.SAVE_FAILED);
                         });
                 }
             } else {
-                console.log('editor:update:invalid', {
+                logRocketConsole('editor:update:invalid', {
                     parsedVal,
                     catalogName,
                     catalogType,
@@ -134,7 +139,7 @@ function MonacoEditor({
                 setStatus(EditorStatus.INVALID);
             }
         } else {
-            console.log('editor:update:missing', {
+            logRocketConsole('editor:update:missing', {
                 onChange,
                 currentValue,
             });
@@ -165,7 +170,7 @@ function MonacoEditor({
 
     const handlers = {
         change: (value: any, ev: any) => {
-            console.log('handlers:change', {
+            logRocketConsole('handlers:change', {
                 status,
                 value,
                 ev,
@@ -176,7 +181,7 @@ function MonacoEditor({
             debouncedChange();
         },
         mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
-            console.log('handlers:mount');
+            logRocketConsole('handlers:mount');
             editorRef.current = editor;
         },
         merge: () => {
