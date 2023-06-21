@@ -1,12 +1,14 @@
 import { LoadingButton } from '@mui/lab';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
+import { authenticatedRoutes } from 'app/routes';
 import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useNavigate } from 'react-router';
 import {
     useTransformationCreate_addTransformConfigs,
     useTransformationCreate_catalogName,
@@ -24,14 +26,16 @@ import {
 interface Props {
     entityNameError: string | null;
     selectedCollections: Set<string>;
-    setSQLEditorOpen: Dispatch<SetStateAction<boolean>>;
+    setSQLEditorOpen?: Dispatch<SetStateAction<boolean>>;
 }
 
 function InitializeDraftButton({
     entityNameError,
     selectedCollections,
-    setSQLEditorOpen: setOpenSQLEditor,
+    setSQLEditorOpen,
 }: Props) {
+    const navigate = useNavigate();
+
     // Transformation Create Store
     const language = useTransformationCreate_language();
 
@@ -101,7 +105,13 @@ function InitializeDraftButton({
                     setDraftId(draftId);
                     setPersistedDraftId(draftId);
 
-                    setOpenSQLEditor(true);
+                    if (setSQLEditorOpen) {
+                        setSQLEditorOpen(true);
+                    }
+
+                    // TODO (transform): Replace this with the navigate to create workflow hook and the production-ready URL
+                    //   when it is time to launch this feature.
+                    navigate(authenticatedRoutes.beta.new.fullPath);
                 }
             } else {
                 // Set error state
@@ -110,7 +120,7 @@ function InitializeDraftButton({
     }, [
         addTransformConfigs,
         setDraftId,
-        setOpenSQLEditor,
+        setSQLEditorOpen,
         setPersistedDraftId,
         setSelectedAttribute,
         setSourceCollections,
@@ -126,7 +136,7 @@ function InitializeDraftButton({
             disabled={formInvalid}
             onClick={initializeTransformation}
         >
-            <FormattedMessage id={validationErrorMessageId ?? 'cta.next'} />
+            <FormattedMessage id="cta.next" />
         </LoadingButton>
     );
 }

@@ -48,6 +48,9 @@ export interface TransformCreateState {
     migrations: MigrationDictionary;
     addMigrations: (configs: string[]) => void;
 
+    // Shuffle Keys
+    shuffleKeyErrorsExist: boolean;
+
     // Misc.
     selectedAttribute: string;
     setSelectedAttribute: (value: string) => void;

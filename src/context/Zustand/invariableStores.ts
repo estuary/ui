@@ -19,6 +19,7 @@ import {
     ResourceConfigStoreNames,
     SelectTableStoreNames,
     ShardDetailStoreNames,
+    TransformCreateStoreNames,
 } from 'stores/names';
 import { createResourceConfigStore } from 'stores/ResourceConfig/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
@@ -27,6 +28,7 @@ import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
 import { createBillingTableStore } from 'stores/Tables/Billing/Store';
 import { createSelectableTableStore } from 'stores/Tables/Store';
 import { createTopBarStore } from 'stores/TopBar/Store';
+import { createTransformationCreateStore } from 'stores/TransformationCreate/Store';
 import { MessagePrefixes } from 'types';
 
 const invariableStores = {
@@ -144,11 +146,10 @@ const invariableStores = {
     ),
 
     // Transformation Create
-    // TODO (transform create)
-    // [TransformCreateStoreNames.TRANSFORM_CREATE]:
-    //     createTransformationCreateStore(
-    //         TransformCreateStoreNames.TRANSFORM_CREATE
-    //     ),
+    [TransformCreateStoreNames.TRANSFORM_CREATE]:
+        createTransformationCreateStore(
+            TransformCreateStoreNames.TRANSFORM_CREATE
+        ),
 
     // Global App Stores
     [GlobalStoreNames.ENTITIES]: createEntitiesStore(GlobalStoreNames.ENTITIES),

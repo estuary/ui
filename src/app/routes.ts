@@ -185,6 +185,17 @@ const user = {
     },
 };
 
+const beta = {
+    title: 'routeTitle.collectionCreate',
+    path: 'beta/collections/create',
+    fullPath: '/beta/collections/create',
+    new: {
+        title: 'routeTitle.collectionCreate',
+        path: 'new',
+        fullPath: '/beta/collections/create/new',
+    },
+};
+
 export const authenticatedRoutes = {
     path: '/',
     oauth,
@@ -196,6 +207,7 @@ export const authenticatedRoutes = {
     materializations,
     user,
     pageNotFound,
+    beta,
 };
 
 export const unauthenticatedRoutes = {

@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import CatalogListItem from 'components/transformation/create/DerivationEditor/Catalog/CatalogListItem';
 import { EditPencil } from 'iconoir-react';
-import { CSSProperties, MouseEventHandler, useEffect, useState } from 'react';
+import { CSSProperties, MouseEventHandler } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { DerivationAttribute } from 'stores/TransformationCreate/types';
 import { hasLength } from 'utils/misc-utils';
@@ -28,55 +28,54 @@ interface Props {
     height?: number;
 }
 
-const DEFAULT_LIST_HEIGHT = 400.5;
+// const DEFAULT_LIST_HEIGHT = 400.5;
 
-const getListItemContainerHeight = (height?: number): string => {
-    const evaluatedHeight = (height ?? DEFAULT_LIST_HEIGHT) - 37;
+// const getListItemContainerHeight = (height?: number): string => {
+//     const evaluatedHeight = (height ?? DEFAULT_LIST_HEIGHT) - 37;
 
-    return `${evaluatedHeight}px`;
-};
+//     return `${evaluatedHeight}px`;
+// };
 
 function CatalogList({
     fixedAttributeType,
     content,
     addButtonClickHandler,
-    borderBottom,
     height,
 }: Props) {
     const theme = useTheme();
 
-    const [windowResizing, setWindowResizing] = useState(false);
-    const [clientWidth, setClientWidth] = useState<number | undefined>();
-    const [scrollWidth, setScrollWidth] = useState<number | undefined>();
+    // const [windowResizing, setWindowResizing] = useState(false);
+    // const [clientWidth, setClientWidth] = useState<number | undefined>();
+    // const [scrollWidth, setScrollWidth] = useState<number | undefined>();
 
-    useEffect(() => {
-        let timeout: NodeJS.Timeout;
+    // useEffect(() => {
+    //     let timeout: NodeJS.Timeout;
 
-        const handleResize = () => {
-            clearTimeout(timeout);
+    //     const handleResize = () => {
+    //         clearTimeout(timeout);
 
-            setWindowResizing(true);
+    //         setWindowResizing(true);
 
-            timeout = setTimeout(() => {
-                setWindowResizing(false);
-            }, 200);
-        };
-        window.addEventListener('resize', handleResize);
+    //         timeout = setTimeout(() => {
+    //             setWindowResizing(false);
+    //         }, 200);
+    //     };
+    //     window.addEventListener('resize', handleResize);
 
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    //     return () => window.removeEventListener('resize', handleResize);
+    // }, []);
 
-    useEffect(() => {
-        if (!windowResizing) {
-            setClientWidth(
-                document.querySelector('div#list-item-container')?.clientWidth
-            );
+    // useEffect(() => {
+    //     if (!windowResizing) {
+    //         setClientWidth(
+    //             document.querySelector('div#list-item-container')?.clientWidth
+    //         );
 
-            setScrollWidth(
-                document.querySelector('div#list-item-container')?.scrollWidth
-            );
-        }
-    }, [setClientWidth, setScrollWidth, windowResizing]);
+    //         setScrollWidth(
+    //             document.querySelector('div#list-item-container')?.scrollWidth
+    //         );
+    //     }
+    // }, [setClientWidth, setScrollWidth, windowResizing]);
 
     return (
         <List
@@ -106,26 +105,22 @@ function CatalogList({
                     </IconButton>
                 </Stack>
             }
-            sx={{
-                height: height ?? '400.5px',
-                borderBottom,
-            }}
         >
             <Box
                 id="list-item-container"
                 sx={{
-                    height: getListItemContainerHeight(height),
-                    overflowX: 'auto',
+                    height,
+                    overflowY: 'auto',
                 }}
             >
                 {hasLength(content) ? (
                     <Box
-                        sx={{
-                            minWidth:
-                                clientWidth === scrollWidth
-                                    ? clientWidth
-                                    : 'max-content',
-                        }}
+                    // sx={{
+                    //     minWidth:
+                    //         clientWidth === scrollWidth
+                    //             ? clientWidth
+                    //             : 'max-content',
+                    // }}
                     >
                         {content.map(({ attributeId, value, nestedValue }) => (
                             <CatalogListItem

@@ -1020,6 +1020,9 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
 
     'newTransform.editor.catalog.header': `Catalog`,
     'newTransform.editor.catalog.description': `This is a placeholder for a section description`,
+    'newTransform.catalog.tab.advancedSettings': `Advanced`,
+    'newTransform.catalog.tab.basicSettings': `Config`,
+    'newTransform.catalog.tab.sqlEditor': `Streaming`,
     'newTransform.editor.catalog.advancedSettings': `Advanced Catalog Settings`,
     'newTransform.editor.catalog.transform.header': `Transforms`,
     'newTransform.editor.catalog.transform.addDialog.header': `Add or Remove Transforms`,

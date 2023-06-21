@@ -18,7 +18,7 @@ import {
 import { generateInitialSpec } from 'utils/derivation-utils';
 
 interface Props {
-    postWindowOpen: (window: Window | null) => void;
+    postWindowOpen?: (window: Window | null) => void;
     entityNameError?: string | null;
     sourceCollectionSet?: Set<string>;
     buttonVariant?: LoadingButtonProps['variant'];
@@ -222,7 +222,9 @@ function GitPodButton({
                         );
                     }
 
-                    postWindowOpen(gitPodWindow);
+                    if (postWindowOpen) {
+                        postWindowOpen(gitPodWindow);
+                    }
                 }
             }}
         >

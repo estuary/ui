@@ -16,6 +16,7 @@ const getInitialStateData = (): Pick<
     | 'name'
     | 'previewActive'
     | 'selectedAttribute'
+    | 'shuffleKeyErrorsExist'
     | 'sourceCollections'
     | 'transformConfigs'
     | 'transformCount'
@@ -28,6 +29,7 @@ const getInitialStateData = (): Pick<
     name: '',
     previewActive: false,
     selectedAttribute: '',
+    shuffleKeyErrorsExist: false,
     sourceCollections: [],
     transformConfigs: {},
     transformCount: 0,

@@ -1,5 +1,4 @@
 import {
-    Box,
     Button,
     Dialog,
     DialogActions,
@@ -7,7 +6,6 @@ import {
     DialogTitle,
     Divider,
     Stack,
-    useTheme,
 } from '@mui/material';
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
@@ -17,7 +15,6 @@ import CatalogList, {
 import UpdateDraftButton from 'components/transformation/create/DerivationEditor/Catalog/UpdateDraftButton';
 import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
-import { intensifiedOutline } from 'context/Theme';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -28,8 +25,6 @@ import {
 } from 'stores/TransformationCreate/hooks';
 
 function TransformList() {
-    const theme = useTheme();
-
     const collections = useLiveSpecs('collection');
 
     const transformConfigs = useTransformationCreate_transformConfigs();
@@ -68,17 +63,12 @@ function TransformList() {
     }, [sourceCollections, open]);
 
     return (
-        <Box
-            sx={{
-                borderLeft: intensifiedOutline[theme.palette.mode],
-                borderRight: intensifiedOutline[theme.palette.mode],
-            }}
-        >
+        <>
             <CatalogList
                 fixedAttributeType="transform"
                 content={content}
                 addButtonClickHandler={handlers.toggleDialog}
-                borderBottom={intensifiedOutline[theme.palette.mode]}
+                height={534}
             />
 
             <Dialog open={open} fullWidth maxWidth="md">
@@ -125,7 +115,7 @@ function TransformList() {
                     />
                 </DialogActions>
             </Dialog>
-        </Box>
+        </>
     );
 }
 
