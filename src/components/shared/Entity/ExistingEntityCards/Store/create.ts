@@ -1,7 +1,10 @@
 import { getLiveSpecsByConnectorId } from 'api/liveSpecsExt';
 import { ExistingEntityState } from 'components/shared/Entity/ExistingEntityCards/Store/types';
 import produce from 'immer';
-import { getStoreWithHydrationSettings } from 'stores/extensions/Hydration';
+import {
+    getInitialHydrationData,
+    getStoreWithHydrationSettings,
+} from 'stores/extensions/Hydration';
 import { ExistingEntityStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
@@ -82,8 +85,7 @@ const getInitialState = (
             set(
                 () => ({
                     ...getInitialStateData(),
-                    hydrated: false,
-                    hydrationErrorsExist: false,
+                    ...getInitialHydrationData(),
                 }),
                 false,
                 'Existing Entity State Reset'

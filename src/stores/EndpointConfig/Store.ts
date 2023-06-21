@@ -8,9 +8,13 @@ import {
     CustomError,
     fetchErrors,
     filterErrors,
+    getInitialCustomErrorsData,
     getStoreWithCustomErrorsSettings,
 } from 'stores/extensions/CustomErrors';
-import { getStoreWithHydrationSettings } from 'stores/extensions/Hydration';
+import {
+    getInitialHydrationData,
+    getStoreWithHydrationSettings,
+} from 'stores/extensions/Hydration';
 import { EndpointConfigStoreNames } from 'stores/names';
 import { JsonFormsData, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -270,7 +274,8 @@ const getInitialState = (
         set(
             {
                 ...getInitialStateData(),
-                ...getStoreWithCustomErrorsSettings(STORE_KEY),
+                ...getInitialHydrationData(),
+                ...getInitialCustomErrorsData(),
             },
             false,
             'Endpoint Config State Reset'
