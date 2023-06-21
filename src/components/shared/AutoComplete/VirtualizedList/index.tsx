@@ -13,7 +13,7 @@ const getChildSize = (child: ReactChild) => {
         return groupSize;
     }
 
-    // Might be the raw string to
+    // Might be the raw string or node that'll be rendered
     const itemToRender = child[1];
     const itemHeight =
         itemToRender?.props?.['x-react-window-item-height'] ?? itemSize;
