@@ -1,5 +1,6 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
-import { Schema } from 'types';
+import { orderBy } from 'lodash';
+import { Schema, SortDirection } from 'types';
 import ChipList from '../cells/ChipList';
 
 interface RowProps {
@@ -8,6 +9,8 @@ interface RowProps {
 
 interface RowsProps {
     data: Schema | null;
+    sortDirection: SortDirection;
+    columnToSort: string;
 }
 
 function Row({ row }: RowProps) {
@@ -30,16 +33,18 @@ function Row({ row }: RowProps) {
     );
 }
 
-function Rows({ data }: RowsProps) {
+function Rows({ data, sortDirection, columnToSort }: RowsProps) {
     if (!data) {
         return null;
     }
 
     return (
         <>
-            {data.map((record: any, index: number) => (
-                <Row row={record} key={`schema-table-rows-${index}`} />
-            ))}
+            {orderBy(data, [columnToSort], [sortDirection]).map(
+                (record: any, index: number) => (
+                    <Row row={record} key={`schema-table-rows-${index}`} />
+                )
+            )}
         </>
     );
 }
