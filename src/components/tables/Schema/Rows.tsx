@@ -39,6 +39,9 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
     }
 
     // We only do special sorting for name - otherwise we can use lodash
+    //  We're probably safe always using the method above but made them
+    //  different so we can have special control when sorting the fields
+    //  in case we want to make more customizations
     if (columnToSort === 'name') {
         return (
             <>
@@ -78,6 +81,7 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
         );
     }
 
+    // Just use the plain orderBy when not sorting names.
     return (
         <>
             {orderBy(data, [columnToSort], [sortDirection]).map(
