@@ -44,9 +44,9 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
             <>
                 {data
                     .sort((first: any, second: any) => {
-                        // Fetch the fields we want to sort
-                        const a = first[columnToSort];
-                        const b = second[columnToSort];
+                        // Try fetching the name and if it isn't there then set to empty string
+                        const a = first.name ?? '';
+                        const b = second.name ?? '';
 
                         // See if the values start with alphanumeric
                         const aIsAlphabetical = a.localeCompare('a') >= 0;
