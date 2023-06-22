@@ -1028,12 +1028,12 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.editor.catalog.transform.addDialog.header': `Add or Remove Transforms`,
     'newTransform.editor.catalog.migration.header': `Migrations`,
     'newTransform.editor.catalog.message.empty': `Click on the edit pencil above to edit the list of {contentType}s.`,
+    'newTransform.catalog.alert.noTransformSelected': `No transform selected.`,
 
     'newTransform.editor.streaming.header': `Streaming`,
     'newTransform.editor.streaming.description': `Used for selecting columns and creating aggregations`,
     'newTransform.editor.streaming.cta.generatePreview': `Preview`,
     'newTransform.editor.streaming.advancedSettings': `Advanced Streaming Settings`,
-    'newTransform.editor.streaming.monaco.empty': `No SQL file selected.`,
     'newTransform.editor.streaming.shuffleKeys.header': `Shuffle Keys`,
     'newTransform.editor.streaming.shuffleKeys.tooltip': `Select a key from your source collection schemas to help scale joins`,
 

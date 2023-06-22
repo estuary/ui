@@ -127,6 +127,7 @@ function InitializeDraftButton({
         catalogName,
         entityName,
         language,
+        navigate,
         selectedCollections,
     ]);
 

@@ -1,4 +1,5 @@
 import { Box } from '@mui/material';
+import DerivationCatalogConfig from 'components/transformation/create/Catalog/Config';
 import DerivationCatalogEditorTabs, {
     tabProps,
 } from 'components/transformation/create/Catalog/Tabs';
@@ -40,18 +41,16 @@ function DerivationCatalogEditor() {
             />
 
             {tabProps[activeTab].value === 'config' ? (
-                <span>Config</span>
+                <DerivationCatalogConfig />
             ) : tabProps[activeTab].value === 'streaming' ? (
-                <>
-                    {catalogName && showEditor ? (
-                        <SQLEditor
-                            entityName={catalogName}
-                            editorHeight={EDITOR_HEIGHT}
-                        />
-                    ) : (
-                        <EmptySQLEditor editorHeight={EDITOR_HEIGHT} />
-                    )}
-                </>
+                catalogName && showEditor ? (
+                    <SQLEditor
+                        entityName={catalogName}
+                        editorHeight={EDITOR_HEIGHT}
+                    />
+                ) : (
+                    <EmptySQLEditor editorHeight={EDITOR_HEIGHT} />
+                )
             ) : (
                 <span>Advanced</span>
             )}
