@@ -52,18 +52,22 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
                         const aIsAlphabetical = a.localeCompare('a') >= 0;
                         const bIsAlphabetical = b.localeCompare('a') >= 0;
 
+                        // If a is alpha and b isn't then return >0 to put b first
                         if (!aIsAlphabetical && bIsAlphabetical) {
                             return 1;
                         }
 
+                        // If a is alpha and b isn't then return <0 to put a first
                         if (aIsAlphabetical && !bIsAlphabetical) {
                             return -1;
                         }
 
+                        // When ascending we want to compare a to b
                         if (sortDirection === 'asc') {
                             return a.localeCompare(b);
                         }
 
+                        // Otherwise we're descending and need to flip the comparison order
                         return b.localeCompare(a);
                     })
                     .map((record: InferDetails, index: number) => (
