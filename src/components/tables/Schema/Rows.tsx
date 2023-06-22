@@ -62,12 +62,13 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
                             return -1;
                         }
 
-                        // When ascending we want to compare a to b
+                        // If we're here we know both strings are alphanumeric and can do normal sorts
+                        // ascending means compare a to b
                         if (sortDirection === 'asc') {
                             return a.localeCompare(b);
                         }
 
-                        // Otherwise we're descending and need to flip the comparison order
+                        // descending means to flip the comparison order
                         return b.localeCompare(a);
                     })
                     .map((record: InferDetails, index: number) => (
