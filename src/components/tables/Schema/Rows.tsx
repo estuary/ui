@@ -1,10 +1,10 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
 import { orderBy } from 'lodash';
-import { Schema, SortDirection } from 'types';
+import { InferDetails, Schema, SortDirection } from 'types';
 import ChipList from '../cells/ChipList';
 
 interface RowProps {
-    row: any;
+    row: InferDetails;
 }
 
 interface RowsProps {
@@ -43,7 +43,7 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
         return (
             <>
                 {data
-                    .sort((first: any, second: any) => {
+                    .sort((first: InferDetails, second: InferDetails) => {
                         // Try fetching the name and if it isn't there then set to empty string
                         const a = first.name ?? '';
                         const b = second.name ?? '';
@@ -66,7 +66,7 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
 
                         return b.localeCompare(a);
                     })
-                    .map((record: any, index: number) => (
+                    .map((record: InferDetails, index: number) => (
                         <Row row={record} key={`schema-table-rows-${index}`} />
                     ))}
             </>
@@ -76,7 +76,7 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
     return (
         <>
             {orderBy(data, [columnToSort], [sortDirection]).map(
-                (record: any, index: number) => (
+                (record, index) => (
                     <Row row={record} key={`schema-table-rows-${index}`} />
                 )
             )}
