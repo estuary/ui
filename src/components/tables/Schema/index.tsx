@@ -6,26 +6,26 @@ import {
 } from 'components/editor/Bindings/Store/hooks';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { TableColumns, TableState, TableStatuses } from 'types';
+import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
 import EntityTableBody from '../EntityTable/TableBody';
 import EntityTableHeader from '../EntityTable/TableHeader';
 import Rows from './Rows';
 
 export const columns: TableColumns[] = [
     {
-        field: null,
+        field: 'name',
         headerIntlKey: 'data.field',
     },
     {
-        field: null,
+        field: 'pointer',
         headerIntlKey: 'data.pointer',
     },
     {
-        field: null,
+        field: 'type',
         headerIntlKey: 'data.type',
     },
     {
-        field: null,
+        field: 'exists',
         headerIntlKey: 'data.exists',
     },
 ];
@@ -37,11 +37,26 @@ function SchemaPropertiesTable() {
         status: TableStatuses.LOADING,
     });
 
+    const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+    const [columnToSort, setColumnToSort] = useState('name');
+
     const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
     const inferSchemaDoneProcessing =
         useBindingsEditorStore_inferSchemaResponseDoneProcessing();
     const inferSchemaResponseEmpty =
         useBindingsEditorStore_inferSchemaResponseEmpty();
+
+    const handlers = {
+        sortRequest: (_event: React.MouseEvent<unknown>, column: any) => {
+            const isAsc = columnToSort === column && sortDirection === 'asc';
+
+            setSortDirection(isAsc ? 'desc' : 'asc');
+            setColumnToSort(column);
+        },
+        sort: (column: any) => (event: React.MouseEvent<unknown>) => {
+            handlers.sortRequest(event, column);
+        },
+    };
 
     useEffect(() => {
         if (inferSchemaDoneProcessing) {
@@ -65,7 +80,13 @@ function SchemaPropertiesTable() {
                         id: 'entityTable.title',
                     })}
                 >
-                    <EntityTableHeader columns={columns} hide />
+                    <EntityTableHeader
+                        columns={columns}
+                        columnToSort={columnToSort}
+                        sortDirection={sortDirection}
+                        headerClick={handlers.sort}
+                        selectData={true} // We aren't fetching data so we can hardcode this to true
+                    />
 
                     <EntityTableBody
                         columns={columns}
@@ -78,7 +99,11 @@ function SchemaPropertiesTable() {
                         loading={!inferSchemaDoneProcessing}
                         rows={
                             !inferSchemaResponseEmpty ? (
-                                <Rows data={inferSchemaResponse} />
+                                <Rows
+                                    data={inferSchemaResponse}
+                                    sortDirection={sortDirection}
+                                    columnToSort={columnToSort}
+                                />
                             ) : null
                         }
                     />
