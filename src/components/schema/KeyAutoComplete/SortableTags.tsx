@@ -19,6 +19,7 @@ import {
 } from '@dnd-kit/sortable';
 import { AutocompleteGetTagProps } from '@mui/material';
 import { useMemo, useState } from 'react';
+import { keyIsValidOption } from './shared';
 import SortableTag from './SortableTag';
 import StyledChip from './StyledChip';
 
@@ -53,7 +54,7 @@ function SortableTags({
                 tagProps={getTagProps({ index: tagValueIndex })}
                 validOption={
                     validateOptions
-                        ? ownerState.options.includes(tagValue)
+                        ? keyIsValidOption(ownerState.options, tagValue)
                         : true
                 }
             />

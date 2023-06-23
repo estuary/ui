@@ -6,6 +6,7 @@ import { flatMap } from 'lodash';
 import {
     AsyncOperationProps,
     getAsyncDefault,
+    getInitialHydrationData,
     getStoreWithHydrationSettings,
     StoreWithHydration,
 } from 'stores/extensions/Hydration';
@@ -246,7 +247,11 @@ export const getInitialState = (
         },
 
         resetState: () => {
-            set(getInitialStateData(), false, 'Resetting State');
+            set(
+                { ...getInitialStateData(), ...getInitialHydrationData() },
+                false,
+                'Resetting State'
+            );
         },
 
         hydrate: async () => {

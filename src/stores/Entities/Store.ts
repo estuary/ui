@@ -1,6 +1,9 @@
 import { getAuthRoles } from 'api/combinedGrantsExt';
 import produce from 'immer';
-import { getStoreWithHydrationSettings } from 'stores/extensions/Hydration';
+import {
+    getInitialHydrationData,
+    getStoreWithHydrationSettings,
+} from 'stores/extensions/Hydration';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -89,7 +92,11 @@ const getInitialState = (
     },
 
     resetState: () => {
-        set(getInitialStateData(), false, 'Entities Reset');
+        set(
+            { ...getInitialStateData(), ...getInitialHydrationData() },
+            false,
+            'Entities Reset'
+        );
     },
 });
 
