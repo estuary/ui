@@ -228,7 +228,6 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.materializationEdit': `Edit Materialization`,
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,
-    'routeTitle.passwordReset': `Password Reset`,
 };
 
 const Header: ResolvedIntlConfig['messages'] = {
@@ -303,17 +302,6 @@ const EntityNotFound: ResolvedIntlConfig['messages'] = {
     'entityNotFound.message': `The entity you are looking for could not be found. This is likely because it has been deleted.`,
 };
 
-// TODO (password reset) not active
-const PasswordReset: ResolvedIntlConfig['messages'] = {
-    'passwordReset.heading': `Password Reset`,
-    'passwordReset.main': `Enter your new password below.`,
-    'email.description': `The email address associated with your ${CommonMessages.productName} Account`,
-    'email.label': `Email`,
-    'password.description': `Please provide a safe and secure password`,
-    'password.label': `Password`,
-    'confirmPassword.label': `Confirm Password`,
-};
-
 const Registration: ResolvedIntlConfig['messages'] = {
     'register.heading': `We're currently accepting Beta partners.`,
     'register.main.message': `Please enter your information and our team will approve your account.`,
@@ -332,8 +320,6 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.tabs.register': `Register`,
     'login.login.message': `Sign in to continue to ${CommonMessages.productName}.`,
     'login.register.message': `Please log in with a provider to use ${CommonMessages.productName} for free.`,
-
-    'login.passwordReset': 'You should not need to reset your password.',
 
     'login.magicLink': 'Magic link sent. Please check your email.',
     'login.magicLink.failed': 'Failed. Please try again.',
@@ -1138,7 +1124,6 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...EntityTable,
     ...Home,
     ...PageNotFound,
-    ...PasswordReset,
     ...Registration,
     ...AdminPage,
     ...MonacoEditor,
