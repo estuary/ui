@@ -46,8 +46,11 @@ function TenantGuard({ children }: BaseComponentProps) {
         );
     }
 
-    if (userGrants.length === 0 || showBeta) {
-        return <OnboardGuard grantsMutate={mutate} forceDisplay={showBeta} />;
+    const showOnboarding = userGrants.length === 0 || showBeta;
+    if (showOnboarding) {
+        return (
+            <OnboardGuard grantsMutate={mutate} forceDisplay={showOnboarding} />
+        );
     } else {
         // eslint-disable-next-line react/jsx-no-useless-fragment
         return <>{children}</>;
