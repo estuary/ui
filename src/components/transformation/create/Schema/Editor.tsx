@@ -1,6 +1,6 @@
 import MonacoEditor from 'components/editor/MonacoEditor';
 import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
-import EmptySQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor/Empty';
+import EmptySQLEditor from 'components/transformation/create/Catalog/SQLEditor/Empty';
 import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
 import { Schema } from 'types';
 

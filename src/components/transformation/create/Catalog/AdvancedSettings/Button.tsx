@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import AdvancedCatalogSettingsDialog from 'components/transformation/create/DerivationEditor/Catalog/AdvancedSettings/Dialog';
+import AdvancedCatalogSettingsDialog from 'components/transformation/create/Catalog/AdvancedSettings/Dialog';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 

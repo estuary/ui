@@ -1,10 +1,10 @@
 import { Box } from '@mui/material';
 import DerivationCatalogConfig from 'components/transformation/create/Catalog/Config';
+import SQLEditor from 'components/transformation/create/Catalog/SQLEditor';
+import EmptySQLEditor from 'components/transformation/create/Catalog/SQLEditor/Empty';
 import DerivationCatalogEditorTabs, {
     tabProps,
 } from 'components/transformation/create/Catalog/Tabs';
-import SQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor';
-import EmptySQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor/Empty';
 import { isEmpty } from 'lodash';
 import { useMemo, useState } from 'react';
 import {

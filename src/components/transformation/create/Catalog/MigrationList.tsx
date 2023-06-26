@@ -1,6 +1,6 @@
 import CatalogList, {
     CatalogListContent,
-} from 'components/transformation/create/DerivationEditor/Catalog/CatalogList';
+} from 'components/transformation/create/Catalog/CatalogList';
 import { useMemo, useState } from 'react';
 import {
     useTransformationCreate_addMigrations,

@@ -2,10 +2,10 @@ import { Stack, Typography, useTheme } from '@mui/material';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import AdvancedCatalogSettingsButton from 'components/transformation/create/Catalog/AdvancedSettings/Button';
 import DerivationCatalogEditor from 'components/transformation/create/Catalog/Editor';
 import DerivationCatalogHeader from 'components/transformation/create/Catalog/Header';
-import AdvancedCatalogSettingsButton from 'components/transformation/create/DerivationEditor/Catalog/AdvancedSettings/Button';
-import TransformList from 'components/transformation/create/DerivationEditor/Catalog/TransformList';
+import TransformList from 'components/transformation/create/Catalog/TransformList';
 import { alternativeReflexContainerBackground } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
 

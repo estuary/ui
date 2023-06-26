@@ -1032,6 +1032,8 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
 
     'newTransform.schema.header': `Schema`,
     'newTransform.schema.description': `Edit the templated derivation schema below.`,
+    'newTransform.schema.cta.generatePreview': `Preview`,
+    'newTransform.schema.dataPreview.header': `Data Preview`,
 
     'newTransform.editor.streaming.header': `Streaming`,
     'newTransform.editor.streaming.description': `Used for selecting columns and creating aggregations`,

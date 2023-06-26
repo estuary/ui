@@ -8,9 +8,9 @@ import {
     useTheme,
 } from '@mui/material';
 import ListAndDetails from 'components/editor/ListAndDetails';
-import MigrationList from 'components/transformation/create/DerivationEditor/Catalog/MigrationList';
-import SQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor';
-import EmptySQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor/Empty';
+import MigrationList from 'components/transformation/create/Catalog/MigrationList';
+import SQLEditor from 'components/transformation/create/Catalog/SQLEditor';
+import EmptySQLEditor from 'components/transformation/create/Catalog/SQLEditor/Empty';
 import { alternativeReflexContainerBackground } from 'context/Theme';
 import { isEmpty } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';

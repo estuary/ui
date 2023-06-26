@@ -11,8 +11,8 @@ import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkelet
 import CollectionSelector from 'components/collection/Selector';
 import CatalogList, {
     CatalogListContent,
-} from 'components/transformation/create/DerivationEditor/Catalog/CatalogList';
-import UpdateDraftButton from 'components/transformation/create/DerivationEditor/Catalog/UpdateDraftButton';
+} from 'components/transformation/create/Catalog/CatalogList';
+import UpdateDraftButton from 'components/transformation/create/Catalog/UpdateDraftButton';
 import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import useLiveSpecs from 'hooks/useLiveSpecs';

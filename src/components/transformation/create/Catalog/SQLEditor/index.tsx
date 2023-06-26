@@ -1,7 +1,7 @@
 import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
-import EmptySQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor/Empty';
-import MonacoEditor from 'components/transformation/create/DerivationEditor/SQLEditor/MonacoEditor';
-import useSQLEditor from 'components/transformation/create/DerivationEditor/SQLEditor/useSQLEditor';
+import EmptySQLEditor from 'components/transformation/create/Catalog/SQLEditor/Empty';
+import MonacoEditor from 'components/transformation/create/Catalog/SQLEditor/MonacoEditor';
+import useSQLEditor from 'components/transformation/create/Catalog/SQLEditor/useSQLEditor';
 import { useMemo } from 'react';
 import {
     useTransformationCreate_attributeType,

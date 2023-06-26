@@ -7,7 +7,7 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import CatalogListItem from 'components/transformation/create/DerivationEditor/Catalog/CatalogListItem';
+import CatalogListItem from 'components/transformation/create/Catalog/CatalogListItem';
 import { EditPencil } from 'iconoir-react';
 import { CSSProperties, MouseEventHandler } from 'react';
 import { FormattedMessage } from 'react-intl';
