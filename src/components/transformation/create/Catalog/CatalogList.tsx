@@ -8,6 +8,7 @@ import {
     useTheme,
 } from '@mui/material';
 import CatalogListItem from 'components/transformation/create/Catalog/CatalogListItem';
+import { defaultOutline } from 'context/Theme';
 import { EditPencil } from 'iconoir-react';
 import { CSSProperties, MouseEventHandler } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -28,14 +29,6 @@ interface Props {
     height?: number;
 }
 
-// const DEFAULT_LIST_HEIGHT = 400.5;
-
-// const getListItemContainerHeight = (height?: number): string => {
-//     const evaluatedHeight = (height ?? DEFAULT_LIST_HEIGHT) - 37;
-
-//     return `${evaluatedHeight}px`;
-// };
-
 function CatalogList({
     fixedAttributeType,
     content,
@@ -44,44 +37,17 @@ function CatalogList({
 }: Props) {
     const theme = useTheme();
 
-    // const [windowResizing, setWindowResizing] = useState(false);
-    // const [clientWidth, setClientWidth] = useState<number | undefined>();
-    // const [scrollWidth, setScrollWidth] = useState<number | undefined>();
-
-    // useEffect(() => {
-    //     let timeout: NodeJS.Timeout;
-
-    //     const handleResize = () => {
-    //         clearTimeout(timeout);
-
-    //         setWindowResizing(true);
-
-    //         timeout = setTimeout(() => {
-    //             setWindowResizing(false);
-    //         }, 200);
-    //     };
-    //     window.addEventListener('resize', handleResize);
-
-    //     return () => window.removeEventListener('resize', handleResize);
-    // }, []);
-
-    // useEffect(() => {
-    //     if (!windowResizing) {
-    //         setClientWidth(
-    //             document.querySelector('div#list-item-container')?.clientWidth
-    //         );
-
-    //         setScrollWidth(
-    //             document.querySelector('div#list-item-container')?.scrollWidth
-    //         );
-    //     }
-    // }, [setClientWidth, setScrollWidth, windowResizing]);
-
     return (
         <List
             disablePadding
             subheader={
-                <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
+                <Stack
+                    direction="row"
+                    sx={{
+                        justifyContent: 'space-between',
+                        borderBottom: defaultOutline[theme.palette.mode],
+                    }}
+                >
                     <Typography
                         component="div"
                         sx={{
@@ -106,22 +72,9 @@ function CatalogList({
                 </Stack>
             }
         >
-            <Box
-                id="list-item-container"
-                sx={{
-                    height,
-                    overflowY: 'auto',
-                }}
-            >
+            <Box id="list-item-container" sx={{ height, overflowY: 'auto' }}>
                 {hasLength(content) ? (
-                    <Box
-                    // sx={{
-                    //     minWidth:
-                    //         clientWidth === scrollWidth
-                    //             ? clientWidth
-                    //             : 'max-content',
-                    // }}
-                    >
+                    <Box sx={{ minWidth: 'max-content' }}>
                         {content.map(({ attributeId, value, nestedValue }) => (
                             <CatalogListItem
                                 key={attributeId}

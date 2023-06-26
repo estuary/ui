@@ -1,4 +1,5 @@
 import { Collapse, List, ListItemButton, ListItemText } from '@mui/material';
+import { defaultOutline } from 'context/Theme';
 import { NavArrowDown, NavArrowRight } from 'iconoir-react';
 import { useState } from 'react';
 import {
@@ -41,12 +42,13 @@ function CatalogListItem({
         return (
             <>
                 <ListItemButton
-                    dense
                     selected={selectedAttribute === attributeId}
                     onClick={handlers.toggleList}
                     sx={{
                         'width': '100%',
                         'px': 1,
+                        'borderBottom': (theme) =>
+                            open ? 'none' : defaultOutline[theme.palette.mode],
                         '&.Mui-selected': {
                             backgroundColor: open
                                 ? 'unset'
@@ -55,6 +57,10 @@ function CatalogListItem({
                                 open
                                     ? theme.palette.primary.main
                                     : theme.palette.text.primary,
+                            boxShadow: (theme) =>
+                                open
+                                    ? undefined
+                                    : `inset 0px 0px 0px 1px ${theme.palette.primary.main}`,
                         },
                     }}
                 >
@@ -76,16 +82,33 @@ function CatalogListItem({
                     in={open}
                     timeout="auto"
                     unmountOnExit
-                    sx={{ width: '100%' }}
+                    sx={{
+                        width: '100%',
+                        borderBottom: (theme) =>
+                            defaultOutline[theme.palette.mode],
+                    }}
                 >
                     <List component="div" disablePadding>
                         <ListItemButton
                             dense
                             selected={selectedAttribute === attributeId}
                             onClick={handlers.displayAttributeSQL(attributeId)}
-                            sx={{ pl: 5 }}
+                            sx={{
+                                'pl': 5,
+                                '&.Mui-selected': {
+                                    boxShadow: (theme) =>
+                                        `inset 0px 0px 0px 1px ${theme.palette.primary.main}`,
+                                },
+                            }}
                         >
-                            <ListItemText primary={nestedItemLabel} />
+                            <ListItemText
+                                primary={nestedItemLabel}
+                                sx={{
+                                    '& .MuiListItemText-primary': {
+                                        whiteSpace: 'nowrap',
+                                    },
+                                }}
+                            />
                         </ListItemButton>
                     </List>
                 </Collapse>
@@ -94,12 +117,26 @@ function CatalogListItem({
     } else {
         return (
             <ListItemButton
-                dense
                 selected={selectedAttribute === attributeId}
                 onClick={handlers.displayAttributeSQL(attributeId)}
-                sx={{ px: 1 }}
+                sx={{
+                    'px': 1,
+                    'borderBottom': (theme) =>
+                        defaultOutline[theme.palette.mode],
+                    '&.Mui-selected': {
+                        boxShadow: (theme) =>
+                            `inset 0px 0px 0px 1px ${theme.palette.primary.main}`,
+                    },
+                }}
             >
-                <ListItemText primary={itemLabel} />
+                <ListItemText
+                    primary={itemLabel}
+                    sx={{
+                        '& .MuiListItemText-primary': {
+                            whiteSpace: 'nowrap',
+                        },
+                    }}
+                />
             </ListItemButton>
         );
     }

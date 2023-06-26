@@ -33,10 +33,9 @@ function TransformList() {
     const content: CatalogListContent[] = useMemo(
         () =>
             Object.entries(transformConfigs).map(
-                ([attributeId, { filename, collection }]) => ({
+                ([attributeId, { filename }]) => ({
                     attributeId,
                     value: filename,
-                    nestedValue: collection,
                 })
             ),
         [transformConfigs]
@@ -68,7 +67,7 @@ function TransformList() {
                 fixedAttributeType="transform"
                 content={content}
                 addButtonClickHandler={handlers.toggleDialog}
-                height={534}
+                height={532}
             />
 
             <Dialog open={open} fullWidth maxWidth="md">
