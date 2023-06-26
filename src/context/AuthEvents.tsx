@@ -1,16 +1,23 @@
 import { unauthenticatedRoutes } from 'app/routes';
 import { useClient } from 'hooks/supabase-swr';
-import { redirect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import { BaseComponentProps } from 'types';
 
 function AuthEvents({ children }: BaseComponentProps) {
     const supabaseClient = useClient();
+    const navigate = useNavigate();
+
     useEffectOnce(() => {
         supabaseClient.auth.onAuthStateChange((event) => {
             console.log('AuthEvents : onAuthStateChange', { event });
             if (event === 'SIGNED_OUT') {
-                redirect(unauthenticatedRoutes.logout.path);
+                // Need to use navigate here otherwise the RequireAuth code
+                //  would pick up the user logged out and handle the redirecting
+                //  to the login page.
+                navigate(unauthenticatedRoutes.logout.path, {
+                    replace: true,
+                });
             }
         });
     });
