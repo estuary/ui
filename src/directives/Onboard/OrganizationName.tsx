@@ -47,7 +47,7 @@ function OrganizationNameField() {
                 onChange={(event) => handlers.update(event.target.value)}
                 required
                 inputProps={{
-                    pattern: PREFIX_NAME_PATTERN,
+                    pattern: `^${PREFIX_NAME_PATTERN}$`,
                 }}
                 sx={{
                     'maxWidth': 424,
