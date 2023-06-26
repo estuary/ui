@@ -1,1 +1,1 @@
-export type TabOptions = 'config' | 'streaming' | 'advanced';
+export type TabOptions = 'basic' | 'advanced';
