@@ -243,4 +243,8 @@ export const logRocketConsole = (message: string, ...props: any[]) => {
     if (LogRocket?.log) {
         LogRocket.log(message, props);
     }
+
+    if (process.env.NODE_ENV === 'development') {
+        console.log(message, props);
+    }
 };
