@@ -10,7 +10,7 @@ function AuthEvents({ children }: BaseComponentProps) {
         supabaseClient.auth.onAuthStateChange((event) => {
             console.log('SupabaseClient:AuthEvents:stateChange', { event });
             if (event === 'SIGNED_OUT') {
-                redirect(unauthenticatedRoutes.path);
+                redirect(unauthenticatedRoutes.logout.path);
             }
         });
     });
