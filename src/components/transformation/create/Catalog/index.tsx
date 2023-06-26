@@ -24,7 +24,7 @@ function DerivationCatalog() {
                     }}
                 >
                     <Typography sx={{ mr: 2 }}>
-                        <FormattedMessage id="newTransform.editor.catalog.description" />
+                        <FormattedMessage id="newTransform.catalog.description" />
                     </Typography>
 
                     <AdvancedCatalogSettingsButton />

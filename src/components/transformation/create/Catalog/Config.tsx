@@ -1,4 +1,4 @@
-import { Stack, TextField, Typography } from '@mui/material';
+import { Box, Stack, TextField, Typography } from '@mui/material';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -19,22 +19,38 @@ function DerivationCatalogConfig() {
         [selectedAttribute, transformConfigs]
     );
 
-    console.log(transformConfig);
     return (
-        <Stack spacing={2} sx={{ py: 2 }}>
+        <Stack spacing={3} sx={{ py: 2 }}>
             {transformConfig ? (
                 <>
-                    <TextField
-                        size="small"
-                        label="Source Collection"
-                        value={transformConfig.collection}
-                    />
+                    <Box>
+                        <Typography variant="subtitle1">
+                            Source Collection
+                        </Typography>
 
-                    <TextField
-                        size="small"
-                        label="Table"
-                        value={stripPathing(transformConfig.collection)}
-                    />
+                        <Typography sx={{ ml: 1.5 }}>
+                            {transformConfig.collection}
+                        </Typography>
+                    </Box>
+
+                    <Stack>
+                        <TextField
+                            size="small"
+                            variant="standard"
+                            label="Transform Name"
+                            value={stripPathing(transformConfig.collection)}
+                        />
+
+                        <Typography
+                            variant="caption"
+                            color={(theme) => theme.palette.text.secondary}
+                            sx={{ mt: '3px' }}
+                        >
+                            Unique name of the transformation, containing only
+                            Unicode letters, numbers, hyphens, or underscores
+                            (no spaces or other punctuation).
+                        </Typography>
+                    </Stack>
                 </>
             ) : (
                 <Typography>

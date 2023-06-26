@@ -1,6 +1,5 @@
 import { Box, Divider, Typography } from '@mui/material';
 import DataPreview from 'components/transformation/create/DerivationEditor/SQLDataPreview/DataPreview';
-import { intensifiedOutline } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
 import {
     useTransformationCreate_name,
@@ -12,13 +11,7 @@ function SQLDataPreview() {
     const entityName = useTransformationCreate_name();
 
     return (
-        <Box
-            sx={{
-                borderBottom: (theme) => intensifiedOutline[theme.palette.mode],
-                borderRight: (theme) => intensifiedOutline[theme.palette.mode],
-                borderLeft: (theme) => intensifiedOutline[theme.palette.mode],
-            }}
-        >
+        <>
             <Box sx={{ height: 37, p: 1 }}>
                 {entityName ? (
                     <Typography
@@ -38,7 +31,7 @@ function SQLDataPreview() {
                     </Typography>
                 )}
             </Box>
-        </Box>
+        </>
     );
 }
 

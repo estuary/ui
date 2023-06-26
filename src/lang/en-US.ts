@@ -1018,8 +1018,8 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
                             continue, e.g`,
     'newTransform.button.cta': `Proceed to GitPod`,
 
-    'newTransform.editor.catalog.header': `Catalog`,
-    'newTransform.editor.catalog.description': `This is a placeholder for a section description`,
+    'newTransform.catalog.header': `Catalog`,
+    'newTransform.catalog.description': `This is a placeholder for a section description`,
     'newTransform.catalog.tab.advancedSettings': `Advanced`,
     'newTransform.catalog.tab.basicSettings': `Config`,
     'newTransform.catalog.tab.sqlEditor': `Streaming`,
@@ -1029,6 +1029,9 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.editor.catalog.migration.header': `Migrations`,
     'newTransform.editor.catalog.message.empty': `Click on the edit pencil above to edit the list of {contentType}s.`,
     'newTransform.catalog.alert.noTransformSelected': `No transform selected.`,
+
+    'newTransform.schema.header': `Schema`,
+    'newTransform.schema.description': `Edit the templated derivation schema below.`,
 
     'newTransform.editor.streaming.header': `Streaming`,
     'newTransform.editor.streaming.description': `Used for selecting columns and creating aggregations`,

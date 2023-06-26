@@ -1,10 +1,11 @@
-import { Collapse, Stack } from '@mui/material';
+import { Box, Collapse } from '@mui/material';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityError from 'components/shared/Entity/Error';
 import EntityToolbar from 'components/shared/Entity/Header';
 import DerivationCatalog from 'components/transformation/create/Catalog';
 import GitPodButton from 'components/transformation/create/GitPodButton';
+import DerivationSchema from 'components/transformation/create/Schema';
 import { CustomEvents } from 'services/logrocket';
 import {
     useFormStateStore_error,
@@ -57,25 +58,31 @@ function DerivationCreateAlternate() {
     };
 
     return (
-        <Stack spacing={3}>
-            <EntityToolbar
-                GenerateButton={null}
-                TestButton={<GitPodButton buttonVariant="outlined" />}
-                SaveButton={
-                    <EntitySaveButton
-                        callFailed={helpers.callFailed}
-                        taskNames={
-                            typeof catalogName === 'string'
-                                ? [catalogName]
-                                : undefined
-                        }
-                        closeLogs={handlers.closeLogs}
-                        logEvent={CustomEvents.COLLECTION_CREATE}
-                    />
-                }
-            />
+        <>
+            <Box sx={{ mb: 3 }}>
+                <EntityToolbar
+                    GenerateButton={null}
+                    TestButton={<GitPodButton buttonVariant="outlined" />}
+                    SaveButton={
+                        <EntitySaveButton
+                            callFailed={helpers.callFailed}
+                            taskNames={
+                                typeof catalogName === 'string'
+                                    ? [catalogName]
+                                    : undefined
+                            }
+                            closeLogs={handlers.closeLogs}
+                            logEvent={CustomEvents.COLLECTION_CREATE}
+                        />
+                    }
+                />
+            </Box>
 
-            <Collapse in={publicationError !== null} unmountOnExit>
+            <Collapse
+                in={publicationError !== null}
+                unmountOnExit
+                sx={{ mb: 2 }}
+            >
                 {publicationError ? (
                     <EntityError
                         title={publicationError.title}
@@ -87,7 +94,9 @@ function DerivationCreateAlternate() {
             </Collapse>
 
             <DerivationCatalog />
-        </Stack>
+
+            <DerivationSchema />
+        </>
     );
 }
 

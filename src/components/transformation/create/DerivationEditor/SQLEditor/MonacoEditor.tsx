@@ -159,7 +159,7 @@ function MonacoEditor({
 
     if (attributeId) {
         return (
-            <Paper sx={{ width: '100%', boxShadow: 'unset' }}>
+            <Paper sx={{ width: '100%' }} variant="outlined">
                 <Box
                     sx={{
                         minHeight: toolbarHeight,
