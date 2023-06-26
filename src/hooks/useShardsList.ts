@@ -75,6 +75,7 @@ const useShardsList = <T extends LiveSpecsExtBareMinimum>(specs: T[]) => {
             refreshInterval: INTERVAL,
             revalidateOnFocus: false, // We're already refreshing and these status do not change often
             onError: async (error: string | Error) => {
+                console.log('useShardsList on error', { error });
                 if (typeof error === 'object') {
                     return Promise.reject(error.message);
                 }

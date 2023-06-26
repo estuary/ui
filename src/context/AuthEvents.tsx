@@ -8,7 +8,7 @@ function AuthEvents({ children }: BaseComponentProps) {
     const supabaseClient = useClient();
     useEffectOnce(() => {
         supabaseClient.auth.onAuthStateChange((event) => {
-            console.log('SupabaseClient:AuthEvents:stateChange', { event });
+            console.log('AuthEvents : onAuthStateChange', { event });
             if (event === 'SIGNED_OUT') {
                 redirect(unauthenticatedRoutes.logout.path);
             }
