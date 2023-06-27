@@ -10,6 +10,7 @@ import CatalogList, {
 } from 'components/transformation/create/Catalog/CatalogList';
 import { defaultOutline } from 'context/Theme';
 import { NavArrowDown } from 'iconoir-react';
+import { isEmpty } from 'lodash';
 import { useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -108,6 +109,7 @@ function MigrationList() {
                     content={content}
                     addButtonClickHandler={handlers.insertBlankMigration}
                     height={200}
+                    extendList={isEmpty(migrations)}
                 />
             </AccordionDetails>
         </Accordion>

@@ -1027,7 +1027,7 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.editor.catalog.transform.header': `Transforms`,
     'newTransform.editor.catalog.transform.addDialog.header': `Add or Remove Transforms`,
     'newTransform.editor.catalog.migration.header': `Migrations`,
-    'newTransform.editor.catalog.message.empty': `Click on the edit pencil above to edit the list of {contentType}s.`,
+    'newTransform.editor.catalog.message.empty': `Click on the plus sign above to add a {contentType}.`,
     'newTransform.catalog.alert.noTransformSelected': `No transform selected.`,
 
     'newTransform.schema.header': `Schema`,

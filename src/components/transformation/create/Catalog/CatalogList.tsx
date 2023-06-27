@@ -8,9 +8,9 @@ import {
     useTheme,
 } from '@mui/material';
 import CatalogListItem from 'components/transformation/create/Catalog/CatalogListItem';
-import { defaultOutline } from 'context/Theme';
-import { EditPencil } from 'iconoir-react';
-import { CSSProperties, MouseEventHandler } from 'react';
+import { defaultOutline, disabledButtonText } from 'context/Theme';
+import { Plus } from 'iconoir-react';
+import { MouseEventHandler } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { DerivationAttribute } from 'stores/TransformationCreate/types';
 import { hasLength } from 'utils/misc-utils';
@@ -25,7 +25,7 @@ interface Props {
     fixedAttributeType: DerivationAttribute;
     content: CatalogListContent[];
     addButtonClickHandler: MouseEventHandler<HTMLButtonElement>;
-    borderBottom?: CSSProperties['borderBottom'];
+    extendList?: boolean;
     height?: number;
 }
 
@@ -33,6 +33,7 @@ function CatalogList({
     fixedAttributeType,
     content,
     addButtonClickHandler,
+    extendList = true,
     height,
 }: Props) {
     const theme = useTheme();
@@ -62,11 +63,16 @@ function CatalogList({
                     </Typography>
 
                     <IconButton
+                        disabled={!extendList}
                         onClick={addButtonClickHandler}
                         sx={{ borderRadius: 0 }}
                     >
-                        <EditPencil
-                            style={{ color: theme.palette.primary.main }}
+                        <Plus
+                            style={{
+                                color: extendList
+                                    ? theme.palette.primary.main
+                                    : disabledButtonText[theme.palette.mode],
+                            }}
                         />
                     </IconButton>
                 </Stack>
