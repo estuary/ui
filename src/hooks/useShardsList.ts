@@ -1,5 +1,6 @@
 import { Auth } from '@supabase/ui';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
+import { ResponseError } from 'data-plane-gateway/types/util';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useMemo } from 'react';
 import { logRocketConsole } from 'services/logrocket';
@@ -7,9 +8,10 @@ import useSWR from 'swr';
 import { LiveSpecsExtBareMinimum } from 'types';
 
 enum ErrorFlags {
-    TOKEN_NOT_FOUND = 'Unauthenticated',
-    TOKEN_INVALID = 'Authentication failed',
     OPERATION_INVALID = 'Unauthorized',
+    TOKEN_EXPIRED = 'token is expired',
+    TOKEN_INVALID = 'Authentication failed',
+    TOKEN_NOT_FOUND = 'Unauthenticated',
 }
 
 // These status do not change often so checking every 30 seconds is probably enough
@@ -41,24 +43,29 @@ const useShardsList = <T extends LiveSpecsExtBareMinimum>(specs: T[]) => {
 
     const fetcher = async (_url: string) => {
         if (!(shardClient && session)) {
-            return { shards: [], error: null };
+            return { shards: [] };
         }
-        try {
-            const result = await shardClient.list(taskSelector);
-            const shards = result.unwrap();
 
+        const result = await shardClient.list(taskSelector);
+
+        // Check for an error
+        if (result.err()) {
+            // Unwrap the error, log the error, and reject the response
+            const error = result.unwrap_err();
+            logRocketConsole('ShardsList : error : ', error);
+            return Promise.reject(error.body);
+        }
+
+        try {
+            // No error so should be fine to unwrap
+            const shards = result.unwrap();
             return {
                 shards: shards.length > 0 ? shards : [],
-                error: null,
             };
-            // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
-        } catch (error: any) {
-            logRocketConsole('ShardsList : error : ', error);
-
-            return {
-                shards: [],
-                error: error?.message ?? error,
-            };
+        } catch (error: unknown) {
+            // This is just here to be safe. We'll keep an eye on it and possibly remove
+            logRocketConsole('ShardsList : unwrapError : ', error);
+            return Promise.reject(error);
         }
     };
 
@@ -74,20 +81,22 @@ const useShardsList = <T extends LiveSpecsExtBareMinimum>(specs: T[]) => {
             errorRetryInterval: INTERVAL / 2,
             refreshInterval: INTERVAL,
             revalidateOnFocus: false, // We're already refreshing and these status do not change often
-            onError: async (error: string | Error) => {
+            onError: async (error: string | ResponseError['body']) => {
                 logRocketConsole('useShardsList on error', { error });
-                if (typeof error === 'object') {
-                    return Promise.reject(error.message);
-                }
 
+                // Try fetching the error message
+                const errorMessage =
+                    typeof error === 'object' ? error.message : error;
+
+                // Check if we need to refresh the access token before returning the error
                 if (
-                    error.includes(ErrorFlags.TOKEN_INVALID) ||
-                    error.includes(ErrorFlags.TOKEN_NOT_FOUND)
+                    errorMessage &&
+                    (errorMessage.includes(ErrorFlags.TOKEN_INVALID) ||
+                        errorMessage.includes(ErrorFlags.TOKEN_NOT_FOUND) ||
+                        errorMessage.includes(ErrorFlags.TOKEN_EXPIRED))
                 ) {
                     await refreshAccess();
                 }
-
-                return Promise.reject(error);
             },
         }
     );
