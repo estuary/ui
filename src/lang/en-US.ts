@@ -1007,6 +1007,7 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.errors.nameMissing': `Missing entity name`,
     'newTransform.errors.urlNotGenerated': `We failed to generate the proper URL to start GitPod. ${Error['error.tryAgain']}`,
     'newTransform.errors.gitPodWindow': `Failed to open GitPod. Your browser may be blocking it from opening. Please ensure your browser allows pop-ups.`,
+    'newTransform.errors.draftSpecUpdateFailed': `Updating Specification Failed`,
     'newTransform.info.gitPodWindowTitle': `GitPod should be opened in a new tab or window`,
     'newTransform.info.gitPodWindowMessage': `To develop your transformation please use GitPod.`,
     'newTransform.stepper.step1.label': `Select source collections`,

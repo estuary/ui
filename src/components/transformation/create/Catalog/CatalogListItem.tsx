@@ -1,8 +1,17 @@
-import { Collapse, List, ListItemButton, ListItemText } from '@mui/material';
+import {
+    Collapse,
+    IconButton,
+    List,
+    ListItemButton,
+    ListItemText,
+    Stack,
+} from '@mui/material';
+import { useEditorStore_setId } from 'components/editor/Store/hooks';
 import { defaultOutline } from 'context/Theme';
-import { NavArrowDown, NavArrowRight } from 'iconoir-react';
+import { Cancel, NavArrowDown, NavArrowRight } from 'iconoir-react';
 import { useState } from 'react';
 import {
+    useTransformationCreate_removeAttribute,
     useTransformationCreate_selectedAttribute,
     useTransformationCreate_setAttributeType,
     useTransformationCreate_setSelectedAttribute,
@@ -22,9 +31,14 @@ function CatalogListItem({
     itemLabel,
     nestedItemLabel,
 }: Props) {
+    // Draft Editor Store
+    const setDraftId = useEditorStore_setId();
+
+    // Transformation Create Store
     const selectedAttribute = useTransformationCreate_selectedAttribute();
     const setSelectedAttribute = useTransformationCreate_setSelectedAttribute();
     const setAttributeType = useTransformationCreate_setAttributeType();
+    const removeAttribute = useTransformationCreate_removeAttribute();
 
     const [open, setOpen] = useState<boolean>(true);
 
@@ -35,6 +49,15 @@ function CatalogListItem({
         displayAttributeSQL: (id: string) => () => {
             setAttributeType(fixedAttributeType);
             setSelectedAttribute(id);
+        },
+        removeListItem: (
+            event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+        ) => {
+            event.stopPropagation();
+            event.preventDefault();
+
+            removeAttribute(attributeId);
+            setDraftId(null);
         },
     };
 
@@ -49,6 +72,9 @@ function CatalogListItem({
                         'px': 1,
                         'borderBottom': (theme) =>
                             open ? 'none' : defaultOutline[theme.palette.mode],
+                        '&.MuiButtonBase-root:hover::after': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                        },
                         '&.Mui-selected': {
                             backgroundColor: open
                                 ? 'unset'
@@ -95,6 +121,9 @@ function CatalogListItem({
                             onClick={handlers.displayAttributeSQL(attributeId)}
                             sx={{
                                 'pl': 5,
+                                '&.MuiButtonBase-root:hover::after': {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                                },
                                 '&.Mui-selected': {
                                     boxShadow: (theme) =>
                                         `inset 0px 0px 0px 1px ${theme.palette.primary.main}`,
@@ -116,28 +145,43 @@ function CatalogListItem({
         );
     } else {
         return (
-            <ListItemButton
-                selected={selectedAttribute === attributeId}
-                onClick={handlers.displayAttributeSQL(attributeId)}
+            <Stack
+                direction="row"
                 sx={{
-                    'px': 1,
-                    'borderBottom': (theme) =>
-                        defaultOutline[theme.palette.mode],
-                    '&.Mui-selected': {
-                        boxShadow: (theme) =>
-                            `inset 0px 0px 0px 1px ${theme.palette.primary.main}`,
-                    },
+                    borderBottom: (theme) => defaultOutline[theme.palette.mode],
                 }}
             >
-                <ListItemText
-                    primary={itemLabel}
+                <ListItemButton
+                    selected={selectedAttribute === attributeId}
+                    onClick={handlers.displayAttributeSQL(attributeId)}
                     sx={{
-                        '& .MuiListItemText-primary': {
-                            whiteSpace: 'nowrap',
+                        'px': 1,
+                        '&.MuiButtonBase-root:hover::after': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                        },
+                        '&.Mui-selected': {
+                            boxShadow: (theme) =>
+                                `inset 0px 0px 0px 1px ${theme.palette.primary.main}`,
                         },
                     }}
-                />
-            </ListItemButton>
+                >
+                    <ListItemText
+                        primary={itemLabel}
+                        sx={{
+                            '& .MuiListItemText-primary': {
+                                whiteSpace: 'nowrap',
+                            },
+                        }}
+                    />
+
+                    <IconButton
+                        onClick={handlers.removeListItem}
+                        sx={{ zIndex: 40 }}
+                    >
+                        <Cancel />
+                    </IconButton>
+                </ListItemButton>
+            </Stack>
         );
     }
 }

@@ -5,7 +5,9 @@ import EntityError from 'components/shared/Entity/Error';
 import EntityToolbar from 'components/shared/Entity/Header';
 import DerivationCatalog from 'components/transformation/create/Catalog';
 import GitPodButton from 'components/transformation/create/GitPodButton';
+import PatchDraftButton from 'components/transformation/create/PatchDraftButton';
 import DerivationSchema from 'components/transformation/create/Schema';
+import useDraftSpecs from 'hooks/useDraftSpecs';
 import { CustomEvents } from 'services/logrocket';
 import {
     useFormStateStore_error,
@@ -31,6 +33,11 @@ function DerivationCreateAlternate() {
 
     // Transformation Create Store
     const catalogName = useTransformationCreate_catalogName();
+
+    const { draftSpecs, isValidating, mutate } = useDraftSpecs(draftId, {
+        specType: 'collection',
+        catalogName,
+    });
 
     const helpers = {
         callFailed: (formState: any) => {
@@ -61,7 +68,9 @@ function DerivationCreateAlternate() {
         <>
             <Box sx={{ mb: 3 }}>
                 <EntityToolbar
-                    GenerateButton={null}
+                    GenerateButton={
+                        <PatchDraftButton mutateDraftSpecs={mutate} />
+                    }
                     TestButton={<GitPodButton buttonVariant="outlined" />}
                     SaveButton={
                         <EntitySaveButton
@@ -93,7 +102,11 @@ function DerivationCreateAlternate() {
                 ) : null}
             </Collapse>
 
-            <DerivationCatalog />
+            <DerivationCatalog
+                draftSpecs={draftSpecs}
+                isValidating={isValidating}
+                mutate={mutate}
+            />
 
             <DerivationSchema />
         </>

@@ -78,7 +78,7 @@ function MonacoEditor({
 
     const [showServerDiff, setShowServerDiff] = useState(false);
 
-    const updateValue = () => {
+    const updateValue = useCallback(() => {
         console.log('editor:update');
         const currentValue = editorRef.current
             ?.getValue()
@@ -121,11 +121,12 @@ function MonacoEditor({
                 currentValue,
             });
         }
-    };
+    }, [patchSelectedAttribute, setStatus, attributeId, onChange]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedChange = useCallback(debounce(updateValue, 750), [
         attributeId,
+        updateValue,
     ]);
 
     const handlers = {

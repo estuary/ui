@@ -147,6 +147,16 @@ export const useTransformationCreate_patchSelectedAttribute = () => {
     );
 };
 
+export const useTransformationCreate_removeAttribute = () => {
+    return useZustandStore<
+        TransformCreateState,
+        TransformCreateState['removeAttribute']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.removeAttribute
+    );
+};
+
 export const useTransformationCreate_attributeType = () => {
     return useZustandStore<
         TransformCreateState,

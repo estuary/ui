@@ -4,19 +4,22 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
-import useDraftSpecs, { DraftSpec } from 'hooks/useDraftSpecs';
-import { useEffect, useState } from 'react';
+import { SuccessResponse } from 'hooks/supabase-swr';
+import { DraftSpec, DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { useCallback, useEffect, useState } from 'react';
 import {
     useTransformationCreate_attributeType,
     useTransformationCreate_migrations,
     useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
+import { KeyedMutator } from 'swr';
 import { updateMigrations, updateTransforms } from 'utils/derivation-utils';
 
-const entityType = 'collection';
-
-// TODO (sql editor): Add support for migration updates.
-function useSQLEditor(entityName: string) {
+function useSQLEditor(
+    entityName: string,
+    draftSpecs: DraftSpecQuery[],
+    mutate: KeyedMutator<SuccessResponse<DraftSpecQuery>>
+) {
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
 
@@ -30,38 +33,44 @@ function useSQLEditor(entityName: string) {
 
     const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
 
-    const { draftSpecs, isValidating, mutate } = useDraftSpecs(draftId, {
-        specType: entityType,
-        catalogName: entityName,
-    });
+    const processEditorValue = useCallback(
+        async (value: any, attributeId: string) => {
+            if (draftSpec) {
+                if (attributeType === 'transform') {
+                    draftSpec.spec.derive.transforms = updateTransforms(
+                        transformConfigs[attributeId].collection,
+                        value,
+                        transformConfigs
+                    );
+                } else {
+                    draftSpec.spec.derive.using.sqlite.migrations =
+                        updateMigrations(attributeId, value, migrations);
+                }
 
-    const processEditorValue = async (value: any, attributeId: string) => {
-        if (draftSpec) {
-            if (attributeType === 'transform') {
-                draftSpec.spec.derive.transforms = updateTransforms(
-                    transformConfigs[attributeId].collection,
-                    value,
-                    transformConfigs
-                );
+                const updateResponse = await modifyDraftSpec(draftSpec.spec, {
+                    draft_id: draftId,
+                    catalog_name: entityName,
+                });
+
+                if (updateResponse.error) {
+                    return Promise.reject();
+                }
+
+                return mutate();
             } else {
-                draftSpec.spec.derive.using.sqlite.migrations =
-                    updateMigrations(attributeId, value, migrations);
-            }
-
-            const updateResponse = await modifyDraftSpec(draftSpec.spec, {
-                draft_id: draftId,
-                catalog_name: entityName,
-            });
-
-            if (updateResponse.error) {
                 return Promise.reject();
             }
-
-            return mutate();
-        } else {
-            return Promise.reject();
-        }
-    };
+        },
+        [
+            attributeType,
+            draftId,
+            draftSpec,
+            entityName,
+            migrations,
+            mutate,
+            transformConfigs,
+        ]
+    );
 
     useEffect(() => {
         if (draftSpecs.length > 0) {
@@ -91,8 +100,6 @@ function useSQLEditor(entityName: string) {
     return {
         onChange: processEditorValue,
         draftSpec,
-        isValidating,
-        mutate,
     };
 }
 

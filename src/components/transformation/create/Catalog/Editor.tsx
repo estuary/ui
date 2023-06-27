@@ -11,6 +11,8 @@ import EmptySQLEditor from 'components/transformation/create/Catalog/SQLEditor/E
 import DerivationCatalogEditorTabs, {
     tabProps,
 } from 'components/transformation/create/Catalog/Tabs';
+import { SuccessResponse } from 'hooks/supabase-swr';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { HelpCircle } from 'iconoir-react';
 import { isEmpty } from 'lodash';
 import { useMemo, useState } from 'react';
@@ -22,9 +24,16 @@ import {
     useTransformationCreate_selectedAttribute,
     useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
+import { KeyedMutator } from 'swr';
 import { stripPathing } from 'utils/misc-utils';
 
-function DerivationCatalogEditor() {
+interface Props {
+    draftSpecs: DraftSpecQuery[];
+    isValidating: boolean;
+    mutate: KeyedMutator<SuccessResponse<DraftSpecQuery>>;
+}
+
+function DerivationCatalogEditor({ draftSpecs, isValidating, mutate }: Props) {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -88,6 +97,9 @@ function DerivationCatalogEditor() {
                     {catalogName && showEditor ? (
                         <SQLEditor
                             entityName={catalogName}
+                            draftSpecs={draftSpecs}
+                            isValidating={isValidating}
+                            mutate={mutate}
                             editorHeight={editorHeight}
                         />
                     ) : (

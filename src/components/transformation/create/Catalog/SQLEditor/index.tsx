@@ -2,6 +2,8 @@ import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkele
 import EmptySQLEditor from 'components/transformation/create/Catalog/SQLEditor/Empty';
 import MonacoEditor from 'components/transformation/create/Catalog/SQLEditor/MonacoEditor';
 import useSQLEditor from 'components/transformation/create/Catalog/SQLEditor/useSQLEditor';
+import { SuccessResponse } from 'hooks/supabase-swr';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useMemo } from 'react';
 import {
     useTransformationCreate_attributeType,
@@ -9,20 +11,35 @@ import {
     useTransformationCreate_selectedAttribute,
     useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
+import { KeyedMutator } from 'swr';
 
 export interface Props {
     entityName: string;
+    draftSpecs: DraftSpecQuery[];
+    isValidating: boolean;
+    mutate: KeyedMutator<SuccessResponse<DraftSpecQuery>>;
     disabled?: boolean;
     editorHeight?: number;
 }
 
-function SQLEditor({ entityName, disabled, editorHeight }: Props) {
+function SQLEditor({
+    entityName,
+    draftSpecs,
+    isValidating,
+    mutate,
+    disabled,
+    editorHeight,
+}: Props) {
     const transformConfigs = useTransformationCreate_transformConfigs();
     const migrations = useTransformationCreate_migrations();
     const selectedAttribute = useTransformationCreate_selectedAttribute();
     const attributeType = useTransformationCreate_attributeType();
 
-    const { draftSpec, isValidating, onChange } = useSQLEditor(entityName);
+    const { draftSpec, onChange } = useSQLEditor(
+        entityName,
+        draftSpecs,
+        mutate
+    );
 
     const defaultSQL = useMemo(() => {
         if (

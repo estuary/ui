@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { intersection } from 'lodash';
+import { intersection, omit } from 'lodash';
 import { TransformCreateStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
@@ -8,6 +8,7 @@ import { TransformCreateState } from './types';
 
 const getInitialStateData = (): Pick<
     TransformCreateState,
+    | 'attributeRemovalMetadata'
     | 'attributeType'
     | 'catalogName'
     | 'catalogUpdating'
@@ -21,6 +22,11 @@ const getInitialStateData = (): Pick<
     | 'transformConfigs'
     | 'transformCount'
 > => ({
+    attributeRemovalMetadata: {
+        selectedAttribute: null,
+        removedAttribute: '',
+        index: -1,
+    },
     attributeType: 'transform',
     catalogName: '',
     catalogUpdating: false,
@@ -142,7 +148,44 @@ const getInitialState = (
                 });
             }),
             false,
-            'Migrations Added'
+            'Migration Added'
+        );
+    },
+
+    removeAttribute: (attributeId) => {
+        set(
+            produce((state: TransformCreateState) => {
+                const { migrations, selectedAttribute, transformConfigs } =
+                    get();
+
+                if (Object.hasOwn(migrations, attributeId)) {
+                    state.attributeRemovalMetadata = {
+                        selectedAttribute,
+                        removedAttribute: attributeId,
+                        index: Object.keys(migrations).findIndex(
+                            (migrationId) => migrationId === attributeId
+                        ),
+                    };
+
+                    state.migrations = omit(migrations, attributeId);
+                } else if (Object.hasOwn(transformConfigs, attributeId)) {
+                    state.attributeRemovalMetadata = {
+                        selectedAttribute,
+                        removedAttribute: attributeId,
+                        index: Object.keys(transformConfigs).findIndex(
+                            (transformConfigId) =>
+                                transformConfigId === attributeId
+                        ),
+                    };
+
+                    state.transformConfigs = omit(
+                        transformConfigs,
+                        attributeId
+                    );
+                }
+            }),
+            false,
+            'Attribute Removed'
         );
     },
 

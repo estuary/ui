@@ -7,9 +7,18 @@ import DerivationCatalogHeader from 'components/transformation/create/Catalog/He
 import MigrationList from 'components/transformation/create/Catalog/MigrationList';
 import TransformList from 'components/transformation/create/Catalog/TransformList';
 import { alternativeReflexContainerBackground } from 'context/Theme';
+import { SuccessResponse } from 'hooks/supabase-swr';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { FormattedMessage } from 'react-intl';
+import { KeyedMutator } from 'swr';
 
-function DerivationCatalog() {
+interface Props {
+    draftSpecs: DraftSpecQuery[];
+    isValidating: boolean;
+    mutate: KeyedMutator<SuccessResponse<DraftSpecQuery>>;
+}
+
+function DerivationCatalog({ draftSpecs, isValidating, mutate }: Props) {
     const theme = useTheme();
 
     return (
@@ -21,7 +30,13 @@ function DerivationCatalog() {
 
                 <ListAndDetails
                     list={<TransformList />}
-                    details={<DerivationCatalogEditor />}
+                    details={
+                        <DerivationCatalogEditor
+                            draftSpecs={draftSpecs}
+                            isValidating={isValidating}
+                            mutate={mutate}
+                        />
+                    }
                     backgroundColor={
                         alternativeReflexContainerBackground[theme.palette.mode]
                     }
