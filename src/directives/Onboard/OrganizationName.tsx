@@ -6,7 +6,6 @@ import {
     useOnboardingStore_setRequestedTenant,
 } from 'directives/Onboard/Store/hooks';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 
 function OrganizationNameField() {
     const intl = useIntl();
@@ -30,25 +29,22 @@ function OrganizationNameField() {
             </FormLabel>
 
             <TextField
-                value={requestedTenant}
-                size="small"
-                placeholder={intl.formatMessage({
-                    id: 'tenant.input.placeholder',
-                })}
+                error={nameMissing || nameInvalid}
                 helperText={intl.formatMessage({
                     id:
                         nameMissing || nameInvalid
                             ? 'tenant.expectations.error'
                             : 'tenant.expectations',
                 })}
-                error={nameMissing || nameInvalid}
                 id="requestedTenant"
                 label={<FormattedMessage id="common.tenant.creationForm" />}
                 onChange={(event) => handlers.update(event.target.value)}
+                placeholder={intl.formatMessage({
+                    id: 'tenant.input.placeholder',
+                })}
                 required
-                inputProps={{
-                    pattern: `^${PREFIX_NAME_PATTERN}$`,
-                }}
+                size="small"
+                value={requestedTenant}
                 sx={{
                     'maxWidth': 424,
                     '& .MuiInputBase-root': { borderRadius: 3 },
