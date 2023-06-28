@@ -628,7 +628,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.instructions': `To start select a Connector below. Once you make a selection the rest of the form will display and you can configure your endpoint. You can search by name and if you do not find what you are looking for please let us know by requesting the connector.`,
 
     'entityCreate.endpointConfig.detailsHaveErrors': `The Details section has errors:`,
-    'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Output Collections section has errors:`,
+    'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections section has errors:`,
     'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${endpointConfigHeader} section has errors:`,
 
     'entityCreate.endpointConfig.noConnectorSelectedTitle': `Please select a Connector to begin`,
@@ -753,7 +753,7 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.details.heading': `Materialization Details`,
-    'materializationCreate.collections.heading': `Output Collections`,
+    'materializationCreate.collections.heading': `Source Collections`,
     'materializationCreate.config.source.doclink': `Connector Help`,
     'materializationCreate.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
     'materializationCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.materialization']}" again. You can also edit the specification file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
@@ -1089,6 +1089,8 @@ const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
     'schemaEditor.table.empty.header': `No fields to display.`,
     'schemaEditor.table.empty.message': `We were unable to generate a table from the current schema. Please update the schema.`,
     'schemaEditor.error.title': `Schema Invalid`,
+    'keyAutoComplete.keys.group.must': `Fields that always exist`,
+    'keyAutoComplete.keys.group.may': `Fields that sometimes exist`,
     'keyAutoComplete.keys.invalid.message': `Field is not a valid key. Please remove or update the schema.`,
     'keyAutoComplete.keys.invalid.message.readOnly': `Field is not a valid key. Please update the schema.`,
     'keyAutoComplete.keys.missing.title': `Key is empty`,

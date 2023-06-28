@@ -1,8 +1,12 @@
-import { createBindingsEditorStore } from 'components/editor/Bindings/Store/create';
+import { bindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import { createEditorStore } from 'components/editor/Store/create';
 import { createExistingEntityStore } from 'components/shared/Entity/ExistingEntityCards/Store/create';
-import { createBillingStore } from 'stores/Billing/Store';
-import { createDetailsFormStore } from 'stores/DetailsForm/Store';
+import { billingStore } from 'stores/Billing/Store';
+import {
+    captureDetailsForm,
+    collectionDetailsForm,
+    materializationDetailsForm,
+} from 'stores/DetailsForm/Store';
 import { createEndpointConfigStore } from 'stores/EndpointConfig/Store';
 import { createEntitiesStore } from 'stores/Entities/Store';
 import { createFormStateStore } from 'stores/FormState/Store';
@@ -33,23 +37,15 @@ import { MessagePrefixes } from 'types';
 
 const invariableStores = {
     // Billing Store
-    [BillingStoreNames.GENERAL]: createBillingStore(BillingStoreNames.GENERAL),
+    [BillingStoreNames.GENERAL]: billingStore,
 
     // Bindings Editor Store
-    [BindingsEditorStoreNames.GENERAL]: createBindingsEditorStore(
-        BindingsEditorStoreNames.GENERAL
-    ),
+    [BindingsEditorStoreNames.GENERAL]: bindingsEditorStore,
 
     // Details Form Store
-    [DetailsFormStoreNames.CAPTURE]: createDetailsFormStore(
-        DetailsFormStoreNames.CAPTURE
-    ),
-    [DetailsFormStoreNames.COLLECTION]: createDetailsFormStore(
-        DetailsFormStoreNames.COLLECTION
-    ),
-    [DetailsFormStoreNames.MATERIALIZATION]: createDetailsFormStore(
-        DetailsFormStoreNames.MATERIALIZATION
-    ),
+    [DetailsFormStoreNames.CAPTURE]: captureDetailsForm,
+    [DetailsFormStoreNames.COLLECTION]: collectionDetailsForm,
+    [DetailsFormStoreNames.MATERIALIZATION]: materializationDetailsForm,
 
     // Specification Editor Store
     [EditorStoreNames.CAPTURE]: createEditorStore(EditorStoreNames.CAPTURE),

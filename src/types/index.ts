@@ -293,3 +293,21 @@ export type ParsedStream =
     | 'test'
     | 'cleanup'
     | 'activate';
+
+// TODO (infer) need to use these types and run them through the app
+export interface InferDetails {
+    description: string | undefined;
+    enum_vals: any[];
+    exists: 'may' | 'must' | 'cannot';
+    is_pattern_property: boolean;
+    name: string | undefined;
+    pointer: string;
+    reduction: string;
+    string_format: string | undefined;
+    title: string | undefined;
+    types: string[];
+}
+
+export interface InferResponse {
+    properties?: InferDetails[];
+}

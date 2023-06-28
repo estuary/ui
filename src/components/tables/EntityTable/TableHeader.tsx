@@ -26,7 +26,7 @@ function EntityTableHeader({
     sortDirection,
     noBackgroundColor,
 }: Props) {
-    const enableSort = columnToSort && headerClick && sortDirection;
+    const enableSort = Boolean(columnToSort && headerClick && sortDirection);
 
     return (
         <TableHead>

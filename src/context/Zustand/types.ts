@@ -9,8 +9,4 @@ export type UseZustandStore = <S extends Object, U>(
 
 export interface ZustandProviderProps {
     children: ReactNode;
-    storeSlice?: {
-        storeName: string;
-        createStore: (key: string) => unknown;
-    };
 }
