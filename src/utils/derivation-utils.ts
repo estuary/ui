@@ -1,4 +1,4 @@
-import { isArray, uniq } from 'lodash';
+import { isArray } from 'lodash';
 import {
     MigrationDictionary,
     TransformConfig,
@@ -147,15 +147,15 @@ export const generateInitialSpec = (
 };
 
 export const updateTransforms = (
-    transformSource: string,
+    transformName: string,
     newLambda: string,
     existingConfigs: TransformConfigDictionary
 ): Transform[] =>
     Object.values(existingConfigs).map(
-        ({ collection, lambda, shuffle }): Transform => ({
-            name: stripPathing(collection),
+        ({ name, collection, lambda, shuffle }): Transform => ({
+            name,
             source: collection,
-            lambda: collection === transformSource ? newLambda : lambda,
+            lambda: transformName === name ? newLambda : lambda,
             shuffle,
         })
     );
@@ -177,12 +177,14 @@ export const updateMigrations = (
 export const templateTransformConfig = (
     source: string,
     entityName: string,
+    version: number,
     shuffleKeys?: string[]
 ): TransformConfig => {
-    const tableName = stripPathing(source);
+    const versionedTableName = `${stripPathing(source)}-v${version}`;
 
     return {
-        filename: `${entityName}.lambda.${tableName}.sql`,
+        filename: `${entityName}.lambda.${versionedTableName}.sql`,
+        name: versionedTableName,
         lambda: '',
         sqlTemplate: 'Simple Select',
         shuffle: shuffleKeys ? { key: shuffleKeys } : 'any',
@@ -194,47 +196,31 @@ export const evaluateTransformConfigs = (
     selectedCollections: string[],
     transformCount: number,
     existingTransformConfigs: TransformConfigDictionary,
-    name: string
+    entityName: string
 ): TransformConfigDictionary => {
-    const existingCollections = Object.values(existingTransformConfigs).map(
-        ({ collection }) => collection
-    );
+    let compositeTransformConfigs: TransformConfigDictionary = {
+        ...existingTransformConfigs,
+    };
 
-    const compositeSourceCollections: string[] = uniq([
-        ...existingCollections,
-        ...selectedCollections,
-    ]);
+    selectedCollections.forEach((source, index) => {
+        const compositeIndex = transformCount + index + 1;
+        const tableName = stripPathing(source);
 
-    let compositeTransformConfigs: TransformConfigDictionary = {};
+        const existingVersions = Object.values(compositeTransformConfigs)
+            .filter(({ collection }) => stripPathing(collection) === tableName)
+            .map(({ name }) => Number(name.slice(-1)))
+            .sort();
 
-    compositeSourceCollections.forEach((source, index) => {
-        if (!existingCollections.includes(source)) {
-            // Create a transform configuration for a source collection that did not previously exist.
+        const versionNumber =
+            existingVersions.length > 0
+                ? existingVersions[existingVersions.length - 1] + 1
+                : 0;
 
-            const compositeIndex = transformCount + index + 1;
-
-            compositeTransformConfigs = {
-                ...compositeTransformConfigs,
-                [`${name}.lambda.${compositeIndex}.sql`]:
-                    templateTransformConfig(source, name),
-            };
-        } else if (selectedCollections.includes(source)) {
-            // Retain the transform configuration for an existing source collection
-            // that is in the set of selected collections.
-
-            const configEntry = Object.entries(existingTransformConfigs).find(
-                ([_id, config]) => config.collection === source
-            );
-
-            if (configEntry) {
-                const [transformId, transformConfig] = configEntry;
-
-                compositeTransformConfigs = {
-                    ...compositeTransformConfigs,
-                    [transformId]: transformConfig,
-                };
-            }
-        }
+        compositeTransformConfigs = {
+            ...compositeTransformConfigs,
+            [`${entityName}.lambda.${compositeIndex}.sql`]:
+                templateTransformConfig(source, entityName, versionNumber),
+        };
     });
 
     return compositeTransformConfigs;

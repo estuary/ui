@@ -178,10 +178,16 @@ const getInitialState = (
                         ),
                     };
 
-                    state.transformConfigs = omit(
+                    const evaluatedTransformConfigs = omit(
                         transformConfigs,
                         attributeId
                     );
+
+                    state.transformConfigs = evaluatedTransformConfigs;
+
+                    state.sourceCollections = Object.values(
+                        evaluatedTransformConfigs
+                    ).map(({ collection }) => collection);
                 }
             }),
             false,

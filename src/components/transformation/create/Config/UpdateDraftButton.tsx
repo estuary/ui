@@ -53,10 +53,10 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
         setCatalogUpdating(true);
 
         if (draftId && catalogName && currentCatalog) {
-            const collections = Array.from(selectedCollections);
+            const newCollections = Array.from(selectedCollections);
 
             const evaluatedTransformConfigs = evaluateTransformConfigs(
-                collections,
+                newCollections,
                 transformCount,
                 transformConfigs,
                 entityName
@@ -75,7 +75,7 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
 
             const draftSpec = { ...currentCatalog.spec };
 
-            draftSpec.derive.transforms = Object.values(evaluatedTransforms);
+            draftSpec.derive.transforms = evaluatedTransforms;
 
             const draftSpecResponse = await modifyDraftSpec(draftSpec, {
                 draft_id: draftId,
@@ -86,7 +86,12 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
                 setCatalogUpdating(false);
                 // Set error state
             } else {
+                const collections = evaluatedTransforms.map(
+                    ({ source }) => source
+                );
+
                 setSourceCollections(collections);
+
                 updateTransformConfigs(evaluatedTransformConfigs);
 
                 const transformIds = Object.keys(evaluatedTransformConfigs);

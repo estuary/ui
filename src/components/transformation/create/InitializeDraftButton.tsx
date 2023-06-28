@@ -22,6 +22,7 @@ import {
     generateInitialSpec,
     templateTransformConfig,
 } from 'utils/derivation-utils';
+import { stripPathing } from 'utils/misc-utils';
 
 interface Props {
     entityNameError: string | null;
@@ -78,9 +79,28 @@ function InitializeDraftButton({
 
                 setSourceCollections(collections);
 
+                let latestTransformVersions: { [tableName: string]: number } =
+                    {};
+
                 const transformConfigs: TransformConfig[] = collections.map(
-                    (collection) =>
-                        templateTransformConfig(collection, entityName)
+                    (collection) => {
+                        const tableName = stripPathing(collection);
+
+                        if (Object.hasOwn(latestTransformVersions, tableName)) {
+                            latestTransformVersions[tableName] += 1;
+                        } else {
+                            latestTransformVersions = {
+                                ...latestTransformVersions,
+                                [tableName]: 0,
+                            };
+                        }
+
+                        return templateTransformConfig(
+                            collection,
+                            entityName,
+                            latestTransformVersions[tableName]
+                        );
+                    }
                 );
 
                 addTransformConfigs(transformConfigs);

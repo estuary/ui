@@ -25,7 +25,6 @@ import {
     useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
 import { KeyedMutator } from 'swr';
-import { stripPathing } from 'utils/misc-utils';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];
@@ -115,9 +114,7 @@ function DerivationCatalogEditor({ draftSpecs, isValidating, mutate }: Props) {
                                     size="small"
                                     variant="standard"
                                     label="Transform Name"
-                                    value={stripPathing(
-                                        transformConfig.collection
-                                    )}
+                                    value={transformConfig.name}
                                 />
 
                                 <Typography

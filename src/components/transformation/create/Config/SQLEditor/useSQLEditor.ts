@@ -38,7 +38,7 @@ function useSQLEditor(
             if (draftSpec) {
                 if (attributeType === 'transform') {
                     draftSpec.spec.derive.transforms = updateTransforms(
-                        transformConfigs[attributeId].collection,
+                        transformConfigs[attributeId].name,
                         value,
                         transformConfigs
                     );
