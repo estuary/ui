@@ -3,7 +3,7 @@ import { useEditorStore_id } from 'components/editor/Store/hooks';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityError from 'components/shared/Entity/Error';
 import EntityToolbar from 'components/shared/Entity/Header';
-import DerivationCatalog from 'components/transformation/create/Catalog';
+import DerivationConfig from 'components/transformation/create/Config';
 import GitPodButton from 'components/transformation/create/GitPodButton';
 import PatchDraftButton from 'components/transformation/create/PatchDraftButton';
 import DerivationSchema from 'components/transformation/create/Schema';
@@ -102,7 +102,7 @@ function DerivationCreateAlternate() {
                 ) : null}
             </Collapse>
 
-            <DerivationCatalog
+            <DerivationConfig
                 draftSpecs={draftSpecs}
                 isValidating={isValidating}
                 mutate={mutate}

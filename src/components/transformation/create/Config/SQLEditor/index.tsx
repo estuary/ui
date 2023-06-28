@@ -1,7 +1,7 @@
 import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
-import EmptySQLEditor from 'components/transformation/create/Catalog/SQLEditor/Empty';
-import MonacoEditor from 'components/transformation/create/Catalog/SQLEditor/MonacoEditor';
-import useSQLEditor from 'components/transformation/create/Catalog/SQLEditor/useSQLEditor';
+import EmptySQLEditor from 'components/transformation/create/Config/SQLEditor/Empty';
+import MonacoEditor from 'components/transformation/create/Config/SQLEditor/MonacoEditor';
+import useSQLEditor from 'components/transformation/create/Config/SQLEditor/useSQLEditor';
 import { SuccessResponse } from 'hooks/supabase-swr';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useMemo } from 'react';

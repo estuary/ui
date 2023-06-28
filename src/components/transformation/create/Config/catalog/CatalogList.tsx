@@ -7,7 +7,7 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import CatalogListItem from 'components/transformation/create/Catalog/CatalogListItem';
+import CatalogListItem from 'components/transformation/create/Config/catalog/CatalogListItem';
 import { defaultOutline, disabledButtonText } from 'context/Theme';
 import { Plus } from 'iconoir-react';
 import { MouseEventHandler } from 'react';

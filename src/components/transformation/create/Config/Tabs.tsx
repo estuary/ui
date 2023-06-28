@@ -1,5 +1,5 @@
 import { Box, Button, Tab, Tabs } from '@mui/material';
-import { TabOptions } from 'components/transformation/create/Catalog/types';
+import { TabOptions } from 'components/transformation/create/Config/types';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { MuiTabProps } from 'types';

@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import CatalogList, {
     CatalogListContent,
-} from 'components/transformation/create/Catalog/CatalogList';
+} from 'components/transformation/create/Config/catalog/CatalogList';
 import { defaultOutline } from 'context/Theme';
 import { NavArrowDown } from 'iconoir-react';
 import { isEmpty } from 'lodash';

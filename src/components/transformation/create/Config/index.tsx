@@ -2,10 +2,10 @@ import { Typography, useTheme } from '@mui/material';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import DerivationCatalogEditor from 'components/transformation/create/Catalog/Editor';
-import DerivationCatalogHeader from 'components/transformation/create/Catalog/Header';
-import MigrationList from 'components/transformation/create/Catalog/MigrationList';
-import TransformList from 'components/transformation/create/Catalog/TransformList';
+import MigrationList from 'components/transformation/create/Config/catalog/MigrationList';
+import TransformList from 'components/transformation/create/Config/catalog/TransformList';
+import DerivationCatalogEditor from 'components/transformation/create/Config/Editor';
+import DerivationCatalogHeader from 'components/transformation/create/Config/Header';
 import { alternativeReflexContainerBackground } from 'context/Theme';
 import { SuccessResponse } from 'hooks/supabase-swr';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
@@ -18,7 +18,7 @@ interface Props {
     mutate: KeyedMutator<SuccessResponse<DraftSpecQuery>>;
 }
 
-function DerivationCatalog({ draftSpecs, isValidating, mutate }: Props) {
+function DerivationConfig({ draftSpecs, isValidating, mutate }: Props) {
     const theme = useTheme();
 
     return (
@@ -51,4 +51,4 @@ function DerivationCatalog({ draftSpecs, isValidating, mutate }: Props) {
     );
 }
 
-export default DerivationCatalog;
+export default DerivationConfig;

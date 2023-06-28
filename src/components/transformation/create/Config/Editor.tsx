@@ -6,11 +6,11 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import SQLEditor from 'components/transformation/create/Catalog/SQLEditor';
-import EmptySQLEditor from 'components/transformation/create/Catalog/SQLEditor/Empty';
+import SQLEditor from 'components/transformation/create/Config/SQLEditor';
+import EmptySQLEditor from 'components/transformation/create/Config/SQLEditor/Empty';
 import DerivationCatalogEditorTabs, {
     tabProps,
-} from 'components/transformation/create/Catalog/Tabs';
+} from 'components/transformation/create/Config/Tabs';
 import { SuccessResponse } from 'hooks/supabase-swr';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { HelpCircle } from 'iconoir-react';
