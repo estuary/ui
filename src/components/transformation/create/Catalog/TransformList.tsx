@@ -16,19 +16,15 @@ import UpdateDraftButton from 'components/transformation/create/Catalog/UpdateDr
 import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import useLiveSpecs from 'hooks/useLiveSpecs';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSet } from 'react-use';
-import {
-    useTransformationCreate_sourceCollections,
-    useTransformationCreate_transformConfigs,
-} from 'stores/TransformationCreate/hooks';
+import { useTransformationCreate_transformConfigs } from 'stores/TransformationCreate/hooks';
 
 function TransformList() {
     const collections = useLiveSpecs('collection');
 
     const transformConfigs = useTransformationCreate_transformConfigs();
-    const sourceCollections = useTransformationCreate_sourceCollections();
 
     const content: CatalogListContent[] = useMemo(
         () =>
@@ -51,15 +47,6 @@ function TransformList() {
             setOpen(!open);
         },
     };
-
-    useEffect(() => {
-        if (open) {
-            sourceCollections.forEach((collection) => {
-                selectedCollectionSet.add(collection);
-            });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [sourceCollections, open]);
 
     return (
         <>

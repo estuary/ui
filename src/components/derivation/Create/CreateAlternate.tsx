@@ -92,7 +92,7 @@ function DerivationCreateAlternate() {
                 unmountOnExit
                 sx={{ mb: 2 }}
             >
-                {publicationError ? (
+                {draftId && publicationError ? (
                     <EntityError
                         title={publicationError.title}
                         error={publicationError.error}

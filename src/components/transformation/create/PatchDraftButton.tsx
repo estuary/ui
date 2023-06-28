@@ -49,7 +49,11 @@ function PatchDraftButton({ mutateDraftSpecs }: Props) {
 
     const updateDerivationSpec = useCallback(async (): Promise<void> => {
         setCatalogUpdating(true);
-        setFormState({ status: FormStatus.GENERATING });
+        setFormState({
+            status: FormStatus.GENERATING,
+            error: null,
+            message: { key: null, severity: null },
+        });
 
         if (draftId && catalogName && currentCatalog) {
             const evaluatedTransforms = Object.values(transformConfigs).map(
