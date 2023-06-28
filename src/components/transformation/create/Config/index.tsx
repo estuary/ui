@@ -25,7 +25,7 @@ function DerivationConfig({ draftSpecs, isValidating, mutate }: Props) {
         <WrapperWithHeader header={<DerivationCatalogHeader />}>
             <ErrorBoundryWrapper>
                 <Typography sx={{ mb: 3 }}>
-                    <FormattedMessage id="newTransform.catalog.description" />
+                    <FormattedMessage id="newTransform.config.description" />
                 </Typography>
 
                 <ListAndDetails

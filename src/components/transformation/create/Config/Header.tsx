@@ -22,7 +22,7 @@ function DerivationCatalogHeader() {
             ) : null}
 
             <Typography variant="subtitle1">
-                <FormattedMessage id="newTransform.catalog.header" />
+                <FormattedMessage id="newTransform.config.header" />
             </Typography>
         </>
     );

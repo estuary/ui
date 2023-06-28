@@ -59,7 +59,7 @@ function TransformList() {
 
             <Dialog open={open} fullWidth maxWidth="md">
                 <DialogTitle>
-                    <FormattedMessage id="newTransform.editor.catalog.transform.addDialog.header" />
+                    <FormattedMessage id="newTransform.config.transform.addDialog.header" />
                 </DialogTitle>
 
                 <DialogContent>

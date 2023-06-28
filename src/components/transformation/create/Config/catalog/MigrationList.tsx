@@ -99,7 +99,7 @@ function MigrationList() {
                 }}
             >
                 <Typography sx={{ fontWeight: 500 }}>
-                    <FormattedMessage id="newTransform.editor.catalog.advancedSettings" />
+                    <FormattedMessage id="newTransform.config.advancedSettings.header" />
                 </Typography>
             </AccordionSummary>
 

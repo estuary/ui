@@ -16,7 +16,7 @@ function EmptySQLEditor({ editorHeight = DEFAULT_HEIGHT }: Props) {
 
             <Box sx={{ height: editorHeight, p: 1 }}>
                 <Typography>
-                    <FormattedMessage id="newTransform.catalog.alert.noTransformSelected" />
+                    <FormattedMessage id="newTransform.config.alert.noTransformSelected" />
                 </Typography>
             </Box>
         </Box>

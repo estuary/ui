@@ -58,7 +58,7 @@ function CatalogList({
                         }}
                     >
                         <FormattedMessage
-                            id={`newTransform.editor.catalog.${fixedAttributeType}.header`}
+                            id={`newTransform.config.${fixedAttributeType}.header`}
                         />
                     </Typography>
 
@@ -95,7 +95,7 @@ function CatalogList({
                     <ListItem>
                         <Typography sx={{ mt: 1 }}>
                             <FormattedMessage
-                                id="newTransform.editor.catalog.message.empty"
+                                id="newTransform.config.message.listEmpty"
                                 values={{ contentType: fixedAttributeType }}
                             />
                         </Typography>

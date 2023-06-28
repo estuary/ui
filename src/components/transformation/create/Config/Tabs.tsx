@@ -11,11 +11,11 @@ interface CatalogTabsProps {
 
 export const tabProps: MuiTabProps<TabOptions>[] = [
     {
-        label: 'newTransform.catalog.tab.basicSettings',
+        label: 'newTransform.config.tab.basicSettings',
         value: 'basic',
     },
     {
-        label: 'newTransform.catalog.tab.advancedSettings',
+        label: 'newTransform.config.tab.advancedSettings',
         value: 'advanced',
     },
 ];
