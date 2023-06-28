@@ -27,6 +27,20 @@ export type StatsFilter =
     | 'lastMonth'
     | 'thisMonth';
 
+export interface DefaultStats {
+    catalog_name: string;
+    grain: string;
+    bytes_written_by_me: number;
+    docs_written_by_me: number;
+    bytes_read_by_me: number;
+    docs_read_by_me: number;
+    bytes_written_to_me: number;
+    docs_written_to_me: number;
+    bytes_read_from_me: number;
+    docs_read_from_me: number;
+    ts: string;
+}
+
 const DEFAULT_QUERY = `    
             catalog_name,
             grain,

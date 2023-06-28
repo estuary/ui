@@ -38,8 +38,12 @@ export enum SeriesNames {
 
 export interface SeriesConfig {
     data: [string, number][];
+    connectNulls?: boolean;
+    name?: string;
     seriesName?: string;
     stack?: string;
+    type?: string;
+    yAxisIndex?: number;
 }
 
 export const formatDataVolumeForDisplay = (
