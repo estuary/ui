@@ -1,4 +1,5 @@
 import { Box, Collapse } from '@mui/material';
+import { authenticatedRoutes } from 'app/routes';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityError from 'components/shared/Entity/Error';
@@ -8,6 +9,8 @@ import GitPodButton from 'components/transformation/create/GitPodButton';
 import PatchDraftButton from 'components/transformation/create/PatchDraftButton';
 import DerivationSchema from 'components/transformation/create/Schema';
 import useDraftSpecs from 'hooks/useDraftSpecs';
+import usePageTitle from 'hooks/usePageTitle';
+import { useNavigate } from 'react-router';
 import { CustomEvents } from 'services/logrocket';
 import {
     useFormStateStore_error,
@@ -20,6 +23,12 @@ import { FormStatus } from 'stores/FormState/types';
 import { useTransformationCreate_catalogName } from 'stores/TransformationCreate/hooks';
 
 function DerivationCreateAlternate() {
+    usePageTitle({
+        header: authenticatedRoutes.beta.new.title,
+        headerLink: 'https://docs.estuary.dev/concepts/derivations/',
+    });
+    const navigate = useNavigate();
+
     // Draft Editor Store
     const draftId = useEditorStore_id();
 
@@ -49,6 +58,7 @@ function DerivationCreateAlternate() {
         },
         exit: () => {
             resetFormState();
+            navigate(authenticatedRoutes.collections.fullPath);
         },
     };
 
