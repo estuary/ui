@@ -1,4 +1,5 @@
 import { Stack, Typography } from '@mui/material';
+import { useEditorStore_id } from 'components/editor/Store/hooks';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import DerivationSchemaEditor from 'components/transformation/create/Schema/Editor';
@@ -8,10 +9,17 @@ import { FormattedMessage } from 'react-intl';
 import { useTransformationCreate_catalogName } from 'stores/TransformationCreate/hooks';
 
 function DerivationSchema() {
+    // Draft Editor Store
+    const draftId = useEditorStore_id();
+
+    // Transformation Create Store
     const catalogName = useTransformationCreate_catalogName();
 
     return (
-        <WrapperWithHeader header={<DerivationSchemaHeader />}>
+        <WrapperWithHeader
+            header={<DerivationSchemaHeader />}
+            hideBorder={!draftId}
+        >
             <ErrorBoundryWrapper>
                 <Stack
                     direction="row"
@@ -27,9 +35,9 @@ function DerivationSchema() {
 
                     <SQLDataPreviewButton />
                 </Stack>
-            </ErrorBoundryWrapper>
 
-            <DerivationSchemaEditor entityName={catalogName} />
+                <DerivationSchemaEditor entityName={catalogName} />
+            </ErrorBoundryWrapper>
         </WrapperWithHeader>
     );
 }
