@@ -1,7 +1,7 @@
 import { Stack, Typography } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
+import HourlyRangeFilter from 'components/filters/HourRange';
 import DataByHourGraph from 'components/graphs/DataByHourGraph';
-import HourlyRangeFilter from 'components/graphs/filters/HourRange';
 import EmptyGraphState from 'components/graphs/states/Empty';
 import GraphLoadingState from 'components/graphs/states/Loading';
 import { tooltipSX } from 'components/graphs/tooltips';
