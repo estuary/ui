@@ -1,3 +1,4 @@
+import { useTheme } from '@mui/material';
 import { DefaultStats } from 'api/stats';
 import { eachHourOfInterval, sub } from 'date-fns';
 import { LineChart } from 'echarts/charts';
@@ -10,11 +11,15 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
+import prettyBytes from 'pretty-bytes';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import readable from 'readable-numbers';
 import useConstant from 'use-constant';
 import { CARD_AREA_HEIGHT, SeriesConfig } from 'utils/billing-utils';
+import { getTooltipItem, getTooltipTitle } from './tooltips';
 import { DataByHourRange } from './types';
+import useTooltipConfig from './useTooltipConfig';
 
 interface Props {
     stats: DefaultStats[];
@@ -23,6 +28,8 @@ interface Props {
 
 function DataByHourGraph({ range, stats }: Props) {
     const intl = useIntl();
+    const theme = useTheme();
+    const tooltipConfig = useTooltipConfig();
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
 
@@ -80,9 +87,6 @@ function DataByHourGraph({ range, stats }: Props) {
         return [bytesSeries, docsSeries];
     }, [intl, hours, stats]);
 
-    console.log('hours', hours);
-    console.log('seriesConfig', seriesConfig);
-
     useEffect(() => {
         if (!myChart) {
             echarts.use([
@@ -108,6 +112,42 @@ function DataByHourGraph({ range, stats }: Props) {
             animation: false,
             legend: {
                 data: ['Data', 'Docs'],
+            },
+            textStyle: {
+                color: theme.palette.text.primary,
+            },
+            tooltip: {
+                ...tooltipConfig,
+                formatter: (tooltipConfigs: any[]) => {
+                    const content: string[] = [];
+
+                    tooltipConfigs.forEach((config) => {
+                        const { axisValueLabel, data, marker, seriesName } =
+                            config;
+
+                        let valueDisplay: string;
+                        if (seriesName === 'Data') {
+                            valueDisplay = prettyBytes(data[1]);
+                        } else {
+                            valueDisplay = readable(data[1], 2, false);
+                        }
+
+                        const tooltipItem = getTooltipItem(
+                            marker,
+                            seriesName,
+                            valueDisplay
+                        );
+
+                        // If the first item add a header
+                        if (content.length === 0) {
+                            content.push(getTooltipTitle(axisValueLabel));
+                        }
+
+                        content.push(tooltipItem);
+                    });
+
+                    return content.join('');
+                },
             },
             xAxis: {
                 axisTick: {
@@ -146,7 +186,14 @@ function DataByHourGraph({ range, stats }: Props) {
         };
 
         myChart?.setOption(option);
-    }, [hours, myChart, seriesConfig]);
+    }, [
+        hours,
+        intl,
+        myChart,
+        seriesConfig,
+        theme.palette.text.primary,
+        tooltipConfig,
+    ]);
 
     return <div id="data-by-hour" style={{ height: CARD_AREA_HEIGHT }} />;
 }

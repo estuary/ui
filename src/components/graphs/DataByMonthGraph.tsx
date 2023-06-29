@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material';
-import { defaultOutlineColor, paperBackground } from 'context/Theme';
+import { defaultOutlineColor } from 'context/Theme';
 import {
     eachMonthOfInterval,
     isWithinInterval,
@@ -29,12 +29,15 @@ import {
     SeriesNames,
     stripTimeFromDate,
 } from 'utils/billing-utils';
+import { getTooltipItem, getTooltipTitle } from './tooltips';
+import useTooltipConfig from './useTooltipConfig';
 
 const stackId = 'Data Volume';
 
 function DataByMonthGraph() {
     const theme = useTheme();
     const intl = useIntl();
+    const tooltipConfig = useTooltipConfig();
 
     const billingStoreHydrated = useBilling_hydrated();
     const billingHistory = useBilling_billingHistory();
@@ -150,16 +153,7 @@ function DataByMonthGraph() {
                     color: theme.palette.text.primary,
                 },
                 tooltip: {
-                    backgroundColor: paperBackground[theme.palette.mode],
-                    borderColor: defaultOutlineColor[theme.palette.mode],
-                    trigger: 'axis',
-                    textStyle: {
-                        color: theme.palette.text.primary,
-                        fontWeight: 'normal',
-                    },
-                    axisPointer: {
-                        type: 'shadow',
-                    },
+                    ...tooltipConfig,
                     formatter: (tooltipConfigs: any[]) => {
                         let content: string | undefined;
 
@@ -169,15 +163,14 @@ function DataByMonthGraph() {
                                 config
                             );
 
+                            const tooltipItem = getTooltipItem(
+                                config.marker,
+                                config.seriesName,
+                                dataVolume
+                            );
+
                             if (content) {
-                                content = `${content}
-                                            <div class="tooltipItem">
-                                                <div>
-                                                    ${config.marker}
-                                                    <span>${config.seriesName}</span>
-                                                </div>
-                                                <span class="tooltipDataValue">${dataVolume}</span>
-                                            </div>`;
+                                content = `${content}${tooltipItem}`;
                             } else {
                                 const tooltipTitle =
                                     billingHistory
@@ -197,14 +190,11 @@ function DataByMonthGraph() {
                                             date.includes(config.axisValueLabel)
                                         ) ?? config.axisValueLabel;
 
-                                content = `<div class="tooltipTitle">${tooltipTitle}</div>
-                                            <div class="tooltipItem">
-                                                <div>
-                                                    ${config.marker}
-                                                    <span>${config.seriesName}</span>
-                                                </div>
-                                                <span class="tooltipDataValue">${dataVolume}</span>
-                                            </div>`;
+                                console.log('tooltipTitle', tooltipTitle);
+
+                                content = `${getTooltipTitle(
+                                    tooltipTitle
+                                )}${tooltipItem}`;
                             }
                         });
 
