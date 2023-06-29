@@ -6,6 +6,7 @@ import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
+import { logRocketConsole } from 'services/logrocket';
 
 const boxStyling: SxProps<Theme> = {
     marginBottom: 2,
@@ -65,12 +66,11 @@ const DataPlaneAuthReq = () => {
                 newUrl.searchParams.append('token', gatewayAuthToken);
                 newUrl.searchParams.append('orig_url', originalUrl);
 
-                console.log(
-                    'redirecting after successful auth',
+                logRocketConsole('redirecting after successful auth', {
                     newUrl,
                     gatewayUrl,
-                    originalUrl
-                );
+                    originalUrl,
+                });
                 window.location.replace(newUrl.toString());
             }
         }

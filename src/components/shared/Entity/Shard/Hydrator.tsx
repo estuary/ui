@@ -27,10 +27,11 @@ function ShardHydrator({ catalogName, children, lastPubId }: Props) {
     const setError = useShardDetail_setError();
 
     useEffect(() => {
+        // Set the error or default back to null
+        setError(error ?? null);
+
+        // Try to set the data returned
         if (data) {
-            if (data.error || error) {
-                setError(data.error || error);
-            }
             if (data.shards.length > 0) {
                 setShards(data.shards);
             }

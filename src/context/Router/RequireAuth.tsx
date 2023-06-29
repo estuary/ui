@@ -2,6 +2,7 @@ import { Auth } from '@supabase/ui';
 import { unauthenticatedRoutes } from 'app/routes';
 import useLoginRedirectPath from 'hooks/useLoginRedirectPath';
 import { Navigate, useLocation } from 'react-router-dom';
+import { logRocketConsole } from 'services/logrocket';
 import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
@@ -15,11 +16,18 @@ function RequireAuth({ children, firstLoad }: Props) {
 
     if (user && firstLoad) {
         // When first load, we want to redirect where we need to go
+        logRocketConsole('RequireAuth : Navigate : redirectTo', {
+            to: redirectTo,
+        });
         return <Navigate to={redirectTo} replace />;
     }
 
     if (!user && !firstLoad) {
         // When not first load and no user, go to login with the location where the user wants to go
+        logRocketConsole('RequireAuth : Navigate : login', {
+            to: unauthenticatedRoutes.login.path,
+            from: location,
+        });
         return (
             <Navigate
                 to={unauthenticatedRoutes.login.path}

@@ -111,6 +111,12 @@ const router = createBrowserRouter(
                 path={unauthenticatedRoutes.magicLink.path}
                 element={<Auth />}
             />
+
+            {/*Logout goes directly to login to make sure it isn't wrapped in RequireAuth and won't try to log the user back in*/}
+            <Route
+                path={unauthenticatedRoutes.logout.path}
+                element={<Login />}
+            />
             <Route
                 path={unauthenticatedRoutes.register.path}
                 element={<Login showRegistration />}
