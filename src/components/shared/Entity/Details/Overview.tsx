@@ -69,17 +69,20 @@ function Overview({ name }: Props) {
                             </Typography>
                         </Stack>
                         <Box>
-                            <ConnectorLogo
-                                imageSrc={
-                                    liveSpecs[0].connector_logo_url['en-us']
-                                }
-                                maxHeight={35}
-                                padding="0 0.5rem"
-                                unknownConnectorIconConfig={{
-                                    width: 51,
-                                    fontSize: 24,
-                                }}
-                            />
+                            {liveSpecs[0].connector_logo_url ? (
+                                <ConnectorLogo
+                                    imageSrc={
+                                        liveSpecs[0].connector_logo_url['en-us']
+                                    }
+                                    maxHeight={35}
+                                    padding="0 0.5rem"
+                                    unknownConnectorIconConfig={{
+                                        width: 51,
+                                        fontSize: 24,
+                                    }}
+                                />
+                            ) : null}
+
                             <KeyValueList
                                 data={[
                                     {
