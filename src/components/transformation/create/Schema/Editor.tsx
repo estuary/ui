@@ -1,35 +1,22 @@
-import MonacoEditor from 'components/editor/MonacoEditor';
+import CollectionSchemaEditor from 'components/collection/schema/Editor';
 import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
 import EmptySQLEditor from 'components/transformation/create/Config/SQLEditor/Empty';
 import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
-import { Schema } from 'types';
 
 export interface Props {
     entityName: string;
-    disabled?: boolean;
     editorHeight?: number;
 }
 
-function DerivationSchemaEditor({ entityName, disabled, editorHeight }: Props) {
-    const { draftSpec, isValidating, onChange } = useDraftSpecEditor(
+function DerivationSchemaEditor({ entityName, editorHeight }: Props) {
+    const { draftSpec, isValidating } = useDraftSpecEditor(
         entityName,
         'collection',
         false
     );
 
     if (draftSpec) {
-        return (
-            <MonacoEditor
-                editorSchemaScope="schema"
-                localZustandScope={false}
-                disabled={disabled}
-                height={editorHeight}
-                toolbarHeight={37}
-                onChange={async (value: Schema, path, type) => {
-                    await onChange(value, path, type, 'schema');
-                }}
-            />
-        );
+        return <CollectionSchemaEditor entityName={entityName} />;
     } else if (isValidating) {
         return <MonacoEditorSkeleton editorHeight={editorHeight} />;
     } else {

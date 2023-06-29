@@ -1,4 +1,5 @@
 import { Stack, Typography } from '@mui/material';
+import SchemaEditToggle from 'components/editor/Bindings/SchemaEdit/Toggle';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
@@ -33,7 +34,11 @@ function DerivationSchema() {
                         <FormattedMessage id="newTransform.schema.description" />
                     </Typography>
 
-                    <SQLDataPreviewButton />
+                    <Stack direction="row" spacing={1}>
+                        <SQLDataPreviewButton />
+
+                        <SchemaEditToggle />
+                    </Stack>
                 </Stack>
 
                 <DerivationSchemaEditor entityName={catalogName} />

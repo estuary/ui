@@ -18,13 +18,14 @@ import { getProperSchemaScope } from 'utils/schema-utils';
 
 export interface Props {
     entityName?: string;
+    localZustandScope?: boolean;
 }
 
-function CollectionSchemaEditor({ entityName }: Props) {
+function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     const { onChange, draftSpec, mutate } = useDraftSpecEditor(
         entityName,
         'collection',
-        true
+        localZustandScope
     );
 
     const [editorSchemaScope, setEditorSchemaScope] = useState<
@@ -64,7 +65,7 @@ function CollectionSchemaEditor({ entityName }: Props) {
     }, [draftSpec, entityType, populateInferSchemaResponse, setCollectionData]);
 
     useUpdateEffect(() => {
-        // If the schema is updated via the scheme inferrence
+        // If the schema is updated via the scheme inference
         //  of CLI button we want to fire mutate and make sure we get the latest
         if (schemaUpdated) {
             void mutate();
@@ -74,18 +75,21 @@ function CollectionSchemaEditor({ entityName }: Props) {
     if (draftSpec && entityName) {
         return (
             <Grid container>
-                <Stack
-                    sx={{
-                        alignItems: 'start',
-                        alignContent: 'start',
-                        mb: 3,
-                    }}
-                >
-                    <Typography variant="subtitle1" component="div">
-                        <FormattedMessage id="entityName.label" />
-                    </Typography>
-                    <Typography sx={{ ml: 1.5 }}>{entityName}</Typography>
-                </Stack>
+                {entityType === 'collection' ? null : (
+                    <Stack
+                        sx={{
+                            alignItems: 'start',
+                            alignContent: 'start',
+                            mb: 3,
+                        }}
+                    >
+                        <Typography variant="subtitle1" component="div">
+                            <FormattedMessage id="entityName.label" />
+                        </Typography>
+
+                        <Typography sx={{ ml: 1.5 }}>{entityName}</Typography>
+                    </Stack>
+                )}
 
                 <KeyAutoComplete
                     value={draftSpec.spec.key}
@@ -97,6 +101,7 @@ function CollectionSchemaEditor({ entityName }: Props) {
                 <PropertiesViewer
                     disabled={!editModeEnabled}
                     editorProps={{
+                        localZustandScope,
                         onChange: async (value: Schema, path, type, scope) => {
                             await onChange(
                                 value,

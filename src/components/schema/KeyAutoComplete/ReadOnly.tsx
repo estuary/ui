@@ -47,6 +47,7 @@ function ReadOnly({ value }: Props) {
                 <Tooltip
                     leaveDelay={250}
                     title={<FormattedMessage id="schemaEditor.key.helper" />}
+                    placement="right"
                 >
                     <IconButton>
                         <HelpCircle />

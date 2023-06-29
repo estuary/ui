@@ -12,17 +12,17 @@ import { Entity } from 'types';
 function useDraftSpecEditor(
     entityName: string | undefined,
     entityType: Entity,
-    useLocalScope: boolean
+    localScope?: boolean
 ) {
     // Local State
     const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
 
     // Draft Editor Store
     const currentCatalog = useEditorStore_currentCatalog({
-        localScope: useLocalScope,
+        localScope,
     });
     const setSpecs = useEditorStore_setSpecs({
-        localScope: useLocalScope,
+        localScope,
     });
     const draftId = useEditorStore_persistedDraftId();
 

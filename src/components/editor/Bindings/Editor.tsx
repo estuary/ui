@@ -148,6 +148,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 collectionData.belongsToDraft ? (
                                     <CollectionSchemaEditor
                                         entityName={currentCollection}
+                                        localZustandScope
                                     />
                                 ) : (
                                     <ControlledEditor />
