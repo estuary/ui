@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { createEvolution } from 'api/evolutions';
+import { createEvolution, toEvolutionRequest } from 'api/evolutions';
 import {
     useBindingsEditorStore_incompatibleCollections,
     useBindingsEditorStore_setIncompatibleCollections,
@@ -122,9 +122,8 @@ function SchemaEvolution({ onFailure }: Props) {
             if (incompatibleCollections && incompatibleCollections.length > 0) {
                 const response = await createEvolution(
                     draftId,
-                    incompatibleCollections.map(
-                        (incompatibleCollection) =>
-                            incompatibleCollection.collection
+                    incompatibleCollections.map((incompatibleCollection) =>
+                        toEvolutionRequest(incompatibleCollection)
                     )
                 );
                 if (response.error) {

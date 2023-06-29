@@ -1,13 +1,15 @@
 import { Box, Collapse, Stack, Typography } from '@mui/material';
-import { useBindingsEditorStore_hasIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
+import { useBindingsEditorStore_incompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
+import { hasLength } from 'utils/misc-utils';
 import Actions from './Actions';
 import CollectionsList from './CollectionsList';
 
 function IncompatibleCollections() {
-    const hasIncompatibleCollections =
-        useBindingsEditorStore_hasIncompatibleCollections();
+    const incompatibleCollections =
+        useBindingsEditorStore_incompatibleCollections();
+    const hasIncompatibleCollections = hasLength(incompatibleCollections);
 
     return (
         <Collapse

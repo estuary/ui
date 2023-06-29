@@ -134,7 +134,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.configure': `Configure`,
     'cta.showAll': `Show All`,
     'cta.reload': `Reload`,
-    'cta.evolve': `Create New Collection Versions`,
+    'cta.evolve': `Apply`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -1078,9 +1078,32 @@ const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
 const EntityEvolution: ResolvedIntlConfig['messages'] = {
     'entityEvolution.failure.errorTitle': `Update Failed`,
     'entityEvolution.serverUnreachable': `${CommonMessages['common.failedFetch']} while trying to update collections`,
-    'entityEvolution.error.title': `Changes Rejected Due to Incompatible Schema Updates`,
-    'entityEvolution.error.message': `Schema changes will break downstream tasks. To avoid this, click below and then publish a new version of the affected collections.`,
-    'entityEvolution.error.note': `Note: This may result in additional cost as new collection versions are backfilled.`,
+    'entityEvolution.error.title': `Changes rejected due to incompatible collection updates`,
+    'entityEvolution.error.message': `The proposed collection changes would break downstream tasks. You can click '${CTAs['cta.evolve']}' below to automatically update your draft with the following recommended actions.`,
+    'entityEvolution.error.note': `Note: This may result in additional cost as new versions are backfilled.`,
+
+    // Single quotes are special and must be doubled: https://formatjs.io/docs/core-concepts/icu-syntax#quoting--escaping
+    'entityEvolution.action.recreateOneBinding.description': `the Materialization ''{materializationName}'' will be updated to materialize the collection into a new resource`,
+    'entityEvolution.action.recreateBindings.description': `{materializationCount} Materializations will be updated to materialize the collection into new resources`,
+    'entityEvolution.action.recreateBindings.help': `Any materializations of this collection will be updated to materialize it
+    into a new resource (database table, for example) with an incremented version suffix (like "_v2"). The Collection itself will
+    have the schema updated in place, and will retain all current data. The materialization will backfill from the beginning of
+    this collection, but other bindings in the materialization will not be affected.`,
+
+    'entityEvolution.action.recreateCollection.description': `Collection will be re-created as ''{newName}'' because {reason}`,
+    'entityEvolution.action.recreateCollection.help': `This will create a new Collection with the name shown.
+    The Capture will be updated to write into the new collection, and will backfill the collection from source system.
+    Any Materializations will also be updated to materialize the new collection instead of the old one.
+    The result will be a new resource (database table, for example) with an incremented version suffix (like "_v2")`,
+
+    'entityEvolution.action.recreateCollection.reason.keyChange':
+        'the collection key cannot be modified',
+    'entityEvolution.action.recreateCollection.reason.partitionChange':
+        'the collection partitions cannot be modified',
+    'entityEvolution.action.recreateCollection.reason.prevDeletedSpec':
+        'a live spec with this same name has already been created and was subsequently deleted',
+    'entityEvolution.action.recreateCollection.reason.authoritativeSourceSchema':
+        'a live spec with this same name has already been created and was subsequently deleted',
 };
 
 const DraftErrors: ResolvedIntlConfig['messages'] = {
