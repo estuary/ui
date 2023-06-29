@@ -4,6 +4,7 @@ import DataByHourGraph from 'components/graphs/DataByHourGraph';
 import HourlyRangeFilter from 'components/graphs/filters/HourRange';
 import EmptyGraphState from 'components/graphs/states/Empty';
 import GraphLoadingState from 'components/graphs/states/Loading';
+import { tooltipSX } from 'components/graphs/tooltips';
 import { DataByHourRange } from 'components/graphs/types';
 import Error from 'components/shared/Error';
 import useDetailsStats from 'hooks/useDetailsStats';
@@ -22,7 +23,7 @@ function Usage({ catalogName }: Props) {
     const [range, setRange] = useState<DataByHourRange>(6);
 
     return (
-        <Stack direction="column" spacing={2} sx={{ m: 2 }}>
+        <Stack direction="column" spacing={2} sx={{ ...tooltipSX, m: 2 }}>
             <Stack direction="row" spacing={1}>
                 <Typography
                     component="span"

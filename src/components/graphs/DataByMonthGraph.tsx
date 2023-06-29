@@ -190,8 +190,6 @@ function DataByMonthGraph() {
                                             date.includes(config.axisValueLabel)
                                         ) ?? config.axisValueLabel;
 
-                                console.log('tooltipTitle', tooltipTitle);
-
                                 content = `${getTooltipTitle(
                                     tooltipTitle
                                 )}${tooltipItem}`;

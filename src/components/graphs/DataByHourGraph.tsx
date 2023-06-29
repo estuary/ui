@@ -124,26 +124,30 @@ function DataByHourGraph({ range, stats }: Props) {
                     tooltipConfigs.forEach((config) => {
                         const { axisValueLabel, data, marker, seriesName } =
                             config;
+                        const value = data[1];
 
+                        // format the value based on what data is showing
                         let valueDisplay: string;
                         if (seriesName === 'Data') {
-                            valueDisplay = prettyBytes(data[1]);
+                            valueDisplay = prettyBytes(value);
                         } else {
-                            valueDisplay = readable(data[1], 2, false);
+                            valueDisplay =
+                                value > 0
+                                    ? readable(value, 2, false)
+                                    : intl.formatMessage({
+                                          id: 'common.missing',
+                                      });
                         }
-
-                        const tooltipItem = getTooltipItem(
-                            marker,
-                            seriesName,
-                            valueDisplay
-                        );
 
                         // If the first item add a header
                         if (content.length === 0) {
                             content.push(getTooltipTitle(axisValueLabel));
                         }
 
-                        content.push(tooltipItem);
+                        // Generate the item html
+                        content.push(
+                            getTooltipItem(marker, seriesName, valueDisplay)
+                        );
                     });
 
                     return content.join('');

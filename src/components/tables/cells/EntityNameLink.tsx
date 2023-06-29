@@ -47,14 +47,12 @@ function EntityNameLink({ name, detailsLink, showEntityStatus }: Props) {
                         component={NavLink}
                         to={detailsLink}
                         state={{ backButtonUrl: location }}
-                        sx={
-                            belowMd
-                                ? {
-                                      overflowWrap: 'break-word',
-                                      wordBreak: 'break-all',
-                                  }
-                                : undefined
-                        }
+                        sx={{
+                            padding: 1,
+                            pl: 0,
+                            overflowWrap: belowMd ? 'break-word' : undefined,
+                            wordBreak: belowMd ? 'break-all' : undefined,
+                        }}
                     >
                         {name}
                     </Link>
