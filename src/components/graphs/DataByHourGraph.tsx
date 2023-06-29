@@ -40,7 +40,8 @@ function DataByHourGraph({ range, stats }: Props) {
     const seriesConfig = useMemo(() => {
         const scopedDataSet = {};
         stats.forEach((stat) => {
-            scopedDataSet[intl.formatTime(stat.ts)] = {
+            const formattedTime = intl.formatTime(stat.ts);
+            scopedDataSet[formattedTime] = {
                 docs: stat.docs_written_by_me,
                 bytes: stat.bytes_written_by_me,
             };
@@ -52,20 +53,28 @@ function DataByHourGraph({ range, stats }: Props) {
             name: 'Data',
             type: 'line',
             yAxisIndex: 0,
+            smooth: true,
+            showAllSymbol: true,
+            symbol: 'circle',
         };
         const docsSeries: SeriesConfig = {
             data: [],
             name: 'Docs',
             type: 'line',
             yAxisIndex: 1,
+            smooth: true,
+            showAllSymbol: true,
+            symbol: 'rect',
         };
 
         // Go through all the hours so we can snag
         hours.forEach((hour) => {
             const hourlyDataSet = scopedDataSet[hour];
 
-            bytesSeries.data.push([hour, hourlyDataSet?.bytes ?? 0]);
-            docsSeries.data.push([hour, hourlyDataSet?.docs ?? 0]);
+            const bytes = hourlyDataSet?.bytes ?? 0;
+            const docs = hourlyDataSet?.docs ?? 0;
+            bytesSeries.data.push([hour, bytes]);
+            docsSeries.data.push([hour, docs]);
         });
 
         return [bytesSeries, docsSeries];

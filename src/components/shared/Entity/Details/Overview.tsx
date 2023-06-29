@@ -33,6 +33,10 @@ function Overview({ name }: Props) {
         <Grid container spacing={2}>
             <Endpoints name={entityName} />
 
+            <Grid item xs={12}>
+                <Usage catalogName={entityName} />
+            </Grid>
+
             {!isCollection || isDerivation ? (
                 <Grid item xs={12}>
                     <ShardInformation entityType={entityType} />
@@ -44,10 +48,6 @@ function Overview({ name }: Props) {
                     <DataPreview collectionName={entityName} />
                 </Grid>
             ) : null}
-
-            <Grid item xs={12}>
-                <Usage catalogName={entityName} />
-            </Grid>
         </Grid>
     );
 }

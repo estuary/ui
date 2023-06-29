@@ -1,6 +1,6 @@
 import { parseISO } from 'date-fns';
 import prettyBytes from 'pretty-bytes';
-import { CatalogStats_Billing, Entity } from 'types';
+import { CatalogStats_Billing, Entity, Schema } from 'types';
 
 export const TOTAL_CARD_HEIGHT = 300;
 
@@ -36,14 +36,15 @@ export enum SeriesNames {
     SURPLUS = 'Billed',
 }
 
-export interface SeriesConfig {
-    data: [string, number][];
+export interface SeriesConfig extends Schema {
+    data: [string, number][] | any[];
     connectNulls?: boolean;
     name?: string;
     seriesName?: string;
     stack?: string;
     type?: string;
     yAxisIndex?: number;
+    smooth?: boolean;
 }
 
 export const formatDataVolumeForDisplay = (
