@@ -17,7 +17,7 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { CatalogStats, CatalogStats_Billing } from 'types';
+import { CatalogStats, CatalogStats_Billing, Entity } from 'types';
 
 export type StatsFilter =
     | 'today'
@@ -30,6 +30,7 @@ export type StatsFilter =
 export interface DefaultStats {
     catalog_name: string;
     grain: string;
+    ts: string;
     bytes_written_by_me: number;
     docs_written_by_me: number;
     bytes_read_by_me: number;
@@ -38,12 +39,16 @@ export interface DefaultStats {
     docs_written_to_me: number;
     bytes_read_from_me: number;
     docs_read_from_me: number;
-    ts: string;
 }
 
-const DEFAULT_QUERY = `    
+const BASE_QUERY = `
             catalog_name,
             grain,
+            ts
+`;
+
+const DEFAULT_QUERY = `    
+            ${BASE_QUERY},
             bytes_written_by_me,
             docs_written_by_me,
             bytes_read_by_me,
@@ -51,9 +56,38 @@ const DEFAULT_QUERY = `
             bytes_written_to_me,
             docs_written_to_me,
             bytes_read_from_me,
-            docs_read_from_me,
-            ts
+            docs_read_from_me
         `;
+
+export interface DetailsStats {
+    catalog_name: string;
+    grain: string;
+    ts: string;
+    docs: number;
+    bytes: number;
+}
+
+// Queries just for details panel
+const CAPTURE_QUERY = `
+    ${BASE_QUERY},
+    docs:docs_written_by_me,
+    bytes:bytes_written_by_me
+`;
+
+// Need to get collections working with to and from
+const COLLECTION_QUERY = `
+    ${BASE_QUERY},
+    docs:bytes_written_to_me,
+    bytes:docs_written_to_me,
+    docsBy:bytes_written_by_me,
+    bytesBy:docs_written_by_me
+`;
+
+const MATERIALIZATION_QUERY = `
+    ${BASE_QUERY},
+    docs:docs_read_by_me,
+    bytes:bytes_read_by_me
+`;
 
 // This will format the date so that it just gets the month, day, year
 //  We do not need the full minute/hour/offset because the backend is not saving those
@@ -153,13 +187,28 @@ const getStatsForBilling = (tenants: string[], startDate: string) => {
         .order('ts', { ascending: false });
 };
 
-const getStatsForDetails = (catalogName: string) => {
+const getStatsForDetails = (catalogName: string, entityType: Entity) => {
     const today = new Date();
     const past = subHours(today, 6);
 
+    let query: string;
+    switch (entityType) {
+        case 'capture':
+            query = CAPTURE_QUERY;
+            break;
+        case 'materialization':
+            query = MATERIALIZATION_QUERY;
+            break;
+        case 'collection':
+            query = COLLECTION_QUERY;
+            break;
+        default:
+            query = DEFAULT_QUERY;
+    }
+
     return supabaseClient
         .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
-        .select(DEFAULT_QUERY)
+        .select(query)
         .eq('catalog_name', catalogName)
         .eq('grain', 'hourly')
         .gte('ts', formatToGMT(past, true))

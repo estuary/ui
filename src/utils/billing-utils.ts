@@ -37,7 +37,7 @@ export enum SeriesNames {
 }
 
 export interface SeriesConfig extends Schema {
-    data: [string, number][] | any[];
+    data: [string, number][];
     connectNulls?: boolean;
     name?: string;
     seriesName?: string;
