@@ -1,4 +1,5 @@
-import { Box, CircularProgress, Grid, Stack, Typography } from '@mui/material';
+import { CircularProgress, Grid, Stack, Typography } from '@mui/material';
+import CardWrapper from 'components/admin/Billing/CardWrapper';
 import { DataPreview } from 'components/collection/DataPreview';
 import ConnectorLogo from 'components/connectors/card/Logo';
 import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
@@ -68,7 +69,7 @@ function Overview({ name }: Props) {
                                 <FormattedMessage id="detailsPanel.details.title" />
                             </Typography>
                         </Stack>
-                        <Box>
+                        <CardWrapper>
                             {liveSpecs[0].connector_logo_url ? (
                                 <ConnectorLogo
                                     imageSrc={
@@ -115,7 +116,7 @@ function Overview({ name }: Props) {
                                     },
                                 ]}
                             />
-                        </Box>
+                        </CardWrapper>
                     </Stack>
                 )}
             </Grid>

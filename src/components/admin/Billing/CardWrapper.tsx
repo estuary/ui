@@ -14,7 +14,7 @@ import { BaseComponentProps } from 'types';
 import { TOTAL_CARD_HEIGHT } from 'utils/billing-utils';
 
 interface Props extends BaseComponentProps {
-    message: string | ReactNode;
+    message?: string | ReactNode;
     tooltipMessageId?: string;
 }
 
@@ -35,12 +35,14 @@ function CardWrapper({ children, message, tooltipMessageId }: Props) {
             }}
         >
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-                <Typography
-                    sx={{ mb: 2, fontSize: 16, fontWeight: 300 }}
-                    component="div"
-                >
-                    {message}
-                </Typography>
+                {message ? (
+                    <Typography
+                        sx={{ mb: 2, fontSize: 16, fontWeight: 300 }}
+                        component="div"
+                    >
+                        {message}
+                    </Typography>
+                ) : null}
 
                 {tooltipMessageId ? (
                     <Tooltip
