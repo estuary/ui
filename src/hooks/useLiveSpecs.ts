@@ -1,17 +1,17 @@
 import { useDebugValue } from 'react';
 import { TABLES } from 'services/supabase';
-import { Entity } from 'types';
+import { Entity, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { useQuery, useSelect } from './supabase-swr/';
 
-export interface LiveSpecsQuery {
+export interface LiveSpecsQuery extends Schema {
     catalog_name: string;
     spec_type: string;
     // Filtering only
     updated_at: undefined;
 }
 
-const queryColumns = ['catalog_name', 'spec_type'];
+const queryColumns = ['*'];
 
 const defaultResponse: LiveSpecsQuery[] = [];
 

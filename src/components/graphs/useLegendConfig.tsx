@@ -18,7 +18,6 @@ const navArrowsDark = [
 function useLegendConfig(seriesConfig: any) {
     const theme = useTheme();
     return useMemo(() => {
-        console.log('seriesConfig', seriesConfig);
         return {
             type: 'scroll',
             data: seriesConfig.map((config: any) => {
