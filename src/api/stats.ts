@@ -78,11 +78,7 @@ const CAPTURE_QUERY = `
 const COLLECTION_QUERY = `
     ${BASE_QUERY},
     docs:bytes_written_to_me,
-    bytes:docs_written_to_me,
-    docsBy:bytes_written_by_me,
-    bytesBy:docs_written_by_me,
-        docsFrom:bytes_read_from_me,
-    bytesFrom:docs_read_from_me
+    bytes:docs_written_to_me
 `;
 
 const MATERIALIZATION_QUERY = `
