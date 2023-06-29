@@ -19,12 +19,15 @@ import useConstant from 'use-constant';
 import { CARD_AREA_HEIGHT, SeriesConfig } from 'utils/billing-utils';
 import { getTooltipItem, getTooltipTitle } from './tooltips';
 import { DataByHourRange } from './types';
+import useLegendConfig from './useLegendConfig';
 import useTooltipConfig from './useTooltipConfig';
 
 interface Props {
     stats: DefaultStats[];
     range: DataByHourRange;
 }
+
+const colors = ['#5470C6', '#91CC75', '#EE6666'];
 
 function DataByHourGraph({ range, stats }: Props) {
     const intl = useIntl();
@@ -62,7 +65,6 @@ function DataByHourGraph({ range, stats }: Props) {
             yAxisIndex: 0,
             smooth: true,
             showAllSymbol: true,
-            symbol: 'circle',
         };
         const docsSeries: SeriesConfig = {
             data: [],
@@ -71,7 +73,6 @@ function DataByHourGraph({ range, stats }: Props) {
             yAxisIndex: 1,
             smooth: true,
             showAllSymbol: true,
-            symbol: 'rect',
         };
 
         // Go through all the hours so we can snag
@@ -86,6 +87,8 @@ function DataByHourGraph({ range, stats }: Props) {
 
         return [bytesSeries, docsSeries];
     }, [intl, hours, stats]);
+
+    const legendConfig = useLegendConfig(seriesConfig);
 
     useEffect(() => {
         if (!myChart) {
@@ -110,14 +113,17 @@ function DataByHourGraph({ range, stats }: Props) {
 
         const option = {
             animation: false,
-            legend: {
-                data: ['Data', 'Docs'],
-            },
+            legend: legendConfig,
             textStyle: {
                 color: theme.palette.text.primary,
             },
             tooltip: {
                 ...tooltipConfig,
+                // trigger: 'axis',
+                axisPointer: {
+                    snap: true,
+                    type: 'line',
+                },
                 formatter: (tooltipConfigs: any[]) => {
                     const content: string[] = [];
 
@@ -168,8 +174,12 @@ function DataByHourGraph({ range, stats }: Props) {
                     alignTicks: true,
                     axisLine: {
                         show: true,
+                        lineStyle: {
+                            color: colors[0],
+                        },
                     },
                     axisLabel: {
+                        color: colors[0],
                         formatter: '{value} bytes',
                     },
                 },
@@ -180,8 +190,13 @@ function DataByHourGraph({ range, stats }: Props) {
                     alignTicks: true,
                     axisLine: {
                         show: true,
+                        lineStyle: {
+                            color: colors[1],
+                        },
                     },
                     axisLabel: {
+                        color: colors[1],
+
                         formatter: '{value} docs',
                     },
                 },
@@ -193,6 +208,7 @@ function DataByHourGraph({ range, stats }: Props) {
     }, [
         hours,
         intl,
+        legendConfig,
         myChart,
         seriesConfig,
         theme.palette.text.primary,

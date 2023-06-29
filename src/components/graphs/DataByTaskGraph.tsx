@@ -16,10 +16,6 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import navArrowLeftDark from 'images/graph-icons/nav-arrow-left__dark.svg';
-import navArrowLeftLight from 'images/graph-icons/nav-arrow-left__light.svg';
-import navArrowRightDark from 'images/graph-icons/nav-arrow-right__dark.svg';
-import navArrowRightLight from 'images/graph-icons/nav-arrow-right__light.svg';
 import { sortBy, sum, uniq } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -36,16 +32,7 @@ import {
     SeriesConfig,
 } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
-
-const navArrowsLight = [
-    `image://${navArrowLeftLight}`,
-    `image://${navArrowRightLight}`,
-];
-
-const navArrowsDark = [
-    `image://${navArrowLeftDark}`,
-    `image://${navArrowRightDark}`,
-];
+import useLegendConfig from './useLegendConfig';
 
 const evaluateLargestDataProcessingTasks = (
     dataVolumeByTask: DataVolumeByTask[]
@@ -121,6 +108,8 @@ function DataByTaskGraph() {
         });
     }, [dataByTaskGraphDetails, intl, today]);
 
+    const legendConfig = useLegendConfig(seriesConfig);
+
     useEffect(() => {
         if (billingStoreHydrated && hasLength(seriesConfig)) {
             if (!myChart) {
@@ -172,26 +161,7 @@ function DataByTaskGraph() {
                         (dataVolume / BYTES_PER_GB).toFixed(3),
                     ]),
                 })),
-                legend: {
-                    type: 'scroll',
-                    data: seriesConfig.map((config) => config.seriesName),
-                    textStyle: {
-                        color: theme.palette.text.primary,
-                        fontWeight: 'normal',
-                    },
-                    icon: 'circle',
-                    itemWidth: 10,
-                    itemHeight: 10,
-                    pageTextStyle: {
-                        color: theme.palette.text.primary,
-                    },
-                    pageIcons: {
-                        horizontal:
-                            theme.palette.mode === 'light'
-                                ? navArrowsLight
-                                : navArrowsDark,
-                    },
-                },
+                legend: legendConfig,
                 textStyle: {
                     color: theme.palette.text.primary,
                 },
@@ -262,14 +232,15 @@ function DataByTaskGraph() {
             myChart?.setOption(option);
         }
     }, [
-        setMyChart,
-        dataByTaskGraphDetails,
         billingStoreHydrated,
+        dataByTaskGraphDetails,
         intl,
+        legendConfig,
         months,
         myChart,
         seriesConfig,
-        theme,
+        theme.palette.mode,
+        theme.palette.text.primary,
     ]);
 
     return <div id="data-by-task" style={{ height: CARD_AREA_HEIGHT }} />;

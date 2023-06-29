@@ -2,7 +2,7 @@ import { parseISO } from 'date-fns';
 import prettyBytes from 'pretty-bytes';
 import { CatalogStats_Billing, Entity, Schema } from 'types';
 
-export const TOTAL_CARD_HEIGHT = 300;
+export const TOTAL_CARD_HEIGHT = 450;
 
 // Grid item height - 72 = graph canvas height
 export const CARD_AREA_HEIGHT = TOTAL_CARD_HEIGHT - 72;
