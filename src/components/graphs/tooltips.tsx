@@ -5,13 +5,13 @@ const ITEM_CLASS = 'tooltipItem';
 const TITLE_CLASS = 'tooltipTitle';
 
 const getTooltipItem = (marker: any, label: any, value: any) => {
-    return `<div class="${ITEM_CLASS}">
-                <div>
+    return `<dl class="${ITEM_CLASS}">
+                <dt>
                     ${marker}
                     <span>${label}</span>
-                </div>
-                <span class="${VALUE_CLASS}">${value}</span>
-            </div>`;
+                </dt>
+                <dd class="${VALUE_CLASS}">${value}</dd>
+            </dl>`;
 };
 
 const getTooltipTitle = (title: any) => {
