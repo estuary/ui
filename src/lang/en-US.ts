@@ -28,6 +28,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.noData': `No data to display`,
     'common.loggedOut': `You have been logged out. Please log back in.`,
     'common.missing': `N/A`,
+    'common.none': `none`,
     'common.noUnDo': `This action cannot be undone.`,
     'common.version': `version`,
     'common.tenant': `Prefix`,

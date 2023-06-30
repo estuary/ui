@@ -75,7 +75,7 @@ function DataByHourGraph({ range, stats }: Props) {
                             maximumFractionDigits: 2,
                         }),
                 },
-                position: 'start',
+                position: 'end',
                 symbolSize: 0,
             },
         };
@@ -161,7 +161,7 @@ function DataByHourGraph({ range, stats }: Props) {
                                 value > 0
                                     ? readable(value, 2, false)
                                     : intl.formatMessage({
-                                          id: 'common.missing',
+                                          id: 'common.none',
                                       });
                         }
 
