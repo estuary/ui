@@ -53,9 +53,16 @@ function DataByHourGraph({ range, stats }: Props) {
         const scopedDataSet = {};
         stats.forEach((stat) => {
             const formattedTime = intl.formatTime(stat.ts);
+            const totalDocs = stat.docs_to
+                ? stat.docs_to + stat.docs_by
+                : stat.docs_by;
+            const totalBytes = stat.bytes_to
+                ? stat.bytes_to + stat.bytes_by
+                : stat.bytes_by;
+
             scopedDataSet[formattedTime] = {
-                docs: stat.docs,
-                bytes: stat.bytes,
+                docs: totalDocs,
+                bytes: totalBytes,
             };
         });
 

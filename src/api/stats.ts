@@ -63,28 +63,32 @@ export interface DetailsStats {
     catalog_name: string;
     grain: string;
     ts: string;
-    docs: number;
-    bytes: number;
+    docs_by: number;
+    bytes_by: number;
+    docs_to?: number;
+    bytes_to?: number;
 }
 
 // Queries just for details panel
 const CAPTURE_QUERY = `
     ${BASE_QUERY},
-    docs:docs_written_by_me,
-    bytes:bytes_written_by_me
+    docs_by:docs_written_by_me,
+    bytes_by:bytes_written_by_me
 `;
 
 // Need to get collections working with to and from
 const COLLECTION_QUERY = `
     ${BASE_QUERY},
-    docs:bytes_written_to_me,
-    bytes:docs_written_to_me
+    bytes_by:bytes_written_by_me,
+    docs_by:docs_written_by_me,
+    bytes_to:bytes_written_to_me,
+    docs_to:docs_written_to_me
 `;
 
 const MATERIALIZATION_QUERY = `
     ${BASE_QUERY},
-    docs:docs_read_by_me,
-    bytes:bytes_read_by_me
+    docs_by:docs_read_by_me,
+    bytes_by:bytes_read_by_me
 `;
 
 // This will format the date so that it just gets the month, day, year
