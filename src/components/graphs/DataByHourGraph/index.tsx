@@ -5,6 +5,8 @@ import { LineChart } from 'echarts/charts';
 import {
     GridComponent,
     LegendComponent,
+    MarkLineComponent,
+    MarkPointComponent,
     ToolboxComponent,
     TooltipComponent,
 } from 'echarts/components';
@@ -64,6 +66,18 @@ function DataByHourGraph({ range, stats }: Props) {
             type: 'line',
             yAxisIndex: 0,
             smooth: true,
+            markLine: {
+                data: [{ type: 'max', name: 'Max' }],
+                label: {
+                    formatter: ({ value }: any) =>
+                        prettyBytes(value, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        }),
+                },
+                position: 'start',
+                symbolSize: 0,
+            },
         };
         const docsSeries: SeriesConfig = {
             data: [],
@@ -98,6 +112,8 @@ function DataByHourGraph({ range, stats }: Props) {
                 LineChart,
                 CanvasRenderer,
                 UniversalTransition,
+                MarkLineComponent,
+                MarkPointComponent,
             ]);
 
             const chartDom = document.getElementById('data-by-hour');
@@ -121,6 +137,9 @@ function DataByHourGraph({ range, stats }: Props) {
                 axisPointer: {
                     snap: true,
                     type: 'line',
+                    lineStyle: {
+                        shadowBlur: 5,
+                    },
                 },
                 formatter: (tooltipConfigs: any[]) => {
                     const content: string[] = [];
