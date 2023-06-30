@@ -1084,7 +1084,10 @@ const EntityEvolution: ResolvedIntlConfig['messages'] = {
 
     // Single quotes are special and must be doubled: https://formatjs.io/docs/core-concepts/icu-syntax#quoting--escaping
     'entityEvolution.action.recreateOneBinding.description': `the Materialization ''{materializationName}'' will be updated to materialize the collection into a new resource`,
-    'entityEvolution.action.recreateBindings.description': `{materializationCount} Materializations will be updated to materialize the collection into new resources`,
+    'entityEvolution.action.recreateBindings.description': `{materializationCount} {materializationCount, plural,
+        one {Materialization}
+        other {Materializations}
+    } will be updated to materialize the collection into new resources`,
     'entityEvolution.action.recreateBindings.help': `Any materializations of this collection will be updated to materialize it
     into a new resource (database table, for example) with an incremented version suffix (like "_v2"). The Collection itself will
     have the schema updated in place, and will retain all current data. The materialization will backfill from the beginning of
