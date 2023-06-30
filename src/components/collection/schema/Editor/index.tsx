@@ -6,6 +6,7 @@ import {
     useBindingsEditorStore_setCollectionData,
 } from 'components/editor/Bindings/Store/hooks';
 import { AllowedScopes } from 'components/editor/MonacoEditor/types';
+import { useHydrateEditorState } from 'components/editor/Store/hooks';
 import KeyAutoComplete from 'components/schema/KeyAutoComplete';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
 import { useEntityType } from 'context/EntityContext';
@@ -22,9 +23,10 @@ export interface Props {
 }
 
 function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
+    useHydrateEditorState('collection', entityName, localZustandScope);
+
     const { onChange, draftSpec, mutate } = useDraftSpecEditor(
         entityName,
-        'collection',
         localZustandScope
     );
 
@@ -67,7 +69,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     useUpdateEffect(() => {
         // If the schema is updated via the scheme inference
         //  of CLI button we want to fire mutate and make sure we get the latest
-        if (schemaUpdated) {
+        if (mutate && schemaUpdated) {
             void mutate();
         }
     }, [schemaUpdated]);

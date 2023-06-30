@@ -3,15 +3,16 @@ import { AllowedScopes } from 'components/editor/MonacoEditor/types';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
+    useEditorStore_queryResponse_draftSpecs,
+    useEditorStore_queryResponse_isValidating,
+    useEditorStore_queryResponse_mutate,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
-import useDraftSpecs, { DraftSpec } from 'hooks/useDraftSpecs';
+import { DraftSpec } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
-import { Entity } from 'types';
 
 function useDraftSpecEditor(
     entityName: string | undefined,
-    entityType: Entity,
     localScope?: boolean
 ) {
     // Local State
@@ -26,11 +27,11 @@ function useDraftSpecEditor(
     });
     const draftId = useEditorStore_persistedDraftId();
 
-    // Fetch the draft specs for this draft
-    const { draftSpecs, isValidating, mutate } = useDraftSpecs(draftId, {
-        specType: entityType,
-        catalogName: entityName,
+    const draftSpecs = useEditorStore_queryResponse_draftSpecs({ localScope });
+    const isValidating = useEditorStore_queryResponse_isValidating({
+        localScope,
     });
+    const mutate = useEditorStore_queryResponse_mutate({ localScope });
 
     const handlers = {
         change: async (
@@ -39,7 +40,7 @@ function useDraftSpecEditor(
             specType: string,
             propUpdating?: AllowedScopes
         ) => {
-            if (draftSpec) {
+            if (mutate && draftSpec) {
                 if (propUpdating) {
                     draftSpec.spec[propUpdating] = newVal;
                 } else {

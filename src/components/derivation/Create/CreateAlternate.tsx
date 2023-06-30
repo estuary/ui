@@ -1,6 +1,10 @@
 import { Box, Collapse } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
-import { useEditorStore_id } from 'components/editor/Store/hooks';
+import {
+    useEditorStore_persistedDraftId,
+    useEditorStore_resetState,
+    useHydrateEditorState,
+} from 'components/editor/Store/hooks';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityError from 'components/shared/Entity/Error';
 import EntityToolbar from 'components/shared/Entity/Header';
@@ -8,7 +12,6 @@ import DerivationConfig from 'components/transformation/create/Config';
 import GitPodButton from 'components/transformation/create/GitPodButton';
 import PatchDraftButton from 'components/transformation/create/PatchDraftButton';
 import DerivationSchema from 'components/transformation/create/Schema';
-import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useNavigate } from 'react-router';
 import { CustomEvents } from 'services/logrocket';
@@ -30,7 +33,8 @@ function DerivationCreateAlternate() {
     const navigate = useNavigate();
 
     // Draft Editor Store
-    const draftId = useEditorStore_id();
+    const draftId = useEditorStore_persistedDraftId();
+    const resetEditorStore = useEditorStore_resetState();
 
     // Form State Store
     const logToken = useFormStateStore_logToken();
@@ -43,10 +47,7 @@ function DerivationCreateAlternate() {
     // Transformation Create Store
     const catalogName = useTransformationCreate_catalogName();
 
-    const { draftSpecs, isValidating, mutate } = useDraftSpecs(draftId, {
-        specType: 'collection',
-        catalogName,
-    });
+    useHydrateEditorState('collection', catalogName);
 
     const helpers = {
         callFailed: (formState: any) => {
@@ -57,6 +58,7 @@ function DerivationCreateAlternate() {
             });
         },
         exit: () => {
+            resetEditorStore();
             resetFormState();
             navigate(authenticatedRoutes.collections.fullPath);
         },
@@ -78,9 +80,7 @@ function DerivationCreateAlternate() {
         <>
             <Box sx={{ mb: 3 }}>
                 <EntityToolbar
-                    GenerateButton={
-                        <PatchDraftButton mutateDraftSpecs={mutate} />
-                    }
+                    GenerateButton={<PatchDraftButton />}
                     TestButton={<GitPodButton buttonVariant="outlined" />}
                     SaveButton={
                         <EntitySaveButton
@@ -112,11 +112,7 @@ function DerivationCreateAlternate() {
                 ) : null}
             </Collapse>
 
-            <DerivationConfig
-                draftSpecs={draftSpecs}
-                isValidating={isValidating}
-                mutate={mutate}
-            />
+            <DerivationConfig />
 
             <DerivationSchema />
         </>

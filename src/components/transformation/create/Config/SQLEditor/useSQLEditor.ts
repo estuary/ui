@@ -2,26 +2,24 @@ import { modifyDraftSpec } from 'api/draftSpecs';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
+    useEditorStore_queryResponse_draftSpecs,
+    useEditorStore_queryResponse_mutate,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
-import { SuccessResponse } from 'hooks/supabase-swr';
-import { DraftSpec, DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { DraftSpec } from 'hooks/useDraftSpecs';
 import { useCallback, useEffect, useState } from 'react';
 import {
     useTransformationCreate_attributeType,
     useTransformationCreate_migrations,
     useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
-import { KeyedMutator } from 'swr';
 import { updateMigrations, updateTransforms } from 'utils/derivation-utils';
 
-function useSQLEditor(
-    entityName: string,
-    draftSpecs: DraftSpecQuery[],
-    mutate: KeyedMutator<SuccessResponse<DraftSpecQuery>>
-) {
+function useSQLEditor(entityName: string) {
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
+    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
+    const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
     const currentCatalog = useEditorStore_currentCatalog();
     const setSpecs = useEditorStore_setSpecs();
@@ -35,7 +33,7 @@ function useSQLEditor(
 
     const processEditorValue = useCallback(
         async (value: any, attributeId: string) => {
-            if (draftSpec) {
+            if (mutateDraftSpecs && draftSpec) {
                 if (attributeType === 'transform') {
                     draftSpec.spec.derive.transforms = updateTransforms(
                         transformConfigs[attributeId].name,
@@ -56,7 +54,7 @@ function useSQLEditor(
                     return Promise.reject();
                 }
 
-                return mutate();
+                return mutateDraftSpecs();
             } else {
                 return Promise.reject();
             }
@@ -67,7 +65,7 @@ function useSQLEditor(
             draftSpec,
             entityName,
             migrations,
-            mutate,
+            mutateDraftSpecs,
             transformConfigs,
         ]
     );

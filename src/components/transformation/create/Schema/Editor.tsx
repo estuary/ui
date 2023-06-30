@@ -9,11 +9,7 @@ export interface Props {
 }
 
 function DerivationSchemaEditor({ entityName, editorHeight }: Props) {
-    const { draftSpec, isValidating } = useDraftSpecEditor(
-        entityName,
-        'collection',
-        false
-    );
+    const { draftSpec, isValidating } = useDraftSpecEditor(entityName);
 
     if (draftSpec) {
         return <CollectionSchemaEditor entityName={entityName} />;

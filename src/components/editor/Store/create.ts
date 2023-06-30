@@ -8,7 +8,21 @@ export const isEditorActive = (status: EditorStatus) => {
     return status === EditorStatus.SAVING;
 };
 
-const getInitialStateData = () => {
+const getInitialStateData = <T>(): Pick<
+    EditorStoreState<T>,
+    | 'currentCatalog'
+    | 'discoveredDraftId'
+    | 'draftInitializationError'
+    | 'id'
+    | 'isEditing'
+    | 'isSaving'
+    | 'persistedDraftId'
+    | 'pubId'
+    | 'queryResponse'
+    | 'serverUpdate'
+    | 'specs'
+    | 'status'
+> => {
     return {
         currentCatalog: null,
         id: null,
@@ -21,6 +35,7 @@ const getInitialStateData = () => {
         status: EditorStatus.IDLE,
         serverUpdate: null,
         draftInitializationError: null,
+        queryResponse: { draftSpecs: [], isValidating: false, mutate: null },
     };
 };
 
@@ -28,7 +43,7 @@ const getInitialState = <T>(
     set: NamedSet<EditorStoreState<T>>
 ): EditorStoreState<T> => {
     return {
-        ...getInitialStateData(),
+        ...getInitialStateData<T>(),
         setId: (newVal) => {
             set(
                 produce((state) => {
@@ -127,12 +142,23 @@ const getInitialState = <T>(
             );
         },
 
+        setQueryResponse: (value) => {
+            set(
+                produce((state) => {
+                    state.queryResponse = value;
+                }),
+                false,
+                'Query Response Set'
+            );
+        },
+
         // This is a hacky, temporary solution to preserve the persisted draft ID
         // when the generate button is clicked in all workflows.
         resetState: (excludePersistedDraftId) => {
             set(
                 () => {
-                    const { persistedDraftId, ...rest } = getInitialStateData();
+                    const { persistedDraftId, ...rest } =
+                        getInitialStateData<T>();
 
                     return excludePersistedDraftId
                         ? rest

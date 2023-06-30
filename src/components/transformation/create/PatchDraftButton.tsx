@@ -3,11 +3,10 @@ import { modifyDraftSpec } from 'api/draftSpecs';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
+    useEditorStore_queryResponse_mutate,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
-import { SuccessResponse } from 'hooks/supabase-swr';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { useCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -20,17 +19,14 @@ import {
     useTransformationCreate_setSelectedAttribute,
     useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
-import { KeyedMutator } from 'swr';
 import { Transform } from 'types';
 import { stripPathing } from 'utils/misc-utils';
 
-interface Props {
-    mutateDraftSpecs: KeyedMutator<SuccessResponse<DraftSpecQuery>>;
-}
-
-function PatchDraftButton({ mutateDraftSpecs }: Props) {
+function PatchDraftButton() {
     // Draft Editor Store
     const currentCatalog = useEditorStore_currentCatalog();
+    const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
+
     const draftId = useEditorStore_persistedDraftId();
     const setDraftId = useEditorStore_setId();
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
@@ -92,7 +88,7 @@ function PatchDraftButton({ mutateDraftSpecs }: Props) {
                         error: draftSpecResponse.error,
                     },
                 });
-            } else {
+            } else if (mutateDraftSpecs) {
                 await mutateDraftSpecs();
 
                 let evaluatedAttribute = '';
@@ -110,6 +106,9 @@ function PatchDraftButton({ mutateDraftSpecs }: Props) {
 
                 setCatalogUpdating(false);
                 setFormState({ status: FormStatus.GENERATED });
+            } else {
+                setCatalogUpdating(false);
+                setFormState({ status: FormStatus.FAILED });
             }
         } else {
             setCatalogUpdating(false);
