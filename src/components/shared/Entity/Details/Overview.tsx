@@ -114,6 +114,20 @@ function Overview({ name }: Props) {
                                             }
                                         ),
                                     },
+                                    {
+                                        title: intl.formatMessage({
+                                            id: liveSpecs[0].writes_to
+                                                ? 'data.writes_to'
+                                                : liveSpecs[0].reads_from
+                                                ? 'data.reads_from'
+                                                : 'common.missing',
+                                        }),
+                                        val: liveSpecs[0].writes_to
+                                            ? liveSpecs[0].writes_to.join(', ')
+                                            : liveSpecs[0].reads_from
+                                            ? liveSpecs[0].reads_from.join(', ')
+                                            : '',
+                                    },
                                 ]}
                             />
                         </CardWrapper>

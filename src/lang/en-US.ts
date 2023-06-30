@@ -150,6 +150,8 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.pointer': `Pointer`,
     'data.exists': `Exists`,
     'data.field': `Field`,
+    'data.writes_to': `Writes To`,
+    'data.reads_from': `Reads From`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
@@ -371,8 +373,8 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.specTypeWithColon': `Type:`,
     'entityTable.data.lastPublished': `Published`,
     'entityTable.data.actions': `Actions`,
-    'entityTable.data.writesTo': `Writes To`,
-    'entityTable.data.readsFrom': `Reads From`,
+    'entityTable.data.writesTo': Data['data.writes_to'],
+    'entityTable.data.readsFrom': Data['data.reads_from'],
     'entityTable.data.status': `Status`,
     'entityTable.data.userFullName': `Name`,
     'entityTable.data.capability': `Capability`,
