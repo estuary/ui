@@ -20,6 +20,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import readable from 'readable-numbers';
 import { CARD_AREA_HEIGHT } from 'utils/billing-utils';
+import { getTooltipItem, getTooltipTitle } from '../tooltips';
 import { DataByHourRange } from '../types';
 import useLegendConfig from '../useLegendConfig';
 import useTooltipConfig from '../useTooltipConfig';
@@ -59,7 +60,7 @@ function DataByHourGraph({ range, stats }: Props) {
                 : stat.bytes_by;
 
             return {
-                ts: stat.ts,
+                ts: new Date(stat.ts),
                 docs: totalDocs,
                 bytes: totalBytes,
             };
@@ -156,6 +157,42 @@ function DataByHourGraph({ range, stats }: Props) {
                         shadowBlur: 5,
                     },
                 },
+                formatter: (tooltipConfigs: any) => {
+                    const content: string[] = [];
+
+                    tooltipConfigs.forEach((config: any) => {
+                        const { data, marker, seriesName } = config;
+                        const { ts, docs, bytes } = data;
+
+                        // format the value based on what data is showing
+                        let valueDisplay: string;
+                        if (seriesName === 'Data') {
+                            valueDisplay = prettyBytes(bytes, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            });
+                        } else {
+                            valueDisplay =
+                                docs > 0
+                                    ? readable(docs, 2, false)
+                                    : intl.formatMessage({
+                                          id: 'common.none',
+                                      });
+                        }
+
+                        // If the first item add a header
+                        if (content.length === 0) {
+                            content.push(getTooltipTitle(intl.formatTime(ts)));
+                        }
+
+                        // Generate the item html
+                        content.push(
+                            getTooltipItem(marker, seriesName, valueDisplay)
+                        );
+                    });
+
+                    return content.join('');
+                },
             },
             xAxis: {
                 axisLabel: {
@@ -223,11 +260,13 @@ function DataByHourGraph({ range, stats }: Props) {
     ]);
 
     useEffect(() => {
+        const dataset: EChartsOption['dataset'] = {
+            dimensions: [{ name: 'ts', type: 'time' }, 'docs', 'bytes'],
+
+            source: dataSet,
+        };
         myChart?.setOption({
-            dataset: {
-                dimensions: [{ name: 'ts', type: 'time' }, 'docs', 'bytes'],
-                source: dataSet,
-            },
+            dataset,
         });
     }, [dataSet, myChart]);
 
