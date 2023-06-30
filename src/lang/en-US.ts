@@ -153,6 +153,8 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.field': `Field`,
     'data.writes_to': `Writes To`,
     'data.reads_from': `Reads From`,
+    'data.data': `Data`,
+    'data.docs': `Docs`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {

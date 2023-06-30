@@ -1,7 +1,8 @@
 import { useTheme } from '@mui/material';
 import { defaultOutlineColor, paperBackground } from 'context/Theme';
+import { EChartsOption } from 'echarts';
 
-function useTooltipConfig() {
+function useTooltipConfig(): EChartsOption['tooltip'] {
     const theme = useTheme();
     return {
         backgroundColor: paperBackground[theme.palette.mode],

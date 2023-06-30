@@ -1,8 +1,10 @@
 import { useTheme } from '@mui/material';
 import { DetailsStats } from 'api/stats';
-import { eachHourOfInterval, sub } from 'date-fns';
+import { subHours } from 'date-fns';
+import { EChartsOption } from 'echarts';
 import { LineChart } from 'echarts/charts';
 import {
+    DatasetComponent,
     GridComponent,
     LegendComponent,
     MarkLineComponent,
@@ -17,9 +19,7 @@ import prettyBytes from 'pretty-bytes';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import readable from 'readable-numbers';
-import useConstant from 'use-constant';
-import { CARD_AREA_HEIGHT, SeriesConfig } from 'utils/billing-utils';
-import { getTooltipItem, getTooltipTitle } from '../tooltips';
+import { CARD_AREA_HEIGHT } from 'utils/billing-utils';
 import { DataByHourRange } from '../types';
 import useLegendConfig from '../useLegendConfig';
 import useTooltipConfig from '../useTooltipConfig';
@@ -38,21 +38,19 @@ function DataByHourGraph({ range, stats }: Props) {
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
 
-    const today = useConstant(() => new Date());
+    // const today = useConstant(() => new Date());
 
-    const hours = useMemo(() => {
-        const startDate = sub(today, { hours: range - 1 });
+    // const hours = useMemo(() => {
+    //     const startDate = sub(today, { hours: range - 1 });
 
-        return eachHourOfInterval({
-            start: startDate,
-            end: today,
-        }).map((date) => intl.formatTime(date));
-    }, [intl, today, range]);
+    //     return eachHourOfInterval({
+    //         start: startDate,
+    //         end: today,
+    //     }).map((date) => intl.formatTime(date));
+    // }, [intl, today, range]);
 
-    const seriesConfig = useMemo(() => {
-        const scopedDataSet = {};
-        stats.forEach((stat) => {
-            const formattedTime = intl.formatTime(stat.ts);
+    const dataSet = useMemo(() => {
+        return stats.map((stat) => {
             const totalDocs = stat.docs_to
                 ? stat.docs_to + stat.docs_by
                 : stat.docs_by;
@@ -60,58 +58,68 @@ function DataByHourGraph({ range, stats }: Props) {
                 ? stat.bytes_to + stat.bytes_by
                 : stat.bytes_by;
 
-            scopedDataSet[formattedTime] = {
+            return {
+                ts: stat.ts,
                 docs: totalDocs,
                 bytes: totalBytes,
             };
         });
+    }, [stats]);
 
-        // Create the series config object so we can push to the data prop
-        const bytesSeries: SeriesConfig = {
-            data: [],
-            name: 'Data',
-            type: 'line',
-            yAxisIndex: 0,
-            smooth: true,
-            markLine: {
-                data: [{ type: 'max', name: 'Max' }],
-                label: {
-                    formatter: ({ value }: any) =>
-                        prettyBytes(value, {
+    const seriesConfig: EChartsOption['series'] = useMemo(() => {
+        return [
+            {
+                encode: { y: 'bytes' },
+                markLine: {
+                    data: [{ type: 'max', name: 'Max' }],
+                    label: {
+                        position: 'start',
+                        formatter: ({ value }: any) =>
+                            prettyBytes(value, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            }),
+                    },
+                    symbolSize: 0,
+                },
+                name: intl.formatMessage({ id: 'data.data' }),
+                smooth: true,
+                tooltip: {
+                    valueFormatter: (bytes: any) => {
+                        return prettyBytes(bytes, {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
-                        }),
+                        });
+                    },
                 },
-                position: 'end',
-                symbolSize: 0,
+                type: 'line',
+                yAxisIndex: 0,
             },
-        };
-        const docsSeries: SeriesConfig = {
-            data: [],
-            name: 'Docs',
-            type: 'line',
-            yAxisIndex: 1,
-            smooth: true,
-        };
-
-        // Go through all the hours so we can snag
-        hours.forEach((hour) => {
-            const hourlyDataSet = scopedDataSet[hour];
-
-            const bytes = hourlyDataSet?.bytes ?? 0;
-            const docs = hourlyDataSet?.docs ?? 0;
-            bytesSeries.data.push([hour, bytes]);
-            docsSeries.data.push([hour, docs]);
-        });
-
-        return [bytesSeries, docsSeries];
-    }, [intl, hours, stats]);
+            {
+                encode: { y: 'docs' },
+                name: intl.formatMessage({ id: 'data.docs' }),
+                smooth: true,
+                tooltip: {
+                    valueFormatter: (docs: any) => {
+                        return docs > 0
+                            ? readable(docs, 2, false)
+                            : intl.formatMessage({
+                                  id: 'common.none',
+                              });
+                    },
+                },
+                type: 'line',
+                yAxisIndex: 1,
+            },
+        ];
+    }, [intl]);
 
     const legendConfig = useLegendConfig(seriesConfig);
 
     useEffect(() => {
         if (!myChart) {
             echarts.use([
+                DatasetComponent,
                 ToolboxComponent,
                 TooltipComponent,
                 GridComponent,
@@ -132,7 +140,7 @@ function DataByHourGraph({ range, stats }: Props) {
             myChart?.resize();
         });
 
-        const option = {
+        const option: EChartsOption = {
             animation: false,
             darkMode: theme.palette.mode === 'dark',
             legend: legendConfig,
@@ -148,56 +156,23 @@ function DataByHourGraph({ range, stats }: Props) {
                         shadowBlur: 5,
                     },
                 },
-                formatter: (tooltipConfigs: any[]) => {
-                    const content: string[] = [];
-
-                    tooltipConfigs.forEach((config) => {
-                        const { axisValueLabel, data, marker, seriesName } =
-                            config;
-                        const value = data[1];
-
-                        // format the value based on what data is showing
-                        let valueDisplay: string;
-                        if (seriesName === 'Data') {
-                            valueDisplay = prettyBytes(value, {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                            });
-                        } else {
-                            valueDisplay =
-                                value > 0
-                                    ? readable(value, 2, false)
-                                    : intl.formatMessage({
-                                          id: 'common.none',
-                                      });
-                        }
-
-                        // If the first item add a header
-                        if (content.length === 0) {
-                            content.push(getTooltipTitle(axisValueLabel));
-                        }
-
-                        // Generate the item html
-                        content.push(
-                            getTooltipItem(marker, seriesName, valueDisplay)
-                        );
-                    });
-
-                    return content.join('');
-                },
             },
             xAxis: {
-                axisTick: {
-                    alignWithLabel: true,
+                axisLabel: {
+                    formatter: (value: any) => {
+                        return intl.formatTime(value);
+                    },
                 },
-                type: 'category',
-                boundaryGap: false,
-                data: hours,
+                type: 'time',
+                min: (value: any) => {
+                    return subHours(value.max, range);
+                },
+                maxInterval: 3600 * 1000 * 1,
             },
             yAxis: [
                 {
                     alignTicks: true,
-                    name: 'Data',
+                    name: intl.formatMessage({ id: 'data.data' }),
                     type: 'value',
                     axisLine: {
                         show: true,
@@ -215,7 +190,7 @@ function DataByHourGraph({ range, stats }: Props) {
                 {
                     alignTicks: true,
                     minInterval: 1,
-                    name: 'Docs',
+                    name: intl.formatMessage({ id: 'data.docs' }),
                     position: 'right',
                     type: 'value',
                     axisLine: {
@@ -237,15 +212,24 @@ function DataByHourGraph({ range, stats }: Props) {
 
         myChart?.setOption(option);
     }, [
-        hours,
         intl,
         legendConfig,
         myChart,
+        range,
         seriesConfig,
         theme.palette.mode,
         theme.palette.text.primary,
         tooltipConfig,
     ]);
+
+    useEffect(() => {
+        myChart?.setOption({
+            dataset: {
+                dimensions: [{ name: 'ts', type: 'time' }, 'docs', 'bytes'],
+                source: dataSet,
+            },
+        });
+    }, [dataSet, myChart]);
 
     return <div id="data-by-hour" style={{ height: CARD_AREA_HEIGHT }} />;
 }

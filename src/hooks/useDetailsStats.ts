@@ -11,7 +11,10 @@ function useDetailsStats(catalogName: string) {
         hasLength(catalogName)
             ? getStatsForDetails(catalogName, entityType)
             : null,
-        extendedPollSettings
+        {
+            ...extendedPollSettings,
+            // , refreshInterval: 5000
+        }
     );
 
     return {
