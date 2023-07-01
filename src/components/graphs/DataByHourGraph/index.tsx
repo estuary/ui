@@ -1,10 +1,10 @@
 import { useTheme } from '@mui/material';
 import { DetailsStats } from 'api/stats';
-import { subHours } from 'date-fns';
 import { EChartsOption } from 'echarts';
 import { LineChart } from 'echarts/charts';
 import {
     DatasetComponent,
+    DataZoomComponent,
     GridComponent,
     LegendComponent,
     MarkLineComponent,
@@ -18,6 +18,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import prettyBytes from 'pretty-bytes';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useUpdateEffect } from 'react-use';
 import readable from 'readable-numbers';
 import { CARD_AREA_HEIGHT } from 'utils/billing-utils';
 import { getTooltipItem, getTooltipTitle } from '../tooltips';
@@ -32,40 +33,12 @@ interface Props {
 
 const colors = ['#5470C6', '#91CC75'];
 
-function DataByHourGraph({ range, stats }: Props) {
+function DataByHourGraph({ stats }: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const tooltipConfig = useTooltipConfig();
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
-
-    // const today = useConstant(() => new Date());
-
-    // const hours = useMemo(() => {
-    //     const startDate = sub(today, { hours: range - 1 });
-
-    //     return eachHourOfInterval({
-    //         start: startDate,
-    //         end: today,
-    //     }).map((date) => intl.formatTime(date));
-    // }, [intl, today, range]);
-
-    const dataSet = useMemo(() => {
-        return stats.map((stat) => {
-            const totalDocs = stat.docs_to
-                ? stat.docs_to + stat.docs_by
-                : stat.docs_by;
-            const totalBytes = stat.bytes_to
-                ? stat.bytes_to + stat.bytes_by
-                : stat.bytes_by;
-
-            return {
-                ts: new Date(stat.ts),
-                docs: totalDocs,
-                bytes: totalBytes,
-            };
-        });
-    }, [stats]);
 
     const seriesConfig: EChartsOption['series'] = useMemo(() => {
         return [
@@ -118,8 +91,11 @@ function DataByHourGraph({ range, stats }: Props) {
     const legendConfig = useLegendConfig(seriesConfig);
 
     useEffect(() => {
+        console.log('Starting up eCharts');
+
         if (!myChart) {
             echarts.use([
+                DataZoomComponent,
                 DatasetComponent,
                 ToolboxComponent,
                 TooltipComponent,
@@ -136,14 +112,31 @@ function DataByHourGraph({ range, stats }: Props) {
 
             setMyChart(chartDom && echarts.init(chartDom));
         }
+    }, [myChart]);
+
+    useUpdateEffect(() => {
+        console.log('Adding echarts resizer');
 
         window.addEventListener('resize', () => {
             myChart?.resize();
         });
+    }, [myChart]);
+
+    useEffect(() => {
+        console.log('main effect running here');
 
         const option: EChartsOption = {
             animation: false,
             darkMode: theme.palette.mode === 'dark',
+            dataZoom: [
+                {
+                    type: 'slider',
+                    show: true,
+                    xAxisIndex: [0],
+                    start: 0,
+                    end: 100,
+                },
+            ],
             legend: legendConfig,
             textStyle: {
                 color: theme.palette.text.primary,
@@ -194,18 +187,16 @@ function DataByHourGraph({ range, stats }: Props) {
                     return content.join('');
                 },
             },
-            xAxis: {
-                axisLabel: {
-                    formatter: (value: any) => {
-                        return intl.formatTime(value);
+            xAxis: [
+                {
+                    axisLabel: {
+                        formatter: (value: any) => {
+                            return intl.formatTime(value);
+                        },
                     },
+                    type: 'time',
                 },
-                type: 'time',
-                min: (value: any) => {
-                    return subHours(value.max, range);
-                },
-                maxInterval: 3600 * 1000 * 1,
-            },
+            ],
             yAxis: [
                 {
                     alignTicks: true,
@@ -252,13 +243,31 @@ function DataByHourGraph({ range, stats }: Props) {
         intl,
         legendConfig,
         myChart,
-        range,
         seriesConfig,
         theme.palette.mode,
         theme.palette.text.primary,
         tooltipConfig,
     ]);
 
+    // Update the set as we get fresh stats
+    const dataSet = useMemo(() => {
+        return stats.map((stat) => {
+            const totalDocs = stat.docs_to
+                ? stat.docs_to + stat.docs_by
+                : stat.docs_by;
+            const totalBytes = stat.bytes_to
+                ? stat.bytes_to + stat.bytes_by
+                : stat.bytes_by;
+
+            return {
+                ts: new Date(stat.ts),
+                docs: totalDocs,
+                bytes: totalBytes,
+            };
+        });
+    }, [stats]);
+
+    // Update the dataset
     useEffect(() => {
         const dataset: EChartsOption['dataset'] = {
             dimensions: [{ name: 'ts', type: 'time' }, 'docs', 'bytes'],

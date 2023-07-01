@@ -17,10 +17,10 @@ interface Props {
 }
 
 function Usage({ catalogName }: Props) {
-    const { isValidating, stats, error } = useDetailsStats(catalogName);
-    const statsPopulated = hasLength(stats);
-
     const [range, setRange] = useState<DataByHourRange>(6);
+
+    const { isValidating, stats, error } = useDetailsStats(catalogName, range);
+    const statsPopulated = hasLength(stats);
 
     return (
         <Stack direction="column" spacing={2} sx={{ ...tooltipSX, m: 2 }}>

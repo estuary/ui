@@ -45,11 +45,11 @@ function Overview({ name }: Props) {
         <Grid container spacing={2}>
             <Endpoints name={entityName} />
 
-            <Grid item xs={9}>
+            <Grid item xs={8}>
                 <Usage catalogName={entityName} />
             </Grid>
 
-            <Grid item xs={3}>
+            <Grid item xs={4}>
                 {validatingLiveSpecs ? (
                     <CircularProgress />
                 ) : (

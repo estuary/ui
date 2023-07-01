@@ -1,3 +1,5 @@
+import { DataByHourRange } from 'components/graphs/types';
+
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import {
     endOfWeek,
@@ -189,9 +191,13 @@ const getStatsForBilling = (tenants: string[], startDate: string) => {
         .order('ts', { ascending: false });
 };
 
-const getStatsForDetails = (catalogName: string, entityType: Entity) => {
+const getStatsForDetails = (
+    catalogName: string,
+    entityType: Entity,
+    range?: DataByHourRange
+) => {
     const today = new Date();
-    const past = subHours(today, 6);
+    const past = range ? subHours(today, range) : today;
 
     let query: string;
     switch (entityType) {
