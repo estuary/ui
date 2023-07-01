@@ -57,6 +57,7 @@ function DataByHourGraph({ stats }: Props) {
                     symbolSize: 0,
                 },
                 name: intl.formatMessage({ id: 'data.data' }),
+                showSymbol: false,
                 smooth: true,
                 tooltip: {
                     valueFormatter: (bytes: any) => {
@@ -72,6 +73,7 @@ function DataByHourGraph({ stats }: Props) {
             {
                 encode: { y: 'docs' },
                 name: intl.formatMessage({ id: 'data.docs' }),
+                showSymbol: false,
                 smooth: true,
                 tooltip: {
                     valueFormatter: (docs: any) => {
@@ -259,8 +261,11 @@ function DataByHourGraph({ stats }: Props) {
                 ? stat.bytes_to + stat.bytes_by
                 : stat.bytes_by;
 
+            const ts = new Date(stat.ts);
+            console.log('ts', ts);
+
             return {
-                ts: new Date(stat.ts),
+                ts,
                 docs: totalDocs,
                 bytes: totalBytes,
             };
