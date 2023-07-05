@@ -1,66 +1,64 @@
-import { getStatsForDetails } from 'api/stats';
+import { DetailsStats, getStatsForDetails } from 'api/stats';
 import { DataByHourRange } from 'components/graphs/types';
 import { useEntityType } from 'context/EntityContext';
-import { formatInTimeZone } from 'date-fns-tz';
 import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
-import { useEffect, useState } from 'react';
-import { useInterval, useList } from 'react-use';
-import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 function useDetailsStats(catalogName: string, range: DataByHourRange) {
     const entityType = useEntityType();
 
-    const [localRange, setLocalRange] = useState<DataByHourRange | undefined>(
-        range
-    );
-
-    const [detailsStats, { set, insertAt }] = useList<any>([]);
-
-    const { data, error, mutate, isValidating } = useSelectNew(
+    const { data, error, mutate, isValidating } = useSelectNew<DetailsStats>(
         hasLength(catalogName)
-            ? getStatsForDetails(catalogName, entityType, localRange)
+            ? getStatsForDetails(catalogName, entityType, range)
             : null
     );
 
-    useInterval(async () => {
-        console.log('calling mutate');
-        setLocalRange(undefined);
-        await mutate();
-    }, 15000);
+    // This is some work to get the data streaming in after
+    //  it does the initial fetching of data. Not currently used
+    //  but leaving as a potential example.
+    //     const [localRange, setLocalRange] = useState<DataByHourRange | undefined>(
+    //     range
+    // );
 
-    useEffect(() => {
-        console.log('Range changed so updating');
-        setLocalRange(range);
-    }, [range]);
+    // const [detailsStats, { set, insertAt }] = useList<any>([]);
+    // useInterval(async () => {
+    //     console.log('calling mutate');
+    //     setLocalRange(undefined);
+    //     await mutate();
+    // }, 15000);
 
-    useEffect(() => {
-        if (!isValidating && data?.data) {
-            if (data.data.length > 1) {
-                console.log('setting the state', { data });
-                set(data.data);
-            } else {
-                console.log('updating the state', { data });
-                const freshData = data.data[0] as Schema;
+    // useEffect(() => {
+    //     console.log('Range changed so updating');
+    //     setLocalRange(range);
+    // }, [range]);
 
-                const ts = formatInTimeZone(
-                    new Date(),
-                    'GMT',
-                    `yyyy-MM-dd HH:mm:ssxxx`
-                ).replace(' ', 'T');
+    // useEffect(() => {
+    //     if (!isValidating && data?.data) {
+    //         if (data.data.length > 1) {
+    //             console.log('setting the state', { data });
+    //             set(data.data);
+    //         } else {
+    //             console.log('updating the state', { data });
+    //             const freshData = data.data[0] as Schema;
 
-                console.log('timeZonedCurretTime', ts);
+    //             const ts = formatInTimeZone(
+    //                 new Date(),
+    //                 'GMT',
+    //                 `yyyy-MM-dd HH:mm:ssxxx`
+    //             ).replace(' ', 'T');
 
-                insertAt(0, {
-                    ...freshData,
-                    ts,
-                });
-            }
-        }
-    }, [isValidating, data, insertAt, set]);
+    //             console.log('timeZonedCurretTime', ts);
+
+    //             insertAt(0, {
+    //                 ...freshData,
+    //                 ts,
+    //             });
+    //         }
+    //     }
+    // }, [isValidating, data, insertAt, set]);
 
     return {
-        stats: detailsStats,
+        stats: data ? data.data : [],
         error,
         mutate,
         isValidating,

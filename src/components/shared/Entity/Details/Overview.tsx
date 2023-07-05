@@ -10,8 +10,9 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useLiveSpecs from 'hooks/useLiveSpecs';
+import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { specContainsDerivation } from 'utils/misc-utils';
+import { hasLength, specContainsDerivation } from 'utils/misc-utils';
 import ShardInformation from '../Shard/Information';
 import Endpoints from './Endpoints';
 import Usage from './Usage';
@@ -24,11 +25,15 @@ interface Props {
 
 function Overview({ name }: Props) {
     const intl = useIntl();
+
     const entityType = useEntityType();
     const isCollection = entityType === 'collection';
-
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const entityName = name ?? catalogName;
+    const { liveSpecs, isValidating: validatingLiveSpecs } = useLiveSpecs(
+        entityType,
+        entityName
+    );
 
     const currentCatalog = useEditorStore_currentCatalog({
         localScope: true,
@@ -36,9 +41,10 @@ function Overview({ name }: Props) {
     const catalogSpec = currentCatalog?.spec ?? null;
     const { isDerivation } = specContainsDerivation(catalogSpec);
 
-    const { liveSpecs, isValidating: validatingLiveSpecs } = useLiveSpecs(
-        entityType,
-        entityName
+    const latestLiveSpec = useMemo(
+        () =>
+            !validatingLiveSpecs && hasLength(liveSpecs) ? liveSpecs[0] : null,
+        [liveSpecs, validatingLiveSpecs]
     );
 
     return (
@@ -46,11 +52,14 @@ function Overview({ name }: Props) {
             <Endpoints name={entityName} />
 
             <Grid item xs={8}>
-                <Usage catalogName={entityName} />
+                <Usage
+                    catalogName={entityName}
+                    createdAt={latestLiveSpec?.created_at}
+                />
             </Grid>
 
             <Grid item xs={4}>
-                {validatingLiveSpecs ? (
+                {!latestLiveSpec ? (
                     <CircularProgress />
                 ) : (
                     <Stack
@@ -70,10 +79,12 @@ function Overview({ name }: Props) {
                             </Typography>
                         </Stack>
                         <CardWrapper>
-                            {liveSpecs[0].connector_logo_url ? (
+                            {latestLiveSpec.connector_logo_url ? (
                                 <ConnectorLogo
                                     imageSrc={
-                                        liveSpecs[0].connector_logo_url['en-us']
+                                        latestLiveSpec.connector_logo_url[
+                                            'en-us'
+                                        ]
                                     }
                                     maxHeight={35}
                                     padding="0 0.5rem"
@@ -91,14 +102,14 @@ function Overview({ name }: Props) {
                                             id: 'data.updated_at',
                                         }),
                                         val: `${intl.formatDate(
-                                            liveSpecs[0].updated_at,
+                                            latestLiveSpec.updated_at,
                                             {
                                                 day: 'numeric',
                                                 month: 'long',
                                                 year: 'numeric',
                                             }
                                         )} by ${
-                                            liveSpecs[0].last_pub_user_email
+                                            latestLiveSpec.last_pub_user_email
                                         }`,
                                     },
                                     {
@@ -106,7 +117,7 @@ function Overview({ name }: Props) {
                                             id: 'data.created_at',
                                         }),
                                         val: intl.formatDate(
-                                            liveSpecs[0].created_at,
+                                            latestLiveSpec.created_at,
                                             {
                                                 day: 'numeric',
                                                 month: 'long',
@@ -116,16 +127,20 @@ function Overview({ name }: Props) {
                                     },
                                     {
                                         title: intl.formatMessage({
-                                            id: liveSpecs[0].writes_to
+                                            id: latestLiveSpec.writes_to
                                                 ? 'data.writes_to'
-                                                : liveSpecs[0].reads_from
+                                                : latestLiveSpec.reads_from
                                                 ? 'data.reads_from'
                                                 : 'common.missing',
                                         }),
-                                        val: liveSpecs[0].writes_to
-                                            ? liveSpecs[0].writes_to.join(', ')
-                                            : liveSpecs[0].reads_from
-                                            ? liveSpecs[0].reads_from.join(', ')
+                                        val: latestLiveSpec.writes_to
+                                            ? latestLiveSpec.writes_to.join(
+                                                  ', '
+                                              )
+                                            : latestLiveSpec.reads_from
+                                            ? latestLiveSpec.reads_from.join(
+                                                  ', '
+                                              )
                                             : '',
                                     },
                                 ]}

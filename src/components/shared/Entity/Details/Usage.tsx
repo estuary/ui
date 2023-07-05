@@ -14,9 +14,10 @@ import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     catalogName: string;
+    createdAt?: string;
 }
 
-function Usage({ catalogName }: Props) {
+function Usage({ catalogName, createdAt }: Props) {
     const [range, setRange] = useState<DataByHourRange>(6);
 
     const { isValidating, stats, error } = useDetailsStats(catalogName, range);
@@ -35,6 +36,7 @@ function Usage({ catalogName }: Props) {
                     <FormattedMessage id="detailsPanel.dataUsage.title" />
                 </Typography>
             </Stack>
+
             {isValidating && !statsPopulated ? (
                 <GraphLoadingState />
             ) : error ? (
@@ -51,7 +53,11 @@ function Usage({ catalogName }: Props) {
                         <HourlyRangeFilter range={range} setRange={setRange} />
                     }
                 >
-                    <DataByHourGraph stats={stats} range={range} />
+                    <DataByHourGraph
+                        stats={stats}
+                        range={range}
+                        createdAt={createdAt}
+                    />
                 </CardWrapper>
             )}
         </Stack>
