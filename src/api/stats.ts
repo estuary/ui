@@ -219,7 +219,7 @@ const getStatsForDetails = (
         .select(query)
         .eq('catalog_name', catalogName)
         .eq('grain', 'hourly')
-        .gte('ts', formatToGMT(past, true))
+        .gt('ts', formatToGMT(past, true))
         .lte('ts', formatToGMT(today, true))
         .order('ts', { ascending: false });
 };

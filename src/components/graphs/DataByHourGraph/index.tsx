@@ -1,7 +1,7 @@
 import { useTheme } from '@mui/material';
 import { DetailsStats } from 'api/stats';
 import { defaultOutlineColor, infoMain } from 'context/Theme';
-import { formatRFC3339, parseISO, startOfHour, subHours } from 'date-fns';
+import { formatRFC3339, parseISO, startOfHour } from 'date-fns';
 import { EChartsOption } from 'echarts';
 import { BarChart, LineChart } from 'echarts/charts';
 import {
@@ -83,11 +83,16 @@ function DataByHourGraph({ createdAt, range, stats }: Props) {
                         coord: [xAxis, 0],
                     },
                 ],
+                label: {
+                    formatter: () => {
+                        return intl.formatMessage({
+                            id: 'detailsPanel.recentUsage.createdAt.label',
+                        });
+                    },
+                },
                 itemStyle: {
                     color: infoMain,
                 },
-                symbol: 'pin',
-                symbolSize: 10,
             };
         }
 
@@ -177,8 +182,6 @@ function DataByHourGraph({ createdAt, range, stats }: Props) {
                             return intl.formatTime(value);
                         },
                     },
-                    min: subHours(new Date(), range),
-                    max: new Date(),
                     type: 'time',
                 },
             ],
@@ -187,6 +190,7 @@ function DataByHourGraph({ createdAt, range, stats }: Props) {
                     alignTicks: true,
                     name: intl.formatMessage({ id: 'data.data' }),
                     type: 'value',
+                    position: 'left',
                     axisLabel: {
                         color: colors[0],
                         formatter: (value: any) => {
