@@ -1,10 +1,10 @@
 import { useTheme } from '@mui/material';
 import { DetailsStats } from 'api/stats';
+import { eachHourOfInterval, sub } from 'date-fns';
 import { EChartsOption } from 'echarts';
-import { LineChart } from 'echarts/charts';
+import { LineChart, ScatterChart } from 'echarts/charts';
 import {
     DatasetComponent,
-    DataZoomComponent,
     GridComponent,
     LegendComponent,
     MarkLineComponent,
@@ -33,12 +33,22 @@ interface Props {
 
 const colors = ['#5470C6', '#91CC75'];
 
-function DataByHourGraph({ stats }: Props) {
+function DataByHourGraph({ range, stats }: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const tooltipConfig = useTooltipConfig();
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
+
+    const hours = useMemo(() => {
+        const today = new Date();
+        const startDate = sub(today, { hours: range - 1 });
+
+        return eachHourOfInterval({
+            start: startDate,
+            end: today,
+        }).map((date) => intl.formatTime(date));
+    }, [intl, range]);
 
     const seriesConfig: EChartsOption['series'] = useMemo(() => {
         return [
@@ -59,14 +69,6 @@ function DataByHourGraph({ stats }: Props) {
                 name: intl.formatMessage({ id: 'data.data' }),
                 showSymbol: false,
                 smooth: true,
-                tooltip: {
-                    valueFormatter: (bytes: any) => {
-                        return prettyBytes(bytes, {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                        });
-                    },
-                },
                 type: 'line',
                 yAxisIndex: 0,
             },
@@ -75,15 +77,6 @@ function DataByHourGraph({ stats }: Props) {
                 name: intl.formatMessage({ id: 'data.docs' }),
                 showSymbol: false,
                 smooth: true,
-                tooltip: {
-                    valueFormatter: (docs: any) => {
-                        return docs > 0
-                            ? readable(docs, 2, false)
-                            : intl.formatMessage({
-                                  id: 'common.none',
-                              });
-                    },
-                },
                 type: 'line',
                 yAxisIndex: 1,
             },
@@ -97,7 +90,6 @@ function DataByHourGraph({ stats }: Props) {
 
         if (!myChart) {
             echarts.use([
-                DataZoomComponent,
                 DatasetComponent,
                 ToolboxComponent,
                 TooltipComponent,
@@ -108,6 +100,7 @@ function DataByHourGraph({ stats }: Props) {
                 UniversalTransition,
                 MarkLineComponent,
                 MarkPointComponent,
+                ScatterChart,
             ]);
 
             const chartDom = document.getElementById('data-by-hour');
@@ -130,15 +123,6 @@ function DataByHourGraph({ stats }: Props) {
         const option: EChartsOption = {
             animation: false,
             darkMode: theme.palette.mode === 'dark',
-            dataZoom: [
-                {
-                    type: 'slider',
-                    show: true,
-                    xAxisIndex: [0],
-                    start: 0,
-                    end: 100,
-                },
-            ],
             legend: legendConfig,
             textStyle: {
                 color: theme.palette.text.primary,
@@ -177,7 +161,7 @@ function DataByHourGraph({ stats }: Props) {
 
                         // If the first item add a header
                         if (content.length === 0) {
-                            content.push(getTooltipTitle(intl.formatTime(ts)));
+                            content.push(getTooltipTitle(ts));
                         }
 
                         // Generate the item html
@@ -191,12 +175,12 @@ function DataByHourGraph({ stats }: Props) {
             },
             xAxis: [
                 {
-                    axisLabel: {
-                        formatter: (value: any) => {
-                            return intl.formatTime(value);
-                        },
+                    axisTick: {
+                        alignWithLabel: true,
                     },
-                    type: 'time',
+                    type: 'category',
+                    boundaryGap: false,
+                    data: hours,
                 },
             ],
             yAxis: [
@@ -242,6 +226,7 @@ function DataByHourGraph({ stats }: Props) {
 
         myChart?.setOption(option);
     }, [
+        hours,
         intl,
         legendConfig,
         myChart,
@@ -261,7 +246,7 @@ function DataByHourGraph({ stats }: Props) {
                 ? stat.bytes_to + stat.bytes_by
                 : stat.bytes_by;
 
-            const ts = new Date(stat.ts);
+            const ts = intl.formatTime(stat.ts);
             console.log('ts', ts);
 
             return {
@@ -275,8 +260,7 @@ function DataByHourGraph({ stats }: Props) {
     // Update the dataset
     useEffect(() => {
         const dataset: EChartsOption['dataset'] = {
-            dimensions: [{ name: 'ts', type: 'time' }, 'docs', 'bytes'],
-
+            dimensions: ['ts', 'docs', 'bytes'],
             source: dataSet,
         };
         myChart?.setOption({
