@@ -211,14 +211,15 @@ function DataByMonthGraph() {
             myChart?.setOption(option);
         }
     }, [
-        setMyChart,
         billingHistory,
         billingStoreHydrated,
         intl,
         months,
         myChart,
         seriesConfig,
-        theme,
+        theme.palette.mode,
+        theme.palette.text.primary,
+        tooltipConfig,
     ]);
 
     return <div id="data-by-month" style={{ height: CARD_AREA_HEIGHT }} />;

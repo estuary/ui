@@ -1,6 +1,7 @@
 import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import { DataByHourRange } from 'components/graphs/types';
 import { linkButtonSx } from 'context/Theme';
+import { Filter } from 'iconoir-react';
 import React, { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -41,6 +42,7 @@ function HourlyRangeFilter({ range, setRange }: Props) {
                 aria-expanded={open ? 'true' : undefined}
                 variant="text"
                 disableElevation
+                endIcon={<Filter style={{ fontSize: 13 }} />}
                 onClick={handlers.openMenu}
                 sx={{ ...linkButtonSx }}
             >

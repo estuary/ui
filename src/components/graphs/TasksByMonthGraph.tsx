@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material';
-import { defaultOutlineColor, paperBackground } from 'context/Theme';
+import { defaultOutlineColor } from 'context/Theme';
 import {
     eachMonthOfInterval,
     isWithinInterval,
@@ -28,12 +28,14 @@ import {
     SeriesNames,
     stripTimeFromDate,
 } from 'utils/billing-utils';
+import useTooltipConfig from './useTooltipConfig';
 
 const stackId = 'Task Count';
 
 function DataByMonthGraph() {
     const theme = useTheme();
     const intl = useIntl();
+    const tooltipConfig = useTooltipConfig();
 
     const billingStoreHydrated = useBilling_hydrated();
     const billingHistory = useBilling_billingHistory();
@@ -144,16 +146,7 @@ function DataByMonthGraph() {
                     color: theme.palette.text.primary,
                 },
                 tooltip: {
-                    backgroundColor: paperBackground[theme.palette.mode],
-                    borderColor: defaultOutlineColor[theme.palette.mode],
-                    trigger: 'axis',
-                    textStyle: {
-                        color: theme.palette.text.primary,
-                        fontWeight: 'normal',
-                    },
-                    axisPointer: {
-                        type: 'shadow',
-                    },
+                    ...tooltipConfig,
                     formatter: (tooltipConfigs: any[]) => {
                         let content: string | undefined;
 
@@ -218,7 +211,6 @@ function DataByMonthGraph() {
             myChart?.setOption(option);
         }
     }, [
-        setMyChart,
         billingHistory,
         billingStoreHydrated,
         intl,
@@ -227,6 +219,7 @@ function DataByMonthGraph() {
         seriesConfig,
         theme.palette.mode,
         theme.palette.text.primary,
+        tooltipConfig,
     ]);
 
     return <div id="tasks-by-month" style={{ height: CARD_AREA_HEIGHT }} />;

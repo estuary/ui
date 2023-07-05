@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material';
-import { defaultOutlineColor, paperBackground } from 'context/Theme';
+import { defaultOutlineColor } from 'context/Theme';
 import {
     eachMonthOfInterval,
     isWithinInterval,
@@ -33,6 +33,7 @@ import {
 } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
 import useLegendConfig from './useLegendConfig';
+import useTooltipConfig from './useTooltipConfig';
 
 const evaluateLargestDataProcessingTasks = (
     dataVolumeByTask: DataVolumeByTask[]
@@ -64,6 +65,7 @@ const evaluateLargestDataProcessingTasks = (
 function DataByTaskGraph() {
     const theme = useTheme();
     const intl = useIntl();
+    const tooltipConfig = useTooltipConfig();
 
     const billingStoreHydrated = useBilling_hydrated();
     const dataByTaskGraphDetails = useBilling_dataByTaskGraphDetails();
@@ -166,16 +168,7 @@ function DataByTaskGraph() {
                     color: theme.palette.text.primary,
                 },
                 tooltip: {
-                    backgroundColor: paperBackground[theme.palette.mode],
-                    borderColor: defaultOutlineColor[theme.palette.mode],
-                    trigger: 'axis',
-                    textStyle: {
-                        color: theme.palette.text.primary,
-                        fontWeight: 'normal',
-                    },
-                    axisPointer: {
-                        type: 'shadow',
-                    },
+                    ...tooltipConfig,
                     formatter: (tooltipConfigs: any[]) => {
                         let content: string | undefined;
 
@@ -241,6 +234,7 @@ function DataByTaskGraph() {
         seriesConfig,
         theme.palette.mode,
         theme.palette.text.primary,
+        tooltipConfig,
     ]);
 
     return <div id="data-by-task" style={{ height: CARD_AREA_HEIGHT }} />;

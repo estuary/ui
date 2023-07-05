@@ -1,4 +1,5 @@
 import { CircularProgress, Grid, Stack, Typography } from '@mui/material';
+import { authenticatedRoutes } from 'app/routes';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import { DataPreview } from 'components/collection/DataPreview';
 import ConnectorLogo from 'components/connectors/card/Logo';
@@ -9,13 +10,14 @@ import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
+import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { hasLength, specContainsDerivation } from 'utils/misc-utils';
-import ShardInformation from '../Shard/Information';
-import Endpoints from './Endpoints';
-import Usage from './Usage';
+import ShardInformation from '../../Shard/Information';
+import Endpoints from '../Endpoints';
+import Usage from '../Usage';
 
 // TODO (details page)
 // Temporary - allow to pass in the name
@@ -46,6 +48,17 @@ function Overview({ name }: Props) {
             !validatingLiveSpecs && hasLength(liveSpecs) ? liveSpecs[0] : null,
         [liveSpecs, validatingLiveSpecs]
     );
+
+    const { generatePath } = useDetailsNavigator(
+        authenticatedRoutes.captures.details.overview.fullPath
+    );
+
+    // const foo = generatePath({
+    //     catalog_name: entityName,
+    //     last_pub_id:
+    // });
+
+    console.log('foo', generatePath);
 
     return (
         <Grid container spacing={2}>
@@ -122,6 +135,8 @@ function Overview({ name }: Props) {
                                                 day: 'numeric',
                                                 month: 'long',
                                                 year: 'numeric',
+                                                hour: 'numeric',
+                                                minute: 'numeric',
                                             }
                                         ),
                                     },

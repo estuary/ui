@@ -1,8 +1,9 @@
 import { useTheme } from '@mui/material';
 import { DetailsStats } from 'api/stats';
+import { defaultOutlineColor, infoMain } from 'context/Theme';
 import { formatRFC3339, parseISO, startOfHour, subHours } from 'date-fns';
 import { EChartsOption } from 'echarts';
-import { LineChart } from 'echarts/charts';
+import { BarChart, LineChart } from 'echarts/charts';
 import {
     DatasetComponent,
     GridComponent,
@@ -55,41 +56,37 @@ function DataByHourGraph({ createdAt, range, stats }: Props) {
                 },
                 symbolSize: 0,
             },
+            barMinHeight: 10,
             name: intl.formatMessage({ id: 'data.data' }),
-            showSymbol: false,
-            smooth: true,
-            type: 'line',
+            type: 'bar',
             yAxisIndex: 0,
         };
 
         const docsSeries: EChartsOption['series'] = {
+            barMinHeight: 10,
             encode: { y: 'docs' },
             name: intl.formatMessage({ id: 'data.docs' }),
-            showSymbol: false,
-            smooth: true,
-            type: 'line',
+            type: 'bar',
             yAxisIndex: 1,
         };
 
         if (createdAt) {
             const xAxis = formatRFC3339(startOfHour(parseISO(createdAt)));
-            console.log('x', xAxis);
-            docsSeries.markPoint = {
+            // const xAxis = formatRFC3339(parseISO(createdAt));
+
+            bytesSeries.markPoint = {
                 data: [
                     {
-                        name: 'Creation',
+                        name: intl.formatMessage({
+                            id: 'detailsPanel.recentUsage.createdAt.label',
+                        }),
                         coord: [xAxis, 0],
                     },
                 ],
-                label: {
-                    formatter: () =>
-                        intl.formatMessage({ id: 'data.created_at' }),
-                    position: 'top',
-                },
                 itemStyle: {
-                    color: '#ff0000',
+                    color: infoMain,
                 },
-                symbol: 'circle',
+                symbol: 'pin',
                 symbolSize: 10,
             };
         }
@@ -108,6 +105,7 @@ function DataByHourGraph({ createdAt, range, stats }: Props) {
                 GridComponent,
                 LegendComponent,
                 LineChart,
+                BarChart,
                 CanvasRenderer,
                 UniversalTransition,
                 MarkPointComponent,
@@ -135,10 +133,6 @@ function DataByHourGraph({ createdAt, range, stats }: Props) {
             },
             tooltip: {
                 ...tooltipConfig,
-                axisPointer: {
-                    snap: true,
-                    type: 'line',
-                },
                 formatter: (tooltipConfigs: any) => {
                     const content: string[] = [];
 
@@ -193,16 +187,15 @@ function DataByHourGraph({ createdAt, range, stats }: Props) {
                     alignTicks: true,
                     name: intl.formatMessage({ id: 'data.data' }),
                     type: 'value',
-                    axisLine: {
-                        show: true,
-                        lineStyle: {
-                            color: colors[0],
-                        },
-                    },
                     axisLabel: {
                         color: colors[0],
                         formatter: (value: any) => {
                             return prettyBytes(value);
+                        },
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: defaultOutlineColor[theme.palette.mode],
                         },
                     },
                 },
@@ -212,16 +205,15 @@ function DataByHourGraph({ createdAt, range, stats }: Props) {
                     name: intl.formatMessage({ id: 'data.docs' }),
                     position: 'right',
                     type: 'value',
-                    axisLine: {
-                        show: true,
-                        lineStyle: {
-                            color: colors[1],
-                        },
-                    },
                     axisLabel: {
                         color: colors[1],
                         formatter: (value: any) => {
                             return readable(value, 1, true);
+                        },
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: defaultOutlineColor[theme.palette.mode],
                         },
                     },
                 },

@@ -757,6 +757,7 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.recentUsage.title.prefix': `Past`,
     'detailsPanel.recentUsage.range.label': `Timeframe`,
     'detailsPanel.recentUsage.filter.label': `{range} hours`,
+    'detailsPanel.recentUsage.createdAt.label': `Creation hour`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
