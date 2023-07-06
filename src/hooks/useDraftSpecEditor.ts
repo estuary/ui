@@ -9,11 +9,15 @@ import {
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
 import { DraftSpec } from 'hooks/useDraftSpecs';
-import { useCallback, useEffect, useState } from 'react';
+import { get, has, set } from 'lodash';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { stringifyJSON } from 'services/stringify';
+import { Entity } from 'types';
 
 function useDraftSpecEditor(
     entityName: string | undefined,
-    localScope?: boolean
+    localScope?: boolean,
+    editorSchemaScope?: AllowedScopes | string
 ) {
     // Local State
     const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
@@ -33,16 +37,31 @@ function useDraftSpecEditor(
     });
     const mutate = useEditorStore_queryResponse_mutate({ localScope });
 
+    const specAsString = useMemo(() => {
+        let spec = draftSpec?.spec ?? null;
+
+        if (draftSpec?.spec && editorSchemaScope) {
+            // If there is a schema scope make sure it exists first
+            //  otherwise we will fall back to the schema prop
+            // This is just being super safe
+            spec = has(draftSpec.spec, editorSchemaScope)
+                ? get(draftSpec.spec, editorSchemaScope)
+                : draftSpec.spec.schema;
+        }
+
+        return stringifyJSON(spec);
+    }, [draftSpec, editorSchemaScope]);
+
     const processEditorValue = useCallback(
         async (
             newVal: any,
             catalogName: string,
-            specType: string,
-            propUpdating?: AllowedScopes
+            specType: Entity,
+            propUpdating?: AllowedScopes | string
         ) => {
             if (mutate && draftSpec) {
                 if (propUpdating) {
-                    draftSpec.spec[propUpdating] = newVal;
+                    set(draftSpec.spec, propUpdating, newVal);
                 } else {
                     draftSpec.spec = newVal;
                 }
@@ -50,6 +69,7 @@ function useDraftSpecEditor(
                 const updateResponse = await modifyDraftSpec(draftSpec.spec, {
                     draft_id: draftId,
                     catalog_name: catalogName,
+                    spec_type: specType,
                 });
 
                 if (updateResponse.error) {
@@ -118,6 +138,7 @@ function useDraftSpecEditor(
         draftSpec,
         isValidating,
         mutate,
+        defaultValue: specAsString,
     };
 }
 

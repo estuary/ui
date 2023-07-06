@@ -1,4 +1,5 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
+import { AllowedScopes } from 'components/editor/MonacoEditor/types';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
@@ -7,12 +8,16 @@ import {
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
 import { DraftSpec } from 'hooks/useDraftSpecs';
-import { useCallback, useEffect, useState } from 'react';
+import { set } from 'lodash';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     useTransformationCreate_attributeType,
     useTransformationCreate_migrations,
+    useTransformationCreate_patchSelectedAttribute,
+    useTransformationCreate_selectedAttribute,
     useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
+import { Entity } from 'types';
 import { updateMigrations, updateTransforms } from 'utils/derivation-utils';
 
 function useSQLEditor(entityName: string) {
@@ -28,31 +33,62 @@ function useSQLEditor(entityName: string) {
     const transformConfigs = useTransformationCreate_transformConfigs();
     const migrations = useTransformationCreate_migrations();
     const attributeType = useTransformationCreate_attributeType();
+    const attributeId = useTransformationCreate_selectedAttribute();
+    const patchSelectedAttribute =
+        useTransformationCreate_patchSelectedAttribute();
 
     const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
 
+    const defaultSQL = useMemo(() => {
+        if (
+            attributeType === 'transform' &&
+            Object.hasOwn(transformConfigs, attributeId)
+        ) {
+            return transformConfigs[attributeId].lambda;
+        } else if (
+            attributeType === 'migration' &&
+            Object.hasOwn(migrations, attributeId)
+        ) {
+            return migrations[attributeId];
+        } else {
+            return '';
+        }
+    }, [attributeType, migrations, transformConfigs, attributeId]);
+
     const processEditorValue = useCallback(
-        async (value: any, attributeId: string) => {
+        async (
+            value: any,
+            catalogName: string,
+            specType: Entity,
+            propUpdating?: AllowedScopes | string
+        ) => {
             if (mutateDraftSpecs && draftSpec) {
-                if (attributeType === 'transform') {
-                    draftSpec.spec.derive.transforms = updateTransforms(
-                        transformConfigs[attributeId].name,
-                        value,
-                        transformConfigs
-                    );
+                if (propUpdating) {
+                    const evaluatedAttribute =
+                        attributeType === 'transform'
+                            ? updateTransforms(
+                                  transformConfigs[attributeId].name,
+                                  value,
+                                  transformConfigs
+                              )
+                            : updateMigrations(attributeId, value, migrations);
+
+                    set(draftSpec.spec, propUpdating, evaluatedAttribute);
                 } else {
-                    draftSpec.spec.derive.using.sqlite.migrations =
-                        updateMigrations(attributeId, value, migrations);
+                    draftSpec.spec = value;
                 }
 
                 const updateResponse = await modifyDraftSpec(draftSpec.spec, {
                     draft_id: draftId,
-                    catalog_name: entityName,
+                    catalog_name: catalogName,
+                    spec_type: specType,
                 });
 
                 if (updateResponse.error) {
                     return Promise.reject();
                 }
+
+                patchSelectedAttribute(value);
 
                 return mutateDraftSpecs();
             } else {
@@ -60,6 +96,8 @@ function useSQLEditor(entityName: string) {
             }
         },
         [
+            patchSelectedAttribute,
+            attributeId,
             attributeType,
             draftId,
             draftSpec,
@@ -98,6 +136,7 @@ function useSQLEditor(entityName: string) {
     return {
         onChange: processEditorValue,
         draftSpec,
+        defaultValue: defaultSQL,
     };
 }
 

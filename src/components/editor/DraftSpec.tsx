@@ -20,10 +20,8 @@ function DraftSpecEditor({
 }: Props) {
     // useHydrateEditorState(entityType, entityName, localZustandScope);
 
-    const { draftSpec, isValidating, onChange } = useDraftSpecEditor(
-        entityName,
-        localZustandScope
-    );
+    const { draftSpec, isValidating, onChange, defaultValue } =
+        useDraftSpecEditor(entityName, localZustandScope);
 
     if (draftSpec) {
         return (
@@ -32,6 +30,7 @@ function DraftSpecEditor({
                 localZustandScope={localZustandScope}
                 height={editorHeight}
                 onChange={onChange}
+                defaultValue={defaultValue}
             />
         );
     } else if (isValidating) {

@@ -24,14 +24,15 @@ export interface Props {
 function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     // useHydrateEditorState('collection', entityName, localZustandScope);
 
-    const { onChange, draftSpec, mutate } = useDraftSpecEditor(
-        entityName,
-        localZustandScope
-    );
-
     const [editorSchemaScope, setEditorSchemaScope] = useState<
         AllowedScopes | undefined
     >(undefined);
+
+    const { onChange, draftSpec, mutate, defaultValue } = useDraftSpecEditor(
+        entityName,
+        localZustandScope,
+        editorSchemaScope
+    );
 
     const entityType = useEntityType();
 
@@ -119,6 +120,8 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
                         localZustandScope,
                         onChange: onPropertiesViewerChange,
                         editorSchemaScope,
+                        defaultValue,
+                        path: `${entityName}-${editorSchemaScope}`,
                     }}
                 />
             </Grid>
