@@ -28,12 +28,10 @@ function TransformList() {
 
     const content: CatalogListContent[] = useMemo(
         () =>
-            Object.entries(transformConfigs).map(
-                ([attributeId, { filename }]) => ({
-                    attributeId,
-                    value: filename,
-                })
-            ),
+            Object.entries(transformConfigs).map(([attributeId, { name }]) => ({
+                attributeId,
+                value: name,
+            })),
         [transformConfigs]
     );
 
