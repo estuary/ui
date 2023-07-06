@@ -6,9 +6,37 @@ import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { TransformCreateState } from './types';
 
+const evaluateSelectedAttribute = (
+    removedAttribute: string,
+    removedAttributeIndex: number,
+    selectedAttribute: string,
+    targetAttributeIds: string[],
+    alternateAttributeIds: string[]
+): string => {
+    const attributeCount = targetAttributeIds.length;
+
+    if (targetAttributeIds.includes(selectedAttribute)) {
+        return selectedAttribute;
+    } else if (attributeCount && selectedAttribute === removedAttribute) {
+        if (
+            removedAttributeIndex > -1 &&
+            removedAttributeIndex < attributeCount
+        ) {
+            return targetAttributeIds[removedAttributeIndex];
+        } else if (removedAttributeIndex === attributeCount) {
+            return targetAttributeIds[removedAttributeIndex - 1];
+        } else {
+            return '';
+        }
+    } else if (alternateAttributeIds.length) {
+        return alternateAttributeIds[0];
+    } else {
+        return '';
+    }
+};
+
 const getInitialStateData = (): Pick<
     TransformCreateState,
-    | 'attributeRemovalMetadata'
     | 'attributeType'
     | 'catalogName'
     | 'catalogUpdating'
@@ -22,11 +50,6 @@ const getInitialStateData = (): Pick<
     | 'transformConfigs'
     | 'transformCount'
 > => ({
-    attributeRemovalMetadata: {
-        selectedAttribute: null,
-        removedAttribute: '',
-        index: -1,
-    },
     attributeType: 'transform',
     catalogName: '',
     catalogUpdating: false,
@@ -152,35 +175,41 @@ const getInitialState = (
         );
     },
 
-    removeAttribute: (attributeId) => {
+    removeAttribute: (removedAttribute) => {
         set(
             produce((state: TransformCreateState) => {
                 const { migrations, selectedAttribute, transformConfigs } =
                     get();
 
-                if (Object.hasOwn(migrations, attributeId)) {
-                    state.attributeRemovalMetadata = {
-                        selectedAttribute,
-                        removedAttribute: attributeId,
-                        index: Object.keys(migrations).findIndex(
-                            (migrationId) => migrationId === attributeId
-                        ),
-                    };
+                if (Object.hasOwn(migrations, removedAttribute)) {
+                    const removedAttributeIndex = Object.keys(
+                        migrations
+                    ).findIndex((id) => id === removedAttribute);
 
-                    state.migrations = omit(migrations, attributeId);
-                } else if (Object.hasOwn(transformConfigs, attributeId)) {
-                    state.attributeRemovalMetadata = {
+                    state.migrations = omit(migrations, removedAttribute);
+
+                    const migrationIds = Object.keys(state.migrations);
+                    const transformConfigIds = Object.keys(transformConfigs);
+
+                    state.selectedAttribute = evaluateSelectedAttribute(
+                        removedAttribute,
+                        removedAttributeIndex,
                         selectedAttribute,
-                        removedAttribute: attributeId,
-                        index: Object.keys(transformConfigs).findIndex(
-                            (transformConfigId) =>
-                                transformConfigId === attributeId
-                        ),
-                    };
+                        migrationIds,
+                        transformConfigIds
+                    );
+
+                    if (state.selectedAttribute.includes('lambda')) {
+                        state.attributeType = 'transform';
+                    }
+                } else if (Object.hasOwn(transformConfigs, removedAttribute)) {
+                    const removedAttributeIndex = Object.keys(
+                        transformConfigs
+                    ).findIndex((id) => id === removedAttribute);
 
                     const evaluatedTransformConfigs = omit(
                         transformConfigs,
-                        attributeId
+                        removedAttribute
                     );
 
                     state.transformConfigs = evaluatedTransformConfigs;
@@ -188,6 +217,23 @@ const getInitialState = (
                     state.sourceCollections = Object.values(
                         evaluatedTransformConfigs
                     ).map(({ collection }) => collection);
+
+                    const migrationIds = Object.keys(migrations);
+                    const transformConfigIds = Object.keys(
+                        state.transformConfigs
+                    );
+
+                    state.selectedAttribute = evaluateSelectedAttribute(
+                        removedAttribute,
+                        removedAttributeIndex,
+                        selectedAttribute,
+                        transformConfigIds,
+                        migrationIds
+                    );
+
+                    if (state.selectedAttribute.includes('migration')) {
+                        state.attributeType = 'migration';
+                    }
                 }
             }),
             false,
