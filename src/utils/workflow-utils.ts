@@ -10,6 +10,16 @@ import { EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
 
+export const getCollectionName = (binding: any) => {
+    const root = Object.hasOwn(binding, 'source')
+        ? binding.source
+        : Object.hasOwn(binding, 'target')
+        ? binding.target
+        : binding;
+
+    return Object.hasOwn(root, 'name') ? root.name : root;
+};
+
 // TODO (typing): Narrow the return type for this function.
 export const generateTaskSpec = (
     entityType: EntityWithCreateWorkflow,
@@ -36,7 +46,7 @@ export const generateTaskSpec = (
             const resourceConfig = resourceConfigs[collectionName].data;
 
             const existingBindingIndex = draftSpec.bindings.findIndex(
-                (binding: any) => binding[collectionNameProp] === collectionName
+                (binding: any) => getCollectionName(binding) === collectionName
             );
 
             if (existingBindingIndex > -1) {
@@ -54,11 +64,11 @@ export const generateTaskSpec = (
         });
 
         if (hasLength(draftSpec.bindings)) {
-            const filteredBindings = draftSpec.bindings.filter((binding: any) =>
-                boundCollectionNames.includes(binding[collectionNameProp])
+            draftSpec.bindings = draftSpec.bindings.filter((binding: any) =>
+                boundCollectionNames.includes(
+                    getCollectionName(binding[collectionNameProp])
+                )
             );
-
-            draftSpec.bindings = filteredBindings;
         }
     } else {
         draftSpec.bindings = [];
