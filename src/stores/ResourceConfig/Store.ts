@@ -21,7 +21,7 @@ import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { getCollectionName } from 'utils/workflow-utils';
+import { getCollectionName, getCollectionNameProp } from 'utils/workflow-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
@@ -186,8 +186,7 @@ const getInitialState = (
             produce((state: ResourceConfigState) => {
                 const collections: string[] = [];
 
-                const queryProp =
-                    entityType === 'materialization' ? 'source' : 'target';
+                const queryProp = getCollectionNameProp(entityType);
 
                 value.forEach((binding: any) => {
                     collections.push(getCollectionName(binding[queryProp]));

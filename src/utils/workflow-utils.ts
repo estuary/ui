@@ -6,9 +6,13 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
-import { EntityWithCreateWorkflow, Schema } from 'types';
+import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
+
+export const getCollectionNameProp = (entityType: Entity) => {
+    return entityType === 'materialization' ? 'source' : 'target';
+};
 
 export const getCollectionName = (binding: any) => {
     // First see if we've already been passed a scoped binding
@@ -42,8 +46,7 @@ export const generateTaskSpec = (
     draftSpec.endpoint.connector = connectorConfig;
 
     if (resourceConfigs) {
-        const collectionNameProp =
-            entityType === 'capture' ? 'target' : 'source';
+        const collectionNameProp = getCollectionNameProp(entityType);
 
         const boundCollectionNames = Object.keys(resourceConfigs);
 
