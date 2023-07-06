@@ -6,6 +6,7 @@ import {
     useHydrateEditorState,
 } from 'components/editor/Store/hooks';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
+import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import EntityError from 'components/shared/Entity/Error';
 import EntityToolbar from 'components/shared/Entity/Header';
 import DerivationConfig from 'components/transformation/create/Config';
@@ -115,6 +116,8 @@ function DerivationCreateAlternate() {
             <DerivationConfig />
 
             <DerivationSchema />
+
+            <CatalogEditor messageId="newTransform.finalReview.instructions" />
         </>
     );
 }

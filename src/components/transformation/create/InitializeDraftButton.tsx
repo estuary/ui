@@ -109,7 +109,8 @@ function InitializeDraftButton({
                 const spec = generateInitialSpec(
                     language,
                     catalogName,
-                    selectedCollections
+                    selectedCollections,
+                    { existingTransforms: transformConfigs }
                 );
 
                 const draftSpecResponse = await createDraftSpec(

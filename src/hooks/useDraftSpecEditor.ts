@@ -9,7 +9,7 @@ import {
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
 import { DraftSpec } from 'hooks/useDraftSpecs';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 function useDraftSpecEditor(
     entityName: string | undefined,
@@ -33,8 +33,8 @@ function useDraftSpecEditor(
     });
     const mutate = useEditorStore_queryResponse_mutate({ localScope });
 
-    const handlers = {
-        change: async (
+    const processEditorValue = useCallback(
+        async (
             newVal: any,
             catalogName: string,
             specType: string,
@@ -61,7 +61,8 @@ function useDraftSpecEditor(
                 return Promise.reject();
             }
         },
-    };
+        [mutate, draftId, draftSpec]
+    );
 
     useEffect(() => {
         if (draftSpecs.length > 0) {
@@ -113,7 +114,7 @@ function useDraftSpecEditor(
     // });
 
     return {
-        onChange: handlers.change,
+        onChange: processEditorValue,
         draftSpec,
         isValidating,
         mutate,

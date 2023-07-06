@@ -26,7 +26,8 @@ const formatSqlTransforms = (
     entityName: string,
     templateFiles?: boolean,
     lambda?: string,
-    shuffle?: Transform_Shuffle
+    shuffle?: Transform_Shuffle,
+    name?: string
 ): Transform => {
     const tableName = stripPathing(source);
 
@@ -39,7 +40,7 @@ const formatSqlTransforms = (
     }
 
     return {
-        name: tableName,
+        name: name ?? tableName,
         source,
         lambda: evaluatedLambda,
         shuffle: shuffle ?? 'any',
@@ -59,14 +60,16 @@ const generateSqlTemplate = (
     let transforms: Transform[] = [];
 
     if (existingTransforms && existingTransforms.length > 0) {
-        transforms = existingTransforms.map(({ collection, lambda, shuffle }) =>
-            formatSqlTransforms(
-                collection,
-                entityName,
-                templateFiles,
-                lambda,
-                shuffle
-            )
+        transforms = existingTransforms.map(
+            ({ collection, lambda, shuffle, name }) =>
+                formatSqlTransforms(
+                    collection,
+                    entityName,
+                    templateFiles,
+                    lambda,
+                    shuffle,
+                    name
+                )
         );
     } else if (isArray(sourceCollections)) {
         transforms = sourceCollections.map((source) =>

@@ -1,6 +1,5 @@
 import MonacoEditor from 'components/editor/MonacoEditor';
 import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
-import { useHydrateEditorState } from 'components/editor/Store/hooks';
 import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
 import { Entity } from 'types';
 
@@ -13,13 +12,13 @@ export interface Props {
 }
 
 function DraftSpecEditor({
-    entityType,
+    // entityType,
     disabled,
     localZustandScope = false,
     editorHeight,
     entityName,
 }: Props) {
-    useHydrateEditorState(entityType, entityName, localZustandScope);
+    // useHydrateEditorState(entityType, entityName, localZustandScope);
 
     const { draftSpec, isValidating, onChange } = useDraftSpecEditor(
         entityName,

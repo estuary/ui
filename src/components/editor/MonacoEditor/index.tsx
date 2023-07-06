@@ -13,7 +13,7 @@ import {
 import { EditorStatus } from 'components/editor/Store/types';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { logRocketConsole } from 'services/logrocket';
 import { stringifyJSON } from 'services/stringify';
 import {
@@ -36,7 +36,7 @@ export interface MonacoEditorProps {
     onChange?: onChange;
     height?: number;
     toolbarHeight?: number;
-    editorSchemaScope?: AllowedScopes; // Used to scop the schema editor
+    editorSchemaScope?: AllowedScopes; // Used to scope the schema editor
 }
 
 function MonacoEditor({
@@ -66,9 +66,18 @@ function MonacoEditor({
     });
 
     // TODO (editor store) Should just fetch these directly from the store?
-    const catalogName = currentCatalog?.catalog_name ?? null;
-    const catalogSpec = currentCatalog?.spec ?? null;
-    const catalogType = currentCatalog?.spec_type ?? null;
+    const catalogName = useMemo(
+        () => currentCatalog?.catalog_name ?? null,
+        [currentCatalog]
+    );
+    const catalogSpec = useMemo(
+        () => currentCatalog?.spec ?? null,
+        [currentCatalog]
+    );
+    const catalogType = useMemo(
+        () => currentCatalog?.spec_type,
+        [currentCatalog]
+    );
 
     // Snagging out the status of the editor
     const status = useEditorStore_status({ localScope: localZustandScope });
@@ -76,102 +85,121 @@ function MonacoEditor({
         localScope: localZustandScope,
     });
 
-    const doneUpdatingValue = (message: string, format: boolean) => {
-        logRocketConsole(message);
-        setStatus(EditorStatus.SAVED);
+    const doneUpdatingValue = useCallback(
+        (message: string, format: boolean) => {
+            logRocketConsole(message);
+            setStatus(EditorStatus.SAVED);
 
-        if (format) {
-            // Format the editor. Formatting like this should work like a standard IDE
-            //  where your cursor position stays where it was and is moved with the new format
-            void editorRef.current
-                ?.getAction('editor.action.formatDocument')
-                .run();
-        }
-    };
-
-    const updateValue = (isUndo: boolean) => {
-        // Fetch the current value of the editor
-        const currentValue = editorRef.current?.getValue();
-
-        // Make sure we have a value and handled to call
-        if (onChange && currentValue) {
-            setStatus(EditorStatus.EDITING);
-
-            // We save as JSON on the backend so need to make sure we can parse it
-            //  otherwise Postgres will not let us update the value
-            let parsedVal;
-            try {
-                parsedVal = JSON.parse(currentValue);
-            } catch {
-                setStatus(EditorStatus.INVALID);
+            if (format) {
+                // Format the editor. Formatting like this should work like a standard IDE
+                //  where your cursor position stays where it was and is moved with the new format
+                void editorRef.current
+                    ?.getAction('editor.action.formatDocument')
+                    .run();
             }
+        },
+        [setStatus]
+    );
 
-            // Make sure we have all the props needed to update the value
-            if (parsedVal && catalogName && catalogType) {
-                logRocketConsole('editor:update:saving', {
-                    parsedVal,
-                    catalogName,
-                    catalogType,
-                });
-                setStatus(EditorStatus.SAVING);
+    const updateValue = useCallback(
+        (isUndo: boolean) => {
+            // Fetch the current value of the editor
+            const currentValue = editorRef.current?.getValue();
 
-                // Check if there is a scope to update (ex: Schema editing for bindings editor)
-                if (editorSchemaScope) {
-                    logRocketConsole('editor:update:saving:scoped', {
-                        nestedProperty: editorSchemaScope,
-                    });
-                    onChange(
+            // Make sure we have a value and handled to call
+            if (onChange && currentValue) {
+                setStatus(EditorStatus.EDITING);
+
+                // We save as JSON on the backend so need to make sure we can parse it
+                //  otherwise Postgres will not let us update the value
+                let parsedVal;
+                try {
+                    parsedVal = JSON.parse(currentValue);
+                } catch {
+                    setStatus(EditorStatus.INVALID);
+                }
+
+                // Make sure we have all the props needed to update the value
+                if (parsedVal && catalogName && catalogType) {
+                    logRocketConsole('editor:update:saving', {
                         parsedVal,
                         catalogName,
                         catalogType,
-                        editorSchemaScope
-                    )
-                        .then(() => {
-                            doneUpdatingValue(
-                                'editor:update:saving:scoped:success',
-                                !isUndo
-                            );
-                        })
-                        .catch(() => {
-                            logRocketConsole(
-                                'editor:update:saving:scoped:failed'
-                            );
-                            setStatus(EditorStatus.SAVE_FAILED);
+                    });
+                    setStatus(EditorStatus.SAVING);
+
+                    // Check if there is a scope to update (ex: Schema editing for bindings editor)
+                    if (editorSchemaScope) {
+                        logRocketConsole('editor:update:saving:scoped', {
+                            nestedProperty: editorSchemaScope,
                         });
+                        onChange(
+                            parsedVal,
+                            catalogName,
+                            catalogType,
+                            editorSchemaScope
+                        )
+                            .then(() => {
+                                doneUpdatingValue(
+                                    'editor:update:saving:scoped:success',
+                                    !isUndo
+                                );
+                            })
+                            .catch(() => {
+                                logRocketConsole(
+                                    'editor:update:saving:scoped:failed'
+                                );
+                                setStatus(EditorStatus.SAVE_FAILED);
+                            });
+                    } else {
+                        // Fire off the onChange to update the server
+                        onChange(parsedVal, catalogName, catalogType)
+                            .then(() => {
+                                doneUpdatingValue(
+                                    'editor:update:saving:success',
+                                    !isUndo
+                                );
+                            })
+                            .catch(() => {
+                                logRocketConsole('editor:update:saving:failed');
+                                setStatus(EditorStatus.SAVE_FAILED);
+                            });
+                    }
                 } else {
-                    // Fire off the onChange to update the server
-                    onChange(parsedVal, catalogName, catalogType)
-                        .then(() => {
-                            doneUpdatingValue(
-                                'editor:update:saving:success',
-                                !isUndo
-                            );
-                        })
-                        .catch(() => {
-                            logRocketConsole('editor:update:saving:failed');
-                            setStatus(EditorStatus.SAVE_FAILED);
-                        });
+                    logRocketConsole('editor:update:invalid', {
+                        parsedVal,
+                        catalogName,
+                        catalogType,
+                    });
+                    setStatus(EditorStatus.INVALID);
                 }
             } else {
-                logRocketConsole('editor:update:invalid', {
-                    parsedVal,
-                    catalogName,
-                    catalogType,
+                logRocketConsole('editor:update:missing', {
+                    onChange,
+                    currentValue,
                 });
-                setStatus(EditorStatus.INVALID);
             }
-        } else {
-            logRocketConsole('editor:update:missing', {
-                onChange,
-                currentValue,
-            });
-        }
-    };
+        },
+        [
+            doneUpdatingValue,
+            onChange,
+            setStatus,
+            catalogName,
+            catalogType,
+            editorSchemaScope,
+        ]
+    );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedChange = useCallback(debounce(updateValue, 750), [
+        updateValue,
         catalogName,
     ]);
+
+    const scopeId = useMemo(
+        () => editorSchemaScope ?? 'spec',
+        [editorSchemaScope]
+    );
 
     const specAsString = useMemo(() => {
         let spec: any;
@@ -189,6 +217,10 @@ function MonacoEditor({
         }
         return stringifyJSON(spec);
     }, [catalogSpec, editorSchemaScope]);
+
+    useEffect(() => {
+        if (specAsString) setLocalCopy(specAsString);
+    }, [setLocalCopy, specAsString]);
 
     const handlers = {
         change: (value: any, ev: any) => {
@@ -279,7 +311,7 @@ function MonacoEditor({
                         saveViewState={false}
                         defaultValue={specAsString}
                         value={localCopy}
-                        path={catalogName}
+                        path={`${catalogName}-${scopeId}`}
                         options={{
                             readOnly: disabled ? disabled : false,
                             minimap: {

@@ -6,12 +6,11 @@ import {
     useBindingsEditorStore_setCollectionData,
 } from 'components/editor/Bindings/Store/hooks';
 import { AllowedScopes } from 'components/editor/MonacoEditor/types';
-import { useHydrateEditorState } from 'components/editor/Store/hooks';
 import KeyAutoComplete from 'components/schema/KeyAutoComplete';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
 import { useEntityType } from 'context/EntityContext';
 import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUpdateEffect } from 'react-use';
 import { Schema } from 'types';
@@ -23,7 +22,7 @@ export interface Props {
 }
 
 function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
-    useHydrateEditorState('collection', entityName, localZustandScope);
+    // useHydrateEditorState('collection', entityName, localZustandScope);
 
     const { onChange, draftSpec, mutate } = useDraftSpecEditor(
         entityName,
@@ -74,6 +73,22 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         }
     }, [schemaUpdated]);
 
+    const onKeyChange = useCallback(
+        async (_event, keys) => {
+            if (entityName) {
+                await onChange(keys, entityName, 'collection', 'key');
+            }
+        },
+        [onChange, entityName]
+    );
+
+    const onPropertiesViewerChange = useCallback(
+        async (value: Schema, path, type, scope) => {
+            await onChange(value, path, type, scope ?? 'schema');
+        },
+        [onChange]
+    );
+
     if (draftSpec && entityName) {
         return (
             <Grid container>
@@ -96,22 +111,13 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
                 <KeyAutoComplete
                     value={draftSpec.spec.key}
                     disabled={!editModeEnabled}
-                    onChange={async (_event, keys) => {
-                        await onChange(keys, entityName, 'collection', 'key');
-                    }}
+                    onChange={onKeyChange}
                 />
                 <PropertiesViewer
                     disabled={!editModeEnabled}
                     editorProps={{
                         localZustandScope,
-                        onChange: async (value: Schema, path, type, scope) => {
-                            await onChange(
-                                value,
-                                path,
-                                type,
-                                scope ?? 'schema'
-                            );
-                        },
+                        onChange: onPropertiesViewerChange,
                         editorSchemaScope,
                     }}
                 />

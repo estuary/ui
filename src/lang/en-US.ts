@@ -1019,11 +1019,11 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
                             continue, e.g`,
     'newTransform.button.cta': `Proceed to GitPod`,
 
-    'newTransform.config.header': `Configuration`,
+    'newTransform.config.header': `Database`,
     'newTransform.config.description': `This is a placeholder for a section description`,
     'newTransform.config.tab.advancedSettings': `Advanced`,
     'newTransform.config.tab.basicSettings': `General`,
-    'newTransform.config.advancedSettings.header': `Advanced Configuration`,
+    'newTransform.config.advancedSettings.header': `Advanced Internal State Settings`,
     'newTransform.config.transform.header': `Transforms`,
     'newTransform.config.transform.addDialog.header': `Add Transform`,
     'newTransform.config.migration.header': `Migrations`,

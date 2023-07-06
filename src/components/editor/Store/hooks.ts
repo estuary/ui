@@ -481,9 +481,15 @@ export const useHydrateEditorState = (
     const draftId = useEditorStore_id({ localScope });
     const setQueryResponse = useEditorStore_setQueryResponse({ localScope });
 
-    const response = useDraftSpecs(draftId, { specType, catalogName });
+    const response = useDraftSpecs(draftId, {
+        specType,
+        catalogName,
+        singleCall: true,
+    });
 
     useEffect(() => {
-        setQueryResponse(response);
+        if (!response.isValidating) {
+            setQueryResponse(response);
+        }
     }, [setQueryResponse, response]);
 };

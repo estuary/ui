@@ -3,6 +3,7 @@ import { modifyDraftSpec } from 'api/draftSpecs';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
+    useEditorStore_queryResponse_mutate,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
@@ -21,7 +22,7 @@ import {
 } from 'stores/TransformationCreate/hooks';
 import { Transform } from 'types';
 import { evaluateTransformConfigs } from 'utils/derivation-utils';
-import { hasLength, stripPathing } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     selectedCollections: Set<string>;
@@ -31,6 +32,8 @@ interface Props {
 function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
     // Draft Editor Store
     const currentCatalog = useEditorStore_currentCatalog();
+    const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
+
     const draftId = useEditorStore_persistedDraftId();
     const setDraftId = useEditorStore_setId();
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
@@ -65,8 +68,8 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
             const evaluatedTransforms = Object.values(
                 evaluatedTransformConfigs
             ).map(
-                ({ collection, lambda, shuffle }): Transform => ({
-                    name: stripPathing(collection),
+                ({ collection, lambda, shuffle, name }): Transform => ({
+                    name,
                     source: collection,
                     lambda,
                     shuffle,
@@ -85,7 +88,9 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
             if (draftSpecResponse.error) {
                 setCatalogUpdating(false);
                 // Set error state
-            } else {
+            } else if (mutateDraftSpecs) {
+                await mutateDraftSpecs();
+
                 const collections = evaluatedTransforms.map(
                     ({ source }) => source
                 );
@@ -107,6 +112,9 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
 
                 setCatalogUpdating(false);
                 setDialogOpen(false);
+            } else {
+                setCatalogUpdating(false);
+                // Set error state
             }
         } else {
             setCatalogUpdating(false);

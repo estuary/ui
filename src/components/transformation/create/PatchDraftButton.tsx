@@ -20,7 +20,6 @@ import {
     useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
 import { Transform } from 'types';
-import { stripPathing } from 'utils/misc-utils';
 
 function PatchDraftButton() {
     // Draft Editor Store
@@ -53,8 +52,8 @@ function PatchDraftButton() {
 
         if (draftId && catalogName && currentCatalog) {
             const evaluatedTransforms = Object.values(transformConfigs).map(
-                ({ collection, lambda, shuffle }): Transform => ({
-                    name: stripPathing(collection),
+                ({ collection, lambda, shuffle, name }): Transform => ({
+                    name,
                     source: collection,
                     lambda,
                     shuffle,
