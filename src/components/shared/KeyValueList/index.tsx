@@ -26,6 +26,12 @@ function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
                                 disableTypography={disableTypography}
                                 primary={title}
                                 secondary={val}
+                                primaryTypographyProps={{
+                                    component: 'div',
+                                }}
+                                secondaryTypographyProps={{
+                                    component: 'div',
+                                }}
                             />
                         </ListItem>
                     ))}

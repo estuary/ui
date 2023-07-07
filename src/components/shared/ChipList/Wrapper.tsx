@@ -57,6 +57,8 @@ function ChipWrapper({ disabled, onClick, stripPath, title, val }: Props) {
         return title ?? displayValue;
     }, [displayValue, title, val.title]);
 
+    console.log('tooltipTitle', tooltipTitle);
+
     return (
         <ListItem>
             <Tooltip
