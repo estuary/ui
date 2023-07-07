@@ -1,4 +1,4 @@
-import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
+import { Button, Menu, MenuItem, Stack } from '@mui/material';
 import { DataByHourRange } from 'components/graphs/types';
 import { linkButtonSx } from 'context/Theme';
 import { Filter } from 'iconoir-react';
@@ -29,9 +29,7 @@ function HourlyRangeFilter({ range, setRange }: Props) {
 
     return (
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Typography component="span">
-                <FormattedMessage id="detailsPanel.recentUsage.title.prefix" />
-            </Typography>
+            <FormattedMessage id="detailsPanel.recentUsage.title.prefix" />
 
             <Button
                 id="hourly-usage-filter-selector-button"

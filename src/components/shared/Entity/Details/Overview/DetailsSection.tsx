@@ -1,7 +1,7 @@
-import { CircularProgress, Divider, Stack, Typography } from '@mui/material';
+import { CircularProgress, Stack } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
-import ConnectorLogo from 'components/connectors/card/Logo';
 import { tooltipSX } from 'components/graphs/tooltips';
+import ExternalLink from 'components/shared/ExternalLink';
 import KeyValueList from 'components/shared/KeyValueList';
 import { LiveSpecsQuery } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
@@ -21,6 +21,19 @@ function DetailsSection({ latestLiveSpec }: Props) {
         const response = [];
 
         if (latestLiveSpec) {
+            // Add last updated - without user as Estuary folks
+            //  sometimes update stuff and that might look odd
+            response.push({
+                title: intl.formatMessage({
+                    id: 'entityTable.data.lastUpdated',
+                }),
+                val: `${intl.formatDate(latestLiveSpec.updated_at, {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                })}`,
+            });
+
             // At when it was created
             response.push({
                 title: intl.formatMessage({
@@ -35,18 +48,27 @@ function DetailsSection({ latestLiveSpec }: Props) {
                 }),
             });
 
-            // Add last updated - without user as Estuary folks
-            //  sometimes update stuff and that might look odd
-            response.push({
-                title: intl.formatMessage({
-                    id: 'entityTable.data.lastUpdated',
-                }),
-                val: `${intl.formatDate(latestLiveSpec.updated_at, {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                })}`,
-            });
+            if (latestLiveSpec.connector_title?.['en-US']) {
+                response.push({
+                    title: intl.formatMessage({
+                        id: 'connector.label',
+                    }),
+                    val: (
+                        <Stack direction="row" spacing={2}>
+                            {latestLiveSpec.connector_title['en-US']}
+                            {latestLiveSpec.connector_tag_documentation_url ? (
+                                <ExternalLink
+                                    link={
+                                        latestLiveSpec.connector_tag_documentation_url
+                                    }
+                                >
+                                    <FormattedMessage id="terms.documentation" />
+                                </ExternalLink>
+                            ) : null}
+                        </Stack>
+                    ),
+                });
+            }
 
             if (hasLength(latestLiveSpec.writes_to)) {
                 response.push({
@@ -84,32 +106,9 @@ function DetailsSection({ latestLiveSpec }: Props) {
 
     return (
         <Stack direction="column" spacing={2} sx={{ ...tooltipSX, m: 2 }}>
-            <Stack direction="row" spacing={1}>
-                <Typography
-                    component="span"
-                    variant="h6"
-                    sx={{
-                        alignItems: 'center',
-                    }}
-                >
-                    <FormattedMessage id="detailsPanel.details.title" />
-                </Typography>
-            </Stack>
-            <CardWrapper>
-                {latestLiveSpec.connector_logo_url ? (
-                    <ConnectorLogo
-                        imageSrc={latestLiveSpec.connector_logo_url['en-us']}
-                        maxHeight={35}
-                        padding="0 0.5rem"
-                        unknownConnectorIconConfig={{
-                            width: 51,
-                            fontSize: 24,
-                        }}
-                    />
-                ) : null}
-
-                <Divider />
-
+            <CardWrapper
+                message={<FormattedMessage id="detailsPanel.details.title" />}
+            >
                 <KeyValueList data={data} />
             </CardWrapper>
         </Stack>

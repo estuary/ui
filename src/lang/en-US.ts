@@ -157,6 +157,7 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.reads_from': `Reads From`,
     'data.data': `Data`,
     'data.docs': `Docs`,
+    'data.connectorImage': `Connector Image`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
@@ -740,9 +741,8 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
     'detailsPanel.specification.header': `Specification`,
     'detailsPanel.status.header': `Status`,
-    'detailsPanel.dataUsage.title': `Usage`,
     'detailsPanel.details.title': `Details`,
-    'detailsPanel.recentUsage.title.prefix': `Past`,
+    'detailsPanel.recentUsage.title.prefix': `Usage over the past`,
     'detailsPanel.recentUsage.range.label': `Timeframe`,
     'detailsPanel.recentUsage.filter.label': `{range} hours`,
     'detailsPanel.recentUsage.createdAt.label': `Creation hour`,

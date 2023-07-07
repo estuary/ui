@@ -1,5 +1,5 @@
 import { Link, useMediaQuery, useTheme } from '@mui/material';
-import { NavLink } from 'react-router-dom';
+import { Link as ReactRouterLink } from 'react-router-dom';
 
 interface Props {
     link: string;
@@ -12,9 +12,12 @@ function LinkWrapper({ link, name }: Props) {
 
     return (
         <Link
-            component={NavLink}
+            reloadDocument={false}
+            component={ReactRouterLink}
             to={link}
-            state={{ backButtonUrl: location }}
+            state={{
+                backButtonUrl: `${window.location.pathname}${window.location.search}`,
+            }}
             sx={{
                 padding: 1,
                 pl: 0,

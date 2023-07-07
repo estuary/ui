@@ -19,32 +19,29 @@ import DetailTabs from './Tabs';
 function EntityDetails() {
     useBrowserTitle('routeTitle.details');
 
+    // Generate the local store
     const localStore = useMemo(
         () => createEditorStore(EditorStoreNames.GENERAL),
         []
     );
 
+    // Fetch params from URL
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
 
+    // Fetch react router stuff
     const navigate = useNavigate();
     const location = useLocation();
-    const backButtonUrlRef = useRef(location.state?.backButtonUrl ?? null);
 
     // TODO (details) This always assumes the details is only 2 levels away from the parent
     //  we should probably make this less brittle in the future
-    const returnTo = useMemo(() => {
-        if (backButtonUrlRef.current === null) {
-            return `../../`;
-        } else {
-            return `${backButtonUrlRef.current.pathname}${backButtonUrlRef.current.search}`;
-        }
-    }, []);
-
+    const backButtonUrlRef = useRef(location.state?.backButtonUrl ?? `../../`);
     const goBack = () => {
-        navigate(returnTo);
+        navigate(backButtonUrlRef.current);
     };
 
+    // We have already pulled the backButton path out of state we can put state back
+    //  how it was. That way we are not cluttering it up
     useEffectOnce(() => {
         window.history.replaceState(
             {

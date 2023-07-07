@@ -1,4 +1,4 @@
-import { Stack, Typography } from '@mui/material';
+import { Stack } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import HourlyRangeFilter from 'components/filters/HourRange';
 import DataByHourGraph from 'components/graphs/DataByHourGraph';
@@ -25,18 +25,6 @@ function Usage({ catalogName, createdAt }: Props) {
 
     return (
         <Stack direction="column" spacing={2} sx={{ ...tooltipSX, m: 2 }}>
-            <Stack direction="row" spacing={1}>
-                <Typography
-                    component="span"
-                    variant="h6"
-                    sx={{
-                        alignItems: 'center',
-                    }}
-                >
-                    <FormattedMessage id="detailsPanel.dataUsage.title" />
-                </Typography>
-            </Stack>
-
             {isValidating && !statsPopulated ? (
                 <GraphLoadingState />
             ) : error ? (
