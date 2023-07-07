@@ -486,11 +486,6 @@ export const useHydrateEditorState = (
     const draftId = useEditorStore_id({ localScope });
     const setQueryResponse = useEditorStore_setQueryResponse({ localScope });
 
-    console.log('hook', {
-        specType,
-        catalogName,
-    });
-
     const response = useDraftSpecs(draftId ?? draftIdInURL, {
         specType,
         catalogName,
