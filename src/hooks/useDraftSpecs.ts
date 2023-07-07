@@ -1,5 +1,4 @@
 import { PostgrestError } from '@supabase/postgrest-js';
-import { singleCallSettings } from 'context/SWR';
 import { TABLES } from 'services/supabase';
 import { KeyedMutator } from 'swr';
 import { Entity } from 'types';
@@ -37,7 +36,6 @@ function useDraftSpecs(
         lastPubId?: string;
         specType?: Entity;
         catalogName?: string;
-        singleCall?: boolean;
     }
 ): DraftSpecSwrMetadata {
     const draftSpecQuery = useQuery<DraftSpecQuery>(
@@ -76,8 +74,7 @@ function useDraftSpecs(
     );
 
     const { data, error, mutate, isValidating } = useSelect(
-        draftId ? draftSpecQuery : null,
-        options?.singleCall ? singleCallSettings : undefined
+        draftId ? draftSpecQuery : null
     );
 
     return {

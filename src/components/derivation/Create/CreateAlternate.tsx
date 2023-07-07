@@ -1,9 +1,9 @@
 import { Box, Collapse } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
+import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
-    useHydrateEditorState,
 } from 'components/editor/Store/hooks';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
@@ -48,8 +48,6 @@ function DerivationCreateAlternate() {
     // Transformation Create Store
     const catalogName = useTransformationCreate_catalogName();
 
-    useHydrateEditorState('collection', catalogName);
-
     const helpers = {
         callFailed: (formState: any) => {
             setFormState({
@@ -78,7 +76,10 @@ function DerivationCreateAlternate() {
     };
 
     return (
-        <>
+        <DraftSpecEditorHydrator
+            entityType="collection"
+            entityName={catalogName}
+        >
             <Box sx={{ mb: 3 }}>
                 <EntityToolbar
                     GenerateButton={<PatchDraftButton />}
@@ -118,7 +119,7 @@ function DerivationCreateAlternate() {
             <DerivationSchema />
 
             <CatalogEditor messageId="newTransform.finalReview.instructions" />
-        </>
+        </DraftSpecEditorHydrator>
     );
 }
 

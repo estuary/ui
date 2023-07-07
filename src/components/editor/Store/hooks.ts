@@ -1,6 +1,9 @@
 import { useEntityType } from 'context/EntityContext';
 import { useLocalZustandStore } from 'context/LocalZustand';
 import { useZustandStore as useGlobalZustandStore } from 'context/Zustand/provider';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { useEffect } from 'react';
@@ -478,13 +481,19 @@ export const useHydrateEditorState = (
     catalogName?: string,
     localScope?: boolean
 ) => {
+    const draftIdInURL = useGlobalSearchParams(GlobalSearchParams.DRAFT_ID);
+
     const draftId = useEditorStore_id({ localScope });
     const setQueryResponse = useEditorStore_setQueryResponse({ localScope });
 
-    const response = useDraftSpecs(draftId, {
+    console.log('hook', {
         specType,
         catalogName,
-        singleCall: true,
+    });
+
+    const response = useDraftSpecs(draftId ?? draftIdInURL, {
+        specType,
+        catalogName,
     });
 
     useEffect(() => {

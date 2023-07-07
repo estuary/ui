@@ -22,8 +22,6 @@ export interface Props {
 }
 
 function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
-    // useHydrateEditorState('collection', entityName, localZustandScope);
-
     const [editorSchemaScope, setEditorSchemaScope] = useState<
         AllowedScopes | undefined
     >(undefined);
