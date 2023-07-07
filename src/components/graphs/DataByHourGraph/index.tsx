@@ -9,7 +9,6 @@ import {
     GridComponent,
     LegendComponent,
     MarkLineComponent,
-    ToolboxComponent,
     TooltipComponent,
 } from 'echarts/components';
 import * as echarts from 'echarts/core';
@@ -37,10 +36,12 @@ const colors = ['#5470C6', '#91CC75'];
 function DataByHourGraph({ range, stats }: Props) {
     const intl = useIntl();
     const theme = useTheme();
+    const legendConfig = useLegendConfig();
     const tooltipConfig = useTooltipConfig();
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
 
+    // Generate a list of all the hours within the range requested
     const hours = useMemo(() => {
         const today = new Date();
         const startDate = subHours(today, range - 1);
@@ -51,47 +52,11 @@ function DataByHourGraph({ range, stats }: Props) {
         }).map((date) => intl.formatTime(date));
     }, [intl, range]);
 
-    const seriesConfig: EChartsOption['series'] = useMemo(() => {
-        const bytesSeries: EChartsOption['series'] = {
-            data: [],
-            markLine: {
-                data: [{ type: 'max', name: 'Max' }],
-                label: {
-                    position: 'start',
-                    formatter: ({ value }: any) =>
-                        prettyBytes(value, {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                        }),
-                },
-                symbolSize: 0,
-            },
-            barMinHeight: 10,
-            name: intl.formatMessage({ id: 'data.data' }),
-            type: 'bar',
-            showBackground: true,
-            yAxisIndex: 0,
-        };
-
-        const docsSeries: EChartsOption['series'] = {
-            barMinHeight: 10,
-            data: [],
-            name: intl.formatMessage({ id: 'data.docs' }),
-            type: 'bar',
-            showBackground: true,
-            yAxisIndex: 1,
-        };
-
-        return [bytesSeries, docsSeries];
-    }, [intl]);
-
-    const legendConfig = useLegendConfig();
-
+    // Wire up the myCharts and pass in components we will use
     useEffect(() => {
         if (!myChart) {
             echarts.use([
                 DatasetComponent,
-                ToolboxComponent,
                 TooltipComponent,
                 GridComponent,
                 LegendComponent,
@@ -107,12 +72,14 @@ function DataByHourGraph({ range, stats }: Props) {
         }
     }, [myChart]);
 
+    // Add the window resizer
     useUpdateEffect(() => {
         window.addEventListener('resize', () => {
             myChart?.resize();
         });
     }, [myChart]);
 
+    // Set the main bulk of the options for the chart
     useEffect(() => {
         const option: EChartsOption = {
             animation: false,
@@ -250,7 +217,7 @@ function DataByHourGraph({ range, stats }: Props) {
         return response;
     }, [intl, stats]);
 
-    // Effect to update the data
+    // Effect to update the data by updating the series.
     useEffect(() => {
         const bytesSeries: EChartsOption['series'] = {
             data: [],
