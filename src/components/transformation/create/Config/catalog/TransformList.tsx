@@ -42,6 +42,8 @@ function TransformList() {
 
     const handlers = {
         toggleDialog: () => {
+            selectedCollectionSetFunctions.reset();
+
             setOpen(!open);
         },
     };

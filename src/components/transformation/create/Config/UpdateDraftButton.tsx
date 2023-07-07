@@ -141,7 +141,7 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
         <LoadingButton
             variant="contained"
             loading={catalogUpdating}
-            disabled={catalogUpdating}
+            disabled={selectedCollections.size < 1 || catalogUpdating}
             onClick={updateDerivationSpec}
         >
             <FormattedMessage id="cta.continue" />
