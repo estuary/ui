@@ -16,18 +16,11 @@ const navArrowsDark = [
     `image://${navArrowRightDark}`,
 ];
 
-function useLegendConfig(seriesConfig: any): EChartsOption['legend'] {
+function useLegendConfig(seriesConfig?: any): EChartsOption['legend'] {
     const theme = useTheme();
     return useMemo(() => {
-        return {
+        const response: EChartsOption['legend'] = {
             type: 'scroll',
-            data: seriesConfig.map((config: any) => {
-                return config.seriesName
-                    ? config.seriesName
-                    : config.name
-                    ? config.name
-                    : '';
-            }),
             textStyle: {
                 color: theme.palette.text.primary,
                 fontWeight: 'normal',
@@ -45,6 +38,22 @@ function useLegendConfig(seriesConfig: any): EChartsOption['legend'] {
                         : navArrowsDark,
             },
         };
+
+        if (seriesConfig) {
+            response.data = seriesConfig.map((config: any) => {
+                const name = config.seriesName
+                    ? config.seriesName
+                    : config.name
+                    ? config.name
+                    : '_unknown_';
+
+                return {
+                    name,
+                };
+            });
+        }
+
+        return response;
     }, [seriesConfig, theme.palette.mode, theme.palette.text.primary]);
 }
 

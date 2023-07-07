@@ -85,7 +85,7 @@ function DataByHourGraph({ range, stats }: Props) {
         return [bytesSeries, docsSeries];
     }, [intl]);
 
-    const legendConfig = useLegendConfig(seriesConfig);
+    const legendConfig = useLegendConfig();
 
     useEffect(() => {
         if (!myChart) {
