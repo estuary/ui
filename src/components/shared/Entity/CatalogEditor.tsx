@@ -23,7 +23,10 @@ function CatalogEditor({ messageId }: Props) {
     const formStatus = useFormStateStore_status();
     const formActive = useFormStateStore_isActive();
 
-    if (draftId && formStatus !== FormStatus.INIT) {
+    if (
+        draftId &&
+        (formStatus !== FormStatus.INIT || entityType === 'collection')
+    ) {
         return (
             <WrapperWithHeader
                 header={
