@@ -3,6 +3,7 @@ import { DataByHourRange } from 'components/graphs/types';
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import {
     endOfWeek,
+    startOfHour,
     startOfMonth,
     startOfWeek,
     subDays,
@@ -199,6 +200,9 @@ const getStatsForDetails = (
     const today = new Date();
     const past = range ? subHours(today, range) : today;
 
+    const gte = formatToGMT(startOfHour(past), true);
+    const lte = formatToGMT(startOfHour(today), true);
+
     let query: string;
     switch (entityType) {
         case 'capture':
@@ -219,8 +223,8 @@ const getStatsForDetails = (
         .select(query)
         .eq('catalog_name', catalogName)
         .eq('grain', 'hourly')
-        .gt('ts', formatToGMT(past, true))
-        .lte('ts', formatToGMT(today, true))
+        .gte('ts', gte)
+        .lte('ts', lte)
         .order('ts', { ascending: false });
 };
 

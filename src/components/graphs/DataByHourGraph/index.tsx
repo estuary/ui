@@ -3,12 +3,12 @@ import { DetailsStats } from 'api/stats';
 import { defaultOutlineColor } from 'context/Theme';
 import { eachHourOfInterval, subHours } from 'date-fns';
 import { EChartsOption } from 'echarts';
-import { BarChart, LineChart } from 'echarts/charts';
+import { BarChart } from 'echarts/charts';
 import {
     DatasetComponent,
     GridComponent,
     LegendComponent,
-    MarkPointComponent,
+    MarkLineComponent,
     ToolboxComponent,
     TooltipComponent,
 } from 'echarts/components';
@@ -69,6 +69,7 @@ function DataByHourGraph({ range, stats }: Props) {
             barMinHeight: 10,
             name: intl.formatMessage({ id: 'data.data' }),
             type: 'bar',
+            showBackground: true,
             yAxisIndex: 0,
         };
 
@@ -77,36 +78,9 @@ function DataByHourGraph({ range, stats }: Props) {
             data: [],
             name: intl.formatMessage({ id: 'data.docs' }),
             type: 'bar',
+            showBackground: true,
             yAxisIndex: 1,
         };
-
-        // if (createdAt) {
-        //     const xAxis = intl.formatTime(
-        //         formatRFC3339(startOfHour(parseISO(createdAt)))
-        //     );
-        //     // const xAxis = formatRFC3339(parseISO(createdAt));
-
-        //     bytesSeries.markPoint = {
-        //         data: [
-        //             {
-        //                 name: intl.formatMessage({
-        //                     id: 'detailsPanel.recentUsage.createdAt.label',
-        //                 }),
-        //                 coord: [xAxis, 0],
-        //             },
-        //         ],
-        //         label: {
-        //             formatter: () => {
-        //                 return intl.formatMessage({
-        //                     id: 'detailsPanel.recentUsage.createdAt.label',
-        //                 });
-        //             },
-        //         },
-        //         itemStyle: {
-        //             color: infoMain,
-        //         },
-        //     };
-        // }
 
         return [bytesSeries, docsSeries];
     }, [intl]);
@@ -121,11 +95,10 @@ function DataByHourGraph({ range, stats }: Props) {
                 TooltipComponent,
                 GridComponent,
                 LegendComponent,
-                LineChart,
                 BarChart,
                 CanvasRenderer,
                 UniversalTransition,
-                MarkPointComponent,
+                MarkLineComponent,
             ]);
 
             const chartDom = document.getElementById('data-by-hour');
@@ -153,13 +126,15 @@ function DataByHourGraph({ range, stats }: Props) {
                 formatter: (tooltipConfigs: any) => {
                     const content: string[] = [];
 
+                    // Run through all the configs to generate all the lines needed
                     tooltipConfigs.forEach((config: any) => {
-                        const { data, marker, seriesName } = config;
-                        const { 0: time, 1: value } = data;
+                        // Grab details we need to display stuff
+                        const { axisValue, data, marker, seriesName } = config;
+                        const { value } = data;
 
                         // If the first item add a header
                         if (content.length === 0) {
-                            content.push(getTooltipTitle(time));
+                            content.push(getTooltipTitle(axisValue));
                         }
 
                         let valueDisplay: string;
@@ -249,7 +224,33 @@ function DataByHourGraph({ range, stats }: Props) {
         tooltipConfig,
     ]);
 
-    // Update the dataset
+    // Create a dataset the groups things based on time
+    const scopedDataSet = useMemo(() => {
+        const response = {};
+
+        stats.forEach((stat) => {
+            // Format to time
+            const formattedTime = intl.formatTime(stat.ts);
+
+            // Total up docs. Mainly for collections that are derivations
+            //  eventually we might split this data up into multiple lines
+            const totalDocs = stat.docs_to
+                ? stat.docs_to + stat.docs_by
+                : stat.docs_by;
+            const totalBytes = stat.bytes_to
+                ? stat.bytes_to + stat.bytes_by
+                : stat.bytes_by;
+
+            response[formattedTime] = {
+                docs: totalDocs,
+                bytes: totalBytes,
+            };
+        });
+
+        return response;
+    }, [intl, stats]);
+
+    // Effect to update the data
     useEffect(() => {
         const bytesSeries: EChartsOption['series'] = {
             data: [],
@@ -279,36 +280,31 @@ function DataByHourGraph({ range, stats }: Props) {
             yAxisIndex: 1,
         };
 
-        const scopedDataSet = {};
-        stats.forEach((stat) => {
-            const formattedTime = intl.formatTime(stat.ts);
-            const totalDocs = stat.docs_to
-                ? stat.docs_to + stat.docs_by
-                : stat.docs_by;
-            const totalBytes = stat.bytes_to
-                ? stat.bytes_to + stat.bytes_by
-                : stat.bytes_by;
-
-            scopedDataSet[formattedTime] = {
-                docs: totalDocs,
-                bytes: totalBytes,
-            };
-        });
-
-        hours.forEach((hour) => {
+        // Go through hours so we have data for each hour
+        hours.forEach((hour, index) => {
+            // See if there is data for the hour we're looking for
             const hourlyDataSet = scopedDataSet[hour];
 
+            // Default to null so we can differentiate between 0 and missing data
             const bytes = hourlyDataSet?.bytes ?? null;
             const docs = hourlyDataSet?.docs ?? null;
 
-            bytesSeries.data?.push([hour, bytes]);
-            docsSeries.data?.push([hour, docs]);
+            // Add custom styling for the last hour as that will be updating dynamically
+            const itemStyle: any = {};
+            if (index === hours.length - 1) {
+                itemStyle.opacity = '0.8';
+            }
+
+            // Add data to series
+            bytesSeries.data?.push({ itemStyle, value: bytes });
+            docsSeries.data?.push({ itemStyle, value: docs });
         });
 
+        // Update mychart series so new data goes in
         myChart?.setOption({
             series: [bytesSeries, docsSeries],
         });
-    }, [hours, intl, myChart, stats]);
+    }, [hours, intl, myChart, scopedDataSet]);
 
     return <div id="data-by-hour" style={{ height: CARD_AREA_HEIGHT }} />;
 }
