@@ -41,7 +41,9 @@ const filterInferSchemaResponse = (schema: any) => {
             .map((inferredProperty: any) => {
                 const interrefPropertyTypes = inferredProperty.types;
                 const isValidKey = Boolean(
-                    inferredProperty.exists === 'must' &&
+                    // Happens when the schema contradicts itself, which isnt a "feature" we use intentionally
+                    inferredProperty.exists !== 'cannot' &&
+                        // Make sure there is a single type and it is on the list of allowed types
                         interrefPropertyTypes.length === 1 &&
                         typesAllowedAsKeys.some((key) =>
                             interrefPropertyTypes.includes(key)

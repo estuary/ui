@@ -10,6 +10,8 @@ export const getStoreName = (entityType: Entity): DetailsFormStoreNames => {
             return DetailsFormStoreNames.CAPTURE;
         case 'materialization':
             return DetailsFormStoreNames.MATERIALIZATION;
+        case 'collection':
+            return DetailsFormStoreNames.COLLECTION;
         default: {
             throw new Error('Invalid DetailsForm store name');
         }

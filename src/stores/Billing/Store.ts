@@ -147,8 +147,9 @@ export const getInitialState = (
     };
 };
 
-export const createBillingStore = (key: BillingStoreNames.GENERAL) => {
-    return create<BillingState>()(
-        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
-    );
-};
+export const billingStore = create<BillingState>()(
+    devtools(
+        (set, get) => getInitialState(set, get),
+        devtoolsOptions(BillingStoreNames.GENERAL)
+    )
+);

@@ -3,12 +3,11 @@ import { Stack, SxProps, Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
-import { Auth } from '@supabase/ui';
 import UserAvatar from 'components/shared/UserAvatar';
 import { useClient } from 'hooks/supabase-swr';
+import useUserDetails from 'hooks/useUserDetails';
 import { LogOut, Mail, ProfileCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { getUserDetails } from 'services/supabase';
 import IconMenu from './IconMenu';
 
 interface Props {
@@ -24,9 +23,7 @@ const nonInteractiveMenuStyling: SxProps = {
 const UserMenu = ({ iconColor }: Props) => {
     const intl = useIntl();
     const supabaseClient = useClient();
-
-    const { user } = Auth.useUser();
-    const { userName, email, emailVerified, avatar } = getUserDetails(user);
+    const { userName, email, emailVerified, avatar } = useUserDetails();
 
     const handlers = {
         logout: async () => {

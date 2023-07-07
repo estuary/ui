@@ -36,6 +36,7 @@ export enum CustomEvents {
     MATERIALIZATION_CREATE_CONFIG_EDIT = 'Materialization_Create_Config_Edit',
     MATERIALIZATION_TEST = 'Materialization_Test',
     MATERIALIZATION_EDIT = 'Materialization_Edit',
+    COLLECTION_CREATE = 'Collection_Create',
     DIRECTIVE = 'Directive',
     ERROR_BOUNDARY_DISPLAYED = 'Error_Boundary_Displayed',
     ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
@@ -241,5 +242,9 @@ export const logRocketConsole = (message: string, ...props: any[]) => {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (LogRocket?.log) {
         LogRocket.log(message, props);
+    }
+
+    if (process.env.NODE_ENV === 'development') {
+        console.log(message, props);
     }
 };

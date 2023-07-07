@@ -2,6 +2,8 @@ export interface ClientConfig<T> extends RequestInit {
     data?: T;
 }
 
+export const AUTH_ERROR = 'common.loggedOut';
+
 export const client = <Response, Request = {}>(
     endpoint: string,
     { data, ...customConfig }: ClientConfig<Request> = {}
@@ -33,7 +35,7 @@ export const client = <Response, Request = {}>(
         .then(async (response) => {
             if (response.status === 401) {
                 // await auth.signout();
-                return Promise.reject({ message: 'common.loggedOut' });
+                return Promise.reject({ message: AUTH_ERROR });
             } else if (response.ok) {
                 return response.json();
             } else {

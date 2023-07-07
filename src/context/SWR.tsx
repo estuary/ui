@@ -61,7 +61,14 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                                         }
                                     );
                                 })
-                                .catch(() => {});
+                                .catch((signOutError) => {
+                                    console.log(
+                                        'SWR:onError:failed to sign out',
+                                        {
+                                            signOutError,
+                                        }
+                                    );
+                                });
                         }
                     },
 

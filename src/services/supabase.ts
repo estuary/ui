@@ -184,10 +184,10 @@ export const getUserDetails = (user: User | null) => {
 
     if (user) {
         if (!isEmpty(user.user_metadata)) {
-            userName = user.user_metadata.full_name;
             email = user.user_metadata.email;
             emailVerified = user.user_metadata.email_verified;
             avatar = user.user_metadata.avatar_url;
+            userName = user.user_metadata.full_name ?? email;
         } else {
             userName = user.email;
             email = user.email;

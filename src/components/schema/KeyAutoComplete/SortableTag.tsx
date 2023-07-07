@@ -1,6 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Box, ChipProps, Tooltip } from '@mui/material';
+import { truncateTextSx } from 'context/Theme';
 import { useIntl } from 'react-intl';
 import StyledChip from './StyledChip';
 
@@ -34,6 +35,10 @@ function SortableTag({ tagProps, label, validOption }: Props) {
             id={label}
             ref={setNodeRef}
             style={style}
+            sx={{
+                ...truncateTextSx,
+                maxWidth: 300,
+            }}
             {...attributes}
         >
             {validOption ? (

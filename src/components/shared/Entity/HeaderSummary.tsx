@@ -15,7 +15,10 @@ function HeaderSummary({ severity, title, children }: Props) {
                 short
                 severity={severity}
                 title={
-                    <Typography variant="h5" component="span">
+                    <Typography
+                        component="span"
+                        sx={{ fontSize: 18, fontWeight: 500 }}
+                    >
                         <FormattedMessage id={title} />
                     </Typography>
                 }

@@ -14,6 +14,7 @@ import { EditorStatus } from 'components/editor/Store/types';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { logRocketConsole } from 'services/logrocket';
 import { stringifyJSON } from 'services/stringify';
 import {
     DEFAULT_HEIGHT,
@@ -51,10 +52,15 @@ function MonacoEditor({
         null
     );
 
+    // Need to keep a local copy so that as we are parsing/formatting JSON to save it
+    //  the editor will not format and move the cursor around and will just keep
+    //  displaying what the user has entered/edited
+    const [localCopy, setLocalCopy] = useState('');
+    const [showServerDiff, setShowServerDiff] = useState(false);
+
     const serverUpdate = useEditorStore_serverUpdate({
         localScope: localZustandScope,
     });
-
     const currentCatalog = useEditorStore_currentCatalog({
         localScope: localZustandScope,
     });
@@ -64,40 +70,54 @@ function MonacoEditor({
     const catalogSpec = currentCatalog?.spec ?? null;
     const catalogType = currentCatalog?.spec_type ?? null;
 
+    // Snagging out the status of the editor
     const status = useEditorStore_status({ localScope: localZustandScope });
     const setStatus = useEditorStore_setStatus({
         localScope: localZustandScope,
     });
 
-    const [showServerDiff, setShowServerDiff] = useState(false);
+    const doneUpdatingValue = (message: string, format: boolean) => {
+        logRocketConsole(message);
+        setStatus(EditorStatus.SAVED);
 
-    const updateValue = () => {
-        console.log('editor:update');
+        if (format) {
+            // Format the editor. Formatting like this should work like a standard IDE
+            //  where your cursor position stays where it was and is moved with the new format
+            void editorRef.current
+                ?.getAction('editor.action.formatDocument')
+                .run();
+        }
+    };
+
+    const updateValue = (isUndo: boolean) => {
+        // Fetch the current value of the editor
         const currentValue = editorRef.current?.getValue();
-        console.log('editor:update:current', {
-            currentValue,
-        });
+
+        // Make sure we have a value and handled to call
         if (onChange && currentValue) {
             setStatus(EditorStatus.EDITING);
 
+            // We save as JSON on the backend so need to make sure we can parse it
+            //  otherwise Postgres will not let us update the value
             let parsedVal;
             try {
                 parsedVal = JSON.parse(currentValue);
-                console.log('editor:update:parsed');
             } catch {
                 setStatus(EditorStatus.INVALID);
             }
 
+            // Make sure we have all the props needed to update the value
             if (parsedVal && catalogName && catalogType) {
-                console.log('editor:update:saving', {
+                logRocketConsole('editor:update:saving', {
                     parsedVal,
                     catalogName,
                     catalogType,
                 });
                 setStatus(EditorStatus.SAVING);
 
+                // Check if there is a scope to update (ex: Schema editing for bindings editor)
                 if (editorSchemaScope) {
-                    console.log('editor:update:saving:scoped', {
+                    logRocketConsole('editor:update:saving:scoped', {
                         nestedProperty: editorSchemaScope,
                     });
                     onChange(
@@ -107,26 +127,33 @@ function MonacoEditor({
                         editorSchemaScope
                     )
                         .then(() => {
-                            console.log('editor:update:saving:scoped:success');
-                            setStatus(EditorStatus.SAVED);
+                            doneUpdatingValue(
+                                'editor:update:saving:scoped:success',
+                                !isUndo
+                            );
                         })
                         .catch(() => {
-                            console.log('editor:update:saving:scoped:failed');
+                            logRocketConsole(
+                                'editor:update:saving:scoped:failed'
+                            );
                             setStatus(EditorStatus.SAVE_FAILED);
                         });
                 } else {
+                    // Fire off the onChange to update the server
                     onChange(parsedVal, catalogName, catalogType)
                         .then(() => {
-                            console.log('editor:update:saving:success');
-                            setStatus(EditorStatus.SAVED);
+                            doneUpdatingValue(
+                                'editor:update:saving:success',
+                                !isUndo
+                            );
                         })
                         .catch(() => {
-                            console.log('editor:update:saving:failed');
+                            logRocketConsole('editor:update:saving:failed');
                             setStatus(EditorStatus.SAVE_FAILED);
                         });
                 }
             } else {
-                console.log('editor:update:invalid', {
+                logRocketConsole('editor:update:invalid', {
                     parsedVal,
                     catalogName,
                     catalogType,
@@ -134,7 +161,7 @@ function MonacoEditor({
                 setStatus(EditorStatus.INVALID);
             }
         } else {
-            console.log('editor:update:missing', {
+            logRocketConsole('editor:update:missing', {
                 onChange,
                 currentValue,
             });
@@ -149,7 +176,7 @@ function MonacoEditor({
     const specAsString = useMemo(() => {
         let spec: any;
         if (editorSchemaScope) {
-            // If there is a schema sdcope make sure it exists first
+            // If there is a schema scope make sure it exists first
             //  otherwise we will fall back to the schema prop
             // This is just being super safe
             if (catalogSpec[editorSchemaScope]) {
@@ -165,18 +192,29 @@ function MonacoEditor({
 
     const handlers = {
         change: (value: any, ev: any) => {
-            console.log('handlers:change', {
+            logRocketConsole('handlers:change', {
                 status,
                 value,
                 ev,
             });
+
+            // Safely grab if the user is undoing. That way we can skip the formatting
+            //  otherwise thye might get stuck undoing the formatting
+            const undoing = ev?.isUndoing ?? false;
+
+            // Set the status to editing
             if (status !== EditorStatus.EDITING) {
                 setStatus(EditorStatus.EDITING);
             }
-            debouncedChange();
+
+            // Update the local copy
+            setLocalCopy(value);
+
+            // Fire off the debounced change to keep the server up to date
+            debouncedChange(undoing);
         },
         mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
-            console.log('handlers:mount');
+            logRocketConsole('handlers:mount');
             editorRef.current = editor;
         },
         merge: () => {
@@ -240,7 +278,7 @@ function MonacoEditor({
                         }
                         saveViewState={false}
                         defaultValue={specAsString}
-                        value={specAsString}
+                        value={localCopy}
                         path={catalogName}
                         options={{
                             readOnly: disabled ? disabled : false,

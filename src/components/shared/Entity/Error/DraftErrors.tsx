@@ -68,8 +68,8 @@ function DraftErrors({ draftId, enablePolling }: DraftErrorProps) {
                             return (
                                 <Typography
                                     key={`draft-error-breadcrumbs-${scope}`}
-                                    variant="h6"
                                     component="span"
+                                    sx={{ fontWeight: 500 }}
                                 >
                                     {scope}
                                 </Typography>

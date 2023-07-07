@@ -16,7 +16,9 @@ import {
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
 import SingleLineCode from 'components/content/SingleLineCode';
+import { useEditorStore_id } from 'components/editor/Store/hooks';
 import PrefixedName from 'components/inputs/PrefixedName';
+import EntityError from 'components/shared/Entity/Error';
 import DerivationEditor from 'components/transformation/create/DerivationEditor';
 import GitPodButton from 'components/transformation/create/GitPodButton';
 import InitializeDraftButton from 'components/transformation/create/InitializeDraftButton';
@@ -32,10 +34,13 @@ import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSet } from 'react-use';
 import {
+    useFormStateStore_error,
+    useFormStateStore_logToken,
+} from 'stores/FormState/hooks';
+import {
     useTransformationCreate_language,
     useTransformationCreate_setCatalogName,
     useTransformationCreate_setName,
-    useTransformationCreate_setPrefix,
 } from 'stores/TransformationCreate/hooks';
 import SingleStep from './SingleStep';
 import StepWrapper from './Wrapper';
@@ -56,9 +61,10 @@ const StyledStepConnector = styled(StepConnector)(() => ({
 
 interface Props {
     postWindowOpen: (window: Window | null) => void;
+    closeDialog: () => void;
 }
 
-function TransformationCreate({ postWindowOpen }: Props) {
+function TransformationCreate({ postWindowOpen, closeDialog }: Props) {
     const newTransformWorkflow = useGlobalSearchParams(
         GlobalSearchParams.HIDDEN_TRANSFORM_WORKFLOW
     );
@@ -74,9 +80,16 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
     const collections = useLiveSpecs('collection');
 
-    const setCatalogName = useTransformationCreate_setCatalogName();
+    // Draft Editor Store
+    const draftId = useEditorStore_id();
+
+    // Form State Store
+    const logToken = useFormStateStore_logToken();
+    const publicationError = useFormStateStore_error();
+
+    // Transformation Create Store
     const setDerivationName = useTransformationCreate_setName();
-    const setCatalogPrefix = useTransformationCreate_setPrefix();
+    const setCatalogName = useTransformationCreate_setCatalogName();
     const language = useTransformationCreate_language();
 
     const [entityNameError, setEntityNameError] = useState<string | null>(null);
@@ -124,14 +137,9 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
                             <Divider />
 
-                            <Box
-                                sx={{
-                                    p: 2,
-                                }}
-                            >
+                            <Box sx={{ py: 1, px: 2 }}>
                                 <PrefixedName
                                     standardVariant
-                                    size="medium"
                                     label={null}
                                     onChange={(newName, errors) => {
                                         setCatalogName(newName);
@@ -139,10 +147,6 @@ function TransformationCreate({ postWindowOpen }: Props) {
                                     }}
                                     onNameChange={(newName, errors) => {
                                         setDerivationName(newName);
-                                        setEntityNameError(errors);
-                                    }}
-                                    onPrefixChange={(prefix, errors) => {
-                                        setCatalogPrefix(prefix);
                                         setEntityNameError(errors);
                                     }}
                                 />
@@ -165,7 +169,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
                             ) : (
                                 <GitPodButton
                                     entityNameError={entityNameError}
-                                    selectedCollections={selectedCollectionSet}
+                                    sourceCollectionSet={selectedCollectionSet}
                                     postWindowOpen={postWindowOpen}
                                 />
                             )}
@@ -174,7 +178,20 @@ function TransformationCreate({ postWindowOpen }: Props) {
                 </Collapse>
 
                 <Collapse in={sqlEditorOpen}>
-                    <DerivationEditor />
+                    <Collapse in={publicationError !== null} unmountOnExit>
+                        {publicationError ? (
+                            <EntityError
+                                title={publicationError.title}
+                                error={publicationError.error}
+                                logToken={logToken}
+                                draftId={draftId}
+                            />
+                        ) : null}
+                    </Collapse>
+                    <DerivationEditor
+                        postWindowOpen={postWindowOpen}
+                        closeDialog={closeDialog}
+                    />
                 </Collapse>
             </>
         );
@@ -263,15 +280,11 @@ function TransformationCreate({ postWindowOpen }: Props) {
                                     setDerivationName(newName);
                                     setEntityNameError(errors);
                                 }}
-                                onPrefixChange={(prefix, errors) => {
-                                    setCatalogPrefix(prefix);
-                                    setEntityNameError(errors);
-                                }}
                             />
 
                             <GitPodButton
                                 entityNameError={entityNameError}
-                                selectedCollections={selectedCollectionSet}
+                                sourceCollectionSet={selectedCollectionSet}
                                 postWindowOpen={postWindowOpen}
                             />
 

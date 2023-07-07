@@ -130,10 +130,12 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.register.google': `Register with Google`,
     'cta.login.github': `Sign in with GitHub`,
     'cta.register.github': `Register with GitHub`,
+    'cta.login.azure': `Sign in with Azure`,
+    'cta.register.azure': `Register with Azure`,
     'cta.configure': `Configure`,
     'cta.showAll': `Show All`,
     'cta.reload': `Reload`,
-    'cta.evolve': `Create New Collection Versions`,
+    'cta.evolve': `Apply`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -232,7 +234,6 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.materializationEdit': `Edit Materialization`,
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,
-    'routeTitle.passwordReset': `Password Reset`,
 };
 
 const Header: ResolvedIntlConfig['messages'] = {
@@ -307,17 +308,6 @@ const EntityNotFound: ResolvedIntlConfig['messages'] = {
     'entityNotFound.message': `The entity you are looking for could not be found. This is likely because it has been deleted.`,
 };
 
-// TODO (password reset) not active
-const PasswordReset: ResolvedIntlConfig['messages'] = {
-    'passwordReset.heading': `Password Reset`,
-    'passwordReset.main': `Enter your new password below.`,
-    'email.description': `The email address associated with your ${CommonMessages.productName} Account`,
-    'email.label': `Email`,
-    'password.description': `Please provide a safe and secure password`,
-    'password.label': `Password`,
-    'confirmPassword.label': `Confirm Password`,
-};
-
 const Registration: ResolvedIntlConfig['messages'] = {
     'register.heading': `We're currently accepting Beta partners.`,
     'register.main.message': `Please enter your information and our team will approve your account.`,
@@ -336,8 +326,6 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.tabs.register': `Register`,
     'login.login.message': `Sign in to continue to ${CommonMessages.productName}.`,
     'login.register.message': `Please log in with a provider to use ${CommonMessages.productName} for free.`,
-
-    'login.passwordReset': 'You should not need to reset your password.',
 
     'login.magicLink': 'Magic link sent. Please check your email.',
     'login.magicLink.failed': 'Failed. Please try again.',
@@ -631,7 +619,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.instructions': `To start select a Connector below. Once you make a selection the rest of the form will display and you can configure your endpoint. You can search by name and if you do not find what you are looking for please let us know by requesting the connector.`,
 
     'entityCreate.endpointConfig.detailsHaveErrors': `The Details section has errors:`,
-    'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Output Collections section has errors:`,
+    'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections section has errors:`,
     'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${endpointConfigHeader} section has errors:`,
 
     'entityCreate.endpointConfig.noConnectorSelectedTitle': `Please select a Connector to begin`,
@@ -762,7 +750,7 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.details.heading': `Materialization Details`,
-    'materializationCreate.collections.heading': `Output Collections`,
+    'materializationCreate.collections.heading': `Source Collections`,
     'materializationCreate.config.source.doclink': `Connector Help`,
     'materializationCreate.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
     'materializationCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.materialization']}" again. You can also edit the specification file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
@@ -1033,7 +1021,7 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.editor.catalog.transform.header': `Transforms`,
     'newTransform.editor.catalog.transform.addDialog.header': `Add or Remove Transforms`,
     'newTransform.editor.catalog.migration.header': `Migrations`,
-    'newTransform.editor.catalog.message.empty': `Click on the edit pencil above to add or remove a {contentType}.`,
+    'newTransform.editor.catalog.message.empty': `Click on the edit pencil above to edit the list of {contentType}s.`,
 
     'newTransform.editor.streaming.header': `Streaming`,
     'newTransform.editor.streaming.description': `Used for selecting columns and creating aggregations`,
@@ -1045,7 +1033,15 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
 
     'newTransform.editor.preview.header': `Data Preview`,
     'newTransform.editor.preview.description': `This is a placeholder for a section description`,
-    'newTransform.editor.preview.noPreviewGenerated': `Click PREVIEW to execute your query.`,
+    'newTransform.editor.preview.noPreviewGenerated': `Click PREVIEW to sample your derivation.`,
+
+    'newTransform.editor.save.failedErrorTitle': `Derivation Save Failed`,
+    'newTransform.editor.save.failure.errorTitle': `Derivation Save Failed`,
+    'newTransform.editor.save.serverUnreachable': `${CommonMessages['common.failedFetch']} while saving derivation`,
+    'newTransform.editor.save.waitMessage': `Please wait while we test, save, and publish your derivation.`,
+
+    'newTransform.editor.createNotification.title': `New Derivation Created`,
+    'newTransform.editor.createNotification.desc': `Your new derivation is published and ready to be used.`,
 };
 
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
@@ -1080,6 +1076,8 @@ const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
     'schemaEditor.table.empty.header': `No fields to display.`,
     'schemaEditor.table.empty.message': `We were unable to generate a table from the current schema. Please update the schema.`,
     'schemaEditor.error.title': `Schema Invalid`,
+    'keyAutoComplete.keys.group.must': `Fields that always exist`,
+    'keyAutoComplete.keys.group.may': `Fields that sometimes exist`,
     'keyAutoComplete.keys.invalid.message': `Field is not a valid key. Please remove or update the schema.`,
     'keyAutoComplete.keys.invalid.message.readOnly': `Field is not a valid key. Please update the schema.`,
     'keyAutoComplete.keys.missing.title': `Key is empty`,
@@ -1091,9 +1089,35 @@ const SchemaEditor_Collection: ResolvedIntlConfig['messages'] = {
 const EntityEvolution: ResolvedIntlConfig['messages'] = {
     'entityEvolution.failure.errorTitle': `Update Failed`,
     'entityEvolution.serverUnreachable': `${CommonMessages['common.failedFetch']} while trying to update collections`,
-    'entityEvolution.error.title': `Changes Rejected Due to Incompatible Schema Updates`,
-    'entityEvolution.error.message': `Schema changes will break downstream tasks. To avoid this, click below and then publish a new version of the affected collections.`,
-    'entityEvolution.error.note': `Note: This may result in additional cost as new collection versions are backfilled.`,
+    'entityEvolution.error.title': `Changes rejected due to incompatible collection updates`,
+    'entityEvolution.error.message': `The proposed collection changes would break downstream tasks. You can click '${CTAs['cta.evolve']}' below to automatically update your draft with the following recommended actions.`,
+    'entityEvolution.error.note': `Note: This may result in additional cost as new versions are backfilled.`,
+
+    // Single quotes are special and must be doubled: https://formatjs.io/docs/core-concepts/icu-syntax#quoting--escaping
+    'entityEvolution.action.recreateOneBinding.description': `the Materialization ''{materializationName}'' will be updated to materialize the collection into a new resource`,
+    'entityEvolution.action.recreateBindings.description': `{materializationCount} {materializationCount, plural,
+        one {Materialization}
+        other {Materializations}
+    } will be updated to materialize the collection into new resources`,
+    'entityEvolution.action.recreateBindings.help': `Any materializations of this collection will be updated to materialize it
+    into a new resource (database table, for example) with an incremented version suffix (like "_v2"). The Collection itself will
+    have the schema updated in place, and will retain all current data. The materialization will backfill from the beginning of
+    this collection, but other bindings in the materialization will not be affected.`,
+
+    'entityEvolution.action.recreateCollection.description': `Collection will be re-created as ''{newName}'' because {reason}`,
+    'entityEvolution.action.recreateCollection.help': `This will create a new Collection with the name shown.
+    The Capture will be updated to write into the new collection, and will backfill the collection from source system.
+    Any Materializations will also be updated to materialize the new collection instead of the old one.
+    The result will be a new resource (database table, for example) with an incremented version suffix (like "_v2")`,
+
+    'entityEvolution.action.recreateCollection.reason.keyChange':
+        'the collection key cannot be modified',
+    'entityEvolution.action.recreateCollection.reason.partitionChange':
+        'the collection partitions cannot be modified',
+    'entityEvolution.action.recreateCollection.reason.prevDeletedSpec':
+        'a live spec with this same name has already been created and was subsequently deleted',
+    'entityEvolution.action.recreateCollection.reason.authoritativeSourceSchema':
+        'a live spec with this same name has already been created and was subsequently deleted',
 };
 
 const DraftErrors: ResolvedIntlConfig['messages'] = {
@@ -1142,7 +1166,6 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...EntityTable,
     ...Home,
     ...PageNotFound,
-    ...PasswordReset,
     ...Registration,
     ...AdminPage,
     ...MonacoEditor,

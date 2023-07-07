@@ -8,6 +8,7 @@ import {
     CustomError,
     fetchErrors,
     filterErrors,
+    getInitialCustomErrorsData,
     getStoreWithCustomErrorsSettings,
 } from 'stores/extensions/CustomErrors';
 import {
@@ -93,7 +94,7 @@ export const getInitialState = (
                 populateErrors(details, val, state);
             }),
             false,
-            'Endpoint Custom Errors Set'
+            'Details Custom Errors Set'
         );
     },
 
@@ -276,15 +277,29 @@ export const getInitialState = (
 
     resetState: () => {
         set(
-            { ...getInitialStateData(), ...getInitialHydrationData() },
+            {
+                ...getInitialStateData(),
+                ...getInitialHydrationData(),
+                ...getInitialCustomErrorsData(),
+            },
             false,
             'Details Form State Reset'
         );
     },
 });
 
-export const createDetailsFormStore = (key: DetailsFormStoreNames) => {
+const createDetailsFormStore = (key: DetailsFormStoreNames) => {
     return createStore<DetailsFormState>()(
         devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
     );
 };
+
+export const captureDetailsForm = createDetailsFormStore(
+    DetailsFormStoreNames.CAPTURE
+);
+export const collectionDetailsForm = createDetailsFormStore(
+    DetailsFormStoreNames.COLLECTION
+);
+export const materializationDetailsForm = createDetailsFormStore(
+    DetailsFormStoreNames.MATERIALIZATION
+);

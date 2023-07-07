@@ -1,15 +1,26 @@
 import { arrayMove } from '@dnd-kit/sortable';
-import { Autocomplete, Grid, TextField } from '@mui/material';
 import {
+    Autocomplete,
+    Grid,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material';
+import {
+    useBindingsEditorStore_inferSchemaResponse,
     useBindingsEditorStore_inferSchemaResponseEmpty,
     useBindingsEditorStore_inferSchemaResponse_Keys,
 } from 'components/editor/Bindings/Store/hooks';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { useEntityType } from 'context/EntityContext';
-import { useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { truncateTextSx } from 'context/Theme';
+import { filter, orderBy } from 'lodash';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
+import BasicOption from './options/Basic';
 import ReadOnly from './ReadOnly';
+import { keyIsValidOption } from './shared';
 import SortableTags from './SortableTags';
 
 interface Props {
@@ -22,7 +33,14 @@ interface Props {
     ) => PromiseLike<any>;
 }
 
+// Hardcoded and figured out by rendering the content and inspecting heigh
+//  due to virtualization we need to be specific here.
+const tallHeight = 71;
+const getValue = (option: any) => option.pointer;
+
 function KeyAutoComplete({ disabled, onChange, value }: Props) {
+    const intl = useIntl();
+
     // We want a local copy so that the display is updated right away when the user
     //  is done dragging. Otherwise, the item being dragged kind flies around when
     //  put in a new location
@@ -36,7 +54,23 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
     // Need the response so we know the options
     const inferSchemaResponseEmpty =
         useBindingsEditorStore_inferSchemaResponseEmpty();
-    const keys = useBindingsEditorStore_inferSchemaResponse_Keys();
+    const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
+    const validKeys = useBindingsEditorStore_inferSchemaResponse_Keys();
+    const keys = useMemo(
+        () =>
+            inferSchemaResponse
+                ? orderBy(
+                      // Filter so only valid keys are displayed
+                      filter(Object.values(inferSchemaResponse), (field) =>
+                          keyIsValidOption(validKeys, field.pointer)
+                      ),
+                      // Order first by exists so groups do not duplicate in the dropdown
+                      ['exists', 'pointer'],
+                      ['desc', 'asc']
+                  )
+                : [],
+        [inferSchemaResponse, validKeys]
+    );
 
     // Make sure we keep our local copy up to date
     useEffect(() => {
@@ -69,14 +103,103 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
             <Autocomplete
                 {...autoCompleteDefaults_Virtual_Multiple}
                 disabled={inferSchemaResponseEmpty}
+                getOptionLabel={getValue}
+                groupBy={(option) => option.exists}
                 inputValue={inputValue}
-                onChange={changeHandler}
-                onInputChange={(event, newInputValue) => {
-                    setInputValue(newInputValue);
+                isOptionEqualToValue={(option, optionValue) => {
+                    return option.pointer === optionValue;
                 }}
                 options={keys}
                 readOnly={disableInput}
                 value={localCopyValue}
+                onChange={async (event, newValues, reason) => {
+                    if (changeHandler) {
+                        await changeHandler(
+                            event,
+                            newValues.map((newValue) => {
+                                if (typeof newValue === 'string') {
+                                    return newValue;
+                                } else {
+                                    return getValue(newValue);
+                                }
+                            }),
+                            reason
+                        );
+                    }
+                }}
+                onInputChange={(event, newInputValue) => {
+                    setInputValue(newInputValue);
+                }}
+                renderGroup={({ key, group, children }) => {
+                    const readableGroup = intl.formatMessage({
+                        id:
+                            group === 'must'
+                                ? 'keyAutoComplete.keys.group.must'
+                                : 'keyAutoComplete.keys.group.may',
+                    });
+
+                    return { key, group: readableGroup, children } as ReactNode;
+                }}
+                renderInput={(params) => {
+                    return (
+                        <TextField
+                            {...params}
+                            disabled={inferSchemaResponseEmpty || disableInput}
+                            error={showEditErrorState}
+                            helperText={
+                                inferSchemaResponseEmpty ? (
+                                    <FormattedMessage id="keyAutoComplete.noOptions.message" />
+                                ) : noUsableKeys ? (
+                                    <FormattedMessage id="keyAutoComplete.noUsableKeys.message" />
+                                ) : (
+                                    <FormattedMessage id="schemaEditor.key.helper" />
+                                )
+                            }
+                            label={
+                                <FormattedMessage id="schemaEditor.key.label" />
+                            }
+                            variant="standard"
+                        />
+                    );
+                }}
+                renderOption={(renderOptionProps, option, state) => {
+                    const { description, pointer, types } = option;
+
+                    // We do this logic here to pass the specific component (Stack with custom prop)
+                    //  into the virtualized renderer. That way we can easily read off the custom prop.
+                    let RowContent;
+                    if (description) {
+                        RowContent = (
+                            <Stack
+                                component="span"
+                                spacing={1}
+                                x-react-window-item-height={tallHeight}
+                            >
+                                <BasicOption pointer={pointer} types={types} />
+                                <Typography
+                                    component="span"
+                                    variant="caption"
+                                    sx={{
+                                        ...truncateTextSx,
+                                        pl: 1.5,
+                                    }}
+                                >
+                                    {description}
+                                </Typography>
+                            </Stack>
+                        );
+                    } else {
+                        RowContent = (
+                            <BasicOption pointer={pointer} types={types} />
+                        );
+                    }
+
+                    return [
+                        renderOptionProps,
+                        RowContent,
+                        state.selected,
+                    ] as ReactNode;
+                }}
                 renderTags={(tagValues, getTagProps, ownerState) => {
                     return (
                         <SortableTags
@@ -102,28 +225,6 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                                     'orderingUpdated'
                                 );
                             }}
-                        />
-                    );
-                }}
-                renderInput={(params) => {
-                    return (
-                        <TextField
-                            {...params}
-                            disabled={inferSchemaResponseEmpty || disableInput}
-                            error={showEditErrorState}
-                            helperText={
-                                inferSchemaResponseEmpty ? (
-                                    <FormattedMessage id="keyAutoComplete.noOptions.message" />
-                                ) : noUsableKeys ? (
-                                    <FormattedMessage id="keyAutoComplete.noUsableKeys.message" />
-                                ) : (
-                                    <FormattedMessage id="schemaEditor.key.helper" />
-                                )
-                            }
-                            label={
-                                <FormattedMessage id="schemaEditor.key.label" />
-                            }
-                            variant="standard"
                         />
                     );
                 }}

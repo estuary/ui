@@ -87,7 +87,7 @@ function MonacoEditor({
         console.log('editor:update:current', {
             currentValue,
         });
-        if (onChange && currentValue) {
+        if (onChange && typeof currentValue === 'string') {
             setStatus(EditorStatus.EDITING);
 
             if (attributeId) {

@@ -1,6 +1,7 @@
 import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
 import { AuthenticatedOnlyContext } from 'context/Authenticated';
 import { EntityContextProvider } from 'context/EntityContext';
+import { WorkflowContextProvider } from 'context/Workflow';
 import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import Auth from 'pages/Auth';
@@ -110,6 +111,12 @@ const router = createBrowserRouter(
                 path={unauthenticatedRoutes.magicLink.path}
                 element={<Auth />}
             />
+
+            {/*Logout goes directly to login to make sure it isn't wrapped in RequireAuth and won't try to log the user back in*/}
+            <Route
+                path={unauthenticatedRoutes.logout.path}
+                element={<Login />}
+            />
             <Route
                 path={unauthenticatedRoutes.register.path}
                 element={<Login showRegistration />}
@@ -204,7 +211,9 @@ const router = createBrowserRouter(
                                             }
                                             element={
                                                 <Suspense fallback={null}>
-                                                    <DerivationCreateComponent />
+                                                    <WorkflowContextProvider value="collection_create">
+                                                        <DerivationCreateComponent />
+                                                    </WorkflowContextProvider>
                                                 </Suspense>
                                             }
                                         />

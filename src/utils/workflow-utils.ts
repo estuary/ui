@@ -6,9 +6,28 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
-import { EntityWithCreateWorkflow, Schema } from 'types';
+import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
+
+export const getCollectionNameProp = (entityType: Entity) => {
+    return entityType === 'materialization' ? 'source' : 'target';
+};
+
+export const getCollectionName = (binding: any) => {
+    // First see if we've already been passed a scoped binding
+    //  or if we need to find the proper scope ourselves.
+    const scopedBinding = Object.hasOwn(binding, 'source')
+        ? binding.source
+        : Object.hasOwn(binding, 'target')
+        ? binding.target
+        : binding;
+
+    // Check if we're dealing with a FullSource or just a string
+    return Object.hasOwn(scopedBinding, 'name')
+        ? scopedBinding.name
+        : scopedBinding;
+};
 
 // TODO (typing): Narrow the return type for this function.
 export const generateTaskSpec = (
@@ -27,8 +46,7 @@ export const generateTaskSpec = (
     draftSpec.endpoint.connector = connectorConfig;
 
     if (resourceConfigs) {
-        const collectionNameProp =
-            entityType === 'capture' ? 'target' : 'source';
+        const collectionNameProp = getCollectionNameProp(entityType);
 
         const boundCollectionNames = Object.keys(resourceConfigs);
 
@@ -36,7 +54,7 @@ export const generateTaskSpec = (
             const resourceConfig = resourceConfigs[collectionName].data;
 
             const existingBindingIndex = draftSpec.bindings.findIndex(
-                (binding: any) => binding[collectionNameProp] === collectionName
+                (binding: any) => getCollectionName(binding) === collectionName
             );
 
             if (existingBindingIndex > -1) {
@@ -54,11 +72,11 @@ export const generateTaskSpec = (
         });
 
         if (hasLength(draftSpec.bindings)) {
-            const filteredBindings = draftSpec.bindings.filter((binding: any) =>
-                boundCollectionNames.includes(binding[collectionNameProp])
+            draftSpec.bindings = draftSpec.bindings.filter((binding: any) =>
+                boundCollectionNames.includes(
+                    getCollectionName(binding[collectionNameProp])
+                )
             );
-
-            draftSpec.bindings = filteredBindings;
         }
     } else {
         draftSpec.bindings = [];

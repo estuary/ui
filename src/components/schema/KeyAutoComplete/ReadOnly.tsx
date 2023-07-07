@@ -15,6 +15,7 @@ import AlertBox from 'components/shared/AlertBox';
 import { HelpCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
+import { keyIsValidOption } from './shared';
 
 interface Props {
     value: string[] | null;
@@ -77,7 +78,7 @@ function ReadOnly({ value }: Props) {
                     }}
                 >
                     {value.map((key: string) => {
-                        const validOption = keys.includes(key);
+                        const validOption = keyIsValidOption(keys, key);
                         const Tag = (
                             <ListItem
                                 key={`read-only-keys-${key}`}

@@ -15,14 +15,15 @@ import { FormStatus } from 'stores/FormState/types';
 interface Props {
     closeLogs: Function;
     callFailed: Function;
-    disabled: boolean;
-    taskNames: string[];
     logEvent:
         | CustomEvents.CAPTURE_CREATE
+        | CustomEvents.COLLECTION_CREATE
         | CustomEvents.MATERIALIZATION_CREATE
         | CustomEvents.CAPTURE_EDIT
         | CustomEvents.MATERIALIZATION_EDIT;
+    disabled?: boolean;
     materialize?: Function;
+    taskNames?: string[];
 }
 
 function EntitySaveButton({
@@ -75,7 +76,7 @@ function EntitySaveButton({
                 }
             />
             <EntityCreateSave
-                disabled={disabled || !draftId}
+                disabled={disabled ?? !draftId}
                 onFailure={callFailed}
                 logEvent={logEvent}
             />

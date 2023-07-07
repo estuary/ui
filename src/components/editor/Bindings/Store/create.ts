@@ -463,7 +463,9 @@ const getInitialState = (
     },
 });
 
-export const createBindingsEditorStore = (key: BindingsEditorStoreNames) =>
-    create<BindingsEditorState>()(
-        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
-    );
+export const bindingsEditorStore = create<BindingsEditorState>()(
+    devtools(
+        (set, get) => getInitialState(set, get),
+        devtoolsOptions(BindingsEditorStoreNames.GENERAL)
+    )
+);
