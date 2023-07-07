@@ -1,7 +1,6 @@
 import { TableRow, useTheme } from '@mui/material';
 import { MaterializationQueryWithStats } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
-import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
@@ -23,6 +22,7 @@ import {
 import { getPathWithParams, hasLength } from 'utils/misc-utils';
 import EntityNameLink from '../cells/EntityNameLink';
 import OptionsMenu from '../cells/OptionsMenu';
+import RelatedCollectionsCell from '../cells/RelatedCollectionsCell';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
 
@@ -109,7 +109,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                 </>
             ) : null}
 
-            <ChipList strings={row.reads_from} maxChips={5} />
+            <RelatedCollectionsCell values={row.reads_from} />
 
             <TimeStamp time={row.updated_at} />
 

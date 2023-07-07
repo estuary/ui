@@ -1,7 +1,7 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
 import { orderBy } from 'lodash';
 import { InferDetails, Schema, SortDirection } from 'types';
-import ChipList from '../cells/ChipList';
+import ChipListCell from '../cells/ChipList';
 
 interface RowProps {
     row: InferDetails;
@@ -24,7 +24,7 @@ function Row({ row }: RowProps) {
                 <Typography>{row.pointer}</Typography>
             </TableCell>
 
-            <ChipList strings={row.types} stripPath={false} />
+            <ChipListCell values={row.types} stripPath={false} />
 
             <TableCell>
                 <Typography>{row.exists}</Typography>

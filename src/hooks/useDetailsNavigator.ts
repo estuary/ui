@@ -1,36 +1,32 @@
-import {
-    CaptureQueryWithStats,
-    CollectionQueryWithStats,
-    MaterializationQueryWithStats,
-} from 'api/liveSpecsExt';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { getPathWithParams } from 'utils/misc-utils';
 import { GlobalSearchParams } from './searchParams/useGlobalSearchParams';
 
-type Row =
-    | CollectionQueryWithStats
-    | MaterializationQueryWithStats
-    | CaptureQueryWithStats;
+interface Data {
+    catalog_name: string;
+    last_pub_id: string;
+}
+
 function useDetailsNavigator(path: string) {
     const navigate = useNavigate();
 
     const generatePath = useCallback(
-        (row: Row) => {
+        (data: Data) => {
             return getPathWithParams(path, {
-                [GlobalSearchParams.CATALOG_NAME]: row.catalog_name,
-                [GlobalSearchParams.LAST_PUB_ID]: row.last_pub_id,
+                [GlobalSearchParams.CATALOG_NAME]: data.catalog_name,
+                [GlobalSearchParams.LAST_PUB_ID]: data.last_pub_id,
             });
         },
         [path]
     );
 
     const navigateToPath = useCallback(
-        (row: Row) => {
+        (data: Data) => {
             navigate(
                 getPathWithParams(path, {
-                    [GlobalSearchParams.CATALOG_NAME]: row.catalog_name,
-                    [GlobalSearchParams.LAST_PUB_ID]: row.last_pub_id,
+                    [GlobalSearchParams.CATALOG_NAME]: data.catalog_name,
+                    [GlobalSearchParams.LAST_PUB_ID]: data.last_pub_id,
                 })
             );
         },

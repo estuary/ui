@@ -746,6 +746,7 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.recentUsage.range.label': `Timeframe`,
     'detailsPanel.recentUsage.filter.label': `{range} hours`,
     'detailsPanel.recentUsage.createdAt.label': `Creation hour`,
+    'detailsPanel.details.linkToCollection': `View details for {catalogName}`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
