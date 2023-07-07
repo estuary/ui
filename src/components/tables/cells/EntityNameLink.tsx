@@ -1,4 +1,4 @@
-import { Stack, TableCell, Tooltip } from '@mui/material';
+import { Box, Stack, TableCell, Tooltip } from '@mui/material';
 import LinkWrapper from 'components/shared/LinkWrapper';
 import EntityStatus from 'components/tables/cells/EntityStatus';
 import { useIntl } from 'react-intl';
@@ -32,7 +32,9 @@ function EntityNameLink({ name, detailsLink, showEntityStatus }: Props) {
                         id: 'entityTable.detailsLink',
                     })}
                 >
-                    <LinkWrapper link={detailsLink} name={name} />
+                    <Box>
+                        <LinkWrapper link={detailsLink} name={name} />
+                    </Box>
                 </Tooltip>
             </Stack>
         </TableCell>
