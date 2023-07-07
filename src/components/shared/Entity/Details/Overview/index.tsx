@@ -45,14 +45,14 @@ function Overview({ name }: Props) {
         <Grid container spacing={2}>
             <Endpoints name={entityName} />
 
-            <Grid item xs={8}>
+            <Grid item xs={12} md={8}>
                 <Usage
                     catalogName={entityName}
                     createdAt={latestLiveSpec?.created_at}
                 />
             </Grid>
 
-            <Grid item xs={4}>
+            <Grid item xs={12} md={4}>
                 <DetailsSection
                     entityName={entityName}
                     latestLiveSpec={latestLiveSpec}
