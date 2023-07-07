@@ -35,6 +35,7 @@ import {
 } from 'stores/ResourceConfig/hooks';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Schema } from 'types';
+import { getCollectionName, getCollectionNameProp } from 'utils/workflow-utils';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];
@@ -99,13 +100,12 @@ function BindingsMultiEditor({
     const resourceConfigUpdated = useMemo(() => {
         let queriedResourceConfig: ResourceConfigDictionary = {};
 
-        const collectionNameProp =
-            entityType === 'materialization' ? 'source' : 'target';
+        const collectionNameProp = getCollectionNameProp(entityType);
 
         draftSpecs[0]?.spec.bindings.forEach((binding: any) => {
             queriedResourceConfig = {
                 ...queriedResourceConfig,
-                [binding[collectionNameProp]]: {
+                [getCollectionName(binding[collectionNameProp])]: {
                     data: binding.resource,
                     errors: [],
                 },
