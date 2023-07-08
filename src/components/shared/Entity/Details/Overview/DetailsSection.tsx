@@ -14,11 +14,13 @@ interface Props {
 }
 
 const TIME_SETTINGS: FormatDateOptions = {
-    day: 'numeric',
+    day: '2-digit',
     month: 'long',
     year: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZoneName: 'short',
 };
 
 function DetailsSection({ latestLiveSpec }: Props) {
