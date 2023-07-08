@@ -26,23 +26,34 @@ function TotalsSection({ entityName }: Props) {
 
     const displayData = useMemo(() => {
         if (!isValidating && data?.data) {
-            const scope: any = data.data[0];
+            const scope = data.data[0];
 
             return [
                 {
                     title: intl.formatMessage({
                         id: 'data.data',
                     }),
-                    val: prettyBytes(scope.bytes_by, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                    }),
+                    val: prettyBytes(
+                        scope.bytes_to
+                            ? scope.bytes_to + scope.bytes_by
+                            : scope.bytes_by,
+                        {
+                            minimumFractionDigits: 3,
+                            maximumFractionDigits: 3,
+                        }
+                    ),
                 },
                 {
                     title: intl.formatMessage({
                         id: 'data.docs',
                     }),
-                    val: readable(scope.docs_by, 2, false),
+                    val: readable(
+                        scope.docs_to
+                            ? scope.docs_to + scope.docs_by
+                            : scope.docs_by,
+                        3,
+                        false
+                    ),
                 },
             ];
         }

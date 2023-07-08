@@ -4,7 +4,7 @@ import ExternalLink from 'components/shared/ExternalLink';
 import KeyValueList from 'components/shared/KeyValueList';
 import { LiveSpecsQuery } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormatDateOptions, FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 import RelatedCollections from '../../RelatedCollections';
 
@@ -12,6 +12,14 @@ interface Props {
     entityName: string;
     latestLiveSpec: LiveSpecsQuery | null;
 }
+
+const TIME_SETTINGS: FormatDateOptions = {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+};
 
 function DetailsSection({ latestLiveSpec }: Props) {
     const intl = useIntl();
@@ -26,11 +34,10 @@ function DetailsSection({ latestLiveSpec }: Props) {
                 title: intl.formatMessage({
                     id: 'entityTable.data.lastUpdated',
                 }),
-                val: `${intl.formatDate(latestLiveSpec.updated_at, {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                })}`,
+                val: `${intl.formatDate(
+                    latestLiveSpec.updated_at,
+                    TIME_SETTINGS
+                )}`,
             });
 
             // At when it was created
@@ -38,13 +45,7 @@ function DetailsSection({ latestLiveSpec }: Props) {
                 title: intl.formatMessage({
                     id: 'data.created_at',
                 }),
-                val: intl.formatDate(latestLiveSpec.created_at, {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                    hour: 'numeric',
-                    minute: 'numeric',
-                }),
+                val: intl.formatDate(latestLiveSpec.created_at, TIME_SETTINGS),
             });
 
             if (latestLiveSpec.connector_title?.['en-US']) {

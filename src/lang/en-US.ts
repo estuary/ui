@@ -742,7 +742,7 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.specification.header': `Specification`,
     'detailsPanel.status.header': `Status`,
     'detailsPanel.details.title': `Details`,
-    'detailsPanel.totals.title': `Monthly Usage`,
+    'detailsPanel.totals.title': `Usage this month`,
     'detailsPanel.recentUsage.title.prefix': `Usage over the past`,
     'detailsPanel.recentUsage.range.label': `Timeframe`,
     'detailsPanel.recentUsage.filter.label': `{range} hours`,
