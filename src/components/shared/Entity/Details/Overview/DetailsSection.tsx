@@ -1,6 +1,5 @@
 import { CircularProgress, Stack } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
-import { tooltipSX } from 'components/graphs/tooltips';
 import ExternalLink from 'components/shared/ExternalLink';
 import KeyValueList from 'components/shared/KeyValueList';
 import { LiveSpecsQuery } from 'hooks/useLiveSpecs';
@@ -105,13 +104,35 @@ function DetailsSection({ latestLiveSpec }: Props) {
     }
 
     return (
-        <Stack direction="column" spacing={2} sx={{ ...tooltipSX, m: 2 }}>
-            <CardWrapper
-                message={<FormattedMessage id="detailsPanel.details.title" />}
-            >
-                <KeyValueList data={data} />
-            </CardWrapper>
-        </Stack>
+        <CardWrapper
+            height={undefined}
+            message={<FormattedMessage id="detailsPanel.details.title" />}
+        >
+            {/*                <Grid
+                    container
+                    component="dl" // mount a Definition List
+                    spacing={1}
+                >
+                    {data.map((datum) => {
+                        return (
+                            <Grid
+                                item
+                                key={`detail-section-${datum.title}`}
+                                xs={3}
+                                md={12}
+                            >
+                                <Typography component="dt" variant="h6">
+                                    {datum.title}
+                                </Typography>
+                                <Typography component="dd" variant="body2">
+                                    {datum.val}
+                                </Typography>
+                            </Grid>
+                        );
+                    })}
+                </Grid>*/}
+            <KeyValueList data={data} />
+        </CardWrapper>
     );
 }
 

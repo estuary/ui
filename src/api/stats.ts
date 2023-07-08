@@ -1,13 +1,11 @@
-import { DataByHourRange } from 'components/graphs/types';
-
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import {
     endOfWeek,
     startOfHour,
     startOfMonth,
     startOfWeek,
+    sub,
     subDays,
-    subHours,
     subMonths,
     subWeeks,
 } from 'date-fns';
@@ -166,7 +164,7 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
     return queryBuilder.then(handleSuccess<CatalogStats[]>, handleFailure);
 };
 
-const getStatsForBilling = (tenants: string[], startDate: string) => {
+const getStatsForBilling = (tenants: string[], startDate: any) => {
     const subjectRoleFilters = tenants
         .map((tenant) => `catalog_name.ilike.${tenant}%`)
         .join(',');
@@ -195,10 +193,11 @@ const getStatsForBilling = (tenants: string[], startDate: string) => {
 const getStatsForDetails = (
     catalogName: string,
     entityType: Entity,
-    range?: DataByHourRange
+    grain: string,
+    duration?: Duration
 ) => {
     const today = new Date();
-    const past = range ? subHours(today, range) : today;
+    const past = duration ? sub(today, duration) : today;
 
     const gte = formatToGMT(startOfHour(past), true);
     const lte = formatToGMT(startOfHour(today), true);
@@ -222,7 +221,7 @@ const getStatsForDetails = (
         .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
         .select(query)
         .eq('catalog_name', catalogName)
-        .eq('grain', 'hourly')
+        .eq('grain', grain)
         .gte('ts', gte)
         .lte('ts', lte)
         .order('ts', { ascending: false });

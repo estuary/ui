@@ -35,6 +35,7 @@ import {
     useBilling_updateBillingHistory,
 } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
+import { TOTAL_CARD_HEIGHT } from 'utils/billing-utils';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
@@ -193,6 +194,7 @@ function AdminBilling() {
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
                 <Grid item xs={12} md={6}>
                     <CardWrapper
+                        height={TOTAL_CARD_HEIGHT}
                         message={
                             <FormattedMessage id="admin.billing.table.history.header" />
                         }
@@ -203,6 +205,7 @@ function AdminBilling() {
 
                 <Grid item xs={12} md={6}>
                     <CardWrapper
+                        height={TOTAL_CARD_HEIGHT}
                         message={
                             <FormattedMessage id="admin.billing.graph.dataByMonth.header" />
                         }
@@ -215,6 +218,7 @@ function AdminBilling() {
 
                 <Grid item xs={12} md={6}>
                     <CardWrapper
+                        height={TOTAL_CARD_HEIGHT}
                         message={
                             <FormattedMessage id="admin.billing.graph.tasksByMonth.header" />
                         }
@@ -227,6 +231,7 @@ function AdminBilling() {
 
                 <Grid item xs={12} md={6}>
                     <CardWrapper
+                        height={TOTAL_CARD_HEIGHT}
                         message={
                             <FormattedMessage id="admin.billing.graph.dataByTask.header" />
                         }

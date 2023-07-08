@@ -9,7 +9,9 @@ function useDetailsStats(catalogName: string, range: DataByHourRange) {
 
     const { data, error, isValidating } = useSelectNew<DetailsStats>(
         hasLength(catalogName)
-            ? getStatsForDetails(catalogName, entityType, range)
+            ? getStatsForDetails(catalogName, entityType, 'hourly', {
+                  hours: range,
+              })
             : null,
         {
             refreshInterval: 15000,

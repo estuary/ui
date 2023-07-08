@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material';
+import { Divider, Grid, Stack } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
 import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
@@ -12,6 +12,7 @@ import ShardInformation from '../../Shard/Information';
 import Endpoints from '../Endpoints';
 import Usage from '../Usage';
 import DetailsSection from './DetailsSection';
+import TotalsSection from './TotalsSection';
 
 // TODO (details page)
 // Temporary - allow to pass in the name
@@ -45,18 +46,31 @@ function Overview({ name }: Props) {
         <Grid container spacing={2}>
             <Endpoints name={entityName} />
 
-            <Grid item xs={12} md={8}>
+            <Grid
+                item
+                xs={12}
+                md={8}
+                lg={9}
+                sx={{
+                    bgColor: '#00ff00',
+                }}
+            >
                 <Usage
                     catalogName={entityName}
                     createdAt={latestLiveSpec?.created_at}
                 />
+                <Divider />
             </Grid>
 
-            <Grid item xs={12} md={4}>
-                <DetailsSection
-                    entityName={entityName}
-                    latestLiveSpec={latestLiveSpec}
-                />
+            <Grid item xs={12} md={4} lg={3}>
+                <Stack spacing={2}>
+                    <TotalsSection entityName={entityName} />
+
+                    <DetailsSection
+                        entityName={entityName}
+                        latestLiveSpec={latestLiveSpec}
+                    />
+                </Stack>
             </Grid>
 
             {!isCollection || isDerivation ? (

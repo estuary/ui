@@ -19,7 +19,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUpdateEffect } from 'react-use';
 import readable from 'readable-numbers';
-import { CARD_AREA_HEIGHT } from 'utils/billing-utils';
 import { getTooltipItem, getTooltipTitle } from '../tooltips';
 import { DataByHourRange } from '../types';
 import useLegendConfig from '../useLegendConfig';
@@ -68,7 +67,9 @@ function DataByHourGraph({ range, stats }: Props) {
 
             const chartDom = document.getElementById('data-by-hour');
 
-            setMyChart(chartDom && echarts.init(chartDom));
+            if (chartDom) {
+                setMyChart(echarts.init(chartDom));
+            }
         }
     }, [myChart]);
 
@@ -273,7 +274,7 @@ function DataByHourGraph({ range, stats }: Props) {
         });
     }, [hours, intl, myChart, scopedDataSet]);
 
-    return <div id="data-by-hour" style={{ height: CARD_AREA_HEIGHT }} />;
+    return <div id="data-by-hour" style={{ height: 500 }} />;
 }
 
 export default DataByHourGraph;

@@ -11,23 +11,22 @@ import { HelpCircle } from 'iconoir-react';
 import { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 import { BaseComponentProps } from 'types';
-import { TOTAL_CARD_HEIGHT } from 'utils/billing-utils';
 
 interface Props extends BaseComponentProps {
     message?: string | ReactNode;
     tooltipMessageId?: string;
+    height: string | number | undefined;
 }
 
-function CardWrapper({ children, message, tooltipMessageId }: Props) {
+function CardWrapper({ children, height, message, tooltipMessageId }: Props) {
+    const intl = useIntl();
     const theme = useTheme();
     const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
-
-    const intl = useIntl();
 
     return (
         <Box
             sx={{
-                height: TOTAL_CARD_HEIGHT,
+                height,
                 p: 2,
                 background: semiTransparentBackground[theme.palette.mode],
                 boxShadow: defaultBoxShadow,

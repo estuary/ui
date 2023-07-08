@@ -1,10 +1,8 @@
-import { Stack } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import HourlyRangeFilter from 'components/filters/HourRange';
 import DataByHourGraph from 'components/graphs/DataByHourGraph';
 import EmptyGraphState from 'components/graphs/states/Empty';
 import GraphLoadingState from 'components/graphs/states/Loading';
-import { tooltipSX } from 'components/graphs/tooltips';
 import { DataByHourRange } from 'components/graphs/types';
 import Error from 'components/shared/Error';
 import useDetailsStats from 'hooks/useDetailsStats';
@@ -24,7 +22,8 @@ function Usage({ catalogName, createdAt }: Props) {
     const statsPopulated = hasLength(stats);
 
     return (
-        <Stack direction="column" spacing={2} sx={{ ...tooltipSX, m: 2 }}>
+        // eslint-disable-next-line react/jsx-no-useless-fragment
+        <>
             {isValidating && !statsPopulated ? (
                 <GraphLoadingState />
             ) : error ? (
@@ -37,6 +36,7 @@ function Usage({ catalogName, createdAt }: Props) {
                 />
             ) : (
                 <CardWrapper
+                    height={undefined}
                     message={
                         <HourlyRangeFilter range={range} setRange={setRange} />
                     }
@@ -48,7 +48,7 @@ function Usage({ catalogName, createdAt }: Props) {
                     />
                 </CardWrapper>
             )}
-        </Stack>
+        </>
     );
 }
 
