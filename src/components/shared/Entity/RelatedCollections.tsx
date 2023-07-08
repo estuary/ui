@@ -32,7 +32,7 @@ function RelatedCollections({ collections }: Props) {
         };
     });
 
-    return <ChipList values={collectionList} />;
+    return <ChipList values={collectionList} maxChips={5} />;
 }
 
 export default RelatedCollections;
