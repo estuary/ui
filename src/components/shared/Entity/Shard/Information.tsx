@@ -13,6 +13,7 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+import CardWrapper from 'components/admin/Billing/CardWrapper';
 import MessageWithLink from 'components/content/MessageWithLink';
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
@@ -84,26 +85,21 @@ function ShardInformation({ entityType }: Props) {
     };
 
     return (
-        <Stack direction="column" spacing={2} sx={{ m: 2 }}>
-            <Stack direction="row" spacing={1}>
-                <Typography
-                    component="span"
-                    variant="h6"
-                    sx={{
-                        alignItems: 'center',
-                    }}
-                >
+        <CardWrapper
+            height={undefined}
+            message={
+                <Stack direction="row" spacing={1}>
                     <FormattedMessage id="detailsPanel.shardDetails.title" />
-                </Typography>
-                <ExternalLink
-                    link={intl.formatMessage({
-                        id: 'detailsPanel.shardDetails.docPath',
-                    })}
-                >
-                    <FormattedMessage id="terms.documentation" />
-                </ExternalLink>
-            </Stack>
-
+                    <ExternalLink
+                        link={intl.formatMessage({
+                            id: 'detailsPanel.shardDetails.docPath',
+                        })}
+                    >
+                        <FormattedMessage id="terms.documentation" />
+                    </ExternalLink>
+                </Stack>
+            }
+        >
             {error ? (
                 <AlertBox
                     severity="error"
@@ -168,7 +164,7 @@ function ShardInformation({ entityType }: Props) {
                     </Grid>
                 </>
             )}
-        </Stack>
+        </CardWrapper>
     );
 }
 

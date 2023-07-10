@@ -124,29 +124,6 @@ function DetailsSection({ latestLiveSpec }: Props) {
             height={undefined}
             message={<FormattedMessage id="detailsPanel.details.title" />}
         >
-            {/*                <Grid
-                    container
-                    component="dl" // mount a Definition List
-                    spacing={1}
-                >
-                    {data.map((datum) => {
-                        return (
-                            <Grid
-                                item
-                                key={`detail-section-${datum.title}`}
-                                xs={3}
-                                md={12}
-                            >
-                                <Typography component="dt" variant="h6">
-                                    {datum.title}
-                                </Typography>
-                                <Typography component="dd" variant="body2">
-                                    {datum.val}
-                                </Typography>
-                            </Grid>
-                        );
-                    })}
-                </Grid>*/}
             <KeyValueList data={data} />
         </CardWrapper>
     );
