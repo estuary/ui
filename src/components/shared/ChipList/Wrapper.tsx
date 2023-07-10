@@ -1,5 +1,5 @@
 import { Box, Chip as MuiChip, styled, Tooltip } from '@mui/material';
-import { defaultOutline } from 'context/Theme';
+import { defaultOutline, underlineTextSx } from 'context/Theme';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { stripPathing } from 'utils/misc-utils';
@@ -39,6 +39,15 @@ function ChipWrapper({ disabled, onClick, stripPath, title, val }: Props) {
           )
         : val.display;
 
+    // Set what we should display in the tooltip
+    const tooltipTitle = useMemo(() => {
+        if (val.title) {
+            return val.title;
+        }
+
+        return title ?? displayValue;
+    }, [displayValue, title, val.title]);
+
     // Save off the Chip so we can more easily wrap in a link if needed
     const chip = useMemo(() => {
         return (
@@ -49,6 +58,7 @@ function ChipWrapper({ disabled, onClick, stripPath, title, val }: Props) {
                 disabled={disabled}
                 onClick={onClick}
                 sx={{
+                    ...underlineTextSx,
                     'maxWidth': 200,
                     'border': (theme) => defaultOutline[theme.palette.mode],
                     // TODO (typing) Figure out how to use truncateTextSx here
@@ -64,15 +74,6 @@ function ChipWrapper({ disabled, onClick, stripPath, title, val }: Props) {
             />
         );
     }, [disabled, displayValue, onClick]);
-
-    // Set what we should display in the tooltip
-    const tooltipTitle = useMemo(() => {
-        if (val.title) {
-            return val.title;
-        }
-
-        return title ?? displayValue;
-    }, [displayValue, title, val.title]);
 
     return (
         <ListItem>

@@ -337,16 +337,20 @@ export const jsonFormsPadding: SxProps<Theme> = {
     },
 };
 
-// Used to make buttons look like a normal(ish) link
-export const linkButtonSx: SxProps<Theme> = {
-    'px': 1,
-    'py': 0,
-    'fontWeight': 500,
-    'zIndex': headerLinkIndex,
+export const underlineTextSx: SxProps<Theme> = {
     'textDecoration': 'underline',
     '&:hover, &:focus': {
         textDecoration: 'underline',
     },
+};
+
+// Used to make buttons look like a normal(ish) link
+export const linkButtonSx: SxProps<Theme> = {
+    ...underlineTextSx,
+    px: 1,
+    py: 0,
+    fontWeight: 500,
+    zIndex: headerLinkIndex,
 };
 
 // Light is an RGB translation of #E1E9F4; Light is an RGB translation of #F7F9FC.

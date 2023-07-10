@@ -1,12 +1,12 @@
 import { Link, useMediaQuery, useTheme } from '@mui/material';
 import { Link as ReactRouterLink } from 'react-router-dom';
+import { BaseComponentProps } from 'types';
 
-interface Props {
+interface Props extends BaseComponentProps {
     link: string;
-    name: string;
 }
 
-function LinkWrapper({ link, name }: Props) {
+function LinkWrapper({ children, link }: Props) {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -25,7 +25,7 @@ function LinkWrapper({ link, name }: Props) {
                 wordBreak: belowMd ? 'break-all' : undefined,
             }}
         >
-            {name}
+            {children}
         </Link>
     );
 }
