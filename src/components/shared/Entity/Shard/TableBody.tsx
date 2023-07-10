@@ -1,6 +1,6 @@
 import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import TableLoadingRows from 'components/tables/Loading';
-import { shardTableRow } from 'context/Theme';
+import { semiTransparentBackgroundIntensified } from 'context/Theme';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { FormattedMessage } from 'react-intl';
 import { TableColumns } from 'types';
@@ -27,8 +27,10 @@ function InformationTableBody({ columns, page, rowsPerPage, shards }: Props) {
             <TableBody>
                 <TableRow
                     sx={{
-                        background: (theme) =>
-                            shardTableRow[theme.palette.mode],
+                        bgcolor: (theme) =>
+                            semiTransparentBackgroundIntensified[
+                                theme.palette.mode
+                            ],
                     }}
                 >
                     <TableCell colSpan={2}>
@@ -55,8 +57,10 @@ function InformationTableBody({ columns, page, rowsPerPage, shards }: Props) {
                     <TableRow
                         key={shard.spec.id}
                         sx={{
-                            background: (theme) =>
-                                shardTableRow[theme.palette.mode],
+                            bgcolor: (theme) =>
+                                semiTransparentBackgroundIntensified[
+                                    theme.palette.mode
+                                ],
                         }}
                     >
                         <StatusIndicatorAndLabel shard={shard} />

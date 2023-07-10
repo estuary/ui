@@ -18,6 +18,7 @@ import MessageWithLink from 'components/content/MessageWithLink';
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
+import { semiTransparentBackground } from 'context/Theme';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { MouseEvent, useEffect, useState } from 'react';
@@ -81,7 +82,7 @@ function ShardInformation({ entityType }: Props) {
     ) => setPage(newPage);
 
     const tableHeaderFooterSx: SxProps<Theme> = {
-        background: theme.palette.background.paper,
+        bgcolor: semiTransparentBackground[theme.palette.mode],
     };
 
     return (
