@@ -33,7 +33,7 @@ function EntityNameLink({ name, detailsLink, showEntityStatus }: Props) {
                     })}
                 >
                     <Box>
-                        <LinkWrapper link={detailsLink} name={name} />
+                        <LinkWrapper link={detailsLink}>{name}</LinkWrapper>
                     </Box>
                 </Tooltip>
             </Stack>

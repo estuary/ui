@@ -1,4 +1,4 @@
-import { Chip as MuiChip, styled, Tooltip } from '@mui/material';
+import { Box, Chip as MuiChip, styled, Tooltip } from '@mui/material';
 import { defaultOutline } from 'context/Theme';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -39,14 +39,31 @@ function ChipWrapper({ disabled, onClick, stripPath, title, val }: Props) {
           )
         : val.display;
 
-    // Set if we need to display a link to the details page
-    const label = useMemo(() => {
-        if (val.link) {
-            return <LinkWrapper link={val.link} name={displayValue} />;
-        } else {
-            return displayValue;
-        }
-    }, [displayValue, val.link]);
+    // Save off the Chip so we can more easily wrap in a link if needed
+    const chip = useMemo(() => {
+        return (
+            <MuiChip
+                label={displayValue}
+                size="small"
+                variant="outlined"
+                disabled={disabled}
+                onClick={onClick}
+                sx={{
+                    'maxWidth': 200,
+                    'border': (theme) => defaultOutline[theme.palette.mode],
+                    // TODO (typing) Figure out how to use truncateTextSx here
+                    'whiteSpace': 'nowrap',
+                    'overflow': 'hidden',
+                    'textOverflow': 'ellipsis',
+                    '&:hover': {
+                        ...chipListHoverStyling,
+                        background: (hoverTheme) =>
+                            hoverTheme.palette.background.default,
+                    },
+                }}
+            />
+        );
+    }, [disabled, displayValue, onClick]);
 
     // Set what we should display in the tooltip
     const tooltipTitle = useMemo(() => {
@@ -65,26 +82,13 @@ function ChipWrapper({ disabled, onClick, stripPath, title, val }: Props) {
                 disableHoverListener={!stripPath}
                 disableTouchListener={!stripPath}
             >
-                <MuiChip
-                    label={label}
-                    size="small"
-                    variant="outlined"
-                    disabled={disabled}
-                    onClick={onClick}
-                    sx={{
-                        'maxWidth': 200,
-                        'border': (theme) => defaultOutline[theme.palette.mode],
-                        // TODO (typing) Figure out how to use truncateTextSx here
-                        'whiteSpace': 'nowrap',
-                        'overflow': 'hidden',
-                        'textOverflow': 'ellipsis',
-                        '&:hover': {
-                            ...chipListHoverStyling,
-                            background: (hoverTheme) =>
-                                hoverTheme.palette.background.default,
-                        },
-                    }}
-                />
+                {val.link ? (
+                    <Box>
+                        <LinkWrapper link={val.link}>{chip}</LinkWrapper>
+                    </Box>
+                ) : (
+                    chip
+                )}
             </Tooltip>
         </ListItem>
     );
