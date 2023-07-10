@@ -15,9 +15,6 @@ function LinkWrapper({ children, link }: Props) {
             reloadDocument={false}
             component={ReactRouterLink}
             to={link}
-            state={{
-                backButtonUrl: `${window.location.pathname}${window.location.search}`,
-            }}
             sx={{
                 padding: 1,
                 pl: 0,

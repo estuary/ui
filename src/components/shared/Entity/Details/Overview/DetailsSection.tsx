@@ -1,5 +1,6 @@
-import { CircularProgress, Stack } from '@mui/material';
+import { CircularProgress, Stack, Typography } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
+import ConnectorIcon from 'components/connectors/ConnectorIcon';
 import ExternalLink from 'components/shared/ExternalLink';
 import KeyValueList from 'components/shared/KeyValueList';
 import { LiveSpecsQuery } from 'hooks/useLiveSpecs';
@@ -56,8 +57,20 @@ function DetailsSection({ latestLiveSpec }: Props) {
                         id: 'connector.label',
                     }),
                     val: (
-                        <Stack direction="row" spacing={2}>
-                            {latestLiveSpec.connector_title['en-US']}
+                        <Stack direction="row" spacing={1}>
+                            {latestLiveSpec.connector_logo_url?.['en-US'] ? (
+                                <ConnectorIcon
+                                    size={20}
+                                    iconPath={
+                                        latestLiveSpec.connector_logo_url?.[
+                                            'en-US'
+                                        ]
+                                    }
+                                />
+                            ) : null}
+                            <Typography>
+                                {latestLiveSpec.connector_title['en-US']}
+                            </Typography>
                             {latestLiveSpec.connector_tag_documentation_url ? (
                                 <ExternalLink
                                     link={
