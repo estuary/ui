@@ -1,4 +1,11 @@
-import { Box, Chip as MuiChip, styled, Tooltip } from '@mui/material';
+import {
+    Box,
+    Chip as MuiChip,
+    styled,
+    SxProps,
+    Theme,
+    Tooltip,
+} from '@mui/material';
 import { defaultOutline, underlineTextSx } from 'context/Theme';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -50,30 +57,48 @@ function ChipWrapper({ disabled, onClick, stripPath, title, val }: Props) {
 
     // Save off the Chip so we can more easily wrap in a link if needed
     const chip = useMemo(() => {
+        let chipSX: SxProps<Theme> = {
+            // TODO (typing) Figure out how to use truncateTextSx here
+            'whiteSpace': 'nowrap',
+            'overflow': 'hidden',
+            'textOverflow': 'ellipsis',
+            'maxWidth': 200,
+            'border': (theme) => defaultOutline[theme.palette.mode],
+
+            '&:hover': {
+                ...chipListHoverStyling,
+                background: (hoverTheme) =>
+                    hoverTheme.palette.background.default,
+            },
+        };
+
+        if (val.link) {
+            chipSX = {
+                ...chipSX,
+                ...underlineTextSx,
+                color: (theme) => theme.palette.primary.main,
+            };
+        }
+
         return (
             <MuiChip
+                component="span"
                 label={displayValue}
                 size="small"
                 variant="outlined"
                 disabled={disabled}
                 onClick={onClick}
-                sx={{
-                    ...underlineTextSx,
-                    'maxWidth': 200,
-                    'border': (theme) => defaultOutline[theme.palette.mode],
-                    // TODO (typing) Figure out how to use truncateTextSx here
-                    'whiteSpace': 'nowrap',
-                    'overflow': 'hidden',
-                    'textOverflow': 'ellipsis',
-                    '&:hover': {
-                        ...chipListHoverStyling,
-                        background: (hoverTheme) =>
-                            hoverTheme.palette.background.default,
-                    },
-                }}
+                sx={chipSX}
             />
         );
-    }, [disabled, displayValue, onClick]);
+    }, [disabled, displayValue, onClick, val.link]);
+
+    const wrappedChip = useMemo(() => {
+        if (val.link) {
+            return <LinkWrapper link={val.link}>{chip}</LinkWrapper>;
+        }
+        return chip;
+    }, [chip, val.link]);
 
     return (
         <ListItem>
@@ -83,13 +108,7 @@ function ChipWrapper({ disabled, onClick, stripPath, title, val }: Props) {
                 disableHoverListener={!stripPath}
                 disableTouchListener={!stripPath}
             >
-                {val.link ? (
-                    <Box>
-                        <LinkWrapper link={val.link}>{chip}</LinkWrapper>
-                    </Box>
-                ) : (
-                    chip
-                )}
+                <Box>{wrappedChip}</Box>
             </Tooltip>
         </ListItem>
     );
