@@ -22,8 +22,10 @@ function Usage({ catalogName, createdAt }: Props) {
     const statsPopulated = hasLength(stats);
 
     return (
-        // eslint-disable-next-line react/jsx-no-useless-fragment
-        <>
+        <CardWrapper
+            height={undefined}
+            message={<HourlyRangeFilter range={range} setRange={setRange} />}
+        >
             {isValidating && !statsPopulated ? (
                 <GraphLoadingState />
             ) : error ? (
@@ -35,20 +37,13 @@ function Usage({ catalogName, createdAt }: Props) {
                     }
                 />
             ) : (
-                <CardWrapper
-                    height={undefined}
-                    message={
-                        <HourlyRangeFilter range={range} setRange={setRange} />
-                    }
-                >
-                    <DataByHourGraph
-                        stats={stats}
-                        range={range}
-                        createdAt={createdAt}
-                    />
-                </CardWrapper>
+                <DataByHourGraph
+                    stats={stats}
+                    range={range}
+                    createdAt={createdAt}
+                />
             )}
-        </>
+        </CardWrapper>
     );
 }
 
