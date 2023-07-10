@@ -8,7 +8,6 @@ import {
     useEditorStore_currentCatalog,
     useEditorStore_serverUpdate,
     useEditorStore_setStatus,
-    useEditorStore_status,
 } from 'components/editor/Store/hooks';
 import { EditorStatus } from 'components/editor/Store/types';
 import { debounce } from 'lodash';
@@ -84,8 +83,9 @@ function MonacoEditor({
     );
 
     // Snagging out the status of the editor
-    const status = useEditorStore_status({ localScope: localZustandScope });
-    const setStatus = useEditorStore_setStatus({
+    const [status, setStatus] = useState<EditorStatus>(EditorStatus.IDLE);
+
+    const updateStoreStatus = useEditorStore_setStatus({
         localScope: localZustandScope,
     });
 
@@ -213,6 +213,10 @@ function MonacoEditor({
     useEffect(() => {
         if (typeof defaultValue === 'string') setLocalCopy(defaultValue);
     }, [setLocalCopy, defaultValue]);
+
+    useEffect(() => {
+        updateStoreStatus(status);
+    }, [updateStoreStatus, status]);
 
     const handlers = {
         change: (value: any, ev: any) => {

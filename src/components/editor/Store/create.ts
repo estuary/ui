@@ -21,7 +21,6 @@ const getInitialStateData = <T>(): Pick<
     | 'queryResponse'
     | 'serverUpdate'
     | 'specs'
-    | 'status'
 > => {
     return {
         currentCatalog: null,
@@ -32,7 +31,6 @@ const getInitialStateData = <T>(): Pick<
         specs: null,
         isSaving: false,
         isEditing: false,
-        status: EditorStatus.IDLE,
         serverUpdate: null,
         draftInitializationError: null,
         queryResponse: { draftSpecs: [], isValidating: false, mutate: null },
@@ -125,7 +123,6 @@ const getInitialState = <T>(
                 produce((state) => {
                     state.isSaving = newVal === EditorStatus.SAVING;
                     state.isEditing = newVal === EditorStatus.EDITING;
-                    state.status = newVal;
                 }),
                 false,
                 'Setting status'

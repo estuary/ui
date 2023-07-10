@@ -52,7 +52,6 @@ export interface EditorStoreState<T> {
 
     isSaving: boolean;
     isEditing: boolean;
-    status: EditorStatus;
     setStatus: (newVal: EditorStatus) => void;
 
     // Draft Initialization

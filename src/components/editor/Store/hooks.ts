@@ -296,21 +296,6 @@ export const useEditorStore_isEditing = (
     >(storeName(entityType, localScope), (state) => state.isEditing);
 };
 
-export const useEditorStore_status = (params?: SelectorParams | undefined) => {
-    const localScope = params?.localScope;
-
-    const useZustandStore = localScope
-        ? useLocalZustandStore
-        : useGlobalZustandStore;
-
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['status']
-    >(storeName(entityType, localScope), (state) => state.status);
-};
-
 export const useEditorStore_setStatus = (
     params?: SelectorParams | undefined
 ) => {
