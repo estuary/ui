@@ -13,6 +13,8 @@ interface Props {
     entityName: string;
 }
 
+// TODO (details) want to make some kidn of summary of totals and potentially
+//  include the cost. Leaving here as this can be used lated when we add this section
 function TotalsSection({ entityName }: Props) {
     console.log('entityname', entityName);
     const intl = useIntl();
@@ -21,11 +23,14 @@ function TotalsSection({ entityName }: Props) {
     const { data, isValidating } = useSelectNew<DetailsStats>(
         getStatsForDetails(entityName, entityType, 'monthly', {
             months: 1,
-        })
+        }),
+        {
+            refreshInterval: 5000,
+        }
     );
 
     const displayData = useMemo(() => {
-        if (!isValidating && data?.data) {
+        if (!isValidating && data?.data[0]) {
             const scope = data.data[0];
 
             return [
@@ -60,8 +65,6 @@ function TotalsSection({ entityName }: Props) {
 
         return null;
     }, [data?.data, intl, isValidating]);
-
-    console.log('data', data);
 
     return (
         <CardWrapper
