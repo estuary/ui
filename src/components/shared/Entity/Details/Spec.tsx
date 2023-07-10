@@ -1,22 +1,47 @@
 import { Grid, Stack, Typography } from '@mui/material';
 import MonacoEditor from 'components/editor/MonacoEditor';
+import ExternalLink from 'components/shared/ExternalLink';
+import { useEntityType } from 'context/EntityContext';
+import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 function Spec() {
+    const entityType = useEntityType();
+
+    const docsLink = useMemo(() => {
+        switch (entityType) {
+            case 'capture':
+                return 'https://docs.estuary.dev/concepts/captures/#specification';
+            case 'materialization':
+                return 'https://docs.estuary.dev/concepts/materialization/#specification';
+            default:
+                return 'https://docs.estuary.dev/concepts/collections/#specification';
+        }
+    }, [entityType]);
+
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
-                <Stack direction="column" spacing={2} sx={{ m: 2 }}>
-                    <Typography
-                        component="span"
-                        variant="h6"
-                        sx={{
-                            alignItems: 'center',
-                        }}
-                    >
-                        <FormattedMessage id="detailsPanel.specification.header" />
-                    </Typography>
-                    <MonacoEditor localZustandScope={true} height={500} />
+                <Stack spacing={2} sx={{ m: 2 }}>
+                    <Stack direction="row" spacing={1}>
+                        <Typography
+                            component="span"
+                            variant="h6"
+                            sx={{
+                                alignItems: 'center',
+                            }}
+                        >
+                            <FormattedMessage id="detailsPanel.specification.header" />
+                        </Typography>
+                        <ExternalLink link={docsLink}>
+                            <FormattedMessage id="terms.documentation" />
+                        </ExternalLink>
+                    </Stack>
+                    <MonacoEditor
+                        localZustandScope={true}
+                        height={500}
+                        disabled
+                    />
                 </Stack>
             </Grid>
         </Grid>
