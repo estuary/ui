@@ -101,7 +101,6 @@ function useSQLEditor(entityName: string) {
             attributeType,
             draftId,
             draftSpec,
-            entityName,
             migrations,
             mutateDraftSpecs,
             transformConfigs,

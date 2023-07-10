@@ -131,6 +131,7 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
         currentCatalog,
         draftId,
         entityName,
+        mutateDraftSpecs,
         selectedCollections,
         transformConfigs,
         transformCount,
