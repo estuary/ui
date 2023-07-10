@@ -1,4 +1,4 @@
-import { Divider, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
 import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
@@ -45,20 +45,11 @@ function Overview({ name }: Props) {
         <Grid container spacing={2}>
             <Endpoints name={entityName} />
 
-            <Grid
-                item
-                xs={12}
-                md={8}
-                lg={9}
-                sx={{
-                    bgColor: '#00ff00',
-                }}
-            >
+            <Grid item xs={12} md={8} lg={9}>
                 <Usage
                     catalogName={entityName}
                     createdAt={latestLiveSpec?.created_at}
                 />
-                <Divider />
             </Grid>
 
             <Grid item xs={12} md={4} lg={3}>
