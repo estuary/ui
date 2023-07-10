@@ -34,6 +34,7 @@ function SQLEditor({ entityName, disabled, editorHeight }: Props) {
             <MonacoEditor
                 localZustandScope={false}
                 height={editorHeight}
+                toolbarHeight={29}
                 disabled={disabled}
                 path={selectedAttribute}
                 defaultLanguage="sql"

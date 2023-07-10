@@ -5,11 +5,21 @@ import {
     ListItemButton,
     ListItemText,
     Stack,
+    useTheme,
 } from '@mui/material';
-import { useEditorStore_setId } from 'components/editor/Store/hooks';
+import {
+    useEditorStore_invalidEditors,
+    useEditorStore_removeStaleStatus,
+    useEditorStore_setId,
+} from 'components/editor/Store/hooks';
 import { defaultOutline } from 'context/Theme';
-import { Cancel, NavArrowDown, NavArrowRight } from 'iconoir-react';
-import { useState } from 'react';
+import {
+    Cancel,
+    NavArrowDown,
+    NavArrowRight,
+    WarningCircle,
+} from 'iconoir-react';
+import { useMemo, useState } from 'react';
 import {
     useTransformationCreate_removeAttribute,
     useTransformationCreate_selectedAttribute,
@@ -31,8 +41,12 @@ function CatalogListItem({
     itemLabel,
     nestedItemLabel,
 }: Props) {
+    const theme = useTheme();
+
     // Draft Editor Store
     const setDraftId = useEditorStore_setId();
+    const invalidEditors = useEditorStore_invalidEditors();
+    const removeStaleEditorStatus = useEditorStore_removeStaleStatus();
 
     // Transformation Create Store
     const selectedAttribute = useTransformationCreate_selectedAttribute();
@@ -41,6 +55,11 @@ function CatalogListItem({
     const removeAttribute = useTransformationCreate_removeAttribute();
 
     const [open, setOpen] = useState<boolean>(true);
+
+    const editorInvalid = useMemo(
+        () => invalidEditors.includes(attributeId),
+        [invalidEditors, attributeId]
+    );
 
     const handlers = {
         toggleList: () => {
@@ -57,6 +76,7 @@ function CatalogListItem({
             event.preventDefault();
 
             removeAttribute(attributeId);
+            removeStaleEditorStatus(attributeId);
             setDraftId(null);
         },
     };
@@ -70,8 +90,9 @@ function CatalogListItem({
                     sx={{
                         'width': '100%',
                         'px': 1,
-                        'borderBottom': (theme) =>
-                            open ? 'none' : defaultOutline[theme.palette.mode],
+                        'borderBottom': open
+                            ? 'none'
+                            : defaultOutline[theme.palette.mode],
                         '&.MuiButtonBase-root:hover::after': {
                             backgroundColor: 'rgba(0, 0, 0, 0.04)',
                         },
@@ -79,14 +100,12 @@ function CatalogListItem({
                             backgroundColor: open
                                 ? 'unset'
                                 : 'rgba(58, 86, 202, 0.08)',
-                            color: (theme) =>
-                                open
-                                    ? theme.palette.primary.main
-                                    : theme.palette.text.primary,
-                            boxShadow: (theme) =>
-                                open
-                                    ? undefined
-                                    : `inset 0px 0px 0px 1px ${theme.palette.primary.main}`,
+                            color: open
+                                ? theme.palette.primary.main
+                                : theme.palette.text.primary,
+                            boxShadow: open
+                                ? undefined
+                                : `inset 0px 0px 0px 1px ${theme.palette.primary.main}`,
                         },
                     }}
                 >
@@ -110,8 +129,7 @@ function CatalogListItem({
                     unmountOnExit
                     sx={{
                         width: '100%',
-                        borderBottom: (theme) =>
-                            defaultOutline[theme.palette.mode],
+                        borderBottom: defaultOutline[theme.palette.mode],
                     }}
                 >
                     <List component="div" disablePadding>
@@ -125,8 +143,7 @@ function CatalogListItem({
                                     backgroundColor: 'rgba(0, 0, 0, 0.04)',
                                 },
                                 '&.Mui-selected': {
-                                    boxShadow: (theme) =>
-                                        `inset 0px 0px 0px 1px ${theme.palette.primary.main}`,
+                                    boxShadow: `inset 0px 0px 0px 1px ${theme.palette.primary.main}`,
                                 },
                             }}
                         >
@@ -148,7 +165,7 @@ function CatalogListItem({
             <Stack
                 direction="row"
                 sx={{
-                    borderBottom: (theme) => defaultOutline[theme.palette.mode],
+                    borderBottom: defaultOutline[theme.palette.mode],
                 }}
             >
                 <ListItemButton
@@ -160,11 +177,22 @@ function CatalogListItem({
                             backgroundColor: 'rgba(0, 0, 0, 0.04)',
                         },
                         '&.Mui-selected': {
-                            boxShadow: (theme) =>
-                                `inset 0px 0px 0px 1px ${theme.palette.primary.main}`,
+                            boxShadow: `inset 0px 0px 0px 1px ${theme.palette.primary.main}`,
                         },
                     }}
                 >
+                    {editorInvalid ? (
+                        <WarningCircle
+                            style={{
+                                marginRight: 4,
+                                fontSize: 12,
+                                color: theme.palette.warning[
+                                    theme.palette.mode
+                                ],
+                            }}
+                        />
+                    ) : null}
+
                     <ListItemText
                         primary={itemLabel}
                         sx={{

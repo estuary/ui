@@ -53,7 +53,7 @@ function DerivationCatalogEditor() {
     );
 
     const editorHeight = useMemo(
-        () => (transformConfig ? 356 : 458),
+        () => (transformConfig ? 364 : 458),
         [transformConfig]
     );
 

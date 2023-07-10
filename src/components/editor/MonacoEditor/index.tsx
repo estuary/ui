@@ -8,6 +8,7 @@ import {
     useEditorStore_currentCatalog,
     useEditorStore_serverUpdate,
     useEditorStore_setStatus,
+    useEditorStore_statuses,
 } from 'components/editor/Store/hooks';
 import { EditorStatus } from 'components/editor/Store/types';
 import { debounce } from 'lodash';
@@ -83,16 +84,30 @@ function MonacoEditor({
     );
 
     // Snagging out the status of the editor
-    const [status, setStatus] = useState<EditorStatus>(EditorStatus.IDLE);
-
-    const updateStoreStatus = useEditorStore_setStatus({
+    const statuses = useEditorStore_statuses({
         localScope: localZustandScope,
     });
+    const setStatus = useEditorStore_setStatus({
+        localScope: localZustandScope,
+    });
+
+    const evaluatedPath = useMemo(
+        () => path ?? catalogName ?? 'preset_path',
+        [catalogName, path]
+    );
+
+    const status = useMemo(
+        () =>
+            Object.hasOwn(statuses, evaluatedPath)
+                ? statuses[evaluatedPath]
+                : EditorStatus.IDLE,
+        [evaluatedPath, statuses]
+    );
 
     const doneUpdatingValue = useCallback(
         (message: string, format: boolean) => {
             logRocketConsole(message);
-            setStatus(EditorStatus.SAVED);
+            setStatus(EditorStatus.SAVED, evaluatedPath);
 
             if (format) {
                 // Format the editor. Formatting like this should work like a standard IDE
@@ -102,7 +117,7 @@ function MonacoEditor({
                     .run();
             }
         },
-        [setStatus]
+        [setStatus, evaluatedPath]
     );
 
     const updateValue = useCallback(
@@ -112,7 +127,7 @@ function MonacoEditor({
 
             // Make sure we have a value and handled to call
             if (onChange && typeof currentValue === 'string') {
-                setStatus(EditorStatus.EDITING);
+                setStatus(EditorStatus.EDITING, evaluatedPath);
 
                 let processedVal;
                 let validValue = true;
@@ -126,7 +141,7 @@ function MonacoEditor({
                     } catch {
                         validValue = false;
 
-                        setStatus(EditorStatus.INVALID);
+                        setStatus(EditorStatus.INVALID, evaluatedPath);
                     }
                 } else {
                     processedVal = currentValue;
@@ -139,7 +154,7 @@ function MonacoEditor({
                         catalogName,
                         catalogType,
                     });
-                    setStatus(EditorStatus.SAVING);
+                    setStatus(EditorStatus.SAVING, evaluatedPath);
 
                     // Check if there is a scope to update (ex: Schema editing for bindings editor)
                     if (editorSchemaScope) {
@@ -162,7 +177,10 @@ function MonacoEditor({
                                 logRocketConsole(
                                     'editor:update:saving:scoped:failed'
                                 );
-                                setStatus(EditorStatus.SAVE_FAILED);
+                                setStatus(
+                                    EditorStatus.SAVE_FAILED,
+                                    evaluatedPath
+                                );
                             });
                     } else {
                         // Fire off the onChange to update the server
@@ -175,7 +193,10 @@ function MonacoEditor({
                             })
                             .catch(() => {
                                 logRocketConsole('editor:update:saving:failed');
-                                setStatus(EditorStatus.SAVE_FAILED);
+                                setStatus(
+                                    EditorStatus.SAVE_FAILED,
+                                    evaluatedPath
+                                );
                             });
                     }
                 } else {
@@ -184,7 +205,7 @@ function MonacoEditor({
                         catalogName,
                         catalogType,
                     });
-                    setStatus(EditorStatus.INVALID);
+                    setStatus(EditorStatus.INVALID, evaluatedPath);
                 }
             } else {
                 logRocketConsole('editor:update:missing', {
@@ -201,6 +222,7 @@ function MonacoEditor({
             catalogType,
             defaultLanguage,
             editorSchemaScope,
+            evaluatedPath,
         ]
     );
 
@@ -213,10 +235,6 @@ function MonacoEditor({
     useEffect(() => {
         if (typeof defaultValue === 'string') setLocalCopy(defaultValue);
     }, [setLocalCopy, defaultValue]);
-
-    useEffect(() => {
-        updateStoreStatus(status);
-    }, [updateStoreStatus, status]);
 
     const handlers = {
         change: (value: any, ev: any) => {
@@ -232,7 +250,7 @@ function MonacoEditor({
 
             // Set the status to editing
             if (status !== EditorStatus.EDITING) {
-                setStatus(EditorStatus.EDITING);
+                setStatus(EditorStatus.EDITING, evaluatedPath);
             }
 
             // Update the local copy
@@ -307,7 +325,7 @@ function MonacoEditor({
                         saveViewState={false}
                         defaultValue={defaultValue}
                         value={localCopy}
-                        path={path ?? catalogName}
+                        path={evaluatedPath}
                         options={{
                             readOnly: disabled ? disabled : false,
                             minimap: {

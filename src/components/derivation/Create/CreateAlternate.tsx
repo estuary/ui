@@ -2,6 +2,7 @@ import { Box, Collapse } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
 import {
+    useEditorStore_invalidEditors,
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
 } from 'components/editor/Store/hooks';
@@ -35,6 +36,7 @@ function DerivationCreateAlternate() {
 
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
+    const invalidEditors = useEditorStore_invalidEditors();
     const resetEditorStore = useEditorStore_resetState();
 
     // Form State Store
@@ -86,6 +88,7 @@ function DerivationCreateAlternate() {
                     TestButton={<GitPodButton buttonVariant="outlined" />}
                     SaveButton={
                         <EntitySaveButton
+                            disabled={invalidEditors.length > 0}
                             callFailed={helpers.callFailed}
                             taskNames={
                                 typeof catalogName === 'string'

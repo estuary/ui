@@ -296,6 +296,23 @@ export const useEditorStore_isEditing = (
     >(storeName(entityType, localScope), (state) => state.isEditing);
 };
 
+export const useEditorStore_statuses = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['statuses']
+    >(storeName(entityType, localScope), (state) => state.statuses);
+};
+
 export const useEditorStore_setStatus = (
     params?: SelectorParams | undefined
 ) => {
@@ -311,6 +328,40 @@ export const useEditorStore_setStatus = (
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setStatus']
     >(storeName(entityType, localScope), (state) => state.setStatus);
+};
+
+export const useEditorStore_invalidEditors = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['invalidEditors']
+    >(storeName(entityType, localScope), (state) => state.invalidEditors);
+};
+
+export const useEditorStore_removeStaleStatus = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['removeStaleStatus']
+    >(storeName(entityType, localScope), (state) => state.removeStaleStatus);
 };
 
 export const useEditorStore_draftInitializationError = (

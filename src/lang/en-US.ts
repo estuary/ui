@@ -662,6 +662,8 @@ const EntityEdit: ResolvedIntlConfig['messages'] = {
 const MonacoEditor: ResolvedIntlConfig['messages'] = {
     'monacoEditor.serverDiff': `Your version is out of sync with the server.`,
     'monacoEditor.serverDiffCTA': `See changes`,
+
+    'monacoEditor.alert.invalid': `An error was encountered parsing the contents of the editor. Invalid syntax is the most common source of this error.`,
 };
 
 const CaptureCreate: ResolvedIntlConfig['messages'] = {

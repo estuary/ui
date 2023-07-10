@@ -52,7 +52,11 @@ export interface EditorStoreState<T> {
 
     isSaving: boolean;
     isEditing: boolean;
-    setStatus: (newVal: EditorStatus) => void;
+    statuses: { [path: string]: EditorStatus };
+    setStatus: (status: EditorStatus, path: string) => void;
+    removeStaleStatus: (path: string) => void;
+
+    invalidEditors: string[];
 
     // Draft Initialization
     draftInitializationError: null | {
