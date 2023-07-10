@@ -115,6 +115,7 @@ function MonacoEditor({
                 setStatus(EditorStatus.EDITING);
 
                 let processedVal;
+                let validValue = true;
 
                 if (defaultLanguage === 'json') {
                     // We save as JSON on the backend so need to make sure we can parse it
@@ -123,6 +124,8 @@ function MonacoEditor({
                     try {
                         processedVal = JSON.parse(currentValue);
                     } catch {
+                        validValue = false;
+
                         setStatus(EditorStatus.INVALID);
                     }
                 } else {
@@ -130,9 +133,9 @@ function MonacoEditor({
                 }
 
                 // Make sure we have all the props needed to update the value
-                if (processedVal && catalogName && catalogType) {
+                if (validValue && catalogName && catalogType) {
                     logRocketConsole('editor:update:saving', {
-                        parsedVal: processedVal,
+                        processedVal,
                         catalogName,
                         catalogType,
                     });
