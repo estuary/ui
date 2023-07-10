@@ -274,7 +274,7 @@ function DataByHourGraph({ range, stats }: Props) {
         });
     }, [hours, intl, myChart, scopedDataSet]);
 
-    return <div id="data-by-hour" style={{ height: 500 }} />;
+    return <div id="data-by-hour" style={{ height: 350 }} />;
 }
 
 export default DataByHourGraph;
