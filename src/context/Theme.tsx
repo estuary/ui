@@ -274,6 +274,12 @@ export const alertTextPrimary = {
 };
 export const alertBackground = paperBackground;
 
+// RGB translation of #121212.
+export const dataPreviewBackground = {
+    light: 'white',
+    dark: 'rgba(18, 18, 18, 0.25)',
+};
+
 export const monacoEditorHeaderBackground = {
     light: 'white',
     dark: '#121212',

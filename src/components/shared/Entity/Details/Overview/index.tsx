@@ -46,16 +46,14 @@ function Overview({ name }: Props) {
             <Endpoints name={entityName} />
 
             <Grid item xs={12} md={8} lg={9}>
-                <Usage
-                    catalogName={entityName}
-                    createdAt={latestLiveSpec?.created_at}
-                />
+                <Usage catalogName={entityName} />
             </Grid>
 
             <Grid item xs={12} md={4} lg={3}>
                 <DetailsSection
                     entityName={entityName}
                     latestLiveSpec={latestLiveSpec}
+                    loading={validatingLiveSpecs}
                 />
             </Grid>
 

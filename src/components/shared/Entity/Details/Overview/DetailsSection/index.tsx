@@ -12,6 +12,7 @@ import { hasLength } from 'utils/misc-utils';
 interface Props {
     entityName: string;
     latestLiveSpec: LiveSpecsQuery | null;
+    loading: boolean;
 }
 
 const TIME_SETTINGS: FormatDateOptions = {

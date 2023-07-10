@@ -1,11 +1,6 @@
-import {
-    AlertTitle,
-    Box,
-    Button,
-    Grid,
-    Stack,
-    Typography,
-} from '@mui/material';
+/* eslint-disable complexity */
+import { AlertTitle, Box, Button, Stack, Typography } from '@mui/material';
+import CardWrapper from 'components/admin/Billing/CardWrapper';
 import ListView from 'components/collection/DataPreview/ListView';
 import AlertBox from 'components/shared/AlertBox';
 import { useJournalData, useJournalsForCollection } from 'hooks/useJournalData';
@@ -52,25 +47,15 @@ export function DataPreview({ collectionName }: Props) {
     const isLoading = journalsLoading || journalData.loading;
 
     return (
-        <Grid item xs={12} sx={{ m: 2 }}>
-            <Stack
-                justifyContent="space-between"
-                direction="row"
-                spacing={2}
-                sx={{ mb: 2 }}
-            >
+        <CardWrapper
+            height={undefined}
+            message={
                 <Stack
                     direction="row"
                     spacing={2}
                     sx={{ alignItems: 'center' }}
                 >
-                    <Typography
-                        component="span"
-                        variant="h6"
-                        sx={{
-                            alignItems: 'center',
-                        }}
-                    >
+                    <Typography component="span">
                         <FormattedMessage id="detailsPanel.dataPreview.header" />
                     </Typography>
 
@@ -87,69 +72,73 @@ export function DataPreview({ collectionName }: Props) {
                     >
                         <FormattedMessage id="cta.refresh" />
                     </Button>
+
+                    {/*
+                    <ToggleButtonGroup
+                        color="primary"
+                        size="small"
+                        exclusive
+                        onChange={toggleMode}
+                        value={previewMode}
+                        disabled={!hasLength(journalData.data?.documents)}
+                    >
+                        <ToggleButton value={Views.list}>
+                            <FormattedMessage id="cta.list" />
+                        </ToggleButton>
+                        <ToggleButton value={Views.table}>
+                            <FormattedMessage id="cta.table" />
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                    */}
                 </Stack>
-
-                {/*                <ToggleButtonGroup
-                    color="primary"
-                    size="small"
-                    exclusive
-                    onChange={toggleMode}
-                    value={previewMode}
-                    disabled={!hasLength(journalData.data?.documents)}
-                >
-                    <ToggleButton value={Views.list}>
-                        <FormattedMessage id="cta.list" />
-                    </ToggleButton>
-                    <ToggleButton value={Views.table}>
-                        <FormattedMessage id="cta.table" />
-                    </ToggleButton>
-                </ToggleButtonGroup>*/}
-            </Stack>
-
-            {journalsData && !hasLength(journalsData.journals) ? (
-                <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning" short>
-                        <AlertTitle>
-                            <FormattedMessage id="collectionsPreview.notFound.title" />
-                        </AlertTitle>
-                        <FormattedMessage id="collectionsPreview.notFound.message" />
-                    </AlertBox>
-                </Box>
-            ) : journalData.data?.tooManyBytes &&
-              journalData.data.documents.length === 0 ? (
-                <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning" short>
-                        <AlertTitle>
-                            <FormattedMessage id="collectionsPreview.tooManyBytesAndNoDocuments.title" />
-                        </AlertTitle>
-                        <FormattedMessage id="collectionsPreview.tooManyBytesAndNoDocuments.message" />
-                    </AlertBox>
-                </Box>
-            ) : journalData.data?.tooFewDocuments ? (
-                <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning" short>
-                        <AlertTitle>
-                            <FormattedMessage id="collectionsPreview.tooFewDocuments.title" />
-                        </AlertTitle>
-                        <FormattedMessage id="collectionsPreview.tooFewDocuments.message" />
-                    </AlertBox>
-                </Box>
-            ) : journalData.data?.tooManyBytes ? (
-                <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="warning" short>
-                        <AlertTitle>
-                            <FormattedMessage id="collectionsPreview.tooManyBytes.title" />
-                        </AlertTitle>
-                        <FormattedMessage id="collectionsPreview.tooManyBytes.message" />
-                    </AlertBox>
-                </Box>
-            ) : null}
-            {(journalData.data?.documents.length ?? 0) > 0 && spec ? (
-                <ListView journalData={journalData} spec={spec} />
-            ) : null}
-            {/*             : (
+            }
+        >
+            <>
+                {journalsData && !hasLength(journalsData.journals) ? (
+                    <Box sx={{ mb: 3 }}>
+                        <AlertBox severity="warning" short>
+                            <AlertTitle>
+                                <FormattedMessage id="collectionsPreview.notFound.title" />
+                            </AlertTitle>
+                            <FormattedMessage id="collectionsPreview.notFound.message" />
+                        </AlertBox>
+                    </Box>
+                ) : journalData.data?.tooManyBytes &&
+                  journalData.data.documents.length === 0 ? (
+                    <Box sx={{ mb: 3 }}>
+                        <AlertBox severity="warning" short>
+                            <AlertTitle>
+                                <FormattedMessage id="collectionsPreview.tooManyBytesAndNoDocuments.title" />
+                            </AlertTitle>
+                            <FormattedMessage id="collectionsPreview.tooManyBytesAndNoDocuments.message" />
+                        </AlertBox>
+                    </Box>
+                ) : journalData.data?.tooFewDocuments ? (
+                    <Box sx={{ mb: 3 }}>
+                        <AlertBox severity="warning" short>
+                            <AlertTitle>
+                                <FormattedMessage id="collectionsPreview.tooFewDocuments.title" />
+                            </AlertTitle>
+                            <FormattedMessage id="collectionsPreview.tooFewDocuments.message" />
+                        </AlertBox>
+                    </Box>
+                ) : journalData.data?.tooManyBytes ? (
+                    <Box sx={{ mb: 3 }}>
+                        <AlertBox severity="warning" short>
+                            <AlertTitle>
+                                <FormattedMessage id="collectionsPreview.tooManyBytes.title" />
+                            </AlertTitle>
+                            <FormattedMessage id="collectionsPreview.tooManyBytes.message" />
+                        </AlertBox>
+                    </Box>
+                ) : null}
+                {(journalData.data?.documents.length ?? 0) > 0 && spec ? (
+                    <ListView journalData={journalData} spec={spec} />
+                ) : null}
+                {/*             : (
                 <TableView journalData={journalData} spec={spec} />
             )}*/}
-        </Grid>
+            </>
+        </CardWrapper>
     );
 }

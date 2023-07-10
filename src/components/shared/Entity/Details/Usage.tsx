@@ -15,7 +15,7 @@ interface Props {
     createdAt?: string;
 }
 
-function Usage({ catalogName, createdAt }: Props) {
+function Usage({ catalogName }: Props) {
     const [range, setRange] = useState<DataByHourRange>(6);
 
     const { isValidating, stats, error } = useDetailsStats(catalogName, range);
@@ -37,11 +37,7 @@ function Usage({ catalogName, createdAt }: Props) {
                     }
                 />
             ) : (
-                <DataByHourGraph
-                    stats={stats}
-                    range={range}
-                    createdAt={createdAt}
-                />
+                <DataByHourGraph stats={stats} range={range} />
             )}
         </CardWrapper>
     );
