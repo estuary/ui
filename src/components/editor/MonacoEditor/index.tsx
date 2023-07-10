@@ -31,7 +31,7 @@ import {
 } from 'utils/editor-utils';
 import { AllowedScopes } from './types';
 
-export type EditorChangeHandler = (
+type EditorChangeHandler = (
     newVal: any,
     path: string,
     specType: Entity,
