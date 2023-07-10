@@ -1,6 +1,5 @@
 import { CircularProgress, Skeleton, Stack, Typography } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
-import ConnectorIcon from 'components/connectors/ConnectorIcon';
 import RelatedCollections from 'components/shared/Entity/RelatedCollections';
 import ExternalLink from 'components/shared/ExternalLink';
 import KeyValueList from 'components/shared/KeyValueList';
@@ -67,24 +66,20 @@ function DetailsSection({ latestLiveSpec }: Props) {
             val: intl.formatDate(latestLiveSpec.created_at, TIME_SETTINGS),
         });
 
-        if (latestLiveSpec.connector_title?.['en-US']) {
+        if (latestLiveSpec.connectorName) {
             response.push({
                 title: intl.formatMessage({
                     id: 'connector.label',
                 }),
                 val: (
-                    <Stack direction="row" spacing={1}>
-                        {latestLiveSpec.connector_logo_url?.['en-US'] ? (
-                            <ConnectorIcon
-                                size={20}
-                                iconPath={
-                                    latestLiveSpec.connector_logo_url?.['en-US']
-                                }
-                            />
-                        ) : null}
-                        <Typography>
-                            {latestLiveSpec.connector_title['en-US']}
-                        </Typography>
+                    <Stack
+                        direction="row"
+                        spacing={1}
+                        sx={{
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Typography>{latestLiveSpec.connectorName}</Typography>
                         {latestLiveSpec.connector_tag_documentation_url ? (
                             <ExternalLink
                                 link={

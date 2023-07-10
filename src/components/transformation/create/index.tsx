@@ -29,7 +29,7 @@ import { LegacyStepWrapper } from 'components/transformation/create/legacy/Wrapp
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useLiveSpecs from 'hooks/useLiveSpecs';
+import { useLiveSpecs } from 'hooks/useLiveSpecs';
 import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSet } from 'react-use';

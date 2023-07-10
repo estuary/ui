@@ -11,7 +11,7 @@ export interface LiveSpecsQuery extends Schema {
     updated_at: undefined;
 }
 
-const queryColumns = ['*'];
+const queryColumns = ['catalog_name', 'spec_type'];
 
 const defaultResponse: LiveSpecsQuery[] = [];
 
@@ -43,6 +43,39 @@ function useLiveSpecs(specType?: Entity, matchName?: string) {
     const { data, error, isValidating } = useSelect(
         specType ? draftSpecQuery : null
     );
+
+    return {
+        liveSpecs: data ? data.data : defaultResponse,
+        error,
+        isValidating,
+    };
+}
+
+function useLiveSpecs_details(specType: Entity, catalogName: string) {
+    const draftSpecQuery = useQuery<LiveSpecsQuery>(
+        TABLES.LIVE_SPECS_EXT,
+        {
+            columns: `
+                updated_at,
+                created_at,
+                connectorName:connector_title->>en-US::text,
+                connector_tag_documentation_url,
+                writes_to,
+                reads_from
+            `,
+            filter: (query) => {
+                return query
+                    .eq('catalog_name', catalogName)
+                    .eq('spec_type', specType)
+                    .order('updated_at', {
+                        ascending: false,
+                    });
+            },
+        },
+        [specType, catalogName]
+    );
+
+    const { data, error, isValidating } = useSelect(draftSpecQuery);
 
     return {
         liveSpecs: data ? data.data : defaultResponse,
@@ -96,4 +129,4 @@ export function useLiveSpecs_spec(id: string, collectionNames?: string[]) {
     };
 }
 
-export default useLiveSpecs;
+export { useLiveSpecs, useLiveSpecs_details };

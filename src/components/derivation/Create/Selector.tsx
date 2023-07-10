@@ -1,6 +1,6 @@
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import BindingSelector from 'components/editor/Bindings/Selector';
-import useLiveSpecs from 'hooks/useLiveSpecs';
+import { useLiveSpecs } from 'hooks/useLiveSpecs';
 
 function Selector() {
     const collections = useLiveSpecs('collection');

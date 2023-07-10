@@ -18,7 +18,7 @@ import UpdateDraftButton from 'components/transformation/create/DerivationEditor
 import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import { intensifiedOutline } from 'context/Theme';
-import useLiveSpecs from 'hooks/useLiveSpecs';
+import { useLiveSpecs } from 'hooks/useLiveSpecs';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSet } from 'react-use';

@@ -5,7 +5,7 @@ import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useLiveSpecs from 'hooks/useLiveSpecs';
+import { useLiveSpecs_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import { hasLength, specContainsDerivation } from 'utils/misc-utils';
 import ShardInformation from '../../Shard/Information';
@@ -24,10 +24,8 @@ function Overview({ name }: Props) {
     const isCollection = entityType === 'collection';
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const entityName = name ?? catalogName;
-    const { liveSpecs, isValidating: validatingLiveSpecs } = useLiveSpecs(
-        entityType,
-        entityName
-    );
+    const { liveSpecs, isValidating: validatingLiveSpecs } =
+        useLiveSpecs_details(entityType, entityName);
 
     const currentCatalog = useEditorStore_currentCatalog({
         localScope: true,
