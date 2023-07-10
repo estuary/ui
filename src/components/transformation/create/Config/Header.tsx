@@ -2,7 +2,10 @@ import { Typography, useTheme } from '@mui/material';
 import { useEditorStore_invalidEditors } from 'components/editor/Store/hooks';
 import { WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import { useTransformationCreate_shuffleKeyErrorsExist } from 'stores/TransformationCreate/hooks';
+import {
+    useTransformationCreate_emptySQLExists,
+    useTransformationCreate_shuffleKeyErrorsExist,
+} from 'stores/TransformationCreate/hooks';
 
 function DerivationCatalogHeader() {
     const theme = useTheme();
@@ -11,25 +14,20 @@ function DerivationCatalogHeader() {
     const invalidEditors = useEditorStore_invalidEditors();
 
     // Transformation Create Store
+    const emptySQLExists = useTransformationCreate_emptySQLExists();
     const shuffleKeyErrorsExist =
         useTransformationCreate_shuffleKeyErrorsExist();
 
     return (
         <>
-            {shuffleKeyErrorsExist ? (
+            {emptySQLExists ||
+            shuffleKeyErrorsExist ||
+            invalidEditors.length > 0 ? (
                 <WarningCircle
                     style={{
                         marginRight: 4,
                         fontSize: 12,
                         color: theme.palette.error.main,
-                    }}
-                />
-            ) : invalidEditors.length > 0 ? (
-                <WarningCircle
-                    style={{
-                        marginRight: 4,
-                        fontSize: 12,
-                        color: theme.palette.warning[theme.palette.mode],
                     }}
                 />
             ) : null}

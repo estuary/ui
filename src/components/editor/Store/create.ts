@@ -146,7 +146,10 @@ const getInitialState = <T>(
 
                     state.invalidEditors = Object.entries(state.statuses)
                         .filter(
-                            ([_key, status]) => status === EditorStatus.INVALID
+                            ([_key, status]) =>
+                                status === EditorStatus.INVALID ||
+                                status === EditorStatus.SAVE_FAILED ||
+                                status === EditorStatus.OUT_OF_SYNC
                         )
                         .map(([key, _status]) => key);
                 }),

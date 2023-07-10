@@ -5,6 +5,7 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+import { useEditorStore_invalidEditors } from 'components/editor/Store/hooks';
 import CatalogList, {
     CatalogListContent,
 } from 'components/transformation/create/Config/catalog/CatalogList';
@@ -18,10 +19,15 @@ import {
     useTransformationCreate_migrations,
     useTransformationCreate_selectedAttribute,
 } from 'stores/TransformationCreate/hooks';
+import { hasLength } from 'utils/misc-utils';
 
 function MigrationList() {
     const theme = useTheme();
 
+    // Draft Editor Store
+    const invalidEditors = useEditorStore_invalidEditors();
+
+    // Transformation Create Store
     const selectedAttribute = useTransformationCreate_selectedAttribute();
     const migrations = useTransformationCreate_migrations();
     const addMigrations = useTransformationCreate_addMigrations();
@@ -30,11 +36,14 @@ function MigrationList() {
 
     const content: CatalogListContent[] = useMemo(
         () =>
-            Object.keys(migrations).map((attributeId) => ({
+            Object.entries(migrations).map(([attributeId, migration]) => ({
                 attributeId,
                 value: attributeId,
+                editorInvalid:
+                    !hasLength(migration) ||
+                    invalidEditors.includes(attributeId),
             })),
-        [migrations]
+        [invalidEditors, migrations]
     );
 
     const migrationSelected = useMemo(

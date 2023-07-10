@@ -1,6 +1,7 @@
 import produce from 'immer';
 import { intersection, omit } from 'lodash';
 import { TransformCreateStoreNames } from 'stores/names';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -40,6 +41,7 @@ const getInitialStateData = (): Pick<
     | 'attributeType'
     | 'catalogName'
     | 'catalogUpdating'
+    | 'emptySQLExists'
     | 'language'
     | 'migrations'
     | 'name'
@@ -53,6 +55,7 @@ const getInitialStateData = (): Pick<
     attributeType: 'transform',
     catalogName: '',
     catalogUpdating: false,
+    emptySQLExists: false,
     language: 'sql',
     migrations: {},
     name: '',
@@ -125,6 +128,14 @@ const getInitialState = (
                     };
                 });
 
+                state.emptySQLExists =
+                    Object.values(state.transformConfigs).some(
+                        ({ lambda }) => !hasLength(lambda)
+                    ) ||
+                    Object.values(state.migrations).some(
+                        (migration) => !hasLength(migration)
+                    );
+
                 state.transformCount += Object.keys(
                     state.transformConfigs
                 ).length;
@@ -144,6 +155,14 @@ const getInitialState = (
                 ).map(({ collection }) => collection);
 
                 state.transformConfigs = value;
+
+                state.emptySQLExists =
+                    Object.values(state.transformConfigs).some(
+                        ({ lambda }) => !hasLength(lambda)
+                    ) ||
+                    Object.values(state.migrations).some(
+                        (migration) => !hasLength(migration)
+                    );
 
                 state.transformCount +=
                     Object.keys(state.transformConfigs).length -
@@ -169,6 +188,14 @@ const getInitialState = (
                             migration,
                     };
                 });
+
+                state.emptySQLExists =
+                    Object.values(state.transformConfigs).some(
+                        ({ lambda }) => !hasLength(lambda)
+                    ) ||
+                    Object.values(state.migrations).some(
+                        (migration) => !hasLength(migration)
+                    );
             }),
             false,
             'Migration Added'
@@ -235,6 +262,14 @@ const getInitialState = (
                         state.attributeType = 'migration';
                     }
                 }
+
+                state.emptySQLExists =
+                    Object.values(state.transformConfigs).some(
+                        ({ lambda }) => !hasLength(lambda)
+                    ) ||
+                    Object.values(state.migrations).some(
+                        (migration) => !hasLength(migration)
+                    );
             }),
             false,
             'Attribute Removed'
@@ -261,6 +296,14 @@ const getInitialState = (
                 } else {
                     state.migrations[selectedAttribute] = value;
                 }
+
+                state.emptySQLExists =
+                    Object.values(state.transformConfigs).some(
+                        ({ lambda }) => !hasLength(lambda)
+                    ) ||
+                    Object.values(state.migrations).some(
+                        (migration) => !hasLength(migration)
+                    );
             }),
             false,
             'Selected Attribute Set'

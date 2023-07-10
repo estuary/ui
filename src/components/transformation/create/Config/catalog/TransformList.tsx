@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
+import { useEditorStore_invalidEditors } from 'components/editor/Store/hooks';
 import CatalogList, {
     CatalogListContent,
 } from 'components/transformation/create/Config/catalog/CatalogList';
@@ -20,19 +21,29 @@ import { useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSet } from 'react-use';
 import { useTransformationCreate_transformConfigs } from 'stores/TransformationCreate/hooks';
+import { hasLength } from 'utils/misc-utils';
 
 function TransformList() {
     const collections = useLiveSpecs('collection');
 
+    // Draft Editor Store
+    const invalidEditors = useEditorStore_invalidEditors();
+
+    // Transformation Create Store
     const transformConfigs = useTransformationCreate_transformConfigs();
 
     const content: CatalogListContent[] = useMemo(
         () =>
-            Object.entries(transformConfigs).map(([attributeId, { name }]) => ({
-                attributeId,
-                value: name,
-            })),
-        [transformConfigs]
+            Object.entries(transformConfigs).map(
+                ([attributeId, { name, lambda }]) => ({
+                    attributeId,
+                    value: name,
+                    editorInvalid:
+                        !hasLength(lambda) ||
+                        invalidEditors.includes(attributeId),
+                })
+            ),
+        [invalidEditors, transformConfigs]
     );
 
     const [open, setOpen] = useState<boolean>(false);

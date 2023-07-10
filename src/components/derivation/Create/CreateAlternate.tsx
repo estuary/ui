@@ -25,7 +25,10 @@ import {
     useFormStateStore_setFormState,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useTransformationCreate_catalogName } from 'stores/TransformationCreate/hooks';
+import {
+    useTransformationCreate_catalogName,
+    useTransformationCreate_emptySQLExists,
+} from 'stores/TransformationCreate/hooks';
 
 function DerivationCreateAlternate() {
     usePageTitle({
@@ -49,6 +52,7 @@ function DerivationCreateAlternate() {
 
     // Transformation Create Store
     const catalogName = useTransformationCreate_catalogName();
+    const emptySQLExists = useTransformationCreate_emptySQLExists();
 
     const helpers = {
         callFailed: (formState: any) => {
@@ -88,7 +92,9 @@ function DerivationCreateAlternate() {
                     TestButton={<GitPodButton buttonVariant="outlined" />}
                     SaveButton={
                         <EntitySaveButton
-                            disabled={invalidEditors.length > 0}
+                            disabled={
+                                emptySQLExists || invalidEditors.length > 0
+                            }
                             callFailed={helpers.callFailed}
                             taskNames={
                                 typeof catalogName === 'string'

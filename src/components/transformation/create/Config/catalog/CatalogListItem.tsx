@@ -8,7 +8,6 @@ import {
     useTheme,
 } from '@mui/material';
 import {
-    useEditorStore_invalidEditors,
     useEditorStore_removeStaleStatus,
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
@@ -19,7 +18,7 @@ import {
     NavArrowRight,
     WarningCircle,
 } from 'iconoir-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import {
     useTransformationCreate_removeAttribute,
     useTransformationCreate_selectedAttribute,
@@ -32,6 +31,7 @@ interface Props {
     fixedAttributeType: DerivationAttribute;
     attributeId: string;
     itemLabel: string;
+    editorInvalid: boolean;
     nestedItemLabel?: string;
 }
 
@@ -39,13 +39,14 @@ function CatalogListItem({
     fixedAttributeType,
     attributeId,
     itemLabel,
+    editorInvalid,
     nestedItemLabel,
 }: Props) {
     const theme = useTheme();
 
     // Draft Editor Store
     const setDraftId = useEditorStore_setId();
-    const invalidEditors = useEditorStore_invalidEditors();
+    // const invalidEditors = useEditorStore_invalidEditors();
     const removeStaleEditorStatus = useEditorStore_removeStaleStatus();
 
     // Transformation Create Store
@@ -56,10 +57,10 @@ function CatalogListItem({
 
     const [open, setOpen] = useState<boolean>(true);
 
-    const editorInvalid = useMemo(
-        () => invalidEditors.includes(attributeId),
-        [invalidEditors, attributeId]
-    );
+    // const editorInvalid = useMemo(
+    //     () => invalidEditors.includes(attributeId),
+    //     [invalidEditors, attributeId]
+    // );
 
     const handlers = {
         toggleList: () => {
@@ -186,9 +187,7 @@ function CatalogListItem({
                             style={{
                                 marginRight: 4,
                                 fontSize: 12,
-                                color: theme.palette.warning[
-                                    theme.palette.mode
-                                ],
+                                color: theme.palette.error.main,
                             }}
                         />
                     ) : null}

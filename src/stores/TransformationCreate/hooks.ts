@@ -177,6 +177,16 @@ export const useTransformationCreate_setAttributeType = () => {
     );
 };
 
+export const useTransformationCreate_emptySQLExists = () => {
+    return useZustandStore<
+        TransformCreateState,
+        TransformCreateState['emptySQLExists']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.emptySQLExists
+    );
+};
+
 export const useTransformationCreate_previewActive = () => {
     return useZustandStore<
         TransformCreateState,

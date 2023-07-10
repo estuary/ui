@@ -18,6 +18,7 @@ import { hasLength } from 'utils/misc-utils';
 export interface CatalogListContent {
     attributeId: string;
     value: string;
+    editorInvalid: boolean;
     nestedValue?: string;
 }
 
@@ -81,15 +82,23 @@ function CatalogList({
             <Box id="list-item-container" sx={{ height, overflowY: 'auto' }}>
                 {hasLength(content) ? (
                     <Box sx={{ minWidth: 'max-content' }}>
-                        {content.map(({ attributeId, value, nestedValue }) => (
-                            <CatalogListItem
-                                key={attributeId}
-                                attributeId={attributeId}
-                                fixedAttributeType={fixedAttributeType}
-                                itemLabel={value}
-                                nestedItemLabel={nestedValue}
-                            />
-                        ))}
+                        {content.map(
+                            ({
+                                attributeId,
+                                value,
+                                nestedValue,
+                                editorInvalid,
+                            }) => (
+                                <CatalogListItem
+                                    key={attributeId}
+                                    attributeId={attributeId}
+                                    fixedAttributeType={fixedAttributeType}
+                                    itemLabel={value}
+                                    editorInvalid={editorInvalid}
+                                    nestedItemLabel={nestedValue}
+                                />
+                            )
+                        )}
                     </Box>
                 ) : (
                     <ListItem>

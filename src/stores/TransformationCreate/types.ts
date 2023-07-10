@@ -62,6 +62,8 @@ export interface TransformCreateState {
     attributeType: DerivationAttribute;
     setAttributeType: (value: TransformCreateState['attributeType']) => void;
 
+    emptySQLExists: boolean;
+
     previewActive: boolean;
     setPreviewActive: (value: TransformCreateState['previewActive']) => void;
 
