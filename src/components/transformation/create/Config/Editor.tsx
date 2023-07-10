@@ -86,7 +86,7 @@ function DerivationCatalogEditor() {
                             )}
                         </Box>
                     ) : (
-                        <Stack spacing={1} sx={{ py: 2 }}>
+                        <Stack spacing={1} sx={{ py: 1 }}>
                             <Stack
                                 spacing={1}
                                 direction="row"
