@@ -10,7 +10,7 @@ interface Props {
 function EmptySQLEditor({ editorHeight = DEFAULT_HEIGHT }: Props) {
     return (
         <Box sx={{ border: (theme) => defaultOutline[theme.palette.mode] }}>
-            <Box sx={{ height: 37 }} />
+            <Box sx={{ height: 29 }} />
 
             <Divider />
 

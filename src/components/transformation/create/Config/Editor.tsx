@@ -53,21 +53,21 @@ function DerivationCatalogEditor() {
     );
 
     const editorHeight = useMemo(
-        () => (transformConfig ? 364 : 458),
+        () => (transformConfig ? 364 : 520),
         [transformConfig]
     );
 
     return (
         <Box sx={{ p: 1 }}>
-            <DerivationCatalogEditorTabs
-                selectedTab={activeTab}
-                setSelectedTab={setActiveTab}
-            />
+            {transformConfig ? (
+                <>
+                    <DerivationCatalogEditorTabs
+                        selectedTab={activeTab}
+                        setSelectedTab={setActiveTab}
+                    />
 
-            {tabProps[activeTab].value === 'basic' ? (
-                <Box sx={{ pt: 1 }}>
-                    {transformConfig ? (
-                        <>
+                    {tabProps[activeTab].value === 'basic' ? (
+                        <Box sx={{ pt: 1 }}>
                             <Box sx={{ mb: 2 }}>
                                 <Typography variant="subtitle1">
                                     Source Collection
@@ -81,22 +81,18 @@ function DerivationCatalogEditor() {
                             <Typography variant="subtitle1" sx={{ mb: 1 }}>
                                 Transform Lambda
                             </Typography>
-                        </>
-                    ) : null}
 
-                    {catalogName && showEditor ? (
-                        <SQLEditor
-                            entityName={catalogName}
-                            editorHeight={editorHeight}
-                        />
+                            {catalogName && showEditor ? (
+                                <SQLEditor
+                                    entityName={catalogName}
+                                    editorHeight={editorHeight}
+                                />
+                            ) : (
+                                <EmptySQLEditor editorHeight={editorHeight} />
+                            )}
+                        </Box>
                     ) : (
-                        <EmptySQLEditor editorHeight={editorHeight} />
-                    )}
-                </Box>
-            ) : (
-                <Stack spacing={3} sx={{ py: 2 }}>
-                    {transformConfig ? (
-                        <>
+                        <Stack spacing={3} sx={{ py: 2 }}>
                             <Stack>
                                 <TextField
                                     size="small"
@@ -116,7 +112,6 @@ function DerivationCatalogEditor() {
                                     punctuation).
                                 </Typography>
                             </Stack>
-
                             <Box>
                                 <Stack
                                     spacing={1}
@@ -147,9 +142,16 @@ function DerivationCatalogEditor() {
                                     Soon you will be able to shuffle some keys!
                                 </Typography>
                             </Box>
-                        </>
-                    ) : null}
-                </Stack>
+                        </Stack>
+                    )}
+                </>
+            ) : catalogName && showEditor ? (
+                <SQLEditor
+                    entityName={catalogName}
+                    editorHeight={editorHeight}
+                />
+            ) : (
+                <EmptySQLEditor editorHeight={editorHeight} />
             )}
         </Box>
     );

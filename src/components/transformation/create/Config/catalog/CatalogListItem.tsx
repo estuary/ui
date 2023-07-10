@@ -46,7 +46,6 @@ function CatalogListItem({
 
     // Draft Editor Store
     const setDraftId = useEditorStore_setId();
-    // const invalidEditors = useEditorStore_invalidEditors();
     const removeStaleEditorStatus = useEditorStore_removeStaleStatus();
 
     // Transformation Create Store
@@ -56,11 +55,6 @@ function CatalogListItem({
     const removeAttribute = useTransformationCreate_removeAttribute();
 
     const [open, setOpen] = useState<boolean>(true);
-
-    // const editorInvalid = useMemo(
-    //     () => invalidEditors.includes(attributeId),
-    //     [invalidEditors, attributeId]
-    // );
 
     const handlers = {
         toggleList: () => {
