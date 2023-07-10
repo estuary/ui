@@ -215,6 +215,9 @@ export const unauthenticatedRoutes = {
     auth: {
         path: '/auth',
     },
+    logout: {
+        path: '/logout',
+    },
     login: {
         path: '/login',
     },

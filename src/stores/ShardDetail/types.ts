@@ -1,5 +1,6 @@
 import { SemanticColor } from 'context/Theme';
 import { Shard } from 'data-plane-gateway/types/shard_client';
+import { ResponseError } from 'data-plane-gateway/types/util';
 
 // TODO: Determine a way to access an interface property with a function type.
 export type SetShards = (shards: Shard[]) => void;
@@ -58,7 +59,7 @@ export interface Endpoint {
 export interface ShardDetailStore {
     shards: Shard[];
     setShards: SetShards;
-    error: Error | string | null;
+    error: ResponseError['body'] | string | null;
     setError: (val: ShardDetailStore['error']) => void;
     getTaskShards: (
         catalogNamespace: string | undefined,
