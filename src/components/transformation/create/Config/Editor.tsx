@@ -1,11 +1,4 @@
-import {
-    Box,
-    Stack,
-    TextField,
-    Tooltip,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { Box, Stack, Tooltip, Typography, useTheme } from '@mui/material';
 import SQLEditor from 'components/transformation/create/Config/SQLEditor';
 import EmptySQLEditor from 'components/transformation/create/Config/SQLEditor/Empty';
 import DerivationCatalogEditorTabs, {
@@ -85,6 +78,7 @@ function DerivationCatalogEditor() {
                             {catalogName && showEditor ? (
                                 <SQLEditor
                                     entityName={catalogName}
+                                    editorLabel={transformConfig.filename}
                                     editorHeight={editorHeight}
                                 />
                             ) : (
@@ -92,56 +86,34 @@ function DerivationCatalogEditor() {
                             )}
                         </Box>
                     ) : (
-                        <Stack spacing={3} sx={{ py: 2 }}>
-                            <Stack>
-                                <TextField
-                                    size="small"
-                                    variant="standard"
-                                    label="Transform Name"
-                                    value={transformConfig.name}
-                                />
-
-                                <Typography
-                                    variant="caption"
-                                    color={theme.palette.text.secondary}
-                                    sx={{ mt: '3px' }}
-                                >
-                                    Unique name of the transformation,
-                                    containing only Unicode letters, numbers,
-                                    hyphens, or underscores (no spaces or other
-                                    punctuation).
+                        <Stack spacing={1} sx={{ py: 2 }}>
+                            <Stack
+                                spacing={1}
+                                direction="row"
+                                sx={{ alignItems: 'center' }}
+                            >
+                                <Typography variant="subtitle1">
+                                    <FormattedMessage id="newTransform.editor.streaming.shuffleKeys.header" />
                                 </Typography>
+
+                                <Tooltip
+                                    title={intl.formatMessage({
+                                        id: 'newTransform.editor.streaming.shuffleKeys.tooltip',
+                                    })}
+                                    placement="right"
+                                >
+                                    <HelpCircle
+                                        style={{
+                                            fontSize: 12,
+                                            color: theme.palette.text.primary,
+                                        }}
+                                    />
+                                </Tooltip>
                             </Stack>
-                            <Box>
-                                <Stack
-                                    spacing={1}
-                                    direction="row"
-                                    sx={{ mb: 1, alignItems: 'center' }}
-                                >
-                                    <Typography variant="subtitle1">
-                                        <FormattedMessage id="newTransform.editor.streaming.shuffleKeys.header" />
-                                    </Typography>
 
-                                    <Tooltip
-                                        title={intl.formatMessage({
-                                            id: 'newTransform.editor.streaming.shuffleKeys.tooltip',
-                                        })}
-                                        placement="right"
-                                    >
-                                        <HelpCircle
-                                            style={{
-                                                fontSize: 12,
-                                                color: theme.palette.text
-                                                    .primary,
-                                            }}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-
-                                <Typography sx={{ px: 1 }}>
-                                    Soon you will be able to shuffle some keys!
-                                </Typography>
-                            </Box>
+                            <Typography sx={{ px: 1 }}>
+                                Soon you will be able to shuffle some keys!
+                            </Typography>
                         </Stack>
                     )}
                 </>

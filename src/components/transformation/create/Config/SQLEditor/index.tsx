@@ -10,9 +10,10 @@ interface Props {
     entityName: string;
     disabled?: boolean;
     editorHeight?: number;
+    editorLabel?: string;
 }
 
-function SQLEditor({ entityName, disabled, editorHeight }: Props) {
+function SQLEditor({ entityName, disabled, editorHeight, editorLabel }: Props) {
     // Draft Editor Store
     const draftSpecValidating = useEditorStore_queryResponse_isValidating();
 
@@ -40,6 +41,7 @@ function SQLEditor({ entityName, disabled, editorHeight }: Props) {
                 defaultLanguage="sql"
                 defaultValue={defaultValue}
                 editorSchemaScope={editorSchemaScope}
+                editorLabel={editorLabel ?? selectedAttribute}
                 onChange={onChange}
             />
         );

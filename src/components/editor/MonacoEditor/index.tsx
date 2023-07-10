@@ -1,5 +1,12 @@
 import Editor, { DiffEditor } from '@monaco-editor/react';
-import { Box, Divider, Paper, Stack, useTheme } from '@mui/material';
+import {
+    Box,
+    Divider,
+    Paper,
+    Stack,
+    Typography,
+    useTheme,
+} from '@mui/material';
 import Invalid from 'components/editor/Status/Invalid';
 import ServerDiff from 'components/editor/Status/ServerDiff';
 import Synchronized from 'components/editor/Status/Synchronized';
@@ -41,6 +48,7 @@ export interface MonacoEditorProps {
     defaultLanguage?: 'json' | 'sql';
     defaultValue?: string;
     path?: string;
+    editorLabel?: string;
 }
 
 function MonacoEditor({
@@ -53,6 +61,7 @@ function MonacoEditor({
     defaultLanguage = 'json',
     defaultValue,
     path,
+    editorLabel,
 }: MonacoEditorProps) {
     const theme = useTheme();
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
@@ -274,17 +283,21 @@ function MonacoEditor({
                 <Box
                     sx={{
                         minHeight: toolbarHeight,
+                        py: 0.5,
+                        px: 1,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                     }}
                 >
+                    <Typography sx={{ fontWeight: 500 }}>
+                        {editorLabel}
+                    </Typography>
+
                     <Stack
                         spacing={1}
                         direction="row"
-                        sx={{
-                            py: 0.5,
-                            px: 1,
-                            justifyContent: 'end',
-                            alignItems: 'center',
-                        }}
+                        sx={{ justifyContent: 'end' }}
                     >
                         {/* TODO (editor) Need to get the save failure state working */}
                         {status === EditorStatus.INVALID ||
