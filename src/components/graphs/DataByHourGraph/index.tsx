@@ -220,13 +220,22 @@ function DataByHourGraph({ range, stats }: Props) {
 
     // Effect to update the data by updating the series.
     useEffect(() => {
+        const bytesFormatter = ({ value }: any) => {
+            if (!Number.isInteger(value)) {
+                return intl.formatMessage({
+                    id: 'common.missing',
+                });
+            }
+
+            return defaultDataFormat(value);
+        };
         const bytesSeries: EChartsOption['series'] = {
             data: [],
             markLine: {
                 data: [{ type: 'max', name: 'Max' }],
                 label: {
                     position: 'start',
-                    formatter: ({ value }: any) => defaultDataFormat(value),
+                    formatter: bytesFormatter,
                 },
                 symbolSize: 0,
             },
@@ -235,34 +244,36 @@ function DataByHourGraph({ range, stats }: Props) {
             type: 'bar',
             yAxisIndex: 0,
             tooltip: {
-                valueFormatter: (value: any) => {
-                    if (!Number.isInteger(value)) {
-                        return intl.formatMessage({
-                            id: 'common.missing',
-                        });
-                    }
-
-                    return defaultDataFormat(value);
-                },
+                valueFormatter: (value: any) => bytesFormatter({ value }),
             },
+        };
+
+        const docsFormatter = ({ value }: any) => {
+            if (!Number.isInteger(value)) {
+                return intl.formatMessage({
+                    id: 'common.missing',
+                });
+            }
+
+            return readable(value, 2, false);
         };
 
         const docsSeries: EChartsOption['series'] = {
             barMinHeight: 1,
             data: [],
+            markLine: {
+                data: [{ type: 'max', name: 'Max' }],
+                label: {
+                    position: 'end',
+                    formatter: docsFormatter,
+                },
+                symbolSize: 0,
+            },
             name: intl.formatMessage({ id: 'data.docs' }),
             type: 'bar',
             yAxisIndex: 1,
             tooltip: {
-                valueFormatter: (value: any) => {
-                    if (!Number.isInteger(value)) {
-                        return intl.formatMessage({
-                            id: 'common.missing',
-                        });
-                    }
-
-                    return readable(value, 2, false);
-                },
+                valueFormatter: (value: any) => docsFormatter({ value }),
             },
         };
 
