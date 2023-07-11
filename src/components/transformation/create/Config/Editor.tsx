@@ -122,9 +122,7 @@ function DerivationCatalogEditor() {
                     entityName={catalogName}
                     editorHeight={editorHeight}
                 />
-            ) : (
-                <EmptySQLEditor editorHeight={editorHeight} />
-            )}
+            ) : null}
         </Box>
     );
 }
