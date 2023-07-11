@@ -87,7 +87,10 @@ function PatchDraftButton() {
                         error: draftSpecResponse.error,
                     },
                 });
-            } else if (mutateDraftSpecs) {
+            } else if (!mutateDraftSpecs) {
+                setCatalogUpdating(false);
+                setFormState({ status: FormStatus.FAILED });
+            } else {
                 await mutateDraftSpecs();
 
                 let evaluatedAttribute = '';
@@ -105,9 +108,6 @@ function PatchDraftButton() {
 
                 setCatalogUpdating(false);
                 setFormState({ status: FormStatus.GENERATED });
-            } else {
-                setCatalogUpdating(false);
-                setFormState({ status: FormStatus.FAILED });
             }
         } else {
             setCatalogUpdating(false);

@@ -59,7 +59,9 @@ function useDraftSpecEditor(
             specType: Entity,
             propUpdating?: AllowedScopes | string
         ) => {
-            if (mutate && draftSpec) {
+            if (!mutate || !draftSpec) {
+                return Promise.reject();
+            } else {
                 if (propUpdating) {
                     set(draftSpec.spec, propUpdating, newVal);
                 } else {
@@ -77,8 +79,6 @@ function useDraftSpecEditor(
                 }
 
                 return mutate();
-            } else {
-                return Promise.reject();
             }
         },
         [mutate, draftId, draftSpec]

@@ -85,10 +85,10 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
                 catalog_name: catalogName,
             });
 
-            if (draftSpecResponse.error) {
+            if (draftSpecResponse.error || !mutateDraftSpecs) {
                 setCatalogUpdating(false);
                 // Set error state
-            } else if (mutateDraftSpecs) {
+            } else {
                 await mutateDraftSpecs();
 
                 const collections = evaluatedTransforms.map(
@@ -112,9 +112,6 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
 
                 setCatalogUpdating(false);
                 setDialogOpen(false);
-            } else {
-                setCatalogUpdating(false);
-                // Set error state
             }
         } else {
             setCatalogUpdating(false);

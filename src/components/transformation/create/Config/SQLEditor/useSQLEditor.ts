@@ -62,7 +62,9 @@ function useSQLEditor(entityName: string) {
             specType: Entity,
             propUpdating?: AllowedScopes | string
         ) => {
-            if (mutateDraftSpecs && draftSpec) {
+            if (!mutateDraftSpecs || !draftSpec) {
+                return Promise.reject();
+            } else {
                 if (propUpdating) {
                     const evaluatedAttribute =
                         attributeType === 'transform'
@@ -91,8 +93,6 @@ function useSQLEditor(entityName: string) {
                 patchSelectedAttribute(value);
 
                 return mutateDraftSpecs();
-            } else {
-                return Promise.reject();
             }
         },
         [
