@@ -1,4 +1,3 @@
-import { useDebugValue } from 'react';
 import { TABLES } from 'services/supabase';
 import { Entity, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -12,8 +11,15 @@ export interface LiveSpecsQuery extends Schema {
 }
 
 const queryColumns = ['catalog_name', 'spec_type'];
-
 const defaultResponse: LiveSpecsQuery[] = [];
+
+const withKey =
+    (key: string) =>
+    (useSWRNext: any) =>
+    (params: any, fetcher: any, config: any) => {
+        // Pass the serialized key, and unserialize it in fetcher.
+        return useSWRNext(key, () => fetcher(...params), config);
+    };
 
 function useLiveSpecs(specType?: Entity, matchName?: string) {
     const draftSpecQuery = useQuery<LiveSpecsQuery>(
@@ -61,7 +67,8 @@ function useLiveSpecs_details(specType: Entity, catalogName: string) {
                 connectorName:connector_title->>en-US::text,
                 connector_tag_documentation_url,
                 writes_to,
-                reads_from
+                reads_from,
+                spec
             `,
             filter: (query) => {
                 return query
@@ -96,16 +103,7 @@ export interface LiveSpecsQuery_spec extends LiveSpecsQuery {
 }
 const specQuery = queryColumns.concat(['id', 'spec']);
 
-const withKey =
-    (key: string) =>
-    (useSWRNext: any) =>
-    (params: any, fetcher: any, config: any) => {
-        // Pass the serialized key, and unserialize it in fetcher.
-        return useSWRNext(key, () => fetcher(...params), config);
-    };
-
 export function useLiveSpecs_spec(id: string, collectionNames?: string[]) {
-    useDebugValue(`useLiveSpecs_spec ${collectionNames?.join(', ')}`);
     const liveSpecQuery = useQuery<LiveSpecsQuery_spec>(
         TABLES.LIVE_SPECS_EXT,
         {
