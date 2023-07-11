@@ -183,7 +183,9 @@ export const templateTransformConfig = (
     version: number,
     shuffleKeys?: string[]
 ): TransformConfig => {
-    const versionedTableName = `${stripPathing(source)}-v${version}`;
+    const versionedTableName = version
+        ? `${stripPathing(source)}_v${version}`
+        : stripPathing(source);
 
     return {
         filename: `${entityName}.lambda.${versionedTableName}.sql`,
@@ -211,7 +213,11 @@ export const evaluateTransformConfigs = (
 
         const existingVersions = Object.values(compositeTransformConfigs)
             .filter(({ collection }) => stripPathing(collection) === tableName)
-            .map(({ name }) => Number(name.slice(-1)))
+            .map(({ name }) => {
+                const convertedCharacter = Number(name.slice(-1));
+
+                return isNaN(convertedCharacter) ? 0 : convertedCharacter;
+            })
             .sort();
 
         const versionNumber =
