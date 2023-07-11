@@ -5,7 +5,18 @@ import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
-import { TransformCreateState } from './types';
+import {
+    MigrationDictionary,
+    TransformConfigDictionary,
+    TransformCreateState,
+} from './types';
+
+const evaluateSQLStatementLength = (
+    transformConfigs: TransformConfigDictionary,
+    migrations: MigrationDictionary
+) =>
+    Object.values(transformConfigs).some(({ lambda }) => !hasLength(lambda)) ||
+    Object.values(migrations).some((migration) => !hasLength(migration));
 
 const evaluateSelectedAttribute = (
     removedAttribute: string,
@@ -17,19 +28,23 @@ const evaluateSelectedAttribute = (
     const attributeCount = targetAttributeIds.length;
 
     if (targetAttributeIds.includes(selectedAttribute)) {
+        // The selected attribute is of the same type as the removed attribute and the removed attribute is not selected.
         return selectedAttribute;
     } else if (attributeCount && selectedAttribute === removedAttribute) {
         if (
             removedAttributeIndex > -1 &&
             removedAttributeIndex < attributeCount
         ) {
+            // The removed attribute is selected but it is not the last item in the attribute list.
             return targetAttributeIds[removedAttributeIndex];
         } else if (removedAttributeIndex === attributeCount) {
+            // The removed attribute is selected and it is the last item in the attribute list.
             return targetAttributeIds[removedAttributeIndex - 1];
         } else {
             return '';
         }
     } else if (alternateAttributeIds.length) {
+        // The selected attribute is not of the same type as the removed attribute and attributes of the alternative type exist.
         return alternateAttributeIds[0];
     } else {
         return '';
@@ -128,13 +143,10 @@ const getInitialState = (
                     };
                 });
 
-                state.emptySQLExists =
-                    Object.values(state.transformConfigs).some(
-                        ({ lambda }) => !hasLength(lambda)
-                    ) ||
-                    Object.values(state.migrations).some(
-                        (migration) => !hasLength(migration)
-                    );
+                state.emptySQLExists = evaluateSQLStatementLength(
+                    state.transformConfigs,
+                    state.migrations
+                );
 
                 state.transformCount += Object.keys(
                     state.transformConfigs
@@ -156,13 +168,10 @@ const getInitialState = (
 
                 state.transformConfigs = value;
 
-                state.emptySQLExists =
-                    Object.values(state.transformConfigs).some(
-                        ({ lambda }) => !hasLength(lambda)
-                    ) ||
-                    Object.values(state.migrations).some(
-                        (migration) => !hasLength(migration)
-                    );
+                state.emptySQLExists = evaluateSQLStatementLength(
+                    state.transformConfigs,
+                    state.migrations
+                );
 
                 state.transformCount +=
                     Object.keys(state.transformConfigs).length -
@@ -189,13 +198,10 @@ const getInitialState = (
                     };
                 });
 
-                state.emptySQLExists =
-                    Object.values(state.transformConfigs).some(
-                        ({ lambda }) => !hasLength(lambda)
-                    ) ||
-                    Object.values(state.migrations).some(
-                        (migration) => !hasLength(migration)
-                    );
+                state.emptySQLExists = evaluateSQLStatementLength(
+                    state.transformConfigs,
+                    state.migrations
+                );
             }),
             false,
             'Migration Added'
@@ -263,13 +269,10 @@ const getInitialState = (
                     }
                 }
 
-                state.emptySQLExists =
-                    Object.values(state.transformConfigs).some(
-                        ({ lambda }) => !hasLength(lambda)
-                    ) ||
-                    Object.values(state.migrations).some(
-                        (migration) => !hasLength(migration)
-                    );
+                state.emptySQLExists = evaluateSQLStatementLength(
+                    state.transformConfigs,
+                    state.migrations
+                );
             }),
             false,
             'Attribute Removed'
@@ -297,13 +300,10 @@ const getInitialState = (
                     state.migrations[selectedAttribute] = value;
                 }
 
-                state.emptySQLExists =
-                    Object.values(state.transformConfigs).some(
-                        ({ lambda }) => !hasLength(lambda)
-                    ) ||
-                    Object.values(state.migrations).some(
-                        (migration) => !hasLength(migration)
-                    );
+                state.emptySQLExists = evaluateSQLStatementLength(
+                    state.transformConfigs,
+                    state.migrations
+                );
             }),
             false,
             'Selected Attribute Set'

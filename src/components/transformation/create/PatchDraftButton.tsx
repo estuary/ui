@@ -14,6 +14,7 @@ import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import {
     useTransformationCreate_catalogName,
+    useTransformationCreate_emptySQLExists,
     useTransformationCreate_migrations,
     useTransformationCreate_setCatalogUpdating,
     useTransformationCreate_setSelectedAttribute,
@@ -41,6 +42,7 @@ function PatchDraftButton() {
 
     const transformConfigs = useTransformationCreate_transformConfigs();
     const migrations = useTransformationCreate_migrations();
+    const emptySQLExists = useTransformationCreate_emptySQLExists();
 
     const updateDerivationSpec = useCallback(async (): Promise<void> => {
         setCatalogUpdating(true);
@@ -129,7 +131,7 @@ function PatchDraftButton() {
     ]);
 
     return (
-        <Button onClick={updateDerivationSpec}>
+        <Button disabled={emptySQLExists} onClick={updateDerivationSpec}>
             <FormattedMessage id="cta.next" />
         </Button>
     );
