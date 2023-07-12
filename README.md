@@ -8,7 +8,15 @@ Make sure Node and npm are installed
 
 Run: `npm install`
 
-If you get a 401 error for `@estuary/flow-web` you need to authenticate. Github has documented [how to do this](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token).
+## I got a 401 error for `@estuary/flow-web`. 
+
+You need to update `~/.npmrc` with the following:
+```
+//npm.pkg.github.com/:_authToken=__YOUR_AUTH_TOKEN_YOU_MADE_ON_GITHUB__
+@estuary:registry=https://npm.pkg.github.com/
+```
+
+[Github docs](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token).
 
 # How to start/run?
 
