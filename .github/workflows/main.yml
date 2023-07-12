@@ -1,5 +1,8 @@
 name: UI Build
 
+permissions:
+    packages: read
+
 on:
     push:
         branches: [main]
