@@ -7,7 +7,7 @@ import { specContainsDerivation } from 'utils/misc-utils';
 import { DisableEnableButtonProps } from './types';
 
 const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
-    draftSpec.shards = draftSpec.shards ?? {};
+    draftSpec.shards ??= {};
     draftSpec.shards.disable = !enabling;
 };
 

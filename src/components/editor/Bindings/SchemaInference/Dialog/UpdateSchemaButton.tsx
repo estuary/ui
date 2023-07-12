@@ -30,7 +30,7 @@ function UpdateSchemaButton({ setOpen }: Props) {
     const currentCollection = useResourceConfig_currentCollection();
 
     const originalSchema = useMemo(() => {
-        if (!collectionData || !collectionData.spec) {
+        if (!collectionData?.spec) {
             return {};
         }
 
