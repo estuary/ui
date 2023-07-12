@@ -79,7 +79,7 @@ function InitializeDraftButton({
 
                 setSourceCollections(collections);
 
-                let latestTransformVersions: { [tableName: string]: number } =
+                const latestTransformVersions: { [tableName: string]: number } =
                     {};
 
                 const transformConfigs: TransformConfig[] = collections.map(
@@ -89,10 +89,7 @@ function InitializeDraftButton({
                         if (Object.hasOwn(latestTransformVersions, tableName)) {
                             latestTransformVersions[tableName] += 1;
                         } else {
-                            latestTransformVersions = {
-                                ...latestTransformVersions,
-                                [tableName]: 0,
-                            };
+                            latestTransformVersions[tableName] = 0;
                         }
 
                         return templateTransformConfig(

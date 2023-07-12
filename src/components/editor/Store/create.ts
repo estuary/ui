@@ -127,11 +127,7 @@ const getInitialState = <T>(
         setStatus: (value, path) => {
             set(
                 produce((state) => {
-                    if (Object.hasOwn(state.statuses, path)) {
-                        state.statuses[path] = value;
-                    } else {
-                        state.statuses = { ...state.statuses, [path]: value };
-                    }
+                    state.statuses[path] = value;
 
                     const editorStatuses: EditorStatus[] = Object.values(
                         state.statuses
