@@ -34,6 +34,9 @@ function PopperWrapper({ children, anchorEl, open, setOpen }: Props) {
             anchorEl={anchorEl}
             transition
             sx={{ zIndex: popperIndex }}
+            // TODO (MUI Typing) - https://github.com/mui/material-ui/issues/35287
+            onResize={undefined}
+            onResizeCapture={undefined}
         >
             {({ TransitionProps }) => (
                 <ClickAwayListener onClickAway={externalAreaClicked}>
