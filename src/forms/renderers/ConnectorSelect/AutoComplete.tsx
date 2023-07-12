@@ -1,3 +1,6 @@
+// We  heavily base this off JsonForms stuff so tweaking linting options they don't use
+/* eslint-disable @typescript-eslint/unbound-method */
+
 /*
   The MIT License
 
@@ -62,11 +65,8 @@ export const ConnectorAutoComplete = (
         path,
         options,
         config,
-        // eslint-disable-next-line @typescript-eslint/unbound-method
         handleChange,
-        // eslint-disable-next-line @typescript-eslint/unbound-method
         getOptionLabel,
-        // eslint-disable-next-line @typescript-eslint/unbound-method
         filterOptions,
     } = props;
 
