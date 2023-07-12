@@ -187,6 +187,26 @@ export const useTransformationCreate_emptySQLExists = () => {
     );
 };
 
+export const useTransformationCreate_schemaUnedited = () => {
+    return useZustandStore<
+        TransformCreateState,
+        TransformCreateState['schemaUnedited']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.schemaUnedited
+    );
+};
+
+export const useTransformationCreate_setSchemaUnedited = () => {
+    return useZustandStore<
+        TransformCreateState,
+        TransformCreateState['setSchemaUnedited']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.setSchemaUnedited
+    );
+};
+
 export const useTransformationCreate_previewActive = () => {
     return useZustandStore<
         TransformCreateState,

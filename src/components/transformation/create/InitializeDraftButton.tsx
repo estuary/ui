@@ -151,6 +151,7 @@ function InitializeDraftButton({
     }, [
         addTransformConfigs,
         setDraftId,
+        setFormState,
         setPersistedDraftId,
         setSelectedAttribute,
         setSourceCollections,

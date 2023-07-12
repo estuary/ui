@@ -64,6 +64,9 @@ export interface TransformCreateState {
 
     emptySQLExists: boolean;
 
+    schemaUnedited: boolean;
+    setSchemaUnedited: (value: TransformCreateState['schemaUnedited']) => void;
+
     previewActive: boolean;
     setPreviewActive: (value: TransformCreateState['previewActive']) => void;
 

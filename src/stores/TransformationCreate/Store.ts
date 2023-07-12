@@ -61,6 +61,7 @@ const getInitialStateData = (): Pick<
     | 'migrations'
     | 'name'
     | 'previewActive'
+    | 'schemaUnedited'
     | 'selectedAttribute'
     | 'shuffleKeyErrorsExist'
     | 'sourceCollections'
@@ -75,6 +76,7 @@ const getInitialStateData = (): Pick<
     migrations: {},
     name: '',
     previewActive: false,
+    schemaUnedited: false,
     selectedAttribute: '',
     shuffleKeyErrorsExist: false,
     sourceCollections: [],
@@ -337,6 +339,16 @@ const getInitialState = (
             }),
             false,
             'Catalog Updating Set'
+        );
+    },
+
+    setSchemaUnedited: (value) => {
+        set(
+            produce((state: TransformCreateState) => {
+                state.schemaUnedited = value;
+            }),
+            false,
+            'Schema Unedited Set'
         );
     },
 

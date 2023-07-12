@@ -1,24 +1,34 @@
 import { Typography, useTheme } from '@mui/material';
 import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
 import { WarningCircle } from 'iconoir-react';
-import { useMemo } from 'react';
+import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
+import {
+    useTransformationCreate_schemaUnedited,
+    useTransformationCreate_setSchemaUnedited,
+} from 'stores/TransformationCreate/hooks';
 
 function DerivationSchemaHeader() {
     const theme = useTheme();
 
+    // Draft Editor Store
     const currentCatalog = useEditorStore_currentCatalog();
 
-    const schemaUnedited = useMemo(() => {
-        if (currentCatalog && Object.hasOwn(currentCatalog.spec, 'schema')) {
-            return Object.hasOwn(
-                currentCatalog.spec.schema.properties,
-                'your_key'
-            );
-        } else {
-            return false;
-        }
-    }, [currentCatalog]);
+    // Transformation Create Store
+    const schemaUnedited = useTransformationCreate_schemaUnedited();
+    const setSchemaUnedited = useTransformationCreate_setSchemaUnedited();
+
+    useEffect(() => {
+        const templateDetected =
+            currentCatalog && Object.hasOwn(currentCatalog.spec, 'schema')
+                ? Object.hasOwn(
+                      currentCatalog.spec.schema.properties,
+                      'your_key'
+                  )
+                : false;
+
+        setSchemaUnedited(templateDetected);
+    }, [setSchemaUnedited, currentCatalog]);
 
     return (
         <>

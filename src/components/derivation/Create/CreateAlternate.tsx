@@ -28,6 +28,7 @@ import { FormStatus } from 'stores/FormState/types';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_emptySQLExists,
+    useTransformationCreate_schemaUnedited,
 } from 'stores/TransformationCreate/hooks';
 
 function DerivationCreateAlternate() {
@@ -53,6 +54,7 @@ function DerivationCreateAlternate() {
     // Transformation Create Store
     const catalogName = useTransformationCreate_catalogName();
     const emptySQLExists = useTransformationCreate_emptySQLExists();
+    const schemaUnedited = useTransformationCreate_schemaUnedited();
 
     const helpers = {
         callFailed: (formState: any) => {
@@ -93,7 +95,9 @@ function DerivationCreateAlternate() {
                     SaveButton={
                         <EntitySaveButton
                             disabled={
-                                emptySQLExists || invalidEditors.length > 0
+                                emptySQLExists ||
+                                schemaUnedited ||
+                                invalidEditors.length > 0
                             }
                             callFailed={helpers.callFailed}
                             taskNames={
