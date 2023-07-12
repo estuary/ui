@@ -16,6 +16,7 @@ import PatchDraftButton from 'components/transformation/create/PatchDraftButton'
 import DerivationSchema from 'components/transformation/create/Schema';
 import usePageTitle from 'hooks/usePageTitle';
 import { useNavigate } from 'react-router';
+import { useUnmount } from 'react-use';
 import { CustomEvents } from 'services/logrocket';
 import {
     useFormStateStore_error,
@@ -28,6 +29,7 @@ import { FormStatus } from 'stores/FormState/types';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_emptySQLExists,
+    useTransformationCreate_resetState,
     useTransformationCreate_schemaUnedited,
 } from 'stores/TransformationCreate/hooks';
 
@@ -55,6 +57,7 @@ function DerivationCreateAlternate() {
     const catalogName = useTransformationCreate_catalogName();
     const emptySQLExists = useTransformationCreate_emptySQLExists();
     const schemaUnedited = useTransformationCreate_schemaUnedited();
+    const resetTransformationCreateState = useTransformationCreate_resetState();
 
     const helpers = {
         callFailed: (formState: any) => {
@@ -65,8 +68,6 @@ function DerivationCreateAlternate() {
             });
         },
         exit: () => {
-            resetEditorStore();
-            resetFormState();
             navigate(authenticatedRoutes.collections.fullPath);
         },
     };
@@ -82,6 +83,12 @@ function DerivationCreateAlternate() {
             }
         },
     };
+
+    useUnmount(() => {
+        resetEditorStore();
+        resetFormState();
+        resetTransformationCreateState();
+    });
 
     return (
         <DraftSpecEditorHydrator

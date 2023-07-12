@@ -263,3 +263,10 @@ export const useTransformationCreate_setCatalogName = () => {
         (state) => state.setCatalogName
     );
 };
+
+export const useTransformationCreate_resetState = () => {
+    return useZustandStore<
+        TransformCreateState,
+        TransformCreateState['resetState']
+    >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.resetState);
+};
