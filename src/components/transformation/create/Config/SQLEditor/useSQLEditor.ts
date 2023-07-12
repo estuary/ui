@@ -1,5 +1,4 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
-import { AllowedScopes } from 'components/editor/MonacoEditor/types';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
@@ -60,7 +59,7 @@ function useSQLEditor(entityName: string) {
             value: any,
             catalogName: string,
             specType: Entity,
-            propUpdating?: AllowedScopes | string
+            propUpdating?: string
         ) => {
             if (!mutateDraftSpecs || !draftSpec) {
                 return Promise.reject();

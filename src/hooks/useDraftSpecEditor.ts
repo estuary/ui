@@ -1,5 +1,4 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
-import { AllowedScopes } from 'components/editor/MonacoEditor/types';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
@@ -17,7 +16,7 @@ import { Entity } from 'types';
 function useDraftSpecEditor(
     entityName: string | undefined,
     localScope?: boolean,
-    editorSchemaScope?: AllowedScopes | string
+    editorSchemaScope?: string
 ) {
     // Local State
     const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
@@ -57,7 +56,7 @@ function useDraftSpecEditor(
             newVal: any,
             catalogName: string,
             specType: Entity,
-            propUpdating?: AllowedScopes | string
+            propUpdating?: string
         ) => {
             if (!mutate || !draftSpec) {
                 return Promise.reject();

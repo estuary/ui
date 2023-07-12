@@ -29,13 +29,12 @@ import {
     DEFAULT_TOOLBAR_HEIGHT,
     ICON_SIZE,
 } from 'utils/editor-utils';
-import { AllowedScopes } from './types';
 
 type EditorChangeHandler = (
     newVal: any,
     path: string,
     specType: Entity,
-    scope?: AllowedScopes | string
+    scope?: string
 ) => any;
 
 export interface MonacoEditorProps {
@@ -44,7 +43,7 @@ export interface MonacoEditorProps {
     onChange?: EditorChangeHandler;
     height?: number;
     toolbarHeight?: number;
-    editorSchemaScope?: AllowedScopes | string; // Used to scope the schema editor
+    editorSchemaScope?: string; // Used to scope the schema editor
     defaultLanguage?: 'json' | 'sql';
     defaultValue?: string;
     path?: string;
