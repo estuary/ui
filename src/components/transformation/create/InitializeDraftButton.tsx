@@ -6,9 +6,11 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
-import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
+import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import {
     useTransformationCreate_addTransformConfigs,
     useTransformationCreate_catalogName,
@@ -27,15 +29,20 @@ import { stripPathing } from 'utils/misc-utils';
 interface Props {
     entityNameError: string | null;
     selectedCollections: Set<string>;
-    setSQLEditorOpen?: Dispatch<SetStateAction<boolean>>;
 }
 
 function InitializeDraftButton({
     entityNameError,
     selectedCollections,
-    setSQLEditorOpen,
 }: Props) {
     const navigate = useNavigate();
+
+    // Draft Editor Store
+    const setDraftId = useEditorStore_setId();
+    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
+
+    // Form State Store
+    const setFormState = useFormStateStore_setFormState();
 
     // Transformation Create Store
     const language = useTransformationCreate_language();
@@ -46,10 +53,6 @@ function InitializeDraftButton({
     const addTransformConfigs = useTransformationCreate_addTransformConfigs();
     const setSelectedAttribute = useTransformationCreate_setSelectedAttribute();
     const setSourceCollections = useTransformationCreate_setSourceCollections();
-
-    // Draft Editor Store
-    const setDraftId = useEditorStore_setId();
-    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     const validationErrorMessageId = useMemo(() => {
         if (selectedCollections.size < 1) {
@@ -67,6 +70,12 @@ function InitializeDraftButton({
     );
 
     const initializeTransformation = useCallback(async (): Promise<void> => {
+        setFormState({
+            status: FormStatus.GENERATING,
+            error: null,
+            message: { key: null, severity: null },
+        });
+
         if (catalogName) {
             const draftsResponse = await createEntityDraft(catalogName);
 
@@ -118,27 +127,30 @@ function InitializeDraftButton({
                 );
 
                 if (draftSpecResponse.error) {
-                    // Set error state
+                    setFormState({
+                        status: FormStatus.FAILED,
+                        error: {
+                            title: 'newTransform.errors.draftSpecCreateFailed',
+                            error: draftSpecResponse.error,
+                        },
+                    });
                 } else {
                     setDraftId(draftId);
                     setPersistedDraftId(draftId);
 
-                    if (setSQLEditorOpen) {
-                        setSQLEditorOpen(true);
-                    }
+                    setFormState({ status: FormStatus.GENERATED });
 
                     // TODO (transform): Replace this with the navigate to create workflow hook and the production-ready URL
                     //   when it is time to launch this feature.
                     navigate(authenticatedRoutes.beta.new.fullPath);
                 }
             } else {
-                // Set error state
+                setFormState({ status: FormStatus.FAILED });
             }
         }
     }, [
         addTransformConfigs,
         setDraftId,
-        setSQLEditorOpen,
         setPersistedDraftId,
         setSelectedAttribute,
         setSourceCollections,

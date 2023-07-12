@@ -2,7 +2,6 @@ import { Paper, Typography } from '@mui/material';
 import DraftSpecEditor from 'components/editor/DraftSpec';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import { useEntityType } from 'context/EntityContext';
 import { FormattedMessage } from 'react-intl';
 import {
     useFormStateStore_isActive,
@@ -16,17 +15,12 @@ interface Props {
 }
 
 function CatalogEditor({ messageId }: Props) {
-    const entityType = useEntityType();
-
     const draftId = useEditorStore_id();
 
     const formStatus = useFormStateStore_status();
     const formActive = useFormStateStore_isActive();
 
-    if (
-        draftId &&
-        (formStatus !== FormStatus.INIT || entityType === 'collection')
-    ) {
+    if (draftId && formStatus !== FormStatus.INIT) {
         return (
             <WrapperWithHeader
                 header={
