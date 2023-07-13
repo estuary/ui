@@ -34,6 +34,14 @@ const formatTimeSettings: FormatDateOptions = {
     minute: '2-digit',
 };
 
+const formatDateSettings: FormatDateOptions = {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+};
+
 const defaultDataFormat = (value: any) => {
     return prettyBytes(value, {
         minimumFractionDigits: 2,
@@ -60,7 +68,7 @@ function DataByHourGraph({ range, stats }: Props) {
         });
 
         return listOfHours.map((date) => {
-            return intl.formatTime(date, formatTimeSettings);
+            return intl.formatDate(date, formatDateSettings);
         });
     }, [intl, range]);
 
@@ -123,6 +131,9 @@ function DataByHourGraph({ range, stats }: Props) {
                     data: hours,
                     axisLabel: {
                         align: 'center',
+                        formatter: (value: any) => {
+                            return intl.formatTime(value, formatTimeSettings);
+                        },
                     },
                     type: 'category',
                 },
@@ -197,8 +208,11 @@ function DataByHourGraph({ range, stats }: Props) {
         const response = {};
 
         stats.forEach((stat) => {
+            console.log('stats loop', stat);
             // Format to time
-            const formattedTime = intl.formatTime(stat.ts, formatTimeSettings);
+            const formattedTime = intl.formatDate(stat.ts, formatDateSettings);
+
+            console.log('     formattedTime', formattedTime);
 
             // Total up docs. Mainly for collections that are derivations
             //  eventually we might split this data up into multiple lines
@@ -218,9 +232,12 @@ function DataByHourGraph({ range, stats }: Props) {
         return response;
     }, [intl, stats]);
 
+    console.log('scopedDataSet', scopedDataSet);
+
     // Effect to update the data by updating the series.
     useEffect(() => {
         const bytesFormatter = ({ value }: any) => {
+            console.log('bytesFormatter', value);
             if (!Number.isInteger(value)) {
                 return intl.formatMessage({
                     id: 'common.missing',
