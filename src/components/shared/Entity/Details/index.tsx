@@ -10,7 +10,6 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useMemo } from 'react';
 import { EditorStoreNames } from 'stores/names';
 import ShardHydrator from '../Shard/Hydrator';
-import EditButton from './EditButton';
 import RenderTab from './RenderTab';
 import DetailTabs from './Tabs';
 
@@ -48,7 +47,8 @@ function EntityDetails() {
                                 >
                                     {catalogName}
                                 </Typography>
-                                <EditButton />
+                                {/*TODO (details) need to wire in edit button*/}
+                                {/*<EditButton />*/}
                             </Stack>
                             <Divider />
                             <DetailTabs />
