@@ -2,7 +2,7 @@ import { AlertColor } from '@mui/material';
 import { IncompatibleCollections } from 'api/evolutions';
 import { CollectionData } from 'components/editor/Bindings/types';
 import { Dispatch, SetStateAction } from 'react';
-import { Schema } from 'types';
+import { InferSchemaPropertyForRender, Schema } from 'types';
 
 export interface BindingsEditorState {
     collectionData: CollectionData | null | undefined;
@@ -63,14 +63,12 @@ export interface BindingsEditorState {
     setEditModeEnabled: (value: BindingsEditorState['editModeEnabled']) => void;
 
     // Infer Schema used to set the key of a collection
-    inferSchemaResponse: Schema | null;
+    inferSchemaResponse: InferSchemaPropertyForRender[] | null;
     inferSchemaResponse_Keys: string[];
     inferSchemaResponseError: string | null;
     inferSchemaResponseDoneProcessing: boolean;
     inferSchemaResponseEmpty: boolean;
-    populateInferSchemaResponse: (
-        value: BindingsEditorState['inferSchemaResponse']
-    ) => void;
+    populateInferSchemaResponse: (value?: any) => void;
 
     // Schema Evolution
     incompatibleCollections: IncompatibleCollections[];
