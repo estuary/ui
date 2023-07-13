@@ -8,6 +8,8 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { getPathWithParams } from 'utils/misc-utils';
 
+// TODO (details) Not being used yet. Need to figure out how we want to
+//  fetch all the details needed to create the proper link.
 function EditButton() {
     const navigate = useNavigate();
 
@@ -19,7 +21,7 @@ function EditButton() {
 
     const connectorId = '';
     const liveSpec = '';
-    const lastPubId = '';
+    const lastPubId = ''; //useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID)
 
     const editPath = useMemo(() => {
         switch (entityType) {
