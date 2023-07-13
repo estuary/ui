@@ -3,6 +3,7 @@ import { modifyDraftSpec } from 'api/draftSpecs';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
+    useEditorStore_queryResponse_mutate,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
@@ -21,7 +22,7 @@ import {
 } from 'stores/TransformationCreate/hooks';
 import { Transform } from 'types';
 import { evaluateTransformConfigs } from 'utils/derivation-utils';
-import { hasLength, stripPathing } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     selectedCollections: Set<string>;
@@ -31,6 +32,8 @@ interface Props {
 function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
     // Draft Editor Store
     const currentCatalog = useEditorStore_currentCatalog();
+    const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
+
     const draftId = useEditorStore_persistedDraftId();
     const setDraftId = useEditorStore_setId();
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
@@ -53,10 +56,10 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
         setCatalogUpdating(true);
 
         if (draftId && catalogName && currentCatalog) {
-            const collections = Array.from(selectedCollections);
+            const newCollections = Array.from(selectedCollections);
 
             const evaluatedTransformConfigs = evaluateTransformConfigs(
-                collections,
+                newCollections,
                 transformCount,
                 transformConfigs,
                 entityName
@@ -65,8 +68,8 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
             const evaluatedTransforms = Object.values(
                 evaluatedTransformConfigs
             ).map(
-                ({ collection, lambda, shuffle }): Transform => ({
-                    name: stripPathing(collection),
+                ({ collection, lambda, shuffle, name }): Transform => ({
+                    name,
                     source: collection,
                     lambda,
                     shuffle,
@@ -75,18 +78,25 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
 
             const draftSpec = { ...currentCatalog.spec };
 
-            draftSpec.derive.transforms = Object.values(evaluatedTransforms);
+            draftSpec.derive.transforms = evaluatedTransforms;
 
             const draftSpecResponse = await modifyDraftSpec(draftSpec, {
                 draft_id: draftId,
                 catalog_name: catalogName,
             });
 
-            if (draftSpecResponse.error) {
+            if (draftSpecResponse.error || !mutateDraftSpecs) {
                 setCatalogUpdating(false);
                 // Set error state
             } else {
+                await mutateDraftSpecs();
+
+                const collections = evaluatedTransforms.map(
+                    ({ source }) => source
+                );
+
                 setSourceCollections(collections);
+
                 updateTransformConfigs(evaluatedTransformConfigs);
 
                 const transformIds = Object.keys(evaluatedTransformConfigs);
@@ -118,6 +128,7 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
         currentCatalog,
         draftId,
         entityName,
+        mutateDraftSpecs,
         selectedCollections,
         transformConfigs,
         transformCount,
@@ -128,7 +139,7 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
         <LoadingButton
             variant="contained"
             loading={catalogUpdating}
-            disabled={catalogUpdating}
+            disabled={selectedCollections.size < 1 || catalogUpdating}
             onClick={updateDerivationSpec}
         >
             <FormattedMessage id="cta.continue" />

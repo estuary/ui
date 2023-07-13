@@ -5,11 +5,13 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+import { useEditorStore_invalidEditors } from 'components/editor/Store/hooks';
 import CatalogList, {
     CatalogListContent,
-} from 'components/transformation/create/DerivationEditor/Catalog/CatalogList';
-import { defaultOutline, intensifiedOutline } from 'context/Theme';
+} from 'components/transformation/create/Config/catalog/CatalogList';
+import { defaultOutline } from 'context/Theme';
 import { NavArrowDown } from 'iconoir-react';
+import { isEmpty } from 'lodash';
 import { useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -17,10 +19,15 @@ import {
     useTransformationCreate_migrations,
     useTransformationCreate_selectedAttribute,
 } from 'stores/TransformationCreate/hooks';
+import { hasLength } from 'utils/misc-utils';
 
 function MigrationList() {
     const theme = useTheme();
 
+    // Draft Editor Store
+    const invalidEditors = useEditorStore_invalidEditors();
+
+    // Transformation Create Store
     const selectedAttribute = useTransformationCreate_selectedAttribute();
     const migrations = useTransformationCreate_migrations();
     const addMigrations = useTransformationCreate_addMigrations();
@@ -29,11 +36,14 @@ function MigrationList() {
 
     const content: CatalogListContent[] = useMemo(
         () =>
-            Object.keys(migrations).map((attributeId) => ({
+            Object.entries(migrations).map(([attributeId, migration]) => ({
                 attributeId,
                 value: attributeId,
+                editorInvalid:
+                    !hasLength(migration) ||
+                    invalidEditors.includes(attributeId),
             })),
-        [migrations]
+        [invalidEditors, migrations]
     );
 
     const migrationSelected = useMemo(
@@ -55,9 +65,9 @@ function MigrationList() {
             expanded={expanded}
             onChange={handlers.toggleAccordion}
             sx={{
-                'borderLeft': intensifiedOutline[theme.palette.mode],
-                'borderRight': intensifiedOutline[theme.palette.mode],
-                'borderBottom': intensifiedOutline[theme.palette.mode],
+                'borderLeft': defaultOutline[theme.palette.mode],
+                'borderRight': defaultOutline[theme.palette.mode],
+                'borderBottom': defaultOutline[theme.palette.mode],
                 ':last-of-type': {
                     borderRadius: 0,
                 },
@@ -98,7 +108,7 @@ function MigrationList() {
                 }}
             >
                 <Typography sx={{ fontWeight: 500 }}>
-                    <FormattedMessage id="newTransform.editor.catalog.advancedSettings" />
+                    <FormattedMessage id="newTransform.config.advancedSettings.header" />
                 </Typography>
             </AccordionSummary>
 
@@ -108,6 +118,7 @@ function MigrationList() {
                     content={content}
                     addButtonClickHandler={handlers.insertBlankMigration}
                     height={200}
+                    extendList={isEmpty(migrations)}
                 />
             </AccordionDetails>
         </Accordion>

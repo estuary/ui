@@ -2,7 +2,6 @@ import { Paper, Typography } from '@mui/material';
 import DraftSpecEditor from 'components/editor/DraftSpec';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import { useEntityType } from 'context/EntityContext';
 import { FormattedMessage } from 'react-intl';
 import {
     useFormStateStore_isActive,
@@ -16,8 +15,6 @@ interface Props {
 }
 
 function CatalogEditor({ messageId }: Props) {
-    const entityType = useEntityType();
-
     const draftId = useEditorStore_id();
 
     const formStatus = useFormStateStore_status();
@@ -40,10 +37,7 @@ function CatalogEditor({ messageId }: Props) {
                     </Typography>
 
                     <Paper variant="outlined" sx={{ p: 1 }}>
-                        <DraftSpecEditor
-                            entityType={entityType}
-                            disabled={formActive}
-                        />
+                        <DraftSpecEditor disabled={formActive} />
                     </Paper>
                 </ErrorBoundryWrapper>
             </WrapperWithHeader>

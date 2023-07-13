@@ -1,10 +1,8 @@
 import MonacoEditor from 'components/editor/MonacoEditor';
 import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
 import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
-import { Entity } from 'types';
 
 export interface Props {
-    entityType: Entity;
     disabled?: boolean;
     localZustandScope?: boolean;
     editorHeight?: number;
@@ -12,17 +10,13 @@ export interface Props {
 }
 
 function DraftSpecEditor({
-    entityType,
     disabled,
     localZustandScope = false,
     editorHeight,
     entityName,
 }: Props) {
-    const { draftSpec, isValidating, onChange } = useDraftSpecEditor(
-        entityName,
-        entityType,
-        localZustandScope
-    );
+    const { draftSpec, isValidating, onChange, defaultValue } =
+        useDraftSpecEditor(entityName, localZustandScope);
 
     if (draftSpec) {
         return (
@@ -31,6 +25,7 @@ function DraftSpecEditor({
                 localZustandScope={localZustandScope}
                 height={editorHeight}
                 onChange={onChange}
+                defaultValue={defaultValue}
             />
         );
     } else if (isValidating) {
