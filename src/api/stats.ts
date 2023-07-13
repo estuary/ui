@@ -199,7 +199,7 @@ const getStatsForDetails = (
     const today = new Date();
     const past = duration ? sub(today, duration) : today;
 
-    const gte = formatToGMT(startOfHour(past), true);
+    const gt = formatToGMT(startOfHour(past), true);
     const lte = formatToGMT(startOfHour(today), true);
 
     let query: string;
@@ -222,7 +222,7 @@ const getStatsForDetails = (
         .select(query)
         .eq('catalog_name', catalogName)
         .eq('grain', grain)
-        .gte('ts', gte)
+        .gt('ts', gt)
         .lte('ts', lte)
         .order('ts', { ascending: false });
 };
