@@ -294,20 +294,25 @@ export type ParsedStream =
     | 'cleanup'
     | 'activate';
 
-// TODO (infer) need to use these types and run them through the app
-export interface InferDetails {
-    description: string | undefined;
-    enum_vals: any[];
-    exists: 'may' | 'must' | 'cannot';
-    is_pattern_property: boolean;
-    name: string | undefined;
-    pointer: string;
-    reduction: string;
-    string_format: string | undefined;
-    title: string | undefined;
-    types: string[];
+export interface InferSchemaResponse {
+    properties: InferSchemaResponseProperty[];
 }
 
-export interface InferResponse {
-    properties?: InferDetails[];
+export interface InferSchemaResponseProperty {
+    is_pattern_property: boolean;
+    // https://github.com/estuary/flow/blob/db2cdd86825132ee7e0bcac8b432712ab5866c83/crates/doc/src/inference.rs#L1121
+    exists: 'may' | 'must' | 'cannot' | 'implicit';
+    title: string;
+    reduction: string;
+    pointer: string;
+    types: string[];
+    enum_vals: any[];
+    name?: string;
+    description?: string;
+    string_format?: string;
+}
+
+export interface InferSchemaPropertyForRender
+    extends InferSchemaResponseProperty {
+    allowedToBeKey: boolean;
 }
