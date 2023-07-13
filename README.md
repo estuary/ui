@@ -31,7 +31,7 @@ The UI is built to hit our own instance of Supabase. That means you will need to
 
 # Building Blocks
 
--   [MUI](https://mui.com/core/) for components
+-   [MUI](https://github.com/mui/material-ui) for components
 -   [Zustand](https://github.com/pmndrs/zustand) for local state
 -   [JSON Forms](https://github.com/eclipsesource/jsonforms) for many forms
 -   [SWR](https://github.com/vercel/swr) for server calls
