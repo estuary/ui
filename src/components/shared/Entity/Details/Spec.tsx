@@ -1,12 +1,47 @@
 import { Grid, Stack, Typography } from '@mui/material';
+import {
+    useBindingsEditorStore_inferSchemaResponseDoneProcessing,
+    useBindingsEditorStore_populateInferSchemaResponse,
+    useBindingsEditorStore_resetState,
+} from 'components/editor/Bindings/Store/hooks';
 import LiveSpecEditor from 'components/editor/LiveSpec';
+import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
+import ReadOnly from 'components/schema/KeyAutoComplete/ReadOnly';
+import PropertiesViewer from 'components/schema/PropertiesViewer';
 import ExternalLink from 'components/shared/ExternalLink';
 import { useEntityType } from 'context/EntityContext';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 function Spec() {
     const entityType = useEntityType();
+
+    const currentCatalog = useEditorStore_currentCatalog({
+        localScope: true,
+    });
+
+    const resetState = useBindingsEditorStore_resetState();
+
+    const populateInferSchemaResponse =
+        useBindingsEditorStore_populateInferSchemaResponse();
+
+    const inferSchemaResponseDoneProcessing =
+        useBindingsEditorStore_inferSchemaResponseDoneProcessing();
+
+    useEffect(() => {
+        if (entityType === 'collection' && currentCatalog) {
+            populateInferSchemaResponse(currentCatalog.spec);
+        }
+
+        return () => {
+            resetState();
+        };
+    }, [currentCatalog, entityType, populateInferSchemaResponse, resetState]);
+
+    console.log(
+        'inferSchemaResponseDoneProcessing',
+        inferSchemaResponseDoneProcessing
+    );
 
     const docsLink = useMemo(() => {
         switch (entityType) {
@@ -37,7 +72,14 @@ function Spec() {
                             <FormattedMessage id="terms.documentation" />
                         </ExternalLink>
                     </Stack>
-                    <LiveSpecEditor localZustandScope singleSpec />
+                    {inferSchemaResponseDoneProcessing ? (
+                        <>
+                            <ReadOnly value={currentCatalog?.spec.key} />
+                            <PropertiesViewer disabled />
+                        </>
+                    ) : (
+                        <LiveSpecEditor localZustandScope singleSpec />
+                    )}
                 </Stack>
             </Grid>
         </Grid>
