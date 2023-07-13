@@ -1,6 +1,6 @@
 import { AllowedScopes } from 'components/editor/MonacoEditor/types';
 import { isEmpty } from 'lodash';
-import { Schema } from 'types';
+import { InferSchemaResponse, Schema } from 'types';
 import { hasLength } from './misc-utils';
 
 const typesAllowedAsKeys = ['boolean', 'integer', 'null', 'string'];
@@ -26,7 +26,7 @@ const getProperSchemaScope = (spec: any) => {
     return [key, readSchemaExists];
 };
 
-const filterInferSchemaResponse = (schema: any) => {
+const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
     let fields: any | null = null;
     const validKeys: string[] = [];
 
@@ -34,7 +34,7 @@ const filterInferSchemaResponse = (schema: any) => {
         const { properties } = schema;
 
         fields = properties
-            ?.filter((inferredProperty: any) => {
+            .filter((inferredProperty: any) => {
                 // If there is a blank pointer it cannot be used
                 return hasLength(inferredProperty.pointer);
             })
@@ -43,13 +43,9 @@ const filterInferSchemaResponse = (schema: any) => {
                 const isValidKey = Boolean(
                     // Happens when the schema contradicts itself, which isnt a "feature" we use intentionally
                     inferredProperty.exists !== 'cannot' &&
-                        // Check if there is a single type
-                        (inferredPropertyTypes.length === 1 ||
-                            // or if there are two and one is null
-                            (inferredPropertyTypes.length === 2 &&
-                                inferredPropertyTypes.filter(
-                                    (type) => type === 'null'
-                                ).length === 1)) &&
+                        // Make sure we only have a single type besides null
+                        inferredPropertyTypes.filter((type) => type !== 'null')
+                            .length === 1 &&
                         // make sure all types are valid
                         inferredPropertyTypes.every((type) =>
                             typesAllowedAsKeys.includes(type)

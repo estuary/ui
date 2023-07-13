@@ -12,6 +12,7 @@ import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
+import { InferSchemaPropertyForRender, InferSchemaResponse } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { filterInferSchemaResponse, hasReadSchema } from 'utils/schema-utils';
 import { devtoolsOptions } from 'utils/store-utils';
@@ -76,11 +77,8 @@ const evaluateCollectionData = async (
 };
 
 // Used to properly populate the inferSchemaResponse related state
-const evaluateInferSchemaResponse = (
-    dataVal: BindingsEditorState['inferSchemaResponse'][] | null
-) => {
-    let updatedVal: BindingsEditorState['inferSchemaResponse'] | null,
-        validKeys: string[];
+const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
+    let updatedVal: InferSchemaPropertyForRender[] | null, validKeys: string[];
 
     const hasResponse = dataVal && dataVal.length > 0;
     if (hasResponse) {
@@ -102,7 +100,7 @@ const evaluateInferSchemaResponse = (
         // Put the read/write output together so all keys are rendered
         updatedVal = union(...filteredFields);
     } else {
-        updatedVal = dataVal;
+        updatedVal = null;
         validKeys = [];
     }
 
@@ -370,7 +368,7 @@ const getInitialState = (
     //  to support that again
     populateInferSchemaResponse: (spec) => {
         const populateState = (
-            dataVal: BindingsEditorState['inferSchemaResponse'][] | null,
+            dataVal: InferSchemaResponse[] | null,
             errorVal: BindingsEditorState['inferSchemaResponseError']
         ) => {
             const { hasResponse, updatedVal, validKeys } =
