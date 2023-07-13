@@ -1,6 +1,6 @@
 import { Box, Divider, Stack, Typography } from '@mui/material';
 import { createEditorStore } from 'components/editor/Store/create';
-import EditorHydrator from 'components/editor/Store/LiveSpecsHydrator';
+import LiveSpecsHydrator from 'components/editor/Store/LiveSpecsHydrator';
 import { LocalZustandProvider } from 'context/LocalZustand';
 import { truncateTextSx } from 'context/Theme';
 import useGlobalSearchParams, {
@@ -28,7 +28,7 @@ function EntityDetails() {
 
     return (
         <LocalZustandProvider createStore={localStore}>
-            <EditorHydrator
+            <LiveSpecsHydrator
                 collectionNames={[catalogName]}
                 lastPubId={lastPubId}
                 localZustandScope={true}
@@ -59,7 +59,7 @@ function EntityDetails() {
                         </Box>
                     </Box>
                 </ShardHydrator>
-            </EditorHydrator>
+            </LiveSpecsHydrator>
         </LocalZustandProvider>
     );
 }
