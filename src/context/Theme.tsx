@@ -245,16 +245,9 @@ export const jsonFormsGroupHeaders = {
     dark: 'transparent',
 };
 
-export const getReflexSplitterBackground = (
-    theme: Theme,
-    codeEditorPresent: boolean
-) => {
-    if (theme.palette.mode === 'light') {
-        return 'white';
-    } else {
-        // RGB translation of #F7F9FC.
-        return codeEditorPresent ? '#0A0A0A' : 'rgba(247, 249, 252, 0.30)';
-    }
+export const reflexSplitterBackground = {
+    light: 'white',
+    dark: 'rgba(247, 249, 252, 0.30)',
 };
 
 // RGB translation of #F7F9FC.

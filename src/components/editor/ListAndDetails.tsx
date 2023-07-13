@@ -1,6 +1,6 @@
 import { useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
-import { defaultOutline, getReflexSplitterBackground } from 'context/Theme';
+import { defaultOutline, reflexSplitterBackground } from 'context/Theme';
 import { MoreVert } from 'iconoir-react';
 import { ReactNode } from 'react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
@@ -12,7 +12,6 @@ export interface Props {
     height?: number;
     backgroundColor?: string;
     displayBorder?: boolean;
-    codeEditorDetails?: boolean;
     removeMargin?: boolean;
 }
 
@@ -25,7 +24,6 @@ function ListAndDetails({
     details,
     height,
     displayBorder,
-    codeEditorDetails = false,
     removeMargin,
 }: Props) {
     const theme = useTheme();
@@ -69,10 +67,8 @@ function ListAndDetails({
                         alignItems: 'center',
                         justifyContent: 'center',
                         border: defaultOutline[theme.palette.mode],
-                        backgroundColor: getReflexSplitterBackground(
-                            theme,
-                            codeEditorDetails
-                        ),
+                        backgroundColor:
+                            reflexSplitterBackground[theme.palette.mode],
                     }}
                 >
                     <MoreVert style={{ color: theme.palette.text.primary }} />

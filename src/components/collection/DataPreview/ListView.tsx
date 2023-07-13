@@ -64,7 +64,6 @@ function ListView({
                 <Error error={error} />
             ) : (
                 <ListAndDetails
-                    codeEditorDetails
                     backgroundColor={
                         semiTransparentBackground[theme.palette.mode]
                     }
