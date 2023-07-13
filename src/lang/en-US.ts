@@ -1054,7 +1054,7 @@ const CustomRenderers: ResolvedIntlConfig['messages'] = {
 };
 
 const TaskEndpoints: ResolvedIntlConfig['messages'] = {
-    'taskEndpoint.list.title': `Endpoints:`,
+    'taskEndpoint.list.title': `Endpoints`,
     'taskEndpoint.otherProtocol.message': `{protocol} hostname: {hostname}`,
     'taskEndpoint.multipleEndpoints.message': `mutliple endpoints exposed, see task details for their addresses.`,
 

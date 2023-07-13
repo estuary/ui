@@ -1,11 +1,14 @@
 import { Box, Tooltip, Typography } from '@mui/material';
+import CardWrapper from 'components/admin/Billing/CardWrapper';
 import ExternalLink from 'components/shared/ExternalLink';
 import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
 import useShardsList from 'hooks/useShardsList';
+import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useShardDetail_getTaskEndpoints,
     useShardDetail_setShards,
+    useShardDetail_shards,
 } from 'stores/ShardDetail/hooks';
 import { Endpoint } from 'stores/ShardDetail/types';
 
@@ -80,49 +83,61 @@ export function EndpointLink({ endpoint }: EndpointLinkProps) {
 
 export function TaskEndpoints({ taskName }: Props) {
     const gateway = useScopedGatewayAuthToken(taskName);
-
+    const shards = useShardDetail_shards();
     const getTaskEndpoints = useShardDetail_getTaskEndpoints();
 
-    let gatewayHostname = null;
-    if (gateway.data?.gateway_url) {
-        // Even though `gateway_url` is already a `URL` object, the
-        // `host` property returns `null` for some $jsReason
-        const url = new URL(gateway.data.gateway_url.toString());
-        gatewayHostname = url.host;
-    }
-    const endpoints = getTaskEndpoints(taskName, gatewayHostname);
+    const gatewayHostname = useMemo(() => {
+        if (gateway.data?.gateway_url) {
+            // Even though `gateway_url` is already a `URL` object, the
+            // `host` property returns `null` for some $jsReason
+            const url = new URL(gateway.data.gateway_url.toString());
+            return url.host;
+        }
+
+        return null;
+    }, [gateway.data?.gateway_url]);
+
+    const endpoints = useMemo(() => {
+        return getTaskEndpoints(taskName, gatewayHostname);
+        // TODO (details) Need to make a better solution now that shards are not
+        //  always loaded before details is shown
+        // We need to listen to shards changing as this function relies on that
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [gatewayHostname, getTaskEndpoints, taskName, shards]);
 
     return endpoints.length > 0 ? (
-        <Box
-            sx={{
-                gap: '10px',
-                display: 'flex',
-                flexDirection: 'column',
-                flexWrap: 'wrap',
-                justifyContent: 'left',
-                flexGrow: 1,
-            }}
+        <CardWrapper
+            height={undefined}
+            message={<FormattedMessage id="taskEndpoint.list.title" />}
         >
-            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 500 }}>
-                <FormattedMessage id="taskEndpoint.list.title" />
-            </Typography>
-            {endpoints.map((ep) => {
-                return (
-                    <Box
-                        key={ep.fullHostname}
-                        sx={{
-                            gap: '10px',
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            justifyContent: 'left',
-                            flexGrow: 1,
-                        }}
-                    >
-                        <EndpointLink endpoint={ep} />
-                    </Box>
-                );
-            })}
-        </Box>
+            <Box
+                sx={{
+                    gap: '10px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    flexWrap: 'wrap',
+                    justifyContent: 'left',
+                    flexGrow: 1,
+                }}
+            >
+                {endpoints.map((ep) => {
+                    return (
+                        <Box
+                            key={ep.fullHostname}
+                            sx={{
+                                gap: '10px',
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                justifyContent: 'left',
+                                flexGrow: 1,
+                            }}
+                        >
+                            <EndpointLink endpoint={ep} />
+                        </Box>
+                    );
+                })}
+            </Box>
+        </CardWrapper>
     ) : null;
 }
 

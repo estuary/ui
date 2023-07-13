@@ -1,6 +1,7 @@
 import { Grid } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
 import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
+import { TaskEndpoints } from 'components/shared/TaskEndpoints';
 import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -9,7 +10,6 @@ import { useLiveSpecs_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import { hasLength, specContainsDerivation } from 'utils/misc-utils';
 import ShardInformation from '../../Shard/Information';
-import Endpoints from '../Endpoints';
 import Usage from '../Usage';
 import DetailsSection from './DetailsSection';
 
@@ -41,8 +41,6 @@ function Overview({ name }: Props) {
 
     return (
         <Grid container spacing={2}>
-            <Endpoints name={entityName} />
-
             <Grid item xs={12} md={8} lg={9}>
                 <Usage catalogName={entityName} />
             </Grid>
@@ -54,6 +52,12 @@ function Overview({ name }: Props) {
                     loading={validatingLiveSpecs}
                 />
             </Grid>
+
+            {!isCollection ? (
+                <Grid item xs={12}>
+                    <TaskEndpoints taskName={catalogName} />
+                </Grid>
+            ) : null}
 
             {!isCollection || isDerivation ? (
                 <Grid item xs={12}>
