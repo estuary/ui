@@ -6,7 +6,6 @@ import { DataByHourRange } from 'components/graphs/types';
 import Error from 'components/shared/Error';
 import useDetailsStats from 'hooks/useDetailsStats';
 import { useState } from 'react';
-import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     catalogName: string;
@@ -16,15 +15,18 @@ interface Props {
 function Usage({ catalogName }: Props) {
     const [range, setRange] = useState<DataByHourRange>(6);
 
-    const { isValidating, stats, error } = useDetailsStats(catalogName, range);
-    const statsPopulated = hasLength(stats);
+    const { isValidating, stats, error } = useDetailsStats(
+        catalogName,
+        'hourly',
+        { hours: range }
+    );
 
     return (
         <CardWrapper
             height={undefined}
             message={<HourlyRangeFilter range={range} setRange={setRange} />}
         >
-            {isValidating && !statsPopulated ? (
+            {isValidating && !stats ? (
                 <GraphLoadingState />
             ) : error ? (
                 <Error error={error} />

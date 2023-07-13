@@ -23,8 +23,8 @@ import useLegendConfig from '../useLegendConfig';
 import useTooltipConfig from '../useTooltipConfig';
 
 interface Props {
-    stats: DetailsStats[];
     range: DataByHourRange;
+    stats: DetailsStats[] | undefined;
     createdAt?: string;
 }
 
@@ -49,7 +49,7 @@ const defaultDataFormat = (value: any) => {
     });
 };
 
-function DataByHourGraph({ range, stats }: Props) {
+function DataByHourGraph({ range, stats = [] }: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const legendConfig = useLegendConfig();
