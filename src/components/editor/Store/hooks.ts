@@ -1,11 +1,19 @@
 import { useEntityType } from 'context/EntityContext';
 import { useLocalZustandStore } from 'context/LocalZustand';
 import { useZustandStore as useGlobalZustandStore } from 'context/Zustand/provider';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
+import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
+import { useEffect } from 'react';
 import { EditorStoreNames } from 'stores/names';
 import { Entity } from 'types';
-import { EditorStoreState, SelectorParams } from './types';
+import { EditorStoreState } from './types';
+
+interface SelectorParams {
+    localScope?: boolean;
+}
 
 const storeName = (
     entityType: Entity,
@@ -288,7 +296,9 @@ export const useEditorStore_isEditing = (
     >(storeName(entityType, localScope), (state) => state.isEditing);
 };
 
-export const useEditorStore_status = (params?: SelectorParams | undefined) => {
+export const useEditorStore_statuses = (
+    params?: SelectorParams | undefined
+) => {
     const localScope = params?.localScope;
 
     const useZustandStore = localScope
@@ -299,8 +309,8 @@ export const useEditorStore_status = (params?: SelectorParams | undefined) => {
 
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['status']
-    >(storeName(entityType, localScope), (state) => state.status);
+        EditorStoreState<DraftSpecQuery>['statuses']
+    >(storeName(entityType, localScope), (state) => state.statuses);
 };
 
 export const useEditorStore_setStatus = (
@@ -318,6 +328,40 @@ export const useEditorStore_setStatus = (
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setStatus']
     >(storeName(entityType, localScope), (state) => state.setStatus);
+};
+
+export const useEditorStore_invalidEditors = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['invalidEditors']
+    >(storeName(entityType, localScope), (state) => state.invalidEditors);
+};
+
+export const useEditorStore_removeStaleStatus = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['removeStaleStatus']
+    >(storeName(entityType, localScope), (state) => state.removeStaleStatus);
 };
 
 export const useEditorStore_draftInitializationError = (
@@ -360,6 +404,97 @@ export const useEditorStore_setDraftInitializationError = (
     );
 };
 
+export const useEditorStore_queryResponse = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['queryResponse']
+    >(storeName(entityType, localScope), (state) => state.queryResponse);
+};
+
+export const useEditorStore_setQueryResponse = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setQueryResponse']
+    >(storeName(entityType, localScope), (state) => state.setQueryResponse);
+};
+
+export const useEditorStore_queryResponse_draftSpecs = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['queryResponse']['draftSpecs']
+    >(
+        storeName(entityType, localScope),
+        (state) => state.queryResponse.draftSpecs
+    );
+};
+
+export const useEditorStore_queryResponse_isValidating = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['queryResponse']['isValidating']
+    >(
+        storeName(entityType, localScope),
+        (state) => state.queryResponse.isValidating
+    );
+};
+
+export const useEditorStore_queryResponse_mutate = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['queryResponse']['mutate']
+    >(storeName(entityType, localScope), (state) => state.queryResponse.mutate);
+};
+
 export const useEditorStore_resetState = (
     params?: SelectorParams | undefined
 ) => {
@@ -375,4 +510,26 @@ export const useEditorStore_resetState = (
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['resetState']
     >(storeName(entityType, localScope), (state) => state.resetState);
+};
+
+export const useHydrateEditorState = (
+    specType: Entity,
+    catalogName?: string,
+    localScope?: boolean
+) => {
+    const draftIdInURL = useGlobalSearchParams(GlobalSearchParams.DRAFT_ID);
+
+    const draftId = useEditorStore_id({ localScope });
+    const setQueryResponse = useEditorStore_setQueryResponse({ localScope });
+
+    const response = useDraftSpecs(draftId ?? draftIdInURL, {
+        specType,
+        catalogName,
+    });
+
+    useEffect(() => {
+        if (!response.isValidating) {
+            setQueryResponse(response);
+        }
+    }, [setQueryResponse, response]);
 };

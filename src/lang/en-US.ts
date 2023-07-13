@@ -629,7 +629,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
 
     'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
 
-    'entityCreate.bindingsConfig.collectionsLabel': `Available {items}`,
+    'entityCreate.bindingsConfig.collectionsLabel': `Search {items}`,
     'entityCreate.bindingsConfig.noRows': `Please select from the list above to begin.`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
 
@@ -648,6 +648,8 @@ const EntityEdit: ResolvedIntlConfig['messages'] = {
 const MonacoEditor: ResolvedIntlConfig['messages'] = {
     'monacoEditor.serverDiff': `Your version is out of sync with the server.`,
     'monacoEditor.serverDiffCTA': `See changes`,
+
+    'monacoEditor.alert.invalid': `An error was encountered parsing the contents of the editor. Invalid syntax is the most common source of this error.`,
 };
 
 const CaptureCreate: ResolvedIntlConfig['messages'] = {
@@ -993,6 +995,8 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.errors.nameMissing': `Missing entity name`,
     'newTransform.errors.urlNotGenerated': `We failed to generate the proper URL to start GitPod. ${Error['error.tryAgain']}`,
     'newTransform.errors.gitPodWindow': `Failed to open GitPod. Your browser may be blocking it from opening. Please ensure your browser allows pop-ups.`,
+    'newTransform.errors.draftSpecCreateFailed': `Creating Specification Failed`,
+    'newTransform.errors.draftSpecUpdateFailed': `Updating Specification Failed`,
     'newTransform.info.gitPodWindowTitle': `GitPod should be opened in a new tab or window`,
     'newTransform.info.gitPodWindowMessage': `To develop your transformation please use GitPod.`,
     'newTransform.stepper.step1.label': `Select source collections`,
@@ -1004,19 +1008,28 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
                             continue, e.g`,
     'newTransform.button.cta': `Proceed to GitPod`,
 
-    'newTransform.editor.catalog.header': `Catalog`,
-    'newTransform.editor.catalog.description': `This is a placeholder for a section description`,
-    'newTransform.editor.catalog.advancedSettings': `Advanced Catalog Settings`,
-    'newTransform.editor.catalog.transform.header': `Transforms`,
-    'newTransform.editor.catalog.transform.addDialog.header': `Add or Remove Transforms`,
-    'newTransform.editor.catalog.migration.header': `Migrations`,
-    'newTransform.editor.catalog.message.empty': `Click on the edit pencil above to edit the list of {contentType}s.`,
+    'newTransform.config.header': `Database`,
+    'newTransform.config.description': `This is a placeholder for a section description`,
+    'newTransform.config.tab.advancedSettings': `Advanced`,
+    'newTransform.config.tab.basicSettings': `General`,
+    'newTransform.config.advancedSettings.header': `Advanced Internal State Settings`,
+    'newTransform.config.transform.header': `Transforms`,
+    'newTransform.config.transform.addDialog.header': `Add Transform`,
+    'newTransform.config.migration.header': `Migrations`,
+    'newTransform.config.message.listEmpty': `Click on the plus sign above to add a {contentType}.`,
+    'newTransform.config.alert.noTransformSelected': `No transform selected.`,
+
+    'newTransform.schema.header': `Schema`,
+    'newTransform.schema.description': `Edit the templated derivation schema below.`,
+    'newTransform.schema.cta.generatePreview': `Preview`,
+    'newTransform.schema.dataPreview.header': `Data Preview`,
+
+    'newTransform.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.next']}" again. You can also edit the specification file directly below. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
     'newTransform.editor.streaming.header': `Streaming`,
     'newTransform.editor.streaming.description': `Used for selecting columns and creating aggregations`,
     'newTransform.editor.streaming.cta.generatePreview': `Preview`,
     'newTransform.editor.streaming.advancedSettings': `Advanced Streaming Settings`,
-    'newTransform.editor.streaming.monaco.empty': `No SQL file selected.`,
     'newTransform.editor.streaming.shuffleKeys.header': `Shuffle Keys`,
     'newTransform.editor.streaming.shuffleKeys.tooltip': `Select a key from your source collection schemas to help scale joins`,
 
@@ -1024,13 +1037,13 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
     'newTransform.editor.preview.description': `This is a placeholder for a section description`,
     'newTransform.editor.preview.noPreviewGenerated': `Click PREVIEW to sample your derivation.`,
 
-    'newTransform.editor.save.failedErrorTitle': `Derivation Save Failed`,
-    'newTransform.editor.save.failure.errorTitle': `Derivation Save Failed`,
-    'newTransform.editor.save.serverUnreachable': `${CommonMessages['common.failedFetch']} while saving derivation`,
-    'newTransform.editor.save.waitMessage': `Please wait while we test, save, and publish your derivation.`,
+    'newTransform.save.failedErrorTitle': `Derivation Save Failed`,
+    'newTransform.save.failure.errorTitle': `Derivation Save Failed`,
+    'newTransform.save.serverUnreachable': `${CommonMessages['common.failedFetch']} while saving derivation`,
+    'newTransform.save.waitMessage': `Please wait while we test, save, and publish your derivation.`,
 
-    'newTransform.editor.createNotification.title': `New Derivation Created`,
-    'newTransform.editor.createNotification.desc': `Your new derivation is published and ready to be used.`,
+    'newTransform.createNotification.title': `New Derivation Created`,
+    'newTransform.createNotification.desc': `Your new derivation is published and ready to be used.`,
 };
 
 const CustomRenderers: ResolvedIntlConfig['messages'] = {

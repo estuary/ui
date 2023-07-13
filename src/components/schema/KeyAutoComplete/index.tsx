@@ -47,9 +47,10 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
     const [localCopyValue, setLocalCopyValue] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState('');
 
-    // We only want to all edit during Capture create/edit.
+    // We only want to all edit during capture create/edit and derivation create.
     const entityType = useEntityType();
-    const editKeyAllowed = entityType === 'capture';
+    const editKeyAllowed =
+        entityType === 'capture' || entityType === 'collection';
 
     // Need the response so we know the options
     const inferSchemaResponseEmpty =

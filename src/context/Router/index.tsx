@@ -46,6 +46,12 @@ const CapturesTable = lazy(
 const DerivationCreateComponent = lazy(
     () => import(/* webpackPrefetch: true */ 'components/derivation/Create')
 );
+const CollectionCreateRoute = lazy(
+    () => import(/* webpackPrefetch: true */ './CollectionCreate')
+);
+const CollectionCreateNewRoute = lazy(
+    () => import(/* webpackPrefetch: true */ './CollectionCreateNew')
+);
 const CollectionDetailsRoute = lazy(
     () => import(/* webpackPrefetch: true */ './CollectionDetails')
 );
@@ -154,6 +160,26 @@ const router = createBrowserRouter(
                         path={authenticatedRoutes.dataPlaneAuth.path}
                         element={<DataPlaneAuthReq />}
                     />
+
+                    <Route path={authenticatedRoutes.beta.path}>
+                        <Route
+                            path=""
+                            element={
+                                <Suspense fallback={null}>
+                                    <CollectionCreateRoute />
+                                </Suspense>
+                            }
+                        />
+
+                        <Route
+                            path={authenticatedRoutes.beta.new.path}
+                            element={
+                                <Suspense fallback={null}>
+                                    <CollectionCreateNewRoute />
+                                </Suspense>
+                            }
+                        />
+                    </Route>
 
                     <Route
                         path={`${authenticatedRoutes.collections.path}/*`}

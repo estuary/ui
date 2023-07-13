@@ -57,11 +57,14 @@ function useInitializeCollectionDraft() {
 
     const resetBindingsEditorState = useBindingsEditorStore_resetState();
 
-    // Draft Editor Store
+    // Global Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
     const setDraftId = useEditorStore_setId();
 
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
+
+    // Local Draft Editor Store
+    const setLocalDraftId = useEditorStore_setId({ localScope: true });
 
     const updateBindingsEditorState = useCallback(
         (data: BindingsEditorState['collectionData']): void => {
@@ -197,6 +200,8 @@ function useInitializeCollectionDraft() {
                     // The draft of a collection that has never been published could not be found.
                     updateBindingsEditorState(undefined);
                 }
+
+                setLocalDraftId(existingDraftId);
             } else {
                 // A draft for the entity could not be found. Current scenarios(s): entering the
                 // materialization create workflow and attempting to edit a collection specification
@@ -213,6 +218,7 @@ function useInitializeCollectionDraft() {
                     );
                 }
 
+                setLocalDraftId(newDraftId);
                 setDraftId(newDraftId);
                 setPersistedDraftId(newDraftId);
             }
@@ -221,6 +227,7 @@ function useInitializeCollectionDraft() {
             createCollectionDraftSpec,
             setCollectionInitializationAlert,
             setDraftId,
+            setLocalDraftId,
             setPersistedDraftId,
             updateBindingsEditorState,
         ]

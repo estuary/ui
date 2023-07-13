@@ -10,7 +10,7 @@ import KeyAutoComplete from 'components/schema/KeyAutoComplete';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
 import { useEntityType } from 'context/EntityContext';
 import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUpdateEffect } from 'react-use';
 import { Schema } from 'types';
@@ -18,18 +18,19 @@ import { getProperSchemaScope } from 'utils/schema-utils';
 
 export interface Props {
     entityName?: string;
+    localZustandScope?: boolean;
 }
 
-function CollectionSchemaEditor({ entityName }: Props) {
-    const { onChange, draftSpec, mutate } = useDraftSpecEditor(
-        entityName,
-        'collection',
-        true
-    );
-
+function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     const [editorSchemaScope, setEditorSchemaScope] = useState<
         AllowedScopes | undefined
     >(undefined);
+
+    const { onChange, draftSpec, mutate, defaultValue } = useDraftSpecEditor(
+        entityName,
+        localZustandScope,
+        editorSchemaScope
+    );
 
     const entityType = useEntityType();
 
@@ -64,48 +65,61 @@ function CollectionSchemaEditor({ entityName }: Props) {
     }, [draftSpec, entityType, populateInferSchemaResponse, setCollectionData]);
 
     useUpdateEffect(() => {
-        // If the schema is updated via the scheme inferrence
+        // If the schema is updated via the scheme inference
         //  of CLI button we want to fire mutate and make sure we get the latest
-        if (schemaUpdated) {
+        if (mutate && schemaUpdated) {
             void mutate();
         }
     }, [schemaUpdated]);
 
+    const onKeyChange = useCallback(
+        async (_event, keys) => {
+            if (entityName) {
+                await onChange(keys, entityName, 'collection', 'key');
+            }
+        },
+        [onChange, entityName]
+    );
+
+    const onPropertiesViewerChange = useCallback(
+        async (value: Schema, path, type, scope) => {
+            await onChange(value, path, type, scope ?? 'schema');
+        },
+        [onChange]
+    );
+
     if (draftSpec && entityName) {
         return (
             <Grid container>
-                <Stack
-                    sx={{
-                        alignItems: 'start',
-                        alignContent: 'start',
-                        mb: 3,
-                    }}
-                >
-                    <Typography variant="subtitle1" component="div">
-                        <FormattedMessage id="entityName.label" />
-                    </Typography>
-                    <Typography sx={{ ml: 1.5 }}>{entityName}</Typography>
-                </Stack>
+                {entityType === 'collection' ? null : (
+                    <Stack
+                        sx={{
+                            alignItems: 'start',
+                            alignContent: 'start',
+                            mb: 3,
+                        }}
+                    >
+                        <Typography variant="subtitle1" component="div">
+                            <FormattedMessage id="entityName.label" />
+                        </Typography>
+
+                        <Typography sx={{ ml: 1.5 }}>{entityName}</Typography>
+                    </Stack>
+                )}
 
                 <KeyAutoComplete
                     value={draftSpec.spec.key}
                     disabled={!editModeEnabled}
-                    onChange={async (_event, keys) => {
-                        await onChange(keys, entityName, 'collection', 'key');
-                    }}
+                    onChange={onKeyChange}
                 />
                 <PropertiesViewer
                     disabled={!editModeEnabled}
                     editorProps={{
-                        onChange: async (value: Schema, path, type, scope) => {
-                            await onChange(
-                                value,
-                                path,
-                                type,
-                                scope ?? 'schema'
-                            );
-                        },
+                        localZustandScope,
+                        onChange: onPropertiesViewerChange,
                         editorSchemaScope,
+                        defaultValue,
+                        path: `${entityName}-${editorSchemaScope}`,
                     }}
                 />
             </Grid>

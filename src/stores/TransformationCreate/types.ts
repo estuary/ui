@@ -6,6 +6,7 @@ export type DerivationAttribute = 'transform' | 'migration';
 
 export interface TransformConfig {
     filename: string;
+    name: string;
     lambda: string;
     sqlTemplate: string;
     collection: string;
@@ -48,13 +49,23 @@ export interface TransformCreateState {
     migrations: MigrationDictionary;
     addMigrations: (configs: string[]) => void;
 
+    // Shuffle Keys
+    shuffleKeyErrorsExist: boolean;
+
     // Misc.
     selectedAttribute: string;
     setSelectedAttribute: (value: string) => void;
     patchSelectedAttribute: (value: string) => void;
 
+    removeAttribute: (value: string) => void;
+
     attributeType: DerivationAttribute;
     setAttributeType: (value: TransformCreateState['attributeType']) => void;
+
+    emptySQLExists: boolean;
+
+    schemaUnedited: boolean;
+    setSchemaUnedited: (value: TransformCreateState['schemaUnedited']) => void;
 
     previewActive: boolean;
     setPreviewActive: (value: TransformCreateState['previewActive']) => void;
