@@ -1,5 +1,15 @@
 import { AlertColor } from '@mui/material';
-import { DraftSpec } from 'hooks/useDraftSpecs';
+import { PostgrestError } from '@supabase/postgrest-js';
+import { SuccessResponse } from 'hooks/supabase-swr';
+import { DraftSpec, DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { KeyedMutator } from 'swr';
+
+export interface DraftSpecResponse {
+    draftSpecs: DraftSpecQuery[];
+    isValidating: boolean;
+    mutate: KeyedMutator<SuccessResponse<DraftSpecQuery>> | null;
+    error?: PostgrestError;
+}
 
 export enum EditorStatus {
     IDLE = 'nothing happened since load',
@@ -42,8 +52,11 @@ export interface EditorStoreState<T> {
 
     isSaving: boolean;
     isEditing: boolean;
-    status: EditorStatus;
-    setStatus: (newVal: EditorStatus) => void;
+    statuses: { [path: string]: EditorStatus };
+    setStatus: (status: EditorStatus, path: string) => void;
+    removeStaleStatus: (path: string) => void;
+
+    invalidEditors: string[];
 
     // Draft Initialization
     draftInitializationError: null | {
@@ -54,10 +67,9 @@ export interface EditorStoreState<T> {
         value: EditorStoreState<T>['draftInitializationError']
     ) => void;
 
-    resetState: (excludeEditDraftId?: boolean) => void;
-}
+    // Misc.
+    queryResponse: DraftSpecResponse;
+    setQueryResponse: (value: EditorStoreState<T>['queryResponse']) => void;
 
-// Selector Hooks
-export interface SelectorParams {
-    localScope?: boolean;
+    resetState: (excludeEditDraftId?: boolean) => void;
 }

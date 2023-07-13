@@ -412,6 +412,11 @@ export const dataGridListStyling: SxProps<Theme> = {
     },
 };
 
+export const disabledButtonText = {
+    light: 'rgba(0, 0, 0, 0.26)',
+    dark: 'rgba(255, 255, 255, 0.3)',
+};
+
 const themeSettings = createTheme({
     breakpoints: {
         values: {

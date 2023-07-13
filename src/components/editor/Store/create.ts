@@ -1,6 +1,7 @@
 import produce from 'immer';
+import { omit } from 'lodash';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create } from 'zustand';
+import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { EditorStatus, EditorStoreState } from './types';
 
@@ -8,7 +9,22 @@ export const isEditorActive = (status: EditorStatus) => {
     return status === EditorStatus.SAVING;
 };
 
-const getInitialStateData = () => {
+const getInitialStateData = <T>(): Pick<
+    EditorStoreState<T>,
+    | 'currentCatalog'
+    | 'discoveredDraftId'
+    | 'draftInitializationError'
+    | 'id'
+    | 'invalidEditors'
+    | 'isEditing'
+    | 'isSaving'
+    | 'persistedDraftId'
+    | 'pubId'
+    | 'queryResponse'
+    | 'serverUpdate'
+    | 'specs'
+    | 'statuses'
+> => {
     return {
         currentCatalog: null,
         id: null,
@@ -16,19 +32,22 @@ const getInitialStateData = () => {
         persistedDraftId: null,
         pubId: null,
         specs: null,
+        statuses: {},
         isSaving: false,
         isEditing: false,
-        status: EditorStatus.IDLE,
         serverUpdate: null,
         draftInitializationError: null,
+        queryResponse: { draftSpecs: [], isValidating: false, mutate: null },
+        invalidEditors: [],
     };
 };
 
 const getInitialState = <T>(
-    set: NamedSet<EditorStoreState<T>>
+    set: NamedSet<EditorStoreState<T>>,
+    get: StoreApi<EditorStoreState<T>>['getState']
 ): EditorStoreState<T> => {
     return {
-        ...getInitialStateData(),
+        ...getInitialStateData<T>(),
         setId: (newVal) => {
             set(
                 produce((state) => {
@@ -105,15 +124,51 @@ const getInitialState = <T>(
             );
         },
 
-        setStatus: (newVal) => {
+        setStatus: (value, path) => {
             set(
                 produce((state) => {
-                    state.isSaving = newVal === EditorStatus.SAVING;
-                    state.isEditing = newVal === EditorStatus.EDITING;
-                    state.status = newVal;
+                    state.statuses[path] = value;
+
+                    const editorStatuses: EditorStatus[] = Object.values(
+                        state.statuses
+                    );
+
+                    state.isSaving = editorStatuses.some(
+                        (status) => status === EditorStatus.SAVING
+                    );
+                    state.isEditing = editorStatuses.some(
+                        (status) => status === EditorStatus.EDITING
+                    );
+
+                    state.invalidEditors = Object.entries(state.statuses)
+                        .filter(
+                            ([_key, status]) =>
+                                status === EditorStatus.INVALID ||
+                                status === EditorStatus.SAVE_FAILED ||
+                                status === EditorStatus.OUT_OF_SYNC
+                        )
+                        .map(([key, _status]) => key);
                 }),
                 false,
                 'Setting status'
+            );
+        },
+
+        removeStaleStatus: (value) => {
+            set(
+                produce((state) => {
+                    const { invalidEditors, statuses } = get();
+
+                    if (Object.hasOwn(statuses, value)) {
+                        state.statuses = omit(statuses, value);
+                    }
+
+                    state.invalidEditors = invalidEditors.filter(
+                        (path) => path !== value
+                    );
+                }),
+                false,
+                'Stale Status Removed'
             );
         },
 
@@ -127,12 +182,23 @@ const getInitialState = <T>(
             );
         },
 
+        setQueryResponse: (value) => {
+            set(
+                produce((state) => {
+                    state.queryResponse = value;
+                }),
+                false,
+                'Query Response Set'
+            );
+        },
+
         // This is a hacky, temporary solution to preserve the persisted draft ID
         // when the generate button is clicked in all workflows.
         resetState: (excludePersistedDraftId) => {
             set(
                 () => {
-                    const { persistedDraftId, ...rest } = getInitialStateData();
+                    const { persistedDraftId, ...rest } =
+                        getInitialStateData<T>();
 
                     return excludePersistedDraftId
                         ? rest
@@ -147,6 +213,9 @@ const getInitialState = <T>(
 
 export const createEditorStore = <T>(key: string) => {
     return create<EditorStoreState<T>>()(
-        devtools((set) => getInitialState<T>(set), devtoolsOptions(key))
+        devtools(
+            (set, get) => getInitialState<T>(set, get),
+            devtoolsOptions(key)
+        )
     );
 };

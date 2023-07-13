@@ -3,17 +3,17 @@ import { authenticatedRoutes } from 'app/routes';
 import AlertBox from 'components/shared/AlertBox';
 import DialogTitleWithClose from 'components/shared/Dialog/TitleWithClose';
 import TransformationCreate from 'components/transformation/create';
-import { LocalZustandProvider } from 'context/LocalZustand';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import { TransformCreateStoreNames } from 'stores/names';
-import { createTransformationCreateStore } from 'stores/TransformationCreate/Store';
+import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
 
 const ARIA_LABEL_ID = 'derivation-create-dialog';
 
 function DerivationCreate() {
     const navigate = useNavigate();
+
+    const resetTransformationCreateState = useTransformationCreate_resetState();
 
     // There is _probably_ a better way to do this, but the idea is
     // to reset the state of the NewCollection component every time
@@ -26,15 +26,8 @@ function DerivationCreate() {
         navigate(authenticatedRoutes.collections.fullPath);
         setShowConfirmation(false);
         setNewCollectionKey((k) => k + 1);
+        resetTransformationCreateState();
     };
-
-    const createLocalStore = useMemo(
-        () =>
-            createTransformationCreateStore(
-                TransformCreateStoreNames.TRANSFORM_CREATE
-            ),
-        []
-    );
 
     return (
         <Dialog
@@ -64,19 +57,17 @@ function DerivationCreate() {
                 </Collapse>
 
                 <Collapse in={!showConfirmation}>
-                    <LocalZustandProvider createStore={createLocalStore}>
-                        <TransformationCreate
-                            key={newCollectionKey}
-                            postWindowOpen={(gitPodWindow) => {
-                                // If there is a window object we know the browser at least let us open it up.
-                                //  This does not 100% prove that GitPod loaded correctly
-                                if (gitPodWindow) {
-                                    setShowConfirmation(true);
-                                }
-                            }}
-                            closeDialog={closeDialog}
-                        />
-                    </LocalZustandProvider>
+                    <TransformationCreate
+                        key={newCollectionKey}
+                        postWindowOpen={(gitPodWindow) => {
+                            // If there is a window object we know the browser at least let us open it up.
+                            //  This does not 100% prove that GitPod loaded correctly
+                            if (gitPodWindow) {
+                                setShowConfirmation(true);
+                            }
+                        }}
+                        closeDialog={closeDialog}
+                    />
                 </Collapse>
             </DialogContent>
         </Dialog>

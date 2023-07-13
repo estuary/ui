@@ -14,7 +14,10 @@ function NonEditLabel() {
             <Typography variant="subtitle1" component="div">
                 <FormattedMessage id="schemaEditor.key.label" />
             </Typography>
-            <Tooltip title={<FormattedMessage id="schemaEditor.key.helper" />}>
+            <Tooltip
+                title={<FormattedMessage id="schemaEditor.key.helper" />}
+                placement="right"
+            >
                 <IconButton>
                     <HelpCircle />
                 </IconButton>

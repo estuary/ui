@@ -1,47 +1,68 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
-import { AllowedScopes } from 'components/editor/MonacoEditor/types';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
+    useEditorStore_queryResponse_draftSpecs,
+    useEditorStore_queryResponse_isValidating,
+    useEditorStore_queryResponse_mutate,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
-import useDraftSpecs, { DraftSpec } from 'hooks/useDraftSpecs';
-import { useEffect, useState } from 'react';
+import { DraftSpec } from 'hooks/useDraftSpecs';
+import { get, has, set } from 'lodash';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { stringifyJSON } from 'services/stringify';
 import { Entity } from 'types';
 
 function useDraftSpecEditor(
     entityName: string | undefined,
-    entityType: Entity,
-    useLocalScope: boolean
+    localScope?: boolean,
+    editorSchemaScope?: string
 ) {
     // Local State
     const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
 
     // Draft Editor Store
     const currentCatalog = useEditorStore_currentCatalog({
-        localScope: useLocalScope,
+        localScope,
     });
     const setSpecs = useEditorStore_setSpecs({
-        localScope: useLocalScope,
+        localScope,
     });
     const draftId = useEditorStore_persistedDraftId();
 
-    // Fetch the draft specs for this draft
-    const { draftSpecs, isValidating, mutate } = useDraftSpecs(draftId, {
-        specType: entityType,
-        catalogName: entityName,
+    const draftSpecs = useEditorStore_queryResponse_draftSpecs({ localScope });
+    const isValidating = useEditorStore_queryResponse_isValidating({
+        localScope,
     });
+    const mutate = useEditorStore_queryResponse_mutate({ localScope });
 
-    const handlers = {
-        change: async (
+    const specAsString = useMemo(() => {
+        let spec = draftSpec?.spec ?? null;
+
+        if (draftSpec?.spec && editorSchemaScope) {
+            // If there is a schema scope make sure it exists first
+            //  otherwise we will fall back to the schema prop
+            // This is just being super safe
+            spec = has(draftSpec.spec, editorSchemaScope)
+                ? get(draftSpec.spec, editorSchemaScope)
+                : draftSpec.spec.schema;
+        }
+
+        return stringifyJSON(spec);
+    }, [draftSpec, editorSchemaScope]);
+
+    const processEditorValue = useCallback(
+        async (
             newVal: any,
             catalogName: string,
-            specType: string,
-            propUpdating?: AllowedScopes
+            specType: Entity,
+            propUpdating?: string
         ) => {
-            if (draftSpec) {
+            if (!mutate || !draftSpec) {
+                return Promise.reject();
+            } else {
                 if (propUpdating) {
-                    draftSpec.spec[propUpdating] = newVal;
+                    set(draftSpec.spec, propUpdating, newVal);
                 } else {
                     draftSpec.spec = newVal;
                 }
@@ -49,6 +70,7 @@ function useDraftSpecEditor(
                 const updateResponse = await modifyDraftSpec(draftSpec.spec, {
                     draft_id: draftId,
                     catalog_name: catalogName,
+                    spec_type: specType,
                 });
 
                 if (updateResponse.error) {
@@ -56,11 +78,10 @@ function useDraftSpecEditor(
                 }
 
                 return mutate();
-            } else {
-                return Promise.reject();
             }
         },
-    };
+        [mutate, draftId, draftSpec]
+    );
 
     useEffect(() => {
         if (draftSpecs.length > 0) {
@@ -112,10 +133,11 @@ function useDraftSpecEditor(
     // });
 
     return {
-        onChange: handlers.change,
+        onChange: processEditorValue,
         draftSpec,
         isValidating,
         mutate,
+        defaultValue: specAsString,
     };
 }
 

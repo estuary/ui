@@ -11,6 +11,7 @@ import {
     useBindingsEditorStore_schemaUpdateErrored,
 } from 'components/editor/Bindings/Store/hooks';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
+import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_setCurrentCatalog,
@@ -146,9 +147,16 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
 
                             {collectionData ? (
                                 collectionData.belongsToDraft ? (
-                                    <CollectionSchemaEditor
+                                    <DraftSpecEditorHydrator
+                                        entityType="collection"
                                         entityName={currentCollection}
-                                    />
+                                        localScope
+                                    >
+                                        <CollectionSchemaEditor
+                                            entityName={currentCollection}
+                                            localZustandScope
+                                        />
+                                    </DraftSpecEditorHydrator>
                                 ) : (
                                     <ControlledEditor />
                                 )

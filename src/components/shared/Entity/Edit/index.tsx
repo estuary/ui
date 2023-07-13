@@ -1,6 +1,7 @@
 import { Box, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import CollectionConfig from 'components/collection/Config';
+import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
 import {
     useEditorStore_draftInitializationError,
     useEditorStore_id,
@@ -21,6 +22,7 @@ import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_connectorImage,
+    useDetailsForm_draftedEntityName,
     useDetailsForm_hydrated,
 } from 'stores/DetailsForm/hooks';
 import {
@@ -83,6 +85,7 @@ function EntityEdit({
     // Details Form Store
     const detailsFormStoreHydrated = useDetailsForm_hydrated();
     const imageTag = useDetailsForm_connectorImage();
+    const entityName = useDetailsForm_draftedEntityName();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
@@ -152,7 +155,10 @@ function EntityEdit({
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
             ) : !persistedDraftId || storeHydrationIncomplete ? null : (
-                <>
+                <DraftSpecEditorHydrator
+                    entityType={entityType}
+                    entityName={entityName}
+                >
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError ? (
                             <EntityError
@@ -218,7 +224,7 @@ function EntityEdit({
                     <CatalogEditor
                         messageId={`${messagePrefix}.finalReview.instructions`}
                     />
-                </>
+                </DraftSpecEditorHydrator>
             )}
         </>
     );

@@ -1,12 +1,16 @@
 import { LoadingButton } from '@mui/lab';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
+import { authenticatedRoutes } from 'app/routes';
 import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
-import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useNavigate } from 'react-router';
+import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import {
     useTransformationCreate_addTransformConfigs,
     useTransformationCreate_catalogName,
@@ -20,18 +24,26 @@ import {
     generateInitialSpec,
     templateTransformConfig,
 } from 'utils/derivation-utils';
+import { stripPathing } from 'utils/misc-utils';
 
 interface Props {
     entityNameError: string | null;
     selectedCollections: Set<string>;
-    setSQLEditorOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 function InitializeDraftButton({
     entityNameError,
     selectedCollections,
-    setSQLEditorOpen: setOpenSQLEditor,
 }: Props) {
+    const navigate = useNavigate();
+
+    // Draft Editor Store
+    const setDraftId = useEditorStore_setId();
+    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
+
+    // Form State Store
+    const setFormState = useFormStateStore_setFormState();
+
     // Transformation Create Store
     const language = useTransformationCreate_language();
 
@@ -41,10 +53,6 @@ function InitializeDraftButton({
     const addTransformConfigs = useTransformationCreate_addTransformConfigs();
     const setSelectedAttribute = useTransformationCreate_setSelectedAttribute();
     const setSourceCollections = useTransformationCreate_setSourceCollections();
-
-    // Draft Editor Store
-    const setDraftId = useEditorStore_setId();
-    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     const validationErrorMessageId = useMemo(() => {
         if (selectedCollections.size < 1) {
@@ -62,6 +70,12 @@ function InitializeDraftButton({
     );
 
     const initializeTransformation = useCallback(async (): Promise<void> => {
+        setFormState({
+            status: FormStatus.GENERATING,
+            error: null,
+            message: { key: null, severity: null },
+        });
+
         if (catalogName) {
             const draftsResponse = await createEntityDraft(catalogName);
 
@@ -74,9 +88,25 @@ function InitializeDraftButton({
 
                 setSourceCollections(collections);
 
+                const latestTransformVersions: { [tableName: string]: number } =
+                    {};
+
                 const transformConfigs: TransformConfig[] = collections.map(
-                    (collection) =>
-                        templateTransformConfig(collection, entityName)
+                    (collection) => {
+                        const tableName = stripPathing(collection);
+
+                        if (Object.hasOwn(latestTransformVersions, tableName)) {
+                            latestTransformVersions[tableName] += 1;
+                        } else {
+                            latestTransformVersions[tableName] = 0;
+                        }
+
+                        return templateTransformConfig(
+                            collection,
+                            entityName,
+                            latestTransformVersions[tableName]
+                        );
+                    }
                 );
 
                 addTransformConfigs(transformConfigs);
@@ -85,7 +115,8 @@ function InitializeDraftButton({
                 const spec = generateInitialSpec(
                     language,
                     catalogName,
-                    selectedCollections
+                    selectedCollections,
+                    { existingTransforms: transformConfigs }
                 );
 
                 const draftSpecResponse = await createDraftSpec(
@@ -96,27 +127,38 @@ function InitializeDraftButton({
                 );
 
                 if (draftSpecResponse.error) {
-                    // Set error state
+                    setFormState({
+                        status: FormStatus.FAILED,
+                        error: {
+                            title: 'newTransform.errors.draftSpecCreateFailed',
+                            error: draftSpecResponse.error,
+                        },
+                    });
                 } else {
                     setDraftId(draftId);
                     setPersistedDraftId(draftId);
 
-                    setOpenSQLEditor(true);
+                    setFormState({ status: FormStatus.GENERATED });
+
+                    // TODO (transform): Replace this with the navigate to create workflow hook and the production-ready URL
+                    //   when it is time to launch this feature.
+                    navigate(authenticatedRoutes.beta.new.fullPath);
                 }
             } else {
-                // Set error state
+                setFormState({ status: FormStatus.FAILED });
             }
         }
     }, [
         addTransformConfigs,
         setDraftId,
-        setOpenSQLEditor,
+        setFormState,
         setPersistedDraftId,
         setSelectedAttribute,
         setSourceCollections,
         catalogName,
         entityName,
         language,
+        navigate,
         selectedCollections,
     ]);
 
@@ -126,7 +168,7 @@ function InitializeDraftButton({
             disabled={formInvalid}
             onClick={initializeTransformation}
         >
-            <FormattedMessage id={validationErrorMessageId ?? 'cta.next'} />
+            <FormattedMessage id="cta.next" />
         </LoadingButton>
     );
 }

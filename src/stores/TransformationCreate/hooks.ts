@@ -1,37 +1,37 @@
-import { useLocalZustandStore } from 'context/LocalZustand';
+import { useZustandStore } from 'context/Zustand/provider';
 import { TransformCreateStoreNames } from 'stores/names';
 import { TransformCreateState } from './types';
 
 export const useTransformationCreate_language = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['language']
     >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.language);
 };
 
 export const useTransformationCreate_setLanguage = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['setLanguage']
     >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.setLanguage);
 };
 
 export const useTransformationCreate_name = () => {
-    return useLocalZustandStore<
-        TransformCreateState,
-        TransformCreateState['name']
-    >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.name);
+    return useZustandStore<TransformCreateState, TransformCreateState['name']>(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.name
+    );
 };
 
 export const useTransformationCreate_setName = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['setName']
     >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.setName);
 };
 
 export const useTransformationCreate_sourceCollections = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['sourceCollections']
     >(
@@ -41,7 +41,7 @@ export const useTransformationCreate_sourceCollections = () => {
 };
 
 export const useTransformationCreate_setSourceCollections = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['setSourceCollections']
     >(
@@ -51,7 +51,7 @@ export const useTransformationCreate_setSourceCollections = () => {
 };
 
 export const useTransformationCreate_transformCount = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['transformCount']
     >(
@@ -61,7 +61,7 @@ export const useTransformationCreate_transformCount = () => {
 };
 
 export const useTransformationCreate_transformConfigs = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['transformConfigs']
     >(
@@ -71,7 +71,7 @@ export const useTransformationCreate_transformConfigs = () => {
 };
 
 export const useTransformationCreate_addTransformConfigs = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['addTransformConfigs']
     >(
@@ -81,7 +81,7 @@ export const useTransformationCreate_addTransformConfigs = () => {
 };
 
 export const useTransformationCreate_updateTransformConfigs = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['updateTransformConfigs']
     >(
@@ -91,14 +91,14 @@ export const useTransformationCreate_updateTransformConfigs = () => {
 };
 
 export const useTransformationCreate_migrations = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['migrations']
     >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.migrations);
 };
 
 export const useTransformationCreate_addMigrations = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['addMigrations']
     >(
@@ -107,8 +107,18 @@ export const useTransformationCreate_addMigrations = () => {
     );
 };
 
+export const useTransformationCreate_shuffleKeyErrorsExist = () => {
+    return useZustandStore<
+        TransformCreateState,
+        TransformCreateState['shuffleKeyErrorsExist']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.shuffleKeyErrorsExist
+    );
+};
+
 export const useTransformationCreate_selectedAttribute = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['selectedAttribute']
     >(
@@ -118,7 +128,7 @@ export const useTransformationCreate_selectedAttribute = () => {
 };
 
 export const useTransformationCreate_setSelectedAttribute = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['setSelectedAttribute']
     >(
@@ -128,7 +138,7 @@ export const useTransformationCreate_setSelectedAttribute = () => {
 };
 
 export const useTransformationCreate_patchSelectedAttribute = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['patchSelectedAttribute']
     >(
@@ -137,8 +147,18 @@ export const useTransformationCreate_patchSelectedAttribute = () => {
     );
 };
 
+export const useTransformationCreate_removeAttribute = () => {
+    return useZustandStore<
+        TransformCreateState,
+        TransformCreateState['removeAttribute']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.removeAttribute
+    );
+};
+
 export const useTransformationCreate_attributeType = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['attributeType']
     >(
@@ -148,7 +168,7 @@ export const useTransformationCreate_attributeType = () => {
 };
 
 export const useTransformationCreate_setAttributeType = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['setAttributeType']
     >(
@@ -157,8 +177,38 @@ export const useTransformationCreate_setAttributeType = () => {
     );
 };
 
+export const useTransformationCreate_emptySQLExists = () => {
+    return useZustandStore<
+        TransformCreateState,
+        TransformCreateState['emptySQLExists']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.emptySQLExists
+    );
+};
+
+export const useTransformationCreate_schemaUnedited = () => {
+    return useZustandStore<
+        TransformCreateState,
+        TransformCreateState['schemaUnedited']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.schemaUnedited
+    );
+};
+
+export const useTransformationCreate_setSchemaUnedited = () => {
+    return useZustandStore<
+        TransformCreateState,
+        TransformCreateState['setSchemaUnedited']
+    >(
+        TransformCreateStoreNames.TRANSFORM_CREATE,
+        (state) => state.setSchemaUnedited
+    );
+};
+
 export const useTransformationCreate_previewActive = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['previewActive']
     >(
@@ -168,7 +218,7 @@ export const useTransformationCreate_previewActive = () => {
 };
 
 export const useTransformationCreate_setPreviewActive = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['setPreviewActive']
     >(
@@ -178,7 +228,7 @@ export const useTransformationCreate_setPreviewActive = () => {
 };
 
 export const useTransformationCreate_catalogUpdating = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['catalogUpdating']
     >(
@@ -188,7 +238,7 @@ export const useTransformationCreate_catalogUpdating = () => {
 };
 
 export const useTransformationCreate_setCatalogUpdating = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['setCatalogUpdating']
     >(
@@ -198,18 +248,25 @@ export const useTransformationCreate_setCatalogUpdating = () => {
 };
 
 export const useTransformationCreate_catalogName = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['catalogName']
     >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.catalogName);
 };
 
 export const useTransformationCreate_setCatalogName = () => {
-    return useLocalZustandStore<
+    return useZustandStore<
         TransformCreateState,
         TransformCreateState['setCatalogName']
     >(
         TransformCreateStoreNames.TRANSFORM_CREATE,
         (state) => state.setCatalogName
     );
+};
+
+export const useTransformationCreate_resetState = () => {
+    return useZustandStore<
+        TransformCreateState,
+        TransformCreateState['resetState']
+    >(TransformCreateStoreNames.TRANSFORM_CREATE, (state) => state.resetState);
 };

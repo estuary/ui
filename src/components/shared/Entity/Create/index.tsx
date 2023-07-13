@@ -1,5 +1,6 @@
 import { Box, Collapse } from '@mui/material';
 import CollectionConfig from 'components/collection/Config';
+import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
@@ -21,6 +22,7 @@ import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_connectorImage,
+    useDetailsForm_draftedEntityName,
     useDetailsForm_entityNameChanged,
 } from 'stores/DetailsForm/hooks';
 import {
@@ -67,6 +69,7 @@ function EntityCreate({
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
+    const entityName = useDetailsForm_draftedEntityName();
     const entityNameChanged = useDetailsForm_entityNameChanged();
 
     // Draft Editor Store
@@ -144,7 +147,10 @@ function EntityCreate({
     return connectorTagsError ? (
         <Error error={connectorTagsError} />
     ) : (
-        <>
+        <DraftSpecEditorHydrator
+            entityType={entityType}
+            entityName={entityName}
+        >
             {toolbar}
 
             <Box sx={{ mb: 4 }}>
@@ -199,7 +205,7 @@ function EntityCreate({
             <CatalogEditor
                 messageId={`${messagePrefix}.finalReview.instructions`}
             />
-        </>
+        </DraftSpecEditorHydrator>
     );
 }
 

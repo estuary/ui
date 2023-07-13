@@ -7,7 +7,7 @@ export type fake = 'fake';
 export enum MessagePrefixes {
     CAPTURE_CREATE = 'captureCreate',
     CAPTURE_EDIT = 'captureEdit',
-    COLLECTION_CREATE = 'newTransform.editor',
+    COLLECTION_CREATE = 'newTransform',
     MATERIALIZATION_CREATE = 'materializationCreate',
     MATERIALIZATION_EDIT = 'materializationEdit',
 }

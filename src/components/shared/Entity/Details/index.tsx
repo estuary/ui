@@ -1,6 +1,6 @@
 import { Box, Divider, Stack, Typography } from '@mui/material';
 import { createEditorStore } from 'components/editor/Store/create';
-import EditorHydrator from 'components/editor/Store/Hydrator';
+import EditorHydrator from 'components/editor/Store/LiveSpecsHydrator';
 import { LocalZustandProvider } from 'context/LocalZustand';
 import { truncateTextSx } from 'context/Theme';
 import useGlobalSearchParams, {
