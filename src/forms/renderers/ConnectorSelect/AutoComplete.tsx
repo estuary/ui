@@ -1,3 +1,6 @@
+// We  heavily base this off JsonForms stuff so tweaking linting options they don't use
+/* eslint-disable @typescript-eslint/unbound-method */
+
 /*
   The MIT License
 
@@ -53,7 +56,6 @@ const areOptionsEqual = (option?: any, value?: any) => {
 export const ConnectorAutoComplete = (
     props: EnumCellProps & WithClassname & WithOptionLabel
 ) => {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     const {
         data,
         className,
@@ -61,9 +63,9 @@ export const ConnectorAutoComplete = (
         enabled,
         uischema,
         path,
-        handleChange,
         options,
         config,
+        handleChange,
         getOptionLabel,
         filterOptions,
     } = props;

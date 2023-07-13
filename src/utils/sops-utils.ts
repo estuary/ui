@@ -36,7 +36,7 @@ const copyEncryptedEndpointConfig = (
             const keyToUse = truncatedKey ?? key;
 
             // Make sure the nested element is populated
-            response[keyToUse] = response[keyToUse] ?? {};
+            response[keyToUse] ??= {};
 
             // start recursion so we can clone deeply
             response[keyToUse] = copyEncryptedEndpointConfig(

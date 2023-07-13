@@ -24,4 +24,4 @@ yarn-debug.log*
 yarn-error.log*
 
 # Created by npm run `depgraph`
-graph.svg
+flow_ui_dep_graph.svg
