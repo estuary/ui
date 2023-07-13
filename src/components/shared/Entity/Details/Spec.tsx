@@ -1,5 +1,5 @@
 import { Grid, Stack, Typography } from '@mui/material';
-import MonacoEditor from 'components/editor/MonacoEditor';
+import LiveSpecEditor from 'components/editor/LiveSpec';
 import ExternalLink from 'components/shared/ExternalLink';
 import { useEntityType } from 'context/EntityContext';
 import { useMemo } from 'react';
@@ -37,11 +37,7 @@ function Spec() {
                             <FormattedMessage id="terms.documentation" />
                         </ExternalLink>
                     </Stack>
-                    <MonacoEditor
-                        localZustandScope={true}
-                        height={500}
-                        disabled
-                    />
+                    <LiveSpecEditor localZustandScope singleSpec />
                 </Stack>
             </Grid>
         </Grid>

@@ -5,9 +5,10 @@ import { stringifyJSON } from 'services/stringify';
 
 interface Props {
     localZustandScope: boolean;
+    singleSpec?: boolean;
 }
 
-function LiveSpecEditor({ localZustandScope }: Props) {
+function LiveSpecEditor({ localZustandScope, singleSpec }: Props) {
     const currentCatalog = useEditorStore_currentCatalog({
         localScope: localZustandScope,
     });
@@ -22,6 +23,7 @@ function LiveSpecEditor({ localZustandScope }: Props) {
             localZustandScope={localZustandScope}
             defaultValue={specAsString}
             disabled={true}
+            disableList={singleSpec}
         />
     );
 }
