@@ -4,24 +4,35 @@ The web UI for Estuary Flow.
 
 # How to install?
 
-You'll need to make sure the UI ahas the depencies installed. For the UI this should be straight forward and running `npm install` in the UI root directory.
+Make sure Node and npm are installed.
 
-You'll also need internet connectivity so you can reach our Supabase API.
+Run: `npm install`
 
-# How do I run the UI?
+## Troubleshooting
 
-You need to run with Node 16 right now. There is an issue with Node 17.
+### 401 error for `@estuary/flow-web`.
 
-`npm start` starts UI
+You need to update `~/.npmrc` with the following:
 
-For more details on UI commands please look at `build.md`.
+```
+//npm.pkg.github.com/:_authToken=__YOUR_AUTH_TOKEN_YOU_MADE_ON_GITHUB__
+@estuary:registry=https://npm.pkg.github.com/
+```
 
-# What is the status?
+[Github docs](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token).
 
-The status very much a "work in progress"... or like one level above a proof of concept.
+# How to start/run?
+
+Make sure [Estuary Flow](https://github.com/estuary/flow) and [Supabase CLI](https://github.com/supabase/cli) are installed and running.
+
+Run: `npm start`
+
+The UI is built to hit our own instance of Supabase. That means you will need to have that running locally as well.
 
 # Building Blocks
 
-This project was started using [Create React App](https://create-react-app.dev/) and [added TypeScript](https://create-react-app.dev/docs/adding-typescript).
-
-As we are currently using [MUI](https://mui.com/core/) as our main component library so we used [their typescript template](https://github.com/mui-org/material-ui/tree/master/examples/create-react-app-with-typescript) as a reference for this project. We combined some of their tsconfig settings with those found from [typescript-cheatsheets](https://github.com/typescript-cheatsheets/react#troubleshooting-handbook-tsconfigjson).
+-   [MUI](https://github.com/mui/material-ui) for components
+-   [Zustand](https://github.com/pmndrs/zustand) for local state
+-   [JSON Forms](https://github.com/eclipsesource/jsonforms) for many forms
+-   [SWR](https://github.com/vercel/swr) for server calls
+-   [Apache ECharts](https://github.com/apache/echarts) for charts

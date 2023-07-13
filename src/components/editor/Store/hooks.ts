@@ -212,7 +212,7 @@ export function useEditorStore_specs<T = DraftSpecQuery | LiveSpecsQuery_spec>(
 }
 
 export function useEditorStore_setSpecs<
-    T = DraftSpecQuery | LiveSpecsQuery_spec
+    T = DraftSpecQuery | LiveSpecsQuery_spec,
 >(params?: SelectorParams | undefined) {
     const localScope = params?.localScope;
 

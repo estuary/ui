@@ -50,8 +50,11 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
         if (resourceSchema.properties) {
             // Find the field with the collection name annotation
             const collectionNameField =
-                Object.entries(resourceSchema.properties).find(([_, value]) =>
-                    value?.hasOwnProperty(Annotations.defaultResourceConfigName)
+                Object.entries(resourceSchema.properties).find(
+                    ([_, value]) =>
+                        value?.hasOwnProperty(
+                            Annotations.defaultResourceConfigName
+                        )
                 ) ?? [];
 
             // Try to fetch the key

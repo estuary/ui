@@ -192,8 +192,7 @@ export const getInitialState = (
                                 Object.entries(currentStat).forEach(
                                     ([key, value]) => {
                                         if (typeof value === 'number') {
-                                            currentStat[key] =
-                                                currentStat[key] || 0;
+                                            currentStat[key] ||= 0;
                                             currentStat[key] += datum[key];
                                         }
                                     }

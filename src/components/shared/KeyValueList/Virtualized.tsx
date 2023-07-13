@@ -27,7 +27,9 @@ function VirtualizedKeyValueList({ data }: Props) {
     if (data.length > 0) {
         return (
             <AutoSizer style={{ width: '100%', maxHeight: '400px' }}>
-                {({ width, height }) => {
+                {({ width, height }: AutoSizer['state']) => {
+                    // TODO (typing) pretty sure this is the right type but need
+                    //  to figure that out before launching this
                     return (
                         <FixedSizeList
                             height={height}
