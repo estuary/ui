@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 import { Schema } from 'types';
 import { hasLength } from './misc-utils';
 
-const typesAllowedAsKeys = ['string', 'integer', 'boolean'];
+const typesAllowedAsKeys = ['boolean', 'integer', 'null', 'string'];
 
 const hasWriteSchema = (spec: any) => {
     return spec.hasOwnProperty('writeSchema');
@@ -39,14 +39,20 @@ const filterInferSchemaResponse = (schema: any) => {
                 return hasLength(inferredProperty.pointer);
             })
             .map((inferredProperty: any) => {
-                const interrefPropertyTypes = inferredProperty.types;
+                const inferredPropertyTypes: string[] = inferredProperty.types;
                 const isValidKey = Boolean(
                     // Happens when the schema contradicts itself, which isnt a "feature" we use intentionally
                     inferredProperty.exists !== 'cannot' &&
-                        // Make sure there is a single type and it is on the list of allowed types
-                        interrefPropertyTypes.length === 1 &&
-                        typesAllowedAsKeys.some((key) =>
-                            interrefPropertyTypes.includes(key)
+                        // Check if there is a single type
+                        (inferredPropertyTypes.length === 1 ||
+                            // or if there are two and one is null
+                            (inferredPropertyTypes.length === 2 &&
+                                inferredPropertyTypes.filter(
+                                    (type) => type === 'null'
+                                ).length === 1)) &&
+                        // make sure all types are valid
+                        inferredPropertyTypes.every((type) =>
+                            typesAllowedAsKeys.includes(type)
                         )
                 );
 
