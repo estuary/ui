@@ -67,6 +67,7 @@ function DataByHourGraph({ range, stats }: Props) {
             end: today,
         });
 
+        // Format the full date so that hours from one day don't show for another day
         return listOfHours.map((date) => {
             return intl.formatDate(date, formatDateSettings);
         });
@@ -104,11 +105,13 @@ function DataByHourGraph({ range, stats }: Props) {
 
     // Update the "last updated" string shown as an xAxis label
     useEffect(() => {
+        // Want to format with seconds to show more of a "ticking clock" to users
         const currentTime = intl.formatTime(new Date(), {
             ...formatTimeSettings,
             second: '2-digit',
         });
 
+        // Made a string instead of passing value into message to make life easier
         setLastUpdated(
             `${intl.formatMessage({
                 id: 'entityTable.data.lastUpdatedWithColon',
@@ -132,6 +135,7 @@ function DataByHourGraph({ range, stats }: Props) {
                     axisLabel: {
                         align: 'center',
                         formatter: (value: any) => {
+                            // We store the date and time but only want to show time to user
                             return intl.formatTime(value, formatTimeSettings);
                         },
                     },
@@ -208,11 +212,8 @@ function DataByHourGraph({ range, stats }: Props) {
         const response = {};
 
         stats.forEach((stat) => {
-            console.log('stats loop', stat);
             // Format to time
             const formattedTime = intl.formatDate(stat.ts, formatDateSettings);
-
-            console.log('     formattedTime', formattedTime);
 
             // Total up docs. Mainly for collections that are derivations
             //  eventually we might split this data up into multiple lines
@@ -232,12 +233,9 @@ function DataByHourGraph({ range, stats }: Props) {
         return response;
     }, [intl, stats]);
 
-    console.log('scopedDataSet', scopedDataSet);
-
     // Effect to update the data by updating the series.
     useEffect(() => {
         const bytesFormatter = ({ value }: any) => {
-            console.log('bytesFormatter', value);
             if (!Number.isInteger(value)) {
                 return intl.formatMessage({
                     id: 'common.missing',
