@@ -81,6 +81,11 @@ export function EndpointLink({ endpoint }: EndpointLinkProps) {
     );
 }
 
+// TODO (task endpoints) This was designed to quickly get added to the old
+//  details panel inside the tables. It was pretty constrained in there and
+//  didn't have a specific design language. I think now that the details page
+//  exists and has other lists we should work on getting this redesigned to
+//  make the experience better and consistent.
 export function TaskEndpoints({ taskName }: Props) {
     const gateway = useScopedGatewayAuthToken(taskName);
     const shards = useShardDetail_shards();
