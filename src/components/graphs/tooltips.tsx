@@ -5,11 +5,6 @@ const ITEM_CLASS = 'tooltipItem';
 const TITLE_CLASS = 'tooltipTitle';
 
 const getTooltipItem = (marker: string, label: string, value?: string) => {
-    console.log('getTooltipItem', {
-        marker,
-        label,
-        value,
-    });
     return `<div class="${ITEM_CLASS}">
                 <div>
                     ${marker}
