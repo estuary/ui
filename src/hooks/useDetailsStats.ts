@@ -1,7 +1,8 @@
-import { DetailsStats, getStatsForDetails } from 'api/stats';
+import { getStatsForDetails } from 'api/stats';
 import { useEntityType } from 'context/EntityContext';
 import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { hasLength } from 'utils/misc-utils';
+import { CatalogStats_Details } from 'types';
 
 function useDetailsStats(
     catalogName: string,
@@ -10,7 +11,7 @@ function useDetailsStats(
 ) {
     const entityType = useEntityType();
 
-    const { data, error, isValidating } = useSelectNew<DetailsStats>(
+    const { data, error, isValidating } = useSelectNew<CatalogStats_Details>(
         hasLength(catalogName)
             ? getStatsForDetails(catalogName, entityType, grain, duration)
             : null,

@@ -18,7 +18,12 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { CatalogStats, CatalogStats_Billing, Entity } from 'types';
+import {
+    CatalogStats,
+    CatalogStats_Billing,
+    CatalogStats_Details,
+    Entity,
+} from 'types';
 
 export type StatsFilter =
     | 'today'
@@ -59,16 +64,6 @@ const DEFAULT_QUERY = `
             bytes_read_from_me,
             docs_read_from_me
         `;
-
-export interface DetailsStats {
-    catalog_name: string;
-    grain: string;
-    ts: string;
-    docs_by: number;
-    bytes_by: number;
-    docs_to?: number;
-    bytes_to?: number;
-}
 
 // Queries just for details panel
 const CAPTURE_QUERY = `
@@ -220,7 +215,7 @@ const getStatsForDetails = (
     }
 
     return supabaseClient
-        .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
+        .from<CatalogStats_Details>(TABLES.CATALOG_STATS)
         .select(query)
         .eq('catalog_name', catalogName)
         .eq('grain', grain)

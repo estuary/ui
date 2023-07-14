@@ -1,5 +1,4 @@
 import { useTheme } from '@mui/material';
-import { DetailsStats } from 'api/stats';
 import { defaultOutlineColor } from 'context/Theme';
 import { eachHourOfInterval, subHours } from 'date-fns';
 import { EChartsOption } from 'echarts';
@@ -18,13 +17,14 @@ import prettyBytes from 'pretty-bytes';
 import { useEffect, useMemo, useState } from 'react';
 import { FormatDateOptions, useIntl } from 'react-intl';
 import readable from 'readable-numbers';
+import { CatalogStats_Details } from 'types';
 import { DataByHourRange } from '../types';
 import useLegendConfig from '../useLegendConfig';
 import useTooltipConfig from '../useTooltipConfig';
 
 interface Props {
     range: DataByHourRange;
-    stats: DetailsStats[] | undefined;
+    stats: CatalogStats_Details[] | undefined;
     createdAt?: string;
 }
 

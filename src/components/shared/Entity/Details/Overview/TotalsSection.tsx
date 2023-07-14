@@ -1,5 +1,5 @@
 import { CircularProgress } from '@mui/material';
-import { DetailsStats, getStatsForDetails } from 'api/stats';
+import { getStatsForDetails } from 'api/stats';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import KeyValueList from 'components/shared/KeyValueList';
 import { useEntityType } from 'context/EntityContext';
@@ -8,6 +8,7 @@ import prettyBytes from 'pretty-bytes';
 import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import readable from 'readable-numbers';
+import { CatalogStats_Details } from 'types';
 
 interface Props {
     entityName: string;
@@ -20,7 +21,7 @@ function TotalsSection({ entityName }: Props) {
     const intl = useIntl();
     const entityType = useEntityType();
 
-    const { data, isValidating } = useSelectNew<DetailsStats>(
+    const { data, isValidating } = useSelectNew<CatalogStats_Details>(
         getStatsForDetails(entityName, entityType, 'monthly', {
             months: 1,
         }),
