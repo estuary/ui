@@ -72,7 +72,6 @@ const CAPTURE_QUERY = `
     bytes_by:bytes_written_by_me
 `;
 
-// Need to get collections working with to and from
 const COLLECTION_QUERY = `
     ${BASE_QUERY},
     bytes_by:bytes_written_by_me,
