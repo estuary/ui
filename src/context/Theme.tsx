@@ -417,6 +417,11 @@ export const disabledButtonText = {
     dark: 'rgba(255, 255, 255, 0.3)',
 };
 
+// TODO (echarts) need to make a color service or something to
+//  generate a proper ECharts theme. These two colors are taken
+//  from ECharts default colors they apply in order
+export const eChartsColors = ['#5470C6', '#91CC75'];
+
 const themeSettings = createTheme({
     breakpoints: {
         values: {

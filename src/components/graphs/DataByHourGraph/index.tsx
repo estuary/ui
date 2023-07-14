@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material';
-import { defaultOutlineColor } from 'context/Theme';
+import { defaultOutlineColor, eChartsColors } from 'context/Theme';
 import { eachHourOfInterval, subHours } from 'date-fns';
 import { EChartsOption } from 'echarts';
 import { BarChart } from 'echarts/charts';
@@ -28,7 +28,6 @@ interface Props {
     createdAt?: string;
 }
 
-const colors = ['#5470C6', '#91CC75'];
 const formatTimeSettings: FormatDateOptions = {
     hour: '2-digit',
     minute: '2-digit',
@@ -163,7 +162,9 @@ function DataByHourGraph({ range, stats = [] }: Props) {
                     type: 'value',
                     position: 'left',
                     axisLabel: {
-                        color: colors[0],
+                        color: eChartsColors[0],
+                        fontSize: 14,
+                        fontWeight: 'bold',
                         formatter: (value: any) => {
                             return defaultDataFormat(value);
                         },
@@ -181,7 +182,9 @@ function DataByHourGraph({ range, stats = [] }: Props) {
                     position: 'right',
                     type: 'value',
                     axisLabel: {
-                        color: colors[1],
+                        color: eChartsColors[1],
+                        fontSize: 14,
+                        fontWeight: 'bold',
                         formatter: (value: any) => {
                             return readable(value, 1, true);
                         },
