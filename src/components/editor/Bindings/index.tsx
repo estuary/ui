@@ -1,8 +1,5 @@
 import { Typography, useTheme } from '@mui/material';
-import {
-    BindingsEditorConfigSkeleton,
-    BindingsSelectorSkeleton,
-} from 'components/collection/CollectionSkeletons';
+import { BindingsEditorConfigSkeleton } from 'components/collection/CollectionSkeletons';
 import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
@@ -172,8 +169,6 @@ function BindingsMultiEditor({
                     <BindingSelector
                         itemType={itemType}
                         shortenName={entityType === 'capture'}
-                        loading={fetchingSpecs}
-                        skeleton={<BindingsSelectorSkeleton />}
                         readOnly={readOnly}
                         RediscoverButton={RediscoverButton}
                     />
