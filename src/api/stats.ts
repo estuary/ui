@@ -92,9 +92,11 @@ const MATERIALIZATION_QUERY = `
     bytes_by:bytes_read_by_me
 `;
 
+type AllowedDates = Date | string | number;
+
 // This will format the date so that it just gets the month, day, year
 //  We do not need the full minute/hour/offset because the backend is not saving those
-export const formatToGMT = (date: any, includeHour?: boolean) =>
+export const formatToGMT = (date: AllowedDates, includeHour?: boolean) =>
     formatInTimeZone(
         date,
         'GMT',
@@ -164,7 +166,7 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
     return queryBuilder.then(handleSuccess<CatalogStats[]>, handleFailure);
 };
 
-const getStatsForBilling = (tenants: string[], startDate: any) => {
+const getStatsForBilling = (tenants: string[], startDate: AllowedDates) => {
     const subjectRoleFilters = tenants
         .map((tenant) => `catalog_name.ilike.${tenant}%`)
         .join(',');
