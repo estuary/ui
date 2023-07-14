@@ -32,6 +32,7 @@ import {
     SeriesConfig,
 } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
+import { getTooltipItem, getTooltipTitle } from './tooltips';
 import useLegendConfig from './useLegendConfig';
 import useTooltipConfig from './useTooltipConfig';
 
@@ -179,14 +180,13 @@ function DataByTaskGraph() {
                                 true
                             );
 
+                            const tooltipItem = getTooltipItem(
+                                config.marker,
+                                dataVolume
+                            );
+
                             if (content) {
-                                content = `${content}
-                                            <div class="tooltipItem">
-                                                <div>
-                                                    ${config.marker}
-                                                    <span>${dataVolume}</span>
-                                                </div>
-                                            </div>`;
+                                content = `${content}${tooltipItem}`;
                             } else {
                                 const tooltipTitle =
                                     dataByTaskGraphDetails
@@ -200,13 +200,9 @@ function DataByTaskGraph() {
                                             date.includes(config.name)
                                         ) ?? config.name;
 
-                                content = `<div class="tooltipTitle">${tooltipTitle}</div>
-                                            <div class="tooltipItem">
-                                                <div>
-                                                    ${config.marker}
-                                                    <span>${dataVolume}</span>
-                                                </div>
-                                            </div>`;
+                                content = `${getTooltipTitle(
+                                    tooltipTitle
+                                )}${tooltipItem}`;
                             }
                         });
 

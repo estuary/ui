@@ -6,6 +6,7 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+import { eChartsTooltipSX } from 'components/graphs/tooltips';
 import { defaultBoxShadow, semiTransparentBackground } from 'context/Theme';
 import { HelpCircle } from 'iconoir-react';
 import { ReactNode } from 'react';
@@ -26,6 +27,7 @@ function CardWrapper({ children, height, message, tooltipMessageId }: Props) {
     return (
         <Box
             sx={{
+                ...eChartsTooltipSX,
                 height,
                 p: 2,
                 background: semiTransparentBackground[theme.palette.mode],

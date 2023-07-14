@@ -9,7 +9,7 @@ import {
 } from 'stores/Billing/hooks';
 import { BaseComponentProps } from 'types';
 import { hasLength } from 'utils/misc-utils';
-import { tooltipSX } from '../tooltips';
+import { eChartsTooltipSX } from '../tooltips';
 
 function GraphStateWrapper({ children }: BaseComponentProps) {
     const billingStoreHydrated = useBilling_hydrated();
@@ -19,7 +19,7 @@ function GraphStateWrapper({ children }: BaseComponentProps) {
     if (billingStoreHydrated) {
         return hasLength(billingHistory) &&
             hasLength(dataByTaskGraphDetails) ? (
-            <Box sx={tooltipSX}>{children}</Box>
+            <Box sx={eChartsTooltipSX}>{children}</Box>
         ) : (
             <EmptyGraphState
                 message={

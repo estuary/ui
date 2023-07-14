@@ -4,21 +4,26 @@ const VALUE_CLASS = 'tooltipDataValue';
 const ITEM_CLASS = 'tooltipItem';
 const TITLE_CLASS = 'tooltipTitle';
 
-const getTooltipItem = (marker: any, label: any, value: any) => {
-    return `<dl class="${ITEM_CLASS}">
-                <dt>
+const getTooltipItem = (marker: string, label: string, value?: string) => {
+    console.log('getTooltipItem', {
+        marker,
+        label,
+        value,
+    });
+    return `<div class="${ITEM_CLASS}">
+                <div>
                     ${marker}
                     <span>${label}</span>
-                </dt>
-                <dd class="${VALUE_CLASS}">${value}</dd>
-            </dl>`;
+                </div>
+                ${value ? `<span class="${VALUE_CLASS}">${value}</span>` : ``}
+            </div>`;
 };
 
 const getTooltipTitle = (title: any) => {
     return `<div class="${TITLE_CLASS}">${title}</div>`;
 };
 
-const tooltipSX: SxProps<Theme> = {
+const eChartsTooltipSX: SxProps<Theme> = {
     [`& .${TITLE_CLASS}`]: {
         marginBottom: '0.5rem',
     },
@@ -35,4 +40,4 @@ const tooltipSX: SxProps<Theme> = {
     },
 };
 
-export { getTooltipItem, getTooltipTitle, tooltipSX };
+export { getTooltipItem, getTooltipTitle, eChartsTooltipSX };

@@ -28,6 +28,7 @@ import {
     SeriesNames,
     stripTimeFromDate,
 } from 'utils/billing-utils';
+import { getTooltipItem, getTooltipTitle } from './tooltips';
 import useTooltipConfig from './useTooltipConfig';
 
 const stackId = 'Task Count';
@@ -157,15 +158,14 @@ function DataByMonthGraph() {
                                     ? `${taskCount} Task`
                                     : `${taskCount} Tasks`;
 
+                            const tooltipItem = getTooltipItem(
+                                config.marker,
+                                config.seriesName,
+                                formattedValue
+                            );
+
                             if (content) {
-                                content = `${content}
-                                            <div class="tooltipItem">
-                                                <div>
-                                                    ${config.marker}
-                                                    <span>${config.seriesName}</span>
-                                                </div>
-                                                <span class="tooltipDataValue">${formattedValue}</span>
-                                            </div>`;
+                                content = `${content}${tooltipItem}`;
                             } else {
                                 const tooltipTitle =
                                     billingHistory
@@ -185,14 +185,9 @@ function DataByMonthGraph() {
                                             date.includes(config.axisValueLabel)
                                         ) ?? config.axisValueLabel;
 
-                                content = `<div class="tooltipTitle">${tooltipTitle}</div>
-                                            <div class="tooltipItem">
-                                                <div>
-                                                    ${config.marker}
-                                                    <span>${config.seriesName}</span>
-                                                </div>
-                                                <span class="tooltipDataValue">${formattedValue}</span>
-                                            </div>`;
+                                content = `${getTooltipTitle(
+                                    tooltipTitle
+                                )}${tooltipItem}`;
                             }
                         });
 
