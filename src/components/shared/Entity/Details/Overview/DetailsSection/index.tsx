@@ -125,7 +125,6 @@ function DetailsSection({ latestLiveSpec }: Props) {
 
     return (
         <CardWrapper
-            height={undefined}
             message={<FormattedMessage id="detailsPanel.details.title" />}
         >
             {!hasLength(data) ? (

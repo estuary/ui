@@ -69,7 +69,6 @@ function TotalsSection({ entityName }: Props) {
 
     return (
         <CardWrapper
-            height={undefined}
             message={<FormattedMessage id="detailsPanel.totals.title" />}
         >
             {!displayData ? (

@@ -107,7 +107,6 @@ export function TaskEndpoints({ taskName }: Props) {
 
     return endpoints.length > 0 ? (
         <CardWrapper
-            height={undefined}
             message={<FormattedMessage id="taskEndpoint.list.title" />}
         >
             <Box

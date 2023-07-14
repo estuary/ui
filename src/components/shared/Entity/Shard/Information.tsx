@@ -87,7 +87,6 @@ function ShardInformation({ entityType }: Props) {
 
     return (
         <CardWrapper
-            height={undefined}
             message={
                 <Stack direction="row" spacing={1}>
                     <FormattedMessage id="detailsPanel.shardDetails.title" />

@@ -48,7 +48,6 @@ export function DataPreview({ collectionName }: Props) {
 
     return (
         <CardWrapper
-            height={undefined}
             message={
                 <Stack
                     direction="row"

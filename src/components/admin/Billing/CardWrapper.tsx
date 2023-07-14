@@ -15,7 +15,7 @@ import { BaseComponentProps } from 'types';
 interface Props extends BaseComponentProps {
     message?: string | ReactNode;
     tooltipMessageId?: string;
-    height: string | number | undefined;
+    height?: string | number;
 }
 
 function CardWrapper({ children, height, message, tooltipMessageId }: Props) {

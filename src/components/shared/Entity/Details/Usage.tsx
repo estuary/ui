@@ -23,7 +23,6 @@ function Usage({ catalogName }: Props) {
 
     return (
         <CardWrapper
-            height={undefined}
             message={<HourlyRangeFilter range={range} setRange={setRange} />}
         >
             {isValidating && !stats ? (
