@@ -38,11 +38,6 @@ function Spec() {
         };
     }, [currentCatalog, entityType, populateInferSchemaResponse, resetState]);
 
-    console.log(
-        'inferSchemaResponseDoneProcessing',
-        inferSchemaResponseDoneProcessing
-    );
-
     const docsLink = useMemo(() => {
         switch (entityType) {
             case 'capture':

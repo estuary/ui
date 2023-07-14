@@ -1,7 +1,7 @@
 import { CircularProgress } from '@mui/material';
 import { getStatsForDetails } from 'api/stats';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
-import KeyValueList from 'components/shared/KeyValueList';
+import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
 import { useEntityType } from 'context/EntityContext';
 import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import prettyBytes from 'pretty-bytes';
@@ -30,7 +30,7 @@ function TotalsSection({ entityName }: Props) {
         }
     );
 
-    const displayData = useMemo(() => {
+    const displayData = useMemo<KeyValue[] | null>(() => {
         if (!isValidating && data?.data[0]) {
             const scope = data.data[0];
 
