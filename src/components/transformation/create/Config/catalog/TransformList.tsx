@@ -16,7 +16,7 @@ import CatalogList, {
 import UpdateDraftButton from 'components/transformation/create/Config/UpdateDraftButton';
 import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
-import useLiveSpecs from 'hooks/useLiveSpecs';
+import { useLiveSpecs } from 'hooks/useLiveSpecs';
 import { useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSet } from 'react-use';

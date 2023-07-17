@@ -1,5 +1,5 @@
 import { TableCell } from '@mui/material';
-import DateFilter from 'components/tables/Filters/Date';
+import DateFilter from 'components/filters/Date';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useZustandStore } from 'context/Zustand/provider';
 import { SelectTableStoreNames } from 'stores/names';

@@ -31,6 +31,9 @@ interface Props {
     disableLogs?: boolean; // TODO (detail logs) We'll start using this again when we have better logs
 }
 
+// TODO (details) This is no longer used and needs removed soon. We now have
+//  a dedicated details page. Leaving for right now in case we need the reference
+//  to fix an issue or compare solutions. July, 2023
 function DetailsPanel({
     detailsExpanded,
     lastPubId,

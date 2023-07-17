@@ -2,14 +2,14 @@ import { Divider, Grid, Typography } from '@mui/material';
 import { BillingRecord, getBillingHistory } from 'api/billing';
 import { authenticatedRoutes } from 'app/routes';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
-import DataByMonthGraph from 'components/admin/Billing/graphs/DataByMonthGraph';
-import DataByTaskGraph from 'components/admin/Billing/graphs/DataByTaskGraph';
-import GraphStateWrapper from 'components/admin/Billing/graphs/states/Wrapper';
-import TasksByMonth from 'components/admin/Billing/graphs/TasksByMonthGraph';
 import PaymentMethods from 'components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'components/admin/Billing/PricingTierDetails';
 import TenantOptions from 'components/admin/Billing/TenantOptions';
 import AdminTabs from 'components/admin/Tabs';
+import DataByMonthGraph from 'components/graphs/DataByMonthGraph';
+import DataByTaskGraph from 'components/graphs/DataByTaskGraph';
+import GraphStateWrapper from 'components/graphs/states/Wrapper';
+import TasksByMonth from 'components/graphs/TasksByMonthGraph';
 import AlertBox from 'components/shared/AlertBox';
 import BillingHistoryTable from 'components/tables/Billing';
 import { eachMonthOfInterval, format, startOfMonth, subMonths } from 'date-fns';
@@ -35,6 +35,7 @@ import {
     useBilling_updateBillingHistory,
 } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
+import { TOTAL_CARD_HEIGHT } from 'utils/billing-utils';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
@@ -192,13 +193,23 @@ function AdminBilling() {
 
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
                 <Grid item xs={12} md={6}>
-                    <CardWrapper messageId="admin.billing.table.history.header">
+                    <CardWrapper
+                        height={TOTAL_CARD_HEIGHT}
+                        message={
+                            <FormattedMessage id="admin.billing.table.history.header" />
+                        }
+                    >
                         <BillingHistoryTable />
                     </CardWrapper>
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                    <CardWrapper messageId="admin.billing.graph.dataByMonth.header">
+                    <CardWrapper
+                        height={TOTAL_CARD_HEIGHT}
+                        message={
+                            <FormattedMessage id="admin.billing.graph.dataByMonth.header" />
+                        }
+                    >
                         <GraphStateWrapper>
                             <DataByMonthGraph />
                         </GraphStateWrapper>
@@ -206,7 +217,12 @@ function AdminBilling() {
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                    <CardWrapper messageId="admin.billing.graph.tasksByMonth.header">
+                    <CardWrapper
+                        height={TOTAL_CARD_HEIGHT}
+                        message={
+                            <FormattedMessage id="admin.billing.graph.tasksByMonth.header" />
+                        }
+                    >
                         <GraphStateWrapper>
                             <TasksByMonth />
                         </GraphStateWrapper>
@@ -215,7 +231,10 @@ function AdminBilling() {
 
                 <Grid item xs={12} md={6}>
                     <CardWrapper
-                        messageId="admin.billing.graph.dataByTask.header"
+                        height={TOTAL_CARD_HEIGHT}
+                        message={
+                            <FormattedMessage id="admin.billing.graph.dataByTask.header" />
+                        }
                         tooltipMessageId="admin.billing.graph.dataByTask.tooltip"
                     >
                         <GraphStateWrapper>

@@ -28,6 +28,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.noData': `No data to display`,
     'common.loggedOut': `You have been logged out. Please log back in.`,
     'common.missing': `N/A`,
+    'common.none': `none`,
     'common.noUnDo': `This action cannot be undone.`,
     'common.version': `version`,
     'common.tenant': `Prefix`,
@@ -145,12 +146,18 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.type': `Type`,
     'data.maintainer': `Maintainer`,
     'data.updated_at': `Updated`,
+    'data.created_at': `Created`,
     'data.email': `Email`,
     'data.display_name': `Username`,
     'data.published_at': `Published At`,
     'data.pointer': `Pointer`,
     'data.exists': `Exists`,
     'data.field': `Field`,
+    'data.writes_to': `Writes To`,
+    'data.reads_from': `Reads From`,
+    'data.data': `Data`,
+    'data.docs': `Docs`,
+    'data.connectorImage': `Connector Image`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
@@ -358,8 +365,8 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.specTypeWithColon': `Type:`,
     'entityTable.data.lastPublished': `Published`,
     'entityTable.data.actions': `Actions`,
-    'entityTable.data.writesTo': `Writes To`,
-    'entityTable.data.readsFrom': `Reads From`,
+    'entityTable.data.writesTo': Data['data.writes_to'],
+    'entityTable.data.readsFrom': Data['data.reads_from'],
     'entityTable.data.status': `Status`,
     'entityTable.data.userFullName': `Name`,
     'entityTable.data.capability': `Capability`,
@@ -442,7 +449,6 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.table.history.label.totalCost': `Total Cost`,
     'admin.billing.table.history.tooltip.month': `This billing period began on {timestamp}`,
     'admin.billing.table.history.tooltip.dataVolume': `GB of data processed by tasks`,
-    'admin.billing.table.history.emptyTableDefault.header': `No information found.`,
     'admin.billing.table.history.emptyTableDefault.message': `We couldn't find any billing information on file. Only administrators of a tenant are able to review billing information.`,
 
     'admin.billing.paymentMethods.header': `Payment Information`,
@@ -737,6 +743,13 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
     'detailsPanel.specification.header': `Specification`,
     'detailsPanel.status.header': `Status`,
+    'detailsPanel.details.title': `Details`,
+    'detailsPanel.totals.title': `Usage this month`,
+    'detailsPanel.recentUsage.title.prefix': `Usage over the past`,
+    'detailsPanel.recentUsage.range.label': `Timeframe`,
+    'detailsPanel.recentUsage.filter.label': `{range} hours`,
+    'detailsPanel.recentUsage.createdAt.label': `Creation hour`,
+    'detailsPanel.details.linkToCollection': `View details for {catalogName}`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
@@ -1054,7 +1067,7 @@ const CustomRenderers: ResolvedIntlConfig['messages'] = {
 };
 
 const TaskEndpoints: ResolvedIntlConfig['messages'] = {
-    'taskEndpoint.list.title': `Endpoints:`,
+    'taskEndpoint.list.title': `Endpoints`,
     'taskEndpoint.otherProtocol.message': `{protocol} hostname: {hostname}`,
     'taskEndpoint.multipleEndpoints.message': `mutliple endpoints exposed, see task details for their addresses.`,
 
@@ -1147,6 +1160,11 @@ const CustomErrors: ResolvedIntlConfig['messages'] = {
     'custom.catalogName.pattern': `must match pattern "organization/name"\nwhich may include ${CommonMessages['catalogName.limitations']}`,
 };
 
+const Graphs: ResolvedIntlConfig['messages'] = {
+    'graphs.empty.header': `No information found.`,
+    'graphs.entityDetails.empty.message': `Unable to fetch details for data usage graph.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1203,6 +1221,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...DraftErrors,
     ...UpdateEntity,
     ...PrefixedName,
+    ...Graphs,
 };
 
 export default enUSMessages;

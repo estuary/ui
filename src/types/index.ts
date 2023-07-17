@@ -169,13 +169,23 @@ export interface CatalogStats {
     flow_document: any;
 }
 
-export interface CatalogStats_Billing {
+interface BaseCatalogStats {
     catalog_name: string;
     grain: string;
     ts: string;
+}
+
+export interface CatalogStats_Billing extends BaseCatalogStats {
     bytes_written_by_me: number;
     bytes_read_by_me: number;
     flow_document: any;
+}
+
+export interface CatalogStats_Details extends BaseCatalogStats {
+    docs_by: number;
+    bytes_by: number;
+    docs_to?: number;
+    bytes_to?: number;
 }
 
 export interface Directive {

@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material';
-import { defaultOutlineColor, paperBackground } from 'context/Theme';
+import { defaultOutlineColor } from 'context/Theme';
 import {
     eachMonthOfInterval,
     isWithinInterval,
@@ -16,10 +16,6 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import navArrowLeftDark from 'images/graph-icons/nav-arrow-left__dark.svg';
-import navArrowLeftLight from 'images/graph-icons/nav-arrow-left__light.svg';
-import navArrowRightDark from 'images/graph-icons/nav-arrow-right__dark.svg';
-import navArrowRightLight from 'images/graph-icons/nav-arrow-right__light.svg';
 import { sortBy, sum, uniq } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -36,16 +32,9 @@ import {
     SeriesConfig,
 } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
-
-const navArrowsLight = [
-    `image://${navArrowLeftLight}`,
-    `image://${navArrowRightLight}`,
-];
-
-const navArrowsDark = [
-    `image://${navArrowLeftDark}`,
-    `image://${navArrowRightDark}`,
-];
+import { getTooltipItem, getTooltipTitle } from './tooltips';
+import useLegendConfig from './useLegendConfig';
+import useTooltipConfig from './useTooltipConfig';
 
 const evaluateLargestDataProcessingTasks = (
     dataVolumeByTask: DataVolumeByTask[]
@@ -77,6 +66,7 @@ const evaluateLargestDataProcessingTasks = (
 function DataByTaskGraph() {
     const theme = useTheme();
     const intl = useIntl();
+    const tooltipConfig = useTooltipConfig();
 
     const billingStoreHydrated = useBilling_hydrated();
     const dataByTaskGraphDetails = useBilling_dataByTaskGraphDetails();
@@ -120,6 +110,8 @@ function DataByTaskGraph() {
             };
         });
     }, [dataByTaskGraphDetails, intl, today]);
+
+    const legendConfig = useLegendConfig(seriesConfig);
 
     useEffect(() => {
         if (billingStoreHydrated && hasLength(seriesConfig)) {
@@ -172,40 +164,12 @@ function DataByTaskGraph() {
                         (dataVolume / BYTES_PER_GB).toFixed(3),
                     ]),
                 })),
-                legend: {
-                    type: 'scroll',
-                    data: seriesConfig.map((config) => config.seriesName),
-                    textStyle: {
-                        color: theme.palette.text.primary,
-                        fontWeight: 'normal',
-                    },
-                    icon: 'circle',
-                    itemWidth: 10,
-                    itemHeight: 10,
-                    pageTextStyle: {
-                        color: theme.palette.text.primary,
-                    },
-                    pageIcons: {
-                        horizontal:
-                            theme.palette.mode === 'light'
-                                ? navArrowsLight
-                                : navArrowsDark,
-                    },
-                },
+                legend: legendConfig,
                 textStyle: {
                     color: theme.palette.text.primary,
                 },
                 tooltip: {
-                    backgroundColor: paperBackground[theme.palette.mode],
-                    borderColor: defaultOutlineColor[theme.palette.mode],
-                    trigger: 'axis',
-                    textStyle: {
-                        color: theme.palette.text.primary,
-                        fontWeight: 'normal',
-                    },
-                    axisPointer: {
-                        type: 'shadow',
-                    },
+                    ...tooltipConfig,
                     formatter: (tooltipConfigs: any[]) => {
                         let content: string | undefined;
 
@@ -216,14 +180,13 @@ function DataByTaskGraph() {
                                 true
                             );
 
+                            const tooltipItem = getTooltipItem(
+                                config.marker,
+                                dataVolume
+                            );
+
                             if (content) {
-                                content = `${content}
-                                            <div class="tooltipItem">
-                                                <div>
-                                                    ${config.marker}
-                                                    <span>${dataVolume}</span>
-                                                </div>
-                                            </div>`;
+                                content = `${content}${tooltipItem}`;
                             } else {
                                 const tooltipTitle =
                                     dataByTaskGraphDetails
@@ -237,13 +200,9 @@ function DataByTaskGraph() {
                                             date.includes(config.name)
                                         ) ?? config.name;
 
-                                content = `<div class="tooltipTitle">${tooltipTitle}</div>
-                                            <div class="tooltipItem">
-                                                <div>
-                                                    ${config.marker}
-                                                    <span>${dataVolume}</span>
-                                                </div>
-                                            </div>`;
+                                content = `${getTooltipTitle(
+                                    tooltipTitle
+                                )}${tooltipItem}`;
                             }
                         });
 
@@ -262,14 +221,16 @@ function DataByTaskGraph() {
             myChart?.setOption(option);
         }
     }, [
-        setMyChart,
-        dataByTaskGraphDetails,
         billingStoreHydrated,
+        dataByTaskGraphDetails,
         intl,
+        legendConfig,
         months,
         myChart,
         seriesConfig,
-        theme,
+        theme.palette.mode,
+        theme.palette.text.primary,
+        tooltipConfig,
     ]);
 
     return <div id="data-by-task" style={{ height: CARD_AREA_HEIGHT }} />;

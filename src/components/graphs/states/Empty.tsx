@@ -1,8 +1,13 @@
 import { Stack, Typography } from '@mui/material';
+import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { CARD_AREA_HEIGHT } from 'utils/billing-utils';
 
-function EmptyGraphState() {
+interface Props {
+    message: string | ReactNode;
+}
+
+function EmptyGraphState({ message }: Props) {
     return (
         <Stack
             spacing={1}
@@ -16,12 +21,10 @@ function EmptyGraphState() {
             }}
         >
             <Typography variant="subtitle2" align="center">
-                <FormattedMessage id="admin.billing.table.history.emptyTableDefault.header" />
+                <FormattedMessage id="graphs.empty.header" />
             </Typography>
 
-            <Typography component="div">
-                <FormattedMessage id="admin.billing.table.history.emptyTableDefault.message" />
-            </Typography>
+            <Typography component="div">{message}</Typography>
         </Stack>
     );
 }

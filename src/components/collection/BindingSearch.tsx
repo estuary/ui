@@ -3,7 +3,7 @@ import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import useDraftSpecs from 'hooks/useDraftSpecs';
-import useLiveSpecs from 'hooks/useLiveSpecs';
+import { useLiveSpecs } from 'hooks/useLiveSpecs';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';

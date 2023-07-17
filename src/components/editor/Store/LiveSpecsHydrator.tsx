@@ -14,7 +14,7 @@ interface Props extends BaseComponentProps {
     collectionNames?: string[];
 }
 
-function Hydrator({
+function LiveSpecsHydrator({
     lastPubId,
     localZustandScope,
     collectionNames,
@@ -50,4 +50,4 @@ function Hydrator({
     return <>{children}</>;
 }
 
-export default Hydrator;
+export default LiveSpecsHydrator;

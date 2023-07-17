@@ -6,14 +6,18 @@ import MonacoEditor, {
 
 export interface Props extends MonacoEditorProps {
     height?: number;
+    disableList?: boolean;
 }
 
 function EditorWithFileSelector(props: Props) {
-    const { localZustandScope } = props;
+    const { localZustandScope, disableList } = props;
+
+    if (disableList) {
+        return <MonacoEditor {...props} />;
+    }
 
     return (
         <ListAndDetails
-            codeEditorDetails
             list={<EditorFileSelector localZustandScope={localZustandScope} />}
             details={<MonacoEditor {...props} />}
         />

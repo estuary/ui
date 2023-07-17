@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import useLiveSpecs from 'hooks/useLiveSpecs';
+import { useLiveSpecs } from 'hooks/useLiveSpecs';
 import { difference } from 'lodash';
 import { ReactNode } from 'react';
 import CollectionSelectorActions from './Actions';
