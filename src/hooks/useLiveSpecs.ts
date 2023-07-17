@@ -1,10 +1,9 @@
-import { useDebugValue } from 'react';
 import { TABLES } from 'services/supabase';
-import { Entity } from 'types';
+import { Entity, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { useQuery, useSelect } from './supabase-swr/';
 
-export interface LiveSpecsQuery {
+export interface LiveSpecsQuery extends Schema {
     catalog_name: string;
     spec_type: string;
     // Filtering only
@@ -12,8 +11,15 @@ export interface LiveSpecsQuery {
 }
 
 const queryColumns = ['catalog_name', 'spec_type'];
-
 const defaultResponse: LiveSpecsQuery[] = [];
+
+const withKey =
+    (key: string) =>
+    (useSWRNext: any) =>
+    (params: any, fetcher: any, config: any) => {
+        // Pass the serialized key, and unserialize it in fetcher.
+        return useSWRNext(key, () => fetcher(...params), config);
+    };
 
 function useLiveSpecs(specType?: Entity, matchName?: string) {
     const draftSpecQuery = useQuery<LiveSpecsQuery>(
@@ -51,6 +57,40 @@ function useLiveSpecs(specType?: Entity, matchName?: string) {
     };
 }
 
+function useLiveSpecs_details(specType: Entity, catalogName: string) {
+    const draftSpecQuery = useQuery<LiveSpecsQuery>(
+        TABLES.LIVE_SPECS_EXT,
+        {
+            columns: `
+                updated_at,
+                created_at,
+                connectorName:connector_title->>en-US::text,
+                connector_tag_documentation_url,
+                writes_to,
+                reads_from,
+                spec
+            `,
+            filter: (query) => {
+                return query
+                    .eq('catalog_name', catalogName)
+                    .eq('spec_type', specType)
+                    .order('updated_at', {
+                        ascending: false,
+                    });
+            },
+        },
+        [specType, catalogName]
+    );
+
+    const { data, error, isValidating } = useSelect(draftSpecQuery);
+
+    return {
+        liveSpecs: data ? data.data : defaultResponse,
+        error,
+        isValidating,
+    };
+}
+
 export interface LiveSpecsQuery_spec extends LiveSpecsQuery {
     id: string;
     spec: {
@@ -63,16 +103,7 @@ export interface LiveSpecsQuery_spec extends LiveSpecsQuery {
 }
 const specQuery = queryColumns.concat(['id', 'spec']);
 
-const withKey =
-    (key: string) =>
-    (useSWRNext: any) =>
-    (params: any, fetcher: any, config: any) => {
-        // Pass the serialized key, and unserialize it in fetcher.
-        return useSWRNext(key, () => fetcher(...params), config);
-    };
-
 export function useLiveSpecs_spec(id: string, collectionNames?: string[]) {
-    useDebugValue(`useLiveSpecs_spec ${collectionNames?.join(', ')}`);
     const liveSpecQuery = useQuery<LiveSpecsQuery_spec>(
         TABLES.LIVE_SPECS_EXT,
         {
@@ -96,4 +127,4 @@ export function useLiveSpecs_spec(id: string, collectionNames?: string[]) {
     };
 }
 
-export default useLiveSpecs;
+export { useLiveSpecs, useLiveSpecs_details };

@@ -1,8 +1,10 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import {
     endOfWeek,
+    startOfHour,
     startOfMonth,
     startOfWeek,
+    sub,
     subDays,
     subMonths,
     subWeeks,
@@ -16,7 +18,12 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { CatalogStats, CatalogStats_Billing } from 'types';
+import {
+    CatalogStats,
+    CatalogStats_Billing,
+    CatalogStats_Details,
+    Entity,
+} from 'types';
 
 export type StatsFilter =
     | 'today'
@@ -26,10 +33,69 @@ export type StatsFilter =
     | 'lastMonth'
     | 'thisMonth';
 
+export interface DefaultStats {
+    catalog_name: string;
+    grain: string;
+    ts: string;
+    bytes_written_by_me: number;
+    docs_written_by_me: number;
+    bytes_read_by_me: number;
+    docs_read_by_me: number;
+    bytes_written_to_me: number;
+    docs_written_to_me: number;
+    bytes_read_from_me: number;
+    docs_read_from_me: number;
+}
+
+const BASE_QUERY = `
+            catalog_name,
+            grain,
+            ts
+`;
+
+const DEFAULT_QUERY = `    
+            ${BASE_QUERY},
+            bytes_written_by_me,
+            docs_written_by_me,
+            bytes_read_by_me,
+            docs_read_by_me,
+            bytes_written_to_me,
+            docs_written_to_me,
+            bytes_read_from_me,
+            docs_read_from_me
+        `;
+
+// Queries just for details panel
+const CAPTURE_QUERY = `
+    ${BASE_QUERY},
+    docs_by:docs_written_by_me,
+    bytes_by:bytes_written_by_me
+`;
+
+const COLLECTION_QUERY = `
+    ${BASE_QUERY},
+    bytes_by:bytes_written_by_me,
+    docs_by:docs_written_by_me,
+    bytes_to:bytes_written_to_me,
+    docs_to:docs_written_to_me
+`;
+
+const MATERIALIZATION_QUERY = `
+    ${BASE_QUERY},
+    docs_by:docs_read_by_me,
+    bytes_by:bytes_read_by_me
+`;
+
+type AllowedDates = Date | string | number;
+
 // This will format the date so that it just gets the month, day, year
 //  We do not need the full minute/hour/offset because the backend is not saving those
-export const formatToGMT = (date: any) =>
-    formatInTimeZone(date, 'GMT', "yyyy-MM-dd' 00:00:00+00'");
+export const formatToGMT = (date: AllowedDates, includeHour?: boolean) =>
+    formatInTimeZone(
+        date,
+        'GMT',
+        `yyyy-MM-dd${includeHour ? ' HH:00:00' : "' 00:00:00+00'"}`
+    );
 
 // TODO (stats) add support for which stats columns each entity wants
 //  Right now all tables run the same query even though they only need
@@ -38,21 +104,7 @@ export const formatToGMT = (date: any) =>
 const getStatsByName = (names: string[], filter?: StatsFilter) => {
     let queryBuilder = supabaseClient
         .from<CatalogStats>(TABLES.CATALOG_STATS)
-        .select(
-            `    
-            catalog_name,
-            grain,
-            bytes_written_by_me,
-            docs_written_by_me,
-            bytes_read_by_me,
-            docs_read_by_me,
-            bytes_written_to_me,
-            docs_written_to_me,
-            bytes_read_from_me,
-            docs_read_from_me,
-            ts
-        `
-        )
+        .select(DEFAULT_QUERY)
         .in('catalog_name', names)
         .order('catalog_name');
 
@@ -108,7 +160,7 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
     return queryBuilder.then(handleSuccess<CatalogStats[]>, handleFailure);
 };
 
-const getStatsForBilling = (tenants: string[], startDate: string) => {
+const getStatsForBilling = (tenants: string[], startDate: AllowedDates) => {
     const subjectRoleFilters = tenants
         .map((tenant) => `catalog_name.ilike.${tenant}%`)
         .join(',');
@@ -131,6 +183,43 @@ const getStatsForBilling = (tenants: string[], startDate: string) => {
         .gte('ts', formatToGMT(startDate))
         .lte('ts', formatToGMT(today))
         .or(subjectRoleFilters)
+        .order('ts', { ascending: false });
+};
+
+const getStatsForDetails = (
+    catalogName: string,
+    entityType: Entity,
+    grain: string,
+    duration?: Duration
+) => {
+    const today = new Date();
+    const past = duration ? sub(today, duration) : today;
+
+    const gt = formatToGMT(startOfHour(past), true);
+    const lte = formatToGMT(startOfHour(today), true);
+
+    let query: string;
+    switch (entityType) {
+        case 'capture':
+            query = CAPTURE_QUERY;
+            break;
+        case 'materialization':
+            query = MATERIALIZATION_QUERY;
+            break;
+        case 'collection':
+            query = COLLECTION_QUERY;
+            break;
+        default:
+            query = DEFAULT_QUERY;
+    }
+
+    return supabaseClient
+        .from<CatalogStats_Details>(TABLES.CATALOG_STATS)
+        .select(query)
+        .eq('catalog_name', catalogName)
+        .eq('grain', grain)
+        .gt('ts', gt)
+        .lte('ts', lte)
         .order('ts', { ascending: false });
 };
 
@@ -180,4 +269,9 @@ const getStatsForBillingHistoryTable = (
     return queryBuilder;
 };
 
-export { getStatsByName, getStatsForBilling, getStatsForBillingHistoryTable };
+export {
+    getStatsByName,
+    getStatsForBilling,
+    getStatsForBillingHistoryTable,
+    getStatsForDetails,
+};

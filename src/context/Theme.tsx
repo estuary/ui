@@ -245,16 +245,9 @@ export const jsonFormsGroupHeaders = {
     dark: 'transparent',
 };
 
-export const getReflexSplitterBackground = (
-    theme: Theme,
-    codeEditorPresent: boolean
-) => {
-    if (theme.palette.mode === 'light') {
-        return 'white';
-    } else {
-        // RGB translation of #F7F9FC.
-        return codeEditorPresent ? '#0A0A0A' : 'rgba(247, 249, 252, 0.30)';
-    }
+export const reflexSplitterBackground = {
+    light: 'white',
+    dark: 'rgba(247, 249, 252, 0.30)',
 };
 
 // RGB translation of #F7F9FC.
@@ -337,16 +330,20 @@ export const jsonFormsPadding: SxProps<Theme> = {
     },
 };
 
-// Used to make buttons look like a normal(ish) link
-export const linkButtonSx: SxProps<Theme> = {
-    'px': 1,
-    'py': 0,
-    'fontWeight': 500,
-    'zIndex': headerLinkIndex,
+export const underlineTextSx: SxProps<Theme> = {
     'textDecoration': 'underline',
     '&:hover, &:focus': {
         textDecoration: 'underline',
     },
+};
+
+// Used to make buttons look like a normal(ish) link
+export const linkButtonSx: SxProps<Theme> = {
+    ...underlineTextSx,
+    px: 1,
+    py: 0,
+    fontWeight: 500,
+    zIndex: headerLinkIndex,
 };
 
 // Light is an RGB translation of #E1E9F4; Light is an RGB translation of #F7F9FC.
@@ -419,6 +416,11 @@ export const disabledButtonText = {
     light: 'rgba(0, 0, 0, 0.26)',
     dark: 'rgba(255, 255, 255, 0.3)',
 };
+
+// TODO (echarts) need to make a color service or something to
+//  generate a proper ECharts theme. These two colors are taken
+//  from ECharts default colors they apply in order
+export const eChartsColors = ['#5470C6', '#91CC75'];
 
 const themeSettings = createTheme({
     breakpoints: {

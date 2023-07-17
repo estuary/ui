@@ -1,6 +1,5 @@
 import { Auth } from '@supabase/ui';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
-import { ResponseError } from 'data-plane-gateway/types/util';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useMemo } from 'react';
 import { logRocketConsole } from 'services/logrocket';
@@ -69,37 +68,39 @@ const useShardsList = <T extends LiveSpecsExtBareMinimum>(specs: T[]) => {
         }
     };
 
-    return useSWR(
-        specs.length > 0
-            ? `shards-${
-                  gatewayConfig?.gateway_url ?? '__missing_gateway_url__'
-              }-${specs.map((spec) => spec.id).join('-')}`
-            : null,
-        fetcher,
-        {
-            errorRetryCount: 3,
-            errorRetryInterval: INTERVAL / 2,
-            refreshInterval: INTERVAL,
-            revalidateOnFocus: false, // We're already refreshing and these status do not change often
-            onError: async (error: string | ResponseError['body']) => {
-                logRocketConsole('useShardsList on error', { error });
-
-                // Try fetching the error message
-                const errorMessage =
-                    typeof error === 'object' ? error.message : error;
-
-                // Check if we need to refresh the access token before returning the error
-                if (
-                    errorMessage &&
-                    (errorMessage.includes(ErrorFlags.TOKEN_INVALID) ||
-                        errorMessage.includes(ErrorFlags.TOKEN_NOT_FOUND) ||
-                        errorMessage.includes(ErrorFlags.TOKEN_EXPIRED))
-                ) {
-                    await refreshAccess();
-                }
-            },
-        }
+    const swrKey = useMemo(
+        () =>
+            specs.length > 0
+                ? `shards-${
+                      gatewayConfig?.gateway_url ?? '__missing_gateway_url__'
+                  }-${specs.map((spec) => spec.id).join('-')}`
+                : null,
+        [gatewayConfig?.gateway_url, specs]
     );
+
+    return useSWR(swrKey, fetcher, {
+        errorRetryCount: 3,
+        errorRetryInterval: INTERVAL / 2,
+        refreshInterval: INTERVAL,
+        revalidateOnFocus: false, // We're already refreshing and these status do not change often
+        onError: async (error: string | Error) => {
+            logRocketConsole('useShardsList on error', { error });
+
+            // Try fetching the error message
+            const errorMessage =
+                typeof error === 'object' ? error.message : error;
+
+            // Check if we need to refresh the access token before returning the error
+            if (
+                errorMessage &&
+                (errorMessage.includes(ErrorFlags.TOKEN_INVALID) ||
+                    errorMessage.includes(ErrorFlags.TOKEN_NOT_FOUND) ||
+                    errorMessage.includes(ErrorFlags.TOKEN_EXPIRED))
+            ) {
+                await refreshAccess();
+            }
+        },
+    });
 };
 
 export default useShardsList;

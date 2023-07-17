@@ -1,16 +1,13 @@
-import { Box, Divider, IconButton, Stack, Typography } from '@mui/material';
+import { Box, Divider, Stack, Typography } from '@mui/material';
 import { createEditorStore } from 'components/editor/Store/create';
-import EditorHydrator from 'components/editor/Store/LiveSpecsHydrator';
+import LiveSpecsHydrator from 'components/editor/Store/LiveSpecsHydrator';
 import { LocalZustandProvider } from 'context/LocalZustand';
 import { truncateTextSx } from 'context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
-import { NavArrowLeft } from 'iconoir-react';
-import { useMemo, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
+import { useMemo } from 'react';
 import { EditorStoreNames } from 'stores/names';
 import ShardHydrator from '../Shard/Hydrator';
 import RenderTab from './RenderTab';
@@ -19,45 +16,19 @@ import DetailTabs from './Tabs';
 function EntityDetails() {
     useBrowserTitle('routeTitle.details');
 
+    // Generate the local store
     const localStore = useMemo(
         () => createEditorStore(EditorStoreNames.GENERAL),
         []
     );
 
+    // Fetch params from URL
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
 
-    const navigate = useNavigate();
-    const location = useLocation();
-    const backButtonUrlRef = useRef(location.state?.backButtonUrl ?? null);
-
-    // TODO (details) This always assumes the details is only 2 levels away from the parent
-    //  we should probably make this less brittle in the future
-    const returnTo = useMemo(() => {
-        if (backButtonUrlRef.current === null) {
-            return `../../`;
-        } else {
-            return `${backButtonUrlRef.current.pathname}${backButtonUrlRef.current.search}`;
-        }
-    }, []);
-
-    const goBack = () => {
-        navigate(returnTo);
-    };
-
-    useEffectOnce(() => {
-        window.history.replaceState(
-            {
-                ...location.state,
-                backButtonUrl: undefined,
-            },
-            document.title
-        );
-    });
-
     return (
         <LocalZustandProvider createStore={localStore}>
-            <EditorHydrator
+            <LiveSpecsHydrator
                 collectionNames={[catalogName]}
                 lastPubId={lastPubId}
                 localZustandScope={true}
@@ -66,9 +37,6 @@ function EntityDetails() {
                     <Box>
                         <Stack spacing={2} sx={{ m: 1 }}>
                             <Stack direction="row" spacing={1}>
-                                <IconButton onClick={goBack}>
-                                    <NavArrowLeft />
-                                </IconButton>
                                 <Typography
                                     component="span"
                                     variant="h6"
@@ -79,6 +47,8 @@ function EntityDetails() {
                                 >
                                     {catalogName}
                                 </Typography>
+                                {/*TODO (details) need to wire in edit button*/}
+                                {/*<EditButton />*/}
                             </Stack>
                             <Divider />
                             <DetailTabs />
@@ -89,7 +59,7 @@ function EntityDetails() {
                         </Box>
                     </Box>
                 </ShardHydrator>
-            </EditorHydrator>
+            </LiveSpecsHydrator>
         </LocalZustandProvider>
     );
 }

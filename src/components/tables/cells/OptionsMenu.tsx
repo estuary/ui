@@ -4,12 +4,10 @@ import { MoreVert } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {
-    detailsExpanded: boolean;
-    toggleDetailsPanel: () => void;
     editTask: () => void;
 }
 
-function OptionsMenu({ detailsExpanded, toggleDetailsPanel, editTask }: Props) {
+function OptionsMenu({ editTask }: Props) {
     const intl = useIntl();
 
     return (
@@ -32,18 +30,6 @@ function OptionsMenu({ detailsExpanded, toggleDetailsPanel, editTask }: Props) {
                     anchorOrigin: { horizontal: 'left', vertical: 'top' },
                 }}
             >
-                <MenuItem onClick={toggleDetailsPanel}>
-                    <Typography>
-                        <FormattedMessage
-                            id={
-                                detailsExpanded
-                                    ? 'optionMenu.option.detailsPanel.hide'
-                                    : 'optionMenu.option.detailsPanel.display'
-                            }
-                        />
-                    </Typography>
-                </MenuItem>
-
                 <MenuItem onClick={editTask}>
                     <Typography>
                         <FormattedMessage id="optionMenu.option.edit" />

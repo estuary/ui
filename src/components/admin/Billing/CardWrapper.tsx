@@ -6,27 +6,29 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+import { eChartsTooltipSX } from 'components/graphs/tooltips';
 import { defaultBoxShadow, semiTransparentBackground } from 'context/Theme';
 import { HelpCircle } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { ReactNode } from 'react';
+import { useIntl } from 'react-intl';
 import { BaseComponentProps } from 'types';
-import { TOTAL_CARD_HEIGHT } from 'utils/billing-utils';
 
 interface Props extends BaseComponentProps {
-    messageId: string;
+    message?: string | ReactNode;
     tooltipMessageId?: string;
+    height?: string | number;
 }
 
-function CardWrapper({ children, messageId, tooltipMessageId }: Props) {
+function CardWrapper({ children, height, message, tooltipMessageId }: Props) {
+    const intl = useIntl();
     const theme = useTheme();
     const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
-
-    const intl = useIntl();
 
     return (
         <Box
             sx={{
-                height: TOTAL_CARD_HEIGHT,
+                ...eChartsTooltipSX,
+                height,
                 p: 2,
                 background: semiTransparentBackground[theme.palette.mode],
                 boxShadow: defaultBoxShadow,
@@ -34,9 +36,14 @@ function CardWrapper({ children, messageId, tooltipMessageId }: Props) {
             }}
         >
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-                <Typography sx={{ mb: 2, fontSize: 16, fontWeight: 300 }}>
-                    <FormattedMessage id={messageId} />
-                </Typography>
+                {message ? (
+                    <Typography
+                        sx={{ mb: 2, fontSize: 16, fontWeight: 300 }}
+                        component="div"
+                    >
+                        {message}
+                    </Typography>
+                ) : null}
 
                 {tooltipMessageId ? (
                     <Tooltip

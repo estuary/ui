@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material';
-import { defaultOutlineColor, paperBackground } from 'context/Theme';
+import { defaultOutlineColor } from 'context/Theme';
 import {
     eachMonthOfInterval,
     isWithinInterval,
@@ -24,17 +24,19 @@ import {
 import useConstant from 'use-constant';
 import {
     CARD_AREA_HEIGHT,
-    formatDataVolumeForDisplay,
     SeriesConfig,
     SeriesNames,
     stripTimeFromDate,
 } from 'utils/billing-utils';
+import { getTooltipItem, getTooltipTitle } from './tooltips';
+import useTooltipConfig from './useTooltipConfig';
 
-const stackId = 'Data Volume';
+const stackId = 'Task Count';
 
 function DataByMonthGraph() {
     const theme = useTheme();
     const intl = useIntl();
+    const tooltipConfig = useTooltipConfig();
 
     const billingStoreHydrated = useBilling_hydrated();
     const billingHistory = useBilling_billingHistory();
@@ -57,8 +59,8 @@ function DataByMonthGraph() {
 
         const scopedDataSet: {
             month: string;
-            includedDataVolume: number;
-            surplusDataVolume: number;
+            includedTasks: number;
+            surplusTasks: number;
         }[] = billingHistory
             .filter(({ billed_month }) => {
                 const billedMonth = stripTimeFromDate(billed_month);
@@ -68,31 +70,32 @@ function DataByMonthGraph() {
                     end: today,
                 });
             })
-            .map(({ billed_month, line_items }) => {
+            .map(({ billed_month, line_items, max_concurrent_tasks }) => {
                 const billedMonth = stripTimeFromDate(billed_month);
 
                 return {
                     month: intl.formatDate(billedMonth, { month: 'short' }),
-                    includedDataVolume: line_items[2].count,
-                    surplusDataVolume: line_items[3].count,
+                    includedTasks:
+                        max_concurrent_tasks > 0 ? line_items[0].count : 0,
+                    surplusTasks: line_items[1].count,
                 };
             });
 
         return scopedDataSet.flatMap(
             ({
                 month,
-                includedDataVolume,
-                surplusDataVolume,
+                includedTasks,
+                surplusTasks,
             }): SeriesConfig | SeriesConfig[] => [
                 {
                     seriesName: SeriesNames.INCLUDED,
                     stack: stackId,
-                    data: [[month, includedDataVolume]],
+                    data: [[month, includedTasks]],
                 },
                 {
                     seriesName: SeriesNames.SURPLUS,
                     stack: stackId,
-                    data: [[month, surplusDataVolume]],
+                    data: [[month, surplusTasks]],
                 },
             ]
         );
@@ -110,7 +113,7 @@ function DataByMonthGraph() {
                     TooltipComponent,
                 ]);
 
-                const chartDom = document.getElementById('data-by-month');
+                const chartDom = document.getElementById('tasks-by-month');
 
                 setMyChart(chartDom && echarts.init(chartDom));
             }
@@ -126,58 +129,43 @@ function DataByMonthGraph() {
                 },
                 yAxis: {
                     type: 'value',
-                    axisLabel: {
-                        formatter: '{value} GB',
-                    },
                     splitLine: {
                         lineStyle: {
                             color: defaultOutlineColor[theme.palette.mode],
                         },
                     },
-                    minInterval: 0.001,
+                    minInterval: 1,
                 },
                 series: seriesConfig.map(({ seriesName, stack, data }) => ({
                     name: seriesName,
                     type: 'bar',
                     stack,
                     barMinHeight: seriesName === SeriesNames.INCLUDED ? 3 : 0,
-                    data: data.map(([month, dataVolume]) => [
-                        month,
-                        dataVolume.toFixed(3),
-                    ]),
+                    data,
                 })),
                 textStyle: {
                     color: theme.palette.text.primary,
                 },
                 tooltip: {
-                    backgroundColor: paperBackground[theme.palette.mode],
-                    borderColor: defaultOutlineColor[theme.palette.mode],
-                    trigger: 'axis',
-                    textStyle: {
-                        color: theme.palette.text.primary,
-                        fontWeight: 'normal',
-                    },
-                    axisPointer: {
-                        type: 'shadow',
-                    },
+                    ...tooltipConfig,
                     formatter: (tooltipConfigs: any[]) => {
                         let content: string | undefined;
 
                         tooltipConfigs.forEach((config) => {
-                            const dataVolume = formatDataVolumeForDisplay(
-                                seriesConfig,
-                                config
+                            const taskCount = config.value[1];
+                            const formattedValue =
+                                taskCount === 1
+                                    ? `${taskCount} Task`
+                                    : `${taskCount} Tasks`;
+
+                            const tooltipItem = getTooltipItem(
+                                config.marker,
+                                config.seriesName,
+                                formattedValue
                             );
 
                             if (content) {
-                                content = `${content}
-                                            <div class="tooltipItem">
-                                                <div>
-                                                    ${config.marker}
-                                                    <span>${config.seriesName}</span>
-                                                </div>
-                                                <span class="tooltipDataValue">${dataVolume}</span>
-                                            </div>`;
+                                content = `${content}${tooltipItem}`;
                             } else {
                                 const tooltipTitle =
                                     billingHistory
@@ -197,14 +185,9 @@ function DataByMonthGraph() {
                                             date.includes(config.axisValueLabel)
                                         ) ?? config.axisValueLabel;
 
-                                content = `<div class="tooltipTitle">${tooltipTitle}</div>
-                                            <div class="tooltipItem">
-                                                <div>
-                                                    ${config.marker}
-                                                    <span>${config.seriesName}</span>
-                                                </div>
-                                                <span class="tooltipDataValue">${dataVolume}</span>
-                                            </div>`;
+                                content = `${getTooltipTitle(
+                                    tooltipTitle
+                                )}${tooltipItem}`;
                             }
                         });
 
@@ -212,7 +195,7 @@ function DataByMonthGraph() {
                     },
                 },
                 grid: {
-                    left: 10,
+                    left: 30,
                     top: 15,
                     right: 50,
                     bottom: 0,
@@ -223,17 +206,18 @@ function DataByMonthGraph() {
             myChart?.setOption(option);
         }
     }, [
-        setMyChart,
         billingHistory,
         billingStoreHydrated,
         intl,
         months,
         myChart,
         seriesConfig,
-        theme,
+        theme.palette.mode,
+        theme.palette.text.primary,
+        tooltipConfig,
     ]);
 
-    return <div id="data-by-month" style={{ height: CARD_AREA_HEIGHT }} />;
+    return <div id="tasks-by-month" style={{ height: CARD_AREA_HEIGHT }} />;
 }
 
 export default DataByMonthGraph;
