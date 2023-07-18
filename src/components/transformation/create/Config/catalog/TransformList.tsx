@@ -9,6 +9,7 @@ import { useSet } from 'react-use';
 import { useTransformationCreate_transformConfigs } from 'stores/TransformationCreate/hooks';
 import { hasLength } from 'utils/misc-utils';
 import AddCollection from './AddCollection';
+import CollectionList from './CollectionList';
 
 function TransformList() {
     const collections = useLiveSpecs('collection');
@@ -49,8 +50,12 @@ function TransformList() {
     return (
         <>
             <CatalogList
-                fixedAttributeType="transform"
-                content={content}
+                content={
+                    <CollectionList
+                        content={content}
+                        fixedAttributeType="transform"
+                    />
+                }
                 addButtonClickHandler={handlers.toggleDialog}
                 height={532}
                 header={
