@@ -117,6 +117,9 @@ function MigrationList() {
                     fixedAttributeType="migration"
                     content={content}
                     addButtonClickHandler={handlers.insertBlankMigration}
+                    header={
+                        <FormattedMessage id="newTransform.config.migration.header" />
+                    }
                     height={200}
                     extendList={isEmpty(migrations)}
                 />

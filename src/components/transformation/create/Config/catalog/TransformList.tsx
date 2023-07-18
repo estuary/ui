@@ -53,6 +53,9 @@ function TransformList() {
                 content={content}
                 addButtonClickHandler={handlers.toggleDialog}
                 height={532}
+                header={
+                    <FormattedMessage id="newTransform.config.transform.header" />
+                }
             />
 
             <AddCollection

@@ -10,7 +10,7 @@ import {
 import CatalogListItem from 'components/transformation/create/Config/catalog/CatalogListItem';
 import { defaultOutline, disabledButtonText } from 'context/Theme';
 import { Plus } from 'iconoir-react';
-import { MouseEventHandler } from 'react';
+import { MouseEventHandler, ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { DerivationAttribute } from 'stores/TransformationCreate/types';
 import { hasLength } from 'utils/misc-utils';
@@ -23,9 +23,10 @@ export interface CatalogListContent {
 }
 
 interface Props {
-    fixedAttributeType: DerivationAttribute;
-    content: CatalogListContent[];
     addButtonClickHandler: MouseEventHandler<HTMLButtonElement>;
+    content: CatalogListContent[];
+    fixedAttributeType: DerivationAttribute;
+    header: ReactNode;
     extendList?: boolean;
     height?: number;
 }
@@ -34,6 +35,7 @@ function CatalogList({
     fixedAttributeType,
     content,
     addButtonClickHandler,
+    header,
     extendList = true,
     height,
 }: Props) {
@@ -58,9 +60,7 @@ function CatalogList({
                             textTransform: 'uppercase',
                         }}
                     >
-                        <FormattedMessage
-                            id={`newTransform.config.${fixedAttributeType}.header`}
-                        />
+                        {header}
                     </Typography>
 
                     <IconButton
