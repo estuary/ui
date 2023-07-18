@@ -866,6 +866,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.label.listHeader': `Collections`,
     'workflows.collectionSelector.tab.collectionSchema': `Collection`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
+    'workflows.collectionSelector.tab.fieldSelection': `Field Selection`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
@@ -1165,6 +1166,21 @@ const Graphs: ResolvedIntlConfig['messages'] = {
     'graphs.entityDetails.empty.message': `Unable to fetch details for data usage graph.`,
 };
 
+const FieldSelection: ResolvedIntlConfig['messages'] = {
+    'fieldSelection.table.cta.addProjection': `Add Projection`,
+    'fieldSelection.table.cta.renameField': `Rename`,
+    'fieldSelection.table.empty.header': `No information found`,
+    'fieldSelection.table.empty.message': `Click the test button above to validate your resource configuration and create a set of projections.`,
+    'fieldSelection.table.label.details': `Details`,
+    'fieldSelection.table.label.actions': `Actions`,
+    'fieldSelection.table.label.fieldRequired': `Field Required`,
+    'fieldSelection.table.label.locationRequired': `Location Required`,
+    'fieldSelection.table.label.locationRecommended': `Location Recommended`,
+    'fieldSelection.table.label.fieldOptional': `Field Optional`,
+    'fieldSelection.table.label.fieldForbidden': `Field Forbidden`,
+    'fieldSelection.table.label.unsatisfiable': `Unsatisfiable`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1222,6 +1238,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...UpdateEntity,
     ...PrefixedName,
     ...Graphs,
+    ...FieldSelection,
 };
 
 export default enUSMessages;

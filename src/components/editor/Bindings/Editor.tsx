@@ -4,6 +4,7 @@ import CollectionSchemaEditor from 'components/collection/schema/Editor';
 import CollectionSchemaEditorSkeleton from 'components/collection/schema/Editor/Skeleton';
 import MessageWithLink from 'components/content/MessageWithLink';
 import ControlledEditor from 'components/editor/Bindings/ControlledEditor';
+import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
 import SchemaInferenceButton from 'components/editor/Bindings/SchemaInference/Button';
 import {
     useBindingsEditorStore_collectionData,
@@ -89,6 +90,10 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                         <ResourceConfig
                             collectionName={currentCollection}
                             readOnly={readOnly}
+                        />
+                    ) : tabProps[activeTab].value === 'field_selection' ? (
+                        <FieldSelectionViewer
+                            collectionName={currentCollection}
                         />
                     ) : collectionData || collectionData === null ? (
                         <Stack spacing={2}>
