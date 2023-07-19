@@ -5,7 +5,7 @@ import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import Rows from 'components/tables/FieldSelection/Rows';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { TableColumns, TableState, TableStatuses } from 'types';
+import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
 
 interface Props {
     projections: CompositeProjection[] | null;
@@ -21,11 +21,11 @@ export const columns: TableColumns[] = [
         headerIntlKey: 'data.pointer',
     },
     {
-        field: 'inference',
+        field: null,
         headerIntlKey: 'data.type',
     },
     {
-        field: 'details',
+        field: 'constraint.type',
         headerIntlKey: 'fieldSelection.table.label.details',
     },
     {
@@ -41,20 +41,20 @@ function FieldSelectionTable({ projections }: Props) {
         status: TableStatuses.LOADING,
     });
 
-    // const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-    // const [columnToSort, setColumnToSort] = useState('field');
+    const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+    const [columnToSort, setColumnToSort] = useState('constraint.type');
 
-    // const handlers = {
-    //     sortRequest: (_event: React.MouseEvent<unknown>, column: any) => {
-    //         const isAsc = columnToSort === column && sortDirection === 'asc';
+    const handlers = {
+        sortRequest: (_event: React.MouseEvent<unknown>, column: any) => {
+            const isAsc = columnToSort === column && sortDirection === 'asc';
 
-    //         setSortDirection(isAsc ? 'desc' : 'asc');
-    //         setColumnToSort(column);
-    //     },
-    //     sort: (column: any) => (event: React.MouseEvent<unknown>) => {
-    //         handlers.sortRequest(event, column);
-    //     },
-    // };
+            setSortDirection(isAsc ? 'desc' : 'asc');
+            setColumnToSort(column);
+        },
+        sort: (column: any) => (event: React.MouseEvent<unknown>) => {
+            handlers.sortRequest(event, column);
+        },
+    };
 
     useEffect(() => {
         setTableState({
@@ -76,9 +76,9 @@ function FieldSelectionTable({ projections }: Props) {
                 >
                     <EntityTableHeader
                         columns={columns}
-                        // columnToSort={columnToSort}
-                        // sortDirection={sortDirection}
-                        // headerClick={handlers.sort}
+                        columnToSort={columnToSort}
+                        sortDirection={sortDirection}
+                        headerClick={handlers.sort}
                         selectData={true}
                     />
 
@@ -91,7 +91,15 @@ function FieldSelectionTable({ projections }: Props) {
                         }}
                         tableState={tableState}
                         loading={false}
-                        rows={projections ? <Rows data={projections} /> : null}
+                        rows={
+                            projections ? (
+                                <Rows
+                                    data={projections}
+                                    sortDirection={sortDirection}
+                                    columnToSort={columnToSort}
+                                />
+                            ) : null
+                        }
                     />
                 </Table>
             </TableContainer>

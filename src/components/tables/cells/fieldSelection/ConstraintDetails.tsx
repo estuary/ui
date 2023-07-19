@@ -1,30 +1,30 @@
 import { TableCell, Typography } from '@mui/material';
 import {
-    Constraint,
-    ConstraintType,
+    ConstraintTypes,
+    TranslatedConstraint,
 } from 'components/editor/Bindings/FieldSelection/types';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-    constraint: Constraint;
+    constraint: TranslatedConstraint;
 }
 
-const getConstraintMessageId = (constraintType: ConstraintType): string => {
+const getConstraintMessageId = (constraintType: ConstraintTypes): string => {
     switch (constraintType) {
-        case 'FIELD_REQUIRED':
+        case ConstraintTypes.FIELD_REQUIRED:
             return 'fieldSelection.table.label.fieldRequired';
-        case 'LOCATION_REQUIRED':
+        case ConstraintTypes.LOCATION_REQUIRED:
             return 'fieldSelection.table.label.locationRequired';
-        case 'LOCATION_RECOMMENDED':
+        case ConstraintTypes.LOCATION_RECOMMENDED:
             return 'fieldSelection.table.label.locationRecommended';
-        case 'FIELD_OPTIONAL':
+        case ConstraintTypes.FIELD_OPTIONAL:
             return 'fieldSelection.table.label.fieldOptional';
-        case 'FIELD_FORBIDDEN':
+        case ConstraintTypes.FIELD_FORBIDDEN:
             return 'fieldSelection.table.label.fieldForbidden';
-        case 'UNSATISFIABLE':
+        case ConstraintTypes.UNSATISFIABLE:
             return 'fieldSelection.table.label.unsatisfiable';
         default:
-            return '';
+            return 'fieldSelection.table.label.unknown';
     }
 };
 

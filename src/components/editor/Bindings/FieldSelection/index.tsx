@@ -2,6 +2,7 @@ import {
     BuiltSpec_Binding,
     CompositeProjection,
     ConstraintDictionary,
+    ConstraintTypes,
     Projection,
     ValidationResponse_Binding,
 } from 'components/editor/Bindings/FieldSelection/types';
@@ -23,7 +24,10 @@ const mapConstraintsToProjections = (
         inference,
         ptr,
         constraint: Object.hasOwn(constraints, field)
-            ? constraints[field]
+            ? {
+                  type: ConstraintTypes[constraints[field].type],
+                  reason: constraints[field].reason,
+              }
             : null,
     }));
 

@@ -26,15 +26,19 @@ export interface BuiltSpec_Binding {
     resourcePath: string[];
 }
 
-export type ConstraintType =
-    | 'FIELD_REQUIRED'
-    | 'LOCATION_REQUIRED'
-    | 'LOCATION_RECOMMENDED'
-    | 'FIELD_OPTIONAL'
-    | 'FIELD_FORBIDDEN'
-    | 'UNSATISFIABLE';
+// The constraint types are ordered by severity, with one being the most severe and six the least.
+export enum ConstraintTypes {
+    UNSATISFIABLE = 1,
+    FIELD_FORBIDDEN = 2,
+    FIELD_OPTIONAL = 3,
+    LOCATION_RECOMMENDED = 4,
+    LOCATION_REQUIRED = 5,
+    FIELD_REQUIRED = 6,
+}
 
-export interface Constraint {
+export type ConstraintType = keyof typeof ConstraintTypes;
+
+interface Constraint {
     type: ConstraintType;
     reason: string;
 }
@@ -48,6 +52,11 @@ export interface ValidationResponse_Binding {
     resourcePath: string[];
 }
 
+export interface TranslatedConstraint {
+    type: ConstraintTypes;
+    reason: string;
+}
+
 export interface CompositeProjection extends Projection {
-    constraint: Constraint | null;
+    constraint: TranslatedConstraint | null;
 }

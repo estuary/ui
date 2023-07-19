@@ -1,21 +1,21 @@
 import { Button, Stack, TableCell } from '@mui/material';
 import {
-    Constraint,
-    ConstraintType,
+    ConstraintTypes,
+    TranslatedConstraint,
 } from 'components/editor/Bindings/FieldSelection/types';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-    constraint: Constraint;
+    constraint: TranslatedConstraint;
 }
 
-const setActionTypes = (constraintType: ConstraintType): string[] => {
+const setActionTypes = (constraintType: ConstraintTypes): string[] => {
     switch (constraintType) {
-        case 'FIELD_REQUIRED':
-        case 'LOCATION_REQUIRED':
+        case ConstraintTypes.FIELD_REQUIRED:
+        case ConstraintTypes.LOCATION_REQUIRED:
             return ['add'];
-        case 'LOCATION_RECOMMENDED':
-        case 'FIELD_OPTIONAL':
+        case ConstraintTypes.LOCATION_RECOMMENDED:
+        case ConstraintTypes.FIELD_OPTIONAL:
             return ['rename', 'remove'];
         default:
             return [];
