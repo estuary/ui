@@ -48,23 +48,23 @@ export interface ColumnProps extends TableColumns {
 
 interface Props {
     columns: ColumnProps[];
-    renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
-    pagination: Pagination;
-    setPagination: (data: any) => void;
-    searchQuery: string | null;
-    setSearchQuery: (data: any) => void;
-    sortDirection: SortDirection;
-    setSortDirection: (data: any) => void;
     columnToSort: string;
-    setColumnToSort: (data: any) => void;
-    header: string | ReactNode;
     filterLabel: string;
+    header: string | ReactNode | null;
     noExistingDataContentIds: TableIntlConfig;
+    pagination: Pagination;
+    renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
+    searchQuery: string | null;
     selectableTableStoreName: SelectTableStoreNames;
-    showEntityStatus?: boolean;
+    setColumnToSort: (data: any) => void;
+    setPagination: (data: any) => void;
+    setSearchQuery: (data: any) => void;
+    setSortDirection: (data: any) => void;
+    sortDirection: SortDirection;
     hideHeaderAndFooter?: boolean;
-    rowsPerPageOptions?: number[];
     minWidth?: number;
+    rowsPerPageOptions?: number[];
+    showEntityStatus?: boolean;
     showToolbar?: boolean;
     toolbar?: ReactNode;
 }

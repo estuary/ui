@@ -35,7 +35,7 @@ function Row({ isSelected, row, setRow }: RowProps) {
 }
 
 function Rows({ data }: RowsProps) {
-    const selectTableStoreName = SelectTableStoreNames.COLLECTION;
+    const selectTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
 
     const selected = useZustandStore<
         SelectableTableStore,

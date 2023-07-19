@@ -5,6 +5,7 @@ export interface RowSelectorProps {
     selectableTableStoreName?:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
+        | SelectTableStoreNames.COLLECTION_SELECTOR
         | SelectTableStoreNames.MATERIALIZATION;
     showMaterialize?: boolean;
 }

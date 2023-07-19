@@ -7,7 +7,7 @@ import useTableState from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import Rows from './Rows';
 
-const selectableTableStoreName = SelectTableStoreNames.COLLECTION;
+const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
 export const tableColumns = [
     {
         field: null,
@@ -62,7 +62,7 @@ function Hydrator() {
                 setSortDirection={setSortDirection}
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
-                header="collectionsTable.title"
+                header={null}
                 filterLabel="collectionsTable.filterLabel"
                 selectableTableStoreName={selectableTableStoreName}
                 showToolbar

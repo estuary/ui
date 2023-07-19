@@ -3,6 +3,7 @@ import { useLiveSpecs } from 'hooks/useLiveSpecs';
 import { difference } from 'lodash';
 import { ReactNode } from 'react';
 import { BindingsSelectorSkeleton } from '../CollectionSkeletons';
+import CollectionSearchAndSelector from '../UnderDev_Selector';
 import CollectionSelectorActions from './Actions';
 import CollectionSelectorList from './List';
 import CollectionSelectorSearch from './Search';
@@ -50,6 +51,8 @@ function CollectionSelector({
         <Box>{skeleton ? skeleton : <BindingsSelectorSkeleton />}</Box>
     ) : (
         <>
+            <CollectionSearchAndSelector />
+
             <CollectionSelectorSearch
                 options={catalogNames}
                 readOnly={readOnly}
