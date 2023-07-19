@@ -1,3 +1,4 @@
+import { Stack, Typography } from '@mui/material';
 import {
     BuiltSpec_Binding,
     CompositeProjection,
@@ -7,9 +8,11 @@ import {
     ValidationResponse_Binding,
 } from 'components/editor/Bindings/FieldSelection/types';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
+import ExternalLink from 'components/shared/ExternalLink';
 import FieldSelectionTable from 'components/tables/FieldSelection';
 import { isEqual } from 'lodash';
 import { useMemo } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 interface Props {
     collectionName: string;
@@ -82,7 +85,21 @@ function FieldSelectionViewer({ collectionName }: Props) {
         }
     }, [collectionName, draftSpecs]);
 
-    return <FieldSelectionTable projections={data} />;
+    return (
+        <Stack spacing={4}>
+            <Stack direction="row">
+                <Typography variant="h6" sx={{ mr: 0.5 }}>
+                    <FormattedMessage id="fieldSelection.header" />
+                </Typography>
+
+                <ExternalLink link="https://docs.estuary.dev/concepts/materialization/#projected-fields">
+                    <FormattedMessage id="terms.documentation" />
+                </ExternalLink>
+            </Stack>
+
+            <FieldSelectionTable projections={data} />
+        </Stack>
+    );
 }
 
 export default FieldSelectionViewer;

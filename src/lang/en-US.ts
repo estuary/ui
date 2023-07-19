@@ -1167,6 +1167,7 @@ const Graphs: ResolvedIntlConfig['messages'] = {
 };
 
 const FieldSelection: ResolvedIntlConfig['messages'] = {
+    'fieldSelection.header': `Field Selection`,
     'fieldSelection.table.cta.addProjection': `Add Projection`,
     'fieldSelection.table.cta.renameField': `Rename`,
     'fieldSelection.table.empty.header': `No information found`,
