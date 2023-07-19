@@ -25,8 +25,6 @@ import { EntityWorkflow } from 'types';
 import { hasLength, stripPathing } from 'utils/misc-utils';
 
 interface BindingSelectorProps {
-    loading: boolean;
-    skeleton: ReactNode;
     itemType?: string;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
@@ -108,10 +106,8 @@ function Row({
 
 function BindingSelector({
     itemType,
-    loading,
     readOnly,
     shortenName,
-    skeleton,
     RediscoverButton,
 }: BindingSelectorProps) {
     const theme = useTheme();
@@ -209,9 +205,7 @@ function BindingSelector({
 
     const disableActions = formActive || readOnly;
 
-    return loading ? (
-        <Box>{skeleton}</Box>
-    ) : (
+    return (
         <>
             <BindingSearch
                 itemType={itemType}

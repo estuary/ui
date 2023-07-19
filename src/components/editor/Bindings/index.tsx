@@ -1,8 +1,4 @@
 import { Typography, useTheme } from '@mui/material';
-import {
-    BindingsEditorConfigSkeleton,
-    BindingsSelectorSkeleton,
-} from 'components/collection/CollectionSkeletons';
 import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
@@ -16,7 +12,6 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useLiveSpecs } from 'hooks/useLiveSpecs';
 import { isEqual } from 'lodash';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -144,13 +139,6 @@ function BindingsMultiEditor({
         }
     }, [resetResourceConfigAndCollections, removeDiscoveredCollectionOptions]);
 
-    const { liveSpecs } = useLiveSpecs('collection');
-
-    const fetchingSpecs =
-        entityType === 'materialization'
-            ? liveSpecs.length === 0
-            : draftSpecs.length === 0;
-
     // For captures we want to show the bindings config as "Bindings"
     //  Other entities we still call them "collections" so we set to undefined
     //      as the default display is "collections"
@@ -172,19 +160,11 @@ function BindingsMultiEditor({
                     <BindingSelector
                         itemType={itemType}
                         shortenName={entityType === 'capture'}
-                        loading={fetchingSpecs}
-                        skeleton={<BindingsSelectorSkeleton />}
                         readOnly={readOnly}
                         RediscoverButton={RediscoverButton}
                     />
                 }
-                details={
-                    <BindingsEditor
-                        loading={fetchingSpecs}
-                        skeleton={<BindingsEditorConfigSkeleton />}
-                        readOnly={readOnly}
-                    />
-                }
+                details={<BindingsEditor readOnly={readOnly} />}
                 backgroundColor={
                     alternativeReflexContainerBackground[theme.palette.mode]
                 }
