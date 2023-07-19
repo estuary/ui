@@ -58,6 +58,11 @@ export interface CollectionQueryWithStats extends CollectionQuery {
     stats?: CatalogStats;
 }
 
+interface CollectionSelectorQuery {
+    catalog_name: string;
+    spec_type: string;
+}
+
 const captureColumns = commonColumns.concat(['writes_to']).join(',');
 const captureColumnsWithSpec = captureColumns.concat(',spec');
 
@@ -123,6 +128,28 @@ const getLiveSpecs_collections = (
         });
 
     queryBuilder = defaultTableFilter<CollectionQuery>(
+        queryBuilder,
+        ['catalog_name'],
+        searchQuery,
+        sorting,
+        pagination
+    ).eq('spec_type', 'collection');
+
+    return queryBuilder;
+};
+
+const getLiveSpecs_collectionsSelector = (
+    pagination: any,
+    searchQuery: any,
+    sorting: SortingProps<any>[]
+) => {
+    let queryBuilder = supabaseClient
+        .from<CollectionSelectorQuery>(TABLES.LIVE_SPECS_EXT)
+        .select('catalog_name, id, spec_type', {
+            count: 'exact',
+        });
+
+    queryBuilder = defaultTableFilter<CollectionSelectorQuery>(
         queryBuilder,
         ['catalog_name'],
         searchQuery,
@@ -331,6 +358,7 @@ const getLiveSpecsByLiveSpecId = async (
 export {
     getLiveSpecs_captures,
     getLiveSpecs_collections,
+    getLiveSpecs_collectionsSelector,
     getLiveSpecs_existingTasks,
     getLiveSpecs_materializations,
     getLiveSpecs_detailsForm,

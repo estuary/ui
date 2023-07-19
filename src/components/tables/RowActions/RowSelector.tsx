@@ -14,6 +14,7 @@ import {
 import { RowSelectorProps } from './types';
 
 function RowSelector({
+    hideActions,
     selectableTableStoreName = SelectTableStoreNames.CAPTURE,
     showMaterialize,
 }: RowSelectorProps) {
@@ -70,27 +71,29 @@ function RowSelector({
                 </Button>
             </ButtonGroup>
 
-            <ButtonGroup
-                aria-label={intl.formatMessage({
-                    id: 'capturesTable.ctaGroup.aria',
-                })}
-                disableElevation
-                disabled={!hasSelections}
-            >
-                <DisableEnableButton
-                    selectableTableStoreName={selectableTableStoreName}
-                    enabling={true}
-                />
+            {hideActions ? null : (
+                <ButtonGroup
+                    aria-label={intl.formatMessage({
+                        id: 'capturesTable.ctaGroup.aria',
+                    })}
+                    disableElevation
+                    disabled={!hasSelections}
+                >
+                    <DisableEnableButton
+                        selectableTableStoreName={selectableTableStoreName}
+                        enabling={true}
+                    />
 
-                <DisableEnableButton
-                    selectableTableStoreName={selectableTableStoreName}
-                    enabling={false}
-                />
+                    <DisableEnableButton
+                        selectableTableStoreName={selectableTableStoreName}
+                        enabling={false}
+                    />
 
-                <DeleteButton
-                    selectableTableStoreName={selectableTableStoreName}
-                />
-            </ButtonGroup>
+                    <DeleteButton
+                        selectableTableStoreName={selectableTableStoreName}
+                    />
+                </ButtonGroup>
+            )}
 
             {showMaterialize ? (
                 <Materialize

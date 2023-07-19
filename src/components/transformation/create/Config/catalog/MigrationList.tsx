@@ -20,6 +20,7 @@ import {
     useTransformationCreate_selectedAttribute,
 } from 'stores/TransformationCreate/hooks';
 import { hasLength } from 'utils/misc-utils';
+import CollectionList from './CollectionList';
 
 function MigrationList() {
     const theme = useTheme();
@@ -114,9 +115,16 @@ function MigrationList() {
 
             <AccordionDetails sx={{ p: 0, borderBottomLeftRadius: 4 }}>
                 <CatalogList
-                    fixedAttributeType="migration"
-                    content={content}
+                    content={
+                        <CollectionList
+                            content={content}
+                            fixedAttributeType="migration"
+                        />
+                    }
                     addButtonClickHandler={handlers.insertBlankMigration}
+                    header={
+                        <FormattedMessage id="newTransform.config.migration.header" />
+                    }
                     height={200}
                     extendList={isEmpty(migrations)}
                 />
