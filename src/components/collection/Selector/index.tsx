@@ -2,13 +2,13 @@ import { Box } from '@mui/material';
 import { useLiveSpecs } from 'hooks/useLiveSpecs';
 import { difference } from 'lodash';
 import { ReactNode } from 'react';
+import { BindingsSelectorSkeleton } from '../CollectionSkeletons';
 import CollectionSelectorActions from './Actions';
 import CollectionSelectorList from './List';
 import CollectionSelectorSearch from './Search';
 
 interface BindingSelectorProps {
     loading: boolean;
-    skeleton: ReactNode;
     removeAllCollections: () => void;
 
     currentCollection?: any;
@@ -19,6 +19,7 @@ interface BindingSelectorProps {
     addCollection: (collectionName: string) => void;
 
     readOnly?: boolean;
+    skeleton?: ReactNode;
     RediscoverButton?: ReactNode;
 
     height?: number;
@@ -46,7 +47,7 @@ function CollectionSelector({
     const collectionsArray = Array.from(collections);
 
     return loading ? (
-        <Box>{skeleton}</Box>
+        <Box>{skeleton ? skeleton : <BindingsSelectorSkeleton />}</Box>
     ) : (
         <>
             <CollectionSelectorSearch
