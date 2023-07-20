@@ -4,6 +4,7 @@ import { useBindingsEditorStore_resetState } from 'components/editor/Bindings/St
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
+    useEditorStore_queryResponse_mutate,
     useEditorStore_resetState,
 } from 'components/editor/Store/hooks';
 import MaterializeGenerateButton from 'components/materialization/GenerateButton';
@@ -19,7 +20,7 @@ import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
@@ -57,9 +58,9 @@ function MaterializationEdit() {
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
-
     const persistedDraftId = useEditorStore_persistedDraftId();
     const resetEditorStore = useEditorStore_resetState();
+    const mutate_advancedEditor = useEditorStore_queryResponse_mutate();
 
     // Endpoint Config Store
     const resetEndpointConfigState = useEndpointConfigStore_reset();
@@ -76,6 +77,13 @@ function MaterializationEdit() {
         persistedDraftId,
         { lastPubId }
     );
+
+    const updateDraftSpecs = useCallback(async () => {
+        await mutateDraftSpecs();
+        if (mutate_advancedEditor) {
+            await mutate_advancedEditor();
+        }
+    }, [mutateDraftSpecs, mutate_advancedEditor]);
 
     const taskNames = useMemo(
         () =>
@@ -155,7 +163,7 @@ function MaterializationEdit() {
                                         <MaterializeGenerateButton
                                             disabled={!hasConnectors}
                                             callFailed={helpers.callFailed}
-                                            mutateDraftSpecs={mutateDraftSpecs}
+                                            mutateDraftSpecs={updateDraftSpecs}
                                         />
                                     }
                                     TestButton={
