@@ -47,11 +47,13 @@ function CollectionSelector({
 
     const collectionsArray = Array.from(collections);
 
+    console.log('collections', collections);
+
     return loading ? (
         <Box>{skeleton ? skeleton : <BindingsSelectorSkeleton />}</Box>
     ) : (
         <>
-            <CollectionSearchAndSelector />
+            <CollectionSearchAndSelector collections={collections} />
 
             <CollectionSelectorSearch
                 options={catalogNames}

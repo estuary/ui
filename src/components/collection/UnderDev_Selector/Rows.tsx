@@ -25,7 +25,7 @@ function Row({ isSelected, row, setRow }: RowProps) {
         <TableRow
             key={`collection-search-${row.id}`}
             selected={isSelected}
-            onClick={() => setRow(row.id, row.last_pub_id, !isSelected)}
+            onClick={() => setRow(row.catalog_name, null, !isSelected)}
             sx={getEntityTableRowSx(theme, false)}
         >
             <RowSelect isSelected={isSelected} name={row.catalog_name} />
@@ -51,7 +51,7 @@ function Rows({ data }: RowsProps) {
         <>
             {data.map((row) => (
                 <Row
-                    isSelected={selected.has(row.id)}
+                    isSelected={selected.has(row.catalog_name)}
                     key={row.id}
                     row={row}
                     setRow={setRow}

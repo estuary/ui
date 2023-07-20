@@ -40,8 +40,6 @@ function Hydrator() {
         ]);
     }, [columnToSort, pagination, searchQuery, sortDirection]);
 
-    console.log('Hydrator');
-
     return (
         <TableHydrator
             query={query}
