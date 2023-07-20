@@ -1,11 +1,14 @@
 import { Button, Stack, TableCell } from '@mui/material';
+import EditProjectionButton from 'components/editor/Bindings/FieldSelection/EditProjection/Button';
 import {
     ConstraintTypes,
+    Projection,
     TranslatedConstraint,
 } from 'components/editor/Bindings/FieldSelection/types';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
+    projection: Projection;
     constraint: TranslatedConstraint;
 }
 
@@ -22,7 +25,7 @@ const setActionTypes = (constraintType: ConstraintTypes): string[] => {
     }
 };
 
-function Actions({ constraint }: Props) {
+function ProjectionActions({ projection, constraint }: Props) {
     const actionTypes: string[] = setActionTypes(constraint.type);
 
     if (actionTypes.length > 0) {
@@ -30,15 +33,17 @@ function Actions({ constraint }: Props) {
             <TableCell>
                 <Stack spacing={1} direction="row">
                     {actionTypes.includes('add') ? (
-                        <Button size="small" variant="outlined">
-                            <FormattedMessage id="fieldSelection.table.cta.addProjection" />
-                        </Button>
+                        <EditProjectionButton
+                            operation="addProjection"
+                            projection={projection}
+                        />
                     ) : null}
 
                     {actionTypes.includes('rename') ? (
-                        <Button size="small" variant="outlined">
-                            <FormattedMessage id="fieldSelection.table.cta.renameField" />
-                        </Button>
+                        <EditProjectionButton
+                            operation="renameField"
+                            projection={projection}
+                        />
                     ) : null}
 
                     {actionTypes.includes('remove') ? (
@@ -54,4 +59,4 @@ function Actions({ constraint }: Props) {
     }
 }
 
-export default Actions;
+export default ProjectionActions;

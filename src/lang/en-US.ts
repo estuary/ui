@@ -1168,7 +1168,17 @@ const Graphs: ResolvedIntlConfig['messages'] = {
 
 const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.header': `Field Selection`,
+    'fieldSelection.dialog.updateProjection.header': `Update Projection`,
+    'fieldSelection.dialog.updateProjection.header.new': `Add Projection`,
+    'fieldSelection.dialog.updateProjection.message': `Update projection for collection, {collection}, to change how the field appears when materialized.`,
+    'fieldSelection.dialog.updateProjection.cta.apply': `Apply`,
+    'fieldSelection.dialog.updateProjection.label.fieldName': `Field Name:`,
+    'fieldSelection.dialog.updateProjection.label.pointer': `JSON Pointer:`,
+    'fieldSelection.dialog.updateProjection.label.type': `Type:`,
     'fieldSelection.table.cta.addProjection': `Add Projection`,
+    'fieldSelection.table.cta.defaultField': `Default`,
+    'fieldSelection.table.cta.excludeField': `Exclude`,
+    'fieldSelection.table.cta.includeField': `Include`,
     'fieldSelection.table.cta.renameField': `Rename`,
     'fieldSelection.table.empty.header': `No information found`,
     'fieldSelection.table.empty.message': `Click the test button above to validate your resource configuration and create a set of projections.`,

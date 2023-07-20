@@ -60,3 +60,5 @@ export interface TranslatedConstraint {
 export interface CompositeProjection extends Projection {
     constraint: TranslatedConstraint | null;
 }
+
+export type FieldSelectionType = 'default' | 'include' | 'exclude';
