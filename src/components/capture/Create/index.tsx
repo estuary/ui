@@ -6,6 +6,7 @@ import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_pubId,
+    useEditorStore_queryResponse_mutate,
     useEditorStore_resetState,
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
@@ -17,7 +18,7 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
@@ -68,6 +69,7 @@ function CaptureCreate() {
 
     // Endpoint Config Store
     const resetEndpointConfigState = useEndpointConfigStore_reset();
+    const mutate_advancedEditor = useEditorStore_queryResponse_mutate();
 
     // Form State Store
     const setFormState = useFormStateStore_setFormState();
@@ -81,6 +83,13 @@ function CaptureCreate() {
 
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
         useDraftSpecs(persistedDraftId);
+
+    const updateDraftSpecs = useCallback(async () => {
+        await mutateDraftSpecs();
+        if (mutate_advancedEditor) {
+            await mutate_advancedEditor();
+        }
+    }, [mutateDraftSpecs, mutate_advancedEditor]);
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -169,7 +178,7 @@ function CaptureCreate() {
                                         entityType={entityType}
                                         disabled={!hasConnectors}
                                         callFailed={helpers.callFailed}
-                                        postGenerateMutate={mutateDraftSpecs}
+                                        postGenerateMutate={updateDraftSpecs}
                                         createWorkflowMetadata={{
                                             initiateDiscovery,
                                             setInitiateDiscovery,

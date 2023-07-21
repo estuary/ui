@@ -21,19 +21,17 @@ import {
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
 import useInitializeCollectionDraft from 'hooks/useInitializeCollectionDraft';
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 import SchemaEditCLIButton from './SchemaEdit/CLIButton';
 import SchemaEditToggle from './SchemaEdit/Toggle';
 
 interface Props {
-    loading: boolean;
-    skeleton: ReactNode;
     readOnly?: boolean;
 }
 
-function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
+function BindingsEditor({ readOnly = false }: Props) {
     const initializeCollectionDraft = useInitializeCollectionDraft();
 
     // Bindings Editor Store
@@ -76,9 +74,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     ]);
 
     if (currentCollection) {
-        return loading ? (
-            <Box>{skeleton}</Box>
-        ) : (
+        return (
             <Box sx={{ p: 1 }}>
                 <BindingsTabs
                     selectedTab={activeTab}

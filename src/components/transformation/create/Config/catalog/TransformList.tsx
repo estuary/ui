@@ -1,27 +1,15 @@
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Divider,
-    Stack,
-} from '@mui/material';
-import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
-import CollectionSelector from 'components/collection/Selector';
 import { useEditorStore_invalidEditors } from 'components/editor/Store/hooks';
 import CatalogList, {
     CatalogListContent,
 } from 'components/transformation/create/Config/catalog/CatalogList';
-import UpdateDraftButton from 'components/transformation/create/Config/UpdateDraftButton';
-import SingleStep from 'components/transformation/create/SingleStep';
-import StepWrapper from 'components/transformation/create/Wrapper';
 import { useLiveSpecs } from 'hooks/useLiveSpecs';
-import { useMemo, useState } from 'react';
+import { SyntheticEvent, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSet } from 'react-use';
 import { useTransformationCreate_transformConfigs } from 'stores/TransformationCreate/hooks';
 import { hasLength } from 'utils/misc-utils';
+import AddCollection from './AddCollection';
+import CollectionList from './CollectionList';
 
 function TransformList() {
     const collections = useLiveSpecs('collection');
@@ -52,66 +40,39 @@ function TransformList() {
     );
 
     const handlers = {
-        toggleDialog: () => {
+        toggleDialog: (args: SyntheticEvent | boolean) => {
             selectedCollectionSetFunctions.reset();
 
-            setOpen(!open);
+            setOpen(typeof args === 'boolean' ? args : !open);
         },
     };
 
     return (
         <>
             <CatalogList
-                fixedAttributeType="transform"
-                content={content}
+                content={
+                    <CollectionList
+                        content={content}
+                        fixedAttributeType="transform"
+                    />
+                }
                 addButtonClickHandler={handlers.toggleDialog}
                 height={532}
+                header={
+                    <FormattedMessage id="newTransform.config.transform.header" />
+                }
             />
 
-            <Dialog open={open} fullWidth maxWidth="md">
-                <DialogTitle>
+            <AddCollection
+                collections={selectedCollectionSet}
+                collectionsActions={selectedCollectionSetFunctions}
+                loading={collections.isValidating}
+                open={open}
+                toggle={handlers.toggleDialog}
+                title={
                     <FormattedMessage id="newTransform.config.transform.addDialog.header" />
-                </DialogTitle>
-
-                <DialogContent>
-                    <Stack spacing={3} sx={{ pt: 2 }}>
-                        <StepWrapper>
-                            <SingleStep>
-                                <FormattedMessage id="newTransform.baseConfig.sourceCollections.label" />
-                            </SingleStep>
-
-                            <Divider />
-
-                            <CollectionSelector
-                                height={350}
-                                loading={collections.isValidating}
-                                skeleton={<BindingsSelectorSkeleton />}
-                                removeAllCollections={
-                                    selectedCollectionSetFunctions.reset
-                                }
-                                collections={selectedCollectionSet}
-                                removeCollection={
-                                    selectedCollectionSetFunctions.remove
-                                }
-                                addCollection={
-                                    selectedCollectionSetFunctions.add
-                                }
-                            />
-                        </StepWrapper>
-                    </Stack>
-                </DialogContent>
-
-                <DialogActions>
-                    <Button variant="outlined" onClick={handlers.toggleDialog}>
-                        <FormattedMessage id="cta.cancel" />
-                    </Button>
-
-                    <UpdateDraftButton
-                        selectedCollections={selectedCollectionSet}
-                        setDialogOpen={setOpen}
-                    />
-                </DialogActions>
-            </Dialog>
+                }
+            />
         </>
     );
 }
