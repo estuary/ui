@@ -111,6 +111,8 @@
         "eslint-config-kentcdodds": "^20.3.1",
         "eslint-plugin-jest-dom": "^4.0.3",
         "eslint-plugin-react": "^7.32.2",
+        "eslint-plugin-simple-import-sort": "^10.0.0",
+        "eslint-plugin-unused-imports": "^2.0.0",
         "husky": "^8.0.3",
         "jest-localstorage-mock": "^2.4.26",
         "jest-mock-extended": "^3.0.1",
