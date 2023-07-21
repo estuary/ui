@@ -1,7 +1,8 @@
+import { Entity } from 'types';
+
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { debounce } from 'lodash';
-import { Entity } from 'types';
 
 import Editor, { DiffEditor } from '@monaco-editor/react';
 import {

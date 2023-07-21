@@ -1,6 +1,7 @@
+import { Entity } from 'types';
+
 import { MouseEvent, useEffect, useState } from 'react';
 
-import { Entity } from 'types';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import {

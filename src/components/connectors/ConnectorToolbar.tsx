@@ -1,3 +1,5 @@
+import { Entity, SortDirection } from 'types';
+
 import {
     ChangeEvent,
     Dispatch,
@@ -7,7 +9,6 @@ import {
 } from 'react';
 
 import { debounce } from 'lodash';
-import { Entity, SortDirection } from 'types';
 import { useIntl } from 'react-intl';
 import useConstant from 'use-constant';
 

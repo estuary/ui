@@ -1,4 +1,5 @@
 import { SortDirection } from 'types';
+
 import { ArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 

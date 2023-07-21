@@ -1,4 +1,5 @@
 import { BaseComponentProps } from 'types';
+
 import { QueryParamProvider as UseQueryParamsHookProvider } from 'use-query-params';
 
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';

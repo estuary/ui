@@ -1,5 +1,6 @@
-import { isArray } from 'lodash';
 import { DerivationLanguage, Transform, Transform_Shuffle } from 'types';
+
+import { isArray } from 'lodash';
 
 import {
     MigrationDictionary,

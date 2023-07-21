@@ -1,6 +1,6 @@
-import { useCallback } from 'react';
-
 import { Entity } from 'types';
+
+import { useCallback } from 'react';
 
 import { getDraftSpecsBySpecType } from 'api/draftSpecs';
 

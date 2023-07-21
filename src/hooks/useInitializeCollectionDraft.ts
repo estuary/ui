@@ -22,9 +22,9 @@ import {
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
 
-import { Annotations } from 'types/jsonforms';
-
 import { getProperSchemaScope } from 'utils/schema-utils';
+
+import { Annotations } from 'types/jsonforms';
 
 const specType = 'collection';
 

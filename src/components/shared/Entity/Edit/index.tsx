@@ -1,6 +1,7 @@
+import { EntityWithCreateWorkflow } from 'types';
+
 import { ReactNode, useEffect, useMemo } from 'react';
 
-import { EntityWithCreateWorkflow } from 'types';
 import { FormattedMessage } from 'react-intl';
 
 import { Box, Collapse } from '@mui/material';

@@ -1,5 +1,6 @@
-import { isEmpty } from 'lodash';
 import { InferSchemaResponse, Schema } from 'types';
+
+import { isEmpty } from 'lodash';
 
 import { AllowedScopes } from 'components/editor/MonacoEditor/types';
 

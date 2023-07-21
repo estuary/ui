@@ -1,4 +1,5 @@
 import { BaseComponentProps } from 'types';
+
 import { FormattedMessage } from 'react-intl';
 
 import { AlertColor, Box, Typography } from '@mui/material';

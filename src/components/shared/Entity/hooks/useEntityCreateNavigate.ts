@@ -1,6 +1,7 @@
+import { EntityWithCreateWorkflow } from 'types';
+
 import { useCallback } from 'react';
 
-import { EntityWithCreateWorkflow } from 'types';
 import { useNavigate } from 'react-router';
 
 import { authenticatedRoutes } from 'app/routes';

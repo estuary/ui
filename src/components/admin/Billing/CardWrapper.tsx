@@ -1,6 +1,7 @@
+import { BaseComponentProps } from 'types';
+
 import { ReactNode } from 'react';
 
-import { BaseComponentProps } from 'types';
 import { HelpCircle } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 

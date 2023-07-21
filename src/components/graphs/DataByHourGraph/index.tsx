@@ -1,7 +1,8 @@
+import { CatalogStats_Details } from 'types';
+
 import { useEffect, useMemo, useState } from 'react';
 
 import { EChartsOption } from 'echarts';
-import { CatalogStats_Details } from 'types';
 import { eachHourOfInterval, subHours } from 'date-fns';
 import prettyBytes from 'pretty-bytes';
 import { FormatDateOptions, useIntl } from 'react-intl';

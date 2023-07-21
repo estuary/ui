@@ -1,4 +1,5 @@
 import { BaseComponentProps } from 'types';
+
 import { FormattedMessage } from 'react-intl';
 
 import FullPageError from 'components/fullPage/Error';

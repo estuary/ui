@@ -1,7 +1,8 @@
+import { Entity } from 'types';
+
 import { useCallback } from 'react';
 
 import { isEmpty } from 'lodash';
-import { Entity } from 'types';
 import { useNavigate } from 'react-router';
 
 import { authenticatedRoutes } from 'app/routes';

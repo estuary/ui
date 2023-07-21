@@ -1,6 +1,7 @@
+import { Schema } from 'types';
+
 import { useCallback, useEffect, useState } from 'react';
 
-import { Schema } from 'types';
 import { FormattedMessage } from 'react-intl';
 import { useUpdateEffect } from 'react-use';
 

@@ -1,4 +1,5 @@
 import { EntityWithCreateWorkflow } from 'types';
+
 import { FormattedMessage } from 'react-intl';
 
 import { Button } from '@mui/material';

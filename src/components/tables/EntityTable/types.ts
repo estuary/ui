@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
-
 import { TableColumns } from 'types';
+
+import { ReactNode } from 'react';
 
 import { SelectTableStoreNames } from 'stores/names';
 

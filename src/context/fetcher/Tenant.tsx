@@ -1,6 +1,6 @@
-import { createContext, useContext } from 'react';
-
 import { BaseComponentProps, Tenants } from 'types';
+
+import { createContext, useContext } from 'react';
 
 import FullPageSpinner from 'components/fullPage/Spinner';
 

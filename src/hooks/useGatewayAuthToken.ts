@@ -1,7 +1,8 @@
+import { GatewayAuthTokenResponse } from 'types';
+
 import { decodeJwt, JWTPayload } from 'jose';
 import { isEmpty } from 'lodash';
 import useSWR from 'swr';
-import { GatewayAuthTokenResponse } from 'types';
 import { isBefore } from 'date-fns';
 
 import { Auth } from '@supabase/ui';

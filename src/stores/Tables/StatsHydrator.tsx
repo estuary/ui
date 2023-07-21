@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-
 import { BaseComponentProps } from 'types';
+
+import { useEffect } from 'react';
 
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useZustandStore } from 'context/Zustand/provider';

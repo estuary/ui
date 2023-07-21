@@ -1,6 +1,6 @@
-import { createContext, useContext } from 'react';
-
 import { BaseComponentProps, Entity } from 'types';
+
+import { createContext, useContext } from 'react';
 
 interface Props extends BaseComponentProps {
     value: Entity;

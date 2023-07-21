@@ -1,6 +1,7 @@
+import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
+
 import { useEffect, useState } from 'react';
 
-import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
 import { useIntl } from 'react-intl';
 
 import { Box, Table, TableContainer } from '@mui/material';

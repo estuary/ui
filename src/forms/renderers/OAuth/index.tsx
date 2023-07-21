@@ -18,9 +18,9 @@ import { optionExists } from 'forms/renderers/Overrides/testers/testers';
 import { useEndpointConfigStore_setCustomErrors } from 'stores/EndpointConfig/hooks';
 import { generateCustomError } from 'stores/extensions/CustomErrors';
 
-import { Options } from 'types/jsonforms';
-
 import { hasLength } from 'utils/misc-utils';
+
+import { Options } from 'types/jsonforms';
 
 import {
     getDefaultValue,

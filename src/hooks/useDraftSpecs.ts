@@ -1,5 +1,6 @@
-import { KeyedMutator } from 'swr';
 import { Entity } from 'types';
+
+import { KeyedMutator } from 'swr';
 
 import { PostgrestError } from '@supabase/postgrest-js';
 

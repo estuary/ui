@@ -1,8 +1,9 @@
+import { InferSchemaPropertyForRender, InferSchemaResponse } from 'types';
+
 import { Dispatch, SetStateAction } from 'react';
 
 import produce from 'immer';
 import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
-import { InferSchemaPropertyForRender, InferSchemaResponse } from 'types';
 import { create, StoreApi } from 'zustand';
 
 import { infer } from '@estuary/flow-web';

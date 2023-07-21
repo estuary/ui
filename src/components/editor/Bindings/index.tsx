@@ -1,7 +1,8 @@
+import { Schema } from 'types';
+
 import { ReactNode, useEffect, useMemo } from 'react';
 
 import { isEqual } from 'lodash';
-import { Schema } from 'types';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { Typography, useTheme } from '@mui/material';

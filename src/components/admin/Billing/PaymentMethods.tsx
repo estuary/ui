@@ -1,6 +1,7 @@
+import { TableColumns } from 'types';
+
 import { useEffect, useMemo, useState } from 'react';
 
-import { TableColumns } from 'types';
 import { FormattedMessage } from 'react-intl';
 
 import {

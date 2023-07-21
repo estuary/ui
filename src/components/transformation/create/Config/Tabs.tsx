@@ -1,6 +1,7 @@
+import { MuiTabProps } from 'types';
+
 import { Dispatch, SetStateAction, useMemo } from 'react';
 
-import { MuiTabProps } from 'types';
 import { useIntl } from 'react-intl';
 
 import { Box, Button, Tab, Tabs } from '@mui/material';

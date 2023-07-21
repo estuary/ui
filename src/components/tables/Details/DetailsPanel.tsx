@@ -1,7 +1,8 @@
+import { Entity } from 'types';
+
 import { useMemo } from 'react';
 
 import { concat } from 'lodash';
-import { Entity } from 'types';
 import { FormattedMessage } from 'react-intl';
 
 import {

@@ -1,5 +1,6 @@
-import { orderBy } from 'lodash';
 import { InferSchemaResponseProperty, Schema, SortDirection } from 'types';
+
+import { orderBy } from 'lodash';
 
 import { TableCell, TableRow, Typography } from '@mui/material';
 

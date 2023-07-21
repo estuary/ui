@@ -1,7 +1,8 @@
+import { LiveSpecsExtBareMinimum } from 'types';
+
 import { useMemo } from 'react';
 
 import useSWR from 'swr';
-import { LiveSpecsExtBareMinimum } from 'types';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 
 import { Auth } from '@supabase/ui';

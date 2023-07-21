@@ -1,6 +1,7 @@
+import { BaseComponentProps } from 'types';
+
 import React from 'react';
 
-import { BaseComponentProps } from 'types';
 import { useLocalStorage } from 'react-use';
 
 import {

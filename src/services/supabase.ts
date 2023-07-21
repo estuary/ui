@@ -1,6 +1,7 @@
+import { JobStatus, SortDirection } from 'types';
+
 import { forEach, isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
-import { JobStatus, SortDirection } from 'types';
 
 import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { createClient, User } from '@supabase/supabase-js';

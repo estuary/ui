@@ -1,6 +1,7 @@
+import { BaseComponentProps } from 'types';
+
 import { createContext, ReactNode, useContext, useRef, useState } from 'react';
 
-import { BaseComponentProps } from 'types';
 import { FormattedMessage } from 'react-intl';
 
 import {

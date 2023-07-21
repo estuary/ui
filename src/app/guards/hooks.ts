@@ -1,7 +1,8 @@
+import { AppliedDirective } from 'types';
+
 import { useEffect, useMemo, useState } from 'react';
 
 import { OptionsObject, useSnackbar } from 'notistack';
-import { AppliedDirective } from 'types';
 import { useIntl } from 'react-intl';
 
 import { PostgrestError } from '@supabase/postgrest-js';

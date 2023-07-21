@@ -1,9 +1,10 @@
 import 'react-reflex/styles.css';
 
+import { BaseComponentProps } from 'types';
+
 import * as React from 'react';
 import { useEffect } from 'react';
 
-import { BaseComponentProps } from 'types';
 import { Navigate } from 'react-router';
 
 import { Auth } from '@supabase/ui';

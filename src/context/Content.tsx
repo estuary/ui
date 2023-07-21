@@ -1,4 +1,5 @@
 import { BaseComponentProps } from 'types';
+
 import { IntlProvider } from 'react-intl';
 
 import enUSMessages from 'lang/en-US';

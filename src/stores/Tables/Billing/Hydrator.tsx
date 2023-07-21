@@ -1,6 +1,7 @@
+import { BaseComponentProps, CatalogStats_Billing } from 'types';
+
 import { useEffect } from 'react';
 
-import { BaseComponentProps, CatalogStats_Billing } from 'types';
 import { useUnmount } from 'react-use';
 
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';

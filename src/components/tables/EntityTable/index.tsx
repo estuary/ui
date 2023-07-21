@@ -1,4 +1,12 @@
 import {
+    SortDirection,
+    TableColumns,
+    TableIntlConfig,
+    TableState,
+    TableStatuses,
+} from 'types';
+
+import {
     ChangeEvent,
     MouseEvent,
     ReactNode,
@@ -9,13 +17,6 @@ import {
 } from 'react';
 
 import { debounce } from 'lodash';
-import {
-    SortDirection,
-    TableColumns,
-    TableIntlConfig,
-    TableState,
-    TableStatuses,
-} from 'types';
 import { useIntl } from 'react-intl';
 import { useEffectOnce } from 'react-use';
 

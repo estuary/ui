@@ -1,7 +1,8 @@
+import { Schema } from 'types';
+
 import { useEffect, useMemo } from 'react';
 
 import { isEmpty, isEqual } from 'lodash';
-import { Schema } from 'types';
 import { useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 

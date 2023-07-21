@@ -1,6 +1,7 @@
+import { JsonFormsData } from 'types';
+
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
-import { JsonFormsData } from 'types';
 import { createStore, StoreApi } from 'zustand';
 
 import { getConnectors_detailsForm } from 'api/connectors';

@@ -39,9 +39,8 @@ import { Box, Hidden, IconButton, Popover, Stack } from '@mui/material';
 import { LocalizationProvider, StaticDatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
-import { Patterns } from 'types/jsonforms';
-
 import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
+import { Patterns } from 'types/jsonforms';
 
 import { CustomMaterialInputControl } from './MaterialInputControl';
 import useDatePickerState from './useDatePickerState';

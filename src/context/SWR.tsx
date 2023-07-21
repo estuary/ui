@@ -1,6 +1,7 @@
+import { BaseComponentProps } from 'types';
+
 import { useSnackbar } from 'notistack';
 import { SWRConfig } from 'swr';
-import { BaseComponentProps } from 'types';
 import { LRUCache } from 'lru-cache';
 import { useIntl } from 'react-intl';
 

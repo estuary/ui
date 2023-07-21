@@ -1,4 +1,5 @@
 import { BaseComponentProps } from 'types';
+
 import { Navigate, useLocation } from 'react-router-dom';
 
 import { Auth } from '@supabase/ui';

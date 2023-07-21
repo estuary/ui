@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
-
 import { BaseComponentProps } from 'types';
+
+import { useMemo } from 'react';
 
 import FullPageSpinner from 'components/fullPage/Spinner';
 

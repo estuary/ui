@@ -1,6 +1,7 @@
+import { BaseComponentProps } from 'types';
+
 import { useEffect, useState } from 'react';
 
-import { BaseComponentProps } from 'types';
 import { FormattedMessage } from 'react-intl';
 
 import { Typography } from '@mui/material';

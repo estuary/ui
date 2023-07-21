@@ -1,6 +1,7 @@
+import { GatewayAuthTokenResponse } from 'types';
+
 import { decodeJwt, JWTPayload } from 'jose';
 import useSWR from 'swr';
-import { GatewayAuthTokenResponse } from 'types';
 
 import { Auth } from '@supabase/ui';
 

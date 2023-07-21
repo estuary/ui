@@ -1,5 +1,6 @@
-import produce from 'immer';
 import { MessagePrefixes } from 'types';
+
+import produce from 'immer';
 import { create, StoreApi } from 'zustand';
 
 import { devtoolsOptions } from 'utils/store-utils';

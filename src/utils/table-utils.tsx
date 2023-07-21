@@ -1,4 +1,5 @@
 import { TableIntlConfig, TableStatuses } from 'types';
+
 import { FormattedMessage } from 'react-intl';
 
 import MessageWithLink from 'components/content/MessageWithLink';

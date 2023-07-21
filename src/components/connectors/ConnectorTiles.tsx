@@ -1,5 +1,3 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-
 import {
     BaseComponentProps,
     EntityWithCreateWorkflow,
@@ -8,6 +6,9 @@ import {
     TableState,
     TableStatuses,
 } from 'types';
+
+import { useEffect, useMemo, useRef, useState } from 'react';
+
 import { AddSquare } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 

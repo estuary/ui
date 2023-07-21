@@ -1,4 +1,5 @@
 import { BaseComponentProps } from 'types';
+
 import { useEffectOnce } from 'react-use';
 
 import { useEntityType } from 'context/EntityContext';

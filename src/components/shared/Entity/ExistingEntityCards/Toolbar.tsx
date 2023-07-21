@@ -1,3 +1,5 @@
+import { SortDirection } from 'types';
+
 import {
     ChangeEvent,
     Dispatch,
@@ -6,7 +8,6 @@ import {
     useRef,
 } from 'react';
 
-import { SortDirection } from 'types';
 import { useIntl } from 'react-intl';
 import useConstant from 'use-constant';
 

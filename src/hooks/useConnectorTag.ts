@@ -1,6 +1,6 @@
-import { useCallback } from 'react';
-
 import { Schema } from 'types';
+
+import { useCallback } from 'react';
 
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 

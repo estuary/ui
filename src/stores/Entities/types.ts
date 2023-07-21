@@ -1,5 +1,6 @@
-import { KeyedMutator } from 'swr';
 import { AuthRoles, Schema } from 'types';
+
+import { KeyedMutator } from 'swr';
 
 import { PostgrestResponse } from '@supabase/postgrest-js';
 

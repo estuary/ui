@@ -1,6 +1,7 @@
+import { JsonFormsData, Schema } from 'types';
+
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
-import { JsonFormsData, Schema } from 'types';
 import { create, StoreApi } from 'zustand';
 
 import { getDraftSpecsByDraftId } from 'api/draftSpecs';

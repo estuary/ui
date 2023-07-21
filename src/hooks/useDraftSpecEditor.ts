@@ -1,7 +1,8 @@
+import { Entity } from 'types';
+
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { get, has, set } from 'lodash';
-import { Entity } from 'types';
 
 import { modifyDraftSpec } from 'api/draftSpecs';
 

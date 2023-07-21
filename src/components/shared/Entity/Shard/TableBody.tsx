@@ -1,4 +1,5 @@
 import { TableColumns } from 'types';
+
 import { FormattedMessage } from 'react-intl';
 
 import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';

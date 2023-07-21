@@ -1,5 +1,6 @@
-import { KeyedMutator } from 'swr';
 import { AppliedDirective, JoinedAppliedDirective } from 'types';
+
+import { KeyedMutator } from 'swr';
 
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 

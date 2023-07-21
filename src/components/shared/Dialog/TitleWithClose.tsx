@@ -1,4 +1,5 @@
 import { BaseComponentProps } from 'types';
+
 import { Cancel } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 

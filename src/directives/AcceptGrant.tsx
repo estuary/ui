@@ -1,7 +1,8 @@
+import { AppliedDirective, JoinedAppliedDirective } from 'types';
+
 import { useState } from 'react';
 
 import { KeyedMutator } from 'swr';
-import { AppliedDirective, JoinedAppliedDirective } from 'types';
 import { FormattedMessage } from 'react-intl';
 
 import { LoadingButton } from '@mui/lab';

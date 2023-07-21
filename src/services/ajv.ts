@@ -2,9 +2,9 @@ import { isEmpty } from 'lodash';
 
 import { createAjv } from '@jsonforms/core';
 
-import { Annotations } from 'types/jsonforms';
-
 import { stripPathing } from 'utils/misc-utils';
+
+import { Annotations } from 'types/jsonforms';
 
 type Ajv = ReturnType<typeof createAjv>;
 

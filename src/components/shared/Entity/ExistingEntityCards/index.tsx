@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-
 import {
     SortDirection,
     TableIntlConfig,
     TableState,
     TableStatuses,
 } from 'types';
+
+import { useEffect, useMemo, useRef, useState } from 'react';
+
 import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
 

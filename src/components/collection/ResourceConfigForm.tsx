@@ -19,9 +19,9 @@ import {
     useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig/hooks';
 
-import { Annotations } from 'types/jsonforms';
-
 import { stripPathing } from 'utils/misc-utils';
+
+import { Annotations } from 'types/jsonforms';
 
 type Props = {
     collectionName: string;

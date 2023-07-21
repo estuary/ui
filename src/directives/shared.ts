@@ -1,5 +1,6 @@
-import { isEmpty } from 'lodash';
 import { AppliedDirective } from 'types';
+
+import { isEmpty } from 'lodash';
 
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import { JOB_STATUS_COLUMNS, supabaseClient, TABLES } from 'services/supabase';

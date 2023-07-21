@@ -1,5 +1,6 @@
-import { SWRConfiguration } from 'swr';
 import { JobStatus } from 'types';
+
+import { SWRConfiguration } from 'swr';
 
 import { DEFAULT_POLLING } from 'context/SWR';
 

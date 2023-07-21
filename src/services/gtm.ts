@@ -1,4 +1,5 @@
 import { Schema } from 'types';
+
 import TagManager from 'react-gtm-module';
 
 import { getGoogleTageManagerSettings, isProduction } from 'utils/env-utils';

@@ -41,11 +41,10 @@ import {
     UISchemaElement,
 } from '@jsonforms/core';
 
-import { Annotations, Formats, Options } from 'types/jsonforms';
-
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
+import { Annotations, Formats, Options } from 'types/jsonforms';
 
 import { ADVANCED, CONTAINS_REQUIRED_FIELDS } from './shared';
 

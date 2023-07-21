@@ -1,6 +1,7 @@
+import { TableColumns, TableStatuses } from 'types';
+
 import { useMemo } from 'react';
 
-import { TableColumns, TableStatuses } from 'types';
 import { useIntl } from 'react-intl';
 
 import { Box, Table, TableContainer } from '@mui/material';

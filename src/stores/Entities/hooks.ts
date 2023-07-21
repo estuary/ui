@@ -1,7 +1,8 @@
+import { Schema } from 'types';
+
 import { useEffect } from 'react';
 
 import useSWR from 'swr';
-import { Schema } from 'types';
 
 import { singleCallSettings } from 'context/SWR';
 import { useZustandStore } from 'context/Zustand/provider';

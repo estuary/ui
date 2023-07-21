@@ -1,6 +1,7 @@
+import { Entity, TableColumns } from 'types';
+
 import { MouseEvent, useEffect, useState } from 'react';
 
-import { Entity, TableColumns } from 'types';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import {

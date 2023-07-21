@@ -1,3 +1,5 @@
+import { Capability } from 'types';
+
 import {
     ChangeEvent,
     Dispatch,
@@ -6,7 +8,6 @@ import {
     useState,
 } from 'react';
 
-import { Capability } from 'types';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { Button, Grid, TextField } from '@mui/material';

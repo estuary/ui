@@ -1,6 +1,6 @@
-import { Dispatch, SetStateAction } from 'react';
-
 import { InferSchemaPropertyForRender, Schema } from 'types';
+
+import { Dispatch, SetStateAction } from 'react';
 
 import { AlertColor } from '@mui/material';
 

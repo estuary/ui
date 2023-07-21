@@ -1,5 +1,6 @@
-import produce from 'immer';
 import { Entity } from 'types';
+
+import produce from 'immer';
 import { create, StoreApi } from 'zustand';
 
 import { errorMain, successMain, warningMain } from 'context/Theme';

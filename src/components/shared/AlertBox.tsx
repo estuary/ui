@@ -1,6 +1,7 @@
+import { BaseComponentProps } from 'types';
+
 import { forwardRef, ReactNode, useMemo } from 'react';
 
-import { BaseComponentProps } from 'types';
 import {
     CheckCircle,
     DeleteCircle,

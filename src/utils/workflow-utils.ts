@@ -1,5 +1,6 @@
-import { isEmpty } from 'lodash';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
+
+import { isEmpty } from 'lodash';
 
 import {
     DraftSpecsExtQuery_ByCatalogName,

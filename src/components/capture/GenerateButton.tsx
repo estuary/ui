@@ -1,6 +1,7 @@
+import { Entity } from 'types';
+
 import { Dispatch, SetStateAction, useEffect } from 'react';
 
-import { Entity } from 'types';
 import { FormattedMessage } from 'react-intl';
 
 import { Button } from '@mui/material';

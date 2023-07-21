@@ -1,4 +1,5 @@
 import { BaseComponentProps } from 'types';
+
 import { Link as ReactRouterLink } from 'react-router-dom';
 
 import { Link, useMediaQuery, useTheme } from '@mui/material';

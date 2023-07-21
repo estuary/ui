@@ -1,3 +1,5 @@
+import { Schema } from 'types';
+
 import produce from 'immer';
 import {
     difference,
@@ -9,7 +11,6 @@ import {
     pick,
     sortBy,
 } from 'lodash';
-import { Schema } from 'types';
 import { create, StoreApi } from 'zustand';
 
 import { getDraftSpecsByDraftId } from 'api/draftSpecs';

@@ -1,6 +1,7 @@
+import { EntityWorkflow } from 'types';
+
 import { ReactNode, useMemo } from 'react';
 
-import { EntityWorkflow } from 'types';
 import { Cancel, WarningCircle } from 'iconoir-react';
 
 import { Box, IconButton, ListItemText, useTheme } from '@mui/material';

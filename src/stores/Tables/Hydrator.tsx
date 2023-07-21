@@ -1,6 +1,7 @@
+import { BaseComponentProps } from 'types';
+
 import { useEffect } from 'react';
 
-import { BaseComponentProps } from 'types';
 import { useUnmount } from 'react-use';
 
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';

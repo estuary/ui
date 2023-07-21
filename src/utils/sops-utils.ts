@@ -1,5 +1,6 @@
-import { isPlainObject } from 'lodash';
 import { JsonFormsData, Schema } from 'types';
+
+import { isPlainObject } from 'lodash';
 
 import { encryptConfig } from 'api/oauth';
 

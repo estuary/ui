@@ -20,10 +20,13 @@ module.exports = {
                     // Side effect imports.
                     ['^\\u0000'],
 
+                    // Putting types at top
+                    ['^types$'],
+
                     // React stuff
                     ['^react'],
 
-                    // Single word imports... hope this covers most external packages that are not scoped
+                    // Single word imports and imports with underscores and hyphens. Should match most packages we use
                     ['^(\\w)+$', '^[a-zA-Z0-9-_]+$'],
 
                     //  Scoped Packages
@@ -45,7 +48,6 @@ module.exports = {
                     ['^polyfills/'],
                     ['^services/'],
                     ['^stores/'],
-                    ['^types/'],
                     ['^utils/'],
 
                     // Absolute imports and other imports such `@/foo`.

@@ -1,6 +1,7 @@
+import { CatalogStats_Details } from 'types';
+
 import { useMemo } from 'react';
 
-import { CatalogStats_Details } from 'types';
 import prettyBytes from 'pretty-bytes';
 import { FormattedMessage, useIntl } from 'react-intl';
 import readable from 'readable-numbers';

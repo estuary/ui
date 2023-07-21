@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
-
 import { TableColumns } from 'types';
+
+import { useMemo } from 'react';
 
 import { Box } from '@mui/material';
 
