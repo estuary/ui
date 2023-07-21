@@ -5,6 +5,8 @@ import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import Rows from 'components/tables/FieldSelection/Rows';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useFormStateStore_status } from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
 
 interface Props {
@@ -37,6 +39,8 @@ export const columns: TableColumns[] = [
 function FieldSelectionTable({ projections }: Props) {
     const intl = useIntl();
 
+    const formStatus = useFormStateStore_status();
+
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
@@ -57,12 +61,16 @@ function FieldSelectionTable({ projections }: Props) {
     };
 
     useEffect(() => {
-        setTableState({
-            status: projections
-                ? TableStatuses.DATA_FETCHED
-                : TableStatuses.NO_EXISTING_DATA,
-        });
-    }, [setTableState, projections]);
+        if (formStatus === FormStatus.TESTING) {
+            setTableState({ status: TableStatuses.LOADING });
+        } else {
+            setTableState({
+                status: projections
+                    ? TableStatuses.DATA_FETCHED
+                    : TableStatuses.NO_EXISTING_DATA,
+            });
+        }
+    }, [setTableState, formStatus, projections]);
 
     return (
         <Box>
@@ -90,9 +98,9 @@ function FieldSelectionTable({ projections }: Props) {
                             disableDoclink: true,
                         }}
                         tableState={tableState}
-                        loading={false}
+                        loading={formStatus === FormStatus.TESTING}
                         rows={
-                            projections ? (
+                            projections && formStatus !== FormStatus.TESTING ? (
                                 <Rows
                                     data={projections}
                                     sortDirection={sortDirection}

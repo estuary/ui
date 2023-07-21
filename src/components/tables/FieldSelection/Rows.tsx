@@ -34,7 +34,10 @@ function Row({ row }: RowProps) {
             ) : null}
 
             {row.constraint ? (
-                <FieldActions constraint={row.constraint} />
+                <FieldActions
+                    constraint={row.constraint}
+                    selectionType={row.selectionType}
+                />
             ) : null}
         </TableRow>
     );

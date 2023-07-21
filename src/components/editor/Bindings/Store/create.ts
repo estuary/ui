@@ -16,8 +16,8 @@ import { InferSchemaPropertyForRender, InferSchemaResponse } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { filterInferSchemaResponse, hasReadSchema } from 'utils/schema-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import { StoreApi, create } from 'zustand';
+import { NamedSet, devtools } from 'zustand/middleware';
 
 const processDraftSpecResponse = (
     draftSpecResponse: CallSupabaseResponse<any>,
@@ -130,6 +130,9 @@ const getInitialStateData = (): Pick<
     | 'inferSchemaResponse_Keys'
     | 'incompatibleCollections'
     | 'hasIncompatibleCollections'
+    | 'recommendFields'
+    | 'includedFields'
+    | 'excludedFields'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -148,6 +151,9 @@ const getInitialStateData = (): Pick<
     inferSchemaResponseEmpty: false,
     incompatibleCollections: [],
     hasIncompatibleCollections: false,
+    recommendFields: true,
+    includedFields: {},
+    excludedFields: [],
 });
 
 const getInitialState = (
@@ -358,6 +364,36 @@ const getInitialState = (
         } else {
             return null;
         }
+    },
+
+    setRecommendFields: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.recommendFields = value;
+            }),
+            false,
+            'Recommend Fields Set'
+        );
+    },
+
+    setIncludedFields: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.includedFields = value;
+            }),
+            false,
+            'Included Fields Set'
+        );
+    },
+
+    setExcludedFields: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.excludedFields = value;
+            }),
+            false,
+            'Excluded Fields Set'
+        );
     },
 
     // TODO (collection editor) maybe

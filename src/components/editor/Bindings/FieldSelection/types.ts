@@ -17,9 +17,16 @@ interface Collection {
     writeSchema: Schema;
 }
 
+export interface FieldSelection {
+    keys: string[];
+    values: string[];
+    document: string;
+    fieldConfig?: { [field: string]: any };
+}
+
 export interface BuiltSpec_Binding {
     collection: Collection;
-    fieldSelection: any;
+    fieldSelection: FieldSelection;
     journalReadSuffix: string;
     partitionSelector: any;
     resourceConfig: any;
@@ -38,7 +45,7 @@ export enum ConstraintTypes {
 
 export type ConstraintType = keyof typeof ConstraintTypes;
 
-interface Constraint {
+export interface Constraint {
     type: ConstraintType;
     reason: string;
 }
@@ -52,6 +59,8 @@ export interface ValidationResponse_Binding {
     resourcePath: string[];
 }
 
+export type FieldSelectionType = 'default' | 'include' | 'exclude';
+
 export interface TranslatedConstraint {
     type: ConstraintTypes;
     reason: string;
@@ -59,6 +68,5 @@ export interface TranslatedConstraint {
 
 export interface CompositeProjection extends Projection {
     constraint: TranslatedConstraint | null;
+    selectionType: FieldSelectionType;
 }
-
-export type FieldSelectionType = 'default' | 'include' | 'exclude';

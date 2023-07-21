@@ -11,8 +11,8 @@ import { FormattedMessage } from 'react-intl';
 
 interface Props {
     constraint: TranslatedConstraint;
-    selectedValue: FieldSelectionType;
-    setSelectedValue: Dispatch<SetStateAction<FieldSelectionType>>;
+    selectedValue: FieldSelectionType | null;
+    setSelectedValue: Dispatch<SetStateAction<FieldSelectionType | null>>;
 }
 
 // TODO (field selection): Share disabled and shared state styling with the OutlinedToggleButton component.

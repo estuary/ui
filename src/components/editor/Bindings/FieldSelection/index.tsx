@@ -1,40 +1,94 @@
-import { Stack, Typography } from '@mui/material';
+import {
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    Stack,
+    Typography,
+} from '@mui/material';
 import {
     BuiltSpec_Binding,
     CompositeProjection,
     ConstraintDictionary,
     ConstraintTypes,
+    FieldSelectionType,
     Projection,
+    TranslatedConstraint,
     ValidationResponse_Binding,
 } from 'components/editor/Bindings/FieldSelection/types';
+import {
+    useBindingsEditorStore_recommendFields,
+    useBindingsEditorStore_setRecommendFields,
+} from 'components/editor/Bindings/Store/hooks';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import ExternalLink from 'components/shared/ExternalLink';
 import FieldSelectionTable from 'components/tables/FieldSelection';
+import { Square } from 'iconoir-react';
+import CheckSquare from 'icons/CheckSquare';
 import { isEqual } from 'lodash';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { Schema } from 'types';
 
 interface Props {
     collectionName: string;
 }
 
+interface FieldMetadata {
+    recommended: boolean;
+    include?: { [field: string]: any };
+    exclude?: string[];
+}
+
 const mapConstraintsToProjections = (
     projections: Projection[],
-    constraints: ConstraintDictionary
+    constraints: ConstraintDictionary,
+    fieldMetadata?: FieldMetadata
 ): CompositeProjection[] =>
-    projections.map(({ field, inference, ptr }) => ({
-        field,
-        inference,
-        ptr,
-        constraint: Object.hasOwn(constraints, field)
+    projections.map(({ field, inference, ptr }) => {
+        const constraint: TranslatedConstraint | null = Object.hasOwn(
+            constraints,
+            field
+        )
             ? {
                   type: ConstraintTypes[constraints[field].type],
                   reason: constraints[field].reason,
               }
-            : null,
-    }));
+            : null;
+
+        let selectionType: FieldSelectionType = 'default';
+
+        if (fieldMetadata) {
+            const { recommended, include, exclude } = fieldMetadata;
+
+            if (include && Object.hasOwn(include, field)) {
+                selectionType = 'include';
+            } else if (exclude?.includes(field)) {
+                selectionType = 'exclude';
+            } else if (!recommended && constraint) {
+                const includeRecommended =
+                    constraint.type === ConstraintTypes.FIELD_REQUIRED ||
+                    constraint.type === ConstraintTypes.LOCATION_REQUIRED ||
+                    constraint.type === ConstraintTypes.LOCATION_RECOMMENDED;
+
+                selectionType = includeRecommended ? 'include' : 'exclude';
+            }
+        }
+
+        return {
+            field,
+            inference,
+            ptr,
+            constraint,
+            selectionType,
+        };
+    });
 
 function FieldSelectionViewer({ collectionName }: Props) {
+    // Bindings Editor Store
+    const recommendFields = useBindingsEditorStore_recommendFields();
+    const setRecommendFields = useBindingsEditorStore_setRecommendFields();
+
+    // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
     const data: CompositeProjection[] | null = useMemo(() => {
@@ -71,10 +125,27 @@ function FieldSelectionViewer({ collectionName }: Props) {
                         )
                     )?.constraints;
 
+                const selectedBinding: Schema | undefined =
+                    draftSpecs[0].spec.bindings.find(
+                        (binding: any) => binding.source === collectionName
+                    );
+
+                let evaluatedFieldMetadata: FieldMetadata | undefined;
+
+                if (
+                    selectedBinding &&
+                    Object.hasOwn(selectedBinding, 'fields')
+                ) {
+                    evaluatedFieldMetadata = selectedBinding.fields;
+
+                    setRecommendFields(selectedBinding.fields.recommended);
+                }
+
                 return evaluatedConstraints
                     ? mapConstraintsToProjections(
                           evaluatedProjections,
-                          evaluatedConstraints
+                          evaluatedConstraints,
+                          evaluatedFieldMetadata
                       )
                     : null;
             } else {
@@ -83,11 +154,11 @@ function FieldSelectionViewer({ collectionName }: Props) {
         } else {
             return null;
         }
-    }, [collectionName, draftSpecs]);
+    }, [setRecommendFields, collectionName, draftSpecs]);
 
     return (
-        <Stack spacing={4}>
-            <Stack direction="row">
+        <>
+            <Stack direction="row" sx={{ mb: 1 }}>
                 <Typography variant="h6" sx={{ mr: 0.5 }}>
                     <FormattedMessage id="fieldSelection.header" />
                 </Typography>
@@ -97,8 +168,31 @@ function FieldSelectionViewer({ collectionName }: Props) {
                 </ExternalLink>
             </Stack>
 
+            <Typography sx={{ mb: 2 }}>
+                <FormattedMessage id="fieldSelection.message" />
+            </Typography>
+
+            <FormControl sx={{ mb: 1, mx: 0 }}>
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            value={recommendFields}
+                            icon={<Square style={{ fontSize: 14 }} />}
+                            checkedIcon={
+                                <CheckSquare style={{ fontSize: 14 }} />
+                            }
+                            defaultChecked
+                        />
+                    }
+                    onChange={() => setRecommendFields(!recommendFields)}
+                    label={
+                        <FormattedMessage id="fieldSelection.cta.defaultAllFields" />
+                    }
+                />
+            </FormControl>
+
             <FieldSelectionTable projections={data} />
-        </Stack>
+        </>
     );
 }
 

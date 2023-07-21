@@ -77,6 +77,16 @@ export interface BindingsEditorState {
     ) => void;
     hasIncompatibleCollections: boolean;
 
+    // Field Selection
+    recommendFields: boolean;
+    setRecommendFields: (value: BindingsEditorState['recommendFields']) => void;
+
+    includedFields: { [field: string]: {} };
+    setIncludedFields: (value: BindingsEditorState['includedFields']) => void;
+
+    excludedFields: string[];
+    setExcludedFields: (value: BindingsEditorState['excludedFields']) => void;
+
     // Misc.
     resetState: () => void;
 }

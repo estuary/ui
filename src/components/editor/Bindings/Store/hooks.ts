@@ -269,6 +269,48 @@ export const useBindingsEditorStore_populateInferSchemaResponse = () => {
     );
 };
 
+export const useBindingsEditorStore_recommendFields = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['recommendFields']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.recommendFields);
+};
+
+export const useBindingsEditorStore_setRecommendFields = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setRecommendFields']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.setRecommendFields);
+};
+
+export const useBindingsEditorStore_includedFields = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['includedFields']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.includedFields);
+};
+
+export const useBindingsEditorStore_setIncludedFields = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setIncludedFields']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.setIncludedFields);
+};
+
+export const useBindingsEditorStore_excludedFields = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['excludedFields']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.excludedFields);
+};
+
+export const useBindingsEditorStore_setExcludedFields = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setExcludedFields']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.setExcludedFields);
+};
+
 export const useBindingsEditorStore_resetState = () => {
     return useZustandStore<
         BindingsEditorState,
