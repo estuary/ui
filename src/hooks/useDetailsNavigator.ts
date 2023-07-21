@@ -1,6 +1,9 @@
 import { useCallback } from 'react';
+
 import { useNavigate } from 'react-router';
+
 import { getPathWithParams } from 'utils/misc-utils';
+
 import { GlobalSearchParams } from './searchParams/useGlobalSearchParams';
 
 interface Data {

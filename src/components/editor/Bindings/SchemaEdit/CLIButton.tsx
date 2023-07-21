@@ -1,4 +1,5 @@
 import { Skeleton } from '@mui/material';
+
 import DiscoveredSchemaCommands from 'components/editor/Bindings/SchemaEdit/Commands/DiscoveredSchema';
 import ExistingSchemaCommands from 'components/editor/Bindings/SchemaEdit/Commands/ExistingSchema';
 import EditCommandsWrapper from 'components/editor/Bindings/SchemaEdit/Commands/Wrapper';
@@ -7,6 +8,7 @@ import {
     useBindingsEditorStore_editModeEnabled,
 } from 'components/editor/Bindings/Store/hooks';
 import ButtonWithPopper from 'components/shared/ButtonWithPopper';
+
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 
 function SchemaEditCLIButton() {

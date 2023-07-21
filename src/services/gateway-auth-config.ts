@@ -1,4 +1,5 @@
 import { client } from 'services/client';
+
 import {
     getGatewayAuthTokenSettings,
     getSupabaseAnonymousKey,

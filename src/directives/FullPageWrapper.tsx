@@ -1,7 +1,10 @@
-import { Box, Paper, Toolbar, useMediaQuery, useTheme } from '@mui/material';
-import PageContainer from 'components/shared/PageContainer';
-import { paperBackground } from 'context/Theme';
 import { BaseComponentProps } from 'types';
+
+import { Box, Paper, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+
+import PageContainer from 'components/shared/PageContainer';
+
+import { paperBackground } from 'context/Theme';
 
 interface Props extends BaseComponentProps {
     fullWidth?: boolean;

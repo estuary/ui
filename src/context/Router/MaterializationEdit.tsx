@@ -1,5 +1,7 @@
 import EntityExistenceGuard from 'app/guards/EntityExistenceGuard';
+
 import MaterializationEdit from 'components/materialization/Edit';
+
 import { EntityContextProvider } from 'context/EntityContext';
 import { WorkflowContextProvider } from 'context/Workflow';
 

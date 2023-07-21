@@ -1,14 +1,21 @@
+import { ReactNode, useMemo } from 'react';
+
+import { EntityWorkflow } from 'types';
+import { Cancel, WarningCircle } from 'iconoir-react';
+
 import { Box, IconButton, ListItemText, useTheme } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
+
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
+
 import BindingSearch from 'components/collection/BindingSearch';
 import CollectionSelectorActions from 'components/collection/Selector/Actions';
 import CollectionSelectorList from 'components/collection/Selector/List';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
+
 import { typographyTruncation } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
-import { Cancel, WarningCircle } from 'iconoir-react';
-import { ReactNode, useMemo } from 'react';
+
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
@@ -21,7 +28,7 @@ import {
     useResourceConfig_setCurrentCollection,
     useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
-import { EntityWorkflow } from 'types';
+
 import { hasLength, stripPathing } from 'utils/misc-utils';
 
 interface BindingSelectorProps {

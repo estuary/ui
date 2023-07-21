@@ -1,7 +1,9 @@
+import { BaseComponentProps } from 'types';
+
 import IconoirProvider from 'context/Iconoir';
 import NotificationProvider from 'context/Notifications';
 import SwrConfigProvider from 'context/SWR';
-import { BaseComponentProps } from 'types';
+
 import ClientProvider from './Client';
 import ContentProvider from './Content';
 import ThemeProvider from './Theme';

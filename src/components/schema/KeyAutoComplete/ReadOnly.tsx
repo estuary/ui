@@ -1,3 +1,6 @@
+import { HelpCircle } from 'iconoir-react';
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     Chip,
     Grid,
@@ -7,14 +10,15 @@ import {
     Tooltip,
     Typography,
 } from '@mui/material';
+
 import {
-    useBindingsEditorStore_inferSchemaResponseEmpty,
     useBindingsEditorStore_inferSchemaResponse_Keys,
+    useBindingsEditorStore_inferSchemaResponseEmpty,
 } from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
-import { HelpCircle } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import { hasLength } from 'utils/misc-utils';
+
 import { keyIsValidOption } from './shared';
 
 interface Props {

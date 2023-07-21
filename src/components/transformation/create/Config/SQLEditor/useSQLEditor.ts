@@ -1,4 +1,10 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { set } from 'lodash';
+import { Entity } from 'types';
+
 import { modifyDraftSpec } from 'api/draftSpecs';
+
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
@@ -6,9 +12,9 @@ import {
     useEditorStore_queryResponse_mutate,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
+
 import { DraftSpec } from 'hooks/useDraftSpecs';
-import { set } from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+
 import {
     useTransformationCreate_attributeType,
     useTransformationCreate_migrations,
@@ -16,7 +22,7 @@ import {
     useTransformationCreate_selectedAttribute,
     useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
-import { Entity } from 'types';
+
 import { updateMigrations, updateTransforms } from 'utils/derivation-utils';
 
 function useSQLEditor(entityName: string) {

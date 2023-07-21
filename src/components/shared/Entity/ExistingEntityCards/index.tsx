@@ -1,3 +1,14 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+import {
+    SortDirection,
+    TableIntlConfig,
+    TableState,
+    TableStatuses,
+} from 'types';
+import { FormattedMessage } from 'react-intl';
+import { useUnmount } from 'react-use';
+
 import {
     Box,
     Divider,
@@ -7,11 +18,13 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+
 import {
     CaptureQueryWithSpec,
     getLiveSpecs_existingTasks,
     MaterializationQueryWithSpec,
 } from 'api/liveSpecsExt';
+
 import ExistingEntityCard from 'components/shared/Entity/ExistingEntityCards/Cards/Existing';
 import NewEntityCard from 'components/shared/Entity/ExistingEntityCards/Cards/New';
 import ExistingEntityCardSkeleton from 'components/shared/Entity/ExistingEntityCards/Skeleton';
@@ -21,22 +34,16 @@ import {
     useExistingEntity_setQueryData,
 } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
 import ExistingEntityCardToolbar from 'components/shared/Entity/ExistingEntityCards/Toolbar';
+
 import { useEntityType } from 'context/EntityContext';
 import { semiTransparentBackground } from 'context/Theme';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { useDistributedSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { useUnmount } from 'react-use';
-import {
-    SortDirection,
-    TableIntlConfig,
-    TableState,
-    TableStatuses,
-} from 'types';
+
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
 
 const intlConfig: TableIntlConfig = {

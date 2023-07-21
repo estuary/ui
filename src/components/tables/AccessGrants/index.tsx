@@ -1,5 +1,9 @@
+import { useMemo } from 'react';
+
 import { Box } from '@mui/material';
+
 import { getGrants, getGrants_Users } from 'api/combinedGrantsExt';
+
 import AccessLinksButton from 'components/tables/AccessGrants/AccessLinks/Dialog/Button';
 import DataShareButton from 'components/tables/AccessGrants/DataSharing/Dialog/Button';
 import PrefixRows, {
@@ -9,7 +13,7 @@ import UserRows, {
     userTableColumns,
 } from 'components/tables/AccessGrants/UserRows';
 import EntityTable from 'components/tables/EntityTable';
-import { useMemo } from 'react';
+
 import { SelectTableStoreNames } from 'stores/names';
 import useTableState, { TablePrefix } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';

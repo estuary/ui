@@ -1,10 +1,15 @@
+import { useMemo, useState } from 'react';
+
+import { useIntl } from 'react-intl';
+
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
+
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
-import { useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
+
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, hideValidation } from 'services/jsonforms/shared';
+
 import {
     useTransformationCreate_name,
     useTransformationCreate_setName,

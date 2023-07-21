@@ -1,5 +1,6 @@
-import { Tester, UISchemaElement } from '@jsonforms/core';
 import { has, isEmpty } from 'lodash';
+
+import { Tester, UISchemaElement } from '@jsonforms/core';
 
 // The normal option tester 'optionIs' needs to test for a specific value
 //  and not just if it exists. This is tweaking that tester

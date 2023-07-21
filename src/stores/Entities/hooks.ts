@@ -1,9 +1,13 @@
-import { singleCallSettings } from 'context/SWR';
-import { useZustandStore } from 'context/Zustand/provider';
 import { useEffect } from 'react';
-import { GlobalStoreNames } from 'stores/names';
+
 import useSWR from 'swr';
 import { Schema } from 'types';
+
+import { singleCallSettings } from 'context/SWR';
+import { useZustandStore } from 'context/Zustand/provider';
+
+import { GlobalStoreNames } from 'stores/names';
+
 import { EntitiesState } from './types';
 
 export const useEntitiesStore_setCapabilities = () => {

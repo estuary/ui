@@ -1,16 +1,23 @@
+import { useState } from 'react';
+
+import { BaseComponentProps } from 'types';
+import { FormattedMessage } from 'react-intl';
+
 import { Stack, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
+
 import { getDirectiveByToken } from 'api/directives';
+
 import MessageWithLink from 'components/content/MessageWithLink';
 import FullPageSpinner from 'components/fullPage/Spinner';
+
 import AcceptGrant from 'directives/AcceptGrant';
 import FullPageWrapper from 'directives/FullPageWrapper';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
+
 import useDirectiveGuard from './hooks';
 
 const SELECTED_DIRECTIVE = 'grant';

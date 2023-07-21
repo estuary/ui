@@ -1,5 +1,7 @@
 import { useZustandStore } from 'context/Zustand/provider';
+
 import { GlobalStoreNames } from 'stores/names';
+
 import { TopBarState } from './types';
 
 export const useTopBarStore_header = () => {

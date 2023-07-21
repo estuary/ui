@@ -1,5 +1,12 @@
+import { useState } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+import { useSet } from 'react-use';
+
 import { Box, Divider, Stack } from '@mui/material';
+
 import { authenticatedRoutes } from 'app/routes';
+
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
 import PrefixedName from 'components/inputs/PrefixedName';
@@ -10,12 +17,12 @@ import InitializeDraftButton from 'components/transformation/create/InitializeDr
 import LanguageSelector from 'components/transformation/create/LanguageSelector';
 import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
+
 import { useLiveSpecs } from 'hooks/useLiveSpecs';
 import usePageTitle from 'hooks/usePageTitle';
-import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { useSet } from 'react-use';
+
 import { CustomEvents } from 'services/logrocket';
+
 import {
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_resetState,

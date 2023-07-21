@@ -1,14 +1,20 @@
+import { useMemo } from 'react';
+
 import { Grid } from '@mui/material';
+
 import { DataPreview } from 'components/collection/DataPreview';
 import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
 import { TaskEndpoints } from 'components/shared/TaskEndpoints';
+
 import { useEntityType } from 'context/EntityContext';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useLiveSpecs_details } from 'hooks/useLiveSpecs';
-import { useMemo } from 'react';
+
 import { hasLength, specContainsDerivation } from 'utils/misc-utils';
+
 import ShardInformation from '../../Shard/Information';
 import Usage from '../Usage';
 import DetailsSection from './DetailsSection';

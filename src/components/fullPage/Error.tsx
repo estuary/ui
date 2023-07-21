@@ -1,11 +1,16 @@
+import { ReactElement } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+import { useMount } from 'react-use';
+
 import { Divider, Stack, Typography } from '@mui/material';
+
 import MessageWithLink from 'components/content/MessageWithLink';
 import Error from 'components/shared/Error';
 import { ErrorDetails } from 'components/shared/Error/types';
+
 import FullPageWrapper from 'directives/FullPageWrapper';
-import { ReactElement } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { useMount } from 'react-use';
+
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 
 interface Props {

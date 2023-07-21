@@ -1,3 +1,6 @@
+import { NavArrowDown } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
 import Editor from '@monaco-editor/react';
 import {
     Accordion,
@@ -10,12 +13,13 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { Shard } from 'data-plane-gateway/types/shard_client';
-import { NavArrowDown } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+
 import { useShardDetail_getShardDetails } from 'stores/ShardDetail/hooks';
 import { ShardDetails } from 'stores/ShardDetail/types';
+
 import { unescapeString } from 'utils/misc-utils';
+
+import { Shard } from 'data-plane-gateway/types/shard_client';
 
 interface Props {
     shards: Shard[] | null;

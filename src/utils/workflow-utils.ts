@@ -1,13 +1,19 @@
+import { isEmpty } from 'lodash';
+import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
+
 import {
     DraftSpecsExtQuery_ByCatalogName,
     modifyDraftSpec,
 } from 'api/draftSpecs';
+
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isEmpty } from 'lodash';
+
 import { CallSupabaseResponse } from 'services/supabase';
+
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
-import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
+
 import { hasLength } from 'utils/misc-utils';
+
 import { ConnectorConfig } from '../../flow_deps/flow';
 
 export const getCollectionNameProp = (entityType: Entity) => {

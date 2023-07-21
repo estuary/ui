@@ -1,7 +1,11 @@
-import { Box, Typography } from '@mui/material';
-import ResourceConfigForm from 'components/collection/ResourceConfigForm';
 import { FormattedMessage } from 'react-intl';
+
+import { Box, Typography } from '@mui/material';
+
+import ResourceConfigForm from 'components/collection/ResourceConfigForm';
+
 import { useResourceConfig_hydrated } from 'stores/ResourceConfig/hooks';
+
 import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
 
 interface Props {

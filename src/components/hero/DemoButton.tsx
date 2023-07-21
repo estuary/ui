@@ -1,14 +1,21 @@
-import { Box, Grid, Link } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
-import DemoDialog from 'components/hero/DemoDialog';
-import { semiTransparentBackgroundIntensified } from 'context/Theme';
 import { useCallback, useState } from 'react';
+
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+
+import { Box, Grid, Link } from '@mui/material';
+
+import { authenticatedRoutes } from 'app/routes';
+
+import DemoDialog from 'components/hero/DemoDialog';
+
+import { semiTransparentBackgroundIntensified } from 'context/Theme';
+
 import {
     useEntitiesStore_capabilities_adminable,
     useEntitiesStore_capabilities_readable,
 } from 'stores/Entities/hooks';
+
 import { getPathWithParams } from 'utils/misc-utils';
 
 export const FILTER_TABLE_PROPS = {

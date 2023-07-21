@@ -1,8 +1,11 @@
+import { Entity } from 'types';
+
 import { ExistingEntityState } from 'components/shared/Entity/ExistingEntityCards/Store/types';
+
 import { useEntityType } from 'context/EntityContext';
 import { useZustandStore } from 'context/Zustand/provider';
+
 import { ExistingEntityStoreNames } from 'stores/names';
-import { Entity } from 'types';
 
 const getStoreName = (entityType: Entity): ExistingEntityStoreNames => {
     if (entityType === 'capture' || entityType === 'materialization') {

@@ -1,3 +1,5 @@
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     Divider,
     FormControlLabel,
@@ -5,9 +7,10 @@ import {
     RadioGroup,
     Typography,
 } from '@mui/material';
+
 import LegacySingleStep from 'components/transformation/create/legacy/SingleStep';
 import { LegacyStepWrapper } from 'components/transformation/create/legacy/Wrapper';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     useTransformationCreate_language,
     useTransformationCreate_setLanguage,

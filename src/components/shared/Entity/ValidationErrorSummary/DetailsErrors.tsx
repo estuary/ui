@@ -1,10 +1,13 @@
-import KeyValueList from 'components/shared/KeyValueList';
 import { useIntl } from 'react-intl';
+
+import KeyValueList from 'components/shared/KeyValueList';
+
 import {
     useDetailsForm_connectorImage_id,
     useDetailsForm_customErrors,
     useDetailsForm_details_entityName,
 } from 'stores/DetailsForm/hooks';
+
 import { hasLength } from 'utils/misc-utils';
 
 function DetailsErrors() {

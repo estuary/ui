@@ -1,6 +1,8 @@
-import { IconButton, ListItemText } from '@mui/material';
-import { typographyTruncation } from 'context/Theme';
 import { Cancel } from 'iconoir-react';
+
+import { IconButton, ListItemText } from '@mui/material';
+
+import { typographyTruncation } from 'context/Theme';
 
 interface Props {
     collection: string;

@@ -1,14 +1,20 @@
+import { useMemo } from 'react';
+
 import { Box, Divider, Stack, Typography } from '@mui/material';
+
 import { createEditorStore } from 'components/editor/Store/create';
 import LiveSpecsHydrator from 'components/editor/Store/LiveSpecsHydrator';
+
 import { LocalZustandProvider } from 'context/LocalZustand';
 import { truncateTextSx } from 'context/Theme';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
-import { useMemo } from 'react';
+
 import { EditorStoreNames } from 'stores/names';
+
 import ShardHydrator from '../Shard/Hydrator';
 import RenderTab from './RenderTab';
 import DetailTabs from './Tabs';

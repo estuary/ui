@@ -1,9 +1,11 @@
 import { Box, Skeleton } from '@mui/material';
+
 import {
     defaultOutline,
     monacoEditorHeaderBackground,
     monacoEditorWidgetBackground,
 } from 'context/Theme';
+
 import {
     DEFAULT_HEIGHT,
     DEFAULT_TOOLBAR_HEIGHT,

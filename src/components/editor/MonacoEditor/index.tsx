@@ -1,3 +1,8 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { debounce } from 'lodash';
+import { Entity } from 'types';
+
 import Editor, { DiffEditor } from '@monaco-editor/react';
 import {
     Box,
@@ -7,6 +12,7 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
 import Invalid from 'components/editor/Status/Invalid';
 import ServerDiff from 'components/editor/Status/ServerDiff';
 import Synchronized from 'components/editor/Status/Synchronized';
@@ -18,17 +24,17 @@ import {
     useEditorStore_statuses,
 } from 'components/editor/Store/hooks';
 import { EditorStatus } from 'components/editor/Store/types';
-import { debounce } from 'lodash';
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import { logRocketConsole } from 'services/logrocket';
 import { stringifyJSON } from 'services/stringify';
-import { Entity } from 'types';
+
 import {
     DEFAULT_HEIGHT,
     DEFAULT_TOOLBAR_HEIGHT,
     ICON_SIZE,
 } from 'utils/editor-utils';
+
+import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 
 type EditorChangeHandler = (
     newVal: any,

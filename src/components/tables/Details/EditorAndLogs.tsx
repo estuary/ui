@@ -1,4 +1,9 @@
+import { useEffect } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+
 import { Grid } from '@mui/material';
+
 import LiveSpecEditor from 'components/editor/LiveSpec';
 import {
     useEditorStore_setId,
@@ -7,10 +12,10 @@ import {
 import Logs from 'components/logs';
 import AlertBox from 'components/shared/AlertBox';
 import Error from 'components/shared/Error';
+
 import { useLiveSpecs_spec } from 'hooks/useLiveSpecs';
 import usePublications from 'hooks/usePublications';
-import { useEffect } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { getEditorTotalHeight } from 'utils/editor-utils';
 import { hasLength } from 'utils/misc-utils';
 

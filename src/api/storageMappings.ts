@@ -1,3 +1,5 @@
+import { StorageMappings } from 'types';
+
 import {
     defaultTableFilter,
     Pagination,
@@ -5,7 +7,6 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { StorageMappings } from 'types';
 
 const getStorageMappings = (
     pagination: Pagination,

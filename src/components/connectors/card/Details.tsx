@@ -1,5 +1,6 @@
-import { Stack, Typography } from '@mui/material';
 import { FormattedDate, FormattedMessage } from 'react-intl';
+
+import { Stack, Typography } from '@mui/material';
 
 interface Props {
     description: string;

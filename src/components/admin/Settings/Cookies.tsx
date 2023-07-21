@@ -1,5 +1,7 @@
-import { Box, Button, SxProps, Theme, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
+
+import { Box, Button, SxProps, Theme, Typography } from '@mui/material';
+
 import { showCookieDrawer } from 'services/osano';
 
 const boxStyling: SxProps<Theme> = {

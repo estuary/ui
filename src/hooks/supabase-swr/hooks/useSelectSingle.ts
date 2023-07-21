@@ -1,7 +1,11 @@
-import { PostgrestError } from '@supabase/postgrest-js';
-import { SuccessResponseSingle } from 'hooks/supabase-swr/types';
 import { useMemo } from 'react';
+
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
+
+import { PostgrestError } from '@supabase/postgrest-js';
+
+import { SuccessResponseSingle } from 'hooks/supabase-swr/types';
+
 import { Query } from '../query';
 import useFetcher, { FetcherType } from './useFetcher';
 

@@ -1,3 +1,8 @@
+import { useState } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+import { useUnmount } from 'react-use';
+
 import { LoadingButton } from '@mui/lab';
 import {
     Box,
@@ -8,8 +13,11 @@ import {
     useTheme,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
+
 import { submitDirective } from 'api/directives';
+
 import AlertBox from 'components/shared/AlertBox';
+
 import CustomerQuote from 'directives/Onboard/CustomerQuote';
 import OrganizationNameField from 'directives/Onboard/OrganizationName';
 import {
@@ -21,12 +29,12 @@ import {
     useOnboardingStore_surveyResponse,
 } from 'directives/Onboard/Store/hooks';
 import OnboardingSurvey from 'directives/Onboard/Survey';
-import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { useUnmount } from 'react-use';
+
 import { fireGtmEvent } from 'services/gtm';
 import { jobStatusPoller } from 'services/supabase';
+
 import { hasLength } from 'utils/misc-utils';
+
 import { jobStatusQuery, trackEvent } from './shared';
 import { DirectiveProps } from './types';
 

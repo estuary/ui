@@ -1,14 +1,20 @@
+import { useEffect, useRef, useState } from 'react';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import { Box, LinearProgress } from '@mui/material';
+
 import MessageWithLink from 'components/content/MessageWithLink';
 import AlertBox from 'components/shared/AlertBox';
+
 import { useColorMode } from 'context/Theme';
-import { useEffect, useRef, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     useSidePanelDocsStore_disabled,
     useSidePanelDocsStore_setAnimateOpening,
     useSidePanelDocsStore_url,
 } from 'stores/SidePanelDocs/hooks';
+
 import { getDocsSettings } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 

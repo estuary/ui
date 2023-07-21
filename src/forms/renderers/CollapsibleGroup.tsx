@@ -1,3 +1,5 @@
+import { NavArrowDown } from 'iconoir-react';
+
 import { RankedTester, rankWith, uiTypeIs } from '@jsonforms/core';
 import {
     MaterialLayoutRenderer,
@@ -12,8 +14,9 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
 import { defaultOutline, jsonFormsGroupHeaders } from 'context/Theme';
-import { NavArrowDown } from 'iconoir-react';
+
 import { ADVANCED, CONTAINS_REQUIRED_FIELDS } from 'services/jsonforms/shared';
 
 export const CollapsibleGroupType = 'CollapsibleGroup';

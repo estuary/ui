@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
+
 import {
     useDetailsForm_connectorImage_imageName,
     useDetailsForm_details_entityName,
     useDetailsForm_draftedEntityName,
 } from 'stores/DetailsForm/hooks';
+
 import { hasLength, stripPathing } from 'utils/misc-utils';
 
 // Used to add the image name to the end of an entity name

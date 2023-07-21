@@ -1,4 +1,9 @@
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import {
+    CatalogStats,
+    CatalogStats_Billing,
+    CatalogStats_Details,
+    Entity,
+} from 'types';
 import {
     endOfWeek,
     startOfHour,
@@ -10,6 +15,9 @@ import {
     subWeeks,
 } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
+
+import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+
 import {
     defaultTableFilter,
     handleFailure,
@@ -18,12 +26,6 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import {
-    CatalogStats,
-    CatalogStats_Billing,
-    CatalogStats_Details,
-    Entity,
-} from 'types';
 
 export type StatsFilter =
     | 'today'

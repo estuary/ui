@@ -1,11 +1,31 @@
-import { useTheme } from '@mui/material';
-import { defaultOutlineColor } from 'context/Theme';
+import { useEffect, useMemo, useState } from 'react';
+
 import {
     eachMonthOfInterval,
     isWithinInterval,
     startOfMonth,
     sub,
 } from 'date-fns';
+import { useIntl } from 'react-intl';
+import useConstant from 'use-constant';
+
+import { useTheme } from '@mui/material';
+
+import { defaultOutlineColor } from 'context/Theme';
+
+import {
+    useBilling_billingHistory,
+    useBilling_hydrated,
+} from 'stores/Billing/hooks';
+
+import {
+    CARD_AREA_HEIGHT,
+    formatDataVolumeForDisplay,
+    SeriesConfig,
+    SeriesNames,
+    stripTimeFromDate,
+} from 'utils/billing-utils';
+
 import { BarChart } from 'echarts/charts';
 import {
     GridComponent,
@@ -15,20 +35,7 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import { useEffect, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
-import {
-    useBilling_billingHistory,
-    useBilling_hydrated,
-} from 'stores/Billing/hooks';
-import useConstant from 'use-constant';
-import {
-    CARD_AREA_HEIGHT,
-    formatDataVolumeForDisplay,
-    SeriesConfig,
-    SeriesNames,
-    stripTimeFromDate,
-} from 'utils/billing-utils';
+
 import { getTooltipItem, getTooltipTitle } from './tooltips';
 import useTooltipConfig from './useTooltipConfig';
 

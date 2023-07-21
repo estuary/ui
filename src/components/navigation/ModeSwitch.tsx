@@ -1,3 +1,6 @@
+import { HalfMoon, SunLight } from 'iconoir-react';
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     ListItemButton,
     ListItemIcon,
@@ -5,9 +8,8 @@ import {
     Tooltip,
     useTheme,
 } from '@mui/material';
+
 import { useColorMode } from 'context/Theme';
-import { HalfMoon, SunLight } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
 
 function ModeSwitch() {
     const intl = useIntl();

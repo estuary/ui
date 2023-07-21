@@ -1,4 +1,7 @@
+import { FormattedMessage } from 'react-intl';
+
 import { Box, Collapse, Grid, Typography } from '@mui/material';
+
 import {
     useBindingsEditorStore_inferSchemaResponseEmpty,
     useBindingsEditorStore_inferSchemaResponseError,
@@ -8,7 +11,6 @@ import MonacoEditor, {
 } from 'components/editor/MonacoEditor';
 import AlertBox from 'components/shared/AlertBox';
 import SchemaPropertiesTable from 'components/tables/Schema';
-import { FormattedMessage } from 'react-intl';
 
 interface Props {
     disabled: boolean;

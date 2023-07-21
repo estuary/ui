@@ -23,6 +23,10 @@
   THE SOFTWARE.
 */
 
+import { useCallback } from 'react';
+
+import { useIntl } from 'react-intl';
+
 import {
     ControlProps,
     OwnPropsOfEnum,
@@ -32,11 +36,12 @@ import {
 } from '@jsonforms/core';
 import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
+
 import PrefixedName from 'components/inputs/PrefixedName';
 import { PrefixedName_Change } from 'components/inputs/PrefixedName/types';
+
 import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { useCallback } from 'react';
-import { useIntl } from 'react-intl';
+
 import { useDetailsForm_setCustomErrors } from 'stores/DetailsForm/hooks';
 import { generateCustomError } from 'stores/extensions/CustomErrors';
 

@@ -1,10 +1,14 @@
-import { Collapse, Divider, IconButton, Paper, useTheme } from '@mui/material';
-import { NavArrowDown } from 'iconoir-react';
 import { ReactNode, useState } from 'react';
+
+import { NavArrowDown } from 'iconoir-react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
+
+import { Collapse, Divider, IconButton, Paper, useTheme } from '@mui/material';
+
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
+
 import AlertBox from './AlertBox';
 import MustReloadDialog from './MustReloadDialog';
 

@@ -1,3 +1,8 @@
+import { ChangeEvent } from 'react';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+import useConstant from 'use-constant';
+
 import {
     FormControl,
     FormControlLabel,
@@ -6,14 +11,12 @@ import {
     RadioGroup,
     TextField,
 } from '@mui/material';
+
 import {
     useOnboardingStore_setSurveyResponse,
     useOnboardingStore_surveyOptionOther,
     useOnboardingStore_surveyResponse,
 } from 'directives/Onboard/Store/hooks';
-import { ChangeEvent } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import useConstant from 'use-constant';
 
 export interface SurveyResponse {
     origin: string;

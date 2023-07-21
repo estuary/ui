@@ -1,4 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
+import React, { ReactNode } from 'react';
+
 import {
     Box,
     IconButton,
@@ -9,12 +11,12 @@ import {
     Theme,
     Tooltip,
 } from '@mui/material';
+
 import {
     defaultOutline,
     paperBackground,
     paperBackgroundImage,
 } from 'context/Theme';
-import React, { ReactNode } from 'react';
 
 interface CustomPopoverPosition {
     transformOrigin?: PopoverOrigin;

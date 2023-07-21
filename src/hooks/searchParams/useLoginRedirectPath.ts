@@ -1,6 +1,8 @@
-import { authenticatedRoutes, REDIRECT_TO_PARAM_NAME } from 'app/routes';
 import { useMemo } from 'react';
+
 import { useLocation } from 'react-router-dom';
+
+import { authenticatedRoutes, REDIRECT_TO_PARAM_NAME } from 'app/routes';
 
 // If no redirectToBase is passed in then we assume you want to get redirected to the home page
 function useLoginRedirectPath(redirectToBase?: string) {

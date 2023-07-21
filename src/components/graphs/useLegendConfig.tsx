@@ -1,10 +1,13 @@
-import { useTheme } from '@mui/material';
+import { useMemo } from 'react';
+
 import { EChartsOption } from 'echarts';
+
+import { useTheme } from '@mui/material';
+
 import navArrowLeftDark from 'images/graph-icons/nav-arrow-left__dark.svg';
 import navArrowLeftLight from 'images/graph-icons/nav-arrow-left__light.svg';
 import navArrowRightDark from 'images/graph-icons/nav-arrow-right__dark.svg';
 import navArrowRightLight from 'images/graph-icons/nav-arrow-right__light.svg';
-import { useMemo } from 'react';
 
 const navArrowsLight = [
     `image://${navArrowLeftLight}`,

@@ -1,7 +1,10 @@
 import { TableCell, TableRow, useTheme } from '@mui/material';
+
 import RowSelect from 'components/tables/cells/RowSelect';
+
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
+
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,

@@ -1,7 +1,10 @@
+import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
+
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
+
 import { CallSupabaseResponse } from 'services/supabase';
-import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
+
 import {
     CaptureBinding,
     MaterializationBinding,

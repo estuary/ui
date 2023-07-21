@@ -1,6 +1,7 @@
+import { ReactNode } from 'react';
+
 import { JsonFormsCore } from '@jsonforms/core';
 import { PostgrestError } from '@supabase/supabase-js';
-import { ReactNode } from 'react';
 
 export type fake = 'fake';
 

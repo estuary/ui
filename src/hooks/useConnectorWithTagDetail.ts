@@ -1,9 +1,11 @@
+import { EntityWithCreateWorkflow } from 'types';
+
 import {
     CONNECTOR_NAME,
     CONNECTOR_RECOMMENDED,
     TABLES,
 } from 'services/supabase';
-import { EntityWithCreateWorkflow } from 'types';
+
 import { useQuery, useSelect } from './supabase-swr';
 
 export interface ConnectorWithTagDetailQuery {

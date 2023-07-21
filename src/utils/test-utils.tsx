@@ -1,17 +1,21 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 // https://testing-library.com/docs/react-testing-library/setup#custom-render
 
+import { ReactElement } from 'react';
+
+import produce from 'immer';
+import { mockDeep } from 'jest-mock-extended';
+
 import { createClient, User } from '@supabase/supabase-js';
 import { Auth } from '@supabase/ui';
 import { AuthSession } from '@supabase/ui/dist/cjs/components/Auth/UserContext';
 import { render as rtlRender, RenderOptions } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
 import AppContent from 'context/Content';
 import ThemeProvider from 'context/Theme';
+
 import { SwrSupabaseContext } from 'hooks/supabase-swr';
-import produce from 'immer';
-import { mockDeep } from 'jest-mock-extended';
-import { ReactElement } from 'react';
 
 const goTo = (route?: string, name?: string) => {
     window.history.pushState(

@@ -1,9 +1,13 @@
-import { Button, Menu, MenuItem, Stack } from '@mui/material';
-import { DataByHourRange } from 'components/graphs/types';
-import { linkButtonSx } from 'context/Theme';
-import { Filter } from 'iconoir-react';
 import React, { useState } from 'react';
+
+import { Filter } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
+
+import { Button, Menu, MenuItem, Stack } from '@mui/material';
+
+import { DataByHourRange } from 'components/graphs/types';
+
+import { linkButtonSx } from 'context/Theme';
 
 interface Props {
     range: DataByHourRange;

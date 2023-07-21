@@ -1,6 +1,8 @@
-import { Auth } from '@supabase/ui';
-import { useClient } from 'hooks/supabase-swr';
 import { BaseComponentProps } from 'types';
+
+import { Auth } from '@supabase/ui';
+
+import { useClient } from 'hooks/supabase-swr';
 
 export const UserProvider = ({ children }: BaseComponentProps) => {
     const supabaseClient = useClient();

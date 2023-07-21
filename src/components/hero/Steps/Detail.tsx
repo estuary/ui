@@ -1,5 +1,7 @@
-import { Grid } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
+
+import { Grid } from '@mui/material';
+
 import HeroStep from '../Step';
 
 interface Props {

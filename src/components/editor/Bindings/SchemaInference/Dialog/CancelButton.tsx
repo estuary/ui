@@ -1,7 +1,10 @@
-import { Button } from '@mui/material';
-import { useBindingsEditorStore_setInferredSchemaApplicationErrored } from 'components/editor/Bindings/Store/hooks';
 import { Dispatch, SetStateAction } from 'react';
+
 import { FormattedMessage } from 'react-intl';
+
+import { Button } from '@mui/material';
+
+import { useBindingsEditorStore_setInferredSchemaApplicationErrored } from 'components/editor/Bindings/Store/hooks';
 
 interface Props {
     setOpen: Dispatch<SetStateAction<boolean>>;

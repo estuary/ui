@@ -1,8 +1,12 @@
-import FullPageSpinner from 'components/fullPage/Spinner';
-import { useQuery, useSelect } from 'hooks/supabase-swr';
 import { createContext, useContext } from 'react';
-import { TABLES } from 'services/supabase';
+
 import { BaseComponentProps } from 'types';
+
+import FullPageSpinner from 'components/fullPage/Spinner';
+
+import { useQuery, useSelect } from 'hooks/supabase-swr';
+
+import { TABLES } from 'services/supabase';
 
 // TODO: Determine an approach that results in a single combined grants query of in the Authenticated app component.
 export interface CombinedGrantsExtQuery {

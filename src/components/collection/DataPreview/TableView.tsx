@@ -1,3 +1,7 @@
+import { useMemo } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+
 import {
     Grid,
     Paper,
@@ -10,12 +14,14 @@ import {
     TableRow,
     Theme,
 } from '@mui/material';
+
 import Error from 'components/shared/Error';
+
 import { tableAlternateRowsSx } from 'context/Theme';
+
 import { useJournalData } from 'hooks/useJournalData';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
-import { useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { hasLength } from 'utils/misc-utils';
 
 interface PreviewTableModeProps {

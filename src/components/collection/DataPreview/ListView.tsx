@@ -1,14 +1,19 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { isEmpty } from 'lodash';
+import { JsonPointer } from 'json-ptr';
+import ReactJson from 'react-json-view';
+
 import { Box, Grid, useTheme } from '@mui/material';
 import { DataGrid, GridSelectionModel } from '@mui/x-data-grid';
+
 import ListAndDetails from 'components/editor/ListAndDetails';
 import Error from 'components/shared/Error';
+
 import { dataGridListStyling, semiTransparentBackground } from 'context/Theme';
+
 import { JournalRecord, useJournalData } from 'hooks/useJournalData';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
-import { JsonPointer } from 'json-ptr';
-import { isEmpty } from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import ReactJson from 'react-json-view';
 
 interface PreviewJsonModeProps {
     spec: LiveSpecsQuery_spec;

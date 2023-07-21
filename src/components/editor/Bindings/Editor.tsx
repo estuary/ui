@@ -1,4 +1,9 @@
+import { useEffect, useState } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+
 import { Box, Stack, Typography } from '@mui/material';
+
 import ResourceConfig from 'components/collection/ResourceConfig';
 import CollectionSchemaEditor from 'components/collection/schema/Editor';
 import CollectionSchemaEditorSkeleton from 'components/collection/schema/Editor/Skeleton';
@@ -19,10 +24,11 @@ import {
 } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
+
 import useInitializeCollectionDraft from 'hooks/useInitializeCollectionDraft';
-import { useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+
 import SchemaEditCLIButton from './SchemaEdit/CLIButton';
 import SchemaEditToggle from './SchemaEdit/Toggle';
 

@@ -1,6 +1,7 @@
+import { MessagePrefixes } from 'types';
+
 import { AlertColor } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
-import { MessagePrefixes } from 'types';
 
 export interface FormState {
     displayValidation: boolean;

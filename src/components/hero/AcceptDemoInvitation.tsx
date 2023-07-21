@@ -1,12 +1,19 @@
+import { Dispatch, SetStateAction, useState } from 'react';
+
 import { Box } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
+
 import { submitDirective } from 'api/directives';
+
 import useDirectiveGuard from 'app/guards/hooks';
+
 import MessageWithButton from 'components/content/MessageWithButton';
 import Error from 'components/shared/Error';
+
 import { jobStatusQuery, trackEvent } from 'directives/shared';
-import { Dispatch, SetStateAction, useState } from 'react';
+
 import { jobStatusPoller } from 'services/supabase';
+
 import { useEntitiesStore_mutate } from 'stores/Entities/hooks';
 
 interface Props {

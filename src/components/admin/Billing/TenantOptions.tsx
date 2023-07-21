@@ -1,9 +1,14 @@
+import { useEffect } from 'react';
+
+import { useIntl } from 'react-intl';
+
 import { Skeleton } from '@mui/material';
+
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
+
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useZustandStore } from 'context/Zustand/provider';
-import { useEffect } from 'react';
-import { useIntl } from 'react-intl';
+
 import {
     useBilling_resetState,
     useBilling_setSelectedTenant,

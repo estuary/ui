@@ -1,6 +1,8 @@
-import { TableCell, TableRow } from '@mui/material';
-import TimeStamp from 'components/tables/cells/TimeStamp';
 import { StorageMappings, StorageMappingStore } from 'types';
+
+import { TableCell, TableRow } from '@mui/material';
+
+import TimeStamp from 'components/tables/cells/TimeStamp';
 
 interface RowProps {
     row: StorageMappings;

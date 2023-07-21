@@ -1,6 +1,8 @@
-import { Button, ButtonProps, Typography } from '@mui/material';
 import { MouseEventHandler } from 'react';
+
 import { FormattedMessage } from 'react-intl';
+
+import { Button, ButtonProps, Typography } from '@mui/material';
 
 interface Props {
     messageId: string;

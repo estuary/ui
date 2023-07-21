@@ -1,3 +1,9 @@
+import { useMemo } from 'react';
+
+import { concat } from 'lodash';
+import { Entity } from 'types';
+import { FormattedMessage } from 'react-intl';
+
 import {
     Box,
     Collapse,
@@ -8,18 +14,17 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
 import { DataPreview } from 'components/collection/DataPreview';
 import { createEditorStore } from 'components/editor/Store/create';
 import { TaskEndpoints } from 'components/shared/TaskEndpoints';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
 import ShardInformation from 'components/tables/Details/ShardInformation';
+
 import { LocalZustandProvider } from 'context/LocalZustand';
 import { detailsPanelBgColor } from 'context/Theme';
-import { concat } from 'lodash';
-import { useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { EditorStoreNames } from 'stores/names';
-import { Entity } from 'types';
 
 interface Props {
     detailsExpanded: boolean;

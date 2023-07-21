@@ -3,8 +3,10 @@ import {
     ReactNode,
     useContext,
 } from 'react';
-import { StoreName } from 'stores/names';
+
 import { StoreApi, useStore } from 'zustand';
+
+import { StoreName } from 'stores/names';
 
 interface LocalZustandProviderProps {
     children: ReactNode;

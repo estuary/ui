@@ -1,5 +1,7 @@
-import { CircularProgress, Stack, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
+
+import { CircularProgress, Stack, Typography } from '@mui/material';
+
 import { CARD_AREA_HEIGHT } from 'utils/billing-utils';
 
 function GraphLoadingState() {

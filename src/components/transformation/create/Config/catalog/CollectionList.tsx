@@ -1,8 +1,13 @@
-import { Box, ListItem, Typography } from '@mui/material';
-import CatalogListItem from 'components/transformation/create/Config/catalog/CatalogListItem';
 import { FormattedMessage } from 'react-intl';
+
+import { Box, ListItem, Typography } from '@mui/material';
+
+import CatalogListItem from 'components/transformation/create/Config/catalog/CatalogListItem';
+
 import { DerivationAttribute } from 'stores/TransformationCreate/types';
+
 import { hasLength } from 'utils/misc-utils';
+
 import { CatalogListContent } from './CatalogList';
 
 interface Props {

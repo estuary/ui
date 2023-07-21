@@ -1,7 +1,10 @@
-import { Drawer, IconButton, Toolbar, Typography } from '@mui/material';
 import { Cancel } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
+
+import { Drawer, IconButton, Toolbar, Typography } from '@mui/material';
+
 import { useSidePanelDocsStore_setShow } from 'stores/SidePanelDocs/hooks';
+
 import SidePanelIframe from './Iframe';
 
 interface Props {

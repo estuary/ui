@@ -1,18 +1,27 @@
-import { ControlProps, RankedTester, rankWith } from '@jsonforms/core';
-import { withJsonFormsControlProps } from '@jsonforms/react';
-import { Alert, Box, Button, Chip, Stack, Typography } from '@mui/material';
-import FullPageSpinner from 'components/fullPage/Spinner';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { optionExists } from 'forms/renderers/Overrides/testers/testers';
-import { startCase } from 'lodash';
 import { useEffect, useMemo } from 'react';
+
+import { startCase } from 'lodash';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
+
+import { ControlProps, RankedTester, rankWith } from '@jsonforms/core';
+import { withJsonFormsControlProps } from '@jsonforms/react';
+import { Alert, Box, Button, Chip, Stack, Typography } from '@mui/material';
+
+import FullPageSpinner from 'components/fullPage/Spinner';
+
+import { useEntityWorkflow_Editing } from 'context/Workflow';
+
+import { optionExists } from 'forms/renderers/Overrides/testers/testers';
+
 import { useEndpointConfigStore_setCustomErrors } from 'stores/EndpointConfig/hooks';
 import { generateCustomError } from 'stores/extensions/CustomErrors';
+
 import { Options } from 'types/jsonforms';
+
 import { hasLength } from 'utils/misc-utils';
+
 import {
     getDefaultValue,
     getDiscriminator,

@@ -1,9 +1,11 @@
+import { useMemo } from 'react';
+
 import {
     PostgrestResponse,
     PostgrestSingleResponse,
     SupabaseClient,
 } from '@supabase/supabase-js';
-import { useMemo } from 'react';
+
 import { QueryConfig } from '../query';
 import useClient from './useClient';
 

@@ -1,3 +1,12 @@
+import { useState } from 'react';
+
+import {
+    Cancel,
+    NavArrowDown,
+    NavArrowRight,
+    WarningCircle,
+} from 'iconoir-react';
+
 import {
     Collapse,
     IconButton,
@@ -7,18 +16,14 @@ import {
     Stack,
     useTheme,
 } from '@mui/material';
+
 import {
     useEditorStore_removeStaleStatus,
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
+
 import { defaultOutline } from 'context/Theme';
-import {
-    Cancel,
-    NavArrowDown,
-    NavArrowRight,
-    WarningCircle,
-} from 'iconoir-react';
-import { useState } from 'react';
+
 import {
     useTransformationCreate_removeAttribute,
     useTransformationCreate_selectedAttribute,

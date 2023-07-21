@@ -1,11 +1,16 @@
-import { Box, IconButton, Tooltip, Typography } from '@mui/material';
-import { IncompatibleCollections } from 'api/evolutions';
-import { useBindingsEditorStore_incompatibleCollections } from 'components/editor/Bindings/Store/hooks';
-import KeyValueList from 'components/shared/KeyValueList';
 import { HelpCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
+
+import { Box, IconButton, Tooltip, Typography } from '@mui/material';
+
+import { IncompatibleCollections } from 'api/evolutions';
+
+import { useBindingsEditorStore_incompatibleCollections } from 'components/editor/Bindings/Store/hooks';
+import KeyValueList from 'components/shared/KeyValueList';
+
 import { hasLength } from 'utils/misc-utils';
 import { suggestedName } from 'utils/name-utils';
+
 import Description from './Description';
 
 interface CollectionActionProps {

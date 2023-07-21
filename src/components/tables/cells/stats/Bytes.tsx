@@ -1,8 +1,11 @@
-import { Box, TableCell, Tooltip, Typography } from '@mui/material';
-import { semiTransparentBackgroundIntensified } from 'context/Theme';
-import prettyBytes from 'pretty-bytes';
 import { useMemo } from 'react';
+
+import prettyBytes from 'pretty-bytes';
 import { useIntl } from 'react-intl';
+
+import { Box, TableCell, Tooltip, Typography } from '@mui/material';
+
+import { semiTransparentBackgroundIntensified } from 'context/Theme';
 
 interface Props {
     read?: boolean;

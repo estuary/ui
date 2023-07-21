@@ -1,20 +1,27 @@
+import { ReactNode, useEffect, useMemo } from 'react';
+
+import { isEqual } from 'lodash';
+import { Schema } from 'types';
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import { Typography, useTheme } from '@mui/material';
+
 import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import { createEditorStore } from 'components/editor/Store/create';
+
 import { useEntityType } from 'context/EntityContext';
 import { LocalZustandProvider } from 'context/LocalZustand';
 import { alternativeReflexContainerBackground } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isEqual } from 'lodash';
-import { ReactNode, useEffect, useMemo } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_details_entityName,
@@ -29,7 +36,7 @@ import {
     useResourceConfig_setServerUpdateRequired,
 } from 'stores/ResourceConfig/hooks';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
-import { Schema } from 'types';
+
 import { getCollectionName, getCollectionNameProp } from 'utils/workflow-utils';
 
 interface Props {

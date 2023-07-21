@@ -1,13 +1,20 @@
+import { useEffect, useMemo } from 'react';
+
 import { TableRow, useTheme } from '@mui/material';
+
 import { CollectionQueryWithStats } from 'api/liveSpecsExt';
+
 import { authenticatedRoutes } from 'app/routes';
+
 import TimeStamp from 'components/tables/cells/TimeStamp';
+
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
+
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import useShardsList from 'hooks/useShardsList';
-import { useEffect, useMemo } from 'react';
+
 import { SelectTableStoreNames } from 'stores/names';
 import {
     useShardDetail_setError,
@@ -18,7 +25,9 @@ import {
     selectableTableStoreSelectors,
     StatsResponse,
 } from 'stores/Tables/Store';
+
 import { hasLength } from 'utils/misc-utils';
+
 import EntityNameLink from '../cells/EntityNameLink';
 import RowSelect from '../cells/RowSelect';
 import Bytes from '../cells/stats/Bytes';

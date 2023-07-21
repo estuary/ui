@@ -1,5 +1,7 @@
 import { Box, Grid } from '@mui/material';
+
 import MessageWithEmphasis from 'components/content/MessageWithEmphasis';
+
 import HeroBaseStep from './Base';
 
 interface Props {

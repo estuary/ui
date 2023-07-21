@@ -1,6 +1,9 @@
-import { Box } from '@mui/material';
 import { useMemo, useState } from 'react';
+
 import { useIntl } from 'react-intl';
+
+import { Box } from '@mui/material';
+
 import ChipWrapper, { ChipDisplay } from './Wrapper';
 
 export interface ChipListProps {

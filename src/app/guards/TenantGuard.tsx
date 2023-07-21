@@ -1,12 +1,16 @@
+import { useMemo } from 'react';
+
+import { BaseComponentProps } from 'types';
+import { FormattedMessage } from 'react-intl';
+
 import FullPageError from 'components/fullPage/Error';
 import FullPageSpinner from 'components/fullPage/Spinner';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useUserGrants from 'hooks/useUserGrants';
-import { useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
+
 import OnboardGuard from './OnboardGuard';
 
 // This is a way to very simply "hide" the flow where anyone

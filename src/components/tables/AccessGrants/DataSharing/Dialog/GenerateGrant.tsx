@@ -1,9 +1,3 @@
-import { Button, Grid, TextField } from '@mui/material';
-import { PostgrestError } from '@supabase/postgrest-js';
-import { createRoleGrant } from 'api/roleGrants';
-import PrefixedName from 'components/inputs/PrefixedName';
-import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import { useZustandStore } from 'context/Zustand/provider';
 import {
     ChangeEvent,
     Dispatch,
@@ -11,7 +5,20 @@ import {
     useMemo,
     useState,
 } from 'react';
+
+import { Capability } from 'types';
 import { FormattedMessage, useIntl } from 'react-intl';
+
+import { Button, Grid, TextField } from '@mui/material';
+import { PostgrestError } from '@supabase/postgrest-js';
+
+import { createRoleGrant } from 'api/roleGrants';
+
+import PrefixedName from 'components/inputs/PrefixedName';
+import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
+
+import { useZustandStore } from 'context/Zustand/provider';
+
 import { SelectTableStoreNames } from 'stores/names';
 import useNotificationStore, {
     notificationStoreSelectors,
@@ -20,7 +27,7 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { Capability } from 'types';
+
 import {
     appendWithForwardSlash,
     hasLength,

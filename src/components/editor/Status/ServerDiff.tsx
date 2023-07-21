@@ -1,6 +1,7 @@
-import { Button, Typography, useTheme } from '@mui/material';
 import { DbError } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
+
+import { Button, Typography, useTheme } from '@mui/material';
 
 interface Props {
     iconSize: number;

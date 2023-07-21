@@ -1,11 +1,14 @@
-import { Box, Stack } from '@mui/material';
-import { Provider } from '@supabase/supabase-js';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { useClient } from 'hooks/supabase-swr';
-import useLoginRedirectPath from 'hooks/useLoginRedirectPath';
 import { useSnackbar } from 'notistack';
 import GoogleButton from 'react-google-button';
 import { useIntl } from 'react-intl';
+
+import { Box, Stack } from '@mui/material';
+import { Provider } from '@supabase/supabase-js';
+
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { useClient } from 'hooks/supabase-swr';
+import useLoginRedirectPath from 'hooks/useLoginRedirectPath';
+
 import AzureButton from './AzureButton';
 import GithubButton from './GithubButton';
 

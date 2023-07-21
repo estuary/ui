@@ -1,8 +1,12 @@
-import { getStatsForDetails } from 'api/stats';
-import { useEntityType } from 'context/EntityContext';
-import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
-import { hasLength } from 'utils/misc-utils';
 import { CatalogStats_Details } from 'types';
+
+import { getStatsForDetails } from 'api/stats';
+
+import { useEntityType } from 'context/EntityContext';
+
+import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
+
+import { hasLength } from 'utils/misc-utils';
 
 function useDetailsStats(
     catalogName: string,

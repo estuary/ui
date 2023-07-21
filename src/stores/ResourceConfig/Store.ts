@@ -1,10 +1,3 @@
-import { getDraftSpecsByDraftId } from 'api/draftSpecs';
-import {
-    getLiveSpecsByLastPubId,
-    getLiveSpecsByLiveSpecId,
-    getSchema_Resource,
-} from 'api/hydration';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import {
     difference,
@@ -16,14 +9,28 @@ import {
     pick,
     sortBy,
 } from 'lodash';
-import { createJSONFormDefaults } from 'services/ajv';
-import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
+import { create, StoreApi } from 'zustand';
+
+import { getDraftSpecsByDraftId } from 'api/draftSpecs';
+import {
+    getLiveSpecsByLastPubId,
+    getLiveSpecsByLiveSpecId,
+    getSchema_Resource,
+} from 'api/hydration';
+
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+
+import { createJSONFormDefaults } from 'services/ajv';
+
+import { ResourceConfigStoreNames } from 'stores/names';
+
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { getCollectionName, getCollectionNameProp } from 'utils/workflow-utils';
-import { create, StoreApi } from 'zustand';
+
 import { devtools, NamedSet } from 'zustand/middleware';
+
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
 
 const populateResourceConfigErrors = (

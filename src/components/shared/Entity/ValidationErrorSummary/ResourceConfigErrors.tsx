@@ -1,4 +1,5 @@
 import SectionError from 'components/shared/Entity/ValidationErrorSummary/SectionError';
+
 import {
     useResourceConfig_collections,
     useResourceConfig_resourceConfigErrors,

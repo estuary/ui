@@ -1,11 +1,12 @@
-import { StoreWithCustomErrors } from 'stores/extensions/CustomErrors';
-import { StoreWithHydration } from 'stores/extensions/Hydration';
 import {
     EntityWithCreateWorkflow,
     EntityWorkflow,
     JsonFormsData,
     Schema,
 } from 'types';
+
+import { StoreWithCustomErrors } from 'stores/extensions/CustomErrors';
+import { StoreWithHydration } from 'stores/extensions/Hydration';
 
 export interface EndpointConfigState
     extends StoreWithHydration,

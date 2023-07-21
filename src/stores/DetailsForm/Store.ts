@@ -1,8 +1,13 @@
-import { getConnectors_detailsForm } from 'api/connectors';
-import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
+import { JsonFormsData } from 'types';
+import { createStore, StoreApi } from 'zustand';
+
+import { getConnectors_detailsForm } from 'api/connectors';
+import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
+
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+
 import { Details, DetailsFormState } from 'stores/DetailsForm/types';
 import {
     CustomError,
@@ -16,10 +21,10 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { DetailsFormStoreNames } from 'stores/names';
-import { JsonFormsData } from 'types';
+
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { createStore, StoreApi } from 'zustand';
+
 import { devtools, NamedSet } from 'zustand/middleware';
 
 const STORE_KEY = 'Details Form';

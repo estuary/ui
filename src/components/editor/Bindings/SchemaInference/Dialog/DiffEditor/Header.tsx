@@ -1,7 +1,10 @@
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
+
 import { useBindingsEditorStore_loadingInferredSchema } from 'components/editor/Bindings/Store/hooks';
 import CustomWidthTooltip from 'components/shared/CustomWidthTooltip';
+
 import { defaultOutline, monacoEditorHeaderBackground } from 'context/Theme';
+
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 
 function InferenceDiffEditorHeader() {

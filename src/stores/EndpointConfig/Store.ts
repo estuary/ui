@@ -1,9 +1,15 @@
-import { getDraftSpecsByDraftId } from 'api/draftSpecs';
-import { getLiveSpecsByLiveSpecId, getSchema_Endpoint } from 'api/hydration';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
+import { JsonFormsData, Schema } from 'types';
+import { create, StoreApi } from 'zustand';
+
+import { getDraftSpecsByDraftId } from 'api/draftSpecs';
+import { getLiveSpecsByLiveSpecId, getSchema_Endpoint } from 'api/hydration';
+
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+
 import { createJSONFormDefaults } from 'services/ajv';
+
 import {
     CustomError,
     fetchErrors,
@@ -16,12 +22,13 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { EndpointConfigStoreNames } from 'stores/names';
-import { JsonFormsData, Schema } from 'types';
+
 import { hasLength } from 'utils/misc-utils';
 import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
+
 import { devtools, NamedSet } from 'zustand/middleware';
+
 import { EndpointConfigState } from './types';
 
 const STORE_KEY = 'Endpoint Config';

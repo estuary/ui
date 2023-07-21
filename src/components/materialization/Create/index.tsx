@@ -1,4 +1,9 @@
+import { useCallback, useEffect, useMemo } from 'react';
+
+import { useNavigate } from 'react-router-dom';
+
 import { authenticatedRoutes } from 'app/routes';
+
 import { useBindingsEditorStore_resetState } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
@@ -12,12 +17,13 @@ import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import EntityToolbar from 'components/shared/Entity/Header';
+
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
-import { useCallback, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { CustomEvents } from 'services/logrocket';
+
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_resetState,

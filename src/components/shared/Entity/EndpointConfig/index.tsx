@@ -1,4 +1,12 @@
+import { useEffect, useMemo } from 'react';
+
+import { isEmpty, isEqual } from 'lodash';
+import { Schema } from 'types';
+import { useIntl } from 'react-intl';
+import { useMount, useUnmount } from 'react-use';
+
 import { Box, useTheme } from '@mui/material';
+
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
@@ -6,14 +14,16 @@ import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+
 import { useEntityWorkflow } from 'context/Workflow';
+
 import useConnectorTag from 'hooks/useConnectorTag';
-import { isEmpty, isEqual } from 'lodash';
-import { useEffect, useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { useMount, useUnmount } from 'react-use';
+
 import { createJSONFormDefaults } from 'services/ajv';
+
 import {
+    useEndpointConfig_setEndpointCanBeEmpty,
+    useEndpointConfig_setServerUpdateRequired,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_previousEndpointConfig_data,
@@ -21,14 +31,11 @@ import {
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
     useEndpointConfigStore_setPreviousEndpointConfig,
-    useEndpointConfig_setEndpointCanBeEmpty,
-    useEndpointConfig_setServerUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
 import {
     useSidePanelDocsStore_resetState,
     useSidePanelDocsStore_setUrl,
 } from 'stores/SidePanelDocs/hooks';
-import { Schema } from 'types';
 
 interface Props {
     connectorImage: string;

@@ -1,5 +1,6 @@
 import MonacoEditor from 'components/editor/MonacoEditor';
 import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
+
 import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
 
 export interface Props {

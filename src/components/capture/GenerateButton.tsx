@@ -1,7 +1,12 @@
-import { Button } from '@mui/material';
-import { buttonSx } from 'components/shared/Entity/Header';
 import { Dispatch, SetStateAction, useEffect } from 'react';
+
+import { Entity } from 'types';
 import { FormattedMessage } from 'react-intl';
+
+import { Button } from '@mui/material';
+
+import { buttonSx } from 'components/shared/Entity/Header';
+
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_entityNameChanged,
@@ -9,7 +14,7 @@ import {
 } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { Entity } from 'types';
+
 import useDiscoverCapture from './useDiscoverCapture';
 
 interface Props {

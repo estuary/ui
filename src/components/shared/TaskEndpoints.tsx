@@ -1,10 +1,15 @@
+import { useMemo } from 'react';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import { Box, Tooltip, Typography } from '@mui/material';
+
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import ExternalLink from 'components/shared/ExternalLink';
+
 import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
 import useShardsList from 'hooks/useShardsList';
-import { useMemo } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     useShardDetail_getTaskEndpoints,
     useShardDetail_setShards,

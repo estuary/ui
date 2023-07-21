@@ -1,5 +1,6 @@
-import { insertSupabase, TABLES } from 'services/supabase';
 import { Capability } from 'types';
+
+import { insertSupabase, TABLES } from 'services/supabase';
 
 export const createRoleGrant = (
     subject_role: string,

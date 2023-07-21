@@ -1,5 +1,7 @@
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import produce from 'immer';
+
+import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+
 import { NamedSet } from 'zustand/middleware';
 
 export interface StoreWithHydration {

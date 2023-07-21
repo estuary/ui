@@ -1,21 +1,29 @@
+import { useEffect, useMemo } from 'react';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Box, Stack, Typography } from '@mui/material';
+
 import { useEditorStore_isSaving } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
+
 import { useEntityWorkflow_Editing } from 'context/Workflow';
+
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
-import { useEffect, useMemo } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
+
 import {
     useDetailsForm_details,
     useDetailsForm_setDetails,
@@ -29,6 +37,7 @@ import {
     useFormStateStore_isActive,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState/hooks';
+
 import { hasLength } from 'utils/misc-utils';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';

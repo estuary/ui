@@ -1,3 +1,7 @@
+import { useMemo } from 'react';
+
+import { useIntl } from 'react-intl';
+
 import {
     Box,
     Chip as MuiChip,
@@ -6,10 +10,11 @@ import {
     Theme,
     Tooltip,
 } from '@mui/material';
+
 import { defaultOutline, underlineTextSx } from 'context/Theme';
-import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
+
 import { stripPathing } from 'utils/misc-utils';
+
 import LinkWrapper from '../LinkWrapper';
 
 export interface ChipDisplay {

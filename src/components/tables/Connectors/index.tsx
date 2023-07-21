@@ -1,9 +1,14 @@
+import { useMemo } from 'react';
+
 import { Box } from '@mui/material';
+
 import { getConnectors } from 'api/connectors';
+
 import Rows, { tableColumns } from 'components/tables/Connectors/Rows';
 import EntityTable from 'components/tables/EntityTable';
-import { useMemo } from 'react';
+
 import { CONNECTOR_NAME } from 'services/supabase';
+
 import { SelectTableStoreNames } from 'stores/names';
 import useTableState from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';

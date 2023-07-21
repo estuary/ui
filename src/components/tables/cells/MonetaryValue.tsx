@@ -1,5 +1,6 @@
-import { TableCell, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
+
+import { TableCell, Typography } from '@mui/material';
 
 interface Props {
     amount: number;

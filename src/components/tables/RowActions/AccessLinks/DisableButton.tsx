@@ -1,19 +1,27 @@
+import { useState } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+
 import { Button, Dialog } from '@mui/material';
+
 import { unauthenticatedRoutes } from 'app/routes';
+
 import ConfirmationMessage from 'components/tables/RowActions/AccessLinks/ConfirmationMessage';
 import DisableDirective from 'components/tables/RowActions/AccessLinks/DisableDirective';
 import ProgressDialog from 'components/tables/RowActions/ProgressDialog';
 import RowActionConfirmation from 'components/tables/RowActions/Shared/Confirmation';
+
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useZustandStore } from 'context/Zustand/provider';
+
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
+
 import { getPathWithParams } from 'utils/misc-utils';
 
 const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;

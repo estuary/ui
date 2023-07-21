@@ -1,3 +1,7 @@
+import React, { useState } from 'react';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     Box,
     Button,
@@ -12,12 +16,14 @@ import {
     useTheme,
 } from '@mui/material';
 import { Auth } from '@supabase/ui';
+
 import FullPageDialog from 'components/fullPage/Dialog';
 import ExternalLink from 'components/shared/ExternalLink';
+
 import useBrowserTitle from 'hooks/useBrowserTitle';
-import React, { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import { getUserDetails } from 'services/supabase';
+
 import { getUrls } from 'utils/env-utils';
 
 interface RegistrationRequest {

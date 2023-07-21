@@ -1,11 +1,13 @@
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import { FormControl, FormLabel, TextField } from '@mui/material';
+
 import {
     useOnboardingStore_nameInvalid,
     useOnboardingStore_nameMissing,
     useOnboardingStore_requestedTenant,
     useOnboardingStore_setRequestedTenant,
 } from 'directives/Onboard/Store/hooks';
-import { FormattedMessage, useIntl } from 'react-intl';
 
 function OrganizationNameField() {
     const intl = useIntl();

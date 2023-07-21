@@ -1,7 +1,10 @@
-import { Button, Grid, Typography } from '@mui/material';
-import MessageWithEmphasis from 'components/content/MessageWithEmphasis';
 import { NavArrowRight } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
+
+import { Button, Grid, Typography } from '@mui/material';
+
+import MessageWithEmphasis from 'components/content/MessageWithEmphasis';
+
 import { useHeroTabs } from './hooks';
 
 function HeroOverview() {

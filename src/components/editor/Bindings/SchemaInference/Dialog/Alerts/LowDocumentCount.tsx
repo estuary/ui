@@ -1,7 +1,9 @@
+import { FormattedMessage } from 'react-intl';
+
 import { Typography } from '@mui/material';
+
 import { useBindingsEditorStore_documentsRead } from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
-import { FormattedMessage } from 'react-intl';
 
 const DOCUMENT_THRESHOLD = 10000;
 

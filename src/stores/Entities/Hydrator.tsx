@@ -1,7 +1,9 @@
+import { BaseComponentProps } from 'types';
+import { FormattedMessage } from 'react-intl';
+
 import FullPageError from 'components/fullPage/Error';
 import FullPageSpinner from 'components/fullPage/Spinner';
-import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
+
 import {
     useEntitiesStore_hydrated,
     useEntitiesStore_hydrationErrors,

@@ -1,9 +1,14 @@
+import { useCallback, useMemo } from 'react';
+
+import { Entity } from 'types';
+
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
 import {
     DraftSpecsExtQuery_ByCatalogName,
     getDraftSpecsByCatalogName,
 } from 'api/draftSpecs';
+
 import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
@@ -11,19 +16,22 @@ import {
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
+
 import { useEntityWorkflow_Editing } from 'context/Workflow';
+
 import { useClient } from 'hooks/supabase-swr';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
-import { useCallback, useMemo } from 'react';
+
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
     DEFAULT_FILTER,
     DEFAULT_POLLER_ERROR,
-    jobStatusPoller,
     JOB_STATUS_POLLER_ERROR,
+    jobStatusPoller,
     TABLES,
 } from 'services/supabase';
+
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
@@ -33,13 +41,13 @@ import {
     useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm/hooks';
 import {
+    useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setPreviousEndpointConfig,
-    useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
@@ -51,7 +59,7 @@ import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
-import { Entity } from 'types';
+
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { modifyExistingCaptureDraftSpec } from 'utils/workflow-utils';
 

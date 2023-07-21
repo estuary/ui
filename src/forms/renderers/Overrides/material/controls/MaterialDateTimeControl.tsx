@@ -23,6 +23,10 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
+import { formatRFC3339 } from 'date-fns';
+import { Calendar } from 'iconoir-react';
+import { useIntl } from 'react-intl';
+
 import {
     ControlProps,
     isDateTimeControl,
@@ -37,10 +41,9 @@ import {
     StaticDateTimePicker,
 } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { formatRFC3339 } from 'date-fns';
-import { Calendar } from 'iconoir-react';
+
 import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
-import { useIntl } from 'react-intl';
+
 import { CustomMaterialInputControl } from './MaterialInputControl';
 import useDatePickerState from './useDatePickerState';
 

@@ -1,3 +1,8 @@
+import { MouseEvent, useEffect, useState } from 'react';
+
+import { Entity, TableColumns } from 'types';
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     Grid,
     Stack,
@@ -13,22 +18,25 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import MessageWithLink from 'components/content/MessageWithLink';
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
+
 import { semiTransparentBackground } from 'context/Theme';
-import { Shard } from 'data-plane-gateway/types/shard_client';
+
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
-import { MouseEvent, useEffect, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     useShardDetail_error,
     useShardDetail_getTaskShards,
     useShardDetail_shards,
 } from 'stores/ShardDetail/hooks';
-import { Entity, TableColumns } from 'types';
+
+import { Shard } from 'data-plane-gateway/types/shard_client';
+
 import ShardErrors from './Errors';
 import InformationTableBody from './TableBody';
 

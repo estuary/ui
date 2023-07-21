@@ -1,5 +1,6 @@
-import { Avatar, Box } from '@mui/material';
 import { QuestionMark } from 'iconoir-react';
+
+import { Avatar, Box } from '@mui/material';
 
 interface Props {
     size?: number;

@@ -1,5 +1,10 @@
+import { useMemo } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+
 import { DiffEditor } from '@monaco-editor/react';
 import { Box, Typography, useTheme } from '@mui/material';
+
 import InferenceDiffEditorFooter from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor/Footer';
 import InferenceDiffEditorHeader from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor/Header';
 import {
@@ -9,14 +14,15 @@ import {
 } from 'components/editor/Bindings/Store/hooks';
 import { JsonSchemaSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
 import AlertBox from 'components/shared/AlertBox';
+
 import {
     defaultOutline,
     monacoEditorComponentBackground,
     monacoEditorWidgetBackground,
 } from 'context/Theme';
-import { useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { stringifyJSON } from 'services/stringify';
+
 import { DEFAULT_HEIGHT } from 'utils/editor-utils';
 
 interface Props {

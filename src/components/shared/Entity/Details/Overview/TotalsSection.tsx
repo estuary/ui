@@ -1,14 +1,20 @@
-import { CircularProgress } from '@mui/material';
-import { getStatsForDetails } from 'api/stats';
-import CardWrapper from 'components/admin/Billing/CardWrapper';
-import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
-import { useEntityType } from 'context/EntityContext';
-import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
-import prettyBytes from 'pretty-bytes';
 import { useMemo } from 'react';
+
+import { CatalogStats_Details } from 'types';
+import prettyBytes from 'pretty-bytes';
 import { FormattedMessage, useIntl } from 'react-intl';
 import readable from 'readable-numbers';
-import { CatalogStats_Details } from 'types';
+
+import { CircularProgress } from '@mui/material';
+
+import { getStatsForDetails } from 'api/stats';
+
+import CardWrapper from 'components/admin/Billing/CardWrapper';
+import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
+
+import { useEntityType } from 'context/EntityContext';
+
+import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 
 interface Props {
     entityName: string;

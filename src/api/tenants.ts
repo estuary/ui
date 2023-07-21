@@ -1,5 +1,6 @@
-import { supabaseClient, TABLES } from 'services/supabase';
 import { Tenants } from 'types';
+
+import { supabaseClient, TABLES } from 'services/supabase';
 
 const getTenantDetails = () => {
     const queryBuilder = supabaseClient.from<Tenants>(TABLES.TENANTS).select(

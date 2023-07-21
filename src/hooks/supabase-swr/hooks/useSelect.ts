@@ -1,9 +1,12 @@
+import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
+
 import { PostgrestError } from '@supabase/postgrest-js';
+
 import {
     SuccessResponse,
     ToDistributedSuccessResponse,
 } from 'hooks/supabase-swr/types';
-import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
+
 import { Query } from '../query';
 import useFetcher, { FetcherType } from './useFetcher';
 

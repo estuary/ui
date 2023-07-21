@@ -1,14 +1,18 @@
+import { useMemo } from 'react';
+
+import { TableColumns, TableStatuses } from 'types';
+import { useIntl } from 'react-intl';
+
 import { Box, Table, TableContainer } from '@mui/material';
+
 import Rows from 'components/tables/Billing/Rows';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
-import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
+
 import {
     useBilling_billingHistory,
     useBilling_hydrated,
 } from 'stores/Billing/hooks';
-import { TableColumns, TableStatuses } from 'types';
 
 export const columns: TableColumns[] = [
     {

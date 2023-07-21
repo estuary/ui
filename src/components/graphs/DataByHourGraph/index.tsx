@@ -1,7 +1,16 @@
-import { useTheme } from '@mui/material';
-import { defaultOutlineColor, eChartsColors } from 'context/Theme';
-import { eachHourOfInterval, subHours } from 'date-fns';
+import { useEffect, useMemo, useState } from 'react';
+
 import { EChartsOption } from 'echarts';
+import { CatalogStats_Details } from 'types';
+import { eachHourOfInterval, subHours } from 'date-fns';
+import prettyBytes from 'pretty-bytes';
+import { FormatDateOptions, useIntl } from 'react-intl';
+import readable from 'readable-numbers';
+
+import { useTheme } from '@mui/material';
+
+import { defaultOutlineColor, eChartsColors } from 'context/Theme';
+
 import { BarChart } from 'echarts/charts';
 import {
     DatasetComponent,
@@ -13,11 +22,7 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import prettyBytes from 'pretty-bytes';
-import { useEffect, useMemo, useState } from 'react';
-import { FormatDateOptions, useIntl } from 'react-intl';
-import readable from 'readable-numbers';
-import { CatalogStats_Details } from 'types';
+
 import { DataByHourRange } from '../types';
 import useLegendConfig from '../useLegendConfig';
 import useTooltipConfig from '../useTooltipConfig';

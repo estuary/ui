@@ -1,3 +1,8 @@
+import { createContext, ReactNode, useContext, useRef, useState } from 'react';
+
+import { BaseComponentProps } from 'types';
+import { FormattedMessage } from 'react-intl';
+
 import {
     Box,
     Button,
@@ -6,9 +11,6 @@ import {
     DialogContent,
     DialogTitle,
 } from '@mui/material';
-import { createContext, ReactNode, useContext, useRef, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
 
 export interface IConfirmationModalOptions {
     confirmText?: string;

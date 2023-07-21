@@ -23,6 +23,8 @@
   THE SOFTWARE.
 */
 
+import { concat, includes, isPlainObject, orderBy } from 'lodash';
+
 import {
     ControlElement,
     deriveTypes,
@@ -38,11 +40,13 @@ import {
     toDataPath,
     UISchemaElement,
 } from '@jsonforms/core';
-import { concat, includes, isPlainObject, orderBy } from 'lodash';
+
+import { Annotations, Formats, Options } from 'types/jsonforms';
+
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
-import { Annotations, Formats, Options } from 'types/jsonforms';
+
 import { ADVANCED, CONTAINS_REQUIRED_FIELDS } from './shared';
 
 /////////////////////////////////////////////////////////

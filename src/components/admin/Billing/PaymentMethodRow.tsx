@@ -1,5 +1,7 @@
-import { Button, TableCell, TableRow } from '@mui/material';
 import { Check } from 'iconoir-react';
+
+import { Button, TableCell, TableRow } from '@mui/material';
+
 import AmexLogo from 'images/payment-methods/amex.png';
 import DiscoverLogo from 'images/payment-methods/discover.png';
 import MastercardLogo from 'images/payment-methods/mastercard.png';

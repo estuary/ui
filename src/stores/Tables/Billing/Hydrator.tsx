@@ -1,15 +1,20 @@
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { useZustandStore } from 'context/Zustand/provider';
-import useBillingRecord from 'hooks/billing/useBillingRecord';
 import { useEffect } from 'react';
+
+import { BaseComponentProps, CatalogStats_Billing } from 'types';
 import { useUnmount } from 'react-use';
+
+import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+
+import { useZustandStore } from 'context/Zustand/provider';
+
+import useBillingRecord from 'hooks/billing/useBillingRecord';
+
 import { SelectTableStoreNames } from 'stores/names';
 import { useBillingTable_hydrateContinuously } from 'stores/Tables/Billing/hooks';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { BaseComponentProps, CatalogStats_Billing } from 'types';
 
 // TODO (billing): Use this method to hydrate the billing select table store when
 //   a database table containing billing history is available. Currently, this component is

@@ -1,5 +1,6 @@
-import { StoreName } from 'stores/names';
 import { StoreApi, useStore } from 'zustand';
+
+import { StoreName } from 'stores/names';
 
 // TODO (zustand): Determine a method to store UI stores. The following stores
 // use this method: details form.

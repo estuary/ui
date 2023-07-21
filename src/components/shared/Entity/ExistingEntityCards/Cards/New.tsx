@@ -1,17 +1,22 @@
+import { EntityWithCreateWorkflow } from 'types';
+import { Plus } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
 import { Box, Typography } from '@mui/material';
+
 import EntityCardWrapper from 'components/shared/Entity/ExistingEntityCards/Cards/Wrapper';
 import { useExistingEntity_connectorName } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
+
 import { useEntityType } from 'context/EntityContext';
 import { alternateConnectorImageBackgroundSx } from 'context/Theme';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { Plus } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import { DEFAULT_FILTER } from 'services/supabase';
-import { EntityWithCreateWorkflow } from 'types';
 
 const trackEvent = (
     entityType: EntityWithCreateWorkflow,

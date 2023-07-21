@@ -1,8 +1,12 @@
-import { getStorageMapping } from 'api/storageMappings';
 import produce from 'immer';
-import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
+
+import { getStorageMapping } from 'api/storageMappings';
+
+import { devtoolsOptions } from 'utils/store-utils';
+
 import { devtools, NamedSet } from 'zustand/middleware';
+
 import { AdminStoreNames } from '../names';
 import { StorageMappingForm, StorageMappingsState } from './types';
 

@@ -1,8 +1,12 @@
-import { AlertColor } from '@mui/material';
-import { IncompatibleCollections } from 'api/evolutions';
-import { CollectionData } from 'components/editor/Bindings/types';
 import { Dispatch, SetStateAction } from 'react';
+
 import { InferSchemaPropertyForRender, Schema } from 'types';
+
+import { AlertColor } from '@mui/material';
+
+import { IncompatibleCollections } from 'api/evolutions';
+
+import { CollectionData } from 'components/editor/Bindings/types';
 
 export interface BindingsEditorState {
     collectionData: CollectionData | null | undefined;

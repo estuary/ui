@@ -1,6 +1,8 @@
-import { Stack } from '@mui/material';
-import ConnectorIcon from 'components/connectors/ConnectorIcon';
 import useConstant from 'use-constant';
+
+import { Stack } from '@mui/material';
+
+import ConnectorIcon from 'components/connectors/ConnectorIcon';
 
 interface Props {
     title: string | null;

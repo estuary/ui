@@ -1,5 +1,7 @@
-import { Checkbox, TableCell } from '@mui/material';
 import { Square } from 'iconoir-react';
+
+import { Checkbox, TableCell } from '@mui/material';
+
 import CheckSquare from 'icons/CheckSquare';
 
 interface Props {

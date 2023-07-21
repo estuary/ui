@@ -1,9 +1,12 @@
+import { FormattedMessage } from 'react-intl';
+
 import { TableCell, TableRow, Typography } from '@mui/material';
+
 import { BillingRecord } from 'api/billing';
+
 import DataVolume from 'components/tables/cells/billing/DataVolume';
 import TimeStamp from 'components/tables/cells/billing/TimeStamp';
 import MonetaryValue from 'components/tables/cells/MonetaryValue';
-import { FormattedMessage } from 'react-intl';
 
 interface RowProps {
     row: BillingRecord;

@@ -1,7 +1,11 @@
-import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useMemo } from 'react';
+
+import { useTenantDetails } from 'context/fetcher/Tenant';
+
 import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
+
 import { hasLength } from 'utils/misc-utils';
+
 import StatsHeader from '../cells/stats/Header';
 import { ColumnProps } from '../EntityTable/types';
 

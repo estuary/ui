@@ -1,3 +1,14 @@
+import { forwardRef, ReactNode, useMemo } from 'react';
+
+import { BaseComponentProps } from 'types';
+import {
+    CheckCircle,
+    DeleteCircle,
+    InfoEmpty,
+    WarningCircle,
+} from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
 import {
     Alert,
     AlertColor,
@@ -5,16 +16,8 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
 import { alertBackground, alertTextPrimary } from 'context/Theme';
-import {
-    CheckCircle,
-    DeleteCircle,
-    InfoEmpty,
-    WarningCircle,
-} from 'iconoir-react';
-import { forwardRef, ReactNode, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
     severity: AlertColor;

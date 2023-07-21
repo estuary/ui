@@ -1,11 +1,17 @@
+import { useMemo } from 'react';
+
+import { BaseComponentProps } from 'types';
+
 import FullPageSpinner from 'components/fullPage/Spinner';
+
 import { LocalZustandProvider } from 'context/LocalZustand';
+
 import BetaOnboard from 'directives/BetaOnboard';
 import FullPageWrapper from 'directives/FullPageWrapper';
 import { createOnboardingStore } from 'directives/Onboard/Store/create';
-import { useMemo } from 'react';
+
 import { OnboardingStoreNames } from 'stores/names';
-import { BaseComponentProps } from 'types';
+
 import useDirectiveGuard from './hooks';
 
 const SELECTED_DIRECTIVE = 'betaOnboard';

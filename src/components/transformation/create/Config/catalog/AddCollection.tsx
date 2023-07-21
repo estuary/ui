@@ -1,3 +1,8 @@
+import { ReactNode } from 'react';
+import { Actions } from 'react-use/lib/useSet';
+
+import { FormattedMessage } from 'react-intl';
+
 import {
     Button,
     Dialog,
@@ -7,14 +12,12 @@ import {
     Divider,
     Stack,
 } from '@mui/material';
+
 import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
 import CollectionSelector from 'components/collection/Selector';
 import UpdateDraftButton from 'components/transformation/create/Config/UpdateDraftButton';
 import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
-import { ReactNode } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { Actions } from 'react-use/lib/useSet';
 
 interface Props {
     collections: Set<string>;

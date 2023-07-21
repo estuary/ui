@@ -1,9 +1,12 @@
-import { User } from '@supabase/supabase-js';
-import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
+import { includeKeys } from 'filter-obj';
 import setupLogRocketReact from 'logrocket-react';
+
+import { User } from '@supabase/supabase-js';
+
 import { getUserDetails } from 'services/supabase';
+
 import {
     getAppVersion,
     getLogRocketSettings,

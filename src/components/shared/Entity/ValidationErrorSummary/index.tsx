@@ -1,23 +1,28 @@
+import { FormattedMessage } from 'react-intl';
+
 import { AlertTitle, Collapse } from '@mui/material';
+
 import AlertBox from 'components/shared/AlertBox';
 import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/DetailsErrors';
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
 import NoConnectorError from 'components/shared/Entity/ValidationErrorSummary/NoConnectorError';
 import ResourceConfigErrors from 'components/shared/Entity/ValidationErrorSummary/ResourceConfigErrors';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { FormattedMessage } from 'react-intl';
+
 import { useDetailsForm_errorsExist } from 'stores/DetailsForm/hooks';
 import {
-    useEndpointConfigStore_errorsExist,
     useEndpointConfig_hydrationErrorsExist,
+    useEndpointConfigStore_errorsExist,
 } from 'stores/EndpointConfig/hooks';
 import { useFormStateStore_displayValidation } from 'stores/FormState/hooks';
 import {
     useResourceConfig_hydrationErrorsExist,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
+
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {

@@ -1,10 +1,15 @@
-import { accessToken, authURL } from 'api/oauth';
-import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
-import { isEmpty } from 'lodash';
 import { useState } from 'react';
+
+import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
+
+import { accessToken, authURL } from 'api/oauth';
+
+import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
+
 import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm/hooks';
 import { useEndpointConfigStore_endpointConfig_data } from 'stores/EndpointConfig/hooks';
+
 import { CREDENTIALS, INJECTED_VALUES } from './shared';
 
 // Hook for OAuth popup opening, error handling, error message setting, etc.

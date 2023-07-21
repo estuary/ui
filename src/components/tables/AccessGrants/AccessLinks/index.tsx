@@ -1,13 +1,18 @@
+import { useMemo } from 'react';
+
+import { TableColumns } from 'types';
+
 import { Box } from '@mui/material';
+
 import { getDirectivesByType } from 'api/directives';
+
 import Rows from 'components/tables/AccessGrants/AccessLinks/Rows';
 import EntityTable from 'components/tables/EntityTable';
 import RowSelector from 'components/tables/RowActions/AccessLinks/RowSelector';
-import { useMemo } from 'react';
+
 import { SelectTableStoreNames } from 'stores/names';
 import useTableState from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
-import { TableColumns } from 'types';
 
 export const columns: TableColumns[] = [
     {

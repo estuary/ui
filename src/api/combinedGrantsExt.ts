@@ -1,3 +1,5 @@
+import { AuthRoles, Grants } from 'types';
+
 import {
     defaultTableFilter,
     RPCS,
@@ -5,7 +7,6 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { AuthRoles, Grants } from 'types';
 
 // Used to display prefix grants in admin page
 const getGrants = (

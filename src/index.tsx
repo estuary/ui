@@ -1,12 +1,16 @@
 import 'index.css';
 import 'polyfills/transformStream';
 
-import ApplicationRouter from 'context/Router';
-import { enableMapSet, setAutoFreeze } from 'immer';
 import React from 'react';
+
+import { enableMapSet, setAutoFreeze } from 'immer';
 import ReactDOM from 'react-dom';
+
+import ApplicationRouter from 'context/Router';
+
 import { initGoogleTagManager } from 'services/gtm';
 import { initLogRocket } from 'services/logrocket';
+
 import AppProviders from './context';
 
 // export const profilerCallback = (

@@ -1,4 +1,10 @@
+import { useEffect, useMemo } from 'react';
+
+import { EntityWithCreateWorkflow } from 'types';
+import { FormattedMessage } from 'react-intl';
+
 import { Box, CircularProgress, Collapse, Typography } from '@mui/material';
+
 import ConnectorTiles from 'components/connectors/ConnectorTiles';
 import ExistingEntityCards from 'components/shared/Entity/ExistingEntityCards';
 import {
@@ -7,12 +13,10 @@ import {
     useExistingEntity_hydrated,
 } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { useEffect, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { EntityWithCreateWorkflow } from 'types';
 
 interface Props {
     entityType: EntityWithCreateWorkflow;

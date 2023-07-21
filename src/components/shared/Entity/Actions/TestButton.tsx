@@ -1,9 +1,12 @@
+import { FormattedMessage } from 'react-intl';
+
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
-import { FormattedMessage } from 'react-intl';
+
 import { CustomEvents } from 'services/logrocket';
+
 import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,

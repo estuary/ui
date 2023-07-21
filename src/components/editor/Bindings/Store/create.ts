@@ -1,22 +1,30 @@
+import { Dispatch, SetStateAction } from 'react';
+
+import produce from 'immer';
+import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
+import { InferSchemaPropertyForRender, InferSchemaResponse } from 'types';
+import { create, StoreApi } from 'zustand';
+
 import { infer } from '@estuary/flow-web';
+
 import {
     createDraftSpec,
     getDraftSpecsByCatalogName,
     modifyDraftSpec,
 } from 'api/draftSpecs';
 import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
+
 import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
 import { CollectionData } from 'components/editor/Bindings/types';
-import produce from 'immer';
-import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
-import { Dispatch, SetStateAction } from 'react';
+
 import { CallSupabaseResponse } from 'services/supabase';
+
 import { BindingsEditorStoreNames } from 'stores/names';
-import { InferSchemaPropertyForRender, InferSchemaResponse } from 'types';
+
 import { hasLength } from 'utils/misc-utils';
 import { filterInferSchemaResponse, hasReadSchema } from 'utils/schema-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
+
 import { devtools, NamedSet } from 'zustand/middleware';
 
 const processDraftSpecResponse = (

@@ -1,7 +1,12 @@
+import { useEffect, useState } from 'react';
+
+import { Entity } from 'types';
+
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { CaptureQuery } from 'api/liveSpecsExt';
 import { createPublication } from 'api/publications';
+
 import AlertBox from 'components/shared/AlertBox';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import Error from 'components/shared/Error';
@@ -9,20 +14,22 @@ import SharedProgress, {
     ProgressStates,
     SharedProgressProps,
 } from 'components/tables/RowActions/Shared/Progress';
+
 import { useZustandStore } from 'context/Zustand/provider';
+
 import {
     LiveSpecsExtQueryWithSpec,
     useLiveSpecsExtWithSpec,
 } from 'hooks/useLiveSpecsExt';
 import usePublications from 'hooks/usePublications';
-import { useEffect, useState } from 'react';
+
 import { jobSucceeded } from 'services/supabase';
+
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { Entity } from 'types';
 
 export interface UpdateEntityProps {
     entity: CaptureQuery;

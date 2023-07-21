@@ -1,8 +1,12 @@
-import { Typography, useTheme } from '@mui/material';
-import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
-import { WarningCircle } from 'iconoir-react';
 import { useEffect } from 'react';
+
+import { WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
+
+import { Typography, useTheme } from '@mui/material';
+
+import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
+
 import {
     useTransformationCreate_schemaUnedited,
     useTransformationCreate_setSchemaUnedited,

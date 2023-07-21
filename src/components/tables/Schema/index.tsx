@@ -1,12 +1,16 @@
+import { useEffect, useState } from 'react';
+
+import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
+import { useIntl } from 'react-intl';
+
 import { Box, Table, TableContainer } from '@mui/material';
+
 import {
     useBindingsEditorStore_inferSchemaResponse,
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_inferSchemaResponseEmpty,
 } from 'components/editor/Bindings/Store/hooks';
-import { useEffect, useState } from 'react';
-import { useIntl } from 'react-intl';
-import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
+
 import EntityTableBody from '../EntityTable/TableBody';
 import EntityTableHeader from '../EntityTable/TableHeader';
 import Rows from './Rows';

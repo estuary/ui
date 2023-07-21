@@ -1,4 +1,5 @@
 import { Box, Skeleton } from '@mui/material';
+
 import {
     connectorImageBackgroundRadius,
     semiTransparentBackground,

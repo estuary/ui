@@ -1,10 +1,14 @@
+import { useEffect, useMemo, useRef } from 'react';
+
+import { cloneDeep } from 'lodash';
+
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
-import { cloneDeep } from 'lodash';
-import { useEffect, useMemo, useRef } from 'react';
+
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import { jsonFormsDefaults } from 'services/jsonforms/defaults';
 import { showValidation } from 'services/jsonforms/shared';
+
 import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
@@ -14,7 +18,9 @@ import {
     useResourceConfig_resourceSchema,
     useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig/hooks';
+
 import { Annotations } from 'types/jsonforms';
+
 import { stripPathing } from 'utils/misc-utils';
 
 type Props = {

@@ -1,5 +1,7 @@
 import { useZustandStore } from 'context/Zustand/provider';
+
 import { GlobalStoreNames } from 'stores/names';
+
 import { SidePanelDocsState } from './types';
 
 export const useSidePanelDocsStore_animateOpening = () => {

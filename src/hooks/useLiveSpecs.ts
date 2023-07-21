@@ -1,6 +1,9 @@
-import { TABLES } from 'services/supabase';
 import { Entity, Schema } from 'types';
+
+import { TABLES } from 'services/supabase';
+
 import { hasLength } from 'utils/misc-utils';
+
 import { useQuery, useSelect } from './supabase-swr/';
 
 export interface LiveSpecsQuery extends Schema {

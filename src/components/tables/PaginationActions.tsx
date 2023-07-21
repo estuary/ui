@@ -1,10 +1,11 @@
-import { Box, IconButton, useTheme } from '@mui/material';
 import {
     FastArrowLeft,
     FastArrowRight,
     NavArrowLeft,
     NavArrowRight,
 } from 'iconoir-react';
+
+import { Box, IconButton, useTheme } from '@mui/material';
 
 interface TablePaginationActionsProps {
     count: number;

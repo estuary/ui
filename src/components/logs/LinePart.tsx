@@ -1,6 +1,9 @@
-import { ListItemText, styled } from '@mui/material';
-import { ParsedSpan } from 'ansicolor';
 import { useMemo } from 'react';
+
+import { ParsedSpan } from 'ansicolor';
+
+import { ListItemText, styled } from '@mui/material';
+
 import { unescapeString } from 'utils/misc-utils';
 
 interface Props {

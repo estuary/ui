@@ -1,5 +1,15 @@
 //TODO (UI / UX) - These icons are not final
 import {
+    CloudDownload,
+    CloudUpload,
+    DatabaseScript,
+    FastArrowLeft,
+    HomeSimple,
+    Settings,
+} from 'iconoir-react';
+import { useIntl } from 'react-intl';
+
+import {
     Box,
     List,
     ListItemButton,
@@ -11,18 +21,13 @@ import {
     useTheme,
 } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
+
 import { authenticatedRoutes } from 'app/routes';
+
 import ModeSwitch from 'components/navigation/ModeSwitch';
+
 import { paperBackground } from 'context/Theme';
-import {
-    CloudDownload,
-    CloudUpload,
-    DatabaseScript,
-    FastArrowLeft,
-    HomeSimple,
-    Settings,
-} from 'iconoir-react';
-import { useIntl } from 'react-intl';
+
 import ListItemLink from './ListItemLink';
 
 interface NavigationProps {

@@ -1,8 +1,11 @@
-import { Box, TableCell, Tooltip, Typography } from '@mui/material';
-import { semiTransparentBackgroundIntensified } from 'context/Theme';
 import { useMemo } from 'react';
+
 import { FormattedMessage, useIntl } from 'react-intl';
 import readable from 'readable-numbers';
+
+import { Box, TableCell, Tooltip, Typography } from '@mui/material';
+
+import { semiTransparentBackgroundIntensified } from 'context/Theme';
 
 interface Props {
     read?: boolean;

@@ -1,9 +1,12 @@
+import { BaseComponentProps } from 'types';
+import { FormattedMessage } from 'react-intl';
+
 import FullPageError from 'components/fullPage/Error';
 import FullPageSpinner from 'components/fullPage/Spinner';
+
 import ClickToAccept from 'directives/ClickToAccept';
 import FullPageWrapper from 'directives/FullPageWrapper';
-import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
+
 import useDirectiveGuard from './hooks';
 
 const SELECTED_DIRECTIVE = 'clickToAccept';

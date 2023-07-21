@@ -3,6 +3,7 @@ import DetailsFormForm from 'components/shared/Entity/DetailsForm/Form';
 import DetailsFormHeader from 'components/shared/Entity/DetailsForm/Header';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
+
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 
 function DetailsForm({ connectorTags, entityType, readOnly }: Props) {

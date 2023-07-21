@@ -1,7 +1,11 @@
-import { Box } from '@mui/material';
-import { useLiveSpecs } from 'hooks/useLiveSpecs';
-import { difference } from 'lodash';
 import { ReactNode } from 'react';
+
+import { difference } from 'lodash';
+
+import { Box } from '@mui/material';
+
+import { useLiveSpecs } from 'hooks/useLiveSpecs';
+
 import { BindingsSelectorSkeleton } from '../CollectionSkeletons';
 import CollectionSelectorActions from './Actions';
 import CollectionSelectorList from './List';

@@ -1,18 +1,24 @@
+import { isEmpty } from 'lodash';
+import { useIntl } from 'react-intl';
+
 import { Box, Typography } from '@mui/material';
+
 import {
     CaptureQueryWithSpec,
     MaterializationQueryWithSpec,
 } from 'api/liveSpecsExt';
+
 import ConnectorLogo from 'components/connectors/card/Logo';
 import CustomWidthTooltip from 'components/shared/CustomWidthTooltip';
 import EntityCardWrapper from 'components/shared/Entity/ExistingEntityCards/Cards/Wrapper';
 import useEntityEditNavigate from 'components/shared/Entity/hooks/useEntityEditNavigate';
+
 import { alternateConnectorImageBackgroundSx } from 'context/Theme';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { isEmpty } from 'lodash';
-import { useIntl } from 'react-intl';
+
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 
 interface Props {

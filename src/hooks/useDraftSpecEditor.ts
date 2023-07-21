@@ -1,4 +1,10 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { get, has, set } from 'lodash';
+import { Entity } from 'types';
+
 import { modifyDraftSpec } from 'api/draftSpecs';
+
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
@@ -7,11 +13,10 @@ import {
     useEditorStore_queryResponse_mutate,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
+
 import { DraftSpec } from 'hooks/useDraftSpecs';
-import { get, has, set } from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+
 import { stringifyJSON } from 'services/stringify';
-import { Entity } from 'types';
 
 function useDraftSpecEditor(
     entityName: string | undefined,

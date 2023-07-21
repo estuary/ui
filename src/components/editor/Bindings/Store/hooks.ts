@@ -1,5 +1,7 @@
 import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
+
 import { useZustandStore } from 'context/Zustand/provider';
+
 import { BindingsEditorStoreNames } from 'stores/names';
 
 // Selector Hooks

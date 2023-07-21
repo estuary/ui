@@ -1,6 +1,9 @@
 import { useZustandStore } from 'context/Zustand/provider';
+
 import { ResourceConfigStoreNames } from 'stores/names';
+
 import { shallow } from 'zustand/shallow';
+
 import { ResourceConfigState } from './types';
 
 // Selector Hooks

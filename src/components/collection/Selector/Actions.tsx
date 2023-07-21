@@ -1,7 +1,10 @@
-import { Box, Button, Divider, Stack, useTheme } from '@mui/material';
-import { defaultOutline } from 'context/Theme';
 import { ReactNode } from 'react';
+
 import { FormattedMessage } from 'react-intl';
+
+import { Box, Button, Divider, Stack, useTheme } from '@mui/material';
+
+import { defaultOutline } from 'context/Theme';
 
 interface Props {
     removeAllCollections: (event: React.MouseEvent<HTMLElement>) => void;

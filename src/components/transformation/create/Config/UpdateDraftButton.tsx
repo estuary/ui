@@ -1,5 +1,12 @@
+import { Dispatch, SetStateAction, useCallback } from 'react';
+
+import { Transform } from 'types';
+import { FormattedMessage } from 'react-intl';
+
 import { LoadingButton } from '@mui/lab';
+
 import { modifyDraftSpec } from 'api/draftSpecs';
+
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
@@ -7,8 +14,7 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
-import { Dispatch, SetStateAction, useCallback } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_catalogUpdating,
@@ -20,7 +26,7 @@ import {
     useTransformationCreate_transformCount,
     useTransformationCreate_updateTransformConfigs,
 } from 'stores/TransformationCreate/hooks';
-import { Transform } from 'types';
+
 import { evaluateTransformConfigs } from 'utils/derivation-utils';
 import { hasLength } from 'utils/misc-utils';
 

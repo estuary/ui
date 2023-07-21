@@ -1,4 +1,10 @@
+import { ReactNode, useEffect, useMemo } from 'react';
+
+import { EntityWithCreateWorkflow } from 'types';
+import { FormattedMessage } from 'react-intl';
+
 import { Box, Collapse } from '@mui/material';
+
 import CollectionConfig from 'components/collection/Config';
 import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
 import {
@@ -13,21 +19,21 @@ import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
-import { ReactNode, useEffect, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_draftedEntityName,
     useDetailsForm_entityNameChanged,
 } from 'stores/DetailsForm/hooks';
 import {
-    useEndpointConfigStore_changed,
     useEndpointConfig_serverUpdateRequired,
+    useEndpointConfigStore_changed,
 } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_error,
@@ -36,8 +42,9 @@ import {
     useFormStateStore_messagePrefix,
 } from 'stores/FormState/hooks';
 import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/hooks';
-import { EntityWithCreateWorkflow } from 'types';
+
 import { hasLength } from 'utils/misc-utils';
+
 import AlertBox from '../../AlertBox';
 import ValidationErrorSummary from '../ValidationErrorSummary';
 

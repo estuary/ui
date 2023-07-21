@@ -1,3 +1,7 @@
+import { Dispatch, SetStateAction, useState } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+
 import {
     Box,
     Collapse,
@@ -7,10 +11,9 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
+
 import AcceptDemoInvitation from 'components/hero/AcceptDemoInvitation';
 import Logo from 'components/navigation/Logo';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 
 const TITLE_ID = 'accept-demo-tenant-dialog-title';
 

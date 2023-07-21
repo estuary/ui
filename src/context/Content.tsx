@@ -1,6 +1,7 @@
-import enUSMessages from 'lang/en-US';
-import { IntlProvider } from 'react-intl';
 import { BaseComponentProps } from 'types';
+import { IntlProvider } from 'react-intl';
+
+import enUSMessages from 'lang/en-US';
 
 // TODO (intl) - Don't hard hardcode to EN
 //    When we do we need to pass locale to MUI https://mui.com/guides/localization/

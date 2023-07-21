@@ -1,6 +1,9 @@
 import { Auth } from '@supabase/ui';
+
 import { getUserGrants } from 'api/userGrants';
+
 import { singleCallSettings } from 'context/SWR';
+
 import { useSelectNew } from './supabase-swr/hooks/useSelect';
 
 interface Props {

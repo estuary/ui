@@ -1,7 +1,10 @@
-import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
-import { FormattedMessage } from 'react-intl';
 import { TableIntlConfig, TableState } from 'types';
+import { FormattedMessage } from 'react-intl';
+
+import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
+
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
+
 import TableLoadingRows from '../Loading';
 import { ColumnProps } from './types';
 

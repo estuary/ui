@@ -1,14 +1,19 @@
+import { useEffect } from 'react';
+
+import { Entity } from 'types';
+
 import { useEntityType } from 'context/EntityContext';
 import { useLocalZustandStore } from 'context/LocalZustand';
 import { useZustandStore as useGlobalZustandStore } from 'context/Zustand/provider';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
-import { useEffect } from 'react';
+
 import { EditorStoreNames } from 'stores/names';
-import { Entity } from 'types';
+
 import { EditorStoreState } from './types';
 
 interface SelectorParams {

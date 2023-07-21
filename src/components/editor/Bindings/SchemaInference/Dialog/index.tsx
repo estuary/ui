@@ -1,3 +1,8 @@
+import { Dispatch, SetStateAction } from 'react';
+
+import { CodeBrackets } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
 import {
     Dialog,
     DialogActions,
@@ -6,14 +11,13 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
+
 import LowDocumentCountAlert from 'components/editor/Bindings/SchemaInference/Dialog/Alerts/LowDocumentCount';
 import SchemaApplicationErroredAlert from 'components/editor/Bindings/SchemaInference/Dialog/Alerts/SchemaApplicationErrored';
 import CancelButton from 'components/editor/Bindings/SchemaInference/Dialog/CancelButton';
 import InferenceDiffEditor from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor';
 import UpdateSchemaButton from 'components/editor/Bindings/SchemaInference/Dialog/UpdateSchemaButton';
-import { CodeBrackets } from 'iconoir-react';
-import { Dispatch, SetStateAction } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 
 interface Props {

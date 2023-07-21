@@ -1,7 +1,10 @@
-import { Typography } from '@mui/material';
-import { useBindingsEditorStore_documentsRead } from 'components/editor/Bindings/Store/hooks';
-import { defaultOutline, monacoEditorWidgetBackground } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
+
+import { Typography } from '@mui/material';
+
+import { useBindingsEditorStore_documentsRead } from 'components/editor/Bindings/Store/hooks';
+
+import { defaultOutline, monacoEditorWidgetBackground } from 'context/Theme';
 
 function InferenceDiffEditorFooter() {
     // Bindings Editor Store

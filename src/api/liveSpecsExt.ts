@@ -1,5 +1,13 @@
-import { PostgrestResponse } from '@supabase/postgrest-js';
+import {
+    CatalogStats,
+    Entity,
+    EntityWithCreateWorkflow,
+    LiveSpecsExtBaseQuery,
+} from 'types';
 import pLimit from 'p-limit';
+
+import { PostgrestResponse } from '@supabase/postgrest-js';
+
 import {
     CONNECTOR_IMAGE,
     CONNECTOR_TITLE,
@@ -12,12 +20,6 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import {
-    CatalogStats,
-    Entity,
-    EntityWithCreateWorkflow,
-    LiveSpecsExtBaseQuery,
-} from 'types';
 
 const baseColumns = [
     'catalog_name',

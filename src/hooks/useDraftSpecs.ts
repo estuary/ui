@@ -1,7 +1,10 @@
-import { PostgrestError } from '@supabase/postgrest-js';
-import { TABLES } from 'services/supabase';
 import { KeyedMutator } from 'swr';
 import { Entity } from 'types';
+
+import { PostgrestError } from '@supabase/postgrest-js';
+
+import { TABLES } from 'services/supabase';
+
 import { SuccessResponse, useQuery, useSelect } from './supabase-swr/';
 
 export interface DraftSpecQuery {

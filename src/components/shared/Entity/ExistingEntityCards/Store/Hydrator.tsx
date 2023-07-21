@@ -1,15 +1,19 @@
+import { useEffect } from 'react';
+
+import { BaseComponentProps } from 'types';
+
 import {
     useExistingEntity_hydrated,
     useExistingEntity_hydrateState,
     useExistingEntity_setHydrated,
     useExistingEntity_setHydrationErrorsExist,
 } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
+
 import { useEntityType } from 'context/EntityContext';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { useEffect } from 'react';
-import { BaseComponentProps } from 'types';
 
 function ExistingEntityHydrator({ children }: BaseComponentProps) {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);

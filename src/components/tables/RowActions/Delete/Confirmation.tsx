@@ -1,6 +1,8 @@
-import { Typography } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
+
+import { Typography } from '@mui/material';
+
+import AlertBox from 'components/shared/AlertBox';
 
 function DeleteConfirmation() {
     return (

@@ -1,10 +1,12 @@
-import useClient from 'hooks/supabase-swr/hooks/useClient';
-import { LRUCache } from 'lru-cache';
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
-import { ERROR_MESSAGES } from 'services/supabase';
 import { SWRConfig } from 'swr';
 import { BaseComponentProps } from 'types';
+import { LRUCache } from 'lru-cache';
+import { useIntl } from 'react-intl';
+
+import useClient from 'hooks/supabase-swr/hooks/useClient';
+
+import { ERROR_MESSAGES } from 'services/supabase';
 
 export const singleCallSettings = {
     revalidateIfStale: false,

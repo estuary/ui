@@ -1,5 +1,6 @@
-import { supabaseClient, TABLES } from 'services/supabase';
 import { UserGrants } from 'types';
+
+import { supabaseClient, TABLES } from 'services/supabase';
 
 export const getUserGrants = (userId: string, adminOnly?: boolean) => {
     let queryBuilder = supabaseClient

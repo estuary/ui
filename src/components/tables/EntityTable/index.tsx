@@ -1,4 +1,25 @@
 import {
+    ChangeEvent,
+    MouseEvent,
+    ReactNode,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
+
+import { debounce } from 'lodash';
+import {
+    SortDirection,
+    TableColumns,
+    TableIntlConfig,
+    TableState,
+    TableStatuses,
+} from 'types';
+import { useIntl } from 'react-intl';
+import { useEffectOnce } from 'react-use';
+
+import {
     Box,
     Stack,
     Table,
@@ -8,33 +29,19 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+
 import Title from 'components/tables/Title';
+
 import { useZustandStore } from 'context/Zustand/provider';
-import { debounce } from 'lodash';
-import {
-    ChangeEvent,
-    MouseEvent,
-    ReactNode,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
-import { useIntl } from 'react-intl';
-import { useEffectOnce } from 'react-use';
+
 import { Pagination } from 'services/supabase';
+
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import {
-    SortDirection,
-    TableColumns,
-    TableIntlConfig,
-    TableState,
-    TableStatuses,
-} from 'types';
+
 import EntityTableBody from './TableBody';
 import EntityTableFooter from './TableFooter';
 import EntityTableHeader from './TableHeader';

@@ -1,14 +1,20 @@
+import { useCallback, useMemo } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+import { useNavigate } from 'react-router';
+
 import { LoadingButton } from '@mui/lab';
+
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
+
 import { authenticatedRoutes } from 'app/routes';
+
 import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
-import { useCallback, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { useNavigate } from 'react-router';
+
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import {
@@ -20,6 +26,7 @@ import {
     useTransformationCreate_setSourceCollections,
 } from 'stores/TransformationCreate/hooks';
 import { TransformConfig } from 'stores/TransformationCreate/types';
+
 import {
     generateInitialSpec,
     templateTransformConfig,

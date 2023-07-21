@@ -1,6 +1,8 @@
-import { TableCell, TableRow, Typography } from '@mui/material';
 import { orderBy } from 'lodash';
 import { InferSchemaResponseProperty, Schema, SortDirection } from 'types';
+
+import { TableCell, TableRow, Typography } from '@mui/material';
+
 import ChipListCell from '../cells/ChipList';
 
 interface RowProps {

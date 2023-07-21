@@ -1,8 +1,11 @@
 import produce from 'immer';
 import { omit } from 'lodash';
-import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
+
+import { devtoolsOptions } from 'utils/store-utils';
+
 import { devtools, NamedSet } from 'zustand/middleware';
+
 import { EditorStatus, EditorStoreState } from './types';
 
 export const isEditorActive = (status: EditorStatus) => {

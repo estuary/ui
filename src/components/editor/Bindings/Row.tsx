@@ -1,13 +1,18 @@
-import { IconButton, ListItemText } from '@mui/material';
-import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
-import { typographyTruncation } from 'context/Theme';
+import { EntityWorkflow } from 'types';
 import { Cancel } from 'iconoir-react';
+
+import { IconButton, ListItemText } from '@mui/material';
+
+import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
+
+import { typographyTruncation } from 'context/Theme';
+
 import {
     useResourceConfig_discoveredCollections,
     useResourceConfig_removeCollection,
     useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
-import { EntityWorkflow } from 'types';
+
 import { hasLength } from 'utils/misc-utils';
 
 interface RowProps {

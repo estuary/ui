@@ -1,16 +1,5 @@
-import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
-import { AuthenticatedOnlyContext } from 'context/Authenticated';
-import { EntityContextProvider } from 'context/EntityContext';
-import { WorkflowContextProvider } from 'context/Workflow';
-import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
-import useBrowserTitle from 'hooks/useBrowserTitle';
-import Auth from 'pages/Auth';
-import Collections from 'pages/Collections';
-import DataPlaneAuthReq from 'pages/DataPlaneAuthReq';
-import TestJsonForms from 'pages/dev/TestJsonForms';
-import PageNotFound from 'pages/error/PageNotFound';
-import Login from 'pages/Login';
 import { lazy, Suspense } from 'react';
+
 import {
     createBrowserRouter,
     createRoutesFromElements,
@@ -18,6 +7,23 @@ import {
     RouterProvider,
     Routes,
 } from 'react-router-dom';
+
+import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
+
+import { AuthenticatedOnlyContext } from 'context/Authenticated';
+import { EntityContextProvider } from 'context/EntityContext';
+import { WorkflowContextProvider } from 'context/Workflow';
+
+import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
+import useBrowserTitle from 'hooks/useBrowserTitle';
+
+import Auth from 'pages/Auth';
+import Collections from 'pages/Collections';
+import DataPlaneAuthReq from 'pages/DataPlaneAuthReq';
+import TestJsonForms from 'pages/dev/TestJsonForms';
+import PageNotFound from 'pages/error/PageNotFound';
+import Login from 'pages/Login';
+
 import RequireAuth from './RequireAuth';
 
 const Authenticated = lazy(

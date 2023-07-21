@@ -1,3 +1,6 @@
+import { FormattedMessage } from 'react-intl';
+import { useNavigate } from 'react-router-dom';
+
 import {
     Button,
     Dialog,
@@ -7,8 +10,7 @@ import {
     DialogTitle,
     Typography,
 } from '@mui/material';
-import { FormattedMessage } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
+
 import AlertBox from './AlertBox';
 
 const ARIA_DESC_ID = 'chunkNotFetched-dialog-description';

@@ -1,6 +1,9 @@
-import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import { Dispatch, SetStateAction } from 'react';
+
 import { useIntl } from 'react-intl';
+
+import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
+
 import { FREE_GB_BY_TIER } from 'utils/billing-utils';
 
 interface Props {

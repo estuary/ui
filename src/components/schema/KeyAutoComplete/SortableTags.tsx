@@ -1,3 +1,5 @@
+import { useMemo, useState } from 'react';
+
 import {
     closestCenter,
     DndContext,
@@ -18,7 +20,7 @@ import {
     sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
 import { AutocompleteGetTagProps } from '@mui/material';
-import { useMemo, useState } from 'react';
+
 import { keyIsValidOption } from './shared';
 import SortableTag from './SortableTag';
 import StyledChip from './StyledChip';

@@ -1,4 +1,3 @@
-import { useClient } from 'hooks/supabase-swr';
 import {
     createContext,
     useCallback,
@@ -7,8 +6,13 @@ import {
     useRef,
     useState,
 } from 'react';
-import { DEFAULT_POLLING_INTERVAL, RPCS } from 'services/supabase';
+
 import { BaseComponentProps, ViewLogs_Line } from 'types';
+
+import { useClient } from 'hooks/supabase-swr';
+
+import { DEFAULT_POLLING_INTERVAL, RPCS } from 'services/supabase';
+
 import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 
 interface Props extends BaseComponentProps {

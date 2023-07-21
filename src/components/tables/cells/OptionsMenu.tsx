@@ -1,7 +1,9 @@
-import { MenuItem, TableCell, Typography } from '@mui/material';
-import IconMenu from 'components/menus/IconMenu';
 import { MoreVert } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
+
+import { MenuItem, TableCell, Typography } from '@mui/material';
+
+import IconMenu from 'components/menus/IconMenu';
 
 interface Props {
     editTask: () => void;

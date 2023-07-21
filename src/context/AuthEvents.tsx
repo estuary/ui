@@ -1,9 +1,12 @@
-import { unauthenticatedRoutes } from 'app/routes';
-import { useClient } from 'hooks/supabase-swr';
+import { BaseComponentProps } from 'types';
 import { useNavigate } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
+
+import { unauthenticatedRoutes } from 'app/routes';
+
+import { useClient } from 'hooks/supabase-swr';
+
 import { logRocketConsole } from 'services/logrocket';
-import { BaseComponentProps } from 'types';
 
 function AuthEvents({ children }: BaseComponentProps) {
     const supabaseClient = useClient();

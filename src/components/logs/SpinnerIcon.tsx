@@ -1,4 +1,5 @@
 import { AlertColor, CircularProgress } from '@mui/material';
+
 import { lineNumberColor } from './Line';
 
 interface Props {

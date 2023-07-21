@@ -1,11 +1,33 @@
-import { useTheme } from '@mui/material';
-import { defaultOutlineColor } from 'context/Theme';
+import { useEffect, useMemo, useState } from 'react';
+
+import { sortBy, sum, uniq } from 'lodash';
 import {
     eachMonthOfInterval,
     isWithinInterval,
     startOfMonth,
     sub,
 } from 'date-fns';
+import { useIntl } from 'react-intl';
+import useConstant from 'use-constant';
+
+import { useTheme } from '@mui/material';
+
+import { defaultOutlineColor } from 'context/Theme';
+
+import {
+    useBilling_dataByTaskGraphDetails,
+    useBilling_hydrated,
+} from 'stores/Billing/hooks';
+import { DataVolumeByTask } from 'stores/Billing/types';
+
+import {
+    BYTES_PER_GB,
+    CARD_AREA_HEIGHT,
+    formatDataVolumeForDisplay,
+    SeriesConfig,
+} from 'utils/billing-utils';
+import { hasLength } from 'utils/misc-utils';
+
 import { BarChart } from 'echarts/charts';
 import {
     GridComponent,
@@ -16,22 +38,7 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import { sortBy, sum, uniq } from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
-import {
-    useBilling_dataByTaskGraphDetails,
-    useBilling_hydrated,
-} from 'stores/Billing/hooks';
-import { DataVolumeByTask } from 'stores/Billing/types';
-import useConstant from 'use-constant';
-import {
-    BYTES_PER_GB,
-    CARD_AREA_HEIGHT,
-    formatDataVolumeForDisplay,
-    SeriesConfig,
-} from 'utils/billing-utils';
-import { hasLength } from 'utils/misc-utils';
+
 import { getTooltipItem, getTooltipTitle } from './tooltips';
 import useLegendConfig from './useLegendConfig';
 import useTooltipConfig from './useTooltipConfig';

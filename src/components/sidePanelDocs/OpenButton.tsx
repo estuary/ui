@@ -1,3 +1,6 @@
+import { SidebarCollapse } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
 import {
     Box,
     Button,
@@ -7,13 +10,13 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import { SidebarCollapse } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+
 import {
     useSidePanelDocsStore_setShow,
     useSidePanelDocsStore_show,
     useSidePanelDocsStore_url,
 } from 'stores/SidePanelDocs/hooks';
+
 import { hasLength } from 'utils/misc-utils';
 
 function SidePanelDocsOpenButton() {

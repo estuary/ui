@@ -1,4 +1,5 @@
 import { DEFAULT_FILTER, insertSupabase, TABLES } from 'services/supabase';
+
 import { hasLength } from 'utils/misc-utils';
 import { suggestedName } from 'utils/name-utils';
 

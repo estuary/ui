@@ -1,18 +1,24 @@
+import { useEffect, useState } from 'react';
+
+import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
+import { Outlet } from 'react-router';
+import { useLocalStorage } from 'react-use';
+
 import { Box, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+
 import Navigation from 'components/navigation/Navigation';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import DocsSidePanel from 'components/sidePanelDocs/SidePanel';
+
 import { NavWidths } from 'context/Theme';
-import { useEffect, useState } from 'react';
-import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
-import { Outlet } from 'react-router';
-import { useLocalStorage } from 'react-use';
+
 import {
     useSidePanelDocsStore_animateOpening,
     useSidePanelDocsStore_setAnimateOpening,
     useSidePanelDocsStore_show,
 } from 'stores/SidePanelDocs/hooks';
+
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 
 function AppLayout() {

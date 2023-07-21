@@ -1,13 +1,16 @@
 /* eslint-disable no-await-in-loop */
-import { Auth } from '@supabase/ui';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import useSWR from 'swr';
 import {
     JournalClient,
     JournalSelector,
     parseJournalDocuments,
 } from 'data-plane-gateway';
+
+import { Auth } from '@supabase/ui';
+
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import useSWR from 'swr';
 
 enum ErrorFlags {
     TOKEN_NOT_FOUND = 'Unauthenticated',

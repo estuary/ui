@@ -1,8 +1,11 @@
+import { useIntl } from 'react-intl';
+
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Box, ChipProps, Tooltip } from '@mui/material';
+
 import { truncateTextSx } from 'context/Theme';
-import { useIntl } from 'react-intl';
+
 import StyledChip from './StyledChip';
 
 interface Props {

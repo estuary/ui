@@ -1,6 +1,8 @@
-import { Box } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
+
+import { Box } from '@mui/material';
+
+import AlertBox from 'components/shared/AlertBox';
 
 function SelectorEmpty() {
     return (

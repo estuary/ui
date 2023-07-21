@@ -1,7 +1,9 @@
+import { useIntl } from 'react-intl';
+
 import { Box, Stack, TableCell, Tooltip } from '@mui/material';
+
 import LinkWrapper from 'components/shared/LinkWrapper';
 import EntityStatus from 'components/tables/cells/EntityStatus';
-import { useIntl } from 'react-intl';
 
 interface Props {
     name: string;

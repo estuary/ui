@@ -1,3 +1,8 @@
+import { useEffect, useMemo, useState } from 'react';
+
+import { TableColumns } from 'types';
+import { FormattedMessage } from 'react-intl';
+
 import {
     Box,
     Button,
@@ -15,22 +20,22 @@ import {
 } from '@mui/material';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+
 import {
     deleteTenantPaymentMethod,
     getSetupIntentSecret,
     getTenantPaymentMethods,
     setTenantPrimaryPaymentMethod,
 } from 'api/billing';
+
 import { PaymentForm } from 'components/admin/Billing/CapturePaymentMethod';
 import { PaymentMethod } from 'components/admin/Billing/PaymentMethodRow';
 import AlertBox from 'components/shared/AlertBox';
 import TableLoadingRows from 'components/tables/Loading';
 
-import { useEffect, useMemo, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
+
 import { useBilling_selectedTenant } from 'stores/Billing/hooks';
-import { TableColumns } from 'types';
 
 const columns: TableColumns[] = [
     {

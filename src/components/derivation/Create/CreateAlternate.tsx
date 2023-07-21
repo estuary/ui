@@ -1,5 +1,10 @@
+import { useNavigate } from 'react-router';
+import { useUnmount } from 'react-use';
+
 import { Box, Collapse } from '@mui/material';
+
 import { authenticatedRoutes } from 'app/routes';
+
 import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
 import {
     useEditorStore_invalidEditors,
@@ -14,10 +19,11 @@ import DerivationConfig from 'components/transformation/create/Config';
 import GitPodButton from 'components/transformation/create/GitPodButton';
 import PatchDraftButton from 'components/transformation/create/PatchDraftButton';
 import DerivationSchema from 'components/transformation/create/Schema';
+
 import usePageTitle from 'hooks/usePageTitle';
-import { useNavigate } from 'react-router';
-import { useUnmount } from 'react-use';
+
 import { CustomEvents } from 'services/logrocket';
+
 import {
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,

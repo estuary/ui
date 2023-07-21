@@ -1,4 +1,5 @@
 import { BaseComponentProps } from 'types';
+
 import { GrantDetailsContextProvider } from './GrantDetails';
 import { TenantContextProvider } from './Tenant';
 

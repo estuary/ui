@@ -1,7 +1,9 @@
-import { Box, Typography } from '@mui/material';
-import ExternalLink from 'components/shared/ExternalLink';
 import { TerminalTag } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
+
+import { Box, Typography } from '@mui/material';
+
+import ExternalLink from 'components/shared/ExternalLink';
 
 function EditCommandsHeader() {
     const intl = useIntl();

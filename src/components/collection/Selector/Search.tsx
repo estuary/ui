@@ -1,3 +1,8 @@
+import { useState } from 'react';
+
+import { isEqual } from 'lodash';
+import { useIntl } from 'react-intl';
+
 import {
     Autocomplete,
     AutocompleteChangeReason,
@@ -5,14 +10,14 @@ import {
     Skeleton,
     TextField,
 } from '@mui/material';
+
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
-import { isEqual } from 'lodash';
-import { useState } from 'react';
-import { useIntl } from 'react-intl';
+
 import {
     detectAutoCompleteInputReset,
     detectRemoveOptionWithBackspace,
 } from 'utils/mui-utils';
+
 import { CollectionData } from './types';
 
 interface Props {

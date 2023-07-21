@@ -1,6 +1,8 @@
-import { Snackbar } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
+
+import { Snackbar } from '@mui/material';
+
+import AlertBox from 'components/shared/AlertBox';
 
 interface Props {
     notificationMessage?: string;

@@ -1,7 +1,10 @@
-import { DataGrid } from '@mui/x-data-grid';
-import { dataGridListStyling } from 'context/Theme';
-import { JournalRecord } from 'hooks/useJournalData';
 import { JsonPointer } from 'json-ptr';
+
+import { DataGrid } from '@mui/x-data-grid';
+
+import { dataGridListStyling } from 'context/Theme';
+
+import { JournalRecord } from 'hooks/useJournalData';
 
 const sampleSpec = {
     catalog_name: 'estuary/kjt/milk_types',

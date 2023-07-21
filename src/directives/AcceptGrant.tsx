@@ -1,16 +1,24 @@
+import { useState } from 'react';
+
+import { KeyedMutator } from 'swr';
+import { AppliedDirective, JoinedAppliedDirective } from 'types';
+import { FormattedMessage } from 'react-intl';
+
 import { LoadingButton } from '@mui/lab';
 import { Box, Stack, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
+
 import { submitDirective } from 'api/directives';
+
 import AlertBox from 'components/shared/AlertBox';
+
 import { defaultOutline } from 'context/Theme';
+
 import { jobStatusQuery, trackEvent } from 'directives/shared';
+
 import { SuccessResponse } from 'hooks/supabase-swr';
-import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { jobStatusPoller } from 'services/supabase';
-import { KeyedMutator } from 'swr';
-import { AppliedDirective, JoinedAppliedDirective } from 'types';
 
 interface Props {
     directive: AppliedDirective<any> | null;

@@ -1,8 +1,11 @@
-import { TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
+import { SortDirection } from 'types';
 import { ArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
+
+import { TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
+
 import { SelectTableStoreNames } from 'stores/names';
-import { SortDirection } from 'types';
+
 import { ColumnProps } from './types';
 
 interface Props {

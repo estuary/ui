@@ -1,5 +1,7 @@
-import { AlertColor, AlertTitle, Box } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
+
+import { AlertColor, AlertTitle, Box } from '@mui/material';
+
 import AlertBox from '../AlertBox';
 import Message from './Message';
 import { ErrorDetails } from './types';

@@ -1,5 +1,7 @@
-import { getTenantDetails } from 'api/tenants';
 import { Tenants } from 'types';
+
+import { getTenantDetails } from 'api/tenants';
+
 import { useSelectNew } from './supabase-swr/hooks/useSelect';
 
 const defaultResponse: Tenants[] = [];

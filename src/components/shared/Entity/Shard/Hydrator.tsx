@@ -1,11 +1,15 @@
-import { useEntityType } from 'context/EntityContext';
-import useShardsList from 'hooks/useShardsList';
 import { useEffect } from 'react';
+
+import { BaseComponentProps } from 'types';
+
+import { useEntityType } from 'context/EntityContext';
+
+import useShardsList from 'hooks/useShardsList';
+
 import {
     useShardDetail_setError,
     useShardDetail_setShards,
 } from 'stores/ShardDetail/hooks';
-import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
     lastPubId: string;

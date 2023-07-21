@@ -1,7 +1,9 @@
-import { Box, Tooltip, Typography, useTheme } from '@mui/material';
-import { Shard } from 'data-plane-gateway/types/shard_client';
 import { useEffect, useState } from 'react';
+
 import { FormattedMessage } from 'react-intl';
+
+import { Box, Tooltip, Typography, useTheme } from '@mui/material';
+
 import {
     useShardDetail_error,
     useShardDetail_getTaskShardDetails,
@@ -13,6 +15,8 @@ import {
     ShardStatusColor,
     TaskShardDetailsWithShard,
 } from 'stores/ShardDetail/types';
+
+import { Shard } from 'data-plane-gateway/types/shard_client';
 
 interface Props {
     name: string;

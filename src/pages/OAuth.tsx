@@ -1,4 +1,5 @@
 import FullPageSpinner from 'components/fullPage/Spinner';
+
 import useBrowserTitle from 'hooks/useBrowserTitle';
 
 // This is the main "controller" for handling the response from providers that entity

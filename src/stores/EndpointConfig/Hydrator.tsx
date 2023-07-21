@@ -1,14 +1,17 @@
+import { BaseComponentProps } from 'types';
+import { useEffectOnce } from 'react-use';
+
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
-import { useEffectOnce } from 'react-use';
+
 import { logRocketConsole } from 'services/logrocket';
+
 import {
     useEndpointConfig_hydrated,
     useEndpointConfig_hydrateState,
     useEndpointConfig_setHydrated,
     useEndpointConfig_setHydrationErrorsExist,
 } from 'stores/EndpointConfig/hooks';
-import { BaseComponentProps } from 'types';
 
 export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
     const entityType = useEntityType();

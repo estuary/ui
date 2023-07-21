@@ -1,9 +1,14 @@
-import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
-import TableLoadingRows from 'components/tables/Loading';
-import { semiTransparentBackgroundIntensified } from 'context/Theme';
-import { Shard } from 'data-plane-gateway/types/shard_client';
-import { FormattedMessage } from 'react-intl';
 import { TableColumns } from 'types';
+import { FormattedMessage } from 'react-intl';
+
+import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
+
+import TableLoadingRows from 'components/tables/Loading';
+
+import { semiTransparentBackgroundIntensified } from 'context/Theme';
+
+import { Shard } from 'data-plane-gateway/types/shard_client';
+
 import StatusIndicatorAndLabel from './StatusIndicatorAndLabel';
 
 interface Props {

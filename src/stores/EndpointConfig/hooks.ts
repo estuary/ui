@@ -1,7 +1,10 @@
+import { Entity } from 'types';
+
 import { useEntityType } from 'context/EntityContext';
 import { useZustandStore } from 'context/Zustand/provider';
+
 import { EndpointConfigStoreNames } from 'stores/names';
-import { Entity } from 'types';
+
 import { EndpointConfigState } from './types';
 
 const getStoreName = (entityType: Entity): EndpointConfigStoreNames => {

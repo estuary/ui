@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+
 import { useInterval } from 'react-use';
 
 const linearProgressInterval = 500;

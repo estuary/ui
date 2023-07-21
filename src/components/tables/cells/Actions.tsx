@@ -1,5 +1,6 @@
-import { Box, TableCell } from '@mui/material';
 import { ReactNode } from 'react';
+
+import { Box, TableCell } from '@mui/material';
 
 interface Props {
     children: ReactNode | ReactNode[];

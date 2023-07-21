@@ -1,9 +1,13 @@
-import { Box, Button } from '@mui/material';
-import { useBindingsEditorStore_updateSchema } from 'components/editor/Bindings/Store/hooks';
-import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useState } from 'react';
+
 import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
+
+import { Box, Button } from '@mui/material';
+
+import { useBindingsEditorStore_updateSchema } from 'components/editor/Bindings/Store/hooks';
+import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
+
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 
 function UpdateSchemaButton() {

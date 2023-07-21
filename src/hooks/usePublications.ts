@@ -1,7 +1,10 @@
-import { DEFAULT_POLLING } from 'context/SWR';
-import { TABLES } from 'services/supabase';
 import { SWRConfiguration } from 'swr';
 import { JobStatus } from 'types';
+
+import { DEFAULT_POLLING } from 'context/SWR';
+
+import { TABLES } from 'services/supabase';
+
 import { useQuery, useSelectSingle } from './supabase-swr/';
 
 export interface Publications {

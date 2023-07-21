@@ -1,9 +1,14 @@
+import { useCallback } from 'react';
+
+import { isEmpty } from 'lodash';
+
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, getDraftSpecsByCatalogName } from 'api/draftSpecs';
 import {
     getLiveSpecsByCatalogName,
     LiveSpecsExtQuery_ByCatalogName,
 } from 'api/liveSpecsExt';
+
 import {
     useBindingsEditorStore_resetState,
     useBindingsEditorStore_setCollectionData,
@@ -16,9 +21,9 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
-import { isEmpty } from 'lodash';
-import { useCallback } from 'react';
+
 import { Annotations } from 'types/jsonforms';
+
 import { getProperSchemaScope } from 'utils/schema-utils';
 
 const specType = 'collection';

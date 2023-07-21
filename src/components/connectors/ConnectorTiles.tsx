@@ -1,3 +1,16 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+import {
+    BaseComponentProps,
+    EntityWithCreateWorkflow,
+    SortDirection,
+    TableIntlConfig,
+    TableState,
+    TableStatuses,
+} from 'types';
+import { AddSquare } from 'iconoir-react';
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     Box,
     Grid,
@@ -8,37 +21,32 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+
 import ConnectorCard from 'components/connectors/card';
 import ConnectorToolbar from 'components/connectors/ConnectorToolbar';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
+
 import {
     semiTransparentBackground,
     semiTransparentBackgroundIntensified,
 } from 'context/Theme';
+
 import { useQuery, useSelect } from 'hooks/supabase-swr';
 import {
-    ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
+    ConnectorWithTagDetailQuery,
 } from 'hooks/useConnectorWithTagDetail';
-import { AddSquare } from 'iconoir-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     CONNECTOR_NAME,
     CONNECTOR_RECOMMENDED,
     defaultTableFilter,
     TABLES,
 } from 'services/supabase';
-import {
-    BaseComponentProps,
-    EntityWithCreateWorkflow,
-    SortDirection,
-    TableIntlConfig,
-    TableState,
-    TableStatuses,
-} from 'types';
+
 import { hasLength } from 'utils/misc-utils';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
+
 import ConnectorCardDetails from './card/Details';
 import ConnectorLogo from './card/Logo';
 import ConnectorCardTitle from './card/Title';

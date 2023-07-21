@@ -1,13 +1,19 @@
+import { SyntheticEvent, useMemo, useState } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+import { useSet } from 'react-use';
+
 import { useEditorStore_invalidEditors } from 'components/editor/Store/hooks';
 import CatalogList, {
     CatalogListContent,
 } from 'components/transformation/create/Config/catalog/CatalogList';
+
 import { useLiveSpecs } from 'hooks/useLiveSpecs';
-import { SyntheticEvent, useMemo, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { useSet } from 'react-use';
+
 import { useTransformationCreate_transformConfigs } from 'stores/TransformationCreate/hooks';
+
 import { hasLength } from 'utils/misc-utils';
+
 import AddCollection from './AddCollection';
 import CollectionList from './CollectionList';
 

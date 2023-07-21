@@ -1,3 +1,7 @@
+import { ReactNode, useState } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+
 import {
     Button,
     DialogActions,
@@ -6,8 +10,6 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import { ReactNode, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 
 interface Props {
     selectedEntities: any[];

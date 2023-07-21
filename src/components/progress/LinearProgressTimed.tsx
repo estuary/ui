@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
+
 import useProgressTimer from 'hooks/useProgressTimer';
 
 // If there is no wait then we'll

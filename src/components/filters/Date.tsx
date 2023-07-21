@@ -1,3 +1,8 @@
+import React, { useState } from 'react';
+
+import { Filter } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
 import {
     Button,
     CircularProgress,
@@ -6,12 +11,12 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
+
 import { StatsFilter } from 'api/stats';
+
 import { linkButtonSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
-import { Filter } from 'iconoir-react';
-import React, { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,

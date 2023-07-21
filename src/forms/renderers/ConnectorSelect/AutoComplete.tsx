@@ -25,16 +25,19 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
+import React, { ReactNode } from 'react';
+
 import { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
 import {
     Autocomplete,
     AutocompleteRenderOptionState,
     FilterOptionsState,
 } from '@mui/material';
+
 import ConnectorInput from 'forms/renderers/ConnectorSelect/Input';
 import ConnectorOption from 'forms/renderers/ConnectorSelect/Option';
+
 import merge from 'lodash/merge';
-import React, { ReactNode } from 'react';
 
 export interface WithOptionLabel {
     getOptionLabel?(option: EnumOption): string;

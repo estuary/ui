@@ -1,17 +1,25 @@
+import { useEffect } from 'react';
+
+import { useNavigate } from 'react-router';
+
 import { TableRow, useTheme } from '@mui/material';
+
 import { MaterializationQueryWithStats } from 'api/liveSpecsExt';
+
 import { authenticatedRoutes } from 'app/routes';
+
 import Connector from 'components/tables/cells/Connector';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
+
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
+
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import useShardsList from 'hooks/useShardsList';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router';
+
 import { SelectTableStoreNames } from 'stores/names';
 import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 import {
@@ -19,7 +27,9 @@ import {
     selectableTableStoreSelectors,
     StatsResponse,
 } from 'stores/Tables/Store';
+
 import { getPathWithParams, hasLength } from 'utils/misc-utils';
+
 import EntityNameLink from '../cells/EntityNameLink';
 import OptionsMenu from '../cells/OptionsMenu';
 import RelatedCollectionsCell from '../cells/RelatedCollectionsCell';

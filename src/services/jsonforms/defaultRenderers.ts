@@ -1,4 +1,5 @@
 import { materialRenderers } from '@jsonforms/material-renderers';
+
 import {
     CatalogName,
     catalogNameTypeTester,

@@ -1,13 +1,17 @@
+import { FormattedMessage } from 'react-intl';
+
 import { Paper, Typography } from '@mui/material';
+
 import DraftSpecEditor from 'components/editor/DraftSpec';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import { FormattedMessage } from 'react-intl';
+
 import {
     useFormStateStore_isActive,
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+
 import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
 
 interface Props {

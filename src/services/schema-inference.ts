@@ -1,5 +1,6 @@
-import { client } from 'services/client';
 import { GatewayAuthTokenResponse, Schema } from 'types';
+
+import { client } from 'services/client';
 
 export interface InferSchemaResponse {
     documents_read: number;

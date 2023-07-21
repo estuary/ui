@@ -1,8 +1,11 @@
 import produce from 'immer';
+import { create } from 'zustand';
+
 import { getDocsSettings } from 'utils/env-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create } from 'zustand';
+
 import { devtools, NamedSet } from 'zustand/middleware';
+
 import { GlobalStoreNames } from '../names';
 import { SidePanelDocsState } from './types';
 

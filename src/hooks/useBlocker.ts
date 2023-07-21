@@ -1,6 +1,8 @@
-import { useConfirmationModalContext } from 'context/Confirmation';
 import { useEffect } from 'react';
+
 import { unstable_useBlocker as useBlocker } from 'react-router-dom';
+
+import { useConfirmationModalContext } from 'context/Confirmation';
 
 /**
  * Based on https://github.com/remix-run/react-router/issues/8139#issuecomment-1021457943

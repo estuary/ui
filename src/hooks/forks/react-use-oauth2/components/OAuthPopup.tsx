@@ -1,7 +1,10 @@
 // Heavily edited version of https://github.com/tasoskakour/react-use-oauth2
-import FullPageSpinner from 'components/fullPage/Spinner';
 import { useEffect } from 'react';
+
+import FullPageSpinner from 'components/fullPage/Spinner';
+
 import { base64RemovePadding } from 'utils/misc-utils';
+
 import { OAUTH_RESPONSE, OAUTH_STATE_KEY } from './constants';
 
 const checkState = (receivedState: string) => {

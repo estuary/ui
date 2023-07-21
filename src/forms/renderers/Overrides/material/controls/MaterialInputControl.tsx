@@ -29,8 +29,8 @@ import {
     showAsRequired,
 } from '@jsonforms/core';
 import { useFocus } from '@jsonforms/material-renderers';
-
 import { FormControl, FormHelperText, Hidden, InputLabel } from '@mui/material';
+
 import merge from 'lodash/merge';
 
 export interface WithInput {

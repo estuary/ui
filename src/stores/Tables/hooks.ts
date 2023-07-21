@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+
 import { SortDirection } from 'types';
 import {
     JsonParam,
@@ -6,6 +7,7 @@ import {
     useQueryParams,
     withDefault,
 } from 'use-query-params';
+
 import { getPagination } from '../../components/tables/EntityTable';
 
 export type TablePrefix =

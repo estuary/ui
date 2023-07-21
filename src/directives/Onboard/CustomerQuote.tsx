@@ -1,7 +1,9 @@
+import { useIntl } from 'react-intl';
+
 import { Box, useTheme } from '@mui/material';
+
 import customerQuoteDark from 'images/customer_quote-dark.png';
 import customerQuoteLight from 'images/customer_quote-light.png';
-import { useIntl } from 'react-intl';
 
 interface Props {
     hideQuote: boolean;

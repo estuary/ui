@@ -1,5 +1,6 @@
-import { Box, TableCell, Tooltip, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
+
+import { Box, TableCell, Tooltip, Typography } from '@mui/material';
 
 interface Props {
     volumeInGB: number;

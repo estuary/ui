@@ -1,3 +1,9 @@
+import { useEffect, useRef, useState } from 'react';
+
+import { useIntl } from 'react-intl';
+import { useUnmount } from 'react-use';
+import useConstant from 'use-constant';
+
 import { Box, Typography } from '@mui/material';
 import {
     DataGrid,
@@ -7,12 +13,11 @@ import {
     GridSelectionModel,
     GridValueGetterParams,
 } from '@mui/x-data-grid';
+
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
+
 import { dataGridListStyling } from 'context/Theme';
-import { useEffect, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
-import { useUnmount } from 'react-use';
-import useConstant from 'use-constant';
+
 import CollectionSelectorRow from './Row';
 
 interface Props {

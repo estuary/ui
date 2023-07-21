@@ -1,8 +1,10 @@
-import { Box, Tab, Tabs } from '@mui/material';
 import { useMemo, useState } from 'react';
+
 import { useIntl } from 'react-intl';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import useConstant from 'use-constant';
+
+import { Box, Tab, Tabs } from '@mui/material';
 
 function DetailTabs() {
     const intl = useIntl();

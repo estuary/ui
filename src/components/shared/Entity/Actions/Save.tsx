@@ -1,9 +1,13 @@
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import { Button } from '@mui/material';
+
 import {
     deleteDraftSpecsByCatalogName,
     getDraftSpecsBySpecTypeReduced,
 } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
+
 import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
@@ -12,15 +16,17 @@ import {
     useEditorStore_setPubId,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
+
 import { useClient } from 'hooks/supabase-swr';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
     DEFAULT_FILTER,
-    jobStatusPoller,
     JOB_STATUS_COLUMNS,
+    jobStatusPoller,
     TABLES,
 } from 'services/supabase';
+
 import { useDetailsForm_details_description } from 'stores/DetailsForm/hooks';
 import {
     useFormStateStore_isActive,
@@ -33,6 +39,7 @@ import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
 import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
+
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {

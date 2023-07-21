@@ -1,6 +1,7 @@
 import CollectionSchemaEditor from 'components/collection/schema/Editor';
 import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
 import EmptySQLEditor from 'components/transformation/create/Config/SQLEditor/Empty';
+
 import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
 
 export interface Props {

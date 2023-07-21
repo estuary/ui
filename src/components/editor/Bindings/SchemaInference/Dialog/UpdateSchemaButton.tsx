@@ -1,4 +1,10 @@
+import { Dispatch, SetStateAction, useMemo } from 'react';
+
+import { isEqual } from 'lodash';
+import { FormattedMessage } from 'react-intl';
+
 import { Button } from '@mui/material';
+
 import {
     useBindingsEditorStore_applyInferredSchema,
     useBindingsEditorStore_collectionData,
@@ -6,9 +12,7 @@ import {
     useBindingsEditorStore_loadingInferredSchema,
 } from 'components/editor/Bindings/Store/hooks';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
-import { isEqual } from 'lodash';
-import { Dispatch, SetStateAction, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 
 interface Props {

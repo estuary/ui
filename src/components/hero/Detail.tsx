@@ -1,8 +1,11 @@
-import { Button, Grid } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
 import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { NavLink } from 'react-router-dom';
+
+import { Button, Grid } from '@mui/material';
+
+import { authenticatedRoutes } from 'app/routes';
+
 import DetailStep from './Steps/Detail';
 
 function HeroDetail() {

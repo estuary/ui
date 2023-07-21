@@ -1,21 +1,27 @@
+import { useMemo } from 'react';
+
+import { isEmpty } from 'lodash';
+import { FormattedMessage } from 'react-intl';
+
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Box, StyledEngineProvider } from '@mui/material';
+
 import AlertBox from 'components/shared/AlertBox';
+
 import { useEntityType } from 'context/EntityContext';
 import { jsonFormsPadding } from 'context/Theme';
-import { isEmpty } from 'lodash';
-import { useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { setDefaultsValidator } from 'services/ajv';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions } from 'services/jsonforms/shared';
+
 import {
+    useEndpointConfig_endpointCanBeEmpty,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_setEndpointConfig,
-    useEndpointConfig_endpointCanBeEmpty,
 } from 'stores/EndpointConfig/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 

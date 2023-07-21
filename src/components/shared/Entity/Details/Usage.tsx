@@ -1,11 +1,13 @@
+import { useState } from 'react';
+
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import HourlyRangeFilter from 'components/filters/HourRange';
 import DataByHourGraph from 'components/graphs/DataByHourGraph';
 import GraphLoadingState from 'components/graphs/states/Loading';
 import { DataByHourRange } from 'components/graphs/types';
 import Error from 'components/shared/Error';
+
 import useDetailsStats from 'hooks/useDetailsStats';
-import { useState } from 'react';
 
 interface Props {
     catalogName: string;

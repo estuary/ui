@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
+
 import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
 import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
-import { useMemo } from 'react';
+
 import { stringifyJSON } from 'services/stringify';
 
 interface Props {

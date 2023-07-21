@@ -1,4 +1,9 @@
+import { useEffect, useMemo } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+
 import { Grid, Stack, Typography } from '@mui/material';
+
 import {
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_populateInferSchemaResponse,
@@ -9,9 +14,8 @@ import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
 import ReadOnly from 'components/schema/KeyAutoComplete/ReadOnly';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
 import ExternalLink from 'components/shared/ExternalLink';
+
 import { useEntityType } from 'context/EntityContext';
-import { useEffect, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
 
 function Spec() {
     const entityType = useEntityType();

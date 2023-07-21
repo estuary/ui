@@ -1,5 +1,7 @@
 import { Auth } from '@supabase/ui';
+
 import { TABLES } from 'services/supabase';
+
 import { useQuery, useSelect } from './supabase-swr';
 
 export interface DraftQuery {

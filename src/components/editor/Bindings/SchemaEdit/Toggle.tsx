@@ -1,5 +1,7 @@
-import { Button } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
+
+import { Button } from '@mui/material';
+
 import {
     useBindingsEditorStore_editModeEnabled,
     useBindingsEditorStore_setEditModeEnabled,

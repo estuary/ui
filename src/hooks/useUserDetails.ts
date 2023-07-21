@@ -1,6 +1,9 @@
-import { Auth } from '@supabase/ui';
-import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
+
+import { isEmpty } from 'lodash';
+
+import { Auth } from '@supabase/ui';
+
 import { logRocketConsole } from 'services/logrocket';
 
 function useUserDetails() {

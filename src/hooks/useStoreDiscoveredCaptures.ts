@@ -1,13 +1,20 @@
+import { useCallback } from 'react';
+
+import { Entity } from 'types';
+
 import { getDraftSpecsBySpecType } from 'api/draftSpecs';
+
 import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
+
 import { useEntityWorkflow } from 'context/Workflow';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { useCallback } from 'react';
+
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useEndpointConfigStore_setEncryptedEndpointConfig } from 'stores/EndpointConfig/hooks';
 import {
@@ -15,7 +22,7 @@ import {
     useResourceConfig_resetConfigAndCollections,
     useResourceConfig_setDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
-import { Entity } from 'types';
+
 import {
     modifyDiscoveredDraftSpec,
     SupabaseConfig,

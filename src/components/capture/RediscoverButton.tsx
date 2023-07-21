@@ -1,7 +1,9 @@
-import { Button } from '@mui/material';
-import useDiscoverCapture from 'components/capture/useDiscoverCapture';
-import { FormattedMessage } from 'react-intl';
 import { Entity } from 'types';
+import { FormattedMessage } from 'react-intl';
+
+import { Button } from '@mui/material';
+
+import useDiscoverCapture from 'components/capture/useDiscoverCapture';
 
 interface Props {
     entityType: Entity;

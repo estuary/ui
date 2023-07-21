@@ -1,9 +1,13 @@
+import produce from 'immer';
+
 import DisableEnableConfirmation from 'components/tables/RowActions/DisableEnable/Confirmation';
 import RowActionButton from 'components/tables/RowActions/Shared/Button';
 import UpdateEntity from 'components/tables/RowActions/Shared/UpdateEntity';
-import produce from 'immer';
+
 import { SelectTableStoreNames } from 'stores/names';
+
 import { specContainsDerivation } from 'utils/misc-utils';
+
 import { DisableEnableButtonProps } from './types';
 
 const updateShardDisabled = (draftSpec: any, enabling: boolean) => {

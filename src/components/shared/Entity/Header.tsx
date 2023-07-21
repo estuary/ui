@@ -1,7 +1,10 @@
+import { ReactNode } from 'react';
+
 import { Collapse, Stack, SxProps, Theme, Toolbar } from '@mui/material';
+
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import LinearProgressTimed from 'components/progress/LinearProgressTimed';
-import { ReactNode } from 'react';
+
 import {
     useFormStateStore_isActive,
     useFormStateStore_status,

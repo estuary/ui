@@ -1,6 +1,8 @@
-import { Typography } from '@mui/material';
-import usePageTitle from 'hooks/usePageTitle';
 import { FormattedMessage } from 'react-intl';
+
+import { Typography } from '@mui/material';
+
+import usePageTitle from 'hooks/usePageTitle';
 
 const EntityNotFound = () => {
     usePageTitle({

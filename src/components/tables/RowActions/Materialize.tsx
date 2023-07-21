@@ -1,14 +1,20 @@
-import { Button } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
-import { useZustandStore } from 'context/Zustand/provider';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
+
+import { Button } from '@mui/material';
+
+import { authenticatedRoutes } from 'app/routes';
+
+import { useZustandStore } from 'context/Zustand/provider';
+
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
+
 import { getPathWithParams } from 'utils/misc-utils';
 
 // TODO (materialize collections) materializing specific collections

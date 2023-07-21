@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+
 import { act, configure } from '@testing-library/react';
 
 // https://github.com/clarkbw/jest-localstorage-mock#in-create-react-app

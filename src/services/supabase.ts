@@ -1,9 +1,12 @@
-import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { createClient, User } from '@supabase/supabase-js';
-import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { forEach, isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { JobStatus, SortDirection } from 'types';
+
+import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import { createClient, User } from '@supabase/supabase-js';
+
+import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
+
 import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 
 if (

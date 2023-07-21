@@ -1,4 +1,5 @@
 import { TableCell } from '@mui/material';
+
 import ChipList, { ChipListProps } from 'components/shared/ChipList';
 
 function ChipListCell(props: ChipListProps) {

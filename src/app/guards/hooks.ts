@@ -1,12 +1,17 @@
+import { useEffect, useMemo, useState } from 'react';
+
+import { OptionsObject, useSnackbar } from 'notistack';
+import { AppliedDirective } from 'types';
+import { useIntl } from 'react-intl';
+
 import { PostgrestError } from '@supabase/postgrest-js';
+
 import { exchangeBearerToken } from 'api/directives';
+
 import { DIRECTIVES } from 'directives/shared';
 import { UserClaims } from 'directives/types';
+
 import useAppliedDirectives from 'hooks/useAppliedDirectives';
-import { OptionsObject, useSnackbar } from 'notistack';
-import { useEffect, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
-import { AppliedDirective } from 'types';
 
 const snackbarSettings: OptionsObject = {
     anchorOrigin: {

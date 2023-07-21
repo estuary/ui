@@ -1,8 +1,10 @@
+import { FormattedMessage } from 'react-intl';
+
 import { Typography } from '@mui/material';
+
 import MessageWithLink from 'components/content/MessageWithLink';
 import { useBindingsEditorStore_inferredSchemaApplicationErrored } from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
-import { FormattedMessage } from 'react-intl';
 
 function SchemaApplicationErroredAlert() {
     // Bindings Editor Store

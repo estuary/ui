@@ -1,8 +1,13 @@
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { useCallback } from 'react';
-import { TABLES } from 'services/supabase';
+
 import { Schema } from 'types';
+
+import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+
+import { TABLES } from 'services/supabase';
+
 import { hasLength } from 'utils/misc-utils';
+
 import { useQuery, useSelectSingle } from './supabase-swr/';
 
 export interface ConnectorTag {

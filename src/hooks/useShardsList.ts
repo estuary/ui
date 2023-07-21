@@ -1,10 +1,14 @@
-import { Auth } from '@supabase/ui';
-import { ShardClient, ShardSelector } from 'data-plane-gateway';
-import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useMemo } from 'react';
-import { logRocketConsole } from 'services/logrocket';
+
 import useSWR from 'swr';
 import { LiveSpecsExtBareMinimum } from 'types';
+import { ShardClient, ShardSelector } from 'data-plane-gateway';
+
+import { Auth } from '@supabase/ui';
+
+import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
+
+import { logRocketConsole } from 'services/logrocket';
 
 enum ErrorFlags {
     OPERATION_INVALID = 'Unauthorized',

@@ -1,9 +1,13 @@
-import { Auth } from '@supabase/ui';
-import { unauthenticatedRoutes } from 'app/routes';
-import useLoginRedirectPath from 'hooks/useLoginRedirectPath';
-import { Navigate, useLocation } from 'react-router-dom';
-import { logRocketConsole } from 'services/logrocket';
 import { BaseComponentProps } from 'types';
+import { Navigate, useLocation } from 'react-router-dom';
+
+import { Auth } from '@supabase/ui';
+
+import { unauthenticatedRoutes } from 'app/routes';
+
+import useLoginRedirectPath from 'hooks/useLoginRedirectPath';
+
+import { logRocketConsole } from 'services/logrocket';
 
 interface Props extends BaseComponentProps {
     firstLoad?: boolean;

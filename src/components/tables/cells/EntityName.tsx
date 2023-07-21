@@ -5,6 +5,7 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+
 import EntityStatus from 'components/tables/cells/EntityStatus';
 
 interface Props {

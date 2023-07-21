@@ -1,7 +1,10 @@
-import { Accordion, AccordionDetails, useTheme } from '@mui/material';
-import Header from 'components/shared/Entity/WrapperWithHeader/Header';
-import { defaultOutline } from 'context/Theme';
 import { ReactNode, useEffect, useState } from 'react';
+
+import { Accordion, AccordionDetails, useTheme } from '@mui/material';
+
+import Header from 'components/shared/Entity/WrapperWithHeader/Header';
+
+import { defaultOutline } from 'context/Theme';
 
 interface Props {
     header: ReactNode;

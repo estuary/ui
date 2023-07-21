@@ -1,7 +1,11 @@
-import { Box, Stack, Typography } from '@mui/material';
-import MessageWithLink from 'components/content/MessageWithLink';
 import { FormattedMessage, useIntl } from 'react-intl';
+
+import { Box, Stack, Typography } from '@mui/material';
+
+import MessageWithLink from 'components/content/MessageWithLink';
+
 import { logRocketConsole } from 'services/logrocket';
+
 import { ErrorDetails } from './types';
 
 interface Props {

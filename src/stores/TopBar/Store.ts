@@ -1,7 +1,10 @@
 import produce from 'immer';
-import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
+
+import { devtoolsOptions } from 'utils/store-utils';
+
 import { devtools, NamedSet } from 'zustand/middleware';
+
 import { GlobalStoreNames } from '../names';
 import { TopBarState } from './types';
 

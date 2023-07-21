@@ -1,7 +1,10 @@
+import { BaseComponentProps } from 'types';
+
 import AppGuards from 'app/guards';
+
 import ConfirmationModalContextProvider from 'context/Confirmation';
 import { ZustandProvider } from 'context/Zustand/provider';
-import { BaseComponentProps } from 'types';
+
 import AuthEvents from './AuthEvents';
 import PreFetchDataProvider from './fetcher';
 import Osano from './Osano';

@@ -1,3 +1,7 @@
+import { ReactNode } from 'react';
+
+import { useIntl } from 'react-intl';
+
 import {
     Badge,
     ListItemButton,
@@ -5,10 +9,10 @@ import {
     ListItemText,
     Tooltip,
 } from '@mui/material';
+
 import RouterLink from 'components/navigation/RouterLink';
+
 import { NavWidths } from 'context/Theme';
-import { ReactNode } from 'react';
-import { useIntl } from 'react-intl';
 
 interface Props {
     icon: ReactNode;

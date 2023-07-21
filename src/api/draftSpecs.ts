@@ -1,6 +1,10 @@
-import { PostgrestResponse } from '@supabase/postgrest-js';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { Entity } from 'types';
 import pLimit from 'p-limit';
+
+import { PostgrestResponse } from '@supabase/postgrest-js';
+
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+
 import {
     deleteSupabase,
     handleFailure,
@@ -10,7 +14,6 @@ import {
     TABLES,
     updateSupabase,
 } from 'services/supabase';
-import { Entity } from 'types';
 
 interface CreateMatchData {
     draft_id: string | null;

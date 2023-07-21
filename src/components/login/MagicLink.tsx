@@ -1,12 +1,18 @@
+import { useState } from 'react';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+import useConstant from 'use-constant';
+
 import { Button, Stack } from '@mui/material';
+
 import MagicLinkInputs from 'components/login/MagicLinkInputs';
+
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useLoginRedirectPath from 'hooks/useLoginRedirectPath';
-import { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
-import useConstant from 'use-constant';
+
 import { getLoginSettings } from 'utils/env-utils';
 
 interface Props {

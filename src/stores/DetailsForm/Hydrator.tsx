@@ -1,14 +1,17 @@
+import { BaseComponentProps } from 'types';
+import { useEffectOnce } from 'react-use';
+
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
-import { useEffectOnce } from 'react-use';
+
 import { logRocketConsole } from 'services/logrocket';
+
 import {
     useDetailsForm_hydrated,
     useDetailsForm_hydrateState,
     useDetailsForm_setHydrated,
     useDetailsForm_setHydrationErrorsExist,
 } from 'stores/DetailsForm/hooks';
-import { BaseComponentProps } from 'types';
 
 export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
     const entityType = useEntityType();

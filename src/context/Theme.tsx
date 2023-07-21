@@ -1,3 +1,8 @@
+import React from 'react';
+
+import { BaseComponentProps } from 'types';
+import { useLocalStorage } from 'react-use';
+
 import {
     createTheme,
     PaletteOptions,
@@ -9,9 +14,7 @@ import {
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
-import React from 'react';
-import { useLocalStorage } from 'react-use';
-import { BaseComponentProps } from 'types';
+
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 
 // The code block commented out directly below is how the typography variants can be extended

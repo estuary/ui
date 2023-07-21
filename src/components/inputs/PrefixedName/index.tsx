@@ -1,3 +1,8 @@
+import { useState } from 'react';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+import { useMount } from 'react-use';
+
 import {
     FormControl,
     FormHelperText,
@@ -9,12 +14,13 @@ import {
     Select,
     TextField,
 } from '@mui/material';
+
 import AlertBox from 'components/shared/AlertBox';
-import { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { useMount } from 'react-use';
+
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
+
 import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+
 import { PrefixedName_Change, PrefixedName_Errors } from './types';
 
 export interface Props {

@@ -27,6 +27,10 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
+import { useCallback, useState } from 'react';
+
+import { forIn, keys } from 'lodash';
+
 import {
     and,
     CombinatorRendererProps,
@@ -51,9 +55,9 @@ import {
     Tab,
     Tabs,
 } from '@mui/material';
-import { forIn, keys } from 'lodash';
+
 import isEmpty from 'lodash/isEmpty';
-import { useCallback, useState } from 'react';
+
 import CombinatorProperties from './CombinatorProperties';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {

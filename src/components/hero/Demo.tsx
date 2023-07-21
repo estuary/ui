@@ -1,6 +1,9 @@
-import { Grid } from '@mui/material';
-import ExternalLink from 'components/shared/ExternalLink';
 import { FormattedMessage } from 'react-intl';
+
+import { Grid } from '@mui/material';
+
+import ExternalLink from 'components/shared/ExternalLink';
+
 import DemoButton from './DemoButton';
 import DemoStep from './Steps/Demo';
 

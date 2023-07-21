@@ -1,4 +1,11 @@
+import { useCallback, useEffect, useState } from 'react';
+
+import { Schema } from 'types';
+import { FormattedMessage } from 'react-intl';
+import { useUpdateEffect } from 'react-use';
+
 import { Grid, Stack, Typography } from '@mui/material';
+
 import {
     useBindingsEditorStore_editModeEnabled,
     useBindingsEditorStore_populateInferSchemaResponse,
@@ -8,12 +15,11 @@ import {
 import { AllowedScopes } from 'components/editor/MonacoEditor/types';
 import KeyAutoComplete from 'components/schema/KeyAutoComplete';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
+
 import { useEntityType } from 'context/EntityContext';
+
 import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
-import { useCallback, useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { useUpdateEffect } from 'react-use';
-import { Schema } from 'types';
+
 import { getProperSchemaScope } from 'utils/schema-utils';
 
 export interface Props {

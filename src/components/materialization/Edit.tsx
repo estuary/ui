@@ -1,5 +1,11 @@
+import { useCallback, useMemo } from 'react';
+
+import { useNavigate } from 'react-router-dom';
+
 import { RealtimeSubscription } from '@supabase/supabase-js';
+
 import { authenticatedRoutes } from 'app/routes';
+
 import { useBindingsEditorStore_resetState } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
@@ -13,6 +19,7 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
 import DraftInitializer from 'components/shared/Entity/Edit/DraftInitializer';
 import EntityToolbar from 'components/shared/Entity/Header';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -20,9 +27,9 @@ import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
-import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { CustomEvents } from 'services/logrocket';
+
 import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig/hooks';

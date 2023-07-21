@@ -1,4 +1,5 @@
 import { TABLES } from 'services/supabase';
+
 import { useQuery, useSelectSingle } from './supabase-swr/';
 
 interface Connector {

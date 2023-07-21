@@ -1,8 +1,11 @@
 import { isEmpty } from 'lodash';
+import { AppliedDirective } from 'types';
+
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import { JOB_STATUS_COLUMNS, supabaseClient, TABLES } from 'services/supabase';
-import { AppliedDirective } from 'types';
+
 import { hasLength } from 'utils/misc-utils';
+
 import { Directives, UserClaims } from './types';
 
 export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v2';

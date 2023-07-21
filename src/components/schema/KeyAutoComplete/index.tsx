@@ -1,3 +1,8 @@
+import { ReactNode, useEffect, useMemo, useState } from 'react';
+
+import { filter, orderBy } from 'lodash';
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import { arrayMove } from '@dnd-kit/sortable';
 import {
     Autocomplete,
@@ -6,18 +11,19 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
+
 import {
     useBindingsEditorStore_inferSchemaResponse,
-    useBindingsEditorStore_inferSchemaResponseEmpty,
     useBindingsEditorStore_inferSchemaResponse_Keys,
+    useBindingsEditorStore_inferSchemaResponseEmpty,
 } from 'components/editor/Bindings/Store/hooks';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
+
 import { useEntityType } from 'context/EntityContext';
 import { truncateTextSx } from 'context/Theme';
-import { filter, orderBy } from 'lodash';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import { hasLength } from 'utils/misc-utils';
+
 import BasicOption from './options/Basic';
 import ReadOnly from './ReadOnly';
 import { keyIsValidOption } from './shared';

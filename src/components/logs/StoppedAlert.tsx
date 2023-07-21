@@ -1,7 +1,11 @@
-import { Button, Collapse } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
-import { linkButtonSx } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
+
+import { Button, Collapse } from '@mui/material';
+
+import AlertBox from 'components/shared/AlertBox';
+
+import { linkButtonSx } from 'context/Theme';
+
 import { useLogsContext } from './Context';
 
 function StoppedAlert() {

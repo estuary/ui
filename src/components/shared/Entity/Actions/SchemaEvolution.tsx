@@ -1,5 +1,11 @@
+import { useCallback } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+
 import { Button } from '@mui/material';
+
 import { createEvolution, toEvolutionRequest } from 'api/evolutions';
+
 import {
     useBindingsEditorStore_incompatibleCollections,
     useBindingsEditorStore_setIncompatibleCollections,
@@ -9,20 +15,22 @@ import {
     useEditorStore_isSaving,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
+
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
+
 import { useClient } from 'hooks/supabase-swr';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
-import { useCallback } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { logRocketEvent } from 'services/logrocket';
 import {
     DEFAULT_POLLER_ERROR,
-    jobStatusPoller,
     JOB_STATUS_COLUMNS,
     JOB_STATUS_POLLER_ERROR,
+    jobStatusPoller,
     TABLES,
 } from 'services/supabase';
+
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,

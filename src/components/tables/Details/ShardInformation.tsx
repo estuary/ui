@@ -1,3 +1,8 @@
+import { MouseEvent, useEffect, useState } from 'react';
+
+import { Entity } from 'types';
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     Box,
     Divider,
@@ -14,19 +19,22 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import ExternalLink from 'components/shared/ExternalLink';
 import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';
+
 import { sample_grey } from 'context/Theme';
-import { Shard } from 'data-plane-gateway/types/shard_client';
+
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
-import { MouseEvent, useEffect, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     useShardDetail_getTaskShards,
     useShardDetail_shards,
 } from 'stores/ShardDetail/hooks';
-import { Entity } from 'types';
+
+import { Shard } from 'data-plane-gateway/types/shard_client';
+
 import ShardErrors from './ShardErrors';
 
 interface Props {

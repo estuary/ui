@@ -1,3 +1,8 @@
+import { ReactNode } from 'react';
+
+import { CheckCircle, InfoEmpty, WarningCircle } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
 import {
     Box,
     CircularProgress,
@@ -6,11 +11,9 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
 import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import Error from 'components/shared/Error';
-import { CheckCircle, InfoEmpty, WarningCircle } from 'iconoir-react';
-import { ReactNode } from 'react';
-import { FormattedMessage } from 'react-intl';
 
 export enum ProgressStates {
     RUNNING = 1,

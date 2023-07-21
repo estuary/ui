@@ -1,6 +1,9 @@
-import { Stack, Typography } from '@mui/material';
-import ExternalLink from 'components/shared/ExternalLink';
 import { FormattedMessage } from 'react-intl';
+
+import { Stack, Typography } from '@mui/material';
+
+import ExternalLink from 'components/shared/ExternalLink';
+
 import {
     useTopBarStore_header,
     useTopBarStore_headerLink,

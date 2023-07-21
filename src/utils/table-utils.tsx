@@ -1,6 +1,7 @@
-import MessageWithLink from 'components/content/MessageWithLink';
-import { FormattedMessage } from 'react-intl';
 import { TableIntlConfig, TableStatuses } from 'types';
+import { FormattedMessage } from 'react-intl';
+
+import MessageWithLink from 'components/content/MessageWithLink';
 
 export const getEmptyTableHeader = (
     tableStatus: TableStatuses,

@@ -1,7 +1,10 @@
-import { authenticatedRoutes } from 'app/routes';
-import ChipList from 'components/shared/ChipList';
-import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { useIntl } from 'react-intl';
+
+import { authenticatedRoutes } from 'app/routes';
+
+import ChipList from 'components/shared/ChipList';
+
+import useDetailsNavigator from 'hooks/useDetailsNavigator';
 
 interface Props {
     collections: string[];

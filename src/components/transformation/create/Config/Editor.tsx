@@ -1,13 +1,17 @@
+import { useMemo, useState } from 'react';
+
+import { isEmpty } from 'lodash';
+import { HelpCircle } from 'iconoir-react';
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import { Box, Stack, Tooltip, Typography, useTheme } from '@mui/material';
+
 import SQLEditor from 'components/transformation/create/Config/SQLEditor';
 import EmptySQLEditor from 'components/transformation/create/Config/SQLEditor/Empty';
 import DerivationCatalogEditorTabs, {
     tabProps,
 } from 'components/transformation/create/Config/Tabs';
-import { HelpCircle } from 'iconoir-react';
-import { isEmpty } from 'lodash';
-import { useMemo, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     useTransformationCreate_attributeType,
     useTransformationCreate_catalogName,

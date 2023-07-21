@@ -1,3 +1,8 @@
+import { ReactNode, useState } from 'react';
+
+import { Check, Copy, WarningCircle } from 'iconoir-react';
+import { useIntl } from 'react-intl';
+
 import {
     Box,
     Button,
@@ -6,10 +11,8 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
 import { codeBackground } from 'context/Theme';
-import { Check, Copy, WarningCircle } from 'iconoir-react';
-import { ReactNode, useState } from 'react';
-import { useIntl } from 'react-intl';
 
 interface Props {
     value: string;

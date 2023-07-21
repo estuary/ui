@@ -1,3 +1,9 @@
+import { ReactNode } from 'react';
+
+import { BaseComponentProps } from 'types';
+import { HelpCircle } from 'iconoir-react';
+import { useIntl } from 'react-intl';
+
 import {
     Box,
     Stack,
@@ -6,12 +12,10 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+
 import { eChartsTooltipSX } from 'components/graphs/tooltips';
+
 import { defaultBoxShadow, semiTransparentBackground } from 'context/Theme';
-import { HelpCircle } from 'iconoir-react';
-import { ReactNode } from 'react';
-import { useIntl } from 'react-intl';
-import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
     message?: string | ReactNode;

@@ -1,7 +1,10 @@
-import { Button } from '@mui/material';
-import SQLDataPreviewDialog from 'components/transformation/create/Schema/SQLDataPreview/Dialog';
 import { useState } from 'react';
+
 import { FormattedMessage } from 'react-intl';
+
+import { Button } from '@mui/material';
+
+import SQLDataPreviewDialog from 'components/transformation/create/Schema/SQLDataPreview/Dialog';
 
 function SQLDataPreviewButton() {
     const [open, setOpen] = useState(false);

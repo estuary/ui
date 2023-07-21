@@ -1,7 +1,11 @@
-import { Auth } from '@supabase/ui';
-import { getAppliedDirectives } from 'api/directives';
-import { DIRECTIVES } from 'directives/shared';
 import { AppliedDirective, JoinedAppliedDirective } from 'types';
+
+import { Auth } from '@supabase/ui';
+
+import { getAppliedDirectives } from 'api/directives';
+
+import { DIRECTIVES } from 'directives/shared';
+
 import { useSelectNew } from './supabase-swr/hooks/useSelect';
 
 function useAppliedDirectives(type: keyof typeof DIRECTIVES) {

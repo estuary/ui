@@ -23,6 +23,12 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
+import { useMemo, useState } from 'react';
+
+import { format } from 'date-fns';
+import { Clock } from 'iconoir-react';
+import { useIntl } from 'react-intl';
+
 import {
     ControlProps,
     isTimeControl,
@@ -34,13 +40,13 @@ import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Box, Hidden, IconButton, Popover, Stack } from '@mui/material';
 import { LocalizationProvider, StaticTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { format } from 'date-fns';
-import { Clock } from 'iconoir-react';
-import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
-import { useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
+
 import { Patterns } from 'types/jsonforms';
+
 import { hasLength } from 'utils/misc-utils';
+
+import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
+
 import { CustomMaterialInputControl } from './MaterialInputControl';
 import useDatePickerState from './useDatePickerState';
 

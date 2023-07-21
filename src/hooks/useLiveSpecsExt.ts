@@ -1,6 +1,9 @@
-import { PostgrestError } from '@supabase/postgrest-js';
-import { TABLES } from 'services/supabase';
 import { Entity } from 'types';
+
+import { PostgrestError } from '@supabase/postgrest-js';
+
+import { TABLES } from 'services/supabase';
+
 import { useQuery, useSelect } from './supabase-swr/';
 
 // TODO: Consider consolidating query interface instances.

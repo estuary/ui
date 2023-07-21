@@ -1,6 +1,3 @@
-import { debounce, Grid, Toolbar } from '@mui/material';
-import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import SearchField from 'components/shared/toolbar/SearchField';
 import {
     ChangeEvent,
     Dispatch,
@@ -8,9 +5,15 @@ import {
     SyntheticEvent,
     useRef,
 } from 'react';
-import { useIntl } from 'react-intl';
+
 import { SortDirection } from 'types';
+import { useIntl } from 'react-intl';
 import useConstant from 'use-constant';
+
+import { debounce, Grid, Toolbar } from '@mui/material';
+
+import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
+import SearchField from 'components/shared/toolbar/SearchField';
 
 interface Props {
     belowMd: boolean;

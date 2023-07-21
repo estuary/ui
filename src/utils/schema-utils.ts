@@ -1,6 +1,8 @@
-import { AllowedScopes } from 'components/editor/MonacoEditor/types';
 import { isEmpty } from 'lodash';
 import { InferSchemaResponse, Schema } from 'types';
+
+import { AllowedScopes } from 'components/editor/MonacoEditor/types';
+
 import { hasLength } from './misc-utils';
 
 const typesAllowedAsKeys = ['boolean', 'integer', 'null', 'string'];

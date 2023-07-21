@@ -1,7 +1,9 @@
+import { EntityWithCreateWorkflow, EntityWorkflow } from 'types';
+
 import { JsonFormsCore } from '@jsonforms/core';
+
 import { StoreWithCustomErrors } from 'stores/extensions/CustomErrors';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
-import { EntityWithCreateWorkflow, EntityWorkflow } from 'types';
 
 export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {

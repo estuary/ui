@@ -1,6 +1,18 @@
+import { useEffect, useMemo } from 'react';
+
+import { isArray, isEmpty } from 'lodash';
+import { eachMonthOfInterval, format, startOfMonth, subMonths } from 'date-fns';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FormattedMessage } from 'react-intl';
+import { useUnmount } from 'react-use';
+import useConstant from 'use-constant';
+
 import { Divider, Grid, Typography } from '@mui/material';
+
 import { BillingRecord, getBillingHistory } from 'api/billing';
+
 import { authenticatedRoutes } from 'app/routes';
+
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import PaymentMethods from 'components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'components/admin/Billing/PricingTierDetails';
@@ -12,16 +24,13 @@ import GraphStateWrapper from 'components/graphs/states/Wrapper';
 import TasksByMonth from 'components/graphs/TasksByMonthGraph';
 import AlertBox from 'components/shared/AlertBox';
 import BillingHistoryTable from 'components/tables/Billing';
-import { eachMonthOfInterval, format, startOfMonth, subMonths } from 'date-fns';
+
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
 import useBillingRecord from 'hooks/billing/useBillingRecord';
 import usePageTitle from 'hooks/usePageTitle';
-import { isArray, isEmpty } from 'lodash';
-import { useEffect, useMemo } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-import { FormattedMessage } from 'react-intl';
-import { useUnmount } from 'react-use';
+
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
+
 import {
     useBilling_billingHistoryInitialized,
     useBilling_hydrated,
@@ -34,7 +43,7 @@ import {
     useBilling_setHydrationErrorsExist,
     useBilling_updateBillingHistory,
 } from 'stores/Billing/hooks';
-import useConstant from 'use-constant';
+
 import { TOTAL_CARD_HEIGHT } from 'utils/billing-utils';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;

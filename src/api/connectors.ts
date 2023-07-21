@@ -1,7 +1,8 @@
 import {
-    ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
+    ConnectorWithTagDetailQuery,
 } from 'hooks/useConnectorWithTagDetail';
+
 import {
     CONNECTOR_NAME,
     defaultTableFilter,

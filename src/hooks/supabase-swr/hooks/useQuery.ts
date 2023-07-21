@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import { createQuery, Query, QueryConfig } from '../query';
 
 const useQuery = <Data>(

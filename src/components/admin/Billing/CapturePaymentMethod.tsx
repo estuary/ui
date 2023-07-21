@@ -1,3 +1,5 @@
+import { useCallback, useState } from 'react';
+
 import {
     Button,
     CircularProgress,
@@ -12,7 +14,7 @@ import {
     useStripe,
 } from '@stripe/react-stripe-js';
 import { Auth } from '@supabase/ui';
-import { useCallback, useState } from 'react';
+
 import { getUserDetails } from 'services/supabase';
 
 export interface PaymentFormProps {

@@ -1,4 +1,5 @@
 import CaptureCreate from 'components/capture/Create';
+
 import { EntityContextProvider } from 'context/EntityContext';
 import { WorkflowContextProvider } from 'context/Workflow';
 

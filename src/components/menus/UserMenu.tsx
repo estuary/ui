@@ -1,13 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
+import { LogOut, Mail, ProfileCircle } from 'iconoir-react';
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import { Stack, SxProps, Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
+
 import UserAvatar from 'components/shared/UserAvatar';
+
 import { useClient } from 'hooks/supabase-swr';
 import useUserDetails from 'hooks/useUserDetails';
-import { LogOut, Mail, ProfileCircle } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import IconMenu from './IconMenu';
 
 interface Props {

@@ -1,10 +1,14 @@
+import { FormattedMessage } from 'react-intl';
+
 import { Box, SxProps, Theme, Typography } from '@mui/material';
 import { Auth } from '@supabase/ui';
+
 import { authenticatedRoutes } from 'app/routes';
+
 import AdminTabs from 'components/admin/Tabs';
 import SingleLineCode from 'components/content/SingleLineCode';
+
 import usePageTitle from 'hooks/usePageTitle';
-import { FormattedMessage } from 'react-intl';
 
 const boxStyling: SxProps<Theme> = {
     marginBottom: 2,

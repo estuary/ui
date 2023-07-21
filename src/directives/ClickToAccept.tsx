@@ -1,3 +1,8 @@
+import { useState } from 'react';
+
+import { Square } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
 import { LoadingButton } from '@mui/lab';
 import {
     Checkbox,
@@ -7,15 +12,18 @@ import {
     Typography,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
+
 import { submitDirective } from 'api/directives';
+
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
-import { Square } from 'iconoir-react';
+
 import CheckSquare from 'icons/CheckSquare';
-import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { jobStatusPoller } from 'services/supabase';
+
 import { getUrls } from 'utils/env-utils';
+
 import {
     CLICK_TO_ACCEPT_LATEST_VERSION,
     jobStatusQuery,

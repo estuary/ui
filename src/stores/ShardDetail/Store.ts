@@ -1,12 +1,17 @@
+import produce from 'immer';
+import { Entity } from 'types';
+import { create, StoreApi } from 'zustand';
+
 import { errorMain, successMain, warningMain } from 'context/Theme';
+
+import { ShardDetailStoreNames } from 'stores/names';
+
+import { devtoolsOptions } from 'utils/store-utils';
+
 import { ReplicaStatusCode } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import { Shard } from 'data-plane-gateway/types/shard_client';
-import produce from 'immer';
-import { ShardDetailStoreNames } from 'stores/names';
-import { Entity } from 'types';
-import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
+
 import {
     Endpoint,
     ShardDetails,

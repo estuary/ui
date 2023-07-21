@@ -1,13 +1,18 @@
+import { ReactNode } from 'react';
+
+import { WarningCircle } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
 import { Typography, useTheme } from '@mui/material';
+
 import MessageWithLink from 'components/content/MessageWithLink';
 import BindingsMultiEditor from 'components/editor/Bindings';
 import AlertBox from 'components/shared/AlertBox';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { WarningCircle } from 'iconoir-react';
-import { ReactNode } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 import {
     useResourceConfig_collectionErrorsExist,

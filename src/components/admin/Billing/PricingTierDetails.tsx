@@ -1,13 +1,18 @@
-import { Skeleton, Typography } from '@mui/material';
-import { BillingRecord } from 'api/billing';
-import { isSameMonth } from 'date-fns';
 import { useMemo } from 'react';
+
+import { isSameMonth } from 'date-fns';
 import { FormattedMessage, useIntl } from 'react-intl';
+import useConstant from 'use-constant';
+
+import { Skeleton, Typography } from '@mui/material';
+
+import { BillingRecord } from 'api/billing';
+
 import {
     useBilling_billingHistory,
     useBilling_hydrated,
 } from 'stores/Billing/hooks';
-import useConstant from 'use-constant';
+
 import { FREE_GB_BY_TIER } from 'utils/billing-utils';
 
 function PricingTierDetails() {

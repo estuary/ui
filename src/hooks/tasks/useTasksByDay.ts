@@ -1,5 +1,7 @@
-import { TABLES } from 'services/supabase';
 import { Entity } from 'types';
+
+import { TABLES } from 'services/supabase';
+
 import { useQuery, useSelect } from '../supabase-swr/';
 
 export interface Meta {

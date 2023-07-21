@@ -1,11 +1,15 @@
-import { Auth } from '@supabase/ui';
-import { isBefore } from 'date-fns';
 import { decodeJwt, JWTPayload } from 'jose';
 import { isEmpty } from 'lodash';
-import { client } from 'services/client';
-import { useEntitiesStore_capabilities_readable } from 'stores/Entities/hooks';
 import useSWR from 'swr';
 import { GatewayAuthTokenResponse } from 'types';
+import { isBefore } from 'date-fns';
+
+import { Auth } from '@supabase/ui';
+
+import { client } from 'services/client';
+
+import { useEntitiesStore_capabilities_readable } from 'stores/Entities/hooks';
+
 import {
     getGatewayAuthTokenSettings,
     getSupabaseAnonymousKey,

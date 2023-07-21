@@ -1,8 +1,3 @@
-import { Grid, Toolbar } from '@mui/material';
-import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import SearchField from 'components/shared/toolbar/SearchField';
-import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
-import { debounce } from 'lodash';
 import {
     ChangeEvent,
     Dispatch,
@@ -10,10 +5,20 @@ import {
     SyntheticEvent,
     useRef,
 } from 'react';
-import { useIntl } from 'react-intl';
-import { CONNECTOR_NAME } from 'services/supabase';
+
+import { debounce } from 'lodash';
 import { Entity, SortDirection } from 'types';
+import { useIntl } from 'react-intl';
 import useConstant from 'use-constant';
+
+import { Grid, Toolbar } from '@mui/material';
+
+import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
+import SearchField from 'components/shared/toolbar/SearchField';
+
+import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
+
+import { CONNECTOR_NAME } from 'services/supabase';
 
 interface Props {
     belowMd: boolean;

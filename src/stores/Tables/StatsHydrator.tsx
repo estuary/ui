@@ -1,12 +1,16 @@
+import { useEffect } from 'react';
+
+import { BaseComponentProps } from 'types';
+
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useZustandStore } from 'context/Zustand/provider';
-import { useEffect } from 'react';
+
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { BaseComponentProps } from 'types';
+
 import { hasLength } from 'utils/misc-utils';
 
 // Hydrator

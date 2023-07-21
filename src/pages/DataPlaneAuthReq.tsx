@@ -1,11 +1,17 @@
-import { Box, SxProps, Theme, Toolbar, Typography } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
-import AlertBox from 'components/shared/AlertBox';
-import usePageTitle from 'hooks/usePageTitle';
-import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
 import { useEffect, useState } from 'react';
+
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
+
+import { Box, SxProps, Theme, Toolbar, Typography } from '@mui/material';
+
+import { authenticatedRoutes } from 'app/routes';
+
+import AlertBox from 'components/shared/AlertBox';
+
+import usePageTitle from 'hooks/usePageTitle';
+import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
+
 import { logRocketConsole } from 'services/logrocket';
 
 const boxStyling: SxProps<Theme> = {

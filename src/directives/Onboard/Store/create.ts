@@ -1,9 +1,13 @@
-import { OnboardingState } from 'directives/Onboard/Store/types';
 import produce from 'immer';
+import { create, StoreApi } from 'zustand';
+
+import { OnboardingState } from 'directives/Onboard/Store/types';
+
 import { OnboardingStoreNames } from 'stores/names';
+
 import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
+
 import { devtools, NamedSet } from 'zustand/middleware';
 
 const namePattern = new RegExp(`^${PREFIX_NAME_PATTERN}$`);

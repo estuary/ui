@@ -1,11 +1,15 @@
+import { useEffect } from 'react';
+
+import { BaseComponentProps } from 'types';
+
 import {
     useEditorStore_setId,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
 import Error from 'components/shared/Error';
+
 import { useLiveSpecs_spec } from 'hooks/useLiveSpecs';
-import { useEffect } from 'react';
-import { BaseComponentProps } from 'types';
+
 import { hasLength } from 'utils/misc-utils';
 
 interface Props extends BaseComponentProps {

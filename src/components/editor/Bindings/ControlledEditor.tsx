@@ -1,5 +1,6 @@
 import Editor from '@monaco-editor/react';
 import { Box, Stack, useTheme } from '@mui/material';
+
 import {
     useBindingsEditorStore_collectionData,
     useBindingsEditorStore_schemaUpdated,
@@ -8,13 +9,17 @@ import {
 import OutOfSync from 'components/editor/Status/OutOfSync';
 import ReadOnly from 'components/editor/Status/ReadOnly';
 import Synchronizing from 'components/editor/Status/Synchronizing';
+
 import {
     defaultOutline,
     monacoEditorComponentBackground,
     monacoEditorHeaderBackground,
 } from 'context/Theme';
+
 import { stringifyJSON } from 'services/stringify';
+
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+
 import { getEditorTotalHeight, ICON_SIZE } from 'utils/editor-utils';
 
 const EDITOR_HEIGHT = 396;

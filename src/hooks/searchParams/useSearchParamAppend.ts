@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+
 import { createSearchParams, useSearchParams } from 'react-router-dom';
 
 export default function useSearchParamAppend() {

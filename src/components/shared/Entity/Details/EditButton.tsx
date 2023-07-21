@@ -1,11 +1,18 @@
-import { Button } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
-import { useEditorStore_specs } from 'components/editor/Store/hooks';
-import { useEntityType } from 'context/EntityContext';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useCallback, useMemo } from 'react';
+
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+
+import { Button } from '@mui/material';
+
+import { authenticatedRoutes } from 'app/routes';
+
+import { useEditorStore_specs } from 'components/editor/Store/hooks';
+
+import { useEntityType } from 'context/EntityContext';
+
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+
 import { getPathWithParams } from 'utils/misc-utils';
 
 // TODO (details) Not being used yet. Need to figure out how we want to

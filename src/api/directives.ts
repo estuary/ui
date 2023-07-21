@@ -1,5 +1,16 @@
+import {
+    AppliedDirective,
+    Directive,
+    GrantDirective,
+    GrantDirective_AccessLinks,
+    GrantDirectiveSpec,
+    JoinedAppliedDirective,
+    Schema,
+} from 'types';
+
 import { DIRECTIVES } from 'directives/shared';
 import { UserClaims } from 'directives/types';
+
 import {
     CallSupabaseResponse,
     defaultTableFilter,
@@ -12,15 +23,6 @@ import {
     TABLES,
     updateSupabase,
 } from 'services/supabase';
-import {
-    AppliedDirective,
-    Directive,
-    GrantDirective,
-    GrantDirectiveSpec,
-    GrantDirective_AccessLinks,
-    JoinedAppliedDirective,
-    Schema,
-} from 'types';
 
 interface GrantDirective_CreateMatchData {
     catalog_prefix: string;

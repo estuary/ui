@@ -1,5 +1,6 @@
-import { supabaseClient, TABLES } from 'services/supabase';
 import { Schema } from 'types';
+
+import { supabaseClient, TABLES } from 'services/supabase';
 
 export interface PublicationSpecsExt_PublicationHistory {
     live_spec_id: string;

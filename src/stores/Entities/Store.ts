@@ -1,12 +1,17 @@
-import { getAuthRoles } from 'api/combinedGrantsExt';
 import produce from 'immer';
+import { create } from 'zustand';
+
+import { getAuthRoles } from 'api/combinedGrantsExt';
+
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
+
 import { devtoolsOptions } from 'utils/store-utils';
-import { create } from 'zustand';
+
 import { devtools, NamedSet } from 'zustand/middleware';
+
 import { GlobalStoreNames } from '../names';
 import { EntitiesState } from './types';
 

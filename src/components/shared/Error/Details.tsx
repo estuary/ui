@@ -1,6 +1,9 @@
-import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
 import { useIntl } from 'react-intl';
+
+import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
+
 import { hasLength } from 'utils/misc-utils';
+
 import { ErrorDetails } from './types';
 
 interface Props {

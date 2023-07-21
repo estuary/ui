@@ -1,3 +1,7 @@
+import { MouseEventHandler, ReactNode } from 'react';
+
+import { Plus } from 'iconoir-react';
+
 import {
     Box,
     IconButton,
@@ -6,9 +10,8 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
 import { defaultOutline, disabledButtonText } from 'context/Theme';
-import { Plus } from 'iconoir-react';
-import { MouseEventHandler, ReactNode } from 'react';
 
 export interface CatalogListContent {
     attributeId: string;

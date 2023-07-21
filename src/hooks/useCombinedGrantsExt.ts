@@ -1,7 +1,11 @@
-import { Auth } from '@supabase/ui';
-import { getGrantsForUser } from 'api/combinedGrantsExt';
-import { singleCallSettings } from 'context/SWR';
 import { Grants } from 'types';
+
+import { Auth } from '@supabase/ui';
+
+import { getGrantsForUser } from 'api/combinedGrantsExt';
+
+import { singleCallSettings } from 'context/SWR';
+
 import { useSelectNew } from './supabase-swr/hooks/useSelect';
 
 interface Props {

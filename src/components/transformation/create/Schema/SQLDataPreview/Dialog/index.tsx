@@ -1,3 +1,7 @@
+import { Dispatch, SetStateAction } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+
 import {
     Box,
     Button,
@@ -8,10 +12,11 @@ import {
     Divider,
     Typography,
 } from '@mui/material';
+
 import DataPreview from 'components/transformation/create/Schema/SQLDataPreview/Dialog/DataPreview';
+
 import { defaultOutline } from 'context/Theme';
-import { Dispatch, SetStateAction } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { useTransformationCreate_name } from 'stores/TransformationCreate/hooks';
 
 interface Props {

@@ -1,4 +1,7 @@
+import { FormattedMessage } from 'react-intl';
+
 import { Button } from '@mui/material';
+
 import { createEntityDraft } from 'api/drafts';
 import {
     createDraftSpec,
@@ -6,6 +9,7 @@ import {
     getDraftSpecsByCatalogName,
     modifyDraftSpec,
 } from 'api/draftSpecs';
+
 import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
@@ -14,9 +18,11 @@ import {
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
+
 import { useEntityWorkflow_Editing } from 'context/Workflow';
+
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
-import { FormattedMessage } from 'react-intl';
+
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
@@ -26,13 +32,13 @@ import {
     useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm/hooks';
 import {
+    useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setPreviousEndpointConfig,
-    useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
@@ -44,6 +50,7 @@ import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
+
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { generateTaskSpec } from 'utils/workflow-utils';
 

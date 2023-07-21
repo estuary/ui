@@ -1,4 +1,9 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { useNavigate } from 'react-router-dom';
+
 import { authenticatedRoutes } from 'app/routes';
+
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import RediscoverButton from 'components/capture/RediscoverButton';
 import { useBindingsEditorStore_resetState } from 'components/editor/Bindings/Store/hooks';
@@ -14,13 +19,14 @@ import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import EntityToolbar from 'components/shared/Entity/Header';
+
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { CustomEvents } from 'services/logrocket';
+
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_entityNameChanged,
@@ -37,6 +43,7 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
+
 import { getPathWithParams, MAX_DISCOVER_TIME } from 'utils/misc-utils';
 
 function CaptureCreate() {

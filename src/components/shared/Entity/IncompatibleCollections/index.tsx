@@ -1,8 +1,12 @@
+import { FormattedMessage } from 'react-intl';
+
 import { Box, Collapse, Stack, Typography } from '@mui/material';
+
 import { useBindingsEditorStore_incompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
-import { FormattedMessage } from 'react-intl';
+
 import { hasLength } from 'utils/misc-utils';
+
 import Actions from './Actions';
 import CollectionsList from './CollectionsList';
 

@@ -1,7 +1,9 @@
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { SuccessResponse } from 'hooks/supabase-swr';
 import { KeyedMutator } from 'swr';
 import { AppliedDirective, JoinedAppliedDirective } from 'types';
+
+import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+
+import { SuccessResponse } from 'hooks/supabase-swr';
 
 // THESE MUST STAY IN SYNC WITH THE DB
 export interface Directives {

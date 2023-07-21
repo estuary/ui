@@ -1,7 +1,9 @@
+import { FormattedMessage } from 'react-intl';
+
 import { Stack, Typography } from '@mui/material';
+
 import ExternalLink from 'components/shared/ExternalLink';
 import StorageMappingsTable from 'components/tables/StorageMappings';
-import { FormattedMessage } from 'react-intl';
 
 const docsUrl = 'https://docs.estuary.dev/concepts/storage-mappings/';
 

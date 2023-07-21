@@ -1,7 +1,10 @@
-import { Box, Paper } from '@mui/material';
-import CompanyLogo from 'components/graphics/CompanyLogo';
-import { paperBackground } from 'context/Theme';
 import { BaseComponentProps } from 'types';
+
+import { Box, Paper } from '@mui/material';
+
+import CompanyLogo from 'components/graphics/CompanyLogo';
+
+import { paperBackground } from 'context/Theme';
 
 interface Props extends BaseComponentProps {
     maxWidth?: number;

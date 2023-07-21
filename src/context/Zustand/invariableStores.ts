@@ -1,6 +1,9 @@
+import { MessagePrefixes } from 'types';
+
 import { bindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import { createEditorStore } from 'components/editor/Store/create';
 import { createExistingEntityStore } from 'components/shared/Entity/ExistingEntityCards/Store/create';
+
 import { billingStore } from 'stores/Billing/Store';
 import {
     captureDetailsForm,
@@ -33,7 +36,6 @@ import { createBillingTableStore } from 'stores/Tables/Billing/Store';
 import { createSelectableTableStore } from 'stores/Tables/Store';
 import { createTopBarStore } from 'stores/TopBar/Store';
 import { createTransformationCreateStore } from 'stores/TransformationCreate/Store';
-import { MessagePrefixes } from 'types';
 
 const invariableStores = {
     // Billing Store

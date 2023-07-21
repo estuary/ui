@@ -1,4 +1,10 @@
+import { useState } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+import { useUnmountPromise } from 'react-use';
+
 import { Button } from '@mui/material';
+
 import SchemaInferenceDialog from 'components/editor/Bindings/SchemaInference/Dialog';
 import {
     useBindingsEditorStore_collectionData,
@@ -7,13 +13,15 @@ import {
     useBindingsEditorStore_setInferredSpec,
     useBindingsEditorStore_setLoadingInferredSchema,
 } from 'components/editor/Bindings/Store/hooks';
+
 import { useEntityWorkflow } from 'context/Workflow';
+
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
-import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { useUnmountPromise } from 'react-use';
+
 import getInferredSchema from 'services/schema-inference';
+
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+
 import { moveUpdatedSchemaToReadSchema } from 'utils/schema-utils';
 
 function SchemaInferenceButton() {

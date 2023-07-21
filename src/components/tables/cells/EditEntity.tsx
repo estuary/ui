@@ -1,5 +1,6 @@
-import { Button, TableCell, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
+
+import { Button, TableCell, Typography } from '@mui/material';
 
 interface Props {
     editTask: () => void;

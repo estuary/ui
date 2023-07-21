@@ -1,7 +1,10 @@
-import FullPageSpinner from 'components/fullPage/Spinner';
-import useTenants from 'hooks/useTenants';
 import { createContext, useContext } from 'react';
+
 import { BaseComponentProps, Tenants } from 'types';
+
+import FullPageSpinner from 'components/fullPage/Spinner';
+
+import useTenants from 'hooks/useTenants';
 
 const TenantContext = createContext<Tenants[] | null>(null);
 const TenantContextProvider = ({ children }: BaseComponentProps) => {

@@ -1,16 +1,23 @@
+import { useState } from 'react';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import { Button, Grid } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
+
 import { generateGrantDirective } from 'api/directives';
+
 import PrefixedName from 'components/inputs/PrefixedName';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
+
 import { useZustandStore } from 'context/Zustand/provider';
-import { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
+
 import { appendWithForwardSlash, hasLength } from 'utils/misc-utils';
 
 interface Props {

@@ -1,12 +1,5 @@
-import { Box, Divider, Stack, Tab, Tabs, Typography } from '@mui/material';
-import FullPageDialog from 'components/fullPage/Dialog';
-import MagicLink from 'components/login/MagicLink';
-import OIDCs from 'components/login/OIDCs';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useState } from 'react';
+
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useEffectOnce,
@@ -14,6 +7,18 @@ import {
     useMount,
     useUnmount,
 } from 'react-use';
+
+import { Box, Divider, Stack, Tab, Tabs, Typography } from '@mui/material';
+
+import FullPageDialog from 'components/fullPage/Dialog';
+import MagicLink from 'components/login/MagicLink';
+import OIDCs from 'components/login/OIDCs';
+
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
+import useBrowserTitle from 'hooks/useBrowserTitle';
+
 import { getLoginSettings } from 'utils/env-utils';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 

@@ -1,6 +1,9 @@
-import { DEFAULT_POLLING } from 'context/SWR';
-import { TABLES } from 'services/supabase';
 import { SWRConfiguration } from 'swr';
+
+import { DEFAULT_POLLING } from 'context/SWR';
+
+import { TABLES } from 'services/supabase';
+
 import { useQuery, useSelect } from './supabase-swr/';
 
 interface DraftErrorsQuery {

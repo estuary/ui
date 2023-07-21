@@ -1,8 +1,10 @@
+import { Entity } from 'types';
+
 import { useEntityType } from 'context/EntityContext';
 import { useZustandStore } from 'context/Zustand/provider';
+
 import { DetailsFormState } from 'stores/DetailsForm/types';
 import { DetailsFormStoreNames } from 'stores/names';
-import { Entity } from 'types';
 
 export const getStoreName = (entityType: Entity): DetailsFormStoreNames => {
     switch (entityType) {
