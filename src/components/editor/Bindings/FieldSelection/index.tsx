@@ -181,6 +181,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
                             checkedIcon={
                                 <CheckSquare style={{ fontSize: 14 }} />
                             }
+                            disabled={!data}
                             defaultChecked
                         />
                     }
