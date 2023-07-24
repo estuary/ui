@@ -1,37 +1,18 @@
-import { Box, ToggleButton, ToggleButtonGroup, styled } from '@mui/material';
+import { Box, ToggleButtonGroup } from '@mui/material';
 import {
     ConstraintTypes,
     FieldSelectionType,
     TranslatedConstraint,
 } from 'components/editor/Bindings/FieldSelection/types';
+import { useBindingsEditorStore_recommendFields } from 'components/editor/Bindings/Store/hooks';
 import OutlinedToggleButton from 'components/tables/cells/fieldSelection/OutlinedToggleButton';
-import { intensifiedOutline } from 'context/Theme';
 import { Dispatch, SetStateAction } from 'react';
-import { FormattedMessage } from 'react-intl';
 
 interface Props {
     constraint: TranslatedConstraint;
     selectedValue: FieldSelectionType | null;
     setSelectedValue: Dispatch<SetStateAction<FieldSelectionType | null>>;
 }
-
-// TODO (field selection): Share disabled and shared state styling with the OutlinedToggleButton component.
-const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
-    'width': '100%',
-    'justifyContent': 'space-between',
-    '& .MuiToggleButtonGroup-grouped': {
-        'border': intensifiedOutline[theme.palette.mode],
-        'borderRadius': 4,
-        '&.Mui-disabled': {
-            border: `1px solid ${theme.palette.divider}`,
-        },
-        '&.Mui-selected': {
-            backgroundColor: 'rgba(58, 86, 202, 0.15)',
-            borderColor: theme.palette.primary.main,
-            color: theme.palette.primary.main,
-        },
-    },
-}));
 
 // TODO (field selection): Determine whether the included/excluded toggle button group should be disabled
 //   when the default option is selected.
@@ -40,58 +21,80 @@ function CustomSelectionOptions({
     selectedValue,
     setSelectedValue,
 }: Props) {
+    const recommendFields = useBindingsEditorStore_recommendFields();
+
     if (constraint.type === ConstraintTypes.UNSATISFIABLE) {
         return null;
-    } else if (
-        constraint.type === ConstraintTypes.FIELD_REQUIRED ||
-        constraint.type === ConstraintTypes.LOCATION_REQUIRED
-    ) {
-        return (
-            <Box>
-                <OutlinedToggleButton
-                    messageId="fieldSelection.table.cta.includeField"
-                    selectedValue={selectedValue}
-                    value="include"
-                    onClick={() => {
-                        setSelectedValue(
-                            selectedValue === 'include' ? 'default' : 'include'
-                        );
-                    }}
-                />
-            </Box>
-        );
     } else {
         return (
             <Box>
-                <StyledToggleButtonGroup
+                <ToggleButtonGroup
                     size="small"
-                    value={selectedValue}
                     exclusive
-                    onChange={(
-                        _event: React.MouseEvent<HTMLElement>,
-                        value: FieldSelectionType
-                    ) => {
-                        setSelectedValue(value);
+                    sx={{
+                        '& .MuiToggleButton-root': {
+                            '&:not(:first-of-type), &:not(:last-of-type)': {
+                                borderRadius: 0,
+                            },
+                            '&:first-of-type': {
+                                borderTopLeftRadius: 4,
+                                borderBottomLeftRadius: 4,
+                                borderTopRightRadius: 0,
+                                borderBottomRightRadius: 0,
+                            },
+                            '&:last-of-type': {
+                                borderTopLeftRadius: 0,
+                                borderBottomLeftRadius: 0,
+                                borderTopRightRadius: 4,
+                                borderBottomRightRadius: 4,
+                            },
+                        },
                     }}
-                    aria-label="text alignment"
-                    // disabled={toggleDisabled}
                 >
-                    <ToggleButton
+                    <OutlinedToggleButton
+                        messageId="fieldSelection.table.cta.includeField"
+                        selectedValue={selectedValue}
                         value="include"
-                        aria-label="left aligned"
-                        sx={{ px: '9px', py: '3px' }}
-                    >
-                        <FormattedMessage id="fieldSelection.table.cta.includeField" />
-                    </ToggleButton>
+                        onClick={() => {
+                            const singleValue =
+                                selectedValue !== 'include' ||
+                                constraint.type ===
+                                    ConstraintTypes.FIELD_REQUIRED ||
+                                constraint.type ===
+                                    ConstraintTypes.LOCATION_REQUIRED
+                                    ? 'include'
+                                    : null;
 
-                    <ToggleButton
+                            setSelectedValue(
+                                selectedValue === 'include' && recommendFields
+                                    ? 'default'
+                                    : singleValue
+                            );
+                        }}
+                    />
+
+                    <OutlinedToggleButton
+                        messageId="fieldSelection.table.cta.excludeField"
+                        selectedValue={selectedValue}
                         value="exclude"
-                        aria-label="right aligned"
-                        sx={{ px: '9px', py: '3px' }}
-                    >
-                        <FormattedMessage id="fieldSelection.table.cta.excludeField" />
-                    </ToggleButton>
-                </StyledToggleButtonGroup>
+                        disabled={
+                            constraint.type ===
+                                ConstraintTypes.FIELD_REQUIRED ||
+                            constraint.type ===
+                                ConstraintTypes.LOCATION_REQUIRED
+                        }
+                        onClick={() => {
+                            const singleValue =
+                                selectedValue !== 'exclude' ? 'exclude' : null;
+
+                            setSelectedValue(
+                                selectedValue === 'exclude' && recommendFields
+                                    ? 'default'
+                                    : singleValue
+                            );
+                        }}
+                    />
+                </ToggleButtonGroup>
             </Box>
         );
     }

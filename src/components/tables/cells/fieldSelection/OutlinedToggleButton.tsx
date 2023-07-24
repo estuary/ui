@@ -13,7 +13,6 @@ interface Props {
     onClick?: MouseEventHandler;
 }
 
-// TODO (field selection): Share disabled and shared state styling with the StyledToggleButtonGroup component.
 function OutlinedToggleButton({
     messageId,
     selectedValue,
