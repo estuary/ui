@@ -1,4 +1,5 @@
 import {
+    Box,
     Checkbox,
     FormControl,
     FormControlLabel,
@@ -221,7 +222,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
     }, [applyFieldSelections, setSelectionSaving, draftSpecs, selectionSaving]);
 
     return (
-        <>
+        <Box sx={{ mt: 3 }}>
             <Stack direction="row" sx={{ mb: 1 }}>
                 <Typography variant="h6" sx={{ mr: 0.5 }}>
                     <FormattedMessage id="fieldSelection.header" />
@@ -257,7 +258,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
             </FormControl>
 
             <FieldSelectionTable projections={data} />
-        </>
+        </Box>
     );
 }
 

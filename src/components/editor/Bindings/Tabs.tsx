@@ -1,6 +1,5 @@
 import { Box, Button, Tab, Tabs } from '@mui/material';
 import { TabOptions } from 'components/editor/Bindings/types';
-import { useEntityType } from 'context/EntityContext';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { MuiTabProps } from 'types';
@@ -23,7 +22,6 @@ export const tabProps: MuiTabProps<TabOptions>[] = [
 
 function BindingsTabs({ selectedTab, setSelectedTab }: BindingTabsProps) {
     const intl = useIntl();
-    const entityType = useEntityType();
 
     const tabs = useMemo(
         () =>
@@ -42,7 +40,7 @@ function BindingsTabs({ selectedTab, setSelectedTab }: BindingTabsProps) {
                     }}
                 />
             )),
-        [setSelectedTab, entityType, intl]
+        [setSelectedTab, intl]
     );
 
     return (

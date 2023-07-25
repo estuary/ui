@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/collection/ResourceConfigForm';
 import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
+import { useEntityType } from 'context/EntityContext';
 import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_hydrated } from 'stores/ResourceConfig/hooks';
 import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
@@ -11,6 +12,8 @@ interface Props {
 }
 
 function ResourceConfig({ collectionName, readOnly = false }: Props) {
+    const entityType = useEntityType();
+
     const hydrated = useResourceConfig_hydrated();
 
     return (
@@ -19,7 +22,7 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
                 <FormattedMessage id="materializationCreate.resourceConfig.heading" />
             </Typography>
 
-            <Box sx={{ width: '100%', mb: 3 }}>
+            <Box sx={{ width: '100%' }}>
                 {hydrated ? (
                     <ResourceConfigForm
                         collectionName={collectionName}
@@ -30,7 +33,9 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
                 )}
             </Box>
 
-            <FieldSelectionViewer collectionName={collectionName} />
+            {entityType === 'materialization' ? (
+                <FieldSelectionViewer collectionName={collectionName} />
+            ) : null}
         </>
     );
 }
