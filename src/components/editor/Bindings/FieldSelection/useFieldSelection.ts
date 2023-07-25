@@ -31,6 +31,8 @@ function useFieldSelection(collectionName: string) {
 
     // TODO (field Selection): Determine a comfortable debounce interval. A second or less feels too quick
     //   but five seconds feels too long.
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedUpdate = useCallback(
         debounce(() => {
             setSelectionActive(false);
