@@ -297,6 +297,34 @@ export const useBindingsEditorStore_setSingleSelection = () => {
     >(BindingsEditorStoreNames.GENERAL, (state) => state.setSingleSelection);
 };
 
+export const useBindingsEditorStore_selectionActive = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['selectionActive']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.selectionActive);
+};
+
+export const useBindingsEditorStore_setSelectionActive = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setSelectionActive']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.setSelectionActive);
+};
+
+export const useBindingsEditorStore_selectionSaving = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['selectionSaving']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.selectionSaving);
+};
+
+export const useBindingsEditorStore_setSelectionSaving = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setSelectionSaving']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.setSelectionSaving);
+};
+
 export const useBindingsEditorStore_includedFields = () => {
     return useZustandStore<
         BindingsEditorState,

@@ -132,6 +132,8 @@ const getInitialStateData = (): Pick<
     | 'hasIncompatibleCollections'
     | 'recommendFields'
     | 'selections'
+    | 'selectionActive'
+    | 'selectionSaving'
     | 'includedFields'
     | 'excludedFields'
 > => ({
@@ -154,6 +156,8 @@ const getInitialStateData = (): Pick<
     hasIncompatibleCollections: false,
     recommendFields: true,
     selections: {},
+    selectionActive: false,
+    selectionSaving: false,
     includedFields: {},
     excludedFields: [],
 });
@@ -378,13 +382,39 @@ const getInitialState = (
         );
     },
 
-    setSingleSelection: (field, selectionType) => {
+    setSingleSelection: (field, selectionType, initOnly) => {
         set(
             produce((state: BindingsEditorState) => {
+                const { selectionActive } = get();
+
+                if (!selectionActive && !initOnly) {
+                    state.selectionActive = true;
+                }
+
                 state.selections[field] = selectionType;
             }),
             false,
             'Custom Selections Set'
+        );
+    },
+
+    setSelectionActive: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.selectionActive = value;
+            }),
+            false,
+            'Selection Active Set'
+        );
+    },
+
+    setSelectionSaving: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.selectionSaving = value;
+            }),
+            false,
+            'Selection Saving Set'
         );
     },
 

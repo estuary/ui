@@ -85,8 +85,15 @@ export interface BindingsEditorState {
     selections: { [field: string]: FieldSelectionType | null };
     setSingleSelection: (
         field: string,
-        selectionType: FieldSelectionType | null
+        selectionType: FieldSelectionType | null,
+        initOnly?: boolean
     ) => void;
+
+    selectionActive: boolean;
+    setSelectionActive: (value: BindingsEditorState['selectionActive']) => void;
+
+    selectionSaving: boolean;
+    setSelectionSaving: (value: BindingsEditorState['selectionSaving']) => void;
 
     includedFields: { [field: string]: {} };
     setIncludedFields: (value: BindingsEditorState['includedFields']) => void;
