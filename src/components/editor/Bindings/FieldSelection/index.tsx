@@ -5,7 +5,6 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import { modifyDraftSpec } from 'api/draftSpecs';
 import {
     BuiltSpec_Binding,
     CompositeProjection,
@@ -16,31 +15,23 @@ import {
     TranslatedConstraint,
     ValidationResponse_Binding,
 } from 'components/editor/Bindings/FieldSelection/types';
+import useFieldSelection from 'components/editor/Bindings/FieldSelection/useFieldSelection';
 import {
     useBindingsEditorStore_recommendFields,
-    useBindingsEditorStore_selectionActive,
     useBindingsEditorStore_selectionSaving,
-    useBindingsEditorStore_selections,
     useBindingsEditorStore_setRecommendFields,
-    useBindingsEditorStore_setSelectionActive,
     useBindingsEditorStore_setSelectionSaving,
     useBindingsEditorStore_setSingleSelection,
 } from 'components/editor/Bindings/Store/hooks';
-import {
-    useEditorStore_persistedDraftId,
-    useEditorStore_queryResponse_draftSpecs,
-    useEditorStore_queryResponse_mutate,
-} from 'components/editor/Store/hooks';
+import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import ExternalLink from 'components/shared/ExternalLink';
 import FieldSelectionTable from 'components/tables/FieldSelection';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { Square } from 'iconoir-react';
 import CheckSquare from 'icons/CheckSquare';
-import { debounce, isEqual, omit } from 'lodash';
+import { isEqual } from 'lodash';
 import { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     collectionName: string;
@@ -100,23 +91,19 @@ function FieldSelectionViewer({ collectionName }: Props) {
     const recommendFields = useBindingsEditorStore_recommendFields();
     const setRecommendFields = useBindingsEditorStore_setRecommendFields();
 
-    const selections = useBindingsEditorStore_selections();
     const setSingleSelection = useBindingsEditorStore_setSingleSelection();
-
-    const selectionActive = useBindingsEditorStore_selectionActive();
-    const setSelectionActive = useBindingsEditorStore_setSelectionActive();
 
     const selectionSaving = useBindingsEditorStore_selectionSaving();
     const setSelectionSaving = useBindingsEditorStore_setSelectionSaving();
 
     // Draft Editor Store
-    const draftId = useEditorStore_persistedDraftId();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
-    const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
     const [data, setData] = useState<
         CompositeProjection[] | null | undefined
     >();
+
+    const applyFieldSelections = useFieldSelection(collectionName);
 
     useEffect(() => {
         if (
@@ -222,117 +209,16 @@ function FieldSelectionViewer({ collectionName }: Props) {
         [setRecommendFields, setSingleSelection, data, recommendFields]
     );
 
-    const debouncedUpdate = useCallback(
-        debounce(() => {
-            setSelectionActive(false);
-            setSelectionSaving(true);
-        }, 750),
-        [setSelectionActive, setSelectionSaving]
-    );
-
-    useEffect(() => {
-        if (selectionActive) {
-            debouncedUpdate();
-        }
-    }, [debouncedUpdate, selectionActive]);
-
-    const processFieldSelections = useCallback(
-        async (draftSpec: DraftSpecQuery) => {
-            const includedFields: string[] = Object.entries(selections)
-                .filter(
-                    ([_field, selectionType]) => selectionType === 'include'
-                )
-                .map(([field]) => field);
-
-            const excludedFields: string[] = Object.entries(selections)
-                .filter(
-                    ([_field, selectionType]) => selectionType === 'exclude'
-                )
-                .map(([field]) => field);
-
-            const bindingIndex: number = draftSpec.spec.bindings.findIndex(
-                (binding: any) => binding.source === collectionName
-            );
-
-            if (!mutateDraftSpecs || bindingIndex === -1) {
-                return Promise.reject();
-            } else {
-                const spec: Schema = draftSpec.spec;
-
-                spec.bindings[bindingIndex].fields = {
-                    recommended: recommendFields,
-                    exclude: [],
-                    include: {},
-                };
-
-                if (
-                    hasLength(includedFields) ||
-                    hasLength(excludedFields) ||
-                    !recommendFields
-                ) {
-                    if (hasLength(includedFields)) {
-                        const formattedFields = {};
-
-                        includedFields.forEach((field) => {
-                            formattedFields[field] = {};
-                        });
-
-                        spec.bindings[bindingIndex].fields.include =
-                            formattedFields;
-                    } else {
-                        spec.bindings[bindingIndex].fields = omit(
-                            spec.bindings[bindingIndex].fields,
-                            'include'
-                        );
-                    }
-
-                    if (hasLength(excludedFields)) {
-                        spec.bindings[bindingIndex].fields.exclude =
-                            excludedFields;
-                    } else {
-                        spec.bindings[bindingIndex].fields = omit(
-                            spec.bindings[bindingIndex].fields,
-                            'exclude'
-                        );
-                    }
-                } else {
-                    spec.bindings[bindingIndex] = omit(
-                        spec.bindings[bindingIndex],
-                        'fields'
-                    );
-                }
-
-                const updateResponse = await modifyDraftSpec(spec, {
-                    draft_id: draftId,
-                    catalog_name: draftSpec.catalog_name,
-                    spec_type: 'materialization',
-                });
-
-                if (updateResponse.error) {
-                    return Promise.reject();
-                }
-
-                return mutateDraftSpecs();
-            }
-        },
-        [mutateDraftSpecs, collectionName, draftId, recommendFields, selections]
-    );
-
     useEffect(() => {
         if (selectionSaving && draftSpecs.length > 0 && draftSpecs[0].spec) {
-            processFieldSelections(draftSpecs[0])
+            applyFieldSelections(draftSpecs[0])
                 .then(
                     () => console.log('success'),
                     (error) => console.log('error', error)
                 )
                 .finally(() => setSelectionSaving(false));
         }
-    }, [
-        processFieldSelections,
-        setSelectionSaving,
-        draftSpecs,
-        selectionSaving,
-    ]);
+    }, [applyFieldSelections, setSelectionSaving, draftSpecs, selectionSaving]);
 
     return (
         <>
