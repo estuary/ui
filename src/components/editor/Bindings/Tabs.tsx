@@ -19,38 +19,31 @@ export const tabProps: MuiTabProps<TabOptions>[] = [
         label: 'workflows.collectionSelector.tab.collectionSchema',
         value: 'schema',
     },
-    {
-        label: 'workflows.collectionSelector.tab.fieldSelection',
-        value: 'field_selection',
-    },
 ];
 
 function BindingsTabs({ selectedTab, setSelectedTab }: BindingTabsProps) {
     const intl = useIntl();
     const entityType = useEntityType();
 
-    const tabs = useMemo(() => {
-        const evaluatedTabProps =
-            entityType === 'materialization'
-                ? tabProps
-                : tabProps.filter(({ value }) => value !== 'field_selection');
-
-        return evaluatedTabProps.map((tabProp, index) => (
-            <Tab
-                key={`collection-selection-tabs-${tabProp.label}`}
-                label={intl.formatMessage({
-                    id: tabProp.label,
-                })}
-                component={Button}
-                onClick={() => setSelectedTab(index)}
-                sx={{
-                    '&:hover': {
-                        backgroundColor: 'transparent',
-                    },
-                }}
-            />
-        ));
-    }, [setSelectedTab, entityType, intl]);
+    const tabs = useMemo(
+        () =>
+            tabProps.map((tabProp, index) => (
+                <Tab
+                    key={`collection-selection-tabs-${tabProp.label}`}
+                    label={intl.formatMessage({
+                        id: tabProp.label,
+                    })}
+                    component={Button}
+                    onClick={() => setSelectedTab(index)}
+                    sx={{
+                        '&:hover': {
+                            backgroundColor: 'transparent',
+                        },
+                    }}
+                />
+            )),
+        [setSelectedTab, entityType, intl]
+    );
 
     return (
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

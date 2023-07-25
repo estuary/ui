@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/collection/ResourceConfigForm';
+import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
 import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_hydrated } from 'stores/ResourceConfig/hooks';
 import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
@@ -18,7 +19,7 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
                 <FormattedMessage id="materializationCreate.resourceConfig.heading" />
             </Typography>
 
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{ width: '100%', mb: 3 }}>
                 {hydrated ? (
                     <ResourceConfigForm
                         collectionName={collectionName}
@@ -28,6 +29,8 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
                     <BindingsEditorConfigSkeleton />
                 )}
             </Box>
+
+            <FieldSelectionViewer collectionName={collectionName} />
         </>
     );
 }
