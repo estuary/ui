@@ -81,6 +81,7 @@ function useFieldSelection(collectionName: string) {
                     hasLength(excludedFields) ||
                     !recommendFields
                 ) {
+                    // Remove the include property if no fields are marked for explicit inclusion, otherwise set the property.
                     if (hasLength(includedFields)) {
                         const formattedFields = {};
 
@@ -97,6 +98,7 @@ function useFieldSelection(collectionName: string) {
                         );
                     }
 
+                    // Remove the exclude property if no fields are marked for explicit exclusion, otherwise set the property.
                     if (hasLength(excludedFields)) {
                         spec.bindings[bindingIndex].fields.exclude =
                             excludedFields;
@@ -107,6 +109,7 @@ function useFieldSelection(collectionName: string) {
                         );
                     }
                 } else {
+                    // Remove the fields property from the specification if it equates to default behavior.
                     spec.bindings[bindingIndex] = omit(
                         spec.bindings[bindingIndex],
                         'fields'
