@@ -134,8 +134,6 @@ const getInitialStateData = (): Pick<
     | 'selections'
     | 'selectionActive'
     | 'selectionSaving'
-    | 'includedFields'
-    | 'excludedFields'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -158,8 +156,6 @@ const getInitialStateData = (): Pick<
     selections: {},
     selectionActive: false,
     selectionSaving: false,
-    includedFields: {},
-    excludedFields: [],
 });
 
 const getInitialState = (
@@ -415,26 +411,6 @@ const getInitialState = (
             }),
             false,
             'Selection Saving Set'
-        );
-    },
-
-    setIncludedFields: (value) => {
-        set(
-            produce((state: BindingsEditorState) => {
-                state.includedFields = value;
-            }),
-            false,
-            'Included Fields Set'
-        );
-    },
-
-    setExcludedFields: (value) => {
-        set(
-            produce((state: BindingsEditorState) => {
-                state.excludedFields = value;
-            }),
-            false,
-            'Excluded Fields Set'
         );
     },
 

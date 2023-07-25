@@ -95,12 +95,6 @@ export interface BindingsEditorState {
     selectionSaving: boolean;
     setSelectionSaving: (value: BindingsEditorState['selectionSaving']) => void;
 
-    includedFields: { [field: string]: {} };
-    setIncludedFields: (value: BindingsEditorState['includedFields']) => void;
-
-    excludedFields: string[];
-    setExcludedFields: (value: BindingsEditorState['excludedFields']) => void;
-
     // Misc.
     resetState: () => void;
 }

@@ -29,11 +29,13 @@ function useFieldSelection(collectionName: string) {
     const draftId = useEditorStore_persistedDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
+    // TODO (field Selection): Determine a comfortable debounce interval. A second or less feels too quick
+    //   but five seconds feels too long.
     const debouncedUpdate = useCallback(
         debounce(() => {
             setSelectionActive(false);
             setSelectionSaving(true);
-        }, 750),
+        }, 3000),
         [setSelectionActive, setSelectionSaving]
     );
 

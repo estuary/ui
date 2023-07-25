@@ -1,5 +1,6 @@
 import { ToggleButton, ToggleButtonProps } from '@mui/material';
 import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
+import { useBindingsEditorStore_selectionSaving } from 'components/editor/Bindings/Store/hooks';
 import { intensifiedOutline } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
 
@@ -20,12 +21,14 @@ function OutlinedToggleButton({
     onChange,
     onClick,
 }: Props) {
+    const selectionSaving = useBindingsEditorStore_selectionSaving();
+
     return (
         <ToggleButton
             size="small"
             value={value}
             selected={selectedValue === value}
-            disabled={disabled}
+            disabled={selectionSaving || disabled}
             onChange={onChange}
             onClick={onClick}
             sx={{
@@ -36,11 +39,17 @@ function OutlinedToggleButton({
                 '&.Mui-disabled': {
                     border: (theme) => `1px solid ${theme.palette.divider}`,
                 },
-                '&.Mui-selected': {
-                    backgroundColor: 'rgba(58, 86, 202, 0.15)',
-                    borderColor: (theme) => theme.palette.primary.main,
-                    color: (theme) => theme.palette.primary.main,
-                },
+                '&.Mui-selected': selectionSaving
+                    ? {
+                          backgroundColor: 'rgba(58, 86, 202, 0.10)',
+                          borderColor: 'rgba(58, 86, 202, 0.75)',
+                          color: 'rgba(58, 86, 202, 0.75)',
+                      }
+                    : {
+                          backgroundColor: 'rgba(58, 86, 202, 0.15)',
+                          borderColor: (theme) => theme.palette.primary.main,
+                          color: (theme) => theme.palette.primary.main,
+                      },
             }}
         >
             <FormattedMessage id={messageId} />

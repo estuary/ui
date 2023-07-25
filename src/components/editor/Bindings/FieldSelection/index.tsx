@@ -87,6 +87,8 @@ const mapConstraintsToProjections = (
     });
 
 function FieldSelectionViewer({ collectionName }: Props) {
+    const applyFieldSelections = useFieldSelection(collectionName);
+
     // Bindings Editor Store
     const recommendFields = useBindingsEditorStore_recommendFields();
     const setRecommendFields = useBindingsEditorStore_setRecommendFields();
@@ -102,8 +104,6 @@ function FieldSelectionViewer({ collectionName }: Props) {
     const [data, setData] = useState<
         CompositeProjection[] | null | undefined
     >();
-
-    const applyFieldSelections = useFieldSelection(collectionName);
 
     useEffect(() => {
         if (
@@ -246,7 +246,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
                             checkedIcon={
                                 <CheckSquare style={{ fontSize: 14 }} />
                             }
-                            disabled={!data}
+                            disabled={selectionSaving || !data}
                         />
                     }
                     onChange={toggleRecommendFields}
