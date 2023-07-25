@@ -1,27 +1,29 @@
 import { Box, ToggleButtonGroup } from '@mui/material';
 import {
     ConstraintTypes,
-    FieldSelectionType,
     TranslatedConstraint,
 } from 'components/editor/Bindings/FieldSelection/types';
-import { useBindingsEditorStore_recommendFields } from 'components/editor/Bindings/Store/hooks';
+import {
+    useBindingsEditorStore_recommendFields,
+    useBindingsEditorStore_selections,
+    useBindingsEditorStore_setSingleSelection,
+} from 'components/editor/Bindings/Store/hooks';
 import OutlinedToggleButton from 'components/tables/cells/fieldSelection/OutlinedToggleButton';
-import { Dispatch, SetStateAction } from 'react';
+import { useMemo } from 'react';
 
 interface Props {
+    field: string;
     constraint: TranslatedConstraint;
-    selectedValue: FieldSelectionType | null;
-    setSelectedValue: Dispatch<SetStateAction<FieldSelectionType | null>>;
 }
 
 // TODO (field selection): Determine whether the included/excluded toggle button group should be disabled
 //   when the default option is selected.
-function CustomSelectionOptions({
-    constraint,
-    selectedValue,
-    setSelectedValue,
-}: Props) {
+function CustomSelectionOptions({ constraint, field }: Props) {
     const recommendFields = useBindingsEditorStore_recommendFields();
+    const selections = useBindingsEditorStore_selections();
+    const setSingleSelection = useBindingsEditorStore_setSingleSelection();
+
+    const selectedValue = useMemo(() => selections[field], [field, selections]);
 
     if (constraint.type === ConstraintTypes.UNSATISFIABLE) {
         return null;
@@ -65,7 +67,8 @@ function CustomSelectionOptions({
                                     ? 'include'
                                     : null;
 
-                            setSelectedValue(
+                            setSingleSelection(
+                                field,
                                 selectedValue === 'include' && recommendFields
                                     ? 'default'
                                     : singleValue
@@ -87,7 +90,8 @@ function CustomSelectionOptions({
                             const singleValue =
                                 selectedValue !== 'exclude' ? 'exclude' : null;
 
-                            setSelectedValue(
+                            setSingleSelection(
+                                field,
                                 selectedValue === 'exclude' && recommendFields
                                     ? 'default'
                                     : singleValue

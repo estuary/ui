@@ -35,6 +35,7 @@ function Row({ row }: RowProps) {
 
             {row.constraint ? (
                 <FieldActions
+                    field={row.field}
                     constraint={row.constraint}
                     selectionType={row.selectionType}
                 />

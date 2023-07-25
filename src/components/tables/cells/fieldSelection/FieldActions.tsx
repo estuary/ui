@@ -1,41 +1,58 @@
-import { Box, Stack, TableCell } from '@mui/material';
+import { Box, Stack, TableCell, ToggleButtonProps } from '@mui/material';
 import {
     ConstraintTypes,
     FieldSelectionType,
     TranslatedConstraint,
 } from 'components/editor/Bindings/FieldSelection/types';
-import { useBindingsEditorStore_recommendFields } from 'components/editor/Bindings/Store/hooks';
+import {
+    useBindingsEditorStore_recommendFields,
+    useBindingsEditorStore_selections,
+    useBindingsEditorStore_setSingleSelection,
+} from 'components/editor/Bindings/Store/hooks';
 import CustomSelectionOptions from 'components/tables/cells/fieldSelection/CustomSelectionOptions';
 import OutlinedToggleButton from 'components/tables/cells/fieldSelection/OutlinedToggleButton';
-import { useState } from 'react';
-import { useUpdateEffect } from 'react-use';
+import { SyntheticEvent, useCallback, useMemo } from 'react';
 
 interface Props {
+    field: string;
     constraint: TranslatedConstraint;
-    selectionType: FieldSelectionType;
+    selectionType: FieldSelectionType | null;
 }
 
-function FieldActions({ constraint, selectionType }: Props) {
+function FieldActions({ field, constraint }: Props) {
     const recommendFields = useBindingsEditorStore_recommendFields();
-
-    const [selectedValue, setSelectedValue] =
-        useState<FieldSelectionType | null>(selectionType);
+    const selections = useBindingsEditorStore_selections();
+    const setSingleSelection = useBindingsEditorStore_setSingleSelection();
 
     // TODO (field selection): Determine whether the included/excluded toggle button group should be disabled
     //   when the default option is selected.
     // const [toggleDisabled, setToggleDisabled] = useState(true);
 
-    useUpdateEffect(() => {
-        if (!recommendFields) {
-            const includeRequired =
-                constraint.type === ConstraintTypes.FIELD_REQUIRED ||
-                constraint.type === ConstraintTypes.LOCATION_REQUIRED;
+    const selectedValue = useMemo(() => selections[field], [field, selections]);
 
-            setSelectedValue(includeRequired ? 'include' : null);
-        } else {
-            setSelectedValue('default');
-        }
-    }, [setSelectedValue, constraint.type, recommendFields]);
+    const updateFieldSelection: ToggleButtonProps['onChange'] = useCallback(
+        (event: SyntheticEvent) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (selectedValue === 'default') {
+                const includeRecommended =
+                    constraint.type === ConstraintTypes.FIELD_REQUIRED ||
+                    constraint.type === ConstraintTypes.LOCATION_REQUIRED ||
+                    constraint.type === ConstraintTypes.LOCATION_RECOMMENDED;
+
+                setSingleSelection(
+                    field,
+                    includeRecommended ? 'include' : 'exclude'
+                );
+            } else {
+                setSingleSelection(field, 'default');
+            }
+
+            // setToggleDisabled(!toggleDisabled);
+        },
+        [setSingleSelection, constraint.type, field, selectedValue]
+    );
 
     return (
         <TableCell>
@@ -46,33 +63,11 @@ function FieldActions({ constraint, selectionType }: Props) {
                         selectedValue={selectedValue}
                         value="default"
                         disabled={!recommendFields}
-                        onClick={() => {
-                            if (selectedValue === 'default') {
-                                const includeRecommended =
-                                    constraint.type ===
-                                        ConstraintTypes.FIELD_REQUIRED ||
-                                    constraint.type ===
-                                        ConstraintTypes.LOCATION_REQUIRED ||
-                                    constraint.type ===
-                                        ConstraintTypes.LOCATION_RECOMMENDED;
-
-                                setSelectedValue(
-                                    includeRecommended ? 'include' : 'exclude'
-                                );
-                            } else {
-                                setSelectedValue('default');
-                            }
-
-                            // setToggleDisabled(!toggleDisabled);
-                        }}
+                        onChange={updateFieldSelection}
                     />
                 </Box>
 
-                <CustomSelectionOptions
-                    constraint={constraint}
-                    selectedValue={selectedValue}
-                    setSelectedValue={setSelectedValue}
-                />
+                <CustomSelectionOptions field={field} constraint={constraint} />
             </Stack>
         </TableCell>
     );

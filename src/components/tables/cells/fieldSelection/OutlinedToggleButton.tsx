@@ -1,7 +1,6 @@
-import { ToggleButton } from '@mui/material';
+import { ToggleButton, ToggleButtonProps } from '@mui/material';
 import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
 import { intensifiedOutline } from 'context/Theme';
-import { MouseEventHandler } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -9,8 +8,8 @@ interface Props {
     selectedValue: FieldSelectionType | null;
     value: FieldSelectionType;
     disabled?: boolean;
-    onChange?: MouseEventHandler;
-    onClick?: MouseEventHandler;
+    onChange?: ToggleButtonProps['onChange'];
+    onClick?: ToggleButtonProps['onClick'];
 }
 
 function OutlinedToggleButton({

@@ -10,7 +10,7 @@ import { FormStatus } from 'stores/FormState/types';
 import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
 
 interface Props {
-    projections: CompositeProjection[] | null;
+    projections: CompositeProjection[] | null | undefined;
 }
 
 export const columns: TableColumns[] = [
@@ -61,13 +61,17 @@ function FieldSelectionTable({ projections }: Props) {
     };
 
     useEffect(() => {
-        if (formStatus === FormStatus.TESTING) {
+        if (
+            typeof projections === 'undefined' ||
+            formStatus === FormStatus.TESTING
+        ) {
             setTableState({ status: TableStatuses.LOADING });
         } else {
             setTableState({
-                status: projections
-                    ? TableStatuses.DATA_FETCHED
-                    : TableStatuses.NO_EXISTING_DATA,
+                status:
+                    projections && projections.length > 0
+                        ? TableStatuses.DATA_FETCHED
+                        : TableStatuses.NO_EXISTING_DATA,
             });
         }
     }, [setTableState, formStatus, projections]);
@@ -100,7 +104,9 @@ function FieldSelectionTable({ projections }: Props) {
                         tableState={tableState}
                         loading={formStatus === FormStatus.TESTING}
                         rows={
-                            projections && formStatus !== FormStatus.TESTING ? (
+                            projections &&
+                            projections.length > 0 &&
+                            formStatus !== FormStatus.TESTING ? (
                                 <Rows
                                     data={projections}
                                     sortDirection={sortDirection}

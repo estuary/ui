@@ -131,6 +131,7 @@ const getInitialStateData = (): Pick<
     | 'incompatibleCollections'
     | 'hasIncompatibleCollections'
     | 'recommendFields'
+    | 'selections'
     | 'includedFields'
     | 'excludedFields'
 > => ({
@@ -152,6 +153,7 @@ const getInitialStateData = (): Pick<
     incompatibleCollections: [],
     hasIncompatibleCollections: false,
     recommendFields: true,
+    selections: {},
     includedFields: {},
     excludedFields: [],
 });
@@ -373,6 +375,16 @@ const getInitialState = (
             }),
             false,
             'Recommend Fields Set'
+        );
+    },
+
+    setSingleSelection: (field, selectionType) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.selections[field] = selectionType;
+            }),
+            false,
+            'Custom Selections Set'
         );
     },
 

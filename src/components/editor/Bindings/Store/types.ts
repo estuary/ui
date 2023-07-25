@@ -1,5 +1,6 @@
 import { AlertColor } from '@mui/material';
 import { IncompatibleCollections } from 'api/evolutions';
+import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
 import { CollectionData } from 'components/editor/Bindings/types';
 import { Dispatch, SetStateAction } from 'react';
 import { InferSchemaPropertyForRender, Schema } from 'types';
@@ -80,6 +81,12 @@ export interface BindingsEditorState {
     // Field Selection
     recommendFields: boolean;
     setRecommendFields: (value: BindingsEditorState['recommendFields']) => void;
+
+    selections: { [field: string]: FieldSelectionType | null };
+    setSingleSelection: (
+        field: string,
+        selectionType: FieldSelectionType | null
+    ) => void;
 
     includedFields: { [field: string]: {} };
     setIncludedFields: (value: BindingsEditorState['includedFields']) => void;

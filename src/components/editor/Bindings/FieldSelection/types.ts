@@ -68,5 +68,5 @@ export interface TranslatedConstraint {
 
 export interface CompositeProjection extends Projection {
     constraint: TranslatedConstraint | null;
-    selectionType: FieldSelectionType;
+    selectionType: FieldSelectionType | null;
 }

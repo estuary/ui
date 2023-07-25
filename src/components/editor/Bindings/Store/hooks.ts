@@ -283,6 +283,20 @@ export const useBindingsEditorStore_setRecommendFields = () => {
     >(BindingsEditorStoreNames.GENERAL, (state) => state.setRecommendFields);
 };
 
+export const useBindingsEditorStore_selections = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['selections']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.selections);
+};
+
+export const useBindingsEditorStore_setSingleSelection = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setSingleSelection']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.setSingleSelection);
+};
+
 export const useBindingsEditorStore_includedFields = () => {
     return useZustandStore<
         BindingsEditorState,

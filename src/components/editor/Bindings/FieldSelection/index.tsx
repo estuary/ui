@@ -18,6 +18,7 @@ import {
 import {
     useBindingsEditorStore_recommendFields,
     useBindingsEditorStore_setRecommendFields,
+    useBindingsEditorStore_setSingleSelection,
 } from 'components/editor/Bindings/Store/hooks';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import ExternalLink from 'components/shared/ExternalLink';
@@ -25,7 +26,7 @@ import FieldSelectionTable from 'components/tables/FieldSelection';
 import { Square } from 'iconoir-react';
 import CheckSquare from 'icons/CheckSquare';
 import { isEqual } from 'lodash';
-import { useMemo } from 'react';
+import { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { Schema } from 'types';
 
@@ -55,7 +56,7 @@ const mapConstraintsToProjections = (
               }
             : null;
 
-        let selectionType: FieldSelectionType = 'default';
+        let selectionType: FieldSelectionType | null = 'default';
 
         if (fieldMetadata) {
             const { recommended, include, exclude } = fieldMetadata;
@@ -65,12 +66,11 @@ const mapConstraintsToProjections = (
             } else if (exclude?.includes(field)) {
                 selectionType = 'exclude';
             } else if (!recommended && constraint) {
-                const includeRecommended =
+                const includeRequired =
                     constraint.type === ConstraintTypes.FIELD_REQUIRED ||
-                    constraint.type === ConstraintTypes.LOCATION_REQUIRED ||
-                    constraint.type === ConstraintTypes.LOCATION_RECOMMENDED;
+                    constraint.type === ConstraintTypes.LOCATION_REQUIRED;
 
-                selectionType = includeRecommended ? 'include' : 'exclude';
+                selectionType = includeRequired ? 'include' : null;
             }
         }
 
@@ -88,10 +88,16 @@ function FieldSelectionViewer({ collectionName }: Props) {
     const recommendFields = useBindingsEditorStore_recommendFields();
     const setRecommendFields = useBindingsEditorStore_setRecommendFields();
 
+    const setSingleSelection = useBindingsEditorStore_setSingleSelection();
+
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
-    const data: CompositeProjection[] | null = useMemo(() => {
+    const [data, setData] = useState<
+        CompositeProjection[] | null | undefined
+    >();
+
+    useEffect(() => {
         if (
             draftSpecs.length > 0 &&
             draftSpecs[0].built_spec &&
@@ -141,20 +147,59 @@ function FieldSelectionViewer({ collectionName }: Props) {
                     setRecommendFields(selectedBinding.fields.recommended);
                 }
 
-                return evaluatedConstraints
-                    ? mapConstraintsToProjections(
-                          evaluatedProjections,
-                          evaluatedConstraints,
-                          evaluatedFieldMetadata
-                      )
-                    : null;
+                if (evaluatedConstraints) {
+                    const compositeProjections = mapConstraintsToProjections(
+                        evaluatedProjections,
+                        evaluatedConstraints,
+                        evaluatedFieldMetadata
+                    );
+
+                    compositeProjections.forEach(({ field, selectionType }) =>
+                        setSingleSelection(field, selectionType)
+                    );
+
+                    setData(compositeProjections);
+                } else {
+                    setData(null);
+                }
             } else {
-                return null;
+                setData(null);
             }
         } else {
-            return null;
+            setData(null);
         }
-    }, [setRecommendFields, collectionName, draftSpecs]);
+    }, [
+        setData,
+        setRecommendFields,
+        setSingleSelection,
+        collectionName,
+        draftSpecs,
+    ]);
+
+    const toggleRecommendFields = useCallback(
+        (event: SyntheticEvent, checked) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            setRecommendFields(!recommendFields);
+
+            data?.forEach(({ field, constraint }) => {
+                if (!checked && constraint) {
+                    const includeRequired =
+                        constraint.type === ConstraintTypes.FIELD_REQUIRED ||
+                        constraint.type === ConstraintTypes.LOCATION_REQUIRED;
+
+                    setSingleSelection(
+                        field,
+                        includeRequired ? 'include' : null
+                    );
+                } else {
+                    setSingleSelection(field, 'default');
+                }
+            });
+        },
+        [setRecommendFields, setSingleSelection, data, recommendFields]
+    );
 
     return (
         <>
@@ -177,15 +222,15 @@ function FieldSelectionViewer({ collectionName }: Props) {
                     control={
                         <Checkbox
                             value={recommendFields}
+                            checked={recommendFields}
                             icon={<Square style={{ fontSize: 14 }} />}
                             checkedIcon={
                                 <CheckSquare style={{ fontSize: 14 }} />
                             }
                             disabled={!data}
-                            defaultChecked
                         />
                     }
-                    onChange={() => setRecommendFields(!recommendFields)}
+                    onChange={toggleRecommendFields}
                     label={
                         <FormattedMessage id="fieldSelection.cta.defaultAllFields" />
                     }
