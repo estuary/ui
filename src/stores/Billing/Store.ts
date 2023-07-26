@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { isEqual } from 'lodash';
+import { isArray, isEqual } from 'lodash';
 import { BillingState, DataVolumeByTask } from 'stores/Billing/types';
 import {
     getInitialHydrationData,
@@ -7,21 +7,24 @@ import {
 } from 'stores/extensions/Hydration';
 import { BillingStoreNames } from 'stores/names';
 import { evaluateSpecType, stripTimeFromDate } from 'utils/billing-utils';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import { StoreApi, create } from 'zustand';
+import { NamedSet, devtools } from 'zustand/middleware';
 
 const getInitialStateData = (): Pick<
     BillingState,
     | 'billingHistory'
     | 'billingHistoryInitialized'
     | 'dataByTaskGraphDetails'
+    | 'paymentMethodExists'
     | 'selectedTenant'
 > => {
     return {
         billingHistory: [],
         billingHistoryInitialized: false,
         dataByTaskGraphDetails: [],
+        paymentMethodExists: null,
         selectedTenant: '',
     };
 };
@@ -134,6 +137,17 @@ export const getInitialState = (
                 }),
                 false,
                 'Data By Task Graph Details Set'
+            );
+        },
+
+        setPaymentMethodExists: (value) => {
+            set(
+                produce((state: BillingState) => {
+                    state.paymentMethodExists =
+                        isArray(value) && hasLength(value);
+                }),
+                false,
+                'Payment Exists Updated'
             );
         },
 

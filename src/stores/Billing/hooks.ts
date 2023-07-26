@@ -87,6 +87,20 @@ export const useBilling_setSelectedTenant = () => {
     );
 };
 
+export const useBilling_paymentMethodExists = () => {
+    return useZustandStore<BillingState, BillingState['paymentMethodExists']>(
+        BillingStoreNames.GENERAL,
+        (state) => state.paymentMethodExists
+    );
+};
+
+export const useBilling_setPaymentMethodExists = () => {
+    return useZustandStore<
+        BillingState,
+        BillingState['setPaymentMethodExists']
+    >(BillingStoreNames.GENERAL, (state) => state.setPaymentMethodExists);
+};
+
 export const useBilling_resetState = () => {
     return useZustandStore<BillingState, BillingState['resetState']>(
         BillingStoreNames.GENERAL,

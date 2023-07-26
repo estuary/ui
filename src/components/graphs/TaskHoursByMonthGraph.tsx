@@ -33,7 +33,7 @@ import useTooltipConfig from './useTooltipConfig';
 
 const stackId = 'Task Count';
 
-function DataByMonthGraph() {
+function TaskHoursByMonthGraph() {
     const theme = useTheme();
     const intl = useIntl();
     const tooltipConfig = useTooltipConfig();
@@ -113,7 +113,7 @@ function DataByMonthGraph() {
                     TooltipComponent,
                 ]);
 
-                const chartDom = document.getElementById('tasks-by-month');
+                const chartDom = document.getElementById('task-hours-by-month');
 
                 setMyChart(chartDom && echarts.init(chartDom));
             }
@@ -153,10 +153,12 @@ function DataByMonthGraph() {
 
                         tooltipConfigs.forEach((config) => {
                             const taskCount = config.value[1];
-                            const formattedValue =
-                                taskCount === 1
-                                    ? `${taskCount} Task`
-                                    : `${taskCount} Tasks`;
+                            const formattedValue = intl.formatMessage(
+                                {
+                                    id: 'admin.billing.graph.taskHoursByMonth.tooltip.datum',
+                                },
+                                { taskUsage: taskCount }
+                            );
 
                             const tooltipItem = getTooltipItem(
                                 config.marker,
@@ -217,7 +219,9 @@ function DataByMonthGraph() {
         tooltipConfig,
     ]);
 
-    return <div id="tasks-by-month" style={{ height: CARD_AREA_HEIGHT }} />;
+    return (
+        <div id="task-hours-by-month" style={{ height: CARD_AREA_HEIGHT }} />
+    );
 }
 
-export default DataByMonthGraph;
+export default TaskHoursByMonthGraph;
