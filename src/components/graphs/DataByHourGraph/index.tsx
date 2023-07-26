@@ -1,6 +1,6 @@
 import { useTheme } from '@mui/material';
 import { defaultOutlineColor, eChartsColors } from 'context/Theme';
-import { eachHourOfInterval, subHours } from 'date-fns';
+import { eachHourOfInterval, parseISO, startOfHour, subHours } from 'date-fns';
 import { EChartsOption } from 'echarts';
 import { BarChart } from 'echarts/charts';
 import {
@@ -68,7 +68,7 @@ function DataByHourGraph({ range, stats = [] }: Props) {
 
         // Format the full date so that hours from one day don't show for another day
         return listOfHours.map((date) => {
-            return intl.formatDate(date, formatDateSettings);
+            return intl.formatDate(startOfHour(date), formatDateSettings);
         });
     }, [intl, range]);
 
@@ -216,7 +216,10 @@ function DataByHourGraph({ range, stats = [] }: Props) {
 
         stats.forEach((stat) => {
             // Format to time
-            const formattedTime = intl.formatDate(stat.ts, formatDateSettings);
+            const formattedTime = intl.formatDate(
+                startOfHour(parseISO(stat.ts)),
+                formatDateSettings
+            );
 
             // Total up docs. Mainly for collections that are derivations
             //  eventually we might split this data up into multiple lines
