@@ -25,7 +25,6 @@ import useConstant from 'use-constant';
 import {
     CARD_AREA_HEIGHT,
     SeriesConfig,
-    SeriesNames,
     stripTimeFromDate,
 } from 'utils/billing-utils';
 import { getTooltipItem, getTooltipTitle } from './tooltips';
@@ -114,7 +113,7 @@ function TaskHoursByMonthGraph() {
                     name: seriesName,
                     type: 'bar',
                     stack: 'Task Count',
-                    barMinHeight: seriesName === SeriesNames.INCLUDED ? 3 : 0,
+                    barMinHeight: 3,
                     data,
                 })),
                 textStyle: {

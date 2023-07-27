@@ -25,7 +25,6 @@ import useConstant from 'use-constant';
 import {
     CARD_AREA_HEIGHT,
     SeriesConfig,
-    SeriesNames,
     formatDataVolumeForDisplay,
     stripTimeFromDate,
 } from 'utils/billing-utils';
@@ -120,7 +119,7 @@ function DataByMonthGraph() {
                     name: seriesName,
                     type: 'bar',
                     stack: 'Data Volume',
-                    barMinHeight: seriesName === SeriesNames.INCLUDED ? 3 : 0,
+                    barMinHeight: 3,
                     data: data.map(([month, dataVolume]) => [
                         month,
                         dataVolume.toFixed(3),
