@@ -31,8 +31,6 @@ import {
 import { getTooltipItem, getTooltipTitle } from './tooltips';
 import useTooltipConfig from './useTooltipConfig';
 
-const stackId = 'Task Count';
-
 function TaskHoursByMonthGraph() {
     const theme = useTheme();
     const intl = useIntl();
@@ -57,11 +55,7 @@ function TaskHoursByMonthGraph() {
     const seriesConfig: SeriesConfig[] = useMemo(() => {
         const startDate = startOfMonth(sub(today, { months: 5 }));
 
-        const scopedDataSet: {
-            month: string;
-            includedTasks: number;
-            surplusTasks: number;
-        }[] = billingHistory
+        return billingHistory
             .filter(({ billed_month }) => {
                 const billedMonth = stripTimeFromDate(billed_month);
 
@@ -70,35 +64,15 @@ function TaskHoursByMonthGraph() {
                     end: today,
                 });
             })
-            .map(({ billed_month, line_items, max_concurrent_tasks }) => {
+            .map(({ billed_month, max_concurrent_tasks }) => {
                 const billedMonth = stripTimeFromDate(billed_month);
+                const month = intl.formatDate(billedMonth, { month: 'short' });
 
                 return {
-                    month: intl.formatDate(billedMonth, { month: 'short' }),
-                    includedTasks:
-                        max_concurrent_tasks > 0 ? line_items[0].count : 0,
-                    surplusTasks: line_items[1].count,
+                    seriesName: billed_month,
+                    data: [[month, max_concurrent_tasks]],
                 };
             });
-
-        return scopedDataSet.flatMap(
-            ({
-                month,
-                includedTasks,
-                surplusTasks,
-            }): SeriesConfig | SeriesConfig[] => [
-                {
-                    seriesName: SeriesNames.INCLUDED,
-                    stack: stackId,
-                    data: [[month, includedTasks]],
-                },
-                {
-                    seriesName: SeriesNames.SURPLUS,
-                    stack: stackId,
-                    data: [[month, surplusTasks]],
-                },
-            ]
-        );
     }, [billingHistory, intl, today]);
 
     useEffect(() => {
@@ -136,10 +110,10 @@ function TaskHoursByMonthGraph() {
                     },
                     minInterval: 1,
                 },
-                series: seriesConfig.map(({ seriesName, stack, data }) => ({
+                series: seriesConfig.map(({ seriesName, data }) => ({
                     name: seriesName,
                     type: 'bar',
-                    stack,
+                    stack: 'Task Count',
                     barMinHeight: seriesName === SeriesNames.INCLUDED ? 3 : 0,
                     data,
                 })),
@@ -162,7 +136,6 @@ function TaskHoursByMonthGraph() {
 
                             const tooltipItem = getTooltipItem(
                                 config.marker,
-                                config.seriesName,
                                 formattedValue
                             );
 

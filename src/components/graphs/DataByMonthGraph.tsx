@@ -70,15 +70,9 @@ function DataByMonthGraph() {
                 const month = intl.formatDate(billedMonth, { month: 'short' });
 
                 return {
-                    seriesName: month,
+                    seriesName: billed_month,
                     data: [[month, total_processed_data_gb]],
                 };
-
-                // return {
-                //     month: intl.formatDate(billedMonth, { month: 'short' }),
-                //     includedDataVolume: line_items[2].count,
-                //     surplusDataVolume: line_items[3].count,
-                // };
             });
 
         return scopedDataSet;
@@ -125,6 +119,7 @@ function DataByMonthGraph() {
                 series: seriesConfig.map(({ seriesName, data }) => ({
                     name: seriesName,
                     type: 'bar',
+                    stack: 'Data Volume',
                     barMinHeight: seriesName === SeriesNames.INCLUDED ? 3 : 0,
                     data: data.map(([month, dataVolume]) => [
                         month,
@@ -147,7 +142,6 @@ function DataByMonthGraph() {
 
                             const tooltipItem = getTooltipItem(
                                 config.marker,
-                                config.seriesName,
                                 dataVolume
                             );
 
