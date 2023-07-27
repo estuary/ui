@@ -143,6 +143,9 @@ function DataByHourGraph({ range, stats = [] }: Props) {
             markLine: {
                 data: [{ type: 'max', name: 'Max' }],
                 label: {
+                    backgroundColor: eChartsColors[0],
+                    color: 'white',
+                    padding: 3,
                     position: 'start',
                     formatter: ({ value }: any) => {
                         return formatter(value, 'bytes');
@@ -164,6 +167,10 @@ function DataByHourGraph({ range, stats = [] }: Props) {
             markLine: {
                 data: [{ type: 'max', name: 'Max' }],
                 label: {
+                    backgroundColor: eChartsColors[1],
+                    color: 'black',
+                    padding: 3,
+
                     position: 'end',
                     formatter: ({ value }: any) => {
                         return formatter(value, 'docs');
