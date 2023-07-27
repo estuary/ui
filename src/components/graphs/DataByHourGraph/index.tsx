@@ -1,6 +1,6 @@
 import { useTheme } from '@mui/material';
 import { defaultOutlineColor, eChartsColors } from 'context/Theme';
-import { format, sub } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { EChartsOption } from 'echarts';
 import { BarChart } from 'echarts/charts';
 import {
@@ -27,6 +27,12 @@ interface Props {
     range: DataByHourRange;
     stats: CatalogStats_Details[] | undefined;
     createdAt?: string;
+}
+
+interface Data {
+    docs?: number;
+    bytes?: number;
+    timestamp?: string; //Date;
 }
 
 const formatTimeSettings: FormatDateOptions = {
@@ -98,7 +104,7 @@ function DataByHourGraph({ range, stats = [] }: Props) {
 
     // Create a dataset the groups things based on time
     const scopedDataSet = useMemo(() => {
-        return stats.map((stat) => {
+        const response: Data[] = stats.map((stat) => {
             // Total up docs. Mainly for collections that are derivations
             //  eventually we might split this data up into multiple lines
             const totalDocs = stat.docs_to
@@ -111,10 +117,11 @@ function DataByHourGraph({ range, stats = [] }: Props) {
             return {
                 docs: totalDocs,
                 bytes: totalBytes,
-                serverTime: stat.ts,
-                timestamp: new Date(stat.ts),
+                timestamp: stat.ts, //new Date(stat.ts)
             };
         });
+
+        return response;
     }, [stats]);
 
     // Set the main bulk of the options for the chart
@@ -177,7 +184,8 @@ function DataByHourGraph({ range, stats = [] }: Props) {
             yAxisIndex: 1,
         };
 
-        const option: EChartsOption = {
+        // TODO (typing) EChartsOption is the type but removed due to it complaining about the dataset typing
+        const option: any = {
             animation: false,
             darkMode: theme.palette.mode === 'dark',
             legend: legendConfig,
@@ -185,7 +193,7 @@ function DataByHourGraph({ range, stats = [] }: Props) {
             useUTC: true,
             // Setting dataset here because setting in a stand alone set option cause the chart to go blank
             dataset: {
-                dimensions: ['timestamp', 'bytes', 'docs', 'serverTime'],
+                dimensions: ['timestamp', 'bytes', 'docs'],
                 source: scopedDataSet,
             },
             textStyle: {
@@ -198,7 +206,10 @@ function DataByHourGraph({ range, stats = [] }: Props) {
 
                     // Add the header outside the loop as we are good just grabbing the first tooltip config
                     const { axisValue } = tooltipConfigs[0];
-                    const tooltipTitle = format(axisValue, `P hh:mm aa`);
+                    const tooltipTitle = format(
+                        parseISO(axisValue),
+                        `P hh:mm aa`
+                    );
                     content.push(`${getTooltipTitle(tooltipTitle)}`);
 
                     // Go through all the tooltip configs. These should match to all the Y axis
@@ -233,15 +244,16 @@ function DataByHourGraph({ range, stats = [] }: Props) {
                     axisLabel: {
                         align: 'center',
                         formatter: (value: any) => {
-                            // Only display the time for now. Might need to show more details later
-                            return format(value, `hh:mm aa`);
+                            if (value) {
+                                return format(parseISO(value), `hh:mm aa`);
+                            }
+                            return '';
                         },
                     },
-                    min: sub(new Date(), {
-                        hours: range,
-                    }),
-                    type: 'time',
-                    axisTick: { show: false },
+                    axisPointer: {
+                        show: true,
+                    },
+                    type: 'category',
                 },
                 {
                     data: [lastUpdated],
