@@ -3,7 +3,6 @@ import { BillingRecord } from 'api/billing';
 import DataVolume from 'components/tables/cells/billing/DataVolume';
 import TimeStamp from 'components/tables/cells/billing/TimeStamp';
 import MonetaryValue from 'components/tables/cells/MonetaryValue';
-import { FormattedMessage } from 'react-intl';
 
 interface RowProps {
     row: BillingRecord;
@@ -14,8 +13,6 @@ interface RowsProps {
 }
 
 function Row({ row }: RowProps) {
-    const evaluatedSubtotal = row.subtotal / 100;
-
     return (
         <TableRow hover>
             <TimeStamp date={row.billed_month} />
@@ -26,17 +23,7 @@ function Row({ row }: RowProps) {
                 <Typography>{row.task_usage_hours}</Typography>
             </TableCell>
 
-            <TableCell>
-                <Typography>
-                    <FormattedMessage
-                        id={`admin.billing.tier.${
-                            evaluatedSubtotal > 0 ? 'personal' : 'free'
-                        }`}
-                    />
-                </Typography>
-            </TableCell>
-
-            <MonetaryValue amount={evaluatedSubtotal} />
+            <MonetaryValue amount={row.subtotal / 100} />
         </TableRow>
     );
 }
