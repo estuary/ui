@@ -18,10 +18,10 @@ import { FormattedMessage } from 'react-intl';
 import { logRocketEvent } from 'services/logrocket';
 import {
     DEFAULT_POLLER_ERROR,
-    jobStatusPoller,
     JOB_STATUS_COLUMNS,
     JOB_STATUS_POLLER_ERROR,
     TABLES,
+    jobStatusPoller,
 } from 'services/supabase';
 import {
     useFormStateStore_isActive,
@@ -154,8 +154,8 @@ function SchemaEvolution({ onFailure }: Props) {
         }
     };
 
-    // Only show in edit mode and for captures
-    if (!editingEntity || entityType !== 'capture') {
+    // Only show in edit mode
+    if (!editingEntity) {
         return null;
     }
     return (
