@@ -440,7 +440,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.tier.enterprise': `Enterprise`,
     'admin.billing.graph.dataByMonth.header': `Data Volume by Month`,
     'admin.billing.graph.taskHoursByMonth.header': `Task Hours by Month`,
-    'admin.billing.graph.taskHoursByMonth.tooltip.datum': `{taskUsage} {taskUsage, plural, one {Hour} other {Hours}}`,
+    'admin.billing.graph.taskHoursByMonth.formatValue': `{taskUsage} {taskUsage, plural, one {Hour} other {Hours}}`,
     'admin.billing.graph.dataByTask.header': `Data Volume by Task`,
     'admin.billing.graph.dataByTask.tooltip': `This graph displays the three, largest data processing tasks over the set interval.`,
     'admin.billing.table.history.header': `Recent History`,

@@ -128,7 +128,7 @@ function TaskHoursByMonthGraph() {
                             const taskCount = config.value[1];
                             const formattedValue = intl.formatMessage(
                                 {
-                                    id: 'admin.billing.graph.taskHoursByMonth.tooltip.datum',
+                                    id: 'admin.billing.graph.taskHoursByMonth.formatValue',
                                 },
                                 { taskUsage: taskCount }
                             );

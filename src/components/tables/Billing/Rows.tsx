@@ -3,6 +3,7 @@ import { BillingRecord } from 'api/billing';
 import DataVolume from 'components/tables/cells/billing/DataVolume';
 import TimeStamp from 'components/tables/cells/billing/TimeStamp';
 import MonetaryValue from 'components/tables/cells/MonetaryValue';
+import { FormattedMessage } from 'react-intl';
 
 interface RowProps {
     row: BillingRecord;
@@ -20,7 +21,12 @@ function Row({ row }: RowProps) {
             <DataVolume volumeInGB={row.processed_data_gb ?? 0} />
 
             <TableCell>
-                <Typography>{row.task_usage_hours}</Typography>
+                <Typography>
+                    <FormattedMessage
+                        id="admin.billing.graph.taskHoursByMonth.formatValue"
+                        values={{ taskUsage: row.task_usage_hours }}
+                    />
+                </Typography>
             </TableCell>
 
             <MonetaryValue amount={row.subtotal / 100} />
