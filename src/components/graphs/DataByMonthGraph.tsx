@@ -64,13 +64,13 @@ function DataByMonthGraph() {
                     end: today,
                 });
             })
-            .map(({ billed_month, total_processed_data_gb }) => {
+            .map(({ billed_month, processed_data_gb }) => {
                 const billedMonth = stripTimeFromDate(billed_month);
                 const month = intl.formatDate(billedMonth, { month: 'short' });
 
                 return {
                     seriesName: billed_month,
-                    data: [[month, total_processed_data_gb]],
+                    data: [[month, processed_data_gb ?? 0]],
                 };
             });
 

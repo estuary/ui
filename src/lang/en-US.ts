@@ -435,7 +435,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.error.undefinedPricingTier.docLink': `contact support`,
     'admin.billing.error.undefinedPricingTier.docPath': `mailto:support@estuary.dev`,
     'admin.billing.label.tiers': `Pricing Tier`,
-    'admin.billing.tier.free': `Open Source`,
+    'admin.billing.tier.free': `Free`,
     'admin.billing.tier.personal': `Cloud`,
     'admin.billing.tier.enterprise': `Enterprise`,
     'admin.billing.graph.dataByMonth.header': `Data Volume by Month`,

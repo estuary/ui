@@ -14,23 +14,29 @@ interface RowsProps {
 }
 
 function Row({ row }: RowProps) {
+    const evaluatedSubtotal = row.subtotal / 100;
+
     return (
         <TableRow hover>
             <TimeStamp date={row.billed_month} />
 
-            <DataVolume volumeInGB={row.total_processed_data_gb} />
+            <DataVolume volumeInGB={row.processed_data_gb ?? 0} />
 
             <TableCell>
-                <Typography>{row.max_concurrent_tasks}</Typography>
+                <Typography>{row.task_usage_hours}</Typography>
             </TableCell>
 
             <TableCell>
                 <Typography>
-                    <FormattedMessage id="admin.billing.tier.personal" />
+                    <FormattedMessage
+                        id={`admin.billing.tier.${
+                            evaluatedSubtotal > 0 ? 'personal' : 'free'
+                        }`}
+                    />
                 </Typography>
             </TableCell>
 
-            <MonetaryValue amount={row.subtotal / 100} />
+            <MonetaryValue amount={evaluatedSubtotal} />
         </TableRow>
     );
 }

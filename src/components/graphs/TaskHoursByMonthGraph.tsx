@@ -63,13 +63,13 @@ function TaskHoursByMonthGraph() {
                     end: today,
                 });
             })
-            .map(({ billed_month, max_concurrent_tasks }) => {
+            .map(({ billed_month, task_usage_hours }) => {
                 const billedMonth = stripTimeFromDate(billed_month);
                 const month = intl.formatDate(billedMonth, { month: 'short' });
 
                 return {
                     seriesName: billed_month,
-                    data: [[month, max_concurrent_tasks]],
+                    data: [[month, task_usage_hours ?? 0]],
                 };
             });
     }, [billingHistory, intl, today]);

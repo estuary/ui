@@ -80,7 +80,8 @@ export const getInitialState = (
                     // Since the selected tenant is subject to vary, the billed prefix of the record input must be
                     // validated against the selected tenant before altering the billing history.
                     if (
-                        value[0].max_concurrent_tasks > 0 &&
+                        typeof value[0].task_usage_hours === 'number' &&
+                        typeof value[0].processed_data_gb === 'number' &&
                         value[0].billed_prefix === state.selectedTenant
                     ) {
                         const { billingHistory } = get();

@@ -96,7 +96,12 @@ function AdminBilling() {
                                 throw new Error(response.error.message);
                             }
 
-                            if (response.data.max_concurrent_tasks > 0) {
+                            if (
+                                typeof response.data.task_usage_hours ===
+                                    'number' &&
+                                typeof response.data.processed_data_gb ===
+                                    'number'
+                            ) {
                                 data.push(response.data);
                             }
                         });
