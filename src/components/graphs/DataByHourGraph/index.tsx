@@ -1,5 +1,6 @@
 import { useTheme } from '@mui/material';
 import { defaultOutlineColor, eChartsColors } from 'context/Theme';
+import { format, sub } from 'date-fns';
 import { EChartsOption } from 'echarts';
 import { BarChart } from 'echarts/charts';
 import {
@@ -12,12 +13,12 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import { orderBy } from 'lodash';
 import prettyBytes from 'pretty-bytes';
 import { useEffect, useMemo, useState } from 'react';
 import { FormatDateOptions, useIntl } from 'react-intl';
 import readable from 'readable-numbers';
 import { CatalogStats_Details } from 'types';
+import { getTooltipItem, getTooltipTitle } from '../tooltips';
 import { DataByHourRange } from '../types';
 import useLegendConfig from '../useLegendConfig';
 import useTooltipConfig from '../useTooltipConfig';
@@ -26,12 +27,6 @@ interface Props {
     range: DataByHourRange;
     stats: CatalogStats_Details[] | undefined;
     createdAt?: string;
-}
-
-interface LocalData {
-    docs: number;
-    bytes: number;
-    time: Date;
 }
 
 const formatTimeSettings: FormatDateOptions = {
@@ -47,8 +42,6 @@ const defaultDataFormat = (value: any) => {
 };
 
 function DataByHourGraph({ range, stats = [] }: Props) {
-    console.log('range', range);
-
     const intl = useIntl();
     const theme = useTheme();
     const legendConfig = useLegendConfig();
@@ -118,36 +111,137 @@ function DataByHourGraph({ range, stats = [] }: Props) {
             return {
                 docs: totalDocs,
                 bytes: totalBytes,
-                time: new Date(stat.ts),
+                serverTime: stat.ts,
+                timestamp: new Date(stat.ts),
             };
         });
     }, [stats]);
 
     // Set the main bulk of the options for the chart
     useEffect(() => {
+        // Function to format that handles both dimensions. This allows the tooltip
+        //  formatter to not worry about dimensions and just pass them in here
+        const formatter = (value: any, dimension: 'bytes' | 'docs') => {
+            if (!Number.isInteger(value)) {
+                return intl.formatMessage({
+                    id: 'common.missing',
+                });
+            }
+
+            if (dimension === 'docs') {
+                return readable(value, 2, false);
+            }
+
+            return defaultDataFormat(value);
+        };
+
+        const bytesSeries: EChartsOption['series'] = {
+            barMinHeight: 1,
+            encode: {
+                x: 'timestamp',
+                y: 'bytes',
+            },
+            markLine: {
+                data: [{ type: 'max', name: 'Max' }],
+                label: {
+                    position: 'start',
+                    formatter: ({ value }: any) => {
+                        return formatter(value, 'bytes');
+                    },
+                },
+                symbolSize: 0,
+            },
+            name: intl.formatMessage({ id: 'data.data' }),
+            type: 'bar',
+            yAxisIndex: 0,
+        };
+
+        const docsSeries: EChartsOption['series'] = {
+            barMinHeight: 1,
+            encode: {
+                x: 'timestamp',
+                y: 'docs',
+            },
+            markLine: {
+                data: [{ type: 'max', name: 'Max' }],
+                label: {
+                    position: 'end',
+                    formatter: ({ value }: any) => {
+                        return formatter(value, 'docs');
+                    },
+                },
+                symbolSize: 0,
+            },
+            name: intl.formatMessage({ id: 'data.docs' }),
+            type: 'bar',
+            yAxisIndex: 1,
+        };
+
         const option: EChartsOption = {
             animation: false,
             darkMode: theme.palette.mode === 'dark',
             legend: legendConfig,
+            series: [bytesSeries, docsSeries],
+            useUTC: true,
+            // Setting dataset here because setting in a stand alone set option cause the chart to go blank
+            dataset: {
+                dimensions: ['timestamp', 'bytes', 'docs', 'serverTime'],
+                source: scopedDataSet,
+            },
             textStyle: {
                 color: theme.palette.text.primary,
             },
-            tooltip: tooltipConfig,
-            dataset: {
-                dimensions: ['time', 'bytes', 'docs'],
-                source: scopedDataSet,
+            tooltip: {
+                ...tooltipConfig,
+                formatter: (tooltipConfigs: any) => {
+                    const content: string[] = [];
+
+                    // Add the header outside the loop as we are good just grabbing the first tooltip config
+                    const { axisValue } = tooltipConfigs[0];
+                    const tooltipTitle = format(axisValue, `P hh:mm aa`);
+                    content.push(`${getTooltipTitle(tooltipTitle)}`);
+
+                    // Go through all the tooltip configs. These should match to all the Y axis
+                    tooltipConfigs.forEach(
+                        ({
+                            data,
+                            dimensionNames,
+                            encode,
+                            marker,
+                            seriesName,
+                        }: any) => {
+                            // We encode a single prop for the Y axis so should be safe brading that from the dimensions
+                            const dimension = dimensionNames[encode.y];
+
+                            // Pass the proper data to the formatter with the dimension to know which formatter to use
+                            const displayValue = formatter(
+                                data[dimension],
+                                dimension
+                            );
+
+                            content.push(
+                                getTooltipItem(marker, seriesName, displayValue)
+                            );
+                        }
+                    );
+
+                    return content.join('');
+                },
             },
             xAxis: [
                 {
                     axisLabel: {
                         align: 'center',
                         formatter: (value: any) => {
-                            console.log('xAxis formatter', value);
-                            // We store the date and time but only want to show time to user
-                            return intl.formatTime(value, formatTimeSettings);
+                            // Only display the time for now. Might need to show more details later
+                            return format(value, `hh:mm aa`);
                         },
                     },
-                    type: 'category',
+                    min: sub(new Date(), {
+                        hours: range,
+                    }),
+                    type: 'time',
+                    axisTick: { show: false },
                 },
                 {
                     data: [lastUpdated],
@@ -213,74 +307,12 @@ function DataByHourGraph({ range, stats = [] }: Props) {
         lastUpdated,
         legendConfig,
         myChart,
+        range,
         scopedDataSet,
         theme.palette.mode,
         theme.palette.text.primary,
         tooltipConfig,
     ]);
-
-    // Effect to update the data by updating the series.
-    useEffect(() => {
-        const bytesFormatter = ({ value }: any) => {
-            if (!Number.isInteger(value)) {
-                return intl.formatMessage({
-                    id: 'common.missing',
-                });
-            }
-
-            return defaultDataFormat(value);
-        };
-        const bytesSeries: EChartsOption['series'] = {
-            markLine: {
-                data: [{ type: 'max', name: 'Max' }],
-                label: {
-                    position: 'start',
-                    formatter: bytesFormatter,
-                },
-                symbolSize: 0,
-            },
-            barMinHeight: 1,
-            name: intl.formatMessage({ id: 'data.data' }),
-            type: 'bar',
-            yAxisIndex: 0,
-            tooltip: {
-                valueFormatter: (value: any) => bytesFormatter({ value }),
-            },
-        };
-
-        const docsFormatter = ({ value }: any) => {
-            if (!Number.isInteger(value)) {
-                return intl.formatMessage({
-                    id: 'common.missing',
-                });
-            }
-
-            return readable(value, 2, false);
-        };
-
-        const docsSeries: EChartsOption['series'] = {
-            barMinHeight: 1,
-            markLine: {
-                data: [{ type: 'max', name: 'Max' }],
-                label: {
-                    position: 'end',
-                    formatter: docsFormatter,
-                },
-                symbolSize: 0,
-            },
-            name: intl.formatMessage({ id: 'data.docs' }),
-            type: 'bar',
-            yAxisIndex: 1,
-            tooltip: {
-                valueFormatter: (value: any) => docsFormatter({ value }),
-            },
-        };
-
-        // Update mychart series so new data goes in
-        myChart?.setOption({
-            series: [bytesSeries, docsSeries],
-        });
-    }, [intl, myChart]);
 
     return <div id="data-by-hour" style={{ height: 350 }} />;
 }
