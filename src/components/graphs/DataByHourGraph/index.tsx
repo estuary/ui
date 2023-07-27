@@ -102,7 +102,7 @@ function DataByHourGraph({ range, stats = [] }: Props) {
         );
     }, [intl, stats]);
 
-    // Create a dataset the groups things based on time
+    // Create a dataset
     const scopedDataSet = useMemo(() => {
         const response: Data[] = stats.map((stat) => {
             // Total up docs. Mainly for collections that are derivations
@@ -117,7 +117,7 @@ function DataByHourGraph({ range, stats = [] }: Props) {
             return {
                 docs: totalDocs,
                 bytes: totalBytes,
-                timestamp: stat.ts, //new Date(stat.ts)
+                timestamp: stat.ts,
             };
         });
 
