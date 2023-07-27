@@ -30,6 +30,8 @@ import {
 import { getTooltipItem, getTooltipTitle } from './tooltips';
 import useTooltipConfig from './useTooltipConfig';
 
+const chartContainerId = 'task-hours-by-month';
+
 function TaskHoursByMonthGraph() {
     const theme = useTheme();
     const intl = useIntl();
@@ -86,7 +88,7 @@ function TaskHoursByMonthGraph() {
                     TooltipComponent,
                 ]);
 
-                const chartDom = document.getElementById('task-hours-by-month');
+                const chartDom = document.getElementById(chartContainerId);
 
                 setMyChart(chartDom && echarts.init(chartDom));
             }
@@ -191,9 +193,7 @@ function TaskHoursByMonthGraph() {
         tooltipConfig,
     ]);
 
-    return (
-        <div id="task-hours-by-month" style={{ height: CARD_AREA_HEIGHT }} />
-    );
+    return <div id={chartContainerId} style={{ height: CARD_AREA_HEIGHT }} />;
 }
 
 export default TaskHoursByMonthGraph;

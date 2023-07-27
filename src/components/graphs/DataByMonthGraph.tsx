@@ -31,6 +31,8 @@ import {
 import { getTooltipItem, getTooltipTitle } from './tooltips';
 import useTooltipConfig from './useTooltipConfig';
 
+const chartContainerId = 'data-by-month';
+
 function DataByMonthGraph() {
     const theme = useTheme();
     const intl = useIntl();
@@ -89,7 +91,7 @@ function DataByMonthGraph() {
                     TooltipComponent,
                 ]);
 
-                const chartDom = document.getElementById('data-by-month');
+                const chartDom = document.getElementById(chartContainerId);
 
                 setMyChart(chartDom && echarts.init(chartDom));
             }
@@ -197,7 +199,7 @@ function DataByMonthGraph() {
         tooltipConfig,
     ]);
 
-    return <div id="data-by-month" style={{ height: CARD_AREA_HEIGHT }} />;
+    return <div id={chartContainerId} style={{ height: CARD_AREA_HEIGHT }} />;
 }
 
 export default DataByMonthGraph;
