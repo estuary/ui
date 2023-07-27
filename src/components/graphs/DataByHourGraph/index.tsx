@@ -29,12 +29,6 @@ interface Props {
     createdAt?: string;
 }
 
-interface Data {
-    docs?: number;
-    bytes?: number;
-    timestamp?: string; //Date;
-}
-
 const formatTimeSettings: FormatDateOptions = {
     hour: '2-digit',
     minute: '2-digit',
@@ -104,7 +98,7 @@ function DataByHourGraph({ range, stats = [] }: Props) {
 
     // Create a dataset
     const scopedDataSet = useMemo(() => {
-        const response: Data[] = stats.map((stat) => {
+        return stats.map((stat) => {
             // Total up docs. Mainly for collections that are derivations
             //  eventually we might split this data up into multiple lines
             const totalDocs = stat.docs_to
@@ -120,8 +114,6 @@ function DataByHourGraph({ range, stats = [] }: Props) {
                 timestamp: stat.ts,
             };
         });
-
-        return response;
     }, [stats]);
 
     // Set the main bulk of the options for the chart
@@ -184,8 +176,7 @@ function DataByHourGraph({ range, stats = [] }: Props) {
             yAxisIndex: 1,
         };
 
-        // TODO (typing) EChartsOption is the type but removed due to it complaining about the dataset typing
-        const option: any = {
+        const option: EChartsOption = {
             animation: false,
             darkMode: theme.palette.mode === 'dark',
             legend: legendConfig,
