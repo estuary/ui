@@ -1,16 +1,6 @@
 import { FormattedMessage } from 'react-intl';
 
-import {
-    Box,
-    Box,
-    Collapse,
-    Collapse,
-    Divider,
-    Stack,
-    Stack,
-    Typography,
-    Typography,
-} from '@mui/material';
+import { Box, Collapse, Divider, Stack, Typography } from '@mui/material';
 
 import { useBindingsEditorStore_incompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';

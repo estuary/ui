@@ -25,7 +25,6 @@ import {
     DEFAULT_FILTER,
     JOB_STATUS_COLUMNS,
     jobStatusPoller,
-    jobStatusPoller,
     TABLES,
 } from 'services/supabase';
 

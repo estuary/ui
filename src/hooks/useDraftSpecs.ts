@@ -1,10 +1,10 @@
-import { Entity, Entity, Schema } from 'types';
+import { Entity, Schema } from 'types';
 
-import { KeyedMutator, KeyedMutator } from 'swr';
+import { KeyedMutator } from 'swr';
 
-import { PostgrestError, PostgrestError } from '@supabase/postgrest-js';
+import { PostgrestError } from '@supabase/postgrest-js';
 
-import { TABLES, TABLES } from 'services/supabase';
+import { TABLES } from 'services/supabase';
 
 import { SuccessResponse, useQuery, useSelect } from './supabase-swr/';
 
