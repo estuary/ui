@@ -16,8 +16,8 @@ import { InferSchemaPropertyForRender, InferSchemaResponse } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { filterInferSchemaResponse, hasReadSchema } from 'utils/schema-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import { StoreApi, create } from 'zustand';
+import { NamedSet, devtools } from 'zustand/middleware';
 
 const processDraftSpecResponse = (
     draftSpecResponse: CallSupabaseResponse<any>,
@@ -130,6 +130,10 @@ const getInitialStateData = (): Pick<
     | 'inferSchemaResponse_Keys'
     | 'incompatibleCollections'
     | 'hasIncompatibleCollections'
+    | 'recommendFields'
+    | 'selections'
+    | 'selectionActive'
+    | 'selectionSaving'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -148,6 +152,10 @@ const getInitialStateData = (): Pick<
     inferSchemaResponseEmpty: false,
     incompatibleCollections: [],
     hasIncompatibleCollections: false,
+    recommendFields: true,
+    selections: {},
+    selectionActive: false,
+    selectionSaving: false,
 });
 
 const getInitialState = (
@@ -358,6 +366,52 @@ const getInitialState = (
         } else {
             return null;
         }
+    },
+
+    setRecommendFields: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.recommendFields = value;
+            }),
+            false,
+            'Recommend Fields Set'
+        );
+    },
+
+    setSingleSelection: (field, selectionType, initOnly) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                const { selectionActive } = get();
+
+                if (!selectionActive && !initOnly) {
+                    state.selectionActive = true;
+                }
+
+                state.selections[field] = selectionType;
+            }),
+            false,
+            'Custom Selections Set'
+        );
+    },
+
+    setSelectionActive: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.selectionActive = value;
+            }),
+            false,
+            'Selection Active Set'
+        );
+    },
+
+    setSelectionSaving: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.selectionSaving = value;
+            }),
+            false,
+            'Selection Saving Set'
+        );
     },
 
     // TODO (collection editor) maybe

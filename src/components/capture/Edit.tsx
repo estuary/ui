@@ -6,6 +6,7 @@ import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_pubId,
+    useEditorStore_queryResponse_mutate,
     useEditorStore_resetState,
 } from 'components/editor/Store/hooks';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
@@ -20,7 +21,7 @@ import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
@@ -72,6 +73,7 @@ function CaptureEdit() {
 
     // Endpoint Config Store
     const resetEndpointConfigState = useEndpointConfigStore_reset();
+    const mutate_advancedEditor = useEditorStore_queryResponse_mutate();
 
     // Form State Store
     const setFormState = useFormStateStore_setFormState();
@@ -85,6 +87,13 @@ function CaptureEdit() {
         persistedDraftId,
         { lastPubId }
     );
+
+    const updateDraftSpecs = useCallback(async () => {
+        await mutateDraftSpecs();
+        if (mutate_advancedEditor) {
+            await mutate_advancedEditor();
+        }
+    }, [mutateDraftSpecs, mutate_advancedEditor]);
 
     const taskNames = useMemo(
         () =>
@@ -178,7 +187,7 @@ function CaptureEdit() {
                                             disabled={!hasConnectors}
                                             callFailed={helpers.callFailed}
                                             postGenerateMutate={
-                                                mutateDraftSpecs
+                                                updateDraftSpecs
                                             }
                                         />
                                     }
