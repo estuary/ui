@@ -29,6 +29,7 @@ import {
     JOB_STATUS_POLLER_ERROR,
     jobStatusPoller,
     TABLES,
+    jobStatusPoller,
 } from 'services/supabase';
 
 import {
@@ -162,8 +163,8 @@ function SchemaEvolution({ onFailure }: Props) {
         }
     };
 
-    // Only show in edit mode and for captures
-    if (!editingEntity || entityType !== 'capture') {
+    // Only show in edit mode
+    if (!editingEntity) {
         return null;
     }
     return (

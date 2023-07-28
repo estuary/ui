@@ -32,7 +32,11 @@ function Usage({ catalogName }: Props) {
             ) : error ? (
                 <Error error={error} />
             ) : (
-                <DataByHourGraph stats={stats} range={range} />
+                <DataByHourGraph
+                    id="data-by-hour_entity-details"
+                    stats={stats}
+                    range={range}
+                />
             )}
         </CardWrapper>
     );

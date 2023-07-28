@@ -78,7 +78,7 @@ function EntityTableHeader({
                                     }
                                     sx={{
                                         '& .MuiTableSortLabel-icon': {
-                                            fontSize: 14,
+                                            fontSize: 10,
                                         },
                                     }}
                                 >

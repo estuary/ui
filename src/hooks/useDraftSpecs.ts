@@ -1,10 +1,10 @@
-import { Entity } from 'types';
+import { Entity, Entity, Schema } from 'types';
 
-import { KeyedMutator } from 'swr';
+import { KeyedMutator, KeyedMutator } from 'swr';
 
-import { PostgrestError } from '@supabase/postgrest-js';
+import { PostgrestError, PostgrestError } from '@supabase/postgrest-js';
 
-import { TABLES } from 'services/supabase';
+import { TABLES, TABLES } from 'services/supabase';
 
 import { SuccessResponse, useQuery, useSelect } from './supabase-swr/';
 
@@ -14,6 +14,8 @@ export interface DraftSpecQuery {
     spec: any;
     draft_id: string;
     expect_pub_id: string;
+    built_spec: Schema | null;
+    validated: Schema | null;
 }
 
 export type DraftSpec = DraftSpecQuery | null;
@@ -31,6 +33,8 @@ const DRAFT_SPEC_COLS = [
     'spec',
     'draft_id',
     'expect_pub_id',
+    'built_spec',
+    'validated',
 ];
 const defaultResponse: DraftSpecQuery[] = [];
 

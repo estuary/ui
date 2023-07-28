@@ -1,4 +1,4 @@
-export type TabOptions = 'config' | 'schema';
+export type TabOptions = 'config' | 'schema' | 'field_selection';
 
 export interface CollectionData {
     spec: any;

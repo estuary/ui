@@ -71,7 +71,12 @@ function CollectionsList() {
         return {
             val: <CollectionAction incompatibleCollection={ic} />,
             title: (
-                <Typography sx={{ fontWeight: 600 }}>
+                <Typography
+                    sx={{
+                        fontWeight: 500,
+                        color: (theme) => theme.palette.text.secondary,
+                    }}
+                >
                     {ic.collection}
                 </Typography>
             ),

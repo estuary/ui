@@ -1,6 +1,16 @@
 import { FormattedMessage } from 'react-intl';
 
-import { Box, Collapse, Stack, Typography } from '@mui/material';
+import {
+    Box,
+    Box,
+    Collapse,
+    Collapse,
+    Divider,
+    Stack,
+    Stack,
+    Typography,
+    Typography,
+} from '@mui/material';
 
 import { useBindingsEditorStore_incompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
@@ -27,12 +37,17 @@ function IncompatibleCollections() {
                 short
                 severity="warning"
                 title={
-                    <Typography variant="h5" component="span">
+                    <Typography
+                        component="span"
+                        sx={{ fontSize: 18, fontWeight: 500 }}
+                    >
                         <FormattedMessage id="entityEvolution.error.title" />
                     </Typography>
                 }
             >
-                <Stack spacing={2}>
+                <Stack spacing={1}>
+                    <Divider flexItem />
+
                     <Box>
                         <Typography>
                             <FormattedMessage id="entityEvolution.error.message" />

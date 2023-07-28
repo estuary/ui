@@ -223,7 +223,7 @@ const getStatsForDetails = (
         .eq('grain', grain)
         .gt('ts', gt)
         .lte('ts', lte)
-        .order('ts', { ascending: false });
+        .order('ts', { ascending: true });
 };
 
 // TODO (billing): Enable pagination when a database table containing historic billing data is available.
