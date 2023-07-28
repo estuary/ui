@@ -1,13 +1,18 @@
+import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
+
+import { useEffect, useState } from 'react';
+
+import { useIntl } from 'react-intl';
+
 import { Box, Table, TableContainer } from '@mui/material';
+
 import { CompositeProjection } from 'components/editor/Bindings/FieldSelection/types';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import Rows from 'components/tables/FieldSelection/Rows';
-import { useEffect, useState } from 'react';
-import { useIntl } from 'react-intl';
+
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
 
 interface Props {
     projections: CompositeProjection[] | null | undefined;

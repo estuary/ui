@@ -1,9 +1,11 @@
+import { FormattedMessage } from 'react-intl';
+
 import { TableCell, Typography } from '@mui/material';
+
 import {
     ConstraintTypes,
     TranslatedConstraint,
 } from 'components/editor/Bindings/FieldSelection/types';
-import { FormattedMessage } from 'react-intl';
 
 interface Props {
     constraint: TranslatedConstraint;

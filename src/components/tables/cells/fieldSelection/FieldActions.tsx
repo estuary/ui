@@ -1,4 +1,7 @@
+import { SyntheticEvent, useCallback, useMemo } from 'react';
+
 import { Box, Stack, TableCell, ToggleButtonProps } from '@mui/material';
+
 import {
     ConstraintTypes,
     FieldSelectionType,
@@ -11,7 +14,6 @@ import {
 } from 'components/editor/Bindings/Store/hooks';
 import CustomSelectionOptions from 'components/tables/cells/fieldSelection/CustomSelectionOptions';
 import OutlinedToggleButton from 'components/tables/cells/fieldSelection/OutlinedToggleButton';
-import { SyntheticEvent, useCallback, useMemo } from 'react';
 
 interface Props {
     field: string;

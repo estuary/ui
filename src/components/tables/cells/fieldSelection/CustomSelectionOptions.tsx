@@ -1,4 +1,7 @@
+import { useMemo } from 'react';
+
 import { Box, ToggleButtonGroup } from '@mui/material';
+
 import {
     ConstraintTypes,
     TranslatedConstraint,
@@ -9,7 +12,6 @@ import {
     useBindingsEditorStore_setSingleSelection,
 } from 'components/editor/Bindings/Store/hooks';
 import OutlinedToggleButton from 'components/tables/cells/fieldSelection/OutlinedToggleButton';
-import { useMemo } from 'react';
 
 interface Props {
     field: string;

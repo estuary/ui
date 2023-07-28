@@ -1,6 +1,7 @@
-import { Stack, TextField, Typography, useTheme } from '@mui/material';
 import { ArrowRight, CheckCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
+
+import { Stack, TextField, Typography, useTheme } from '@mui/material';
 
 interface Props {
     labelMessageId: string;

@@ -25,8 +25,8 @@ import {
     DEFAULT_FILTER,
     JOB_STATUS_COLUMNS,
     jobStatusPoller,
-    TABLES,
     jobStatusPoller,
+    TABLES,
 } from 'services/supabase';
 
 import { useDetailsForm_details_description } from 'stores/DetailsForm/hooks';

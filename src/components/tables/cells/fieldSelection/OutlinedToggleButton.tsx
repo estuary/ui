@@ -1,8 +1,11 @@
+import { FormattedMessage } from 'react-intl';
+
 import { ToggleButton, ToggleButtonProps } from '@mui/material';
+
 import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
 import { useBindingsEditorStore_selectionSaving } from 'components/editor/Bindings/Store/hooks';
+
 import { intensifiedOutline } from 'context/Theme';
-import { FormattedMessage } from 'react-intl';
 
 interface Props {
     messageId: string;

@@ -1,4 +1,11 @@
+import { Schema } from 'types';
+
+import { useCallback, useEffect } from 'react';
+
+import { debounce, omit } from 'lodash';
+
 import { modifyDraftSpec } from 'api/draftSpecs';
+
 import {
     useBindingsEditorStore_recommendFields,
     useBindingsEditorStore_selectionActive,
@@ -10,10 +17,9 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
+
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { debounce, omit } from 'lodash';
-import { useCallback, useEffect } from 'react';
-import { Schema } from 'types';
+
 import { hasLength } from 'utils/misc-utils';
 
 function useFieldSelection(collectionName: string) {

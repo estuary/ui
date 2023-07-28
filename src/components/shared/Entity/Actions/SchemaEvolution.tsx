@@ -28,8 +28,8 @@ import {
     JOB_STATUS_COLUMNS,
     JOB_STATUS_POLLER_ERROR,
     jobStatusPoller,
-    TABLES,
     jobStatusPoller,
+    TABLES,
 } from 'services/supabase';
 
 import {

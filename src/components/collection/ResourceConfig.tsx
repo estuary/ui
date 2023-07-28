@@ -1,13 +1,20 @@
+import { useMemo } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+
 import { Box, Typography } from '@mui/material';
+
 import ResourceConfigForm from 'components/collection/ResourceConfigForm';
 import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
+
 import { useEntityType } from 'context/EntityContext';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { useResourceConfig_hydrated } from 'stores/ResourceConfig/hooks';
+
 import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
 
 interface Props {

@@ -1,19 +1,33 @@
-import { CatalogStats_Details } from 'types';
+import { CatalogStats_Details, CatalogStats_Details } from 'types';
 
-import { useEffect, useMemo, useState } from 'react';
+import {
+    useEffect,
+    useEffect,
+    useMemo,
+    useMemo,
+    useState,
+    useState,
+} from 'react';
 
-import { useTheme } from '@mui/material';
-import { defaultOutlineColor, eChartsColors } from 'context/Theme';
-import { format, parseISO } from 'date-fns';
 import { EChartsOption } from 'echarts';
-import { eachHourOfInterval, subHours } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import prettyBytes from 'pretty-bytes';
-import { FormatDateOptions, useIntl } from 'react-intl';
+import {
+    FormatDateOptions,
+    FormatDateOptions,
+    useIntl,
+    useIntl,
+} from 'react-intl';
 import readable from 'readable-numbers';
 
-import { useTheme } from '@mui/material';
+import { useTheme, useTheme } from '@mui/material';
 
-import { defaultOutlineColor, eChartsColors } from 'context/Theme';
+import {
+    defaultOutlineColor,
+    defaultOutlineColor,
+    eChartsColors,
+    eChartsColors,
+} from 'context/Theme';
 
 import { BarChart } from 'echarts/charts';
 import {
@@ -26,11 +40,7 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import prettyBytes from 'pretty-bytes';
-import { useEffect, useMemo, useState } from 'react';
-import { FormatDateOptions, useIntl } from 'react-intl';
-import readable from 'readable-numbers';
-import { CatalogStats_Details } from 'types';
+
 import { getTooltipItem, getTooltipTitle } from '../tooltips';
 import { DataByHourRange } from '../types';
 import useLegendConfig from '../useLegendConfig';

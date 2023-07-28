@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction } from 'react';
 
 import produce from 'immer';
 import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
-import { create, StoreApi } from 'zustand';
+import { create, create, StoreApi, StoreApi } from 'zustand';
 
 import { infer } from '@estuary/flow-web';
 
@@ -27,7 +27,6 @@ import { filterInferSchemaResponse, hasReadSchema } from 'utils/schema-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 
 import { devtools, NamedSet } from 'zustand/middleware';
-import { StoreApi, create } from 'zustand';
 
 const processDraftSpecResponse = (
     draftSpecResponse: CallSupabaseResponse<any>,

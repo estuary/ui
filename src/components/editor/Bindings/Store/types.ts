@@ -1,18 +1,19 @@
-import { AlertColor } from '@mui/material';
-import { IncompatibleCollections } from 'api/evolutions';
-import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
-import { CollectionData } from 'components/editor/Bindings/types';
-import { Dispatch, SetStateAction } from 'react';
-
 import { InferSchemaPropertyForRender, Schema } from 'types';
 
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, Dispatch, SetStateAction, SetStateAction } from 'react';
 
-import { AlertColor } from '@mui/material';
+import { AlertColor, AlertColor } from '@mui/material';
 
-import { IncompatibleCollections } from 'api/evolutions';
+import {
+    IncompatibleCollections,
+    IncompatibleCollections,
+} from 'api/evolutions';
 
-import { CollectionData } from 'components/editor/Bindings/types';
+import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
+import {
+    CollectionData,
+    CollectionData,
+} from 'components/editor/Bindings/types';
 
 export interface BindingsEditorState {
     collectionData: CollectionData | null | undefined;

@@ -1,3 +1,11 @@
+import { Schema } from 'types';
+
+import { SyntheticEvent, useCallback, useEffect, useState } from 'react';
+
+import { isEqual } from 'lodash';
+import { Square } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
 import {
     Box,
     Checkbox,
@@ -6,6 +14,7 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
+
 import {
     BuiltSpec_Binding,
     CompositeProjection,
@@ -27,12 +36,8 @@ import {
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import ExternalLink from 'components/shared/ExternalLink';
 import FieldSelectionTable from 'components/tables/FieldSelection';
-import { Square } from 'iconoir-react';
+
 import CheckSquare from 'icons/CheckSquare';
-import { isEqual } from 'lodash';
-import { SyntheticEvent, useCallback, useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { Schema } from 'types';
 
 interface Props {
     collectionName: string;
