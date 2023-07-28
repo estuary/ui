@@ -1,20 +1,24 @@
 import { Box, Button, Divider, Stack, useTheme } from '@mui/material';
 import { defaultOutline } from 'context/Theme';
+import invariableStores from 'context/Zustand/invariableStores';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useStore } from 'zustand';
 
 interface Props {
-    removeAllCollections: (event: React.MouseEvent<HTMLElement>) => void;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
 }
 
-function CollectionSelectorActions({
-    removeAllCollections,
-    readOnly,
-    RediscoverButton,
-}: Props) {
+function CollectionSelectorActions({ readOnly, RediscoverButton }: Props) {
     const theme = useTheme();
+
+    const resetSelected = useStore(
+        invariableStores['Collections-Selector-Table'],
+        (state) => {
+            return state.resetSelected;
+        }
+    );
 
     return (
         <Box
@@ -45,7 +49,12 @@ function CollectionSelectorActions({
                 <Button
                     variant="text"
                     disabled={readOnly}
-                    onClick={removeAllCollections}
+                    onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        resetSelected();
+                    }}
                     sx={{ borderRadius: 0 }}
                 >
                     <FormattedMessage id="workflows.collectionSelector.cta.delete" />

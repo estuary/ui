@@ -1,12 +1,11 @@
 import { Box } from '@mui/material';
-import { useLiveSpecs } from 'hooks/useLiveSpecs';
-import { difference } from 'lodash';
+import invariableStores from 'context/Zustand/invariableStores';
 import { ReactNode } from 'react';
+import { useStore } from 'zustand';
 import { BindingsSelectorSkeleton } from '../CollectionSkeletons';
 import CollectionSearchAndSelector from '../UnderDev_Selector';
 import CollectionSelectorActions from './Actions';
 import CollectionSelectorList from './List';
-import CollectionSelectorSearch from './Search';
 
 interface BindingSelectorProps {
     loading: boolean;
@@ -14,10 +13,6 @@ interface BindingSelectorProps {
 
     currentCollection?: any;
     setCurrentCollection?: (collection: any) => void;
-
-    collections: Set<string>;
-    removeCollection: (collectionName: string) => void;
-    addCollection: (collectionName: string) => void;
 
     readOnly?: boolean;
     skeleton?: ReactNode;
@@ -32,54 +27,31 @@ function CollectionSelector({
     readOnly,
     RediscoverButton,
 
-    collections,
-    addCollection,
-    removeCollection,
-    removeAllCollections,
-
     currentCollection,
     setCurrentCollection,
 
     height,
 }: BindingSelectorProps) {
-    const { liveSpecs } = useLiveSpecs('collection');
-    const catalogNames = liveSpecs.map((liveSpec) => liveSpec.catalog_name);
-
-    const collectionsArray = Array.from(collections);
-
-    console.log('collections', collections);
+    const selected = useStore(
+        invariableStores['Collections-Selector-Table'],
+        (state) => {
+            return state.selected;
+        }
+    );
 
     return loading ? (
         <Box>{skeleton ? skeleton : <BindingsSelectorSkeleton />}</Box>
     ) : (
         <>
-            <CollectionSearchAndSelector collections={collections} />
-
-            <CollectionSelectorSearch
-                options={catalogNames}
-                readOnly={readOnly}
-                selectedCollections={collectionsArray}
-                onChange={(value, reason) => {
-                    if (reason === 'selectOption') {
-                        addCollection(difference(value, collectionsArray)[0]);
-                    } else if (reason === 'removeOption') {
-                        removeCollection(
-                            difference(collectionsArray, value)[0]
-                        );
-                    }
-                }}
-            />
+            <CollectionSearchAndSelector />
 
             <CollectionSelectorActions
-                readOnly={readOnly ?? collections.size === 0}
-                removeAllCollections={removeAllCollections}
+                readOnly={readOnly ?? selected.size === 0}
                 RediscoverButton={RediscoverButton}
             />
 
             <CollectionSelectorList
                 height={height}
-                collections={collections}
-                removeCollection={removeCollection}
                 currentCollection={currentCollection}
                 setCurrentCollection={setCurrentCollection}
             />

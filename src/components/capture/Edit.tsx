@@ -38,7 +38,7 @@ import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 import { getPathWithParams, MAX_DISCOVER_TIME } from 'utils/misc-utils';
 
-import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
+import { authenticatedRoutes } from 'app/routes';
 
 function CaptureEdit() {
     usePageTitle({
