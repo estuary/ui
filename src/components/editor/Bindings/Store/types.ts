@@ -1,5 +1,6 @@
 import { AlertColor } from '@mui/material';
 import { IncompatibleCollections } from 'api/evolutions';
+import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
 import { CollectionData } from 'components/editor/Bindings/types';
 import { Dispatch, SetStateAction } from 'react';
 import { InferSchemaPropertyForRender, Schema } from 'types';
@@ -76,6 +77,23 @@ export interface BindingsEditorState {
         value: BindingsEditorState['incompatibleCollections']
     ) => void;
     hasIncompatibleCollections: boolean;
+
+    // Field Selection
+    recommendFields: boolean;
+    setRecommendFields: (value: BindingsEditorState['recommendFields']) => void;
+
+    selections: { [field: string]: FieldSelectionType | null };
+    setSingleSelection: (
+        field: string,
+        selectionType: FieldSelectionType | null,
+        initOnly?: boolean
+    ) => void;
+
+    selectionActive: boolean;
+    setSelectionActive: (value: BindingsEditorState['selectionActive']) => void;
+
+    selectionSaving: boolean;
+    setSelectionSaving: (value: BindingsEditorState['selectionSaving']) => void;
 
     // Misc.
     resetState: () => void;

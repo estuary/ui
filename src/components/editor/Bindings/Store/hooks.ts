@@ -269,6 +269,62 @@ export const useBindingsEditorStore_populateInferSchemaResponse = () => {
     );
 };
 
+export const useBindingsEditorStore_recommendFields = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['recommendFields']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.recommendFields);
+};
+
+export const useBindingsEditorStore_setRecommendFields = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setRecommendFields']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.setRecommendFields);
+};
+
+export const useBindingsEditorStore_selections = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['selections']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.selections);
+};
+
+export const useBindingsEditorStore_setSingleSelection = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setSingleSelection']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.setSingleSelection);
+};
+
+export const useBindingsEditorStore_selectionActive = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['selectionActive']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.selectionActive);
+};
+
+export const useBindingsEditorStore_setSelectionActive = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setSelectionActive']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.setSelectionActive);
+};
+
+export const useBindingsEditorStore_selectionSaving = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['selectionSaving']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.selectionSaving);
+};
+
+export const useBindingsEditorStore_setSelectionSaving = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setSelectionSaving']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.setSelectionSaving);
+};
+
 export const useBindingsEditorStore_resetState = () => {
     return useZustandStore<
         BindingsEditorState,
