@@ -24,10 +24,17 @@ import useLegendConfig from '../useLegendConfig';
 import useTooltipConfig from '../useTooltipConfig';
 
 interface Props {
+    id: string;
     range: DataByHourRange;
     stats: CatalogStats_Details[] | undefined;
     createdAt?: string;
 }
+
+// These are keys that are used all over. Not typing them as Echarts typing within
+//  dataset complained when I tried
+const TIME = 'timestamp';
+const DOCS = 'docs';
+const BYTES = 'bytes';
 
 const formatTimeSettings: FormatDateOptions = {
     hour: '2-digit',
@@ -41,7 +48,7 @@ const defaultDataFormat = (value: any) => {
     });
 };
 
-function DataByHourGraph({ range, stats = [] }: Props) {
+function DataByHourGraph({ id, range, stats = [] }: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const legendConfig = useLegendConfig();
@@ -64,7 +71,7 @@ function DataByHourGraph({ range, stats = [] }: Props) {
                 MarkLineComponent,
             ]);
 
-            const chartDom = document.getElementById('data-by-hour');
+            const chartDom = document.getElementById(id);
 
             if (chartDom) {
                 const chart = echarts.init(chartDom);
@@ -78,7 +85,7 @@ function DataByHourGraph({ range, stats = [] }: Props) {
                 });
             }
         }
-    }, [myChart]);
+    }, [id, myChart]);
 
     // Update the "last updated" string shown as an xAxis label
     useEffect(() => {
@@ -109,9 +116,9 @@ function DataByHourGraph({ range, stats = [] }: Props) {
                 : stat.bytes_by;
 
             return {
-                docs: totalDocs,
-                bytes: totalBytes,
-                timestamp: stat.ts,
+                [DOCS]: totalDocs,
+                [BYTES]: totalBytes,
+                [TIME]: stat.ts,
             };
         });
     }, [stats]);
@@ -127,7 +134,7 @@ function DataByHourGraph({ range, stats = [] }: Props) {
                 });
             }
 
-            if (dimension === 'docs') {
+            if (dimension === DOCS) {
                 return readable(value, 2, false);
             }
 
@@ -137,8 +144,8 @@ function DataByHourGraph({ range, stats = [] }: Props) {
         const bytesSeries: EChartsOption['series'] = {
             barMinHeight: 1,
             encode: {
-                x: 'timestamp',
-                y: 'bytes',
+                x: TIME,
+                y: BYTES,
             },
             markLine: {
                 data: [{ type: 'max', name: 'Max' }],
@@ -147,9 +154,7 @@ function DataByHourGraph({ range, stats = [] }: Props) {
                     color: 'white',
                     padding: 3,
                     position: 'start',
-                    formatter: ({ value }: any) => {
-                        return formatter(value, 'bytes');
-                    },
+                    formatter: ({ value }: any) => formatter(value, BYTES),
                 },
                 symbolSize: 0,
             },
@@ -161,8 +166,8 @@ function DataByHourGraph({ range, stats = [] }: Props) {
         const docsSeries: EChartsOption['series'] = {
             barMinHeight: 1,
             encode: {
-                x: 'timestamp',
-                y: 'docs',
+                x: TIME,
+                y: DOCS,
             },
             markLine: {
                 data: [{ type: 'max', name: 'Max' }],
@@ -172,9 +177,7 @@ function DataByHourGraph({ range, stats = [] }: Props) {
                     padding: 3,
 
                     position: 'end',
-                    formatter: ({ value }: any) => {
-                        return formatter(value, 'docs');
-                    },
+                    formatter: ({ value }: any) => formatter(value, DOCS),
                 },
                 symbolSize: 0,
             },
@@ -191,7 +194,7 @@ function DataByHourGraph({ range, stats = [] }: Props) {
             useUTC: true,
             // Setting dataset here because setting in a stand alone set option cause the chart to go blank
             dataset: {
-                dimensions: ['timestamp', 'bytes', 'docs'],
+                dimensions: [TIME, BYTES, DOCS],
                 source: scopedDataSet,
             },
             textStyle: {
@@ -324,7 +327,7 @@ function DataByHourGraph({ range, stats = [] }: Props) {
         tooltipConfig,
     ]);
 
-    return <div id="data-by-hour" style={{ height: 350 }} />;
+    return <div id={id} style={{ height: 350 }} />;
 }
 
 export default DataByHourGraph;
