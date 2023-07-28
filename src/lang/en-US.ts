@@ -866,6 +866,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.label.listHeader': `Collections`,
     'workflows.collectionSelector.tab.collectionSchema': `Collection`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
+    'workflows.collectionSelector.tab.fieldSelection': `Field Selection`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
@@ -1165,6 +1166,35 @@ const Graphs: ResolvedIntlConfig['messages'] = {
     'graphs.entityDetails.empty.message': `Unable to fetch details for data usage graph.`,
 };
 
+const FieldSelection: ResolvedIntlConfig['messages'] = {
+    'fieldSelection.header': `Field Selection`,
+    'fieldSelection.message': `Determine which fields in your collection get materialized. By default, the fields exported by your materialization are dynamically selected by the connector. Click "${CTAs['cta.testConfig']}" to update the table below.`,
+    'fieldSelection.cta.defaultAllFields': `Accept connector defaults`,
+    'fieldSelection.dialog.updateProjection.header': `Update Projection`,
+    'fieldSelection.dialog.updateProjection.header.new': `Add Projection`,
+    'fieldSelection.dialog.updateProjection.message': `Update projection for collection, {collection}, to change how the field appears when materialized.`,
+    'fieldSelection.dialog.updateProjection.cta.apply': `Apply`,
+    'fieldSelection.dialog.updateProjection.label.fieldName': `Field Name:`,
+    'fieldSelection.dialog.updateProjection.label.pointer': `JSON Pointer:`,
+    'fieldSelection.dialog.updateProjection.label.type': `Type:`,
+    'fieldSelection.table.cta.addProjection': `Add Projection`,
+    'fieldSelection.table.cta.defaultField': `Default`,
+    'fieldSelection.table.cta.excludeField': `Exclude`,
+    'fieldSelection.table.cta.includeField': `Include`,
+    'fieldSelection.table.cta.renameField': `Rename`,
+    'fieldSelection.table.empty.header': `No information found`,
+    'fieldSelection.table.empty.message': `Click the test button above to validate your resource configuration and create a set of projections.`,
+    'fieldSelection.table.label.details': `Details`,
+    'fieldSelection.table.label.actions': `Actions`,
+    'fieldSelection.table.label.fieldRequired': `Field Required`,
+    'fieldSelection.table.label.locationRequired': `Location Required`,
+    'fieldSelection.table.label.locationRecommended': `Location Recommended`,
+    'fieldSelection.table.label.fieldOptional': `Field Optional`,
+    'fieldSelection.table.label.fieldForbidden': `Field Forbidden`,
+    'fieldSelection.table.label.unsatisfiable': `Unsatisfiable`,
+    'fieldSelection.table.label.unknown': `Unknown`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1222,6 +1252,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...UpdateEntity,
     ...PrefixedName,
     ...Graphs,
+    ...FieldSelection,
 };
 
 export default enUSMessages;

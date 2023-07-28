@@ -8,6 +8,7 @@ import { useBindingsEditorStore_setIncompatibleCollections } from 'components/ed
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
+    useEditorStore_queryResponse_mutate,
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setPubId,
 } from 'components/editor/Store/hooks';
@@ -17,9 +18,9 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
     DEFAULT_FILTER,
-    jobStatusPoller,
     JOB_STATUS_COLUMNS,
     TABLES,
+    jobStatusPoller,
 } from 'services/supabase';
 import { useDetailsForm_details_description } from 'stores/DetailsForm/hooks';
 import {
@@ -64,6 +65,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
     const isSaving = useEditorStore_isSaving();
 
     const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
+    const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
     // Details Form Store
     const entityDescription = useDetailsForm_details_description();
@@ -119,6 +121,10 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
                 } else {
                     description = `${messagePrefix}.testNotification.desc`;
                     title = `${messagePrefix}.testNotification.title`;
+
+                    if (mutateDraftSpecs) {
+                        void mutateDraftSpecs();
+                    }
                 }
 
                 showNotification({
