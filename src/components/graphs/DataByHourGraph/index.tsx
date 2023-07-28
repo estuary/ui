@@ -1,33 +1,16 @@
-import { CatalogStats_Details, CatalogStats_Details } from 'types';
+import { CatalogStats_Details } from 'types';
 
-import {
-    useEffect,
-    useEffect,
-    useMemo,
-    useMemo,
-    useState,
-    useState,
-} from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { EChartsOption } from 'echarts';
 import { format, parseISO } from 'date-fns';
 import prettyBytes from 'pretty-bytes';
-import {
-    FormatDateOptions,
-    FormatDateOptions,
-    useIntl,
-    useIntl,
-} from 'react-intl';
+import { FormatDateOptions, useIntl } from 'react-intl';
 import readable from 'readable-numbers';
 
-import { useTheme, useTheme } from '@mui/material';
+import { useTheme } from '@mui/material';
 
-import {
-    defaultOutlineColor,
-    defaultOutlineColor,
-    eChartsColors,
-    eChartsColors,
-} from 'context/Theme';
+import { defaultOutlineColor, eChartsColors } from 'context/Theme';
 
 import { BarChart } from 'echarts/charts';
 import {
