@@ -17,6 +17,7 @@ export const columns: TableColumns[] = [
     {
         field: 'field',
         headerIntlKey: 'data.field',
+        sticky: true,
     },
     {
         field: 'ptr',
@@ -76,12 +77,13 @@ function FieldSelectionTable({ projections }: Props) {
         }
     }, [setTableState, formStatus, projections]);
 
+    // TODO (field selection): Extend the row hover styling to the sticky cell.
     return (
         <Box>
             <TableContainer component={Box}>
                 <Table
                     size="small"
-                    sx={{ minWidth: 350 }}
+                    sx={{ minWidth: 350, borderCollapse: 'separate' }}
                     aria-label={intl.formatMessage({
                         id: 'entityTable.title',
                     })}

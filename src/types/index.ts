@@ -275,6 +275,7 @@ export interface TableColumns {
     field: string | null;
     headerIntlKey?: string | null;
     width?: number;
+    sticky?: boolean;
 }
 
 export interface TableState {

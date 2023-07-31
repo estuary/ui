@@ -1,11 +1,11 @@
 import {
-    createTheme,
+    ThemeProvider as MUIThemeProvider,
     PaletteOptions,
     SxProps,
     Theme,
     ThemeOptions,
-    ThemeProvider as MUIThemeProvider,
     TypographyProps,
+    createTheme,
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -410,6 +410,25 @@ export const dataGridListStyling: SxProps<Theme> = {
         justifyContent: 'space-between',
         mr: 4.5,
     },
+};
+
+const tableCellBackground = {
+    light: 'white',
+    dark: '#293341',
+};
+
+export const getStickyTableCell = (headerParent?: boolean): SxProps<Theme> => {
+    return {
+        position: 'sticky',
+        left: 0,
+        background: (theme) =>
+            headerParent
+                ? theme.palette.background.default
+                : tableCellBackground[theme.palette.mode],
+        borderRight: (theme) =>
+            `3px solid ${defaultOutlineColor[theme.palette.mode]}`,
+        zIndex: zIndexIncrement,
+    };
 };
 
 export const disabledButtonText = {

@@ -3,6 +3,7 @@ import { CompositeProjection } from 'components/editor/Bindings/FieldSelection/t
 import ChipListCell from 'components/tables/cells/ChipList';
 import ConstraintDetails from 'components/tables/cells/fieldSelection/ConstraintDetails';
 import FieldActions from 'components/tables/cells/fieldSelection/FieldActions';
+import { getStickyTableCell } from 'context/Theme';
 import { orderBy } from 'lodash';
 import { SortDirection } from 'types';
 
@@ -19,7 +20,7 @@ interface RowsProps {
 function Row({ row }: RowProps) {
     return (
         <TableRow hover>
-            <TableCell>
+            <TableCell sx={getStickyTableCell()}>
                 <Typography>{row.field}</Typography>
             </TableCell>
 
