@@ -122,6 +122,8 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
                     description = `${messagePrefix}.testNotification.desc`;
                     title = `${messagePrefix}.testNotification.title`;
 
+                    // Materialization field selection sources content from the built spec and validation response
+                    // generated on each successful publication.
                     if (mutateDraftSpecs) {
                         void mutateDraftSpecs();
                     }
@@ -142,10 +144,10 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
             async (payload: any) => {
                 trackEvent(logEvent, payload);
 
-                const imcompatibleCollections =
+                const incompatibleCollections =
                     payload?.job_status?.incompatible_collections;
-                if (hasLength(imcompatibleCollections)) {
-                    setIncompatibleCollections(imcompatibleCollections);
+                if (hasLength(incompatibleCollections)) {
+                    setIncompatibleCollections(incompatibleCollections);
                 }
 
                 onFailure({

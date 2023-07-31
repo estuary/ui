@@ -49,18 +49,6 @@ function useFieldSelection(collectionName: string) {
 
     return useCallback(
         async (draftSpec: DraftSpecQuery) => {
-            const includedFields: string[] = Object.entries(selections)
-                .filter(
-                    ([_field, selectionType]) => selectionType === 'include'
-                )
-                .map(([field]) => field);
-
-            const excludedFields: string[] = Object.entries(selections)
-                .filter(
-                    ([_field, selectionType]) => selectionType === 'exclude'
-                )
-                .map(([field]) => field);
-
             const bindingIndex: number = draftSpec.spec.bindings.findIndex(
                 (binding: any) => binding.source === collectionName
             );
@@ -75,6 +63,18 @@ function useFieldSelection(collectionName: string) {
                     exclude: [],
                     include: {},
                 };
+
+                const includedFields: string[] = Object.entries(selections)
+                    .filter(
+                        ([_field, selectionType]) => selectionType === 'include'
+                    )
+                    .map(([field]) => field);
+
+                const excludedFields: string[] = Object.entries(selections)
+                    .filter(
+                        ([_field, selectionType]) => selectionType === 'exclude'
+                    )
+                    .map(([field]) => field);
 
                 if (
                     hasLength(includedFields) ||
