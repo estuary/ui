@@ -9,7 +9,14 @@ module.exports = {
         project: './tsconfig.json',
         tsconfigRootDir: __dirname,
     },
+    plugins: ['unused-imports', 'import'],
     rules: {
+        // Want to make sure imports and exports are always formatted correctly
+        'unused-imports/no-unused-imports': 'error',
+        'import/first': 'error',
+        'import/newline-after-import': 'error',
+        'import/no-duplicates': 'error',
+
         // Only turning off right now to see more actual issues
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-unsafe-argument': 'off',
