@@ -30,16 +30,22 @@ function Row({ row }: RowProps) {
             <ChipListCell values={row.inference.types} stripPath={false} />
 
             {row.constraint ? (
-                <ConstraintDetails constraint={row.constraint} />
-            ) : null}
+                <>
+                    <ConstraintDetails constraint={row.constraint} />
 
-            {row.constraint ? (
-                <FieldActions
-                    field={row.field}
-                    constraint={row.constraint}
-                    selectionType={row.selectionType}
-                />
-            ) : null}
+                    <FieldActions
+                        field={row.field}
+                        constraint={row.constraint}
+                        selectionType={row.selectionType}
+                    />
+                </>
+            ) : (
+                <>
+                    <TableCell />
+
+                    <TableCell />
+                </>
+            )}
         </TableRow>
     );
 }
