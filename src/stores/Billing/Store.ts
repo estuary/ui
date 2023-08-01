@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { isEqual } from 'lodash';
+import { isArray, isEqual } from 'lodash';
 import { BillingState, DataVolumeByTask } from 'stores/Billing/types';
 import {
     getInitialHydrationData,
@@ -7,21 +7,24 @@ import {
 } from 'stores/extensions/Hydration';
 import { BillingStoreNames } from 'stores/names';
 import { evaluateSpecType, stripTimeFromDate } from 'utils/billing-utils';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import { StoreApi, create } from 'zustand';
+import { NamedSet, devtools } from 'zustand/middleware';
 
 const getInitialStateData = (): Pick<
     BillingState,
     | 'billingHistory'
     | 'billingHistoryInitialized'
     | 'dataByTaskGraphDetails'
+    | 'paymentMethodExists'
     | 'selectedTenant'
 > => {
     return {
         billingHistory: [],
         billingHistoryInitialized: false,
         dataByTaskGraphDetails: [],
+        paymentMethodExists: null,
         selectedTenant: '',
     };
 };
@@ -77,7 +80,8 @@ export const getInitialState = (
                     // Since the selected tenant is subject to vary, the billed prefix of the record input must be
                     // validated against the selected tenant before altering the billing history.
                     if (
-                        value[0].max_concurrent_tasks > 0 &&
+                        typeof value[0].task_usage_hours === 'number' &&
+                        typeof value[0].processed_data_gb === 'number' &&
                         value[0].billed_prefix === state.selectedTenant
                     ) {
                         const { billingHistory } = get();
@@ -134,6 +138,17 @@ export const getInitialState = (
                 }),
                 false,
                 'Data By Task Graph Details Set'
+            );
+        },
+
+        setPaymentMethodExists: (value) => {
+            set(
+                produce((state: BillingState) => {
+                    state.paymentMethodExists =
+                        isArray(value) && hasLength(value);
+                }),
+                false,
+                'Payment Exists Updated'
             );
         },
 

@@ -1,5 +1,5 @@
 import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { createClient, User } from '@supabase/supabase-js';
+import { User, createClient } from '@supabase/supabase-js';
 import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { forEach, isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
@@ -67,7 +67,7 @@ export enum RPCS {
     EXCHANGE_DIRECTIVES = 'exchange_directive_token',
     VIEW_LOGS = 'view_logs',
     CREATE_REFRESH_TOKEN = 'create_refresh_token',
-    BILLING_REPORT = 'billing_report',
+    BILLING_REPORT = 'billing_report_202308',
     AUTH_ROLES = 'auth_roles',
 }
 

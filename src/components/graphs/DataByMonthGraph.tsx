@@ -24,15 +24,14 @@ import {
 import useConstant from 'use-constant';
 import {
     CARD_AREA_HEIGHT,
-    formatDataVolumeForDisplay,
     SeriesConfig,
-    SeriesNames,
+    formatDataVolumeForDisplay,
     stripTimeFromDate,
 } from 'utils/billing-utils';
 import { getTooltipItem, getTooltipTitle } from './tooltips';
 import useTooltipConfig from './useTooltipConfig';
 
-const stackId = 'Data Volume';
+const chartContainerId = 'data-by-month';
 
 function DataByMonthGraph() {
     const theme = useTheme();
@@ -58,11 +57,7 @@ function DataByMonthGraph() {
     const seriesConfig: SeriesConfig[] = useMemo(() => {
         const startDate = startOfMonth(sub(today, { months: 5 }));
 
-        const scopedDataSet: {
-            month: string;
-            includedDataVolume: number;
-            surplusDataVolume: number;
-        }[] = billingHistory
+        const scopedDataSet: SeriesConfig[] = billingHistory
             .filter(({ billed_month }) => {
                 const billedMonth = stripTimeFromDate(billed_month);
 
@@ -71,34 +66,17 @@ function DataByMonthGraph() {
                     end: today,
                 });
             })
-            .map(({ billed_month, line_items }) => {
+            .map(({ billed_month, processed_data_gb }) => {
                 const billedMonth = stripTimeFromDate(billed_month);
+                const month = intl.formatDate(billedMonth, { month: 'short' });
 
                 return {
-                    month: intl.formatDate(billedMonth, { month: 'short' }),
-                    includedDataVolume: line_items[2].count,
-                    surplusDataVolume: line_items[3].count,
+                    seriesName: billed_month,
+                    data: [[month, processed_data_gb ?? 0]],
                 };
             });
 
-        return scopedDataSet.flatMap(
-            ({
-                month,
-                includedDataVolume,
-                surplusDataVolume,
-            }): SeriesConfig | SeriesConfig[] => [
-                {
-                    seriesName: SeriesNames.INCLUDED,
-                    stack: stackId,
-                    data: [[month, includedDataVolume]],
-                },
-                {
-                    seriesName: SeriesNames.SURPLUS,
-                    stack: stackId,
-                    data: [[month, surplusDataVolume]],
-                },
-            ]
-        );
+        return scopedDataSet;
     }, [billingHistory, intl, today]);
 
     useEffect(() => {
@@ -113,7 +91,7 @@ function DataByMonthGraph() {
                     TooltipComponent,
                 ]);
 
-                const chartDom = document.getElementById('data-by-month');
+                const chartDom = document.getElementById(chartContainerId);
 
                 setMyChart(chartDom && echarts.init(chartDom));
             }
@@ -139,11 +117,11 @@ function DataByMonthGraph() {
                     },
                     minInterval: 0.001,
                 },
-                series: seriesConfig.map(({ seriesName, stack, data }) => ({
+                series: seriesConfig.map(({ seriesName, data }) => ({
                     name: seriesName,
                     type: 'bar',
-                    stack,
-                    barMinHeight: seriesName === SeriesNames.INCLUDED ? 3 : 0,
+                    stack: 'Data Volume',
+                    barMinHeight: 3,
                     data: data.map(([month, dataVolume]) => [
                         month,
                         dataVolume.toFixed(3),
@@ -165,7 +143,6 @@ function DataByMonthGraph() {
 
                             const tooltipItem = getTooltipItem(
                                 config.marker,
-                                config.seriesName,
                                 dataVolume
                             );
 
@@ -222,7 +199,7 @@ function DataByMonthGraph() {
         tooltipConfig,
     ]);
 
-    return <div id="data-by-month" style={{ height: CARD_AREA_HEIGHT }} />;
+    return <div id={chartContainerId} style={{ height: CARD_AREA_HEIGHT }} />;
 }
 
 export default DataByMonthGraph;

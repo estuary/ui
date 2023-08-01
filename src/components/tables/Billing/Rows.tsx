@@ -18,15 +18,14 @@ function Row({ row }: RowProps) {
         <TableRow hover>
             <TimeStamp date={row.billed_month} />
 
-            <DataVolume volumeInGB={row.total_processed_data_gb} />
-
-            <TableCell>
-                <Typography>{row.max_concurrent_tasks}</Typography>
-            </TableCell>
+            <DataVolume volumeInGB={row.processed_data_gb ?? 0} />
 
             <TableCell>
                 <Typography>
-                    <FormattedMessage id="admin.billing.tier.personal" />
+                    <FormattedMessage
+                        id="admin.billing.graph.taskHoursByMonth.formatValue"
+                        values={{ taskUsage: row.task_usage_hours }}
+                    />
                 </Typography>
             </TableCell>
 
