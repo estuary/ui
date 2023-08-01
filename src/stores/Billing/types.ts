@@ -27,5 +27,8 @@ export interface BillingState extends StoreWithHydration {
     setBillingHistory: (value: BillingRecord[]) => void;
     updateBillingHistory: (value: BillingRecord[]) => void;
 
+    paymentMethodExists: boolean | null;
+    setPaymentMethodExists: (value: any[] | undefined) => void;
+
     resetState: () => void;
 }

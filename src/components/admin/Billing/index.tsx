@@ -9,7 +9,7 @@ import AdminTabs from 'components/admin/Tabs';
 import DataByMonthGraph from 'components/graphs/DataByMonthGraph';
 import DataByTaskGraph from 'components/graphs/DataByTaskGraph';
 import GraphStateWrapper from 'components/graphs/states/Wrapper';
-import TasksByMonth from 'components/graphs/TasksByMonthGraph';
+import TaskHoursByMonthGraph from 'components/graphs/TaskHoursByMonthGraph';
 import AlertBox from 'components/shared/AlertBox';
 import BillingHistoryTable from 'components/tables/Billing';
 import { eachMonthOfInterval, format, startOfMonth, subMonths } from 'date-fns';
@@ -96,7 +96,12 @@ function AdminBilling() {
                                 throw new Error(response.error.message);
                             }
 
-                            if (response.data.max_concurrent_tasks > 0) {
+                            if (
+                                typeof response.data.task_usage_hours ===
+                                    'number' &&
+                                typeof response.data.processed_data_gb ===
+                                    'number'
+                            ) {
                                 data.push(response.data);
                             }
                         });
@@ -220,11 +225,11 @@ function AdminBilling() {
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}
                         message={
-                            <FormattedMessage id="admin.billing.graph.tasksByMonth.header" />
+                            <FormattedMessage id="admin.billing.graph.taskHoursByMonth.header" />
                         }
                     >
                         <GraphStateWrapper>
-                            <TasksByMonth />
+                            <TaskHoursByMonthGraph />
                         </GraphStateWrapper>
                     </CardWrapper>
                 </Grid>

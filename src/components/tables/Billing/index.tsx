@@ -20,12 +20,8 @@ export const columns: TableColumns[] = [
         headerIntlKey: 'admin.billing.table.history.label.dataVolume',
     },
     {
-        field: 'task_count',
+        field: 'task_usage',
         headerIntlKey: 'admin.billing.table.history.label.tasks',
-    },
-    {
-        field: 'details',
-        headerIntlKey: 'admin.billing.table.history.label.details',
     },
     {
         field: 'total_cost',

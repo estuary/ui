@@ -25,15 +25,14 @@ import useConstant from 'use-constant';
 import {
     CARD_AREA_HEIGHT,
     SeriesConfig,
-    SeriesNames,
     stripTimeFromDate,
 } from 'utils/billing-utils';
 import { getTooltipItem, getTooltipTitle } from './tooltips';
 import useTooltipConfig from './useTooltipConfig';
 
-const stackId = 'Task Count';
+const chartContainerId = 'task-hours-by-month';
 
-function DataByMonthGraph() {
+function TaskHoursByMonthGraph() {
     const theme = useTheme();
     const intl = useIntl();
     const tooltipConfig = useTooltipConfig();
@@ -57,11 +56,7 @@ function DataByMonthGraph() {
     const seriesConfig: SeriesConfig[] = useMemo(() => {
         const startDate = startOfMonth(sub(today, { months: 5 }));
 
-        const scopedDataSet: {
-            month: string;
-            includedTasks: number;
-            surplusTasks: number;
-        }[] = billingHistory
+        return billingHistory
             .filter(({ billed_month }) => {
                 const billedMonth = stripTimeFromDate(billed_month);
 
@@ -70,35 +65,15 @@ function DataByMonthGraph() {
                     end: today,
                 });
             })
-            .map(({ billed_month, line_items, max_concurrent_tasks }) => {
+            .map(({ billed_month, task_usage_hours }) => {
                 const billedMonth = stripTimeFromDate(billed_month);
+                const month = intl.formatDate(billedMonth, { month: 'short' });
 
                 return {
-                    month: intl.formatDate(billedMonth, { month: 'short' }),
-                    includedTasks:
-                        max_concurrent_tasks > 0 ? line_items[0].count : 0,
-                    surplusTasks: line_items[1].count,
+                    seriesName: billed_month,
+                    data: [[month, task_usage_hours ?? 0]],
                 };
             });
-
-        return scopedDataSet.flatMap(
-            ({
-                month,
-                includedTasks,
-                surplusTasks,
-            }): SeriesConfig | SeriesConfig[] => [
-                {
-                    seriesName: SeriesNames.INCLUDED,
-                    stack: stackId,
-                    data: [[month, includedTasks]],
-                },
-                {
-                    seriesName: SeriesNames.SURPLUS,
-                    stack: stackId,
-                    data: [[month, surplusTasks]],
-                },
-            ]
-        );
     }, [billingHistory, intl, today]);
 
     useEffect(() => {
@@ -113,7 +88,7 @@ function DataByMonthGraph() {
                     TooltipComponent,
                 ]);
 
-                const chartDom = document.getElementById('tasks-by-month');
+                const chartDom = document.getElementById(chartContainerId);
 
                 setMyChart(chartDom && echarts.init(chartDom));
             }
@@ -136,11 +111,11 @@ function DataByMonthGraph() {
                     },
                     minInterval: 1,
                 },
-                series: seriesConfig.map(({ seriesName, stack, data }) => ({
+                series: seriesConfig.map(({ seriesName, data }) => ({
                     name: seriesName,
                     type: 'bar',
-                    stack,
-                    barMinHeight: seriesName === SeriesNames.INCLUDED ? 3 : 0,
+                    stack: 'Task Count',
+                    barMinHeight: 3,
                     data,
                 })),
                 textStyle: {
@@ -153,14 +128,15 @@ function DataByMonthGraph() {
 
                         tooltipConfigs.forEach((config) => {
                             const taskCount = config.value[1];
-                            const formattedValue =
-                                taskCount === 1
-                                    ? `${taskCount} Task`
-                                    : `${taskCount} Tasks`;
+                            const formattedValue = intl.formatMessage(
+                                {
+                                    id: 'admin.billing.graph.taskHoursByMonth.formatValue',
+                                },
+                                { taskUsage: taskCount }
+                            );
 
                             const tooltipItem = getTooltipItem(
                                 config.marker,
-                                config.seriesName,
                                 formattedValue
                             );
 
@@ -217,7 +193,7 @@ function DataByMonthGraph() {
         tooltipConfig,
     ]);
 
-    return <div id="tasks-by-month" style={{ height: CARD_AREA_HEIGHT }} />;
+    return <div id={chartContainerId} style={{ height: CARD_AREA_HEIGHT }} />;
 }
 
-export default DataByMonthGraph;
+export default TaskHoursByMonthGraph;

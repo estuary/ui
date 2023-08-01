@@ -28,13 +28,15 @@ import useConstant from 'use-constant';
 import {
     BYTES_PER_GB,
     CARD_AREA_HEIGHT,
-    formatDataVolumeForDisplay,
     SeriesConfig,
+    formatDataVolumeForDisplay,
 } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
 import { getTooltipItem, getTooltipTitle } from './tooltips';
 import useLegendConfig from './useLegendConfig';
 import useTooltipConfig from './useTooltipConfig';
+
+const chartContainerId = 'data-by-task';
 
 const evaluateLargestDataProcessingTasks = (
     dataVolumeByTask: DataVolumeByTask[]
@@ -126,7 +128,7 @@ function DataByTaskGraph() {
                     TooltipComponent,
                 ]);
 
-                const chartDom = document.getElementById('data-by-task');
+                const chartDom = document.getElementById(chartContainerId);
 
                 setMyChart(chartDom && echarts.init(chartDom));
             }
@@ -233,7 +235,7 @@ function DataByTaskGraph() {
         tooltipConfig,
     ]);
 
-    return <div id="data-by-task" style={{ height: CARD_AREA_HEIGHT }} />;
+    return <div id={chartContainerId} style={{ height: CARD_AREA_HEIGHT }} />;
 }
 
 export default DataByTaskGraph;

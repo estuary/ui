@@ -29,7 +29,10 @@ import TableLoadingRows from 'components/tables/Loading';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
-import { useBilling_selectedTenant } from 'stores/Billing/hooks';
+import {
+    useBilling_selectedTenant,
+    useBilling_setPaymentMethodExists,
+} from 'stores/Billing/hooks';
 import { TableColumns } from 'types';
 
 const columns: TableColumns[] = [
@@ -67,6 +70,7 @@ const PaymentMethods = () => {
     );
 
     const selectedTenant = useBilling_selectedTenant();
+    const setPaymentMethodExists = useBilling_setPaymentMethodExists();
 
     const [refreshCounter, setRefreshCounter] = useState(0);
 
@@ -109,6 +113,12 @@ const PaymentMethods = () => {
             }
         })();
     }, [selectedTenant, refreshCounter]);
+
+    useEffect(() => {
+        if (!methodsLoading) {
+            setPaymentMethodExists(methods);
+        }
+    }, [setPaymentMethodExists, methods, methodsLoading]);
 
     // TODO (optimization): Remove this temporary, hacky means of detecting when the payment methods service errs
     //   when proper error handling is in place.
