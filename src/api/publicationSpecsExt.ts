@@ -33,5 +33,8 @@ export const getPublicationHistoryByCatalogName = (catalogName: string) => {
             TABLES.PUBLICATION_SPECS_EXT
         )
         .select(`*`)
-        .eq('catalog_name', catalogName);
+        .eq('catalog_name', catalogName)
+        .order('published_at', {
+            ascending: false,
+        });
 };
