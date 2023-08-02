@@ -77,7 +77,6 @@ function FieldSelectionTable({ projections }: Props) {
         }
     }, [setTableState, formStatus, projections]);
 
-    // TODO (field selection): Extend the row hover styling to the sticky cell.
     return (
         <Box>
             <TableContainer component={Box}>

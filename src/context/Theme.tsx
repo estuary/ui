@@ -412,6 +412,11 @@ export const dataGridListStyling: SxProps<Theme> = {
     },
 };
 
+export const doubleElevationHoverBackground = {
+    light: '#F5F5F5',
+    dark: '#3A4350',
+};
+
 const tableCellBackground = {
     light: 'white',
     dark: '#293341',
