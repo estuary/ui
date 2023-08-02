@@ -17,21 +17,13 @@ export interface PublicationSpecsExt_PublicationHistory {
 }
 
 export const getPublicationHistoryByCatalogName = (catalogName: string) => {
-    // const data = await supabaseClient
-    //  .from(TABLES.PUBLICATION_SPECS_EXT)
-    //  .select(`*`)
-    //  .eq('catalog_name', catalogName)
-    //  .then(
-    //      handleSuccess<PublicationSpecsExt_PublicationHistory>,
-    //      handleFailure
-    //  );
-
-    // return data;
-
     return supabaseClient
         .from<PublicationSpecsExt_PublicationHistory>(
             TABLES.PUBLICATION_SPECS_EXT
         )
         .select(`*`)
-        .eq('catalog_name', catalogName);
+        .eq('catalog_name', catalogName)
+        .order('published_at', {
+            ascending: false,
+        });
 };

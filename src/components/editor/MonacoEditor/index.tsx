@@ -18,6 +18,7 @@ import {
     useEditorStore_statuses,
 } from 'components/editor/Store/hooks';
 import { EditorStatus } from 'components/editor/Store/types';
+import { editorToolBarSx } from 'context/Theme';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -281,12 +282,8 @@ function MonacoEditor({
             <Paper sx={{ width: '100%' }} variant="outlined">
                 <Box
                     sx={{
+                        ...editorToolBarSx,
                         minHeight: toolbarHeight,
-                        py: 0.5,
-                        px: 1,
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
                     }}
                 >
                     <Typography sx={{ fontWeight: 500 }}>
