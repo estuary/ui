@@ -32,6 +32,8 @@ import CheckSquare from 'icons/CheckSquare';
 import { isEqual } from 'lodash';
 import { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import { Schema } from 'types';
 
 interface Props {
@@ -101,6 +103,9 @@ function FieldSelectionViewer({ collectionName }: Props) {
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
+
+    // Form State Store
+    const setFormState = useFormStateStore_setFormState();
 
     const [data, setData] = useState<
         CompositeProjection[] | null | undefined
@@ -212,14 +217,26 @@ function FieldSelectionViewer({ collectionName }: Props) {
 
     useEffect(() => {
         if (selectionSaving && draftSpecs.length > 0 && draftSpecs[0].spec) {
+            setFormState({ status: FormStatus.UPDATING });
+
             applyFieldSelections(draftSpecs[0])
                 .then(
-                    () => console.log('success'),
+                    () => {
+                        console.log('success');
+
+                        setFormState({ status: FormStatus.UPDATED });
+                    },
                     (error) => console.log('error', error)
                 )
                 .finally(() => setSelectionSaving(false));
         }
-    }, [applyFieldSelections, setSelectionSaving, draftSpecs, selectionSaving]);
+    }, [
+        applyFieldSelections,
+        setFormState,
+        setSelectionSaving,
+        draftSpecs,
+        selectionSaving,
+    ]);
 
     return (
         <Box sx={{ mt: 3 }}>
