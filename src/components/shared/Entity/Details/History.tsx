@@ -7,10 +7,17 @@ import {
     List,
     ListItemButton,
     ListItemText,
+    Paper,
     Stack,
+    Typography,
     useTheme,
 } from '@mui/material';
-import { monacoEditorComponentBackground } from 'context/Theme';
+import ListAndDetails from 'components/editor/ListAndDetails';
+import AlertBox from 'components/shared/AlertBox';
+import {
+    editorToolBarSx,
+    monacoEditorComponentBackground,
+} from 'context/Theme';
 import { format } from 'date-fns';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -19,8 +26,10 @@ import usePublicationSpecsExt_History from 'hooks/usePublicationSpecsExt';
 import { findIndex } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { stringifyJSON } from 'services/stringify';
+import { getEditorTotalHeight } from 'utils/editor-utils';
 import { hasLength } from 'utils/misc-utils';
 
+const HEIGHT = 400;
 const CARD_DATE_FORMAT = `EEEE, MMM do, yyyy 'at' hh:mm:ss aa`;
 
 const formatDate = (date?: string) => {
@@ -85,69 +94,112 @@ function History() {
         }
     }, [publications, selectedPublication]);
 
+    console.log('publications', publications);
+
     if (isValidating || !publications) {
         return <CircularProgress />;
     }
 
     return (
         <Box>
-            <Grid container spacing={2}>
-                <Grid item xs={12} md={3}>
-                    <List>
-                        {publications.map((publication) => (
-                            <ListItemButton
-                                key={`history-timeline-${publication.pub_id}`}
-                                onClick={() =>
-                                    setSelectedPublication(publication.pub_id)
-                                }
-                                selected={
-                                    selectedPublication === publication.pub_id
-                                }
-                            >
-                                <ListItemText>
-                                    <Stack>
-                                        <Box>
-                                            {formatDate(
-                                                publication.published_at
-                                            )}
+            <AlertBox short severity="warning" title="Under Development">
+                Please feel free to provide any and all feedback to the front
+                end team.
+            </AlertBox>
+            <ListAndDetails
+                displayBorder
+                height={getEditorTotalHeight(HEIGHT)}
+                list={
+                    <>
+                        <Typography variant="subtitle1">
+                            Publication History
+                        </Typography>
+                        <List>
+                            {publications.map((publication) => (
+                                <ListItemButton
+                                    key={`history-timeline-${publication.pub_id}`}
+                                    onClick={() =>
+                                        setSelectedPublication(
+                                            publication.pub_id
+                                        )
+                                    }
+                                    selected={
+                                        selectedPublication ===
+                                        publication.pub_id
+                                    }
+                                >
+                                    <ListItemText>
+                                        <Stack>
+                                            <Box>
+                                                {formatDate(
+                                                    publication.published_at
+                                                )}
+                                            </Box>
+                                            <Box>{publication.user_email}</Box>
+                                        </Stack>
+                                    </ListItemText>
+                                </ListItemButton>
+                            ))}
+                        </List>
+                    </>
+                }
+                details={
+                    // eslint-disable-next-line react/jsx-no-useless-fragment
+                    <>
+                        {hasLength(publications) && currentSpec ? (
+                            <Paper variant="outlined">
+                                <Grid container>
+                                    <Grid item xs={6}>
+                                        <Box
+                                            sx={{
+                                                ...editorToolBarSx,
+                                            }}
+                                        >
+                                            <Typography
+                                                sx={{ fontWeight: 500 }}
+                                            >
+                                                {previousSpec
+                                                    ? formatDate(
+                                                          previousSpec.published_at
+                                                      )
+                                                    : ''}
+                                            </Typography>
                                         </Box>
-                                        <Box>{publication.user_email}</Box>
-                                    </Stack>
-                                </ListItemText>
-                            </ListItemButton>
-                        ))}
-                    </List>
-                </Grid>
-                {hasLength(publications) && currentSpec ? (
-                    <Grid item xs={12} md={9}>
-                        <Grid container>
-                            <Grid item xs={6}>
-                                {previousSpec
-                                    ? formatDate(previousSpec.published_at)
-                                    : ''}
-                            </Grid>
-                            <Grid item xs={6}>
-                                {formatDate(currentSpec.published_at)}
-                            </Grid>
-                        </Grid>
-                        <DiffEditor
-                            height="400px"
-                            original={
-                                previousSpec
-                                    ? stringifyJSON(previousSpec.spec)
-                                    : ''
-                            }
-                            modified={stringifyJSON(currentSpec.spec)}
-                            theme={
-                                monacoEditorComponentBackground[
-                                    theme.palette.mode
-                                ]
-                            }
-                            options={{ readOnly: true }}
-                        />
-                    </Grid>
-                ) : null}
-            </Grid>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <Box sx={editorToolBarSx}>
+                                            <Typography
+                                                sx={{ fontWeight: 500 }}
+                                            >
+                                                {formatDate(
+                                                    currentSpec.published_at
+                                                )}
+                                            </Typography>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                                <DiffEditor
+                                    height={`${HEIGHT}px`}
+                                    original={
+                                        previousSpec
+                                            ? stringifyJSON(previousSpec.spec)
+                                            : ''
+                                    }
+                                    modified={stringifyJSON(currentSpec.spec)}
+                                    theme={
+                                        monacoEditorComponentBackground[
+                                            theme.palette.mode
+                                        ]
+                                    }
+                                    options={{ readOnly: true }}
+                                />
+                            </Paper>
+                        ) : (
+                            <CircularProgress />
+                        )}
+                    </>
+                }
+            />
         </Box>
     );
 }
