@@ -27,8 +27,6 @@ import {
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import ExternalLink from 'components/shared/ExternalLink';
 import FieldSelectionTable from 'components/tables/FieldSelection';
-import { Square } from 'iconoir-react';
-import CheckSquare from 'icons/CheckSquare';
 import { isEqual } from 'lodash';
 import { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -260,10 +258,6 @@ function FieldSelectionViewer({ collectionName }: Props) {
                         <Checkbox
                             value={recommendFields}
                             checked={recommendFields}
-                            icon={<Square style={{ fontSize: 14 }} />}
-                            checkedIcon={
-                                <CheckSquare style={{ fontSize: 14 }} />
-                            }
                             disabled={selectionSaving || !data}
                         />
                     }

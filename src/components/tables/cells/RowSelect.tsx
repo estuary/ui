@@ -1,6 +1,4 @@
 import { Checkbox, TableCell } from '@mui/material';
-import { Square } from 'iconoir-react';
-import CheckSquare from 'icons/CheckSquare';
 
 interface Props {
     isSelected: boolean;
@@ -22,8 +20,6 @@ function RowSelect({ isSelected, name }: Props) {
                 inputProps={{
                     'aria-labelledby': name,
                 }}
-                icon={<Square style={{ fontSize: 14 }} />}
-                checkedIcon={<CheckSquare style={{ fontSize: 14 }} />}
             />
         </TableCell>
     );

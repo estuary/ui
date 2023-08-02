@@ -9,6 +9,8 @@ import {
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
+import { Square } from 'iconoir-react';
+import CheckSquare from 'icons/CheckSquare';
 import React from 'react';
 import { useLocalStorage } from 'react-use';
 import { BaseComponentProps } from 'types';
@@ -515,6 +517,12 @@ const themeSettings = createTheme({
                     fontSize: 14,
                     borderRadius: 4,
                 },
+            },
+        },
+        MuiCheckbox: {
+            defaultProps: {
+                icon: <Square style={{ fontSize: 14 }} />,
+                checkedIcon: <CheckSquare style={{ fontSize: 14 }} />,
             },
         },
         MuiTabs: {
