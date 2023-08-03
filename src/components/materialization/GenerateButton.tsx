@@ -53,6 +53,8 @@ interface Props {
     mutateDraftSpecs: Function;
 }
 
+const ENTITY_TYPE = 'materialization';
+
 function MaterializeGenerateButton({
     disabled,
     callFailed,
@@ -153,13 +155,11 @@ function MaterializeGenerateButton({
             let existingTaskData: DraftSpecsExtQuery_ByCatalogName | null =
                 null;
 
-            // If we have a draft id already then go ahead and try snagging the materialization
-            //      No materialization then a default one will get generated with some calls down below.
-            //      Existing materialization then we'll use that as a base for future updates (ex: entity name changes)
             if (persistedDraftId) {
+                // See if there is an existing materialization tied to the persisted draft id
                 const existingDraftSpecResponse = await getDraftSpecsByDraftId(
                     persistedDraftId,
-                    'materialization'
+                    ENTITY_TYPE
                 );
 
                 if (existingDraftSpecResponse.error) {
@@ -169,13 +169,18 @@ function MaterializeGenerateButton({
                             error: existingDraftSpecResponse.error,
                         },
                     });
-                } else if (
+                }
+
+                // Populate the existing if available. This might not exist if the user edited a collection
+                //  as their first action before clicking this button
+                if (
                     existingDraftSpecResponse.data &&
                     existingDraftSpecResponse.data.length > 0
                 ) {
                     existingTaskData = existingDraftSpecResponse.data[0];
                 }
             } else {
+                // No existing draft so start a new one
                 const draftsResponse = await createEntityDraft(
                     processedEntityName
                 );
@@ -189,23 +194,30 @@ function MaterializeGenerateButton({
                     });
                 }
 
+                // Since we made a new one override the current draft id
                 evaluatedDraftId = draftsResponse.data[0].id;
             }
 
+            // Generate the draft spec that will be sent to the server next
             const draftSpec = generateTaskSpec(
-                'materialization',
+                ENTITY_TYPE,
                 { image: imagePath, config: encryptedEndpointConfig.data },
                 resourceConfig,
                 existingTaskData
             );
 
+            // If there is a draft already with task data then update. We do not match on
+            //   the catalog name as the user could change the name. There is a small issue
+            //      if someone updates their draft on the CLI and adds multiple materializations
+            //      there will be an issue. This will need to be handled eventually but by then
+            //      we should move the UI to the "shopping cart" approach.
             const draftSpecsResponse =
                 persistedDraftId && existingTaskData
                     ? await modifyDraftSpec(
                           draftSpec,
                           {
                               draft_id: evaluatedDraftId,
-                              spec_type: 'materialization',
+                              spec_type: ENTITY_TYPE,
                           },
                           processedEntityName
                       )
@@ -213,7 +225,7 @@ function MaterializeGenerateButton({
                           evaluatedDraftId,
                           processedEntityName,
                           draftSpec,
-                          'materialization'
+                          ENTITY_TYPE
                       );
 
             if (draftSpecsResponse.error) {
@@ -225,17 +237,14 @@ function MaterializeGenerateButton({
                 });
             }
 
+            // Update all the store state
             setEncryptedEndpointConfig({
                 data: draftSpecsResponse.data[0].spec.endpoint.connector.config,
             });
-
             setPreviousEndpointConfig({ data: endpointConfigData });
-
             setDraftId(evaluatedDraftId);
             setPersistedDraftId(evaluatedDraftId);
-
             setDraftedEntityName(draftSpecsResponse.data[0].catalog_name);
-
             setFormState({
                 status: FormStatus.GENERATED,
             });
