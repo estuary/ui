@@ -25,17 +25,20 @@ import {
     useBindingsEditorStore_setSingleSelection,
 } from 'components/editor/Bindings/Store/hooks';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
+import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import ExternalLink from 'components/shared/ExternalLink';
 import FieldSelectionTable from 'components/tables/FieldSelection';
 import { isEqual } from 'lodash';
 import { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { CustomEvents } from 'services/logrocket';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { Schema } from 'types';
 
 interface Props {
     collectionName: string;
+    connectorsExist: boolean;
 }
 
 interface FieldMetadata {
@@ -87,7 +90,7 @@ const mapConstraintsToProjections = (
         };
     });
 
-function FieldSelectionViewer({ collectionName }: Props) {
+function FieldSelectionViewer({ collectionName, connectorsExist }: Props) {
     const applyFieldSelections = useFieldSelection(collectionName);
 
     // Bindings Editor Store
@@ -238,19 +241,34 @@ function FieldSelectionViewer({ collectionName }: Props) {
 
     return (
         <Box sx={{ mt: 3 }}>
-            <Stack direction="row" sx={{ mb: 1 }}>
-                <Typography variant="h6" sx={{ mr: 0.5 }}>
-                    <FormattedMessage id="fieldSelection.header" />
-                </Typography>
+            <Stack
+                direction="row"
+                spacing={1}
+                sx={{ mb: 2, justifyContent: 'space-between' }}
+            >
+                <Stack spacing={1}>
+                    <Stack direction="row">
+                        <Typography variant="h6" sx={{ mr: 0.5 }}>
+                            <FormattedMessage id="fieldSelection.header" />
+                        </Typography>
 
-                <ExternalLink link="https://docs.estuary.dev/concepts/materialization/#projected-fields">
-                    <FormattedMessage id="terms.documentation" />
-                </ExternalLink>
+                        <ExternalLink link="https://docs.estuary.dev/concepts/materialization/#projected-fields">
+                            <FormattedMessage id="terms.documentation" />
+                        </ExternalLink>
+                    </Stack>
+
+                    <Typography>
+                        <FormattedMessage id="fieldSelection.message" />
+                    </Typography>
+                </Stack>
+
+                <Box>
+                    <EntityTestButton
+                        disabled={!connectorsExist}
+                        logEvent={CustomEvents.MATERIALIZATION_TEST}
+                    />
+                </Box>
             </Stack>
-
-            <Typography sx={{ mb: 2 }}>
-                <FormattedMessage id="fieldSelection.message" />
-            </Typography>
 
             <FormControl sx={{ mb: 1, mx: 0 }}>
                 <FormControlLabel

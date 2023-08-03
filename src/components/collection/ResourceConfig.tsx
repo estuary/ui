@@ -50,7 +50,10 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
             </Box>
 
             {showFieldSelection && entityType === 'materialization' ? (
-                <FieldSelectionViewer collectionName={collectionName} />
+                <FieldSelectionViewer
+                    collectionName={collectionName}
+                    connectorsExist={true}
+                />
             ) : null}
         </>
     );

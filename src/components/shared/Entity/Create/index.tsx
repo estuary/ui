@@ -10,6 +10,7 @@ import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
+import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
@@ -47,7 +48,6 @@ interface Props {
         DraftSpecSwrMetadata,
         'draftSpecs' | 'isValidating' | 'error'
     >;
-    resetState: () => void;
     toolbar: ReactNode;
     RediscoverButton?: ReactNode;
 }
@@ -55,11 +55,12 @@ interface Props {
 function EntityCreate({
     entityType,
     draftSpecMetadata,
-    resetState,
     toolbar,
     RediscoverButton,
 }: Props) {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
+
+    const { resetState } = useEntityWorkflowHelpers();
 
     const {
         connectorTags,

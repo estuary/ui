@@ -2,6 +2,8 @@ import { useEditorStore_id } from 'components/editor/Store/hooks';
 import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
+import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useEntityType } from 'context/EntityContext';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import {
@@ -13,8 +15,6 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 
 interface Props {
-    closeLogs: Function;
-    callFailed: Function;
     logEvent:
         | CustomEvents.CAPTURE_CREATE
         | CustomEvents.COLLECTION_CREATE
@@ -22,18 +22,15 @@ interface Props {
         | CustomEvents.CAPTURE_EDIT
         | CustomEvents.MATERIALIZATION_EDIT;
     disabled?: boolean;
-    materialize?: Function;
     taskNames?: string[];
 }
 
-function EntitySaveButton({
-    callFailed,
-    closeLogs,
-    disabled,
-    materialize,
-    taskNames,
-    logEvent,
-}: Props) {
+function EntitySaveButton({ disabled, taskNames, logEvent }: Props) {
+    const entityType = useEntityType();
+
+    const { callFailed, closeLogs, materializeCollections } =
+        useEntityWorkflowHelpers();
+
     // Draft Editor Store
     const draftId = useEditorStore_id();
 
@@ -65,9 +62,9 @@ function EntitySaveButton({
                         close={closeLogs}
                         taskNames={taskNames}
                         materialize={
-                            materialize
+                            entityType !== 'materialization'
                                 ? {
-                                      action: materialize,
+                                      action: materializeCollections,
                                       title: `${messagePrefix}.ctas.materialize`,
                                   }
                                 : undefined

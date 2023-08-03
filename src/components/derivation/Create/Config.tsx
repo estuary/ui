@@ -17,12 +17,6 @@ import { FormattedMessage } from 'react-intl';
 import { useSet } from 'react-use';
 import { CustomEvents } from 'services/logrocket';
 import {
-    useFormStateStore_exitWhenLogsClose,
-    useFormStateStore_resetState,
-    useFormStateStore_setFormState,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import {
     useTransformationCreate_catalogName,
     useTransformationCreate_language,
     useTransformationCreate_setCatalogName,
@@ -37,11 +31,6 @@ function DerivationCreateConfig() {
 
     const collections = useLiveSpecs('collection');
 
-    // Form State Store
-    const setFormState = useFormStateStore_setFormState();
-    const resetFormState = useFormStateStore_resetState();
-    const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
-
     // Transformation Create Store
     const catalogName = useTransformationCreate_catalogName();
     const setCatalogName = useTransformationCreate_setCatalogName();
@@ -55,31 +44,9 @@ function DerivationCreateConfig() {
         new Set<string>([])
     );
 
-    const helpers = {
-        callFailed: (formState: any) => {
-            setFormState({
-                status: FormStatus.FAILED,
-                exitWhenLogsClose: false,
-                ...formState,
-            });
-        },
-        exit: () => {
-            resetFormState();
-        },
-    };
-
-    const handlers = {
-        closeLogs: () => {
-            setFormState({
-                showLogs: false,
-            });
-
-            if (exitWhenLogsClose) {
-                helpers.exit();
-            }
-        },
-    };
-
+    // TODO (transform): Evaluate the value add of using the EntityToolbar component.
+    //   If desired, the test and save buttons should be optional props to avoid an accidental
+    //   rendering of those buttons.
     return (
         <Stack spacing={3}>
             <EntityToolbar
@@ -99,13 +66,11 @@ function DerivationCreateConfig() {
                 TestButton={<GitPodButton buttonVariant="outlined" />}
                 SaveButton={
                     <EntitySaveButton
-                        callFailed={helpers.callFailed}
                         taskNames={
                             typeof catalogName === 'string'
                                 ? [catalogName]
                                 : undefined
                         }
-                        closeLogs={handlers.closeLogs}
                         logEvent={CustomEvents.COLLECTION_CREATE}
                     />
                 }

@@ -15,17 +15,13 @@ import GitPodButton from 'components/transformation/create/GitPodButton';
 import PatchDraftButton from 'components/transformation/create/PatchDraftButton';
 import DerivationSchema from 'components/transformation/create/Schema';
 import usePageTitle from 'hooks/usePageTitle';
-import { useNavigate } from 'react-router';
 import { useUnmount } from 'react-use';
 import { CustomEvents } from 'services/logrocket';
 import {
     useFormStateStore_error,
-    useFormStateStore_exitWhenLogsClose,
     useFormStateStore_logToken,
     useFormStateStore_resetState,
-    useFormStateStore_setFormState,
 } from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_emptySQLExists,
@@ -38,7 +34,6 @@ function DerivationCreateAlternate() {
         header: authenticatedRoutes.beta.new.title,
         headerLink: 'https://docs.estuary.dev/concepts/derivations/',
     });
-    const navigate = useNavigate();
 
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
@@ -49,40 +44,14 @@ function DerivationCreateAlternate() {
     const logToken = useFormStateStore_logToken();
     const publicationError = useFormStateStore_error();
 
-    const setFormState = useFormStateStore_setFormState();
+    // const setFormState = useFormStateStore_setFormState();
     const resetFormState = useFormStateStore_resetState();
-    const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // Transformation Create Store
     const catalogName = useTransformationCreate_catalogName();
     const emptySQLExists = useTransformationCreate_emptySQLExists();
     const schemaUnedited = useTransformationCreate_schemaUnedited();
     const resetTransformationCreateState = useTransformationCreate_resetState();
-
-    const helpers = {
-        callFailed: (formState: any) => {
-            setFormState({
-                status: FormStatus.FAILED,
-                exitWhenLogsClose: false,
-                ...formState,
-            });
-        },
-        exit: () => {
-            navigate(authenticatedRoutes.collections.fullPath);
-        },
-    };
-
-    const handlers = {
-        closeLogs: () => {
-            setFormState({
-                showLogs: false,
-            });
-
-            if (exitWhenLogsClose) {
-                helpers.exit();
-            }
-        },
-    };
 
     useUnmount(() => {
         resetEditorStore();
@@ -106,13 +75,11 @@ function DerivationCreateAlternate() {
                                 schemaUnedited ||
                                 invalidEditors.length > 0
                             }
-                            callFailed={helpers.callFailed}
                             taskNames={
                                 typeof catalogName === 'string'
                                     ? [catalogName]
                                     : undefined
                             }
-                            closeLogs={handlers.closeLogs}
                             logEvent={CustomEvents.COLLECTION_CREATE}
                         />
                     }

@@ -2,6 +2,7 @@ import { useEditorStore_id } from 'components/editor/Store/hooks';
 import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
+import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import {
@@ -13,18 +14,13 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 
 interface Props {
-    closeLogs: Function;
-    callFailed: Function;
     disabled: boolean;
     logEvent: CustomEvents.CAPTURE_TEST | CustomEvents.MATERIALIZATION_TEST;
 }
 
-function EntityTestButton({
-    callFailed,
-    closeLogs,
-    disabled,
-    logEvent,
-}: Props) {
+function EntityTestButton({ disabled, logEvent }: Props) {
+    const { callFailed, closeLogs } = useEntityWorkflowHelpers();
+
     // Draft Editor Store
     const draftId = useEditorStore_id();
 
