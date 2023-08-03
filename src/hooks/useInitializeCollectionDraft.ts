@@ -13,7 +13,6 @@ import {
 import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
 import {
     useEditorStore_persistedDraftId,
-    useEditorStore_setGeneratedGenericSpec,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
@@ -61,7 +60,6 @@ function useInitializeCollectionDraft() {
     // Global Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
     const setDraftId = useEditorStore_setId();
-    const setGeneratedGenericSpec = useEditorStore_setGeneratedGenericSpec();
 
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
@@ -223,14 +221,12 @@ function useInitializeCollectionDraft() {
                 setLocalDraftId(newDraftId);
                 setDraftId(newDraftId);
                 setPersistedDraftId(newDraftId);
-                setGeneratedGenericSpec(true);
             }
         },
         [
             createCollectionDraftSpec,
             setCollectionInitializationAlert,
             setDraftId,
-            setGeneratedGenericSpec,
             setLocalDraftId,
             setPersistedDraftId,
             updateBindingsEditorState,
