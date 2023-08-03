@@ -3,7 +3,7 @@ import { createEntityDraft } from 'api/drafts';
 import {
     createDraftSpec,
     DraftSpecsExtQuery_ByCatalogName,
-    getDraftSpecsByCatalogName,
+    getDraftSpecsByDraftId,
     modifyDraftSpec,
 } from 'api/draftSpecs';
 import {
@@ -153,17 +153,14 @@ function MaterializeGenerateButton({
             let existingTaskData: DraftSpecsExtQuery_ByCatalogName | null =
                 null;
 
-            // Similar to processing we need to see if the name changed
-            //  that way we don't create multiple "materializations" with different names
-            //  all under the same draft. Otherwise we would then try to publish
-            //  all of those documents and not just the final name
-            if (persistedDraftId && !entityNameChanged) {
-                const existingDraftSpecResponse =
-                    await getDraftSpecsByCatalogName(
-                        persistedDraftId,
-                        processedEntityName,
-                        'materialization'
-                    );
+            // If we have a draft id already then go ahead and try snagging the materialization
+            //      No materialization then a default one will get generated with some calls down below.
+            //      Existing materialization then we'll use that as a base for future updates (ex: entity name changes)
+            if (persistedDraftId) {
+                const existingDraftSpecResponse = await getDraftSpecsByDraftId(
+                    persistedDraftId,
+                    'materialization'
+                );
 
                 if (existingDraftSpecResponse.error) {
                     return callFailed({
@@ -204,11 +201,14 @@ function MaterializeGenerateButton({
 
             const draftSpecsResponse =
                 persistedDraftId && existingTaskData
-                    ? await modifyDraftSpec(draftSpec, {
-                          draft_id: evaluatedDraftId,
-                          catalog_name: processedEntityName,
-                          spec_type: 'materialization',
-                      })
+                    ? await modifyDraftSpec(
+                          draftSpec,
+                          {
+                              draft_id: evaluatedDraftId,
+                              spec_type: 'materialization',
+                          },
+                          processedEntityName
+                      )
                     : await createDraftSpec(
                           evaluatedDraftId,
                           processedEntityName,
