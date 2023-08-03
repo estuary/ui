@@ -24,6 +24,7 @@ const getInitialStateData = <T>(): Pick<
     | 'serverUpdate'
     | 'specs'
     | 'statuses'
+    | 'generatedGenericSpec'
 > => {
     return {
         currentCatalog: null,
@@ -39,6 +40,7 @@ const getInitialStateData = <T>(): Pick<
         draftInitializationError: null,
         queryResponse: { draftSpecs: [], isValidating: false, mutate: null },
         invalidEditors: [],
+        generatedGenericSpec: false,
     };
 };
 
@@ -189,6 +191,16 @@ const getInitialState = <T>(
                 }),
                 false,
                 'Query Response Set'
+            );
+        },
+
+        setGeneratedGenericSpec: (value) => {
+            set(
+                produce((state) => {
+                    state.generatedGenericSpec = value;
+                }),
+                false,
+                'GeneratedGenericSpec Flag Set'
             );
         },
 

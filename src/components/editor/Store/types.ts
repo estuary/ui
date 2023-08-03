@@ -35,6 +35,11 @@ export interface EditorStoreState<T> {
         newVal: EditorStoreState<T>['discoveredDraftId']
     ) => void;
 
+    generatedGenericSpec: boolean;
+    setGeneratedGenericSpec: (
+        newVal: EditorStoreState<T>['generatedGenericSpec']
+    ) => void;
+
     pubId: string | null;
     setPubId: (newVal: EditorStoreState<T>['pubId']) => void;
 

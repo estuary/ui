@@ -495,6 +495,43 @@ export const useEditorStore_queryResponse_mutate = (
     >(storeName(entityType, localScope), (state) => state.queryResponse.mutate);
 };
 
+export const useEditorStore_generatedGenericSpec = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['generatedGenericSpec']
+    >(storeName(entityType, localScope), (state) => state.generatedGenericSpec);
+};
+
+export const useEditorStore_setGeneratedGenericSpec = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setGeneratedGenericSpec']
+    >(
+        storeName(entityType, localScope),
+        (state) => state.setGeneratedGenericSpec
+    );
+};
+
 export const useEditorStore_resetState = (
     params?: SelectorParams | undefined
 ) => {
