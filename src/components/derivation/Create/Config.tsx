@@ -1,7 +1,6 @@
 import { Box, Divider, Stack } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
-import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
-import CollectionSelector from 'components/collection/Selector';
+import CollectionSearchAndSelector from 'components/collection/UnderDev_Selector';
 import PrefixedName from 'components/inputs/PrefixedName';
 import LanguageSelector from 'components/transformation/create/LanguageSelector';
 import SingleStep from 'components/transformation/create/SingleStep';
@@ -64,11 +63,7 @@ function DerivationCreateConfig() {
 
                 <Divider />
 
-                <CollectionSelector
-                    height={350}
-                    loading={false}
-                    skeleton={<BindingsSelectorSkeleton />}
-                />
+                <CollectionSearchAndSelector />
             </StepWrapper>
         </Stack>
     );

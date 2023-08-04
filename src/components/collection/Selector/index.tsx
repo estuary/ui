@@ -3,7 +3,6 @@ import invariableStores from 'context/Zustand/invariableStores';
 import { ReactNode } from 'react';
 import { useStore } from 'zustand';
 import { BindingsSelectorSkeleton } from '../CollectionSkeletons';
-import CollectionSearchAndSelector from '../UnderDev_Selector';
 import CollectionSelectorActions from './Actions';
 import CollectionSelectorList from './List';
 
@@ -43,8 +42,6 @@ function CollectionSelector({
         <Box>{skeleton ? skeleton : <BindingsSelectorSkeleton />}</Box>
     ) : (
         <>
-            <CollectionSearchAndSelector />
-
             <CollectionSelectorActions
                 readOnly={readOnly ?? selected.size === 0}
                 RediscoverButton={RediscoverButton}

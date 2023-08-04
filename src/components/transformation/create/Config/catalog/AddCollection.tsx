@@ -7,9 +7,7 @@ import {
     Divider,
     Stack,
 } from '@mui/material';
-import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
-import CollectionSelector from 'components/collection/Selector';
-import UpdateDraftButton from 'components/transformation/create/Config/UpdateDraftButton';
+import CollectionSearchAndSelector from 'components/collection/UnderDev_Selector';
 import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import { ReactNode } from 'react';
@@ -19,9 +17,10 @@ interface Props {
     open: boolean;
     title: string | ReactNode;
     toggle: (args: any) => void;
+    primaryCTA: any;
 }
 
-function AddCollection({ open, title, toggle }: Props) {
+function AddCollection({ primaryCTA, open, title, toggle }: Props) {
     return (
         <Dialog open={open} fullWidth maxWidth="md">
             <DialogTitle>{title}</DialogTitle>
@@ -35,21 +34,17 @@ function AddCollection({ open, title, toggle }: Props) {
 
                         <Divider />
 
-                        <CollectionSelector
-                            height={350}
-                            loading={false}
-                            skeleton={<BindingsSelectorSkeleton />}
-                        />
+                        <CollectionSearchAndSelector />
                     </StepWrapper>
                 </Stack>
             </DialogContent>
 
             <DialogActions>
-                <Button variant="outlined" onClick={toggle}>
+                <Button variant="outlined" onClick={() => toggle(false)}>
                     <FormattedMessage id="cta.cancel" />
                 </Button>
 
-                <UpdateDraftButton setDialogOpen={toggle} />
+                {primaryCTA}
             </DialogActions>
         </Dialog>
     );
