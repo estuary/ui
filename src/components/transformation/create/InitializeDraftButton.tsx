@@ -28,7 +28,7 @@ import { stripPathing } from 'utils/misc-utils';
 
 interface Props {
     entityNameError: string | null;
-    selectedCollections: string[];
+    selectedCollections: Set<string>;
 }
 
 function InitializeDraftButton({
@@ -55,7 +55,7 @@ function InitializeDraftButton({
     const setSourceCollections = useTransformationCreate_setSourceCollections();
 
     const validationErrorMessageId = useMemo(() => {
-        if (selectedCollections.length < 1) {
+        if (selectedCollections.size < 1) {
             return 'newTransform.errors.collection';
         } else if (!entityName) {
             return 'newTransform.errors.name';
@@ -84,13 +84,15 @@ function InitializeDraftButton({
             } else if (draftsResponse.data && draftsResponse.data.length > 0) {
                 const draftId = draftsResponse.data[0].id;
 
-                setSourceCollections(selectedCollections);
+                const collections = Array.from(selectedCollections);
+
+                setSourceCollections(collections);
 
                 const latestTransformVersions: { [tableName: string]: number } =
                     {};
 
-                const transformConfigs: TransformConfig[] =
-                    selectedCollections.map((collection) => {
+                const transformConfigs: TransformConfig[] = collections.map(
+                    (collection) => {
                         const tableName = stripPathing(collection);
 
                         if (Object.hasOwn(latestTransformVersions, tableName)) {
@@ -104,7 +106,8 @@ function InitializeDraftButton({
                             entityName,
                             latestTransformVersions[tableName]
                         );
-                    });
+                    }
+                );
 
                 addTransformConfigs(transformConfigs);
                 setSelectedAttribute(`${entityName}.lambda.0.sql`);

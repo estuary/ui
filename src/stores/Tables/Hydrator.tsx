@@ -36,7 +36,6 @@ export const TableHydrator = ({
     >(selectableTableStoreName, selectableTableStoreSelectors.state.reset);
 
     useEffect(() => {
-        console.log('query', query);
         setQuery(query);
         hydrate();
     }, [hydrate, query, setQuery]);

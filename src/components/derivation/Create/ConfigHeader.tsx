@@ -73,12 +73,12 @@ function ConfigHeader({ entityNameError }: Props) {
                 language === 'sql' ? (
                     <InitializeDraftButton
                         entityNameError={entityNameError}
-                        selectedCollections={selectedCollections}
+                        selectedCollections={new Set(selectedCollections)}
                     />
                 ) : (
                     <GitPodButton
                         entityNameError={entityNameError}
-                        selectedCollections={selectedCollections}
+                        sourceCollectionSet={new Set(selectedCollections)}
                     />
                 )
             }
