@@ -1,7 +1,6 @@
 import { Box, Divider, Stack } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
-import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
-import CollectionSelector from 'components/collection/Selector';
+import CollectionSearchAndSelector from 'components/collection/UnderDev_Selector';
 import PrefixedName from 'components/inputs/PrefixedName';
 import LanguageSelector from 'components/transformation/create/LanguageSelector';
 import SingleStep from 'components/transformation/create/SingleStep';
@@ -9,7 +8,6 @@ import StepWrapper from 'components/transformation/create/Wrapper';
 import usePageTitle from 'hooks/usePageTitle';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useSet } from 'react-use';
 
 import {
     useTransformationCreate_setCatalogName,
@@ -28,10 +26,6 @@ function DerivationCreateConfig() {
     const setDerivationName = useTransformationCreate_setName();
 
     const [entityNameError, setEntityNameError] = useState<string | null>(null);
-
-    const [selectedCollectionSet, selectedCollectionSetFunctions] = useSet(
-        new Set<string>([])
-    );
 
     return (
         <Stack spacing={3}>
@@ -69,15 +63,7 @@ function DerivationCreateConfig() {
 
                 <Divider />
 
-                <CollectionSelector
-                    height={350}
-                    loading={false}
-                    skeleton={<BindingsSelectorSkeleton />}
-                    removeAllCollections={selectedCollectionSetFunctions.reset}
-                    collections={selectedCollectionSet}
-                    removeCollection={selectedCollectionSetFunctions.remove}
-                    addCollection={selectedCollectionSetFunctions.add}
-                />
+                <CollectionSearchAndSelector />
             </StepWrapper>
         </Stack>
     );
