@@ -12,8 +12,6 @@ import AddCollection from './AddCollection';
 import CollectionList from './CollectionList';
 
 function TransformList() {
-    const collections = useLiveSpecs('collection');
-
     // Draft Editor Store
     const invalidEditors = useEditorStore_invalidEditors();
 
@@ -66,7 +64,6 @@ function TransformList() {
             <AddCollection
                 collections={selectedCollectionSet}
                 collectionsActions={selectedCollectionSetFunctions}
-                loading={collections.isValidating}
                 open={open}
                 toggle={handlers.toggleDialog}
                 title={

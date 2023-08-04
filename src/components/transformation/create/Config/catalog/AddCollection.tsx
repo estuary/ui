@@ -19,7 +19,6 @@ import { Actions } from 'react-use/lib/useSet';
 interface Props {
     collections: Set<string>;
     collectionsActions: Actions<string>;
-    loading: boolean;
     open: boolean;
     title: string | ReactNode;
     toggle: (args: any) => void;
@@ -28,7 +27,6 @@ interface Props {
 function AddCollection({
     collections,
     collectionsActions,
-    loading,
     open,
     title,
     toggle,
@@ -48,12 +46,9 @@ function AddCollection({
 
                         <CollectionSelector
                             height={350}
-                            loading={loading}
+                            loading={false}
                             skeleton={<BindingsSelectorSkeleton />}
                             removeAllCollections={collectionsActions.reset}
-                            collections={collections}
-                            removeCollection={collectionsActions.remove}
-                            addCollection={collectionsActions.add}
                         />
                     </StepWrapper>
                 </Stack>
@@ -64,10 +59,7 @@ function AddCollection({
                     <FormattedMessage id="cta.cancel" />
                 </Button>
 
-                <UpdateDraftButton
-                    selectedCollections={collections}
-                    setDialogOpen={toggle}
-                />
+                <UpdateDraftButton setDialogOpen={toggle} />
             </DialogActions>
         </Dialog>
     );
