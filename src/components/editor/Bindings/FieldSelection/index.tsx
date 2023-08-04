@@ -262,10 +262,12 @@ function FieldSelectionViewer({ collectionName, connectorsExist }: Props) {
                     </Typography>
                 </Stack>
 
-                <Box>
+                <Box sx={{ whiteSpace: 'nowrap' }}>
                     <EntityTestButton
                         disabled={!connectorsExist}
                         logEvent={CustomEvents.MATERIALIZATION_TEST}
+                        buttonLabelId="fieldSelection.cta.populateTable"
+                        forceLogsClosed
                     />
                 </Box>
             </Stack>

@@ -41,6 +41,7 @@ interface Props {
     onFailure: Function;
     logEvent: CustomEvents;
     dryRun?: boolean;
+    buttonLabelId?: string;
 }
 
 const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
@@ -53,7 +54,13 @@ const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
     });
 };
 
-function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
+function EntityCreateSave({
+    disabled,
+    dryRun,
+    onFailure,
+    logEvent,
+    buttonLabelId,
+}: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
 
@@ -250,7 +257,13 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
             sx={buttonSx}
         >
             <FormattedMessage
-                id={dryRun === true ? 'cta.testConfig' : 'cta.saveEntity'}
+                id={
+                    buttonLabelId
+                        ? buttonLabelId
+                        : dryRun === true
+                        ? 'cta.testConfig'
+                        : 'cta.saveEntity'
+                }
             />
         </Button>
     );

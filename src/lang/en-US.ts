@@ -1170,7 +1170,7 @@ const Graphs: ResolvedIntlConfig['messages'] = {
 
 const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.header': `Field Selection`,
-    'fieldSelection.message': `Determine which fields in your collection get materialized. By default, the fields exported by your materialization are dynamically selected by the connector. Click "${CTAs['cta.testConfig']}" to update the table below.`,
+    'fieldSelection.message': `Determine which fields in your collection get materialized. By default, the fields exported by your materialization are dynamically selected by the connector. Click "See Fields" to update the table below.`,
     'fieldSelection.cta.defaultAllFields': `Accept recommended fields`,
     'fieldSelection.cta.populateTable': `See Fields`,
     'fieldSelection.dialog.updateProjection.header': `Update Projection`,
