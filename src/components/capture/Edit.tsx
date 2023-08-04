@@ -1,4 +1,5 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
+import { authenticatedRoutes } from 'app/routes';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import RediscoverButton from 'components/capture/RediscoverButton';
 import { useBindingsEditorStore_resetState } from 'components/editor/Bindings/Store/hooks';
@@ -37,8 +38,6 @@ import { FormStatus } from 'stores/FormState/types';
 import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 import { getPathWithParams, MAX_DISCOVER_TIME } from 'utils/misc-utils';
-
-import { authenticatedRoutes } from 'app/routes';
 
 function CaptureEdit() {
     usePageTitle({
