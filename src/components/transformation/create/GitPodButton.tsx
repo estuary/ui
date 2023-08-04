@@ -20,14 +20,14 @@ import { generateInitialSpec } from 'utils/derivation-utils';
 interface Props {
     postWindowOpen?: (window: Window | null) => void;
     entityNameError?: string | null;
-    sourceCollectionSet?: Set<string>;
+    selectedCollections?: string[];
     buttonVariant?: LoadingButtonProps['variant'];
 }
 
 function GitPodButton({
     postWindowOpen,
     entityNameError,
-    sourceCollectionSet,
+    selectedCollections,
     buttonVariant,
 }: Props) {
     const intl = useIntl();
@@ -47,14 +47,14 @@ function GitPodButton({
     const [urlLoading, setUrlLoading] = useState(false);
 
     const submitButtonError = useMemo(() => {
-        if (sourceCollectionSet && sourceCollectionSet.size < 1) {
+        if (selectedCollections && selectedCollections.length < 1) {
             return intl.formatMessage({ id: 'newTransform.errors.collection' });
         } else if (!entityName) {
             return intl.formatMessage({ id: 'newTransform.errors.name' });
         } else {
             return null;
         }
-    }, [intl, entityName, sourceCollectionSet]);
+    }, [intl, entityName, selectedCollections]);
 
     const { enqueueSnackbar } = useSnackbar();
     const displayError = useCallback(
@@ -104,7 +104,7 @@ function GitPodButton({
                     catalog_name: catalogName,
                     spec_type: 'collection',
                 });
-            } else if (sourceCollectionSet) {
+            } else if (selectedCollections) {
                 const draft = await createEntityDraft(catalogName);
 
                 if (draft.error) {
@@ -118,7 +118,7 @@ function GitPodButton({
                 const spec = generateInitialSpec(
                     language,
                     catalogName,
-                    sourceCollectionSet,
+                    selectedCollections,
                     { templateFiles: true }
                 );
 
@@ -139,8 +139,8 @@ function GitPodButton({
             intl,
             language,
             migrations,
+            selectedCollections,
             sourceCollectionArray,
-            sourceCollectionSet,
             transformConfigs,
         ]
     );
@@ -178,7 +178,7 @@ function GitPodButton({
                     evaluatedDraftId,
                     token,
                     language,
-                    sourceCollectionSet ?? sourceCollectionArray,
+                    selectedCollections ?? sourceCollectionArray,
                     catalogName
                 );
             } catch (e: unknown) {
@@ -199,8 +199,8 @@ function GitPodButton({
             generateDraftWithSpecs,
             intl,
             language,
+            selectedCollections,
             sourceCollectionArray,
-            sourceCollectionSet,
         ]
     );
 
