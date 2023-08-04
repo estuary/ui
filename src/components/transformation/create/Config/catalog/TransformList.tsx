@@ -2,12 +2,12 @@ import { useEditorStore_invalidEditors } from 'components/editor/Store/hooks';
 import CatalogList, {
     CatalogListContent,
 } from 'components/transformation/create/Config/catalog/CatalogList';
-import { useLiveSpecs } from 'hooks/useLiveSpecs';
+import invariableStores from 'context/Zustand/invariableStores';
 import { SyntheticEvent, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useSet } from 'react-use';
 import { useTransformationCreate_transformConfigs } from 'stores/TransformationCreate/hooks';
 import { hasLength } from 'utils/misc-utils';
+import { useStore } from 'zustand';
 import AddCollection from './AddCollection';
 import CollectionList from './CollectionList';
 
@@ -33,13 +33,17 @@ function TransformList() {
     );
 
     const [open, setOpen] = useState<boolean>(false);
-    const [selectedCollectionSet, selectedCollectionSetFunctions] = useSet(
-        new Set<string>([])
+
+    const resetSelected = useStore(
+        invariableStores['Collections-Selector-Table'],
+        (state) => {
+            return state.resetSelected;
+        }
     );
 
     const handlers = {
         toggleDialog: (args: SyntheticEvent | boolean) => {
-            selectedCollectionSetFunctions.reset();
+            resetSelected();
 
             setOpen(typeof args === 'boolean' ? args : !open);
         },
@@ -62,8 +66,6 @@ function TransformList() {
             />
 
             <AddCollection
-                collections={selectedCollectionSet}
-                collectionsActions={selectedCollectionSetFunctions}
                 open={open}
                 toggle={handlers.toggleDialog}
                 title={

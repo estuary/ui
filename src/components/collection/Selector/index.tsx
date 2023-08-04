@@ -9,7 +9,7 @@ import CollectionSelectorList from './List';
 
 interface BindingSelectorProps {
     loading: boolean;
-    removeAllCollections: () => void;
+    removeAllCollections?: () => void;
 
     currentCollection?: any;
     setCurrentCollection?: (collection: any) => void;
