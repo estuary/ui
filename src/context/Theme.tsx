@@ -71,9 +71,15 @@ export const sample_grey = {
 };
 
 // Status Colors
-export type SemanticColor = '#40B763' | '#F5D75E' | '#CA3B55' | '#4FD6FF';
+export type SemanticColor =
+    | '#40B763'
+    | '#2A7942'
+    | '#F5D75E'
+    | '#CA3B55'
+    | '#4FD6FF';
 
 export const successMain: SemanticColor = '#40B763';
+export const successDark: SemanticColor = '#2A7942';
 export const warningMain: SemanticColor = '#F5D75E';
 export const errorMain: SemanticColor = '#CA3B55';
 export const infoMain: SemanticColor = '#4FD6FF';
@@ -116,6 +122,7 @@ const lightMode: PaletteOptions = {
     },
     success: {
         main: successMain,
+        dark: successDark,
     },
     text: {
         primary: sample_grey[900],
