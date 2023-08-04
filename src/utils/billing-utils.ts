@@ -31,11 +31,6 @@ export const stripTimeFromDate = (date: string) => {
     return parseISO(truncatedDateStr);
 };
 
-export enum SeriesNames {
-    INCLUDED = 'Included',
-    SURPLUS = 'Billed',
-}
-
 export interface SeriesConfig extends Schema {
     data: [string, number][];
     connectNulls?: boolean;

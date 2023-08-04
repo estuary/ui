@@ -54,9 +54,9 @@ interface InvoiceLineItem {
 export interface BillingRecord {
     billed_prefix: string;
     billed_month: string; // Timestamp
-    total_processed_data_gb: number;
-    max_concurrent_tasks: number;
-    max_concurrent_tasks_at: string; // Timestamp
+    processed_data_gb: number | null;
+    recurring_fee: number;
+    task_usage_hours: number | null;
     line_items: InvoiceLineItem[];
     subtotal: number;
 }

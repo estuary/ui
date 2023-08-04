@@ -12,6 +12,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import React from 'react';
 import { useLocalStorage } from 'react-use';
 import { BaseComponentProps } from 'types';
+import { DEFAULT_TOOLBAR_HEIGHT } from 'utils/editor-utils';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 
 // The code block commented out directly below is how the typography variants can be extended
@@ -210,6 +211,15 @@ export const draggableChipIconSx: SxProps<Theme> = {
         ml: 0,
         zIndex: chipDraggableIndex,
     },
+};
+
+export const editorToolBarSx: SxProps<Theme> = {
+    minHeight: DEFAULT_TOOLBAR_HEIGHT,
+    py: 0.5,
+    px: 1,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
 };
 
 export const defaultBoxShadow =
