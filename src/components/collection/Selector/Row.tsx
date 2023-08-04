@@ -5,7 +5,7 @@ import { Cancel } from 'iconoir-react';
 interface Props {
     collection: string;
     disabled?: boolean;
-    removeCollection?: (collectionName: string) => void;
+    removeCollection: (collectionName: string) => void;
 }
 
 function CollectionSelectorRow({
@@ -13,6 +13,13 @@ function CollectionSelectorRow({
     collection,
     disabled,
 }: Props) {
+    const handlers = {
+        removeCollection: (event: React.MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+            removeCollection(collection);
+        },
+    };
+
     return (
         <>
             <ListItemText
@@ -20,19 +27,14 @@ function CollectionSelectorRow({
                 primaryTypographyProps={typographyTruncation}
             />
 
-            {!removeCollection ? null : (
-                <IconButton
-                    disabled={disabled}
-                    size="small"
-                    onClick={(event: React.MouseEvent<HTMLElement>) => {
-                        event.preventDefault();
-                        removeCollection(collection);
-                    }}
-                    sx={{ color: (theme) => theme.palette.text.primary }}
-                >
-                    <Cancel />
-                </IconButton>
-            )}
+            <IconButton
+                disabled={disabled}
+                size="small"
+                onClick={handlers.removeCollection}
+                sx={{ color: (theme) => theme.palette.text.primary }}
+            >
+                <Cancel />
+            </IconButton>
         </>
     );
 }
