@@ -118,8 +118,8 @@ function CollectionSelectorList({
                 onRowClick={
                     selectionEnabled
                         ? (params: any) => {
-                              // This is hacky but it works. It clears out the
-                              //  current collection before switching.
+                              // TODO (JSONForms) This is hacky but it works.
+                              // It clears out the current collection before switching.
                               //  If a user is typing quickly in a form and then selects a
                               //  different binding VERY quickly it could cause the updates
                               //  to go into the wrong form.
