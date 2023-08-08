@@ -7,8 +7,14 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
+import { useZustandStore } from 'context/Zustand/provider';
 import { Dispatch, SetStateAction, useCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { SelectTableStoreNames } from 'stores/names';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'stores/Tables/Store';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_catalogUpdating,
@@ -25,11 +31,18 @@ import { evaluateTransformConfigs } from 'utils/derivation-utils';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
-    selectedCollections: Set<string>;
     setDialogOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
+function UpdateDraftButton({ setDialogOpen }: Props) {
+    const selected = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['selected']
+    >(
+        SelectTableStoreNames.COLLECTION_SELECTOR,
+        selectableTableStoreSelectors.selected.get
+    );
+
     // Draft Editor Store
     const currentCatalog = useEditorStore_currentCatalog();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
@@ -56,7 +69,9 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
         setCatalogUpdating(true);
 
         if (draftId && catalogName && currentCatalog) {
-            const newCollections = Array.from(selectedCollections);
+            const newCollections = Array.from(selected).map(
+                (collection) => collection[0]
+            );
 
             const evaluatedTransformConfigs = evaluateTransformConfigs(
                 newCollections,
@@ -118,18 +133,18 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
             // Set error state
         }
     }, [
+        catalogName,
+        currentCatalog,
+        draftId,
+        entityName,
+        mutateDraftSpecs,
+        selected,
         setCatalogUpdating,
         setDialogOpen,
         setDraftId,
         setPersistedDraftId,
         setSelectedAttribute,
         setSourceCollections,
-        catalogName,
-        currentCatalog,
-        draftId,
-        entityName,
-        mutateDraftSpecs,
-        selectedCollections,
         transformConfigs,
         transformCount,
         updateTransformConfigs,
@@ -139,7 +154,7 @@ function UpdateDraftButton({ selectedCollections, setDialogOpen }: Props) {
         <LoadingButton
             variant="contained"
             loading={catalogUpdating}
-            disabled={selectedCollections.size < 1 || catalogUpdating}
+            disabled={selected.size < 1 || catalogUpdating}
             onClick={updateDerivationSpec}
         >
             <FormattedMessage id="cta.continue" />

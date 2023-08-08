@@ -3,11 +3,11 @@ import EntityTable from 'components/tables/EntityTable';
 import RowSelector from 'components/tables/RowActions/RowSelector';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
-import useTableState from 'stores/Tables/hooks';
+import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import Rows from './Rows';
 
-const selectableTableStoreName = SelectTableStoreNames.COLLECTION;
+const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
 export const tableColumns = [
     {
         field: null,
@@ -29,7 +29,7 @@ function Hydrator() {
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState('col', 'catalog_name', 'desc');
+    } = useTableState('csl', 'catalog_name', 'desc');
 
     const query = useMemo(() => {
         return getLiveSpecs_collectionsSelector(pagination, searchQuery, [
@@ -39,8 +39,6 @@ function Hydrator() {
             },
         ]);
     }, [columnToSort, pagination, searchQuery, sortDirection]);
-
-    console.log('Hydrator');
 
     return (
         <TableHydrator
@@ -62,7 +60,7 @@ function Hydrator() {
                 setSortDirection={setSortDirection}
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
-                header="collectionsTable.title"
+                header={null}
                 filterLabel="collectionsTable.filterLabel"
                 selectableTableStoreName={selectableTableStoreName}
                 showToolbar

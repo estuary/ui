@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-    header: string | ReactNode;
+    header: string | ReactNode | null;
     marginBottom?: number;
 }
 
@@ -12,6 +12,10 @@ interface Props {
 //  the toolbar props felt like it was meant for _toolbars_
 //  and now a title that is styled different.
 function Title({ header, marginBottom }: Props) {
+    if (!header) {
+        return null;
+    }
+
     if (typeof header === 'string') {
         return (
             <Typography

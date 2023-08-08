@@ -5,7 +5,7 @@ import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
 import { CONNECTOR_NAME } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
-import useTableState from 'stores/Tables/hooks';
+import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 
 function ConnectorsTable() {

@@ -1,3 +1,4 @@
+import invariableStores from 'context/Zustand/invariableStores';
 import { useCallback, useMemo } from 'react';
 import { SortDirection } from 'types';
 import {
@@ -6,6 +7,7 @@ import {
     useQueryParams,
     withDefault,
 } from 'use-query-params';
+import { useStore } from 'zustand';
 import { getPagination } from '../../components/tables/EntityTable';
 
 export type TablePrefix =
@@ -16,6 +18,7 @@ export type TablePrefix =
     | 'cap' // captures
     | 'mat' // materializations
     | 'col' // collections
+    | 'csl' // collections selector
     | 'con' // connectors
     | 'bil' // billing
     | 'sv'; // schema viewer
@@ -74,16 +77,34 @@ function useTableState(
         [sortColumnKey, setQuery]
     );
 
-    return {
-        pagination: query[paginationKey],
-        setPagination,
-        searchQuery: query[searchQueryKey],
-        setSearchQuery,
-        sortDirection: query[sortDirectionKey] as SortDirection,
-        setSortDirection,
-        columnToSort: query[sortColumnKey],
+    return useMemo(() => {
+        return {
+            pagination: query[paginationKey],
+            setPagination,
+            searchQuery: query[searchQueryKey],
+            setSearchQuery,
+            sortDirection: query[sortDirectionKey] as SortDirection,
+            setSortDirection,
+            columnToSort: query[sortColumnKey],
+            setColumnToSort,
+        };
+    }, [
+        paginationKey,
+        query,
+        searchQueryKey,
         setColumnToSort,
-    };
+        setPagination,
+        setSearchQuery,
+        setSortDirection,
+        sortColumnKey,
+        sortDirectionKey,
+    ]);
 }
 
-export default useTableState;
+function useTableStore_selected() {
+    return useStore(invariableStores['Collections-Selector-Table'], (state) => {
+        return [state.selected];
+    });
+}
+
+export { useTableState, useTableStore_selected };

@@ -39,6 +39,7 @@ export interface SelectableTableStore extends StoreWithHydration {
     selected: Map<string, any>;
     setSelected: (key: string, value: string, isSelected: boolean) => void;
     setAllSelected: (isSelected: boolean, valueProperty?: string) => void;
+    resetSelected: () => void;
 
     successfulTransformations: number;
     incrementSuccessfulTransformations: () => void;
@@ -93,6 +94,16 @@ export const getInitialState = (
     return {
         ...getInitialStateData(),
         ...getStoreWithHydrationSettings('Table Store', set),
+
+        resetSelected: () => {
+            set(
+                produce(({ selected }: SelectableTableStore) => {
+                    selected.clear();
+                }),
+                false,
+                'Selected rows reset'
+            );
+        },
 
         setSelected: (key, value, isSelected) => {
             set(
