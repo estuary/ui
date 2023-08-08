@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
@@ -34,7 +35,14 @@ function AddCollection({ primaryCTA, open, title, toggle }: Props) {
 
                         <Divider />
 
-                        <CollectionSearchAndSelector />
+                        <Box
+                            sx={{
+                                minHeight: 400,
+                                maxHeight: 400,
+                            }}
+                        >
+                            <CollectionSearchAndSelector />
+                        </Box>
                     </StepWrapper>
                 </Stack>
             </DialogContent>

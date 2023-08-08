@@ -15,6 +15,7 @@ import {
     ChangeEvent,
     MouseEvent,
     ReactNode,
+    useCallback,
     useEffect,
     useMemo,
     useRef,
@@ -67,6 +68,7 @@ interface Props {
     showEntityStatus?: boolean;
     showToolbar?: boolean;
     toolbar?: ReactNode;
+    keepSelectionOnAction?: boolean;
 }
 
 export const getPagination = (currPage: number, size: number) => {
@@ -104,6 +106,7 @@ function EntityTable({
     minWidth = 350,
     showToolbar,
     toolbar,
+    keepSelectionOnAction,
 }: Props) {
     const isFiltering = useRef(Boolean(searchQuery));
     const searchTextField = useRef<HTMLInputElement>(null);
@@ -200,6 +203,12 @@ function EntityTable({
         };
     });
 
+    const selectionResetHandler = useCallback(() => {
+        if (!keepSelectionOnAction) {
+            resetSelection();
+        }
+    }, [keepSelectionOnAction, resetSelection]);
+
     const handlers = {
         filterTable: debounce(
             (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -208,7 +217,7 @@ function EntityTable({
 
                 isFiltering.current = hasQuery;
 
-                resetSelection();
+                selectionResetHandler();
                 setPagination(getPagination(0, rowsPerPage));
                 setPage(0);
                 setSearchQuery(hasQuery ? filterQuery : null);
@@ -218,7 +227,7 @@ function EntityTable({
         sortRequest: (_event: React.MouseEvent<unknown>, column: any) => {
             const isAsc = columnToSort === column && sortDirection === 'asc';
 
-            resetSelection();
+            selectionResetHandler();
             setSortDirection(isAsc ? 'desc' : 'asc');
             setColumnToSort(column);
         },
@@ -229,14 +238,14 @@ function EntityTable({
             _event: MouseEvent<HTMLButtonElement> | null,
             newPage: number
         ) => {
-            resetSelection();
+            selectionResetHandler();
             setPagination(getPagination(newPage, rowsPerPage));
             setPage(newPage);
         },
         changeRowsPerPage: (event: ChangeEvent<HTMLInputElement>) => {
             const newLimit = parseInt(event.target.value, 10);
 
-            resetSelection();
+            selectionResetHandler();
             setRowsPerPage(newLimit);
             setPagination(getPagination(0, newLimit));
             setPage(0);

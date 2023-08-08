@@ -24,8 +24,7 @@ export type TablePrefix =
 function useTableState(
     keyPrefix: TablePrefix,
     defaultSortCol: any,
-    defaultSortDir?: SortDirection,
-    rowsPerPage?: number
+    defaultSortDir?: SortDirection
 ) {
     const { paginationKey, searchQueryKey, sortDirectionKey, sortColumnKey } =
         useMemo(() => {
@@ -41,10 +40,7 @@ function useTableState(
         [sortColumnKey]: withDefault(StringParam, defaultSortCol),
         [sortDirectionKey]: withDefault(StringParam, defaultSortDir ?? 'asc'),
         [searchQueryKey]: withDefault(StringParam, null),
-        [paginationKey]: withDefault(
-            JsonParam,
-            getPagination(0, rowsPerPage ?? 10)
-        ),
+        [paginationKey]: withDefault(JsonParam, getPagination(0, 10)),
     });
 
     const setPagination = useCallback(
@@ -75,13 +71,8 @@ function useTableState(
         [sortColumnKey, setQuery]
     );
 
-    const reset = useCallback(() => {
-        setQuery({});
-    }, [setQuery]);
-
     return useMemo(() => {
         return {
-            reset,
             pagination: query[paginationKey],
             setPagination,
             searchQuery: query[searchQueryKey],
@@ -92,7 +83,6 @@ function useTableState(
             setColumnToSort,
         };
     }, [
-        reset,
         paginationKey,
         query,
         searchQueryKey,
