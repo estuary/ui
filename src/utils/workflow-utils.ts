@@ -2,6 +2,7 @@ import {
     DraftSpecsExtQuery_ByCatalogName,
     modifyDraftSpec,
 } from 'api/draftSpecs';
+import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
@@ -155,4 +156,25 @@ export const modifyExistingCaptureDraftSpec = async (
         draft_id: draftId,
         spec_type: 'capture',
     });
+};
+
+// Common materialization field selection checks
+export const evaluateRequiredIncludedFields = (
+    constraintType: ConstraintTypes
+): boolean => {
+    return (
+        constraintType === ConstraintTypes.FIELD_REQUIRED ||
+        constraintType === ConstraintTypes.LOCATION_REQUIRED
+    );
+};
+
+export const evaluateRecommendedIncludedFields = (
+    constraintType: ConstraintTypes
+): boolean => {
+    return (
+        constraintType === ConstraintTypes.FIELD_REQUIRED ||
+        constraintType === ConstraintTypes.LOCATION_REQUIRED ||
+        constraintType === ConstraintTypes.LOCATION_RECOMMENDED ||
+        constraintType === ConstraintTypes.FIELD_OPTIONAL
+    );
 };

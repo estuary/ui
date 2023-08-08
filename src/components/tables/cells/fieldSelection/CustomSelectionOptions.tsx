@@ -10,6 +10,11 @@ import {
 } from 'components/editor/Bindings/Store/hooks';
 import OutlinedToggleButton from 'components/tables/cells/fieldSelection/OutlinedToggleButton';
 import { useMemo } from 'react';
+import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import {
+    evaluateRecommendedIncludedFields,
+    evaluateRequiredIncludedFields,
+} from 'utils/workflow-utils';
 
 interface Props {
     field: string;
@@ -19,11 +24,27 @@ interface Props {
 // TODO (field selection): Determine whether the included/excluded toggle button group should be disabled
 //   when the default option is selected.
 function CustomSelectionOptions({ constraint, field }: Props) {
+    // Bindings Editor Store
     const recommendFields = useBindingsEditorStore_recommendFields();
+
     const selections = useBindingsEditorStore_selections();
     const setSingleSelection = useBindingsEditorStore_setSingleSelection();
 
+    // Form State Store
+    const formActive = useFormStateStore_isActive();
+
     const selectedValue = useMemo(() => selections[field], [field, selections]);
+
+    const includeRequired = evaluateRequiredIncludedFields(constraint.type);
+    const includeRecommended = evaluateRecommendedIncludedFields(
+        constraint.type
+    );
+
+    const coloredIncludeButton =
+        selectedValue === 'default' && includeRecommended;
+
+    const coloredExcludeButton =
+        selectedValue === 'default' && !includeRecommended;
 
     if (constraint.type === ConstraintTypes.UNSATISFIABLE) {
         return null;
@@ -58,13 +79,11 @@ function CustomSelectionOptions({ constraint, field }: Props) {
                     messageId="fieldSelection.table.cta.includeField"
                     selectedValue={selectedValue}
                     value="include"
+                    coloredDefaultState={coloredIncludeButton}
+                    disabled={formActive}
                     onClick={() => {
                         const singleValue =
-                            selectedValue !== 'include' ||
-                            constraint.type ===
-                                ConstraintTypes.FIELD_REQUIRED ||
-                            constraint.type ===
-                                ConstraintTypes.LOCATION_REQUIRED
+                            selectedValue !== 'include' || includeRequired
                                 ? 'include'
                                 : null;
 
@@ -81,10 +100,8 @@ function CustomSelectionOptions({ constraint, field }: Props) {
                     messageId="fieldSelection.table.cta.excludeField"
                     selectedValue={selectedValue}
                     value="exclude"
-                    disabled={
-                        constraint.type === ConstraintTypes.FIELD_REQUIRED ||
-                        constraint.type === ConstraintTypes.LOCATION_REQUIRED
-                    }
+                    coloredDefaultState={coloredExcludeButton}
+                    disabled={includeRequired || formActive}
                     onClick={() => {
                         const singleValue =
                             selectedValue !== 'exclude' ? 'exclude' : null;

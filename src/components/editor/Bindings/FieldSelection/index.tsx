@@ -35,6 +35,7 @@ import { CustomEvents } from 'services/logrocket';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { Schema } from 'types';
+import { evaluateRequiredIncludedFields } from 'utils/workflow-utils';
 
 interface Props {
     collectionName: string;
@@ -73,9 +74,9 @@ const mapConstraintsToProjections = (
             } else if (exclude?.includes(field)) {
                 selectionType = 'exclude';
             } else if (!recommended && constraint) {
-                const includeRequired =
-                    constraint.type === ConstraintTypes.FIELD_REQUIRED ||
-                    constraint.type === ConstraintTypes.LOCATION_REQUIRED;
+                const includeRequired = evaluateRequiredIncludedFields(
+                    constraint.type
+                );
 
                 selectionType = includeRequired ? 'include' : null;
             }

@@ -196,6 +196,17 @@ export const intensifiedOutlineThick = {
     dark: `2px solid rgba(247, 249, 252, 0.25)`,
 };
 
+// Light is an RGB translation of #3A56CA; Dark is an RGB translation of #BACDFD.
+export const primaryColoredOutline = {
+    light: `1px solid rgba(58, 86, 202, 0.5)`,
+    dark: `1px solid rgba(186, 205, 253, 0.5)`,
+};
+
+export const primaryColoredOutline_disabled = {
+    light: `1px solid rgba(58, 86, 202, 0.12)`,
+    dark: `1px solid rgba(186, 205, 253, 0.12)`,
+};
+
 // Styles
 
 export const tableAlternateRowsSx: SxProps<Theme> = {
@@ -443,6 +454,22 @@ export const getStickyTableCell = (headerParent?: boolean): SxProps<Theme> => {
             `3px solid ${defaultOutlineColor[theme.palette.mode]}`,
         zIndex: zIndexIncrement,
     };
+};
+
+// Light is an RGB translation of #3A56CA; Dark is an RGB translation of #BACDFD.
+export const outlinedButtonBackground = {
+    light: `rgba(58, 86, 202, 0.12)`,
+    dark: `rgba(186, 205, 253, 0.12)`,
+};
+
+export const outlinedButtonBackground_disabled = {
+    light: `rgba(58, 86, 202, 0.05)`,
+    dark: `rgba(186, 205, 253, 0.05)`,
+};
+
+export const disabledButtonText_primary = {
+    light: `rgba(58, 86, 202, 0.26)`,
+    dark: `rgba(186, 205, 253, 0.26)`,
 };
 
 export const disabledButtonText = {
