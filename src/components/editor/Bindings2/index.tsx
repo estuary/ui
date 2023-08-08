@@ -1,22 +1,18 @@
-import { Button, Typography, useTheme } from '@mui/material';
-import BindingsEditor from 'components/editor/Bindings/Editor';
+import { Typography, useTheme } from '@mui/material';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import { createEditorStore } from 'components/editor/Store/create';
-import EntityList from 'components/shared/Entity/List';
-import { CatalogListContent } from 'components/transformation/create/Config/catalog/CatalogList';
 import { useEntityType } from 'context/EntityContext';
 import { LocalZustandProvider } from 'context/LocalZustand';
 import { alternativeReflexContainerBackground } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
-import invariableStores from 'context/Zustand/invariableStores';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEqual } from 'lodash';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { ReactNode, useEffect, useMemo } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_details_entityName,
@@ -33,7 +29,8 @@ import {
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Schema } from 'types';
 import { getCollectionName, getCollectionNameProp } from 'utils/workflow-utils';
-import { useStore } from 'zustand';
+import BindingsEditor from './Editor';
+import BindingSelector from './Selector';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];
@@ -41,10 +38,12 @@ interface Props {
     RediscoverButton?: ReactNode;
 }
 
-function BindingsMultiEditorUnderDev({
+function BindingsMultiEditor({
     draftSpecs = [],
-    readOnly = false, // RediscoverButton,
+    readOnly = false,
+    RediscoverButton,
 }: Props) {
+    const intl = useIntl();
     const theme = useTheme();
 
     const localStore = useMemo(
@@ -143,37 +142,10 @@ function BindingsMultiEditorUnderDev({
     // For captures we want to show the bindings config as "Bindings"
     //  Other entities we still call them "collections" so we set to undefined
     //      as the default display is "collections"
-    // const itemType =
-    //     entityType === 'capture'
-    //         ? intl.formatMessage({ id: 'terms.bindings' })
-    //         : undefined;
-
-    const resetSelected = useStore(
-        invariableStores['Collections-Selector-Table'],
-        (state) => {
-            return state.resetSelected;
-        }
-    );
-
-    const content: CatalogListContent[] = useMemo(
-        () =>
-            Object.entries(resourceConfig).map(([name], index) => {
-                return {
-                    attributeId: `${name}:${index}`,
-                    value: name,
-                    editorInvalid: false,
-                };
-            }),
-        [resourceConfig]
-    );
-
-    const [open, setOpen] = useState<boolean>(false);
-
-    const toggleDialog = (args: any) => {
-        resetSelected();
-
-        setOpen(typeof args === 'boolean' ? args : !open);
-    };
+    const itemType =
+        entityType === 'capture'
+            ? intl.formatMessage({ id: 'terms.bindings' })
+            : undefined;
 
     return (
         <LocalZustandProvider createStore={localStore}>
@@ -185,14 +157,11 @@ function BindingsMultiEditorUnderDev({
 
             <ListAndDetails
                 list={
-                    <EntityList
-                        content={content}
-                        header={
-                            <FormattedMessage id="newTransform.config.transform.header" />
-                        }
-                        open={open}
-                        primaryCTA={<Button>Hello World</Button>}
-                        toggle={toggleDialog}
+                    <BindingSelector
+                        itemType={itemType}
+                        shortenName={entityType === 'capture'}
+                        readOnly={readOnly}
+                        RediscoverButton={RediscoverButton}
                     />
                 }
                 details={<BindingsEditor readOnly={readOnly} />}
@@ -206,4 +175,4 @@ function BindingsMultiEditorUnderDev({
     );
 }
 
-export default BindingsMultiEditorUnderDev;
+export default BindingsMultiEditor;

@@ -5,14 +5,12 @@ import {
     Skeleton,
     TextField,
 } from '@mui/material';
+import BindingsEditorAdd from 'components/editor/Bindings_UnderDev/Add';
 import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
 import { isEqual } from 'lodash';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-import {
-    detectAutoCompleteInputReset,
-    detectRemoveOptionWithBackspace,
-} from 'utils/mui-utils';
+import { detectAutoCompleteInputReset } from 'utils/mui-utils';
 import { CollectionData } from './types';
 
 interface Props {
@@ -48,19 +46,8 @@ function CollectionSelectorSearch({
     const [inputValue, setInputValue] = useState('');
 
     const handlers = {
-        updateCollections: (
-            event: React.SyntheticEvent,
-            value: string[],
-            reason: AutocompleteChangeReason
-        ) => {
-            const removeOptionWithBackspace = detectRemoveOptionWithBackspace(
-                event,
-                reason
-            );
-
-            if (!removeOptionWithBackspace) {
-                onChange(value, reason);
-            }
+        updateCollections: (value: string[]) => {
+            onChange(value, 'selectOption');
         },
         validateSelection: () => {
             setMissingInput(options.length === 0);
@@ -79,6 +66,11 @@ function CollectionSelectorSearch({
                 alignItems: 'center',
             }}
         >
+            <BindingsEditorAdd
+                title={collectionsLabel}
+                onChange={handlers.updateCollections}
+            />
+
             <Autocomplete
                 {...AutocompleteProps}
                 {...autoCompleteDefaults_Virtual_Multiple}

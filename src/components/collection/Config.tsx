@@ -1,6 +1,6 @@
 import { Typography, useTheme } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
-import BindingsMultiEditor from 'components/editor/Bindings';
+import BindingsMultiEditor from 'components/editor/Bindings2';
 import AlertBox from 'components/shared/AlertBox';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
