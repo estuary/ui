@@ -61,7 +61,8 @@ export interface ResourceConfigState {
     resourceConfig: ResourceConfigDictionary;
     setResourceConfig: (
         key: string | string[],
-        resourceConfig?: ResourceConfig
+        resourceConfig?: ResourceConfig,
+        disableOmit?: boolean
     ) => void;
     resetResourceConfigAndCollections: () => void;
 

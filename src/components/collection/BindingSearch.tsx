@@ -184,20 +184,6 @@ function BindingSearch({
         populateCollectionValues,
     ]);
 
-    const handlers = {
-        updateCollections: (value: CollectionData[]) => {
-            setResourceConfig(value.map(({ name }) => name));
-
-            if (value.length > 0 && discoveredCollections) {
-                const latestCollection = value[value.length - 1].name;
-
-                if (discoveredCollections.includes(latestCollection)) {
-                    setRestrictedDiscoveredCollections(latestCollection);
-                }
-            }
-        },
-    };
-
     const specError =
         entityType === 'materialization'
             ? liveSpecsError
@@ -221,7 +207,21 @@ function BindingSearch({
                 readOnly={readOnly || formActive}
                 selectedCollections={collectionValues}
                 onChange={(value) => {
-                    handlers.updateCollections(value as any);
+                    setResourceConfig(
+                        value.map(({ name }) => name),
+                        undefined,
+                        true
+                    );
+
+                    if (value.length > 0 && discoveredCollections) {
+                        const latestCollection = value[value.length - 1].name;
+
+                        if (discoveredCollections.includes(latestCollection)) {
+                            setRestrictedDiscoveredCollections(
+                                latestCollection
+                            );
+                        }
+                    }
                 }}
                 getValue={(option: CollectionData) =>
                     shortenName ? stripPathing(option.name) : option.name

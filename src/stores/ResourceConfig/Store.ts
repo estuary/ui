@@ -412,10 +412,15 @@ const getInitialState = (
         );
     },
 
-    setResourceConfig: (key, value) => {
+    setResourceConfig: (key, value, disableOmit) => {
         set(
             produce((state: ResourceConfigState) => {
                 const { resourceSchema, collections } = get();
+
+                console.log('setResourceConfig', {
+                    key,
+                    value,
+                });
 
                 if (typeof key === 'string') {
                     state.resourceConfig[key] =
@@ -425,23 +430,29 @@ const getInitialState = (
 
                     state.collectionErrorsExist = isEmpty(collections);
                 } else {
-                    const newResourceKeyList = key;
                     const [removedCollections, newCollections] = whatChanged(
-                        newResourceKeyList,
+                        key,
                         state.resourceConfig
                     );
 
                     // Set defaults on new configs
                     newCollections.forEach((element) => {
-                        state.resourceConfig[element] =
-                            createJSONFormDefaults(resourceSchema);
+                        state.resourceConfig[element] = createJSONFormDefaults(
+                            resourceSchema,
+                            element
+                        );
                     });
 
-                    // Remove any configs that are no longer needed
-                    const newResourceConfig = omit(
-                        state.resourceConfig,
-                        removedCollections
-                    );
+                    // Remove any configs that are no longer needed unless disabled.
+                    //   We disable for the new collection selection pop up where the user
+                    //   is always adding collections and can only remove them manually in
+                    //   the list
+                    const newResourceConfig = disableOmit
+                        ? state.resourceConfig
+                        : omit(state.resourceConfig, removedCollections);
+                    const newConfigKeyList = Object.keys(newResourceConfig);
+
+                    // Update the config
                     state.resourceConfig = newResourceConfig;
 
                     // If previous state had no collections set to first
@@ -452,15 +463,15 @@ const getInitialState = (
                         (state.currentCollection &&
                             !has(state.resourceConfig, state.currentCollection))
                     ) {
-                        state.currentCollection = newResourceKeyList[0];
+                        state.currentCollection = newConfigKeyList[0];
                     } else {
                         state.currentCollection =
-                            newResourceKeyList[newResourceKeyList.length - 1];
+                            newConfigKeyList[newConfigKeyList.length - 1];
                     }
 
                     // Update the collections with the new array
-                    state.collections = newResourceKeyList;
-                    state.collectionErrorsExist = isEmpty(newResourceKeyList);
+                    state.collections = newConfigKeyList;
+                    state.collectionErrorsExist = isEmpty(newConfigKeyList);
 
                     // See if the recently updated configs have errors
                     populateResourceConfigErrors(newResourceConfig, state);

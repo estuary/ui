@@ -7,10 +7,11 @@ import { Plus } from 'iconoir-react';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useStore } from 'zustand';
+import { SelectedCollectionChangeData } from '../Bindings2/types';
 import PrimaryCTA from './PrimaryCTA';
 
 interface Props {
-    onChange: (value: string[]) => void;
+    onChange: (value: SelectedCollectionChangeData[]) => void;
     disabled?: boolean;
 }
 

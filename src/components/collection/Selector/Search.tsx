@@ -5,6 +5,7 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+import { SelectedCollectionChangeData } from 'components/editor/Bindings2/types';
 import BindingsEditorAdd from 'components/editor/Bindings_UnderDev/Add';
 import { useEntityType } from 'context/EntityContext';
 import { defaultOutline } from 'context/Theme';
@@ -13,7 +14,10 @@ import { CollectionData } from './types';
 
 interface Props {
     options: any[];
-    onChange: (collections: string[], reason: AutocompleteChangeReason) => void;
+    onChange: (
+        collections: SelectedCollectionChangeData[],
+        reason: AutocompleteChangeReason
+    ) => void;
     selectedCollections: string[] | CollectionData[];
     itemType?: string;
     getValue?: (option: any) => string;
@@ -37,12 +41,6 @@ function CollectionSelectorSearch({
 
     const collectionsLabel =
         itemType ?? intl.formatMessage({ id: 'terms.collections' });
-
-    const handlers = {
-        updateCollections: (value: string[]) => {
-            onChange(value, 'selectOption');
-        },
-    };
 
     return (
         <Box
@@ -72,7 +70,9 @@ function CollectionSelectorSearch({
                     {disableAdd ? null : (
                         <BindingsEditorAdd
                             disabled={readOnly}
-                            onChange={handlers.updateCollections}
+                            onChange={(value) => {
+                                onChange(value, 'selectOption');
+                            }}
                         />
                     )}
                 </Stack>
