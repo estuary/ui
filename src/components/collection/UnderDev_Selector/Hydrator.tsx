@@ -68,7 +68,6 @@ function Hydrator() {
                 filterLabel="collectionsTable.filterLabel"
                 selectableTableStoreName={selectableTableStoreName}
                 showToolbar
-                keepSelectionOnAction
                 toolbar={
                     <RowSelector
                         hideActions

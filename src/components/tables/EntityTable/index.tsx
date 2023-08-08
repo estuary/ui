@@ -68,7 +68,8 @@ interface Props {
     showEntityStatus?: boolean;
     showToolbar?: boolean;
     toolbar?: ReactNode;
-    keepSelectionOnAction?: boolean;
+    keepSelectionOnFilterOrSearch?: boolean;
+    keepSelectionOnPagination?: boolean;
 }
 
 export const getPagination = (currPage: number, size: number) => {
@@ -106,7 +107,8 @@ function EntityTable({
     minWidth = 350,
     showToolbar,
     toolbar,
-    keepSelectionOnAction,
+    keepSelectionOnFilterOrSearch,
+    keepSelectionOnPagination,
 }: Props) {
     const isFiltering = useRef(Boolean(searchQuery));
     const searchTextField = useRef<HTMLInputElement>(null);
@@ -203,11 +205,14 @@ function EntityTable({
         };
     });
 
-    const selectionResetHandler = useCallback(() => {
-        if (!keepSelectionOnAction) {
-            resetSelection();
-        }
-    }, [keepSelectionOnAction, resetSelection]);
+    const selectionResetHandler = useCallback(
+        (override?: boolean) => {
+            if (override ?? !keepSelectionOnFilterOrSearch) {
+                resetSelection();
+            }
+        },
+        [keepSelectionOnFilterOrSearch, resetSelection]
+    );
 
     const handlers = {
         filterTable: debounce(
@@ -238,7 +243,7 @@ function EntityTable({
             _event: MouseEvent<HTMLButtonElement> | null,
             newPage: number
         ) => {
-            selectionResetHandler();
+            selectionResetHandler(!keepSelectionOnPagination);
             setPagination(getPagination(newPage, rowsPerPage));
             setPage(newPage);
         },
