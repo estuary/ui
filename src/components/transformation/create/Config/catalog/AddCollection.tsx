@@ -35,12 +35,7 @@ function AddCollection({ primaryCTA, open, title, toggle }: Props) {
 
                         <Divider />
 
-                        <Box
-                            sx={{
-                                minHeight: 400,
-                                maxHeight: 400,
-                            }}
-                        >
+                        <Box>
                             <CollectionSearchAndSelector />
                         </Box>
                     </StepWrapper>
