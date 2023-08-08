@@ -34,7 +34,7 @@ import {
 import ConnectorInput from 'forms/renderers/ConnectorSelect/Input';
 import ConnectorOption from 'forms/renderers/ConnectorSelect/Option';
 import merge from 'lodash/merge';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 
 export interface WithOptionLabel {
     getOptionLabel?(option: EnumOption): string;
@@ -72,10 +72,13 @@ export const ConnectorAutoComplete = (
 
     const appliedUiSchemaOptions = merge({}, config, uischema.options);
     const [inputValue, setInputValue] = React.useState('');
-    const currentOption =
-        options?.find((option) => {
-            return areOptionsEqual(option.value, data);
-        }) ?? null;
+    const currentOption = useMemo(
+        () =>
+            options?.find((option) => {
+                return areOptionsEqual(option.value, data);
+            }) ?? null,
+        [data, options]
+    );
 
     return (
         <Autocomplete

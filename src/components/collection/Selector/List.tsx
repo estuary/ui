@@ -44,7 +44,7 @@ function CollectionSelectorList({
     height,
     renderCell,
 }: Props) {
-    const onSelectTimeOut = useRef<number | null>(null);
+    const hackyTimeout = useRef<number | null>(null);
     const intl = useIntl();
     const collectionsLabel = useConstant(
         () =>
@@ -98,7 +98,7 @@ function CollectionSelectorList({
     ];
 
     useUnmount(() => {
-        if (onSelectTimeOut.current) clearTimeout(onSelectTimeOut.current);
+        if (hackyTimeout.current) clearTimeout(hackyTimeout.current);
     });
 
     return (
@@ -118,17 +118,15 @@ function CollectionSelectorList({
                 onRowClick={
                     selectionEnabled
                         ? (params: any) => {
-                              // This is hacky but it works. It clears out the
-                              //  current collection before switching.
+                              // TODO (JSONForms) This is hacky but it works.
+                              // It clears out the current collection before switching.
                               //  If a user is typing quickly in a form and then selects a
                               //  different binding VERY quickly it could cause the updates
                               //  to go into the wrong form.
                               setCurrentCollection(null);
-                              onSelectTimeOut.current = window.setTimeout(
-                                  () => {
-                                      setCurrentCollection(params.row.name);
-                                  }
-                              );
+                              hackyTimeout.current = window.setTimeout(() => {
+                                  setCurrentCollection(params.row.name);
+                              });
                           }
                         : undefined
                 }
