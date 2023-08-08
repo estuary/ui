@@ -25,7 +25,7 @@ function BindingsEditorAdd({ disabled, onChange }: Props) {
         entityType === 'capture' ? 'terms.bindings' : 'terms.collections';
 
     const resetSelected = useStore(
-        invariableStores['Collections-Selector-Table'],
+        invariableStores.CollectionsSelectorTable,
         (state) => {
             return state.resetSelected;
         }

@@ -13,7 +13,7 @@ interface Props {
 
 function PrimaryCTA({ onChange, setDialogOpen }: Props) {
     const [selected] = useStore(
-        invariableStores['Collections-Selector-Table'],
+        invariableStores.CollectionsSelectorTable,
         (state) => {
             return [state.selected];
         }
@@ -22,9 +22,9 @@ function PrimaryCTA({ onChange, setDialogOpen }: Props) {
     const close = () => {
         setDialogOpen(false);
         onChange(
-            Array.from(selected).map((collection) => {
+            Array.from(selected).map(([_id, name]) => {
                 return {
-                    name: collection[0],
+                    name,
                 };
             })
         );

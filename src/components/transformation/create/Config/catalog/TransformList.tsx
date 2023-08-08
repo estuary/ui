@@ -11,7 +11,7 @@ import UpdateDraftButton from '../UpdateDraftButton';
 
 function TransformList() {
     const resetSelected = useStore(
-        invariableStores['Collections-Selector-Table'],
+        invariableStores.CollectionsSelectorTable,
         (state) => {
             return state.resetSelected;
         }

@@ -15,6 +15,7 @@ import { RowSelectorProps } from './types';
 
 function RowSelector({
     hideActions,
+    selectKeyValueName,
     selectableTableStoreName = SelectTableStoreNames.CAPTURE,
     showMaterialize,
 }: RowSelectorProps) {
@@ -43,7 +44,7 @@ function RowSelector({
             setAnchorEl(event.currentTarget);
         },
         toggleSelection: () => {
-            setAll(!hasSelections);
+            setAll(!hasSelections, selectKeyValueName);
         },
     };
 
