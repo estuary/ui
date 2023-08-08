@@ -177,12 +177,12 @@ function EntityTable({
         }
     }, [hydrate, successfulTransformations]);
 
-    const resetSelection = () => {
+    const resetSelection = useCallback(() => {
         if (toolbar) {
             setAll(false);
             resetRows();
         }
-    };
+    }, [resetRows, setAll, toolbar]);
 
     // Weird way but works for clear out the input. This is really only needed when
     //  a user enters text into the input on a page and then clicks the left nav of
