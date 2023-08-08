@@ -2,6 +2,7 @@ import { getLiveSpecs_collectionsSelector } from 'api/liveSpecsExt';
 import EntityTable from 'components/tables/EntityTable';
 import RowSelector from 'components/tables/RowActions/RowSelector';
 import { useMemo } from 'react';
+import { useUnmount } from 'react-use';
 import { SelectTableStoreNames } from 'stores/names';
 import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
@@ -29,6 +30,7 @@ function Hydrator() {
         setSortDirection,
         columnToSort,
         setColumnToSort,
+        reset,
     } = useTableState('csl', 'catalog_name', 'desc');
 
     const query = useMemo(() => {
@@ -39,6 +41,11 @@ function Hydrator() {
             },
         ]);
     }, [columnToSort, pagination, searchQuery, sortDirection]);
+
+    // Need to make sure we clean up the URL params
+    useUnmount(() => {
+        reset();
+    });
 
     return (
         <TableHydrator

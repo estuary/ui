@@ -65,13 +65,10 @@ function BindingsMultiEditor({
 
     // Resource Config Store
     const discoveredCollections = useResourceConfig_discoveredCollections();
-
     const setResourceSchema = useResourceConfig_setResourceSchema();
-
     const resourceConfig = useResourceConfig_resourceConfig();
     const resetResourceConfigAndCollections =
         useResourceConfig_resetResourceConfigAndCollections();
-
     const setServerUpdateRequired = useResourceConfig_setServerUpdateRequired();
 
     const { connectorTag } = useConnectorTag(imageTag.id);
@@ -93,6 +90,7 @@ function BindingsMultiEditor({
     ]);
 
     const resourceConfigUpdated = useMemo(() => {
+        console.log('resourceConfigUpdated', { draftSpecs });
         let queriedResourceConfig: ResourceConfigDictionary = {};
 
         const collectionNameProp = getCollectionNameProp(entityType);

@@ -12,10 +12,10 @@ import PrimaryCTA from './PrimaryCTA';
 interface Props {
     onChange: (value: string[]) => void;
     title: string;
-    extendList?: boolean;
+    disabled?: boolean;
 }
 
-function BindingsEditorAdd({ extendList = true, onChange, title }: Props) {
+function BindingsEditorAdd({ disabled, onChange, title }: Props) {
     const theme = useTheme();
     const entityType = useEntityType();
 
@@ -61,15 +61,15 @@ function BindingsEditorAdd({ extendList = true, onChange, title }: Props) {
                 </Typography>
 
                 <IconButton
-                    disabled={!extendList}
+                    disabled={disabled}
                     onClick={toggleDialog}
                     sx={{ borderRadius: 0 }}
                 >
                     <Plus
                         style={{
-                            color: extendList
-                                ? theme.palette.primary.main
-                                : disabledButtonText[theme.palette.mode],
+                            color: disabled
+                                ? disabledButtonText[theme.palette.mode]
+                                : theme.palette.primary.main,
                         }}
                     />
                 </IconButton>

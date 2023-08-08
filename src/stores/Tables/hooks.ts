@@ -1,4 +1,3 @@
-import invariableStores from 'context/Zustand/invariableStores';
 import { useCallback, useMemo } from 'react';
 import { SortDirection } from 'types';
 import {
@@ -7,7 +6,6 @@ import {
     useQueryParams,
     withDefault,
 } from 'use-query-params';
-import { useStore } from 'zustand';
 import { getPagination } from '../../components/tables/EntityTable';
 
 export type TablePrefix =
@@ -77,8 +75,13 @@ function useTableState(
         [sortColumnKey, setQuery]
     );
 
+    const reset = useCallback(() => {
+        setQuery({});
+    }, [setQuery]);
+
     return useMemo(() => {
         return {
+            reset,
             pagination: query[paginationKey],
             setPagination,
             searchQuery: query[searchQueryKey],
@@ -89,6 +92,7 @@ function useTableState(
             setColumnToSort,
         };
     }, [
+        reset,
         paginationKey,
         query,
         searchQueryKey,
@@ -101,10 +105,4 @@ function useTableState(
     ]);
 }
 
-function useTableStore_selected() {
-    return useStore(invariableStores['Collections-Selector-Table'], (state) => {
-        return [state.selected];
-    });
-}
-
-export { useTableState, useTableStore_selected };
+export { useTableState };

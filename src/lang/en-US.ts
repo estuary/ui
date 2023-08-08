@@ -638,7 +638,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
 
     'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
 
-    'entityCreate.bindingsConfig.collectionsLabel': `Search {items}`,
+    'entityCreate.bindingsConfig.collectionsLabel': `Add {items}`,
     'entityCreate.bindingsConfig.noRows': `Please select from the list above to begin.`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
 

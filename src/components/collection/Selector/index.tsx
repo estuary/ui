@@ -54,13 +54,17 @@ function CollectionSelector({
                 readOnly={readOnly}
                 selectedCollections={collectionsArray}
                 onChange={(value, reason) => {
+                    console.log('change called', {
+                        value,
+                    });
                     if (reason === 'selectOption') {
                         addCollection(difference(value, collectionsArray)[0]);
-                    } else if (reason === 'removeOption') {
-                        removeCollection(
-                            difference(collectionsArray, value)[0]
-                        );
                     }
+                    // else if (reason === 'removeOption') {
+                    //     removeCollection(
+                    //         difference(collectionsArray, value)[0]
+                    //     );
+                    // }
                 }}
             />
 
