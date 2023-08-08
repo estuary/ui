@@ -43,8 +43,6 @@ function DerivationCreateAlternate() {
     // Form State Store
     const logToken = useFormStateStore_logToken();
     const publicationError = useFormStateStore_error();
-
-    // const setFormState = useFormStateStore_setFormState();
     const resetFormState = useFormStateStore_resetState();
 
     // Transformation Create Store

@@ -7,16 +7,10 @@ import { Entity } from 'types';
 interface Props {
     entityType: Entity;
     disabled: boolean;
-    // callFailed: Function;
     postGenerateMutate: Function;
 }
 
-function RediscoverButton({
-    entityType,
-    disabled,
-    // callFailed,
-    postGenerateMutate,
-}: Props) {
+function RediscoverButton({ entityType, disabled, postGenerateMutate }: Props) {
     const { callFailed } = useEntityWorkflowHelpers();
 
     const { generateCatalog, isSaving, formActive } = useDiscoverCapture(

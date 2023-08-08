@@ -55,8 +55,6 @@ interface Props {
 
 const ENTITY_TYPE = 'materialization';
 
-const ENTITY_TYPE = 'materialization';
-
 function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
     const isEdit = useEntityWorkflow_Editing();
     const { callFailed } = useEntityWorkflowHelpers();
