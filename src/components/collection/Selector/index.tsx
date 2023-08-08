@@ -1,5 +1,4 @@
 import { Box } from '@mui/material';
-import { useLiveSpecs } from 'hooks/useLiveSpecs';
 import { difference } from 'lodash';
 import { ReactNode } from 'react';
 import CollectionSelectorActions from './Actions';
@@ -40,10 +39,8 @@ function CollectionSelector({
 
     height,
 }: BindingSelectorProps) {
-    const { liveSpecs } = useLiveSpecs('collection');
-    const catalogNames = liveSpecs.map((liveSpec) => liveSpec.catalog_name);
-
-    const collectionsArray = Array.from(collections);
+    const catalogNames: any[] = [];
+    const collectionsArray: any[] = [];
 
     return loading ? (
         <Box>{skeleton}</Box>

@@ -91,6 +91,7 @@ function BindingsMultiEditor({
 
     const resourceConfigUpdated = useMemo(() => {
         console.log('resourceConfigUpdated', { draftSpecs });
+
         let queriedResourceConfig: ResourceConfigDictionary = {};
 
         const collectionNameProp = getCollectionNameProp(entityType);

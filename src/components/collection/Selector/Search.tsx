@@ -1,5 +1,13 @@
-import { AutocompleteChangeReason, Box } from '@mui/material';
+import {
+    AutocompleteChangeReason,
+    Box,
+    Stack,
+    Typography,
+    useTheme,
+} from '@mui/material';
 import BindingsEditorAdd from 'components/editor/Bindings_UnderDev/Add';
+import { useEntityType } from 'context/EntityContext';
+import { defaultOutline } from 'context/Theme';
 import { useIntl } from 'react-intl';
 import { CollectionData } from './types';
 
@@ -19,14 +27,16 @@ function CollectionSelectorSearch({
     itemType,
 }: Props) {
     const intl = useIntl();
-    const collectionsLabel = intl.formatMessage(
-        {
-            id: 'entityCreate.bindingsConfig.collectionsLabel',
-        },
-        {
-            items: itemType ?? intl.formatMessage({ id: 'terms.collections' }),
-        }
-    );
+    const theme = useTheme();
+    const entityType = useEntityType();
+
+    // Captures can only disable/enable bindings in the UI. The user can
+    //   actually remove items from the list via the CLI and we are okay
+    //   with not handling that scenario in the UI as of Q3 2023
+    const disableAdd = entityType === 'capture';
+
+    const collectionsLabel =
+        itemType ?? intl.formatMessage({ id: 'terms.collections' });
 
     const handlers = {
         updateCollections: (value: string[]) => {
@@ -37,16 +47,36 @@ function CollectionSelectorSearch({
     return (
         <Box
             sx={{
-                p: '0.5rem 0.5rem 1rem',
-                display: 'flex',
-                alignItems: 'center',
+                pb: 1,
             }}
         >
-            <BindingsEditorAdd
-                disabled={readOnly}
-                title={collectionsLabel}
-                onChange={handlers.updateCollections}
-            />
+            <Box sx={{ height: '100%', width: '100%' }}>
+                <Stack
+                    direction="row"
+                    sx={{
+                        justifyContent: 'space-between',
+                        borderBottom: defaultOutline[theme.palette.mode],
+                    }}
+                >
+                    <Typography
+                        component="div"
+                        sx={{
+                            p: 1,
+                            fontWeight: 500,
+                            textTransform: 'uppercase',
+                        }}
+                    >
+                        {collectionsLabel}
+                    </Typography>
+
+                    {disableAdd ? null : (
+                        <BindingsEditorAdd
+                            disabled={readOnly}
+                            onChange={handlers.updateCollections}
+                        />
+                    )}
+                </Stack>
+            </Box>
         </Box>
     );
 }

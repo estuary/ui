@@ -1,7 +1,7 @@
-import { Box, IconButton, Stack, Typography, useTheme } from '@mui/material';
+import { IconButton, useTheme } from '@mui/material';
 import AddCollection from 'components/transformation/create/Config/catalog/AddCollection';
 import { useEntityType } from 'context/EntityContext';
-import { defaultOutline, disabledButtonText } from 'context/Theme';
+import { disabledButtonText } from 'context/Theme';
 import invariableStores from 'context/Zustand/invariableStores';
 import { Plus } from 'iconoir-react';
 import { useState } from 'react';
@@ -11,11 +11,10 @@ import PrimaryCTA from './PrimaryCTA';
 
 interface Props {
     onChange: (value: string[]) => void;
-    title: string;
     disabled?: boolean;
 }
 
-function BindingsEditorAdd({ disabled, onChange, title }: Props) {
+function BindingsEditorAdd({ disabled, onChange }: Props) {
     const theme = useTheme();
     const entityType = useEntityType();
 
@@ -41,39 +40,20 @@ function BindingsEditorAdd({ disabled, onChange, title }: Props) {
     };
 
     return (
-        <Box sx={{ height: '100%', width: '100%' }}>
-            <Stack
-                direction="row"
-                sx={{
-                    justifyContent: 'space-between',
-                    borderBottom: defaultOutline[theme.palette.mode],
-                }}
+        <>
+            <IconButton
+                disabled={disabled}
+                onClick={toggleDialog}
+                sx={{ borderRadius: 0 }}
             >
-                <Typography
-                    component="div"
-                    sx={{
-                        p: 1,
-                        fontWeight: 500,
-                        textTransform: 'uppercase',
+                <Plus
+                    style={{
+                        color: disabled
+                            ? disabledButtonText[theme.palette.mode]
+                            : theme.palette.primary.main,
                     }}
-                >
-                    {title}
-                </Typography>
-
-                <IconButton
-                    disabled={disabled}
-                    onClick={toggleDialog}
-                    sx={{ borderRadius: 0 }}
-                >
-                    <Plus
-                        style={{
-                            color: disabled
-                                ? disabledButtonText[theme.palette.mode]
-                                : theme.palette.primary.main,
-                        }}
-                    />
-                </IconButton>
-            </Stack>
+                />
+            </IconButton>
             <AddCollection
                 open={open}
                 primaryCTA={
@@ -85,7 +65,7 @@ function BindingsEditorAdd({ disabled, onChange, title }: Props) {
                 toggle={toggleDialog}
                 title={<FormattedMessage id={itemType} />}
             />
-        </Box>
+        </>
     );
 }
 

@@ -173,7 +173,9 @@ function CaptureEdit() {
                         <EntityEdit
                             title="routeTitle.captureEdit"
                             entityType={entityType}
-                            readOnly={{ detailsForm: true }}
+                            readOnly={{
+                                detailsForm: true,
+                            }}
                             draftSpecMetadata={draftSpecsMetadata}
                             callFailed={helpers.callFailed}
                             resetState={resetState}
