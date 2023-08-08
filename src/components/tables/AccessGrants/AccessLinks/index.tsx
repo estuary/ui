@@ -5,7 +5,7 @@ import EntityTable from 'components/tables/EntityTable';
 import RowSelector from 'components/tables/RowActions/AccessLinks/RowSelector';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
-import useTableState from 'stores/Tables/hooks';
+import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import { TableColumns } from 'types';
 

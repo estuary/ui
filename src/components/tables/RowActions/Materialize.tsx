@@ -18,6 +18,7 @@ interface Props {
     selectableTableStoreName:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
+        | SelectTableStoreNames.COLLECTION_SELECTOR
         | SelectTableStoreNames.MATERIALIZATION;
 }
 

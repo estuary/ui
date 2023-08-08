@@ -3,7 +3,7 @@ import { createEntityDraft } from 'api/drafts';
 import {
     createDraftSpec,
     DraftSpecsExtQuery_ByCatalogName,
-    getDraftSpecsByCatalogName,
+    getDraftSpecsByDraftId,
     modifyDraftSpec,
 } from 'api/draftSpecs';
 import {
@@ -52,6 +52,10 @@ interface Props {
     disabled: boolean;
     mutateDraftSpecs: Function;
 }
+
+const ENTITY_TYPE = 'materialization';
+
+const ENTITY_TYPE = 'materialization';
 
 function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
     const isEdit = useEntityWorkflow_Editing();
@@ -150,17 +154,12 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
             let existingTaskData: DraftSpecsExtQuery_ByCatalogName | null =
                 null;
 
-            // Similar to processing we need to see if the name changed
-            //  that way we don't create multiple "materializations" with different names
-            //  all under the same draft. Otherwise we would then try to publish
-            //  all of those documents and not just the final name
-            if (persistedDraftId && !entityNameChanged) {
-                const existingDraftSpecResponse =
-                    await getDraftSpecsByCatalogName(
-                        persistedDraftId,
-                        processedEntityName,
-                        'materialization'
-                    );
+            if (persistedDraftId) {
+                // See if there is an existing materialization tied to the persisted draft id
+                const existingDraftSpecResponse = await getDraftSpecsByDraftId(
+                    persistedDraftId,
+                    ENTITY_TYPE
+                );
 
                 if (existingDraftSpecResponse.error) {
                     return callFailed({
@@ -169,13 +168,18 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
                             error: existingDraftSpecResponse.error,
                         },
                     });
-                } else if (
+                }
+
+                // Populate the existing if available. This might not exist if the user edited a collection
+                //  as their first action before clicking this button
+                if (
                     existingDraftSpecResponse.data &&
                     existingDraftSpecResponse.data.length > 0
                 ) {
                     existingTaskData = existingDraftSpecResponse.data[0];
                 }
             } else {
+                // No existing draft so start a new one
                 const draftsResponse = await createEntityDraft(
                     processedEntityName
                 );
@@ -189,28 +193,38 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
                     });
                 }
 
+                // Since we made a new one override the current draft id
                 evaluatedDraftId = draftsResponse.data[0].id;
             }
 
+            // Generate the draft spec that will be sent to the server next
             const draftSpec = generateTaskSpec(
-                'materialization',
+                ENTITY_TYPE,
                 { image: imagePath, config: encryptedEndpointConfig.data },
                 resourceConfig,
                 existingTaskData
             );
 
+            // If there is a draft already with task data then update. We do not match on
+            //   the catalog name as the user could change the name. There is a small issue
+            //      if someone updates their draft on the CLI and adds multiple materializations
+            //      there will be an issue. This will need to be handled eventually but by then
+            //      we should move the UI to the "shopping cart" approach.
             const draftSpecsResponse =
                 persistedDraftId && existingTaskData
-                    ? await modifyDraftSpec(draftSpec, {
-                          draft_id: evaluatedDraftId,
-                          catalog_name: processedEntityName,
-                          spec_type: 'materialization',
-                      })
+                    ? await modifyDraftSpec(
+                          draftSpec,
+                          {
+                              draft_id: evaluatedDraftId,
+                              spec_type: ENTITY_TYPE,
+                          },
+                          processedEntityName
+                      )
                     : await createDraftSpec(
                           evaluatedDraftId,
                           processedEntityName,
                           draftSpec,
-                          'materialization'
+                          ENTITY_TYPE
                       );
 
             if (draftSpecsResponse.error) {
@@ -222,17 +236,14 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
                 });
             }
 
+            // Update all the store state
             setEncryptedEndpointConfig({
                 data: draftSpecsResponse.data[0].spec.endpoint.connector.config,
             });
-
             setPreviousEndpointConfig({ data: endpointConfigData });
-
             setDraftId(evaluatedDraftId);
             setPersistedDraftId(evaluatedDraftId);
-
             setDraftedEntityName(draftSpecsResponse.data[0].catalog_name);
-
             setFormState({
                 status: FormStatus.GENERATED,
             });
