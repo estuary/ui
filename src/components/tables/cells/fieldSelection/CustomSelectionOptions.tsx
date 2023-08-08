@@ -21,8 +21,6 @@ interface Props {
     constraint: TranslatedConstraint;
 }
 
-// TODO (field selection): Determine whether the included/excluded toggle button group should be disabled
-//   when the default option is selected.
 function CustomSelectionOptions({ constraint, field }: Props) {
     // Bindings Editor Store
     const recommendFields = useBindingsEditorStore_recommendFields();
