@@ -32,7 +32,10 @@ import { isEqual } from 'lodash';
 import { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
-import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
+import {
+    useFormStateStore_isActive,
+    useFormStateStore_setFormState,
+} from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { Schema } from 'types';
 import { evaluateRequiredIncludedFields } from 'utils/workflow-utils';
@@ -107,6 +110,7 @@ function FieldSelectionViewer({ collectionName, connectorsExist }: Props) {
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
     // Form State Store
+    const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
 
     const [data, setData] = useState<
@@ -279,7 +283,7 @@ function FieldSelectionViewer({ collectionName, connectorsExist }: Props) {
                         <Checkbox
                             value={recommendFields}
                             checked={recommendFields}
-                            disabled={selectionSaving || !data}
+                            disabled={formActive || !data}
                         />
                     }
                     onChange={toggleRecommendFields}
