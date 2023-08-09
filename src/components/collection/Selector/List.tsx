@@ -109,9 +109,10 @@ function CollectionSelectorList({
                 }}
                 rows={rows}
                 columns={columns}
-                headerHeight={40}
+                headerHeight={0}
                 rowCount={rows.length}
-                hideFooter
+                pagination
+                hideFooterSelectedRowCount
                 disableColumnSelector
                 disableSelectionOnClick={!selectionEnabled}
                 selectionModel={selectionEnabled ? selectionModel : undefined}
