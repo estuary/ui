@@ -200,11 +200,11 @@ function BindingSelector({
                 itemType={itemType}
                 readOnly={disableActions}
                 shortenName={shortenName}
+                RediscoverButton={RediscoverButton}
             />
 
             <CollectionSelectorActions
                 readOnly={rows.size === 0 || disableActions}
-                RediscoverButton={RediscoverButton}
                 removeAllCollections={handlers.removeAllCollections}
             />
 

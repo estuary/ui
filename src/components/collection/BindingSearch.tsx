@@ -20,9 +20,10 @@ import CollectionSelectorSearch from './Selector/Search';
 import { CollectionData } from './Selector/types';
 
 interface Props {
-    itemType?: string;
     emptyListComponent?: ReactNode;
+    itemType?: string;
     readOnly?: boolean;
+    RediscoverButton?: ReactNode;
     shortenName?: boolean;
 }
 
@@ -31,6 +32,7 @@ function BindingSearch({
     emptyListComponent,
     shortenName,
     readOnly = false,
+    RediscoverButton,
 }: Props) {
     const entityType = useEntityType();
     const workFlow = useEntityWorkflow();
@@ -238,6 +240,7 @@ function BindingSearch({
                         },
                     },
                 }}
+                RediscoverButton={RediscoverButton}
             />
         );
     }

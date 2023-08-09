@@ -7,9 +7,8 @@ import {
 } from '@mui/material';
 import { SelectedCollectionChangeData } from 'components/editor/Bindings2/types';
 import BindingsEditorAdd from 'components/editor/Bindings_UnderDev/Add';
-import BindingsEditorRediscover from 'components/editor/Bindings_UnderDev/Rediscover';
-import { useEntityType } from 'context/EntityContext';
 import { defaultOutline } from 'context/Theme';
+import { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 import { CollectionData } from './types';
 
@@ -24,23 +23,22 @@ interface Props {
     getValue?: (option: any) => string;
     readOnly?: boolean;
     AutocompleteProps?: any; // TODO (typing) - need to typ as props
+    RediscoverButton?: ReactNode;
 }
 
 function CollectionSelectorSearch({
     onChange,
     readOnly = false,
     itemType,
+    RediscoverButton,
 }: Props) {
     const intl = useIntl();
     const theme = useTheme();
-    const entityType = useEntityType();
-
-    // Captures are the only ones that show the refresh button. This
-    //  kicks off running a new discover to check for new collections
-    const showRefresh = entityType === 'capture';
 
     const collectionsLabel =
         itemType ?? intl.formatMessage({ id: 'terms.collections' });
+
+    console.log('CollectionSelectorSearch', RediscoverButton);
 
     return (
         <Box
@@ -68,20 +66,13 @@ function CollectionSelectorSearch({
                     </Typography>
 
                     <Stack direction="row">
-                        {showRefresh ? (
-                            <BindingsEditorRediscover
-                                entityType="capture"
-                                disabled={false}
-                                callFailed={undefined}
-                                postGenerateMutate={undefined}
-                            />
-                        ) : null}
+                        {RediscoverButton}
 
                         <BindingsEditorAdd
                             disabled={readOnly}
-                            onChange={(value) => {
-                                onChange(value, 'selectOption');
-                            }}
+                            onChange={(value) =>
+                                onChange(value, 'selectOption')
+                            }
                         />
                     </Stack>
                 </Stack>
