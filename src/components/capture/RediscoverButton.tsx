@@ -1,5 +1,7 @@
-import { Button } from '@mui/material';
+import { IconButton, Tooltip, useTheme } from '@mui/material';
 import useDiscoverCapture from 'components/capture/useDiscoverCapture';
+import { disabledButtonText } from 'context/Theme';
+import { RefreshDouble } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { Entity } from 'types';
 
@@ -16,6 +18,7 @@ function RediscoverButton({
     callFailed,
     postGenerateMutate,
 }: Props) {
+    const theme = useTheme();
     const { generateCatalog, isSaving, formActive } = useDiscoverCapture(
         entityType,
         callFailed,
@@ -24,14 +27,25 @@ function RediscoverButton({
     );
 
     return (
-        <Button
-            variant="text"
-            disabled={disabled || isSaving || formActive}
-            onClick={generateCatalog}
-            sx={{ borderRadius: 0 }}
+        <Tooltip
+            title={
+                <FormattedMessage id="workflows.collectionSelector.cta.rediscover" />
+            }
         >
-            <FormattedMessage id="workflows.collectionSelector.cta.rediscover" />
-        </Button>
+            <IconButton
+                disabled={disabled || isSaving || formActive}
+                onClick={generateCatalog}
+                sx={{ borderRadius: 0 }}
+            >
+                <RefreshDouble
+                    style={{
+                        color: disabled
+                            ? disabledButtonText[theme.palette.mode]
+                            : theme.palette.primary.main,
+                    }}
+                />
+            </IconButton>
+        </Tooltip>
     );
 }
 
