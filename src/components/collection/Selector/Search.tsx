@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { SelectedCollectionChangeData } from 'components/editor/Bindings2/types';
 import BindingsEditorAdd from 'components/editor/Bindings_UnderDev/Add';
+import BindingsEditorRediscover from 'components/editor/Bindings_UnderDev/Rediscover';
 import { useEntityType } from 'context/EntityContext';
 import { defaultOutline } from 'context/Theme';
 import { useIntl } from 'react-intl';
@@ -34,10 +35,9 @@ function CollectionSelectorSearch({
     const theme = useTheme();
     const entityType = useEntityType();
 
-    // Captures can only disable/enable bindings in the UI. The user can
-    //   actually remove items from the list via the CLI and we are okay
-    //   with not handling that scenario in the UI as of Q3 2023
-    const disableAdd = entityType === 'capture';
+    // Captures are the only ones that show the refresh button. This
+    //  kicks off running a new discover to check for new collections
+    const showRefresh = entityType === 'capture';
 
     const collectionsLabel =
         itemType ?? intl.formatMessage({ id: 'terms.collections' });
@@ -67,14 +67,23 @@ function CollectionSelectorSearch({
                         {collectionsLabel}
                     </Typography>
 
-                    {disableAdd ? null : (
+                    <Stack direction="row">
+                        {showRefresh ? (
+                            <BindingsEditorRediscover
+                                entityType="capture"
+                                disabled={false}
+                                callFailed={undefined}
+                                postGenerateMutate={undefined}
+                            />
+                        ) : null}
+
                         <BindingsEditorAdd
                             disabled={readOnly}
                             onChange={(value) => {
                                 onChange(value, 'selectOption');
                             }}
                         />
-                    )}
+                    </Stack>
                 </Stack>
             </Box>
         </Box>
