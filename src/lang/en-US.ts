@@ -857,6 +857,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
 
     'workflows.collectionSelector.cta.delete': `Remove All`,
     'workflows.collectionSelector.cta.rediscover': `Refresh`,
+    'workflows.collectionSelector.cta.rediscover.tooltip': `Refresh bindings with latest from source`,
     'workflows.collectionSelector.cta.schemaEdit': `CLI`,
     'workflows.collectionSelector.cta.schemaInference': `Schema Inference`,
     'workflows.collectionSelector.error.title.editorInitialization': `Editor initialization failed`,
