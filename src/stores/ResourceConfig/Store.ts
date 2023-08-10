@@ -21,10 +21,20 @@ import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { getCollectionName, getCollectionNameProp } from 'utils/workflow-utils';
+import { getCollectionName } from 'utils/workflow-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
+
+const populateCollections = (
+    state: ResourceConfigState,
+    collections: string[]
+) => {
+    state.collections = collections;
+    state.currentCollection = collections[0];
+
+    state.collectionErrorsExist = isEmpty(collections);
+};
 
 const populateResourceConfigErrors = (
     resourceConfig: ResourceConfigDictionary,
@@ -181,21 +191,34 @@ const getInitialState = (
         );
     },
 
-    preFillCollections: (bindings, entityType) => {
+    prefillResourceConfig: (bindings) => {
         set(
             produce((state: ResourceConfigState) => {
-                const queryProp = getCollectionNameProp(entityType);
-                const collections = bindings.map((binding) =>
-                    getCollectionName(binding[queryProp])
-                );
+                console.log('prefillResourceConfig', {
+                    bindings,
+                });
 
-                state.collections = collections;
-                state.currentCollection = collections[0];
+                // As we go through and fetch all the names for collections go ahead and also
+                // populate the resource config
+                const collections = bindings.map((binding: any) => {
+                    // Snag the name so we can add it to the config and list of collections
+                    const name = getCollectionName(binding);
 
-                state.collectionErrorsExist = isEmpty(collections);
+                    // Take the binding resource and plase into config OR
+                    //  generate a default in case there are any issues with it
+                    state.resourceConfig[name] = {
+                        data: binding.resource,
+                        errors: [],
+                    };
+
+                    return name;
+                });
+
+                populateResourceConfigErrors(state.resourceConfig, state);
+                populateCollections(state, collections);
             }),
             false,
-            'Collections Pre-filled'
+            'Resource Config Prefilled'
         );
     },
 
@@ -409,23 +432,22 @@ const getInitialState = (
         );
     },
 
-    setResourceConfig: (key, value, disableOmit) => {
+    setResourceConfig: (key, value, disableCheckingErrors, disableOmit) => {
         set(
             produce((state: ResourceConfigState) => {
                 const { resourceSchema, collections } = get();
-
-                console.log('setResourceConfig', {
-                    key,
-                    value,
-                });
 
                 if (typeof key === 'string') {
                     state.resourceConfig[key] =
                         value ?? createJSONFormDefaults(resourceSchema);
 
-                    populateResourceConfigErrors(state.resourceConfig, state);
-
-                    state.collectionErrorsExist = isEmpty(collections);
+                    if (!disableCheckingErrors) {
+                        populateResourceConfigErrors(
+                            state.resourceConfig,
+                            state
+                        );
+                        state.collectionErrorsExist = isEmpty(collections);
+                    }
                 } else {
                     const [removedCollections, newCollections] = whatChanged(
                         key,
@@ -582,33 +604,22 @@ const getInitialState = (
             if (error) {
                 setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
-                const { setResourceConfig, preFillCollections } = get();
+                const { prefillResourceConfig } = get();
 
                 const collectionNameProp = materializationHydrating
                     ? 'source'
                     : 'target';
 
                 // TODO (direct bindings) We can remove this when/if we move the UI
-                //   to using the bindings directly
+                //   to using the bindings directly and save a lot of processing
                 const sortedBindings = sortBy(data[0].spec.bindings, [
                     collectionNameProp,
                 ]);
-
-                // This is super expensive for entities with a lot of bindings
-                sortedBindings.forEach((binding) =>
-                    setResourceConfig(
-                        getCollectionName(binding[collectionNameProp]),
-                        {
-                            data: binding.resource,
-                            errors: [],
-                        }
-                    )
-                );
-
-                preFillCollections(sortedBindings, entityType);
+                prefillResourceConfig(sortedBindings);
             }
         }
 
+        console.log('prefillPubIds', prefillPubIds);
         if (prefillPubIds.length > 0) {
             // Prefills collections in the materialization create workflow when the Materialize CTA
             // on the Captures page or the capture publication log dialog is clicked.
@@ -616,6 +627,8 @@ const getInitialState = (
                 prefillPubIds,
                 'capture'
             );
+
+            console.log('data', data);
 
             if (error) {
                 setHydrationErrorsExist(true);

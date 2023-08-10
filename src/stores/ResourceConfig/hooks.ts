@@ -21,13 +21,6 @@ export const useResourceConfig_preFillEmptyCollections = () => {
     );
 };
 
-export const useResourceConfig_preFillCollections = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['preFillCollections']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.preFillCollections);
-};
-
 export const useResourceConfig_addCollections = () => {
     return useZustandStore<
         ResourceConfigState,
