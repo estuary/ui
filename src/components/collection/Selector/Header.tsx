@@ -1,21 +1,31 @@
-import { Checkbox, IconButton, Stack, TextField } from '@mui/material';
+import { Box, Checkbox, IconButton, Stack, TextField } from '@mui/material';
 import { Cancel } from 'iconoir-react';
 import { useRef } from 'react';
 import { useIntl } from 'react-intl';
 
 interface Props {
     itemType: string;
+    onFilterChange: (value: string) => void;
 }
 
-function CollectionSelectorHeader({ itemType }: Props) {
+function CollectionSelectorHeader({ itemType, onFilterChange }: Props) {
     // Might be good to remove. Only needed if we need to mess with the value of the input
     const searchTextField = useRef<HTMLInputElement>(null);
 
     const intl = useIntl();
 
     return (
-        <Stack direction="row">
-            <Checkbox />
+        <Stack
+            direction="row"
+            sx={{
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
+            }}
+        >
+            <Box>
+                <Checkbox />
+            </Box>
             <TextField
                 inputRef={searchTextField}
                 id="capture-search-box"
@@ -31,18 +41,22 @@ function CollectionSelectorHeader({ itemType }: Props) {
                 size="small"
                 onChange={(event) => {
                     console.log('filter', event.target.value);
+                    onFilterChange(event.target.value);
                 }}
                 sx={{
-                    'width': 'auto',
+                    'flexGrow': 1,
+                    'my': 2,
                     '& .MuiInputBase-root': { borderRadius: 3 },
                 }}
             />
-            <IconButton
-                size="small"
-                sx={{ color: (theme) => theme.palette.text.primary }}
-            >
-                <Cancel />
-            </IconButton>
+            <Box>
+                <IconButton
+                    size="small"
+                    sx={{ color: (theme) => theme.palette.text.primary }}
+                >
+                    <Cancel />
+                </IconButton>
+            </Box>
         </Stack>
     );
 }

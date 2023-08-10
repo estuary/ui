@@ -2,10 +2,9 @@ import { Box } from '@mui/material';
 import {
     DataGrid,
     GridColDef,
-    GridColumnHeaderParams,
+    GridFilterModel,
     GridRenderCellParams,
     GridSelectionModel,
-    GridValueGetterParams,
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { dataGridListStyling } from 'context/Theme';
@@ -56,6 +55,9 @@ function CollectionSelectorList({
     );
 
     const selectionEnabled = currentCollection && setCurrentCollection;
+    const [filterModel, setFilterModel] = useState<GridFilterModel>({
+        items: [],
+    });
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
         []
     );
@@ -76,10 +78,25 @@ function CollectionSelectorList({
             flex: 1,
             headerName: collectionsLabel,
             sortable: false,
-            renderHeader: (_params: GridColumnHeaderParams) => (
-                <CollectionSelectorHeader itemType={collectionsLabel} />
+            renderHeader: (_params) => (
+                <CollectionSelectorHeader
+                    itemType={collectionsLabel}
+                    onFilterChange={(value) => {
+                        const newFilterMode: GridFilterModel = {
+                            items: [
+                                {
+                                    id: 1,
+                                    columnField: 'name',
+                                    value,
+                                    operatorValue: 'contains',
+                                },
+                            ],
+                        };
+                        setFilterModel(newFilterMode);
+                    }}
+                />
             ),
-            renderCell: (params: GridRenderCellParams) => {
+            renderCell: (params) => {
                 if (renderCell) {
                     return renderCell(params);
                 } else if (removeCollection) {
@@ -92,7 +109,7 @@ function CollectionSelectorList({
                     );
                 }
             },
-            valueGetter: (params: GridValueGetterParams) => {
+            valueGetter: (params) => {
                 return params.row.name;
             },
         },
@@ -105,18 +122,21 @@ function CollectionSelectorList({
     return (
         <Box sx={{ height: height ?? 480 }}>
             <DataGrid
+                columns={columns}
                 components={{
                     NoRowsOverlay: SelectorEmpty,
                 }}
-                rows={rows}
-                columns={columns}
-                rowCount={rows.length}
-                pagination
-                hideFooterSelectedRowCount
                 disableColumnMenu
                 disableColumnSelector
                 disableSelectionOnClick={!selectionEnabled}
+                filterModel={filterModel}
+                hideFooterSelectedRowCount
+                initialState={initialState}
+                pagination
+                rowCount={rows.length}
+                rows={rows}
                 selectionModel={selectionEnabled ? selectionModel : undefined}
+                sx={dataGridListStyling}
                 onRowClick={
                     selectionEnabled
                         ? (params: any) => {
@@ -132,8 +152,6 @@ function CollectionSelectorList({
                           }
                         : undefined
                 }
-                initialState={initialState}
-                sx={dataGridListStyling}
             />
         </Box>
     );

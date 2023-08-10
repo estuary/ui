@@ -407,18 +407,8 @@ export const dataGridListStyling: SxProps<Theme> = {
         borderBottom: (theme) => defaultOutline[theme.palette.mode],
         bgcolor: (theme) => alternativeDataGridHeader[theme.palette.mode],
     },
-    '& .MuiDataGrid-columnHeader:hover': {
-        '& .MuiDataGrid-columnHeaderTitleContainerContent': {
-            mr: 0.5,
-        },
-        '& .MuiDataGrid-menuIcon': {
-            width: '2rem',
-        },
-    },
     '& .MuiDataGrid-columnHeaderTitleContainerContent': {
         width: '100%',
-        justifyContent: 'space-between',
-        mr: 4.5,
     },
 };
 
