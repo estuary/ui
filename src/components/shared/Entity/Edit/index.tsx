@@ -1,5 +1,4 @@
 import { Box, Collapse } from '@mui/material';
-import { RealtimeSubscription } from '@supabase/supabase-js';
 import CollectionConfig from 'components/collection/Config';
 import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
 import {
@@ -12,6 +11,7 @@ import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
+import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
@@ -58,8 +58,6 @@ interface Props {
         DraftSpecSwrMetadata,
         'draftSpecs' | 'isValidating' | 'error'
     >;
-    callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
-    resetState: () => void;
     toolbar: ReactNode;
     RediscoverButton?: ReactNode;
 }
@@ -70,11 +68,12 @@ function EntityEdit({
     entityType,
     readOnly,
     draftSpecMetadata,
-    resetState,
     toolbar,
     RediscoverButton,
 }: Props) {
     useBrowserTitle(title);
+
+    const { resetState } = useEntityWorkflowHelpers();
 
     const {
         connectorTags,

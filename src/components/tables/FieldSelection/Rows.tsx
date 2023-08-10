@@ -3,6 +3,10 @@ import { CompositeProjection } from 'components/editor/Bindings/FieldSelection/t
 import ChipListCell from 'components/tables/cells/ChipList';
 import ConstraintDetails from 'components/tables/cells/fieldSelection/ConstraintDetails';
 import FieldActions from 'components/tables/cells/fieldSelection/FieldActions';
+import {
+    doubleElevationHoverBackground,
+    getStickyTableCell,
+} from 'context/Theme';
 import { orderBy } from 'lodash';
 import { SortDirection } from 'types';
 
@@ -18,8 +22,15 @@ interface RowsProps {
 
 function Row({ row }: RowProps) {
     return (
-        <TableRow hover>
-            <TableCell>
+        <TableRow
+            sx={{
+                '&:hover td': {
+                    background: (theme) =>
+                        doubleElevationHoverBackground[theme.palette.mode],
+                },
+            }}
+        >
+            <TableCell sx={getStickyTableCell()}>
                 <Typography>{row.field}</Typography>
             </TableCell>
 
@@ -30,16 +41,22 @@ function Row({ row }: RowProps) {
             <ChipListCell values={row.inference.types} stripPath={false} />
 
             {row.constraint ? (
-                <ConstraintDetails constraint={row.constraint} />
-            ) : null}
+                <>
+                    <ConstraintDetails constraint={row.constraint} />
 
-            {row.constraint ? (
-                <FieldActions
-                    field={row.field}
-                    constraint={row.constraint}
-                    selectionType={row.selectionType}
-                />
-            ) : null}
+                    <FieldActions
+                        field={row.field}
+                        constraint={row.constraint}
+                        selectionType={row.selectionType}
+                    />
+                </>
+            ) : (
+                <>
+                    <TableCell />
+
+                    <TableCell />
+                </>
+            )}
         </TableRow>
     );
 }

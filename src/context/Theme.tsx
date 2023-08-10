@@ -1,14 +1,16 @@
 import {
-    createTheme,
+    ThemeProvider as MUIThemeProvider,
     PaletteOptions,
     SxProps,
     Theme,
     ThemeOptions,
-    ThemeProvider as MUIThemeProvider,
     TypographyProps,
+    createTheme,
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
+import { Square } from 'iconoir-react';
+import CheckSquare from 'icons/CheckSquare';
 import React from 'react';
 import { useLocalStorage } from 'react-use';
 import { BaseComponentProps } from 'types';
@@ -70,9 +72,15 @@ export const sample_grey = {
 };
 
 // Status Colors
-export type SemanticColor = '#40B763' | '#F5D75E' | '#CA3B55' | '#4FD6FF';
+export type SemanticColor =
+    | '#40B763'
+    | '#2A7942'
+    | '#F5D75E'
+    | '#CA3B55'
+    | '#4FD6FF';
 
 export const successMain: SemanticColor = '#40B763';
+export const successDark: SemanticColor = '#2A7942';
 export const warningMain: SemanticColor = '#F5D75E';
 export const errorMain: SemanticColor = '#CA3B55';
 export const infoMain: SemanticColor = '#4FD6FF';
@@ -115,6 +123,7 @@ const lightMode: PaletteOptions = {
     },
     success: {
         main: successMain,
+        dark: successDark,
     },
     text: {
         primary: sample_grey[900],
@@ -186,6 +195,17 @@ export const intensifiedOutline = {
 export const intensifiedOutlineThick = {
     light: `2px solid rgba(11, 19, 30, 0.25)`,
     dark: `2px solid rgba(247, 249, 252, 0.25)`,
+};
+
+// Light is an RGB translation of #3A56CA; Dark is an RGB translation of #BACDFD.
+export const primaryColoredOutline = {
+    light: `1px solid rgba(58, 86, 202, 0.5)`,
+    dark: `1px solid rgba(186, 205, 253, 0.5)`,
+};
+
+export const primaryColoredOutline_disabled = {
+    light: `1px solid rgba(58, 86, 202, 0.12)`,
+    dark: `1px solid rgba(186, 205, 253, 0.12)`,
 };
 
 // Styles
@@ -412,6 +432,46 @@ export const dataGridListStyling: SxProps<Theme> = {
     },
 };
 
+export const doubleElevationHoverBackground = {
+    light: '#F5F5F5',
+    dark: '#3A4350',
+};
+
+const tableCellBackground = {
+    light: 'white',
+    dark: '#293341',
+};
+
+export const getStickyTableCell = (headerParent?: boolean): SxProps<Theme> => {
+    return {
+        position: 'sticky',
+        left: 0,
+        background: (theme) =>
+            headerParent
+                ? theme.palette.background.default
+                : tableCellBackground[theme.palette.mode],
+        borderRight: (theme) =>
+            `3px solid ${defaultOutlineColor[theme.palette.mode]}`,
+        zIndex: zIndexIncrement,
+    };
+};
+
+// Light is an RGB translation of #3A56CA; Dark is an RGB translation of #BACDFD.
+export const outlinedButtonBackground = {
+    light: `rgba(58, 86, 202, 0.12)`,
+    dark: `rgba(186, 205, 253, 0.12)`,
+};
+
+export const outlinedButtonBackground_disabled = {
+    light: `rgba(58, 86, 202, 0.05)`,
+    dark: `rgba(186, 205, 253, 0.05)`,
+};
+
+export const disabledButtonText_primary = {
+    light: `rgba(58, 86, 202, 0.26)`,
+    dark: `rgba(186, 205, 253, 0.26)`,
+};
+
 export const disabledButtonText = {
     light: 'rgba(0, 0, 0, 0.26)',
     dark: 'rgba(255, 255, 255, 0.3)',
@@ -491,6 +551,12 @@ const themeSettings = createTheme({
                     fontSize: 14,
                     borderRadius: 4,
                 },
+            },
+        },
+        MuiCheckbox: {
+            defaultProps: {
+                icon: <Square style={{ fontSize: 14 }} />,
+                checkedIcon: <CheckSquare style={{ fontSize: 14 }} />,
             },
         },
         MuiTabs: {

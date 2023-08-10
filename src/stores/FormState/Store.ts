@@ -11,7 +11,8 @@ const formActive = (status: FormStatus) => {
         status === FormStatus.TESTING ||
         status === FormStatus.GENERATING ||
         status === FormStatus.SAVING ||
-        status === FormStatus.SCHEMA_EVOLVING
+        status === FormStatus.SCHEMA_EVOLVING ||
+        status === FormStatus.UPDATING
     );
 };
 
@@ -21,7 +22,8 @@ const formIdle = (status: FormStatus) => {
         status === FormStatus.INIT ||
         status === FormStatus.SAVED ||
         status === FormStatus.GENERATED ||
-        status === FormStatus.SCHEMA_EVOLVED
+        status === FormStatus.SCHEMA_EVOLVED ||
+        status === FormStatus.UPDATED
     );
 };
 

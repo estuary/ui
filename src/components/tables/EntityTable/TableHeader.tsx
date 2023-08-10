@@ -1,4 +1,5 @@
 import { TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
+import { getStickyTableCell } from 'context/Theme';
 import { ArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
@@ -53,6 +54,11 @@ function EntityTableHeader({
                                     ? columnToSort === column.field
                                         ? sortDirection
                                         : false
+                                    : undefined
+                            }
+                            sx={
+                                column.sticky
+                                    ? getStickyTableCell(true)
                                     : undefined
                             }
                         >

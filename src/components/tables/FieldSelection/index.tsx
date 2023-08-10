@@ -17,6 +17,7 @@ export const columns: TableColumns[] = [
     {
         field: 'field',
         headerIntlKey: 'data.field',
+        sticky: true,
     },
     {
         field: 'ptr',
@@ -81,7 +82,7 @@ function FieldSelectionTable({ projections }: Props) {
             <TableContainer component={Box}>
                 <Table
                     size="small"
-                    sx={{ minWidth: 350 }}
+                    sx={{ minWidth: 350, borderCollapse: 'separate' }}
                     aria-label={intl.formatMessage({
                         id: 'entityTable.title',
                     })}
