@@ -29,6 +29,7 @@ function RediscoverButton({
 
     return (
         <Tooltip
+            placement="top"
             title={intl.formatMessage({
                 id: 'workflows.collectionSelector.cta.rediscover.tooltip',
             })}
