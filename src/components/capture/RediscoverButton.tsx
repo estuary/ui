@@ -1,4 +1,4 @@
-import { IconButton, Tooltip, useTheme } from '@mui/material';
+import { Box, IconButton, Tooltip, useTheme } from '@mui/material';
 import useDiscoverCapture from 'components/capture/useDiscoverCapture';
 import { disabledButtonText } from 'context/Theme';
 import { RefreshDouble } from 'iconoir-react';
@@ -26,6 +26,7 @@ function RediscoverButton({
         postGenerateMutate,
         { initiateRediscovery: true }
     );
+    const disable = disabled || isSaving || formActive;
 
     return (
         <Tooltip
@@ -34,22 +35,24 @@ function RediscoverButton({
                 id: 'workflows.collectionSelector.cta.rediscover.tooltip',
             })}
         >
-            <IconButton
-                disabled={disabled || isSaving || formActive}
-                onClick={generateCatalog}
-                sx={{ borderRadius: 0 }}
-                aria-label={intl.formatMessage({
-                    id: 'workflows.collectionSelector.cta.rediscover',
-                })}
-            >
-                <RefreshDouble
-                    style={{
-                        color: disabled
-                            ? disabledButtonText[theme.palette.mode]
-                            : theme.palette.primary.main,
-                    }}
-                />
-            </IconButton>
+            <Box>
+                <IconButton
+                    disabled={disable}
+                    onClick={generateCatalog}
+                    sx={{ borderRadius: 0 }}
+                    aria-label={intl.formatMessage({
+                        id: 'workflows.collectionSelector.cta.rediscover',
+                    })}
+                >
+                    <RefreshDouble
+                        style={{
+                            color: disable
+                                ? disabledButtonText[theme.palette.mode]
+                                : theme.palette.primary.main,
+                        }}
+                    />
+                </IconButton>
+            </Box>
         </Tooltip>
     );
 }
