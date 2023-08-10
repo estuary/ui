@@ -171,9 +171,10 @@ export const evaluateRequiredIncludedFields = (
 export const evaluateRecommendedIncludedFields = (
     constraintType: ConstraintTypes
 ): boolean => {
+    const includeRequired = evaluateRequiredIncludedFields(constraintType);
+
     return (
-        constraintType === ConstraintTypes.FIELD_REQUIRED ||
-        constraintType === ConstraintTypes.LOCATION_REQUIRED ||
+        includeRequired ||
         constraintType === ConstraintTypes.LOCATION_RECOMMENDED ||
         constraintType === ConstraintTypes.FIELD_OPTIONAL
     );
