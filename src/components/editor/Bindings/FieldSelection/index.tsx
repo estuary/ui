@@ -224,14 +224,12 @@ function FieldSelectionViewer({ collectionName }: Props) {
         if (selectionSaving && draftSpecs.length > 0 && draftSpecs[0].spec) {
             setFormState({ status: FormStatus.UPDATING });
 
+            // TODO (field selection): Extend error handling.
             applyFieldSelections(draftSpecs[0])
                 .then(
-                    () => {
-                        console.log('success');
-
-                        setFormState({ status: FormStatus.UPDATED });
-                    },
-                    (error) => console.log('error', error)
+                    () => setFormState({ status: FormStatus.UPDATED }),
+                    (error) =>
+                        setFormState({ status: FormStatus.FAILED, error })
                 )
                 .finally(() => setSelectionSaving(false));
         }
