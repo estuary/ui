@@ -126,13 +126,13 @@ function CollectionSelectorList({
                 components={{
                     NoRowsOverlay: SelectorEmpty,
                 }}
+                disableColumnFilter //prevents the filter icon from showing up
                 disableColumnMenu
                 disableColumnSelector
                 disableSelectionOnClick={!selectionEnabled}
                 filterModel={filterModel}
                 hideFooterSelectedRowCount
                 initialState={initialState}
-                rowCount={rows.length}
                 rows={rows}
                 selectionModel={selectionEnabled ? selectionModel : undefined}
                 sx={dataGridListStyling}
