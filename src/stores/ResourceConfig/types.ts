@@ -1,5 +1,5 @@
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
+import { LiveSpecsExt_MaterializeCapture } from 'hooks/useLiveSpecsExt';
 import { CallSupabaseResponse } from 'services/supabase';
 import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
 
@@ -18,7 +18,7 @@ export interface ResourceConfigState {
     // Collection Selector
     collections: string[] | null;
     preFillEmptyCollections: (
-        collections: LiveSpecsExtQuery[] | null[],
+        collections: LiveSpecsExt_MaterializeCapture | null[],
         rehydrating?: boolean
     ) => void;
     addCollections: (value: string[]) => void;

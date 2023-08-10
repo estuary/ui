@@ -1,7 +1,7 @@
 import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import {
-    getLiveSpecsByLastPubId,
     getLiveSpecsByLiveSpecId,
+    getLiveSpecs_writesTo,
     getSchema_Resource,
 } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
@@ -149,8 +149,8 @@ const getInitialState = (
 
                 const emptyCollections: string[] =
                     rehydrating && collections ? collections : [];
-                const modifiedResourceConfig = resourceConfig;
 
+                // Get a list of all the new collections that will be added
                 value.forEach((capture) => {
                     capture?.writes_to.forEach((collection) => {
                         if (!emptyCollections.includes(collection)) {
@@ -160,7 +160,7 @@ const getInitialState = (
                 });
 
                 // Filter out any collections that are not in the emptyCollections list
-                state.collections = collections
+                const modifiedCollections = collections
                     ? [
                           ...collections.filter(
                               (collection) =>
@@ -171,20 +171,25 @@ const getInitialState = (
                     : emptyCollections;
 
                 // Run through and make sure all collections have a corresponding resource config
-                state.collections.forEach((collection) => {
-                    modifiedResourceConfig[collection] = createJSONFormDefaults(
-                        resourceSchema,
-                        collection
-                    );
+                const modifiedResourceConfig = resourceConfig;
+                modifiedCollections.forEach((collection) => {
+                    // Rehydrating     wipe out all configs and start again
+                    // Not rehydrating then we should allow the current config to stand
+                    //  and only populate the ones that are missing
+                    modifiedResourceConfig[collection] =
+                        // Should not happen often but being safe with the resourceConfig check here
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                        !rehydrating && resourceConfig[collection]
+                            ? resourceConfig[collection]
+                            : createJSONFormDefaults(
+                                  resourceSchema,
+                                  collection
+                              );
                 });
 
-                state.currentCollection = state.collections[0];
-
                 state.resourceConfig = modifiedResourceConfig;
-
-                populateResourceConfigErrors(state.resourceConfig, state);
-
-                state.collectionErrorsExist = isEmpty(collections);
+                populateCollections(state, modifiedCollections);
+                populateResourceConfigErrors(modifiedResourceConfig, state);
             }),
             false,
             'Empty Collections Pre-filled'
@@ -623,7 +628,7 @@ const getInitialState = (
         if (prefillPubIds.length > 0) {
             // Prefills collections in the materialization create workflow when the Materialize CTA
             // on the Captures page or the capture publication log dialog is clicked.
-            const { data, error } = await getLiveSpecsByLastPubId(
+            const { data, error } = await getLiveSpecs_writesTo(
                 prefillPubIds,
                 'capture'
             );
@@ -634,7 +639,6 @@ const getInitialState = (
                 setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
                 const { preFillEmptyCollections } = get();
-
                 preFillEmptyCollections(data, rehydrating);
             }
         } else if (materializationReydrating) {
