@@ -61,7 +61,7 @@ function BindingsEditorAdd({ disabled, onChange }: Props) {
 
     return (
         <>
-            <Tooltip title={tooltip}>
+            <Tooltip placement="top" title={tooltip}>
                 <IconButton
                     disabled={disabled}
                     onClick={toggleDialog}

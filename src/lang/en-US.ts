@@ -642,6 +642,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.bindingsConfig.noRows': `Please select from the list above to begin.`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
     'entityCreate.bindingsConfig.list.search': `Filter {itemType}`,
+    'entityCreate.bindingsConfig.list.removeAll': `Remove all {itemType}`,
 
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
     'entityCreate.errors.missingDraftId': `Missing Draft ID.`,
@@ -856,7 +857,6 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.initTask.alert.message.initFailed.docPath': `mailto:support@estuary.dev`,
     'workflows.initTask.alert.message.patchedSpec': `An issue was encountered recovering your changes. The latest, published record of the task was used to initialize the form.`,
 
-    'workflows.collectionSelector.cta.delete': `Remove All`,
     'workflows.collectionSelector.cta.rediscover': `Refresh`,
     'workflows.collectionSelector.cta.rediscover.tooltip': `Refresh bindings with latest from source`,
     'workflows.collectionSelector.cta.schemaEdit': `CLI`,

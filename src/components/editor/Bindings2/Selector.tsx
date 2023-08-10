@@ -203,6 +203,7 @@ function BindingSelector({
             />
 
             <CollectionSelectorList
+                height="100%"
                 header={itemType}
                 disableActions={rows.size === 0 || disableActions}
                 readOnly={disableActions}

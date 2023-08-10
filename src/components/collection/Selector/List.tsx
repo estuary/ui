@@ -20,7 +20,7 @@ interface Props {
     currentCollection?: any;
     disableActions?: boolean;
     header?: string;
-    height?: number;
+    height?: number | string;
     readOnly?: boolean;
     removeAllCollections?: (event: React.MouseEvent<HTMLElement>) => void;
     removeCollection?: (collectionName: string) => void;
@@ -129,6 +129,7 @@ function CollectionSelectorList({
         ];
     }, [
         collectionsLabel,
+        disableActions,
         readOnly,
         removeAllCollections,
         removeCollection,
@@ -155,7 +156,7 @@ function CollectionSelectorList({
                 initialState={initialState}
                 rows={rows}
                 selectionModel={selectionEnabled ? selectionModel : undefined}
-                sx={dataGridListStyling}
+                sx={{ ...dataGridListStyling, border: 0 }}
                 onRowClick={
                     selectionEnabled
                         ? (params: any) => {
