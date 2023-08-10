@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import {
     DataGrid,
     GridColDef,
@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 import useConstant from 'use-constant';
+import CollectionSelectorHeader from './Header';
 import CollectionSelectorRow from './Row';
 
 interface Props {
@@ -75,8 +76,8 @@ function CollectionSelectorList({
             flex: 1,
             headerName: collectionsLabel,
             sortable: false,
-            renderHeader: (params: GridColumnHeaderParams) => (
-                <Typography>{params.colDef.headerName}</Typography>
+            renderHeader: (_params: GridColumnHeaderParams) => (
+                <CollectionSelectorHeader itemType={collectionsLabel} />
             ),
             renderCell: (params: GridRenderCellParams) => {
                 if (renderCell) {
@@ -109,10 +110,10 @@ function CollectionSelectorList({
                 }}
                 rows={rows}
                 columns={columns}
-                headerHeight={0}
                 rowCount={rows.length}
                 pagination
                 hideFooterSelectedRowCount
+                disableColumnMenu
                 disableColumnSelector
                 disableSelectionOnClick={!selectionEnabled}
                 selectionModel={selectionEnabled ? selectionModel : undefined}
