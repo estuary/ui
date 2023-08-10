@@ -85,6 +85,7 @@ function BindingSearch({
                 setResourceConfig(
                     value.map(({ name }) => name),
                     undefined,
+                    false,
                     true
                 );
 
