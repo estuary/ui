@@ -15,6 +15,8 @@ interface Props {
     disabled?: boolean;
 }
 
+const DIALOG_ID = 'add-collection-search-dialog';
+
 function BindingsEditorAdd({ disabled, onChange }: Props) {
     const intl = useIntl();
     const theme = useTheme();
@@ -66,6 +68,9 @@ function BindingsEditorAdd({ disabled, onChange }: Props) {
                     disabled={disabled}
                     onClick={toggleDialog}
                     sx={{ borderRadius: 0 }}
+                    aria-controls={open ? DIALOG_ID : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
                 >
                     <Plus
                         style={{
@@ -77,6 +82,7 @@ function BindingsEditorAdd({ disabled, onChange }: Props) {
                 </IconButton>
             </Tooltip>
             <AddCollection
+                id={DIALOG_ID}
                 open={open}
                 primaryCTA={
                     <PrimaryCTA

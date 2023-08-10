@@ -35,7 +35,7 @@ function CollectionSelectorHeader({
         >
             <Tooltip title="Enable/Disable All Bindings">
                 <Box>
-                    <Checkbox disabled={disabled} />
+                    <Checkbox size="small" disabled={disabled} />
                 </Box>
             </Tooltip>
             <TextField
@@ -56,8 +56,7 @@ function CollectionSelectorHeader({
                 sx={{
                     'flexGrow': 1,
                     'my': 1,
-                    'mx': 2,
-                    '& .MuiInputBase-root': { borderRadius: 3 },
+                    '& .MuiInputBase-root': { borderRadius: 3, my: 0 },
                 }}
             />
             {onRemoveAllClick ? (
@@ -78,6 +77,7 @@ function CollectionSelectorHeader({
                             size="small"
                             sx={{
                                 color: (theme) => theme.palette.text.primary,
+                                ml: 1,
                             }}
                         >
                             <Cancel />

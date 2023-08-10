@@ -1,4 +1,10 @@
-import { Box, IconButton, ListItemText, useTheme } from '@mui/material';
+import {
+    Box,
+    Checkbox,
+    IconButton,
+    ListItemText,
+    useTheme,
+} from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import BindingSearch from 'components/collection/BindingSearch';
@@ -88,6 +94,15 @@ function Row({
 
     return (
         <>
+            <Checkbox
+                disabled={disabled}
+                size="small"
+                onChange={(event) => {
+                    event.stopPropagation();
+                    console.log('check box clicked on', { event });
+                }}
+            />
+
             <ListItemText
                 primary={shortenName ? stripPathing(collection) : collection}
                 primaryTypographyProps={typographyTruncation}
