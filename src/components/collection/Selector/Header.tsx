@@ -7,9 +7,16 @@ import { useIntl } from 'react-intl';
 interface Props {
     itemType: string;
     onFilterChange: (value: string) => void;
+    disabled?: boolean;
+    onRemoveAllClick?: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
-function CollectionSelectorHeader({ itemType, onFilterChange }: Props) {
+function CollectionSelectorHeader({
+    disabled,
+    itemType,
+    onFilterChange,
+    onRemoveAllClick,
+}: Props) {
     const intl = useIntl();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -30,9 +37,10 @@ function CollectionSelectorHeader({ itemType, onFilterChange }: Props) {
             }}
         >
             <Tooltip title="Enable/Disable All Bindings">
-                <Checkbox />
+                <Checkbox disabled={disabled} />
             </Tooltip>
             <TextField
+                disabled={disabled}
                 label={intl.formatMessage(
                     {
                         id: 'entityCreate.bindingsConfig.list.search',
@@ -41,8 +49,8 @@ function CollectionSelectorHeader({ itemType, onFilterChange }: Props) {
                         itemType,
                     }
                 )}
-                variant="outlined"
                 size="small"
+                variant="outlined"
                 onChange={(event) => {
                     debouncedUpdate(event.target.value);
                 }}
@@ -53,14 +61,18 @@ function CollectionSelectorHeader({ itemType, onFilterChange }: Props) {
                     '& .MuiInputBase-root': { borderRadius: 3 },
                 }}
             />
-            <Tooltip title="Remove All Bindings">
-                <IconButton
-                    size="small"
-                    sx={{ color: (theme) => theme.palette.text.primary }}
-                >
-                    <Cancel />
-                </IconButton>
-            </Tooltip>
+            {onRemoveAllClick ? (
+                <Tooltip title="Remove All Bindings">
+                    <IconButton
+                        disabled={disabled}
+                        onClick={onRemoveAllClick}
+                        size="small"
+                        sx={{ color: (theme) => theme.palette.text.primary }}
+                    >
+                        <Cancel />
+                    </IconButton>
+                </Tooltip>
+            ) : null}
         </Stack>
     );
 }

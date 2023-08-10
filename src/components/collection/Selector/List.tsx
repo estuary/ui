@@ -8,7 +8,7 @@ import {
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { dataGridListStyling } from 'context/Theme';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 import useConstant from 'use-constant';
@@ -17,13 +17,15 @@ import CollectionSelectorRow from './Row';
 
 interface Props {
     collections: Set<string>;
-    header?: string;
-    removeCollection?: (collectionName: string) => void;
     currentCollection?: any;
-    setCurrentCollection?: (collection: any) => void;
+    disableActions?: boolean;
+    header?: string;
     height?: number;
-    renderCell?: (params: GridRenderCellParams) => void;
     readOnly?: boolean;
+    removeAllCollections?: (event: React.MouseEvent<HTMLElement>) => void;
+    removeCollection?: (collectionName: string) => void;
+    renderCell?: (params: GridRenderCellParams) => void;
+    setCurrentCollection?: (collection: any) => void;
 }
 
 const initialState = {
@@ -35,14 +37,16 @@ const initialState = {
 };
 
 function CollectionSelectorList({
-    readOnly,
     collections,
-    header,
-    removeCollection,
     currentCollection,
-    setCurrentCollection,
+    disableActions,
+    header,
     height,
+    readOnly,
+    removeAllCollections,
+    removeCollection,
     renderCell,
+    setCurrentCollection,
 }: Props) {
     const hackyTimeout = useRef<number | null>(null);
     const intl = useIntl();
@@ -65,55 +69,71 @@ function CollectionSelectorList({
         if (currentCollection) setSelectionModel([currentCollection]);
     }, [currentCollection]);
 
-    const collectionsArray = Array.from(collections);
+    const rows = useMemo(
+        () =>
+            Array.from(collections).map((collection) => ({
+                id: collection,
+                name: collection,
+            })),
+        [collections]
+    );
 
-    const rows = collectionsArray.map((collection) => ({
-        id: collection,
-        name: collection,
-    }));
-
-    const columns: GridColDef[] = [
-        {
-            field: 'name',
-            flex: 1,
-            headerName: collectionsLabel,
-            sortable: false,
-            renderHeader: (_params) => (
-                <CollectionSelectorHeader
-                    itemType={collectionsLabel}
-                    onFilterChange={(value) => {
-                        const newFilterMode: GridFilterModel = {
-                            items: [
-                                {
-                                    id: 1,
-                                    columnField: 'name',
-                                    value,
-                                    operatorValue: 'contains',
-                                },
-                            ],
-                        };
-                        setFilterModel(newFilterMode);
-                    }}
-                />
-            ),
-            renderCell: (params) => {
-                if (renderCell) {
-                    return renderCell(params);
-                } else if (removeCollection) {
-                    return (
-                        <CollectionSelectorRow
-                            collection={params.value}
-                            disabled={readOnly}
-                            removeCollection={removeCollection}
-                        />
-                    );
-                }
+    const columns = useMemo<GridColDef[]>(() => {
+        return [
+            {
+                field: 'name',
+                flex: 1,
+                headerName: collectionsLabel,
+                sortable: false,
+                renderHeader: (_params) => (
+                    <CollectionSelectorHeader
+                        disabled={disableActions}
+                        itemType={collectionsLabel}
+                        onFilterChange={(value) => {
+                            const newFilterMode: GridFilterModel = {
+                                items: [
+                                    {
+                                        id: 1,
+                                        columnField: 'name',
+                                        value,
+                                        operatorValue: 'contains',
+                                    },
+                                ],
+                            };
+                            setFilterModel(newFilterMode);
+                        }}
+                        onRemoveAllClick={
+                            removeAllCollections
+                                ? removeAllCollections
+                                : undefined
+                        }
+                    />
+                ),
+                renderCell: (params) => {
+                    if (renderCell) {
+                        return renderCell(params);
+                    } else if (removeCollection) {
+                        return (
+                            <CollectionSelectorRow
+                                collection={params.value}
+                                disabled={readOnly}
+                                removeCollection={removeCollection}
+                            />
+                        );
+                    }
+                },
+                valueGetter: (params) => {
+                    return params.row.name;
+                },
             },
-            valueGetter: (params) => {
-                return params.row.name;
-            },
-        },
-    ];
+        ];
+    }, [
+        collectionsLabel,
+        readOnly,
+        removeAllCollections,
+        removeCollection,
+        renderCell,
+    ]);
 
     useUnmount(() => {
         if (hackyTimeout.current) clearTimeout(hackyTimeout.current);

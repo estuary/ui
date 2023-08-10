@@ -41,11 +41,7 @@ function CollectionSelectorSearch({
     console.log('CollectionSelectorSearch', RediscoverButton);
 
     return (
-        <Box
-            sx={{
-                pb: 1,
-            }}
-        >
+        <Box>
             <Box sx={{ height: '100%', width: '100%' }}>
                 <Stack
                     direction="row"
