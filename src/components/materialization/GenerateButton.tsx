@@ -14,6 +14,7 @@ import {
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
+import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { FormattedMessage } from 'react-intl';
@@ -26,13 +27,13 @@ import {
     useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm/hooks';
 import {
+    useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setPreviousEndpointConfig,
-    useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
@@ -49,18 +50,14 @@ import { generateTaskSpec } from 'utils/workflow-utils';
 
 interface Props {
     disabled: boolean;
-    callFailed: Function;
     mutateDraftSpecs: Function;
 }
 
 const ENTITY_TYPE = 'materialization';
 
-function MaterializeGenerateButton({
-    disabled,
-    callFailed,
-    mutateDraftSpecs,
-}: Props) {
+function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
     const isEdit = useEntityWorkflow_Editing();
+    const { callFailed } = useEntityWorkflowHelpers();
 
     // Details Form Store
     const detailsFormsHasErrors = useDetailsForm_errorsExist();

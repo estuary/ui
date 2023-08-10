@@ -869,7 +869,6 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.label.listHeader': `Collections`,
     'workflows.collectionSelector.tab.collectionSchema': `Collection`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
-    'workflows.collectionSelector.tab.fieldSelection': `Field Selection`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
@@ -1171,8 +1170,9 @@ const Graphs: ResolvedIntlConfig['messages'] = {
 
 const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.header': `Field Selection`,
-    'fieldSelection.message': `Determine which fields in your collection get materialized. By default, the fields exported by your materialization are dynamically selected by the connector. Click "${CTAs['cta.testConfig']}" to update the table below.`,
-    'fieldSelection.cta.defaultAllFields': `Accept connector defaults`,
+    'fieldSelection.message': `Determine which fields in your collection get materialized. By default, the connector dynamically selects the fields exported by your materialization. Click "See Fields" to update the table below.`,
+    'fieldSelection.cta.defaultAllFields': `Include recommended fields`,
+    'fieldSelection.cta.populateTable': `See Fields`,
     'fieldSelection.dialog.updateProjection.header': `Update Projection`,
     'fieldSelection.dialog.updateProjection.header.new': `Add Projection`,
     'fieldSelection.dialog.updateProjection.message': `Update projection for collection, {collection}, to change how the field appears when materialized.`,
@@ -1186,7 +1186,7 @@ const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.table.cta.includeField': `Include`,
     'fieldSelection.table.cta.renameField': `Rename`,
     'fieldSelection.table.empty.header': `No information found`,
-    'fieldSelection.table.empty.message': `Click the test button above to validate your resource configuration and create a set of projections.`,
+    'fieldSelection.table.empty.message': `Click "See Fields" to evaluate the fields of the source collection.`,
     'fieldSelection.table.label.details': `Details`,
     'fieldSelection.table.label.actions': `Actions`,
     'fieldSelection.table.label.fieldRequired': `Field Required`,

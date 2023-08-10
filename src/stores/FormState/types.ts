@@ -34,6 +34,9 @@ export enum FormStatus {
     GENERATING = 'GENERATING_PREVIEW',
     GENERATED = 'GENERATED_PREVIEW',
 
+    UPDATING = 'UPDATING',
+    UPDATED = 'UPDATED',
+
     FAILED = 'FAILED',
 }
 

@@ -11,6 +11,7 @@ import {
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
+import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { useClient } from 'hooks/supabase-swr';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
@@ -20,8 +21,8 @@ import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
     DEFAULT_FILTER,
     DEFAULT_POLLER_ERROR,
-    jobStatusPoller,
     JOB_STATUS_POLLER_ERROR,
+    jobStatusPoller,
     TABLES,
 } from 'services/supabase';
 import {
@@ -33,13 +34,13 @@ import {
     useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm/hooks';
 import {
+    useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setPreviousEndpointConfig,
-    useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
@@ -67,13 +68,13 @@ const trackEvent = (payload: any) => {
 
 function useDiscoverCapture(
     entityType: Entity,
-    callFailed: Function,
     postGenerateMutate: Function,
     options?: { initiateRediscovery?: boolean; initiateDiscovery?: boolean }
 ) {
     const supabaseClient = useClient();
 
     const isEdit = useEntityWorkflow_Editing();
+    const { callFailed } = useEntityWorkflowHelpers();
 
     // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();

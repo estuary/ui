@@ -1,4 +1,4 @@
-import { Box, Stack, TableCell, ToggleButtonProps } from '@mui/material';
+import { TableCell, ToggleButtonGroup } from '@mui/material';
 import {
     ConstraintTypes,
     FieldSelectionType,
@@ -9,9 +9,13 @@ import {
     useBindingsEditorStore_selections,
     useBindingsEditorStore_setSingleSelection,
 } from 'components/editor/Bindings/Store/hooks';
-import CustomSelectionOptions from 'components/tables/cells/fieldSelection/CustomSelectionOptions';
 import OutlinedToggleButton from 'components/tables/cells/fieldSelection/OutlinedToggleButton';
-import { SyntheticEvent, useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
+import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import {
+    evaluateRecommendedIncludedFields,
+    evaluateRequiredIncludedFields,
+} from 'utils/workflow-utils';
 
 interface Props {
     field: string;
@@ -19,58 +23,112 @@ interface Props {
     selectionType: FieldSelectionType | null;
 }
 
+const evaluateSelectionType = (
+    recommendFields: boolean,
+    toggleValue: FieldSelectionType,
+    selectedValue: FieldSelectionType | null,
+    singleValue: FieldSelectionType | null
+) =>
+    selectedValue === toggleValue && recommendFields ? 'default' : singleValue;
+
 function FieldActions({ field, constraint }: Props) {
+    // Bindings Editor Store
     const recommendFields = useBindingsEditorStore_recommendFields();
 
-    // const selectionSaving = useBindingsEditorStore_selectionSaving();
     const selections = useBindingsEditorStore_selections();
     const setSingleSelection = useBindingsEditorStore_setSingleSelection();
 
-    // TODO (field selection): Determine whether the included/excluded toggle button group should be disabled
-    //   when the default option is selected.
-    // const [toggleDisabled, setToggleDisabled] = useState(true);
+    // Form State Store
+    const formActive = useFormStateStore_isActive();
 
     const selectedValue = useMemo(() => selections[field], [field, selections]);
 
-    const updateFieldSelection: ToggleButtonProps['onChange'] = useCallback(
-        (event: SyntheticEvent) => {
-            event.preventDefault();
-            event.stopPropagation();
-
-            if (selectedValue === 'default') {
-                const includeRecommended =
-                    constraint.type === ConstraintTypes.FIELD_REQUIRED ||
-                    constraint.type === ConstraintTypes.LOCATION_REQUIRED ||
-                    constraint.type === ConstraintTypes.LOCATION_RECOMMENDED;
-
-                setSingleSelection(
-                    field,
-                    includeRecommended ? 'include' : 'exclude'
-                );
-            } else {
-                setSingleSelection(field, 'default');
-            }
-
-            // setToggleDisabled(!toggleDisabled);
-        },
-        [setSingleSelection, constraint.type, field, selectedValue]
+    const includeRequired = evaluateRequiredIncludedFields(constraint.type);
+    const includeRecommended = evaluateRecommendedIncludedFields(
+        constraint.type
     );
+
+    const coloredIncludeButton =
+        selectedValue === 'default' && includeRecommended;
+
+    const coloredExcludeButton =
+        selectedValue === 'default' && !includeRecommended;
+
+    if (constraint.type === ConstraintTypes.UNSATISFIABLE) {
+        return null;
+    }
 
     return (
         <TableCell>
-            <Stack spacing={2} direction="row" sx={{ alignItems: 'center' }}>
-                <Box>
-                    <OutlinedToggleButton
-                        messageId="fieldSelection.table.cta.defaultField"
-                        selectedValue={selectedValue}
-                        value="default"
-                        disabled={!recommendFields}
-                        onChange={updateFieldSelection}
-                    />
-                </Box>
+            <ToggleButtonGroup
+                size="small"
+                exclusive
+                sx={{
+                    '& .MuiToggleButton-root': {
+                        '&:not(:first-of-type), &:not(:last-of-type)': {
+                            borderRadius: 0,
+                        },
+                        '&:first-of-type': {
+                            borderTopLeftRadius: 4,
+                            borderBottomLeftRadius: 4,
+                            borderTopRightRadius: 0,
+                            borderBottomRightRadius: 0,
+                        },
+                        '&:last-of-type': {
+                            borderTopLeftRadius: 0,
+                            borderBottomLeftRadius: 0,
+                            borderTopRightRadius: 4,
+                            borderBottomRightRadius: 4,
+                        },
+                    },
+                }}
+            >
+                <OutlinedToggleButton
+                    messageId="fieldSelection.table.cta.includeField"
+                    selectedValue={selectedValue}
+                    value="include"
+                    coloredDefaultState={coloredIncludeButton}
+                    disabled={
+                        formActive || (includeRequired && !recommendFields)
+                    }
+                    onClick={() => {
+                        const singleValue =
+                            selectedValue !== 'include' || includeRequired
+                                ? 'include'
+                                : null;
 
-                <CustomSelectionOptions field={field} constraint={constraint} />
-            </Stack>
+                        const selectionType = evaluateSelectionType(
+                            recommendFields,
+                            'include',
+                            selectedValue,
+                            singleValue
+                        );
+
+                        setSingleSelection(field, selectionType);
+                    }}
+                />
+
+                <OutlinedToggleButton
+                    messageId="fieldSelection.table.cta.excludeField"
+                    selectedValue={selectedValue}
+                    value="exclude"
+                    coloredDefaultState={coloredExcludeButton}
+                    disabled={includeRequired || formActive}
+                    onClick={() => {
+                        const singleValue =
+                            selectedValue !== 'exclude' ? 'exclude' : null;
+
+                        const selectionType = evaluateSelectionType(
+                            recommendFields,
+                            'exclude',
+                            selectedValue,
+                            singleValue
+                        );
+
+                        setSingleSelection(field, selectionType);
+                    }}
+                />
+            </ToggleButtonGroup>
         </TableCell>
     );
 }

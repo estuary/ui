@@ -12,7 +12,7 @@ import {
 } from 'components/editor/Store/hooks';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { debounce, omit } from 'lodash';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
@@ -31,36 +31,21 @@ function useFieldSelection(collectionName: string) {
 
     // TODO (field Selection): Determine a comfortable debounce interval. A second or less feels too quick
     //   but five seconds feels too long.
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedUpdate = useCallback(
+    const debouncedUpdate = useRef(
         debounce(() => {
             setSelectionActive(false);
             setSelectionSaving(true);
-        }, 3000),
-        [setSelectionActive, setSelectionSaving]
+        }, 3000)
     );
 
     useEffect(() => {
         if (selectionActive) {
-            debouncedUpdate();
+            debouncedUpdate.current();
         }
-    }, [debouncedUpdate, selectionActive]);
+    }, [selectionActive, selections]);
 
     return useCallback(
         async (draftSpec: DraftSpecQuery) => {
-            const includedFields: string[] = Object.entries(selections)
-                .filter(
-                    ([_field, selectionType]) => selectionType === 'include'
-                )
-                .map(([field]) => field);
-
-            const excludedFields: string[] = Object.entries(selections)
-                .filter(
-                    ([_field, selectionType]) => selectionType === 'exclude'
-                )
-                .map(([field]) => field);
-
             const bindingIndex: number = draftSpec.spec.bindings.findIndex(
                 (binding: any) => binding.source === collectionName
             );
@@ -75,6 +60,18 @@ function useFieldSelection(collectionName: string) {
                     exclude: [],
                     include: {},
                 };
+
+                const includedFields: string[] = Object.entries(selections)
+                    .filter(
+                        ([_field, selectionType]) => selectionType === 'include'
+                    )
+                    .map(([field]) => field);
+
+                const excludedFields: string[] = Object.entries(selections)
+                    .filter(
+                        ([_field, selectionType]) => selectionType === 'exclude'
+                    )
+                    .map(([field]) => field);
 
                 if (
                     hasLength(includedFields) ||

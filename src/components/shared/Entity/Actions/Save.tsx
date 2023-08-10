@@ -41,6 +41,7 @@ interface Props {
     onFailure: Function;
     logEvent: CustomEvents;
     dryRun?: boolean;
+    buttonLabelId?: string;
 }
 
 const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
@@ -53,7 +54,13 @@ const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
     });
 };
 
-function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
+function EntityCreateSave({
+    disabled,
+    dryRun,
+    onFailure,
+    logEvent,
+    buttonLabelId,
+}: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
 
@@ -122,6 +129,8 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
                     description = `${messagePrefix}.testNotification.desc`;
                     title = `${messagePrefix}.testNotification.title`;
 
+                    // Materialization field selection sources content from the built spec and validation response
+                    // generated on each successful publication.
                     if (mutateDraftSpecs) {
                         void mutateDraftSpecs();
                     }
@@ -142,10 +151,10 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
             async (payload: any) => {
                 trackEvent(logEvent, payload);
 
-                const imcompatibleCollections =
+                const incompatibleCollections =
                     payload?.job_status?.incompatible_collections;
-                if (hasLength(imcompatibleCollections)) {
-                    setIncompatibleCollections(imcompatibleCollections);
+                if (hasLength(incompatibleCollections)) {
+                    setIncompatibleCollections(incompatibleCollections);
                 }
 
                 onFailure({
@@ -248,7 +257,13 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
             sx={buttonSx}
         >
             <FormattedMessage
-                id={dryRun === true ? 'cta.testConfig' : 'cta.saveEntity'}
+                id={
+                    buttonLabelId
+                        ? buttonLabelId
+                        : dryRun === true
+                        ? 'cta.testConfig'
+                        : 'cta.saveEntity'
+                }
             />
         </Button>
     );
