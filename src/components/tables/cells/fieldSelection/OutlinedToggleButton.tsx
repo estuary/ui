@@ -36,6 +36,31 @@ function OutlinedToggleButton({
           }
         : {};
 
+    const disabledStateSx: SxProps<Theme> = coloredDefaultState
+        ? {
+              border: (theme) =>
+                  primaryColoredOutline_disabled[theme.palette.mode],
+              color: (theme) => disabledButtonText_primary[theme.palette.mode],
+          }
+        : {
+              border: (theme) => `1px solid ${theme.palette.divider}`,
+          };
+
+    const selectedStateSx: SxProps<Theme> = disabled
+        ? {
+              backgroundColor: (theme) =>
+                  outlinedButtonBackground_disabled[theme.palette.mode],
+              border: (theme) =>
+                  primaryColoredOutline_disabled[theme.palette.mode],
+              color: (theme) => disabledButtonText_primary[theme.palette.mode],
+          }
+        : {
+              backgroundColor: (theme) =>
+                  outlinedButtonBackground[theme.palette.mode],
+              borderColor: (theme) => theme.palette.primary.main,
+              color: (theme) => theme.palette.primary.main,
+          };
+
     return (
         <ToggleButton
             size="small"
@@ -49,38 +74,8 @@ function OutlinedToggleButton({
                 'py': '3px',
                 'border': (theme) => intensifiedOutline[theme.palette.mode],
                 'borderRadius': 2,
-                '&.Mui-disabled': coloredDefaultState
-                    ? {
-                          border: (theme) =>
-                              primaryColoredOutline_disabled[
-                                  theme.palette.mode
-                              ],
-                          color: (theme) =>
-                              disabledButtonText_primary[theme.palette.mode],
-                      }
-                    : {
-                          border: (theme) =>
-                              `1px solid ${theme.palette.divider}`,
-                      },
-                '&.Mui-selected': disabled
-                    ? {
-                          backgroundColor: (theme) =>
-                              outlinedButtonBackground_disabled[
-                                  theme.palette.mode
-                              ],
-                          border: (theme) =>
-                              primaryColoredOutline_disabled[
-                                  theme.palette.mode
-                              ],
-                          color: (theme) =>
-                              disabledButtonText_primary[theme.palette.mode],
-                      }
-                    : {
-                          backgroundColor: (theme) =>
-                              outlinedButtonBackground[theme.palette.mode],
-                          borderColor: (theme) => theme.palette.primary.main,
-                          color: (theme) => theme.palette.primary.main,
-                      },
+                '&.Mui-disabled': disabledStateSx,
+                '&.Mui-selected': selectedStateSx,
                 ...defaultStateSx,
             }}
         >
