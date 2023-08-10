@@ -1,6 +1,5 @@
 import { Button } from '@mui/material';
 import { buttonSx } from 'components/shared/Entity/Header';
-import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -29,11 +28,8 @@ function CaptureGenerateButton({
     postGenerateMutate,
     createWorkflowMetadata,
 }: Props) {
-    const { callFailed } = useEntityWorkflowHelpers();
-
     const { generateCatalog, isSaving, formActive } = useDiscoverCapture(
         entityType,
-        callFailed,
         postGenerateMutate,
         { initiateDiscovery: createWorkflowMetadata?.initiateDiscovery }
     );
