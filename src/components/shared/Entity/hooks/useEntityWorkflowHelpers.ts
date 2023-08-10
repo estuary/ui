@@ -8,6 +8,7 @@ import {
 import { useEntityType } from 'context/EntityContext';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig/hooks';
@@ -53,7 +54,7 @@ function useEntityWorkflowHelpers() {
     // Transformation Create Store
     const resetTransformationCreateState = useTransformationCreate_resetState();
 
-    const resetState = () => {
+    const resetState = useCallback(() => {
         resetFormState();
         resetEndpointConfigState();
         resetDetailsFormState();
@@ -61,33 +62,41 @@ function useEntityWorkflowHelpers() {
         resetEditorStore();
         resetBindingsEditorStore();
         resetTransformationCreateState();
-    };
+    }, [
+        resetBindingsEditorStore,
+        resetDetailsFormState,
+        resetEditorStore,
+        resetEndpointConfigState,
+        resetFormState,
+        resetResourceConfigState,
+        resetTransformationCreateState,
+    ]);
 
-    const callFailed = (
-        formState: any,
-        subscription?: RealtimeSubscription
-    ) => {
-        const setFailureState = () => {
-            setFormState({
-                status: FormStatus.FAILED,
-                exitWhenLogsClose: false,
-                ...formState,
-            });
-        };
+    const callFailed = useCallback(
+        (formState: any, subscription?: RealtimeSubscription) => {
+            const setFailureState = () => {
+                setFormState({
+                    status: FormStatus.FAILED,
+                    exitWhenLogsClose: false,
+                    ...formState,
+                });
+            };
 
-        if (subscription) {
-            supabaseClient
-                .removeSubscription(subscription)
-                .then(() => {
-                    setFailureState();
-                })
-                .catch(() => {});
-        } else {
-            setFailureState();
-        }
-    };
+            if (subscription) {
+                supabaseClient
+                    .removeSubscription(subscription)
+                    .then(() => {
+                        setFailureState();
+                    })
+                    .catch(() => {});
+            } else {
+                setFailureState();
+            }
+        },
+        [setFormState, supabaseClient]
+    );
 
-    const exit = () => {
+    const exit = useCallback(() => {
         resetState();
 
         let route: string;
@@ -104,10 +113,10 @@ function useEntityWorkflowHelpers() {
         }
 
         navigate(route, { replace: true });
-    };
+    }, [navigate, resetState, entityType]);
 
     // Form Event Handlers
-    const closeLogs = () => {
+    const closeLogs = useCallback(() => {
         setFormState({
             showLogs: false,
         });
@@ -115,9 +124,9 @@ function useEntityWorkflowHelpers() {
         if (exitWhenLogsClose) {
             exit();
         }
-    };
+    }, [exit, setFormState, exitWhenLogsClose]);
 
-    const materializeCollections = () => {
+    const materializeCollections = useCallback(() => {
         exit();
 
         navigate(
@@ -130,7 +139,7 @@ function useEntityWorkflowHelpers() {
                   )
                 : authenticatedRoutes.materializations.create.fullPath
         );
-    };
+    }, [exit, navigate, pubId]);
 
     return { callFailed, closeLogs, exit, materializeCollections, resetState };
 }
