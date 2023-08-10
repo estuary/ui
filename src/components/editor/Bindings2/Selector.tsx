@@ -3,6 +3,7 @@ import {
     Checkbox,
     IconButton,
     ListItemText,
+    Tooltip,
     useTheme,
 } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
@@ -94,14 +95,16 @@ function Row({
 
     return (
         <>
-            <Checkbox
-                disabled={disabled}
-                size="small"
-                onChange={(event) => {
-                    event.stopPropagation();
-                    console.log('check box clicked on', { event });
-                }}
-            />
+            <Tooltip title="Enable/Disable Binding">
+                <Checkbox
+                    disabled={disabled}
+                    size="small"
+                    onChange={(event) => {
+                        event.stopPropagation();
+                        console.log('check box clicked on', { event });
+                    }}
+                />
+            </Tooltip>
 
             <ListItemText
                 primary={shortenName ? stripPathing(collection) : collection}

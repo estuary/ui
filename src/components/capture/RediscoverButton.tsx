@@ -12,13 +12,15 @@ interface Props {
 }
 
 function RediscoverButton({ entityType, disabled, postGenerateMutate }: Props) {
-    const intl = useIntl();
-    const theme = useTheme();
     const { generateCatalog, isSaving, formActive } = useDiscoverCapture(
         entityType,
         postGenerateMutate,
         { initiateRediscovery: true }
     );
+
+    const intl = useIntl();
+    const theme = useTheme();
+
     const disable = disabled || isSaving || formActive;
 
     return (

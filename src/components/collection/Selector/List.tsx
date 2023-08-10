@@ -59,6 +59,7 @@ function CollectionSelectorList({
     );
 
     const selectionEnabled = currentCollection && setCurrentCollection;
+    const [viewableRows, setViewableRows] = useState<string[]>([]);
     const [filterModel, setFilterModel] = useState<GridFilterModel>({
         items: [],
     });
@@ -68,6 +69,8 @@ function CollectionSelectorList({
     useEffect(() => {
         if (currentCollection) setSelectionModel([currentCollection]);
     }, [currentCollection]);
+
+    console.log('viewableRows', viewableRows);
 
     const rows = useMemo(
         () =>
@@ -104,9 +107,14 @@ function CollectionSelectorList({
                         }}
                         onRemoveAllClick={
                             removeAllCollections
-                                ? removeAllCollections
+                                ? (event) => {
+                                      removeAllCollections(event);
+                                  }
                                 : undefined
                         }
+                        onToggleAllClick={(event) => {
+                            console.log('event', event);
+                        }}
                     />
                 ),
                 renderCell: (params) => {
@@ -157,18 +165,41 @@ function CollectionSelectorList({
                 rows={rows}
                 selectionModel={selectionEnabled ? selectionModel : undefined}
                 sx={{ ...dataGridListStyling, border: 0 }}
+                onStateChange={(state, arg1) => {
+                    if (arg1.defaultMuiPrevented) {
+                        console.log('prevented');
+                    }
+                    const currentRows = state.filter.filteredRowsLookup;
+                    const updatedViewableRows: string[] = [];
+                    Object.entries(currentRows).forEach(([name, visible]) => {
+                        if (visible) {
+                            updatedViewableRows.push(name);
+                        }
+                    });
+                    setViewableRows(updatedViewableRows);
+                }}
+                onFilterModelChange={(event) => {
+                    console.log('Filter model changed', { event });
+                }}
+                onCellClick={(event) => {
+                    console.log('Cell was clicked', { event });
+                }}
                 onRowClick={
                     selectionEnabled
                         ? (params: any) => {
-                              // TODO (JSONForms) This is hacky but it works.
-                              // It clears out the current collection before switching.
-                              //  If a user is typing quickly in a form and then selects a
-                              //  different binding VERY quickly it could cause the updates
-                              //  to go into the wrong form.
-                              setCurrentCollection(null);
-                              hackyTimeout.current = window.setTimeout(() => {
-                                  setCurrentCollection(params.row.name);
-                              });
+                              if (params.row.name !== currentCollection) {
+                                  // TODO (JSONForms) This is hacky but it works.
+                                  // It clears out the current collection before switching.
+                                  //  If a user is typing quickly in a form and then selects a
+                                  //  different binding VERY quickly it could cause the updates
+                                  //  to go into the wrong form.
+                                  setCurrentCollection(null);
+                                  hackyTimeout.current = window.setTimeout(
+                                      () => {
+                                          setCurrentCollection(params.row.name);
+                                      }
+                                  );
+                              }
                           }
                         : undefined
                 }

@@ -1,6 +1,7 @@
 import {
     Box,
     Checkbox,
+    FormControl,
     IconButton,
     Stack,
     TextField,
@@ -14,6 +15,7 @@ interface Props {
     onFilterChange: (value: string) => void;
     disabled?: boolean;
     onRemoveAllClick?: (event: React.MouseEvent<HTMLElement>) => void;
+    onToggleAllClick?: (event: React.ChangeEvent<HTMLElement>) => void;
 }
 
 function CollectionSelectorHeader({
@@ -21,6 +23,7 @@ function CollectionSelectorHeader({
     itemType,
     onFilterChange,
     onRemoveAllClick,
+    onToggleAllClick,
 }: Props) {
     const intl = useIntl();
 
@@ -35,7 +38,13 @@ function CollectionSelectorHeader({
         >
             <Tooltip title="Enable/Disable All Bindings">
                 <Box>
-                    <Checkbox size="small" disabled={disabled} />
+                    <FormControl>
+                        <Checkbox
+                            size="small"
+                            disabled={disabled}
+                            onChange={onToggleAllClick}
+                        />
+                    </FormControl>
                 </Box>
             </Tooltip>
             <TextField
