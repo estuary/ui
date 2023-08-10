@@ -42,7 +42,6 @@ import { evaluateRequiredIncludedFields } from 'utils/workflow-utils';
 
 interface Props {
     collectionName: string;
-    connectorsExist: boolean;
 }
 
 interface FieldMetadata {
@@ -94,7 +93,7 @@ const mapConstraintsToProjections = (
         };
     });
 
-function FieldSelectionViewer({ collectionName, connectorsExist }: Props) {
+function FieldSelectionViewer({ collectionName }: Props) {
     const applyFieldSelections = useFieldSelection(collectionName);
 
     // Bindings Editor Store
@@ -268,8 +267,10 @@ function FieldSelectionViewer({ collectionName, connectorsExist }: Props) {
                 </Stack>
 
                 <Box sx={{ whiteSpace: 'nowrap' }}>
+                    {/* The shared test and save button component is disabled when the form is active.
+                        No additional disabled conditions are needed. */}
                     <EntityTestButton
-                        disabled={!connectorsExist}
+                        disabled={false}
                         logEvent={CustomEvents.MATERIALIZATION_TEST}
                         buttonLabelId="fieldSelection.cta.populateTable"
                         forceLogsClosed
