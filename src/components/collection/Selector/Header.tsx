@@ -1,7 +1,12 @@
-import { Checkbox, IconButton, Stack, TextField, Tooltip } from '@mui/material';
+import {
+    Box,
+    Checkbox,
+    IconButton,
+    Stack,
+    TextField,
+    Tooltip,
+} from '@mui/material';
 import { Cancel } from 'iconoir-react';
-import { debounce } from 'lodash';
-import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 interface Props {
@@ -19,14 +24,6 @@ function CollectionSelectorHeader({
 }: Props) {
     const intl = useIntl();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedUpdate = useCallback(
-        debounce((value: string) => {
-            onFilterChange(value);
-        }, 750),
-        [onFilterChange]
-    );
-
     return (
         <Stack
             direction="row"
@@ -37,7 +34,9 @@ function CollectionSelectorHeader({
             }}
         >
             <Tooltip title="Enable/Disable All Bindings">
-                <Checkbox disabled={disabled} />
+                <Box>
+                    <Checkbox disabled={disabled} />
+                </Box>
             </Tooltip>
             <TextField
                 disabled={disabled}
@@ -52,7 +51,7 @@ function CollectionSelectorHeader({
                 size="small"
                 variant="outlined"
                 onChange={(event) => {
-                    debouncedUpdate(event.target.value);
+                    onFilterChange(event.target.value);
                 }}
                 sx={{
                     'flexGrow': 1,
@@ -62,15 +61,28 @@ function CollectionSelectorHeader({
                 }}
             />
             {onRemoveAllClick ? (
-                <Tooltip title="Remove All Bindings">
-                    <IconButton
-                        disabled={disabled}
-                        onClick={onRemoveAllClick}
-                        size="small"
-                        sx={{ color: (theme) => theme.palette.text.primary }}
-                    >
-                        <Cancel />
-                    </IconButton>
+                <Tooltip
+                    title={intl.formatMessage(
+                        {
+                            id: 'entityCreate.bindingsConfig.list.removeAll',
+                        },
+                        {
+                            itemType,
+                        }
+                    )}
+                >
+                    <Box>
+                        <IconButton
+                            disabled={disabled}
+                            onClick={onRemoveAllClick}
+                            size="small"
+                            sx={{
+                                color: (theme) => theme.palette.text.primary,
+                            }}
+                        >
+                            <Cancel />
+                        </IconButton>
+                    </Box>
                 </Tooltip>
             ) : null}
         </Stack>
