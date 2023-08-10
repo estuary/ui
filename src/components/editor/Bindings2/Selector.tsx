@@ -4,6 +4,7 @@ import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import BindingSearch from 'components/collection/BindingSearch';
 import CollectionSelectorList from 'components/collection/Selector/List';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
+import { useEntityType } from 'context/EntityContext';
 import { typographyTruncation } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
 import { Cancel, WarningCircle } from 'iconoir-react';
@@ -27,7 +28,6 @@ interface BindingSelectorProps {
     itemType?: string;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
-    shortenName?: boolean;
 }
 
 interface RowProps {
@@ -36,6 +36,7 @@ interface RowProps {
     workflow: EntityWorkflow | null;
     disabled: boolean;
     draftId: string | null;
+    hideRemove?: boolean;
     shortenName?: boolean;
 }
 
@@ -43,6 +44,7 @@ function Row({
     collection,
     disabled,
     draftId,
+    hideRemove,
     shortenName,
     task,
     workflow,
@@ -91,14 +93,16 @@ function Row({
                 primaryTypographyProps={typographyTruncation}
             />
 
-            <IconButton
-                disabled={disabled}
-                size="small"
-                onClick={handlers.removeCollection}
-                sx={{ color: (theme) => theme.palette.text.primary }}
-            >
-                <Cancel />
-            </IconButton>
+            {hideRemove ? null : (
+                <IconButton
+                    disabled={disabled}
+                    size="small"
+                    onClick={handlers.removeCollection}
+                    sx={{ color: (theme) => theme.palette.text.primary }}
+                >
+                    <Cancel />
+                </IconButton>
+            )}
         </>
     );
 }
@@ -106,11 +110,13 @@ function Row({
 function BindingSelector({
     itemType,
     readOnly,
-    shortenName,
     RediscoverButton,
 }: BindingSelectorProps) {
     const theme = useTheme();
+
     const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
+    const isCapture = entityType === 'capture';
 
     // Details Form Store
     const task = useDetailsForm_details_entityName();
@@ -178,7 +184,8 @@ function BindingSelector({
                     collection={collection}
                     disabled={formActive}
                     draftId={draftId}
-                    shortenName={shortenName}
+                    hideRemove={isCapture}
+                    shortenName={isCapture}
                     task={task}
                     workflow={workflow}
                 />
@@ -198,7 +205,7 @@ function BindingSelector({
             <BindingSearch
                 itemType={itemType}
                 readOnly={disableActions}
-                shortenName={shortenName}
+                shortenName={isCapture}
                 RediscoverButton={RediscoverButton}
             />
 
@@ -211,7 +218,9 @@ function BindingSelector({
                 currentCollection={currentCollection}
                 setCurrentCollection={setCurrentCollection}
                 renderCell={cellRender}
-                removeAllCollections={handlers.removeAllCollections}
+                removeAllCollections={
+                    !isCapture ? handlers.removeAllCollections : undefined
+                }
             />
         </>
     );
