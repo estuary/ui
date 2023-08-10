@@ -181,16 +181,13 @@ const getInitialState = (
         );
     },
 
-    preFillCollections: (value, entityType) => {
+    preFillCollections: (bindings, entityType) => {
         set(
             produce((state: ResourceConfigState) => {
-                const collections: string[] = [];
-
                 const queryProp = getCollectionNameProp(entityType);
-
-                value.forEach((binding: any) => {
-                    collections.push(getCollectionName(binding[queryProp]));
-                });
+                const collections = bindings.map((binding) =>
+                    getCollectionName(binding[queryProp])
+                );
 
                 state.collections = collections;
                 state.currentCollection = collections[0];
@@ -591,11 +588,14 @@ const getInitialState = (
                     ? 'source'
                     : 'target';
 
+                // TODO (direct bindings) We can remove this when/if we move the UI
+                //   to using the bindings directly
                 const sortedBindings = sortBy(data[0].spec.bindings, [
                     collectionNameProp,
                 ]);
 
-                sortedBindings.forEach((binding: any) =>
+                // This is super expensive for entities with a lot of bindings
+                sortedBindings.forEach((binding) =>
                     setResourceConfig(
                         getCollectionName(binding[collectionNameProp]),
                         {
