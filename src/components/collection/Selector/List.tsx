@@ -132,7 +132,6 @@ function CollectionSelectorList({
                 filterModel={filterModel}
                 hideFooterSelectedRowCount
                 initialState={initialState}
-                pagination
                 rowCount={rows.length}
                 rows={rows}
                 selectionModel={selectionEnabled ? selectionModel : undefined}

@@ -1,6 +1,7 @@
-import { Box, Checkbox, IconButton, Stack, TextField } from '@mui/material';
+import { Checkbox, IconButton, Stack, TextField, Tooltip } from '@mui/material';
 import { Cancel } from 'iconoir-react';
-import { useRef } from 'react';
+import { debounce } from 'lodash';
+import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 interface Props {
@@ -9,10 +10,15 @@ interface Props {
 }
 
 function CollectionSelectorHeader({ itemType, onFilterChange }: Props) {
-    // Might be good to remove. Only needed if we need to mess with the value of the input
-    const searchTextField = useRef<HTMLInputElement>(null);
-
     const intl = useIntl();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const debouncedUpdate = useCallback(
+        debounce((value: string) => {
+            onFilterChange(value);
+        }, 750),
+        [onFilterChange]
+    );
 
     return (
         <Stack
@@ -23,12 +29,10 @@ function CollectionSelectorHeader({ itemType, onFilterChange }: Props) {
                 width: '100%',
             }}
         >
-            <Box>
+            <Tooltip title="Enable/Disable All Bindings">
                 <Checkbox />
-            </Box>
+            </Tooltip>
             <TextField
-                inputRef={searchTextField}
-                id="capture-search-box"
                 label={intl.formatMessage(
                     {
                         id: 'entityCreate.bindingsConfig.list.search',
@@ -40,23 +44,23 @@ function CollectionSelectorHeader({ itemType, onFilterChange }: Props) {
                 variant="outlined"
                 size="small"
                 onChange={(event) => {
-                    console.log('filter', event.target.value);
-                    onFilterChange(event.target.value);
+                    debouncedUpdate(event.target.value);
                 }}
                 sx={{
                     'flexGrow': 1,
-                    'my': 2,
+                    'my': 1,
+                    'mx': 2,
                     '& .MuiInputBase-root': { borderRadius: 3 },
                 }}
             />
-            <Box>
+            <Tooltip title="Remove All Bindings">
                 <IconButton
                     size="small"
                     sx={{ color: (theme) => theme.palette.text.primary }}
                 >
                     <Cancel />
                 </IconButton>
-            </Box>
+            </Tooltip>
         </Stack>
     );
 }
