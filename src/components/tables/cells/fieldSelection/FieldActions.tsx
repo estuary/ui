@@ -23,6 +23,14 @@ interface Props {
     selectionType: FieldSelectionType | null;
 }
 
+const evaluateSelectionType = (
+    recommendFields: boolean,
+    toggleValue: FieldSelectionType,
+    selectedValue: FieldSelectionType | null,
+    singleValue: FieldSelectionType | null
+) =>
+    selectedValue === toggleValue && recommendFields ? 'default' : singleValue;
+
 function FieldActions({ field, constraint }: Props) {
     // Bindings Editor Store
     const recommendFields = useBindingsEditorStore_recommendFields();
@@ -89,12 +97,14 @@ function FieldActions({ field, constraint }: Props) {
                                 ? 'include'
                                 : null;
 
-                        setSingleSelection(
-                            field,
-                            selectedValue === 'include' && recommendFields
-                                ? 'default'
-                                : singleValue
+                        const selectionType = evaluateSelectionType(
+                            recommendFields,
+                            'include',
+                            selectedValue,
+                            singleValue
                         );
+
+                        setSingleSelection(field, selectionType);
                     }}
                 />
 
@@ -108,12 +118,14 @@ function FieldActions({ field, constraint }: Props) {
                         const singleValue =
                             selectedValue !== 'exclude' ? 'exclude' : null;
 
-                        setSingleSelection(
-                            field,
-                            selectedValue === 'exclude' && recommendFields
-                                ? 'default'
-                                : singleValue
+                        const selectionType = evaluateSelectionType(
+                            recommendFields,
+                            'exclude',
+                            selectedValue,
+                            singleValue
                         );
+
+                        setSingleSelection(field, selectionType);
                     }}
                 />
             </ToggleButtonGroup>
