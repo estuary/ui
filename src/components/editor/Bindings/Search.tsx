@@ -6,10 +6,9 @@ import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
     useResourceConfig_collections,
     useResourceConfig_discoveredCollections,
-    useResourceConfig_setResourceConfig,
-    useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
+import UpdateResourceConfigButton from './UpdateResourceConfigButton';
 
 interface Props {
     emptyListComponent?: ReactNode;
@@ -46,10 +45,6 @@ function BindingSearch({
     // Resource Config Store
     const collections = useResourceConfig_collections();
     const discoveredCollections = useResourceConfig_discoveredCollections();
-    const setRestrictedDiscoveredCollections =
-        useResourceConfig_setRestrictedDiscoveredCollections();
-
-    const setResourceConfig = useResourceConfig_setResourceConfig();
 
     useEffect(() => {
         if (collections) {
@@ -77,22 +72,7 @@ function BindingSearch({
             itemType={itemType}
             readOnly={readOnly || formActive}
             selectedCollections={collectionValues}
-            onChange={(value) => {
-                setResourceConfig(
-                    value.map(({ name }) => name),
-                    undefined,
-                    false,
-                    true
-                );
-
-                if (value.length > 0 && discoveredCollections) {
-                    const latestCollection = value[value.length - 1].name;
-
-                    if (discoveredCollections.includes(latestCollection)) {
-                        setRestrictedDiscoveredCollections(latestCollection);
-                    }
-                }
-            }}
+            AddSelectedButton={UpdateResourceConfigButton}
             RediscoverButton={RediscoverButton}
         />
     );

@@ -1,11 +1,4 @@
-import {
-    AutocompleteChangeReason,
-    Box,
-    Stack,
-    Typography,
-    useTheme,
-} from '@mui/material';
-import { SelectedCollectionChangeData } from 'components/editor/Bindings/types';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { defaultOutline } from 'context/Theme';
 import { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
@@ -13,10 +6,7 @@ import BindingsEditorAdd from './Add';
 import { CollectionData } from './types';
 
 interface Props {
-    onChange: (
-        collections: SelectedCollectionChangeData[],
-        reason: AutocompleteChangeReason
-    ) => void;
+    AddSelectedButton: ReactNode;
     itemType?: string;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
@@ -24,10 +14,10 @@ interface Props {
 }
 
 function CollectionSelector({
-    onChange,
     readOnly = false,
     itemType,
     RediscoverButton,
+    AddSelectedButton,
 }: Props) {
     const intl = useIntl();
     const theme = useTheme();
@@ -63,9 +53,7 @@ function CollectionSelector({
 
                         <BindingsEditorAdd
                             disabled={readOnly}
-                            onChange={(value) =>
-                                onChange(value, 'selectOption')
-                            }
+                            AddSelectedButton={AddSelectedButton}
                         />
                     </Stack>
                 </Stack>

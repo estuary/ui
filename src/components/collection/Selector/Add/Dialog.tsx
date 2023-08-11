@@ -13,16 +13,18 @@ import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { AddCollectionDialogCTAProps } from './types';
 
-interface Props {
+interface Props extends AddCollectionDialogCTAProps {
     id: string;
     open: boolean;
     title: string | ReactNode;
-    toggle: (args: any) => void;
     primaryCTA: any;
 }
 
 function AddCollectionDialog({ id, primaryCTA, open, title, toggle }: Props) {
+    const ContinueButton = primaryCTA;
+
     return (
         <Dialog id={id} open={open} fullWidth maxWidth="md">
             <DialogTitle>{title}</DialogTitle>
@@ -48,7 +50,7 @@ function AddCollectionDialog({ id, primaryCTA, open, title, toggle }: Props) {
                     <FormattedMessage id="cta.cancel" />
                 </Button>
 
-                {primaryCTA}
+                <ContinueButton toggle={toggle} />
             </DialogActions>
         </Dialog>
     );

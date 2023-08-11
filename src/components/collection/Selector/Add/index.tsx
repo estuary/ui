@@ -1,23 +1,21 @@
 import { IconButton, Tooltip, useTheme } from '@mui/material';
-import { SelectedCollectionChangeData } from 'components/editor/Bindings/types';
 import { useEntityType } from 'context/EntityContext';
 import { disabledButtonText } from 'context/Theme';
 import invariableStores from 'context/Zustand/invariableStores';
 import { Plus } from 'iconoir-react';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useStore } from 'zustand';
 import AddCollectionDialog from './Dialog';
-import PrimaryCTA from './PrimaryCTA';
 
 interface Props {
-    onChange: (value: SelectedCollectionChangeData[]) => void;
+    AddSelectedButton: ReactNode;
     disabled?: boolean;
 }
 
 const DIALOG_ID = 'add-collection-search-dialog';
 
-function BindingsEditorAdd({ disabled, onChange }: Props) {
+function BindingsEditorAdd({ AddSelectedButton, disabled }: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const entityType = useEntityType();
@@ -84,12 +82,7 @@ function BindingsEditorAdd({ disabled, onChange }: Props) {
             <AddCollectionDialog
                 id={DIALOG_ID}
                 open={open}
-                primaryCTA={
-                    <PrimaryCTA
-                        onChange={onChange}
-                        setDialogOpen={toggleDialog}
-                    />
-                }
+                primaryCTA={AddSelectedButton}
                 toggle={toggleDialog}
                 title={itemType}
             />

@@ -1,33 +1,29 @@
 import { Box } from '@mui/material';
-import AddCollectionDialog from 'components/collection/Selector/Add/Dialog';
+import CollectionSelector from 'components/collection/Selector';
+import { AddCollectionDialogCTAProps } from 'components/collection/Selector/Add/types';
 import CatalogList, {
     CatalogListContent,
 } from 'components/transformation/create/Config/catalog/CatalogList';
 import CollectionList from 'components/transformation/create/Config/catalog/CollectionList';
 import { ReactNode } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-interface Props {
+interface Props extends AddCollectionDialogCTAProps {
     content: CatalogListContent[];
     header: ReactNode;
-    open: boolean;
     primaryCTA: ReactNode;
-    toggle: (args: any) => void;
 }
 
-const DIALOG_ID = 'add-collection-search-dialog_entity-list';
-
-function EntityList({ content, open, header, primaryCTA, toggle }: Props) {
+function EntityList({ content, header, primaryCTA, toggle }: Props) {
+    const intl = useIntl();
     return (
         <Box>
-            <AddCollectionDialog
-                id={DIALOG_ID}
-                open={open}
-                primaryCTA={primaryCTA}
-                toggle={toggle}
-                title={
-                    <FormattedMessage id="newTransform.config.transform.addDialog.header" />
-                }
+            <CollectionSelector
+                itemType={intl.formatMessage({
+                    id: 'newTransform.config.transform.header',
+                })}
+                selectedCollections={[]}
+                AddSelectedButton={primaryCTA}
             />
 
             <CatalogList
