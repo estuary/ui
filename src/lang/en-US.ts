@@ -618,7 +618,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.errors.collapseTitle': `View logs`,
     'entityCreate.errors.collapseTitleOpen': `Hide logs`,
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
-    'entityCreate.endpointConfig.heading': `${endpointConfigHeader}`,
+    'entityCreate.endpointConfig.heading': `2. ${endpointConfigHeader}`,
     'entityCreate.endpointConfig.errorSummary': `There are issues with the form.`,
     'entityCreate.instructions': `To start select a Connector below. Once you make a selection the rest of the form will display and you can configure your endpoint. You can search by name and if you do not find what you are looking for please let us know by requesting the connector.`,
 
@@ -665,7 +665,7 @@ const MonacoEditor: ResolvedIntlConfig['messages'] = {
 
 const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.heading': `${RouteTitles['routeTitle.captureCreate']}`,
-    'captureCreate.details.heading': `Capture Details`,
+    'captureCreate.details.heading': `1. Capture Details`,
     'captureCreate.ctas.materialize': `Materialize Collections`,
     'captureCreate.instructions': `Provide a unique name and specify a source system for your capture. Fill in the required details and click "${CTAs['cta.generateCatalog.capture']}" to test the connection.`,
     'captureCreate.missingConnectors': `No connectors are installed. You must install a source connector to create a capture.`,
@@ -676,7 +676,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
     'captureCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the specification file directly below. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
-    'captureCreate.collections.heading': `Output Collections`,
+    'captureCreate.collections.heading': `3. Output Collections`,
     'captureCreate.collectionSelector.heading': `Collection Selector`,
     'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
@@ -758,8 +758,8 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
-    'materializationCreate.details.heading': `Materialization Details`,
-    'materializationCreate.collections.heading': `Source Collections`,
+    'materializationCreate.details.heading': `1. Materialization Details`,
+    'materializationCreate.collections.heading': `3. Source Collections`,
     'materializationCreate.config.source.doclink': `Connector Help`,
     'materializationCreate.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
     'materializationCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.materialization']}" again. You can also edit the specification file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
