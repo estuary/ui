@@ -700,7 +700,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
 const CaptureEdit: ResolvedIntlConfig['messages'] = {
     'captureEdit.heading': `${RouteTitles['routeTitle.captureEdit']}`,
-    'captureEdit.details.heading': `Capture Details`,
+    'captureEdit.details.heading': `1. Capture Details`,
     'captureEdit.ctas.materialize': `Materialize Collections`,
     'captureEdit.instructions': `The name and destination of your existing capture.`,
     'captureEdit.missingConnectors': `No connectors are installed. You must install a source connector to edit a capture.`,
@@ -711,7 +711,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
     'captureEdit.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
     'captureEdit.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above or edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
-    'captureEdit.collections.heading': `Output Collections`,
+    'captureEdit.collections.heading': `3. Output Collections`,
     'captureEdit.collectionSelector.heading': `Collection Selector`,
     'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
@@ -794,8 +794,8 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
 };
 
 const MaterializationEdit: ResolvedIntlConfig['messages'] = {
-    'materializationEdit.details.heading': `Materialization Details`,
-    'materializationEdit.collections.heading': `Output Collections`,
+    'materializationEdit.details.heading': `1. Materialization Details`,
+    'materializationEdit.collections.heading': `3. Output Collections`,
     'materializationEdit.config.source.doclink': `Connector Help`,
     'materializationEdit.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
     'materializationEdit.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above or edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
