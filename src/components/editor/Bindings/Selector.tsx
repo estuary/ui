@@ -8,7 +8,6 @@ import {
 } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
-import BindingSearch from 'components/collection/BindingSearch';
 import CollectionSelectorList from 'components/collection/Selector/List';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
@@ -30,6 +29,7 @@ import {
 } from 'stores/ResourceConfig/hooks';
 import { EntityWorkflow } from 'types';
 import { hasLength, stripPathing } from 'utils/misc-utils';
+import BindingSearch from './Search';
 
 interface BindingSelectorProps {
     itemType?: string;

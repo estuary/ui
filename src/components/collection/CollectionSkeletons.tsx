@@ -1,22 +1,4 @@
-import { Box, Skeleton, Stack } from '@mui/material';
-
-export function BindingsSelectorSkeleton() {
-    return (
-        <Box sx={{ p: 1 }}>
-            <Skeleton variant="rectangular" height={40} sx={{ mb: 2 }} />
-
-            <Stack spacing={1}>
-                <Skeleton variant="rectangular" />
-
-                <Skeleton variant="rectangular" height={60} />
-
-                <Skeleton variant="rectangular" height={60} />
-
-                <Skeleton variant="rectangular" height={60} />
-            </Stack>
-        </Box>
-    );
-}
+import { Box, Skeleton } from '@mui/material';
 
 export function BindingsEditorConfigSkeleton() {
     return (

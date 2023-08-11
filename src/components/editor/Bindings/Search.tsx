@@ -1,3 +1,5 @@
+import CollectionSelector from 'components/collection/Selector';
+import { CollectionData } from 'components/collection/Selector/types';
 import { ReactNode, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
@@ -8,8 +10,6 @@ import {
     useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
-import CollectionSelector from './Selector';
-import { CollectionData } from './Selector/types';
 
 interface Props {
     emptyListComponent?: ReactNode;
