@@ -1,84 +1,76 @@
-import { Box } from '@mui/material';
-import { difference } from 'lodash';
+import {
+    AutocompleteChangeReason,
+    Box,
+    Stack,
+    Typography,
+    useTheme,
+} from '@mui/material';
+import { SelectedCollectionChangeData } from 'components/editor/Bindings/types';
+import { defaultOutline } from 'context/Theme';
 import { ReactNode } from 'react';
-import CollectionSelectorActions from './Actions';
-import CollectionSelectorList from './List';
-import CollectionSelectorSearch from './Search';
+import { useIntl } from 'react-intl';
+import BindingsEditorAdd from './Add';
+import { CollectionData } from './types';
 
-interface BindingSelectorProps {
-    loading: boolean;
-    skeleton: ReactNode;
-    removeAllCollections: () => void;
-
-    currentCollection?: any;
-    setCurrentCollection?: (collection: any) => void;
-
-    collections: Set<string>;
-    removeCollection: (collectionName: string) => void;
-    addCollection: (collectionName: string) => void;
-
+interface Props {
+    onChange: (
+        collections: SelectedCollectionChangeData[],
+        reason: AutocompleteChangeReason
+    ) => void;
+    itemType?: string;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
-
-    height?: number;
+    selectedCollections: string[] | CollectionData[];
 }
 
 function CollectionSelector({
-    loading,
-    skeleton,
-    readOnly,
+    onChange,
+    readOnly = false,
+    itemType,
     RediscoverButton,
+}: Props) {
+    const intl = useIntl();
+    const theme = useTheme();
 
-    collections,
-    addCollection,
-    removeCollection,
-    removeAllCollections,
+    const collectionsLabel =
+        itemType ?? intl.formatMessage({ id: 'terms.collections' });
 
-    currentCollection,
-    setCurrentCollection,
+    console.log('CollectionSelectorSearch', RediscoverButton);
 
-    height,
-}: BindingSelectorProps) {
-    const catalogNames: any[] = [];
-    const collectionsArray: any[] = [];
+    return (
+        <Box>
+            <Box sx={{ height: '100%', width: '100%' }}>
+                <Stack
+                    direction="row"
+                    sx={{
+                        justifyContent: 'space-between',
+                        borderBottom: defaultOutline[theme.palette.mode],
+                    }}
+                >
+                    <Typography
+                        component="div"
+                        sx={{
+                            p: 1,
+                            fontWeight: 500,
+                            textTransform: 'uppercase',
+                        }}
+                    >
+                        {collectionsLabel}
+                    </Typography>
 
-    return loading ? (
-        <Box>{skeleton}</Box>
-    ) : (
-        <>
-            <CollectionSelectorSearch
-                options={catalogNames}
-                readOnly={readOnly}
-                selectedCollections={collectionsArray}
-                onChange={(value, reason) => {
-                    console.log('change called', {
-                        value,
-                    });
-                    if (reason === 'selectOption') {
-                        addCollection(difference(value, collectionsArray)[0]);
-                    }
-                    // else if (reason === 'removeOption') {
-                    //     removeCollection(
-                    //         difference(collectionsArray, value)[0]
-                    //     );
-                    // }
-                }}
-            />
+                    <Stack direction="row">
+                        {RediscoverButton}
 
-            <CollectionSelectorActions
-                readOnly={readOnly ?? collections.size === 0}
-                removeAllCollections={removeAllCollections}
-                RediscoverButton={RediscoverButton}
-            />
-
-            <CollectionSelectorList
-                height={height}
-                collections={collections}
-                removeCollection={removeCollection}
-                currentCollection={currentCollection}
-                setCurrentCollection={setCurrentCollection}
-            />
-        </>
+                        <BindingsEditorAdd
+                            disabled={readOnly}
+                            onChange={(value) =>
+                                onChange(value, 'selectOption')
+                            }
+                        />
+                    </Stack>
+                </Stack>
+            </Box>
+        </Box>
     );
 }
 

@@ -1,6 +1,5 @@
 import { IconButton, Tooltip, useTheme } from '@mui/material';
 import { SelectedCollectionChangeData } from 'components/editor/Bindings/types';
-import AddCollection from 'components/transformation/create/Config/catalog/AddCollection';
 import { useEntityType } from 'context/EntityContext';
 import { disabledButtonText } from 'context/Theme';
 import invariableStores from 'context/Zustand/invariableStores';
@@ -8,6 +7,7 @@ import { Plus } from 'iconoir-react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useStore } from 'zustand';
+import AddCollectionDialog from './Dialog';
 import PrimaryCTA from './PrimaryCTA';
 
 interface Props {
@@ -81,7 +81,7 @@ function BindingsEditorAdd({ disabled, onChange }: Props) {
                     />
                 </IconButton>
             </Tooltip>
-            <AddCollection
+            <AddCollectionDialog
                 id={DIALOG_ID}
                 open={open}
                 primaryCTA={

@@ -1,6 +1,6 @@
 import { Box, Divider, Stack } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
-import CollectionSearchAndSelector from 'components/collection/UnderDev_Selector';
+import BindingSelectorTable from 'components/collection/Selector/Table';
 import PrefixedName from 'components/inputs/PrefixedName';
 import LanguageSelector from 'components/transformation/create/LanguageSelector';
 import SingleStep from 'components/transformation/create/SingleStep';
@@ -63,7 +63,7 @@ function DerivationCreateConfig() {
 
                 <Divider />
 
-                <CollectionSearchAndSelector />
+                <BindingSelectorTable />
             </StepWrapper>
         </Stack>
     );

@@ -223,7 +223,6 @@ function BindingSelector({
             <BindingSearch
                 itemType={itemType}
                 readOnly={disableActions}
-                shortenName={isCapture}
                 RediscoverButton={RediscoverButton}
             />
 

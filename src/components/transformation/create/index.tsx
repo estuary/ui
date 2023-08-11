@@ -11,15 +11,13 @@ import {
     Typography,
     useMediaQuery,
 } from '@mui/material';
-import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
-import CollectionSelector from 'components/collection/Selector';
 import SingleLineCode from 'components/content/SingleLineCode';
+import BindingSelector from 'components/editor/Bindings/Selector';
 import PrefixedName from 'components/inputs/PrefixedName';
 import GitPodButton from 'components/transformation/create/GitPodButton';
 import LegacyLanguageSelector from 'components/transformation/create/legacy/LanguageSelector';
 import LegacySingleStep from 'components/transformation/create/legacy/SingleStep';
 import { LegacyStepWrapper } from 'components/transformation/create/legacy/Wrapper';
-import { useLiveSpecs } from 'hooks/useLiveSpecs';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSet } from 'react-use';
@@ -49,17 +47,13 @@ function TransformationCreate({ postWindowOpen }: Props) {
         theme.breakpoints.down('sm')
     );
 
-    const collections = useLiveSpecs('collection');
-
     // Transformation Create Store
     const setDerivationName = useTransformationCreate_setName();
     const setCatalogName = useTransformationCreate_setCatalogName();
 
     const [entityNameError, setEntityNameError] = useState<string | null>(null);
 
-    const [selectedCollectionSet, selectedCollectionSetFunctions] = useSet(
-        new Set<string>([])
-    );
+    const [selectedCollectionSet] = useSet(new Set<string>([]));
 
     return (
         <Box
@@ -96,17 +90,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
             <Stack direction={belowSm ? 'column' : 'row'}>
                 <LegacyStepWrapper>
-                    <CollectionSelector
-                        height={350}
-                        loading={collections.isValidating}
-                        skeleton={<BindingsSelectorSkeleton />}
-                        removeAllCollections={
-                            selectedCollectionSetFunctions.reset
-                        }
-                        collections={selectedCollectionSet}
-                        removeCollection={selectedCollectionSetFunctions.remove}
-                        addCollection={selectedCollectionSetFunctions.add}
-                    />
+                    <BindingSelector />
                 </LegacyStepWrapper>
 
                 <Box

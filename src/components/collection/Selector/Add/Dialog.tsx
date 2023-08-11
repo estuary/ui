@@ -8,7 +8,7 @@ import {
     Divider,
     Stack,
 } from '@mui/material';
-import CollectionSearchAndSelector from 'components/collection/UnderDev_Selector';
+import BindingSelectorTable from 'components/collection/Selector/Table';
 import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import { ReactNode } from 'react';
@@ -22,7 +22,7 @@ interface Props {
     primaryCTA: any;
 }
 
-function AddCollection({ id, primaryCTA, open, title, toggle }: Props) {
+function AddCollectionDialog({ id, primaryCTA, open, title, toggle }: Props) {
     return (
         <Dialog id={id} open={open} fullWidth maxWidth="md">
             <DialogTitle>{title}</DialogTitle>
@@ -37,7 +37,7 @@ function AddCollection({ id, primaryCTA, open, title, toggle }: Props) {
                         <Divider />
 
                         <Box>
-                            <CollectionSearchAndSelector />
+                            <BindingSelectorTable />
                         </Box>
                     </StepWrapper>
                 </Stack>
@@ -54,4 +54,4 @@ function AddCollection({ id, primaryCTA, open, title, toggle }: Props) {
     );
 }
 
-export default AddCollection;
+export default AddCollectionDialog;

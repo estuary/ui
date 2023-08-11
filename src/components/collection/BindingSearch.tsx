@@ -8,8 +8,7 @@ import {
     useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
-import { stripPathing } from 'utils/misc-utils';
-import CollectionSelectorSearch from './Selector/Search';
+import CollectionSelector from './Selector';
 import { CollectionData } from './Selector/types';
 
 interface Props {
@@ -17,12 +16,10 @@ interface Props {
     itemType?: string;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
-    shortenName?: boolean;
 }
 
 function BindingSearch({
     itemType,
-    shortenName,
     readOnly = false,
     RediscoverButton,
 }: Props) {
@@ -76,9 +73,8 @@ function BindingSearch({
     ]);
 
     return (
-        <CollectionSelectorSearch
+        <CollectionSelector
             itemType={itemType}
-            options={collectionOptions}
             readOnly={readOnly || formActive}
             selectedCollections={collectionValues}
             onChange={(value) => {
@@ -96,21 +92,6 @@ function BindingSearch({
                         setRestrictedDiscoveredCollections(latestCollection);
                     }
                 }
-            }}
-            getValue={(option: CollectionData) =>
-                shortenName ? stripPathing(option.name) : option.name
-            }
-            AutocompleteProps={{
-                getOptionLabel: (option: CollectionData) => option.name,
-                groupBy: (option: CollectionData) => option.classification,
-                componentsProps: {
-                    paper: {
-                        sx: {
-                            minWidth: 200,
-                            width: '33vw',
-                        },
-                    },
-                },
             }}
             RediscoverButton={RediscoverButton}
         />

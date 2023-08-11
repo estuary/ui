@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import AddCollection from 'components/transformation/create/Config/catalog/AddCollection';
+import AddCollectionDialog from 'components/collection/Selector/Add/Dialog';
 import CatalogList, {
     CatalogListContent,
 } from 'components/transformation/create/Config/catalog/CatalogList';
@@ -20,7 +20,7 @@ const DIALOG_ID = 'add-collection-search-dialog_entity-list';
 function EntityList({ content, open, header, primaryCTA, toggle }: Props) {
     return (
         <Box>
-            <AddCollection
+            <AddCollectionDialog
                 id={DIALOG_ID}
                 open={open}
                 primaryCTA={primaryCTA}
