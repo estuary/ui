@@ -153,7 +153,7 @@ function BindingSelector({
     const discoveredCollections = useResourceConfig_discoveredCollections();
 
     const resourceConfig = useResourceConfig_resourceConfig();
-
+    const removeCollection = useResourceConfig_removeCollection();
     const removeAllCollections = useResourceConfig_removeAllCollections();
 
     const handlers = {
@@ -236,6 +236,7 @@ function BindingSelector({
                 currentCollection={currentCollection}
                 setCurrentCollection={setCurrentCollection}
                 renderCell={cellRender}
+                removeCollection={removeCollection}
                 removeAllCollections={
                     !isCapture ? handlers.removeAllCollections : undefined
                 }
