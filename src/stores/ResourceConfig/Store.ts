@@ -57,7 +57,6 @@ const populateResourceConfigErrors = (
         resourceConfigErrors = [];
     }
 
-    state.resourceConfigEmpty = hasConfigs;
     state.resourceConfigErrors = resourceConfigErrors;
     state.resourceConfigErrorsExist = !isEmpty(resourceConfigErrors);
 };
@@ -101,7 +100,6 @@ const getInitialMiscStoreData = (): Pick<
     | 'hydrated'
     | 'hydrationErrorsExist'
     | 'resourceConfig'
-    | 'resourceConfigEmpty'
     | 'resourceConfigErrorsExist'
     | 'resourceConfigErrors'
     | 'resourceSchema'
@@ -112,7 +110,6 @@ const getInitialMiscStoreData = (): Pick<
     hydrated: false,
     hydrationErrorsExist: false,
     resourceConfig: {},
-    resourceConfigEmpty: true,
     resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
     resourceSchema: {},
