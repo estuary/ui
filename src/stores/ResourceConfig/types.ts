@@ -60,6 +60,7 @@ export interface ResourceConfigState {
     ) => void;
     resetResourceConfigAndCollections: () => void;
 
+    resourceConfigEmpty: boolean;
     resourceConfigErrorsExist: boolean;
     resourceConfigErrors: (string | undefined)[];
 

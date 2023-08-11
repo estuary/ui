@@ -41,8 +41,9 @@ const populateResourceConfigErrors = (
     state: ResourceConfigState
 ): void => {
     let resourceConfigErrors: any[] = [];
+    const hasConfigs = Object.keys(resourceConfig).length > 0;
 
-    if (Object.keys(resourceConfig).length > 0) {
+    if (hasConfigs) {
         map(resourceConfig, (config) => {
             const { errors } = config;
 
@@ -56,6 +57,7 @@ const populateResourceConfigErrors = (
         resourceConfigErrors = [];
     }
 
+    state.resourceConfigEmpty = hasConfigs;
     state.resourceConfigErrors = resourceConfigErrors;
     state.resourceConfigErrorsExist = !isEmpty(resourceConfigErrors);
 };
@@ -99,6 +101,7 @@ const getInitialMiscStoreData = (): Pick<
     | 'hydrated'
     | 'hydrationErrorsExist'
     | 'resourceConfig'
+    | 'resourceConfigEmpty'
     | 'resourceConfigErrorsExist'
     | 'resourceConfigErrors'
     | 'resourceSchema'
@@ -109,6 +112,7 @@ const getInitialMiscStoreData = (): Pick<
     hydrated: false,
     hydrationErrorsExist: false,
     resourceConfig: {},
+    resourceConfigEmpty: true,
     resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
     resourceSchema: {},
@@ -116,22 +120,7 @@ const getInitialMiscStoreData = (): Pick<
     serverUpdateRequired: false,
 });
 
-const getInitialStateData = (): Pick<
-    ResourceConfigState,
-    | 'collections'
-    | 'collectionErrorsExist'
-    | 'collectionRemovalMetadata'
-    | 'currentCollection'
-    | 'discoveredCollections'
-    | 'hydrated'
-    | 'hydrationErrorsExist'
-    | 'resourceConfig'
-    | 'resourceConfigErrorsExist'
-    | 'resourceConfigErrors'
-    | 'resourceSchema'
-    | 'restrictedDiscoveredCollections'
-    | 'serverUpdateRequired'
-> => ({
+const getInitialStateData = () => ({
     ...getInitialCollectionStateData(),
     ...getInitialMiscStoreData(),
 });

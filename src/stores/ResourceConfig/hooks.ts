@@ -138,6 +138,13 @@ export const useResourceConfig_resetResourceConfigAndCollections = () => {
     );
 };
 
+export const useResourceConfig_resourceConfigEmpty = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceConfigEmpty']
+    >(ResourceConfigStoreNames.GENERAL, (state) => state.resourceConfigEmpty);
+};
+
 export const useResourceConfig_resourceConfigErrorsExist = () => {
     return useZustandStore<
         ResourceConfigState,
