@@ -13,18 +13,15 @@ import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 import useConstant from 'use-constant';
 import CollectionSelectorHeader from './Header';
-import CollectionSelectorRow from './Row';
 
 interface Props {
     collections: Set<string>;
     currentCollection?: any;
     disableActions?: boolean;
+    renderCell: (params: GridRenderCellParams) => void;
     header?: string;
     height?: number | string;
-    readOnly?: boolean;
     removeAllCollections?: (event: React.MouseEvent<HTMLElement>) => void;
-    removeCollection?: (collectionName: string) => void;
-    renderCell?: (params: GridRenderCellParams) => void;
     setCurrentCollection?: (collection: any) => void;
 }
 
@@ -42,9 +39,7 @@ function CollectionSelectorList({
     disableActions,
     header,
     height,
-    readOnly,
     removeAllCollections,
-    removeCollection,
     renderCell,
     setCurrentCollection,
 }: Props) {
@@ -117,32 +112,13 @@ function CollectionSelectorList({
                         }}
                     />
                 ),
-                renderCell: (params) => {
-                    if (renderCell) {
-                        return renderCell(params);
-                    } else if (removeCollection) {
-                        return (
-                            <CollectionSelectorRow
-                                collection={params.value}
-                                disabled={readOnly}
-                                removeCollection={removeCollection}
-                            />
-                        );
-                    }
-                },
+                renderCell,
                 valueGetter: (params) => {
                     return params.row.name;
                 },
             },
         ];
-    }, [
-        collectionsLabel,
-        disableActions,
-        readOnly,
-        removeAllCollections,
-        removeCollection,
-        renderCell,
-    ]);
+    }, [collectionsLabel, disableActions, removeAllCollections, renderCell]);
 
     useUnmount(() => {
         if (hackyTimeout.current) clearTimeout(hackyTimeout.current);

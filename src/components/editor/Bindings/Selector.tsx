@@ -153,7 +153,6 @@ function BindingSelector({
     const discoveredCollections = useResourceConfig_discoveredCollections();
 
     const resourceConfig = useResourceConfig_resourceConfig();
-    const removeCollection = useResourceConfig_removeCollection();
     const removeAllCollections = useResourceConfig_removeAllCollections();
 
     const handlers = {
@@ -230,12 +229,10 @@ function BindingSelector({
                 height="100%"
                 header={itemType}
                 disableActions={rows.size === 0 || disableActions}
-                readOnly={disableActions}
                 collections={rows}
                 currentCollection={currentCollection}
                 setCurrentCollection={setCurrentCollection}
                 renderCell={cellRender}
-                removeCollection={removeCollection}
                 removeAllCollections={
                     !isCapture ? handlers.removeAllCollections : undefined
                 }
