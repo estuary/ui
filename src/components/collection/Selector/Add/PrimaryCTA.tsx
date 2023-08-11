@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import { useStore } from 'zustand';
 
 interface Props {
-    onChange: any;
+    onChange: (values: { name: any }[]) => void;
     setDialogOpen: Dispatch<SetStateAction<boolean>>;
 }
 
