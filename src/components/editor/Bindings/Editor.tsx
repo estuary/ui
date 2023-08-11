@@ -23,8 +23,8 @@ import useInitializeCollectionDraft from 'hooks/useInitializeCollectionDraft';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
-import SchemaEditCLIButton from './SchemaEdit/CLIButton';
-import SchemaEditToggle from './SchemaEdit/Toggle';
+import SchemaEditCLIButton from '../Bindings/SchemaEdit/CLIButton';
+import SchemaEditToggle from '../Bindings/SchemaEdit/Toggle';
 
 interface Props {
     readOnly?: boolean;

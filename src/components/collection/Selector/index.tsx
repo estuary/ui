@@ -1,5 +1,4 @@
 import { Box } from '@mui/material';
-import { useLiveSpecs } from 'hooks/useLiveSpecs';
 import { difference } from 'lodash';
 import { ReactNode } from 'react';
 import CollectionSelectorActions from './Actions';
@@ -40,10 +39,8 @@ function CollectionSelector({
 
     height,
 }: BindingSelectorProps) {
-    const { liveSpecs } = useLiveSpecs('collection');
-    const catalogNames = liveSpecs.map((liveSpec) => liveSpec.catalog_name);
-
-    const collectionsArray = Array.from(collections);
+    const catalogNames: any[] = [];
+    const collectionsArray: any[] = [];
 
     return loading ? (
         <Box>{skeleton}</Box>
@@ -54,13 +51,17 @@ function CollectionSelector({
                 readOnly={readOnly}
                 selectedCollections={collectionsArray}
                 onChange={(value, reason) => {
+                    console.log('change called', {
+                        value,
+                    });
                     if (reason === 'selectOption') {
                         addCollection(difference(value, collectionsArray)[0]);
-                    } else if (reason === 'removeOption') {
-                        removeCollection(
-                            difference(collectionsArray, value)[0]
-                        );
                     }
+                    // else if (reason === 'removeOption') {
+                    //     removeCollection(
+                    //         difference(collectionsArray, value)[0]
+                    //     );
+                    // }
                 }}
             />
 

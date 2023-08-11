@@ -15,10 +15,13 @@ interface Props {
     toggle: (args: any) => void;
 }
 
+const DIALOG_ID = 'add-collection-search-dialog_entity-list';
+
 function EntityList({ content, open, header, primaryCTA, toggle }: Props) {
     return (
         <Box>
             <AddCollection
+                id={DIALOG_ID}
                 open={open}
                 primaryCTA={primaryCTA}
                 toggle={toggle}

@@ -159,7 +159,6 @@ function BindingsMultiEditor({
                 list={
                     <BindingSelector
                         itemType={itemType}
-                        shortenName={entityType === 'capture'}
                         readOnly={readOnly}
                         RediscoverButton={RediscoverButton}
                     />

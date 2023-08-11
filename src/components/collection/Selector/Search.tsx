@@ -1,125 +1,78 @@
 import {
-    Autocomplete,
     AutocompleteChangeReason,
     Box,
-    Skeleton,
-    TextField,
+    Stack,
+    Typography,
+    useTheme,
 } from '@mui/material';
-import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
-import { isEqual } from 'lodash';
-import { useState } from 'react';
+import { SelectedCollectionChangeData } from 'components/editor/Bindings/types';
+import { defaultOutline } from 'context/Theme';
+import { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
-import {
-    detectAutoCompleteInputReset,
-    detectRemoveOptionWithBackspace,
-} from 'utils/mui-utils';
+import BindingsEditorAdd from './Add';
 import { CollectionData } from './types';
 
 interface Props {
     options: any[];
-    onChange: (collections: string[], reason: AutocompleteChangeReason) => void;
+    onChange: (
+        collections: SelectedCollectionChangeData[],
+        reason: AutocompleteChangeReason
+    ) => void;
     selectedCollections: string[] | CollectionData[];
     itemType?: string;
     getValue?: (option: any) => string;
     readOnly?: boolean;
     AutocompleteProps?: any; // TODO (typing) - need to typ as props
+    RediscoverButton?: ReactNode;
 }
 
 function CollectionSelectorSearch({
-    options,
     onChange,
-    selectedCollections,
     readOnly = false,
     itemType,
-    getValue,
-    AutocompleteProps,
+    RediscoverButton,
 }: Props) {
     const intl = useIntl();
-    const collectionsLabel = intl.formatMessage(
-        {
-            id: 'entityCreate.bindingsConfig.collectionsLabel',
-        },
-        {
-            items: itemType ?? intl.formatMessage({ id: 'terms.collections' }),
-        }
-    );
+    const theme = useTheme();
 
-    const [missingInput, setMissingInput] = useState(false);
-    const [inputValue, setInputValue] = useState('');
+    const collectionsLabel =
+        itemType ?? intl.formatMessage({ id: 'terms.collections' });
 
-    const handlers = {
-        updateCollections: (
-            event: React.SyntheticEvent,
-            value: string[],
-            reason: AutocompleteChangeReason
-        ) => {
-            const removeOptionWithBackspace = detectRemoveOptionWithBackspace(
-                event,
-                reason
-            );
-
-            if (!removeOptionWithBackspace) {
-                onChange(value, reason);
-            }
-        },
-        validateSelection: () => {
-            setMissingInput(options.length === 0);
-        },
-    };
-
-    if (options.length === 0) {
-        return <Skeleton />;
-    }
+    console.log('CollectionSelectorSearch', RediscoverButton);
 
     return (
-        <Box
-            sx={{
-                p: '0.5rem 0.5rem 1rem',
-                display: 'flex',
-                alignItems: 'center',
-            }}
-        >
-            <Autocomplete
-                {...AutocompleteProps}
-                {...autoCompleteDefaults_Virtual_Multiple}
-                disabled={readOnly}
-                disableListWrap
-                options={options}
-                isOptionEqualToValue={(option, value) => {
-                    return isEqual(option, value);
-                }}
-                value={selectedCollections}
-                inputValue={inputValue}
-                fullWidth
-                onChange={handlers.updateCollections}
-                onInputChange={(_event, newInputValue, reason) => {
-                    const inputBeingReset =
-                        detectAutoCompleteInputReset(reason);
+        <Box>
+            <Box sx={{ height: '100%', width: '100%' }}>
+                <Stack
+                    direction="row"
+                    sx={{
+                        justifyContent: 'space-between',
+                        borderBottom: defaultOutline[theme.palette.mode],
+                    }}
+                >
+                    <Typography
+                        component="div"
+                        sx={{
+                            p: 1,
+                            fontWeight: 500,
+                            textTransform: 'uppercase',
+                        }}
+                    >
+                        {collectionsLabel}
+                    </Typography>
 
-                    if (!inputBeingReset) {
-                        setInputValue(newInputValue);
-                    }
-                }}
-                disableClearable
-                renderTags={() => null}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        label={collectionsLabel}
-                        required
-                        error={missingInput}
-                        variant="standard"
-                        onBlur={handlers.validateSelection}
-                    />
-                )}
-                renderOption={(props, option, state) => {
-                    return [
-                        props,
-                        getValue ? getValue(option) : option,
-                        state.selected,
-                    ] as React.ReactNode;
-                }}
-            />
+                    <Stack direction="row">
+                        {RediscoverButton}
+
+                        <BindingsEditorAdd
+                            disabled={readOnly}
+                            onChange={(value) =>
+                                onChange(value, 'selectOption')
+                            }
+                        />
+                    </Stack>
+                </Stack>
+            </Box>
         </Box>
     );
 }

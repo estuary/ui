@@ -1,10 +1,17 @@
-import { Box, IconButton, ListItemText, useTheme } from '@mui/material';
+import {
+    Box,
+    Checkbox,
+    IconButton,
+    ListItemText,
+    Tooltip,
+    useTheme,
+} from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import BindingSearch from 'components/collection/BindingSearch';
-import CollectionSelectorActions from 'components/collection/Selector/Actions';
 import CollectionSelectorList from 'components/collection/Selector/List';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
+import { useEntityType } from 'context/EntityContext';
 import { typographyTruncation } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
 import { Cancel, WarningCircle } from 'iconoir-react';
@@ -28,7 +35,6 @@ interface BindingSelectorProps {
     itemType?: string;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
-    shortenName?: boolean;
 }
 
 interface RowProps {
@@ -37,6 +43,7 @@ interface RowProps {
     workflow: EntityWorkflow | null;
     disabled: boolean;
     draftId: string | null;
+    hideRemove?: boolean;
     shortenName?: boolean;
 }
 
@@ -44,6 +51,7 @@ function Row({
     collection,
     disabled,
     draftId,
+    hideRemove,
     shortenName,
     task,
     workflow,
@@ -87,19 +95,32 @@ function Row({
 
     return (
         <>
+            <Tooltip title="Enable/Disable Binding">
+                <Checkbox
+                    disabled={disabled}
+                    size="small"
+                    onChange={(event) => {
+                        event.stopPropagation();
+                        console.log('check box clicked on', { event });
+                    }}
+                />
+            </Tooltip>
+
             <ListItemText
                 primary={shortenName ? stripPathing(collection) : collection}
                 primaryTypographyProps={typographyTruncation}
             />
 
-            <IconButton
-                disabled={disabled}
-                size="small"
-                onClick={handlers.removeCollection}
-                sx={{ color: (theme) => theme.palette.text.primary }}
-            >
-                <Cancel />
-            </IconButton>
+            {hideRemove ? null : (
+                <IconButton
+                    disabled={disabled}
+                    size="small"
+                    onClick={handlers.removeCollection}
+                    sx={{ color: (theme) => theme.palette.text.primary }}
+                >
+                    <Cancel />
+                </IconButton>
+            )}
         </>
     );
 }
@@ -107,11 +128,13 @@ function Row({
 function BindingSelector({
     itemType,
     readOnly,
-    shortenName,
     RediscoverButton,
 }: BindingSelectorProps) {
     const theme = useTheme();
+
     const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
+    const isCapture = entityType === 'capture';
 
     // Details Form Store
     const task = useDetailsForm_details_entityName();
@@ -130,7 +153,7 @@ function BindingSelector({
     const discoveredCollections = useResourceConfig_discoveredCollections();
 
     const resourceConfig = useResourceConfig_resourceConfig();
-
+    const removeCollection = useResourceConfig_removeCollection();
     const removeAllCollections = useResourceConfig_removeAllCollections();
 
     const handlers = {
@@ -161,9 +184,9 @@ function BindingSelector({
         const collection = params.row.name;
         const currentConfig = resourceConfig[collection];
 
-        if (currentConfig.errors.length > 0) {
-            return (
-                <>
+        return (
+            <>
+                {currentConfig.errors.length > 0 ? (
                     <Box>
                         <WarningCircle
                             style={{
@@ -173,28 +196,18 @@ function BindingSelector({
                             }}
                         />
                     </Box>
+                ) : null}
 
-                    <Row
-                        collection={collection}
-                        disabled={formActive}
-                        draftId={draftId}
-                        shortenName={shortenName}
-                        task={task}
-                        workflow={workflow}
-                    />
-                </>
-            );
-        }
-
-        return (
-            <Row
-                collection={collection}
-                disabled={formActive}
-                draftId={draftId}
-                shortenName={shortenName}
-                task={task}
-                workflow={workflow}
-            />
+                <Row
+                    collection={collection}
+                    disabled={formActive}
+                    draftId={draftId}
+                    hideRemove={isCapture}
+                    shortenName={isCapture}
+                    task={task}
+                    workflow={workflow}
+                />
+            </>
         );
     };
 
@@ -210,22 +223,23 @@ function BindingSelector({
             <BindingSearch
                 itemType={itemType}
                 readOnly={disableActions}
-                shortenName={shortenName}
-            />
-
-            <CollectionSelectorActions
-                readOnly={rows.size === 0 || disableActions}
+                shortenName={isCapture}
                 RediscoverButton={RediscoverButton}
-                removeAllCollections={handlers.removeAllCollections}
             />
 
             <CollectionSelectorList
+                height="100%"
                 header={itemType}
+                disableActions={rows.size === 0 || disableActions}
                 readOnly={disableActions}
                 collections={rows}
                 currentCollection={currentCollection}
                 setCurrentCollection={setCurrentCollection}
                 renderCell={cellRender}
+                removeCollection={removeCollection}
+                removeAllCollections={
+                    !isCapture ? handlers.removeAllCollections : undefined
+                }
             />
         </>
     );

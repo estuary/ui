@@ -17,6 +17,10 @@ export const tableColumns = [
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.userFullName',
     },
+    {
+        field: 'updated_at',
+        headerIntlKey: 'entityTable.data.lastPublished',
+    },
 ];
 
 function Hydrator() {
@@ -67,6 +71,7 @@ function Hydrator() {
                 toolbar={
                     <RowSelector
                         hideActions
+                        selectKeyValueName="catalog_name"
                         selectableTableStoreName={selectableTableStoreName}
                     />
                 }

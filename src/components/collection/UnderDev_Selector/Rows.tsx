@@ -1,5 +1,6 @@
 import { TableCell, TableRow, useTheme } from '@mui/material';
 import RowSelect from 'components/tables/cells/RowSelect';
+import TimeStamp from 'components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
 import { SelectTableStoreNames } from 'stores/names';
@@ -25,11 +26,12 @@ function Row({ isSelected, row, setRow }: RowProps) {
         <TableRow
             key={`collection-search-${row.id}`}
             selected={isSelected}
-            onClick={() => setRow(row.catalog_name, null, !isSelected)}
+            onClick={() => setRow(row.id, row.catalog_name, !isSelected)}
             sx={getEntityTableRowSx(theme, false)}
         >
             <RowSelect isSelected={isSelected} name={row.catalog_name} />
             <TableCell>{row.catalog_name}</TableCell>
+            <TimeStamp time={row.updated_at} />
         </TableRow>
     );
 }
@@ -51,7 +53,7 @@ function Rows({ data }: RowsProps) {
         <>
             {data.map((row) => (
                 <Row
-                    isSelected={selected.has(row.catalog_name)}
+                    isSelected={selected.has(row.id)}
                     key={row.id}
                     row={row}
                     setRow={setRow}

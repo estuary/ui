@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
@@ -14,15 +15,16 @@ import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
+    id: string;
     open: boolean;
     title: string | ReactNode;
     toggle: (args: any) => void;
     primaryCTA: any;
 }
 
-function AddCollection({ primaryCTA, open, title, toggle }: Props) {
+function AddCollection({ id, primaryCTA, open, title, toggle }: Props) {
     return (
-        <Dialog open={open} fullWidth maxWidth="md">
+        <Dialog id={id} open={open} fullWidth maxWidth="md">
             <DialogTitle>{title}</DialogTitle>
 
             <DialogContent>
@@ -34,7 +36,9 @@ function AddCollection({ primaryCTA, open, title, toggle }: Props) {
 
                         <Divider />
 
-                        <CollectionSearchAndSelector />
+                        <Box>
+                            <CollectionSearchAndSelector />
+                        </Box>
                     </StepWrapper>
                 </Stack>
             </DialogContent>

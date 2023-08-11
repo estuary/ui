@@ -1,7 +1,7 @@
 import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import {
-    getLiveSpecsByLastPubId,
     getLiveSpecsByLiveSpecId,
+    getLiveSpecs_writesTo,
     getSchema_Resource,
 } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
@@ -21,18 +21,29 @@ import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { getCollectionName, getCollectionNameProp } from 'utils/workflow-utils';
+import { getCollectionName } from 'utils/workflow-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
+
+const populateCollections = (
+    state: ResourceConfigState,
+    collections: string[]
+) => {
+    state.collections = collections;
+    state.currentCollection = collections[0];
+
+    state.collectionErrorsExist = isEmpty(collections);
+};
 
 const populateResourceConfigErrors = (
     resourceConfig: ResourceConfigDictionary,
     state: ResourceConfigState
 ): void => {
     let resourceConfigErrors: any[] = [];
+    const hasConfigs = Object.keys(resourceConfig).length > 0;
 
-    if (Object.keys(resourceConfig).length > 0) {
+    if (hasConfigs) {
         map(resourceConfig, (config) => {
             const { errors } = config;
 
@@ -106,22 +117,7 @@ const getInitialMiscStoreData = (): Pick<
     serverUpdateRequired: false,
 });
 
-const getInitialStateData = (): Pick<
-    ResourceConfigState,
-    | 'collections'
-    | 'collectionErrorsExist'
-    | 'collectionRemovalMetadata'
-    | 'currentCollection'
-    | 'discoveredCollections'
-    | 'hydrated'
-    | 'hydrationErrorsExist'
-    | 'resourceConfig'
-    | 'resourceConfigErrorsExist'
-    | 'resourceConfigErrors'
-    | 'resourceSchema'
-    | 'restrictedDiscoveredCollections'
-    | 'serverUpdateRequired'
-> => ({
+const getInitialStateData = () => ({
     ...getInitialCollectionStateData(),
     ...getInitialMiscStoreData(),
 });
@@ -139,8 +135,8 @@ const getInitialState = (
 
                 const emptyCollections: string[] =
                     rehydrating && collections ? collections : [];
-                const modifiedResourceConfig = resourceConfig;
 
+                // Get a list of all the new collections that will be added
                 value.forEach((capture) => {
                     capture?.writes_to.forEach((collection) => {
                         if (!emptyCollections.includes(collection)) {
@@ -150,7 +146,7 @@ const getInitialState = (
                 });
 
                 // Filter out any collections that are not in the emptyCollections list
-                state.collections = collections
+                const modifiedCollections = collections
                     ? [
                           ...collections.filter(
                               (collection) =>
@@ -161,44 +157,59 @@ const getInitialState = (
                     : emptyCollections;
 
                 // Run through and make sure all collections have a corresponding resource config
-                state.collections.forEach((collection) => {
-                    modifiedResourceConfig[collection] = createJSONFormDefaults(
-                        resourceSchema,
-                        collection
-                    );
+                const modifiedResourceConfig = resourceConfig;
+                modifiedCollections.forEach((collection) => {
+                    // Rehydrating     wipe out all configs and start again
+                    // Not rehydrating then we should allow the current config to stand
+                    //  and only populate the ones that are missing
+                    modifiedResourceConfig[collection] =
+                        // Should not happen often but being safe with the resourceConfig check here
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                        !rehydrating && resourceConfig[collection]
+                            ? resourceConfig[collection]
+                            : createJSONFormDefaults(
+                                  resourceSchema,
+                                  collection
+                              );
                 });
 
-                state.currentCollection = state.collections[0];
-
                 state.resourceConfig = modifiedResourceConfig;
-
-                populateResourceConfigErrors(state.resourceConfig, state);
-
-                state.collectionErrorsExist = isEmpty(collections);
+                populateCollections(state, modifiedCollections);
+                populateResourceConfigErrors(modifiedResourceConfig, state);
             }),
             false,
             'Empty Collections Pre-filled'
         );
     },
 
-    preFillCollections: (value, entityType) => {
+    prefillResourceConfig: (bindings) => {
         set(
             produce((state: ResourceConfigState) => {
-                const collections: string[] = [];
-
-                const queryProp = getCollectionNameProp(entityType);
-
-                value.forEach((binding: any) => {
-                    collections.push(getCollectionName(binding[queryProp]));
+                console.log('prefillResourceConfig', {
+                    bindings,
                 });
 
-                state.collections = collections;
-                state.currentCollection = collections[0];
+                // As we go through and fetch all the names for collections go ahead and also
+                // populate the resource config
+                const collections = bindings.map((binding: any) => {
+                    // Snag the name so we can add it to the config and list of collections
+                    const name = getCollectionName(binding);
 
-                state.collectionErrorsExist = isEmpty(collections);
+                    // Take the binding resource and plase into config OR
+                    //  generate a default in case there are any issues with it
+                    state.resourceConfig[name] = {
+                        data: binding.resource,
+                        errors: [],
+                    };
+
+                    return name;
+                });
+
+                populateResourceConfigErrors(state.resourceConfig, state);
+                populateCollections(state, collections);
             }),
             false,
-            'Collections Pre-filled'
+            'Resource Config Prefilled'
         );
     },
 
@@ -412,7 +423,7 @@ const getInitialState = (
         );
     },
 
-    setResourceConfig: (key, value) => {
+    setResourceConfig: (key, value, disableCheckingErrors, disableOmit) => {
         set(
             produce((state: ResourceConfigState) => {
                 const { resourceSchema, collections } = get();
@@ -421,27 +432,37 @@ const getInitialState = (
                     state.resourceConfig[key] =
                         value ?? createJSONFormDefaults(resourceSchema);
 
-                    populateResourceConfigErrors(state.resourceConfig, state);
-
-                    state.collectionErrorsExist = isEmpty(collections);
+                    if (!disableCheckingErrors) {
+                        populateResourceConfigErrors(
+                            state.resourceConfig,
+                            state
+                        );
+                        state.collectionErrorsExist = isEmpty(collections);
+                    }
                 } else {
-                    const newResourceKeyList = key;
                     const [removedCollections, newCollections] = whatChanged(
-                        newResourceKeyList,
+                        key,
                         state.resourceConfig
                     );
 
                     // Set defaults on new configs
                     newCollections.forEach((element) => {
-                        state.resourceConfig[element] =
-                            createJSONFormDefaults(resourceSchema);
+                        state.resourceConfig[element] = createJSONFormDefaults(
+                            resourceSchema,
+                            element
+                        );
                     });
 
-                    // Remove any configs that are no longer needed
-                    const newResourceConfig = omit(
-                        state.resourceConfig,
-                        removedCollections
-                    );
+                    // Remove any configs that are no longer needed unless disabled.
+                    //   We disable for the new collection selection pop up where the user
+                    //   is always adding collections and can only remove them manually in
+                    //   the list
+                    const newResourceConfig = disableOmit
+                        ? state.resourceConfig
+                        : omit(state.resourceConfig, removedCollections);
+                    const newConfigKeyList = Object.keys(newResourceConfig);
+
+                    // Update the config
                     state.resourceConfig = newResourceConfig;
 
                     // If previous state had no collections set to first
@@ -452,15 +473,15 @@ const getInitialState = (
                         (state.currentCollection &&
                             !has(state.resourceConfig, state.currentCollection))
                     ) {
-                        state.currentCollection = newResourceKeyList[0];
+                        state.currentCollection = newConfigKeyList[0];
                     } else {
                         state.currentCollection =
-                            newResourceKeyList[newResourceKeyList.length - 1];
+                            newConfigKeyList[newConfigKeyList.length - 1];
                     }
 
                     // Update the collections with the new array
-                    state.collections = newResourceKeyList;
-                    state.collectionErrorsExist = isEmpty(newResourceKeyList);
+                    state.collections = newConfigKeyList;
+                    state.collectionErrorsExist = isEmpty(newConfigKeyList);
 
                     // See if the recently updated configs have errors
                     populateResourceConfigErrors(newResourceConfig, state);
@@ -574,43 +595,36 @@ const getInitialState = (
             if (error) {
                 setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
-                const { setResourceConfig, preFillCollections } = get();
+                const { prefillResourceConfig } = get();
 
                 const collectionNameProp = materializationHydrating
                     ? 'source'
                     : 'target';
 
+                // TODO (direct bindings) We can remove this when/if we move the UI
+                //   to using the bindings directly and save a lot of processing
                 const sortedBindings = sortBy(data[0].spec.bindings, [
                     collectionNameProp,
                 ]);
-
-                sortedBindings.forEach((binding: any) =>
-                    setResourceConfig(
-                        getCollectionName(binding[collectionNameProp]),
-                        {
-                            data: binding.resource,
-                            errors: [],
-                        }
-                    )
-                );
-
-                preFillCollections(sortedBindings, entityType);
+                prefillResourceConfig(sortedBindings);
             }
         }
 
+        console.log('prefillPubIds', prefillPubIds);
         if (prefillPubIds.length > 0) {
             // Prefills collections in the materialization create workflow when the Materialize CTA
             // on the Captures page or the capture publication log dialog is clicked.
-            const { data, error } = await getLiveSpecsByLastPubId(
+            const { data, error } = await getLiveSpecs_writesTo(
                 prefillPubIds,
                 'capture'
             );
+
+            console.log('data', data);
 
             if (error) {
                 setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
                 const { preFillEmptyCollections } = get();
-
                 preFillEmptyCollections(data, rehydrating);
             }
         } else if (materializationReydrating) {
