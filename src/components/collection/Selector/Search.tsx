@@ -5,11 +5,11 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { SelectedCollectionChangeData } from 'components/editor/Bindings2/types';
-import BindingsEditorAdd from 'components/editor/Bindings_UnderDev/Add';
+import { SelectedCollectionChangeData } from 'components/editor/Bindings/types';
 import { defaultOutline } from 'context/Theme';
 import { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
+import BindingsEditorAdd from './Add';
 import { CollectionData } from './types';
 
 interface Props {

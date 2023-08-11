@@ -25,20 +25,14 @@ import {
     useBindingsEditorStore_setSingleSelection,
 } from 'components/editor/Bindings/Store/hooks';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
-import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import ExternalLink from 'components/shared/ExternalLink';
 import FieldSelectionTable from 'components/tables/FieldSelection';
+import { Square } from 'iconoir-react';
+import CheckSquare from 'icons/CheckSquare';
 import { isEqual } from 'lodash';
 import { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { CustomEvents } from 'services/logrocket';
-import {
-    useFormStateStore_isActive,
-    useFormStateStore_setFormState,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
 import { Schema } from 'types';
-import { evaluateRequiredIncludedFields } from 'utils/workflow-utils';
 
 interface Props {
     collectionName: string;
@@ -76,9 +70,9 @@ const mapConstraintsToProjections = (
             } else if (exclude?.includes(field)) {
                 selectionType = 'exclude';
             } else if (!recommended && constraint) {
-                const includeRequired = evaluateRequiredIncludedFields(
-                    constraint.type
-                );
+                const includeRequired =
+                    constraint.type === ConstraintTypes.FIELD_REQUIRED ||
+                    constraint.type === ConstraintTypes.LOCATION_REQUIRED;
 
                 selectionType = includeRequired ? 'include' : null;
             }
@@ -107,10 +101,6 @@ function FieldSelectionViewer({ collectionName }: Props) {
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
-
-    // Form State Store
-    const formActive = useFormStateStore_isActive();
-    const setFormState = useFormStateStore_setFormState();
 
     const [data, setData] = useState<
         CompositeProjection[] | null | undefined
@@ -222,59 +212,30 @@ function FieldSelectionViewer({ collectionName }: Props) {
 
     useEffect(() => {
         if (selectionSaving && draftSpecs.length > 0 && draftSpecs[0].spec) {
-            setFormState({ status: FormStatus.UPDATING });
-
-            // TODO (field selection): Extend error handling.
             applyFieldSelections(draftSpecs[0])
                 .then(
-                    () => setFormState({ status: FormStatus.UPDATED }),
-                    (error) =>
-                        setFormState({ status: FormStatus.FAILED, error })
+                    () => console.log('success'),
+                    (error) => console.log('error', error)
                 )
                 .finally(() => setSelectionSaving(false));
         }
-    }, [
-        applyFieldSelections,
-        setFormState,
-        setSelectionSaving,
-        draftSpecs,
-        selectionSaving,
-    ]);
+    }, [applyFieldSelections, setSelectionSaving, draftSpecs, selectionSaving]);
 
     return (
         <Box sx={{ mt: 3 }}>
-            <Stack
-                direction="row"
-                spacing={1}
-                sx={{ mb: 2, justifyContent: 'space-between' }}
-            >
-                <Stack spacing={1}>
-                    <Stack direction="row">
-                        <Typography variant="h6" sx={{ mr: 0.5 }}>
-                            <FormattedMessage id="fieldSelection.header" />
-                        </Typography>
+            <Stack direction="row" sx={{ mb: 1 }}>
+                <Typography variant="h6" sx={{ mr: 0.5 }}>
+                    <FormattedMessage id="fieldSelection.header" />
+                </Typography>
 
-                        <ExternalLink link="https://docs.estuary.dev/concepts/materialization/#projected-fields">
-                            <FormattedMessage id="terms.documentation" />
-                        </ExternalLink>
-                    </Stack>
-
-                    <Typography>
-                        <FormattedMessage id="fieldSelection.message" />
-                    </Typography>
-                </Stack>
-
-                <Box sx={{ whiteSpace: 'nowrap' }}>
-                    {/* The shared test and save button component is disabled when the form is active.
-                        No additional disabled conditions are needed. */}
-                    <EntityTestButton
-                        disabled={false}
-                        logEvent={CustomEvents.MATERIALIZATION_TEST}
-                        buttonLabelId="fieldSelection.cta.populateTable"
-                        forceLogsClosed
-                    />
-                </Box>
+                <ExternalLink link="https://docs.estuary.dev/concepts/materialization/#projected-fields">
+                    <FormattedMessage id="terms.documentation" />
+                </ExternalLink>
             </Stack>
+
+            <Typography sx={{ mb: 2 }}>
+                <FormattedMessage id="fieldSelection.message" />
+            </Typography>
 
             <FormControl sx={{ mb: 1, mx: 0 }}>
                 <FormControlLabel
@@ -282,7 +243,11 @@ function FieldSelectionViewer({ collectionName }: Props) {
                         <Checkbox
                             value={recommendFields}
                             checked={recommendFields}
-                            disabled={formActive || !data}
+                            icon={<Square style={{ fontSize: 14 }} />}
+                            checkedIcon={
+                                <CheckSquare style={{ fontSize: 14 }} />
+                            }
+                            disabled={selectionSaving || !data}
                         />
                     }
                     onChange={toggleRecommendFields}

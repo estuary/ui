@@ -1,6 +1,4 @@
 import { Typography, useTheme } from '@mui/material';
-import BindingsEditor from 'components/editor/Bindings/Editor';
-import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import { createEditorStore } from 'components/editor/Store/create';
 import { useEntityType } from 'context/EntityContext';
@@ -31,6 +29,8 @@ import {
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Schema } from 'types';
 import { getCollectionName, getCollectionNameProp } from 'utils/workflow-utils';
+import BindingsEditor from './Editor';
+import BindingSelector from './Selector';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];
@@ -65,13 +65,10 @@ function BindingsMultiEditor({
 
     // Resource Config Store
     const discoveredCollections = useResourceConfig_discoveredCollections();
-
     const setResourceSchema = useResourceConfig_setResourceSchema();
-
     const resourceConfig = useResourceConfig_resourceConfig();
     const resetResourceConfigAndCollections =
         useResourceConfig_resetResourceConfigAndCollections();
-
     const setServerUpdateRequired = useResourceConfig_setServerUpdateRequired();
 
     const { connectorTag } = useConnectorTag(imageTag.id);
@@ -93,6 +90,8 @@ function BindingsMultiEditor({
     ]);
 
     const resourceConfigUpdated = useMemo(() => {
+        console.log('resourceConfigUpdated', { draftSpecs });
+
         let queriedResourceConfig: ResourceConfigDictionary = {};
 
         const collectionNameProp = getCollectionNameProp(entityType);
@@ -159,7 +158,6 @@ function BindingsMultiEditor({
                 list={
                     <BindingSelector
                         itemType={itemType}
-                        shortenName={entityType === 'capture'}
                         readOnly={readOnly}
                         RediscoverButton={RediscoverButton}
                     />

@@ -1,4 +1,5 @@
 import { IconButton, Tooltip, useTheme } from '@mui/material';
+import { SelectedCollectionChangeData } from 'components/editor/Bindings/types';
 import AddCollection from 'components/transformation/create/Config/catalog/AddCollection';
 import { useEntityType } from 'context/EntityContext';
 import { disabledButtonText } from 'context/Theme';
@@ -7,7 +8,6 @@ import { Plus } from 'iconoir-react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useStore } from 'zustand';
-import { SelectedCollectionChangeData } from '../Bindings2/types';
 import PrimaryCTA from './PrimaryCTA';
 
 interface Props {
