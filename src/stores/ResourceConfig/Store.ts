@@ -6,7 +6,16 @@ import {
 } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
-import { difference, has, isEmpty, isEqual, map, omit, sortBy } from 'lodash';
+import {
+    difference,
+    has,
+    isEmpty,
+    isEqual,
+    map,
+    omit,
+    pick,
+    sortBy,
+} from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
@@ -227,12 +236,10 @@ const getInitialState = (
     removeCollection: (value) => {
         set(
             produce((state: ResourceConfigState) => {
-                const { collections } = get();
+                const { collections, currentCollection, resourceConfig } =
+                    get();
 
-                // THIS ONLY SUPPORTS UNIQUE COLLECTION NAMES
                 if (collections?.includes(value)) {
-                    const { currentCollection, resourceConfig } = get();
-                    // snag some helpful details
                     state.collectionRemovalMetadata = {
                         selectedCollection: currentCollection,
                         removedCollection: value,
@@ -241,13 +248,15 @@ const getInitialState = (
                         ),
                     };
 
-                    // Remove the collection
-                    state.collections = collections.slice(
-                        state.collectionRemovalMetadata.index
+                    state.collections = collections.filter(
+                        (collection) => collection !== value
                     );
 
-                    // Remove the old config and update related
-                    const updatedResourceConfig = omit(resourceConfig, value);
+                    const updatedResourceConfig = pick(
+                        resourceConfig,
+                        state.collections
+                    ) as ResourceConfigDictionary;
+
                     state.resourceConfig = updatedResourceConfig;
                     populateResourceConfigErrors(updatedResourceConfig, state);
                 }
