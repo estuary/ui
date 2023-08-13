@@ -6,6 +6,7 @@ import {
     Typography,
 } from '@mui/material';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
+import { isObject } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -42,7 +43,10 @@ function SchemaEvolution({ readOnly }: Props) {
     // Controlling if we need to show the generate button again
     const schemaEvolutionSettingsUpdated = useMemo(() => {
         if (draftSpecs.length > 0) {
-            if (Object.hasOwn(draftSpecs[0].spec, 'autoDiscover')) {
+            if (
+                Object.hasOwn(draftSpecs[0].spec, 'autoDiscover') &&
+                isObject(draftSpecs[0].spec.autoDiscover)
+            ) {
                 const schemaEvolutionSettings = draftSpecs[0].spec.autoDiscover;
 
                 const newBindingSettingExists = Object.hasOwn(

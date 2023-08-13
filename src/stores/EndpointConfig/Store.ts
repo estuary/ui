@@ -2,7 +2,7 @@ import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import { getLiveSpecsByLiveSpecId, getSchema_Endpoint } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
-import { isEmpty, isEqual } from 'lodash';
+import { isEmpty, isEqual, isObject } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     CustomError,
@@ -277,7 +277,10 @@ const getInitialState = (
                     endpointSchema,
                 } = get();
 
-                if (Object.hasOwn(data[0].spec, 'autoDiscover')) {
+                if (
+                    Object.hasOwn(data[0].spec, 'autoDiscover') &&
+                    isObject(data[0].spec.autoDiscover)
+                ) {
                     const schemaEvolutionSettings = data[0].spec.autoDiscover;
 
                     setAddNewBindings(
