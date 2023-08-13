@@ -4,10 +4,15 @@ import {
 } from 'api/draftSpecs';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isEmpty } from 'lodash';
+import { isEmpty, omit } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
-import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
+import {
+    Entity,
+    EntityWithCreateWorkflow,
+    Schema,
+    SchemaEvolutionSettings,
+} from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
 
@@ -35,9 +40,10 @@ export const generateTaskSpec = (
     entityType: EntityWithCreateWorkflow,
     connectorConfig: ConnectorConfig,
     resourceConfigs: ResourceConfigDictionary | null,
-    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
+    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
+    schemaEvolutionSettings?: SchemaEvolutionSettings
 ) => {
-    const draftSpec = isEmpty(existingTaskData)
+    let draftSpec = isEmpty(existingTaskData)
         ? {
               bindings: [],
               endpoint: {},
@@ -81,6 +87,14 @@ export const generateTaskSpec = (
         }
     } else {
         draftSpec.bindings = [];
+    }
+
+    if (entityType === 'capture' && schemaEvolutionSettings) {
+        if (Object.values(schemaEvolutionSettings).some((value) => value)) {
+            draftSpec.autoDiscover = schemaEvolutionSettings;
+        } else if (Object.hasOwn(draftSpec, 'autoDiscover')) {
+            draftSpec = omit(draftSpec, 'autoDiscover');
+        }
     }
 
     return draftSpec;
@@ -143,13 +157,15 @@ export const modifyExistingCaptureDraftSpec = async (
     connectorImage: string,
     encryptedEndpointConfig: Schema,
     resourceConfig: ResourceConfigDictionary,
-    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
+    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
+    schemaEvolutionSettings?: SchemaEvolutionSettings
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpec = generateTaskSpec(
         'capture',
         { image: connectorImage, config: encryptedEndpointConfig },
         resourceConfig,
-        existingTaskData
+        existingTaskData,
+        schemaEvolutionSettings
     );
 
     return modifyDraftSpec(draftSpec, {

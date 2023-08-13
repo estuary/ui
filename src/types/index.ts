@@ -327,3 +327,8 @@ export interface InferSchemaPropertyForRender
     extends InferSchemaResponseProperty {
     allowedToBeKey: boolean;
 }
+
+export interface SchemaEvolutionSettings {
+    addNewBindings: boolean;
+    evolveIncompatibleCollections: boolean;
+}

@@ -34,6 +34,8 @@ import {
     useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm/hooks';
 import {
+    useEndpointConfig_addNewBindings,
+    useEndpointConfig_evolveIncompatibleCollections,
     useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
@@ -52,7 +54,7 @@ import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
-import { Entity } from 'types';
+import { Entity, SchemaEvolutionSettings } from 'types';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { modifyExistingCaptureDraftSpec } from 'utils/workflow-utils';
 
@@ -108,6 +110,9 @@ function useDiscoverCapture(
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
     const setPreviousEndpointConfig =
         useEndpointConfigStore_setPreviousEndpointConfig();
+    const addNewBindings = useEndpointConfig_addNewBindings();
+    const evolveIncompatibleCollections =
+        useEndpointConfig_evolveIncompatibleCollections();
 
     // Resource Config Store
     const resourceConfig = useResourceConfig_resourceConfig();
@@ -307,13 +312,21 @@ function useDiscoverCapture(
                             ? existingDraftSpecResponse.data[0]
                             : null;
 
+                    const schemaEvolutionSettings:
+                        | SchemaEvolutionSettings
+                        | undefined =
+                        entityType === 'capture'
+                            ? { addNewBindings, evolveIncompatibleCollections }
+                            : undefined;
+
                     const draftSpecsResponse =
                         await modifyExistingCaptureDraftSpec(
                             persistedDraftId,
                             imagePath,
                             encryptedEndpointConfig.data,
                             resourceConfig,
-                            existingTaskData
+                            existingTaskData,
+                            schemaEvolutionSettings
                         );
 
                     if (draftSpecsResponse.error) {
@@ -373,6 +386,9 @@ function useDiscoverCapture(
             setPreviousEndpointConfig,
             setDraftId,
             postGenerateMutate,
+            addNewBindings,
+            evolveIncompatibleCollections,
+            entityType,
         ]
     );
 

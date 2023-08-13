@@ -1,4 +1,5 @@
 import { Box, useTheme } from '@mui/material';
+import SchemaEvolution from 'components/capture/SchemaEvolution';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
@@ -196,6 +197,8 @@ function EndpointConfig({
                     ) : null}
 
                     <EndpointConfigForm readOnly={readOnly} />
+
+                    <SchemaEvolution />
                 </ErrorBoundryWrapper>
             </WrapperWithHeader>
         );

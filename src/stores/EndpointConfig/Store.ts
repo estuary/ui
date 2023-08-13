@@ -20,8 +20,8 @@ import { JsonFormsData, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import { StoreApi, create } from 'zustand';
+import { NamedSet, devtools } from 'zustand/middleware';
 import { EndpointConfigState } from './types';
 
 const STORE_KEY = 'Endpoint Config';
@@ -44,29 +44,33 @@ const populateErrors = (
 
 const getInitialStateData = (): Pick<
     EndpointConfigState,
+    | 'addNewBindings'
     | 'encryptedEndpointConfig'
+    | 'endpointCanBeEmpty'
     | 'endpointConfig'
     | 'errorsExist'
     | 'endpointConfigErrors'
     | 'endpointSchema'
+    | 'evolveIncompatibleCollections'
     | 'hydrated'
     | 'hydrationErrorsExist'
     | 'previousEndpointConfig'
     | 'publishedEndpointConfig'
     | 'serverUpdateRequired'
-    | 'endpointCanBeEmpty'
 > => ({
+    addNewBindings: false,
     encryptedEndpointConfig: { data: {}, errors: [] },
+    endpointCanBeEmpty: false,
     endpointConfig: { data: {}, errors: [] },
     errorsExist: true,
     endpointConfigErrors: [],
     endpointSchema: {},
+    evolveIncompatibleCollections: false,
     hydrated: false,
     hydrationErrorsExist: false,
     previousEndpointConfig: { data: {}, errors: [] },
     publishedEndpointConfig: { data: {}, errors: [] },
     serverUpdateRequired: false,
-    endpointCanBeEmpty: false,
 });
 
 const getInitialState = (
@@ -192,6 +196,32 @@ const getInitialState = (
         );
     },
 
+    setAddNewBindings: (value) => {
+        set(
+            produce((state: EndpointConfigState) => {
+                const { evolveIncompatibleCollections } = get();
+
+                if (!value && evolveIncompatibleCollections) {
+                    state.evolveIncompatibleCollections = false;
+                }
+
+                state.addNewBindings = value;
+            }),
+            false,
+            'Schema Evolution Settings Changed: Add New Bindings'
+        );
+    },
+
+    setEvolveIncompatibleCollections: (value) => {
+        set(
+            produce((state: EndpointConfigState) => {
+                state.evolveIncompatibleCollections = value;
+            }),
+            false,
+            'Schema Evolution Settings Changed: Evolve Incompatible Collections'
+        );
+    },
+
     hydrateState: async (entityType, workflow): Promise<void> => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
@@ -238,12 +268,33 @@ const getInitialState = (
 
             if (data && data.length > 0) {
                 const {
+                    setAddNewBindings,
                     setEncryptedEndpointConfig,
                     setEndpointConfig,
+                    setEvolveIncompatibleCollections,
                     setPreviousEndpointConfig,
                     setPublishedEndpointConfig,
                     endpointSchema,
                 } = get();
+
+                if (Object.hasOwn(data[0].spec, 'autoDiscover')) {
+                    const schemaEvolutionSettings = data[0].spec.autoDiscover;
+
+                    setAddNewBindings(
+                        Object.hasOwn(
+                            schemaEvolutionSettings,
+                            'addNewBindings'
+                        ) && schemaEvolutionSettings.addNewBindings
+                    );
+
+                    setEvolveIncompatibleCollections(
+                        Object.hasOwn(
+                            schemaEvolutionSettings,
+                            'evolveIncompatibleCollections'
+                        ) &&
+                            schemaEvolutionSettings.evolveIncompatibleCollections
+                    );
+                }
 
                 const encryptedEndpointConfig =
                     data[0].spec.endpoint.connector.config;
