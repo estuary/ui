@@ -90,10 +90,18 @@ export const generateTaskSpec = (
     }
 
     if (entityType === 'capture' && schemaEvolutionSettings) {
-        if (Object.values(schemaEvolutionSettings).some((value) => value)) {
+        const truthySettingExists = Object.values(schemaEvolutionSettings).some(
+            (value) => value
+        );
+
+        if (Object.hasOwn(draftSpec, 'autoDiscover')) {
+            draftSpec.autoDiscover = truthySettingExists
+                ? schemaEvolutionSettings
+                : isEmpty(draftSpec.autoDiscover)
+                ? {}
+                : null;
+        } else if (truthySettingExists) {
             draftSpec.autoDiscover = schemaEvolutionSettings;
-        } else if (Object.hasOwn(draftSpec, 'autoDiscover')) {
-            draftSpec.autoDiscover = null;
         }
     }
 
