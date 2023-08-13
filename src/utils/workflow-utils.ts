@@ -4,7 +4,7 @@ import {
 } from 'api/draftSpecs';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isEmpty, omit } from 'lodash';
+import { isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import {
@@ -43,7 +43,7 @@ export const generateTaskSpec = (
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
     schemaEvolutionSettings?: SchemaEvolutionSettings
 ) => {
-    let draftSpec = isEmpty(existingTaskData)
+    const draftSpec = isEmpty(existingTaskData)
         ? {
               bindings: [],
               endpoint: {},
@@ -93,7 +93,7 @@ export const generateTaskSpec = (
         if (Object.values(schemaEvolutionSettings).some((value) => value)) {
             draftSpec.autoDiscover = schemaEvolutionSettings;
         } else if (Object.hasOwn(draftSpec, 'autoDiscover')) {
-            draftSpec = omit(draftSpec, 'autoDiscover');
+            draftSpec.autoDiscover = null;
         }
     }
 
