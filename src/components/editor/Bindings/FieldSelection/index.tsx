@@ -254,7 +254,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
                             <FormattedMessage id="fieldSelection.header" />
                         </Typography>
 
-                        <ExternalLink link="https://docs.estuary.dev/concepts/materialization/#projected-fields">
+                        <ExternalLink link="https://docs.estuary.dev/guides/customize-materialization-fields/">
                             <FormattedMessage id="terms.documentation" />
                         </ExternalLink>
                     </Stack>
