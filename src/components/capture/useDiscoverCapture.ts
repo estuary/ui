@@ -54,7 +54,7 @@ import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
-import { Entity, SchemaEvolutionSettings } from 'types';
+import { AutoDiscoverySettings, Entity } from 'types';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { modifyExistingCaptureDraftSpec } from 'utils/workflow-utils';
 
@@ -312,8 +312,8 @@ function useDiscoverCapture(
                             ? existingDraftSpecResponse.data[0]
                             : null;
 
-                    const schemaEvolutionSettings:
-                        | SchemaEvolutionSettings
+                    const autoDiscoverySettings:
+                        | AutoDiscoverySettings
                         | undefined =
                         entityType === 'capture'
                             ? { addNewBindings, evolveIncompatibleCollections }
@@ -326,7 +326,7 @@ function useDiscoverCapture(
                             encryptedEndpointConfig.data,
                             resourceConfig,
                             existingTaskData,
-                            schemaEvolutionSettings
+                            autoDiscoverySettings
                         );
 
                     if (draftSpecsResponse.error) {

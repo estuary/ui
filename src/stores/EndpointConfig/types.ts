@@ -50,7 +50,7 @@ export interface EndpointConfigState
         workflow: EntityWorkflow | null
     ) => Promise<void>;
 
-    // Schema Evolution
+    // Capture Auto Discovery Settings
     addNewBindings: boolean;
     setAddNewBindings: (value: EndpointConfigState['addNewBindings']) => void;
 

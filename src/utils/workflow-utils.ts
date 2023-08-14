@@ -8,10 +8,10 @@ import { isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import {
+    AutoDiscoverySettings,
     Entity,
     EntityWithCreateWorkflow,
     Schema,
-    SchemaEvolutionSettings,
 } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
@@ -41,7 +41,7 @@ export const generateTaskSpec = (
     connectorConfig: ConnectorConfig,
     resourceConfigs: ResourceConfigDictionary | null,
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
-    schemaEvolutionSettings?: SchemaEvolutionSettings
+    autoDiscoverySettings?: AutoDiscoverySettings
 ) => {
     const draftSpec = isEmpty(existingTaskData)
         ? {
@@ -89,19 +89,19 @@ export const generateTaskSpec = (
         draftSpec.bindings = [];
     }
 
-    if (entityType === 'capture' && schemaEvolutionSettings) {
-        const truthySettingExists = Object.values(schemaEvolutionSettings).some(
+    if (entityType === 'capture' && autoDiscoverySettings) {
+        const truthySettingExists = Object.values(autoDiscoverySettings).some(
             (value) => value
         );
 
         if (Object.hasOwn(draftSpec, 'autoDiscover')) {
             draftSpec.autoDiscover = truthySettingExists
-                ? schemaEvolutionSettings
+                ? autoDiscoverySettings
                 : isEmpty(draftSpec.autoDiscover)
                 ? {}
                 : null;
         } else if (truthySettingExists) {
-            draftSpec.autoDiscover = schemaEvolutionSettings;
+            draftSpec.autoDiscover = autoDiscoverySettings;
         }
     }
 
@@ -166,14 +166,14 @@ export const modifyExistingCaptureDraftSpec = async (
     encryptedEndpointConfig: Schema,
     resourceConfig: ResourceConfigDictionary,
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
-    schemaEvolutionSettings?: SchemaEvolutionSettings
+    autoDiscoverySettings?: AutoDiscoverySettings
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpec = generateTaskSpec(
         'capture',
         { image: connectorImage, config: encryptedEndpointConfig },
         resourceConfig,
         existingTaskData,
-        schemaEvolutionSettings
+        autoDiscoverySettings
     );
 
     return modifyDraftSpec(draftSpec, {

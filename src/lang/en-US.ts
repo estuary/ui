@@ -898,9 +898,9 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.schemaInference.alert.patchService.message.docPath': `mailto:support@estuary.dev`,
     'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
 
-    'workflows.schemaEvolution.header': `Schema Evolution`,
-    'workflows.schemaEvolution.label.addNewBindings': `Update collection schema as source changes`,
-    'workflows.schemaEvolution.label.evolveIncompatibleCollection': `Include breaking changes (will cause reversion and backfill)`,
+    'workflows.autoDiscovery.header': `Schema Evolution`,
+    'workflows.autoDiscovery.label.addNewBindings': `Update collection schema as source changes`,
+    'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Include breaking changes (will cause reversion and backfill)`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {

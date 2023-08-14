@@ -22,7 +22,7 @@ interface Props {
     readOnly?: boolean;
 }
 
-function SchemaEvolution({ readOnly }: Props) {
+function AutoDiscoverySettings({ readOnly }: Props) {
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
@@ -41,39 +41,38 @@ function SchemaEvolution({ readOnly }: Props) {
     const formActive = useFormStateStore_isActive();
 
     // Controlling if we need to show the generate button again
-    const schemaEvolutionSettingsUpdated = useMemo(() => {
+    const autoDiscoverySettingsUpdated = useMemo(() => {
         if (draftSpecs.length > 0) {
             if (
                 Object.hasOwn(draftSpecs[0].spec, 'autoDiscover') &&
                 isObject(draftSpecs[0].spec.autoDiscover)
             ) {
-                const schemaEvolutionSettings = draftSpecs[0].spec.autoDiscover;
+                const autoDiscoverySettings = draftSpecs[0].spec.autoDiscover;
 
                 const newBindingSettingExists = Object.hasOwn(
-                    schemaEvolutionSettings,
+                    autoDiscoverySettings,
                     'addNewBindings'
                 );
 
                 const evolutionSettingExists = Object.hasOwn(
-                    schemaEvolutionSettings,
+                    autoDiscoverySettings,
                     'evolveIncompatibleCollections'
                 );
 
                 if (newBindingSettingExists && !evolutionSettingExists) {
                     return (
-                        schemaEvolutionSettings.addNewBindings !==
-                        addNewBindings
+                        autoDiscoverySettings.addNewBindings !== addNewBindings
                     );
                 } else if (evolutionSettingExists && !newBindingSettingExists) {
                     return (
-                        schemaEvolutionSettings.evolveIncompatibleCollections !==
+                        autoDiscoverySettings.evolveIncompatibleCollections !==
                         evolveIncompatibleCollections
                     );
                 } else if (newBindingSettingExists && evolutionSettingExists) {
                     return (
-                        schemaEvolutionSettings.addNewBindings !==
+                        autoDiscoverySettings.addNewBindings !==
                             addNewBindings ||
-                        schemaEvolutionSettings.evolveIncompatibleCollections !==
+                        autoDiscoverySettings.evolveIncompatibleCollections !==
                             evolveIncompatibleCollections
                     );
                 }
@@ -88,13 +87,13 @@ function SchemaEvolution({ readOnly }: Props) {
     }, [addNewBindings, draftSpecs, evolveIncompatibleCollections]);
 
     useEffect(() => {
-        setServerUpdateRequired(schemaEvolutionSettingsUpdated);
-    }, [setServerUpdateRequired, schemaEvolutionSettingsUpdated]);
+        setServerUpdateRequired(autoDiscoverySettingsUpdated);
+    }, [setServerUpdateRequired, autoDiscoverySettingsUpdated]);
 
     return (
         <Stack sx={{ mt: 3 }}>
             <Typography sx={{ mb: 1, fontWeight: 500 }}>
-                <FormattedMessage id="workflows.schemaEvolution.header" />
+                <FormattedMessage id="workflows.autoDiscovery.header" />
             </Typography>
 
             <FormControl>
@@ -110,7 +109,7 @@ function SchemaEvolution({ readOnly }: Props) {
                         />
                     }
                     label={
-                        <FormattedMessage id="workflows.schemaEvolution.label.addNewBindings" />
+                        <FormattedMessage id="workflows.autoDiscovery.label.addNewBindings" />
                     }
                 />
             </FormControl>
@@ -129,7 +128,7 @@ function SchemaEvolution({ readOnly }: Props) {
                             />
                         }
                         label={
-                            <FormattedMessage id="workflows.schemaEvolution.label.evolveIncompatibleCollection" />
+                            <FormattedMessage id="workflows.autoDiscovery.label.evolveIncompatibleCollection" />
                         }
                         sx={{ ml: 2 }}
                     />
@@ -139,4 +138,4 @@ function SchemaEvolution({ readOnly }: Props) {
     );
 }
 
-export default SchemaEvolution;
+export default AutoDiscoverySettings;

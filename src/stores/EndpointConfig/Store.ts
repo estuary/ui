@@ -278,24 +278,24 @@ const getInitialState = (
                 } = get();
 
                 if (
+                    entityType === 'capture' &&
                     Object.hasOwn(data[0].spec, 'autoDiscover') &&
                     isObject(data[0].spec.autoDiscover)
                 ) {
-                    const schemaEvolutionSettings = data[0].spec.autoDiscover;
+                    const autoDiscoverySettings = data[0].spec.autoDiscover;
 
                     setAddNewBindings(
                         Object.hasOwn(
-                            schemaEvolutionSettings,
+                            autoDiscoverySettings,
                             'addNewBindings'
-                        ) && schemaEvolutionSettings.addNewBindings
+                        ) && autoDiscoverySettings.addNewBindings
                     );
 
                     setEvolveIncompatibleCollections(
                         Object.hasOwn(
-                            schemaEvolutionSettings,
+                            autoDiscoverySettings,
                             'evolveIncompatibleCollections'
-                        ) &&
-                            schemaEvolutionSettings.evolveIncompatibleCollections
+                        ) && autoDiscoverySettings.evolveIncompatibleCollections
                     );
                 }
 

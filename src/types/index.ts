@@ -328,7 +328,7 @@ export interface InferSchemaPropertyForRender
     allowedToBeKey: boolean;
 }
 
-export interface SchemaEvolutionSettings {
+export interface AutoDiscoverySettings {
     addNewBindings: boolean;
     evolveIncompatibleCollections: boolean;
 }
