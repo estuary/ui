@@ -8,16 +8,17 @@ import {
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { dataGridListStyling } from 'context/Theme';
+import { isEmpty } from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
+import { useResourceConfig_resourceConfig } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
 import CollectionSelectorHeaderName from './Header/Name';
 import CollectionSelectorHeaderRemove from './Header/Remove';
 import CollectionSelectorHeaderToggle from './Header/Toggle';
 
 interface Props {
-    collections: Set<string>;
     currentCollection?: any;
     disableActions?: boolean;
     renderCell?: (params: GridRenderCellParams) => void;
@@ -43,7 +44,6 @@ const initialState = {
 };
 
 function CollectionSelectorList({
-    collections,
     currentCollection,
     disableActions,
     header,
@@ -63,6 +63,8 @@ function CollectionSelectorList({
             })
     );
 
+    const resourceConfig = useResourceConfig_resourceConfig();
+
     const selectionEnabled = currentCollection && setCurrentCollection;
     const [viewableRows, setViewableRows] = useState<string[]>([]);
     const [filterModel, setFilterModel] = useState<GridFilterModel>({
@@ -79,11 +81,21 @@ function CollectionSelectorList({
 
     const rows = useMemo(
         () =>
-            Array.from(collections).map((collection) => ({
-                id: collection,
-                name: collection,
-            })),
-        [collections]
+            Array.from(Object.entries(resourceConfig)).map(
+                ([collectionName, config]) => {
+                    return {
+                        id: collectionName,
+                        name: collectionName,
+                        disable: config.disable,
+                    };
+                }
+            ),
+        [resourceConfig]
+    );
+
+    const disable = useMemo(
+        () => isEmpty(resourceConfig) || disableActions,
+        [disableActions, resourceConfig]
     );
 
     const columns = useMemo(() => {
@@ -97,16 +109,13 @@ function CollectionSelectorList({
                 renderCell: renderers?.cell.toggle,
                 renderHeader: (_params) => (
                     <CollectionSelectorHeaderToggle
-                        disabled={disableActions}
+                        disabled={disable}
                         onClick={(event) => {
                             console.log('event', event);
                         }}
                     />
                 ),
-                valueGetter: (params) => {
-                    console.log('toggle getter');
-                    return params.row.name;
-                },
+                valueGetter: (params) => params.row.disable,
             },
             {
                 field: 'name',
@@ -115,7 +124,7 @@ function CollectionSelectorList({
                 sortable: false,
                 renderHeader: (_params) => (
                     <CollectionSelectorHeaderName
-                        disabled={disableActions}
+                        disabled={disable}
                         itemType={collectionsLabel}
                         onChange={(value) => {
                             const newFilterMode: GridFilterModel = {
@@ -133,9 +142,7 @@ function CollectionSelectorList({
                     />
                 ),
                 renderCell,
-                valueGetter: (params) => {
-                    return params.row.name;
-                },
+                valueGetter: (params) => params.row.name,
             },
         ];
 
@@ -144,28 +151,25 @@ function CollectionSelectorList({
                 field: 'remove',
                 headerName: 'Remove',
                 sortable: false,
-                minWidth: 42,
-                maxWidth: 42,
+                minWidth: 52,
+                maxWidth: 52,
                 renderCell: renderers?.cell.remove,
                 renderHeader: (_params) => (
                     <CollectionSelectorHeaderRemove
-                        disabled={disableActions}
+                        disabled={disable}
                         itemType={collectionsLabel}
                         onClick={(event) => {
                             removeAllCollections(event);
                         }}
                     />
                 ),
-                valueGetter: (params) => {
-                    console.log('remove getter');
-                    return params.row.name;
-                },
+                valueGetter: () => null,
             });
         }
         return response;
     }, [
         collectionsLabel,
-        disableActions,
+        disable,
         removeAllCollections,
         renderCell,
         renderers?.cell.remove,
@@ -209,28 +213,21 @@ function CollectionSelectorList({
                 onFilterModelChange={(event) => {
                     console.log('Filter model changed', { event });
                 }}
-                onCellClick={(event) => {
-                    console.log('Cell was clicked', { event });
+                onCellClick={({ field, value }) => {
+                    console.log('Cell was clicked', { field, value });
+
+                    if (selectionEnabled && field === 'name') {
+                        // TODO (JSONForms) This is hacky but it works.
+                        // It clears out the current collection before switching.
+                        //  If a user is typing quickly in a form and then selects a
+                        //  different binding VERY quickly it could cause the updates
+                        //  to go into the wrong form.
+                        setCurrentCollection(null);
+                        hackyTimeout.current = window.setTimeout(() => {
+                            setCurrentCollection(value);
+                        });
+                    }
                 }}
-                onRowClick={
-                    selectionEnabled
-                        ? (params: any) => {
-                              if (params.row.name !== currentCollection) {
-                                  // TODO (JSONForms) This is hacky but it works.
-                                  // It clears out the current collection before switching.
-                                  //  If a user is typing quickly in a form and then selects a
-                                  //  different binding VERY quickly it could cause the updates
-                                  //  to go into the wrong form.
-                                  setCurrentCollection(null);
-                                  hackyTimeout.current = window.setTimeout(
-                                      () => {
-                                          setCurrentCollection(params.row.name);
-                                      }
-                                  );
-                              }
-                          }
-                        : undefined
-                }
             />
         </Box>
     );

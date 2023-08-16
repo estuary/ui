@@ -98,10 +98,14 @@ function BindingsMultiEditor({
         const collectionNameProp = getCollectionNameProp(entityType);
 
         draftSpecs[0]?.spec.bindings.forEach((binding: any) => {
+            // Remove the resource as we need to use that to populate the json forms data
+            //  the rest should still be added
+            const { resource, ...restOfBindings } = binding;
             queriedResourceConfig = {
                 ...queriedResourceConfig,
                 [getCollectionName(binding[collectionNameProp])]: {
-                    data: binding.resource,
+                    ...restOfBindings,
+                    data: resource,
                     errors: [],
                 },
             };

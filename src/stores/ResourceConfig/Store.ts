@@ -9,6 +9,7 @@ import produce from 'immer';
 import {
     difference,
     has,
+    isBoolean,
     isEmpty,
     isEqual,
     map,
@@ -192,13 +193,16 @@ const getInitialState = (
                 // As we go through and fetch all the names for collections go ahead and also
                 // populate the resource config
                 const collections = bindings.map((binding: any) => {
+                    const { resource, ...restOfBindings } = binding;
+
                     // Snag the name so we can add it to the config and list of collections
                     const name = getCollectionName(binding);
 
-                    // Take the binding resource and plase into config OR
+                    // Take the binding resource and place into config OR
                     //  generate a default in case there are any issues with it
                     state.resourceConfig[name] = {
-                        data: binding.resource,
+                        ...restOfBindings,
+                        data: resource,
                         errors: [],
                     };
 
@@ -489,6 +493,30 @@ const getInitialState = (
             }),
             false,
             'Resource Config Changed'
+        );
+    },
+
+    toggleDisable: (keys, value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const update = (key: string) => {
+                    const currValue = isBoolean(
+                        state.resourceConfig[key].disable
+                    )
+                        ? state.resourceConfig[key].disable
+                        : false;
+
+                    state.resourceConfig[key].disable = value ?? !currValue;
+                };
+
+                if (typeof keys === 'string') {
+                    update(keys);
+                } else {
+                    keys.forEach(update);
+                }
+            }),
+            false,
+            'Resource Config Disable Toggle'
         );
     },
 

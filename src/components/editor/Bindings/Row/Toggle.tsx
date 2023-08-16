@@ -1,20 +1,22 @@
 import { ToggleButton, Tooltip } from '@mui/material';
 import { Square } from 'iconoir-react';
 import CheckSquare from 'icons/CheckSquare';
-import { useState } from 'react';
+import { useResourceConfig_toggleDisable } from 'stores/ResourceConfig/hooks';
 
 interface Props {
+    collection: string;
     disabled: boolean;
+    selected: boolean | undefined;
 }
 
-function BindingsSelectorToggle({ disabled }: Props) {
-    const [enabled, setEnabled] = useState(false);
+function BindingsSelectorToggle({ collection, selected, disabled }: Props) {
+    const toggleDisable = useResourceConfig_toggleDisable();
 
     return (
         <Tooltip title="Enable/Disable Binding">
             <ToggleButton
                 disabled={disabled}
-                selected={enabled}
+                selected={!selected}
                 size="small"
                 sx={{
                     border: 0,
@@ -24,10 +26,10 @@ function BindingsSelectorToggle({ disabled }: Props) {
                 onChange={(event) => {
                     event.stopPropagation();
                     console.log('check box clicked on', { event });
-                    setEnabled(!enabled);
+                    toggleDisable(collection);
                 }}
             >
-                {enabled ? <CheckSquare /> : <Square />}
+                {!selected ? <CheckSquare /> : <Square />}
             </ToggleButton>
         </Tooltip>
     );

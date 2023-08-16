@@ -6,7 +6,7 @@ import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import { WarningCircle } from 'iconoir-react';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode } from 'react';
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
@@ -82,11 +82,6 @@ function BindingSelector({
         },
     };
 
-    const rows = useMemo(
-        () => new Set(Object.keys(resourceConfig)),
-        [resourceConfig]
-    );
-
     const disableActions = formActive || readOnly;
 
     const cellRenderers = {
@@ -136,7 +131,13 @@ function BindingSelector({
 
             console.log('toggle row', { collection });
 
-            return <BindingsSelectorToggle disabled={formActive} />;
+            return (
+                <BindingsSelectorToggle
+                    collection={collection}
+                    disabled={formActive}
+                    selected={params.row.disabled}
+                />
+            );
         },
     };
 
@@ -151,8 +152,7 @@ function BindingSelector({
             <CollectionSelectorList
                 height="100%"
                 header={itemType}
-                disableActions={rows.size === 0 || disableActions}
-                collections={rows}
+                disableActions={disableActions}
                 currentCollection={currentCollection}
                 setCurrentCollection={setCurrentCollection}
                 renderers={{

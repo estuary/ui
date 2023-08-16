@@ -4,7 +4,7 @@ import {
 } from 'api/draftSpecs';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isEmpty } from 'lodash';
+import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
@@ -53,18 +53,23 @@ export const generateTaskSpec = (
 
         boundCollectionNames.forEach((collectionName) => {
             const resourceConfig = resourceConfigs[collectionName].data;
+            const { disable } = resourceConfigs[collectionName];
+            const resourceDisable = isBoolean(disable) ? disable : false;
 
             const existingBindingIndex = draftSpec.bindings.findIndex(
                 (binding: any) => getCollectionName(binding) === collectionName
             );
 
             if (existingBindingIndex > -1) {
+                draftSpec.bindings[existingBindingIndex].disable =
+                    resourceDisable;
                 draftSpec.bindings[existingBindingIndex].resource = {
                     ...resourceConfig,
                 };
             } else if (Object.keys(resourceConfig).length > 0) {
                 draftSpec.bindings.push({
                     [collectionNameProp]: collectionName,
+                    disable: resourceDisable,
                     resource: {
                         ...resourceConfig,
                     },

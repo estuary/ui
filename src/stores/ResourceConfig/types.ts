@@ -3,9 +3,9 @@ import { LiveSpecsExt_MaterializeCapture } from 'hooks/useLiveSpecsExt';
 import { CallSupabaseResponse } from 'services/supabase';
 import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
 
-export interface ResourceConfig {
-    [key: string]: JsonFormsData | any[];
+export interface ResourceConfig extends JsonFormsData {
     errors: any[];
+    disable?: boolean;
 }
 
 export interface ResourceConfigDictionary {
@@ -58,6 +58,7 @@ export interface ResourceConfigState {
         disableCheckingErrors?: boolean,
         disableOmit?: boolean
     ) => void;
+    toggleDisable: (key: string | string[], value?: boolean) => void;
     resetResourceConfigAndCollections: () => void;
 
     resourceConfigErrorsExist: boolean;
