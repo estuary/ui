@@ -899,8 +899,8 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
 
     'workflows.autoDiscovery.header': `Schema Evolution`,
-    'workflows.autoDiscovery.label.addNewBindings': `Update collection schema as source changes`,
-    'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Include breaking changes (will cause reversion and backfill)`,
+    'workflows.autoDiscovery.label.addNewBindings': `Add newly discovered collections automatically`,
+    'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Re-version collections upon breaking changes`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {

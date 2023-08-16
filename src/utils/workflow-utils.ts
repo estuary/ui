@@ -4,7 +4,7 @@ import {
 } from 'api/draftSpecs';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isEmpty } from 'lodash';
+import { isEmpty, isNull } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import {
@@ -41,7 +41,8 @@ export const generateTaskSpec = (
     connectorConfig: ConnectorConfig,
     resourceConfigs: ResourceConfigDictionary | null,
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
-    autoDiscoverySettings?: AutoDiscoverySettings
+    autoDiscoverySettings?: AutoDiscoverySettings,
+    editWorkflow?: boolean
 ) => {
     const draftSpec = isEmpty(existingTaskData)
         ? {
@@ -94,12 +95,16 @@ export const generateTaskSpec = (
             (value) => value
         );
 
+        const defaultSettings = editWorkflow ? null : {};
+
         if (Object.hasOwn(draftSpec, 'autoDiscover')) {
             draftSpec.autoDiscover = truthySettingExists
                 ? autoDiscoverySettings
                 : isEmpty(draftSpec.autoDiscover)
                 ? {}
-                : null;
+                : isNull(draftSpec.autoDiscover)
+                ? null
+                : defaultSettings;
         } else if (truthySettingExists) {
             draftSpec.autoDiscover = autoDiscoverySettings;
         }
@@ -166,14 +171,16 @@ export const modifyExistingCaptureDraftSpec = async (
     encryptedEndpointConfig: Schema,
     resourceConfig: ResourceConfigDictionary,
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
-    autoDiscoverySettings?: AutoDiscoverySettings
+    autoDiscoverySettings: AutoDiscoverySettings,
+    editWorkflow: boolean
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpec = generateTaskSpec(
         'capture',
         { image: connectorImage, config: encryptedEndpointConfig },
         resourceConfig,
         existingTaskData,
-        autoDiscoverySettings
+        autoDiscoverySettings,
+        editWorkflow
     );
 
     return modifyDraftSpec(draftSpec, {

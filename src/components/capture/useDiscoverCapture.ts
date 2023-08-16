@@ -54,7 +54,7 @@ import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
-import { AutoDiscoverySettings, Entity } from 'types';
+import { Entity } from 'types';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { modifyExistingCaptureDraftSpec } from 'utils/workflow-utils';
 
@@ -312,13 +312,6 @@ function useDiscoverCapture(
                             ? existingDraftSpecResponse.data[0]
                             : null;
 
-                    const autoDiscoverySettings:
-                        | AutoDiscoverySettings
-                        | undefined =
-                        entityType === 'capture'
-                            ? { addNewBindings, evolveIncompatibleCollections }
-                            : undefined;
-
                     const draftSpecsResponse =
                         await modifyExistingCaptureDraftSpec(
                             persistedDraftId,
@@ -326,7 +319,8 @@ function useDiscoverCapture(
                             encryptedEndpointConfig.data,
                             resourceConfig,
                             existingTaskData,
-                            autoDiscoverySettings
+                            { addNewBindings, evolveIncompatibleCollections },
+                            isEdit
                         );
 
                     if (draftSpecsResponse.error) {
@@ -388,7 +382,7 @@ function useDiscoverCapture(
             postGenerateMutate,
             addNewBindings,
             evolveIncompatibleCollections,
-            entityType,
+            isEdit,
         ]
     );
 
