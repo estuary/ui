@@ -12,7 +12,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 import useConstant from 'use-constant';
-import CollectionSelectorHeader from './Header';
+import CollectionSelectorHeaderName from './Header/Name';
+import CollectionSelectorHeaderRemove from './Header/Remove';
+import CollectionSelectorHeaderToggle from './Header/Toggle';
 
 interface Props {
     collections: Set<string>;
@@ -84,13 +86,20 @@ function CollectionSelectorList({
         [collections]
     );
 
-    const columns = useMemo<GridColDef[]>(() => {
-        return [
+    const columns = useMemo(() => {
+        const response: GridColDef[] = [
             {
                 field: 'toggle',
                 headerName: 'Toggle enabled',
                 sortable: false,
-                renderHeader: null,
+                renderHeader: (_params) => (
+                    <CollectionSelectorHeaderToggle
+                        disabled={disableActions}
+                        onClick={(event) => {
+                            console.log('event', event);
+                        }}
+                    />
+                ),
                 renderCell: renderers?.cell.toggle,
                 valueGetter: (params) => {
                     console.log('toggle getter');
@@ -103,10 +112,10 @@ function CollectionSelectorList({
                 headerName: collectionsLabel,
                 sortable: false,
                 renderHeader: (_params) => (
-                    <CollectionSelectorHeader
+                    <CollectionSelectorHeaderName
                         disabled={disableActions}
                         itemType={collectionsLabel}
-                        onFilterChange={(value) => {
+                        onChange={(value) => {
                             const newFilterMode: GridFilterModel = {
                                 items: [
                                     {
@@ -119,16 +128,6 @@ function CollectionSelectorList({
                             };
                             setFilterModel(newFilterMode);
                         }}
-                        onRemoveAllClick={
-                            removeAllCollections
-                                ? (event) => {
-                                      removeAllCollections(event);
-                                  }
-                                : undefined
-                        }
-                        onToggleAllClick={(event) => {
-                            console.log('event', event);
-                        }}
                     />
                 ),
                 renderCell,
@@ -136,18 +135,30 @@ function CollectionSelectorList({
                     return params.row.name;
                 },
             },
-            {
+        ];
+
+        if (removeAllCollections) {
+            response.push({
                 field: 'remove',
                 headerName: 'Remove',
                 sortable: false,
-                renderHeader: null,
+                renderHeader: (_params) => (
+                    <CollectionSelectorHeaderRemove
+                        disabled={disableActions}
+                        itemType={collectionsLabel}
+                        onClick={(event) => {
+                            removeAllCollections(event);
+                        }}
+                    />
+                ),
                 renderCell: renderers?.cell.remove,
                 valueGetter: (params) => {
                     console.log('remove getter');
                     return params.row.name;
                 },
-            },
-        ];
+            });
+        }
+        return response;
     }, [
         collectionsLabel,
         disableActions,

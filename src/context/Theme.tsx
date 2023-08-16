@@ -429,9 +429,6 @@ export const dataGridListStyling: SxProps<Theme> = {
     },
     // This might need edited but not sure yet so putting back in
     '& .MuiDataGrid-columnHeader:hover': {
-        '& .MuiDataGrid-columnHeaderTitleContainerContent': {
-            mr: 0.5,
-        },
         '& .MuiDataGrid-menuIcon': {
             width: '2rem',
         },
