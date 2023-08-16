@@ -18,7 +18,14 @@ interface Props {
     collections: Set<string>;
     currentCollection?: any;
     disableActions?: boolean;
-    renderCell: (params: GridRenderCellParams) => void;
+    renderCell?: (params: GridRenderCellParams) => void;
+    renderers?: {
+        cell: {
+            name: (params: any) => void;
+            remove?: (params: any) => void;
+            toggle?: (params: any) => void;
+        };
+    };
     header?: string;
     height?: number | string;
     removeAllCollections?: (event: React.MouseEvent<HTMLElement>) => void;
@@ -41,6 +48,7 @@ function CollectionSelectorList({
     height,
     removeAllCollections,
     renderCell,
+    renderers,
     setCurrentCollection,
 }: Props) {
     const hackyTimeout = useRef<number | null>(null);
@@ -78,6 +86,17 @@ function CollectionSelectorList({
 
     const columns = useMemo<GridColDef[]>(() => {
         return [
+            {
+                field: 'toggle',
+                headerName: 'Toggle enabled',
+                sortable: false,
+                renderHeader: null,
+                renderCell: renderers?.cell.toggle,
+                valueGetter: (params) => {
+                    console.log('toggle getter');
+                    return params.row.name;
+                },
+            },
             {
                 field: 'name',
                 flex: 1,
@@ -117,8 +136,26 @@ function CollectionSelectorList({
                     return params.row.name;
                 },
             },
+            {
+                field: 'remove',
+                headerName: 'Remove',
+                sortable: false,
+                renderHeader: null,
+                renderCell: renderers?.cell.remove,
+                valueGetter: (params) => {
+                    console.log('remove getter');
+                    return params.row.name;
+                },
+            },
         ];
-    }, [collectionsLabel, disableActions, removeAllCollections, renderCell]);
+    }, [
+        collectionsLabel,
+        disableActions,
+        removeAllCollections,
+        renderCell,
+        renderers?.cell.remove,
+        renderers?.cell.toggle,
+    ]);
 
     useUnmount(() => {
         if (hackyTimeout.current) clearTimeout(hackyTimeout.current);

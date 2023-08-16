@@ -17,7 +17,9 @@ import {
     useResourceConfig_resourceConfig,
     useResourceConfig_setCurrentCollection,
 } from 'stores/ResourceConfig/hooks';
-import BindingsSelectorRow from './Row';
+import BindingsSelectorName from './Row/Name';
+import BindingsSelectorRemove from './Row/Remove';
+import BindingsSelectorToggle from './Row/Toggle';
 import BindingSearch from './Search';
 
 interface BindingSelectorProps {
@@ -80,42 +82,63 @@ function BindingSelector({
         },
     };
 
-    const cellRender = (params: GridRenderCellParams) => {
-        const collection = params.row.name;
-        const currentConfig = resourceConfig[collection];
-
-        return (
-            <>
-                {currentConfig.errors.length > 0 ? (
-                    <Box>
-                        <WarningCircle
-                            style={{
-                                marginRight: 4,
-                                fontSize: 12,
-                                color: theme.palette.error.main,
-                            }}
-                        />
-                    </Box>
-                ) : null}
-
-                <BindingsSelectorRow
-                    collection={collection}
-                    disabled={formActive}
-                    draftId={draftId}
-                    hideRemove={isCapture}
-                    shortenName={isCapture}
-                    task={task}
-                />
-            </>
-        );
-    };
-
     const rows = useMemo(
         () => new Set(Object.keys(resourceConfig)),
         [resourceConfig]
     );
 
     const disableActions = formActive || readOnly;
+
+    const cellRenderers = {
+        name: (params: GridRenderCellParams) => {
+            const collection = params.row.name;
+            const currentConfig = resourceConfig[collection];
+
+            return (
+                <>
+                    {currentConfig.errors.length > 0 ? (
+                        <Box>
+                            <WarningCircle
+                                style={{
+                                    marginRight: 4,
+                                    fontSize: 12,
+                                    color: theme.palette.error.main,
+                                }}
+                            />
+                        </Box>
+                    ) : null}
+
+                    <BindingsSelectorName
+                        collection={collection}
+                        shortenName={isCapture}
+                    />
+                </>
+            );
+        },
+        remove: (params: GridRenderCellParams) => {
+            if (isCapture) {
+                return null;
+            }
+
+            const collection = params.row.name;
+
+            return (
+                <BindingsSelectorRemove
+                    collection={collection}
+                    task={task}
+                    disabled={formActive}
+                    draftId={draftId}
+                />
+            );
+        },
+        toggle: (params: GridRenderCellParams) => {
+            const collection = params.row.name;
+
+            console.log('toggle row', { collection });
+
+            return <BindingsSelectorToggle disabled={formActive} />;
+        },
+    };
 
     return (
         <>
@@ -132,7 +155,9 @@ function BindingSelector({
                 collections={rows}
                 currentCollection={currentCollection}
                 setCurrentCollection={setCurrentCollection}
-                renderCell={cellRender}
+                renderers={{
+                    cell: cellRenderers,
+                }}
                 removeAllCollections={
                     !isCapture ? handlers.removeAllCollections : undefined
                 }
