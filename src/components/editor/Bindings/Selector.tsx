@@ -11,7 +11,6 @@ import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
     useResourceConfig_collections,
-    useResourceConfig_currentCollection,
     useResourceConfig_discoveredCollections,
     useResourceConfig_removeAllCollections,
     useResourceConfig_resourceConfig,
@@ -49,7 +48,6 @@ function BindingSelector({
     const formActive = useFormStateStore_isActive();
 
     // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
     const setCurrentCollection = useResourceConfig_setCurrentCollection();
 
     const collections = useResourceConfig_collections();
@@ -129,13 +127,11 @@ function BindingSelector({
         toggle: (params: GridRenderCellParams) => {
             const collection = params.row.name;
 
-            console.log('toggle row', { collection });
-
             return (
                 <BindingsSelectorToggle
                     collection={collection}
                     disabled={formActive}
-                    selected={params.row.disabled}
+                    selected={!params.row.disabled}
                 />
             );
         },
@@ -153,7 +149,6 @@ function BindingSelector({
                 height="100%"
                 header={itemType}
                 disableActions={disableActions}
-                currentCollection={currentCollection}
                 setCurrentCollection={setCurrentCollection}
                 renderers={{
                     cell: cellRenderers,

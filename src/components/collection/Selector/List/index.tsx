@@ -12,14 +12,16 @@ import { isEmpty } from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
-import { useResourceConfig_resourceConfig } from 'stores/ResourceConfig/hooks';
+import {
+    useResourceConfig_currentCollection,
+    useResourceConfig_resourceConfig,
+} from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
 import CollectionSelectorHeaderName from './Header/Name';
 import CollectionSelectorHeaderRemove from './Header/Remove';
 import CollectionSelectorHeaderToggle from './Header/Toggle';
 
 interface Props {
-    currentCollection?: any;
     disableActions?: boolean;
     renderCell?: (params: GridRenderCellParams) => void;
     renderers?: {
@@ -44,7 +46,6 @@ const initialState = {
 };
 
 function CollectionSelectorList({
-    currentCollection,
     disableActions,
     header,
     height,
@@ -63,10 +64,12 @@ function CollectionSelectorList({
             })
     );
 
+    const currentCollection = useResourceConfig_currentCollection();
     const resourceConfig = useResourceConfig_resourceConfig();
 
     const selectionEnabled = currentCollection && setCurrentCollection;
-    const [viewableRows, setViewableRows] = useState<string[]>([]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_viewableRows, setViewableRows] = useState<string[]>([]);
     const [filterModel, setFilterModel] = useState<GridFilterModel>({
         items: [],
     });
@@ -77,12 +80,11 @@ function CollectionSelectorList({
         if (currentCollection) setSelectionModel([currentCollection]);
     }, [currentCollection]);
 
-    console.log('viewableRows', viewableRows);
-
     const rows = useMemo(
         () =>
             Array.from(Object.entries(resourceConfig)).map(
                 ([collectionName, config]) => {
+                    console.log('config', config);
                     return {
                         id: collectionName,
                         name: collectionName,
@@ -115,7 +117,10 @@ function CollectionSelectorList({
                         }}
                     />
                 ),
-                valueGetter: (params) => params.row.disable,
+                valueGetter: (params) => {
+                    console.log('toggle=', params.row);
+                    return params.row.disable;
+                },
             },
             {
                 field: 'name',
