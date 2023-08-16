@@ -1,19 +1,11 @@
-import {
-    Box,
-    Checkbox,
-    IconButton,
-    ListItemText,
-    Tooltip,
-    useTheme,
-} from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import CollectionSelectorList from 'components/collection/Selector/List';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
-import { typographyTruncation } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
-import { Cancel, WarningCircle } from 'iconoir-react';
+import { WarningCircle } from 'iconoir-react';
 import { ReactNode, useMemo } from 'react';
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
@@ -22,107 +14,16 @@ import {
     useResourceConfig_currentCollection,
     useResourceConfig_discoveredCollections,
     useResourceConfig_removeAllCollections,
-    useResourceConfig_removeCollection,
     useResourceConfig_resourceConfig,
     useResourceConfig_setCurrentCollection,
-    useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
-import { EntityWorkflow } from 'types';
-import { hasLength, stripPathing } from 'utils/misc-utils';
+import BindingsSelectorRow from './Row';
 import BindingSearch from './Search';
 
 interface BindingSelectorProps {
     itemType?: string;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
-}
-
-interface RowProps {
-    collection: string;
-    task: string;
-    workflow: EntityWorkflow | null;
-    disabled: boolean;
-    draftId: string | null;
-    hideRemove?: boolean;
-    shortenName?: boolean;
-}
-
-function Row({
-    collection,
-    disabled,
-    draftId,
-    hideRemove,
-    shortenName,
-    task,
-    workflow,
-}: RowProps) {
-    // Resource Config Store
-    const discoveredCollections = useResourceConfig_discoveredCollections();
-    const removeCollection = useResourceConfig_removeCollection();
-
-    const setRestrictedDiscoveredCollections =
-        useResourceConfig_setRestrictedDiscoveredCollections();
-
-    const handlers = {
-        removeCollection: (event: React.MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-
-            removeCollection(collection);
-
-            if (
-                workflow === 'capture_edit' &&
-                !hasLength(discoveredCollections)
-            ) {
-                const nativeCollectionDetected = collection.includes(task);
-
-                nativeCollectionDetected
-                    ? setRestrictedDiscoveredCollections(
-                          collection,
-                          nativeCollectionDetected
-                      )
-                    : setRestrictedDiscoveredCollections(collection);
-            } else {
-                setRestrictedDiscoveredCollections(collection);
-            }
-
-            if (draftId && !discoveredCollections?.includes(collection)) {
-                void deleteDraftSpecsByCatalogName(draftId, 'collection', [
-                    collection,
-                ]);
-            }
-        },
-    };
-
-    return (
-        <>
-            <Tooltip title="Enable/Disable Binding">
-                <Checkbox
-                    disabled={disabled}
-                    size="small"
-                    onChange={(event) => {
-                        event.stopPropagation();
-                        console.log('check box clicked on', { event });
-                    }}
-                />
-            </Tooltip>
-
-            <ListItemText
-                primary={shortenName ? stripPathing(collection) : collection}
-                primaryTypographyProps={typographyTruncation}
-            />
-
-            {hideRemove ? null : (
-                <IconButton
-                    disabled={disabled}
-                    size="small"
-                    onClick={handlers.removeCollection}
-                    sx={{ color: (theme) => theme.palette.text.primary }}
-                >
-                    <Cancel />
-                </IconButton>
-            )}
-        </>
-    );
 }
 
 function BindingSelector({
@@ -197,14 +98,13 @@ function BindingSelector({
                     </Box>
                 ) : null}
 
-                <Row
+                <BindingsSelectorRow
                     collection={collection}
                     disabled={formActive}
                     draftId={draftId}
                     hideRemove={isCapture}
                     shortenName={isCapture}
                     task={task}
-                    workflow={workflow}
                 />
             </>
         );
