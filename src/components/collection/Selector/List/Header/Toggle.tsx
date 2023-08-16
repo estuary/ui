@@ -1,7 +1,6 @@
-import { Tooltip, ToggleButton } from '@mui/material';
-import { Square } from 'iconoir-react';
-import CheckSquare from 'icons/CheckSquare';
+import { Switch, FormControlLabel } from '@mui/material';
 import { useState } from 'react';
+import { useIntl } from 'react-intl';
 
 interface Props {
     onClick: (event: any) => void;
@@ -9,29 +8,31 @@ interface Props {
 }
 
 function CollectionSelectorHeaderToggle({ disabled, onClick }: Props) {
+    const intl = useIntl();
     const [enabled, setEnabled] = useState(false);
 
     return (
-        <Tooltip title="Enable/Disable All Bindings">
-            <ToggleButton
-                disabled={disabled}
-                selected={enabled}
-                size="small"
-                sx={{
-                    border: 0,
-                    p: 0,
-                }}
-                value="check"
-                onChange={(event) => {
-                    event.stopPropagation();
-                    console.log('check box clicked on', { event });
-                    setEnabled(!enabled);
-                    onClick(event);
-                }}
-            >
-                {enabled ? <CheckSquare /> : <Square />}
-            </ToggleButton>
-        </Tooltip>
+        <FormControlLabel
+            control={
+                <Switch
+                    disabled={disabled}
+                    size="small"
+                    checked={!enabled}
+                    onChange={(event) => {
+                        event.stopPropagation();
+                        console.log('check box clicked on', { event });
+                        setEnabled(!enabled);
+                        onClick(event);
+                    }}
+                />
+            }
+            label={intl.formatMessage({
+                id: disabled
+                    ? 'workflows.collectionSelector.toggle.enable'
+                    : 'workflows.collectionSelector.toggle.disable',
+            })}
+            labelPlacement="bottom"
+        />
     );
 }
 

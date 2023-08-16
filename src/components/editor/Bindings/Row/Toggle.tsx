@@ -1,5 +1,4 @@
 import { FormControlLabel, Switch } from '@mui/material';
-import { useIntl } from 'react-intl';
 import { useResourceConfig_toggleDisable } from 'stores/ResourceConfig/hooks';
 
 interface Props {
@@ -13,10 +12,7 @@ function BindingsSelectorToggle({
     disableButton,
     disabled,
 }: Props) {
-    const intl = useIntl();
     const toggleDisable = useResourceConfig_toggleDisable();
-
-    console.log('toggle', { disabled });
 
     return (
         <FormControlLabel
@@ -32,10 +28,7 @@ function BindingsSelectorToggle({
                     }}
                 />
             }
-            label={intl.formatMessage({
-                id: disabled ? 'common.disabled' : 'common.enabled',
-            })}
-            labelPlacement="bottom"
+            label={null}
         />
     );
 }

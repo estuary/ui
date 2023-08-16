@@ -870,6 +870,9 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.tab.collectionSchema': `Collection`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
 
+    'workflows.collectionSelector.toggle.enable': `Enable All`,
+    'workflows.collectionSelector.toggle.disable': `Disable All`,
+
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
     'workflows.collectionSelector.schemaEdit.flowctlDocLink': `https://docs.estuary.dev/concepts/flowctl/`,
