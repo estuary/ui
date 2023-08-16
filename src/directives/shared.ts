@@ -5,7 +5,7 @@ import { AppliedDirective } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { Directives, UserClaims } from './types';
 
-export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v2';
+export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v3';
 
 export const jobCompleted = (
     appliedDirective?: AppliedDirective<UserClaims>
