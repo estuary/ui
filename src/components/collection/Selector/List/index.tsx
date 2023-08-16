@@ -92,6 +92,9 @@ function CollectionSelectorList({
                 field: 'toggle',
                 headerName: 'Toggle enabled',
                 sortable: false,
+                minWidth: 42,
+                maxWidth: 42,
+                renderCell: renderers?.cell.toggle,
                 renderHeader: (_params) => (
                     <CollectionSelectorHeaderToggle
                         disabled={disableActions}
@@ -100,7 +103,6 @@ function CollectionSelectorList({
                         }}
                     />
                 ),
-                renderCell: renderers?.cell.toggle,
                 valueGetter: (params) => {
                     console.log('toggle getter');
                     return params.row.name;
@@ -142,6 +144,9 @@ function CollectionSelectorList({
                 field: 'remove',
                 headerName: 'Remove',
                 sortable: false,
+                minWidth: 42,
+                maxWidth: 42,
+                renderCell: renderers?.cell.remove,
                 renderHeader: (_params) => (
                     <CollectionSelectorHeaderRemove
                         disabled={disableActions}
@@ -151,7 +156,6 @@ function CollectionSelectorList({
                         }}
                     />
                 ),
-                renderCell: renderers?.cell.remove,
                 valueGetter: (params) => {
                     console.log('remove getter');
                     return params.row.name;
