@@ -1,6 +1,5 @@
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
-import { cloneDeep } from 'lodash';
 import { useEffect, useMemo, useRef } from 'react';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import { jsonFormsDefaults } from 'services/jsonforms/defaults';
@@ -14,8 +13,6 @@ import {
     useResourceConfig_resourceSchema,
     useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig/hooks';
-import { Annotations } from 'types/jsonforms';
-import { stripPathing } from 'utils/misc-utils';
 
 type Props = {
     collectionName: string;
@@ -45,38 +42,6 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
         },
     };
 
-    // Find field with x-collection-name annotation
-    const collectionNameFieldKey = useMemo(() => {
-        if (resourceSchema.properties) {
-            // Find the field with the collection name annotation
-            const collectionNameField =
-                Object.entries(resourceSchema.properties).find(
-                    ([_, value]) =>
-                        value?.hasOwnProperty(
-                            Annotations.defaultResourceConfigName
-                        )
-                ) ?? [];
-
-            // Try to fetch the key
-            return collectionNameField[0];
-        }
-
-        return null;
-    }, [resourceSchema.properties]);
-
-    // Check if we need to add a default value
-    const preparedResourceSchema = useMemo(() => {
-        if (collectionNameFieldKey) {
-            // Add a default property set to the stripped collection name
-            const response = cloneDeep(resourceSchema);
-            response.properties[collectionNameFieldKey].default =
-                stripPathing(collectionName);
-            return response;
-        }
-
-        return resourceSchema;
-    }, [collectionName, collectionNameFieldKey, resourceSchema]);
-
     const uiSchema = useMemo(
         () => custom_generateDefaultUISchema(resourceSchema),
         [resourceSchema]
@@ -90,7 +55,7 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
         <StyledEngineProvider injectFirst>
             <JsonForms
                 {...jsonFormsDefaults}
-                schema={preparedResourceSchema}
+                schema={resourceSchema}
                 uischema={uiSchema}
                 data={formData}
                 readonly={readOnly || isActive}
