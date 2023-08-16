@@ -121,6 +121,16 @@ export const useResourceConfig_resourceConfig = () => {
     );
 };
 
+export const useResourceConfig_resourceConfigOfCollection = (
+    collection: keyof ResourceConfigState['resourceConfig']
+) => {
+    return useZustandStore<ResourceConfigState, any>(
+        ResourceConfigStoreNames.GENERAL,
+        (state) => state.resourceConfig[collection],
+        shallow
+    );
+};
+
 export const useResourceConfig_setResourceConfig = () => {
     return useZustandStore<
         ResourceConfigState,

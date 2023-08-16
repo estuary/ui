@@ -1,18 +1,26 @@
 import { FormControlLabel, Switch } from '@mui/material';
-import { useResourceConfig_toggleDisable } from 'stores/ResourceConfig/hooks';
+import { useMemo } from 'react';
+import { useIntl } from 'react-intl';
+import {
+    useResourceConfig_resourceConfigOfCollection,
+    useResourceConfig_toggleDisable,
+} from 'stores/ResourceConfig/hooks';
 
 interface Props {
     collection: string;
-    disabled: boolean | undefined;
     disableButton: boolean;
 }
 
-function BindingsSelectorToggle({
-    collection,
-    disableButton,
-    disabled,
-}: Props) {
+function BindingsSelectorToggle({ collection, disableButton }: Props) {
+    const intl = useIntl();
     const toggleDisable = useResourceConfig_toggleDisable();
+    const resourceConfig =
+        useResourceConfig_resourceConfigOfCollection(collection);
+
+    const disabled = useMemo<boolean | undefined>(() => {
+        console.log('resourceConfig disabled memo', resourceConfig);
+        return resourceConfig.disable;
+    }, [resourceConfig]);
 
     return (
         <FormControlLabel
@@ -28,7 +36,18 @@ function BindingsSelectorToggle({
                     }}
                 />
             }
-            label={null}
+            label={intl.formatMessage({
+                id: disabled ? 'common.disabled' : 'common.enabled',
+            })}
+            labelPlacement="bottom"
+            sx={
+                {
+                    // '& .MuiFormControlLabel-label': {
+                    //     height: 0,
+                    //     visibility: 'collapse',
+                    // },
+                }
+            }
         />
     );
 }

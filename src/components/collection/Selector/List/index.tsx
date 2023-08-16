@@ -3,18 +3,17 @@ import {
     DataGrid,
     GridColDef,
     GridFilterModel,
-    GridRenderCellParams,
     GridSelectionModel,
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { dataGridListStyling } from 'context/Theme';
-import { isEmpty } from 'lodash';
+import { debounce, isEmpty } from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 import {
+    useResourceConfig_collections,
     useResourceConfig_currentCollection,
-    useResourceConfig_resourceConfig,
 } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
 import CollectionSelectorHeaderName from './Header/Name';
@@ -23,8 +22,7 @@ import CollectionSelectorHeaderToggle from './Header/Toggle';
 
 interface Props {
     disableActions?: boolean;
-    renderCell?: (params: GridRenderCellParams) => void;
-    renderers?: {
+    renderers: {
         cell: {
             name: (params: any) => void;
             remove?: (params: any) => void;
@@ -50,7 +48,6 @@ function CollectionSelectorList({
     header,
     height,
     removeAllCollections,
-    renderCell,
     renderers,
     setCurrentCollection,
 }: Props) {
@@ -64,8 +61,8 @@ function CollectionSelectorList({
             })
     );
 
+    const collections = useResourceConfig_collections();
     const currentCollection = useResourceConfig_currentCollection();
-    const resourceConfig = useResourceConfig_resourceConfig();
 
     const selectionEnabled = currentCollection && setCurrentCollection;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -80,33 +77,32 @@ function CollectionSelectorList({
         if (currentCollection) setSelectionModel([currentCollection]);
     }, [currentCollection]);
 
+    // TODO (bindings) this happens when current collection changes
+    //  we should not need to run this then
     const rows = useMemo(
         () =>
-            Array.from(Object.entries(resourceConfig)).map(
-                ([collectionName, config]) => {
-                    console.log('config', config);
-                    return {
-                        id: collectionName,
-                        name: collectionName,
-                        disable: config.disable,
-                    };
-                }
-            ),
-        [resourceConfig]
+            !collections
+                ? []
+                : collections.map((collectionName) => {
+                      return {
+                          id: collectionName,
+                          name: collectionName,
+                      };
+                  }),
+        [collections]
     );
 
     const disable = useMemo(
-        () => isEmpty(resourceConfig) || disableActions,
-        [disableActions, resourceConfig]
+        () => isEmpty(rows) || disableActions,
+        [disableActions, rows]
     );
 
     const columns = useMemo(() => {
         const response: GridColDef[] = [
             {
-                field: 'toggle',
-                headerName: 'Toggle enabled',
+                field: 'disable',
                 sortable: false,
-                renderCell: renderers?.cell.toggle,
+                renderCell: renderers.cell.toggle,
                 renderHeader: (_params) => (
                     <CollectionSelectorHeaderToggle
                         disabled={disable}
@@ -115,10 +111,7 @@ function CollectionSelectorList({
                         }}
                     />
                 ),
-                valueGetter: (params) => {
-                    console.log('toggle=', params.row);
-                    return params.row.disable;
-                },
+                valueGetter: () => null,
             },
             {
                 field: 'name',
@@ -144,19 +137,17 @@ function CollectionSelectorList({
                         }}
                     />
                 ),
-                renderCell,
-                valueGetter: (params) => params.row.name,
+                renderCell: renderers.cell.name,
             },
         ];
 
         if (removeAllCollections) {
             response.push({
                 field: 'remove',
-                headerName: 'Remove',
                 sortable: false,
                 minWidth: 52,
                 maxWidth: 52,
-                renderCell: renderers?.cell.remove,
+                renderCell: renderers.cell.remove,
                 renderHeader: (_params) => (
                     <CollectionSelectorHeaderRemove
                         disabled={disable}
@@ -174,9 +165,9 @@ function CollectionSelectorList({
         collectionsLabel,
         disable,
         removeAllCollections,
-        renderCell,
-        renderers?.cell.remove,
-        renderers?.cell.toggle,
+        renderers.cell.name,
+        renderers.cell.remove,
+        renderers.cell.toggle,
     ]);
 
     useUnmount(() => {
@@ -200,7 +191,8 @@ function CollectionSelectorList({
                 rows={rows}
                 selectionModel={selectionEnabled ? selectionModel : undefined}
                 sx={{ ...dataGridListStyling, border: 0 }}
-                onStateChange={(state, arg1) => {
+                onStateChange={debounce((state, arg1) => {
+                    console.log('debounced state change');
                     if (arg1.defaultMuiPrevented) {
                         console.log('prevented');
                     }
@@ -212,10 +204,7 @@ function CollectionSelectorList({
                         }
                     });
                     setViewableRows(updatedViewableRows);
-                }}
-                onFilterModelChange={(event) => {
-                    console.log('Filter model changed', { event });
-                }}
+                }, 500)}
                 onCellClick={({ field, value }) => {
                     console.log('Cell was clicked', { field, value });
 
