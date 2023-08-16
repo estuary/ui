@@ -427,14 +427,9 @@ export const dataGridListStyling: SxProps<Theme> = {
         borderBottom: (theme) => defaultOutline[theme.palette.mode],
         bgcolor: (theme) => alternativeDataGridHeader[theme.palette.mode],
     },
-    '& .MuiDataGrid-columnHeader:hover': {
-        '& .MuiDataGrid-menuIcon': {
-            width: '2rem',
-        },
-    },
+    // Allows the name filter to take the entire width
     '& .MuiDataGrid-columnHeaderTitleContainerContent': {
         width: '100%',
-        justifyContent: 'space-between',
     },
 };
 

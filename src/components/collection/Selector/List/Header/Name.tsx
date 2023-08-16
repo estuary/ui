@@ -26,7 +26,7 @@ function CollectionSelectorHeaderName({ disabled, itemType, onChange }: Props) {
                 onChange(event.target.value);
             }}
             sx={{
-                'flexGrow': 1,
+                'width': '100%',
                 'my': 1,
                 '& .MuiInputBase-root': { borderRadius: 3, my: 0 },
             }}
