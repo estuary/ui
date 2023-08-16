@@ -106,8 +106,6 @@ function CollectionSelectorList({
                 field: 'toggle',
                 headerName: 'Toggle enabled',
                 sortable: false,
-                minWidth: 42,
-                maxWidth: 42,
                 renderCell: renderers?.cell.toggle,
                 renderHeader: (_params) => (
                     <CollectionSelectorHeaderToggle

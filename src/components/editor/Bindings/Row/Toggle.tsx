@@ -1,6 +1,5 @@
-import { ToggleButton, Tooltip } from '@mui/material';
-import { Square } from 'iconoir-react';
-import CheckSquare from 'icons/CheckSquare';
+import { FormControlLabel, Switch } from '@mui/material';
+import { useIntl } from 'react-intl';
 import { useResourceConfig_toggleDisable } from 'stores/ResourceConfig/hooks';
 
 interface Props {
@@ -14,30 +13,30 @@ function BindingsSelectorToggle({
     disableButton,
     disabled,
 }: Props) {
+    const intl = useIntl();
     const toggleDisable = useResourceConfig_toggleDisable();
 
     console.log('toggle', { disabled });
 
     return (
-        <Tooltip title="Enable/Disable Binding">
-            <ToggleButton
-                disabled={disableButton}
-                selected={!disabled}
-                size="small"
-                sx={{
-                    border: 0,
-                    p: 0,
-                }}
-                value="check"
-                onChange={(event) => {
-                    console.log('change', event);
-                    event.stopPropagation();
-                    toggleDisable(collection);
-                }}
-            >
-                {!disabled ? <CheckSquare /> : <Square />}
-            </ToggleButton>
-        </Tooltip>
+        <FormControlLabel
+            control={
+                <Switch
+                    disabled={disableButton}
+                    size="small"
+                    checked={!disabled}
+                    onChange={(event) => {
+                        console.log('change', event);
+                        event.stopPropagation();
+                        toggleDisable(collection);
+                    }}
+                />
+            }
+            label={intl.formatMessage({
+                id: disabled ? 'common.disabled' : 'common.enabled',
+            })}
+            labelPlacement="bottom"
+        />
     );
 }
 
