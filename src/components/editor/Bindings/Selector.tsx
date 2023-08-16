@@ -130,8 +130,8 @@ function BindingSelector({
             return (
                 <BindingsSelectorToggle
                     collection={collection}
-                    disabled={formActive}
-                    selected={!params.row.disabled}
+                    disabled={params.row.disable}
+                    disableButton={formActive}
                 />
             );
         },

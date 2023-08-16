@@ -5,18 +5,24 @@ import { useResourceConfig_toggleDisable } from 'stores/ResourceConfig/hooks';
 
 interface Props {
     collection: string;
-    disabled: boolean;
-    selected: boolean | undefined;
+    disabled: boolean | undefined;
+    disableButton: boolean;
 }
 
-function BindingsSelectorToggle({ collection, selected, disabled }: Props) {
+function BindingsSelectorToggle({
+    collection,
+    disableButton,
+    disabled,
+}: Props) {
     const toggleDisable = useResourceConfig_toggleDisable();
+
+    console.log('toggle', { disabled });
 
     return (
         <Tooltip title="Enable/Disable Binding">
             <ToggleButton
-                disabled={disabled}
-                selected={!selected}
+                disabled={disableButton}
+                selected={!disabled}
                 size="small"
                 sx={{
                     border: 0,
@@ -24,12 +30,12 @@ function BindingsSelectorToggle({ collection, selected, disabled }: Props) {
                 }}
                 value="check"
                 onChange={(event) => {
+                    console.log('change', event);
                     event.stopPropagation();
-                    console.log('check box clicked on', { event });
                     toggleDisable(collection);
                 }}
             >
-                {!selected ? <CheckSquare /> : <Square />}
+                {!disabled ? <CheckSquare /> : <Square />}
             </ToggleButton>
         </Tooltip>
     );

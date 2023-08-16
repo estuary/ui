@@ -58,6 +58,7 @@ export interface ResourceConfigState {
         disableCheckingErrors?: boolean,
         disableOmit?: boolean
     ) => void;
+    updateResourceConfig: (key: string, formData: JsonFormsData) => void;
     toggleDisable: (key: string | string[], value?: boolean) => void;
     resetResourceConfigAndCollections: () => void;
 

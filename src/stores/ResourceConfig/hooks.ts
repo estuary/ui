@@ -128,6 +128,13 @@ export const useResourceConfig_setResourceConfig = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.setResourceConfig);
 };
 
+export const useResourceConfig_updateResourceConfig = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['updateResourceConfig']
+    >(ResourceConfigStoreNames.GENERAL, (state) => state.updateResourceConfig);
+};
+
 export const useResourceConfig_toggleDisable = () => {
     return useZustandStore<
         ResourceConfigState,

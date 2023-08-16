@@ -11,7 +11,7 @@ import {
 import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceSchema,
-    useResourceConfig_setResourceConfig,
+    useResourceConfig_updateResourceConfig,
 } from 'stores/ResourceConfig/hooks';
 
 type Props = {
@@ -24,7 +24,7 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
 
     // Resource Config Store
     const resourceConfig = useResourceConfig_resourceConfig();
-    const setConfig = useResourceConfig_setResourceConfig();
+    const updateResourceConfig = useResourceConfig_updateResourceConfig();
     const resourceSchema = useResourceConfig_resourceSchema();
     const formData = resourceConfig[collectionName].data;
 
@@ -38,7 +38,7 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
 
     const handlers = {
         onChange: (configName: string, form: any) => {
-            setConfig(configName, form);
+            updateResourceConfig(configName, form);
         },
     };
 

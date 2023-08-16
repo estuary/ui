@@ -30,6 +30,7 @@ import {
 } from 'stores/ResourceConfig/hooks';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Schema } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import { getCollectionName, getCollectionNameProp } from 'utils/workflow-utils';
 
 interface Props {
@@ -93,27 +94,35 @@ function BindingsMultiEditor({
     ]);
 
     const resourceConfigUpdated = useMemo(() => {
-        let queriedResourceConfig: ResourceConfigDictionary = {};
+        if (hasLength(draftSpecs)) {
+            let queriedResourceConfig: ResourceConfigDictionary = {};
 
-        const collectionNameProp = getCollectionNameProp(entityType);
+            const collectionNameProp = getCollectionNameProp(entityType);
 
-        draftSpecs[0]?.spec.bindings.forEach((binding: any) => {
-            // Remove the resource as we need to use that to populate the json forms data
-            //  the rest should still be added
-            const { resource, ...restOfBindings } = binding;
-            queriedResourceConfig = {
-                ...queriedResourceConfig,
-                [getCollectionName(binding[collectionNameProp])]: {
+            draftSpecs[0]?.spec.bindings.forEach((binding: any) => {
+                // Remove the resource as we need to use that to populate the json forms data
+                //  the rest should still be added
+                const { resource, ...restOfBindings } = binding;
+                const newValue = {
                     ...restOfBindings,
                     data: resource,
                     errors: [],
-                },
-            };
-        });
+                };
+                queriedResourceConfig = {
+                    ...queriedResourceConfig,
+                    [getCollectionName(binding[collectionNameProp])]: newValue,
+                };
+            });
 
-        return draftSpecs.length > 0
-            ? !isEqual(resourceConfig, queriedResourceConfig)
-            : false;
+            console.log('resourceConfigUpdated', {
+                resourceConfig,
+                queriedResourceConfig,
+            });
+
+            return !isEqual(resourceConfig, queriedResourceConfig);
+        }
+
+        return false;
     }, [draftSpecs, entityType, resourceConfig]);
 
     useEffect(() => {

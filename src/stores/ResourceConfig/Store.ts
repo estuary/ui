@@ -427,9 +427,32 @@ const getInitialState = (
         );
     },
 
+    updateResourceConfig: (key, value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const { setResourceConfig } = get();
+
+                // This was never empty in my testing but wanted to be safe
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                const existingConfig = state.resourceConfig[key] ?? {};
+
+                setResourceConfig(key, {
+                    ...existingConfig,
+                    ...value,
+                });
+            }),
+            false,
+            'Resource Config Updated'
+        );
+    },
+
     setResourceConfig: (key, value, disableCheckingErrors, disableOmit) => {
         set(
             produce((state: ResourceConfigState) => {
+                console.log('setResourceConfig', {
+                    key,
+                    value,
+                });
                 const { resourceSchema, collections } = get();
 
                 if (typeof key === 'string') {
@@ -505,8 +528,13 @@ const getInitialState = (
                     )
                         ? state.resourceConfig[key].disable
                         : false;
+                    const newValue = value ?? !currValue;
 
-                    state.resourceConfig[key].disable = value ?? !currValue;
+                    console.log('newValue', newValue);
+
+                    state.resourceConfig[key].disable = newValue
+                        ? newValue
+                        : undefined;
                 };
 
                 if (typeof keys === 'string') {

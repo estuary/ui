@@ -121,6 +121,11 @@ function EntityEdit({
         [draftSpecs, entityType]
     );
 
+    console.log('entity edit', {
+        draftSpecMetadata,
+        taskDraftSpec,
+    });
+
     useEffect(() => {
         const resetDraftIdFlag =
             endpointConfigServerUpdateRequired ||
