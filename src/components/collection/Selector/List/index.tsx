@@ -48,6 +48,10 @@ const initialState = {
     },
 };
 
+const defaultFilterModel = {
+    items: [],
+};
+
 function CollectionSelectorList({
     disableActions,
     header,
@@ -76,9 +80,8 @@ function CollectionSelectorList({
     const selectionEnabled = currentCollection && setCurrentCollection;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_viewableRows, setViewableRows] = useState<string[]>([]);
-    const [filterModel, setFilterModel] = useState<GridFilterModel>({
-        items: [],
-    });
+    const [filterModel, setFilterModel] =
+        useState<GridFilterModel>(defaultFilterModel);
     const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
         []
     );
@@ -176,9 +179,7 @@ function CollectionSelectorList({
                                     apiRef.current.state
                                 );
                             removeCollections(filteredCollections);
-                            setFilterModel({
-                                items: [],
-                            });
+                            setFilterModel(defaultFilterModel);
                             setFilterValue('');
                         }}
                     />
