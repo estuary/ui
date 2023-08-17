@@ -32,7 +32,10 @@ interface Props {
     header?: string;
     height?: number | string;
     removeAllCollections?: (event: React.MouseEvent<HTMLElement>) => void;
-    toggleAllCollections?: (event: React.MouseEvent<HTMLElement>) => void;
+    toggleAllCollections?: (
+        event: React.MouseEvent<HTMLElement>,
+        value: boolean
+    ) => void;
     setCurrentCollection?: (collection: any) => void;
 }
 
@@ -137,9 +140,7 @@ function CollectionSelectorList({
                 renderHeader: (_params) => (
                     <CollectionSelectorHeaderToggle
                         disabled={disable}
-                        onClick={(event) => {
-                            toggleAllCollections(event);
-                        }}
+                        onClick={toggleAllCollections}
                     />
                 ),
                 valueGetter: () => null,

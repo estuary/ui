@@ -549,10 +549,17 @@ const getInitialState = (
         );
     },
 
+    toggleAllCollections: (value) => {
+        const { collections, toggleDisable } = get();
+
+        // Collections really won't be empty here but need to make ts happy
+        toggleDisable(collections ?? [], value);
+    },
+
     toggleDisable: (keys, value) => {
-        set(
-            produce((state: ResourceConfigState) => {
-                const update = (key: string) => {
+        const update = (key: string) => {
+            set(
+                produce((state: ResourceConfigState) => {
                     const currValue = isBoolean(
                         state.resourceConfig[key].disable
                     )
@@ -560,24 +567,22 @@ const getInitialState = (
                         : false;
                     const newValue = value ?? !currValue;
 
-                    console.log('newValue', newValue);
-
                     if (newValue) {
                         state.resourceConfig[key].disable = newValue;
                     } else {
                         delete state.resourceConfig[key].disable;
                     }
-                };
+                }),
+                false,
+                'Resource Config Disable Toggle'
+            );
+        };
 
-                if (typeof keys === 'string') {
-                    update(keys);
-                } else {
-                    keys.forEach(update);
-                }
-            }),
-            false,
-            'Resource Config Disable Toggle'
-        );
+        if (typeof keys === 'string') {
+            update(keys);
+        } else {
+            keys.forEach(update);
+        }
     },
 
     resetResourceConfigAndCollections: () => {

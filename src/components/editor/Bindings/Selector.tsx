@@ -15,6 +15,7 @@ import {
     useResourceConfig_removeAllCollections,
     useResourceConfig_resourceConfig,
     useResourceConfig_setCurrentCollection,
+    useResourceConfig_toggleAllCollections,
 } from 'stores/ResourceConfig/hooks';
 import BindingsSelectorName from './Row/Name';
 import BindingsSelectorRemove from './Row/Remove';
@@ -56,6 +57,7 @@ function BindingSelector({
 
     const resourceConfig = useResourceConfig_resourceConfig();
     const removeAllCollections = useResourceConfig_removeAllCollections();
+    const toggleAllCollections = useResourceConfig_toggleAllCollections();
 
     const handlers = {
         removeAllCollections: (event: React.MouseEvent<HTMLElement>) => {
@@ -79,10 +81,13 @@ function BindingSelector({
                 );
             }
         },
-        toggleAllCollections: (event: React.MouseEvent<HTMLElement>) => {
+        toggleAllCollections: (
+            event: React.MouseEvent<HTMLElement>,
+            value: boolean
+        ) => {
             event.stopPropagation();
 
-            console.log('toggle all collections here');
+            toggleAllCollections(value);
         },
     };
 
@@ -162,7 +167,7 @@ function BindingSelector({
                     !isCapture ? handlers.removeAllCollections : undefined
                 }
                 toggleAllCollections={
-                    !isCollection ? handlers.removeAllCollections : undefined
+                    !isCollection ? handlers.toggleAllCollections : undefined
                 }
             />
         </>

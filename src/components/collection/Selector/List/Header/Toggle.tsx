@@ -1,18 +1,15 @@
 import { Switch, FormControlLabel } from '@mui/material';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-// import { useResourceConfig_toggleDisable } from 'stores/ResourceConfig/hooks';
 
 interface Props {
-    onClick: (event: any) => void;
+    onClick: (event: any, value: boolean) => void;
     disabled?: boolean;
 }
 
 function CollectionSelectorHeaderToggle({ disabled, onClick }: Props) {
     const intl = useIntl();
     const [enabled, setEnabled] = useState(false);
-
-    // const toggleDisable = useResourceConfig_toggleDisable();
 
     return (
         <FormControlLabel
@@ -23,14 +20,13 @@ function CollectionSelectorHeaderToggle({ disabled, onClick }: Props) {
                     checked={!enabled}
                     onChange={(event) => {
                         event.stopPropagation();
-                        console.log('check box clicked on', { event });
                         setEnabled(!enabled);
-                        onClick(event);
+                        onClick(event, !enabled);
                     }}
                 />
             }
             label={intl.formatMessage({
-                id: disabled
+                id: enabled
                     ? 'workflows.collectionSelector.toggle.enable'
                     : 'workflows.collectionSelector.toggle.disable',
             })}
