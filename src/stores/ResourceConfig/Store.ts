@@ -37,6 +37,9 @@ const populateCollections = (
     state.collectionErrorsExist = isEmpty(collections);
 };
 
+// TODO (bindings) this approach is not needed anymore now that the list
+//  has different cells for each action in the list. This means remove no longer accidently triggers
+//   the setCurrentCatalog. So we can just handle this in the removeCollection
 const getCurrentCollection = (
     collections: string[] | undefined | null,
     metaData: any,
