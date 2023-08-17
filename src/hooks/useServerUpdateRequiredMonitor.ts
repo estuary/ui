@@ -26,12 +26,12 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
 
     const resourceConfigUpdated = useMemo(() => {
         if (hasLength(draftSpecs)) {
-            // First see if the counts match. Using a nested if because otherwise
-            //  if draftSpecs is empty undefined !== number will hit
+            console.log('resourceConfigUpdated');
             if (
                 draftSpecs[0]?.spec.bindings.length ===
                 Object.keys(resourceConfig).length
             ) {
+                // The lengths have not changed so we need to check each binding
                 return draftSpecs[0]?.spec.bindings.some((binding: any) => {
                     // Snag the name so we know which resource config to check
                     const collectionName = getCollectionName(
@@ -49,6 +49,9 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                         errors: [],
                     });
                 });
+            } else {
+                // Lengths do not match so we know the update is needed
+                return true;
             }
         }
 
