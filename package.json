@@ -41,7 +41,7 @@
         "@mui/lab": "^5.0.0-alpha.114",
         "@mui/material": "^5.11.3",
         "@mui/utils": "^5.11.2",
-        "@mui/x-data-grid": "^5.17.18",
+        "@mui/x-data-grid": "^6.11.2",
         "@mui/x-date-pickers": "^5.0.13",
         "@stripe/react-stripe-js": "^2.1.0",
         "@stripe/stripe-js": "^1.52.1",
