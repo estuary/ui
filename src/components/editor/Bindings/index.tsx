@@ -12,7 +12,7 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isEqual } from 'lodash';
+import { useServerUpdateRequiredMonitor } from 'hooks/useServerUpdateRequiredMonitor';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
@@ -24,14 +24,9 @@ import { EditorStoreNames } from 'stores/names';
 import {
     useResourceConfig_discoveredCollections,
     useResourceConfig_resetResourceConfigAndCollections,
-    useResourceConfig_resourceConfig,
     useResourceConfig_setResourceSchema,
-    useResourceConfig_setServerUpdateRequired,
 } from 'stores/ResourceConfig/hooks';
-import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { getCollectionName, getCollectionNameProp } from 'utils/workflow-utils';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];
@@ -44,6 +39,9 @@ function BindingsMultiEditor({
     readOnly = false,
     RediscoverButton,
 }: Props) {
+    // This keeps an eye on resource config and updates if there is a need
+    useServerUpdateRequiredMonitor(draftSpecs);
+
     const intl = useIntl();
     const theme = useTheme();
 
@@ -69,11 +67,8 @@ function BindingsMultiEditor({
 
     const setResourceSchema = useResourceConfig_setResourceSchema();
 
-    const resourceConfig = useResourceConfig_resourceConfig();
     const resetResourceConfigAndCollections =
         useResourceConfig_resetResourceConfigAndCollections();
-
-    const setServerUpdateRequired = useResourceConfig_setServerUpdateRequired();
 
     const { connectorTag } = useConnectorTag(imageTag.id);
 
@@ -92,42 +87,6 @@ function BindingsMultiEditor({
         connectorTag?.connector_id,
         connectorTag?.resource_spec_schema,
     ]);
-
-    const resourceConfigUpdated = useMemo(() => {
-        if (hasLength(draftSpecs)) {
-            let queriedResourceConfig: ResourceConfigDictionary = {};
-
-            const collectionNameProp = getCollectionNameProp(entityType);
-
-            draftSpecs[0]?.spec.bindings.forEach((binding: any) => {
-                // Remove the resource as we need to use that to populate the json forms data
-                //  the rest should still be added
-                const { resource, ...restOfBindings } = binding;
-                const newValue = {
-                    ...restOfBindings,
-                    data: resource,
-                    errors: [],
-                };
-                queriedResourceConfig = {
-                    ...queriedResourceConfig,
-                    [getCollectionName(binding[collectionNameProp])]: newValue,
-                };
-            });
-
-            console.log('resourceConfigUpdated', {
-                resourceConfig,
-                queriedResourceConfig,
-            });
-
-            return !isEqual(resourceConfig, queriedResourceConfig);
-        }
-
-        return false;
-    }, [draftSpecs, entityType, resourceConfig]);
-
-    useEffect(() => {
-        setServerUpdateRequired(resourceConfigUpdated);
-    }, [setServerUpdateRequired, resourceConfigUpdated]);
 
     const removeDiscoveredCollectionOptions = useMemo(() => {
         if (
