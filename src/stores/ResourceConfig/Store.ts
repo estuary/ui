@@ -428,22 +428,16 @@ const getInitialState = (
     },
 
     updateResourceConfig: (key, value) => {
-        set(
-            produce((state: ResourceConfigState) => {
-                const { setResourceConfig } = get();
+        const { resourceConfig, setResourceConfig } = get();
 
-                // This was never empty in my testing but wanted to be safe
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                const existingConfig = state.resourceConfig[key] ?? {};
+        // This was never empty in my testing but wanted to be safe
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        const existingConfig = resourceConfig[key] ?? {};
 
-                setResourceConfig(key, {
-                    ...existingConfig,
-                    ...value,
-                });
-            }),
-            false,
-            'Resource Config Updated'
-        );
+        setResourceConfig(key, {
+            ...existingConfig,
+            ...value,
+        });
     },
 
     setResourceConfig: (key, value, disableCheckingErrors, disableOmit) => {
