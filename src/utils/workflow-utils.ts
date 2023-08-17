@@ -54,7 +54,7 @@ export const generateTaskSpec = (
         boundCollectionNames.forEach((collectionName) => {
             const resourceConfig = resourceConfigs[collectionName].data;
             const { disable } = resourceConfigs[collectionName];
-            const resourceDisable = isBoolean(disable) ? disable : false;
+            const resourceDisable = isBoolean(disable) ? disable : undefined;
 
             const existingBindingIndex = draftSpec.bindings.findIndex(
                 (binding: any) => getCollectionName(binding) === collectionName
