@@ -24,11 +24,10 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
     const name = useRef(collectionName);
 
     // Resource Config Store
-    const formData =
-        useResourceConfig_resourceConfigOfCollectionProperty(
-            collectionName,
-            'data'
-        ) ?? {};
+    const formData = useResourceConfig_resourceConfigOfCollectionProperty(
+        collectionName,
+        'data'
+    );
     const updateResourceConfig = useResourceConfig_updateResourceConfig();
     const resourceSchema = useResourceConfig_resourceSchema();
 
@@ -54,6 +53,11 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
         () => showValidation(displayValidation),
         [displayValidation]
     );
+
+    // Happens when deleting the collection the user is currently viewing
+    if (!formData) {
+        return null;
+    }
 
     return (
         <StyledEngineProvider injectFirst>

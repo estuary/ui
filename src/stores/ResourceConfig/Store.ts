@@ -37,6 +37,37 @@ const populateCollections = (
     state.collectionErrorsExist = isEmpty(collections);
 };
 
+const getCurrentCollection = (
+    collections: string[] | undefined | null,
+    metaData: any,
+    value?: string | undefined | null
+) => {
+    const {
+        selectedCollection,
+        removedCollection,
+        index: removedCollectionIndex,
+    } = metaData;
+
+    const collectionCount = collections?.length;
+
+    if (value && collections?.includes(value)) {
+        return value;
+    } else if (collectionCount && selectedCollection === removedCollection) {
+        if (
+            removedCollectionIndex > -1 &&
+            removedCollectionIndex < collections.length
+        ) {
+            return collections[removedCollectionIndex];
+        } else if (removedCollectionIndex === collections.length) {
+            return collections[removedCollectionIndex - 1];
+        }
+    } else if (collectionCount && removedCollection === value) {
+        return selectedCollection;
+    } else {
+        return null;
+    }
+};
+
 const populateResourceConfigErrors = (
     resourceConfig: ResourceConfigDictionary,
     state: ResourceConfigState
@@ -263,6 +294,10 @@ const getInitialState = (
                     ) as ResourceConfigDictionary;
 
                     state.resourceConfig = updatedResourceConfig;
+                    state.currentCollection = getCurrentCollection(
+                        state.collections,
+                        state.collectionRemovalMetadata
+                    );
                     populateResourceConfigErrors(updatedResourceConfig, state);
                 }
             }),
@@ -350,29 +385,15 @@ const getInitialState = (
                     },
                 } = get();
 
-                const collectionCount = collections?.length;
-
-                if (value && collections?.includes(value)) {
-                    state.currentCollection = value;
-                } else if (
-                    collectionCount &&
-                    selectedCollection === removedCollection
-                ) {
-                    if (
-                        removedCollectionIndex > -1 &&
-                        removedCollectionIndex < collections.length
-                    ) {
-                        state.currentCollection =
-                            collections[removedCollectionIndex];
-                    } else if (removedCollectionIndex === collections.length) {
-                        state.currentCollection =
-                            collections[removedCollectionIndex - 1];
-                    }
-                } else if (collectionCount && removedCollection === value) {
-                    state.currentCollection = selectedCollection;
-                } else {
-                    state.currentCollection = null;
-                }
+                state.currentCollection = getCurrentCollection(
+                    collections,
+                    {
+                        selectedCollection,
+                        removedCollection,
+                        index: removedCollectionIndex,
+                    },
+                    value
+                );
             }),
             false,
             'Current Collection Changed'
