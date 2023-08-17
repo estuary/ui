@@ -68,6 +68,7 @@ function CollectionSelectorList({
                 id: 'workflows.collectionSelector.label.listHeader',
             })
     );
+    const [filterValue, setFilterValue] = useState('');
 
     const collections = useResourceConfig_collections();
     const currentCollection = useResourceConfig_currentCollection();
@@ -114,8 +115,11 @@ function CollectionSelectorList({
                 renderHeader: (_params) => (
                     <CollectionSelectorHeaderName
                         disabled={disable}
+                        inputValue={filterValue}
                         itemType={collectionsLabel}
                         onChange={(value) => {
+                            setFilterValue(value);
+
                             const newFilterMode: GridFilterModel = {
                                 items: [
                                     {
@@ -172,6 +176,10 @@ function CollectionSelectorList({
                                     apiRef.current.state
                                 );
                             removeCollections(filteredCollections);
+                            setFilterModel({
+                                items: [],
+                            });
+                            setFilterValue('');
                         }}
                     />
                 ),
@@ -183,6 +191,7 @@ function CollectionSelectorList({
         apiRef,
         collectionsLabel,
         disable,
+        filterValue,
         removeCollections,
         renderers.cell.name,
         renderers.cell.remove,

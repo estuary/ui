@@ -57,6 +57,7 @@ function BindingSelector({
     const discoveredCollections = useResourceConfig_discoveredCollections();
 
     const resourceConfig = useResourceConfig_resourceConfig();
+
     const removeCollections = useResourceConfig_removeCollections();
     const toggleCollections = useResourceConfig_toggleDisable();
 

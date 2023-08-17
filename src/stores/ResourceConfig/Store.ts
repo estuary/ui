@@ -324,8 +324,8 @@ const getInitialState = (
                     removedCollections
                 );
 
-                // todo1
-                state.currentCollection = null;
+                // Just force the selection back to the first item
+                state.currentCollection = updatedCollections[0];
                 state.collections = updatedCollections;
 
                 let additionalRestrictedCollections: string[] = [];

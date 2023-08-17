@@ -2,13 +2,20 @@ import { TextField } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 interface Props {
+    inputValue: string;
     itemType: string;
     onChange: (filterValue: string) => void;
     disabled?: boolean;
 }
 
-function CollectionSelectorHeaderName({ disabled, itemType, onChange }: Props) {
+function CollectionSelectorHeaderName({
+    disabled,
+    inputValue,
+    itemType,
+    onChange,
+}: Props) {
     const intl = useIntl();
+
     return (
         <TextField
             disabled={disabled}
@@ -22,6 +29,7 @@ function CollectionSelectorHeaderName({ disabled, itemType, onChange }: Props) {
             )}
             size="small"
             variant="outlined"
+            value={inputValue}
             onChange={(event) => {
                 onChange(event.target.value);
             }}
