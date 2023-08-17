@@ -9,4 +9,5 @@ export interface RowSelectorProps {
         | SelectTableStoreNames.COLLECTION_SELECTOR
         | SelectTableStoreNames.MATERIALIZATION;
     showMaterialize?: boolean;
+    showSelectedCount?: boolean;
 }

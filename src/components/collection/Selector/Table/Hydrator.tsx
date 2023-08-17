@@ -71,6 +71,7 @@ function Hydrator() {
                 toolbar={
                     <RowSelector
                         hideActions
+                        showSelectedCount
                         selectKeyValueName="catalog_name"
                         selectableTableStoreName={selectableTableStoreName}
                     />

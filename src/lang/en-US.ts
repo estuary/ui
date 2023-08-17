@@ -404,6 +404,9 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 
     'entityTable.detailsLink': `View details`,
 
+    'entityTable.rowSelector.all': `All`,
+    'entityTable.rowSelector.none': `None`,
+
     'optionMenu.ariaLabel': `Open Option Menu`,
     'optionMenu.tooltip': `Options`,
     'optionMenu.option.detailsPanel.display': `View details`,

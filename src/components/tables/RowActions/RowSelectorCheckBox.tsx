@@ -1,7 +1,8 @@
-import { Button, ButtonGroup, Menu, MenuItem } from '@mui/material';
+import { Badge, Button, ButtonGroup, Menu, MenuItem } from '@mui/material';
 import { useZustandStore } from 'context/Zustand/provider';
 import { MinusSquare, NavArrowDown, Square } from 'iconoir-react';
 import { useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
@@ -11,12 +12,13 @@ import { RowSelectorProps } from './types';
 
 type Props = Pick<
     RowSelectorProps,
-    'selectKeyValueName' | 'selectableTableStoreName'
+    'selectKeyValueName' | 'selectableTableStoreName' | 'showSelectedCount'
 >;
 
 function RowSelectorCheckBox({
     selectKeyValueName,
     selectableTableStoreName = SelectTableStoreNames.CAPTURE,
+    showSelectedCount,
 }: Props) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -46,9 +48,18 @@ function RowSelectorCheckBox({
 
     return (
         <ButtonGroup>
-            <Button size="small" variant="text" onClick={toggleSelection}>
-                {hasSelections ? <MinusSquare /> : <Square />}
-            </Button>
+            <Badge
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                }}
+                badgeContent={selectedRows.size}
+                invisible={!showSelectedCount}
+            >
+                <Button size="small" variant="text" onClick={toggleSelection}>
+                    {hasSelections ? <MinusSquare /> : <Square />}
+                </Button>
+            </Badge>
 
             <Button
                 id="row-selector-button"
@@ -72,9 +83,13 @@ function RowSelectorCheckBox({
                     horizontal: 'left',
                 }}
             >
-                <MenuItem onClick={() => setAll(true)}>All</MenuItem>
+                <MenuItem onClick={() => setAll(true)}>
+                    <FormattedMessage id="entityTable.rowSelector.all" />
+                </MenuItem>
 
-                <MenuItem onClick={() => setAll(false)}>None</MenuItem>
+                <MenuItem onClick={() => setAll(false)}>
+                    <FormattedMessage id="entityTable.rowSelector.none" />
+                </MenuItem>
             </Menu>
         </ButtonGroup>
     );

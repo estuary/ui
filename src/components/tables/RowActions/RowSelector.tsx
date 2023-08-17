@@ -17,6 +17,7 @@ function RowSelector({
     selectKeyValueName,
     selectableTableStoreName = SelectTableStoreNames.CAPTURE,
     showMaterialize,
+    showSelectedCount,
 }: RowSelectorProps) {
     const intl = useIntl();
 
@@ -30,6 +31,7 @@ function RowSelector({
     return (
         <Stack direction="row" spacing={2}>
             <RowSelectorCheckBox
+                showSelectedCount={showSelectedCount}
                 selectableTableStoreName={selectableTableStoreName}
                 selectKeyValueName={selectKeyValueName}
             />
