@@ -133,13 +133,18 @@ export const useResourceConfig_resourceConfigOfCollection = (
 };
 
 export const useResourceConfig_resourceConfigOfCollectionProperty = (
-    collection: keyof ResourceConfigState['resourceConfig'],
+    collection: any,
     property: any
 ) => {
     return useZustandStore<ResourceConfigState, any>(
         ResourceConfigStoreNames.GENERAL,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        (state) => state.resourceConfig[collection]?.[property],
+        (state) => {
+            if (!collection) {
+                return null;
+            }
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            return state.resourceConfig[collection]?.[property];
+        },
         shallow
     );
 };
