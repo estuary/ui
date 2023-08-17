@@ -20,7 +20,6 @@ type Props = {
 };
 
 function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
-    console.log('ResourceConfigForm ', collectionName);
     const name = useRef(collectionName);
 
     // Resource Config Store
@@ -28,6 +27,7 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
         collectionName,
         'data'
     );
+
     const updateResourceConfig = useResourceConfig_updateResourceConfig();
     const resourceSchema = useResourceConfig_resourceSchema();
 
