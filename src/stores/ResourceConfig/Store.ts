@@ -660,7 +660,6 @@ const getInitialState = (
             }
         }
 
-        console.log('prefillPubIds', prefillPubIds);
         if (prefillPubIds.length > 0) {
             // Prefills collections in the materialization create workflow when the Materialize CTA
             // on the Captures page or the capture publication log dialog is clicked.
@@ -668,8 +667,6 @@ const getInitialState = (
                 prefillPubIds,
                 'capture'
             );
-
-            console.log('data', data);
 
             if (error) {
                 setHydrationErrorsExist(true);

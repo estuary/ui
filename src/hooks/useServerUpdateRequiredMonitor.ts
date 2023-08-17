@@ -37,12 +37,6 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                 };
             });
 
-            console.log('resourceConfigUpdated', {
-                draftSpecs,
-                resourceConfig,
-                queriedResourceConfig,
-            });
-
             return !isEqual(resourceConfig, queriedResourceConfig);
         }
 
