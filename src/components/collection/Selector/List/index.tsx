@@ -32,6 +32,7 @@ interface Props {
     header?: string;
     height?: number | string;
     removeAllCollections?: (event: React.MouseEvent<HTMLElement>) => void;
+    toggleAllCollections?: (event: React.MouseEvent<HTMLElement>) => void;
     setCurrentCollection?: (collection: any) => void;
 }
 
@@ -48,6 +49,7 @@ function CollectionSelectorList({
     header,
     height,
     removeAllCollections,
+    toggleAllCollections,
     renderers,
     setCurrentCollection,
 }: Props) {
@@ -100,20 +102,6 @@ function CollectionSelectorList({
     const columns = useMemo(() => {
         const response: GridColDef[] = [
             {
-                field: 'disable',
-                sortable: false,
-                renderCell: renderers.cell.toggle,
-                renderHeader: (_params) => (
-                    <CollectionSelectorHeaderToggle
-                        disabled={disable}
-                        onClick={(event) => {
-                            console.log('event', event);
-                        }}
-                    />
-                ),
-                valueGetter: () => null,
-            },
-            {
                 field: 'name',
                 flex: 1,
                 headerName: collectionsLabel,
@@ -140,6 +128,23 @@ function CollectionSelectorList({
                 renderCell: renderers.cell.name,
             },
         ];
+
+        if (toggleAllCollections) {
+            response.unshift({
+                field: 'disable',
+                sortable: false,
+                renderCell: renderers.cell.toggle,
+                renderHeader: (_params) => (
+                    <CollectionSelectorHeaderToggle
+                        disabled={disable}
+                        onClick={(event) => {
+                            toggleAllCollections(event);
+                        }}
+                    />
+                ),
+                valueGetter: () => null,
+            });
+        }
 
         if (removeAllCollections) {
             response.push({
@@ -168,6 +173,7 @@ function CollectionSelectorList({
         renderers.cell.name,
         renderers.cell.remove,
         renderers.cell.toggle,
+        toggleAllCollections,
     ]);
 
     useUnmount(() => {

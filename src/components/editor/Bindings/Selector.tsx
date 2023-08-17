@@ -37,6 +37,7 @@ function BindingSelector({
     const workflow = useEntityWorkflow();
     const entityType = useEntityType();
     const isCapture = entityType === 'capture';
+    const isCollection = entityType === 'collection';
 
     // Details Form Store
     const task = useDetailsForm_details_entityName();
@@ -77,6 +78,11 @@ function BindingSelector({
                     publishedCollections
                 );
             }
+        },
+        toggleAllCollections: (event: React.MouseEvent<HTMLElement>) => {
+            event.stopPropagation();
+
+            console.log('toggle all collections here');
         },
     };
 
@@ -154,6 +160,9 @@ function BindingSelector({
                 }}
                 removeAllCollections={
                     !isCapture ? handlers.removeAllCollections : undefined
+                }
+                toggleAllCollections={
+                    !isCollection ? handlers.removeAllCollections : undefined
                 }
             />
         </>
