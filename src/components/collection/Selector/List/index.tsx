@@ -3,7 +3,7 @@ import {
     DataGrid,
     GridColDef,
     GridFilterModel,
-    GridSelectionModel,
+    GridRowSelectionModel,
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { dataGridListStyling } from 'context/Theme';
@@ -76,7 +76,7 @@ function CollectionSelectorList({
     const [filterModel, setFilterModel] = useState<GridFilterModel>({
         items: [],
     });
-    const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
+    const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
         []
     );
     useEffect(() => {
@@ -118,10 +118,9 @@ function CollectionSelectorList({
                                 items: [
                                     {
                                         id: 1,
-                                        columnField:
-                                            COLLECTION_SELECTOR_NAME_COL,
+                                        field: COLLECTION_SELECTOR_NAME_COL,
                                         value,
-                                        operatorValue: 'contains',
+                                        operator: 'contains',
                                     },
                                 ],
                             };
@@ -192,12 +191,14 @@ function CollectionSelectorList({
                 disableColumnFilter //prevents the filter icon from showing up
                 disableColumnMenu
                 disableColumnSelector
-                disableSelectionOnClick={!selectionEnabled}
+                disableRowSelectionOnClick={!selectionEnabled}
                 filterModel={filterModel}
                 hideFooter
                 initialState={initialState}
                 rows={rows}
-                selectionModel={selectionEnabled ? selectionModel : undefined}
+                rowSelectionModel={
+                    selectionEnabled ? selectionModel : undefined
+                }
                 sx={{ ...dataGridListStyling, border: 0 }}
                 onStateChange={debounce((state, arg1) => {
                     console.log('debounced state change');

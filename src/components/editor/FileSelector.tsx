@@ -89,12 +89,12 @@ function EditorFileSelector({ localZustandScope }: Props) {
             <DataGrid
                 rows={specs}
                 columns={columns}
-                headerHeight={40}
+                columnHeaderHeight={40}
                 rowCount={specs.length}
                 hideFooter
                 disableColumnSelector
                 loading={isSaving}
-                onSelectionModelChange={(newSelectionModel) => {
+                onRowSelectionModelChange={(newSelectionModel) => {
                     if (!isEditing) {
                         setSelectionModel(newSelectionModel);
                     }
@@ -105,7 +105,7 @@ function EditorFileSelector({ localZustandScope }: Props) {
                     }
                 }}
                 getRowId={getRowId}
-                selectionModel={selectionModel}
+                rowSelectionModel={selectionModel}
                 initialState={initialState}
                 sx={dataGridListStyling}
             />
