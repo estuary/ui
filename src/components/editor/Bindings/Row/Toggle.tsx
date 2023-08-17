@@ -25,8 +25,8 @@ function BindingsSelectorToggle({ collection, disableButton }: Props) {
                     disabled={disableButton}
                     size="small"
                     checked={!disabled}
+                    color="success"
                     onChange={(event) => {
-                        console.log('change', event);
                         event.stopPropagation();
                         toggleDisable(collection);
                     }}
