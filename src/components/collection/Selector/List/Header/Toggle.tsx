@@ -12,7 +12,13 @@ function CollectionSelectorHeaderToggle({ disabled, onClick }: Props) {
     const [enabled, setEnabled] = useState(false);
 
     return (
-        <Box>
+        <Box
+            sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                width: '100%',
+            }}
+        >
             <Button
                 disabled={disabled}
                 size="small"
