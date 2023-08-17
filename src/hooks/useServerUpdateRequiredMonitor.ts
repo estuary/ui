@@ -6,7 +6,6 @@ import {
     useResourceConfig_resourceConfig,
     useResourceConfig_setServerUpdateRequired,
 } from 'stores/ResourceConfig/hooks';
-import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { hasLength } from 'utils/misc-utils';
 import { getCollectionName, getCollectionNameProp } from 'utils/workflow-utils';
 
@@ -16,32 +15,43 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     const resourceConfig = useResourceConfig_resourceConfig();
     const setServerUpdateRequired = useResourceConfig_setServerUpdateRequired();
 
-    const resourceConfigUpdated = useMemo(() => {
-        if (hasLength(draftSpecs)) {
-            let queriedResourceConfig: ResourceConfigDictionary = {};
+    const collectionNameProp = useMemo(
+        () => getCollectionNameProp(entityType),
+        [entityType]
+    );
 
-            const collectionNameProp = getCollectionNameProp(entityType);
+    const resourceConfigUpdated = useMemo(
+        () =>
+            hasLength(draftSpecs)
+                ? draftSpecs[0]?.spec.bindings.some((binding: any) => {
+                      // Snag the name so we know which resource config to check
+                      const collectionName = getCollectionName(
+                          binding[collectionNameProp]
+                      );
 
-            draftSpecs[0]?.spec.bindings.forEach((binding: any) => {
-                // Remove the resource as we need to use that to populate the json forms data
-                //  the rest should still be added
-                const { resource, ...restOfBindings } = binding;
-                const newValue = {
-                    ...restOfBindings,
-                    data: resource,
-                    errors: [],
-                };
-                queriedResourceConfig = {
-                    ...queriedResourceConfig,
-                    [getCollectionName(binding[collectionNameProp])]: newValue,
-                };
-            });
+                      //Pull out resource as that is moved into `data`
+                      const { resource, ...restOfBinding } = binding;
 
-            return !isEqual(resourceConfig, queriedResourceConfig);
-        }
+                      console.log('Checking for change');
 
-        return false;
-    }, [draftSpecs, entityType, resourceConfig]);
+                      console.log('     ', {
+                          1: {
+                              ...restOfBinding,
+                              data: resource,
+                              errors: [],
+                          },
+                          2: resourceConfig[collectionName],
+                      });
+                      // See if anything has changed
+                      return !isEqual(resourceConfig[collectionName], {
+                          ...restOfBinding,
+                          data: resource,
+                          errors: [],
+                      });
+                  })
+                : false,
+        [collectionNameProp, draftSpecs, resourceConfig]
+    );
 
     useEffect(() => {
         setServerUpdateRequired(resourceConfigUpdated);
