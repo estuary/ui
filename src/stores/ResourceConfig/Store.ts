@@ -22,7 +22,7 @@ import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { getCollectionName } from 'utils/workflow-utils';
+import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
@@ -193,15 +193,16 @@ const getInitialState = (
                 // As we go through and fetch all the names for collections go ahead and also
                 // populate the resource config
                 const collections = bindings.map((binding: any) => {
-                    const { resource, ...restOfBindings } = binding;
+                    const { resource, disable } = binding;
 
                     // Snag the name so we can add it to the config and list of collections
                     const name = getCollectionName(binding);
+                    const disableProp = getDisableProps(disable);
 
                     // Take the binding resource and place into config OR
                     //  generate a default in case there are any issues with it
                     state.resourceConfig[name] = {
-                        ...restOfBindings,
+                        ...disableProp,
                         data: resource,
                         errors: [],
                     };

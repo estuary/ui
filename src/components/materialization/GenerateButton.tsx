@@ -44,7 +44,6 @@ import { FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
-    useResourceConfig_setServerUpdateRequired,
 } from 'stores/ResourceConfig/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { generateTaskSpec } from 'utils/workflow-utils';
@@ -105,7 +104,6 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
     const resourceConfig = useResourceConfig_resourceConfig();
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
-    const setServerUpdateRequired = useResourceConfig_setServerUpdateRequired();
 
     // After the first generation we already have a name with the
     //  image name suffix (unless name changed)
@@ -247,7 +245,6 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
             setFormState({
                 status: FormStatus.GENERATED,
             });
-            setServerUpdateRequired(false);
 
             return mutateDraftSpecs();
         }

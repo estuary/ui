@@ -7,10 +7,13 @@ import {
     useResourceConfig_setServerUpdateRequired,
 } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
-import { getCollectionName, getCollectionNameProp } from 'utils/workflow-utils';
+import {
+    getCollectionName,
+    getCollectionNameProp,
+    getDisableProps,
+} from 'utils/workflow-utils';
 
 const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
-    console.log('useServerUpdateRequiredMonitor');
     const entityType = useEntityType();
 
     const resourceConfig = useResourceConfig_resourceConfig();
@@ -23,37 +26,34 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
 
     const resourceConfigUpdated = useMemo(() => {
         if (hasLength(draftSpecs)) {
-            const bindingsCount = draftSpecs[0]?.spec.bindings.length;
-            const configsCount = Object.keys(resourceConfig).length;
+            // First see if the counts match. Using a nested if because otherwise
+            //  if draftSpecs is empty undefined !== number will hit
+            if (
+                draftSpecs[0]?.spec.bindings.length ===
+                Object.keys(resourceConfig).length
+            ) {
+                return draftSpecs[0]?.spec.bindings.some((binding: any) => {
+                    // Snag the name so we know which resource config to check
+                    const collectionName = getCollectionName(
+                        binding[collectionNameProp]
+                    );
 
-            if (bindingsCount !== configsCount) {
-                console.log('       count off');
-                return true;
-            }
+                    //Pull out resource as that is moved into `data`
+                    const { resource, disable } = binding;
+                    const disableProp = getDisableProps(disable);
 
-            return draftSpecs[0]?.spec.bindings.some((binding: any) => {
-                console.log('       manual check');
-                // Snag the name so we know which resource config to check
-                const collectionName = getCollectionName(
-                    binding[collectionNameProp]
-                );
-
-                //Pull out resource as that is moved into `data`
-                const { resource, ...restOfBinding } = binding;
-
-                // See if anything has changed
-                return !isEqual(resourceConfig[collectionName], {
-                    ...restOfBinding,
-                    data: resource,
-                    errors: [],
+                    // See if anything has changed
+                    return !isEqual(resourceConfig[collectionName], {
+                        ...disableProp,
+                        data: resource,
+                        errors: [],
+                    });
                 });
-            });
+            }
         }
 
         return false;
     }, [collectionNameProp, draftSpecs, resourceConfig]);
-
-    console.log(`       resourceConfigUpdated = ${resourceConfigUpdated}`);
 
     useEffect(() => {
         setServerUpdateRequired(resourceConfigUpdated);

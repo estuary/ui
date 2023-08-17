@@ -30,6 +30,10 @@ export const getCollectionName = (binding: any) => {
         : scopedBinding;
 };
 
+export const getDisableProps = (disable: boolean | undefined) => {
+    return disable ? { disable } : {};
+};
+
 // TODO (typing): Narrow the return type for this function.
 export const generateTaskSpec = (
     entityType: EntityWithCreateWorkflow,
@@ -76,9 +80,7 @@ export const generateTaskSpec = (
                     ...resourceConfig,
                 };
             } else if (Object.keys(resourceConfig).length > 0) {
-                const disabledProps = resourceDisable
-                    ? { disable: resourceDisable }
-                    : {};
+                const disabledProps = getDisableProps(resourceDisable);
 
                 draftSpec.bindings.push({
                     [collectionNameProp]: collectionName,
