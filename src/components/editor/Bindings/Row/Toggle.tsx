@@ -1,8 +1,7 @@
 import { FormControlLabel, Switch } from '@mui/material';
-import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
-    useResourceConfig_resourceConfigOfCollection,
+    useResourceConfig_resourceConfigOfCollectionProperty,
     useResourceConfig_toggleDisable,
 } from 'stores/ResourceConfig/hooks';
 
@@ -14,13 +13,10 @@ interface Props {
 function BindingsSelectorToggle({ collection, disableButton }: Props) {
     const intl = useIntl();
     const toggleDisable = useResourceConfig_toggleDisable();
-    const resourceConfig =
-        useResourceConfig_resourceConfigOfCollection(collection);
-
-    const disabled = useMemo<boolean | undefined>(() => {
-        console.log('resourceConfig disabled memo', resourceConfig);
-        return resourceConfig.disable;
-    }, [resourceConfig]);
+    const disabled = useResourceConfig_resourceConfigOfCollectionProperty(
+        collection,
+        'disable'
+    );
 
     return (
         <FormControlLabel

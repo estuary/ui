@@ -9,7 +9,7 @@ import {
     useFormStateStore_isActive,
 } from 'stores/FormState/hooks';
 import {
-    useResourceConfig_resourceConfigOfCollection,
+    useResourceConfig_resourceConfigOfCollectionProperty,
     useResourceConfig_resourceSchema,
     useResourceConfig_updateResourceConfig,
 } from 'stores/ResourceConfig/hooks';
@@ -23,11 +23,13 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
     const name = useRef(collectionName);
 
     // Resource Config Store
-    const resourceConfig =
-        useResourceConfig_resourceConfigOfCollection(collectionName);
+    const formData =
+        useResourceConfig_resourceConfigOfCollectionProperty(
+            collectionName,
+            'data'
+        ) ?? {};
     const updateResourceConfig = useResourceConfig_updateResourceConfig();
     const resourceSchema = useResourceConfig_resourceSchema();
-    const formData = resourceConfig.data;
 
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();

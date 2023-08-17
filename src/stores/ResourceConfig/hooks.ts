@@ -126,7 +126,20 @@ export const useResourceConfig_resourceConfigOfCollection = (
 ) => {
     return useZustandStore<ResourceConfigState, any>(
         ResourceConfigStoreNames.GENERAL,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         (state) => state.resourceConfig[collection],
+        shallow
+    );
+};
+
+export const useResourceConfig_resourceConfigOfCollectionProperty = (
+    collection: keyof ResourceConfigState['resourceConfig'],
+    property: any
+) => {
+    return useZustandStore<ResourceConfigState, any>(
+        ResourceConfigStoreNames.GENERAL,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        (state) => state.resourceConfig[collection]?.[property],
         shallow
     );
 };
