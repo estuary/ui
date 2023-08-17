@@ -35,11 +35,11 @@ export const useResourceConfig_removeCollection = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.removeCollection);
 };
 
-export const useResourceConfig_removeAllCollections = () => {
+export const useResourceConfig_removeCollections = () => {
     return useZustandStore<
         ResourceConfigState,
-        ResourceConfigState['removeAllCollections']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.removeAllCollections);
+        ResourceConfigState['removeCollections']
+    >(ResourceConfigStoreNames.GENERAL, (state) => state.removeCollections);
 };
 
 export const useResourceConfig_resetConfigAndCollections = () => {
@@ -168,13 +168,6 @@ export const useResourceConfig_toggleDisable = () => {
         ResourceConfigState,
         ResourceConfigState['toggleDisable']
     >(ResourceConfigStoreNames.GENERAL, (state) => state.toggleDisable);
-};
-
-export const useResourceConfig_toggleAllCollections = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['toggleAllCollections']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.toggleAllCollections);
 };
 
 export const useResourceConfig_resetResourceConfigAndCollections = () => {

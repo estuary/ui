@@ -13,10 +13,10 @@ import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
     useResourceConfig_collections,
     useResourceConfig_discoveredCollections,
-    useResourceConfig_removeAllCollections,
+    useResourceConfig_removeCollections,
     useResourceConfig_resourceConfig,
     useResourceConfig_setCurrentCollection,
-    useResourceConfig_toggleAllCollections,
+    useResourceConfig_toggleDisable,
 } from 'stores/ResourceConfig/hooks';
 import BindingsSelectorName from './Row/Name';
 import BindingsSelectorRemove from './Row/Remove';
@@ -57,14 +57,12 @@ function BindingSelector({
     const discoveredCollections = useResourceConfig_discoveredCollections();
 
     const resourceConfig = useResourceConfig_resourceConfig();
-    const removeAllCollections = useResourceConfig_removeAllCollections();
-    const toggleAllCollections = useResourceConfig_toggleAllCollections();
+    const removeCollections = useResourceConfig_removeCollections();
+    const toggleCollections = useResourceConfig_toggleDisable();
 
     const handlers = {
-        removeAllCollections: (event: React.MouseEvent<HTMLElement>) => {
-            event.stopPropagation();
-
-            removeAllCollections(workflow, task);
+        removeCollections: (rows: any[]) => {
+            removeCollections(rows, workflow, task);
 
             const publishedCollections =
                 discoveredCollections && collections
@@ -82,13 +80,8 @@ function BindingSelector({
                 );
             }
         },
-        toggleAllCollections: (
-            event: React.MouseEvent<HTMLElement>,
-            value: boolean
-        ) => {
-            event.stopPropagation();
-
-            toggleAllCollections(value);
+        toggleCollections: (rows: any[], value: boolean) => {
+            toggleCollections(rows, value);
         },
     };
 
@@ -164,11 +157,11 @@ function BindingSelector({
                 renderers={{
                     cell: cellRenderers,
                 }}
-                removeAllCollections={
-                    !isCapture ? handlers.removeAllCollections : undefined
+                removeCollections={
+                    !isCapture ? handlers.removeCollections : undefined
                 }
-                toggleAllCollections={
-                    !isCollection ? handlers.toggleAllCollections : undefined
+                toggleCollections={
+                    !isCollection ? handlers.toggleCollections : undefined
                 }
             />
         </>

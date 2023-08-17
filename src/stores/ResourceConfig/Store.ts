@@ -309,7 +309,7 @@ const getInitialState = (
         );
     },
 
-    removeAllCollections: (workflow, task) => {
+    removeCollections: (removedCollections, workflow, task) => {
         set(
             produce((state: ResourceConfigState) => {
                 const {
@@ -319,8 +319,14 @@ const getInitialState = (
                     restrictedDiscoveredCollections,
                 } = get();
 
+                const updatedCollections = difference(
+                    collections,
+                    removedCollections
+                );
+
+                // todo1
                 state.currentCollection = null;
-                state.collections = [];
+                state.collections = updatedCollections;
 
                 let additionalRestrictedCollections: string[] = [];
 
@@ -352,9 +358,12 @@ const getInitialState = (
                     ...additionalRestrictedCollections,
                 ];
 
-                const emptyResourceConfig = {};
-                state.resourceConfig = emptyResourceConfig;
-                populateResourceConfigErrors(emptyResourceConfig, state);
+                const updatedResourceConfig = omit(
+                    resourceConfig,
+                    removedCollections
+                );
+                state.resourceConfig = updatedResourceConfig;
+                populateResourceConfigErrors(updatedResourceConfig, state);
             }),
             false,
             'Removed All Selected Collections'
@@ -547,13 +556,6 @@ const getInitialState = (
             false,
             'Resource Config Changed'
         );
-    },
-
-    toggleAllCollections: (value) => {
-        const { collections, toggleDisable } = get();
-
-        // Collections really won't be empty here but need to make ts happy
-        toggleDisable(collections ?? [], value);
     },
 
     toggleDisable: (keys, value) => {

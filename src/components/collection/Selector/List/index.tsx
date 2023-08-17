@@ -3,7 +3,10 @@ import {
     DataGrid,
     GridColDef,
     GridFilterModel,
+    gridPaginatedVisibleSortedGridRowIdsSelector,
+    GridRowId,
     GridRowSelectionModel,
+    useGridApiRef,
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { dataGridListStyling } from 'context/Theme';
@@ -32,11 +35,8 @@ interface Props {
     };
     header?: string;
     height?: number | string;
-    removeAllCollections?: (event: React.MouseEvent<HTMLElement>) => void;
-    toggleAllCollections?: (
-        event: React.MouseEvent<HTMLElement>,
-        value: boolean
-    ) => void;
+    removeCollections?: (rows: GridRowId[]) => void;
+    toggleCollections?: (rows: GridRowId[], value: boolean) => void;
     setCurrentCollection?: (collection: any) => void;
 }
 
@@ -52,11 +52,13 @@ function CollectionSelectorList({
     disableActions,
     header,
     height,
-    removeAllCollections,
-    toggleAllCollections,
+    removeCollections,
+    toggleCollections,
     renderers,
     setCurrentCollection,
 }: Props) {
+    const apiRef = useGridApiRef();
+
     const hackyTimeout = useRef<number | null>(null);
     const intl = useIntl();
     const collectionsLabel = useConstant(
@@ -132,7 +134,7 @@ function CollectionSelectorList({
             },
         ];
 
-        if (toggleAllCollections) {
+        if (toggleCollections) {
             response.unshift({
                 field: 'disable',
                 sortable: false,
@@ -140,14 +142,20 @@ function CollectionSelectorList({
                 renderHeader: (_params) => (
                     <CollectionSelectorHeaderToggle
                         disabled={disable}
-                        onClick={toggleAllCollections}
+                        onClick={(event, value) => {
+                            const filteredCollections =
+                                gridPaginatedVisibleSortedGridRowIdsSelector(
+                                    apiRef.current.state
+                                );
+                            toggleCollections(filteredCollections, value);
+                        }}
                     />
                 ),
                 valueGetter: () => null,
             });
         }
 
-        if (removeAllCollections) {
+        if (removeCollections) {
             response.push({
                 field: 'remove',
                 sortable: false,
@@ -158,8 +166,12 @@ function CollectionSelectorList({
                     <CollectionSelectorHeaderRemove
                         disabled={disable}
                         itemType={collectionsLabel}
-                        onClick={(event) => {
-                            removeAllCollections(event);
+                        onClick={(_event) => {
+                            const filteredCollections =
+                                gridPaginatedVisibleSortedGridRowIdsSelector(
+                                    apiRef.current.state
+                                );
+                            removeCollections(filteredCollections);
                         }}
                     />
                 ),
@@ -168,13 +180,14 @@ function CollectionSelectorList({
         }
         return response;
     }, [
+        apiRef,
         collectionsLabel,
         disable,
-        removeAllCollections,
+        removeCollections,
         renderers.cell.name,
         renderers.cell.remove,
         renderers.cell.toggle,
-        toggleAllCollections,
+        toggleCollections,
     ]);
 
     useUnmount(() => {
@@ -184,6 +197,7 @@ function CollectionSelectorList({
     return (
         <Box sx={{ height: height ?? 480 }}>
             <DataGrid
+                apiRef={apiRef}
                 columns={columns}
                 components={{
                     NoRowsOverlay: SelectorEmpty,

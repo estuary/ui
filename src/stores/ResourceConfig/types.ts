@@ -23,7 +23,8 @@ export interface ResourceConfigState {
     ) => void;
     addCollections: (value: string[]) => void;
     removeCollection: (value: string) => void;
-    removeAllCollections: (
+    removeCollections: (
+        value: string[],
         workflow: EntityWorkflow | null,
         catalogName: string
     ) => void;
@@ -60,7 +61,6 @@ export interface ResourceConfigState {
     ) => void;
     updateResourceConfig: (key: string, formData: JsonFormsData) => void;
     toggleDisable: (key: string | string[], value?: boolean) => void;
-    toggleAllCollections: (value: boolean) => void;
     resetResourceConfigAndCollections: () => void;
 
     resourceConfigErrorsExist: boolean;
