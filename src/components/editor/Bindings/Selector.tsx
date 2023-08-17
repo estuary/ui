@@ -2,6 +2,7 @@ import { Box, useTheme } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import CollectionSelectorList from 'components/collection/Selector/List';
+import { COLLECTION_SELECTOR_NAME_COL } from 'components/collection/Selector/List/shared';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
@@ -95,7 +96,7 @@ function BindingSelector({
 
     const cellRenderers = {
         name: (params: GridRenderCellParams) => {
-            const collection = params.row.name;
+            const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
             const currentConfig = resourceConfig[collection];
 
             return (
@@ -124,7 +125,7 @@ function BindingSelector({
                 return null;
             }
 
-            const collection = params.row.name;
+            const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
 
             return (
                 <BindingsSelectorRemove
@@ -136,7 +137,7 @@ function BindingSelector({
             );
         },
         toggle: (params: GridRenderCellParams) => {
-            const collection = params.row.name;
+            const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
 
             return (
                 <BindingsSelectorToggle

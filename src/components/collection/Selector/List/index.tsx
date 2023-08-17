@@ -19,6 +19,7 @@ import useConstant from 'use-constant';
 import CollectionSelectorHeaderName from './Header/Name';
 import CollectionSelectorHeaderRemove from './Header/Remove';
 import CollectionSelectorHeaderToggle from './Header/Toggle';
+import { COLLECTION_SELECTOR_NAME_COL } from './shared';
 
 interface Props {
     disableActions?: boolean;
@@ -90,8 +91,7 @@ function CollectionSelectorList({
                 ? []
                 : collections.map((collectionName) => {
                       return {
-                          id: collectionName,
-                          name: collectionName,
+                          [COLLECTION_SELECTOR_NAME_COL]: collectionName,
                       };
                   }),
         [collections]
@@ -105,7 +105,7 @@ function CollectionSelectorList({
     const columns = useMemo(() => {
         const response: GridColDef[] = [
             {
-                field: 'name',
+                field: COLLECTION_SELECTOR_NAME_COL,
                 flex: 1,
                 headerName: collectionsLabel,
                 sortable: false,
@@ -118,7 +118,8 @@ function CollectionSelectorList({
                                 items: [
                                     {
                                         id: 1,
-                                        columnField: 'name',
+                                        columnField:
+                                            COLLECTION_SELECTOR_NAME_COL,
                                         value,
                                         operatorValue: 'contains',
                                     },
@@ -193,7 +194,7 @@ function CollectionSelectorList({
                 disableColumnSelector
                 disableSelectionOnClick={!selectionEnabled}
                 filterModel={filterModel}
-                hideFooterSelectedRowCount
+                hideFooter
                 initialState={initialState}
                 rows={rows}
                 selectionModel={selectionEnabled ? selectionModel : undefined}
@@ -213,9 +214,10 @@ function CollectionSelectorList({
                     setViewableRows(updatedViewableRows);
                 }, 750)}
                 onCellClick={({ field, value }) => {
-                    console.log('Cell was clicked', { field, value });
-
-                    if (selectionEnabled && field === 'name') {
+                    if (
+                        selectionEnabled &&
+                        field === COLLECTION_SELECTOR_NAME_COL
+                    ) {
                         // TODO (JSONForms) This is hacky but it works.
                         // It clears out the current collection before switching.
                         //  If a user is typing quickly in a form and then selects a
