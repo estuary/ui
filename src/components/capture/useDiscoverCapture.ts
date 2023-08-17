@@ -34,8 +34,6 @@ import {
     useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm/hooks';
 import {
-    useEndpointConfig_addNewBindings,
-    useEndpointConfig_evolveIncompatibleCollections,
     useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
@@ -110,9 +108,6 @@ function useDiscoverCapture(
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
     const setPreviousEndpointConfig =
         useEndpointConfigStore_setPreviousEndpointConfig();
-    const addNewBindings = useEndpointConfig_addNewBindings();
-    const evolveIncompatibleCollections =
-        useEndpointConfig_evolveIncompatibleCollections();
 
     // Resource Config Store
     const resourceConfig = useResourceConfig_resourceConfig();
@@ -318,9 +313,7 @@ function useDiscoverCapture(
                             imagePath,
                             encryptedEndpointConfig.data,
                             resourceConfig,
-                            existingTaskData,
-                            { addNewBindings, evolveIncompatibleCollections },
-                            isEdit
+                            existingTaskData
                         );
 
                     if (draftSpecsResponse.error) {
@@ -380,9 +373,6 @@ function useDiscoverCapture(
             setPreviousEndpointConfig,
             setDraftId,
             postGenerateMutate,
-            addNewBindings,
-            evolveIncompatibleCollections,
-            isEdit,
         ]
     );
 

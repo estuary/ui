@@ -5,18 +5,24 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
+import useAutoDiscovery from 'components/capture/useAutoDiscovery';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
-import { isObject } from 'lodash';
+import { isEqual, isObject } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
-    useEndpointConfig_addNewBindings,
-    useEndpointConfig_evolveIncompatibleCollections,
-    useEndpointConfig_setAddNewBindings,
-    useEndpointConfig_setEvolveIncompatibleCollections,
-    useEndpointConfig_setServerUpdateRequired,
-} from 'stores/EndpointConfig/hooks';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+    useFormStateStore_isActive,
+    useFormStateStore_setFormState,
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
+import {
+    useSchemaEvolution_addNewBindings,
+    useSchemaEvolution_evolveIncompatibleCollections,
+    useSchemaEvolution_setAddNewBindings,
+    useSchemaEvolution_setEvolveIncompatibleCollections,
+    useSchemaEvolution_setSettingsSaving,
+    useSchemaEvolution_settingsSaving,
+} from 'stores/SchemaEvolution/hooks';
 
 interface Props {
     readOnly?: boolean;
@@ -26,69 +32,106 @@ function AutoDiscoverySettings({ readOnly }: Props) {
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
-    // Endpoint Config Store
-    const addNewBindings = useEndpointConfig_addNewBindings();
-    const setAddNewBindings = useEndpointConfig_setAddNewBindings();
-
-    const evolveIncompatibleCollections =
-        useEndpointConfig_evolveIncompatibleCollections();
-    const setEvolveIncompatibleCollections =
-        useEndpointConfig_setEvolveIncompatibleCollections();
-
-    const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
-
     // Form State Store
     const formActive = useFormStateStore_isActive();
+    const setFormState = useFormStateStore_setFormState();
 
-    // Controlling if we need to show the generate button again
-    const autoDiscoverySettingsUpdated = useMemo(() => {
-        if (draftSpecs.length > 0) {
-            if (
-                Object.hasOwn(draftSpecs[0].spec, 'autoDiscover') &&
-                isObject(draftSpecs[0].spec.autoDiscover)
-            ) {
-                const autoDiscoverySettings = draftSpecs[0].spec.autoDiscover;
+    // Schema Evolution Store
+    const addNewBindings = useSchemaEvolution_addNewBindings();
+    const setAddNewBindings = useSchemaEvolution_setAddNewBindings();
 
-                const newBindingSettingExists = Object.hasOwn(
-                    autoDiscoverySettings,
-                    'addNewBindings'
-                );
+    const evolveIncompatibleCollections =
+        useSchemaEvolution_evolveIncompatibleCollections();
+    const setEvolveIncompatibleCollections =
+        useSchemaEvolution_setEvolveIncompatibleCollections();
 
-                const evolutionSettingExists = Object.hasOwn(
-                    autoDiscoverySettings,
-                    'evolveIncompatibleCollections'
-                );
+    const settingsSaving = useSchemaEvolution_settingsSaving();
+    const setSettingsSaving = useSchemaEvolution_setSettingsSaving();
 
-                if (newBindingSettingExists && !evolutionSettingExists) {
-                    return (
-                        autoDiscoverySettings.addNewBindings !== addNewBindings
-                    );
-                } else if (evolutionSettingExists && !newBindingSettingExists) {
-                    return (
-                        autoDiscoverySettings.evolveIncompatibleCollections !==
-                        evolveIncompatibleCollections
-                    );
-                } else if (newBindingSettingExists && evolutionSettingExists) {
-                    return (
-                        autoDiscoverySettings.addNewBindings !==
-                            addNewBindings ||
-                        autoDiscoverySettings.evolveIncompatibleCollections !==
-                            evolveIncompatibleCollections
-                    );
-                }
+    const updateAutoDiscoverySettings = useAutoDiscovery();
 
-                return addNewBindings || evolveIncompatibleCollections;
-            } else {
-                return addNewBindings || evolveIncompatibleCollections;
-            }
-        } else {
-            return false;
-        }
-    }, [addNewBindings, draftSpecs, evolveIncompatibleCollections]);
+    const settingsExist = useMemo(
+        () =>
+            draftSpecs.length > 0 &&
+            Object.hasOwn(draftSpecs[0].spec, 'autoDiscover') &&
+            isObject(draftSpecs[0].spec.autoDiscover),
+        [draftSpecs]
+    );
 
     useEffect(() => {
-        setServerUpdateRequired(autoDiscoverySettingsUpdated);
-    }, [setServerUpdateRequired, autoDiscoverySettingsUpdated]);
+        if (settingsExist) {
+            const autoDiscoverySettings = draftSpecs[0].spec.autoDiscover;
+
+            if (Object.hasOwn(autoDiscoverySettings, 'addNewBindings')) {
+                setAddNewBindings(autoDiscoverySettings.addNewBindings, {
+                    initOnly: true,
+                });
+            }
+
+            if (
+                Object.hasOwn(
+                    autoDiscoverySettings,
+                    'evolveIncompatibleCollections'
+                )
+            ) {
+                setEvolveIncompatibleCollections(
+                    autoDiscoverySettings.evolveIncompatibleCollections,
+                    { initOnly: true }
+                );
+            }
+        } else {
+            setAddNewBindings(false, { initOnly: true });
+            setEvolveIncompatibleCollections(false, { initOnly: true });
+        }
+    }, [
+        setAddNewBindings,
+        setEvolveIncompatibleCollections,
+        draftSpecs,
+        settingsExist,
+    ]);
+
+    const serverUpdateRequired = useMemo(() => {
+        const settingsNew =
+            !settingsExist && (addNewBindings || evolveIncompatibleCollections);
+
+        const settingsChanged =
+            settingsExist &&
+            !isEqual(draftSpecs[0].spec.autoDiscover, {
+                addNewBindings,
+                evolveIncompatibleCollections,
+            });
+
+        return settingsNew || settingsChanged;
+    }, [
+        addNewBindings,
+        draftSpecs,
+        evolveIncompatibleCollections,
+        settingsExist,
+    ]);
+
+    useEffect(() => {
+        if (settingsSaving) {
+            if (serverUpdateRequired) {
+                setFormState({ status: FormStatus.UPDATING });
+
+                updateAutoDiscoverySettings()
+                    .then(
+                        () => setFormState({ status: FormStatus.UPDATED }),
+                        (error) =>
+                            setFormState({ status: FormStatus.FAILED, error })
+                    )
+                    .finally(() => setSettingsSaving(false));
+            } else {
+                setSettingsSaving(false);
+            }
+        }
+    }, [
+        setFormState,
+        setSettingsSaving,
+        updateAutoDiscoverySettings,
+        serverUpdateRequired,
+        settingsSaving,
+    ]);
 
     return (
         <Stack sx={{ mt: 3 }}>
@@ -103,7 +146,10 @@ function AutoDiscoverySettings({ readOnly }: Props) {
                             value={addNewBindings}
                             checked={addNewBindings}
                             disabled={readOnly ?? formActive}
-                            onChange={(_event, checked) => {
+                            onChange={(event, checked) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+
                                 setAddNewBindings(checked);
                             }}
                         />
@@ -122,7 +168,10 @@ function AutoDiscoverySettings({ readOnly }: Props) {
                                 value={evolveIncompatibleCollections}
                                 checked={evolveIncompatibleCollections}
                                 disabled={readOnly ?? formActive}
-                                onChange={(_event, checked) => {
+                                onChange={(event, checked) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+
                                     setEvolveIncompatibleCollections(checked);
                                 }}
                             />

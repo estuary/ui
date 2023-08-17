@@ -2,7 +2,7 @@ import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import { getLiveSpecsByLiveSpecId, getSchema_Endpoint } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
-import { isEmpty, isEqual, isObject } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     CustomError,
@@ -44,28 +44,24 @@ const populateErrors = (
 
 const getInitialStateData = (): Pick<
     EndpointConfigState,
-    | 'addNewBindings'
     | 'encryptedEndpointConfig'
     | 'endpointCanBeEmpty'
     | 'endpointConfig'
     | 'errorsExist'
     | 'endpointConfigErrors'
     | 'endpointSchema'
-    | 'evolveIncompatibleCollections'
     | 'hydrated'
     | 'hydrationErrorsExist'
     | 'previousEndpointConfig'
     | 'publishedEndpointConfig'
     | 'serverUpdateRequired'
 > => ({
-    addNewBindings: false,
     encryptedEndpointConfig: { data: {}, errors: [] },
     endpointCanBeEmpty: false,
     endpointConfig: { data: {}, errors: [] },
     errorsExist: true,
     endpointConfigErrors: [],
     endpointSchema: {},
-    evolveIncompatibleCollections: false,
     hydrated: false,
     hydrationErrorsExist: false,
     previousEndpointConfig: { data: {}, errors: [] },
@@ -196,32 +192,6 @@ const getInitialState = (
         );
     },
 
-    setAddNewBindings: (value) => {
-        set(
-            produce((state: EndpointConfigState) => {
-                const { evolveIncompatibleCollections } = get();
-
-                if (!value && evolveIncompatibleCollections) {
-                    state.evolveIncompatibleCollections = false;
-                }
-
-                state.addNewBindings = value;
-            }),
-            false,
-            'Schema Evolution Settings Changed: Add New Bindings'
-        );
-    },
-
-    setEvolveIncompatibleCollections: (value) => {
-        set(
-            produce((state: EndpointConfigState) => {
-                state.evolveIncompatibleCollections = value;
-            }),
-            false,
-            'Schema Evolution Settings Changed: Evolve Incompatible Collections'
-        );
-    },
-
     hydrateState: async (entityType, workflow): Promise<void> => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
@@ -268,36 +238,34 @@ const getInitialState = (
 
             if (data && data.length > 0) {
                 const {
-                    setAddNewBindings,
                     setEncryptedEndpointConfig,
                     setEndpointConfig,
-                    setEvolveIncompatibleCollections,
                     setPreviousEndpointConfig,
                     setPublishedEndpointConfig,
                     endpointSchema,
                 } = get();
 
-                if (
-                    entityType === 'capture' &&
-                    Object.hasOwn(data[0].spec, 'autoDiscover') &&
-                    isObject(data[0].spec.autoDiscover)
-                ) {
-                    const autoDiscoverySettings = data[0].spec.autoDiscover;
+                // if (
+                //     entityType === 'capture' &&
+                //     Object.hasOwn(data[0].spec, 'autoDiscover') &&
+                //     isObject(data[0].spec.autoDiscover)
+                // ) {
+                //     const autoDiscoverySettings = data[0].spec.autoDiscover;
 
-                    setAddNewBindings(
-                        Object.hasOwn(
-                            autoDiscoverySettings,
-                            'addNewBindings'
-                        ) && autoDiscoverySettings.addNewBindings
-                    );
+                //     setAddNewBindings(
+                //         Object.hasOwn(
+                //             autoDiscoverySettings,
+                //             'addNewBindings'
+                //         ) && autoDiscoverySettings.addNewBindings
+                //     );
 
-                    setEvolveIncompatibleCollections(
-                        Object.hasOwn(
-                            autoDiscoverySettings,
-                            'evolveIncompatibleCollections'
-                        ) && autoDiscoverySettings.evolveIncompatibleCollections
-                    );
-                }
+                //     setEvolveIncompatibleCollections(
+                //         Object.hasOwn(
+                //             autoDiscoverySettings,
+                //             'evolveIncompatibleCollections'
+                //         ) && autoDiscoverySettings.evolveIncompatibleCollections
+                //     );
+                // }
 
                 const encryptedEndpointConfig =
                     data[0].spec.endpoint.connector.config;

@@ -4,15 +4,10 @@ import {
 } from 'api/draftSpecs';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isEmpty, isNull } from 'lodash';
+import { isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
-import {
-    AutoDiscoverySettings,
-    Entity,
-    EntityWithCreateWorkflow,
-    Schema,
-} from 'types';
+import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
 
@@ -40,9 +35,7 @@ export const generateTaskSpec = (
     entityType: EntityWithCreateWorkflow,
     connectorConfig: ConnectorConfig,
     resourceConfigs: ResourceConfigDictionary | null,
-    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
-    autoDiscoverySettings?: AutoDiscoverySettings,
-    editWorkflow?: boolean
+    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
 ) => {
     const draftSpec = isEmpty(existingTaskData)
         ? {
@@ -88,26 +81,6 @@ export const generateTaskSpec = (
         }
     } else {
         draftSpec.bindings = [];
-    }
-
-    if (entityType === 'capture' && autoDiscoverySettings) {
-        const truthySettingExists = Object.values(autoDiscoverySettings).some(
-            (value) => value
-        );
-
-        const defaultSettings = editWorkflow ? null : {};
-
-        if (Object.hasOwn(draftSpec, 'autoDiscover')) {
-            draftSpec.autoDiscover = truthySettingExists
-                ? autoDiscoverySettings
-                : isEmpty(draftSpec.autoDiscover)
-                ? {}
-                : isNull(draftSpec.autoDiscover)
-                ? null
-                : defaultSettings;
-        } else if (truthySettingExists) {
-            draftSpec.autoDiscover = autoDiscoverySettings;
-        }
     }
 
     return draftSpec;
@@ -170,17 +143,13 @@ export const modifyExistingCaptureDraftSpec = async (
     connectorImage: string,
     encryptedEndpointConfig: Schema,
     resourceConfig: ResourceConfigDictionary,
-    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
-    autoDiscoverySettings: AutoDiscoverySettings,
-    editWorkflow: boolean
+    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpec = generateTaskSpec(
         'capture',
         { image: connectorImage, config: encryptedEndpointConfig },
         resourceConfig,
-        existingTaskData,
-        autoDiscoverySettings,
-        editWorkflow
+        existingTaskData
     );
 
     return modifyDraftSpec(draftSpec, {

@@ -50,15 +50,6 @@ export interface EndpointConfigState
         workflow: EntityWorkflow | null
     ) => Promise<void>;
 
-    // Capture Auto Discovery Settings
-    addNewBindings: boolean;
-    setAddNewBindings: (value: EndpointConfigState['addNewBindings']) => void;
-
-    evolveIncompatibleCollections: boolean;
-    setEvolveIncompatibleCollections: (
-        value: EndpointConfigState['evolveIncompatibleCollections']
-    ) => void;
-
     // Misc.
     stateChanged: () => boolean;
     resetState: () => void;

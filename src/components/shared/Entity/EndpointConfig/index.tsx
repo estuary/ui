@@ -1,5 +1,4 @@
 import { Box, useTheme } from '@mui/material';
-import AutoDiscoverySettings from 'components/capture/AutoDiscoverySettings';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
@@ -7,7 +6,6 @@ import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { isEmpty, isEqual } from 'lodash';
@@ -49,8 +47,6 @@ function EndpointConfig({
     // General hooks
     const intl = useIntl();
     const theme = useTheme();
-
-    const entityType = useEntityType();
 
     // The useConnectorTag hook can accept a connector ID or a connector tag ID.
     const { connectorTag, error } = useConnectorTag(connectorImage);
@@ -200,10 +196,6 @@ function EndpointConfig({
                     ) : null}
 
                     <EndpointConfigForm readOnly={readOnly} />
-
-                    {entityType === 'capture' ? (
-                        <AutoDiscoverySettings />
-                    ) : null}
                 </ErrorBoundryWrapper>
             </WrapperWithHeader>
         );
