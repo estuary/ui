@@ -433,11 +433,22 @@ const getInitialState = (
         // This was never empty in my testing but wanted to be safe
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         const existingConfig = resourceConfig[key] ?? {};
-
-        setResourceConfig(key, {
+        const updatedConfig = {
             ...existingConfig,
             ...value,
-        });
+        };
+
+        // Only actually update if there was a change. This is mainly here because
+        //  as a user clicks through the bindings the resource config form will fire
+        //  update function calls. This was causing a lot of extra checks in the
+        //  useServerUpdateRequiredMonitor hook
+        // TODO (zustand)
+        // I am not 100% sure why Zustand was still updating resourceConfig even when
+        //  there were no real changes. Wondering if it is because we populate with a
+        //  new object and that triggers it?
+        if (!isEqual(existingConfig, updatedConfig)) {
+            setResourceConfig(key, updatedConfig);
+        }
     },
 
     setResourceConfig: (key, value, disableCheckingErrors, disableOmit) => {
