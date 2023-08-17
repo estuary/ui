@@ -32,16 +32,6 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                       //Pull out resource as that is moved into `data`
                       const { resource, ...restOfBinding } = binding;
 
-                      console.log('Checking for change');
-
-                      console.log('     ', {
-                          1: {
-                              ...restOfBinding,
-                              data: resource,
-                              errors: [],
-                          },
-                          2: resourceConfig[collectionName],
-                      });
                       // See if anything has changed
                       return !isEqual(resourceConfig[collectionName], {
                           ...restOfBinding,
