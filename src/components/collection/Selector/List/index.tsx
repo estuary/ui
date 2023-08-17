@@ -204,7 +204,7 @@ function CollectionSelectorList({
                         }
                     });
                     setViewableRows(updatedViewableRows);
-                }, 500)}
+                }, 750)}
                 onCellClick={({ field, value }) => {
                     console.log('Cell was clicked', { field, value });
 

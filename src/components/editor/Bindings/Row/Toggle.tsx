@@ -40,14 +40,12 @@ function BindingsSelectorToggle({ collection, disableButton }: Props) {
                 id: disabled ? 'common.disabled' : 'common.enabled',
             })}
             labelPlacement="bottom"
-            sx={
-                {
-                    // '& .MuiFormControlLabel-label': {
-                    //     height: 0,
-                    //     visibility: 'collapse',
-                    // },
-                }
-            }
+            sx={{
+                '& .MuiFormControlLabel-label': {
+                    height: 0,
+                    visibility: 'collapse',
+                },
+            }}
         />
     );
 }

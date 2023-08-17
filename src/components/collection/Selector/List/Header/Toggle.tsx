@@ -1,7 +1,7 @@
 import { Switch, FormControlLabel } from '@mui/material';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useResourceConfig_toggleDisable } from 'stores/ResourceConfig/hooks';
+// import { useResourceConfig_toggleDisable } from 'stores/ResourceConfig/hooks';
 
 interface Props {
     onClick: (event: any) => void;
@@ -12,9 +12,7 @@ function CollectionSelectorHeaderToggle({ disabled, onClick }: Props) {
     const intl = useIntl();
     const [enabled, setEnabled] = useState(false);
 
-    const toggleDisable = useResourceConfig_toggleDisable();
-
-    console.log('toggleDisable', toggleDisable);
+    // const toggleDisable = useResourceConfig_toggleDisable();
 
     return (
         <FormControlLabel
