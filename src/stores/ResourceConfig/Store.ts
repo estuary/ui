@@ -526,9 +526,11 @@ const getInitialState = (
 
                     console.log('newValue', newValue);
 
-                    state.resourceConfig[key].disable = newValue
-                        ? newValue
-                        : undefined;
+                    if (newValue) {
+                        state.resourceConfig[key].disable = newValue;
+                    } else {
+                        delete state.resourceConfig[key].disable;
+                    }
                 };
 
                 if (typeof keys === 'string') {
