@@ -1,4 +1,4 @@
-import { ListItemText } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { typographyTruncation } from 'context/Theme';
 import { stripPathing } from 'utils/misc-utils';
 
@@ -9,10 +9,24 @@ interface RowProps {
 
 function BindingsSelectorName({ collection, shortenName }: RowProps) {
     return (
-        <ListItemText
-            primary={shortenName ? stripPathing(collection) : collection}
-            primaryTypographyProps={typographyTruncation}
-        />
+        <Button
+            variant="text"
+            disableFocusRipple
+            sx={{
+                'color': (theme) => theme.palette.text.primary,
+                'height': '100%',
+                'justifyContent': 'left',
+                'textTransform': 'none',
+                'width': '100%',
+                '&:focus, &:hover': {
+                    bgcolor: 'transparent',
+                },
+            }}
+        >
+            <Typography {...typographyTruncation}>
+                {shortenName ? stripPathing(collection) : collection}
+            </Typography>
+        </Button>
     );
 }
 

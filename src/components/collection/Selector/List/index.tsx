@@ -10,7 +10,7 @@ import {
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { dataGridListStyling } from 'context/Theme';
-import { debounce, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
@@ -19,6 +19,7 @@ import {
     useResourceConfig_currentCollection,
 } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
+import { hasLength } from 'utils/misc-utils';
 import CollectionSelectorHeaderName from './Header/Name';
 import CollectionSelectorHeaderRemove from './Header/Remove';
 import CollectionSelectorHeaderToggle from './Header/Toggle';
@@ -39,6 +40,8 @@ interface Props {
     toggleCollections?: (rows: GridRowId[], value: boolean) => void;
     setCurrentCollection?: (collection: any) => void;
 }
+
+const nameCellClass = 'estuary-collection-selector--cell';
 
 const initialState = {
     columns: {
@@ -78,10 +81,10 @@ function CollectionSelectorList({
     const currentCollection = useResourceConfig_currentCollection();
 
     const selectionEnabled = currentCollection && setCurrentCollection;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_viewableRows, setViewableRows] = useState<string[]>([]);
     const [filterModel, setFilterModel] =
         useState<GridFilterModel>(defaultFilterModel);
+
+    // We use mui`s selection model to store which collection was clicked on to display it
     const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
         []
     );
@@ -89,19 +92,21 @@ function CollectionSelectorList({
         if (currentCollection) setSelectionModel([currentCollection]);
     }, [currentCollection]);
 
-    // TODO (bindings) this happens when current collection changes
-    //  we should not need to run this then
-    const rows = useMemo(
-        () =>
-            !collections
-                ? []
-                : collections.map((collectionName) => {
-                      return {
-                          [COLLECTION_SELECTOR_NAME_COL]: collectionName,
-                      };
-                  }),
-        [collections]
-    );
+    const rows = useMemo(() => {
+        // If we have no collections we can just return an empty array
+        if (!collections) {
+            return [];
+        }
+
+        // We have collections so need to format them in a format that mui
+        //  datagrid will handle. At a minimum each object must have an
+        //  `id` property. This is why the name is stored as `id`
+        return collections.map((collectionName) => {
+            return {
+                [COLLECTION_SELECTOR_NAME_COL]: collectionName,
+            };
+        });
+    }, [collections]);
 
     const disable = useMemo(
         () => isEmpty(rows) || disableActions,
@@ -111,6 +116,7 @@ function CollectionSelectorList({
     const columns = useMemo(() => {
         const response: GridColDef[] = [
             {
+                cellClassName: nameCellClass,
                 field: COLLECTION_SELECTOR_NAME_COL,
                 flex: 1,
                 headerName: collectionsLabel,
@@ -154,7 +160,9 @@ function CollectionSelectorList({
                                 gridPaginatedVisibleSortedGridRowIdsSelector(
                                     apiRef.current.state
                                 );
-                            toggleCollections(filteredCollections, value);
+                            if (hasLength(filteredCollections)) {
+                                toggleCollections(filteredCollections, value);
+                            }
                         }}
                     />
                 ),
@@ -178,9 +186,12 @@ function CollectionSelectorList({
                                 gridPaginatedVisibleSortedGridRowIdsSelector(
                                     apiRef.current.state
                                 );
-                            removeCollections(filteredCollections);
-                            setFilterModel(defaultFilterModel);
-                            setFilterValue('');
+
+                            if (hasLength(filteredCollections)) {
+                                removeCollections(filteredCollections);
+                                setFilterModel(defaultFilterModel);
+                                setFilterValue('');
+                            }
                         }}
                     />
                 ),
@@ -223,21 +234,11 @@ function CollectionSelectorList({
                 rowSelectionModel={
                     selectionEnabled ? selectionModel : undefined
                 }
-                sx={{ ...dataGridListStyling, border: 0 }}
-                onStateChange={debounce((state, arg1) => {
-                    console.log('debounced state change');
-                    if (arg1.defaultMuiPrevented) {
-                        console.log('prevented');
-                    }
-                    const currentRows = state.filter.filteredRowsLookup;
-                    const updatedViewableRows: string[] = [];
-                    Object.entries(currentRows).forEach(([name, visible]) => {
-                        if (visible) {
-                            updatedViewableRows.push(name);
-                        }
-                    });
-                    setViewableRows(updatedViewableRows);
-                }, 750)}
+                sx={{
+                    ...dataGridListStyling,
+                    border: 0,
+                    [`& .${nameCellClass}`]: { padding: 0 },
+                }}
                 onCellClick={({ field, value }) => {
                     if (
                         selectionEnabled &&
