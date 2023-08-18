@@ -55,21 +55,23 @@ interface Props {
     noExistingDataContentIds: TableIntlConfig;
     pagination: Pagination;
     renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
+    rowsPerPage: number;
     searchQuery: string | null;
     selectableTableStoreName: SelectTableStoreNames;
     setColumnToSort: (data: any) => void;
     setPagination: (data: any) => void;
+    setRowsPerPage: (data: any) => void;
     setSearchQuery: (data: any) => void;
     setSortDirection: (data: any) => void;
     sortDirection: SortDirection;
     hideHeaderAndFooter?: boolean;
+    keepSelectionOnFilterOrSearch?: boolean;
+    keepSelectionOnPagination?: boolean;
     minWidth?: number;
     rowsPerPageOptions?: number[];
     showEntityStatus?: boolean;
     showToolbar?: boolean;
     toolbar?: ReactNode;
-    keepSelectionOnFilterOrSearch?: boolean;
-    keepSelectionOnPagination?: boolean;
 }
 
 export const getPagination = (currPage: number, size: number) => {
@@ -93,6 +95,7 @@ function EntityTable({
     searchQuery,
     pagination,
     setPagination,
+    setRowsPerPage,
     setSearchQuery,
     sortDirection,
     setSortDirection,
@@ -103,6 +106,7 @@ function EntityTable({
     showEntityStatus = false,
     selectableTableStoreName,
     hideHeaderAndFooter,
+    rowsPerPage,
     rowsPerPageOptions = [10, 25, 50],
     minWidth = 350,
     showToolbar,
@@ -156,7 +160,6 @@ function EntityTable({
         selectableTableStoreSelectors.successfulTransformations.get
     );
 
-    const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });

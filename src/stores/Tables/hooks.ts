@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { SortDirection } from 'types';
 import {
     JsonParam,
+    NumberParam,
     StringParam,
     useQueryParams,
     withDefault,
@@ -24,34 +25,56 @@ export type TablePrefix =
 function useTableState(
     keyPrefix: TablePrefix,
     defaultSortCol: any,
-    defaultSortDir?: SortDirection
+    defaultSortDir?: SortDirection,
+    defaultPage?: number
 ) {
-    const { paginationKey, searchQueryKey, sortDirectionKey, sortColumnKey } =
-        useMemo(() => {
-            return {
-                paginationKey: `${keyPrefix}-p`,
-                searchQueryKey: `${keyPrefix}-sq`,
-                sortDirectionKey: `${keyPrefix}-sdir`,
-                sortColumnKey: `${keyPrefix}-scol`,
-            };
-        }, [keyPrefix]);
+    const {
+        paginationKey,
+        rowsPerPageKey,
+        searchQueryKey,
+        sortDirectionKey,
+        sortColumnKey,
+    } = useMemo(() => {
+        return {
+            paginationKey: `${keyPrefix}-p`,
+            rowsPerPageKey: `${keyPrefix}-rpp`,
+            searchQueryKey: `${keyPrefix}-sq`,
+            sortDirectionKey: `${keyPrefix}-sdir`,
+            sortColumnKey: `${keyPrefix}-scol`,
+        };
+    }, [keyPrefix]);
 
     const [query, setQuery] = useQueryParams({
+        [rowsPerPageKey]: withDefault(NumberParam, defaultPage ?? 10),
         [sortColumnKey]: withDefault(StringParam, defaultSortCol),
         [sortDirectionKey]: withDefault(StringParam, defaultSortDir ?? 'asc'),
         [searchQueryKey]: withDefault(StringParam, null),
-        [paginationKey]: withDefault(JsonParam, getPagination(0, 10)),
+        [paginationKey]: withDefault(
+            JsonParam,
+            getPagination(0, defaultPage ?? 10)
+        ),
     });
 
     const setPagination = useCallback(
         (val: any) => {
+            console.log('setPagination', val);
             setQuery({ [paginationKey]: val });
         },
         [paginationKey, setQuery]
     );
 
+    const setRowsPerPage = useCallback(
+        (val: any) => {
+            console.log('setRowsPerPage', val);
+            setQuery({ [rowsPerPageKey]: val });
+        },
+        [rowsPerPageKey, setQuery]
+    );
+
     const setSearchQuery = useCallback(
         (val: any) => {
+            console.log('setSearchQuery', val);
+
             setQuery({ [searchQueryKey]: val });
         },
         [searchQueryKey, setQuery]
@@ -59,6 +82,8 @@ function useTableState(
 
     const setSortDirection = useCallback(
         (val: any) => {
+            console.log('setSortDirection', val);
+
             setQuery({ [sortDirectionKey]: val });
         },
         [sortDirectionKey, setQuery]
@@ -66,6 +91,8 @@ function useTableState(
 
     const setColumnToSort = useCallback(
         (val: any) => {
+            console.log('setColumnToSort', val);
+
             setQuery({ [sortColumnKey]: val });
         },
         [sortColumnKey, setQuery]
@@ -75,6 +102,8 @@ function useTableState(
         return {
             pagination: query[paginationKey],
             setPagination,
+            rowsPerPage: query[rowsPerPageKey],
+            setRowsPerPage,
             searchQuery: query[searchQueryKey],
             setSearchQuery,
             sortDirection: query[sortDirectionKey] as SortDirection,
@@ -85,9 +114,11 @@ function useTableState(
     }, [
         paginationKey,
         query,
+        rowsPerPageKey,
         searchQueryKey,
         setColumnToSort,
         setPagination,
+        setRowsPerPage,
         setSearchQuery,
         setSortDirection,
         sortColumnKey,

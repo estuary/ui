@@ -43,6 +43,8 @@ function AccessLinksTable() {
     const {
         pagination,
         setPagination,
+        rowsPerPage,
+        setRowsPerPage,
         searchQuery,
         setSearchQuery,
         sortDirection,
@@ -78,6 +80,8 @@ function AccessLinksTable() {
                     }}
                     columns={columns}
                     renderTableRows={(data) => <Rows data={data} />}
+                    rowsPerPage={rowsPerPage}
+                    setRowsPerPage={setRowsPerPage}
                     pagination={pagination}
                     setPagination={setPagination}
                     searchQuery={searchQuery}

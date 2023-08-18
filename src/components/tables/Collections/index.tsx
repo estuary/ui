@@ -16,6 +16,8 @@ function CollectionsTable() {
     const {
         pagination,
         setPagination,
+        rowsPerPage,
+        setRowsPerPage,
         searchQuery,
         setSearchQuery,
         sortDirection,
@@ -55,6 +57,8 @@ function CollectionsTable() {
                                 showEntityStatus={showEntityStatus}
                             />
                         )}
+                        rowsPerPage={rowsPerPage}
+                        setRowsPerPage={setRowsPerPage}
                         pagination={pagination}
                         setPagination={setPagination}
                         searchQuery={searchQuery}

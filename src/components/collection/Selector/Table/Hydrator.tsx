@@ -8,13 +8,15 @@ import TableHydrator from 'stores/Tables/Hydrator';
 import Rows from './Rows';
 
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
+const tableRowsPerPage = [25, 50, 100, 300];
+const catalogNameColumn = 'catalog_name';
 export const tableColumns = [
     {
         field: null,
         headerIntlKey: '',
     },
     {
-        field: 'catalog_name',
+        field: catalogNameColumn,
         headerIntlKey: 'entityTable.data.userFullName',
     },
     {
@@ -27,13 +29,15 @@ function Hydrator() {
     const {
         pagination,
         setPagination,
+        rowsPerPage,
+        setRowsPerPage,
         searchQuery,
         setSearchQuery,
         sortDirection,
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState('csl', 'catalog_name', 'desc');
+    } = useTableState('csl', catalogNameColumn, 'desc', tableRowsPerPage[0]);
 
     const query = useMemo(() => {
         return getLiveSpecs_collectionsSelector(pagination, searchQuery, [
@@ -57,8 +61,10 @@ function Hydrator() {
                 columns={tableColumns}
                 renderTableRows={(data) => <Rows data={data} />}
                 pagination={pagination}
-                rowsPerPageOptions={[25, 50, 100, 300]}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={tableRowsPerPage}
                 setPagination={setPagination}
+                setRowsPerPage={setRowsPerPage}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 sortDirection={sortDirection}
@@ -73,7 +79,7 @@ function Hydrator() {
                     <RowSelector
                         hideActions
                         showSelectedCount
-                        selectKeyValueName="catalog_name"
+                        selectKeyValueName={catalogNameColumn}
                         selectableTableStoreName={selectableTableStoreName}
                     />
                 }
