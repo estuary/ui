@@ -2,6 +2,7 @@ import { getLiveSpecs_collectionsSelector } from 'api/liveSpecsExt';
 import EntityTable from 'components/tables/EntityTable';
 import RowSelector from 'components/tables/RowActions/RowSelector';
 import { useMemo } from 'react';
+import { useUnmount } from 'react-use';
 import { SelectTableStoreNames } from 'stores/names';
 import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
@@ -27,6 +28,7 @@ export const tableColumns = [
 
 function Hydrator() {
     const {
+        reset,
         pagination,
         setPagination,
         rowsPerPage,
@@ -47,6 +49,10 @@ function Hydrator() {
             },
         ]);
     }, [columnToSort, pagination, searchQuery, sortDirection]);
+
+    useUnmount(() => {
+        reset();
+    });
 
     return (
         <TableHydrator

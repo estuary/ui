@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from 'react';
-import { useUnmount } from 'react-use';
 import { SortDirection } from 'types';
 import {
     JsonParam,
@@ -112,10 +111,6 @@ function useTableState(
         setSearchQuery,
         setSortDirection,
     ]);
-
-    useUnmount(() => {
-        reset();
-    });
 
     return useMemo(() => {
         return {
