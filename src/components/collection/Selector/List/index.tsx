@@ -222,15 +222,13 @@ function CollectionSelectorList({
             <DataGrid
                 apiRef={apiRef}
                 columns={columns}
-                components={{
-                    NoRowsOverlay: SelectorEmpty,
-                }}
+                components={{ NoRowsOverlay: SelectorEmpty }}
                 disableColumnFilter //prevents the filter icon from showing up
                 disableColumnMenu
                 disableColumnSelector
                 disableRowSelectionOnClick={!selectionEnabled}
                 filterModel={filterModel}
-                hideFooter
+                hideFooterSelectedRowCount
                 initialState={initialState}
                 rows={rows}
                 rowSelectionModel={
