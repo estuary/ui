@@ -1,7 +1,6 @@
 import { Grid, Toolbar } from '@mui/material';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import SearchField from 'components/shared/toolbar/SearchField';
-import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { debounce } from 'lodash';
 import {
     ChangeEvent,
@@ -11,16 +10,12 @@ import {
     useRef,
 } from 'react';
 import { useIntl } from 'react-intl';
-import { CONNECTOR_NAME } from 'services/supabase';
 import { Entity, SortDirection } from 'types';
 import useConstant from 'use-constant';
 
 interface Props {
     belowMd: boolean;
     gridSpacing: number;
-    setColumnToSort: Dispatch<
-        SetStateAction<keyof ConnectorWithTagDetailQuery>
-    >;
     hideProtocol?: boolean;
     setProtocol: Dispatch<SetStateAction<string | null>>;
     setSortDirection: Dispatch<SetStateAction<SortDirection>>;
@@ -35,7 +30,6 @@ interface ProtocolOption {
 function ConnectorToolbar({
     belowMd,
     gridSpacing,
-    setColumnToSort,
     hideProtocol,
     setProtocol,
     setSortDirection,
@@ -65,24 +59,6 @@ function ConnectorToolbar({
         },
     ]);
 
-    const sortByOptions: {
-        field: keyof ConnectorWithTagDetailQuery;
-        message: string;
-    }[] = useConstant(() => [
-        {
-            field: CONNECTOR_NAME,
-            message: intl.formatMessage({
-                id: 'connectorTable.data.title',
-            }),
-        },
-        {
-            field: 'image_name',
-            message: intl.formatMessage({
-                id: 'connectorTable.data.image_name',
-            }),
-        },
-    ]);
-
     const sortDirectionOptions: {
         direction: SortDirection;
         message: string;
@@ -108,15 +84,6 @@ function ConnectorToolbar({
             )?.protocol;
 
             setProtocol(selectedProtocol ? selectedProtocol : null);
-        },
-        setSortBy: (_event: SyntheticEvent, value: string | null) => {
-            setSortDirection('asc');
-
-            const selectedColumn = sortByOptions.find(
-                (option) => option.message === value
-            )?.field;
-
-            setColumnToSort(selectedColumn ? selectedColumn : CONNECTOR_NAME);
         },
         switchSortDirection: (_event: SyntheticEvent, value: string | null) => {
             const selectedDirection = sortDirectionOptions.find(
@@ -159,19 +126,6 @@ function ConnectorToolbar({
                         })}
                         changeHandler={handlers.filterTiles}
                         autoFocus={true}
-                    />
-                </Grid>
-
-                <Grid item xs={hideProtocol ? 6 : 4} md={2}>
-                    <AutocompletedField
-                        label={intl.formatMessage({
-                            id: 'connectorTable.label.sortBy',
-                        })}
-                        options={sortByOptions.map(({ message }) => message)}
-                        defaultValue={intl.formatMessage({
-                            id: 'connectorTable.data.title',
-                        })}
-                        changeHandler={handlers.setSortBy}
                     />
                 </Grid>
 

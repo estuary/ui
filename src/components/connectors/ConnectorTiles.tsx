@@ -105,8 +105,6 @@ function ConnectorTiles({
     );
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-    const [columnToSort, setColumnToSort] =
-        useState<keyof ConnectorWithTagDetailQuery>(CONNECTOR_NAME);
 
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
@@ -119,7 +117,7 @@ function ConnectorTiles({
             filter: (query) => {
                 return defaultTableFilter<ConnectorWithTagDetailQuery>(
                     query,
-                    [columnToSort],
+                    [CONNECTOR_NAME],
                     searchQuery,
                     [
                         {
@@ -127,7 +125,7 @@ function ConnectorTiles({
                             direction: 'desc',
                         },
                         {
-                            col: columnToSort,
+                            col: CONNECTOR_NAME,
                             direction: sortDirection,
                         },
                     ],
@@ -136,7 +134,7 @@ function ConnectorTiles({
                 );
             },
         },
-        [searchQuery, columnToSort, sortDirection, protocol]
+        [searchQuery, sortDirection, protocol]
     );
 
     const { data: useSelectResponse, isValidating } = useSelect(liveSpecQuery);
@@ -176,7 +174,6 @@ function ConnectorTiles({
                 <ConnectorToolbar
                     belowMd={belowMd}
                     gridSpacing={2}
-                    setColumnToSort={setColumnToSort}
                     hideProtocol={!!protocolPreset}
                     setProtocol={setProtocol}
                     setSortDirection={setSortDirection}
