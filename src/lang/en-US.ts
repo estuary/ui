@@ -909,6 +909,11 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.schemaInference.alert.patchService.message.docLink': `contact support`,
     'workflows.collectionSelector.schemaInference.alert.patchService.message.docPath': `mailto:support@estuary.dev`,
     'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
+
+    'workflows.entityWarnings.title': `No collections`,
+    'workflows.entityWarnings.message': `You have not added any collections yet. This means there will be
+                no data output from this materialization. To add collections,
+                use the Output Collections section.`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {

@@ -1,6 +1,7 @@
 import { Collapse } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
 import { useMemo } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_collectionErrorsExist } from 'stores/ResourceConfig/hooks';
 import AlertBox from '../AlertBox';
 
@@ -17,10 +18,12 @@ function EntityWarnings() {
 
     return (
         <Collapse in={warnEmptyBindings} unmountOnExit>
-            <AlertBox short severity="warning" title="No collections">
-                You have not added any collections yet. This means there will be
-                no data output from this materialization. To add collections,
-                use the Output Collections section to add collections.
+            <AlertBox
+                short
+                severity="warning"
+                title={<FormattedMessage id="workflows.entityWarnings.title" />}
+            >
+                <FormattedMessage id="workflows.entityWarnings.message" />
             </AlertBox>
         </Collapse>
     );
