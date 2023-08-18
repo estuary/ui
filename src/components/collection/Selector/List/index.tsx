@@ -10,7 +10,6 @@ import {
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { dataGridListStyling } from 'context/Theme';
-import { isEmpty } from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
@@ -108,9 +107,11 @@ function CollectionSelectorList({
         });
     }, [collections]);
 
+    const rowsEmpty = useMemo(() => !hasLength(rows), [rows]);
+
     const disable = useMemo(
-        () => isEmpty(rows) || disableActions,
-        [disableActions, rows]
+        () => rowsEmpty || disableActions,
+        [disableActions, rowsEmpty]
     );
 
     const columns = useMemo(() => {
@@ -228,6 +229,7 @@ function CollectionSelectorList({
                 disableColumnSelector
                 disableRowSelectionOnClick={!selectionEnabled}
                 filterModel={filterModel}
+                hideFooterPagination={rowsEmpty}
                 hideFooterSelectedRowCount
                 initialState={initialState}
                 rows={rows}

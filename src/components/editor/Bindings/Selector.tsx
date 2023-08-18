@@ -147,6 +147,7 @@ function BindingSelector({
     return (
         <Box
             sx={{
+                bgcolor: 'red',
                 height,
             }}
         >
