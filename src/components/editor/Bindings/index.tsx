@@ -34,6 +34,8 @@ interface Props {
     RediscoverButton?: ReactNode;
 }
 
+const height = 550;
+
 function BindingsMultiEditor({
     draftSpecs = [],
     readOnly = false,
@@ -130,6 +132,7 @@ function BindingsMultiEditor({
             <ListAndDetails
                 list={
                     <BindingSelector
+                        height={height - 17}
                         itemType={itemType}
                         readOnly={readOnly}
                         RediscoverButton={RediscoverButton}
@@ -140,7 +143,7 @@ function BindingsMultiEditor({
                     alternativeReflexContainerBackground[theme.palette.mode]
                 }
                 displayBorder={true}
-                height={550}
+                height={height}
             />
         </LocalZustandProvider>
     );

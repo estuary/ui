@@ -24,12 +24,14 @@ import BindingsSelectorToggle from './Row/Toggle';
 import BindingSearch from './Search';
 
 interface BindingSelectorProps {
+    height?: number | string;
     itemType?: string;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
 }
 
 function BindingSelector({
+    height,
     itemType,
     readOnly,
     RediscoverButton,
@@ -143,7 +145,11 @@ function BindingSelector({
     };
 
     return (
-        <>
+        <Box
+            sx={{
+                height,
+            }}
+        >
             <BindingSearch
                 itemType={itemType}
                 readOnly={disableActions}
@@ -165,7 +171,7 @@ function BindingSelector({
                     !isCollection ? handlers.toggleCollections : undefined
                 }
             />
-        </>
+        </Box>
     );
 }
 
