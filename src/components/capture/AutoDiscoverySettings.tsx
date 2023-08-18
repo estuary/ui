@@ -150,29 +150,29 @@ function AutoDiscoverySettings({ readOnly }: Props) {
                 <FormattedMessage id="workflows.autoDiscovery.header" />
             </Typography>
 
-            <FormControl>
-                <FormControlLabel
-                    control={
-                        <Switch
-                            size="small"
-                            value={autoDiscover}
-                            checked={autoDiscover}
-                            disabled={readOnly ?? formActive}
-                            onChange={(event, checked) => {
-                                event.preventDefault();
-                                event.stopPropagation();
+            <Stack direction="row">
+                <FormControl>
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                size="small"
+                                value={autoDiscover}
+                                checked={autoDiscover}
+                                disabled={readOnly ?? formActive}
+                                onChange={(event, checked) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
 
-                                setAutoDiscover(checked);
-                            }}
-                        />
-                    }
-                    label={
-                        <FormattedMessage id="workflows.autoDiscovery.label.optIntoDiscovery" />
-                    }
-                />
-            </FormControl>
+                                    setAutoDiscover(checked);
+                                }}
+                            />
+                        }
+                        label={
+                            <FormattedMessage id="workflows.autoDiscovery.label.optIntoDiscovery" />
+                        }
+                    />
+                </FormControl>
 
-            {autoDiscover ? (
                 <FormControl>
                     <FormControlLabel
                         control={
@@ -195,9 +195,7 @@ function AutoDiscoverySettings({ readOnly }: Props) {
                         sx={{ ml: 2 }}
                     />
                 </FormControl>
-            ) : null}
 
-            {addNewBindings ? (
                 <FormControl>
                     <FormControlLabel
                         control={
@@ -220,7 +218,7 @@ function AutoDiscoverySettings({ readOnly }: Props) {
                         sx={{ ml: 2 }}
                     />
                 </FormControl>
-            ) : null}
+            </Stack>
         </Stack>
     );
 }
