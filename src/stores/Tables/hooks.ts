@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import { useUnmount } from 'react-use';
 import { SortDirection } from 'types';
 import {
     JsonParam,
@@ -11,15 +12,15 @@ import { getPagination } from '../../components/tables/EntityTable';
 
 export type TablePrefix =
     | 'ag' // access grants
-    | 'pr' // prefixes
     | 'ali' // access links
-    | 'sm' // storage mappings
-    | 'cap' // captures
-    | 'mat' // materializations
-    | 'col' // collections
-    | 'csl' // collections selector
-    | 'con' // connectors
     | 'bil' // billing
+    | 'cap' // captures
+    | 'col' // collections
+    | 'con' // connectors
+    | 'csl' // collections selector
+    | 'mat' // materializations
+    | 'pr' // prefixes
+    | 'sm' // storage mappings
     | 'sv'; // schema viewer
 
 function useTableState(
@@ -37,10 +38,10 @@ function useTableState(
     } = useMemo(() => {
         return {
             paginationKey: `${keyPrefix}-p`,
-            rowsPerPageKey: `${keyPrefix}-rpp`,
-            searchQueryKey: `${keyPrefix}-sq`,
-            sortDirectionKey: `${keyPrefix}-sdir`,
-            sortColumnKey: `${keyPrefix}-scol`,
+            rowsPerPageKey: `${keyPrefix}-r`,
+            searchQueryKey: `${keyPrefix}-s`,
+            sortDirectionKey: `${keyPrefix}-d`,
+            sortColumnKey: `${keyPrefix}-c`,
         };
     }, [keyPrefix]);
 
@@ -98,8 +99,27 @@ function useTableState(
         [sortColumnKey, setQuery]
     );
 
+    const reset = useCallback(() => {
+        setPagination(null);
+        setRowsPerPage(null);
+        setSearchQuery(null);
+        setSortDirection(null);
+        setColumnToSort(null);
+    }, [
+        setColumnToSort,
+        setPagination,
+        setRowsPerPage,
+        setSearchQuery,
+        setSortDirection,
+    ]);
+
+    useUnmount(() => {
+        reset();
+    });
+
     return useMemo(() => {
         return {
+            reset,
             pagination: query[paginationKey],
             setPagination,
             rowsPerPage: query[rowsPerPageKey],
@@ -112,6 +132,7 @@ function useTableState(
             setColumnToSort,
         };
     }, [
+        reset,
         paginationKey,
         query,
         rowsPerPageKey,
