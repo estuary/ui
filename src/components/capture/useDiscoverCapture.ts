@@ -179,6 +179,8 @@ function useDiscoverCapture(
                     });
 
                     // We have ran a discover so we know the endpoint was able to be submitted
+                    //  Should fix the issue called out here:
+                    //      https://github.com/estuary/ui/pull/650#pullrequestreview-1466195898
                     setServerUpdateRequired(false);
 
                     trackEvent(payload);
