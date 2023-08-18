@@ -1,4 +1,5 @@
 import { Button, Switch } from '@mui/material';
+import { dataGridEntireCellButtonStyling } from 'context/Theme';
 import { useIntl } from 'react-intl';
 import {
     useResourceConfig_resourceConfigOfCollectionProperty,
@@ -23,12 +24,8 @@ function BindingsSelectorToggle({ collection, disableButton }: Props) {
             aria-label={intl.formatMessage({
                 id: disabled ? 'common.disabled' : 'common.enabled',
             })}
-            sx={{
-                justifyContent: 'center',
-                height: '100%',
-                margin: 0,
-                width: '100%',
-            }}
+            disabled={disableButton}
+            sx={dataGridEntireCellButtonStyling}
             variant="text"
             onClick={(event) => {
                 event.stopPropagation();

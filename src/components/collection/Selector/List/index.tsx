@@ -150,6 +150,7 @@ function CollectionSelectorList({
         if (toggleCollections) {
             response.unshift({
                 cellClassName: cellClass_noPadding,
+                headerClassName: cellClass_noPadding,
                 field: 'disable',
                 sortable: false,
                 renderCell: renderers.cell.toggle,

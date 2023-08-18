@@ -411,6 +411,14 @@ export const alternateConnectorImageBackgroundSx: SxProps<Theme> = {
 
 export const autoCompleteListPadding = 8;
 
+export const dataGridEntireCellButtonStyling: SxProps<Theme> = {
+    borderRadius: 0,
+    justifyContent: 'center',
+    height: '100%',
+    margin: 0,
+    width: '100%',
+};
+
 export const dataGridListStyling: SxProps<Theme> = {
     'borderRadius': 0,
     'borderBottom': 'none',
@@ -427,8 +435,8 @@ export const dataGridListStyling: SxProps<Theme> = {
         borderBottom: (theme) => defaultOutline[theme.palette.mode],
         bgcolor: (theme) => alternativeDataGridHeader[theme.palette.mode],
     },
-    // Allows the name filter to take the entire width
     '& .MuiDataGrid-columnHeaderTitleContainerContent': {
+        height: '100%',
         width: '100%',
     },
 };

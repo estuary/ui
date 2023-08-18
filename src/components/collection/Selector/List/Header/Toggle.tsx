@@ -1,4 +1,5 @@
-import { Box, Button } from '@mui/material';
+import { Button } from '@mui/material';
+import { dataGridEntireCellButtonStyling } from 'context/Theme';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -12,35 +13,28 @@ function CollectionSelectorHeaderToggle({ disabled, onClick }: Props) {
     const [enabled, setEnabled] = useState(false);
 
     return (
-        <Box
+        <Button
+            disabled={disabled}
+            size="small"
+            variant="text"
             sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                width: '100%',
+                ...dataGridEntireCellButtonStyling,
+                py: 0,
+                px: 1,
+                textTransform: 'none',
+            }}
+            onClick={(event) => {
+                event.stopPropagation();
+                setEnabled(!enabled);
+                onClick(event, !enabled);
             }}
         >
-            <Button
-                disabled={disabled}
-                size="small"
-                variant="text"
-                sx={{
-                    py: 0,
-                    px: 1,
-                    textTransform: 'none',
-                }}
-                onClick={(event) => {
-                    event.stopPropagation();
-                    setEnabled(!enabled);
-                    onClick(event, !enabled);
-                }}
-            >
-                {intl.formatMessage({
-                    id: enabled
-                        ? 'workflows.collectionSelector.toggle.enable'
-                        : 'workflows.collectionSelector.toggle.disable',
-                })}
-            </Button>
-        </Box>
+            {intl.formatMessage({
+                id: enabled
+                    ? 'workflows.collectionSelector.toggle.enable'
+                    : 'workflows.collectionSelector.toggle.disable',
+            })}
+        </Button>
     );
 }
 
