@@ -45,7 +45,7 @@ interface Props {
 const localSnackbarSettings: OptionsObject = {
     ...snackbarSettings,
     autoHideDuration: 1500,
-    variant: 'success',
+    variant: 'default',
 };
 
 const cellClass_noPadding = 'estuary-datagrid--cell--no-padding';
@@ -181,8 +181,8 @@ function CollectionSelectorList({
                                 intl.formatMessage(
                                     {
                                         id: value
-                                            ? 'workflows.collectionSelector.notifications.toggle.enable'
-                                            : 'workflows.collectionSelector.notifications.toggle.disable',
+                                            ? 'workflows.collectionSelector.notifications.toggle.disable'
+                                            : 'workflows.collectionSelector.notifications.toggle.enable',
                                     },
                                     {
                                         count: filteredCollections.length,
