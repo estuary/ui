@@ -41,7 +41,7 @@ interface Props {
     setCurrentCollection?: (collection: any) => void;
 }
 
-const nameCellClass = 'estuary-collection-selector--cell';
+const cellClass_noPadding = 'estuary-datagrid--cell--no-padding';
 
 const initialState = {
     columns: {
@@ -116,7 +116,7 @@ function CollectionSelectorList({
     const columns = useMemo(() => {
         const response: GridColDef[] = [
             {
-                cellClassName: nameCellClass,
+                cellClassName: cellClass_noPadding,
                 field: COLLECTION_SELECTOR_NAME_COL,
                 flex: 1,
                 headerName: collectionsLabel,
@@ -149,6 +149,7 @@ function CollectionSelectorList({
 
         if (toggleCollections) {
             response.unshift({
+                cellClassName: cellClass_noPadding,
                 field: 'disable',
                 sortable: false,
                 renderCell: renderers.cell.toggle,
@@ -237,7 +238,7 @@ function CollectionSelectorList({
                 sx={{
                     ...dataGridListStyling,
                     border: 0,
-                    [`& .${nameCellClass}`]: { padding: 0 },
+                    [`& .${cellClass_noPadding}`]: { padding: 0 },
                 }}
                 onCellClick={({ field, value }) => {
                     if (

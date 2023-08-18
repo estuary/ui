@@ -1,4 +1,4 @@
-import { FormControlLabel, Switch } from '@mui/material';
+import { Button, Switch } from '@mui/material';
 import { useIntl } from 'react-intl';
 import {
     useResourceConfig_resourceConfigOfCollectionProperty,
@@ -19,30 +19,29 @@ function BindingsSelectorToggle({ collection, disableButton }: Props) {
     );
 
     return (
-        <FormControlLabel
-            control={
-                <Switch
-                    disabled={disableButton}
-                    size="small"
-                    checked={!disabled}
-                    color="success"
-                    onChange={(event) => {
-                        event.stopPropagation();
-                        toggleDisable(collection);
-                    }}
-                />
-            }
-            label={intl.formatMessage({
+        <Button
+            aria-label={intl.formatMessage({
                 id: disabled ? 'common.disabled' : 'common.enabled',
             })}
-            labelPlacement="bottom"
+            variant="text"
             sx={{
-                '& .MuiFormControlLabel-label': {
-                    height: 0,
-                    visibility: 'collapse',
-                },
+                justifyContent: 'center',
+                height: '100%',
+                margin: 0,
+                width: '100%',
             }}
-        />
+            onClick={(event) => {
+                event.stopPropagation();
+                toggleDisable(collection);
+            }}
+        >
+            <Switch
+                disabled={disableButton}
+                size="small"
+                checked={!disabled}
+                color="success"
+            />
+        </Button>
     );
 }
 
