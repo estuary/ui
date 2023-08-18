@@ -9,7 +9,7 @@ import TableHydrator from 'stores/Tables/Hydrator';
 import Rows from './Rows';
 
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
-const tableRowsPerPage = [25, 50, 100, 300];
+const tableRowsPerPage = [10, 50, 100, 300];
 const catalogNameColumn = 'catalog_name';
 export const tableColumns = [
     {
