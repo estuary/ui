@@ -8,11 +8,13 @@ import { NamedSet, devtools } from 'zustand/middleware';
 const getInitialStateData = (): Pick<
     SchemaEvolutionState,
     | 'addNewBindings'
+    | 'autoDiscover'
     | 'evolveIncompatibleCollections'
     | 'settingsActive'
     | 'settingsSaving'
 > => ({
     addNewBindings: false,
+    autoDiscover: false,
     evolveIncompatibleCollections: false,
     settingsActive: false,
     settingsSaving: false,
@@ -24,6 +26,35 @@ const getInitialState = (
 ): SchemaEvolutionState => ({
     ...getInitialStateData(),
 
+    setAutoDiscover: (value, options) => {
+        set(
+            produce((state: SchemaEvolutionState) => {
+                const {
+                    addNewBindings,
+                    evolveIncompatibleCollections,
+                    settingsActive,
+                } = get();
+
+                if (!settingsActive && !options?.initOnly) {
+                    state.settingsActive = true;
+                }
+
+                // Disable the auto-discovery options when auto-discovery itself is disabled.
+                if (
+                    !value &&
+                    (addNewBindings || evolveIncompatibleCollections)
+                ) {
+                    state.addNewBindings = false;
+                    state.evolveIncompatibleCollections = false;
+                }
+
+                state.autoDiscover = value;
+            }),
+            false,
+            'Auto-Discover Set'
+        );
+    },
+
     setAddNewBindings: (value, options) => {
         set(
             produce((state: SchemaEvolutionState) => {
@@ -33,6 +64,7 @@ const getInitialState = (
                     state.settingsActive = true;
                 }
 
+                // Disable the incompatible collection evolution option when the add new bindings option is disabled.
                 if (!value && evolveIncompatibleCollections) {
                     state.evolveIncompatibleCollections = false;
                 }

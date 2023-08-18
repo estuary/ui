@@ -12,6 +12,24 @@ const getStoreName = (entityType: Entity): SchemaEvolutionStoreNames => {
     }
 };
 
+export const useSchemaEvolution_autoDiscover = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        SchemaEvolutionState,
+        SchemaEvolutionState['autoDiscover']
+    >(getStoreName(entityType), (state) => state.autoDiscover);
+};
+
+export const useSchemaEvolution_setAutoDiscover = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        SchemaEvolutionState,
+        SchemaEvolutionState['setAutoDiscover']
+    >(getStoreName(entityType), (state) => state.setAutoDiscover);
+};
+
 export const useSchemaEvolution_addNewBindings = () => {
     const entityType = useEntityType();
 

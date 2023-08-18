@@ -1,5 +1,11 @@
 export interface SchemaEvolutionState {
     // Capture Auto Discovery Settings
+    autoDiscover: boolean;
+    setAutoDiscover: (
+        value: SchemaEvolutionState['autoDiscover'],
+        options?: { initOnly: boolean }
+    ) => void;
+
     addNewBindings: boolean;
     setAddNewBindings: (
         value: SchemaEvolutionState['addNewBindings'],

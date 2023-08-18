@@ -156,6 +156,8 @@ function BindingsMultiEditor({
                 />
             </Typography>
 
+            {entityType === 'capture' ? <AutoDiscoverySettings /> : null}
+
             <ListAndDetails
                 list={
                     <BindingSelector
@@ -172,8 +174,6 @@ function BindingsMultiEditor({
                 displayBorder={true}
                 height={550}
             />
-
-            {entityType === 'capture' ? <AutoDiscoverySettings /> : null}
         </LocalZustandProvider>
     );
 }

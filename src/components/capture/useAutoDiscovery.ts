@@ -8,6 +8,7 @@ import { debounce } from 'lodash';
 import { useCallback, useEffect, useRef } from 'react';
 import {
     useSchemaEvolution_addNewBindings,
+    useSchemaEvolution_autoDiscover,
     useSchemaEvolution_evolveIncompatibleCollections,
     useSchemaEvolution_setSettingsActive,
     useSchemaEvolution_setSettingsSaving,
@@ -22,6 +23,7 @@ function useAutoDiscovery() {
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
     // Schema Evolution Store
+    const autoDiscover = useSchemaEvolution_autoDiscover();
     const addNewBindings = useSchemaEvolution_addNewBindings();
     const evolveIncompatibleCollections =
         useSchemaEvolution_evolveIncompatibleCollections();
@@ -43,7 +45,12 @@ function useAutoDiscovery() {
         if (settingsActive) {
             debouncedUpdate.current();
         }
-    }, [addNewBindings, evolveIncompatibleCollections, settingsActive]);
+    }, [
+        addNewBindings,
+        autoDiscover,
+        evolveIncompatibleCollections,
+        settingsActive,
+    ]);
 
     return useCallback(async () => {
         if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {
@@ -51,10 +58,12 @@ function useAutoDiscovery() {
         } else {
             const spec: Schema = draftSpecs[0].spec;
 
-            spec.autoDiscover = {
-                addNewBindings,
-                evolveIncompatibleCollections,
-            };
+            spec.autoDiscover = autoDiscover
+                ? {
+                      addNewBindings,
+                      evolveIncompatibleCollections,
+                  }
+                : null;
 
             const updateResponse = await modifyDraftSpec(spec, {
                 draft_id: draftId,
@@ -71,6 +80,7 @@ function useAutoDiscovery() {
     }, [
         mutateDraftSpecs,
         addNewBindings,
+        autoDiscover,
         draftId,
         draftSpecs,
         evolveIncompatibleCollections,

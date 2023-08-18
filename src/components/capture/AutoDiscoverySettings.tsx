@@ -17,8 +17,10 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import {
     useSchemaEvolution_addNewBindings,
+    useSchemaEvolution_autoDiscover,
     useSchemaEvolution_evolveIncompatibleCollections,
     useSchemaEvolution_setAddNewBindings,
+    useSchemaEvolution_setAutoDiscover,
     useSchemaEvolution_setEvolveIncompatibleCollections,
     useSchemaEvolution_setSettingsSaving,
     useSchemaEvolution_settingsSaving,
@@ -37,6 +39,9 @@ function AutoDiscoverySettings({ readOnly }: Props) {
     const setFormState = useFormStateStore_setFormState();
 
     // Schema Evolution Store
+    const autoDiscover = useSchemaEvolution_autoDiscover();
+    const setAutoDiscover = useSchemaEvolution_setAutoDiscover();
+
     const addNewBindings = useSchemaEvolution_addNewBindings();
     const setAddNewBindings = useSchemaEvolution_setAddNewBindings();
 
@@ -59,6 +64,8 @@ function AutoDiscoverySettings({ readOnly }: Props) {
     );
 
     useEffect(() => {
+        setAutoDiscover(settingsExist, { initOnly: true });
+
         if (settingsExist) {
             const autoDiscoverySettings = draftSpecs[0].spec.autoDiscover;
 
@@ -85,6 +92,7 @@ function AutoDiscoverySettings({ readOnly }: Props) {
         }
     }, [
         setAddNewBindings,
+        setAutoDiscover,
         setEvolveIncompatibleCollections,
         draftSpecs,
         settingsExist,
@@ -92,18 +100,21 @@ function AutoDiscoverySettings({ readOnly }: Props) {
 
     const serverUpdateRequired = useMemo(() => {
         const settingsNew =
-            !settingsExist && (addNewBindings || evolveIncompatibleCollections);
+            !settingsExist &&
+            (autoDiscover || addNewBindings || evolveIncompatibleCollections);
 
         const settingsChanged =
             settingsExist &&
-            !isEqual(draftSpecs[0].spec.autoDiscover, {
-                addNewBindings,
-                evolveIncompatibleCollections,
-            });
+            (!autoDiscover ||
+                !isEqual(draftSpecs[0].spec.autoDiscover, {
+                    addNewBindings,
+                    evolveIncompatibleCollections,
+                }));
 
         return settingsNew || settingsChanged;
     }, [
         addNewBindings,
+        autoDiscover,
         draftSpecs,
         evolveIncompatibleCollections,
         settingsExist,
@@ -134,7 +145,7 @@ function AutoDiscoverySettings({ readOnly }: Props) {
     ]);
 
     return (
-        <Stack sx={{ mt: 3 }}>
+        <Stack sx={{ mt: 2, mb: 3 }}>
             <Typography sx={{ mb: 1, fontWeight: 500 }}>
                 <FormattedMessage id="workflows.autoDiscovery.header" />
             </Typography>
@@ -143,22 +154,46 @@ function AutoDiscoverySettings({ readOnly }: Props) {
                 <FormControlLabel
                     control={
                         <Checkbox
-                            value={addNewBindings}
-                            checked={addNewBindings}
+                            value={autoDiscover}
+                            checked={autoDiscover}
                             disabled={readOnly ?? formActive}
                             onChange={(event, checked) => {
                                 event.preventDefault();
                                 event.stopPropagation();
 
-                                setAddNewBindings(checked);
+                                setAutoDiscover(checked);
                             }}
                         />
                     }
                     label={
-                        <FormattedMessage id="workflows.autoDiscovery.label.addNewBindings" />
+                        <FormattedMessage id="workflows.autoDiscovery.label.optIntoDiscovery" />
                     }
                 />
             </FormControl>
+
+            {autoDiscover ? (
+                <FormControl>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                value={addNewBindings}
+                                checked={addNewBindings}
+                                disabled={readOnly ?? formActive}
+                                onChange={(event, checked) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+
+                                    setAddNewBindings(checked);
+                                }}
+                            />
+                        }
+                        label={
+                            <FormattedMessage id="workflows.autoDiscovery.label.addNewBindings" />
+                        }
+                        sx={{ ml: 2 }}
+                    />
+                </FormControl>
+            ) : null}
 
             {addNewBindings ? (
                 <FormControl>
