@@ -23,13 +23,13 @@ function BindingsSelectorToggle({ collection, disableButton }: Props) {
             aria-label={intl.formatMessage({
                 id: disabled ? 'common.disabled' : 'common.enabled',
             })}
-            variant="text"
             sx={{
                 justifyContent: 'center',
                 height: '100%',
                 margin: 0,
                 width: '100%',
             }}
+            variant="text"
             onClick={(event) => {
                 event.stopPropagation();
                 toggleDisable(collection);
