@@ -1,6 +1,7 @@
 import { Button, Typography } from '@mui/material';
 import { typographyTruncation } from 'context/Theme';
 import { stripPathing } from 'utils/misc-utils';
+import BindingsSelectorErrorIndicator from './ErrorIndicator';
 
 interface RowProps {
     collection: string;
@@ -12,6 +13,9 @@ function BindingsSelectorName({ collection, shortenName }: RowProps) {
         <Button
             variant="text"
             disableFocusRipple
+            startIcon={
+                <BindingsSelectorErrorIndicator collection={collection} />
+            }
             sx={{
                 'color': (theme) => theme.palette.text.primary,
                 'height': '100%',
