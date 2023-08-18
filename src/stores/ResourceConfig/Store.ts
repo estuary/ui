@@ -20,7 +20,6 @@ import {
 import { createJSONFormDefaults } from 'services/ajv';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
 import { create, StoreApi } from 'zustand';
@@ -32,7 +31,7 @@ const populateCollections = (
     collections: string[]
 ) => {
     state.collections = collections;
-    state.currentCollection = collections[0];
+    state.currentCollection = collections[0] ?? null;
 
     state.collectionErrorsExist = isEmpty(collections);
 };
@@ -69,6 +68,31 @@ const getCurrentCollection = (
     } else {
         return null;
     }
+};
+
+const getNewCollectionList = (adds: string[], curr: string[] | null) => {
+    return curr
+        ? [...curr, ...adds.filter((add) => !curr.includes(add))]
+        : adds;
+};
+
+const getResourceConfig = (binding: any) => {
+    const { resource, disable } = binding;
+
+    // Snag the name so we can add it to the config and list of collections
+    const name = getCollectionName(binding);
+    const disableProp = getDisableProps(disable);
+
+    // Take the binding resource and place into config OR
+    //  generate a default in case there are any issues with it
+    return [
+        name,
+        {
+            ...disableProp,
+            data: resource,
+            errors: [],
+        },
+    ];
 };
 
 const populateResourceConfigErrors = (
@@ -227,19 +251,8 @@ const getInitialState = (
                 // As we go through and fetch all the names for collections go ahead and also
                 // populate the resource config
                 const collections = bindings.map((binding: any) => {
-                    const { resource, disable } = binding;
-
-                    // Snag the name so we can add it to the config and list of collections
-                    const name = getCollectionName(binding);
-                    const disableProp = getDisableProps(disable);
-
-                    // Take the binding resource and place into config OR
-                    //  generate a default in case there are any issues with it
-                    state.resourceConfig[name] = {
-                        ...disableProp,
-                        data: resource,
-                        errors: [],
-                    };
+                    const [name, configVal] = getResourceConfig(binding);
+                    state.resourceConfig[name] = configVal;
 
                     return name;
                 });
@@ -257,15 +270,7 @@ const getInitialState = (
             produce((state: ResourceConfigState) => {
                 const { collections } = get();
 
-                state.collections = collections
-                    ? [
-                          ...collections,
-                          ...value.filter(
-                              (newCollection) =>
-                                  !collections.includes(newCollection)
-                          ),
-                      ]
-                    : value;
+                state.collections = getNewCollectionList(value, collections);
             }),
             false,
             'Collection Added'
@@ -373,8 +378,7 @@ const getInitialState = (
     resetConfigAndCollections: () => {
         set(
             produce((state: ResourceConfigState) => {
-                state.currentCollection = null;
-                state.collections = [];
+                populateCollections(state, []);
 
                 state.restrictedDiscoveredCollections = [];
 
@@ -751,8 +755,8 @@ const getInitialState = (
                 const existingCollections = Object.keys(resourceConfig);
                 const updatedBindings = draftSpecResponse.data[0].spec.bindings;
 
-                let collectionsToAdd: string[] = [];
-                let modifiedResourceConfig: ResourceConfigDictionary = {};
+                const collectionsToAdd: string[] = [];
+                const modifiedResourceConfig: ResourceConfigDictionary = {};
 
                 updatedBindings.forEach((binding: any) => {
                     if (
@@ -761,18 +765,10 @@ const getInitialState = (
                             binding.target
                         )
                     ) {
-                        collectionsToAdd = [
-                            binding.target,
-                            ...collectionsToAdd,
-                        ];
+                        collectionsToAdd.push(binding.target);
 
-                        modifiedResourceConfig = {
-                            [binding.target]: {
-                                data: binding.resource,
-                                errors: [],
-                            },
-                            ...modifiedResourceConfig,
-                        };
+                        const [name, configVal] = getResourceConfig(binding);
+                        modifiedResourceConfig[name] = configVal;
                     }
                 });
 
@@ -781,19 +777,10 @@ const getInitialState = (
                     ...modifiedResourceConfig,
                 };
 
-                state.collections = collections
-                    ? [
-                          ...collections,
-                          ...collectionsToAdd.filter(
-                              (newCollection) =>
-                                  !collections.includes(newCollection)
-                          ),
-                      ]
-                    : collectionsToAdd;
-
-                state.currentCollection = hasLength(state.collections)
-                    ? state.collections[0]
-                    : null;
+                populateCollections(
+                    state,
+                    getNewCollectionList(collectionsToAdd, collections)
+                );
             }),
             false,
             'Discovered Collections Evaluated'
