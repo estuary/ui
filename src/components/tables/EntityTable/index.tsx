@@ -340,6 +340,7 @@ function EntityTable({
                             onRowsPerPageChange={handlers.changeRowsPerPage}
                             page={page}
                             rowsPerPage={rowsPerPage}
+                            rowsPerPageOptions={rowsPerPageOptions}
                             selectableTableStoreName={selectableTableStoreName}
                         />
                     </Table>

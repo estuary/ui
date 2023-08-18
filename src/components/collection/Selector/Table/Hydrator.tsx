@@ -57,6 +57,7 @@ function Hydrator() {
                 columns={tableColumns}
                 renderTableRows={(data) => <Rows data={data} />}
                 pagination={pagination}
+                rowsPerPageOptions={[25, 50, 100, 300]}
                 setPagination={setPagination}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
