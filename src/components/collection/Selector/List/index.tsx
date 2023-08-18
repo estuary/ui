@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Popper } from '@mui/material';
 import {
     DataGrid,
     GridColDef,
@@ -9,9 +9,9 @@ import {
     useGridApiRef,
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
+import AlertBox from 'components/shared/AlertBox';
 import { dataGridListStyling } from 'context/Theme';
-import { OptionsObject, useSnackbar } from 'notistack';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 import {
@@ -20,7 +20,6 @@ import {
 } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
 import { hasLength } from 'utils/misc-utils';
-import { snackbarSettings } from 'utils/notification-utils';
 import CollectionSelectorHeaderName from './Header/Name';
 import CollectionSelectorHeaderRemove from './Header/Remove';
 import CollectionSelectorHeaderToggle from './Header/Toggle';
@@ -42,11 +41,11 @@ interface Props {
     setCurrentCollection?: (collection: any) => void;
 }
 
-const localSnackbarSettings: OptionsObject = {
-    ...snackbarSettings,
-    autoHideDuration: 1500,
-    variant: 'default',
-};
+// const localSnackbarSettings: OptionsObject = {
+//     ...snackbarSettings,
+//     autoHideDuration: 1500,
+//     variant: 'default',
+// };
 
 const cellClass_noPadding = 'estuary-datagrid--cell--no-padding';
 
@@ -72,8 +71,9 @@ function CollectionSelectorList({
     setCurrentCollection,
 }: Props) {
     const apiRef = useGridApiRef();
-    const { enqueueSnackbar } = useSnackbar();
 
+    const notificationAnchorEl = useRef<any | null>();
+    const popperTimeout = useRef<number | null>(null);
     const hackyTimeout = useRef<number | null>(null);
     const intl = useIntl();
     const collectionsLabel = useConstant(
@@ -84,6 +84,8 @@ function CollectionSelectorList({
             })
     );
     const [filterValue, setFilterValue] = useState('');
+    const [notificationMessage, setNotificationMessage] = useState('');
+    const [showNotification, setShowNotification] = useState(false);
 
     const collections = useResourceConfig_collections();
     const currentCollection = useResourceConfig_currentCollection();
@@ -122,6 +124,16 @@ function CollectionSelectorList({
         () => rowsEmpty || disableActions,
         [disableActions, rowsEmpty]
     );
+
+    const showPopper = useCallback((target: any, message: string) => {
+        setNotificationMessage(message);
+        setShowNotification(true);
+
+        if (popperTimeout.current) clearTimeout(popperTimeout.current);
+        popperTimeout.current = window.setTimeout(() => {
+            setShowNotification(false);
+        }, 1000);
+    }, []);
 
     const columns = useMemo(() => {
         const response: GridColDef[] = [
@@ -171,26 +183,27 @@ function CollectionSelectorList({
                         onClick={(event, value) => {
                             const filteredCollections =
                                 gridPaginatedVisibleSortedGridRowIdsSelector(
-                                    apiRef.current.state
+                                    apiRef.current.state,
+                                    apiRef.current.instanceId
                                 );
                             if (hasLength(filteredCollections)) {
                                 toggleCollections(filteredCollections, value);
-                            }
 
-                            enqueueSnackbar(
-                                intl.formatMessage(
-                                    {
-                                        id: value
-                                            ? 'workflows.collectionSelector.notifications.toggle.disable'
-                                            : 'workflows.collectionSelector.notifications.toggle.enable',
-                                    },
-                                    {
-                                        count: filteredCollections.length,
-                                        itemType: collectionsLabel,
-                                    }
-                                ),
-                                localSnackbarSettings
-                            );
+                                showPopper(
+                                    event.currentTarget,
+                                    intl.formatMessage(
+                                        {
+                                            id: value
+                                                ? 'workflows.collectionSelector.notifications.toggle.disable'
+                                                : 'workflows.collectionSelector.notifications.toggle.enable',
+                                        },
+                                        {
+                                            count: filteredCollections.length,
+                                            itemType: collectionsLabel,
+                                        }
+                                    )
+                                );
+                            }
                         }}
                     />
                 ),
@@ -209,30 +222,31 @@ function CollectionSelectorList({
                     <CollectionSelectorHeaderRemove
                         disabled={disable}
                         itemType={collectionsLabel}
-                        onClick={(_event) => {
+                        onClick={(event) => {
                             const filteredCollections =
                                 gridPaginatedVisibleSortedGridRowIdsSelector(
-                                    apiRef.current.state
+                                    apiRef.current.state,
+                                    apiRef.current.instanceId
                                 );
 
                             if (hasLength(filteredCollections)) {
                                 removeCollections(filteredCollections);
                                 setFilterModel(defaultFilterModel);
                                 setFilterValue('');
-                            }
 
-                            enqueueSnackbar(
-                                intl.formatMessage(
-                                    {
-                                        id: 'workflows.collectionSelector.notifications.remove',
-                                    },
-                                    {
-                                        count: filteredCollections.length,
-                                        itemType: collectionsLabel,
-                                    }
-                                ),
-                                localSnackbarSettings
-                            );
+                                showPopper(
+                                    event.currentTarget,
+                                    intl.formatMessage(
+                                        {
+                                            id: 'workflows.collectionSelector.notifications.remove',
+                                        },
+                                        {
+                                            count: filteredCollections.length,
+                                            itemType: collectionsLabel,
+                                        }
+                                    )
+                                );
+                            }
                         }}
                     />
                 ),
@@ -244,22 +258,34 @@ function CollectionSelectorList({
         apiRef,
         collectionsLabel,
         disable,
-        enqueueSnackbar,
         filterValue,
         intl,
         removeCollections,
         renderers.cell.name,
         renderers.cell.remove,
         renderers.cell.toggle,
+        showPopper,
         toggleCollections,
     ]);
 
     useUnmount(() => {
         if (hackyTimeout.current) clearTimeout(hackyTimeout.current);
+        if (popperTimeout.current) clearTimeout(popperTimeout.current);
     });
 
     return (
-        <Box sx={{ height: height ?? 480 }}>
+        <Box sx={{ height: height ?? 480 }} ref={notificationAnchorEl}>
+            <Popper
+                anchorEl={notificationAnchorEl.current}
+                open={Boolean(showNotification && notificationAnchorEl.current)}
+                placement="top"
+                onResize={undefined}
+                onResizeCapture={undefined}
+            >
+                <AlertBox hideIcon short severity="success" title={null}>
+                    {notificationMessage}
+                </AlertBox>
+            </Popper>
             <DataGrid
                 apiRef={apiRef}
                 columns={columns}
