@@ -643,7 +643,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.bindingsConfig.noRows': `Please select from the list above to begin.`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
     'entityCreate.bindingsConfig.list.search': `Filter {itemType}`,
-    'entityCreate.bindingsConfig.list.removeAll': `Remove all {itemType}`,
+    'entityCreate.bindingsConfig.list.removeAll': `Remove {itemType} on this page`,
 
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
     'entityCreate.errors.missingDraftId': `Missing Draft ID.`,
@@ -875,6 +875,12 @@ const Workflows: ResolvedIntlConfig['messages'] = {
 
     'workflows.collectionSelector.toggle.enable': `Enable All`,
     'workflows.collectionSelector.toggle.disable': `Disable All`,
+    'workflows.collectionSelector.toggle.enable.tooltip': `Enable all {itemType} on this page`,
+    'workflows.collectionSelector.toggle.disable.tooltip': `Disable all {itemType} on this page`,
+
+    'workflows.collectionSelector.notifications.remove': `{count} {itemType} removed`,
+    'workflows.collectionSelector.notifications.toggle.enable': `{count} {itemType} enabled`,
+    'workflows.collectionSelector.notifications.toggle.disable': `{count} {itemType} disabled`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,

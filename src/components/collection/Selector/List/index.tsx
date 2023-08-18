@@ -10,6 +10,7 @@ import {
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { dataGridListStyling } from 'context/Theme';
+import { OptionsObject, useSnackbar } from 'notistack';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
@@ -19,6 +20,7 @@ import {
 } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
 import { hasLength } from 'utils/misc-utils';
+import { snackbarSettings } from 'utils/notification-utils';
 import CollectionSelectorHeaderName from './Header/Name';
 import CollectionSelectorHeaderRemove from './Header/Remove';
 import CollectionSelectorHeaderToggle from './Header/Toggle';
@@ -39,6 +41,12 @@ interface Props {
     toggleCollections?: (rows: GridRowId[], value: boolean) => void;
     setCurrentCollection?: (collection: any) => void;
 }
+
+const localSnackbarSettings: OptionsObject = {
+    ...snackbarSettings,
+    autoHideDuration: 1500,
+    variant: 'success',
+};
 
 const cellClass_noPadding = 'estuary-datagrid--cell--no-padding';
 
@@ -64,6 +72,7 @@ function CollectionSelectorList({
     setCurrentCollection,
 }: Props) {
     const apiRef = useGridApiRef();
+    const { enqueueSnackbar } = useSnackbar();
 
     const hackyTimeout = useRef<number | null>(null);
     const intl = useIntl();
@@ -158,6 +167,7 @@ function CollectionSelectorList({
                 renderHeader: (_params) => (
                     <CollectionSelectorHeaderToggle
                         disabled={disable}
+                        itemType={collectionsLabel}
                         onClick={(event, value) => {
                             const filteredCollections =
                                 gridPaginatedVisibleSortedGridRowIdsSelector(
@@ -166,6 +176,21 @@ function CollectionSelectorList({
                             if (hasLength(filteredCollections)) {
                                 toggleCollections(filteredCollections, value);
                             }
+
+                            enqueueSnackbar(
+                                intl.formatMessage(
+                                    {
+                                        id: value
+                                            ? 'workflows.collectionSelector.notifications.toggle.enable'
+                                            : 'workflows.collectionSelector.notifications.toggle.disable',
+                                    },
+                                    {
+                                        count: filteredCollections.length,
+                                        itemType: collectionsLabel,
+                                    }
+                                ),
+                                localSnackbarSettings
+                            );
                         }}
                     />
                 ),
@@ -195,6 +220,19 @@ function CollectionSelectorList({
                                 setFilterModel(defaultFilterModel);
                                 setFilterValue('');
                             }
+
+                            enqueueSnackbar(
+                                intl.formatMessage(
+                                    {
+                                        id: 'workflows.collectionSelector.notifications.remove',
+                                    },
+                                    {
+                                        count: filteredCollections.length,
+                                        itemType: collectionsLabel,
+                                    }
+                                ),
+                                localSnackbarSettings
+                            );
                         }}
                     />
                 ),
@@ -206,7 +244,9 @@ function CollectionSelectorList({
         apiRef,
         collectionsLabel,
         disable,
+        enqueueSnackbar,
         filterValue,
+        intl,
         removeCollections,
         renderers.cell.name,
         renderers.cell.remove,
