@@ -1,8 +1,8 @@
 import {
-    Checkbox,
     FormControl,
     FormControlLabel,
     Stack,
+    Switch,
     Typography,
 } from '@mui/material';
 import useAutoDiscovery from 'components/capture/useAutoDiscovery';
@@ -145,15 +145,16 @@ function AutoDiscoverySettings({ readOnly }: Props) {
     ]);
 
     return (
-        <Stack sx={{ mt: 2, mb: 3 }}>
-            <Typography sx={{ mb: 1, fontWeight: 500 }}>
+        <Stack spacing={1} sx={{ mt: 2, mb: 3 }}>
+            <Typography sx={{ fontWeight: 500 }}>
                 <FormattedMessage id="workflows.autoDiscovery.header" />
             </Typography>
 
             <FormControl>
                 <FormControlLabel
                     control={
-                        <Checkbox
+                        <Switch
+                            size="small"
                             value={autoDiscover}
                             checked={autoDiscover}
                             disabled={readOnly ?? formActive}
@@ -175,7 +176,8 @@ function AutoDiscoverySettings({ readOnly }: Props) {
                 <FormControl>
                     <FormControlLabel
                         control={
-                            <Checkbox
+                            <Switch
+                                size="small"
                                 value={addNewBindings}
                                 checked={addNewBindings}
                                 disabled={readOnly ?? formActive}
@@ -199,7 +201,8 @@ function AutoDiscoverySettings({ readOnly }: Props) {
                 <FormControl>
                     <FormControlLabel
                         control={
-                            <Checkbox
+                            <Switch
+                                size="small"
                                 value={evolveIncompatibleCollections}
                                 checked={evolveIncompatibleCollections}
                                 disabled={readOnly ?? formActive}
