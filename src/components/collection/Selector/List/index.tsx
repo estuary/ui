@@ -244,7 +244,8 @@ function CollectionSelectorList({
                 onCellClick={({ field, value }) => {
                     if (
                         selectionEnabled &&
-                        field === COLLECTION_SELECTOR_NAME_COL
+                        field === COLLECTION_SELECTOR_NAME_COL &&
+                        value !== currentCollection
                     ) {
                         // TODO (JSONForms) This is hacky but it works.
                         // It clears out the current collection before switching.

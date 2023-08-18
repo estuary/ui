@@ -25,8 +25,6 @@ function CollectionSelector({
     const collectionsLabel =
         itemType ?? intl.formatMessage({ id: 'terms.collections' });
 
-    console.log('CollectionSelectorSearch', RediscoverButton);
-
     return (
         <Box>
             <Box sx={{ height: '100%', width: '100%' }}>
