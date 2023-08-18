@@ -144,7 +144,7 @@ const getInitialCollectionStateData = (): Pick<
     | 'currentCollection'
 > => ({
     collections: [],
-    collectionErrorsExist: true,
+    collectionErrorsExist: false,
     collectionRemovalMetadata: {
         selectedCollection: null,
         removedCollection: '',
@@ -292,20 +292,17 @@ const getInitialState = (
                         ),
                     };
 
-                    state.collections = collections.filter(
+                    const updatedCollections = collections.filter(
                         (collection) => collection !== value
                     );
+                    populateCollections(state, updatedCollections);
 
                     const updatedResourceConfig = pick(
                         resourceConfig,
-                        state.collections
+                        updatedCollections
                     ) as ResourceConfigDictionary;
 
                     state.resourceConfig = updatedResourceConfig;
-                    state.currentCollection = getCurrentCollection(
-                        state.collections,
-                        state.collectionRemovalMetadata
-                    );
                     populateResourceConfigErrors(updatedResourceConfig, state);
                 }
             }),
@@ -328,10 +325,7 @@ const getInitialState = (
                     collections,
                     removedCollections
                 );
-
-                // Just force the selection back to the first item
-                state.currentCollection = updatedCollections[0];
-                state.collections = updatedCollections;
+                populateCollections(state, updatedCollections);
 
                 let additionalRestrictedCollections: string[] = [];
 
@@ -598,18 +592,13 @@ const getInitialState = (
                     get();
 
                 if (collections && discoveredCollections) {
-                    state.collections = collections.filter(
+                    const updatedCollections = collections.filter(
                         (collection) =>
                             !discoveredCollections.includes(collection)
                     );
-
-                    state.currentCollection =
-                        state.collections.length > 0
-                            ? state.collections[0]
-                            : null;
+                    populateCollections(state, updatedCollections);
 
                     const reducedResourceConfig = {};
-
                     Object.entries(resourceConfig).forEach(([key, value]) => {
                         if (state.collections?.includes(key)) {
                             reducedResourceConfig[key] = value;
