@@ -41,6 +41,7 @@ import {
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setPreviousEndpointConfig,
+    useEndpointConfig_setServerUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
@@ -106,6 +107,7 @@ function useDiscoverCapture(
         useEndpointConfigStore_encryptedEndpointConfig_data();
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
+    const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
     const setPreviousEndpointConfig =
         useEndpointConfigStore_setPreviousEndpointConfig();
 
@@ -175,6 +177,9 @@ function useDiscoverCapture(
                     setFormState({
                         status: FormStatus.GENERATED,
                     });
+
+                    // We have ran a discover so we know the endpoint was able to be submitted
+                    setServerUpdateRequired(false);
 
                     trackEvent(payload);
                 },
