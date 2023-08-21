@@ -2,14 +2,13 @@ import {
     FormControl,
     FormControlLabel,
     Stack,
-    StackProps,
     Switch,
     Typography,
 } from '@mui/material';
 import useAutoDiscovery from 'components/capture/useAutoDiscovery';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import { isEqual, isObject } from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useFormStateStore_isActive,
@@ -30,8 +29,6 @@ import {
 interface Props {
     readOnly?: boolean;
 }
-
-const containerId = 'auto-discovery-container';
 
 function AutoDiscoverySettings({ readOnly }: Props) {
     // Draft Editor Store
@@ -57,9 +54,6 @@ function AutoDiscoverySettings({ readOnly }: Props) {
     const setSettingsSaving = useSchemaEvolution_setSettingsSaving();
 
     const updateAutoDiscoverySettings = useAutoDiscovery();
-
-    const [displayDirection, setDisplayDirection] =
-        useState<StackProps['direction']>('row');
 
     const settingsExist = useMemo(
         () =>
@@ -150,38 +144,13 @@ function AutoDiscoverySettings({ readOnly }: Props) {
         settingsSaving,
     ]);
 
-    const containerEl = document.getElementById(containerId);
-
-    useEffect(() => {
-        let resizeObserver: ResizeObserver | null = null;
-
-        if (containerEl) {
-            resizeObserver = new ResizeObserver(() => {
-                setDisplayDirection(
-                    containerEl.clientWidth < 600 ? 'column' : 'row'
-                );
-            });
-
-            resizeObserver.observe(containerEl);
-        }
-
-        return () => {
-            if (resizeObserver !== null && containerEl) {
-                resizeObserver.unobserve(containerEl);
-            }
-        };
-    }, [setDisplayDirection, containerEl]);
-
     return (
-        <Stack id={containerId} spacing={1} sx={{ mt: 2, mb: 3 }}>
+        <Stack spacing={1} sx={{ mt: 2, mb: 3 }}>
             <Typography sx={{ fontWeight: 500 }}>
                 <FormattedMessage id="workflows.autoDiscovery.header" />
             </Typography>
 
-            <Stack
-                spacing={displayDirection === 'column' ? 1 : 2}
-                direction={displayDirection}
-            >
+            <Stack spacing={2} direction="row">
                 <FormControl>
                     <FormControlLabel
                         control={
