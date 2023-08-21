@@ -32,13 +32,12 @@ function useAutoDiscovery() {
     const setSettingsActive = useSchemaEvolution_setSettingsActive();
     const setSettingsSaving = useSchemaEvolution_setSettingsSaving();
 
-    // TODO (schema evolution): Determine a comfortable debounce interval. A second or less feels too quick
-    //   but five seconds feels too long.
+    // TODO (schema evolution): Determine a comfortable debounce interval.
     const debouncedUpdate = useRef(
         debounce(() => {
             setSettingsActive(false);
             setSettingsSaving(true);
-        }, 3000)
+        }, 500)
     );
 
     useEffect(() => {
