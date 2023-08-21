@@ -58,10 +58,19 @@ const getInitialState = (
     setAddNewBindings: (value, options) => {
         set(
             produce((state: SchemaEvolutionState) => {
-                const { evolveIncompatibleCollections, settingsActive } = get();
+                const {
+                    autoDiscover,
+                    evolveIncompatibleCollections,
+                    settingsActive,
+                } = get();
 
                 if (!settingsActive && !options?.initOnly) {
                     state.settingsActive = true;
+                }
+
+                // Enable auto-discovery when the add new bindings option is enabled.
+                if (value && !autoDiscover) {
+                    state.autoDiscover = true;
                 }
 
                 // Disable the incompatible collection evolution option when the add new bindings option is disabled.
@@ -79,10 +88,16 @@ const getInitialState = (
     setEvolveIncompatibleCollections: (value, options) => {
         set(
             produce((state: SchemaEvolutionState) => {
-                const { settingsActive } = get();
+                const { addNewBindings, autoDiscover, settingsActive } = get();
 
                 if (!settingsActive && !options?.initOnly) {
                     state.settingsActive = true;
+                }
+
+                // Enable auto-discovery and the add new bindings option when the incompatible collection evolution option is enabled.
+                if (value && (!autoDiscover || !addNewBindings)) {
+                    state.autoDiscover = true;
+                    state.addNewBindings = true;
                 }
 
                 state.evolveIncompatibleCollections = value;
