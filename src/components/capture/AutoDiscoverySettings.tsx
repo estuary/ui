@@ -57,9 +57,7 @@ function AutoDiscoverySettings({ readOnly }: Props) {
 
     const settingsExist = useMemo(
         () =>
-            draftSpecs.length > 0 &&
-            Object.hasOwn(draftSpecs[0].spec, 'autoDiscover') &&
-            isObject(draftSpecs[0].spec.autoDiscover),
+            draftSpecs.length > 0 && isObject(draftSpecs[0].spec.autoDiscover),
         [draftSpecs]
     );
 
