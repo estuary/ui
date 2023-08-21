@@ -67,25 +67,16 @@ function AutoDiscoverySettings({ readOnly }: Props) {
         if (settingsExist) {
             const autoDiscoverySettings = draftSpecs[0].spec.autoDiscover;
 
-            const bindingSetting = Boolean(
-                Object.hasOwn(autoDiscoverySettings, 'addNewBindings') &&
-                    autoDiscoverySettings.addNewBindings
-            );
-
-            const evolutionSetting = Boolean(
-                Object.hasOwn(
-                    autoDiscoverySettings,
-                    'evolveIncompatibleCollections'
-                ) && autoDiscoverySettings.evolveIncompatibleCollections
-            );
-
-            setAddNewBindings(bindingSetting, {
+            setAddNewBindings(Boolean(autoDiscoverySettings.addNewBindings), {
                 initOnly: true,
             });
 
-            setEvolveIncompatibleCollections(evolutionSetting, {
-                initOnly: true,
-            });
+            setEvolveIncompatibleCollections(
+                Boolean(autoDiscoverySettings.evolveIncompatibleCollections),
+                {
+                    initOnly: true,
+                }
+            );
         } else {
             setAddNewBindings(false, { initOnly: true });
             setEvolveIncompatibleCollections(false, { initOnly: true });
