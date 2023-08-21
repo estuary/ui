@@ -1,7 +1,12 @@
+import { CollectionData } from '../types';
 import Hydrator from './Hydrator';
 
-function BindingSelectorTable() {
-    return <Hydrator />;
+interface Props {
+    selectedCollections: string[] | CollectionData[];
+}
+
+function BindingSelectorTable({ selectedCollections }: Props) {
+    return <Hydrator selectedCollections={selectedCollections} />;
 }
 
 export default BindingSelectorTable;

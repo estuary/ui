@@ -6,16 +6,22 @@ import { Plus } from 'iconoir-react';
 import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useStore } from 'zustand';
+import { CollectionData } from '../types';
 import AddCollectionDialog from './Dialog';
 
 interface Props {
+    selectedCollections: string[] | CollectionData[];
     AddSelectedButton: ReactNode;
     disabled?: boolean;
 }
 
 const DIALOG_ID = 'add-collection-search-dialog';
 
-function BindingsEditorAdd({ AddSelectedButton, disabled }: Props) {
+function BindingsEditorAdd({
+    AddSelectedButton,
+    disabled,
+    selectedCollections,
+}: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const entityType = useEntityType();
@@ -83,6 +89,7 @@ function BindingsEditorAdd({ AddSelectedButton, disabled }: Props) {
                 id={DIALOG_ID}
                 open={open}
                 primaryCTA={AddSelectedButton}
+                selectedCollections={selectedCollections}
                 toggle={toggleDialog}
                 title={itemType}
             />

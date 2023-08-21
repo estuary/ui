@@ -1,11 +1,14 @@
 import { getLiveSpecs_collectionsSelector } from 'api/liveSpecsExt';
 import EntityTable from 'components/tables/EntityTable';
 import RowSelector from 'components/tables/RowActions/RowSelector';
-import { useMemo } from 'react';
+import invariableStores from 'context/Zustand/invariableStores';
+import { useEffect, useMemo } from 'react';
 import { useUnmount } from 'react-use';
 import { SelectTableStoreNames } from 'stores/names';
 import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
+import { useStore } from 'zustand';
+import { CollectionData } from '../types';
 import Rows from './Rows';
 
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
@@ -26,7 +29,11 @@ export const tableColumns = [
     },
 ];
 
-function Hydrator() {
+interface Props {
+    selectedCollections: string[] | CollectionData[];
+}
+
+function Hydrator({ selectedCollections }: Props) {
     const {
         reset,
         pagination,
@@ -49,6 +56,18 @@ function Hydrator() {
             },
         ]);
     }, [columnToSort, pagination, searchQuery, sortDirection]);
+
+    //
+    const setDisabledRows = useStore(
+        invariableStores['Collections-Selector-Table'],
+        (state) => {
+            return state.setDisabledRows;
+        }
+    );
+    useEffect(() => {
+        console.log('updating the rows that are disabled');
+        setDisabledRows(selectedCollections);
+    }, [selectedCollections, setDisabledRows]);
 
     useUnmount(() => {
         reset();

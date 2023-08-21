@@ -6,11 +6,11 @@ import BindingsEditorAdd from './Add';
 import { CollectionData } from './types';
 
 interface Props {
+    selectedCollections: string[] | CollectionData[];
     AddSelectedButton: ReactNode;
     itemType?: string;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
-    selectedCollections: string[] | CollectionData[];
 }
 
 function CollectionSelector({
@@ -18,12 +18,15 @@ function CollectionSelector({
     itemType,
     RediscoverButton,
     AddSelectedButton,
+    selectedCollections,
 }: Props) {
     const intl = useIntl();
     const theme = useTheme();
 
     const collectionsLabel =
         itemType ?? intl.formatMessage({ id: 'terms.collections' });
+
+    console.log('selectedCollections=', selectedCollections);
 
     return (
         <Box>
@@ -51,6 +54,7 @@ function CollectionSelector({
 
                         <BindingsEditorAdd
                             disabled={readOnly}
+                            selectedCollections={selectedCollections}
                             AddSelectedButton={AddSelectedButton}
                         />
                     </Stack>

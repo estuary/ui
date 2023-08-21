@@ -13,16 +13,25 @@ import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { CollectionData } from '../types';
 import { AddCollectionDialogCTAProps } from './types';
 
 interface Props extends AddCollectionDialogCTAProps {
     id: string;
     open: boolean;
-    title: string | ReactNode;
     primaryCTA: any;
+    selectedCollections: string[] | CollectionData[];
+    title: string | ReactNode;
 }
 
-function AddCollectionDialog({ id, primaryCTA, open, title, toggle }: Props) {
+function AddCollectionDialog({
+    id,
+    primaryCTA,
+    open,
+    selectedCollections,
+    title,
+    toggle,
+}: Props) {
     const ContinueButton = primaryCTA;
 
     return (
@@ -39,7 +48,9 @@ function AddCollectionDialog({ id, primaryCTA, open, title, toggle }: Props) {
                         <Divider />
 
                         <Box>
-                            <BindingSelectorTable />
+                            <BindingSelectorTable
+                                selectedCollections={selectedCollections}
+                            />
                         </Box>
                     </StepWrapper>
                 </Stack>
