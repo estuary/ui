@@ -67,12 +67,12 @@ function AutoDiscoverySettings({ readOnly }: Props) {
         if (settingsExist) {
             const autoDiscoverySettings = draftSpecs[0].spec.autoDiscover;
 
-            setAddNewBindings(Boolean(autoDiscoverySettings.addNewBindings), {
+            setAddNewBindings(Boolean(autoDiscoverySettings?.addNewBindings), {
                 initOnly: true,
             });
 
             setEvolveIncompatibleCollections(
-                Boolean(autoDiscoverySettings.evolveIncompatibleCollections),
+                Boolean(autoDiscoverySettings?.evolveIncompatibleCollections),
                 {
                     initOnly: true,
                 }
