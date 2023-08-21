@@ -245,28 +245,6 @@ const getInitialState = (
                     endpointSchema,
                 } = get();
 
-                // if (
-                //     entityType === 'capture' &&
-                //     Object.hasOwn(data[0].spec, 'autoDiscover') &&
-                //     isObject(data[0].spec.autoDiscover)
-                // ) {
-                //     const autoDiscoverySettings = data[0].spec.autoDiscover;
-
-                //     setAddNewBindings(
-                //         Object.hasOwn(
-                //             autoDiscoverySettings,
-                //             'addNewBindings'
-                //         ) && autoDiscoverySettings.addNewBindings
-                //     );
-
-                //     setEvolveIncompatibleCollections(
-                //         Object.hasOwn(
-                //             autoDiscoverySettings,
-                //             'evolveIncompatibleCollections'
-                //         ) && autoDiscoverySettings.evolveIncompatibleCollections
-                //     );
-                // }
-
                 const encryptedEndpointConfig =
                     data[0].spec.endpoint.connector.config;
 
