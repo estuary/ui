@@ -87,11 +87,9 @@ export const getInitialState = (
                 state.customErrors = val;
                 state.customErrorsExist = hasLength(val);
 
-                const { details } = get();
-
                 // Setting this so that if there is a custom error then the
                 //  generate button will not proceed
-                populateErrors(details, val, state);
+                populateErrors(state.details, val, state);
             }),
             false,
             'Details Custom Errors Set'
