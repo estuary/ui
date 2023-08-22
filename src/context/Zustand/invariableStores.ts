@@ -21,11 +21,13 @@ import {
     FormStateStoreNames,
     GlobalStoreNames,
     ResourceConfigStoreNames,
+    SchemaEvolutionStoreNames,
     SelectTableStoreNames,
     ShardDetailStoreNames,
     TransformCreateStoreNames,
 } from 'stores/names';
 import { createResourceConfigStore } from 'stores/ResourceConfig/Store';
+import { createSchemaEvolutionStore } from 'stores/SchemaEvolution/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
 import { createSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
@@ -91,6 +93,11 @@ const invariableStores = {
     // Resource Config Store
     [ResourceConfigStoreNames.GENERAL]: createResourceConfigStore(
         ResourceConfigStoreNames.GENERAL
+    ),
+
+    // Schema Evolution Store
+    [SchemaEvolutionStoreNames.GENERAL]: createSchemaEvolutionStore(
+        SchemaEvolutionStoreNames.GENERAL
     ),
 
     // Select Table Store

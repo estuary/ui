@@ -519,7 +519,7 @@ export const useHydrateEditorState = (
 ) => {
     const draftIdInURL = useGlobalSearchParams(GlobalSearchParams.DRAFT_ID);
 
-    const draftId = useEditorStore_id({ localScope });
+    const draftId = useEditorStore_persistedDraftId({ localScope });
     const setQueryResponse = useEditorStore_setQueryResponse({ localScope });
 
     const response = useDraftSpecs(draftId ?? draftIdInURL, {

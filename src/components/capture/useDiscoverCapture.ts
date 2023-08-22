@@ -29,7 +29,6 @@ import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
     useDetailsForm_connectorImage_imagePath,
-    useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
     useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm/hooks';
@@ -90,7 +89,6 @@ function useDiscoverCapture(
     const updateFormStatus = useFormStateStore_updateStatus();
 
     // Details Form Store
-    const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
@@ -288,7 +286,7 @@ function useDiscoverCapture(
                     const existingDraftSpecResponse =
                         await getDraftSpecsByCatalogName(
                             persistedDraftId,
-                            entityName,
+                            processedEntityName,
                             'capture'
                         );
 
@@ -366,7 +364,6 @@ function useDiscoverCapture(
             persistedDraftId,
             processedEntityName,
             createDiscoversSubscription,
-            entityName,
             imagePath,
             resourceConfig,
             setEncryptedEndpointConfig,
