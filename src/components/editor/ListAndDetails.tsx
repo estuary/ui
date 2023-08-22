@@ -33,6 +33,9 @@ function ListAndDetails({
     return (
         <Box
             sx={{
+                border: displayBorder
+                    ? defaultOutline[theme.palette.mode]
+                    : undefined,
                 bgcolor: backgroundColor ?? 'background.paper',
                 height: `${heightVal}px`,
                 overflow: 'hidden',
@@ -51,9 +54,6 @@ function ListAndDetails({
                             height: '100%',
                             display: 'flex',
                             flexDirection: 'column',
-                            border: displayBorder
-                                ? defaultOutline[theme.palette.mode]
-                                : undefined,
                         }}
                     >
                         {list}
@@ -79,9 +79,6 @@ function ListAndDetails({
                     minSize={MIN_RESIZE_WIDTH}
                     style={{
                         overflow: 'auto',
-                        border: displayBorder
-                            ? defaultOutline[theme.palette.mode]
-                            : undefined,
                     }}
                 >
                     <div className="pane-content">{details}</div>
