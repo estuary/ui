@@ -69,6 +69,8 @@ const CatalogNameTypeRenderer = ({
             // TODO (JSONForms) This is hacky but it works.
             //  setting custom errors right away can cause re-renders that will
             //  mess up populating the correct catalog name
+            // The 50 buffer time helps when someone is pasting in a name and
+            //  very quickly clicks next
             hackyTimeout.current = window.setTimeout(() => {
                 const customErrors = [];
 
@@ -85,7 +87,7 @@ const CatalogNameTypeRenderer = ({
                 }
 
                 setCustomErrors(customErrors);
-            });
+            }, 50);
         },
         [handleChange, intl, path, setCustomErrors]
     );
