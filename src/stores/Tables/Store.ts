@@ -161,7 +161,8 @@ export const getInitialState = (
                                 ? value[valueProperty]
                                 : null;
 
-                            if (!disabledRows.includes(key)) {
+                            // if the name is disabled then don't add it here
+                            if (!disabledRows.includes(value.catalog_name)) {
                                 selected.set(key, evaluatedValue);
                             }
                         });
