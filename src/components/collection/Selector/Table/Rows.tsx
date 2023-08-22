@@ -3,6 +3,7 @@ import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'context/Theme';
 import invariableStores from 'context/Zustand/invariableStores';
+import { useMemo } from 'react';
 
 import { useStore } from 'zustand';
 
@@ -19,14 +20,34 @@ interface RowsProps {
 function Row({ isSelected, row, setRow }: RowProps) {
     const theme = useTheme();
 
+    const [disabledRows] = useStore(
+        invariableStores['Collections-Selector-Table'],
+        (state) => {
+            return [state.disabledRows];
+        }
+    );
+
+    const disabled = useMemo(
+        () => disabledRows.includes(row.catalog_name),
+        [disabledRows, row.catalog_name]
+    );
+
     return (
         <TableRow
             key={`collection-search-${row.id}`}
             selected={isSelected}
-            onClick={() => setRow(row.id, row.catalog_name, !isSelected)}
-            sx={getEntityTableRowSx(theme, false)}
+            onClick={
+                disabled
+                    ? undefined
+                    : () => setRow(row.id, row.catalog_name, !isSelected)
+            }
+            sx={getEntityTableRowSx(theme, disabled)}
         >
-            <RowSelect isSelected={isSelected} name={row.catalog_name} />
+            <RowSelect
+                disabled={disabled}
+                isSelected={isSelected}
+                name={row.catalog_name}
+            />
             <TableCell>{row.catalog_name}</TableCell>
             <TimeStamp time={row.updated_at} />
         </TableRow>

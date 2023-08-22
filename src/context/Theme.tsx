@@ -324,13 +324,12 @@ const expandedRowBgColor = {
 };
 export const getEntityTableRowSx = (
     theme: Theme,
-    detailsExpanded: boolean
+    disabled?: boolean
 ): SxProps<Theme> => {
     return {
-        background: detailsExpanded
-            ? expandedRowBgColor[theme.palette.mode]
-            : null,
-        cursor: 'pointer',
+        background: disabled ? expandedRowBgColor[theme.palette.mode] : null,
+        cursor: disabled ? 'default' : 'pointer',
+        opacity: disabled ? 0.75 : undefined,
     };
 };
 
