@@ -7,7 +7,6 @@ import invariableStores from 'context/Zustand/invariableStores';
 import { useStore } from 'zustand';
 
 interface RowProps {
-    isSelected: boolean;
     row: any;
     setRow: any;
 }
@@ -16,13 +15,20 @@ interface RowsProps {
     data: any[];
 }
 
-function Row({ isSelected, row, setRow }: RowProps) {
+function Row({ row, setRow }: RowProps) {
     const theme = useTheme();
 
     const disabled = useStore(
         invariableStores['Collections-Selector-Table'],
         (state) => {
             return state.disabledRows.includes(row.catalog_name);
+        }
+    );
+
+    const isSelected = useStore(
+        invariableStores['Collections-Selector-Table'],
+        (state) => {
+            return state.selected.has(row.id);
         }
     );
 
@@ -49,22 +55,17 @@ function Row({ isSelected, row, setRow }: RowProps) {
 }
 
 function Rows({ data }: RowsProps) {
-    const [selected, setRow] = useStore(
+    const setRow = useStore(
         invariableStores['Collections-Selector-Table'],
         (state) => {
-            return [state.selected, state.setSelected, state.disabledRows];
+            return state.setSelected;
         }
     );
 
     return (
         <>
             {data.map((row) => (
-                <Row
-                    isSelected={selected.has(row.id)}
-                    key={row.id}
-                    row={row}
-                    setRow={setRow}
-                />
+                <Row key={row.id} row={row} setRow={setRow} />
             ))}
         </>
     );
