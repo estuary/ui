@@ -34,9 +34,7 @@ function BindingSearch({
         })
     );
 
-    const [collectionValues, setCollectionValues] = useState<CollectionData[]>(
-        []
-    );
+    const [collectionValues, setCollectionValues] = useState<string[]>([]);
     const [collectionOptions] = useState<CollectionData[]>([]);
 
     // Form State Store
@@ -48,16 +46,7 @@ function BindingSearch({
 
     useEffect(() => {
         if (collections) {
-            const values = collections.map((collection) => {
-                return {
-                    name: collection,
-                    classification: discoveredCollections?.includes(collection)
-                        ? discoveredCollectionsLabel
-                        : existingCollectionsLabel,
-                };
-            });
-
-            setCollectionValues(values);
+            setCollectionValues(collections);
         }
     }, [
         collectionOptions,

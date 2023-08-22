@@ -8,7 +8,6 @@ import { SelectTableStoreNames } from 'stores/names';
 import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import { useStore } from 'zustand';
-import { CollectionData } from '../types';
 import Rows from './Rows';
 
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
@@ -30,7 +29,7 @@ export const tableColumns = [
 ];
 
 interface Props {
-    selectedCollections: string[] | CollectionData[];
+    selectedCollections: string[];
 }
 
 function Hydrator({ selectedCollections }: Props) {

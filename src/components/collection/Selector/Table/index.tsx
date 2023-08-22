@@ -1,8 +1,7 @@
-import { CollectionData } from '../types';
 import Hydrator from './Hydrator';
 
 interface Props {
-    selectedCollections: string[] | CollectionData[];
+    selectedCollections: string[];
 }
 
 function BindingSelectorTable({ selectedCollections }: Props) {

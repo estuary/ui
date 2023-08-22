@@ -209,6 +209,7 @@ function useDiscoverCapture(
             setDraftedEntityName,
             setFormState,
             setPreviousEndpointConfig,
+            setServerUpdateRequired,
             storeDiscoveredCollections,
             supabaseClient,
         ]

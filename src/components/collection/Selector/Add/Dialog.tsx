@@ -13,14 +13,13 @@ import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { CollectionData } from '../types';
 import { AddCollectionDialogCTAProps } from './types';
 
 interface Props extends AddCollectionDialogCTAProps {
     id: string;
     open: boolean;
     primaryCTA: any;
-    selectedCollections: string[] | CollectionData[];
+    selectedCollections: string[];
     title: string | ReactNode;
 }
 

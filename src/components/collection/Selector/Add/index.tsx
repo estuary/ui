@@ -6,11 +6,10 @@ import { Plus } from 'iconoir-react';
 import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useStore } from 'zustand';
-import { CollectionData } from '../types';
 import AddCollectionDialog from './Dialog';
 
 interface Props {
-    selectedCollections: string[] | CollectionData[];
+    selectedCollections: string[];
     AddSelectedButton: ReactNode;
     disabled?: boolean;
 }

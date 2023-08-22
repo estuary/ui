@@ -3,10 +3,9 @@ import { defaultOutline } from 'context/Theme';
 import { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 import BindingsEditorAdd from './Add';
-import { CollectionData } from './types';
 
 interface Props {
-    selectedCollections: string[] | CollectionData[];
+    selectedCollections: string[];
     AddSelectedButton: ReactNode;
     itemType?: string;
     readOnly?: boolean;
@@ -25,8 +24,6 @@ function CollectionSelector({
 
     const collectionsLabel =
         itemType ?? intl.formatMessage({ id: 'terms.collections' });
-
-    console.log('selectedCollections=', selectedCollections);
 
     return (
         <Box>
