@@ -914,6 +914,11 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.entityWarnings.message': `You have not added any collections yet. This means there will be
                 no data output from this materialization. To add collections,
                 use the Output Collections section.`,
+
+    'workflows.autoDiscovery.header': `Schema Evolution`,
+    'workflows.autoDiscovery.label.optIntoDiscovery': `Automatically keep schemas up to date`,
+    'workflows.autoDiscovery.label.addNewBindings': `Automatically add new collections`,
+    'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Breaking changes re-version collections`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {

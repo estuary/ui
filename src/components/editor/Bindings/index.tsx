@@ -1,4 +1,5 @@
 import { Typography, useTheme } from '@mui/material';
+import AutoDiscoverySettings from 'components/capture/AutoDiscoverySettings';
 import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
@@ -128,6 +129,8 @@ function BindingsMultiEditor({
                     id={`${messagePrefix}.collectionSelector.instructions`}
                 />
             </Typography>
+
+            {entityType === 'capture' ? <AutoDiscoverySettings /> : null}
 
             <ListAndDetails
                 list={
