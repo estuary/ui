@@ -3,7 +3,6 @@ import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'context/Theme';
 import invariableStores from 'context/Zustand/invariableStores';
-import { useMemo } from 'react';
 
 import { useStore } from 'zustand';
 
@@ -20,16 +19,11 @@ interface RowsProps {
 function Row({ isSelected, row, setRow }: RowProps) {
     const theme = useTheme();
 
-    const [disabledRows] = useStore(
+    const disabled = useStore(
         invariableStores['Collections-Selector-Table'],
         (state) => {
-            return [state.disabledRows];
+            return state.disabledRows.includes(row.catalog_name);
         }
-    );
-
-    const disabled = useMemo(
-        () => disabledRows.includes(row.catalog_name),
-        [disabledRows, row.catalog_name]
     );
 
     return (
