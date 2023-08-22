@@ -83,11 +83,11 @@ function RowSelectorCheckBox({
                     horizontal: 'left',
                 }}
             >
-                <MenuItem onClick={() => setAll(true)}>
+                <MenuItem onClick={() => setAll(true, selectKeyValueName)}>
                     <FormattedMessage id="entityTable.rowSelector.all" />
                 </MenuItem>
 
-                <MenuItem onClick={() => setAll(false)}>
+                <MenuItem onClick={() => setAll(false, selectKeyValueName)}>
                     <FormattedMessage id="entityTable.rowSelector.none" />
                 </MenuItem>
             </Menu>

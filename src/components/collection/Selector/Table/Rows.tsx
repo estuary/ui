@@ -34,7 +34,7 @@ function Row({ isSelected, row, setRow }: RowProps) {
 
     return (
         <TableRow
-            key={`collection-search-${row.id}`}
+            key={`collection-selector-table-${row.id}`}
             selected={isSelected}
             onClick={
                 disabled
