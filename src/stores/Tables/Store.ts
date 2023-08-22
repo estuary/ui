@@ -152,7 +152,7 @@ export const getInitialState = (
 
         setAllSelected: (isSelected, valueProperty) => {
             set(
-                produce(({ selected }: SelectableTableStore) => {
+                produce(({ disabledRows, selected }: SelectableTableStore) => {
                     if (isSelected) {
                         const { rows } = get();
 
@@ -161,7 +161,9 @@ export const getInitialState = (
                                 ? value[valueProperty]
                                 : null;
 
-                            selected.set(key, evaluatedValue);
+                            if (!disabledRows.includes(key)) {
+                                selected.set(key, evaluatedValue);
+                            }
                         });
                     } else {
                         selected.clear();
