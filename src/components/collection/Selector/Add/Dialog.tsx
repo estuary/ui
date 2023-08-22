@@ -5,11 +5,9 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    Divider,
     Stack,
 } from '@mui/material';
 import BindingSelectorTable from 'components/collection/Selector/Table';
-import SingleStep from 'components/transformation/create/SingleStep';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -40,12 +38,6 @@ function AddCollectionDialog({
             <DialogContent>
                 <Stack spacing={3} sx={{ pt: 2 }}>
                     <StepWrapper>
-                        <SingleStep>
-                            <FormattedMessage id="newTransform.baseConfig.sourceCollections.label" />
-                        </SingleStep>
-
-                        <Divider />
-
                         <Box>
                             <BindingSelectorTable
                                 selectedCollections={selectedCollections}
