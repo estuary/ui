@@ -1,5 +1,4 @@
 import CollectionSelector from 'components/collection/Selector';
-import { CollectionData } from 'components/collection/Selector/types';
 import { ReactNode, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
@@ -35,7 +34,6 @@ function BindingSearch({
     );
 
     const [collectionValues, setCollectionValues] = useState<string[]>([]);
-    const [collectionOptions] = useState<CollectionData[]>([]);
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
@@ -49,7 +47,6 @@ function BindingSearch({
             setCollectionValues(collections);
         }
     }, [
-        collectionOptions,
         collections,
         discoveredCollections,
         discoveredCollectionsLabel,

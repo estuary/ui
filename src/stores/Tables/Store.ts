@@ -1,6 +1,5 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { getStatsByName, StatsFilter } from 'api/stats';
-import { CollectionData } from 'components/collection/Selector/types';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { flatMap } from 'lodash';
@@ -47,7 +46,7 @@ export interface SelectableTableStore extends StoreWithHydration {
     resetSelected: () => void;
 
     disabledRows: string[];
-    setDisabledRows: (val: string | string[] | CollectionData[]) => void;
+    setDisabledRows: (val: string | string[]) => void;
 
     successfulTransformations: number;
     incrementSuccessfulTransformations: () => void;
@@ -121,7 +120,7 @@ export const getInitialState = (
                     if (typeof value === 'string') {
                         state.disabledRows.push(value);
                     } else {
-                        state.disabledRows = value as string[];
+                        state.disabledRows = value;
                     }
                 }),
                 false,
