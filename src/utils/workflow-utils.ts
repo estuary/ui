@@ -11,6 +11,9 @@ import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
 
+// This is the soft limit we recommend to users
+export const MAX_BINDINGS = 300;
+
 export const getCollectionNameProp = (entityType: Entity) => {
     return entityType === 'materialization' ? 'source' : 'target';
 };

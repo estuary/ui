@@ -8,6 +8,7 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
+import { MAX_BINDINGS } from 'utils/workflow-utils';
 import { RowSelectorProps } from './types';
 
 type Props = Pick<
@@ -54,6 +55,7 @@ function RowSelectorCheckBox({
                     horizontal: 'left',
                 }}
                 badgeContent={selectedRows.size}
+                max={MAX_BINDINGS}
                 invisible={!showSelectedCount}
             >
                 <Button size="small" variant="text" onClick={toggleSelection}>

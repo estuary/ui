@@ -7,11 +7,12 @@ import { useUnmount } from 'react-use';
 import { SelectTableStoreNames } from 'stores/names';
 import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
+import { MAX_BINDINGS } from 'utils/workflow-utils';
 import { useStore } from 'zustand';
 import Rows from './Rows';
 
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
-const tableRowsPerPage = [10, 50, 100, 300];
+const tableRowsPerPage = [10, 50, 100, MAX_BINDINGS];
 const catalogNameColumn = 'catalog_name';
 export const tableColumns = [
     {
