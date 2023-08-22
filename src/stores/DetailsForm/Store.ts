@@ -5,7 +5,6 @@ import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
 import { Details, DetailsFormState } from 'stores/DetailsForm/types';
 import {
-    CustomError,
     fetchErrors,
     filterErrors,
     getInitialCustomErrorsData,
@@ -16,7 +15,6 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { DetailsFormStoreNames } from 'stores/names';
-import { JsonFormsData } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { createStore, StoreApi } from 'zustand';
@@ -36,21 +34,6 @@ const initialDetails: Details = {
         entityName: '',
     },
     errors: [],
-};
-
-const populateErrors = (
-    endpointConfig: JsonFormsData,
-    customErrors: CustomError[],
-    state: DetailsFormState
-): void => {
-    const endpointConfigErrors = filterErrors(fetchErrors(endpointConfig)).map(
-        (message) => ({
-            message,
-        })
-    );
-
-    state.errorsExist =
-        !isEmpty(endpointConfigErrors) || !isEmpty(customErrors);
 };
 
 const getInitialStateData = (): Pick<
@@ -89,7 +72,14 @@ export const getInitialState = (
 
                 // Setting this so that if there is a custom error then the
                 //  generate button will not proceed
-                populateErrors(state.details, val, state);
+                const endpointConfigErrors = filterErrors(
+                    fetchErrors(state.details)
+                ).map((message) => ({
+                    message,
+                }));
+
+                state.errorsExist =
+                    !isEmpty(endpointConfigErrors) || !isEmpty(val);
             }),
             false,
             'Details Custom Errors Set'
@@ -106,8 +96,15 @@ export const getInitialState = (
 
                 state.details = val;
 
-                const { customErrors } = get();
-                populateErrors(val, customErrors, state);
+                const endpointConfigErrors = filterErrors(
+                    fetchErrors(state.details)
+                ).map((message) => ({
+                    message,
+                }));
+
+                state.errorsExist =
+                    !isEmpty(endpointConfigErrors) ||
+                    !isEmpty(state.customErrors);
             }),
             false,
             'Details Changed'
