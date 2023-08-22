@@ -56,7 +56,6 @@ function Hydrator({ selectedCollections }: Props) {
         ]);
     }, [columnToSort, pagination, searchQuery, sortDirection]);
 
-    //
     const setDisabledRows = useStore(
         invariableStores['Collections-Selector-Table'],
         (state) => {
@@ -64,7 +63,6 @@ function Hydrator({ selectedCollections }: Props) {
         }
     );
     useEffect(() => {
-        console.log('updating the rows that are disabled');
         setDisabledRows(selectedCollections);
     }, [selectedCollections, setDisabledRows]);
 
