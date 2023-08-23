@@ -53,7 +53,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
     const [entityNameError, setEntityNameError] = useState<string | null>(null);
 
-    // Hacky - please do not sprad this around. Just made it easy to
+    // Hacky - please do not spread this pattern around. Just made it easy to
     //  get this working ASAP and we're gonna replace this anyway
     // TODO (bindings) needs to refactor stores so transforms is not
     //  pulling from 'resourceConfig' for collections. Need a good
