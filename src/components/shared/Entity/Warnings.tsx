@@ -5,8 +5,6 @@ import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_collectionErrorsExist } from 'stores/ResourceConfig/hooks';
 import AlertBox from '../AlertBox';
 
-// Not used yet. Thinking of adding this to the save/text dialog? Maybe
-//  need to see if users keep accidently making empty materializations
 function EntityWarnings() {
     const entityType = useEntityType();
 
