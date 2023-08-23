@@ -26,7 +26,6 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
 
     const resourceConfigUpdated = useMemo(() => {
         if (hasLength(draftSpecs)) {
-            console.log('resourceConfigUpdated');
             if (
                 draftSpecs[0]?.spec.bindings.length ===
                 Object.keys(resourceConfig).length
