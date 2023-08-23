@@ -12,14 +12,7 @@ import {
     useResourceConfig_setHydrationErrorsExist,
 } from './hooks';
 
-// Hydrator
-interface ResourceConfigHydratorProps extends BaseComponentProps {
-    disableAddingCollections?: boolean;
-}
-
-export const ResourceConfigHydrator = ({
-    children,
-}: ResourceConfigHydratorProps) => {
+export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const entityType = useEntityType();
