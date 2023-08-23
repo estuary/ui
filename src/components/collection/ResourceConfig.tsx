@@ -19,6 +19,9 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
 
     const hydrated = useResourceConfig_hydrated();
 
+    // If the collection is disabled then it will not come back in the built spec
+    //  binding list. This means the user could end up clicking "See Fields" button
+    //  forever and never get fields listed.
     const collectionDisabled =
         useResourceConfig_resourceConfigOfCollectionProperty(
             collectionName,
