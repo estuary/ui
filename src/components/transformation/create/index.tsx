@@ -99,7 +99,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
             <Stack direction={belowSm ? 'column' : 'row'}>
                 <LegacyStepWrapper>
-                    <BindingSelector height={370} />
+                    <BindingSelector height={370} disableSelect />
                 </LegacyStepWrapper>
 
                 <Box

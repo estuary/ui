@@ -22,6 +22,7 @@ import BindingsSelectorToggle from './Row/Toggle';
 import BindingSearch from './Search';
 
 interface BindingSelectorProps {
+    disableSelect?: boolean;
     height?: number | string;
     itemType?: string;
     readOnly?: boolean;
@@ -29,6 +30,7 @@ interface BindingSelectorProps {
 }
 
 function BindingSelector({
+    disableSelect,
     height,
     itemType,
     readOnly,
@@ -139,7 +141,9 @@ function BindingSelector({
                 height="100%"
                 header={itemType}
                 disableActions={disableActions}
-                setCurrentCollection={setCurrentCollection}
+                setCurrentCollection={
+                    !disableSelect ? setCurrentCollection : undefined
+                }
                 renderers={{
                     cell: cellRenderers,
                 }}
