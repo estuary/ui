@@ -47,6 +47,11 @@ function RowSelectorCheckBox({
         setAll(!hasSelections, selectKeyValueName);
     };
 
+    const updateAll = (val: boolean) => {
+        setAll(val, selectKeyValueName);
+        closeMenu();
+    };
+
     return (
         <ButtonGroup>
             <Badge
@@ -85,11 +90,11 @@ function RowSelectorCheckBox({
                     horizontal: 'left',
                 }}
             >
-                <MenuItem onClick={() => setAll(true, selectKeyValueName)}>
+                <MenuItem onClick={() => updateAll(true)}>
                     <FormattedMessage id="entityTable.rowSelector.all" />
                 </MenuItem>
 
-                <MenuItem onClick={() => setAll(false, selectKeyValueName)}>
+                <MenuItem onClick={() => updateAll(false)}>
                     <FormattedMessage id="entityTable.rowSelector.none" />
                 </MenuItem>
             </Menu>
