@@ -54,7 +54,7 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
         [displayValidation]
     );
 
-    // Happens when deleting the collection the user is currently viewing
+    // Should never happen but just being very safe so the page does not blow up
     if (!formData) {
         return null;
     }
