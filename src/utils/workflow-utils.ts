@@ -62,16 +62,16 @@ export const generateTaskSpec = (
             const resourceConfig = resourceConfigs[collectionName].data;
 
             // Check if disable is a boolean otherwise default to false
-            //  this was we can only include the 'disable' prop if it is true
-            //  otherwise we want to remove it
             const { disable } = resourceConfigs[collectionName];
             const resourceDisable = isBoolean(disable) ? disable : false;
 
+            // See which binding we need to update
             const existingBindingIndex = draftSpec.bindings.findIndex(
                 (binding: any) => getCollectionName(binding) === collectionName
             );
 
             if (existingBindingIndex > -1) {
+                // Include disable otherwise totally remove it
                 if (resourceDisable) {
                     draftSpec.bindings[existingBindingIndex].disable =
                         resourceDisable;
