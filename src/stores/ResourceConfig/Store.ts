@@ -475,9 +475,11 @@ const getInitialState = (
         //  update function calls. This was causing a lot of extra checks in the
         //  useServerUpdateRequiredMonitor hook
         // TODO (zustand)
-        // I am not 100% sure why Zustand was still updating resourceConfig even when
+        // Not 100% sure why Zustand was still updating resourceConfig even when
         //  there were no real changes. Wondering if it is because we populate with a
         //  new object and that triggers it?
+        // This might be related to how immer handles what is updated vs what
+        //  is not during changes. Need to really dig into this later.
         if (!isEqual(existingConfig, updatedConfig)) {
             setResourceConfig(key, updatedConfig);
         }
