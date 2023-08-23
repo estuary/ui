@@ -41,12 +41,6 @@ interface Props {
     setCurrentCollection?: (collection: any) => void;
 }
 
-// const localSnackbarSettings: OptionsObject = {
-//     ...snackbarSettings,
-//     autoHideDuration: 1500,
-//     variant: 'default',
-// };
-
 const cellClass_noPadding = 'estuary-datagrid--cell--no-padding';
 
 const initialState = {
