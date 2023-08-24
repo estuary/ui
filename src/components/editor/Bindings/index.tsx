@@ -120,7 +120,7 @@ function BindingsMultiEditor({
     const itemType =
         entityType === 'capture'
             ? intl.formatMessage({ id: 'terms.bindings' })
-            : undefined;
+            : intl.formatMessage({ id: 'terms.collections' });
 
     return (
         <LocalZustandProvider createStore={localStore}>
@@ -141,7 +141,9 @@ function BindingsMultiEditor({
                         RediscoverButton={RediscoverButton}
                     />
                 }
-                details={<BindingsEditor readOnly={readOnly} />}
+                details={
+                    <BindingsEditor itemType={itemType} readOnly={readOnly} />
+                }
                 backgroundColor={
                     alternativeReflexContainerBackground[theme.palette.mode]
                 }

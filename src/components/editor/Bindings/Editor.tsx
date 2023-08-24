@@ -2,7 +2,6 @@ import { Box, Stack, Typography } from '@mui/material';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import CollectionSchemaEditor from 'components/collection/schema/Editor';
 import CollectionSchemaEditorSkeleton from 'components/collection/schema/Editor/Skeleton';
-import MessageWithLink from 'components/content/MessageWithLink';
 import ControlledEditor from 'components/editor/Bindings/ControlledEditor';
 import SchemaInferenceButton from 'components/editor/Bindings/SchemaInference/Button';
 import {
@@ -19,6 +18,7 @@ import {
 } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
+import { useEntityType } from 'context/EntityContext';
 import useInitializeCollectionDraft from 'hooks/useInitializeCollectionDraft';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -27,10 +27,13 @@ import SchemaEditCLIButton from '../Bindings/SchemaEdit/CLIButton';
 import SchemaEditToggle from '../Bindings/SchemaEdit/Toggle';
 
 interface Props {
+    itemType: string;
     readOnly?: boolean;
 }
 
-function BindingsEditor({ readOnly = false }: Props) {
+function BindingsEditor({ itemType, readOnly = false }: Props) {
+    const entityType = useEntityType();
+
     const initializeCollectionDraft = useInitializeCollectionDraft();
 
     // Bindings Editor Store
@@ -56,7 +59,6 @@ function BindingsEditor({ readOnly = false }: Props) {
     const currentCollection = useResourceConfig_currentCollection();
 
     const [activeTab, setActiveTab] = useState<number>(0);
-
     useEffect(() => {
         if (tabProps[activeTab].value === 'schema' && currentCollection) {
             setCurrentCatalog(null);
@@ -162,13 +164,29 @@ function BindingsEditor({ readOnly = false }: Props) {
                         </Stack>
                     ) : (
                         <AlertBox
-                            severity="error"
+                            severity="warning"
                             short
                             title={
                                 <FormattedMessage id="workflows.collectionSelector.error.title.missingCollectionSchema" />
                             }
                         >
-                            <MessageWithLink messageID="error.message" />
+                            <Typography>
+                                <FormattedMessage
+                                    id="workflows.collectionSelector.error.message.missingCollectionSchema"
+                                    values={{
+                                        itemType,
+                                        entityType,
+                                    }}
+                                />
+                            </Typography>
+                            <Typography>
+                                <FormattedMessage
+                                    id="workflows.collectionSelector.error.fix.missingCollectionSchema"
+                                    values={{
+                                        itemType,
+                                    }}
+                                />
+                            </Typography>
                         </AlertBox>
                     )}
                 </Box>

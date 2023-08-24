@@ -265,18 +265,6 @@ const getInitialState = (
         );
     },
 
-    addCollections: (value) => {
-        set(
-            produce((state: ResourceConfigState) => {
-                const { collections } = get();
-
-                state.collections = getNewCollectionList(value, collections);
-            }),
-            false,
-            'Collection Added'
-        );
-    },
-
     removeCollection: (value) => {
         set(
             produce((state: ResourceConfigState) => {

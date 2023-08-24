@@ -21,7 +21,6 @@ export interface ResourceConfigState {
         collections: LiveSpecsExt_MaterializeCapture | null[],
         rehydrating?: boolean
     ) => void;
-    addCollections: (value: string[]) => void;
     removeCollection: (value: string) => void;
     removeCollections: (
         value: string[],
