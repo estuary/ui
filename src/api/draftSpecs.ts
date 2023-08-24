@@ -151,22 +151,22 @@ export const deleteDraftSpecsByCatalogName = async (
     specType: Entity,
     catalogNames: string[]
 ) => {
-    // In case we get an absolutely massive amount of catalogs to delete,
-    // we don't want to spam supabase
-    const limiter = pLimit(3);
-    const promises: Array<Promise<PostgrestResponse<any>>> = [];
-    let index = 0;
-
-    const deletePromiseGenerator = (idx: number) => {
-        return supabaseClient
-            .from(TABLES.DRAFT_SPECS)
-            .delete()
-            .eq('draft_id', draftId)
-            .eq('spec_type', specType)
-            .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE));
-    };
-
     if (catalogNames.length > 0) {
+        // In case we get an absolutely massive amount of catalogs to delete,
+        // we don't want to spam supabase
+        const limiter = pLimit(3);
+        const promises: Array<Promise<PostgrestResponse<any>>> = [];
+        let index = 0;
+
+        const deletePromiseGenerator = (idx: number) => {
+            return supabaseClient
+                .from(TABLES.DRAFT_SPECS)
+                .delete()
+                .eq('draft_id', draftId)
+                .eq('spec_type', specType)
+                .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE));
+        };
+
         // This could probably be written in a fancy functional-programming way with
         // clever calls to concat and map and slice and stuff,
         // but I want it to be dead obvious what's happening here.
