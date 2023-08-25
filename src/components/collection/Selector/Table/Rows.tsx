@@ -48,7 +48,13 @@ function Row({ row, setRow }: RowProps) {
                 isSelected={isSelected}
                 name={row.catalog_name}
             />
-            <TableCell>{row.catalog_name}</TableCell>
+            <TableCell
+                sx={{
+                    wordBreak: 'break-all',
+                }}
+            >
+                {row.catalog_name}
+            </TableCell>
             <TimeStamp time={row.updated_at} />
         </TableRow>
     );
