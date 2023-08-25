@@ -1,5 +1,6 @@
 import { LoadingButton } from '@mui/lab';
 import { modifyDraftSpec } from 'api/draftSpecs';
+import { AddCollectionDialogCTAProps } from 'components/collection/Selector/Add/types';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
@@ -8,7 +9,7 @@ import {
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
 import { useZustandStore } from 'context/Zustand/provider';
-import { Dispatch, SetStateAction, useCallback } from 'react';
+import { useCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import {
@@ -30,11 +31,7 @@ import { Transform } from 'types';
 import { evaluateTransformConfigs } from 'utils/derivation-utils';
 import { hasLength } from 'utils/misc-utils';
 
-interface Props {
-    setDialogOpen: Dispatch<SetStateAction<boolean>>;
-}
-
-function UpdateDraftButton({ setDialogOpen }: Props) {
+function UpdateDraftButton({ toggle }: AddCollectionDialogCTAProps) {
     const selected = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['selected']
@@ -126,7 +123,7 @@ function UpdateDraftButton({ setDialogOpen }: Props) {
                 setPersistedDraftId(draftId);
 
                 setCatalogUpdating(false);
-                setDialogOpen(false);
+                toggle(false);
             }
         } else {
             setCatalogUpdating(false);
@@ -140,7 +137,7 @@ function UpdateDraftButton({ setDialogOpen }: Props) {
         mutateDraftSpecs,
         selected,
         setCatalogUpdating,
-        setDialogOpen,
+        toggle,
         setDraftId,
         setPersistedDraftId,
         setSelectedAttribute,

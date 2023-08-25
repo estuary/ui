@@ -15,6 +15,8 @@ function StorageMappingsTable({ header }: Props) {
     const {
         pagination,
         setPagination,
+        rowsPerPage,
+        setRowsPerPage,
         searchQuery,
         setSearchQuery,
         sortDirection,
@@ -48,6 +50,8 @@ function StorageMappingsTable({ header }: Props) {
                     }}
                     columns={tableColumns}
                     renderTableRows={(data) => <Rows data={data} />}
+                    rowsPerPage={rowsPerPage}
+                    setRowsPerPage={setRowsPerPage}
                     pagination={pagination}
                     setPagination={setPagination}
                     searchQuery={searchQuery}

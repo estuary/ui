@@ -324,13 +324,12 @@ const expandedRowBgColor = {
 };
 export const getEntityTableRowSx = (
     theme: Theme,
-    detailsExpanded: boolean
+    disabled?: boolean
 ): SxProps<Theme> => {
     return {
-        background: detailsExpanded
-            ? expandedRowBgColor[theme.palette.mode]
-            : null,
-        cursor: 'pointer',
+        background: disabled ? expandedRowBgColor[theme.palette.mode] : null,
+        cursor: disabled ? 'default' : 'pointer',
+        opacity: disabled ? 0.75 : undefined,
     };
 };
 
@@ -411,6 +410,14 @@ export const alternateConnectorImageBackgroundSx: SxProps<Theme> = {
 
 export const autoCompleteListPadding = 8;
 
+export const dataGridEntireCellButtonStyling: SxProps<Theme> = {
+    borderRadius: 0,
+    justifyContent: 'center',
+    height: '100%',
+    margin: 0,
+    width: '100%',
+};
+
 export const dataGridListStyling: SxProps<Theme> = {
     'borderRadius': 0,
     'borderBottom': 'none',
@@ -427,18 +434,9 @@ export const dataGridListStyling: SxProps<Theme> = {
         borderBottom: (theme) => defaultOutline[theme.palette.mode],
         bgcolor: (theme) => alternativeDataGridHeader[theme.palette.mode],
     },
-    '& .MuiDataGrid-columnHeader:hover': {
-        '& .MuiDataGrid-columnHeaderTitleContainerContent': {
-            mr: 0.5,
-        },
-        '& .MuiDataGrid-menuIcon': {
-            width: '2rem',
-        },
-    },
     '& .MuiDataGrid-columnHeaderTitleContainerContent': {
+        height: '100%',
         width: '100%',
-        justifyContent: 'space-between',
-        mr: 4.5,
     },
 };
 

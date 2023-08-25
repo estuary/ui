@@ -37,9 +37,16 @@ export interface SelectableTableStore extends StoreWithHydration {
     removeRows: () => void;
 
     selected: Map<string, any>;
-    setSelected: (key: string, value: string, isSelected: boolean) => void;
+    setSelected: (
+        key: string | string[],
+        value: string,
+        isSelected: boolean
+    ) => void;
     setAllSelected: (isSelected: boolean, valueProperty?: string) => void;
     resetSelected: () => void;
+
+    disabledRows: string[];
+    setDisabledRows: (val: string | string[]) => void;
 
     successfulTransformations: number;
     incrementSuccessfulTransformations: () => void;
@@ -75,12 +82,14 @@ export const getInitialStateData = (): Pick<
     | 'query'
     | 'stats'
     | 'statsFilter'
+    | 'disabledRows'
 > => {
     return {
         stats: null,
         statsFilter: 'today',
         query: getAsyncDefault(),
         selected: initialCreateStates.selected(),
+        disabledRows: [],
         rows: initialCreateStates.rows(),
         successfulTransformations:
             initialCreateStates.successfulTransformations,
@@ -105,13 +114,35 @@ export const getInitialState = (
             );
         },
 
-        setSelected: (key, value, isSelected) => {
+        setDisabledRows: (value) => {
+            set(
+                produce((state: SelectableTableStore) => {
+                    if (typeof value === 'string') {
+                        state.disabledRows.push(value);
+                    } else {
+                        state.disabledRows = value;
+                    }
+                }),
+                false,
+                'Disabled rows changed'
+            );
+        },
+
+        setSelected: (keys, value, isSelected) => {
             set(
                 produce(({ selected }: SelectableTableStore) => {
-                    if (isSelected) {
-                        selected.set(key, value);
+                    const updateValue = (key: string) => {
+                        if (isSelected) {
+                            selected.set(key, value);
+                        } else {
+                            selected.delete(key);
+                        }
+                    };
+
+                    if (typeof keys === 'string') {
+                        updateValue(keys);
                     } else {
-                        selected.delete(key);
+                        keys.forEach((key) => updateValue(key));
                     }
                 }),
                 false,
@@ -121,7 +152,7 @@ export const getInitialState = (
 
         setAllSelected: (isSelected, valueProperty) => {
             set(
-                produce(({ selected }: SelectableTableStore) => {
+                produce(({ disabledRows, selected }: SelectableTableStore) => {
                     if (isSelected) {
                         const { rows } = get();
 
@@ -130,7 +161,10 @@ export const getInitialState = (
                                 ? value[valueProperty]
                                 : null;
 
-                            selected.set(key, evaluatedValue);
+                            // if the name is disabled then don't add it here
+                            if (!disabledRows.includes(value.catalog_name)) {
+                                selected.set(key, evaluatedValue);
+                            }
                         });
                     } else {
                         selected.clear();

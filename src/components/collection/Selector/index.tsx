@@ -1,83 +1,63 @@
-import { Box } from '@mui/material';
-import { useLiveSpecs } from 'hooks/useLiveSpecs';
-import { difference } from 'lodash';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
+import { defaultOutline } from 'context/Theme';
 import { ReactNode } from 'react';
-import CollectionSelectorActions from './Actions';
-import CollectionSelectorList from './List';
-import CollectionSelectorSearch from './Search';
+import { useIntl } from 'react-intl';
+import BindingsEditorAdd from './Add';
 
-interface BindingSelectorProps {
-    loading: boolean;
-    skeleton: ReactNode;
-    removeAllCollections: () => void;
-
-    currentCollection?: any;
-    setCurrentCollection?: (collection: any) => void;
-
-    collections: Set<string>;
-    removeCollection: (collectionName: string) => void;
-    addCollection: (collectionName: string) => void;
-
+interface Props {
+    selectedCollections: string[];
+    AddSelectedButton: ReactNode;
+    itemType?: string;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
-
-    height?: number;
 }
 
 function CollectionSelector({
-    loading,
-    skeleton,
-    readOnly,
+    readOnly = false,
+    itemType,
     RediscoverButton,
+    AddSelectedButton,
+    selectedCollections,
+}: Props) {
+    const intl = useIntl();
+    const theme = useTheme();
 
-    collections,
-    addCollection,
-    removeCollection,
-    removeAllCollections,
+    const collectionsLabel =
+        itemType ?? intl.formatMessage({ id: 'terms.collections' });
 
-    currentCollection,
-    setCurrentCollection,
+    return (
+        <Box>
+            <Box sx={{ height: '100%', width: '100%' }}>
+                <Stack
+                    direction="row"
+                    sx={{
+                        justifyContent: 'space-between',
+                        borderBottom: defaultOutline[theme.palette.mode],
+                    }}
+                >
+                    <Typography
+                        component="div"
+                        sx={{
+                            p: 1,
+                            fontWeight: 500,
+                            textTransform: 'uppercase',
+                        }}
+                    >
+                        {collectionsLabel}
+                    </Typography>
 
-    height,
-}: BindingSelectorProps) {
-    const { liveSpecs } = useLiveSpecs('collection');
-    const catalogNames = liveSpecs.map((liveSpec) => liveSpec.catalog_name);
+                    <Stack direction="row">
+                        {RediscoverButton}
 
-    const collectionsArray = Array.from(collections);
-
-    return loading ? (
-        <Box>{skeleton}</Box>
-    ) : (
-        <>
-            <CollectionSelectorSearch
-                options={catalogNames}
-                readOnly={readOnly}
-                selectedCollections={collectionsArray}
-                onChange={(value, reason) => {
-                    if (reason === 'selectOption') {
-                        addCollection(difference(value, collectionsArray)[0]);
-                    } else if (reason === 'removeOption') {
-                        removeCollection(
-                            difference(collectionsArray, value)[0]
-                        );
-                    }
-                }}
-            />
-
-            <CollectionSelectorActions
-                readOnly={readOnly ?? collections.size === 0}
-                removeAllCollections={removeAllCollections}
-                RediscoverButton={RediscoverButton}
-            />
-
-            <CollectionSelectorList
-                height={height}
-                collections={collections}
-                removeCollection={removeCollection}
-                currentCollection={currentCollection}
-                setCurrentCollection={setCurrentCollection}
-            />
-        </>
+                        <BindingsEditorAdd
+                            disabled={readOnly}
+                            selectedCollections={selectedCollections}
+                            AddSelectedButton={AddSelectedButton}
+                        />
+                    </Stack>
+                </Stack>
+            </Box>
+        </Box>
     );
 }
 

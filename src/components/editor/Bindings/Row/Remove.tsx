@@ -1,34 +1,31 @@
-import { IconButton, ListItemText } from '@mui/material';
+import { IconButton } from '@mui/material';
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
-import { typographyTruncation } from 'context/Theme';
+import { useEntityWorkflow } from 'context/Workflow';
 import { Cancel } from 'iconoir-react';
+import React from 'react';
 import {
     useResourceConfig_discoveredCollections,
     useResourceConfig_removeCollection,
     useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
-import { EntityWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
-interface RowProps {
+interface Props {
     collection: string;
-    task: string;
-    workflow: EntityWorkflow | null;
     disabled: boolean;
     draftId: string | null;
+    task: string;
 }
 
-function ResourceConfigRow({
+function BindingsSelectorRemove({
     collection,
-    task,
-    workflow,
     disabled,
     draftId,
-}: RowProps) {
-    // Resource Config Store
+    task,
+}: Props) {
+    const workflow = useEntityWorkflow();
     const discoveredCollections = useResourceConfig_discoveredCollections();
     const removeCollection = useResourceConfig_removeCollection();
-
     const setRestrictedDiscoveredCollections =
         useResourceConfig_setRestrictedDiscoveredCollections();
 
@@ -63,22 +60,15 @@ function ResourceConfigRow({
     };
 
     return (
-        <>
-            <ListItemText
-                primary={collection}
-                primaryTypographyProps={typographyTruncation}
-            />
-
-            <IconButton
-                disabled={disabled}
-                size="small"
-                onClick={handlers.removeCollection}
-                sx={{ color: (theme) => theme.palette.text.primary }}
-            >
-                <Cancel />
-            </IconButton>
-        </>
+        <IconButton
+            disabled={disabled}
+            size="small"
+            onClick={handlers.removeCollection}
+            sx={{ color: (theme) => theme.palette.text.primary }}
+        >
+            <Cancel />
+        </IconButton>
     );
 }
 
-export default ResourceConfigRow;
+export default BindingsSelectorRemove;

@@ -232,7 +232,7 @@ function DataPreview() {
             hideFooter
             disableColumnSelector
             density="compact"
-            headerHeight={40}
+            columnHeaderHeight={40}
             rowCount={sampleJournalData.data.documents.length}
             sx={dataGridListStyling}
         />

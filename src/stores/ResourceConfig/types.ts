@@ -1,15 +1,11 @@
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
+import { LiveSpecsExt_MaterializeCapture } from 'hooks/useLiveSpecsExt';
 import { CallSupabaseResponse } from 'services/supabase';
 import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
-import {
-    CaptureBinding,
-    MaterializationBinding,
-} from '../../../flow_deps/flow';
 
-export interface ResourceConfig {
-    [key: string]: JsonFormsData | any[];
+export interface ResourceConfig extends JsonFormsData {
     errors: any[];
+    disable?: boolean;
 }
 
 export interface ResourceConfigDictionary {
@@ -22,16 +18,12 @@ export interface ResourceConfigState {
     // Collection Selector
     collections: string[] | null;
     preFillEmptyCollections: (
-        collections: LiveSpecsExtQuery[] | null[],
+        collections: LiveSpecsExt_MaterializeCapture | null[],
         rehydrating?: boolean
     ) => void;
-    preFillCollections: (
-        bindings: CaptureBinding[] | MaterializationBinding[],
-        entityType: Entity
-    ) => void;
-    addCollections: (value: string[]) => void;
     removeCollection: (value: string) => void;
-    removeAllCollections: (
+    removeCollections: (
+        value: string[],
         workflow: EntityWorkflow | null,
         catalogName: string
     ) => void;
@@ -46,7 +38,7 @@ export interface ResourceConfigState {
     collectionErrorsExist: boolean;
 
     currentCollection: string | null;
-    setCurrentCollection: (collections: string | null) => void;
+    setCurrentCollection: (collections?: string | null) => void;
 
     discoveredCollections: string[] | null;
     setDiscoveredCollections: (value: DraftSpecQuery) => void;
@@ -59,10 +51,15 @@ export interface ResourceConfigState {
 
     // Resource Config
     resourceConfig: ResourceConfigDictionary;
+    prefillResourceConfig: (bindings: any) => void;
     setResourceConfig: (
         key: string | string[],
-        resourceConfig?: ResourceConfig
+        resourceConfig?: ResourceConfig,
+        disableCheckingErrors?: boolean,
+        disableOmit?: boolean
     ) => void;
+    updateResourceConfig: (key: string, formData: JsonFormsData) => void;
+    toggleDisable: (key: string | string[], value?: boolean) => void;
     resetResourceConfigAndCollections: () => void;
 
     resourceConfigErrorsExist: boolean;

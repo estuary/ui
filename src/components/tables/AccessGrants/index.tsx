@@ -23,6 +23,8 @@ function AccessGrantsTable({ tablePrefix, showUser }: Props) {
     const {
         pagination,
         setPagination,
+        rowsPerPage,
+        setRowsPerPage,
         searchQuery,
         setSearchQuery,
         sortDirection,
@@ -80,6 +82,8 @@ function AccessGrantsTable({ tablePrefix, showUser }: Props) {
                             <PrefixRows data={data} />
                         )
                     }
+                    rowsPerPage={rowsPerPage}
+                    setRowsPerPage={setRowsPerPage}
                     pagination={pagination}
                     setPagination={setPagination}
                     searchQuery={searchQuery}

@@ -72,7 +72,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
             key={`Entity-${row.id}`}
             selected={isSelected}
             onClick={() => setRow(row.id, row.last_pub_id, !isSelected)}
-            sx={getEntityTableRowSx(theme, false)}
+            sx={getEntityTableRowSx(theme)}
         >
             <RowSelect isSelected={isSelected} name={row.catalog_name} />
 

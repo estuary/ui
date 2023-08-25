@@ -13,7 +13,7 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isEqual } from 'lodash';
+import { useServerUpdateRequiredMonitor } from 'hooks/useServerUpdateRequiredMonitor';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
@@ -25,13 +25,9 @@ import { EditorStoreNames } from 'stores/names';
 import {
     useResourceConfig_discoveredCollections,
     useResourceConfig_resetResourceConfigAndCollections,
-    useResourceConfig_resourceConfig,
     useResourceConfig_setResourceSchema,
-    useResourceConfig_setServerUpdateRequired,
 } from 'stores/ResourceConfig/hooks';
-import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Schema } from 'types';
-import { getCollectionName, getCollectionNameProp } from 'utils/workflow-utils';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];
@@ -39,11 +35,16 @@ interface Props {
     RediscoverButton?: ReactNode;
 }
 
+const height = 550;
+
 function BindingsMultiEditor({
     draftSpecs = [],
     readOnly = false,
     RediscoverButton,
 }: Props) {
+    // This keeps an eye on resource config and updates if there is a need
+    useServerUpdateRequiredMonitor(draftSpecs);
+
     const intl = useIntl();
     const theme = useTheme();
 
@@ -69,11 +70,8 @@ function BindingsMultiEditor({
 
     const setResourceSchema = useResourceConfig_setResourceSchema();
 
-    const resourceConfig = useResourceConfig_resourceConfig();
     const resetResourceConfigAndCollections =
         useResourceConfig_resetResourceConfigAndCollections();
-
-    const setServerUpdateRequired = useResourceConfig_setServerUpdateRequired();
 
     const { connectorTag } = useConnectorTag(imageTag.id);
 
@@ -92,30 +90,6 @@ function BindingsMultiEditor({
         connectorTag?.connector_id,
         connectorTag?.resource_spec_schema,
     ]);
-
-    const resourceConfigUpdated = useMemo(() => {
-        let queriedResourceConfig: ResourceConfigDictionary = {};
-
-        const collectionNameProp = getCollectionNameProp(entityType);
-
-        draftSpecs[0]?.spec.bindings.forEach((binding: any) => {
-            queriedResourceConfig = {
-                ...queriedResourceConfig,
-                [getCollectionName(binding[collectionNameProp])]: {
-                    data: binding.resource,
-                    errors: [],
-                },
-            };
-        });
-
-        return draftSpecs.length > 0
-            ? !isEqual(resourceConfig, queriedResourceConfig)
-            : false;
-    }, [draftSpecs, entityType, resourceConfig]);
-
-    useEffect(() => {
-        setServerUpdateRequired(resourceConfigUpdated);
-    }, [setServerUpdateRequired, resourceConfigUpdated]);
 
     const removeDiscoveredCollectionOptions = useMemo(() => {
         if (
@@ -146,7 +120,7 @@ function BindingsMultiEditor({
     const itemType =
         entityType === 'capture'
             ? intl.formatMessage({ id: 'terms.bindings' })
-            : undefined;
+            : intl.formatMessage({ id: 'terms.collections' });
 
     return (
         <LocalZustandProvider createStore={localStore}>
@@ -161,18 +135,20 @@ function BindingsMultiEditor({
             <ListAndDetails
                 list={
                     <BindingSelector
+                        height={height - 25}
                         itemType={itemType}
-                        shortenName={entityType === 'capture'}
                         readOnly={readOnly}
                         RediscoverButton={RediscoverButton}
                     />
                 }
-                details={<BindingsEditor readOnly={readOnly} />}
+                details={
+                    <BindingsEditor itemType={itemType} readOnly={readOnly} />
+                }
                 backgroundColor={
                     alternativeReflexContainerBackground[theme.palette.mode]
                 }
                 displayBorder={true}
-                height={550}
+                height={height}
             />
         </LocalZustandProvider>
     );
