@@ -1,7 +1,7 @@
 import { MenuItem, Select } from '@mui/material';
 import { useState } from 'react';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
-import { validateInput } from '.';
+import { validateInput } from './shared';
 import { PrefixedName_Errors } from './types';
 
 interface Props {
