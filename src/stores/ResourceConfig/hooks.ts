@@ -21,20 +21,6 @@ export const useResourceConfig_preFillEmptyCollections = () => {
     );
 };
 
-export const useResourceConfig_preFillCollections = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['preFillCollections']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.preFillCollections);
-};
-
-export const useResourceConfig_addCollections = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['addCollections']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.addCollections);
-};
-
 export const useResourceConfig_removeCollection = () => {
     return useZustandStore<
         ResourceConfigState,
@@ -42,11 +28,11 @@ export const useResourceConfig_removeCollection = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.removeCollection);
 };
 
-export const useResourceConfig_removeAllCollections = () => {
+export const useResourceConfig_removeCollections = () => {
     return useZustandStore<
         ResourceConfigState,
-        ResourceConfigState['removeAllCollections']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.removeAllCollections);
+        ResourceConfigState['removeCollections']
+    >(ResourceConfigStoreNames.GENERAL, (state) => state.removeCollections);
 };
 
 export const useResourceConfig_resetConfigAndCollections = () => {
@@ -128,11 +114,53 @@ export const useResourceConfig_resourceConfig = () => {
     );
 };
 
+export const useResourceConfig_resourceConfigOfCollection = (
+    collection: keyof ResourceConfigState['resourceConfig']
+) => {
+    return useZustandStore<ResourceConfigState, any>(
+        ResourceConfigStoreNames.GENERAL,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        (state) => state.resourceConfig[collection],
+        shallow
+    );
+};
+
+export const useResourceConfig_resourceConfigOfCollectionProperty = (
+    collection: any,
+    property: any
+) => {
+    return useZustandStore<ResourceConfigState, any>(
+        ResourceConfigStoreNames.GENERAL,
+        (state) => {
+            if (!collection) {
+                return null;
+            }
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            return state.resourceConfig[collection]?.[property];
+        },
+        shallow
+    );
+};
+
 export const useResourceConfig_setResourceConfig = () => {
     return useZustandStore<
         ResourceConfigState,
         ResourceConfigState['setResourceConfig']
     >(ResourceConfigStoreNames.GENERAL, (state) => state.setResourceConfig);
+};
+
+export const useResourceConfig_updateResourceConfig = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['updateResourceConfig']
+    >(ResourceConfigStoreNames.GENERAL, (state) => state.updateResourceConfig);
+};
+
+export const useResourceConfig_toggleDisable = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['toggleDisable']
+    >(ResourceConfigStoreNames.GENERAL, (state) => state.toggleDisable);
 };
 
 export const useResourceConfig_resetResourceConfigAndCollections = () => {

@@ -7,7 +7,6 @@ import {
     List,
     ListItemButton,
     ListItemText,
-    Paper,
     Stack,
     Typography,
     useTheme,
@@ -102,16 +101,18 @@ function History() {
 
     return (
         <Box>
-            <AlertBox short severity="warning" title="Under Development">
-                Please feel free to provide any and all feedback to the front
-                end team.
-            </AlertBox>
+            <Box sx={{ m: 2 }}>
+                <AlertBox short severity="warning" title="Under Development">
+                    Please feel free to provide any and all feedback to the
+                    front end team.
+                </AlertBox>
+            </Box>
             <ListAndDetails
                 displayBorder
                 height={getEditorTotalHeight(HEIGHT)}
                 list={
                     <>
-                        <Typography variant="subtitle1">
+                        <Typography variant="subtitle1" sx={{ p: 1 }}>
                             Publication History
                         </Typography>
                         <List>
@@ -135,6 +136,7 @@ function History() {
                                                     publication.published_at
                                                 )}
                                             </Box>
+                                            <Box>{publication.detail}</Box>
                                             <Box>{publication.user_email}</Box>
                                         </Stack>
                                     </ListItemText>
@@ -147,7 +149,7 @@ function History() {
                     // eslint-disable-next-line react/jsx-no-useless-fragment
                     <>
                         {hasLength(publications) && currentSpec ? (
-                            <Paper variant="outlined">
+                            <>
                                 <Grid container>
                                     <Grid item xs={6}>
                                         <Box
@@ -193,7 +195,7 @@ function History() {
                                     }
                                     options={{ readOnly: true }}
                                 />
-                            </Paper>
+                            </>
                         ) : (
                             <CircularProgress />
                         )}

@@ -1,5 +1,8 @@
 import { ConnectorTag } from 'hooks/useConnectorTag';
-import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
+import {
+    LiveSpecsExtQuery,
+    LiveSpecsExt_MaterializeCapture,
+} from 'hooks/useLiveSpecsExt';
 import {
     handleFailure,
     handleSuccess,
@@ -60,7 +63,7 @@ export const getLiveSpecsByLiveSpecId = async (
     return data;
 };
 
-export const getLiveSpecsByLastPubId = async (
+export const getLiveSpecs_writesTo = async (
     lastPubId: string | string[],
     specType: Entity
 ) => {
@@ -69,11 +72,11 @@ export const getLiveSpecsByLastPubId = async (
 
     const data = await supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
-        .select(liveSpecColumns)
+        .select(`writes_to`)
         .eq('spec_type', specType)
         .or(`last_pub_id.in.(${draftArray})`)
         .order('updated_at', { ascending: false })
-        .then(handleSuccess<LiveSpecsExtQuery[]>, handleFailure);
+        .then(handleSuccess<LiveSpecsExt_MaterializeCapture>, handleFailure);
 
     return data;
 };

@@ -22,7 +22,7 @@ function LegacyLanguageSelector() {
     const setLanguage = useTransformationCreate_setLanguage();
 
     return (
-        <LegacyStepWrapper last>
+        <LegacyStepWrapper last="true">
             <div style={{ padding: '0.5rem 16px' }}>
                 <LegacySingleStep num={2}>
                     <Typography>

@@ -11,18 +11,16 @@ import {
     Typography,
     useMediaQuery,
 } from '@mui/material';
-import { BindingsSelectorSkeleton } from 'components/collection/CollectionSkeletons';
-import CollectionSelector from 'components/collection/Selector';
 import SingleLineCode from 'components/content/SingleLineCode';
+import BindingSelector from 'components/editor/Bindings/Selector';
 import PrefixedName from 'components/inputs/PrefixedName';
 import GitPodButton from 'components/transformation/create/GitPodButton';
 import LegacyLanguageSelector from 'components/transformation/create/legacy/LanguageSelector';
 import LegacySingleStep from 'components/transformation/create/legacy/SingleStep';
 import { LegacyStepWrapper } from 'components/transformation/create/legacy/Wrapper';
-import { useLiveSpecs } from 'hooks/useLiveSpecs';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useSet } from 'react-use';
+import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
 import {
     useTransformationCreate_setCatalogName,
     useTransformationCreate_setName,
@@ -49,16 +47,21 @@ function TransformationCreate({ postWindowOpen }: Props) {
         theme.breakpoints.down('sm')
     );
 
-    const collections = useLiveSpecs('collection');
-
     // Transformation Create Store
     const setDerivationName = useTransformationCreate_setName();
     const setCatalogName = useTransformationCreate_setCatalogName();
 
     const [entityNameError, setEntityNameError] = useState<string | null>(null);
 
-    const [selectedCollectionSet, selectedCollectionSetFunctions] = useSet(
-        new Set<string>([])
+    // Hacky - please do not spread this pattern around. Just made it easy to
+    //  get this working ASAP and we're gonna replace this anyway
+    // TODO (bindings) needs to refactor stores so transforms is not
+    //  pulling from 'resourceConfig' for collections. Need a good
+    //  solution of setting the list of selected collections anywhere
+    const collections = useResourceConfig_collections();
+    const selectedCollectionSet = useMemo(
+        () => new Set<string>(collections),
+        [collections]
     );
 
     return (
@@ -96,17 +99,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
             <Stack direction={belowSm ? 'column' : 'row'}>
                 <LegacyStepWrapper>
-                    <CollectionSelector
-                        height={350}
-                        loading={collections.isValidating}
-                        skeleton={<BindingsSelectorSkeleton />}
-                        removeAllCollections={
-                            selectedCollectionSetFunctions.reset
-                        }
-                        collections={selectedCollectionSet}
-                        removeCollection={selectedCollectionSetFunctions.remove}
-                        addCollection={selectedCollectionSetFunctions.add}
-                    />
+                    <BindingSelector height={370} disableSelect />
                 </LegacyStepWrapper>
 
                 <Box

@@ -1,117 +1,45 @@
-import { Box, IconButton, ListItemText, useTheme } from '@mui/material';
+import { Box } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
-import BindingSearch from 'components/collection/BindingSearch';
-import CollectionSelectorActions from 'components/collection/Selector/Actions';
 import CollectionSelectorList from 'components/collection/Selector/List';
+import { COLLECTION_SELECTOR_NAME_COL } from 'components/collection/Selector/List/shared';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
-import { typographyTruncation } from 'context/Theme';
+import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
-import { Cancel, WarningCircle } from 'iconoir-react';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode } from 'react';
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
     useResourceConfig_collections,
-    useResourceConfig_currentCollection,
     useResourceConfig_discoveredCollections,
-    useResourceConfig_removeAllCollections,
-    useResourceConfig_removeCollection,
-    useResourceConfig_resourceConfig,
+    useResourceConfig_removeCollections,
     useResourceConfig_setCurrentCollection,
-    useResourceConfig_setRestrictedDiscoveredCollections,
+    useResourceConfig_toggleDisable,
 } from 'stores/ResourceConfig/hooks';
-import { EntityWorkflow } from 'types';
-import { hasLength, stripPathing } from 'utils/misc-utils';
+import BindingsSelectorName from './Row/Name';
+import BindingsSelectorRemove from './Row/Remove';
+import BindingsSelectorToggle from './Row/Toggle';
+import BindingSearch from './Search';
 
 interface BindingSelectorProps {
+    disableSelect?: boolean;
+    height?: number | string;
     itemType?: string;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
-    shortenName?: boolean;
-}
-
-interface RowProps {
-    collection: string;
-    task: string;
-    workflow: EntityWorkflow | null;
-    disabled: boolean;
-    draftId: string | null;
-    shortenName?: boolean;
-}
-
-function Row({
-    collection,
-    disabled,
-    draftId,
-    shortenName,
-    task,
-    workflow,
-}: RowProps) {
-    // Resource Config Store
-    const discoveredCollections = useResourceConfig_discoveredCollections();
-    const removeCollection = useResourceConfig_removeCollection();
-
-    const setRestrictedDiscoveredCollections =
-        useResourceConfig_setRestrictedDiscoveredCollections();
-
-    const handlers = {
-        removeCollection: (event: React.MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-
-            removeCollection(collection);
-
-            if (
-                workflow === 'capture_edit' &&
-                !hasLength(discoveredCollections)
-            ) {
-                const nativeCollectionDetected = collection.includes(task);
-
-                nativeCollectionDetected
-                    ? setRestrictedDiscoveredCollections(
-                          collection,
-                          nativeCollectionDetected
-                      )
-                    : setRestrictedDiscoveredCollections(collection);
-            } else {
-                setRestrictedDiscoveredCollections(collection);
-            }
-
-            if (draftId && !discoveredCollections?.includes(collection)) {
-                void deleteDraftSpecsByCatalogName(draftId, 'collection', [
-                    collection,
-                ]);
-            }
-        },
-    };
-
-    return (
-        <>
-            <ListItemText
-                primary={shortenName ? stripPathing(collection) : collection}
-                primaryTypographyProps={typographyTruncation}
-            />
-
-            <IconButton
-                disabled={disabled}
-                size="small"
-                onClick={handlers.removeCollection}
-                sx={{ color: (theme) => theme.palette.text.primary }}
-            >
-                <Cancel />
-            </IconButton>
-        </>
-    );
 }
 
 function BindingSelector({
+    disableSelect,
+    height,
     itemType,
     readOnly,
-    shortenName,
     RediscoverButton,
 }: BindingSelectorProps) {
-    const theme = useTheme();
     const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
+    const isCapture = entityType === 'capture';
+    const isCollection = entityType === 'collection';
 
     // Details Form Store
     const task = useDetailsForm_details_entityName();
@@ -123,21 +51,17 @@ function BindingSelector({
     const formActive = useFormStateStore_isActive();
 
     // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
     const setCurrentCollection = useResourceConfig_setCurrentCollection();
 
     const collections = useResourceConfig_collections();
     const discoveredCollections = useResourceConfig_discoveredCollections();
 
-    const resourceConfig = useResourceConfig_resourceConfig();
-
-    const removeAllCollections = useResourceConfig_removeAllCollections();
+    const removeCollections = useResourceConfig_removeCollections();
+    const toggleCollections = useResourceConfig_toggleDisable();
 
     const handlers = {
-        removeAllCollections: (event: React.MouseEvent<HTMLElement>) => {
-            event.stopPropagation();
-
-            removeAllCollections(workflow, task);
+        removeCollections: (rows: any[]) => {
+            removeCollections(rows, workflow, task);
 
             const publishedCollections =
                 discoveredCollections && collections
@@ -155,79 +79,82 @@ function BindingSelector({
                 );
             }
         },
+        toggleCollections: (rows: any[], value: boolean) => {
+            toggleCollections(rows, value);
+        },
     };
-
-    const cellRender = (params: GridRenderCellParams) => {
-        const collection = params.row.name;
-        const currentConfig = resourceConfig[collection];
-
-        if (currentConfig.errors.length > 0) {
-            return (
-                <>
-                    <Box>
-                        <WarningCircle
-                            style={{
-                                marginRight: 4,
-                                fontSize: 12,
-                                color: theme.palette.error.main,
-                            }}
-                        />
-                    </Box>
-
-                    <Row
-                        collection={collection}
-                        disabled={formActive}
-                        draftId={draftId}
-                        shortenName={shortenName}
-                        task={task}
-                        workflow={workflow}
-                    />
-                </>
-            );
-        }
-
-        return (
-            <Row
-                collection={collection}
-                disabled={formActive}
-                draftId={draftId}
-                shortenName={shortenName}
-                task={task}
-                workflow={workflow}
-            />
-        );
-    };
-
-    const rows = useMemo(
-        () => new Set(Object.keys(resourceConfig)),
-        [resourceConfig]
-    );
 
     const disableActions = formActive || readOnly;
 
+    const cellRenderers = {
+        name: (params: GridRenderCellParams) => {
+            const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
+
+            return (
+                <BindingsSelectorName
+                    collection={collection}
+                    shortenName={isCapture}
+                />
+            );
+        },
+        remove: (params: GridRenderCellParams) => {
+            if (isCapture) {
+                return null;
+            }
+
+            const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
+
+            return (
+                <BindingsSelectorRemove
+                    collection={collection}
+                    task={task}
+                    disabled={formActive}
+                    draftId={draftId}
+                />
+            );
+        },
+        toggle: (params: GridRenderCellParams) => {
+            const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
+
+            return (
+                <BindingsSelectorToggle
+                    collection={collection}
+                    disableButton={formActive}
+                />
+            );
+        },
+    };
+
     return (
-        <>
+        <Box
+            sx={{
+                height,
+            }}
+        >
             <BindingSearch
                 itemType={itemType}
                 readOnly={disableActions}
-                shortenName={shortenName}
-            />
-
-            <CollectionSelectorActions
-                readOnly={rows.size === 0 || disableActions}
                 RediscoverButton={RediscoverButton}
-                removeAllCollections={handlers.removeAllCollections}
             />
 
             <CollectionSelectorList
+                height="100%"
                 header={itemType}
-                readOnly={disableActions}
-                collections={rows}
-                currentCollection={currentCollection}
-                setCurrentCollection={setCurrentCollection}
-                renderCell={cellRender}
+                disableActions={disableActions}
+                setCurrentCollection={
+                    !disableSelect ? setCurrentCollection : undefined
+                }
+                renderers={{
+                    cell: cellRenderers,
+                }}
+                removeCollections={
+                    !isCapture ? handlers.removeCollections : undefined
+                }
+                toggleCollections={
+                    !isCollection ? handlers.toggleCollections : undefined
+                }
             />
-        </>
+        </Box>
     );
 }
 

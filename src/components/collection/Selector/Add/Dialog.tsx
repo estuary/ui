@@ -1,40 +1,48 @@
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    Divider,
     Stack,
 } from '@mui/material';
-import CollectionSearchAndSelector from 'components/collection/UnderDev_Selector';
-import SingleStep from 'components/transformation/create/SingleStep';
+import BindingSelectorTable from 'components/collection/Selector/Table';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { AddCollectionDialogCTAProps } from './types';
 
-interface Props {
+interface Props extends AddCollectionDialogCTAProps {
+    id: string;
     open: boolean;
-    title: string | ReactNode;
-    toggle: (args: any) => void;
     primaryCTA: any;
+    selectedCollections: string[];
+    title: string | ReactNode;
 }
 
-function AddCollection({ primaryCTA, open, title, toggle }: Props) {
+function AddCollectionDialog({
+    id,
+    primaryCTA,
+    open,
+    selectedCollections,
+    title,
+    toggle,
+}: Props) {
+    const ContinueButton = primaryCTA;
+
     return (
-        <Dialog open={open} fullWidth maxWidth="md">
+        <Dialog id={id} open={open} fullWidth maxWidth="md">
             <DialogTitle>{title}</DialogTitle>
 
             <DialogContent>
                 <Stack spacing={3} sx={{ pt: 2 }}>
                     <StepWrapper>
-                        <SingleStep>
-                            <FormattedMessage id="newTransform.baseConfig.sourceCollections.label" />
-                        </SingleStep>
-
-                        <Divider />
-
-                        <CollectionSearchAndSelector />
+                        <Box>
+                            <BindingSelectorTable
+                                selectedCollections={selectedCollections}
+                            />
+                        </Box>
                     </StepWrapper>
                 </Stack>
             </DialogContent>
@@ -44,10 +52,10 @@ function AddCollection({ primaryCTA, open, title, toggle }: Props) {
                     <FormattedMessage id="cta.cancel" />
                 </Button>
 
-                {primaryCTA}
+                <ContinueButton toggle={toggle} />
             </DialogActions>
         </Dialog>
     );
 }
 
-export default AddCollection;
+export default AddCollectionDialog;
