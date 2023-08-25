@@ -20,7 +20,11 @@ import LegacySingleStep from 'components/transformation/create/legacy/SingleStep
 import { LegacyStepWrapper } from 'components/transformation/create/legacy/Wrapper';
 import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
+import { useUnmount } from 'react-use';
+import {
+    useResourceConfig_collections,
+    useResourceConfig_resetState,
+} from 'stores/ResourceConfig/hooks';
 import {
     useTransformationCreate_setCatalogName,
     useTransformationCreate_setName,
@@ -63,6 +67,12 @@ function TransformationCreate({ postWindowOpen }: Props) {
         () => new Set<string>(collections),
         [collections]
     );
+
+    // Hacky - due to how we handle stuff up above we also need to reset state here
+    const resetResource = useResourceConfig_resetState();
+    useUnmount(() => {
+        resetResource();
+    });
 
     return (
         <Box
