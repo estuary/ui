@@ -10,25 +10,10 @@ import TableHydrator from 'stores/Tables/Hydrator';
 import { MAX_BINDINGS } from 'utils/workflow-utils';
 import { useStore } from 'zustand';
 import Rows from './Rows';
+import { catalogNameColumn, publishedColumn, tableColumns } from './shared';
 
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
 const tableRowsPerPage = [10, 50, 100, MAX_BINDINGS];
-const catalogNameColumn = 'catalog_name';
-const publishedColumn = 'updated_at';
-export const tableColumns = [
-    {
-        field: null,
-        headerIntlKey: '',
-    },
-    {
-        field: catalogNameColumn,
-        headerIntlKey: 'entityTable.data.userFullName',
-    },
-    {
-        field: publishedColumn,
-        headerIntlKey: 'entityTable.data.lastPublished',
-    },
-];
 
 interface Props {
     selectedCollections: string[];
