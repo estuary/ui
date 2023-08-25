@@ -10,24 +10,10 @@ import TableHydrator from 'stores/Tables/Hydrator';
 import { MAX_BINDINGS } from 'utils/workflow-utils';
 import { useStore } from 'zustand';
 import Rows from './Rows';
+import { catalogNameColumn, publishedColumn, tableColumns } from './shared';
 
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
 const tableRowsPerPage = [10, 50, 100, MAX_BINDINGS];
-const catalogNameColumn = 'catalog_name';
-export const tableColumns = [
-    {
-        field: null,
-        headerIntlKey: '',
-    },
-    {
-        field: catalogNameColumn,
-        headerIntlKey: 'entityTable.data.userFullName',
-    },
-    {
-        field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastPublished',
-    },
-];
 
 interface Props {
     selectedCollections: string[];
@@ -46,7 +32,7 @@ function Hydrator({ selectedCollections }: Props) {
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState('csl', catalogNameColumn, 'desc', tableRowsPerPage[0]);
+    } = useTableState('csl', publishedColumn, 'desc', tableRowsPerPage[0]);
 
     const query = useMemo(() => {
         return getLiveSpecs_collectionsSelector(pagination, searchQuery, [

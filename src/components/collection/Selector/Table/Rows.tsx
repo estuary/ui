@@ -5,6 +5,7 @@ import { getEntityTableRowSx } from 'context/Theme';
 import invariableStores from 'context/Zustand/invariableStores';
 
 import { useStore } from 'zustand';
+import { catalogNameColumn, publishedColumn } from './shared';
 
 interface RowProps {
     row: any;
@@ -21,7 +22,7 @@ function Row({ row, setRow }: RowProps) {
     const disabled = useStore(
         invariableStores['Collections-Selector-Table'],
         (state) => {
-            return state.disabledRows.includes(row.catalog_name);
+            return state.disabledRows.includes(row[catalogNameColumn]);
         }
     );
 
@@ -39,17 +40,23 @@ function Row({ row, setRow }: RowProps) {
             onClick={
                 disabled
                     ? undefined
-                    : () => setRow(row.id, row.catalog_name, !isSelected)
+                    : () => setRow(row.id, row[catalogNameColumn], !isSelected)
             }
             sx={getEntityTableRowSx(theme, disabled)}
         >
             <RowSelect
                 disabled={disabled}
                 isSelected={isSelected}
-                name={row.catalog_name}
+                name={row[catalogNameColumn]}
             />
-            <TableCell>{row.catalog_name}</TableCell>
-            <TimeStamp time={row.updated_at} />
+            <TableCell
+                sx={{
+                    wordBreak: 'break-all',
+                }}
+            >
+                {row[catalogNameColumn]}
+            </TableCell>
+            <TimeStamp time={row[publishedColumn]} />
         </TableRow>
     );
 }
