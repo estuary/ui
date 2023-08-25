@@ -1,5 +1,6 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import {
+    addMonths,
     endOfWeek,
     startOfHour,
     startOfMonth,
@@ -11,12 +12,12 @@ import {
 } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import {
+    SortingProps,
+    TABLES,
     defaultTableFilter,
     handleFailure,
     handleSuccess,
-    SortingProps,
     supabaseClient,
-    TABLES,
 } from 'services/supabase';
 import {
     CatalogStats,
@@ -112,6 +113,7 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
     const yesterday = subDays(today, 1);
     const lastWeek = subWeeks(today, 1);
     const lastMonth = subMonths(today, 1);
+    const nextMonth = addMonths(today, 1);
 
     switch (filter) {
         // Day Range
@@ -143,13 +145,15 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
         // Month Range
         case 'thisMonth':
             queryBuilder = queryBuilder
-                .eq('ts', formatToGMT(startOfMonth(today)))
+                .gte('ts', formatToGMT(startOfMonth(today)))
+                .lt('ts', formatToGMT(startOfMonth(nextMonth)))
                 .eq('grain', 'monthly');
 
             break;
         case 'lastMonth':
             queryBuilder = queryBuilder
-                .eq('ts', formatToGMT(startOfMonth(lastMonth)))
+                .gte('ts', formatToGMT(startOfMonth(lastMonth)))
+                .lt('ts', formatToGMT(startOfMonth(today)))
                 .eq('grain', 'monthly');
             break;
 
