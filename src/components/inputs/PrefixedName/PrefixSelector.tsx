@@ -1,7 +1,7 @@
 import { MenuItem, Select } from '@mui/material';
 import { useState } from 'react';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
-import { validateInput } from './shared';
+import { validateCatalogName } from './shared';
 import { PrefixedName_Errors } from './types';
 
 interface Props {
@@ -40,7 +40,7 @@ function PrefixSelector({ defaultPrefix, disabled }: Props) {
             onChange={(event) => {
                 const prefixValue = event.target.value;
 
-                setPrefixError(validateInput(prefixValue));
+                setPrefixError(validateCatalogName(prefixValue));
                 setPrefix(prefixValue);
             }}
         >

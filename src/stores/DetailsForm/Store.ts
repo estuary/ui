@@ -1,6 +1,6 @@
 import { getConnectors_detailsForm } from 'api/connectors';
 import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
-import { validateInput } from 'components/inputs/PrefixedName/shared';
+import { validateCatalogName } from 'components/inputs/PrefixedName/shared';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
@@ -80,7 +80,7 @@ export const getInitialState = (
                 // Run validation on the name. This is done inside the input but
                 //  having the input set custom errors causes issues as we basically
                 //  make two near identical calls to the store and that causes problems.
-                const nameValidation = validateInput(
+                const nameValidation = validateCatalogName(
                     state.details.data.entityName
                 );
 

@@ -1,7 +1,7 @@
 import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 import { PrefixedName_Errors } from './types';
 
-export const validateInput = (
+export const validateCatalogName = (
     value: string,
     allowBlank?: boolean,
     allowEndSlash?: boolean

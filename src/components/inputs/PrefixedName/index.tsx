@@ -15,7 +15,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { hasLength } from 'utils/misc-utils';
-import { validateInput } from './shared';
+import { validateCatalogName } from './shared';
 import { PrefixedName_Change, PrefixedName_Errors } from './types';
 
 export interface Props {
@@ -96,8 +96,8 @@ function PrefixedName({
 
     const updateErrors = (prefixValue: string, nameValue: string) => {
         // Validate both inputs
-        const prefixErrors = validateInput(prefixValue, false, true);
-        const nameErrors = validateInput(
+        const prefixErrors = validateCatalogName(prefixValue, false, true);
+        const nameErrors = validateCatalogName(
             nameValue,
             allowBlankName,
             allowEndSlash
