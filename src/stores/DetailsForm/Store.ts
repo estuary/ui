@@ -121,9 +121,7 @@ export const getInitialState = (
                 if (connectorImage.id === '') {
                     state.details.data.connectorImage =
                         getInitialStateData().details.data.connectorImage;
-                } else if (
-                    !isEqual(connectorImage, state.details.data.connectorImage)
-                ) {
+                } else {
                     state.details.data.connectorImage = connectorImage;
                 }
             }),
