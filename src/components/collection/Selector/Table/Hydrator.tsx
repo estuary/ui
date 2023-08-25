@@ -14,6 +14,7 @@ import Rows from './Rows';
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
 const tableRowsPerPage = [10, 50, 100, MAX_BINDINGS];
 const catalogNameColumn = 'catalog_name';
+const publishedColumn = 'updated_at';
 export const tableColumns = [
     {
         field: null,
@@ -24,7 +25,7 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.userFullName',
     },
     {
-        field: 'updated_at',
+        field: publishedColumn,
         headerIntlKey: 'entityTable.data.lastPublished',
     },
 ];
@@ -46,7 +47,7 @@ function Hydrator({ selectedCollections }: Props) {
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState('csl', catalogNameColumn, 'desc', tableRowsPerPage[0]);
+    } = useTableState('csl', publishedColumn, 'desc', tableRowsPerPage[0]);
 
     const query = useMemo(() => {
         return getLiveSpecs_collectionsSelector(pagination, searchQuery, [
