@@ -17,6 +17,7 @@ const Home = () => {
         GlobalSearchParams.HOME_PAGE_ERROR
     );
 
+    // home page error related
     const notificationMessage = useMemo(() => {
         if (homePageError) {
             return 'directives.grant.skipped.message';

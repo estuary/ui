@@ -37,6 +37,7 @@ function GrantGuardProcessor({ grantToken }: Props) {
         error: configError,
     } = useDirectiveGuard(SELECTED_DIRECTIVE, { token: grantToken });
 
+    // home page error related
     // We do not really differeniate between these two with messages to users
     //  but still setting them as two different messages just in case we need to
     //  sometime in the future.
