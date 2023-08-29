@@ -1,4 +1,4 @@
-import GrantGuard from 'app/guards/GrantGaurd';
+import GrantGuard from 'app/guards/GrantGuard';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import 'react-reflex/styles.css';
 import { BaseComponentProps } from 'types';
