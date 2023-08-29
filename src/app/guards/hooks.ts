@@ -20,7 +20,7 @@ const useDirectiveGuard = (
     const [serverError, setServerError] = useState<PostgrestError | null>(null);
 
     const { appliedDirective, isValidating, mutate, error } =
-        useAppliedDirectives(selectedDirective);
+        useAppliedDirectives(selectedDirective, options?.token);
 
     const calculateStatus = useMemo(
         () => DIRECTIVES[selectedDirective].calculateStatus,
