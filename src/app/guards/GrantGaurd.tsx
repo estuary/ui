@@ -8,14 +8,19 @@ import FullPageWrapper from 'directives/FullPageWrapper';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
+import { useSnackbar } from 'notistack';
 import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { BaseComponentProps } from 'types';
+import { snackbarSettings } from 'utils/notification-utils';
 import useDirectiveGuard from './hooks';
 
 const SELECTED_DIRECTIVE = 'grant';
 
 function GrantGuard({ children }: BaseComponentProps) {
+    const intl = useIntl();
+    const { enqueueSnackbar } = useSnackbar();
+
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
 
     const [processUninitiated, setProcessUninitiated] = useState<boolean>(true);
@@ -118,6 +123,16 @@ function GrantGuard({ children }: BaseComponentProps) {
             );
         }
     } else {
+        console.log('Already submitted check', directive);
+        if (processUninitiated && directive?.directives?.uses_remaining === 0) {
+            enqueueSnackbar(
+                intl.formatMessage({
+                    id: 'directives.grant.alreadySubmitted',
+                }),
+                { ...snackbarSettings, variant: 'error' }
+            );
+        }
+
         // eslint-disable-next-line react/jsx-no-useless-fragment
         return <>{children}</>;
     }
