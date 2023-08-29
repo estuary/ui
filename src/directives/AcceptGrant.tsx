@@ -2,14 +2,12 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Stack, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
-import { authenticatedRoutes } from 'app/routes';
 import AlertBox from 'components/shared/AlertBox';
 import { defaultOutline } from 'context/Theme';
 import { jobStatusQuery, trackEvent } from 'directives/shared';
 import { SuccessResponse } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
 import { jobStatusPoller } from 'services/supabase';
 import { KeyedMutator } from 'swr';
 import { AppliedDirective, JoinedAppliedDirective } from 'types';
@@ -29,8 +27,6 @@ function AcceptGrant({
     grantedPrefix,
     grantedCapability,
 }: Props) {
-    const navigate = useNavigate();
-
     const [saving, setSaving] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
@@ -63,19 +59,13 @@ function AcceptGrant({
                         mutate()
                             .then(() => {
                                 trackEvent(
-                                    `${directiveName}:Mutate:Success`,
-                                    directive
+                                    `${directiveName}:Complete:Mutate:Success`
                                 );
                             })
                             .catch(() => {
                                 trackEvent(
-                                    `${directiveName}:Mutate:Error`,
-                                    directive
+                                    `${directiveName}:Complete:Mutate:Error`
                                 );
-                            })
-                            .finally(() => {
-                                // No matter what go to home so the user isn't stuck on the page
-                                navigate(authenticatedRoutes.home.path);
                             });
                     }
                 },
