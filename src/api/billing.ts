@@ -69,6 +69,16 @@ export interface BillingRecord {
     subtotal: number;
 }
 
+const billingHistoricalQuery = [
+    'billed_prefix:tenant',
+    'billed_month',
+    'report->processed_data_gb',
+    'report->recurring_fee',
+    'report->task_usage_hours',
+    'report->line_items',
+    'report->subtotal',
+].join(', ');
+
 export const getBillingRecord = (
     billed_prefix: string,
     month: string | Date
@@ -86,17 +96,7 @@ export const getBillingRecord = (
     ) {
         return supabaseClient
             .from<BillingRecord>(TABLES.BILLING_HISTORICALS)
-            .select(
-                [
-                    'billed_prefix:tenant',
-                    'billed_month',
-                    'report->processed_data_gb',
-                    'report->recurring_fee',
-                    'report->task_usage_hours',
-                    'report->line_items',
-                    'report->subtotal',
-                ].join(', ')
-            )
+            .select(billingHistoricalQuery)
             .filter('tenant', 'eq', billed_prefix)
             .filter('billed_month', 'eq', formattedMonth)
             .throwOnError()
@@ -118,6 +118,8 @@ function isSingleResponse<T>(
     return arg.body !== null;
 }
 
+// TODO (billing) need to make this so it does not cause multipl calls
+//  and instead just builds up a single query that matches all months
 export const getBillingHistory = async (
     tenant: string,
     dateRange: string[]
