@@ -89,7 +89,6 @@ export interface AppliedDirective<T> {
 }
 
 export interface JoinedAppliedDirective extends AppliedDirective<any> {
-    ['directives.uses_remaining']: number;
     // FILTERING HACK
     ['directives.token']: string;
     ['applied_directives']: AppliedDirective<any>;
