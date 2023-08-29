@@ -56,6 +56,10 @@ interface InvoiceLineItem {
 }
 
 export interface BillingRecord {
+    // In `billing_historicals` this is called tenant
+    // and so needs to be included here in order to
+    // filter by tenant
+    tenant?: string;
     billed_prefix: string;
     billed_month: string; // Timestamp
     processed_data_gb: number | null;
@@ -84,7 +88,7 @@ export const getBillingRecord = (
             .from<BillingRecord>(TABLES.BILLING_HISTORICALS)
             .select(
                 [
-                    'billed_prefix',
+                    'billed_prefix:tenant',
                     'billed_month',
                     'report->processed_data_gb',
                     'report->recurring_fee',
@@ -93,7 +97,7 @@ export const getBillingRecord = (
                     'report->subtotal',
                 ].join(', ')
             )
-            .filter('billed_prefix', 'eq', billed_prefix)
+            .filter('tenant', 'eq', billed_prefix)
             .filter('billed_month', 'eq', formattedMonth)
             .throwOnError()
             .maybeSingle();
