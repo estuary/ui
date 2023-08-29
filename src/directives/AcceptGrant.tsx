@@ -62,13 +62,20 @@ function AcceptGrant({
                     if (mutate) {
                         mutate()
                             .then(() => {
-                                navigate(authenticatedRoutes.home.path);
+                                trackEvent(
+                                    `${directiveName}:Mutate:Success`,
+                                    directive
+                                );
                             })
                             .catch(() => {
                                 trackEvent(
-                                    `${directiveName}:mutate:Error`,
+                                    `${directiveName}:Mutate:Error`,
                                     directive
                                 );
+                            })
+                            .finally(() => {
+                                // No matter what go to home so the user isn't stuck on the page
+                                navigate(authenticatedRoutes.home.path);
                             });
                     }
                 },
