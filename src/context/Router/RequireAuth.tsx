@@ -21,7 +21,7 @@ function RequireAuth({ children, firstLoad, login }: Props) {
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
 
     if (user && firstLoad) {
-        // This shold handle when an already logged in user visits an access grant link
+        // This should handle when an already logged in user visits an access grant link
         const to =
             login && grantToken
                 ? getPathWithParams(authenticatedRoutes.home.path, {
