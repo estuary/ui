@@ -2,12 +2,14 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Stack, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
+import { authenticatedRoutes } from 'app/routes';
 import AlertBox from 'components/shared/AlertBox';
 import { defaultOutline } from 'context/Theme';
 import { jobStatusQuery, trackEvent } from 'directives/shared';
 import { SuccessResponse } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useNavigate } from 'react-router-dom';
 import { jobStatusPoller } from 'services/supabase';
 import { KeyedMutator } from 'swr';
 import { AppliedDirective, JoinedAppliedDirective } from 'types';
@@ -27,6 +29,8 @@ function AcceptGrant({
     grantedPrefix,
     grantedCapability,
 }: Props) {
+    const navigate = useNavigate();
+
     const [saving, setSaving] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
@@ -56,7 +60,16 @@ function AcceptGrant({
                     trackEvent(`${directiveName}:Complete`, directive);
 
                     if (mutate) {
-                        void mutate();
+                        mutate()
+                            .then(() => {
+                                navigate(authenticatedRoutes.home.path);
+                            })
+                            .catch(() => {
+                                trackEvent(
+                                    `${directiveName}:mutate:Error`,
+                                    directive
+                                );
+                            });
                     }
                 },
                 async (payload: any) => {
