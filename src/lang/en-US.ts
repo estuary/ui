@@ -83,7 +83,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 
     // Used in directives
     'directives.returning': `Welcome back. You still need to provide some information before using the application.`,
-    'directives.grant.alreadySubmitted': `Access Grant Failed: link was a single use token and cannot provide access a second time.`,
+    'directives.grant.skipped.title': `Access Grant Token Skipped`,
+    'directives.grant.skipped.message': `The access grant link you submitted was not applied as you already have the requested access.`,
 
     // User in filters for tables
     'filter.time.today': `Today`,

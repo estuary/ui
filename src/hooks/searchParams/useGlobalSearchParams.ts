@@ -10,6 +10,7 @@ export enum GlobalSearchParams {
     LAST_PUB_ID = 'lastPubId',
     LIVE_SPEC_ID = 'liveSpecId',
     PREFILL_PUB_ID = 'prefillPubId',
+    HOME_PAGE_ERROR = 'homePageError',
 }
 
 function useGlobalSearchParams(key: GlobalSearchParams): string;
