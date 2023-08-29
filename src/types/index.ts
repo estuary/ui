@@ -77,7 +77,7 @@ export interface AppliedDirective<T> {
     detail: null;
     directives?: {
         type: string;
-        uses_remaining: number;
+        uses_remaining: number | null;
     };
     id: string;
     updated_at: Date;
