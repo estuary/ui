@@ -37,8 +37,9 @@ function GrantGuardProcessor({ grantToken }: Props) {
         error: configError,
     } = useDirectiveGuard(SELECTED_DIRECTIVE, { token: grantToken });
 
-    console.log('=', { directive, loading, status, mutate, configError });
-
+    // We do not really differeniate between these two with messages to users
+    //  but still setting them as two different messages just in case we need to
+    //  sometime in the future.
     const homePageError = useMemo(() => {
         if (grantToken && processUninitiated) {
             if (directive?.directives?.uses_remaining === null) {
@@ -51,7 +52,7 @@ function GrantGuardProcessor({ grantToken }: Props) {
         return null;
     }, [directive?.directives?.uses_remaining, grantToken, processUninitiated]);
 
-    if (grantToken && status !== 'fulfilled') {
+    if (status !== 'fulfilled') {
         if (
             (loading ||
                 status === null ||
@@ -61,6 +62,7 @@ function GrantGuardProcessor({ grantToken }: Props) {
             !configError
         ) {
             if (processUninitiated && directive) {
+                // Start fetching the directive details based on token to see what we need to do
                 setProcessUninitiated(false);
 
                 void getDirectiveByToken(grantToken).then(
@@ -94,6 +96,8 @@ function GrantGuardProcessor({ grantToken }: Props) {
             prefix === undefined ||
             capability === undefined
         ) {
+            //  Show the "full stop" error page to make sure the user knows we were unable
+            //      to give them access and do not see a previous submiting
             return (
                 <FullPageWrapper>
                     <Stack spacing={2}>
@@ -110,6 +114,7 @@ function GrantGuardProcessor({ grantToken }: Props) {
                 </FullPageWrapper>
             );
         } else {
+            // Show the page to give user access
             return (
                 <FullPageWrapper>
                     {prefix && capability ? (
@@ -136,7 +141,8 @@ function GrantGuardProcessor({ grantToken }: Props) {
             );
         }
     } else {
-        // See if we need to add the param to show an error
+        // This should mean we have a grant token that has been fulfilled
+        //  So now it is safe to see if we need to show an error or not.
         const navigateToPath = homePageError
             ? getPathWithParams(authenticatedRoutes.home.path, {
                   [GlobalSearchParams.HOME_PAGE_ERROR]: homePageError,
