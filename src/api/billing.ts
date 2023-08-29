@@ -55,23 +55,14 @@ interface InvoiceLineItem {
     subtotal: number;
 }
 
-export interface BillingReport {
+export interface BillingRecord {
+    billed_prefix: string;
+    billed_month: string; // Timestamp
     processed_data_gb: number | null;
     recurring_fee: number;
     task_usage_hours: number | null;
     line_items: InvoiceLineItem[];
     subtotal: number;
-}
-
-export interface BillingHistoricals {
-    billed_prefix: string;
-    billed_month: string; // Timestamp
-    report: BillingReport;
-}
-
-export interface BillingRecord extends BillingReport {
-    billed_prefix: string;
-    billed_month: string; // Timestamp
 }
 
 export const getBillingRecord = (
@@ -89,51 +80,23 @@ export const getBillingRecord = (
             startOfMonth(new Date())
         )
     ) {
-        const req = supabaseClient
-            .from<BillingHistoricals>(TABLES.BILLING_HISTORICALS)
-            .select('billed_prefix, billed_month, report')
+        return supabaseClient
+            .from<BillingRecord>(TABLES.BILLING_HISTORICALS)
+            .select(
+                [
+                    'billed_prefix',
+                    'billed_month',
+                    'report->processed_data_gb',
+                    'report->recurring_fee',
+                    'report->task_usage_hours',
+                    'report->line_items',
+                    'report->subtotal',
+                ].join(', ')
+            )
             .filter('billed_prefix', 'eq', billed_prefix)
-            .filter('billed_month', 'eq', formattedMonth);
-
-        const url = (req as any).url;
-
-        const prom: PromiseLike<PostgrestMaybeSingleResponse<BillingRecord>> =
-            req.then((response) => {
-                if (response.body && response.body.length > 0) {
-                    if (response.body.length > 1) {
-                        throw new Error(
-                            `Found multiple billing historical records where at most one was expected. prefix: ${billed_prefix}, month: ${formattedMonth}`
-                        );
-                    }
-                    const modified_body: BillingRecord = {
-                        billed_month: response.body[0].billed_month,
-                        billed_prefix: response.body[0].billed_prefix,
-                        ...response.body[0].report,
-                    };
-                    return {
-                        ...response,
-                        body: modified_body,
-                        data: modified_body,
-                        url,
-                    };
-                } else {
-                    return {
-                        ...response,
-                        body: null,
-                        data: null,
-                        url,
-                    };
-                }
-            });
-
-        // Hack alert: `useSelectNew` actually expects to be passed a
-        // PostgrestFilterBuilder which has a protected `url: URL` field
-        // which `useSelectNew` uses as the key for SWR purposes. If we `.map()`
-        // the promise-like object returned by the Supabase SDK, we lose that
-        // hidden URL field in the process, breaking SWR.
-        // So... for the moment, this hacks it back into existence.
-        (prom as any).url = url;
-        return prom;
+            .filter('billed_month', 'eq', formattedMonth)
+            .throwOnError()
+            .maybeSingle();
     } else {
         return supabaseClient
             .rpc<BillingRecord>(RPCS.BILLING_REPORT, {
