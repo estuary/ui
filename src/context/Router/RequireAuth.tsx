@@ -21,22 +21,19 @@ function RequireAuth({ children, firstLoad, login }: Props) {
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
 
     if (user && firstLoad) {
-        let redirection;
-
         // This shold handle when an already logged in user visits an access grant link
-        if (login && grantToken) {
-            redirection = getPathWithParams(authenticatedRoutes.home.path, {
-                grantToken,
-            });
-        } else {
-            redirection = redirectTo;
-        }
+        const to =
+            login && grantToken
+                ? getPathWithParams(authenticatedRoutes.home.path, {
+                      grantToken,
+                  })
+                : redirectTo;
 
         // When first load, we want to redirect where we need to go
         logRocketConsole('RequireAuth : Navigate : redirectTo', {
-            to: redirection,
+            to,
         });
-        return <Navigate to={redirection} replace />;
+        return <Navigate to={to} replace />;
     }
 
     if (!user && !firstLoad) {
