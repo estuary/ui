@@ -57,6 +57,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.derivation': `Derivation`,
     'terms.documentation': `Docs`,
     'terms.storageMapping': `Storage Mappings`,
+    'terms.entity': `Entity`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,

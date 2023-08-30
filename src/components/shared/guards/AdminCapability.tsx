@@ -28,8 +28,11 @@ function AdminCapabilityGuard({ children }: InputBaseComponentProps) {
             case 'materialization':
                 return intl.formatMessage({ id: 'terms.materialization' });
                 break;
-            default:
+            case 'collection':
                 return intl.formatMessage({ id: 'terms.transformation' });
+                break;
+            default:
+                return intl.formatMessage({ id: 'terms.entity' });
                 break;
         }
     }, [entityTypeValue, intl]);
