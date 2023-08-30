@@ -6,6 +6,7 @@ import TransformationCreate from 'components/transformation/create';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
 import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
 
 const ARIA_LABEL_ID = 'derivation-create-dialog';
@@ -13,6 +14,7 @@ const ARIA_LABEL_ID = 'derivation-create-dialog';
 function DerivationCreate() {
     const navigate = useNavigate();
 
+    const resetResourceConfigState = useResourceConfig_resetState();
     const resetTransformationCreateState = useTransformationCreate_resetState();
 
     // There is _probably_ a better way to do this, but the idea is
@@ -27,6 +29,7 @@ function DerivationCreate() {
         setShowConfirmation(false);
         setNewCollectionKey((k) => k + 1);
         resetTransformationCreateState();
+        resetResourceConfigState();
     };
 
     return (
