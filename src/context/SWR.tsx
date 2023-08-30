@@ -2,6 +2,7 @@ import useClient from 'hooks/supabase-swr/hooks/useClient';
 import { LRUCache } from 'lru-cache';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
+import { logRocketConsole } from 'services/logrocket';
 import { ERROR_MESSAGES } from 'services/supabase';
 import { SWRConfig } from 'swr';
 import { BaseComponentProps } from 'types';
@@ -65,7 +66,7 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                                     );
                                 })
                                 .catch((signOutError) => {
-                                    console.log(
+                                    logRocketConsole(
                                         'SWR:onError:failed to sign out',
                                         {
                                             signOutError,
