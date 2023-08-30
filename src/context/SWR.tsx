@@ -44,7 +44,10 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                 value={{
                     onError: async (error, _key, _config) => {
                         // Handle JWT tokens expiring
-                        if (error.message === ERROR_MESSAGES.jwtExpired) {
+                        if (
+                            error.message === ERROR_MESSAGES.jwtExpired ||
+                            error.message === ERROR_MESSAGES.jwsInvalid
+                        ) {
                             await supabaseClient.auth
                                 .signOut()
                                 .then(() => {
