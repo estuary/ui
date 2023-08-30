@@ -106,7 +106,7 @@ const router = createBrowserRouter(
             <Route
                 path={unauthenticatedRoutes.login.path}
                 element={
-                    <RequireAuth firstLoad login>
+                    <RequireAuth firstLoad checkForGrant>
                         <Login />
                     </RequireAuth>
                 }
@@ -116,6 +116,17 @@ const router = createBrowserRouter(
             <Route
                 path={unauthenticatedRoutes.magicLink.path}
                 element={<Auth />}
+            />
+
+            {/*We need a callback that registration can come back to that will properly handle the auth token stuff
+                Also this MUST come before the register route down below*/}
+            <Route
+                path={unauthenticatedRoutes.register.callback.fullPath}
+                element={
+                    <RequireAuth firstLoad checkForGrant>
+                        <Login />
+                    </RequireAuth>
+                }
             />
 
             {/*Logout goes directly to login to make sure it isn't wrapped in RequireAuth and won't try to log the user back in*/}
