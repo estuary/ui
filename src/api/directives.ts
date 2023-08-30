@@ -96,7 +96,8 @@ const submitDirective = async (
 
 const getAppliedDirectives = (
     type: keyof typeof DIRECTIVES,
-    userId: string
+    userId: string,
+    token?: string
 ) => {
     let queryBuilder = supabaseClient.from<JoinedAppliedDirective>(
         TABLES.APPLIED_DIRECTIVES
@@ -108,11 +109,15 @@ const getAppliedDirectives = (
             user_id,
             user_claims,
             updated_at,
-            directives !inner(spec->>type)
+            directives !inner(uses_remaining, spec->>type)
         `);
 
     queryBuilder = queryBuilder.eq('directives.spec->>type', type);
     queryBuilder = queryBuilder.eq('user_id', userId);
+
+    if (token) {
+        queryBuilder = queryBuilder.eq('directives.token', token);
+    }
 
     return DIRECTIVES[type]
         .queryFilter(queryBuilder)

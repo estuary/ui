@@ -75,6 +75,10 @@ export interface MuiTabProps<T> {
 export interface AppliedDirective<T> {
     created_at: Date;
     detail: null;
+    directives?: {
+        type: string;
+        uses_remaining: number | null;
+    };
     id: string;
     updated_at: Date;
     job_status: JobStatus;
@@ -86,6 +90,7 @@ export interface AppliedDirective<T> {
 
 export interface JoinedAppliedDirective extends AppliedDirective<any> {
     // FILTERING HACK
+    ['directives.token']: string;
     ['applied_directives']: AppliedDirective<any>;
     ['spec->>type']: undefined;
     ['applied_directives.user_id']: undefined;

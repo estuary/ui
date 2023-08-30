@@ -4,9 +4,10 @@ import { FormattedMessage } from 'react-intl';
 
 interface Props {
     notificationMessage?: string;
+    notificationTitle?: string;
 }
 
-function LoginNotifications({ notificationMessage }: Props) {
+function LoginNotifications({ notificationMessage, notificationTitle }: Props) {
     if (notificationMessage) {
         return (
             <Snackbar
@@ -17,7 +18,15 @@ function LoginNotifications({ notificationMessage }: Props) {
                 }}
                 autoHideDuration={10000}
             >
-                <AlertBox severity="error" short>
+                <AlertBox
+                    severity="error"
+                    short
+                    title={
+                        notificationTitle ? (
+                            <FormattedMessage id={notificationTitle} />
+                        ) : undefined
+                    }
+                >
                     <FormattedMessage id={notificationMessage} />
                 </AlertBox>
             </Snackbar>

@@ -106,7 +106,7 @@ const router = createBrowserRouter(
             <Route
                 path={unauthenticatedRoutes.login.path}
                 element={
-                    <RequireAuth firstLoad>
+                    <RequireAuth firstLoad login>
                         <Login />
                     </RequireAuth>
                 }

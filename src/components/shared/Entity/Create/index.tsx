@@ -40,6 +40,7 @@ import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/ho
 import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
+import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
 import ValidationErrorSummary from '../ValidationErrorSummary';
 
 interface Props {
@@ -145,9 +146,11 @@ function EntityCreate({
         ]
     );
 
+    const storeHydrationComplete = useFormHydrationChecker();
+
     return connectorTagsError ? (
         <Error error={connectorTagsError} />
-    ) : (
+    ) : !storeHydrationComplete ? null : (
         <DraftSpecEditorHydrator
             entityType={entityType}
             entityName={entityName}

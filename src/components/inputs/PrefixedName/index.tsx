@@ -14,7 +14,8 @@ import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
-import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
+import { validateCatalogName } from './shared';
 import { PrefixedName_Change, PrefixedName_Errors } from './types';
 
 export interface Props {
@@ -38,47 +39,6 @@ export interface Props {
 // const UNCLEAN_PATH_RE = new RegExp(/[^a-zA-Z0-9-_.]\.{1,2}\/?/g);
 const DESCRIPTION_ID = 'prefixed-name-description';
 const INPUT_ID = 'prefixed-name-input';
-
-export const validateInput = (
-    value: string,
-    allowBlank?: boolean,
-    allowEndSlash?: boolean
-): PrefixedName_Errors => {
-    const isBlank = !hasLength(value);
-
-    // See iff this field is allowed to be blank
-    if (!allowBlank && isBlank) {
-        return ['missing'];
-    }
-
-    // Check if ending slash - otherwise the regex below would throw an error
-    if (!isBlank && !allowEndSlash && value.endsWith('/')) {
-        return ['endingSlash'];
-    }
-
-    // Check the name is the correct format
-    const NAME_RE = new RegExp(
-        `^(${PREFIX_NAME_PATTERN}/)*${PREFIX_NAME_PATTERN}${
-            allowEndSlash ? '/?' : ''
-        }$`
-    );
-    if (!isBlank && !NAME_RE.test(value)) {
-        return ['invalid'];
-    }
-
-    // TODO (naming) need to check for unclean paths
-    // if (
-    //     value === '.' ||
-    //     value === './' ||
-    //     value === '..' ||
-    //     value === '../' ||
-    //     UNCLEAN_PATH_RE.test(value)
-    // ) {
-    //     return ['unclean'];
-    // }
-
-    return null;
-};
 
 function PrefixedName({
     allowBlankName,
@@ -136,8 +96,8 @@ function PrefixedName({
 
     const updateErrors = (prefixValue: string, nameValue: string) => {
         // Validate both inputs
-        const prefixErrors = validateInput(prefixValue, false, true);
-        const nameErrors = validateInput(
+        const prefixErrors = validateCatalogName(prefixValue, false, true);
+        const nameErrors = validateCatalogName(
             nameValue,
             allowBlankName,
             allowEndSlash

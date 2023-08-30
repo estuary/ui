@@ -1,13 +1,14 @@
 import { getConnectors_detailsForm } from 'api/connectors';
 import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
+import { validateCatalogName } from 'components/inputs/PrefixedName/shared';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
 import { Details, DetailsFormState } from 'stores/DetailsForm/types';
 import {
-    CustomError,
     fetchErrors,
     filterErrors,
+    generateCustomError,
     getInitialCustomErrorsData,
     getStoreWithCustomErrorsSettings,
 } from 'stores/extensions/CustomErrors';
@@ -16,8 +17,6 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { DetailsFormStoreNames } from 'stores/names';
-import { JsonFormsData } from 'types';
-import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { createStore, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -36,21 +35,6 @@ const initialDetails: Details = {
         entityName: '',
     },
     errors: [],
-};
-
-const populateErrors = (
-    endpointConfig: JsonFormsData,
-    customErrors: CustomError[],
-    state: DetailsFormState
-): void => {
-    const endpointConfigErrors = filterErrors(fetchErrors(endpointConfig)).map(
-        (message) => ({
-            message,
-        })
-    );
-
-    state.errorsExist =
-        !isEmpty(endpointConfigErrors) || !isEmpty(customErrors);
 };
 
 const getInitialStateData = (): Pick<
@@ -81,35 +65,50 @@ export const getInitialState = (
     ...getStoreWithHydrationSettings(STORE_KEY, set),
     ...getStoreWithCustomErrorsSettings(STORE_KEY),
 
-    setCustomErrors: (val) => {
-        set(
-            produce((state: DetailsFormState) => {
-                state.customErrors = val;
-                state.customErrorsExist = hasLength(val);
-
-                const { details } = get();
-
-                // Setting this so that if there is a custom error then the
-                //  generate button will not proceed
-                populateErrors(details, val, state);
-            }),
-            false,
-            'Details Custom Errors Set'
-        );
-    },
-
     setDetails: (val) => {
         set(
             produce((state: DetailsFormState) => {
+                // If we are defaulting the connector need to populate the initial state
                 if (val.data.connectorImage.id === '') {
                     state.details.data.connectorImage =
                         getInitialStateData().details.data.connectorImage;
                 }
 
+                // Update the details
                 state.details = val;
 
-                const { customErrors } = get();
-                populateErrors(val, customErrors, state);
+                // Run validation on the name. This is done inside the input but
+                //  having the input set custom errors causes issues as we basically
+                //  make two near identical calls to the store and that causes problems.
+                const nameValidation = validateCatalogName(
+                    state.details.data.entityName
+                );
+
+                // We only have custom errors to handle name validation so it is okay
+                //  to totally clear out customErrors and not inteligently update it
+                // As of Q3 2023
+                // TODO (intl) need to get a way for this kind of error to be translated
+                //  and passed into the store
+                if (nameValidation && nameValidation.length > 0) {
+                    state.customErrors = [];
+                    state.customErrors.push(
+                        generateCustomError('entityName', 'Name invalid')
+                    );
+                } else {
+                    state.customErrors = [];
+                }
+
+                // Check if there are any errors from the forms
+                const endpointConfigErrors = filterErrors(fetchErrors(val)).map(
+                    (message) => ({
+                        message,
+                    })
+                );
+
+                // Set the flag for error checking
+                state.errorsExist =
+                    !isEmpty(endpointConfigErrors) ||
+                    !isEmpty(state.customErrors);
             }),
             false,
             'Details Changed'
