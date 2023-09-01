@@ -31,8 +31,8 @@ export interface ResourceConfigState {
 
     collectionErrorsExist: boolean;
 
-    currentCollection: string | null | undefined;
-    setCurrentCollection: (collections?: string | null) => void;
+    currentCollection: string | null;
+    setCurrentCollection: (collections: string | null) => void;
 
     discoveredCollections: string[] | null;
     setDiscoveredCollections: (value: DraftSpecQuery) => void;
