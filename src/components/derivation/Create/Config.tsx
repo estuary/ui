@@ -63,7 +63,10 @@ function DerivationCreateConfig() {
 
                 <Divider />
 
-                <BindingSelectorTable selectedCollections={[]} />
+                <BindingSelectorTable
+                    entityType="collection"
+                    selectedCollections={[]}
+                />
             </StepWrapper>
         </Stack>
     );

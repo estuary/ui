@@ -140,6 +140,7 @@ const getLiveSpecs_collections = (
 
 const getLiveSpecs_collectionsSelector = (
     pagination: any,
+    specType: string,
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
@@ -155,7 +156,7 @@ const getLiveSpecs_collectionsSelector = (
         searchQuery,
         sorting,
         pagination
-    ).eq('spec_type', 'collection');
+    ).eq('spec_type', specType);
 
     return queryBuilder;
 };

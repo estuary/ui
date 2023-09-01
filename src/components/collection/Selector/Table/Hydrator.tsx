@@ -7,6 +7,7 @@ import { useUnmount } from 'react-use';
 import { SelectTableStoreNames } from 'stores/names';
 import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
+import { Entity } from 'types';
 import { MAX_BINDINGS } from 'utils/workflow-utils';
 import { useStore } from 'zustand';
 import Rows from './Rows';
@@ -16,10 +17,11 @@ const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
 const tableRowsPerPage = [10, 50, 100, MAX_BINDINGS];
 
 interface Props {
+    entityType: Entity;
     selectedCollections: string[];
 }
 
-function Hydrator({ selectedCollections }: Props) {
+function Hydrator({ entityType, selectedCollections }: Props) {
     const {
         reset,
         pagination,
@@ -35,13 +37,18 @@ function Hydrator({ selectedCollections }: Props) {
     } = useTableState('csl', publishedColumn, 'desc', tableRowsPerPage[0]);
 
     const query = useMemo(() => {
-        return getLiveSpecs_collectionsSelector(pagination, searchQuery, [
-            {
-                col: columnToSort,
-                direction: sortDirection,
-            },
-        ]);
-    }, [columnToSort, pagination, searchQuery, sortDirection]);
+        return getLiveSpecs_collectionsSelector(
+            pagination,
+            entityType,
+            searchQuery,
+            [
+                {
+                    col: columnToSort,
+                    direction: sortDirection,
+                },
+            ]
+        );
+    }, [columnToSort, pagination, searchQuery, sortDirection, entityType]);
 
     const setDisabledRows = useStore(
         invariableStores['Collections-Selector-Table'],

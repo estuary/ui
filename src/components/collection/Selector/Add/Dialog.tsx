@@ -5,12 +5,18 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
     Stack,
 } from '@mui/material';
 import BindingSelectorTable from 'components/collection/Selector/Table';
 import StepWrapper from 'components/transformation/create/Wrapper';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { Entity } from 'types';
 import { AddCollectionDialogCTAProps } from './types';
 
 interface Props extends AddCollectionDialogCTAProps {
@@ -30,16 +36,34 @@ function AddCollectionDialog({
     toggle,
 }: Props) {
     const ContinueButton = primaryCTA;
+    const [entityType, setEntityType] = useState<Entity>('collection');
+
+    const handleChange = (event: SelectChangeEvent) => {
+        setEntityType(event.target.value as Entity);
+    };
 
     return (
         <Dialog id={id} open={open} fullWidth maxWidth="md">
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle>
+                <FormControl variant="outlined">
+                    <InputLabel>Type</InputLabel>
+                    <Select
+                        value={entityType}
+                        label="Age"
+                        onChange={handleChange}
+                    >
+                        <MenuItem value="collection">{title}</MenuItem>
+                        <MenuItem value="capture">Captures</MenuItem>
+                    </Select>
+                </FormControl>
+            </DialogTitle>
 
             <DialogContent>
                 <Stack spacing={3} sx={{ pt: 2 }}>
                     <StepWrapper>
                         <Box>
                             <BindingSelectorTable
+                                entityType={entityType}
                                 selectedCollections={selectedCollections}
                             />
                         </Box>
