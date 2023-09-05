@@ -19,6 +19,7 @@ export type TablePrefix =
     | 'csl' // collections selector
     | 'mat' // materializations
     | 'pr' // prefixes
+    | 'pal' // prefix alerts
     | 'sm' // storage mappings
     | 'sv'; // schema viewer
 

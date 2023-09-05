@@ -1,5 +1,5 @@
 import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { createClient, User } from '@supabase/supabase-js';
+import { User, createClient } from '@supabase/supabase-js';
 import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { forEach, isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
@@ -35,6 +35,9 @@ export const ERROR_MESSAGES = {
 export const DEFAULT_FILTER = '__unknown__';
 
 export enum TABLES {
+    ALERTS = 'alerts',
+    ALERT_METHODS = 'alert_methods',
+    ALERT_MESSAGES = 'alert_messages',
     APPLIED_DIRECTIVES = 'applied_directives',
     BILLING_HISTORICALS = 'billing_historicals',
     CATALOG_STATS = 'catalog_stats',

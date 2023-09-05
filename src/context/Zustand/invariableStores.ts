@@ -128,6 +128,9 @@ const invariableStores = {
     [SelectTableStoreNames.MATERIALIZATION]: createSelectableTableStore(
         SelectTableStoreNames.MATERIALIZATION
     ),
+    [SelectTableStoreNames.PREFIX_ALERTS]: createSelectableTableStore(
+        SelectTableStoreNames.PREFIX_ALERTS
+    ),
 
     // Shard Detail Store
     [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(

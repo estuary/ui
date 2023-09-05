@@ -337,3 +337,12 @@ export interface AutoDiscoverySettings {
     addNewBindings: boolean;
     evolveIncompatibleCollections: boolean;
 }
+
+export interface AlertMethod {
+    id: string;
+    detail: string;
+    created_at: string;
+    updated_at: string;
+    prefix: string;
+    email: string[];
+}

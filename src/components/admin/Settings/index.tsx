@@ -1,5 +1,6 @@
 import { Divider, Stack } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
+import Alerts from 'components/admin/Settings/Alerts';
 import AdminTabs from 'components/admin/Tabs';
 import usePageTitle from 'hooks/usePageTitle';
 import { osanoActive } from 'services/osano';
@@ -15,7 +16,13 @@ function Settings() {
         <>
             <AdminTabs />
 
-            <StorageMappings />
+            <Alerts />
+
+            <Stack>
+                <Divider sx={{ mt: 2 }} />
+
+                <StorageMappings />
+            </Stack>
 
             {osanoActive() ? (
                 <Stack>

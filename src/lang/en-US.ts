@@ -488,6 +488,13 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.prefix.issueGrant.notification.success.message': `{objectRole} has been shared with {subjectRole}.`,
     'admin.prefix.issueGrant.error.invalidPrefix': `The value entered in the Shared Prefix text field is not an extension of an existing prefix.`,
 
+    'admin.alerts.header': `Prefix Alerts`,
+    'admin.alerts.cta.addAlertMethod': `Configure`,
+    'admin.alerts.table.filterLabel': `Filter by Prefix or Alert Method`,
+    'admin.alerts.table.noContent.header': `No results found.`,
+    'admin.alerts.table.noContent.message': `We couldn't find any results matching your search. Please try a different filter.`,
+    'admin.alerts.table.label.alertMethod': `Alert Method`,
+
     'admin.cookies': `Cookie Preferences`,
     'admin.cookies.message': `Click below to configure your cookie preferences.`,
     'admin.tabs.users': `Account Access`,
