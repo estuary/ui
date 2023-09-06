@@ -344,5 +344,6 @@ export interface AlertMethod {
     created_at: string;
     updated_at: string;
     prefix: string;
-    email: string[];
+    unverified_emails: string[];
+    verified_emails: string[];
 }

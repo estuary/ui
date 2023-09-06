@@ -40,7 +40,7 @@ function Row({ row, isSelected, setRow }: RowProps) {
 
             <TableCell>{row.prefix}</TableCell>
 
-            <TableCell>{row.email}</TableCell>
+            <TableCell>{row.unverified_emails}</TableCell>
 
             <TimeStamp time={row.updated_at} enableRelative />
         </TableRow>
@@ -49,7 +49,7 @@ function Row({ row, isSelected, setRow }: RowProps) {
 
 function Rows({ data }: RowsProps) {
     // Select Table Store
-    const selectTableStoreName = SelectTableStoreNames.MATERIALIZATION;
+    const selectTableStoreName = SelectTableStoreNames.PREFIX_ALERTS;
 
     const selected = useZustandStore<
         SelectableTableStore,

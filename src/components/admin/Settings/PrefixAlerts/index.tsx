@@ -1,8 +1,9 @@
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
+import AlertGenerateButton from 'components/admin/Settings/PrefixAlerts/generate/Button';
 import PrefixAlertTable from 'components/tables/PrefixAlerts';
 import { FormattedMessage } from 'react-intl';
 
-function Alerts() {
+function PrefixAlerts() {
     return (
         <>
             <Box sx={{ pb: 2, px: 2 }}>
@@ -18,9 +19,7 @@ function Alerts() {
                     </Typography>
                 </Stack>
 
-                <Button variant="outlined">
-                    <FormattedMessage id="admin.alerts.cta.addAlertMethod" />
-                </Button>
+                <AlertGenerateButton />
             </Box>
 
             <PrefixAlertTable />
@@ -28,4 +27,4 @@ function Alerts() {
     );
 }
 
-export default Alerts;
+export default PrefixAlerts;

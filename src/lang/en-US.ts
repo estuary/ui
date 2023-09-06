@@ -116,6 +116,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.clickHere': `Click here`,
     'cta.details': `Details`,
     'cta.preview': `Preview`,
+    'cta.save': `Save`,
     'cta.saveEntity': `Save and publish`,
     'cta.restart': `Restart`,
     'cta.enable': `Enable`,
@@ -490,7 +491,8 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
 
     'admin.alerts.header': `Prefix Alerts`,
     'admin.alerts.cta.addAlertMethod': `Configure`,
-    'admin.alerts.table.filterLabel': `Filter by Prefix or Alert Method`,
+    'admin.alerts.dialog.generate.header': `Add Alert Method`,
+    'admin.alerts.table.filterLabel': `Filter by Prefix`,
     'admin.alerts.table.noContent.header': `No results found.`,
     'admin.alerts.table.noContent.message': `We couldn't find any results matching your search. Please try a different filter.`,
     'admin.alerts.table.label.alertMethod': `Alert Method`,
