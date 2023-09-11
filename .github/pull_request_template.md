@@ -1,3 +1,7 @@
+## Issues
+
+_Please list out any related issues (Here so issue is not auto closed by PR)_
+
 ## Changes
 
 _Describe your changes/features, reasoning, any follow ups you have planned, etc._
@@ -5,10 +9,6 @@ _Describe your changes/features, reasoning, any follow ups you have planned, etc
 ## Tests
 
 _Describe the approach to testing._
-
-## Issues
-
-_Please list out any related issues (Here so issue is not auto closed by PR)_
 
 ## Content
 

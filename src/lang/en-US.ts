@@ -52,10 +52,12 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.bindings': `Bindings`,
     'terms.permissions': `Access Grants`,
     'terms.materialization': `Materialization`,
+    'terms.transformation': `Transformation`,
     'terms.capture': `Capture`,
     'terms.derivation': `Derivation`,
     'terms.documentation': `Docs`,
     'terms.storageMapping': `Storage Mappings`,
+    'terms.entity': `Entity`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,
@@ -596,7 +598,7 @@ const Materializations: ResolvedIntlConfig['messages'] = {
 
 const Collections: ResolvedIntlConfig['messages'] = {
     'collectionsTable.title': `Collections`,
-    'collectionsTable.cta.new': `New Transformation`,
+    'collectionsTable.cta.new': `New ${CommonMessages['terms.transformation']}`,
     'collectionsTable.detailsCTA': `Details`,
     'collectionsTable.filterLabel': `Filter collections`,
     'collections.message1': `You currently have no collections. Click the Captures icon on the menu bar to get started.`,
@@ -923,6 +925,9 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.autoDiscovery.label.optIntoDiscovery': `Automatically keep schemas up to date`,
     'workflows.autoDiscovery.label.addNewBindings': `Automatically add new collections`,
     'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Breaking changes re-version collections`,
+
+    'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
+    'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {

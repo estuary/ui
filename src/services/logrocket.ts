@@ -50,12 +50,13 @@ export const MASKED = '**MASKED**';
 
 // for endspoints where we want nothing ever logged
 const maskEverythingURLs = ['config-encryption.estuary.dev'];
-const shouldMaskEverything = (url: string) =>
-    maskEverythingURLs.some((el) => url.includes(el));
+const shouldMaskEverything = (url?: string) =>
+    maskEverythingURLs.some((el) => url?.includes(el));
 
 // for endpoints where we do not want to mess with the request at all
 const ignoreURLs = ['lr-in-prod'];
-const shouldIgnore = (url: string) => ignoreURLs.some((el) => url.includes(el));
+const shouldIgnore = (url?: string) =>
+    ignoreURLs.some((el) => url?.includes(el));
 
 // The headers we never want to have logged
 const maskHeaderKeys = ['apikey', 'Authorization'];
