@@ -273,7 +273,6 @@ function FieldSelectionViewer({ collectionName }: Props) {
                         disabled={false}
                         logEvent={CustomEvents.MATERIALIZATION_TEST}
                         buttonLabelId="fieldSelection.cta.populateTable"
-                        forceLogsClosed
                     />
                 </Box>
             </Stack>
