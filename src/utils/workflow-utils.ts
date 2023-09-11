@@ -4,12 +4,15 @@ import {
 } from 'api/draftSpecs';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isEmpty } from 'lodash';
+import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
+
+// This is the soft limit we recommend to users
+export const MAX_BINDINGS = 300;
 
 export const getCollectionNameProp = (entityType: Entity) => {
     return entityType === 'materialization' ? 'source' : 'target';
@@ -28,6 +31,10 @@ export const getCollectionName = (binding: any) => {
     return Object.hasOwn(scopedBinding, 'name')
         ? scopedBinding.name
         : scopedBinding;
+};
+
+export const getDisableProps = (disable: boolean | undefined) => {
+    return disable ? { disable } : {};
 };
 
 // TODO (typing): Narrow the return type for this function.
@@ -54,17 +61,33 @@ export const generateTaskSpec = (
         boundCollectionNames.forEach((collectionName) => {
             const resourceConfig = resourceConfigs[collectionName].data;
 
+            // Check if disable is a boolean otherwise default to false
+            const { disable } = resourceConfigs[collectionName];
+            const resourceDisable = isBoolean(disable) ? disable : false;
+
+            // See which binding we need to update
             const existingBindingIndex = draftSpec.bindings.findIndex(
                 (binding: any) => getCollectionName(binding) === collectionName
             );
 
             if (existingBindingIndex > -1) {
+                // Include disable otherwise totally remove it
+                if (resourceDisable) {
+                    draftSpec.bindings[existingBindingIndex].disable =
+                        resourceDisable;
+                } else {
+                    delete draftSpec.bindings[existingBindingIndex].disable;
+                }
+
                 draftSpec.bindings[existingBindingIndex].resource = {
                     ...resourceConfig,
                 };
             } else if (Object.keys(resourceConfig).length > 0) {
+                const disabledProps = getDisableProps(resourceDisable);
+
                 draftSpec.bindings.push({
                     [collectionNameProp]: collectionName,
+                    ...disabledProps,
                     resource: {
                         ...resourceConfig,
                     },

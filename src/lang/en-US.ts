@@ -52,10 +52,12 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.bindings': `Bindings`,
     'terms.permissions': `Access Grants`,
     'terms.materialization': `Materialization`,
+    'terms.transformation': `Transformation`,
     'terms.capture': `Capture`,
     'terms.derivation': `Derivation`,
     'terms.documentation': `Docs`,
     'terms.storageMapping': `Storage Mappings`,
+    'terms.entity': `Entity`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,
@@ -83,6 +85,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 
     // Used in directives
     'directives.returning': `Welcome back. You still need to provide some information before using the application.`,
+    'directives.grant.skipped.title': `Access Grant Token Skipped`,
+    'directives.grant.skipped.message': `The access grant link you submitted was not applied as you already have the requested access.`,
 
     // User in filters for tables
     'filter.time.today': `Today`,
@@ -404,6 +408,9 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 
     'entityTable.detailsLink': `View details`,
 
+    'entityTable.rowSelector.all': `All`,
+    'entityTable.rowSelector.none': `None`,
+
     'optionMenu.ariaLabel': `Open Option Menu`,
     'optionMenu.tooltip': `Options`,
     'optionMenu.option.detailsPanel.display': `View details`,
@@ -538,10 +545,8 @@ const ConnectorsPage: ResolvedIntlConfig['messages'] = {
     'connectorTable.title': `Installed ${CommonMessages['terms.connectors']}`,
     'connectorTable.title.aria': `Table of all installed ${CommonMessages['terms.connectors']}`,
     'connectorTable.filterLabel': `Search connectors`,
-    'connectorTable.label.sortBy': `Sort By`,
-    'connectorTable.label.sortDirection': `Sort Direction`,
+    'connectorTable.label.sortDirection': `Sort Name`,
     'connectorTable.data.title': `Name`,
-    'connectorTable.data.image_name': `Image`,
     'connectorTable.data.detail': `Details`,
     'connectorTable.data.protocol': `Protocol`,
     'connectorTable.data.updated_at': `Last Updated`,
@@ -593,7 +598,7 @@ const Materializations: ResolvedIntlConfig['messages'] = {
 
 const Collections: ResolvedIntlConfig['messages'] = {
     'collectionsTable.title': `Collections`,
-    'collectionsTable.cta.new': `New Transformation`,
+    'collectionsTable.cta.new': `New ${CommonMessages['terms.transformation']}`,
     'collectionsTable.detailsCTA': `Details`,
     'collectionsTable.filterLabel': `Filter collections`,
     'collections.message1': `You currently have no collections. Click the Captures icon on the menu bar to get started.`,
@@ -618,7 +623,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.errors.collapseTitle': `View logs`,
     'entityCreate.errors.collapseTitleOpen': `Hide logs`,
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
-    'entityCreate.endpointConfig.heading': `${endpointConfigHeader}`,
+    'entityCreate.endpointConfig.heading': `2. ${endpointConfigHeader}`,
     'entityCreate.endpointConfig.errorSummary': `There are issues with the form.`,
     'entityCreate.instructions': `To start select a Connector below. Once you make a selection the rest of the form will display and you can configure your endpoint. You can search by name and if you do not find what you are looking for please let us know by requesting the connector.`,
 
@@ -638,9 +643,11 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
 
     'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
 
-    'entityCreate.bindingsConfig.collectionsLabel': `Search {items}`,
+    'entityCreate.bindingsConfig.addCTA': `Add {itemType}`,
     'entityCreate.bindingsConfig.noRows': `Please select from the list above to begin.`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
+    'entityCreate.bindingsConfig.list.search': `Filter {itemType}`,
+    'entityCreate.bindingsConfig.list.removeAll': `Remove {itemType} on this page`,
 
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
     'entityCreate.errors.missingDraftId': `Missing Draft ID.`,
@@ -663,7 +670,7 @@ const MonacoEditor: ResolvedIntlConfig['messages'] = {
 
 const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.heading': `${RouteTitles['routeTitle.captureCreate']}`,
-    'captureCreate.details.heading': `Capture Details`,
+    'captureCreate.details.heading': `1. Capture Details`,
     'captureCreate.ctas.materialize': `Materialize Collections`,
     'captureCreate.instructions': `Provide a unique name and specify a source system for your capture. Fill in the required details and click "${CTAs['cta.generateCatalog.capture']}" to test the connection.`,
     'captureCreate.missingConnectors': `No connectors are installed. You must install a source connector to create a capture.`,
@@ -674,7 +681,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
     'captureCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the specification file directly below. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
-    'captureCreate.collections.heading': `Output Collections`,
+    'captureCreate.collections.heading': `3. Output Collections`,
     'captureCreate.collectionSelector.heading': `Collection Selector`,
     'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
@@ -698,7 +705,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
 const CaptureEdit: ResolvedIntlConfig['messages'] = {
     'captureEdit.heading': `${RouteTitles['routeTitle.captureEdit']}`,
-    'captureEdit.details.heading': `Capture Details`,
+    'captureEdit.details.heading': `1. Capture Details`,
     'captureEdit.ctas.materialize': `Materialize Collections`,
     'captureEdit.instructions': `The name and destination of your existing capture.`,
     'captureEdit.missingConnectors': `No connectors are installed. You must install a source connector to edit a capture.`,
@@ -709,7 +716,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
     'captureEdit.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
     'captureEdit.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above or edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
-    'captureEdit.collections.heading': `Output Collections`,
+    'captureEdit.collections.heading': `3. Output Collections`,
     'captureEdit.collectionSelector.heading': `Collection Selector`,
     'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
@@ -756,8 +763,8 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
-    'materializationCreate.details.heading': `Materialization Details`,
-    'materializationCreate.collections.heading': `Source Collections`,
+    'materializationCreate.details.heading': `1. Materialization Details`,
+    'materializationCreate.collections.heading': `3. Source Collections`,
     'materializationCreate.config.source.doclink': `Connector Help`,
     'materializationCreate.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
     'materializationCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.materialization']}" again. You can also edit the specification file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
@@ -792,8 +799,8 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
 };
 
 const MaterializationEdit: ResolvedIntlConfig['messages'] = {
-    'materializationEdit.details.heading': `Materialization Details`,
-    'materializationEdit.collections.heading': `Output Collections`,
+    'materializationEdit.details.heading': `1. Materialization Details`,
+    'materializationEdit.collections.heading': `3. Output Collections`,
     'materializationEdit.config.source.doclink': `Connector Help`,
     'materializationEdit.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
     'materializationEdit.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above or edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
@@ -855,12 +862,14 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.initTask.alert.message.initFailed.docPath': `mailto:support@estuary.dev`,
     'workflows.initTask.alert.message.patchedSpec': `An issue was encountered recovering your changes. The latest, published record of the task was used to initialize the form.`,
 
-    'workflows.collectionSelector.cta.delete': `Remove All`,
     'workflows.collectionSelector.cta.rediscover': `Refresh`,
+    'workflows.collectionSelector.cta.rediscover.tooltip': `Refresh bindings with latest from source`,
     'workflows.collectionSelector.cta.schemaEdit': `CLI`,
     'workflows.collectionSelector.cta.schemaInference': `Schema Inference`,
     'workflows.collectionSelector.error.title.editorInitialization': `Editor initialization failed`,
-    'workflows.collectionSelector.error.title.missingCollectionSchema': `Failed to fetch collection specification`,
+    'workflows.collectionSelector.error.title.missingCollectionSchema': `No collection schema to display`,
+    'workflows.collectionSelector.error.message.missingCollectionSchema': `This is normally caused by the {itemType} being disabled during {entityType} creation.`,
+    'workflows.collectionSelector.error.fix.missingCollectionSchema': `To see the schema, refresh the {itemType} using the button to the left.`,
     'workflows.collectionSelector.error.message.invalidPubId': `This specification may have diverged from the latest, published record of the collection. Your unpublished changes can be found in the editor.`,
     'workflows.collectionSelector.error.message.draftCreationFailed': `The latest, published record of the collection can be found in the editor. It is read-only.`,
     'workflows.collectionSelector.header.collectionSchema': `Collection Schema`,
@@ -869,6 +878,15 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.label.listHeader': `Collections`,
     'workflows.collectionSelector.tab.collectionSchema': `Collection`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
+
+    'workflows.collectionSelector.toggle.enable': `Enable All`,
+    'workflows.collectionSelector.toggle.disable': `Disable All`,
+    'workflows.collectionSelector.toggle.enable.tooltip': `Enable all {itemType} on this page`,
+    'workflows.collectionSelector.toggle.disable.tooltip': `Disable all {itemType} on this page`,
+
+    'workflows.collectionSelector.notifications.remove': `{count} {itemType} removed`,
+    'workflows.collectionSelector.notifications.toggle.enable': `{count} {itemType} enabled`,
+    'workflows.collectionSelector.notifications.toggle.disable': `{count} {itemType} disabled`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
@@ -897,6 +915,19 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.schemaInference.alert.patchService.message.docLink': `contact support`,
     'workflows.collectionSelector.schemaInference.alert.patchService.message.docPath': `mailto:support@estuary.dev`,
     'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
+
+    'workflows.entityWarnings.title': `No collections`,
+    'workflows.entityWarnings.message': `You have not added any collections yet. This means there will be
+                no data output from this materialization. To add collections,
+                use the Output Collections section.`,
+
+    'workflows.autoDiscovery.header': `Schema Evolution`,
+    'workflows.autoDiscovery.label.optIntoDiscovery': `Automatically keep schemas up to date`,
+    'workflows.autoDiscovery.label.addNewBindings': `Automatically add new collections`,
+    'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Breaking changes re-version collections`,
+
+    'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
+    'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {

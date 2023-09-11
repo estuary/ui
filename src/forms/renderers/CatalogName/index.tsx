@@ -35,11 +35,7 @@ import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 import PrefixedName from 'components/inputs/PrefixedName';
 import { PrefixedName_Change } from 'components/inputs/PrefixedName/types';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { useCallback, useRef } from 'react';
-import { useIntl } from 'react-intl';
-import { useUnmount } from 'react-use';
-import { useDetailsForm_setCustomErrors } from 'stores/DetailsForm/hooks';
-import { generateCustomError } from 'stores/extensions/CustomErrors';
+import { useCallback } from 'react';
 
 export const CATALOG_NAME_SCOPE = 'entityName';
 
@@ -56,45 +52,14 @@ const CatalogNameTypeRenderer = ({
     required,
     uischema,
 }: ControlProps & OwnPropsOfEnum & WithOptionLabel) => {
-    const intl = useIntl();
-    const hackyTimeout = useRef<number | null>(null);
-
     const isEdit = useEntityWorkflow_Editing();
-    const setCustomErrors = useDetailsForm_setCustomErrors();
 
     const updateFunction = useCallback<PrefixedName_Change>(
-        (prefixedName, errorString) => {
+        (prefixedName) => {
             handleChange(path, prefixedName);
-
-            // TODO (JSONForms) This is hacky but it works.
-            //  setting custom errors right away can cause re-renders that will
-            //  mess up populating the correct catalog name
-            hackyTimeout.current = window.setTimeout(() => {
-                const customErrors = [];
-
-                // Just replace all specific errors with a simple "invalid" error
-                if (errorString) {
-                    customErrors.push(
-                        generateCustomError(
-                            path,
-                            intl.formatMessage({
-                                id: 'entityCreate.endpointConfig.entityNameInvalid',
-                            })
-                        )
-                    );
-                }
-
-                setCustomErrors(customErrors);
-            });
         },
-        [handleChange, intl, path, setCustomErrors]
+        [handleChange, path]
     );
-
-    useUnmount(() => {
-        if (hackyTimeout.current) {
-            clearTimeout(hackyTimeout.current);
-        }
-    });
 
     return (
         <PrefixedName

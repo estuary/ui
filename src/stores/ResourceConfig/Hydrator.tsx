@@ -3,8 +3,8 @@ import { useEntityWorkflow } from 'context/Workflow';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { ReactNode } from 'react';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
+import { BaseComponentProps } from 'types';
 import {
     useResourceConfig_hydrated,
     useResourceConfig_hydrateState,
@@ -12,14 +12,7 @@ import {
     useResourceConfig_setHydrationErrorsExist,
 } from './hooks';
 
-// Hydrator
-interface ResourceConfigHydratorProps {
-    children: ReactNode;
-}
-
-export const ResourceConfigHydrator = ({
-    children,
-}: ResourceConfigHydratorProps) => {
+export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const entityType = useEntityType();
@@ -57,7 +50,8 @@ export const ResourceConfigHydrator = ({
         hydrateTheState(true);
     }, [connectorId]);
 
-    return <div>{children}</div>;
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <>{children}</>;
 };
 
 export default ResourceConfigHydrator;

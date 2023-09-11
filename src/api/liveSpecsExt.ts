@@ -145,7 +145,7 @@ const getLiveSpecs_collectionsSelector = (
 ) => {
     let queryBuilder = supabaseClient
         .from<CollectionSelectorQuery>(TABLES.LIVE_SPECS_EXT)
-        .select('catalog_name, id, spec_type', {
+        .select('catalog_name, id, updated_at, spec_type', {
             count: 'exact',
         });
 

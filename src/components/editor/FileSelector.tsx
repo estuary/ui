@@ -3,7 +3,7 @@ import {
     DataGrid,
     GridColDef,
     GridRenderCellParams,
-    GridSelectionModel,
+    GridRowSelectionModel,
 } from '@mui/x-data-grid';
 import {
     useEditorStore_isEditing,
@@ -44,7 +44,7 @@ const columns: GridColDef[] = [
         field: 'catalog_name',
         headerName: 'Files',
         flex: 1,
-        renderCell: (params: GridRenderCellParams<Date>) => (
+        renderCell: (params: GridRenderCellParams) => (
             <ListItemText
                 primary={params.row.catalog_name}
                 secondary={params.row.spec_type}
@@ -73,7 +73,7 @@ function EditorFileSelector({ localZustandScope }: Props) {
 
     const specs = useEditorStore_specs({ localScope: localZustandScope });
 
-    const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
+    const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
         []
     );
 
@@ -89,12 +89,12 @@ function EditorFileSelector({ localZustandScope }: Props) {
             <DataGrid
                 rows={specs}
                 columns={columns}
-                headerHeight={40}
+                columnHeaderHeight={40}
                 rowCount={specs.length}
                 hideFooter
                 disableColumnSelector
                 loading={isSaving}
-                onSelectionModelChange={(newSelectionModel) => {
+                onRowSelectionModelChange={(newSelectionModel) => {
                     if (!isEditing) {
                         setSelectionModel(newSelectionModel);
                     }
@@ -105,7 +105,7 @@ function EditorFileSelector({ localZustandScope }: Props) {
                     }
                 }}
                 getRowId={getRowId}
-                selectionModel={selectionModel}
+                rowSelectionModel={selectionModel}
                 initialState={initialState}
                 sx={dataGridListStyling}
             />

@@ -1,11 +1,13 @@
 import { Checkbox, TableCell } from '@mui/material';
+import { isBoolean } from 'lodash';
 
 interface Props {
     isSelected: boolean;
     name: string;
+    disabled?: boolean;
 }
 
-function RowSelect({ isSelected, name }: Props) {
+function RowSelect({ disabled, isSelected, name }: Props) {
     return (
         <TableCell
             padding="checkbox"
@@ -16,7 +18,10 @@ function RowSelect({ isSelected, name }: Props) {
         >
             <Checkbox
                 color="primary"
-                checked={isSelected}
+                checked={
+                    isBoolean(disabled) ? disabled || isSelected : isSelected
+                }
+                disabled={disabled}
                 inputProps={{
                     'aria-labelledby': name,
                 }}

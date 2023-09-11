@@ -72,9 +72,7 @@ function CatalogList({
                 </Stack>
             }
         >
-            <Box id="list-item-container" sx={{ height, overflowY: 'auto' }}>
-                {content}
-            </Box>
+            <Box sx={{ height, overflowY: 'auto' }}>{content}</Box>
         </List>
     );
 }

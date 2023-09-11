@@ -15,6 +15,7 @@ import {
     ChangeEvent,
     MouseEvent,
     ReactNode,
+    useCallback,
     useEffect,
     useMemo,
     useRef,
@@ -54,14 +55,18 @@ interface Props {
     noExistingDataContentIds: TableIntlConfig;
     pagination: Pagination;
     renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
+    rowsPerPage: number;
     searchQuery: string | null;
     selectableTableStoreName: SelectTableStoreNames;
     setColumnToSort: (data: any) => void;
     setPagination: (data: any) => void;
+    setRowsPerPage: (data: any) => void;
     setSearchQuery: (data: any) => void;
     setSortDirection: (data: any) => void;
     sortDirection: SortDirection;
     hideHeaderAndFooter?: boolean;
+    keepSelectionOnFilterOrSearch?: boolean;
+    keepSelectionOnPagination?: boolean;
     minWidth?: number;
     rowsPerPageOptions?: number[];
     showEntityStatus?: boolean;
@@ -90,6 +95,7 @@ function EntityTable({
     searchQuery,
     pagination,
     setPagination,
+    setRowsPerPage,
     setSearchQuery,
     sortDirection,
     setSortDirection,
@@ -100,10 +106,13 @@ function EntityTable({
     showEntityStatus = false,
     selectableTableStoreName,
     hideHeaderAndFooter,
+    rowsPerPage,
     rowsPerPageOptions = [10, 25, 50],
     minWidth = 350,
     showToolbar,
     toolbar,
+    keepSelectionOnFilterOrSearch,
+    keepSelectionOnPagination,
 }: Props) {
     const isFiltering = useRef(Boolean(searchQuery));
     const searchTextField = useRef<HTMLInputElement>(null);
@@ -151,7 +160,6 @@ function EntityTable({
         selectableTableStoreSelectors.successfulTransformations.get
     );
 
-    const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
@@ -174,12 +182,12 @@ function EntityTable({
         }
     }, [hydrate, successfulTransformations]);
 
-    const resetSelection = () => {
+    const resetSelection = useCallback(() => {
         if (toolbar) {
             setAll(false);
             resetRows();
         }
-    };
+    }, [resetRows, setAll, toolbar]);
 
     // Weird way but works for clear out the input. This is really only needed when
     //  a user enters text into the input on a page and then clicks the left nav of
@@ -200,6 +208,15 @@ function EntityTable({
         };
     });
 
+    const selectionResetHandler = useCallback(
+        (override?: boolean) => {
+            if (override ?? !keepSelectionOnFilterOrSearch) {
+                resetSelection();
+            }
+        },
+        [keepSelectionOnFilterOrSearch, resetSelection]
+    );
+
     const handlers = {
         filterTable: debounce(
             (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -208,7 +225,7 @@ function EntityTable({
 
                 isFiltering.current = hasQuery;
 
-                resetSelection();
+                selectionResetHandler();
                 setPagination(getPagination(0, rowsPerPage));
                 setPage(0);
                 setSearchQuery(hasQuery ? filterQuery : null);
@@ -218,7 +235,7 @@ function EntityTable({
         sortRequest: (_event: React.MouseEvent<unknown>, column: any) => {
             const isAsc = columnToSort === column && sortDirection === 'asc';
 
-            resetSelection();
+            selectionResetHandler();
             setSortDirection(isAsc ? 'desc' : 'asc');
             setColumnToSort(column);
         },
@@ -229,14 +246,14 @@ function EntityTable({
             _event: MouseEvent<HTMLButtonElement> | null,
             newPage: number
         ) => {
-            resetSelection();
+            selectionResetHandler(!keepSelectionOnPagination);
             setPagination(getPagination(newPage, rowsPerPage));
             setPage(newPage);
         },
         changeRowsPerPage: (event: ChangeEvent<HTMLInputElement>) => {
             const newLimit = parseInt(event.target.value, 10);
 
-            resetSelection();
+            selectionResetHandler();
             setRowsPerPage(newLimit);
             setPagination(getPagination(0, newLimit));
             setPage(0);
@@ -326,6 +343,7 @@ function EntityTable({
                             onRowsPerPageChange={handlers.changeRowsPerPage}
                             page={page}
                             rowsPerPage={rowsPerPage}
+                            rowsPerPageOptions={rowsPerPageOptions}
                             selectableTableStoreName={selectableTableStoreName}
                         />
                     </Table>

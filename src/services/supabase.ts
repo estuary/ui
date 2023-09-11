@@ -1,5 +1,5 @@
 import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { User, createClient } from '@supabase/supabase-js';
+import { createClient, User } from '@supabase/supabase-js';
 import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { forEach, isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
@@ -30,12 +30,14 @@ export const QUERY_PARAM_CONNECTOR_TITLE = `connector_title->>en-US`;
 
 export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',
+    jwsInvalid: 'JWSError JWSInvalidSignature',
 };
 
 export const DEFAULT_FILTER = '__unknown__';
 
 export enum TABLES {
     APPLIED_DIRECTIVES = 'applied_directives',
+    BILLING_HISTORICALS = 'billing_historicals',
     CATALOG_STATS = 'catalog_stats',
     COMBINED_GRANTS_EXT = 'combined_grants_ext',
     CONNECTOR_TAGS = 'connector_tags',

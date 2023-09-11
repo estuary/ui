@@ -44,6 +44,10 @@ export enum ResourceConfigStoreNames {
     GENERAL = 'general-resource-config',
 }
 
+export enum SchemaEvolutionStoreNames {
+    GENERAL = 'general-schema-evolution',
+}
+
 export enum SelectTableStoreNames {
     ACCESS_GRANTS_LINKS = 'AccessGrants-Links',
     ACCESS_GRANTS_USERS = 'AccessGrants-Users',
@@ -87,6 +91,7 @@ export type StoreName =
     | FormStateStoreNames
     | OnboardingStoreNames
     | ResourceConfigStoreNames
+    | SchemaEvolutionStoreNames
     | SelectTableStoreNames
     | ShardDetailStoreNames
     | AdminStoreNames

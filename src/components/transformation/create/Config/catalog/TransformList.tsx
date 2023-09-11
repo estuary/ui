@@ -46,8 +46,7 @@ function TransformList() {
             header={
                 <FormattedMessage id="newTransform.config.transform.header" />
             }
-            open={open}
-            primaryCTA={<UpdateDraftButton setDialogOpen={toggleDialog} />}
+            primaryCTA={UpdateDraftButton}
             toggle={toggleDialog}
         />
     );

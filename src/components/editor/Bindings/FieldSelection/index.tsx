@@ -123,9 +123,11 @@ function FieldSelectionViewer({ collectionName }: Props) {
             draftSpecs[0].validated
         ) {
             // Select the binding from the built spec that corresponds to the current collection
-            // to extract the projection information.
+            //  to extract the projection information.
+            // Defaulting to empty array. This is to handle when a user has disabled a collection
+            //  which causes the binding to not be included in the built_spec
             const builtSpecBindings: BuiltSpec_Binding[] =
-                draftSpecs[0].built_spec.bindings;
+                draftSpecs[0].built_spec.bindings ?? [];
 
             const selectedBuiltSpecBinding: BuiltSpec_Binding | undefined =
                 builtSpecBindings.find(
@@ -254,7 +256,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
                             <FormattedMessage id="fieldSelection.header" />
                         </Typography>
 
-                        <ExternalLink link="https://docs.estuary.dev/concepts/materialization/#projected-fields">
+                        <ExternalLink link="https://docs.estuary.dev/guides/customize-materialization-fields/">
                             <FormattedMessage id="terms.documentation" />
                         </ExternalLink>
                     </Stack>

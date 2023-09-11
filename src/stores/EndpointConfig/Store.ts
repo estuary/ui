@@ -20,8 +20,8 @@ import { JsonFormsData, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import { StoreApi, create } from 'zustand';
+import { NamedSet, devtools } from 'zustand/middleware';
 import { EndpointConfigState } from './types';
 
 const STORE_KEY = 'Endpoint Config';
@@ -45,6 +45,7 @@ const populateErrors = (
 const getInitialStateData = (): Pick<
     EndpointConfigState,
     | 'encryptedEndpointConfig'
+    | 'endpointCanBeEmpty'
     | 'endpointConfig'
     | 'errorsExist'
     | 'endpointConfigErrors'
@@ -54,9 +55,9 @@ const getInitialStateData = (): Pick<
     | 'previousEndpointConfig'
     | 'publishedEndpointConfig'
     | 'serverUpdateRequired'
-    | 'endpointCanBeEmpty'
 > => ({
     encryptedEndpointConfig: { data: {}, errors: [] },
+    endpointCanBeEmpty: false,
     endpointConfig: { data: {}, errors: [] },
     errorsExist: true,
     endpointConfigErrors: [],
@@ -66,7 +67,6 @@ const getInitialStateData = (): Pick<
     previousEndpointConfig: { data: {}, errors: [] },
     publishedEndpointConfig: { data: {}, errors: [] },
     serverUpdateRequired: false,
-    endpointCanBeEmpty: false,
 });
 
 const getInitialState = (

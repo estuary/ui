@@ -8,6 +8,7 @@ import Logs from 'components/logs';
 import { ReactNode } from 'react';
 import { useFormStateStore_message } from 'stores/FormState/hooks';
 import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
+import EntityWarnings from './Warnings';
 
 interface Props {
     open: boolean;
@@ -34,6 +35,8 @@ function LogDialog({ open, token, actionComponent, title }: Props) {
             <DialogTitle id={TITLE_ID}>{title}</DialogTitle>
 
             <DialogContent>
+                <EntityWarnings />
+
                 <ErrorBoundryWrapper>
                     <Logs
                         token={token}

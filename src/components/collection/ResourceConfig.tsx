@@ -3,7 +3,10 @@ import ResourceConfigForm from 'components/collection/ResourceConfigForm';
 import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
 import { useEntityType } from 'context/EntityContext';
 import { FormattedMessage } from 'react-intl';
-import { useResourceConfig_hydrated } from 'stores/ResourceConfig/hooks';
+import {
+    useResourceConfig_hydrated,
+    useResourceConfig_resourceConfigOfCollectionProperty,
+} from 'stores/ResourceConfig/hooks';
 import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
 
 interface Props {
@@ -15,6 +18,15 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
     const entityType = useEntityType();
 
     const hydrated = useResourceConfig_hydrated();
+
+    // If the collection is disabled then it will not come back in the built spec
+    //  binding list. This means the user could end up clicking "See Fields" button
+    //  forever and never get fields listed.
+    const collectionDisabled =
+        useResourceConfig_resourceConfigOfCollectionProperty(
+            collectionName,
+            'disable'
+        );
 
     return (
         <>
@@ -33,7 +45,7 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
                 )}
             </Box>
 
-            {entityType === 'materialization' ? (
+            {entityType === 'materialization' && !collectionDisabled ? (
                 <FieldSelectionViewer collectionName={collectionName} />
             ) : null}
         </>

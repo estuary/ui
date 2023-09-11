@@ -23,11 +23,9 @@ import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_draftedEntityName,
-    useDetailsForm_hydrated,
 } from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_changed,
-    useEndpointConfig_hydrated,
     useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
 import {
@@ -36,13 +34,11 @@ import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState/hooks';
-import {
-    useResourceConfig_hydrated,
-    useResourceConfig_serverUpdateRequired,
-} from 'stores/ResourceConfig/hooks';
+import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/hooks';
 import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
+import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
 import IncompatibleCollections from '../IncompatibleCollections';
 import ValidationErrorSummary from '../ValidationErrorSummary';
 
@@ -82,7 +78,6 @@ function EntityEdit({
     } = useConnectorWithTagDetail(entityType);
 
     // Details Form Store
-    const detailsFormStoreHydrated = useDetailsForm_hydrated();
     const imageTag = useDetailsForm_connectorImage();
     const entityName = useDetailsForm_draftedEntityName();
 
@@ -95,7 +90,6 @@ function EntityEdit({
     const draftInitializationError = useEditorStore_draftInitializationError();
 
     // Endpoint Config Store
-    const endpointConfigStoreHydrated = useEndpointConfig_hydrated();
     const endpointConfigChanged = useEndpointConfigStore_changed();
     const endpointConfigServerUpdateRequired =
         useEndpointConfig_serverUpdateRequired();
@@ -110,7 +104,6 @@ function EntityEdit({
     const formSubmitError = useFormStateStore_error();
 
     // Resource Config Store
-    const resourceConfigStoreHydrated = useResourceConfig_hydrated();
     const resourceConfigServerUpdateRequired =
         useResourceConfig_serverUpdateRequired();
 
@@ -138,10 +131,7 @@ function EntityEdit({
     const promptDataLoss = endpointConfigChanged();
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
-    const storeHydrationIncomplete =
-        !detailsFormStoreHydrated ||
-        !endpointConfigStoreHydrated ||
-        !resourceConfigStoreHydrated;
+    const storeHydrationComplete = useFormHydrationChecker();
 
     return (
         <>
@@ -153,7 +143,7 @@ function EntityEdit({
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
-            ) : !persistedDraftId || storeHydrationIncomplete ? null : (
+            ) : !persistedDraftId || !storeHydrationComplete ? null : (
                 <DraftSpecEditorHydrator
                     entityType={entityType}
                     entityName={entityName}

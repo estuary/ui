@@ -43,21 +43,23 @@ function CollectionConfig({
     const collectionsHasErrors = useResourceConfig_collectionErrorsExist();
 
     const hasErrors =
-        resourceConfigHydrationErrorsExist ||
-        resourceConfigHasErrors ||
-        collectionsHasErrors;
+        resourceConfigHydrationErrorsExist || resourceConfigHasErrors;
+
+    const hasWarnings = collectionsHasErrors;
 
     return (
         <WrapperWithHeader
             hideBorder={hideBorder}
             header={
                 <>
-                    {hasErrors ? (
+                    {hasErrors || hasWarnings ? (
                         <WarningCircle
                             style={{
                                 marginRight: 4,
                                 fontSize: 12,
-                                color: theme.palette.error.main,
+                                color: hasErrors
+                                    ? theme.palette.error.main
+                                    : theme.palette.warning.main,
                             }}
                         />
                     ) : null}

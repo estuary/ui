@@ -1,23 +1,27 @@
 import { Stack, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { getDirectiveByToken } from 'api/directives';
+import { authenticatedRoutes } from 'app/routes';
 import MessageWithLink from 'components/content/MessageWithLink';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import AcceptGrant from 'directives/AcceptGrant';
 import FullPageWrapper from 'directives/FullPageWrapper';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useState } from 'react';
+
+import { useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
-import useDirectiveGuard from './hooks';
+import { Navigate } from 'react-router';
+import { getPathWithParams } from 'utils/misc-utils';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { HomePageErrors } from 'components/login/shared';
+import useDirectiveGuard from '../hooks';
 
 const SELECTED_DIRECTIVE = 'grant';
 
-function GrantGuard({ children }: BaseComponentProps) {
-    const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
+interface Props {
+    grantToken: string;
+}
 
+function GrantGuardProcessor({ grantToken }: Props) {
     const [processUninitiated, setProcessUninitiated] = useState<boolean>(true);
     const [serverError, setServerError] = useState<string | null>(null);
     const [prefix, setPrefix] = useState<string | null | undefined>(null);
@@ -33,7 +37,23 @@ function GrantGuard({ children }: BaseComponentProps) {
         error: configError,
     } = useDirectiveGuard(SELECTED_DIRECTIVE, { token: grantToken });
 
-    if (grantToken && status !== 'fulfilled') {
+    // home page error related
+    // We do not really differeniate between these two with messages to users
+    //  but still setting them as two different messages just in case we need to
+    //  sometime in the future.
+    const homePageError = useMemo(() => {
+        if (grantToken && processUninitiated) {
+            if (directive?.directives?.uses_remaining === null) {
+                return HomePageErrors.GRANT_TOKEN_NOT_APPLIED_MULTI_USE;
+            }
+            if (directive?.directives?.uses_remaining === 0) {
+                return HomePageErrors.GRANT_TOKEN_NOT_APPLIED_SINGLE_USE;
+            }
+        }
+        return null;
+    }, [directive?.directives?.uses_remaining, grantToken, processUninitiated]);
+
+    if (status !== 'fulfilled') {
         if (
             (loading ||
                 status === null ||
@@ -43,6 +63,7 @@ function GrantGuard({ children }: BaseComponentProps) {
             !configError
         ) {
             if (processUninitiated && directive) {
+                // Start fetching the directive details based on token to see what we need to do
                 setProcessUninitiated(false);
 
                 void getDirectiveByToken(grantToken).then(
@@ -76,6 +97,8 @@ function GrantGuard({ children }: BaseComponentProps) {
             prefix === undefined ||
             capability === undefined
         ) {
+            //  Show the "full stop" error page to make sure the user knows we were unable
+            //      to give them access and do not see a previous submiting
             return (
                 <FullPageWrapper>
                     <Stack spacing={2}>
@@ -92,6 +115,7 @@ function GrantGuard({ children }: BaseComponentProps) {
                 </FullPageWrapper>
             );
         } else {
+            // Show the page to give user access
             return (
                 <FullPageWrapper>
                     {prefix && capability ? (
@@ -118,9 +142,15 @@ function GrantGuard({ children }: BaseComponentProps) {
             );
         }
     } else {
-        // eslint-disable-next-line react/jsx-no-useless-fragment
-        return <>{children}</>;
+        // This should mean we have a grant token that has been fulfilled
+        //  So now it is safe to see if we need to show an error or not.
+        const navigateToPath = homePageError
+            ? getPathWithParams(authenticatedRoutes.home.path, {
+                  [GlobalSearchParams.HOME_PAGE_ERROR]: homePageError,
+              })
+            : authenticatedRoutes.home.path;
+        return <Navigate to={navigateToPath} replace />;
     }
 }
 
-export default GrantGuard;
+export default GrantGuardProcessor;

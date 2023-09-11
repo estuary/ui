@@ -56,7 +56,17 @@ function AcceptGrant({
                     trackEvent(`${directiveName}:Complete`, directive);
 
                     if (mutate) {
-                        void mutate();
+                        mutate()
+                            .then(() => {
+                                trackEvent(
+                                    `${directiveName}:Complete:Mutate:Success`
+                                );
+                            })
+                            .catch(() => {
+                                trackEvent(
+                                    `${directiveName}:Complete:Mutate:Error`
+                                );
+                            });
                     }
                 },
                 async (payload: any) => {

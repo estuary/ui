@@ -1,5 +1,5 @@
 import { Box, Grid, useTheme } from '@mui/material';
-import { DataGrid, GridSelectionModel } from '@mui/x-data-grid';
+import { DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import Error from 'components/shared/Error';
 import { dataGridListStyling, semiTransparentBackground } from 'context/Theme';
@@ -20,7 +20,7 @@ function ListView({
     journalData: { data, error },
 }: PreviewJsonModeProps) {
     const [selectedKey, setSelectedKey] = useState<string>('');
-    const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
+    const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
         []
     );
 
@@ -78,13 +78,13 @@ function ListView({
                             }))}
                             hideFooter
                             disableColumnSelector
-                            headerHeight={40}
+                            columnHeaderHeight={40}
                             rowCount={data?.documents.length}
                             onRowClick={(params) =>
                                 setSelectedKey(params.row.key)
                             }
-                            selectionModel={selectionModel}
-                            onSelectionModelChange={(newSelectionModel) => {
+                            rowSelectionModel={selectionModel}
+                            onRowSelectionModelChange={(newSelectionModel) => {
                                 setSelectionModel(newSelectionModel);
                             }}
                             sx={dataGridListStyling}

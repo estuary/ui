@@ -520,12 +520,21 @@ export const useHydrateEditorState = (
     const draftIdInURL = useGlobalSearchParams(GlobalSearchParams.DRAFT_ID);
 
     const draftId = useEditorStore_id({ localScope });
+    const persistedDraftId = useEditorStore_persistedDraftId({ localScope });
     const setQueryResponse = useEditorStore_setQueryResponse({ localScope });
 
-    const response = useDraftSpecs(draftId ?? draftIdInURL, {
-        specType,
-        catalogName,
-    });
+    // This fallback chain of draft IDs is required because of how the global editor store
+    // differs in keeping record of the draft ID from its local counterpart. Notable component
+    // call-outs include: the collection tab of the binding selector relies on the draft ID
+    // stored in the 'id' property of the local editor store state; the capture auto-discovery settings
+    // rely on the draft ID stored in the 'persistedDraftId' property of the global editor store state.
+    const response = useDraftSpecs(
+        draftId ?? persistedDraftId ?? draftIdInURL,
+        {
+            specType,
+            catalogName,
+        }
+    );
 
     useEffect(() => {
         if (!response.isValidating) {

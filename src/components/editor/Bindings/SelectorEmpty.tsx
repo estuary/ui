@@ -6,7 +6,7 @@ function SelectorEmpty() {
     return (
         <Box sx={{ pt: 1, px: 1 }}>
             <AlertBox
-                severity="info"
+                severity="warning"
                 short
                 title={
                     <FormattedMessage id="entityCreate.bindingsConfig.noRowsTitle" />
