@@ -120,10 +120,14 @@ const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
 // Constants to handling inferred schema stuff. Taken from
 //  estuary/flow crates/validation/src/lib.rs and slightly changes for JS
 
-// eslint-disable-next-line no-useless-escape
-const REF_INFERRED_SCHEMA_PATTERN = /\"\$ref\":\"flow:\/\/inferred-schema\"/;
-// eslint-disable-next-line no-useless-escape
-const REF_WRITE_SCHEMA_PATTERN = /\"\$ref\":\"flow:\/\/write-schema\"/;
+const REF_INFERRED_SCHEMA_PATTERN = new RegExp(
+    // eslint-disable-next-line no-useless-escape
+    /\"\$ref\": \"flow:\/\/inferred-schema\"/
+);
+const REF_WRITE_SCHEMA_PATTERN = new RegExp(
+    // eslint-disable-next-line no-useless-escape
+    /\"\$ref\": \"flow:\/\/write-schema\"/
+);
 const WRITE_SCHEMA_REF = 'flow://write-schema';
 const INFERRED_SCHEMA_REF = 'flow://inferred-schema';
 
