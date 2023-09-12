@@ -4,15 +4,21 @@ import {
     getDraftSpecsByCatalogName,
     modifyDraftSpec,
 } from 'api/draftSpecs';
+import { fetchInferredSchema } from 'api/inferred_schemas';
 import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
 import { CollectionData } from 'components/editor/Bindings/types';
 import produce from 'immer';
 import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
+import { stringifyJSON } from 'services/stringify';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
-import { InferSchemaPropertyForRender, InferSchemaResponse } from 'types';
+import {
+    InferSchemaPropertyForRender,
+    InferSchemaResponse,
+    Schema,
+} from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { filterInferSchemaResponse, hasReadSchema } from 'utils/schema-utils';
 import { devtoolsOptions } from 'utils/store-utils';
@@ -109,6 +115,67 @@ const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
         validKeys,
         hasResponse,
     };
+};
+
+// Constants to handling inferred schema stuff. Taken from
+//  estuary/flow crates/validation/src/lib.rs and slightly changes for JS
+
+// eslint-disable-next-line no-useless-escape
+const REF_INFERRED_SCHEMA_PATTERN = /\"\$ref\":\"flow:\/\/inferred-schema\"/;
+// eslint-disable-next-line no-useless-escape
+const REF_WRITE_SCHEMA_PATTERN = /\"\$ref\":\"flow:\/\/write-schema\"/;
+const WRITE_SCHEMA_REF = 'flow://write-schema';
+const INFERRED_SCHEMA_REF = 'flow://inferred-schema';
+
+const addSchemaToReadBundle = (
+    schemaType: string,
+    readSchema: Schema,
+    schemaToAdd: Schema
+) => {
+    const defaults = readSchema.$defs ?? {};
+
+    readSchema.$defs = {
+        ...defaults,
+        [schemaType]: {
+            ...schemaToAdd,
+            $id: schemaType,
+        },
+    };
+
+    return readSchema;
+};
+
+const extendReadBundle = async (
+    readSchema: Schema,
+    writeSchema: Schema,
+    entityName: string
+) => {
+    const stringSchema = stringifyJSON(readSchema);
+
+    console.log('extendReadBundle1', readSchema);
+    let response = readSchema;
+
+    if (stringSchema?.match(REF_WRITE_SCHEMA_PATTERN)) {
+        response = addSchemaToReadBundle(
+            WRITE_SCHEMA_REF,
+            response,
+            writeSchema
+        );
+    }
+    console.log('extendReadBundle2', response);
+
+    if (stringSchema?.match(REF_INFERRED_SCHEMA_PATTERN)) {
+        const inferredSchema = await fetchInferredSchema(entityName);
+        response = addSchemaToReadBundle(
+            INFERRED_SCHEMA_REF,
+            response,
+            inferredSchema
+        );
+    }
+
+    console.log('extendReadBundle3', response);
+
+    return response;
 };
 
 const getInitialStateData = (): Pick<
@@ -420,7 +487,7 @@ const getInitialState = (
     // That was removed but might be needed in the future
     //  so we left things running through loops in case we need
     //  to support that again
-    populateInferSchemaResponse: (spec) => {
+    populateInferSchemaResponse: async (spec, entityName) => {
         const populateState = (
             dataVal: InferSchemaResponse[] | null,
             errorVal: BindingsEditorState['inferSchemaResponseError']
@@ -456,7 +523,9 @@ const getInitialState = (
             return;
         }
 
-        const schemasToTest = hasReadSchema(spec)
+        // Check which schema to use
+        const usingReadSchema = hasReadSchema(spec);
+        const schemasToTest = usingReadSchema
             ? [spec.readSchema]
             : [spec.schema];
 
@@ -473,6 +542,20 @@ const getInitialState = (
         }
 
         try {
+            console.log('1');
+            // We only add this when we are using a read schema
+            if (usingReadSchema) {
+                console.log('2');
+                // First make sure that write schema is inlined if needed
+                schemasToTest[0] = await extendReadBundle(
+                    schemasToTest[0],
+                    spec.writeSchema,
+                    entityName
+                );
+            }
+
+            console.log('3', schemasToTest);
+
             // Run infer against schema
             const responses = schemasToTest.map((schema) => infer(schema));
 

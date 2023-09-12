@@ -44,7 +44,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
 
     useEffect(() => {
-        if (draftSpec) {
+        if (draftSpec && entityName) {
             // TODO (collection editor) when we allow collections to get updated
             //  from the details page we'll need to handle this for that.
 
@@ -56,13 +56,19 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
 
             // Infer schema and pass in spec so the function can handle
             //  if there is a read/write or just plain schema
-            populateInferSchemaResponse(draftSpec.spec);
+            populateInferSchemaResponse(draftSpec.spec, entityName);
 
             // Need to keep the collection data updated so that the schema
             //  inference and CLI buttons work
             setCollectionData({ spec: draftSpec.spec, belongsToDraft: true });
         }
-    }, [draftSpec, entityType, populateInferSchemaResponse, setCollectionData]);
+    }, [
+        draftSpec,
+        entityType,
+        entityName,
+        populateInferSchemaResponse,
+        setCollectionData,
+    ]);
 
     useUpdateEffect(() => {
         // If the schema is updated via the scheme inference

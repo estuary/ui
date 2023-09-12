@@ -212,6 +212,14 @@ export interface UserGrants {
     detail: string | null;
 }
 
+// InferredSchemaFlowDocument {}
+
+export interface InferredSchemas {
+    collection_name: string;
+    schema: Schema;
+    flow_document: any; //InferredSchemaFlowDocument
+}
+
 export interface Grants {
     capability: string;
     object_role: string;
