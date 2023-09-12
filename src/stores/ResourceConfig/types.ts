@@ -29,16 +29,10 @@ export interface ResourceConfigState {
     ) => void;
     resetConfigAndCollections: () => void;
 
-    collectionRemovalMetadata: {
-        selectedCollection: string | null;
-        removedCollection: string;
-        index: number;
-    };
-
     collectionErrorsExist: boolean;
 
     currentCollection: string | null;
-    setCurrentCollection: (collections?: string | null) => void;
+    setCurrentCollection: (collections: string | null) => void;
 
     discoveredCollections: string[] | null;
     setDiscoveredCollections: (value: DraftSpecQuery) => void;
