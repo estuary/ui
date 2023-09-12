@@ -1,7 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
-        <% if ( process.env.REACT_APP_OSANO_PATH) { %>
+        <% if ( process.env.REACT_APP_LOGROCKET_ENABLED &&
+        process.env.REACT_APP_LOGROCKET_CDN_URL) { %>
+        <!-- Need to set this !BEFORE! any loading of scripts is started -->
+        <script>
+            window._lrAsyncScript = '%REACT_APP_LOGROCKET_CDN_URL%';
+        </script>
+        <% } %> <% if ( process.env.REACT_APP_OSANO_PATH) { %>
         <!-- Make sure this loads quick -->
         <script src="%REACT_APP_OSANO_PATH%"></script>
 

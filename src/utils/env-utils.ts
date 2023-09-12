@@ -64,6 +64,7 @@ export const getUrls = () => {
 
 type Settings = {
     appID: string | null;
+    serverURL: string | null;
     idUser: {
         enabled: boolean;
         includeName: boolean;
@@ -76,29 +77,35 @@ type Settings = {
         text: boolean;
     };
 };
-export const getLogRocketSettings = (): Settings => {
-    const settings: Settings = {
-        appID: process.env.REACT_APP_LOGROCKET_APP_ID ?? null,
-        idUser: {
-            enabled: process.env.REACT_APP_LOGROCKET_ID_USER === ENABLED,
-            includeName:
-                process.env.REACT_APP_LOGROCKET_ID_USER_INCLUDE_NAME ===
-                ENABLED,
-            includeEmail:
-                process.env.REACT_APP_LOGROCKET_ID_USER_INCLUDE_EMAIL ===
-                ENABLED,
-        },
-        sanitize: {
-            inputs: process.env.REACT_APP_LOGROCKET_SANITIZE_INPUTS === ENABLED,
-            request:
-                process.env.REACT_APP_LOGROCKET_SANITIZE_REQUESTS === ENABLED,
-            response:
-                process.env.REACT_APP_LOGROCKET_SANITIZE_RESPONSES === ENABLED,
-            text: process.env.REACT_APP_LOGROCKET_SANITIZE_TEXT === ENABLED,
-        },
-    };
+export const getLogRocketSettings = (): Settings | null => {
+    if (process.env.REACT_APP_LOGROCKET_ENABLED === ENABLED) {
+        return {
+            appID: process.env.REACT_APP_LOGROCKET_APP_ID ?? null,
+            serverURL: process.env.REACT_APP_LOGROCKET_SERVER_URL ?? null,
+            idUser: {
+                enabled: process.env.REACT_APP_LOGROCKET_ID_USER === ENABLED,
+                includeName:
+                    process.env.REACT_APP_LOGROCKET_ID_USER_INCLUDE_NAME ===
+                    ENABLED,
+                includeEmail:
+                    process.env.REACT_APP_LOGROCKET_ID_USER_INCLUDE_EMAIL ===
+                    ENABLED,
+            },
+            sanitize: {
+                inputs:
+                    process.env.REACT_APP_LOGROCKET_SANITIZE_INPUTS === ENABLED,
+                request:
+                    process.env.REACT_APP_LOGROCKET_SANITIZE_REQUESTS ===
+                    ENABLED,
+                response:
+                    process.env.REACT_APP_LOGROCKET_SANITIZE_RESPONSES ===
+                    ENABLED,
+                text: process.env.REACT_APP_LOGROCKET_SANITIZE_TEXT === ENABLED,
+            },
+        };
+    }
 
-    return settings;
+    return null;
 };
 
 export const getEncryptionSettings = () => {
