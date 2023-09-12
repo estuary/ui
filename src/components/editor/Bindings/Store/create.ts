@@ -136,7 +136,7 @@ const addSchemaToReadBundle = (
     readSchema: Schema,
     schemaToAdd: Schema
 ) => {
-    const defaults = readSchema.$defs ?? {};
+    const defaults = readSchema.$defs ? { ...readSchema.$defs } : {};
 
     readSchema.$defs = {
         ...defaults,
@@ -156,9 +156,9 @@ const extendReadBundle = async (
 ) => {
     const stringSchema = stringifyJSON(readSchema);
 
-    console.log('extendReadBundle1', readSchema);
-    let response = readSchema;
+    let response = { ...readSchema };
 
+    // First check if we need to add the write schema $def
     if (stringSchema?.match(REF_WRITE_SCHEMA_PATTERN)) {
         response = addSchemaToReadBundle(
             WRITE_SCHEMA_REF,
@@ -166,18 +166,19 @@ const extendReadBundle = async (
             writeSchema
         );
     }
-    console.log('extendReadBundle2', response);
 
+    // Checking if we need to fetching the inferred schema and add it
     if (stringSchema?.match(REF_INFERRED_SCHEMA_PATTERN)) {
         const inferredSchema = await fetchInferredSchema(entityName);
-        response = addSchemaToReadBundle(
-            INFERRED_SCHEMA_REF,
-            response,
-            inferredSchema
-        );
+        if (inferredSchema.data) {
+            console.log('inferredSchema', inferredSchema.data);
+            response = addSchemaToReadBundle(
+                INFERRED_SCHEMA_REF,
+                response,
+                inferredSchema.data
+            );
+        }
     }
-
-    console.log('extendReadBundle3', response);
 
     return response;
 };
@@ -546,19 +547,14 @@ const getInitialState = (
         }
 
         try {
-            console.log('1');
-            // We only add this when we are using a read schema
+            // Should only impact the read schema
             if (usingReadSchema) {
-                console.log('2');
-                // First make sure that write schema is inlined if needed
                 schemasToTest[0] = await extendReadBundle(
                     schemasToTest[0],
                     spec.writeSchema,
                     entityName
                 );
             }
-
-            console.log('3', schemasToTest);
 
             // Run infer against schema
             const responses = schemasToTest.map((schema) => infer(schema));
