@@ -11,7 +11,6 @@ import { CollectionData } from 'components/editor/Bindings/types';
 import produce from 'immer';
 import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
-import { stringifyJSON } from 'services/stringify';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
 import {
@@ -117,69 +116,22 @@ const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
     };
 };
 
-// Constants to handling inferred schema stuff. Taken from
-//  estuary/flow crates/validation/src/lib.rs and slightly changes for JS
-
-const REF_INFERRED_SCHEMA_PATTERN = new RegExp(
-    // eslint-disable-next-line no-useless-escape
-    /\"\$ref\": \"flow:\/\/inferred-schema\"/
-);
-const REF_WRITE_SCHEMA_PATTERN = new RegExp(
-    // eslint-disable-next-line no-useless-escape
-    /\"\$ref\": \"flow:\/\/write-schema\"/
-);
-const WRITE_SCHEMA_REF = 'flow://write-schema';
-const INFERRED_SCHEMA_REF = 'flow://inferred-schema';
-
-const addSchemaToReadBundle = (
-    schemaType: string,
-    readSchema: Schema,
-    schemaToAdd: Schema
-) => {
-    const defaults = readSchema.$defs ? { ...readSchema.$defs } : {};
-
-    readSchema.$defs = {
-        ...defaults,
-        [schemaType]: {
-            ...schemaToAdd,
-            $id: schemaType,
-        },
-    };
-
-    return readSchema;
-};
-
+// Call into the flow WASM handler that will inline the write/inferred schema if necessary
 const extendReadBundle = async (
     readSchema: Schema,
     writeSchema: Schema,
     entityName: string
 ) => {
-    const stringSchema = stringifyJSON(readSchema);
+    // Try fetching the inferred schema... possible TODO handle errors better
+    const inferredSchemaResponse = await fetchInferredSchema(entityName);
+    const inferredSchema = inferredSchemaResponse.data ?? {};
 
-    let response = { ...readSchema };
-
-    // First check if we need to add the write schema $def
-    if (stringSchema?.match(REF_WRITE_SCHEMA_PATTERN)) {
-        response = addSchemaToReadBundle(
-            WRITE_SCHEMA_REF,
-            response,
-            writeSchema
-        );
-    }
-
-    // Checking if we need to fetching the inferred schema and add it
-    if (stringSchema?.match(REF_INFERRED_SCHEMA_PATTERN)) {
-        const inferredSchema = await fetchInferredSchema(entityName);
-        if (inferredSchema.data) {
-            console.log('inferredSchema', inferredSchema.data);
-            response = addSchemaToReadBundle(
-                INFERRED_SCHEMA_REF,
-                response,
-                inferredSchema.data
-            );
-        }
-    }
-
+    const response = extend_read_bundle(
+        readSchema,
+        writeSchema,
+        inferredSchema
+    );
+    console.log('response', response);
     return response;
 };
 
