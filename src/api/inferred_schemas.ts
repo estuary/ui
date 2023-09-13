@@ -11,8 +11,7 @@ export const fetchInferredSchema = (collectionName: string) => {
         .from<InferredSchemas>(TABLES.INFERRED_SCHEMAS)
         .select(`schema`)
         .eq('collection_name', collectionName)
-        .maybeSingle()
-        .then(handleSuccess<Pick<InferredSchemas, 'schema'>>, handleFailure);
+        .then(handleSuccess<Pick<InferredSchemas, 'schema'>[]>, handleFailure);
 
     return queryBuilder;
 };
