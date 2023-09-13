@@ -1,4 +1,4 @@
-import { infer } from '@estuary/flow-web';
+import { extend_read_bundle, infer } from '@estuary/flow-web';
 import {
     createDraftSpec,
     getDraftSpecsByCatalogName,
@@ -11,6 +11,7 @@ import { CollectionData } from 'components/editor/Bindings/types';
 import produce from 'immer';
 import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
+import { logRocketConsole } from 'services/logrocket';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
 import {
@@ -117,21 +118,31 @@ const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
 };
 
 // Call into the flow WASM handler that will inline the write/inferred schema if necessary
-const extendReadBundle = async (
-    readSchema: Schema,
-    writeSchema: Schema,
+const updateReadSchema = async (
+    read: Schema,
+    write: Schema,
     entityName: string
 ) => {
     // Try fetching the inferred schema... possible TODO handle errors better
     const inferredSchemaResponse = await fetchInferredSchema(entityName);
-    const inferredSchema = inferredSchemaResponse.data ?? {};
+    const inferred = inferredSchemaResponse.data?.[0]
+        ? inferredSchemaResponse.data[0]
+        : {};
 
-    const response = extend_read_bundle(
-        readSchema,
-        writeSchema,
-        inferredSchema
-    );
-    console.log('response', response);
+    let response;
+    try {
+        response = extend_read_bundle({
+            read,
+            write,
+            inferred,
+        });
+        // We can catch any error here so that any issue causes an empty response and the
+        //  component will show an error... though not the most useful one.
+        // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
+    } catch (e: any) {
+        logRocketConsole('extend_read_bundle:failed', e);
+        response = {};
+    }
     return response;
 };
 
@@ -501,7 +512,7 @@ const getInitialState = (
         try {
             // Should only impact the read schema
             if (usingReadSchema) {
-                schemasToTest[0] = await extendReadBundle(
+                schemasToTest[0] = await updateReadSchema(
                     schemasToTest[0],
                     spec.writeSchema,
                     entityName
