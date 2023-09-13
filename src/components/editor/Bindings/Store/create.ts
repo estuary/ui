@@ -510,9 +510,11 @@ const getInitialState = (
         try {
             // Should only impact the read schema
             if (usingReadSchema) {
+                // We MUST make this call before calling `infer` below
+                //  This will inline the write/inferred schema in the `$defs` if needed
                 schemasToTest[0] = await updateReadSchema(
                     schemasToTest[0],
-                    spec.writeSchema,
+                    spec.writeSchema ?? {},
                     entityName
                 );
             }
