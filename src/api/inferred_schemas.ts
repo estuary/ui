@@ -5,7 +5,8 @@ export const fetchInferredSchema = (collectionName: string) => {
     const queryBuilder = supabaseClient
         .from<InferredSchemas>(TABLES.INFERRED_SCHEMAS)
         .select(`schema`)
-        .eq('collection_name', collectionName);
+        .eq('collection_name', collectionName)
+        .maybeSingle();
 
     return queryBuilder;
 };

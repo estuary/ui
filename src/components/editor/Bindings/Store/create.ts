@@ -125,9 +125,7 @@ const updateReadSchema = async (
 ) => {
     // Try fetching the inferred schema... possible TODO handle errors better
     const inferredSchemaResponse = await fetchInferredSchema(entityName);
-    const inferred = inferredSchemaResponse.data?.[0]
-        ? inferredSchemaResponse.data[0]
-        : {};
+    const inferred = inferredSchemaResponse.data?.schema ?? {};
 
     let response;
     try {
