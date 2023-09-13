@@ -11,7 +11,7 @@ import { CollectionData } from 'components/editor/Bindings/types';
 import produce from 'immer';
 import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
-import { logRocketConsole } from 'services/logrocket';
+import { logRocketEvent } from 'services/logrocket';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
 import {
@@ -138,7 +138,7 @@ const updateReadSchema = async (
         //  component will show an error... though not the most useful one.
         // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
     } catch (e: any) {
-        logRocketConsole('extend_read_bundle:failed', e);
+        logRocketEvent('extend_read_bundle:failed', e);
         response = {};
     }
     return response;
