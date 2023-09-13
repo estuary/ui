@@ -1,4 +1,9 @@
-import { supabaseClient, TABLES } from 'services/supabase';
+import {
+    handleFailure,
+    handleSuccess,
+    supabaseClient,
+    TABLES,
+} from 'services/supabase';
 import { InferredSchemas } from 'types';
 
 export const fetchInferredSchema = (collectionName: string) => {
@@ -6,7 +11,8 @@ export const fetchInferredSchema = (collectionName: string) => {
         .from<InferredSchemas>(TABLES.INFERRED_SCHEMAS)
         .select(`schema`)
         .eq('collection_name', collectionName)
-        .maybeSingle();
+        .maybeSingle()
+        .then(handleSuccess<Pick<InferredSchemas, 'schema'>>, handleFailure);
 
     return queryBuilder;
 };
