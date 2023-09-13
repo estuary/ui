@@ -10,11 +10,15 @@ import ReadOnly from 'components/schema/KeyAutoComplete/ReadOnly';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
 import ExternalLink from 'components/shared/ExternalLink';
 import { useEntityType } from 'context/EntityContext';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 function Spec() {
     const entityType = useEntityType();
+    const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
     const currentCatalog = useEditorStore_currentCatalog({
         localScope: true,
@@ -30,13 +34,19 @@ function Spec() {
 
     useEffect(() => {
         if (entityType === 'collection' && currentCatalog) {
-            populateInferSchemaResponse(currentCatalog.spec);
+            populateInferSchemaResponse(currentCatalog.spec, catalogName);
         }
 
         return () => {
             resetState();
         };
-    }, [currentCatalog, entityType, populateInferSchemaResponse, resetState]);
+    }, [
+        catalogName,
+        currentCatalog,
+        entityType,
+        populateInferSchemaResponse,
+        resetState,
+    ]);
 
     const docsLink = useMemo(() => {
         switch (entityType) {

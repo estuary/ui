@@ -69,7 +69,10 @@ export interface BindingsEditorState {
     inferSchemaResponseError: string | null;
     inferSchemaResponseDoneProcessing: boolean;
     inferSchemaResponseEmpty: boolean;
-    populateInferSchemaResponse: (value?: any) => void;
+    populateInferSchemaResponse: (
+        value: any | undefined,
+        entityName: string
+    ) => void;
 
     // Schema Evolution
     incompatibleCollections: IncompatibleCollections[];
