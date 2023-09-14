@@ -8,8 +8,8 @@ import {
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
 import { DraftSpec } from 'hooks/useDraftSpecs';
-import { get, has, set } from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { get, has, isEqual, set } from 'lodash';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { stringifyJSON } from 'services/stringify';
 import { Entity } from 'types';
 
@@ -20,6 +20,7 @@ function useDraftSpecEditor(
 ) {
     // Local State
     const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
+    const draftSpecRef = useRef<DraftSpec>(null);
 
     // Draft Editor Store
     const currentCatalog = useEditorStore_currentCatalog({
@@ -61,13 +62,25 @@ function useDraftSpecEditor(
             if (!mutate || !draftSpec) {
                 return Promise.reject();
             } else {
+                // Try setting to the newVal and if we are updating a single
+                //  props then go ahead and make sure that specific prop is set correctly
+                let updatedSpec = newVal;
                 if (propUpdating) {
-                    set(draftSpec.spec, propUpdating, newVal);
-                } else {
-                    draftSpec.spec = newVal;
+                    updatedSpec = set(
+                        { ...draftSpec.spec },
+                        propUpdating,
+                        newVal
+                    );
                 }
 
-                const updateResponse = await modifyDraftSpec(draftSpec.spec, {
+                // Update the local copy of the spec that is contained within the entire draft
+                setDraftSpec({
+                    ...draftSpec,
+                    spec: updatedSpec,
+                });
+
+                // Update only the SPEC on the server
+                const updateResponse = await modifyDraftSpec(updatedSpec, {
                     draft_id: draftId,
                     catalog_name: catalogName,
                     spec_type: specType,
@@ -93,18 +106,22 @@ function useDraftSpecEditor(
                         return false;
                     }
 
-                    setDraftSpec(val);
-                    return true;
+                    if (!isEqual(draftSpecRef.current, val)) {
+                        setDraftSpec(val);
+                        draftSpecRef.current = val;
+                        return true;
+                    }
+
+                    return false;
                 });
             }
         }
-        // We do not care if currentCatalog changes that is handled below
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [draftSpecs, entityName, setSpecs]);
+    }, [currentCatalog, draftSpecs, entityName, setSpecs]);
 
     useEffect(() => {
-        if (currentCatalog) {
+        if (currentCatalog && !isEqual(draftSpecRef.current, currentCatalog)) {
             setDraftSpec(currentCatalog);
+            draftSpecRef.current = currentCatalog;
         }
     }, [currentCatalog]);
 
@@ -133,13 +150,15 @@ function useDraftSpecEditor(
     // });
 
     // TODO (draftSpecEditor) need to better handle returning so we are not causing extra renders
-    return {
-        onChange: processEditorValue,
-        draftSpec,
-        isValidating,
-        mutate,
-        defaultValue: specAsString,
-    };
+    return useMemo(() => {
+        return {
+            onChange: processEditorValue,
+            draftSpec,
+            isValidating,
+            mutate,
+            defaultValue: specAsString,
+        };
+    }, [draftSpec, isValidating, mutate, processEditorValue, specAsString]);
 }
 
 export default useDraftSpecEditor;

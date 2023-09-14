@@ -15,6 +15,8 @@ function DraftSpecEditor({
     editorHeight,
     entityName,
 }: Props) {
+    console.log('useDraftSpecEditor : called : DraftSpecEditor', entityName);
+
     const { draftSpec, isValidating, onChange, defaultValue } =
         useDraftSpecEditor(entityName, localZustandScope);
 
