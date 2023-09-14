@@ -468,9 +468,9 @@ const getInitialState = (
                 produce((state: BindingsEditorState) => {
                     state.inferSchemaResponseError = errorVal;
                     state.inferSchemaResponse = updatedVal;
-                    state.inferSchemaResponseDoneProcessing = true;
                     state.inferSchemaResponseEmpty = !hasResponse;
                     state.inferSchemaResponse_Keys = validKeys;
+                    state.inferSchemaResponseDoneProcessing = true;
                 }),
                 false,
                 'Infere Schema Populated'
@@ -479,7 +479,7 @@ const getInitialState = (
 
         set(
             produce((state: BindingsEditorState) => {
-                state.inferSchemaResponseDoneProcessing = true;
+                state.inferSchemaResponseDoneProcessing = false;
             }),
             false,
             'Resetting inferSchemaDoneProcessing flag'
