@@ -1,6 +1,7 @@
 import { Grid, Stack, Typography } from '@mui/material';
 import {
     useBindingsEditorStore_editModeEnabled,
+    useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_populateInferSchemaResponse,
     useBindingsEditorStore_schemaUpdated,
     useBindingsEditorStore_setCollectionData,
@@ -15,6 +16,7 @@ import { FormattedMessage } from 'react-intl';
 import { useDeepCompareEffect, useUpdateEffect } from 'react-use';
 import { Schema } from 'types';
 import { getProperSchemaScope } from 'utils/schema-utils';
+import CollectionSchemaEditorSkeleton from './Skeleton';
 
 export interface Props {
     entityName?: string;
@@ -39,6 +41,8 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
 
     const setCollectionData = useBindingsEditorStore_setCollectionData();
 
+    const inferSchemaResponseDoneProcessing =
+        useBindingsEditorStore_inferSchemaResponseDoneProcessing();
     const populateInferSchemaResponse =
         useBindingsEditorStore_populateInferSchemaResponse();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
@@ -97,6 +101,9 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     );
 
     if (draftSpec && entityName) {
+        if (!inferSchemaResponseDoneProcessing) {
+            return <CollectionSchemaEditorSkeleton />;
+        }
         return (
             <Grid container>
                 {entityType === 'collection' ? null : (
