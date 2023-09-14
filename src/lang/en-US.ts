@@ -879,10 +879,14 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.tab.collectionSchema': `Collection`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
 
-    'workflows.collectionSelector.toggle.enable': `Enable All`,
-    'workflows.collectionSelector.toggle.disable': `Disable All`,
+    'workflows.collectionSelector.toggle.enable': `Enable Page`,
+    'workflows.collectionSelector.toggle.disable': `Disable Page`,
     'workflows.collectionSelector.toggle.enable.tooltip': `Enable all {itemType} on this page`,
     'workflows.collectionSelector.toggle.disable.tooltip': `Disable all {itemType} on this page`,
+    'workflows.collectionSelector.toggle.enable.all': `Enable All`,
+    'workflows.collectionSelector.toggle.disable.all': `Disable All`,
+    'workflows.collectionSelector.toggle.enable.all.tooltip': `Enable all {itemType}`,
+    'workflows.collectionSelector.toggle.disable.all.tooltip': `Disable all {itemType}`,
 
     'workflows.collectionSelector.notifications.remove': `{count} {itemType} removed`,
     'workflows.collectionSelector.notifications.toggle.enable': `{count} {itemType} enabled`,
