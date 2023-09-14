@@ -496,32 +496,41 @@ const getInitialState = (
     },
 
     toggleDisable: (keys, value) => {
-        const update = (key: string) => {
+        // Updating a single item
+        // A specific list (toggle page)
+        // Nothing specified (toggle all)
+        const updateKeys =
+            typeof keys === 'string'
+                ? [keys]
+                : Array.isArray(keys)
+                ? keys
+                : get().collections;
+
+        if (updateKeys && updateKeys.length > 0) {
             set(
                 produce((state: ResourceConfigState) => {
-                    const currValue = isBoolean(
-                        state.resourceConfig[key].disable
-                    )
-                        ? state.resourceConfig[key].disable
-                        : false;
-                    const newValue = value ?? !currValue;
+                    updateKeys.forEach((key) => {
+                        const currValue = isBoolean(
+                            state.resourceConfig[key].disable
+                        )
+                            ? state.resourceConfig[key].disable
+                            : false;
+                        const newValue = value ?? !currValue;
 
-                    if (newValue) {
-                        state.resourceConfig[key].disable = newValue;
-                    } else {
-                        delete state.resourceConfig[key].disable;
-                    }
+                        if (newValue) {
+                            state.resourceConfig[key].disable = newValue;
+                        } else {
+                            delete state.resourceConfig[key].disable;
+                        }
+                    });
                 }),
                 false,
                 'Resource Config Disable Toggle'
             );
-        };
-
-        if (typeof keys === 'string') {
-            update(keys);
-        } else {
-            keys.forEach(update);
         }
+
+        // Return how many we updated
+        return updateKeys ? updateKeys.length : 0;
     },
 
     resetResourceConfigAndCollections: () => {

@@ -53,7 +53,7 @@ export interface ResourceConfigState {
         disableOmit?: boolean
     ) => void;
     updateResourceConfig: (key: string, formData: JsonFormsData) => void;
-    toggleDisable: (key: string | string[], value?: boolean) => void;
+    toggleDisable: (key: string | string[] | null, value?: boolean) => Number;
     resetResourceConfigAndCollections: () => void;
 
     resourceConfigErrorsExist: boolean;

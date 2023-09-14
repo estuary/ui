@@ -37,7 +37,7 @@ interface Props {
     header?: string;
     height?: number | string;
     removeCollections?: (rows: GridRowId[]) => void;
-    toggleCollections?: (rows: GridRowId[], value: boolean) => void;
+    toggleCollections?: (rows: GridRowId[] | null, value: boolean) => Number;
     setCurrentCollection?: (collection: any) => void;
 }
 
@@ -176,30 +176,31 @@ function CollectionSelectorList({
                     <CollectionSelectorHeaderToggle
                         disabled={disable}
                         itemType={collectionsLabel}
-                        onClick={(event, value) => {
-                            const filteredCollections =
-                                gridPaginatedVisibleSortedGridRowIdsSelector(
-                                    apiRef.current.state,
-                                    apiRef.current.instanceId
-                                );
-                            if (hasLength(filteredCollections)) {
-                                toggleCollections(filteredCollections, value);
+                        onClick={(event, value, scope) => {
+                            const count = toggleCollections(
+                                scope === 'page'
+                                    ? gridPaginatedVisibleSortedGridRowIdsSelector(
+                                          apiRef.current.state,
+                                          apiRef.current.instanceId
+                                      )
+                                    : null,
+                                value
+                            );
 
-                                showPopper(
-                                    event.currentTarget,
-                                    intl.formatMessage(
-                                        {
-                                            id: value
-                                                ? 'workflows.collectionSelector.notifications.toggle.disable'
-                                                : 'workflows.collectionSelector.notifications.toggle.enable',
-                                        },
-                                        {
-                                            count: filteredCollections.length,
-                                            itemType: collectionsLabel,
-                                        }
-                                    )
-                                );
-                            }
+                            showPopper(
+                                event.currentTarget,
+                                intl.formatMessage(
+                                    {
+                                        id: value
+                                            ? 'workflows.collectionSelector.notifications.toggle.disable'
+                                            : 'workflows.collectionSelector.notifications.toggle.enable',
+                                    },
+                                    {
+                                        count: `${count}`,
+                                        itemType: collectionsLabel,
+                                    }
+                                )
+                            );
                         }}
                     />
                 ),

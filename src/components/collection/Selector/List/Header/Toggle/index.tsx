@@ -9,8 +9,7 @@ import { Scopes } from './types';
 
 interface Props {
     itemType: string;
-
-    onClick: (event: any, value: boolean) => void;
+    onClick: (event: any, value: boolean, scope: Scopes) => void;
     disabled?: boolean;
 }
 
@@ -100,7 +99,6 @@ function CollectionSelectorHeaderToggle({
                 }}
             >
                 <Tooltip
-                    placement="top"
                     title={intl.formatMessage(
                         {
                             id: tooltipTitle,
@@ -120,7 +118,7 @@ function CollectionSelectorHeaderToggle({
                         onClick={(event) => {
                             event.stopPropagation();
                             setEnabled(!enabled);
-                            onClick(event, !enabled);
+                            onClick(event, !enabled, scope);
                         }}
                     >
                         {intl.formatMessage({
