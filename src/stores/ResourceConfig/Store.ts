@@ -505,6 +505,7 @@ const getInitialState = (
                 : Array.isArray(keys)
                 ? keys
                 : get().collections;
+        let updatedCount = 0;
 
         if (updateKeys && updateKeys.length > 0) {
             set(
@@ -516,6 +517,10 @@ const getInitialState = (
                             ? state.resourceConfig[key].disable
                             : false;
                         const newValue = value ?? !currValue;
+
+                        if (value !== currValue) {
+                            updatedCount = updatedCount + 1;
+                        }
 
                         if (newValue) {
                             state.resourceConfig[key].disable = newValue;
@@ -530,7 +535,7 @@ const getInitialState = (
         }
 
         // Return how many we updated
-        return updateKeys ? updateKeys.length : 0;
+        return updatedCount;
     },
 
     resetResourceConfigAndCollections: () => {
