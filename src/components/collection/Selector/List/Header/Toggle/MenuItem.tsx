@@ -19,7 +19,7 @@ function HeaderToggleMenuItem({
     title,
 }: Props) {
     return (
-        <MenuItem onClick={onClick}>
+        <MenuItem onClick={onClick} selected={scopeState === scope}>
             <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
                 <Box sx={{ minWidth: 15, maxWidth: 15 }}>
                     <Typography>
