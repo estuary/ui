@@ -169,6 +169,8 @@ function CollectionSelectorList({
                 headerClassName: cellClass_noPadding,
                 field: 'disable',
                 sortable: false,
+                minWidth: 110,
+                maxWidth: 125,
                 renderCell: renderers.cell.toggle,
                 renderHeader: (_params) => (
                     <CollectionSelectorHeaderToggle
