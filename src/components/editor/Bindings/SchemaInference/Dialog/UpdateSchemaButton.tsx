@@ -2,6 +2,7 @@ import { Button } from '@mui/material';
 import {
     useBindingsEditorStore_applyInferredSchema,
     useBindingsEditorStore_collectionData,
+    useBindingsEditorStore_inferredSchemaApplicationErrored,
     useBindingsEditorStore_inferredSpec,
     useBindingsEditorStore_loadingInferredSchema,
 } from 'components/editor/Bindings/Store/hooks';
@@ -22,6 +23,8 @@ function UpdateSchemaButton({ setOpen }: Props) {
         useBindingsEditorStore_loadingInferredSchema();
     const applyInferredSchema = useBindingsEditorStore_applyInferredSchema();
     const collectionData = useBindingsEditorStore_collectionData();
+    const inferredSchemaApplicationErrored =
+        useBindingsEditorStore_inferredSchemaApplicationErrored();
 
     // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
@@ -52,6 +55,10 @@ function UpdateSchemaButton({ setOpen }: Props) {
 
         applyInferredSchema(currentCollection, persistedDraftId, setOpen);
     };
+
+    if (inferredSchemaApplicationErrored) {
+        return null;
+    }
 
     return (
         <Button

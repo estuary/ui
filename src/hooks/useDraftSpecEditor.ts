@@ -132,6 +132,7 @@ function useDraftSpecEditor(
     //     };
     // });
 
+    // TODO (draftSpecEditor) need to better handle returning so we are not causing extra renders
     return {
         onChange: processEditorValue,
         draftSpec,

@@ -9,17 +9,21 @@ import {
     useEntitiesStore_capabilities_adminable,
     useEntitiesStore_capabilities_readable,
 } from 'stores/Entities/hooks';
+import { TableFilterKeys, TablePrefixes } from 'stores/Tables/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
 
 export const FILTER_TABLE_PROPS = {
     captures: {
-        'cap-sq': 'demo/wikipedia/recent-changes',
+        [`${TablePrefixes.captures}-${TableFilterKeys.searchQuery}`]:
+            'demo/wikipedia/recent-changes',
     },
     collections: {
-        'col-sq': 'demo/wikipedia/lines-and-bots',
+        [`${TablePrefixes.collections}-${TableFilterKeys.searchQuery}`]:
+            'demo/wikipedia/lines-and-bots',
     },
     materializations: {
-        'mat-sq': 'demo/wikipedia/lines-by-usertype',
+        [`${TablePrefixes.materializations}-${TableFilterKeys.searchQuery}`]:
+            'demo/wikipedia/lines-by-usertype',
     },
 };
 

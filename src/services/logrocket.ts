@@ -4,11 +4,7 @@ import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
 import { getUserDetails } from 'services/supabase';
-import {
-    getAppVersion,
-    getLogRocketSettings,
-    isProduction,
-} from 'utils/env-utils';
+import { getAppVersion, getLogRocketSettings } from 'utils/env-utils';
 
 // Based on node_modules/logrocket/dist/types.d.ts
 interface IUserTraits {
@@ -20,6 +16,7 @@ interface Settings {
     release: any;
     dom: any;
     network?: any;
+    serverURL?: any;
 }
 
 type ParsedBody = [{ [k: string]: any }] | { [k: string]: any } | undefined;
@@ -170,7 +167,7 @@ const maskContent = (requestResponse: any) => {
 // More info about the dom settings
 //  https://docs.logrocket.com/reference/dom
 export const initLogRocket = () => {
-    if (isProduction && logRocketSettings.appID) {
+    if (logRocketSettings?.appID) {
         const settings: Settings = {
             release: getAppVersion(),
             dom: {
@@ -178,6 +175,10 @@ export const initLogRocket = () => {
                 textSanitizer: logRocketSettings.sanitize.text,
             },
         };
+
+        if (logRocketSettings.serverURL) {
+            settings.serverURL = logRocketSettings.serverURL;
+        }
 
         if (
             logRocketSettings.sanitize.response ||
@@ -203,11 +204,7 @@ export const initLogRocket = () => {
 };
 
 export const identifyUser = (user: User) => {
-    if (
-        isProduction &&
-        logRocketSettings.idUser.enabled &&
-        logRocketSettings.appID
-    ) {
+    if (logRocketSettings?.idUser.enabled && logRocketSettings.appID) {
         const traits = {} as IUserTraits;
         const userDetails = getUserDetails(user);
 
