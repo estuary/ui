@@ -19,8 +19,14 @@ function useDraftSpecEditor(
     editorSchemaScope?: string
 ) {
     // Local State
+    // We store off a ref and a state so we can constantly do compares against
+    //  the ref and not cause re-renders. This makes sure we do not do extra updates
     const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
     const draftSpecRef = useRef<DraftSpec>(null);
+    const updateDraftSpec = useCallback((updatedValue: DraftSpec) => {
+        setDraftSpec(updatedValue);
+        draftSpecRef.current = updatedValue;
+    }, []);
 
     // Draft Editor Store
     const currentCatalog = useEditorStore_currentCatalog({
@@ -74,7 +80,7 @@ function useDraftSpecEditor(
                 }
 
                 // Update the local copy of the spec that is contained within the entire draft
-                setDraftSpec({
+                updateDraftSpec({
                     ...draftSpec,
                     spec: updatedSpec,
                 });
@@ -93,7 +99,7 @@ function useDraftSpecEditor(
                 return mutate();
             }
         },
-        [mutate, draftId, draftSpec]
+        [draftId, draftSpec, mutate, updateDraftSpec]
     );
 
     useEffect(() => {
@@ -107,8 +113,7 @@ function useDraftSpecEditor(
                     }
 
                     if (!isEqual(draftSpecRef.current, val)) {
-                        setDraftSpec(val);
-                        draftSpecRef.current = val;
+                        updateDraftSpec(val);
                         return true;
                     }
 
@@ -116,14 +121,13 @@ function useDraftSpecEditor(
                 });
             }
         }
-    }, [currentCatalog, draftSpecs, entityName, setSpecs]);
+    }, [currentCatalog, draftSpecs, entityName, setSpecs, updateDraftSpec]);
 
     useEffect(() => {
         if (currentCatalog && !isEqual(draftSpecRef.current, currentCatalog)) {
-            setDraftSpec(currentCatalog);
-            draftSpecRef.current = currentCatalog;
+            updateDraftSpec(currentCatalog);
         }
-    }, [currentCatalog]);
+    }, [currentCatalog, updateDraftSpec]);
 
     // TODO (sync editing) : turning off as right now this will show lots of "Out of sync" errors
     //    because we are comparing two JSON objects that are being stringified and that means the order
