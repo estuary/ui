@@ -11,9 +11,9 @@ import KeyAutoComplete from 'components/schema/KeyAutoComplete';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
 import { useEntityType } from 'context/EntityContext';
 import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useDeepCompareEffect, useUpdateEffect } from 'react-use';
+import { useUpdateEffect } from 'react-use';
 import { Schema } from 'types';
 import { getProperSchemaScope } from 'utils/schema-utils';
 import CollectionSchemaEditorSkeleton from './Skeleton';
@@ -47,9 +47,9 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         useBindingsEditorStore_populateInferSchemaResponse();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
 
-    // TODO (draftSpecEditor) should not return a new draftSpec causing this
-    // Need to use deep compare to make sure the draftSpec actually changed
-    useDeepCompareEffect(() => {
+    // TODO (draftSpecEditor) This causes some extra calls when using the infer schema
+    //  stuff. however, that is worth it because doing a deep compare breaks the editor
+    useEffect(() => {
         if (draftSpec && entityName) {
             // TODO (collection editor) when we allow collections to get updated
             //  from the details page we'll need to handle this for that.
