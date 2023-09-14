@@ -647,7 +647,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.bindingsConfig.noRows': `Please select from the list above to begin.`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
     'entityCreate.bindingsConfig.list.search': `Filter {itemType}`,
-    'entityCreate.bindingsConfig.list.removeAll': `Remove {itemType} on this page`,
+    'entityCreate.bindingsConfig.list.removeAll': `Remove {itemType} in the view below`,
 
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
     'entityCreate.errors.missingDraftId': `Missing Draft ID.`,
@@ -881,8 +881,8 @@ const Workflows: ResolvedIntlConfig['messages'] = {
 
     'workflows.collectionSelector.toggle.enable': `Enable Page`,
     'workflows.collectionSelector.toggle.disable': `Disable Page`,
-    'workflows.collectionSelector.toggle.enable.tooltip': `Enable all {itemType} visible on this page`,
-    'workflows.collectionSelector.toggle.disable.tooltip': `Disable all {itemType} visible on this page`,
+    'workflows.collectionSelector.toggle.enable.tooltip': `Enable all {itemType} in the view below`,
+    'workflows.collectionSelector.toggle.disable.tooltip': `Disable all {itemType} in the view below`,
     'workflows.collectionSelector.toggle.enable.all': `Enable All`,
     'workflows.collectionSelector.toggle.disable.all': `Disable All`,
     'workflows.collectionSelector.toggle.enable.all.tooltip': `Enable all {itemType} in this {entityType}`,
