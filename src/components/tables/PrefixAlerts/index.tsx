@@ -5,7 +5,7 @@ import Rows from 'components/tables/PrefixAlerts/Rows';
 import RowSelector from 'components/tables/RowActions/PrefixAlerts/RowSelector';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
-import { useTableState } from 'stores/Tables/hooks';
+import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import StatsHydrator from 'stores/Tables/StatsHydrator';
 import { TableColumns } from 'types';
@@ -43,7 +43,7 @@ function PrefixAlertTable() {
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState('pal', 'updated_at', 'desc');
+    } = useTableState(TablePrefixes.prefixAlerts, 'updated_at', 'desc');
 
     const query = useMemo(() => {
         return getPrefixAlertMethod(pagination, searchQuery, [

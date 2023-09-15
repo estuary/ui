@@ -27,6 +27,7 @@ export enum TablePrefixes {
     connectors = 'con',
     materializations = 'mat',
     prefixes = 'pr',
+    prefixAlerts = 'pal',
     schemaViewer = 'sv',
     storageMappings = 'sm',
 }
