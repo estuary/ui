@@ -29,16 +29,10 @@ export interface ResourceConfigState {
     ) => void;
     resetConfigAndCollections: () => void;
 
-    collectionRemovalMetadata: {
-        selectedCollection: string | null;
-        removedCollection: string;
-        index: number;
-    };
-
     collectionErrorsExist: boolean;
 
     currentCollection: string | null;
-    setCurrentCollection: (collections?: string | null) => void;
+    setCurrentCollection: (collections: string | null) => void;
 
     discoveredCollections: string[] | null;
     setDiscoveredCollections: (value: DraftSpecQuery) => void;
@@ -59,7 +53,7 @@ export interface ResourceConfigState {
         disableOmit?: boolean
     ) => void;
     updateResourceConfig: (key: string, formData: JsonFormsData) => void;
-    toggleDisable: (key: string | string[], value?: boolean) => void;
+    toggleDisable: (key: string | string[] | null, value?: boolean) => Number;
     resetResourceConfigAndCollections: () => void;
 
     resourceConfigErrorsExist: boolean;

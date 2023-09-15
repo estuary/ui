@@ -36,40 +36,6 @@ const populateCollections = (
     state.collectionErrorsExist = isEmpty(collections);
 };
 
-// TODO (bindings) this approach is not needed anymore now that the list
-//  has different cells for each action in the list. This means remove no longer accidently triggers
-//   the setCurrentCatalog. So we can just handle this in the removeCollection
-const getCurrentCollection = (
-    collections: string[] | undefined | null,
-    metaData: any,
-    value?: string | undefined | null
-) => {
-    const {
-        selectedCollection,
-        removedCollection,
-        index: removedCollectionIndex,
-    } = metaData;
-
-    const collectionCount = collections?.length;
-
-    if (value && collections?.includes(value)) {
-        return value;
-    } else if (collectionCount && selectedCollection === removedCollection) {
-        if (
-            removedCollectionIndex > -1 &&
-            removedCollectionIndex < collections.length
-        ) {
-            return collections[removedCollectionIndex];
-        } else if (removedCollectionIndex === collections.length) {
-            return collections[removedCollectionIndex - 1];
-        }
-    } else if (collectionCount && removedCollection === value) {
-        return selectedCollection;
-    } else {
-        return null;
-    }
-};
-
 const getNewCollectionList = (adds: string[], curr: string[] | null) => {
     return curr
         ? [...curr, ...adds.filter((add) => !curr.includes(add))]
@@ -138,18 +104,10 @@ const whatChanged = (
 
 const getInitialCollectionStateData = (): Pick<
     ResourceConfigState,
-    | 'collections'
-    | 'collectionErrorsExist'
-    | 'collectionRemovalMetadata'
-    | 'currentCollection'
+    'collections' | 'collectionErrorsExist' | 'currentCollection'
 > => ({
     collections: [],
     collectionErrorsExist: false,
-    collectionRemovalMetadata: {
-        selectedCollection: null,
-        removedCollection: '',
-        index: -1,
-    },
     currentCollection: null,
 });
 
@@ -266,24 +224,28 @@ const getInitialState = (
     },
 
     removeCollection: (value) => {
+        set({ currentCollection: null });
         set(
             produce((state: ResourceConfigState) => {
-                const { collections, currentCollection, resourceConfig } =
-                    get();
+                const { collections, resourceConfig } = get();
 
-                if (collections?.includes(value)) {
-                    state.collectionRemovalMetadata = {
-                        selectedCollection: currentCollection,
-                        removedCollection: value,
-                        index: collections.findIndex(
-                            (collection) => collection === value
-                        ),
-                    };
-
+                const removedIndex = collections?.indexOf(value) ?? -1;
+                if (collections && removedIndex > -1) {
                     const updatedCollections = collections.filter(
                         (collection) => collection !== value
                     );
                     populateCollections(state, updatedCollections);
+
+                    // Try to keep the same index selected
+                    //  Then try one above
+                    //  Then try one below
+                    //  Then give up
+                    state.currentCollection =
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                        updatedCollections[removedIndex] ??
+                        updatedCollections[removedIndex - 1] ??
+                        updatedCollections[removedIndex + 1] ??
+                        null;
 
                     const updatedResourceConfig = pick(
                         resourceConfig,
@@ -374,24 +336,7 @@ const getInitialState = (
     setCurrentCollection: (value) => {
         set(
             produce((state: ResourceConfigState) => {
-                const {
-                    collections,
-                    collectionRemovalMetadata: {
-                        selectedCollection,
-                        removedCollection,
-                        index: removedCollectionIndex,
-                    },
-                } = get();
-
-                state.currentCollection = getCurrentCollection(
-                    collections,
-                    {
-                        selectedCollection,
-                        removedCollection,
-                        index: removedCollectionIndex,
-                    },
-                    value
-                );
+                state.currentCollection = value;
             }),
             false,
             'Current Collection Changed'
@@ -469,6 +414,10 @@ const getInitialState = (
         // This might be related to how immer handles what is updated vs what
         //  is not during changes. Need to really dig into this later.
         if (!isEqual(existingConfig, updatedConfig)) {
+            console.log('setting the resource config', {
+                existingConfig,
+                updatedConfig,
+            });
             setResourceConfig(key, updatedConfig);
         }
     },
@@ -547,32 +496,46 @@ const getInitialState = (
     },
 
     toggleDisable: (keys, value) => {
-        const update = (key: string) => {
+        // Updating a single item
+        // A specific list (toggle page)
+        // Nothing specified (toggle all)
+        const updateKeys =
+            typeof keys === 'string'
+                ? [keys]
+                : Array.isArray(keys)
+                ? keys
+                : get().collections;
+        let updatedCount = 0;
+
+        if (updateKeys && updateKeys.length > 0) {
             set(
                 produce((state: ResourceConfigState) => {
-                    const currValue = isBoolean(
-                        state.resourceConfig[key].disable
-                    )
-                        ? state.resourceConfig[key].disable
-                        : false;
-                    const newValue = value ?? !currValue;
+                    updateKeys.forEach((key) => {
+                        const currValue = isBoolean(
+                            state.resourceConfig[key].disable
+                        )
+                            ? state.resourceConfig[key].disable
+                            : false;
+                        const newValue = value ?? !currValue;
 
-                    if (newValue) {
-                        state.resourceConfig[key].disable = newValue;
-                    } else {
-                        delete state.resourceConfig[key].disable;
-                    }
+                        if (value !== currValue) {
+                            updatedCount = updatedCount + 1;
+                        }
+
+                        if (newValue) {
+                            state.resourceConfig[key].disable = newValue;
+                        } else {
+                            delete state.resourceConfig[key].disable;
+                        }
+                    });
                 }),
                 false,
                 'Resource Config Disable Toggle'
             );
-        };
-
-        if (typeof keys === 'string') {
-            update(keys);
-        } else {
-            keys.forEach(update);
         }
+
+        // Return how many we updated
+        return updatedCount;
     },
 
     resetResourceConfigAndCollections: () => {

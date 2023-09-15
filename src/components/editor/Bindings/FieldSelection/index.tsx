@@ -6,6 +6,7 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
+import RefreshButton from 'components/editor/Bindings/FieldSelection/RefreshButton';
 import {
     BuiltSpec_Binding,
     CompositeProjection,
@@ -25,7 +26,6 @@ import {
     useBindingsEditorStore_setSingleSelection,
 } from 'components/editor/Bindings/Store/hooks';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
-import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import ExternalLink from 'components/shared/ExternalLink';
 import FieldSelectionTable from 'components/tables/FieldSelection';
 import { isEqual } from 'lodash';
@@ -269,11 +269,10 @@ function FieldSelectionViewer({ collectionName }: Props) {
                 <Box sx={{ whiteSpace: 'nowrap' }}>
                     {/* The shared test and save button component is disabled when the form is active.
                         No additional disabled conditions are needed. */}
-                    <EntityTestButton
+                    <RefreshButton
                         disabled={false}
                         logEvent={CustomEvents.MATERIALIZATION_TEST}
                         buttonLabelId="fieldSelection.cta.populateTable"
-                        forceLogsClosed
                     />
                 </Box>
             </Stack>

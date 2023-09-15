@@ -1,6 +1,7 @@
 import { Grid, Stack, Typography } from '@mui/material';
 import {
     useBindingsEditorStore_editModeEnabled,
+    useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_populateInferSchemaResponse,
     useBindingsEditorStore_schemaUpdated,
     useBindingsEditorStore_setCollectionData,
@@ -15,6 +16,7 @@ import { FormattedMessage } from 'react-intl';
 import { useUpdateEffect } from 'react-use';
 import { Schema } from 'types';
 import { getProperSchemaScope } from 'utils/schema-utils';
+import CollectionSchemaEditorSkeleton from './Skeleton';
 
 export interface Props {
     entityName?: string;
@@ -39,12 +41,14 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
 
     const setCollectionData = useBindingsEditorStore_setCollectionData();
 
+    const inferSchemaResponseDoneProcessing =
+        useBindingsEditorStore_inferSchemaResponseDoneProcessing();
     const populateInferSchemaResponse =
         useBindingsEditorStore_populateInferSchemaResponse();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
 
     useEffect(() => {
-        if (draftSpec) {
+        if (draftSpec?.spec && entityName) {
             // TODO (collection editor) when we allow collections to get updated
             //  from the details page we'll need to handle this for that.
 
@@ -56,13 +60,19 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
 
             // Infer schema and pass in spec so the function can handle
             //  if there is a read/write or just plain schema
-            populateInferSchemaResponse(draftSpec.spec);
+            populateInferSchemaResponse(draftSpec.spec, entityName);
 
             // Need to keep the collection data updated so that the schema
             //  inference and CLI buttons work
             setCollectionData({ spec: draftSpec.spec, belongsToDraft: true });
         }
-    }, [draftSpec, entityType, populateInferSchemaResponse, setCollectionData]);
+    }, [
+        draftSpec?.spec,
+        entityType,
+        entityName,
+        populateInferSchemaResponse,
+        setCollectionData,
+    ]);
 
     useUpdateEffect(() => {
         // If the schema is updated via the scheme inference
@@ -89,6 +99,9 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     );
 
     if (draftSpec && entityName) {
+        if (!inferSchemaResponseDoneProcessing) {
+            return <CollectionSchemaEditorSkeleton />;
+        }
         return (
             <Grid container>
                 {entityType === 'collection' ? null : (

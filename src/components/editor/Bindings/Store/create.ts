@@ -1,18 +1,24 @@
-import { infer } from '@estuary/flow-web';
+import { extend_read_bundle, infer } from '@estuary/flow-web';
 import {
     createDraftSpec,
     getDraftSpecsByCatalogName,
     modifyDraftSpec,
 } from 'api/draftSpecs';
+import { fetchInferredSchema } from 'api/inferred_schemas';
 import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
 import { CollectionData } from 'components/editor/Bindings/types';
 import produce from 'immer';
 import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
+import { logRocketEvent } from 'services/logrocket';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
-import { InferSchemaPropertyForRender, InferSchemaResponse } from 'types';
+import {
+    InferSchemaPropertyForRender,
+    InferSchemaResponse,
+    Schema,
+} from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { filterInferSchemaResponse, hasReadSchema } from 'utils/schema-utils';
 import { devtoolsOptions } from 'utils/store-utils';
@@ -109,6 +115,35 @@ const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
         validKeys,
         hasResponse,
     };
+};
+
+// Call into the flow WASM handler that will inline the write/inferred schema if necessary
+const updateReadSchema = async (
+    read: Schema,
+    write: Schema,
+    entityName: string
+) => {
+    // Try fetching the inferred schema... possible TODO handle errors better
+    const inferredSchemaResponse = await fetchInferredSchema(entityName);
+    const inferred = inferredSchemaResponse.data?.[0]?.schema
+        ? inferredSchemaResponse.data[0].schema
+        : {};
+
+    let response;
+    try {
+        response = extend_read_bundle({
+            read,
+            write,
+            inferred,
+        });
+        // We can catch any error here so that any issue causes an empty response and the
+        //  component will show an error... though not the most useful one.
+        // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
+    } catch (e: any) {
+        logRocketEvent('extend_read_bundle:failed', e);
+        response = {};
+    }
+    return response;
 };
 
 const getInitialStateData = (): Pick<
@@ -420,7 +455,7 @@ const getInitialState = (
     // That was removed but might be needed in the future
     //  so we left things running through loops in case we need
     //  to support that again
-    populateInferSchemaResponse: (spec) => {
+    populateInferSchemaResponse: async (spec, entityName) => {
         const populateState = (
             dataVal: InferSchemaResponse[] | null,
             errorVal: BindingsEditorState['inferSchemaResponseError']
@@ -433,9 +468,9 @@ const getInitialState = (
                 produce((state: BindingsEditorState) => {
                     state.inferSchemaResponseError = errorVal;
                     state.inferSchemaResponse = updatedVal;
-                    state.inferSchemaResponseDoneProcessing = true;
                     state.inferSchemaResponseEmpty = !hasResponse;
                     state.inferSchemaResponse_Keys = validKeys;
+                    state.inferSchemaResponseDoneProcessing = true;
                 }),
                 false,
                 'Infere Schema Populated'
@@ -444,7 +479,7 @@ const getInitialState = (
 
         set(
             produce((state: BindingsEditorState) => {
-                state.inferSchemaResponseDoneProcessing = true;
+                state.inferSchemaResponseDoneProcessing = false;
             }),
             false,
             'Resetting inferSchemaDoneProcessing flag'
@@ -456,7 +491,9 @@ const getInitialState = (
             return;
         }
 
-        const schemasToTest = hasReadSchema(spec)
+        // Check which schema to use
+        const usingReadSchema = hasReadSchema(spec);
+        const schemasToTest = usingReadSchema
             ? [spec.readSchema]
             : [spec.schema];
 
@@ -473,6 +510,17 @@ const getInitialState = (
         }
 
         try {
+            // Should only impact the read schema
+            if (usingReadSchema) {
+                // We MUST make this call before calling `infer` below
+                //  This will inline the write/inferred schema in the `$defs` if needed
+                schemasToTest[0] = await updateReadSchema(
+                    schemasToTest[0],
+                    spec.writeSchema ?? {},
+                    entityName
+                );
+            }
+
             // Run infer against schema
             const responses = schemasToTest.map((schema) => infer(schema));
 
