@@ -2,6 +2,7 @@ import useClient from 'hooks/supabase-swr/hooks/useClient';
 import { LRUCache } from 'lru-cache';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
+import { logRocketConsole } from 'services/logrocket';
 import { ERROR_MESSAGES } from 'services/supabase';
 import { SWRConfig } from 'swr';
 import { BaseComponentProps } from 'types';
@@ -44,7 +45,10 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                 value={{
                     onError: async (error, _key, _config) => {
                         // Handle JWT tokens expiring
-                        if (error.message === ERROR_MESSAGES.jwtExpired) {
+                        if (
+                            error.message === ERROR_MESSAGES.jwtExpired ||
+                            error.message === ERROR_MESSAGES.jwsInvalid
+                        ) {
                             await supabaseClient.auth
                                 .signOut()
                                 .then(() => {
@@ -62,7 +66,7 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                                     );
                                 })
                                 .catch((signOutError) => {
-                                    console.log(
+                                    logRocketConsole(
                                         'SWR:onError:failed to sign out',
                                         {
                                             signOutError,

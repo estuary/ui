@@ -30,6 +30,7 @@ export const QUERY_PARAM_CONNECTOR_TITLE = `connector_title->>en-US`;
 
 export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',
+    jwsInvalid: 'JWSError JWSInvalidSignature',
 };
 
 export const DEFAULT_FILTER = '__unknown__';
@@ -52,6 +53,7 @@ export enum TABLES {
     DRAFTS = 'drafts',
     DRAFTS_EXT = 'drafts_ext',
     EVOLUTIONS = 'evolutions',
+    INFERRED_SCHEMAS = 'inferred_schemas',
     LIVE_SPEC_FLOW = 'live_spec_flow',
     LIVE_SPECS = 'live_specs',
     LIVE_SPECS_EXT = 'live_specs_ext',

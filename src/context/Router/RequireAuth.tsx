@@ -11,19 +11,20 @@ import { getPathWithParams } from 'utils/misc-utils';
 
 interface Props extends BaseComponentProps {
     firstLoad?: boolean;
-    login?: boolean;
+    checkForGrant?: boolean;
 }
 
-function RequireAuth({ children, firstLoad, login }: Props) {
+function RequireAuth({ children, firstLoad, checkForGrant }: Props) {
     const { user } = Auth.useUser();
     const location = useLocation();
     const redirectTo = useLoginRedirectPath();
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
 
     if (user && firstLoad) {
-        // This should handle when an already logged in user visits an access grant link
+        // Handles: when an already logged in user visits an access grant link
+        //  when a user is coming back from registration
         const to =
-            login && grantToken
+            checkForGrant && grantToken
                 ? getPathWithParams(authenticatedRoutes.home.path, {
                       grantToken,
                   })

@@ -1,11 +1,13 @@
 import { Box, Stack } from '@mui/material';
 import { Provider } from '@supabase/supabase-js';
+import { unauthenticatedRoutes } from 'app/routes';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useLoginRedirectPath from 'hooks/useLoginRedirectPath';
 import { useSnackbar } from 'notistack';
 import GoogleButton from 'react-google-button';
 import { useIntl } from 'react-intl';
+import { getPathWithParams } from 'utils/misc-utils';
 import AzureButton from './AzureButton';
 import GithubButton from './GithubButton';
 
@@ -44,7 +46,7 @@ function OIDCs({ isRegister, grantToken }: Props) {
 
     const login = async (provider: Provider, scopes?: string) => {
         const redirectBaseURL = isRegister
-            ? window.location.origin
+            ? `${window.location.origin}${unauthenticatedRoutes.register.callback.fullPath}`
             : redirectTo;
 
         try {
@@ -54,7 +56,9 @@ function OIDCs({ isRegister, grantToken }: Props) {
                 },
                 {
                     redirectTo: grantToken
-                        ? `${redirectBaseURL}?${GlobalSearchParams.GRANT_TOKEN}=${grantToken}`
+                        ? getPathWithParams(redirectBaseURL, {
+                              [GlobalSearchParams.GRANT_TOKEN]: grantToken,
+                          })
                         : redirectBaseURL,
                     shouldCreateUser: isRegister,
                     scopes,

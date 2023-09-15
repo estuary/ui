@@ -26,7 +26,5 @@ export const useFormHydrationChecker = () => {
         resourceConfigStoreHydrated,
     ]);
 
-    console.log('storeHydrationComplete = ', storeHydrationComplete);
-
     return storeHydrationComplete;
 };

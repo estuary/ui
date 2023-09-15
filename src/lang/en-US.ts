@@ -52,10 +52,12 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.bindings': `Bindings`,
     'terms.permissions': `Access Grants`,
     'terms.materialization': `Materialization`,
+    'terms.transformation': `Transformation`,
     'terms.capture': `Capture`,
     'terms.derivation': `Derivation`,
     'terms.documentation': `Docs`,
     'terms.storageMapping': `Storage Mappings`,
+    'terms.entity': `Entity`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,
@@ -605,7 +607,7 @@ const Materializations: ResolvedIntlConfig['messages'] = {
 
 const Collections: ResolvedIntlConfig['messages'] = {
     'collectionsTable.title': `Collections`,
-    'collectionsTable.cta.new': `New Transformation`,
+    'collectionsTable.cta.new': `New ${CommonMessages['terms.transformation']}`,
     'collectionsTable.detailsCTA': `Details`,
     'collectionsTable.filterLabel': `Filter collections`,
     'collections.message1': `You currently have no collections. Click the Captures icon on the menu bar to get started.`,
@@ -654,7 +656,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.bindingsConfig.noRows': `Please select from the list above to begin.`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
     'entityCreate.bindingsConfig.list.search': `Filter {itemType}`,
-    'entityCreate.bindingsConfig.list.removeAll': `Remove {itemType} on this page`,
+    'entityCreate.bindingsConfig.list.removeAll': `Remove {itemType} in the list below`,
 
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
     'entityCreate.errors.missingDraftId': `Missing Draft ID.`,
@@ -886,10 +888,14 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.tab.collectionSchema': `Collection`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
 
-    'workflows.collectionSelector.toggle.enable': `Enable All`,
-    'workflows.collectionSelector.toggle.disable': `Disable All`,
-    'workflows.collectionSelector.toggle.enable.tooltip': `Enable all {itemType} on this page`,
-    'workflows.collectionSelector.toggle.disable.tooltip': `Disable all {itemType} on this page`,
+    'workflows.collectionSelector.toggle.enable': `Enable Page`,
+    'workflows.collectionSelector.toggle.disable': `Disable Page`,
+    'workflows.collectionSelector.toggle.enable.tooltip': `Enable all {itemType} in the list below`,
+    'workflows.collectionSelector.toggle.disable.tooltip': `Disable all {itemType} in the list below`,
+    'workflows.collectionSelector.toggle.enable.all': `Enable All`,
+    'workflows.collectionSelector.toggle.disable.all': `Disable All`,
+    'workflows.collectionSelector.toggle.enable.all.tooltip': `Enable all {itemType} in this {entityType} (ignores any filtering)`,
+    'workflows.collectionSelector.toggle.disable.all.tooltip': `Disable all {itemType} in this {entityType} (ignores any filtering)`,
 
     'workflows.collectionSelector.notifications.remove': `{count} {itemType} removed`,
     'workflows.collectionSelector.notifications.toggle.enable': `{count} {itemType} enabled`,
@@ -932,6 +938,9 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.autoDiscovery.label.optIntoDiscovery': `Automatically keep schemas up to date`,
     'workflows.autoDiscovery.label.addNewBindings': `Automatically add new collections`,
     'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Breaking changes re-version collections`,
+
+    'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
+    'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {
@@ -1208,6 +1217,7 @@ const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.message': `Determine which fields in your collection get materialized. By default, the connector dynamically selects the fields exported by your materialization. Click "See Fields" to update the table below.`,
     'fieldSelection.cta.defaultAllFields': `Include recommended fields`,
     'fieldSelection.cta.populateTable': `See Fields`,
+    'fieldSelection.dialog.refreshFields.header': `Please wait while we gather information about your resource fields`,
     'fieldSelection.dialog.updateProjection.header': `Update Projection`,
     'fieldSelection.dialog.updateProjection.header.new': `Add Projection`,
     'fieldSelection.dialog.updateProjection.message': `Update projection for collection, {collection}, to change how the field appears when materialized.`,

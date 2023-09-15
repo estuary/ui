@@ -9,19 +9,28 @@ import {
 } from 'use-query-params';
 import { getPagination } from '../../components/tables/EntityTable';
 
-export type TablePrefix =
-    | 'ag' // access grants
-    | 'ali' // access links
-    | 'bil' // billing
-    | 'cap' // captures
-    | 'col' // collections
-    | 'con' // connectors
-    | 'csl' // collections selector
-    | 'mat' // materializations
-    | 'pr' // prefixes
-    | 'pal' // prefix alerts
-    | 'sm' // storage mappings
-    | 'sv'; // schema viewer
+export enum TableFilterKeys {
+    pagination = 'p',
+    rowsPerPage = 'r',
+    searchQuery = 's',
+    sortColumn = 'c',
+    sortDirection = 'd',
+}
+
+export enum TablePrefixes {
+    accessGrants = 'ag',
+    accessLinks = 'ali',
+    billing = 'bil',
+    captures = 'cap',
+    collections = 'col',
+    collectionsSelector = 'csl',
+    connectors = 'con',
+    materializations = 'mat',
+    prefixes = 'pr',
+    schemaViewer = 'sv',
+    storageMappings = 'sm',
+}
+export type TablePrefix = `${TablePrefixes}`;
 
 function useTableState(
     keyPrefix: TablePrefix,
@@ -37,11 +46,11 @@ function useTableState(
         sortColumnKey,
     } = useMemo(() => {
         return {
-            paginationKey: `${keyPrefix}-p`,
-            rowsPerPageKey: `${keyPrefix}-r`,
-            searchQueryKey: `${keyPrefix}-s`,
-            sortDirectionKey: `${keyPrefix}-d`,
-            sortColumnKey: `${keyPrefix}-c`,
+            paginationKey: `${keyPrefix}-${TableFilterKeys.pagination}`,
+            rowsPerPageKey: `${keyPrefix}-${TableFilterKeys.rowsPerPage}`,
+            searchQueryKey: `${keyPrefix}-${TableFilterKeys.searchQuery}`,
+            sortDirectionKey: `${keyPrefix}-${TableFilterKeys.sortDirection}`,
+            sortColumnKey: `${keyPrefix}-${TableFilterKeys.sortColumn}`,
         };
     }, [keyPrefix]);
 
@@ -58,7 +67,6 @@ function useTableState(
 
     const setPagination = useCallback(
         (val: any) => {
-            console.log('setPagination', val);
             setQuery({ [paginationKey]: val });
         },
         [paginationKey, setQuery]
@@ -66,7 +74,6 @@ function useTableState(
 
     const setRowsPerPage = useCallback(
         (val: any) => {
-            console.log('setRowsPerPage', val);
             setQuery({ [rowsPerPageKey]: val });
         },
         [rowsPerPageKey, setQuery]
@@ -74,8 +81,6 @@ function useTableState(
 
     const setSearchQuery = useCallback(
         (val: any) => {
-            console.log('setSearchQuery', val);
-
             setQuery({ [searchQueryKey]: val });
         },
         [searchQueryKey, setQuery]
@@ -83,8 +88,6 @@ function useTableState(
 
     const setSortDirection = useCallback(
         (val: any) => {
-            console.log('setSortDirection', val);
-
             setQuery({ [sortDirectionKey]: val });
         },
         [sortDirectionKey, setQuery]
@@ -92,8 +95,6 @@ function useTableState(
 
     const setColumnToSort = useCallback(
         (val: any) => {
-            console.log('setColumnToSort', val);
-
             setQuery({ [sortColumnKey]: val });
         },
         [sortColumnKey, setQuery]

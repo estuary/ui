@@ -223,6 +223,10 @@ export const unauthenticatedRoutes = {
     },
     register: {
         path: '/register',
+        callback: {
+            path: 'callback',
+            fullPath: '/register/callback',
+        },
     },
     magicLink: {
         path: '/magicLink',

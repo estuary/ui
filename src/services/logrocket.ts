@@ -4,11 +4,7 @@ import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
 import { getUserDetails } from 'services/supabase';
-import {
-    getAppVersion,
-    getLogRocketSettings,
-    isProduction,
-} from 'utils/env-utils';
+import { getAppVersion, getLogRocketSettings } from 'utils/env-utils';
 
 // Based on node_modules/logrocket/dist/types.d.ts
 interface IUserTraits {
@@ -20,6 +16,7 @@ interface Settings {
     release: any;
     dom: any;
     network?: any;
+    serverURL?: any;
 }
 
 type ParsedBody = [{ [k: string]: any }] | { [k: string]: any } | undefined;
@@ -50,12 +47,13 @@ export const MASKED = '**MASKED**';
 
 // for endspoints where we want nothing ever logged
 const maskEverythingURLs = ['config-encryption.estuary.dev'];
-const shouldMaskEverything = (url: string) =>
-    maskEverythingURLs.some((el) => url.includes(el));
+const shouldMaskEverything = (url?: string) =>
+    maskEverythingURLs.some((el) => url?.includes(el));
 
 // for endpoints where we do not want to mess with the request at all
 const ignoreURLs = ['lr-in-prod'];
-const shouldIgnore = (url: string) => ignoreURLs.some((el) => url.includes(el));
+const shouldIgnore = (url?: string) =>
+    ignoreURLs.some((el) => url?.includes(el));
 
 // The headers we never want to have logged
 const maskHeaderKeys = ['apikey', 'Authorization'];
@@ -169,7 +167,7 @@ const maskContent = (requestResponse: any) => {
 // More info about the dom settings
 //  https://docs.logrocket.com/reference/dom
 export const initLogRocket = () => {
-    if (isProduction && logRocketSettings.appID) {
+    if (logRocketSettings?.appID) {
         const settings: Settings = {
             release: getAppVersion(),
             dom: {
@@ -177,6 +175,10 @@ export const initLogRocket = () => {
                 textSanitizer: logRocketSettings.sanitize.text,
             },
         };
+
+        if (logRocketSettings.serverURL) {
+            settings.serverURL = logRocketSettings.serverURL;
+        }
 
         if (
             logRocketSettings.sanitize.response ||
@@ -202,11 +204,7 @@ export const initLogRocket = () => {
 };
 
 export const identifyUser = (user: User) => {
-    if (
-        isProduction &&
-        logRocketSettings.idUser.enabled &&
-        logRocketSettings.appID
-    ) {
+    if (logRocketSettings?.idUser.enabled && logRocketSettings.appID) {
         const traits = {} as IUserTraits;
         const userDetails = getUserDetails(user);
 
