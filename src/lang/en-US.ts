@@ -930,6 +930,11 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.autoDiscovery.label.addNewBindings': `Automatically add new collections`,
     'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Breaking changes re-version collections`,
 
+    'workflows.sourceCapture.header': `Source Capture`,
+    'workflows.sourceCapture.optin.label': `Automatically add new collections from capture`,
+    'workflows.sourceCapture.input.label': `linked capture name`,
+    'workflows.sourceCapture.input.description': `This will make sure as new collections are discovered on the capture they will automatically be added to the materialization's bindings.`,
+
     'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
     'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
 };
