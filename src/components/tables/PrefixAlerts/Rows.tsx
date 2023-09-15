@@ -1,5 +1,6 @@
 import { TableCell, TableRow, useTheme } from '@mui/material';
 import { AlertMethodQuery } from 'api/alerts';
+import ChipListCell from 'components/tables/cells/ChipList';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'context/Theme';
@@ -40,7 +41,7 @@ function Row({ row, isSelected, setRow }: RowProps) {
 
             <TableCell>{row.prefix}</TableCell>
 
-            <TableCell>{row.unverified_emails}</TableCell>
+            <ChipListCell values={row.unverified_emails} stripPath={false} />
 
             <TimeStamp time={row.updated_at} enableRelative />
         </TableRow>

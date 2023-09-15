@@ -20,7 +20,7 @@ const columns: TableColumns[] = [
         headerIntlKey: 'entityTable.data.catalogPrefix',
     },
     {
-        field: 'email',
+        field: null,
         headerIntlKey: 'admin.alerts.table.label.alertMethod',
     },
     {
