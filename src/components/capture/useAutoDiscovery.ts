@@ -1,4 +1,9 @@
-import useDraftUpdater from 'hooks/useDraftUpdater';
+import { modifyDraftSpec } from 'api/draftSpecs';
+import {
+    useEditorStore_persistedDraftId,
+    useEditorStore_queryResponse_draftSpecs,
+    useEditorStore_queryResponse_mutate,
+} from 'components/editor/Store/hooks';
 import { debounce } from 'lodash';
 import { useCallback, useEffect, useRef } from 'react';
 import {
@@ -12,6 +17,11 @@ import {
 import { Schema } from 'types';
 
 function useAutoDiscovery() {
+    // Draft Editor Store
+    const draftId = useEditorStore_persistedDraftId();
+    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
+    const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
+
     // Schema Evolution Store
     const autoDiscover = useSchemaEvolution_autoDiscover();
     const addNewBindings = useSchemaEvolution_addNewBindings();
@@ -41,22 +51,39 @@ function useAutoDiscovery() {
         settingsActive,
     ]);
 
-    return useDraftUpdater(
-        useCallback(
-            (spec: Schema) => {
-                const response = { ...spec };
-                response.autoDiscover = autoDiscover
-                    ? {
-                          addNewBindings,
-                          evolveIncompatibleCollections,
-                      }
-                    : null;
+    return useCallback(async () => {
+        if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {
+            return Promise.reject();
+        } else {
+            const spec: Schema = draftSpecs[0].spec;
 
-                return response;
-            },
-            [addNewBindings, autoDiscover, evolveIncompatibleCollections]
-        )
-    );
+            spec.autoDiscover = autoDiscover
+                ? {
+                      addNewBindings,
+                      evolveIncompatibleCollections,
+                  }
+                : null;
+
+            const updateResponse = await modifyDraftSpec(spec, {
+                draft_id: draftId,
+                catalog_name: draftSpecs[0].catalog_name,
+                spec_type: 'capture',
+            });
+
+            if (updateResponse.error) {
+                return Promise.reject();
+            }
+
+            return mutateDraftSpecs();
+        }
+    }, [
+        mutateDraftSpecs,
+        addNewBindings,
+        autoDiscover,
+        draftId,
+        draftSpecs,
+        evolveIncompatibleCollections,
+    ]);
 }
 
 export default useAutoDiscovery;
