@@ -8,8 +8,8 @@ import {
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
 import { DraftSpec } from 'hooks/useDraftSpecs';
-import { get, has, set } from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { get, has, isEqual, set } from 'lodash';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { stringifyJSON } from 'services/stringify';
 import { Entity } from 'types';
 
@@ -19,7 +19,14 @@ function useDraftSpecEditor(
     editorSchemaScope?: string
 ) {
     // Local State
+    // We store off a ref and a state so we can constantly do compares against
+    //  the ref and not cause re-renders. This makes sure we do not do extra updates
     const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
+    const draftSpecRef = useRef<DraftSpec>(null);
+    const updateDraftSpec = useCallback((updatedValue: DraftSpec) => {
+        setDraftSpec(updatedValue);
+        draftSpecRef.current = updatedValue;
+    }, []);
 
     // Draft Editor Store
     const currentCatalog = useEditorStore_currentCatalog({
@@ -61,13 +68,25 @@ function useDraftSpecEditor(
             if (!mutate || !draftSpec) {
                 return Promise.reject();
             } else {
+                // Try setting to the newVal and if we are updating a single
+                //  props then go ahead and make sure that specific prop is set correctly
+                let updatedSpec = newVal;
                 if (propUpdating) {
-                    set(draftSpec.spec, propUpdating, newVal);
-                } else {
-                    draftSpec.spec = newVal;
+                    updatedSpec = set(
+                        { ...draftSpec.spec },
+                        propUpdating,
+                        newVal
+                    );
                 }
 
-                const updateResponse = await modifyDraftSpec(draftSpec.spec, {
+                // Update the local copy of the spec that is contained within the entire draft
+                updateDraftSpec({
+                    ...draftSpec,
+                    spec: updatedSpec,
+                });
+
+                // Update only the SPEC on the server
+                const updateResponse = await modifyDraftSpec(updatedSpec, {
                     draft_id: draftId,
                     catalog_name: catalogName,
                     spec_type: specType,
@@ -80,7 +99,7 @@ function useDraftSpecEditor(
                 return mutate();
             }
         },
-        [mutate, draftId, draftSpec]
+        [draftId, draftSpec, mutate, updateDraftSpec]
     );
 
     useEffect(() => {
@@ -93,20 +112,22 @@ function useDraftSpecEditor(
                         return false;
                     }
 
-                    setDraftSpec(val);
-                    return true;
+                    if (!isEqual(draftSpecRef.current, val)) {
+                        updateDraftSpec(val);
+                        return true;
+                    }
+
+                    return false;
                 });
             }
         }
-        // We do not care if currentCatalog changes that is handled below
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [draftSpecs, entityName, setSpecs]);
+    }, [currentCatalog, draftSpecs, entityName, setSpecs, updateDraftSpec]);
 
     useEffect(() => {
-        if (currentCatalog) {
-            setDraftSpec(currentCatalog);
+        if (currentCatalog && !isEqual(draftSpecRef.current, currentCatalog)) {
+            updateDraftSpec(currentCatalog);
         }
-    }, [currentCatalog]);
+    }, [currentCatalog, updateDraftSpec]);
 
     // TODO (sync editing) : turning off as right now this will show lots of "Out of sync" errors
     //    because we are comparing two JSON objects that are being stringified and that means the order
@@ -133,13 +154,15 @@ function useDraftSpecEditor(
     // });
 
     // TODO (draftSpecEditor) need to better handle returning so we are not causing extra renders
-    return {
-        onChange: processEditorValue,
-        draftSpec,
-        isValidating,
-        mutate,
-        defaultValue: specAsString,
-    };
+    return useMemo(() => {
+        return {
+            onChange: processEditorValue,
+            draftSpec,
+            isValidating,
+            mutate,
+            defaultValue: specAsString,
+        };
+    }, [draftSpec, isValidating, mutate, processEditorValue, specAsString]);
 }
 
 export default useDraftSpecEditor;
