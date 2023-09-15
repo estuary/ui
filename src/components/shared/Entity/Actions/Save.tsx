@@ -13,6 +13,7 @@ import {
     useEditorStore_setPubId,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
+import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useClient } from 'hooks/supabase-swr';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
@@ -42,6 +43,7 @@ interface Props {
     logEvent: CustomEvents;
     dryRun?: boolean;
     buttonLabelId?: string;
+    forceLogsClosed?: boolean;
 }
 
 const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
@@ -60,9 +62,11 @@ function EntityCreateSave({
     onFailure,
     logEvent,
     buttonLabelId,
+    forceLogsClosed,
 }: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
+    const { closeLogs } = useEntityWorkflowHelpers();
 
     const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
 
@@ -133,6 +137,12 @@ function EntityCreateSave({
                     // generated on each successful publication.
                     if (mutateDraftSpecs) {
                         void mutateDraftSpecs();
+                    }
+
+                    // A log dialog associated with a dry run that is used to populate the materialization field
+                    // selection table should automatically close when the publication terminates.
+                    if (forceLogsClosed) {
+                        closeLogs();
                     }
                 }
 
