@@ -79,9 +79,8 @@ function BindingSelector({
                 );
             }
         },
-        toggleCollections: (rows: any[], value: boolean) => {
-            toggleCollections(rows, value);
-        },
+        toggleCollections: (rows: any[] | null, value: boolean) =>
+            toggleCollections(rows, value),
     };
 
     const disableActions = formActive || readOnly;
