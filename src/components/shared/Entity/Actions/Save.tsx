@@ -15,7 +15,6 @@ import {
 import { buttonSx } from 'components/shared/Entity/Header';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useClient } from 'hooks/supabase-swr';
-import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
@@ -35,10 +34,7 @@ import { FormStatus } from 'stores/FormState/types';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
-import {
-    useResourceConfig_collections,
-    useResourceConfig_resourceConfig,
-} from 'stores/ResourceConfig/hooks';
+import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -101,18 +97,6 @@ function EntityCreateSave({
 
     // Resource Config Store
     const collections = useResourceConfig_collections();
-    const resourceConfig = useResourceConfig_resourceConfig();
-
-    const couldNeedCleanup = useMemo(() => {
-        const hasCollections = collections && collections.length > 0;
-
-        // If a dry run we only care if the collections list changed
-        // If not then we need to make sure collection list AND resource config are
-        //  cleaned up. These two lists should always be the same but being safe
-        return dryRun
-            ? hasCollections
-            : hasCollections ?? Object.keys(resourceConfig).length > 0;
-    }, [collections, dryRun, resourceConfig]);
 
     const waitForPublishToFinish = (
         logTokenVal: string,
@@ -201,7 +185,7 @@ function EntityCreateSave({
 
         if (draftId) {
             // If there are bound collections then we need to potentially handle clean up
-            if (couldNeedCleanup) {
+            if (collections && collections.length > 0) {
                 const draftSpecResponse = await getDraftSpecsBySpecTypeReduced(
                     draftId,
                     'collection'
@@ -224,19 +208,9 @@ function EntityCreateSave({
 
                     const unboundCollections = draftSpecResponse.data
                         .map((query) => query.catalog_name)
-                        .filter((collection: string) => {
-                            const notInCollections =
-                                !collections?.includes(collection);
-
-                            // If a dry run we only care about the collection list
-                            // If not then only return if this true otherwise go to the next check
-                            if (dryRun || notInCollections) {
-                                return notInCollections;
-                            }
-
-                            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                            return Boolean(resourceConfig[collection]?.disable);
-                        });
+                        .filter(
+                            (collection) => !collections.includes(collection)
+                        );
 
                     const deleteDraftSpecsResponse =
                         await deleteDraftSpecsByCatalogName(
