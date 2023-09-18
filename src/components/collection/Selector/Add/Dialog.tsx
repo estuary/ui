@@ -11,7 +11,7 @@ import BindingSelectorTable from 'components/collection/Selector/Table';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { AddCollectionDialogCTAProps } from './types';
+import { AddCollectionDialogCTAProps } from '../types';
 
 interface Props extends AddCollectionDialogCTAProps {
     id: string;
@@ -40,6 +40,7 @@ function AddCollectionDialog({
                     <StepWrapper>
                         <Box>
                             <BindingSelectorTable
+                                entity="collection"
                                 selectedCollections={selectedCollections}
                             />
                         </Box>
