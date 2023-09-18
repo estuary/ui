@@ -3,6 +3,7 @@ import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'context/Theme';
 import invariableStores from 'context/Zustand/invariableStores';
+import { useMemo } from 'react';
 
 import { useStore } from 'zustand';
 import { catalogNameColumn, publishedColumn } from './shared';
@@ -67,12 +68,15 @@ function Rows({ data }: RowsProps) {
         }
     );
 
-    return (
-        <>
-            {data.map((row) => (
-                <Row key={row.id} row={row} setRow={setRow} />
-            ))}
-        </>
+    return useMemo(
+        () => (
+            <>
+                {data.map((row) => (
+                    <Row key={row.id} row={row} setRow={setRow} />
+                ))}
+            </>
+        ),
+        [data, setRow]
     );
 }
 
