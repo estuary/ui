@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { AddCollectionDialogCTAProps } from 'components/collection/Selector/types';
+import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
 
 import { FormattedMessage } from 'react-intl';

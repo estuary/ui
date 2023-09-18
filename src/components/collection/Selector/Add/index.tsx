@@ -6,7 +6,6 @@ import invariableStores from 'context/Zustand/invariableStores';
 import { Plus } from 'iconoir-react';
 import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { SelectTableStoreNames } from 'stores/names';
 import { useStore } from 'zustand';
 
 interface Props {
@@ -15,7 +14,6 @@ interface Props {
     disabled?: boolean;
 }
 
-const STORE_NAME = SelectTableStoreNames.COLLECTION_SELECTOR;
 const DIALOG_ID = 'add-collection-search-dialog';
 
 function BindingsEditorAdd({

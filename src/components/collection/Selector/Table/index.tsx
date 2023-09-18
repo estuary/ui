@@ -1,4 +1,4 @@
-import { TableHydratorProps } from '../types';
+import { TableHydratorProps } from 'components/shared/Entity/types';
 import Hydrator from './Hydrator';
 
 function BindingSelectorTable({

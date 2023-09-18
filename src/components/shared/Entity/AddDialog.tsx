@@ -11,7 +11,6 @@ import BindingSelectorTable from 'components/collection/Selector/Table';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { SelectTableStoreNames } from 'stores/names';
 import { AddCollectionDialogCTAProps } from './types';
 
 interface Props extends AddCollectionDialogCTAProps {
@@ -19,7 +18,6 @@ interface Props extends AddCollectionDialogCTAProps {
     open: boolean;
     primaryCTA: any;
     selectedCollections: string[];
-    storeName: SelectTableStoreNames;
     title: string | ReactNode;
 }
 
@@ -29,7 +27,6 @@ function AddDialog({
     primaryCTA,
     open,
     selectedCollections,
-    storeName,
     title,
     toggle,
 }: Props) {
@@ -46,7 +43,6 @@ function AddDialog({
                             <BindingSelectorTable
                                 entity={entity}
                                 selectedCollections={selectedCollections}
-                                storeName={storeName}
                             />
                         </Box>
                     </StepWrapper>
