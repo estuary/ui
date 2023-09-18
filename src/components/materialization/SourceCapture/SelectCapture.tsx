@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import AddCollectionDialog from 'components/collection/Selector/Add/Dialog';
+import AddDialog from 'components/shared/Entity/AddDialog';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
@@ -31,7 +31,7 @@ function SelectCapture({ enabled }: Props) {
                     }
                 />
             </Button>
-            <AddCollectionDialog
+            <AddDialog
                 entity="capture"
                 id={DIALOG_ID}
                 open={open}

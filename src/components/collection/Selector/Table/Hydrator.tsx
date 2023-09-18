@@ -1,4 +1,5 @@
 import { getLiveSpecs_collectionsSelector } from 'api/liveSpecsExt';
+import { TableHydratorProps } from 'components/shared/Entity/types';
 import EntityTable from 'components/tables/EntityTable';
 import RowSelector from 'components/tables/RowActions/RowSelector';
 import invariableStores from 'context/Zustand/invariableStores';
@@ -9,7 +10,6 @@ import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import { MAX_BINDINGS } from 'utils/workflow-utils';
 import { useStore } from 'zustand';
-import { TableHydratorProps } from '../types';
 import Rows from './Rows';
 import { catalogNameColumn, publishedColumn, tableColumns } from './shared';
 

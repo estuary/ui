@@ -1,6 +1,6 @@
 import { LoadingButton } from '@mui/lab';
 import { modifyDraftSpec } from 'api/draftSpecs';
-import { AddCollectionDialogCTAProps } from 'components/collection/Selector/types';
+import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,

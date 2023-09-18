@@ -61,6 +61,7 @@ export interface CollectionQueryWithStats extends CollectionQuery {
 interface CollectionSelectorQuery {
     catalog_name: string;
     spec_type: string;
+    writes_to?: string[];
 }
 
 const captureColumns = commonColumns.concat(['writes_to']).join(',');
@@ -138,6 +139,9 @@ const getLiveSpecs_collections = (
     return queryBuilder;
 };
 
+const collectionsSelectorColumns = 'catalog_name, id, updated_at, spec_type';
+const collectionsSelectorColumns_Capture = `${collectionsSelectorColumns}, writes_to`;
+
 const getLiveSpecs_collectionsSelector = (
     pagination: any,
     specType: Entity,
@@ -146,9 +150,14 @@ const getLiveSpecs_collectionsSelector = (
 ) => {
     let queryBuilder = supabaseClient
         .from<CollectionSelectorQuery>(TABLES.LIVE_SPECS_EXT)
-        .select('catalog_name, id, updated_at, spec_type', {
-            count: 'exact',
-        });
+        .select(
+            specType === 'capture'
+                ? collectionsSelectorColumns_Capture
+                : collectionsSelectorColumns,
+            {
+                count: 'exact',
+            }
+        );
 
     queryBuilder = defaultTableFilter<CollectionSelectorQuery>(
         queryBuilder,

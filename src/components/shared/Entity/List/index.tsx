@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import CollectionSelector from 'components/collection/Selector';
-import { AddCollectionDialogCTAProps } from 'components/collection/Selector/types';
+import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import CatalogList, {
     CatalogListContent,
 } from 'components/transformation/create/Config/catalog/CatalogList';

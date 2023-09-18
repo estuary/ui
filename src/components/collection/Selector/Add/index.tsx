@@ -1,12 +1,13 @@
 import { IconButton, Tooltip, useTheme } from '@mui/material';
+import AddDialog from 'components/shared/Entity/AddDialog';
 import { useEntityType } from 'context/EntityContext';
 import { disabledButtonText } from 'context/Theme';
 import invariableStores from 'context/Zustand/invariableStores';
 import { Plus } from 'iconoir-react';
 import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { SelectTableStoreNames } from 'stores/names';
 import { useStore } from 'zustand';
-import AddCollectionDialog from './Dialog';
 
 interface Props {
     selectedCollections: string[];
@@ -14,6 +15,7 @@ interface Props {
     disabled?: boolean;
 }
 
+const STORE_NAME = SelectTableStoreNames.COLLECTION_SELECTOR;
 const DIALOG_ID = 'add-collection-search-dialog';
 
 function BindingsEditorAdd({
@@ -84,7 +86,7 @@ function BindingsEditorAdd({
                     />
                 </IconButton>
             </Tooltip>
-            <AddCollectionDialog
+            <AddDialog
                 entity="collection"
                 id={DIALOG_ID}
                 open={open}
