@@ -15,17 +15,20 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         }
     );
 
+    const [setSourceCapture] = useStore(
+        invariableStores['source-capture'],
+        (state) => {
+            return [state.setSourceCapture];
+        }
+    );
+
     const setResourceConfig = useResourceConfig_setResourceConfig();
 
-    const close = () => {
-        setResourceConfig(
-            Array.from(selected)
-                .map(([_id, row]) => row.writes_to)
-                .flat(),
-            undefined,
-            false,
-            true
-        );
+    const close = async () => {
+        const selectedRow = Array.from(selected).map(([_key, row]) => row)[0];
+
+        setSourceCapture(selectedRow.catalog_name);
+        setResourceConfig(selectedRow.writes_to, undefined, false, true);
 
         toggle(false);
     };

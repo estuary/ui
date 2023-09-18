@@ -1,18 +1,23 @@
 import { Button } from '@mui/material';
 import AddDialog from 'components/shared/Entity/AddDialog';
+import invariableStores from 'context/Zustand/invariableStores';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import { useStore } from 'zustand';
 import AddSourceCaptureToSpecButton from './AddSourceCaptureToSpecButton';
-
-interface Props {
-    enabled: boolean;
-}
 
 const DIALOG_ID = 'add-source-capture-search-dialog';
 
-function SelectCapture({ enabled }: Props) {
+function SelectCapture() {
     const formActive = useFormStateStore_isActive();
+
+    const [sourceCapture] = useStore(
+        invariableStores['source-capture'],
+        (state) => {
+            return [state.sourceCapture];
+        }
+    );
 
     const [open, setOpen] = useState<boolean>(false);
 
@@ -25,7 +30,7 @@ function SelectCapture({ enabled }: Props) {
             <Button disabled={formActive} onClick={toggleDialog}>
                 <FormattedMessage
                     id={
-                        enabled
+                        sourceCapture
                             ? 'workflows.sourceCapture.cta.edit'
                             : 'workflows.sourceCapture.cta'
                     }
