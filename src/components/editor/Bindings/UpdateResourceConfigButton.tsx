@@ -25,9 +25,9 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         useResourceConfig_setRestrictedDiscoveredCollections();
 
     const close = () => {
-        const value = Array.from(selected).map(([_id, name]) => {
+        const value = Array.from(selected).map(([_id, row]) => {
             return {
-                name,
+                name: row.catalog_name,
             };
         });
 
