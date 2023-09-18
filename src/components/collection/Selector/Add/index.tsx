@@ -85,6 +85,7 @@ function BindingsEditorAdd({
                 </IconButton>
             </Tooltip>
             <AddCollectionDialog
+                entity="collection"
                 id={DIALOG_ID}
                 open={open}
                 primaryCTA={AddSelectedButton}

@@ -1,8 +1,9 @@
-import { Button, Chip, Stack, Typography } from '@mui/material';
+import { Chip, Stack, Typography } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import SelectCapture from './SelectCapture';
 
 // const INPUT_ID = 'source-capture-input';
 
@@ -38,15 +39,7 @@ function SourceCapture() {
                     alignItems: 'center',
                 }}
             >
-                <Button disabled={formActive}>
-                    <FormattedMessage
-                        id={
-                            sourceCaptureEnabled
-                                ? 'workflows.sourceCapture.cta.edit'
-                                : 'workflows.sourceCapture.cta'
-                        }
-                    />
-                </Button>
+                <SelectCapture enabled={sourceCaptureEnabled} />
 
                 {sourceCaptureEnabled ? (
                     <Chip

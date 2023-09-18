@@ -34,7 +34,7 @@ function Hydrator({ entity, selectedCollections }: TableHydratorProps) {
     const query = useMemo(() => {
         return getLiveSpecs_collectionsSelector(
             pagination,
-            entity,
+            entity ?? 'collection',
             searchQuery,
             [
                 {

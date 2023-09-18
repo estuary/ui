@@ -22,6 +22,7 @@ interface Props extends AddCollectionDialogCTAProps {
 }
 
 function AddCollectionDialog({
+    entity,
     id,
     primaryCTA,
     open,
@@ -30,6 +31,16 @@ function AddCollectionDialog({
     toggle,
 }: Props) {
     const ContinueButton = primaryCTA;
+
+    console.log('fup', {
+        entity,
+        id,
+        primaryCTA,
+        open,
+        selectedCollections,
+        title,
+        toggle,
+    });
 
     return (
         <Dialog id={id} open={open} fullWidth maxWidth="md">
@@ -40,7 +51,7 @@ function AddCollectionDialog({
                     <StepWrapper>
                         <Box>
                             <BindingSelectorTable
-                                entity="collection"
+                                entity={entity}
                                 selectedCollections={selectedCollections}
                             />
                         </Box>

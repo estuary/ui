@@ -16,6 +16,7 @@ interface Props extends AddCollectionDialogCTAProps {
 
 function EntityList({ content, header, primaryCTA, toggle }: Props) {
     const intl = useIntl();
+
     return (
         <Box>
             <CollectionSelector
