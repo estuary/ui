@@ -31,6 +31,7 @@ export interface StatsSchema {
 
 export type StatsResponse = StatsSchema | null;
 
+// TODO (typing) Need to let us pass in a type for the selected value type
 export interface SelectableTableStore extends StoreWithHydration {
     rows: Map<string, any>;
     setRows: (val: LiveSpecsExtQuery[]) => void;
@@ -39,7 +40,7 @@ export interface SelectableTableStore extends StoreWithHydration {
     selected: Map<string, any>;
     setSelected: (
         key: string | string[],
-        value: string,
+        value: any,
         isSelected: boolean
     ) => void;
     setAllSelected: (isSelected: boolean, valueProperty?: string) => void;
