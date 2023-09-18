@@ -11,12 +11,15 @@ import TableHydrator from 'stores/Tables/Hydrator';
 import { MAX_BINDINGS } from 'utils/workflow-utils';
 import { useStore } from 'zustand';
 import Rows from './Rows';
-import { catalogNameColumn, publishedColumn, tableColumns } from './shared';
+import { catalogNameColumn, publishedColumn } from './shared';
+import useCollectionsSelectorColumns from './useCollectionsSelectorColumns';
 
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
 const tableRowsPerPage = [10, 50, 100, MAX_BINDINGS];
 
 function Hydrator({ entity, selectedCollections }: TableHydratorProps) {
+    const tableColumns = useCollectionsSelectorColumns(entity === 'capture');
+
     const {
         reset,
         pagination,
