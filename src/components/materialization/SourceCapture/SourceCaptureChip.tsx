@@ -42,7 +42,7 @@ function SourceCaptureChip() {
             label={sourceCapture}
             onDelete={async () => {
                 setSourceCapture(null);
-                await updateDraft();
+                await updateDraft(null);
             }}
         />
     );

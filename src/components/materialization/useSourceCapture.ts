@@ -20,49 +20,57 @@ function useSourceCapture() {
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
-    const [sourceCapture, setSaving] = useStore(
+    const [setSaving] = useStore(
         invariableStores['source-capture'],
         (state) => {
-            return [state.sourceCapture, state.setSaving];
+            return [state.setSaving];
         }
     );
 
-    const update = useCallback(async () => {
-        if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {
-            return Promise.reject();
-        } else {
-            setSaving(true);
-
-            const spec: Schema = draftSpecs[0].spec;
-
-            if (sourceCapture) {
-                spec.sourceCapture = sourceCapture;
-            } else if (spec.sourceCapture) {
-                delete spec.sourceCapture;
-            }
-
-            const updateResponse = await modifyDraftSpec(spec, {
-                draft_id: draftId,
-                catalog_name: draftSpecs[0].catalog_name,
-                spec_type: 'materialization',
-            });
-
-            if (updateResponse.error) {
+    const update = useCallback(
+        async (sourceCapture: string | null) => {
+            if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {
                 return Promise.reject();
+            } else {
+                setFormState({ status: FormStatus.UPDATING });
+                setSaving(true);
+
+                const spec: Schema = draftSpecs[0].spec;
+
+                if (sourceCapture) {
+                    spec.sourceCapture = sourceCapture;
+                } else {
+                    delete spec.sourceCapture;
+                }
+
+                const updateResponse = await modifyDraftSpec(spec, {
+                    draft_id: draftId,
+                    catalog_name: draftSpecs[0].catalog_name,
+                    spec_type: 'materialization',
+                });
+
+                if (updateResponse.error) {
+                    return Promise.reject();
+                }
+
+                return mutateDraftSpecs();
             }
+        },
+        [draftId, draftSpecs, mutateDraftSpecs, setFormState, setSaving]
+    );
 
-            return mutateDraftSpecs();
-        }
-    }, [draftId, draftSpecs, mutateDraftSpecs, setSaving, sourceCapture]);
-
-    return useCallback(async () => {
-        update()
-            .then(
-                () => setFormState({ status: FormStatus.UPDATED }),
-                (error) => setFormState({ status: FormStatus.FAILED, error })
-            )
-            .finally(() => setSaving(false));
-    }, [setFormState, setSaving, update]);
+    return useCallback(
+        async (sourceCapture: string | null) => {
+            update(sourceCapture)
+                .then(
+                    () => setFormState({ status: FormStatus.UPDATED }),
+                    (error) =>
+                        setFormState({ status: FormStatus.FAILED, error })
+                )
+                .finally(() => setSaving(false));
+        },
+        [setFormState, setSaving, update]
+    );
 }
 
 export default useSourceCapture;

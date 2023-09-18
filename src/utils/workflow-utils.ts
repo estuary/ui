@@ -42,7 +42,8 @@ export const generateTaskSpec = (
     entityType: EntityWithCreateWorkflow,
     connectorConfig: ConnectorConfig,
     resourceConfigs: ResourceConfigDictionary | null,
-    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
+    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
+    sourceCapture: string | null
 ) => {
     const draftSpec = isEmpty(existingTaskData)
         ? {
@@ -104,6 +105,12 @@ export const generateTaskSpec = (
         }
     } else {
         draftSpec.bindings = [];
+    }
+
+    if (sourceCapture) {
+        draftSpec.sourceCapture = sourceCapture;
+    } else {
+        delete draftSpec.sourceCapture;
     }
 
     return draftSpec;
@@ -172,7 +179,8 @@ export const modifyExistingCaptureDraftSpec = async (
         'capture',
         { image: connectorImage, config: encryptedEndpointConfig },
         resourceConfig,
-        existingTaskData
+        existingTaskData,
+        null
     );
 
     return modifyDraftSpec(draftSpec, {

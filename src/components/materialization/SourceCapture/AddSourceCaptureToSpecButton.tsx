@@ -33,7 +33,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         setSourceCapture(selectedRow.catalog_name);
         setResourceConfig(selectedRow.writes_to, undefined, false, true);
 
-        await updateDraft();
+        await updateDraft(selectedRow.catalog_name);
 
         toggle(false);
     };
