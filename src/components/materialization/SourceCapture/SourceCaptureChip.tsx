@@ -3,9 +3,12 @@ import invariableStores from 'context/Zustand/invariableStores';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { useStore } from 'zustand';
+import useSourceCapture from '../useSourceCapture';
 
 function SourceCaptureChip() {
     const formActive = useFormStateStore_isActive();
+
+    const updateDraft = useSourceCapture();
 
     const [sourceCapture, setSourceCapture] = useStore(
         invariableStores['source-capture'],
@@ -19,8 +22,6 @@ function SourceCaptureChip() {
     });
 
     const disabled = saving || formActive;
-
-    console.log('sourceCapture', sourceCapture);
 
     if (!sourceCapture) {
         return (
@@ -39,8 +40,9 @@ function SourceCaptureChip() {
             color="success"
             disabled={disabled}
             label={sourceCapture}
-            onDelete={() => {
+            onDelete={async () => {
                 setSourceCapture(null);
+                await updateDraft();
             }}
         />
     );

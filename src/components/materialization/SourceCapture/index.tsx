@@ -4,8 +4,6 @@ import { FormattedMessage } from 'react-intl';
 import SelectCapture from './SelectCapture';
 import SourceCaptureChip from './SourceCaptureChip';
 
-// const INPUT_ID = 'source-capture-input';
-
 const DOCS_LINK =
     'https://docs.estuary.dev/concepts/materialization/#using-sourcecapture-to-synchronize-capture-and-materialization-bindings';
 

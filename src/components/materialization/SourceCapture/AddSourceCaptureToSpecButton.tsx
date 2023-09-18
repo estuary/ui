@@ -6,6 +6,7 @@ import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_setResourceConfig } from 'stores/ResourceConfig/hooks';
 
 import { useStore } from 'zustand';
+import useSourceCapture from '../useSourceCapture';
 
 function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
     const [selected] = useStore(
@@ -15,12 +16,14 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         }
     );
 
-    const [setSourceCapture] = useStore(
+    const setSourceCapture = useStore(
         invariableStores['source-capture'],
         (state) => {
-            return [state.setSourceCapture];
+            return state.setSourceCapture;
         }
     );
+
+    const updateDraft = useSourceCapture();
 
     const setResourceConfig = useResourceConfig_setResourceConfig();
 
@@ -29,6 +32,8 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
 
         setSourceCapture(selectedRow.catalog_name);
         setResourceConfig(selectedRow.writes_to, undefined, false, true);
+
+        await updateDraft();
 
         toggle(false);
     };
