@@ -18,14 +18,10 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
     const setResourceConfig = useResourceConfig_setResourceConfig();
 
     const close = () => {
-        const value = Array.from(selected).map(([_id, name]) => {
-            return {
-                name,
-            };
-        });
-
         setResourceConfig(
-            value.map(({ name }) => name),
+            Array.from(selected)
+                .map(([_id, row]) => row.writes_to)
+                .flat(),
             undefined,
             false,
             true
