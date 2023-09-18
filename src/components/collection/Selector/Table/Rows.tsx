@@ -38,9 +38,7 @@ function Row({ row, setRow }: RowProps) {
             key={`collection-selector-table-${row.id}`}
             selected={isSelected}
             onClick={
-                disabled
-                    ? undefined
-                    : () => setRow(row.id, row[catalogNameColumn], !isSelected)
+                disabled ? undefined : () => setRow(row.id, row, !isSelected)
             }
             sx={getEntityTableRowSx(theme, disabled)}
         >
