@@ -3,7 +3,7 @@ import AddDialog from 'components/shared/Entity/AddDialog';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import UpdateResourceConfigButton from './UpdateResourceConfigButton';
+import AddSourceCaptureToSpecButton from './AddSourceCaptureToSpecButton';
 
 interface Props {
     enabled: boolean;
@@ -35,10 +35,10 @@ function SelectCapture({ enabled }: Props) {
                 entity="capture"
                 id={DIALOG_ID}
                 open={open}
-                primaryCTA={UpdateResourceConfigButton}
+                primaryCTA={AddSourceCaptureToSpecButton}
                 selectedCollections={[]}
                 toggle={toggleDialog}
-                title="Captures"
+                title={<FormattedMessage id="captureTable.header" />}
             />
         </>
     );

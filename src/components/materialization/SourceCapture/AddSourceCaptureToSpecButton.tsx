@@ -7,7 +7,7 @@ import { useResourceConfig_setResourceConfig } from 'stores/ResourceConfig/hooks
 
 import { useStore } from 'zustand';
 
-function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
+function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
     const [selected] = useStore(
         invariableStores['Collections-Selector-Table'],
         (state) => {
@@ -41,4 +41,4 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
     );
 }
 
-export default UpdateResourceConfigButton;
+export default AddSourceCaptureToSpecButton;
