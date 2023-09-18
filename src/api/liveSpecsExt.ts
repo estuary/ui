@@ -58,12 +58,6 @@ export interface CollectionQueryWithStats extends CollectionQuery {
     stats?: CatalogStats;
 }
 
-interface CollectionSelectorQuery {
-    catalog_name: string;
-    spec_type: string;
-    writes_to?: string[];
-}
-
 const captureColumns = commonColumns.concat(['writes_to']).join(',');
 const captureColumnsWithSpec = captureColumns.concat(',spec');
 
@@ -141,6 +135,14 @@ const getLiveSpecs_collections = (
 
 const collectionsSelectorColumns = 'catalog_name, id, updated_at, spec_type';
 const collectionsSelectorColumns_Capture = `${collectionsSelectorColumns}, writes_to`;
+
+interface CollectionSelectorQuery {
+    catalog_name: string;
+    id: string;
+    spec_type: Entity;
+    updated_at: string;
+    writes_to?: string[];
+}
 
 const getLiveSpecs_collectionsSelector = (
     pagination: any,
