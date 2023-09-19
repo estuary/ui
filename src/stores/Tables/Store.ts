@@ -1,5 +1,6 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { getStatsByName, StatsFilter } from 'api/stats';
+import { EVERYTHING } from 'components/collection/Selector/Table/shared';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { flatMap } from 'lodash';
@@ -194,7 +195,9 @@ export const getInitialState = (
 
                             rows.forEach((value, key) => {
                                 const evaluatedValue = valueProperty
-                                    ? value[valueProperty]
+                                    ? valueProperty === EVERYTHING
+                                        ? value
+                                        : value[valueProperty]
                                     : null;
 
                                 // if the name is disabled then don't add it here

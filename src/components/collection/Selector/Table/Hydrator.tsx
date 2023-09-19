@@ -11,7 +11,7 @@ import TableHydrator from 'stores/Tables/Hydrator';
 import { MAX_BINDINGS } from 'utils/workflow-utils';
 import { useStore } from 'zustand';
 import Rows from './Rows';
-import { catalogNameColumn, publishedColumn } from './shared';
+import { EVERYTHING, publishedColumn } from './shared';
 import useCollectionsSelectorColumns from './useCollectionsSelectorColumns';
 
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
@@ -96,7 +96,7 @@ function Hydrator({ entity, selectedCollections }: TableHydratorProps) {
                     <RowSelector
                         hideActions
                         showSelectedCount
-                        selectKeyValueName={catalogNameColumn}
+                        selectKeyValueName={EVERYTHING}
                         selectableTableStoreName={selectableTableStoreName}
                         disableMultiSelect={selectingCaptures}
                     />
