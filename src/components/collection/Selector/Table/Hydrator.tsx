@@ -18,7 +18,8 @@ const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
 const tableRowsPerPage = [10, 50, 100, MAX_BINDINGS];
 
 function Hydrator({ entity, selectedCollections }: TableHydratorProps) {
-    const tableColumns = useCollectionsSelectorColumns(entity === 'capture');
+    const selectingCaptures = entity === 'capture';
+    const tableColumns = useCollectionsSelectorColumns(selectingCaptures);
 
     const {
         reset,
@@ -97,6 +98,7 @@ function Hydrator({ entity, selectedCollections }: TableHydratorProps) {
                         showSelectedCount
                         selectKeyValueName={catalogNameColumn}
                         selectableTableStoreName={selectableTableStoreName}
+                        disableMultiSelect={selectingCaptures}
                     />
                 }
             />

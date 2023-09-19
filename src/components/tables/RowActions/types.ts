@@ -2,6 +2,7 @@ import { SelectTableStoreNames } from 'stores/names';
 
 export interface RowSelectorProps {
     hideActions?: boolean;
+    disableMultiSelect?: boolean;
     selectKeyValueName?: string;
     selectableTableStoreName?:
         | SelectTableStoreNames.CAPTURE

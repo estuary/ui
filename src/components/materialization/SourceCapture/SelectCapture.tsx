@@ -12,11 +12,9 @@ const DIALOG_ID = 'add-source-capture-search-dialog';
 function SelectCapture() {
     const formActive = useFormStateStore_isActive();
 
-    const [sourceCapture] = useStore(
+    const sourceCapture = useStore(
         invariableStores['source-capture'],
-        (state) => {
-            return [state.sourceCapture];
-        }
+        (state) => state.sourceCapture
     );
 
     const [open, setOpen] = useState<boolean>(false);

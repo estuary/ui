@@ -45,6 +45,10 @@ export interface SelectableTableStore extends StoreWithHydration {
     ) => void;
     setAllSelected: (isSelected: boolean, valueProperty?: string) => void;
     resetSelected: () => void;
+    disableMultiSelect: boolean;
+    setDisableMultiSelect: (
+        val: SelectableTableStore['disableMultiSelect']
+    ) => void;
 
     disabledRows: string[];
     setDisabledRows: (val: string | string[]) => void;
@@ -77,21 +81,23 @@ export const initialCreateStates = {
 
 export const getInitialStateData = (): Pick<
     SelectableTableStore,
-    | 'selected'
-    | 'rows'
-    | 'successfulTransformations'
+    | 'disabledRows'
     | 'query'
+    | 'rows'
+    | 'selected'
+    | 'disableMultiSelect'
     | 'stats'
     | 'statsFilter'
-    | 'disabledRows'
+    | 'successfulTransformations'
 > => {
     return {
+        disabledRows: [],
+        query: getAsyncDefault(),
+        rows: initialCreateStates.rows(),
+        selected: initialCreateStates.selected(),
+        disableMultiSelect: false,
         stats: null,
         statsFilter: 'today',
-        query: getAsyncDefault(),
-        selected: initialCreateStates.selected(),
-        disabledRows: [],
-        rows: initialCreateStates.rows(),
         successfulTransformations:
             initialCreateStates.successfulTransformations,
     };
@@ -115,6 +121,16 @@ export const getInitialState = (
             );
         },
 
+        setDisableMultiSelect: (value) => {
+            set(
+                produce((state: SelectableTableStore) => {
+                    state.disableMultiSelect = value;
+                }),
+                false,
+                'Single Select set'
+            );
+        },
+
         setDisabledRows: (value) => {
             set(
                 produce((state: SelectableTableStore) => {
@@ -131,21 +147,30 @@ export const getInitialState = (
 
         setSelected: (keys, value, isSelected) => {
             set(
-                produce(({ selected }: SelectableTableStore) => {
-                    const updateValue = (key: string) => {
-                        if (isSelected) {
-                            selected.set(key, value);
-                        } else {
-                            selected.delete(key);
-                        }
-                    };
+                produce(
+                    ({
+                        selected,
+                        disableMultiSelect: singleSelect,
+                    }: SelectableTableStore) => {
+                        const updateValue = (key: string) => {
+                            if (isSelected) {
+                                if (singleSelect) {
+                                    selected.clear();
+                                }
 
-                    if (typeof keys === 'string') {
-                        updateValue(keys);
-                    } else {
-                        keys.forEach((key) => updateValue(key));
+                                selected.set(key, value);
+                            } else {
+                                selected.delete(key);
+                            }
+                        };
+
+                        if (typeof keys === 'string') {
+                            updateValue(keys);
+                        } else {
+                            keys.forEach((key) => updateValue(key));
+                        }
                     }
-                }),
+                ),
                 false,
                 'Selected rows changed'
             );
@@ -153,24 +178,37 @@ export const getInitialState = (
 
         setAllSelected: (isSelected, valueProperty) => {
             set(
-                produce(({ disabledRows, selected }: SelectableTableStore) => {
-                    if (isSelected) {
-                        const { rows } = get();
+                produce(
+                    ({
+                        disabledRows,
+                        selected,
+                        disableMultiSelect: singleSelect,
+                    }: SelectableTableStore) => {
+                        // just being safe here. This should not be called when single select so just returning
+                        if (singleSelect) {
+                            return;
+                        }
 
-                        rows.forEach((value, key) => {
-                            const evaluatedValue = valueProperty
-                                ? value[valueProperty]
-                                : null;
+                        if (isSelected) {
+                            const { rows } = get();
 
-                            // if the name is disabled then don't add it here
-                            if (!disabledRows.includes(value.catalog_name)) {
-                                selected.set(key, evaluatedValue);
-                            }
-                        });
-                    } else {
-                        selected.clear();
+                            rows.forEach((value, key) => {
+                                const evaluatedValue = valueProperty
+                                    ? value[valueProperty]
+                                    : null;
+
+                                // if the name is disabled then don't add it here
+                                if (
+                                    !disabledRows.includes(value.catalog_name)
+                                ) {
+                                    selected.set(key, evaluatedValue);
+                                }
+                            });
+                        } else {
+                            selected.clear();
+                        }
                     }
-                }),
+                ),
                 false,
                 'Selected rows changed'
             );
@@ -391,6 +429,10 @@ export const selectableTableStoreSelectors = {
         get: (state: SelectableTableStore) => state.selected,
         set: (state: SelectableTableStore) => state.setSelected,
         setAll: (state: SelectableTableStore) => state.setAllSelected,
+    },
+    disableMultiSelect: {
+        get: (state: SelectableTableStore) => state.disableMultiSelect,
+        set: (state: SelectableTableStore) => state.setDisableMultiSelect,
     },
     successfulTransformations: {
         get: (state: SelectableTableStore) => state.successfulTransformations,
