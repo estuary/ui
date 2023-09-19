@@ -56,7 +56,6 @@ function Hydrator({ entity, selectedCollections }: TableHydratorProps) {
         }
     );
 
-    console.log('selectedCollections', selectedCollections);
     useEffect(() => {
         setDisabledRows(selectedCollections);
     }, [selectedCollections, setDisabledRows]);

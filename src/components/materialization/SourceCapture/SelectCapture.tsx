@@ -1,7 +1,9 @@
 import { Button } from '@mui/material';
+import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import AddDialog from 'components/shared/Entity/AddDialog';
 import invariableStores from 'context/Zustand/invariableStores';
-import { useState } from 'react';
+import { isString } from 'lodash';
+import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { useStore } from 'zustand';
@@ -12,9 +14,9 @@ const DIALOG_ID = 'add-source-capture-search-dialog';
 function SelectCapture() {
     const formActive = useFormStateStore_isActive();
 
-    const sourceCapture = useStore(
+    const [sourceCapture, setSourceCapture] = useStore(
         invariableStores['source-capture'],
-        (state) => state.sourceCapture
+        (state) => [state.sourceCapture, state.setSourceCapture]
     );
 
     const [open, setOpen] = useState<boolean>(false);
@@ -22,6 +24,23 @@ function SelectCapture() {
     const toggleDialog = (args: any) => {
         setOpen(typeof args === 'boolean' ? args : !open);
     };
+
+    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
+    const settingsExist = useMemo(
+        () =>
+            draftSpecs.length > 0 && isString(draftSpecs[0].spec.sourceCapture),
+        [draftSpecs]
+    );
+
+    useEffect(() => {
+        if (settingsExist) {
+            const sourceCaptureSetting = draftSpecs[0].spec.sourceCapture;
+            if (sourceCapture !== sourceCaptureSetting) {
+                console.log('sourceCaptureSetting', sourceCaptureSetting);
+                setSourceCapture(sourceCaptureSetting);
+            }
+        }
+    }, [draftSpecs, setSourceCapture, settingsExist, sourceCapture]);
 
     return (
         <>
