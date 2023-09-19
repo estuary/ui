@@ -41,7 +41,7 @@ function SelectCapture() {
                 id={DIALOG_ID}
                 open={open}
                 primaryCTA={AddSourceCaptureToSpecButton}
-                selectedCollections={[]}
+                selectedCollections={sourceCapture ? [sourceCapture] : []}
                 toggle={toggleDialog}
                 title={<FormattedMessage id="captureTable.header" />}
             />
