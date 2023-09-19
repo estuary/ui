@@ -6,6 +6,7 @@ import {
     useEditorStore_resetState,
 } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
+import invariableStores from 'context/Zustand/invariableStores';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import { useCallback } from 'react';
@@ -22,6 +23,7 @@ import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
 import { useSchemaEvolution_resetState } from 'stores/SchemaEvolution/hooks';
 import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
+import { useStore } from 'zustand';
 
 function useEntityWorkflowHelpers() {
     const navigate = useNavigate();
@@ -55,6 +57,12 @@ function useEntityWorkflowHelpers() {
     // Schema Evolution Store
     const resetSchemaEvolutionState = useSchemaEvolution_resetState();
 
+    // Source Capture Store
+    const resetSourceCapture = useStore(
+        invariableStores['source-capture'],
+        (state) => state.resetState
+    );
+
     // Transformation Create Store
     const resetTransformationCreateState = useTransformationCreate_resetState();
 
@@ -66,6 +74,7 @@ function useEntityWorkflowHelpers() {
         resetEditorStore();
         resetBindingsEditorStore();
         resetSchemaEvolutionState();
+        resetSourceCapture();
         resetTransformationCreateState();
     }, [
         resetBindingsEditorStore,
@@ -75,6 +84,7 @@ function useEntityWorkflowHelpers() {
         resetFormState,
         resetResourceConfigState,
         resetSchemaEvolutionState,
+        resetSourceCapture,
         resetTransformationCreateState,
     ]);
 
