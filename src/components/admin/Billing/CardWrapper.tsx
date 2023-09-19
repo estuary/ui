@@ -30,6 +30,8 @@ function CardWrapper({ children, height, message, tooltipMessageId }: Props) {
                 ...eChartsTooltipSX,
                 height,
                 p: 2,
+                display: 'flex',
+                flexDirection: 'column',
                 background: semiTransparentBackground[theme.palette.mode],
                 boxShadow: defaultBoxShadow,
                 borderRadius: 3,

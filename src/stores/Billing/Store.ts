@@ -19,13 +19,17 @@ const getInitialStateData = (): Pick<
     | 'dataByTaskGraphDetails'
     | 'paymentMethodExists'
     | 'selectedTenant'
+    | 'selectedMonth'
+    | 'manualBills'
 > => {
     return {
+        selectedMonth: '',
         billingHistory: [],
         billingHistoryInitialized: false,
         dataByTaskGraphDetails: [],
         paymentMethodExists: null,
         selectedTenant: '',
+        manualBills: [],
     };
 };
 
@@ -41,7 +45,7 @@ export const getInitialState = (
             set(
                 produce((state: BillingState) => {
                     state.selectedTenant = value;
-
+                    state.selectedMonth = '';
                     state.billingHistory = [];
                     state.dataByTaskGraphDetails = [];
 
@@ -53,10 +57,37 @@ export const getInitialState = (
             );
         },
 
+        setSelectedMonth: (value) => {
+            set(
+                produce((state: BillingState) => {
+                    state.selectedMonth = value;
+                }),
+                false,
+                'Selected Month Set'
+            );
+        },
+
+        setManualBills: (value) => {
+            set(
+                produce((state: BillingState) => {
+                    state.manualBills = value;
+                }),
+                false,
+                'Selected Month Set'
+            );
+        },
+
         setBillingHistory: (value) => {
             set(
                 produce((state: BillingState) => {
                     state.billingHistory = value;
+                    if (state.selectedMonth === '') {
+                        state.selectedMonth = value.reduce((a, b) =>
+                            new Date(a.billed_month) > new Date(b.billed_month)
+                                ? a
+                                : b
+                        ).billed_month;
+                    }
                 }),
                 false,
                 'Billing Details Set'

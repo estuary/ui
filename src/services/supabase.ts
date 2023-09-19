@@ -1,5 +1,5 @@
 import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { createClient, User } from '@supabase/supabase-js';
+import { User, createClient } from '@supabase/supabase-js';
 import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { forEach, isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
@@ -54,6 +54,7 @@ export enum TABLES {
     LIVE_SPEC_FLOW = 'live_spec_flow',
     LIVE_SPECS = 'live_specs',
     LIVE_SPECS_EXT = 'live_specs_ext',
+    MANUAL_BILLS = 'manual_bills',
     PUBLICATION_SPECS = 'publication_specs',
     PUBLICATION_SPECS_EXT = 'publication_specs_ext',
     PUBLICATIONS = 'publications',

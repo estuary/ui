@@ -1,14 +1,15 @@
 import {
     PostgrestMaybeSingleResponse,
+    PostgrestResponse,
     PostgrestSingleResponse,
 } from '@supabase/postgrest-js';
 import { format, isBefore, parse, startOfMonth } from 'date-fns';
 import {
     FUNCTIONS,
-    invokeSupabase,
     RPCS,
-    supabaseClient,
     TABLES,
+    invokeSupabase,
+    supabaseClient,
 } from 'services/supabase';
 
 const OPERATIONS = {
@@ -16,6 +17,31 @@ const OPERATIONS = {
     GET_TENANT_PAYMENT_METHODS: 'get-tenant-payment-methods',
     DELETE_TENANT_PAYMENT_METHODS: 'delete-tenant-payment-method',
     SET_PRIMARY: 'set-tenant-primary-payment-method',
+    GET_TENANT_INVOICE: 'get-tenant-invoice',
+};
+
+export interface StripeInvoice {
+    id: string;
+    amount_due: number;
+    invoice_pdf: string;
+    hosted_invoice_url: string;
+    status: 'open' | 'paid' | 'void' | 'uncollectable';
+}
+
+export const getTenantInvoice = (
+    tenant: string,
+    month: string,
+    type: 'Manual' | 'Usage'
+) => {
+    return invokeSupabase<{ invoice?: StripeInvoice | null }>(
+        FUNCTIONS.BILLING,
+        {
+            operation: OPERATIONS.GET_TENANT_INVOICE,
+            tenant,
+            month,
+            type,
+        }
+    );
 };
 
 export const getSetupIntentSecret = (tenant: string) => {
@@ -48,7 +74,41 @@ export const setTenantPrimaryPaymentMethod = (tenant: string, id: string) => {
     });
 };
 
-interface InvoiceLineItem {
+export interface ManualBill {
+    usd_cents: number;
+    description: string;
+    date_start: string;
+    date_end: string;
+    tenant?: string;
+}
+
+const manualBillsQuery = [
+    'description',
+    'usd_cents',
+    'date_start',
+    'date_end',
+].join(', ');
+
+export const getManualBills = (
+    billed_prefix: string,
+    active_during: string | Date
+): PromiseLike<PostgrestResponse<ManualBill>> => {
+    const fmt = "yyyy-MM-dd' 00:00:00+00'";
+    const formattedDate: string =
+        typeof active_during === 'string'
+            ? active_during
+            : format(active_during, fmt);
+
+    return supabaseClient
+        .from<ManualBill>(TABLES.MANUAL_BILLS)
+        .select(manualBillsQuery)
+        .filter('tenant', 'eq', billed_prefix)
+        .filter('date_start', 'lte', formattedDate)
+        .filter('date_end', 'gte', formattedDate)
+        .throwOnError();
+};
+
+export interface InvoiceLineItem {
     description: 'string';
     count: number;
     rate: number;

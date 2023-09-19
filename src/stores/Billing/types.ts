@@ -1,4 +1,4 @@
-import { BillingRecord } from 'api/billing';
+import { BillingRecord, ManualBill } from 'api/billing';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { CatalogStats_Billing, Entity } from 'types';
 
@@ -17,6 +17,9 @@ export interface BillingState extends StoreWithHydration {
     selectedTenant: string;
     setSelectedTenant: (value: string) => void;
 
+    selectedMonth: string;
+    setSelectedMonth: (value: string) => void;
+
     dataByTaskGraphDetails: DataVolumeByTask[];
     setDataByTaskGraphDetails: (value: CatalogStats_Billing[]) => void;
 
@@ -29,6 +32,9 @@ export interface BillingState extends StoreWithHydration {
 
     paymentMethodExists: boolean | null;
     setPaymentMethodExists: (value: any[] | undefined) => void;
+
+    manualBills: ManualBill[];
+    setManualBills: (value: ManualBill[]) => void;
 
     resetState: () => void;
 }

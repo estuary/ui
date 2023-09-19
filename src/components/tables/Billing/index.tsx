@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl';
 import {
     useBilling_billingHistory,
     useBilling_hydrated,
+    useBilling_selectedMonth,
 } from 'stores/Billing/hooks';
 import { TableColumns, TableStatuses } from 'types';
 
@@ -26,6 +27,10 @@ export const columns: TableColumns[] = [
     {
         field: 'total_cost',
         headerIntlKey: 'admin.billing.table.history.label.totalCost',
+        align: 'right',
+    },
+    {
+        field: null,
     },
 ];
 
@@ -34,13 +39,17 @@ export const columns: TableColumns[] = [
 function BillingHistoryTable() {
     const intl = useIntl();
 
+    const selectedMonth = useBilling_selectedMonth();
+
     const hydrated = useBilling_hydrated();
     const billingHistory = useBilling_billingHistory();
 
     const dataRows = useMemo(
         () =>
-            billingHistory.length > 0 ? <Rows data={billingHistory} /> : null,
-        [billingHistory]
+            billingHistory.length > 0 ? (
+                <Rows data={billingHistory} selectedMonth={selectedMonth} />
+            ) : null,
+        [billingHistory, selectedMonth]
     );
 
     return (

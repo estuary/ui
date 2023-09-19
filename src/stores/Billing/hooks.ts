@@ -87,6 +87,34 @@ export const useBilling_setSelectedTenant = () => {
     );
 };
 
+export const useBilling_selectedMonth = () => {
+    return useZustandStore<BillingState, BillingState['selectedMonth']>(
+        BillingStoreNames.GENERAL,
+        (state) => state.selectedMonth
+    );
+};
+
+export const useBilling_setSelectedMonth = () => {
+    return useZustandStore<BillingState, BillingState['setSelectedMonth']>(
+        BillingStoreNames.GENERAL,
+        (state) => state.setSelectedMonth
+    );
+};
+
+export const useBilling_manualBills = () => {
+    return useZustandStore<BillingState, BillingState['manualBills']>(
+        BillingStoreNames.GENERAL,
+        (state) => state.manualBills
+    );
+};
+
+export const useBilling_setManualBills = () => {
+    return useZustandStore<BillingState, BillingState['setManualBills']>(
+        BillingStoreNames.GENERAL,
+        (state) => state.setManualBills
+    );
+};
+
 export const useBilling_paymentMethodExists = () => {
     return useZustandStore<BillingState, BillingState['paymentMethodExists']>(
         BillingStoreNames.GENERAL,
