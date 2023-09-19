@@ -37,22 +37,6 @@ export const getDisableProps = (disable: boolean | undefined) => {
     return disable ? { disable } : {};
 };
 
-export const addOrRemoveProperty = (
-    propertyKey: string,
-    propertyValue: any,
-    root: any
-) => {
-    const response = { ...root };
-
-    if (propertyValue) {
-        response[propertyKey] = propertyValue;
-    } else {
-        delete response[propertyKey];
-    }
-
-    return response;
-};
-
 export const addOrRemoveSourceCapture = (
     draftSpec: any,
     sourceCapture: string | null
