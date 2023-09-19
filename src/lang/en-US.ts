@@ -931,10 +931,10 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Breaking changes re-version collections`,
 
     'workflows.sourceCapture.header': `Source Capture`,
-    'workflows.sourceCapture.cta': `select capture`,
-    'workflows.sourceCapture.cta.edit': `change capture`,
+    'workflows.sourceCapture.cta': `link capture`,
+    'workflows.sourceCapture.cta.edit': `update capture`,
     'workflows.sourceCapture.selected.none': `no source capture`,
-    'workflows.sourceCapture.optin.message': `Below you can select a source capture for your materialization. This ensures as new collections are discovered on the capture, they will automatically be added to the materialization's bindings.`,
+    'workflows.sourceCapture.optin.message': `Below you can select a source capture to link to your materialization. This ensures as new collections are discovered on the capture, they will automatically be added to the materialization's bindings.`,
     'workflows.sourceCapture.optin.message2': `If you remove source capture, the bindings that were added are not removed.`,
     'workflows.sourceCapture.input.description': `This ensures as new collections are discovered on the capture, they will automatically be added to the materialization's bindings.`,
 
