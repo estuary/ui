@@ -37,6 +37,35 @@ export const getDisableProps = (disable: boolean | undefined) => {
     return disable ? { disable } : {};
 };
 
+export const addOrRemoveProperty = (
+    propertyKey: string,
+    propertyValue: any,
+    root: any
+) => {
+    const response = { ...root };
+
+    if (propertyValue) {
+        response[propertyKey] = propertyValue;
+    } else {
+        delete response[propertyKey];
+    }
+
+    return response;
+};
+
+export const addOrRemoveSourceCapture = (
+    draftSpec: any,
+    sourceCapture: string | null
+) => {
+    if (sourceCapture) {
+        draftSpec.sourceCapture = sourceCapture;
+    } else {
+        delete draftSpec.sourceCapture;
+    }
+
+    return draftSpec;
+};
+
 // TODO (typing): Narrow the return type for this function.
 export const generateTaskSpec = (
     entityType: EntityWithCreateWorkflow,
@@ -107,10 +136,9 @@ export const generateTaskSpec = (
         draftSpec.bindings = [];
     }
 
-    if (sourceCapture) {
-        draftSpec.sourceCapture = sourceCapture;
-    } else {
-        delete draftSpec.sourceCapture;
+    // Try adding at the end because this setting could be added/changed at any time
+    if (entityType === 'materialization') {
+        addOrRemoveSourceCapture(draftSpec, sourceCapture);
     }
 
     return draftSpec;

@@ -10,6 +10,7 @@ import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 
 import { Schema } from 'types';
+import { addOrRemoveSourceCapture } from 'utils/workflow-utils';
 import { useStore } from 'zustand';
 
 function useSourceCapture() {
@@ -35,13 +36,10 @@ function useSourceCapture() {
                 setFormState({ status: FormStatus.UPDATING });
                 setSaving(true);
 
-                const spec: Schema = draftSpecs[0].spec;
-
-                if (sourceCapture) {
-                    spec.sourceCapture = sourceCapture;
-                } else {
-                    delete spec.sourceCapture;
-                }
+                const spec: Schema = addOrRemoveSourceCapture(
+                    draftSpecs[0].spec,
+                    sourceCapture
+                );
 
                 const updateResponse = await modifyDraftSpec(spec, {
                     draft_id: draftId,
