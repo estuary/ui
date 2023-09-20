@@ -253,17 +253,75 @@ function useDiscoverCapture(
                     });
                 }
 
+                const updateDraft = async (draftIdToUse: string) => {
+                    const existingDraftSpecResponse =
+                        await getDraftSpecsByCatalogName(
+                            draftIdToUse,
+                            processedEntityName,
+                            'capture'
+                        );
+
+                    if (existingDraftSpecResponse.error) {
+                        return callFailed({
+                            error: {
+                                title: 'captureCreate.generate.failedErrorTitle',
+                                error: existingDraftSpecResponse.error,
+                            },
+                        });
+                    }
+
+                    const existingTaskData: DraftSpecsExtQuery_ByCatalogName | null =
+                        existingDraftSpecResponse.data &&
+                        existingDraftSpecResponse.data.length > 0
+                            ? existingDraftSpecResponse.data[0]
+                            : null;
+
+                    const draftSpecsResponse =
+                        await modifyExistingCaptureDraftSpec(
+                            draftIdToUse,
+                            imagePath,
+                            encryptedEndpointConfig.data,
+                            resourceConfig,
+                            existingTaskData
+                        );
+
+                    if (draftSpecsResponse.error) {
+                        return callFailed({
+                            error: {
+                                title: 'captureCreate.generate.failedErrorTitle',
+                                error: draftSpecsResponse.error,
+                            },
+                        });
+                    }
+
+                    setEncryptedEndpointConfig({
+                        data: draftSpecsResponse.data[0].spec.endpoint.connector
+                            .config,
+                    });
+
+                    setPreviousEndpointConfig({ data: endpointConfigData });
+
+                    setDraftId(draftIdToUse);
+
+                    void postGenerateMutate();
+                };
+
                 if (
                     options?.initiateRediscovery ||
                     options?.initiateDiscovery
                 ) {
                     // If we are doing a rediscovery and we have a draft then go ahead and use that draft
-                    //  that way the most recent changes to bindings and endpoints will get picked up
+                    //  that way the most recent changes to bindings and endpoints will get added to the draft before rediscovery
                     // This seems to be what users are expecting to happen.
-                    const draftsResponse =
-                        persistedDraftId && options.initiateRediscovery
-                            ? { data: [{ id: persistedDraftId }] }
-                            : await createEntityDraft(processedEntityName);
+                    const updateBeforeRediscovery =
+                        persistedDraftId && options.initiateRediscovery;
+                    if (updateBeforeRediscovery) {
+                        await updateDraft(persistedDraftId);
+                    }
+
+                    const draftsResponse = updateBeforeRediscovery
+                        ? { data: [{ id: persistedDraftId }] }
+                        : await createEntityDraft(processedEntityName);
 
                     if (draftsResponse.error) {
                         return callFailed({
@@ -296,57 +354,7 @@ function useDiscoverCapture(
                         logToken: discoverResponse.data[0].logs_token,
                     });
                 } else if (persistedDraftId) {
-                    const existingDraftSpecResponse =
-                        await getDraftSpecsByCatalogName(
-                            persistedDraftId,
-                            processedEntityName,
-                            'capture'
-                        );
-
-                    if (existingDraftSpecResponse.error) {
-                        return callFailed({
-                            error: {
-                                title: 'captureCreate.generate.failedErrorTitle',
-                                error: existingDraftSpecResponse.error,
-                            },
-                        });
-                    }
-
-                    const existingTaskData: DraftSpecsExtQuery_ByCatalogName | null =
-                        existingDraftSpecResponse.data &&
-                        existingDraftSpecResponse.data.length > 0
-                            ? existingDraftSpecResponse.data[0]
-                            : null;
-
-                    const draftSpecsResponse =
-                        await modifyExistingCaptureDraftSpec(
-                            persistedDraftId,
-                            imagePath,
-                            encryptedEndpointConfig.data,
-                            resourceConfig,
-                            existingTaskData
-                        );
-
-                    if (draftSpecsResponse.error) {
-                        return callFailed({
-                            error: {
-                                title: 'captureCreate.generate.failedErrorTitle',
-                                error: draftSpecsResponse.error,
-                            },
-                        });
-                    }
-
-                    setEncryptedEndpointConfig({
-                        data: draftSpecsResponse.data[0].spec.endpoint.connector
-                            .config,
-                    });
-
-                    setPreviousEndpointConfig({ data: endpointConfigData });
-
-                    setDraftId(persistedDraftId);
-
-                    void postGenerateMutate();
-
+                    await updateDraft(persistedDraftId);
                     setFormState({
                         status: FormStatus.GENERATED,
                     });

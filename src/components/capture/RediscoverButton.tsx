@@ -1,6 +1,5 @@
 import { Box, IconButton, Tooltip, useTheme } from '@mui/material';
 import useDiscoverCapture from 'components/capture/useDiscoverCapture';
-import { useEditorStore_id } from 'components/editor/Store/hooks';
 import { disabledButtonText } from 'context/Theme';
 import { RefreshDouble } from 'iconoir-react';
 import { useIntl } from 'react-intl';
@@ -21,17 +20,14 @@ function RediscoverButton({ entityType, disabled, postGenerateMutate }: Props) {
 
     const intl = useIntl();
     const theme = useTheme();
-    const draftId = useEditorStore_id();
 
-    const disable = disabled || isSaving || formActive || !draftId;
+    const disable = disabled || isSaving || formActive;
 
     return (
         <Tooltip
             placement="top"
             title={intl.formatMessage({
-                id: draftId
-                    ? 'workflows.collectionSelector.cta.rediscover.tooltip'
-                    : 'workflows.collectionSelector.cta.rediscover.tooltip.missingDraft',
+                id: 'workflows.collectionSelector.cta.rediscover.tooltip',
             })}
         >
             <Box>
