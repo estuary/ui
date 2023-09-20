@@ -194,6 +194,11 @@ export const getInitialState = (
                             const { rows } = get();
 
                             rows.forEach((value, key) => {
+                                // TODO (setAllSelected) this is not a awesome solution and needs to be made awesome
+                                //  We should change the `valueProperty` to be an object that contains settings. That way
+                                //  we can easily check what key should be used OR if we should include the entire object OR
+                                //  include null. As I think having a default here is not the best idea.... that way we do not have
+                                //  this kind of issue in the future.
                                 const evaluatedValue = valueProperty
                                     ? valueProperty === EVERYTHING
                                         ? value
