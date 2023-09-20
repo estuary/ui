@@ -9,6 +9,9 @@ import { Schema } from 'types';
 
 type UpdaterFunction = (spec: Schema) => Schema;
 
+// TODO (draft updates)
+// This is not used today but we need a reusable pattern for this. The `sourceCapture` and `autoDiscovery` hooks are basically
+//      the same thing. We should probably expand this out so an entire hook and store (...maybe component as well) can be made reusable.
 function useDraftUpdater(updater: UpdaterFunction) {
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
