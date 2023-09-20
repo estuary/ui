@@ -16,10 +16,10 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         }
     );
 
-    const setSourceCapture = useStore(
+    const [sourceCapture, setSourceCapture] = useStore(
         invariableStores['source-capture'],
         (state) => {
-            return state.setSourceCapture;
+            return [state.sourceCapture, state.setSourceCapture];
         }
     );
 
@@ -30,11 +30,14 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
     const close = async () => {
         const selectedRow = Array.from(selected).map(([_key, row]) => row)[0];
 
-        setSourceCapture(selectedRow.catalog_name);
-        setResourceConfig(selectedRow.writes_to, undefined, false, true);
+        // Only fire updates if a change happened. Since single select table can allow the user
+        //   to deselect a row and then select it again
+        if (sourceCapture !== selectedRow.catalog_name) {
+            setSourceCapture(selectedRow.catalog_name);
+            setResourceConfig(selectedRow.writes_to, undefined, false, true);
 
-        await updateDraft(selectedRow.catalog_name);
-
+            await updateDraft(selectedRow.catalog_name);
+        }
         toggle(false);
     };
 

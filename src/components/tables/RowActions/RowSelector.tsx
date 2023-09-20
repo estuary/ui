@@ -3,7 +3,6 @@ import DeleteButton from 'components/tables/RowActions/Delete/Button';
 import DisableEnableButton from 'components/tables/RowActions/DisableEnable/Button';
 import Materialize from 'components/tables/RowActions/Materialize';
 import { useZustandStore } from 'context/Zustand/provider';
-import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import {
@@ -19,7 +18,6 @@ function RowSelector({
     selectableTableStoreName = SelectTableStoreNames.CAPTURE,
     showMaterialize,
     showSelectedCount,
-    disableMultiSelect,
 }: RowSelectorProps) {
     const intl = useIntl();
 
@@ -28,23 +26,15 @@ function RowSelector({
         SelectableTableStore['selected']
     >(selectableTableStoreName, selectableTableStoreSelectors.selected.get);
 
-    const setDisableMultiSelect = useZustandStore<
+    const disableMultiSelect = useZustandStore<
         SelectableTableStore,
-        SelectableTableStore['setDisableMultiSelect']
+        SelectableTableStore['disableMultiSelect']
     >(
         selectableTableStoreName,
-        selectableTableStoreSelectors.disableMultiSelect.set
+        selectableTableStoreSelectors.disableMultiSelect.get
     );
 
     const hasSelections = selectedRows.size > 0;
-
-    useEffect(() => {
-        setDisableMultiSelect(disableMultiSelect ?? false);
-        return () => {
-            // Make sure we set it back to the default
-            setDisableMultiSelect(false);
-        };
-    }, [disableMultiSelect, setDisableMultiSelect]);
 
     return (
         <Stack direction="row" spacing={2}>

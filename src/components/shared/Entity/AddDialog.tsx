@@ -40,17 +40,25 @@ function AddDialog({
                 <Stack spacing={3} sx={{ pt: 2 }}>
                     <StepWrapper>
                         <Box>
-                            <BindingSelectorTable
-                                entity={entity}
-                                selectedCollections={selectedCollections}
-                            />
+                            {open ? (
+                                <BindingSelectorTable
+                                    entity={entity}
+                                    selectedCollections={selectedCollections}
+                                />
+                            ) : null}
                         </Box>
                     </StepWrapper>
                 </Stack>
             </DialogContent>
 
             <DialogActions>
-                <Button variant="outlined" onClick={() => toggle(false)}>
+                <Button
+                    variant="outlined"
+                    onClick={() => {
+                        console.log('toggling closed');
+                        toggle(false);
+                    }}
+                >
                     <FormattedMessage id="cta.cancel" />
                 </Button>
 

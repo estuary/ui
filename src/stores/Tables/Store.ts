@@ -148,30 +148,28 @@ export const getInitialState = (
 
         setSelected: (keys, value, isSelected) => {
             set(
-                produce(
-                    ({
-                        selected,
-                        disableMultiSelect: singleSelect,
-                    }: SelectableTableStore) => {
-                        const updateValue = (key: string) => {
-                            if (isSelected) {
-                                if (singleSelect) {
-                                    selected.clear();
-                                }
-
-                                selected.set(key, value);
-                            } else {
-                                selected.delete(key);
+                produce((state: SelectableTableStore) => {
+                    const { selected, disableMultiSelect: singleSelect } =
+                        state;
+                    const updateValue = (key: string) => {
+                        if (isSelected) {
+                            if (singleSelect) {
+                                state.disabledRows = [];
+                                selected.clear();
                             }
-                        };
 
-                        if (typeof keys === 'string') {
-                            updateValue(keys);
+                            selected.set(key, value);
                         } else {
-                            keys.forEach((key) => updateValue(key));
+                            selected.delete(key);
                         }
+                    };
+
+                    if (typeof keys === 'string') {
+                        updateValue(keys);
+                    } else {
+                        keys.forEach((key) => updateValue(key));
                     }
-                ),
+                }),
                 false,
                 'Selected rows changed'
             );

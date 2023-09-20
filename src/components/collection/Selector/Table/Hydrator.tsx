@@ -68,6 +68,7 @@ function Hydrator({ entity, selectedCollections }: TableHydratorProps) {
         <TableHydrator
             query={query}
             selectableTableStoreName={selectableTableStoreName}
+            disableMultiSelect={selectingCaptures}
         >
             <EntityTable
                 noExistingDataContentIds={{
@@ -97,7 +98,6 @@ function Hydrator({ entity, selectedCollections }: TableHydratorProps) {
                         showSelectedCount
                         selectKeyValueName={EVERYTHING}
                         selectableTableStoreName={selectableTableStoreName}
-                        disableMultiSelect={selectingCaptures}
                     />
                 }
             />
