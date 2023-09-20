@@ -930,12 +930,12 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.autoDiscovery.label.addNewBindings': `Automatically add new collections`,
     'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Breaking changes re-version collections`,
 
-    'workflows.sourceCapture.header': `Source Capture`,
+    'workflows.sourceCapture.header': `Link Capture`,
     'workflows.sourceCapture.cta': `link capture`,
     'workflows.sourceCapture.cta.edit': `update capture`,
-    'workflows.sourceCapture.selected.none': `no source capture`,
-    'workflows.sourceCapture.optin.message': `Below you can select a source capture to link to your materialization. This ensures, as new collections are discovered on the capture, they will automatically be added to the materialization's bindings.`,
-    'workflows.sourceCapture.optin.message2': `If you remove the source capture, the bindings that were added are not removed.`,
+    'workflows.sourceCapture.selected.none': `no linked capture`,
+    'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization.  Collections added to your Capture will automatically be added to your materialization.`,
+    'workflows.sourceCapture.optin.message2': `Removing this will not remove associated collections.`,
 
     'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
     'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
