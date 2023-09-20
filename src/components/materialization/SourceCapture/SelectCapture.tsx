@@ -36,7 +36,6 @@ function SelectCapture() {
         if (settingsExist) {
             const sourceCaptureSetting = draftSpecs[0].spec.sourceCapture;
             if (sourceCapture !== sourceCaptureSetting) {
-                console.log('sourceCaptureSetting', sourceCaptureSetting);
                 setSourceCapture(sourceCaptureSetting);
             }
         }
