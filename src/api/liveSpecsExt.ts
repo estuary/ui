@@ -134,7 +134,7 @@ const getLiveSpecs_collections = (
 };
 
 const collectionsSelectorColumns = 'catalog_name, id, updated_at, spec_type';
-const collectionsSelectorColumns_Capture = `${collectionsSelectorColumns}, writes_to`;
+const collectionsSelectorColumns_capture = `${collectionsSelectorColumns}, writes_to`;
 
 interface CollectionSelectorQuery {
     catalog_name: string;
@@ -154,7 +154,7 @@ const getLiveSpecs_collectionsSelector = (
         .from<CollectionSelectorQuery>(TABLES.LIVE_SPECS_EXT)
         .select(
             specType === 'capture'
-                ? collectionsSelectorColumns_Capture
+                ? collectionsSelectorColumns_capture
                 : collectionsSelectorColumns,
             {
                 count: 'exact',
