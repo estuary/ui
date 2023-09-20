@@ -9,7 +9,7 @@ const DOCS_LINK =
 
 function SourceCapture() {
     return (
-        <Stack spacing={1} sx={{ mt: 2, mb: 3 }}>
+        <Stack spacing={1} sx={{ mt: 3, mb: 5 }}>
             <Typography sx={{ fontWeight: 500 }}>
                 <FormattedMessage id="workflows.sourceCapture.header" />
                 <ExternalLink link={DOCS_LINK}>
