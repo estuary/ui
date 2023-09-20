@@ -257,9 +257,14 @@ function useDiscoverCapture(
                     options?.initiateRediscovery ||
                     options?.initiateDiscovery
                 ) {
-                    const draftsResponse = await createEntityDraft(
-                        processedEntityName
-                    );
+                    // If we are doing a rediscovery and we have a draft then go ahead and use that draft
+                    //  that way the most recent changes to bindings and endpoints will get picked up
+                    // This seems to be what users are expecting to happen.
+                    const draftsResponse =
+                        persistedDraftId && options.initiateRediscovery
+                            ? { data: [{ id: persistedDraftId }] }
+                            : await createEntityDraft(processedEntityName);
+
                     if (draftsResponse.error) {
                         return callFailed({
                             error: {
