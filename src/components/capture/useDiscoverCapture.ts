@@ -253,6 +253,8 @@ function useDiscoverCapture(
                     });
                 }
 
+                // Storing into a function so both the normal usecase AND when resicovery is kicked off
+                //  can share this code.
                 const updateDraft = async (draftIdToUse: string) => {
                     const existingDraftSpecResponse =
                         await getDraftSpecsByCatalogName(
