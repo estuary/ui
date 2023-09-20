@@ -644,7 +644,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
 
     'entityCreate.bindingsConfig.addCTA': `Add {itemType}`,
-    'entityCreate.bindingsConfig.noRows': `Please select from the list above to begin.`,
+    'entityCreate.bindingsConfig.noRows': `Start by clicking the '+' icon above and selecting the collections you want.`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
     'entityCreate.bindingsConfig.list.search': `Filter {itemType}`,
     'entityCreate.bindingsConfig.list.removeAll': `Remove {itemType} in the list below`,
