@@ -29,24 +29,31 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
 
     const close = async () => {
         const selectedRow = Array.from(selected).map(([_key, row]) => row)[0];
+        const updatedSourceCapture = selectedRow
+            ? selectedRow.catalog_name
+            : null;
 
         // Only fire updates if a change happened. Since single select table can allow the user
         //   to deselect a row and then select it again
-        if (sourceCapture !== selectedRow.catalog_name) {
-            setSourceCapture(selectedRow.catalog_name);
-            setResourceConfig(selectedRow.writes_to, undefined, false, true);
+        if (sourceCapture !== updatedSourceCapture) {
+            setSourceCapture(updatedSourceCapture);
 
-            await updateDraft(selectedRow.catalog_name);
+            if (selectedRow?.writes_to) {
+                setResourceConfig(
+                    selectedRow.writes_to,
+                    undefined,
+                    false,
+                    true
+                );
+            }
+
+            await updateDraft(updatedSourceCapture);
         }
         toggle(false);
     };
 
     return (
-        <Button
-            variant="contained"
-            disabled={selected.size < 1}
-            onClick={close}
-        >
+        <Button variant="contained" onClick={close}>
             <FormattedMessage id="cta.continue" />
         </Button>
     );
