@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
 import {
@@ -5,6 +6,7 @@ import {
     getDraftSpecsByCatalogName,
 } from 'api/draftSpecs';
 import {
+    useEditorStore_id,
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
@@ -77,6 +79,8 @@ function useDiscoverCapture(
     const { callFailed } = useEntityWorkflowHelpers();
 
     // Draft Editor Store
+    const draftId = useEditorStore_id();
+
     const persistedDraftId = useEditorStore_persistedDraftId();
     const setDraftId = useEditorStore_setId();
     const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
@@ -227,172 +231,174 @@ function useDiscoverCapture(
                     status: FormStatus.FAILED,
                     displayValidation: true,
                 });
-            } else {
-                resetEditorState(true);
+            }
+            resetEditorState(true);
 
-                const selectedEndpointConfig = serverUpdateRequired
-                    ? endpointConfigData
-                    : serverEndpointConfigData;
+            const selectedEndpointConfig = serverUpdateRequired
+                ? endpointConfigData
+                : serverEndpointConfigData;
 
-                const encryptedEndpointConfig = await encryptEndpointConfig(
-                    selectedEndpointConfig,
-                    endpointSchema,
-                    serverUpdateRequired,
-                    imageConnectorId,
-                    imageConnectorTagId,
-                    callFailed,
-                    { overrideJsonFormDefaults: true }
-                );
+            const encryptedEndpointConfig = await encryptEndpointConfig(
+                selectedEndpointConfig,
+                endpointSchema,
+                serverUpdateRequired,
+                imageConnectorId,
+                imageConnectorTagId,
+                callFailed,
+                { overrideJsonFormDefaults: true }
+            );
 
-                if (encryptedEndpointConfig.error) {
+            if (encryptedEndpointConfig.error) {
+                return callFailed({
+                    error: {
+                        title: 'captureCreate.generate.failedErrorTitle',
+                        error: encryptedEndpointConfig.error,
+                    },
+                });
+            }
+
+            // Should Update when...
+            //      Clicking Next to generate
+            //      Clicking Refresh when there are changes that need added to draft
+            // Should skip update when...
+            //      Doing a discovery
+            //      Doing a rediscovery with no new changes
+            if (
+                (!draftId && persistedDraftId && !options?.initiateDiscovery) ||
+                (persistedDraftId &&
+                    !options?.initiateDiscovery &&
+                    !options?.initiateRediscovery)
+            ) {
+                const existingDraftSpecResponse =
+                    await getDraftSpecsByCatalogName(
+                        persistedDraftId,
+                        processedEntityName,
+                        'capture'
+                    );
+
+                if (existingDraftSpecResponse.error) {
                     return callFailed({
                         error: {
                             title: 'captureCreate.generate.failedErrorTitle',
-                            error: encryptedEndpointConfig.error,
+                            error: existingDraftSpecResponse.error,
                         },
                     });
                 }
 
-                // Storing into a function so both the normal usecase AND when resicovery is kicked off
-                //  can share this code.
-                const updateDraft = async (draftIdToUse: string) => {
-                    const existingDraftSpecResponse =
-                        await getDraftSpecsByCatalogName(
-                            draftIdToUse,
-                            processedEntityName,
-                            'capture'
-                        );
+                const existingTaskData: DraftSpecsExtQuery_ByCatalogName | null =
+                    existingDraftSpecResponse.data &&
+                    existingDraftSpecResponse.data.length > 0
+                        ? existingDraftSpecResponse.data[0]
+                        : null;
 
-                    if (existingDraftSpecResponse.error) {
-                        return callFailed({
-                            error: {
-                                title: 'captureCreate.generate.failedErrorTitle',
-                                error: existingDraftSpecResponse.error,
-                            },
-                        });
-                    }
+                const draftSpecsResponse = await modifyExistingCaptureDraftSpec(
+                    persistedDraftId,
+                    imagePath,
+                    encryptedEndpointConfig.data,
+                    resourceConfig,
+                    existingTaskData
+                );
 
-                    const existingTaskData: DraftSpecsExtQuery_ByCatalogName | null =
-                        existingDraftSpecResponse.data &&
-                        existingDraftSpecResponse.data.length > 0
-                            ? existingDraftSpecResponse.data[0]
-                            : null;
-
-                    const draftSpecsResponse =
-                        await modifyExistingCaptureDraftSpec(
-                            draftIdToUse,
-                            imagePath,
-                            encryptedEndpointConfig.data,
-                            resourceConfig,
-                            existingTaskData
-                        );
-
-                    if (draftSpecsResponse.error) {
-                        return callFailed({
-                            error: {
-                                title: 'captureCreate.generate.failedErrorTitle',
-                                error: draftSpecsResponse.error,
-                            },
-                        });
-                    }
-
-                    setEncryptedEndpointConfig({
-                        data: draftSpecsResponse.data[0].spec.endpoint.connector
-                            .config,
+                if (draftSpecsResponse.error) {
+                    return callFailed({
+                        error: {
+                            title: 'captureCreate.generate.failedErrorTitle',
+                            error: draftSpecsResponse.error,
+                        },
                     });
-
-                    setPreviousEndpointConfig({ data: endpointConfigData });
-
-                    setDraftId(draftIdToUse);
-
-                    void postGenerateMutate();
-                };
-
-                if (
-                    options?.initiateRediscovery ||
-                    options?.initiateDiscovery
-                ) {
-                    // If we are doing a rediscovery and we have a draft then go ahead and use that draft
-                    //  that way the most recent changes to bindings and endpoints will get added to the draft before rediscovery
-                    // This seems to be what users are expecting to happen.
-                    const updateBeforeRediscovery =
-                        persistedDraftId && options.initiateRediscovery;
-                    if (updateBeforeRediscovery) {
-                        await updateDraft(persistedDraftId);
-                    }
-
-                    const draftsResponse = updateBeforeRediscovery
-                        ? { data: [{ id: persistedDraftId }] }
-                        : await createEntityDraft(processedEntityName);
-
-                    if (draftsResponse.error) {
-                        return callFailed({
-                            error: {
-                                title: 'captureCreate.generate.failedErrorTitle',
-                                error: draftsResponse.error,
-                            },
-                        });
-                    }
-
-                    const draftId = draftsResponse.data[0].id;
-
-                    const discoverResponse = await discover(
-                        processedEntityName,
-                        encryptedEndpointConfig.data,
-                        imageConnectorTagId,
-                        draftId
-                    );
-                    if (discoverResponse.error) {
-                        return callFailed({
-                            error: {
-                                title: 'captureCreate.generate.failedErrorTitle',
-                                error: discoverResponse.error,
-                            },
-                        });
-                    }
-                    createDiscoversSubscription(draftId, endpointConfigData);
-
-                    setFormState({
-                        logToken: discoverResponse.data[0].logs_token,
-                    });
-                } else if (persistedDraftId) {
-                    await updateDraft(persistedDraftId);
-                    setFormState({
-                        status: FormStatus.GENERATED,
-                    });
-                } else {
-                    // TODO (optimization): This condition should be nearly impossible to reach, but we currently do not have a means to produce
-                    //   an error in this scenario. ValidationErrorSummary is not suitable for this scenario and EntityError, the error component
-                    //   that surfaces form state errors, is only rendered in the event a persisted draft ID is present. Since the likelihood of
-                    //   reaching this code block is slim, I am going to add a solution in a fast-follow to the schema inference changes.
                 }
+
+                setEncryptedEndpointConfig({
+                    data: draftSpecsResponse.data[0].spec.endpoint.connector
+                        .config,
+                });
+
+                setPreviousEndpointConfig({ data: endpointConfigData });
+
+                setDraftId(persistedDraftId);
+
+                void postGenerateMutate();
+            }
+
+            if (options?.initiateRediscovery || options?.initiateDiscovery) {
+                // If we are doing a rediscovery and we have a draft then go ahead and use that draft
+                //  that way the most recent changes to bindings and endpoints will get added to the draft before rediscovery
+                // This seems to be what users are expecting to happen.
+                const updateBeforeRediscovery =
+                    persistedDraftId && options.initiateRediscovery;
+
+                const draftsResponse = updateBeforeRediscovery
+                    ? { data: [{ id: persistedDraftId }] }
+                    : await createEntityDraft(processedEntityName);
+
+                if (draftsResponse.error) {
+                    return callFailed({
+                        error: {
+                            title: 'captureCreate.generate.failedErrorTitle',
+                            error: draftsResponse.error,
+                        },
+                    });
+                }
+
+                const newDraftId = draftsResponse.data[0].id;
+
+                const discoverResponse = await discover(
+                    processedEntityName,
+                    encryptedEndpointConfig.data,
+                    imageConnectorTagId,
+                    newDraftId
+                );
+                if (discoverResponse.error) {
+                    return callFailed({
+                        error: {
+                            title: 'captureCreate.generate.failedErrorTitle',
+                            error: discoverResponse.error,
+                        },
+                    });
+                }
+                createDiscoversSubscription(newDraftId, endpointConfigData);
+
+                setFormState({
+                    logToken: discoverResponse.data[0].logs_token,
+                });
+            } else if (persistedDraftId) {
+                // if we got here we already did the update up above
+                setFormState({
+                    status: FormStatus.GENERATED,
+                });
+            } else {
+                // TODO (optimization): This condition should be nearly impossible to reach, but we currently do not have a means to produce
+                //   an error in this scenario. ValidationErrorSummary is not suitable for this scenario and EntityError, the error component
+                //   that surfaces form state errors, is only rendered in the event a persisted draft ID is present. Since the likelihood of
+                //   reaching this code block is slim, I am going to add a solution in a fast-follow to the schema inference changes.
             }
         },
         [
-            updateFormStatus,
+            callFailed,
+            createDiscoversSubscription,
             detailsFormsHasErrors,
-            endpointConfigErrorsExist,
-            resourceConfigHasErrors,
-            setFormState,
-            resetEditorState,
-            serverUpdateRequired,
+            draftId,
             endpointConfigData,
-            serverEndpointConfigData,
+            endpointConfigErrorsExist,
             endpointSchema,
             imageConnectorId,
             imageConnectorTagId,
-            callFailed,
-            options?.initiateRediscovery,
-            options?.initiateDiscovery,
-            persistedDraftId,
-            processedEntityName,
-            createDiscoversSubscription,
             imagePath,
-            resourceConfig,
-            setEncryptedEndpointConfig,
-            setPreviousEndpointConfig,
-            setDraftId,
+            options?.initiateDiscovery,
+            options?.initiateRediscovery,
+            persistedDraftId,
             postGenerateMutate,
+            processedEntityName,
+            resetEditorState,
+            resourceConfig,
+            resourceConfigHasErrors,
+            serverEndpointConfigData,
+            serverUpdateRequired,
+            setDraftId,
+            setEncryptedEndpointConfig,
+            setFormState,
+            setPreviousEndpointConfig,
+            updateFormStatus,
         ]
     );
 
