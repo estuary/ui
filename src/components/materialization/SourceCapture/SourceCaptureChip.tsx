@@ -26,7 +26,7 @@ function SourceCaptureChip() {
     if (!sourceCapture) {
         return (
             <Chip
-                color="warning"
+                color="info"
                 disabled={disabled}
                 label={
                     <FormattedMessage id="workflows.sourceCapture.selected.none" />
