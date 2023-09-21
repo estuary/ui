@@ -1,10 +1,10 @@
-import { Box, IconButton, Table, TableContainer, Tooltip } from '@mui/material';
+import { Box, Button, Skeleton, Table, TableContainer } from '@mui/material';
 import { StripeInvoice, getTenantInvoice } from 'api/billing';
 import Rows from 'components/tables/BillLineItems/Rows';
 import TotalLines from 'components/tables/BillLineItems/TotalLines';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
-import { CreditCard, DoubleCheck, Download } from 'iconoir-react';
+import { CreditCard, Download } from 'iconoir-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
@@ -115,43 +115,73 @@ function BillingLineItemsTable() {
                     alignItems: 'end',
                 }}
             >
-                {stripeInvoice ? (
-                    <Box>
-                        <Tooltip
-                            title={intl.formatMessage({
-                                id: 'admin.billing.table.line_items.tooltip.download_pdf',
-                            })}
-                        >
-                            <IconButton href={stripeInvoice.invoice_pdf}>
-                                <Download />
-                            </IconButton>
-                        </Tooltip>
-                        {stripeInvoice.status === 'open' ? (
-                            <Tooltip
-                                title={intl.formatMessage({
-                                    id: 'admin.billing.table.line_items.tooltip.pay_invoice',
-                                })}
+                {selectedInvoice?.invoice_type !== 'current_month' ? (
+                    hydrated ? (
+                        <Box>
+                            <Button
+                                href={stripeInvoice?.invoice_pdf}
+                                disabled={!stripeInvoice}
+                                endIcon={<Download />}
+                                variant="outlined"
+                                size="small"
                             >
-                                <IconButton
+                                {intl.formatMessage({
+                                    id: 'admin.billing.table.line_items.tooltip.download_pdf',
+                                })}
+                            </Button>
+                            {stripeInvoice?.status === 'open' ? (
+                                <Button
                                     href={stripeInvoice.hosted_invoice_url}
+                                    endIcon={<CreditCard />}
+                                    sx={{ marginLeft: 1 }}
+                                    variant="outlined"
+                                    size="small"
                                 >
-                                    <CreditCard />
-                                </IconButton>
-                            </Tooltip>
-                        ) : stripeInvoice.status === 'paid' ? (
-                            <Tooltip
-                                title={intl.formatMessage({
-                                    id: 'admin.billing.table.line_items.tooltip.invoice_paid',
-                                })}
-                            >
-                                <span>
-                                    <IconButton disabled>
-                                        <DoubleCheck />
-                                    </IconButton>
-                                </span>
-                            </Tooltip>
-                        ) : null}
-                    </Box>
+                                    {intl.formatMessage({
+                                        id: 'admin.billing.table.line_items.tooltip.pay_invoice',
+                                    })}
+                                </Button>
+                            ) : stripeInvoice?.status === 'paid' ? (
+                                <Button
+                                    endIcon={<CreditCard />}
+                                    disabled
+                                    sx={{ marginLeft: 1 }}
+                                    variant="outlined"
+                                    size="small"
+                                >
+                                    {intl.formatMessage({
+                                        id: 'admin.billing.table.line_items.tooltip.invoice_paid',
+                                    })}
+                                </Button>
+                            ) : (
+                                <Button
+                                    endIcon={<CreditCard />}
+                                    disabled
+                                    sx={{ marginLeft: 1 }}
+                                    variant="outlined"
+                                    size="small"
+                                >
+                                    {intl.formatMessage({
+                                        id: 'admin.billing.table.line_items.tooltip.pay_invoice',
+                                    })}
+                                </Button>
+                            )}
+                        </Box>
+                    ) : (
+                        <>
+                            <Skeleton
+                                variant="rectangular"
+                                width={200}
+                                height={25}
+                            />
+                            <Skeleton
+                                sx={{ marginLeft: 1 }}
+                                variant="rectangular"
+                                width={120}
+                                height={25}
+                            />
+                        </>
+                    )
                 ) : null}
                 <Box sx={{ flexGrow: 1 }} />
                 {selectedInvoice ? (
