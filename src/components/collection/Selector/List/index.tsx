@@ -3,9 +3,9 @@ import {
     DataGrid,
     GridColDef,
     GridFilterModel,
-    gridPaginatedVisibleSortedGridRowIdsSelector,
     GridRowId,
     GridRowSelectionModel,
+    gridPaginatedVisibleSortedGridRowIdsSelector,
     useGridApiRef,
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
@@ -14,6 +14,8 @@ import { dataGridListStyling } from 'context/Theme';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
+import { useFormStateStore_status } from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_collections,
     useResourceConfig_currentCollection,
@@ -81,10 +83,18 @@ function CollectionSelectorList({
     const [notificationMessage, setNotificationMessage] = useState('');
     const [showNotification, setShowNotification] = useState(false);
 
+    // Form State Store
+    const formStatus = useFormStateStore_status();
+
+    // Resource Config Store
     const collections = useResourceConfig_collections();
     const currentCollection = useResourceConfig_currentCollection();
 
-    const selectionEnabled = currentCollection && setCurrentCollection;
+    const selectionEnabled =
+        currentCollection &&
+        setCurrentCollection &&
+        formStatus !== FormStatus.UPDATING;
+
     const [filterModel, setFilterModel] =
         useState<GridFilterModel>(defaultFilterModel);
 
