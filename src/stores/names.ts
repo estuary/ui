@@ -48,6 +48,10 @@ export enum SchemaEvolutionStoreNames {
     GENERAL = 'general-schema-evolution',
 }
 
+export enum MiscStoreNames {
+    SOURCE_CAPTURE = 'source-capture',
+}
+
 export enum SelectTableStoreNames {
     ACCESS_GRANTS_LINKS = 'AccessGrants-Links',
     ACCESS_GRANTS_USERS = 'AccessGrants-Users',
@@ -82,6 +86,7 @@ export enum TransformCreateStoreNames {
 }
 
 export type StoreName =
+    | AdminStoreNames
     | BillingStoreNames
     | BindingsEditorStoreNames
     | DetailsFormStoreNames
@@ -89,11 +94,11 @@ export type StoreName =
     | EndpointConfigStoreNames
     | ExistingEntityStoreNames
     | FormStateStoreNames
+    | GlobalStoreNames
+    | MiscStoreNames
     | OnboardingStoreNames
     | ResourceConfigStoreNames
     | SchemaEvolutionStoreNames
     | SelectTableStoreNames
     | ShardDetailStoreNames
-    | AdminStoreNames
-    | TransformCreateStoreNames
-    | GlobalStoreNames;
+    | TransformCreateStoreNames;

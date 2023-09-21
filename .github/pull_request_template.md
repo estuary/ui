@@ -1,18 +1,17 @@
 ## Issues
 
-_Please list out any related issues (Here so issue is not auto closed by PR)_
+https://github.com/estuary/ui/issues/{issue_number}
 
 ## Changes
 
-_Describe your changes/features, reasoning, any follow ups you have planned, etc._
+-   {issue_number}
+    -   _list your changes_
 
 ## Tests
 
-_Describe the approach to testing._
+Manually tested
 
-## Content
-
-_Were there any changes to [content](https://github.com/estuary/ui/tree/main/src/lang) that you need to get reviewed?_
+-   _list the flows/cases you tested_
 
 ## Screenshots
 

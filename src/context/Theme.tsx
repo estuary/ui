@@ -9,7 +9,7 @@ import {
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Square } from 'iconoir-react';
+import { DeleteCircle, Square } from 'iconoir-react';
 import CheckSquare from 'icons/CheckSquare';
 import React from 'react';
 import { useLocalStorage } from 'react-use';
@@ -565,6 +565,11 @@ const themeSettings = createTheme({
             defaultProps: {
                 icon: <Square style={{ fontSize: 14 }} />,
                 checkedIcon: <CheckSquare style={{ fontSize: 14 }} />,
+            },
+        },
+        MuiChip: {
+            defaultProps: {
+                deleteIcon: <DeleteCircle style={{ fontSize: 14 }} />,
             },
         },
         MuiTabs: {

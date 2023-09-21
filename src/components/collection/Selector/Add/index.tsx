@@ -1,4 +1,5 @@
 import { IconButton, Tooltip, useTheme } from '@mui/material';
+import AddDialog from 'components/shared/Entity/AddDialog';
 import { useEntityType } from 'context/EntityContext';
 import { disabledButtonText } from 'context/Theme';
 import invariableStores from 'context/Zustand/invariableStores';
@@ -6,7 +7,6 @@ import { Plus } from 'iconoir-react';
 import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useStore } from 'zustand';
-import AddCollectionDialog from './Dialog';
 
 interface Props {
     selectedCollections: string[];
@@ -84,7 +84,8 @@ function BindingsEditorAdd({
                     />
                 </IconButton>
             </Tooltip>
-            <AddCollectionDialog
+            <AddDialog
+                entity="collection"
                 id={DIALOG_ID}
                 open={open}
                 primaryCTA={AddSelectedButton}

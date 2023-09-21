@@ -13,10 +13,12 @@ import { BaseComponentProps } from 'types';
 interface TableHydratorProps extends BaseComponentProps {
     query: PostgrestFilterBuilder<any>;
     selectableTableStoreName: SelectTableStoreNames;
+    disableMultiSelect?: boolean;
 }
 
 export const TableHydrator = ({
     children,
+    disableMultiSelect,
     query,
     selectableTableStoreName,
 }: TableHydratorProps) => {
@@ -35,6 +37,18 @@ export const TableHydrator = ({
         SelectableTableStore['resetState']
     >(selectableTableStoreName, selectableTableStoreSelectors.state.reset);
 
+    const setDisableMultiSelect = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setDisableMultiSelect']
+    >(
+        selectableTableStoreName,
+        selectableTableStoreSelectors.disableMultiSelect.set
+    );
+
+    useEffect(() => {
+        setDisableMultiSelect(disableMultiSelect ?? false);
+    }, [disableMultiSelect, setDisableMultiSelect]);
+
     useEffect(() => {
         setQuery(query);
         hydrate();
@@ -42,6 +56,7 @@ export const TableHydrator = ({
 
     // Reset state when leaving until we work out how we want to cache table stuff
     useUnmount(() => {
+        setDisableMultiSelect(false);
         resetState();
     });
 

@@ -23,10 +23,6 @@ function useDraftSpecEditor(
     //  the ref and not cause re-renders. This makes sure we do not do extra updates
     const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
     const draftSpecRef = useRef<DraftSpec>(null);
-    const updateDraftSpec = useCallback((updatedValue: DraftSpec) => {
-        setDraftSpec(updatedValue);
-        draftSpecRef.current = updatedValue;
-    }, []);
 
     // Draft Editor Store
     const currentCatalog = useEditorStore_currentCatalog({
@@ -80,7 +76,7 @@ function useDraftSpecEditor(
                 }
 
                 // Update the local copy of the spec that is contained within the entire draft
-                updateDraftSpec({
+                setDraftSpec({
                     ...draftSpec,
                     spec: updatedSpec,
                 });
@@ -96,10 +92,18 @@ function useDraftSpecEditor(
                     return Promise.reject();
                 }
 
-                return mutate();
+                // Fire off mutate so other uses know to update
+                return mutate().then((args) => {
+                    // Make the update to the current AFTER the mutate so things
+                    //  get a chance to update first. Otherwise they will see NO change
+                    //  and just ignore the updates.
+                    if (args?.data && args.data[0]) {
+                        draftSpecRef.current = args.data[0].spec;
+                    }
+                });
             }
         },
-        [draftId, draftSpec, mutate, updateDraftSpec]
+        [draftId, draftSpec, mutate]
     );
 
     useEffect(() => {
@@ -113,7 +117,8 @@ function useDraftSpecEditor(
                     }
 
                     if (!isEqual(draftSpecRef.current, val)) {
-                        updateDraftSpec(val);
+                        setDraftSpec(val);
+                        draftSpecRef.current = val;
                         return true;
                     }
 
@@ -121,13 +126,13 @@ function useDraftSpecEditor(
                 });
             }
         }
-    }, [currentCatalog, draftSpecs, entityName, setSpecs, updateDraftSpec]);
+    }, [currentCatalog, draftSpecs, entityName, setSpecs]);
 
     useEffect(() => {
         if (currentCatalog && !isEqual(draftSpecRef.current, currentCatalog)) {
-            updateDraftSpec(currentCatalog);
+            setDraftSpec(currentCatalog);
         }
-    }, [currentCatalog, updateDraftSpec]);
+    }, [currentCatalog]);
 
     // TODO (sync editing) : turning off as right now this will show lots of "Out of sync" errors
     //    because we are comparing two JSON objects that are being stringified and that means the order

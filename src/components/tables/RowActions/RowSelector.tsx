@@ -26,15 +26,25 @@ function RowSelector({
         SelectableTableStore['selected']
     >(selectableTableStoreName, selectableTableStoreSelectors.selected.get);
 
+    const disableMultiSelect = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['disableMultiSelect']
+    >(
+        selectableTableStoreName,
+        selectableTableStoreSelectors.disableMultiSelect.get
+    );
+
     const hasSelections = selectedRows.size > 0;
 
     return (
         <Stack direction="row" spacing={2}>
-            <RowSelectorCheckBox
-                showSelectedCount={showSelectedCount}
-                selectableTableStoreName={selectableTableStoreName}
-                selectKeyValueName={selectKeyValueName}
-            />
+            {disableMultiSelect ? null : (
+                <RowSelectorCheckBox
+                    showSelectedCount={showSelectedCount}
+                    selectableTableStoreName={selectableTableStoreName}
+                    selectKeyValueName={selectKeyValueName}
+                />
+            )}
 
             {hideActions ? null : (
                 <ButtonGroup
