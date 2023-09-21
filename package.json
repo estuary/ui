@@ -62,7 +62,6 @@
         "logrocket": "^3.0.1",
         "logrocket-react": "^5.0.1",
         "lru-cache": "^9.1.2",
-        "luxon": "^3.4.3",
         "madge": "^5.0.2",
         "material-ui-popup-state": "^5.0.9",
         "monaco-editor": "^0.34.1",
