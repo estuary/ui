@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import CollectionSelector from 'components/collection/Selector';
-import { AddCollectionDialogCTAProps } from 'components/collection/Selector/Add/types';
+import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import CatalogList, {
     CatalogListContent,
 } from 'components/transformation/create/Config/catalog/CatalogList';
@@ -16,6 +16,7 @@ interface Props extends AddCollectionDialogCTAProps {
 
 function EntityList({ content, header, primaryCTA, toggle }: Props) {
     const intl = useIntl();
+
     return (
         <Box>
             <CollectionSelector

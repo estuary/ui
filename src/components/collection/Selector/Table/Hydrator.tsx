@@ -1,4 +1,5 @@
 import { getLiveSpecs_collectionsSelector } from 'api/liveSpecsExt';
+import { TableHydratorProps } from 'components/shared/Entity/types';
 import EntityTable from 'components/tables/EntityTable';
 import RowSelector from 'components/tables/RowActions/RowSelector';
 import invariableStores from 'context/Zustand/invariableStores';
@@ -10,16 +11,16 @@ import TableHydrator from 'stores/Tables/Hydrator';
 import { MAX_BINDINGS } from 'utils/workflow-utils';
 import { useStore } from 'zustand';
 import Rows from './Rows';
-import { catalogNameColumn, publishedColumn, tableColumns } from './shared';
+import { EVERYTHING, publishedColumn } from './shared';
+import useCollectionsSelectorColumns from './useCollectionsSelectorColumns';
 
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
 const tableRowsPerPage = [10, 50, 100, MAX_BINDINGS];
 
-interface Props {
-    selectedCollections: string[];
-}
+function Hydrator({ entity, selectedCollections }: TableHydratorProps) {
+    const selectingCaptures = entity === 'capture';
+    const tableColumns = useCollectionsSelectorColumns(selectingCaptures);
 
-function Hydrator({ selectedCollections }: Props) {
     const {
         reset,
         pagination,
@@ -35,13 +36,18 @@ function Hydrator({ selectedCollections }: Props) {
     } = useTableState('csl', publishedColumn, 'desc', tableRowsPerPage[0]);
 
     const query = useMemo(() => {
-        return getLiveSpecs_collectionsSelector(pagination, searchQuery, [
-            {
-                col: columnToSort,
-                direction: sortDirection,
-            },
-        ]);
-    }, [columnToSort, pagination, searchQuery, sortDirection]);
+        return getLiveSpecs_collectionsSelector(
+            pagination,
+            entity ?? 'collection',
+            searchQuery,
+            [
+                {
+                    col: columnToSort,
+                    direction: sortDirection,
+                },
+            ]
+        );
+    }, [columnToSort, entity, pagination, searchQuery, sortDirection]);
 
     const setDisabledRows = useStore(
         invariableStores['Collections-Selector-Table'],
@@ -49,6 +55,7 @@ function Hydrator({ selectedCollections }: Props) {
             return state.setDisabledRows;
         }
     );
+
     useEffect(() => {
         setDisabledRows(selectedCollections);
     }, [selectedCollections, setDisabledRows]);
@@ -61,6 +68,7 @@ function Hydrator({ selectedCollections }: Props) {
         <TableHydrator
             query={query}
             selectableTableStoreName={selectableTableStoreName}
+            disableMultiSelect={selectingCaptures}
         >
             <EntityTable
                 noExistingDataContentIds={{
@@ -88,7 +96,7 @@ function Hydrator({ selectedCollections }: Props) {
                     <RowSelector
                         hideActions
                         showSelectedCount
-                        selectKeyValueName={catalogNameColumn}
+                        selectKeyValueName={EVERYTHING}
                         selectableTableStoreName={selectableTableStoreName}
                     />
                 }

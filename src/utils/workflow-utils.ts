@@ -37,12 +37,26 @@ export const getDisableProps = (disable: boolean | undefined) => {
     return disable ? { disable } : {};
 };
 
+export const addOrRemoveSourceCapture = (
+    draftSpec: any,
+    sourceCapture: string | null
+) => {
+    if (sourceCapture) {
+        draftSpec.sourceCapture = sourceCapture;
+    } else {
+        delete draftSpec.sourceCapture;
+    }
+
+    return draftSpec;
+};
+
 // TODO (typing): Narrow the return type for this function.
 export const generateTaskSpec = (
     entityType: EntityWithCreateWorkflow,
     connectorConfig: ConnectorConfig,
     resourceConfigs: ResourceConfigDictionary | null,
-    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
+    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
+    sourceCapture: string | null
 ) => {
     const draftSpec = isEmpty(existingTaskData)
         ? {
@@ -104,6 +118,11 @@ export const generateTaskSpec = (
         }
     } else {
         draftSpec.bindings = [];
+    }
+
+    // Try adding at the end because this setting could be added/changed at any time
+    if (entityType === 'materialization') {
+        addOrRemoveSourceCapture(draftSpec, sourceCapture);
     }
 
     return draftSpec;
@@ -172,7 +191,8 @@ export const modifyExistingCaptureDraftSpec = async (
         'capture',
         { image: connectorImage, config: encryptedEndpointConfig },
         resourceConfig,
-        existingTaskData
+        existingTaskData,
+        null
     );
 
     return modifyDraftSpec(draftSpec, {

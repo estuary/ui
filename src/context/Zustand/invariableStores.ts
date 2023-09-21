@@ -20,6 +20,7 @@ import {
     ExistingEntityStoreNames,
     FormStateStoreNames,
     GlobalStoreNames,
+    MiscStoreNames,
     ResourceConfigStoreNames,
     SchemaEvolutionStoreNames,
     SelectTableStoreNames,
@@ -30,6 +31,7 @@ import { createResourceConfigStore } from 'stores/ResourceConfig/Store';
 import { createSchemaEvolutionStore } from 'stores/SchemaEvolution/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
 import { createSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
+import { createSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
 import { createBillingTableStore } from 'stores/Tables/Billing/Store';
 import { createSelectableTableStore } from 'stores/Tables/Store';
@@ -98,6 +100,11 @@ const invariableStores = {
     // Schema Evolution Store
     [SchemaEvolutionStoreNames.GENERAL]: createSchemaEvolutionStore(
         SchemaEvolutionStoreNames.GENERAL
+    ),
+
+    // Schema Evolution Store
+    [MiscStoreNames.SOURCE_CAPTURE]: createSourceCaptureStore(
+        MiscStoreNames.SOURCE_CAPTURE
     ),
 
     // Select Table Store

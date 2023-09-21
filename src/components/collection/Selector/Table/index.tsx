@@ -1,11 +1,13 @@
+import { TableHydratorProps } from 'components/shared/Entity/types';
 import Hydrator from './Hydrator';
 
-interface Props {
-    selectedCollections: string[];
-}
-
-function BindingSelectorTable({ selectedCollections }: Props) {
-    return <Hydrator selectedCollections={selectedCollections} />;
+function BindingSelectorTable({
+    entity,
+    selectedCollections,
+}: TableHydratorProps) {
+    return (
+        <Hydrator entity={entity} selectedCollections={selectedCollections} />
+    );
 }
 
 export default BindingSelectorTable;
