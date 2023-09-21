@@ -934,7 +934,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.sourceCapture.cta': `link capture`,
     'workflows.sourceCapture.cta.edit': `edit capture`,
     'workflows.sourceCapture.selected.none': `no linked capture`,
-    'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization.  Collections added to your Capture will automatically be added to your materialization.`,
+    'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization.  Collections added to your capture will automatically be added to your materialization.`,
     'workflows.sourceCapture.optin.message2': `Removing this will not remove associated collections.`,
 
     'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
