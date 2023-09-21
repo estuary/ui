@@ -1,5 +1,4 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { DateTime } from 'luxon';
 import {
     endOfWeek,
     format,
@@ -92,17 +91,11 @@ type AllowedDates = Date | string | number;
 
 // This will format the date so that it just gets the month, day, year
 //  We do not need the full minute/hour/offset because the backend is not saving those
-export const formatToUTC = (date: AllowedDates, includeHour?: boolean) => {
-    // Convert date to UTC and then format it
-    const utcDate2 = format(
+export const formatToUTC = (date: AllowedDates, includeHour?: boolean) =>
+    format(
         new UTCDate(date),
         `yyyy-MM-dd${includeHour ? ' HH:00:00' : "' 00:00:00+00'"}`
     );
-
-    console.log('utcDate2 = ', utcDate2);
-
-    return utcDate2;
-};
 
 // TODO (stats) add support for which stats columns each entity wants
 //  Right now all tables run the same query even though they only need
@@ -115,29 +108,10 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
         .in('catalog_name', names)
         .order('catalog_name');
 
-    const today = new Date();
+    const today = new UTCDate();
     const yesterday = subDays(today, 1);
     const lastWeek = subWeeks(today, 1);
     const lastMonth = subMonths(today, 1);
-
-    const today_utc = DateTime.utc();
-    const yesterday_utc = today_utc.minus({ days: 1 });
-    const lastWeek_utc = today_utc.minus({ weeks: 1 });
-    const lastMonth_utc = today_utc.minus({ months: 1 });
-
-    console.log('getStatsByName', {
-        today,
-        yesterday,
-        lastWeek,
-        lastMonth,
-    });
-
-    console.log('getStatsByName', {
-        today_utc,
-        yesterday_utc,
-        lastWeek_utc,
-        lastMonth_utc: lastMonth_utc.toISODate(),
-    });
 
     switch (filter) {
         // Day Range
@@ -218,11 +192,11 @@ const getStatsForDetails = (
     grain: string,
     duration?: Duration
 ) => {
-    const today = new Date();
-    const past = duration ? sub(today, duration) : today;
+    const current = new UTCDate();
+    const past = duration ? sub(current, duration) : current;
 
     const gt = formatToUTC(startOfHour(past), true);
-    const lte = formatToUTC(startOfHour(today), true);
+    const lte = formatToUTC(startOfHour(current), true);
 
     let query: string;
     switch (entityType) {
