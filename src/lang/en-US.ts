@@ -644,7 +644,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
 
     'entityCreate.bindingsConfig.addCTA': `Add {itemType}`,
-    'entityCreate.bindingsConfig.noRows': `Please select from the list above to begin.`,
+    'entityCreate.bindingsConfig.noRows': `Start by clicking the '+' icon above and selecting what you want to`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
     'entityCreate.bindingsConfig.list.search': `Filter {itemType}`,
     'entityCreate.bindingsConfig.list.removeAll': `Remove {itemType} in the list below`,
@@ -929,6 +929,13 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.autoDiscovery.label.optIntoDiscovery': `Automatically keep schemas up to date`,
     'workflows.autoDiscovery.label.addNewBindings': `Automatically add new collections`,
     'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Breaking changes re-version collections`,
+
+    'workflows.sourceCapture.header': `Link Capture`,
+    'workflows.sourceCapture.cta': `link capture`,
+    'workflows.sourceCapture.cta.edit': `edit capture`,
+    'workflows.sourceCapture.selected.none': `no linked capture`,
+    'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization.  Collections added to your Capture will automatically be added to your materialization.`,
+    'workflows.sourceCapture.optin.message2': `Removing this will not remove associated collections.`,
 
     'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
     'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
