@@ -29,11 +29,12 @@ function useFieldSelection(collectionName: string) {
     const draftId = useEditorStore_persistedDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
+    // TODO (field selection): remove the debouncer entirely, to my dismay.
     const debouncedUpdate = useRef(
         debounce(() => {
             setSelectionActive(false);
             setSelectionSaving(true);
-        }, 500)
+        }, 0)
     );
 
     useEffect(() => {
