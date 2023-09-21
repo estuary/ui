@@ -1,4 +1,5 @@
-import { parseISO } from 'date-fns';
+import type { Invoice } from 'api/billing';
+import { format, parseISO } from 'date-fns';
 import prettyBytes from 'pretty-bytes';
 import { CatalogStats_Billing, Entity, Schema } from 'types';
 
@@ -68,4 +69,15 @@ export const formatDataVolumeForDisplay = (
     } else {
         return `${tooltipConfig.value[1]} GB`;
     }
+};
+
+export const formatDateForApi = (date: Date) => {
+    const fmt = "yyyy-MM-dd' 00:00:00+00'";
+
+    return format(date, fmt);
+};
+
+export type InvoiceId = string;
+export const invoiceId = (invoice: Invoice): InvoiceId => {
+    return `${invoice.date_start}-${invoice.date_end}-${invoice.billed_prefix}`;
 };

@@ -37,7 +37,6 @@ export const DEFAULT_FILTER = '__unknown__';
 
 export enum TABLES {
     APPLIED_DIRECTIVES = 'applied_directives',
-    BILLING_HISTORICALS = 'billing_historicals',
     CATALOG_STATS = 'catalog_stats',
     COMBINED_GRANTS_EXT = 'combined_grants_ext',
     CONNECTOR_TAGS = 'connector_tags',
@@ -51,10 +50,10 @@ export enum TABLES {
     DRAFTS_EXT = 'drafts_ext',
     EVOLUTIONS = 'evolutions',
     INFERRED_SCHEMAS = 'inferred_schemas',
+    INVOICES = 'invoices_ext',
     LIVE_SPEC_FLOW = 'live_spec_flow',
     LIVE_SPECS = 'live_specs',
     LIVE_SPECS_EXT = 'live_specs_ext',
-    MANUAL_BILLS = 'manual_bills',
     PUBLICATION_SPECS = 'publication_specs',
     PUBLICATION_SPECS_EXT = 'publication_specs_ext',
     PUBLICATIONS = 'publications',

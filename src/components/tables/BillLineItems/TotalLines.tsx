@@ -1,8 +1,8 @@
 import { Box, Divider, Typography } from '@mui/material';
-import { BillingRecord } from 'api/billing';
+import { Invoice } from 'api/billing';
 import { useIntl } from 'react-intl';
 
-function TotalLines({ bill }: { bill: BillingRecord }) {
+function TotalLines({ invoice }: { invoice: Invoice }) {
     const intl = useIntl();
     return (
         <Box
@@ -22,7 +22,7 @@ function TotalLines({ bill }: { bill: BillingRecord }) {
             >
                 <Typography fontWeight="bold">Amount Due</Typography>
                 <Typography fontWeight="bold">
-                    {intl.formatNumber(bill.subtotal / 100, {
+                    {intl.formatNumber(invoice.subtotal / 100, {
                         style: 'currency',
                         currency: 'USD',
                     })}

@@ -5,16 +5,21 @@ import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
-    useBilling_billingHistory,
     useBilling_hydrated,
-    useBilling_selectedMonth,
+    useBilling_invoices,
+    useBilling_selectedInvoice,
 } from 'stores/Billing/hooks';
 import { TableColumns, TableStatuses } from 'types';
+import { invoiceId } from 'utils/billing-utils';
 
 export const columns: TableColumns[] = [
     {
-        field: 'month',
-        headerIntlKey: 'admin.billing.table.history.label.month',
+        field: 'date_start',
+        headerIntlKey: 'admin.billing.table.history.label.date_start',
+    },
+    {
+        field: 'date_end',
+        headerIntlKey: 'admin.billing.table.history.label.date_end',
     },
     {
         field: 'data_volume',
@@ -29,9 +34,6 @@ export const columns: TableColumns[] = [
         headerIntlKey: 'admin.billing.table.history.label.totalCost',
         align: 'right',
     },
-    {
-        field: null,
-    },
 ];
 
 // TODO (billing): Use the getStatsForBillingHistoryTable query function as the primary source of data for this view
@@ -39,17 +41,22 @@ export const columns: TableColumns[] = [
 function BillingHistoryTable() {
     const intl = useIntl();
 
-    const selectedMonth = useBilling_selectedMonth();
+    const selectedInvoice = useBilling_selectedInvoice();
 
     const hydrated = useBilling_hydrated();
-    const billingHistory = useBilling_billingHistory();
+    const billingHistory = useBilling_invoices();
 
     const dataRows = useMemo(
         () =>
             billingHistory.length > 0 ? (
-                <Rows data={billingHistory} selectedMonth={selectedMonth} />
+                <Rows
+                    data={billingHistory}
+                    selectedInvoice={
+                        selectedInvoice ? invoiceId(selectedInvoice) : null
+                    }
+                />
             ) : null,
-        [billingHistory, selectedMonth]
+        [billingHistory, selectedInvoice]
     );
 
     return (

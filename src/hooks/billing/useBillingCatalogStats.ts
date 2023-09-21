@@ -2,8 +2,8 @@ import { getStatsForBilling } from 'api/stats';
 import { extendedPollSettings } from 'context/SWR';
 import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import {
-    useBilling_billingHistory,
-    useBilling_billingHistoryInitialized,
+    useBilling_invoices,
+    useBilling_invoicesInitialized,
     useBilling_selectedTenant,
 } from 'stores/Billing/hooks';
 import { CatalogStats_Billing } from 'types';
@@ -11,15 +11,12 @@ import { hasLength } from 'utils/misc-utils';
 
 function useBillingCatalogStats() {
     const selectedTenant = useBilling_selectedTenant();
-    const historyInitialized = useBilling_billingHistoryInitialized();
-    const billingHistory = useBilling_billingHistory();
+    const historyInitialized = useBilling_invoicesInitialized();
+    const invoices = useBilling_invoices();
 
     const { data, error, mutate, isValidating } = useSelectNew(
-        hasLength(selectedTenant) && hasLength(billingHistory)
-            ? getStatsForBilling(
-                  [selectedTenant],
-                  billingHistory[0].billed_month
-              )
+        hasLength(selectedTenant) && hasLength(invoices)
+            ? getStatsForBilling([selectedTenant], invoices[0].date_start)
             : null,
         extendedPollSettings
     );

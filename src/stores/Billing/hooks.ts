@@ -1,40 +1,42 @@
+import { Invoice } from 'api/billing';
 import { useZustandStore } from 'context/Zustand/provider';
 import { BillingState } from 'stores/Billing/types';
 import { BillingStoreNames } from 'stores/names';
+import { invoiceId } from 'utils/billing-utils';
 
 // Selector Hooks
-export const useBilling_billingHistoryInitialized = () => {
-    return useZustandStore<
-        BillingState,
-        BillingState['billingHistoryInitialized']
-    >(BillingStoreNames.GENERAL, (state) => state.billingHistoryInitialized);
-};
-
-export const useBilling_setBillingHistoryInitialized = () => {
-    return useZustandStore<
-        BillingState,
-        BillingState['setBillingHistoryInitialized']
-    >(BillingStoreNames.GENERAL, (state) => state.setBillingHistoryInitialized);
-};
-
-export const useBilling_billingHistory = () => {
-    return useZustandStore<BillingState, BillingState['billingHistory']>(
+export const useBilling_invoicesInitialized = () => {
+    return useZustandStore<BillingState, BillingState['invoicesInitialized']>(
         BillingStoreNames.GENERAL,
-        (state) => state.billingHistory
+        (state) => state.invoicesInitialized
     );
 };
 
-export const useBilling_setBillingHistory = () => {
-    return useZustandStore<BillingState, BillingState['setBillingHistory']>(
+export const useBilling_setInvoicesInitialized = () => {
+    return useZustandStore<
+        BillingState,
+        BillingState['setInvoicesInitialized']
+    >(BillingStoreNames.GENERAL, (state) => state.setInvoicesInitialized);
+};
+
+export const useBilling_invoices = () => {
+    return useZustandStore<BillingState, BillingState['invoices']>(
         BillingStoreNames.GENERAL,
-        (state) => state.setBillingHistory
+        (state) => state.invoices
     );
 };
 
-export const useBilling_updateBillingHistory = () => {
-    return useZustandStore<BillingState, BillingState['updateBillingHistory']>(
+export const useBilling_setInvoices = () => {
+    return useZustandStore<BillingState, BillingState['setInvoices']>(
         BillingStoreNames.GENERAL,
-        (state) => state.updateBillingHistory
+        (state) => state.setInvoices
+    );
+};
+
+export const useBilling_updateInvoices = () => {
+    return useZustandStore<BillingState, BillingState['updateInvoices']>(
+        BillingStoreNames.GENERAL,
+        (state) => state.updateInvoices
     );
 };
 
@@ -87,31 +89,22 @@ export const useBilling_setSelectedTenant = () => {
     );
 };
 
-export const useBilling_selectedMonth = () => {
-    return useZustandStore<BillingState, BillingState['selectedMonth']>(
+export const useBilling_selectedInvoice = () => {
+    return useZustandStore<BillingState, Invoice | null>(
         BillingStoreNames.GENERAL,
-        (state) => state.selectedMonth
+        (state) =>
+            state.selectedInvoiceId
+                ? state.invoices.find(
+                      (inv) => invoiceId(inv) === state.selectedInvoiceId
+                  ) ?? null
+                : null
     );
 };
 
-export const useBilling_setSelectedMonth = () => {
-    return useZustandStore<BillingState, BillingState['setSelectedMonth']>(
+export const useBilling_setSelectedInvoice = () => {
+    return useZustandStore<BillingState, BillingState['setSelectedInvoice']>(
         BillingStoreNames.GENERAL,
-        (state) => state.setSelectedMonth
-    );
-};
-
-export const useBilling_manualBills = () => {
-    return useZustandStore<BillingState, BillingState['manualBills']>(
-        BillingStoreNames.GENERAL,
-        (state) => state.manualBills
-    );
-};
-
-export const useBilling_setManualBills = () => {
-    return useZustandStore<BillingState, BillingState['setManualBills']>(
-        BillingStoreNames.GENERAL,
-        (state) => state.setManualBills
+        (state) => state.setSelectedInvoice
     );
 };
 

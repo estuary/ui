@@ -1,8 +1,8 @@
 import { Divider, Grid, Typography } from '@mui/material';
-import { BillingRecord, getBillingHistory, getManualBills } from 'api/billing';
+import { Invoice, getInvoicesBetween } from 'api/billing';
 import { authenticatedRoutes } from 'app/routes';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
-import ManualBillBanner from 'components/admin/Billing/ManualBillBanner';
+import DateRange from 'components/admin/Billing/DateRange';
 import PaymentMethods from 'components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'components/admin/Billing/PricingTierDetails';
 import TenantOptions from 'components/admin/Billing/TenantOptions';
@@ -12,33 +12,31 @@ import GraphStateWrapper from 'components/graphs/states/Wrapper';
 import AlertBox from 'components/shared/AlertBox';
 import BillingLineItemsTable from 'components/tables/BillLineItems';
 import BillingHistoryTable from 'components/tables/Billing';
-import { eachMonthOfInterval, format, startOfMonth, subMonths } from 'date-fns';
+import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
-import useBillingRecord from 'hooks/billing/useBillingRecord';
+import useInvoice from 'hooks/billing/useBillingRecord';
 import usePageTitle from 'hooks/usePageTitle';
 import { isArray, isEmpty } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
-    useBilling_billingHistoryInitialized,
     useBilling_hydrated,
-    useBilling_manualBills,
+    useBilling_invoicesInitialized,
     useBilling_resetState,
-    useBilling_selectedMonth,
+    useBilling_selectedInvoice,
     useBilling_selectedTenant,
-    useBilling_setBillingHistory,
-    useBilling_setBillingHistoryInitialized,
     useBilling_setDataByTaskGraphDetails,
     useBilling_setHydrated,
     useBilling_setHydrationErrorsExist,
-    useBilling_setManualBills,
-    useBilling_updateBillingHistory,
+    useBilling_setInvoices,
+    useBilling_setInvoicesInitialized,
+    useBilling_updateInvoices,
 } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
-import { TOTAL_CARD_HEIGHT, stripTimeFromDate } from 'utils/billing-utils';
+import { TOTAL_CARD_HEIGHT, invoiceId } from 'utils/billing-utils';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
@@ -48,35 +46,27 @@ function AdminBilling() {
     const setHydrated = useBilling_setHydrated();
     const setHydrationErrorsExist = useBilling_setHydrationErrorsExist();
 
-    const historyInitialized = useBilling_billingHistoryInitialized();
-    const setHistoryInitialized = useBilling_setBillingHistoryInitialized();
-    const setBillingHistory = useBilling_setBillingHistory();
-    const updateBillingHistory = useBilling_updateBillingHistory();
-
-    const manualBills = useBilling_manualBills();
-    const setManualBills = useBilling_setManualBills();
+    const historyInitialized = useBilling_invoicesInitialized();
+    const setHistoryInitialized = useBilling_setInvoicesInitialized();
+    const setInvoices = useBilling_setInvoices();
+    const updateBillingHistory = useBilling_updateInvoices();
 
     const selectedTenant = useBilling_selectedTenant();
-    const selectedMonth = useBilling_selectedMonth();
+    const selectedInvoice = useBilling_selectedInvoice();
     const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
 
     const resetBillingState = useBilling_resetState();
 
-    const intl = useIntl();
-
     const currentMonth = useConstant(() => {
         const today = new Date();
 
-        return startOfMonth(today);
+        return endOfMonth(today);
     });
 
     const dateRange = useMemo(() => {
         const startMonth = startOfMonth(subMonths(currentMonth, 5));
 
-        return eachMonthOfInterval({
-            start: startMonth,
-            end: currentMonth,
-        }).map((date) => format(date, "yyyy-MM-dd' 00:00:00+00'"));
+        return { start: startMonth, end: currentMonth };
     }, [currentMonth]);
 
     const {
@@ -85,52 +75,38 @@ function AdminBilling() {
         isValidating: isValidatingStats,
     } = useBillingCatalogStats();
 
-    const { billingRecord, isValidating: isValidatingRecord } =
-        useBillingRecord(currentMonth);
+    const { invoices: currentMonthInvoices, isValidating: isValidatingRecord } =
+        useInvoice(startOfMonth(currentMonth));
 
     useEffect(() => {
-        if (
-            selectedTenant &&
-            dateRange.length > 0 &&
-            !hydrated &&
-            !historyInitialized
-        ) {
-            Promise.all([
-                getManualBills(selectedTenant, new Date()).then((bills) => {
-                    if (bills.body) {
-                        setManualBills(bills.body);
+        if (selectedTenant && !hydrated && !historyInitialized) {
+            void (async () => {
+                try {
+                    const response = await getInvoicesBetween(
+                        selectedTenant,
+                        dateRange.start,
+                        dateRange.end
+                    );
+                    if (response.error) {
+                        throw new Error(response.error.message);
                     }
-                }),
-                getBillingHistory(selectedTenant, dateRange).then(
-                    (responses) => {
-                        const data: BillingRecord[] = [];
+                    const data: Invoice[] = [];
 
-                        responses.forEach((response) => {
-                            if (response.error) {
-                                throw new Error(response.error.message);
-                            }
+                    response.data.forEach((invoice) => {
+                        data.push(invoice);
+                    });
 
-                            if (
-                                typeof response.data.task_usage_hours ===
-                                    'number' &&
-                                typeof response.data.processed_data_gb ===
-                                    'number'
-                            ) {
-                                data.push(response.data);
-                            }
-                        });
-
-                        setBillingHistory(data);
-                    },
-                    () => {
-                        setHydrationErrorsExist(true);
-                        setHydrated(true);
-                    }
-                ),
-            ]).finally(() => setHistoryInitialized(true));
+                    setInvoices(data);
+                } catch {
+                    setHydrationErrorsExist(true);
+                    setHydrated(true);
+                } finally {
+                    setHistoryInitialized(true);
+                }
+            })();
         }
     }, [
-        setBillingHistory,
+        setInvoices,
         setHistoryInitialized,
         setHydrated,
         setHydrationErrorsExist,
@@ -138,7 +114,6 @@ function AdminBilling() {
         historyInitialized,
         hydrated,
         selectedTenant,
-        setManualBills,
     ]);
 
     useEffect(() => {
@@ -168,15 +143,17 @@ function AdminBilling() {
         if (
             historyInitialized &&
             !isValidatingRecord &&
-            !isEmpty(billingRecord)
+            !isEmpty(currentMonthInvoices)
         ) {
             updateBillingHistory(
-                isArray(billingRecord) ? billingRecord : [billingRecord]
+                isArray(currentMonthInvoices)
+                    ? currentMonthInvoices
+                    : [currentMonthInvoices]
             );
         }
     }, [
         updateBillingHistory,
-        billingRecord,
+        currentMonthInvoices,
         historyInitialized,
         isValidatingRecord,
     ]);
@@ -212,11 +189,6 @@ function AdminBilling() {
             </Grid>
 
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
-                <Grid item xs={12}>
-                    {manualBills.map((bill) => (
-                        <ManualBillBanner key={bill.description} bill={bill} />
-                    ))}
-                </Grid>
                 <Grid item xs={12} md={6}>
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}
@@ -245,28 +217,28 @@ function AdminBilling() {
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}
                         message={
-                            <FormattedMessage
-                                id="admin.billing.label.lineItems"
-                                values={{
-                                    b: (chunks) => <strong>{chunks}</strong>,
-                                    month:
-                                        selectedMonth.length > 0
-                                            ? intl.formatDate(
-                                                  stripTimeFromDate(
-                                                      selectedMonth
-                                                  ),
-                                                  {
-                                                      year: 'numeric',
-                                                      month: 'long',
-                                                  }
-                                              )
-                                            : '...',
-                                }}
-                            />
+                            <>
+                                <FormattedMessage id="admin.billing.label.lineItems" />
+
+                                {selectedInvoice ? (
+                                    <DateRange
+                                        start_date={selectedInvoice.date_start}
+                                        end_date={selectedInvoice.date_end}
+                                    />
+                                ) : (
+                                    ' ...'
+                                )}
+                            </>
                         }
                     >
                         {/* The key here makes sure that any stateful fetching logic doesn't get confused. */}
-                        <BillingLineItemsTable key={selectedMonth} />
+                        <BillingLineItemsTable
+                            key={
+                                selectedInvoice
+                                    ? invoiceId(selectedInvoice)
+                                    : null
+                            }
+                        />
                     </CardWrapper>
                 </Grid>
 

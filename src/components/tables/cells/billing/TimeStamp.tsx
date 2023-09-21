@@ -5,9 +5,11 @@ import { stripTimeFromDate } from 'utils/billing-utils';
 
 interface Props {
     date: string;
+    asLink?: boolean;
+    tooltipMessageId: string;
 }
 
-function TimeStamp({ date }: Props) {
+function TimeStamp({ date, asLink, tooltipMessageId }: Props) {
     const intl = useIntl();
 
     const strippedDate = stripTimeFromDate(date);
@@ -17,28 +19,29 @@ function TimeStamp({ date }: Props) {
             <CustomWidthTooltip
                 title={
                     <FormattedMessage
-                        id="admin.billing.table.history.tooltip.month"
+                        id={tooltipMessageId}
                         values={{
-                            timestamp: intl.formatDate(date, {
+                            timestamp: intl.formatDate(strippedDate, {
                                 day: 'numeric',
-                                month: 'short',
+                                month: 'long',
                                 year: 'numeric',
-                                hour: 'numeric',
-                                minute: 'numeric',
-                                second: 'numeric',
-                                timeZoneName: 'short',
                             }),
                         }}
                     />
                 }
                 placement="bottom-start"
             >
-                <Box>
-                    <FormattedDate
-                        month="long"
-                        year="numeric"
-                        value={strippedDate}
-                    />
+                <Box
+                    sx={
+                        asLink
+                            ? {
+                                  textDecoration: 'underline',
+                                  color: (theme) => theme.palette.primary.dark,
+                              }
+                            : undefined
+                    }
+                >
+                    <FormattedDate dateStyle="medium" value={strippedDate} />
                 </Box>
             </CustomWidthTooltip>
         </TableCell>

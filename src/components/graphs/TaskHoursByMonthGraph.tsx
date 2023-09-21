@@ -17,10 +17,7 @@ import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import {
-    useBilling_billingHistory,
-    useBilling_hydrated,
-} from 'stores/Billing/hooks';
+import { useBilling_hydrated, useBilling_invoices } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
 import {
     CARD_AREA_HEIGHT,
@@ -38,7 +35,7 @@ function TaskHoursByMonthGraph() {
     const tooltipConfig = useTooltipConfig();
 
     const billingStoreHydrated = useBilling_hydrated();
-    const billingHistory = useBilling_billingHistory();
+    const invoices = useBilling_invoices();
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
 
@@ -56,28 +53,34 @@ function TaskHoursByMonthGraph() {
     const seriesConfig: SeriesConfig[] = useMemo(() => {
         const startDate = startOfMonth(sub(today, { months: 5 }));
 
-        return billingHistory
-            .filter(({ billed_month }) => {
-                const billedMonth = stripTimeFromDate(billed_month);
-
-                return isWithinInterval(billedMonth, {
-                    start: startDate,
-                    end: today,
-                });
+        return invoices
+            .filter(({ invoice_type, date_start, date_end }) => {
+                return (
+                    (invoice_type === 'current_month' ||
+                        invoice_type === 'usage') &&
+                    isWithinInterval(stripTimeFromDate(date_start), {
+                        start: startDate,
+                        end: today,
+                    }) &&
+                    isWithinInterval(stripTimeFromDate(date_end), {
+                        start: startDate,
+                        end: today,
+                    })
+                );
             })
-            .map(({ billed_month, task_usage_hours }) => {
-                const billedMonth = stripTimeFromDate(billed_month);
+            .map(({ date_start, extra }) => {
+                const billedMonth = stripTimeFromDate(date_start);
                 const month = intl.formatDate(billedMonth, { month: 'short' });
 
                 return {
-                    seriesName: billed_month,
-                    data: [[month, task_usage_hours ?? 0]],
+                    seriesName: date_start,
+                    data: [[month, extra?.task_usage_hours ?? 0]],
                 };
             });
-    }, [billingHistory, intl, today]);
+    }, [invoices, intl, today]);
 
     useEffect(() => {
-        if (billingStoreHydrated && billingHistory.length > 0) {
+        if (billingStoreHydrated && invoices.length > 0) {
             if (!myChart) {
                 echarts.use([
                     GridComponent,
@@ -144,10 +147,10 @@ function TaskHoursByMonthGraph() {
                                 content = `${content}${tooltipItem}`;
                             } else {
                                 const tooltipTitle =
-                                    billingHistory
-                                        .map(({ billed_month }) => {
+                                    invoices
+                                        .map(({ date_start }) => {
                                             const billedMonth =
-                                                stripTimeFromDate(billed_month);
+                                                stripTimeFromDate(date_start);
 
                                             return intl.formatDate(
                                                 billedMonth,
@@ -182,7 +185,7 @@ function TaskHoursByMonthGraph() {
             myChart?.setOption(option);
         }
     }, [
-        billingHistory,
+        invoices,
         billingStoreHydrated,
         intl,
         months,

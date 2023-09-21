@@ -6,7 +6,11 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { BillingStoreNames } from 'stores/names';
-import { evaluateSpecType, stripTimeFromDate } from 'utils/billing-utils';
+import {
+    evaluateSpecType,
+    invoiceId,
+    stripTimeFromDate,
+} from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { StoreApi, create } from 'zustand';
@@ -14,22 +18,20 @@ import { NamedSet, devtools } from 'zustand/middleware';
 
 const getInitialStateData = (): Pick<
     BillingState,
-    | 'billingHistory'
-    | 'billingHistoryInitialized'
+    | 'invoices'
+    | 'invoicesInitialized'
     | 'dataByTaskGraphDetails'
     | 'paymentMethodExists'
     | 'selectedTenant'
-    | 'selectedMonth'
-    | 'manualBills'
+    | 'selectedInvoiceId'
 > => {
     return {
-        selectedMonth: '',
-        billingHistory: [],
-        billingHistoryInitialized: false,
+        selectedInvoiceId: null,
+        invoices: [],
+        invoicesInitialized: false,
         dataByTaskGraphDetails: [],
         paymentMethodExists: null,
         selectedTenant: '',
-        manualBills: [],
     };
 };
 
@@ -45,8 +47,8 @@ export const getInitialState = (
             set(
                 produce((state: BillingState) => {
                     state.selectedTenant = value;
-                    state.selectedMonth = '';
-                    state.billingHistory = [];
+                    state.selectedInvoiceId = null;
+                    state.invoices = [];
                     state.dataByTaskGraphDetails = [];
 
                     state.hydrated = false;
@@ -57,74 +59,66 @@ export const getInitialState = (
             );
         },
 
-        setSelectedMonth: (value) => {
+        setSelectedInvoice: (value) => {
             set(
                 produce((state: BillingState) => {
-                    state.selectedMonth = value;
+                    state.selectedInvoiceId = value;
                 }),
                 false,
                 'Selected Month Set'
             );
         },
 
-        setManualBills: (value) => {
+        setInvoices: (value) => {
             set(
                 produce((state: BillingState) => {
-                    state.manualBills = value;
-                }),
-                false,
-                'Selected Month Set'
-            );
-        },
-
-        setBillingHistory: (value) => {
-            set(
-                produce((state: BillingState) => {
-                    state.billingHistory = value;
-                    if (state.selectedMonth === '') {
-                        state.selectedMonth = value.reduce((a, b) =>
-                            new Date(a.billed_month) > new Date(b.billed_month)
-                                ? a
-                                : b
-                        ).billed_month;
-                    }
+                    state.invoices = value;
+                    state.selectedInvoiceId = invoiceId(value[0]);
                 }),
                 false,
                 'Billing Details Set'
             );
         },
 
-        setBillingHistoryInitialized: (value) => {
+        setInvoicesInitialized: (value) => {
             set(
                 produce((state: BillingState) => {
-                    state.billingHistoryInitialized = value;
+                    state.invoicesInitialized = value;
                 }),
                 false,
                 'Billing History Initialized'
             );
         },
 
-        updateBillingHistory: (value) => {
+        updateInvoices: (value) => {
             set(
                 produce((state: BillingState) => {
                     // This action is used to update the record of the active billing cycle at a regular interval.
                     // Since the selected tenant is subject to vary, the billed prefix of the record input must be
                     // validated against the selected tenant before altering the billing history.
-                    if (
-                        typeof value[0].task_usage_hours === 'number' &&
-                        typeof value[0].processed_data_gb === 'number' &&
-                        value[0].billed_prefix === state.selectedTenant
-                    ) {
-                        const { billingHistory } = get();
+                    if (value[0].billed_prefix === state.selectedTenant) {
+                        const { invoices } = get();
 
-                        const evaluatedBillingHistory = billingHistory.filter(
+                        const evaluatedBillingHistory = invoices.filter(
                             (record) =>
-                                record.billed_month !== value[0].billed_month
+                                record.date_start !== value[0].date_start &&
+                                record.date_end !== value[0].date_end
                         );
 
                         evaluatedBillingHistory.push(value[0]);
 
-                        state.billingHistory = evaluatedBillingHistory;
+                        if (
+                            !evaluatedBillingHistory.find(
+                                (inv) =>
+                                    invoiceId(inv) === state.selectedInvoiceId
+                            )
+                        ) {
+                            state.selectedInvoiceId = invoiceId(
+                                evaluatedBillingHistory[0]
+                            );
+                        }
+
+                        state.invoices = evaluatedBillingHistory;
                     }
                 }),
                 false,

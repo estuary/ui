@@ -8,9 +8,9 @@ import { CreditCard, DoubleCheck, Download } from 'iconoir-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
-    useBilling_billingHistory,
     useBilling_hydrated,
-    useBilling_selectedMonth,
+    useBilling_invoices,
+    useBilling_selectedInvoice,
     useBilling_selectedTenant,
 } from 'stores/Billing/hooks';
 import { TableColumns, TableStatuses } from 'types';
@@ -42,20 +42,14 @@ function BillingLineItemsTable() {
     const intl = useIntl();
 
     const selectedTenant = useBilling_selectedTenant();
-    const selectedMonth = useBilling_selectedMonth();
+    const selectedInvoice = useBilling_selectedInvoice();
 
     const hydrated = useBilling_hydrated();
-    const billingHistory = useBilling_billingHistory();
-
-    const billedMonth = useMemo(
-        () =>
-            billingHistory.find((bill) => bill.billed_month === selectedMonth),
-        [billingHistory, selectedMonth]
-    );
+    const invoices = useBilling_invoices();
 
     const dataRows = useMemo(
-        () => <Rows lineItems={billedMonth?.line_items ?? []} />,
-        [billedMonth]
+        () => <Rows lineItems={selectedInvoice?.line_items ?? []} />,
+        [selectedInvoice]
     );
 
     const [stripeInvoice, setStripeInvoice] = useState<StripeInvoice | null>(
@@ -65,16 +59,22 @@ function BillingLineItemsTable() {
     useEffect(() => {
         setStripeInvoice(null);
         void (async () => {
-            const resp = await getTenantInvoice(
-                selectedTenant,
-                selectedMonth,
-                'Usage'
-            );
-            if (resp.data?.invoice) {
-                setStripeInvoice(resp.data.invoice);
+            if (
+                selectedInvoice &&
+                selectedInvoice.invoice_type !== 'current_month'
+            ) {
+                const resp = await getTenantInvoice(
+                    selectedTenant,
+                    selectedInvoice.date_start,
+                    selectedInvoice.date_end,
+                    selectedInvoice.invoice_type
+                );
+                if (resp.data?.invoice) {
+                    setStripeInvoice(resp.data.invoice);
+                }
             }
         })();
-    }, [selectedMonth, selectedTenant]);
+    }, [selectedInvoice, selectedTenant]);
 
     return (
         <>
@@ -97,7 +97,7 @@ function BillingLineItemsTable() {
                             disableDoclink: true,
                         }}
                         tableState={
-                            billingHistory.length > 0
+                            invoices.length > 0
                                 ? { status: TableStatuses.DATA_FETCHED }
                                 : { status: TableStatuses.NO_EXISTING_DATA }
                         }
@@ -142,7 +142,9 @@ function BillingLineItemsTable() {
                     </Box>
                 ) : null}
                 <Box sx={{ flexGrow: 1 }} />
-                {billedMonth ? <TotalLines bill={billedMonth} /> : null}
+                {selectedInvoice ? (
+                    <TotalLines invoice={selectedInvoice} />
+                ) : null}
             </Box>
         </>
     );
