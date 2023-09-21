@@ -11,7 +11,7 @@ function MonetaryValue({ amount }: Props) {
     return (
         <TableCell align="right">
             <Typography>
-                {intl.formatNumber(amount, {
+                {intl.formatNumber(amount / 100, {
                     style: 'currency',
                     currency: 'USD',
                 })}

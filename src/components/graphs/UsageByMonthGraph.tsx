@@ -1,7 +1,9 @@
 import { useTheme } from '@mui/material';
 import useLegendConfig from 'components/graphs/useLegendConfig';
+import { eChartsColors } from 'context/Theme';
 import {
     eachMonthOfInterval,
+    endOfMonth,
     isWithinInterval,
     startOfMonth,
     sub,
@@ -50,6 +52,7 @@ function UsageByMonthGraph() {
 
     const seriesConfigs = useMemo(() => {
         const startDate = startOfMonth(sub(today, { months: 5 }));
+        const endDate = endOfMonth(today);
 
         const filteredHistory = invoices.filter(
             ({ invoice_type, date_start, date_end }) => {
@@ -58,11 +61,11 @@ function UsageByMonthGraph() {
                         invoice_type === 'usage') &&
                     isWithinInterval(stripTimeFromDate(date_start), {
                         start: startDate,
-                        end: today,
+                        end: endDate,
                     }) &&
                     isWithinInterval(stripTimeFromDate(date_end), {
                         start: startDate,
-                        end: today,
+                        end: endDate,
                     })
                 );
             }
@@ -139,9 +142,13 @@ function UsageByMonthGraph() {
             yAxis: [
                 {
                     type: 'value',
-                    name: '',
                     axisLabel: {
-                        formatter: '{value} GB',
+                        formatter: intl.messages[
+                            'admin.billing.graph.usageByMonth.dataFormatter'
+                        ] as string,
+                        color: eChartsColors[0],
+                        fontSize: 14,
+                        fontWeight: 'bold',
                     },
                     minInterval: 0.001,
                     splitLine: {
@@ -150,9 +157,13 @@ function UsageByMonthGraph() {
                 },
                 {
                     type: 'value',
-                    name: '',
                     axisLabel: {
-                        formatter: '{value} Hours',
+                        formatter: intl.messages[
+                            'admin.billing.graph.usageByMonth.hoursFormatter'
+                        ] as string,
+                        color: eChartsColors[1],
+                        fontSize: 14,
+                        fontWeight: 'bold',
                     },
                     minInterval: 0.001,
                 },
@@ -168,7 +179,14 @@ function UsageByMonthGraph() {
                     ]),
                     tooltip: {
                         valueFormatter: (value) => {
-                            return `${value} GB`;
+                            return intl.formatMessage(
+                                {
+                                    id: 'admin.billing.graph.usageByMonth.dataFormatter',
+                                },
+                                {
+                                    value,
+                                }
+                            ) as string;
                         },
                     },
                 },
@@ -182,7 +200,14 @@ function UsageByMonthGraph() {
                     ]),
                     tooltip: {
                         valueFormatter: (value) => {
-                            return `${value} Hours`;
+                            return intl.formatMessage(
+                                {
+                                    id: 'admin.billing.graph.usageByMonth.hoursFormatter',
+                                },
+                                {
+                                    value,
+                                }
+                            ) as string;
                         },
                     },
                     yAxisIndex: 1,
@@ -193,22 +218,21 @@ function UsageByMonthGraph() {
             },
             grid: {
                 left: 10,
-                top: 10,
+                top: 30,
                 right: 10,
-                bottom: 30,
+                bottom: 10,
                 containLabel: true,
             },
-            tooltip: {
-                trigger: 'axis',
-            },
+            tooltip: tooltipConfig,
             legend: {
                 ...legendConfig,
-                bottom: 0,
+                top: 0,
             },
         };
 
         myChart?.setOption(option);
     }, [
+        intl,
         legendConfig,
         months,
         myChart,

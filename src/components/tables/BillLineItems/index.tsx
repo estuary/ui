@@ -81,7 +81,7 @@ function BillingLineItemsTable() {
             <TableContainer component={Box}>
                 <Table
                     aria-label={intl.formatMessage({
-                        id: 'entityTable.title',
+                        id: 'admin.billing.table.line_items.title',
                     })}
                     size="small"
                     sx={{ minWidth: 350 }}
@@ -117,13 +117,21 @@ function BillingLineItemsTable() {
             >
                 {stripeInvoice ? (
                     <Box>
-                        <Tooltip title="Download invoice PDF">
+                        <Tooltip
+                            title={intl.formatMessage({
+                                id: 'admin.billing.table.line_items.tooltip.download_pdf',
+                            })}
+                        >
                             <IconButton href={stripeInvoice.invoice_pdf}>
                                 <Download />
                             </IconButton>
                         </Tooltip>
                         {stripeInvoice.status === 'open' ? (
-                            <Tooltip title="Pay invoice">
+                            <Tooltip
+                                title={intl.formatMessage({
+                                    id: 'admin.billing.table.line_items.tooltip.pay_invoice',
+                                })}
+                            >
                                 <IconButton
                                     href={stripeInvoice.hosted_invoice_url}
                                 >
@@ -131,7 +139,11 @@ function BillingLineItemsTable() {
                                 </IconButton>
                             </Tooltip>
                         ) : stripeInvoice.status === 'paid' ? (
-                            <Tooltip title="Invoice paid">
+                            <Tooltip
+                                title={intl.formatMessage({
+                                    id: 'admin.billing.table.line_items.tooltip.invoice_paid',
+                                })}
+                            >
                                 <span>
                                     <IconButton disabled>
                                         <DoubleCheck />

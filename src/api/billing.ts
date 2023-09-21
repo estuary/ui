@@ -98,6 +98,7 @@ const invoicesQuery = [
     'line_items',
     'subtotal',
     'invoice_type',
+    'extra',
 ].join(', ');
 
 export const getInvoicesBetween = (

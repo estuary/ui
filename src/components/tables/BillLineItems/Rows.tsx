@@ -20,8 +20,8 @@ function Row({ row }: RowProps) {
                 <Typography>{row.count}</Typography>
             </TableCell>
 
-            <MonetaryValue amount={row.rate / 100} />
-            <MonetaryValue amount={row.subtotal / 100} />
+            <MonetaryValue amount={row.rate} />
+            <MonetaryValue amount={row.subtotal} />
         </TableRow>
     );
 }

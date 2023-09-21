@@ -49,7 +49,7 @@ function Row({ row, isSelected }: RowProps) {
                 </Typography>
             </TableCell>
 
-            <MonetaryValue amount={row.subtotal / 100} />
+            <MonetaryValue amount={row.subtotal} />
         </TableRow>
     );
 }
