@@ -239,6 +239,7 @@ function UsageByMonthGraph() {
         seriesConfigs.data,
         seriesConfigs.hours,
         theme.palette.text.primary,
+        tooltipConfig,
     ]);
 
     return <div id={chartContainerId} style={{ height: CARD_AREA_HEIGHT }} />;
