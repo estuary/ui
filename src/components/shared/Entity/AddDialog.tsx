@@ -55,7 +55,6 @@ function AddDialog({
                 <Button
                     variant="outlined"
                     onClick={() => {
-                        console.log('toggling closed');
                         toggle(false);
                     }}
                 >
