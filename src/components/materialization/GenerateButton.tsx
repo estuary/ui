@@ -16,6 +16,7 @@ import {
 import { buttonSx } from 'components/shared/Entity/Header';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
+import invariableStores from 'context/Zustand/invariableStores';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -47,6 +48,7 @@ import {
 } from 'stores/ResourceConfig/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { generateTaskSpec } from 'utils/workflow-utils';
+import { useStore } from 'zustand';
 
 interface Props {
     disabled: boolean;
@@ -104,6 +106,12 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
     const resourceConfig = useResourceConfig_resourceConfig();
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
+
+    // Source Capture Store
+    const sourceCapture = useStore(
+        invariableStores['source-capture'],
+        (state) => state.sourceCapture
+    );
 
     // After the first generation we already have a name with the
     //  image name suffix (unless name changed)
@@ -200,7 +208,8 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
                 ENTITY_TYPE,
                 { image: imagePath, config: encryptedEndpointConfig.data },
                 resourceConfig,
-                existingTaskData
+                existingTaskData,
+                sourceCapture
             );
 
             // If there is a draft already with task data then update. We do not match on

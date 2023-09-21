@@ -43,6 +43,7 @@ function TransformList() {
     return (
         <EntityList
             content={content}
+            entity="collection"
             header={
                 <FormattedMessage id="newTransform.config.transform.header" />
             }

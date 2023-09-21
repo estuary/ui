@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { AddCollectionDialogCTAProps } from 'components/collection/Selector/Add/types';
+import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
 
 import { FormattedMessage } from 'react-intl';
@@ -25,9 +25,9 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         useResourceConfig_setRestrictedDiscoveredCollections();
 
     const close = () => {
-        const value = Array.from(selected).map(([_id, name]) => {
+        const value = Array.from(selected).map(([_id, row]) => {
             return {
-                name,
+                name: row.catalog_name,
             };
         });
 

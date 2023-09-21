@@ -4,6 +4,7 @@ import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import { createEditorStore } from 'components/editor/Store/create';
+import SourceCapture from 'components/materialization/SourceCapture';
 import { useEntityType } from 'context/EntityContext';
 import { LocalZustandProvider } from 'context/LocalZustand';
 import { alternativeReflexContainerBackground } from 'context/Theme';
@@ -131,6 +132,8 @@ function BindingsMultiEditor({
             </Typography>
 
             {entityType === 'capture' ? <AutoDiscoverySettings /> : null}
+
+            {entityType === 'materialization' ? <SourceCapture /> : null}
 
             <ListAndDetails
                 list={

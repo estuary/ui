@@ -1,8 +1,10 @@
 import { TableCell, TableRow, useTheme } from '@mui/material';
+import ChipListCell from 'components/tables/cells/ChipList';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'context/Theme';
 import invariableStores from 'context/Zustand/invariableStores';
+import { useMemo } from 'react';
 
 import { useStore } from 'zustand';
 import { catalogNameColumn, publishedColumn } from './shared';
@@ -38,9 +40,7 @@ function Row({ row, setRow }: RowProps) {
             key={`collection-selector-table-${row.id}`}
             selected={isSelected}
             onClick={
-                disabled
-                    ? undefined
-                    : () => setRow(row.id, row[catalogNameColumn], !isSelected)
+                disabled ? undefined : () => setRow(row.id, row, !isSelected)
             }
             sx={getEntityTableRowSx(theme, disabled)}
         >
@@ -56,6 +56,9 @@ function Row({ row, setRow }: RowProps) {
             >
                 {row[catalogNameColumn]}
             </TableCell>
+            {row.writes_to ? (
+                <ChipListCell values={row.writes_to} maxChips={5} />
+            ) : undefined}
             <TimeStamp time={row[publishedColumn]} />
         </TableRow>
     );
@@ -69,12 +72,15 @@ function Rows({ data }: RowsProps) {
         }
     );
 
-    return (
-        <>
-            {data.map((row) => (
-                <Row key={row.id} row={row} setRow={setRow} />
-            ))}
-        </>
+    return useMemo(
+        () => (
+            <>
+                {data.map((row) => (
+                    <Row key={row.id} row={row} setRow={setRow} />
+                ))}
+            </>
+        ),
+        [data, setRow]
     );
 }
 

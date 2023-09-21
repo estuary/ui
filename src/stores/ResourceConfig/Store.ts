@@ -425,10 +425,6 @@ const getInitialState = (
     setResourceConfig: (key, value, disableCheckingErrors, disableOmit) => {
         set(
             produce((state: ResourceConfigState) => {
-                console.log('setResourceConfig', {
-                    key,
-                    value,
-                });
                 const { resourceSchema, collections } = get();
 
                 if (typeof key === 'string') {

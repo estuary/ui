@@ -21,7 +21,8 @@ interface Props extends AddCollectionDialogCTAProps {
     title: string | ReactNode;
 }
 
-function AddCollectionDialog({
+function AddDialog({
+    entity,
     id,
     primaryCTA,
     open,
@@ -39,16 +40,24 @@ function AddCollectionDialog({
                 <Stack spacing={3} sx={{ pt: 2 }}>
                     <StepWrapper>
                         <Box>
-                            <BindingSelectorTable
-                                selectedCollections={selectedCollections}
-                            />
+                            {open ? (
+                                <BindingSelectorTable
+                                    entity={entity}
+                                    selectedCollections={selectedCollections}
+                                />
+                            ) : null}
                         </Box>
                     </StepWrapper>
                 </Stack>
             </DialogContent>
 
             <DialogActions>
-                <Button variant="outlined" onClick={() => toggle(false)}>
+                <Button
+                    variant="outlined"
+                    onClick={() => {
+                        toggle(false);
+                    }}
+                >
                     <FormattedMessage id="cta.cancel" />
                 </Button>
 
@@ -58,4 +67,4 @@ function AddCollectionDialog({
     );
 }
 
-export default AddCollectionDialog;
+export default AddDialog;

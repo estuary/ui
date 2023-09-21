@@ -265,7 +265,7 @@ const Header: ResolvedIntlConfig['messages'] = {
 
 const Home: ResolvedIntlConfig['messages'] = {
     'home.main.header': `Welcome to Flow!`,
-    'home.main.description': `Click the Captures icon on the menu bar to get started.`,
+    'home.main.description': `Click the captures icon on the menu bar to get started.`,
 
     'home.hero.tab.ariaLabel': `Welcome Image Tabs`,
     'home.hero.tab.companyOverview': `What we do`,
@@ -279,7 +279,7 @@ const Home: ResolvedIntlConfig['messages'] = {
 
     'home.hero.companyDetails.cta': `New capture`,
     'home.hero.companyDetails.step1': `Set up real-time data ingestion from your sources. Click “New Capture” to get started.`,
-    'home.hero.companyDetails.step2': `Keep destination systems up to date with Materializations: low latency views of your data.`,
+    'home.hero.companyDetails.step2': `Keep destination systems up to date with materializations: low latency views of your data.`,
 
     'home.hero.demo.demoTenant.header': `Testing out Flow just got easier`,
     'home.hero.demo.demoTenant': `Estuary has a public {sharableTenant} tenant that can help you see Flow in action while you get set up. To give your tenant, {userTenant}, read access to it, {button}.`,
@@ -288,17 +288,17 @@ const Home: ResolvedIntlConfig['messages'] = {
     'home.hero.1.title': `Wikipedia Data`,
     'home.hero.1.message': `Flow {emphasis} about 100 events per second from the Wikipedia’s API.`,
     'home.hero.1.message.emphasis': `captures`,
-    'home.hero.1.button': `See the Capture`,
+    'home.hero.1.button': `See the capture`,
 
     'home.hero.2.title': `Transformation`,
     'home.hero.2.message': `We use a {emphasis} to aggregate the raw data.`,
     'home.hero.2.message.emphasis': CommonMessages['terms.derivation'],
-    'home.hero.2.button': `See the Collection`,
+    'home.hero.2.button': `See the collection`,
 
     'home.hero.3.title': `Google Sheets`,
     'home.hero.3.message': `Flow {emphasis} a fact table with real-time updates.`,
     'home.hero.3.message.emphasis': `materializes`,
-    'home.hero.3.button': `See the Materialization`,
+    'home.hero.3.button': `See the materialization`,
 
     'home.hero.button': `See The Demo`,
 };
@@ -601,12 +601,12 @@ const Collections: ResolvedIntlConfig['messages'] = {
     'collectionsTable.cta.new': `New ${CommonMessages['terms.transformation']}`,
     'collectionsTable.detailsCTA': `Details`,
     'collectionsTable.filterLabel': `Filter collections`,
-    'collections.message1': `You currently have no collections. Click the Captures icon on the menu bar to get started.`,
+    'collections.message1': `You currently have no collections. Click the captures icon on the menu bar to get started.`,
     'collections.message2': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
     'collections.message2.docLink': `collections`,
     'collections.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
     'collectionsPreview.notFound.title': `Not Found`,
-    'collectionsPreview.notFound.message': `We were unable to find any data which could mean the Capture has not ingested data yet or is not running. Check the status on the Captures page to make sure it is running.`,
+    'collectionsPreview.notFound.message': `We were unable to find any data which could mean the capture has not ingested data yet or is not running. Check the status on the Captures page to make sure it is running.`,
     'collectionsPreview.tooFewDocuments.title': `Low document count`,
     'collectionsPreview.tooFewDocuments.message': `Fewer documents than desired were found. This could mean that your collection isn't seeing very much data.`,
     'collectionsPreview.tooManyBytes.title': `Large documents`,
@@ -716,7 +716,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
     'captureEdit.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
     'captureEdit.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above or edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
-    'captureEdit.collections.heading': `3. Output Collections`,
+    'captureEdit.collections.heading': `3. Source Collections`,
     'captureEdit.collectionSelector.heading': `Collection Selector`,
     'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
@@ -800,7 +800,7 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
 
 const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.details.heading': `1. Materialization Details`,
-    'materializationEdit.collections.heading': `3. Output Collections`,
+    'materializationEdit.collections.heading': `3. Source Collections`,
     'materializationEdit.config.source.doclink': `Connector Help`,
     'materializationEdit.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
     'materializationEdit.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above or edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
@@ -1147,20 +1147,20 @@ const EntityEvolution: ResolvedIntlConfig['messages'] = {
     'entityEvolution.error.note': `Note: This may result in additional cost as new versions are backfilled.`,
 
     // Single quotes are special and must be doubled: https://formatjs.io/docs/core-concepts/icu-syntax#quoting--escaping
-    'entityEvolution.action.recreateOneBinding.description': `the Materialization ''{materializationName}'' will be updated to materialize the collection into a new resource`,
+    'entityEvolution.action.recreateOneBinding.description': `the materialization ''{materializationName}'' will be updated to materialize the collection into a new resource`,
     'entityEvolution.action.recreateBindings.description': `{materializationCount} {materializationCount, plural,
         one {Materialization}
         other {Materializations}
     } will be updated to materialize the collection into new resources`,
     'entityEvolution.action.recreateBindings.help': `Any materializations of this collection will be updated to materialize it
-    into a new resource (database table, for example) with an incremented version suffix (like "_v2"). The Collection itself will
+    into a new resource (database table, for example) with an incremented version suffix (like "_v2"). The collection itself will
     have the schema updated in place, and will retain all current data. The materialization will backfill from the beginning of
     this collection, but other bindings in the materialization will not be affected.`,
 
     'entityEvolution.action.recreateCollection.description': `Collection will be re-created as ''{newName}'' because {reason}`,
-    'entityEvolution.action.recreateCollection.help': `This will create a new Collection with the name shown.
-    The Capture will be updated to write into the new collection, and will backfill the collection from source system.
-    Any Materializations will also be updated to materialize the new collection instead of the old one.
+    'entityEvolution.action.recreateCollection.help': `This will create a new collection with the name shown.
+    The capture will be updated to write into the new collection, and will backfill the collection from source system.
+    Any materializations will also be updated to materialize the new collection instead of the old one.
     The result will be a new resource (database table, for example) with an incremented version suffix (like "_v2")`,
 
     'entityEvolution.action.recreateCollection.reason.keyChange':

@@ -58,11 +58,6 @@ export interface CollectionQueryWithStats extends CollectionQuery {
     stats?: CatalogStats;
 }
 
-interface CollectionSelectorQuery {
-    catalog_name: string;
-    spec_type: string;
-}
-
 const captureColumns = commonColumns.concat(['writes_to']).join(',');
 const captureColumnsWithSpec = captureColumns.concat(',spec');
 
@@ -138,16 +133,33 @@ const getLiveSpecs_collections = (
     return queryBuilder;
 };
 
+const collectionsSelectorColumns = 'catalog_name, id, updated_at, spec_type';
+const collectionsSelectorColumns_capture = `${collectionsSelectorColumns}, writes_to`;
+
+interface CollectionSelectorQuery {
+    catalog_name: string;
+    id: string;
+    spec_type: Entity;
+    updated_at: string;
+    writes_to?: string[];
+}
+
 const getLiveSpecs_collectionsSelector = (
     pagination: any,
+    specType: Entity,
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
         .from<CollectionSelectorQuery>(TABLES.LIVE_SPECS_EXT)
-        .select('catalog_name, id, updated_at, spec_type', {
-            count: 'exact',
-        });
+        .select(
+            specType === 'capture'
+                ? collectionsSelectorColumns_capture
+                : collectionsSelectorColumns,
+            {
+                count: 'exact',
+            }
+        );
 
     queryBuilder = defaultTableFilter<CollectionSelectorQuery>(
         queryBuilder,
@@ -155,7 +167,7 @@ const getLiveSpecs_collectionsSelector = (
         searchQuery,
         sorting,
         pagination
-    ).eq('spec_type', 'collection');
+    ).eq('spec_type', specType);
 
     return queryBuilder;
 };

@@ -46,7 +46,7 @@ export interface EditorStoreState<T> {
     specs: T[] | null;
     setSpecs: (newVal: EditorStoreState<T>['specs']) => void;
 
-    // TODO: Confirm that a server update will always be a DraftSpecQuery.
+    // TODO (editor store) Confirm that a server update will always be a DraftSpecQuery.
     serverUpdate: any | null;
     setServerUpdate: (newVal: EditorStoreState<T>['serverUpdate']) => void;
 
@@ -68,6 +68,7 @@ export interface EditorStoreState<T> {
     ) => void;
 
     // Misc.
+    // TODO (editor store) need to include a boolean for storing off if hydration is done
     queryResponse: DraftSpecResponse;
     setQueryResponse: (value: EditorStoreState<T>['queryResponse']) => void;
 
