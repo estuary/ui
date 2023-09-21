@@ -18,6 +18,10 @@ const getUTCDate = (date: Date) => {
     return new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
 };
 
+// TODO (MessageWithEmphasis) we can use MessageWithEmphasis as the basis of this
+//  I think not including the hyphens in the `strong` just adds complexity that is not totally needed
+//  So to simplify I think we can create two messages that handle the two main cases below
+//      and just pass in the {start_date} and {end_date} as values.
 function DateRange({ start_date, end_date }: Props) {
     const intl = useIntl();
     const [parsed_start, parsed_end] = useMemo(
