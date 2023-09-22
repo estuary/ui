@@ -1,8 +1,7 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import {
     endOfWeek,
-    format,
-    startOfHour,
+    parseISO,
     startOfMonth,
     startOfWeek,
     sub,
@@ -88,14 +87,33 @@ const MATERIALIZATION_QUERY = `
 `;
 
 type AllowedDates = Date | string | number;
+type Grains = 'hourly' | 'daily' | 'monthly';
 
-// This will format the date so that it just gets the month, day, year
-//  We do not need the full minute/hour/offset because the backend is not saving those
-export const formatToUTC = (date: AllowedDates, includeHour?: boolean) =>
-    format(
-        new UTCDate(date),
-        `yyyy-MM-dd${includeHour ? ' HH:00:00' : "' 00:00:00+00'"}`
+// Make sure that this matched the derivation closely
+//      Function : grainsFromTS
+//      Source : https://github.com/estuary/flow/blob/master/ops-catalog/catalog-stats.ts
+export const convertToUTC = (date: AllowedDates, grain: Grains) => {
+    const isoUTC = new UTCDate(
+        typeof date === 'string' ? parseISO(date) : date
     );
+
+    isoUTC.setUTCMilliseconds(0);
+    isoUTC.setUTCSeconds(0);
+    isoUTC.setUTCMinutes(0);
+
+    // If hourly then we do none of the magic below
+
+    if (grain === 'daily') {
+        isoUTC.setUTCHours(0);
+    }
+
+    if (grain === 'monthly') {
+        isoUTC.setUTCHours(0);
+        isoUTC.setUTCDate(1);
+    }
+
+    return isoUTC.toISOString();
+};
 
 // TODO (stats) add support for which stats columns each entity wants
 //  Right now all tables run the same query even though they only need
@@ -108,7 +126,7 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
         .in('catalog_name', names)
         .order('catalog_name');
 
-    const today = new UTCDate();
+    const today = new Date();
     const yesterday = subDays(today, 1);
     const lastWeek = subWeeks(today, 1);
     const lastMonth = subMonths(today, 1);
@@ -117,39 +135,39 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
         // Day Range
         case 'today':
             queryBuilder = queryBuilder
-                .eq('ts', formatToUTC(today))
+                .eq('ts', convertToUTC(today, 'daily'))
                 .eq('grain', 'daily');
             break;
         case 'yesterday':
             queryBuilder = queryBuilder
-                .eq('ts', formatToUTC(yesterday))
+                .eq('ts', convertToUTC(yesterday, 'daily'))
                 .eq('grain', 'daily');
             break;
 
         // Week Range
         case 'thisWeek':
             queryBuilder = queryBuilder
-                .gte('ts', formatToUTC(startOfWeek(today)))
-                .lt('ts', formatToUTC(endOfWeek(today)))
+                .gt('ts', convertToUTC(startOfWeek(today), 'daily'))
+                .lte('ts', convertToUTC(endOfWeek(today), 'daily'))
                 .eq('grain', 'daily');
             break;
         case 'lastWeek':
             queryBuilder = queryBuilder
-                .gte('ts', formatToUTC(startOfWeek(lastWeek)))
-                .lt('ts', formatToUTC(endOfWeek(lastWeek)))
+                .gt('ts', convertToUTC(startOfWeek(lastWeek), 'daily'))
+                .lte('ts', convertToUTC(endOfWeek(lastWeek), 'daily'))
                 .eq('grain', 'daily');
             break;
 
         // Month Range
         case 'thisMonth':
             queryBuilder = queryBuilder
-                .eq('ts', formatToUTC(startOfMonth(today)))
+                .eq('ts', convertToUTC(today, 'monthly'))
                 .eq('grain', 'monthly');
 
             break;
         case 'lastMonth':
             queryBuilder = queryBuilder
-                .eq('ts', formatToUTC(startOfMonth(lastMonth)))
+                .eq('ts', convertToUTC(lastMonth, 'monthly'))
                 .eq('grain', 'monthly');
             break;
 
@@ -180,8 +198,8 @@ const getStatsForBilling = (tenants: string[], startDate: AllowedDates) => {
         `
         )
         .eq('grain', 'monthly')
-        .gte('ts', formatToUTC(startDate))
-        .lte('ts', formatToUTC(today))
+        .gte('ts', convertToUTC(startDate, 'monthly'))
+        .lte('ts', convertToUTC(today, 'monthly'))
         .or(subjectRoleFilters)
         .order('ts', { ascending: false });
 };
@@ -195,8 +213,8 @@ const getStatsForDetails = (
     const current = new UTCDate();
     const past = duration ? sub(current, duration) : current;
 
-    const gt = formatToUTC(startOfHour(past), true);
-    const lte = formatToUTC(startOfHour(current), true);
+    const gt = convertToUTC(past, 'hourly');
+    const lte = convertToUTC(current, 'hourly');
 
     let query: string;
     switch (entityType) {
@@ -254,8 +272,8 @@ const getStatsForBillingHistoryTable = (
             { count: 'exact' }
         )
         .eq('grain', 'monthly')
-        .gte('ts', formatToUTC(startMonth))
-        .lte('ts', formatToUTC(today))
+        .gte('ts', convertToUTC(startMonth, 'monthly'))
+        .lte('ts', convertToUTC(today, 'monthly'))
         .or(subjectRoleFilters);
 
     queryBuilder = defaultTableFilter<CatalogStats_Billing>(
