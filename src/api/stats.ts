@@ -101,8 +101,6 @@ export const convertToUTC = (date: AllowedDates, grain: Grains) => {
     isoUTC.setUTCSeconds(0);
     isoUTC.setUTCMinutes(0);
 
-    // If hourly then we do none of the magic below
-
     if (grain === 'daily') {
         isoUTC.setUTCHours(0);
     }
