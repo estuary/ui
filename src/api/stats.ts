@@ -1,9 +1,11 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import {
-    endOfWeek,
+    isSaturday,
+    isSunday,
+    nextSaturday,
     parseISO,
+    previousSunday,
     startOfMonth,
-    startOfWeek,
     sub,
     subDays,
     subMonths,
@@ -128,9 +130,12 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
         .order('catalog_name');
 
     const today = new Date();
-    const yesterday = subDays(today, 1);
-    const lastWeek = subWeeks(today, 1);
-    const lastMonth = subMonths(today, 1);
+
+    // startOf/endOf functions can give some odd results so just forcing exactly
+    //  what days we want to say are the start and end of a week based on the
+    //  current day.
+    const weekStart = isSunday(today) ? today : previousSunday(today);
+    const weekEnd = isSaturday(today) ? today : nextSaturday(today);
 
     switch (filter) {
         // Day Range
@@ -141,21 +146,21 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
             break;
         case 'yesterday':
             queryBuilder = queryBuilder
-                .eq('ts', convertToUTC(yesterday, dailyGrain))
+                .eq('ts', convertToUTC(subDays(today, 1), dailyGrain))
                 .eq('grain', dailyGrain);
             break;
 
         // Week Range
         case 'thisWeek':
             queryBuilder = queryBuilder
-                .gt('ts', convertToUTC(startOfWeek(today), dailyGrain))
-                .lte('ts', convertToUTC(endOfWeek(today), dailyGrain))
+                .gte('ts', convertToUTC(weekStart, dailyGrain))
+                .lte('ts', convertToUTC(weekEnd, dailyGrain))
                 .eq('grain', dailyGrain);
             break;
         case 'lastWeek':
             queryBuilder = queryBuilder
-                .gt('ts', convertToUTC(startOfWeek(lastWeek), dailyGrain))
-                .lte('ts', convertToUTC(endOfWeek(lastWeek), dailyGrain))
+                .gte('ts', convertToUTC(subWeeks(weekStart, 1), dailyGrain))
+                .lte('ts', convertToUTC(subWeeks(weekEnd, 1), dailyGrain))
                 .eq('grain', dailyGrain);
             break;
 
@@ -168,7 +173,7 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
             break;
         case 'lastMonth':
             queryBuilder = queryBuilder
-                .eq('ts', convertToUTC(lastMonth, monthlyGrain))
+                .eq('ts', convertToUTC(subMonths(today, 1), monthlyGrain))
                 .eq('grain', monthlyGrain);
             break;
 
