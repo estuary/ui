@@ -166,6 +166,8 @@ function FieldSelectionViewer({ collectionName }: Props) {
                     evaluatedFieldMetadata = selectedBinding.fields;
 
                     setRecommendFields(selectedBinding.fields.recommended);
+                } else {
+                    setRecommendFields(true);
                 }
 
                 if (evaluatedConstraints) {
