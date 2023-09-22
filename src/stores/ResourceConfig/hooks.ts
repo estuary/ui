@@ -273,6 +273,23 @@ export const useResourceConfig_setServerUpdateRequired = () => {
     );
 };
 
+export const useResourceConfig_rediscoveryRequired = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['rediscoveryRequired']
+    >(ResourceConfigStoreNames.GENERAL, (state) => state.rediscoveryRequired);
+};
+
+export const useResourceConfig_setRediscoveryRequired = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setRediscoveryRequired']
+    >(
+        ResourceConfigStoreNames.GENERAL,
+        (state) => state.setRediscoveryRequired
+    );
+};
+
 export const useResourceConfig_evaluateDiscoveredCollections = () => {
     return useZustandStore<
         ResourceConfigState,

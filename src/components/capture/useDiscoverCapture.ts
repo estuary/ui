@@ -53,6 +53,7 @@ import { FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
+    useResourceConfig_setRediscoveryRequired,
 } from 'stores/ResourceConfig/hooks';
 import { Entity } from 'types';
 import { encryptEndpointConfig } from 'utils/sops-utils';
@@ -112,6 +113,8 @@ function useDiscoverCapture(
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
     const setPreviousEndpointConfig =
         useEndpointConfigStore_setPreviousEndpointConfig();
+
+    const setRediscoveryRequired = useResourceConfig_setRediscoveryRequired();
 
     // Resource Config Store
     const resourceConfig = useResourceConfig_resourceConfig();
@@ -185,6 +188,8 @@ function useDiscoverCapture(
                     //      https://github.com/estuary/ui/pull/650#pullrequestreview-1466195898
                     setServerUpdateRequired(false);
 
+                    setRediscoveryRequired(false);
+
                     trackEvent(payload);
                 },
                 (payload: any) => {
@@ -211,6 +216,7 @@ function useDiscoverCapture(
             setDraftedEntityName,
             setFormState,
             setPreviousEndpointConfig,
+            setRediscoveryRequired,
             setServerUpdateRequired,
             storeDiscoveredCollections,
             supabaseClient,
