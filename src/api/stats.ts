@@ -131,6 +131,7 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
 
     const today = new Date();
 
+    // TODO (locale) allow users to have proper locale settings used for start and end of weeks
     // startOf/endOf functions can give some odd results so just forcing exactly
     //  what days we want to say are the start and end of a week based on the
     //  current day.
