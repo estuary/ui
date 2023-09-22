@@ -61,8 +61,8 @@ function Row({ row }: RowProps) {
                     <TableCell colSpan={4}>{row.catalog_prefix}</TableCell>
                     <TimeStamp time={row.updated_at} enableRelative />
                 </TableRow>
-                {row.spec.stores.map((store) => (
-                    <TableRow key={key}>
+                {row.spec.stores.map((store, index) => (
+                    <TableRow key={`${key}_stores_${index}`}>
                         <TableCell />
                         <DataCells store={store} />
                         <TableCell />

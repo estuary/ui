@@ -1,15 +1,17 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import {
-    endOfWeek,
-    startOfHour,
+    isSaturday,
+    isSunday,
+    nextSaturday,
+    parseISO,
+    previousSunday,
     startOfMonth,
-    startOfWeek,
     sub,
     subDays,
     subMonths,
     subWeeks,
 } from 'date-fns';
-import { formatInTimeZone } from 'date-fns-tz';
+import { UTCDate } from '@date-fns/utc';
 import {
     defaultTableFilter,
     handleFailure,
@@ -86,16 +88,35 @@ const MATERIALIZATION_QUERY = `
     bytes_by:bytes_read_by_me
 `;
 
+const hourlyGrain = 'hourly';
+const dailyGrain = 'daily';
+const monthlyGrain = 'monthly';
+type Grains = typeof hourlyGrain | typeof dailyGrain | typeof monthlyGrain;
 type AllowedDates = Date | string | number;
 
-// This will format the date so that it just gets the month, day, year
-//  We do not need the full minute/hour/offset because the backend is not saving those
-export const formatToGMT = (date: AllowedDates, includeHour?: boolean) =>
-    formatInTimeZone(
-        date,
-        'GMT',
-        `yyyy-MM-dd${includeHour ? ' HH:00:00' : "' 00:00:00+00'"}`
+// Make sure that this matched the derivation closely
+//      Function : grainsFromTS
+//      Source : https://github.com/estuary/flow/blob/master/ops-catalog/catalog-stats.ts
+export const convertToUTC = (date: AllowedDates, grain: Grains) => {
+    const isoUTC = new UTCDate(
+        typeof date === 'string' ? parseISO(date) : date
     );
+
+    isoUTC.setUTCMilliseconds(0);
+    isoUTC.setUTCSeconds(0);
+    isoUTC.setUTCMinutes(0);
+
+    if (grain === dailyGrain) {
+        isoUTC.setUTCHours(0);
+    }
+
+    if (grain === monthlyGrain) {
+        isoUTC.setUTCHours(0);
+        isoUTC.setUTCDate(1);
+    }
+
+    return isoUTC.toISOString();
+};
 
 // TODO (stats) add support for which stats columns each entity wants
 //  Right now all tables run the same query even though they only need
@@ -109,48 +130,52 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
         .order('catalog_name');
 
     const today = new Date();
-    const yesterday = subDays(today, 1);
-    const lastWeek = subWeeks(today, 1);
-    const lastMonth = subMonths(today, 1);
+
+    // TODO (locale) allow users to have proper locale settings used for start and end of weeks
+    // startOf/endOf functions can give some odd results so just forcing exactly
+    //  what days we want to say are the start and end of a week based on the
+    //  current day.
+    const weekStart = isSunday(today) ? today : previousSunday(today);
+    const weekEnd = isSaturday(today) ? today : nextSaturday(today);
 
     switch (filter) {
         // Day Range
         case 'today':
             queryBuilder = queryBuilder
-                .eq('ts', formatToGMT(today))
-                .eq('grain', 'daily');
+                .eq('ts', convertToUTC(today, dailyGrain))
+                .eq('grain', dailyGrain);
             break;
         case 'yesterday':
             queryBuilder = queryBuilder
-                .eq('ts', formatToGMT(yesterday))
-                .eq('grain', 'daily');
+                .eq('ts', convertToUTC(subDays(today, 1), dailyGrain))
+                .eq('grain', dailyGrain);
             break;
 
         // Week Range
         case 'thisWeek':
             queryBuilder = queryBuilder
-                .gte('ts', formatToGMT(startOfWeek(today)))
-                .lt('ts', formatToGMT(endOfWeek(today)))
-                .eq('grain', 'daily');
+                .gte('ts', convertToUTC(weekStart, dailyGrain))
+                .lte('ts', convertToUTC(weekEnd, dailyGrain))
+                .eq('grain', dailyGrain);
             break;
         case 'lastWeek':
             queryBuilder = queryBuilder
-                .gte('ts', formatToGMT(startOfWeek(lastWeek)))
-                .lt('ts', formatToGMT(endOfWeek(lastWeek)))
-                .eq('grain', 'daily');
+                .gte('ts', convertToUTC(subWeeks(weekStart, 1), dailyGrain))
+                .lte('ts', convertToUTC(subWeeks(weekEnd, 1), dailyGrain))
+                .eq('grain', dailyGrain);
             break;
 
         // Month Range
         case 'thisMonth':
             queryBuilder = queryBuilder
-                .eq('ts', formatToGMT(startOfMonth(today)))
-                .eq('grain', 'monthly');
+                .eq('ts', convertToUTC(today, monthlyGrain))
+                .eq('grain', monthlyGrain);
 
             break;
         case 'lastMonth':
             queryBuilder = queryBuilder
-                .eq('ts', formatToGMT(startOfMonth(lastMonth)))
-                .eq('grain', 'monthly');
+                .eq('ts', convertToUTC(subMonths(today, 1), monthlyGrain))
+                .eq('grain', monthlyGrain);
             break;
 
         default:
@@ -179,9 +204,9 @@ const getStatsForBilling = (tenants: string[], startDate: AllowedDates) => {
             flow_document
         `
         )
-        .eq('grain', 'monthly')
-        .gte('ts', formatToGMT(startDate))
-        .lte('ts', formatToGMT(today))
+        .eq('grain', monthlyGrain)
+        .gte('ts', convertToUTC(startDate, monthlyGrain))
+        .lte('ts', convertToUTC(today, monthlyGrain))
         .or(subjectRoleFilters)
         .order('ts', { ascending: false });
 };
@@ -192,11 +217,11 @@ const getStatsForDetails = (
     grain: string,
     duration?: Duration
 ) => {
-    const today = new Date();
-    const past = duration ? sub(today, duration) : today;
+    const current = new UTCDate();
+    const past = duration ? sub(current, duration) : current;
 
-    const gt = formatToGMT(startOfHour(past), true);
-    const lte = formatToGMT(startOfHour(today), true);
+    const gt = convertToUTC(past, hourlyGrain);
+    const lte = convertToUTC(current, hourlyGrain);
 
     let query: string;
     switch (entityType) {
@@ -253,9 +278,9 @@ const getStatsForBillingHistoryTable = (
         `,
             { count: 'exact' }
         )
-        .eq('grain', 'monthly')
-        .gte('ts', formatToGMT(startMonth))
-        .lte('ts', formatToGMT(today))
+        .eq('grain', monthlyGrain)
+        .gte('ts', convertToUTC(startMonth, monthlyGrain))
+        .lte('ts', convertToUTC(today, monthlyGrain))
         .or(subjectRoleFilters);
 
     queryBuilder = defaultTableFilter<CatalogStats_Billing>(
