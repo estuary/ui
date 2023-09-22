@@ -86,8 +86,11 @@ const MATERIALIZATION_QUERY = `
     bytes_by:bytes_read_by_me
 `;
 
+const hourlyGrain = 'hourly';
+const dailyGrain = 'daily';
+const monthlyGrain = 'monthly';
+type Grains = typeof hourlyGrain | typeof dailyGrain | typeof monthlyGrain;
 type AllowedDates = Date | string | number;
-type Grains = 'hourly' | 'daily' | 'monthly';
 
 // Make sure that this matched the derivation closely
 //      Function : grainsFromTS
@@ -101,11 +104,11 @@ export const convertToUTC = (date: AllowedDates, grain: Grains) => {
     isoUTC.setUTCSeconds(0);
     isoUTC.setUTCMinutes(0);
 
-    if (grain === 'daily') {
+    if (grain === dailyGrain) {
         isoUTC.setUTCHours(0);
     }
 
-    if (grain === 'monthly') {
+    if (grain === monthlyGrain) {
         isoUTC.setUTCHours(0);
         isoUTC.setUTCDate(1);
     }
@@ -133,40 +136,40 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
         // Day Range
         case 'today':
             queryBuilder = queryBuilder
-                .eq('ts', convertToUTC(today, 'daily'))
-                .eq('grain', 'daily');
+                .eq('ts', convertToUTC(today, dailyGrain))
+                .eq('grain', dailyGrain);
             break;
         case 'yesterday':
             queryBuilder = queryBuilder
-                .eq('ts', convertToUTC(yesterday, 'daily'))
-                .eq('grain', 'daily');
+                .eq('ts', convertToUTC(yesterday, dailyGrain))
+                .eq('grain', dailyGrain);
             break;
 
         // Week Range
         case 'thisWeek':
             queryBuilder = queryBuilder
-                .gt('ts', convertToUTC(startOfWeek(today), 'daily'))
-                .lte('ts', convertToUTC(endOfWeek(today), 'daily'))
-                .eq('grain', 'daily');
+                .gt('ts', convertToUTC(startOfWeek(today), dailyGrain))
+                .lte('ts', convertToUTC(endOfWeek(today), dailyGrain))
+                .eq('grain', dailyGrain);
             break;
         case 'lastWeek':
             queryBuilder = queryBuilder
-                .gt('ts', convertToUTC(startOfWeek(lastWeek), 'daily'))
-                .lte('ts', convertToUTC(endOfWeek(lastWeek), 'daily'))
-                .eq('grain', 'daily');
+                .gt('ts', convertToUTC(startOfWeek(lastWeek), dailyGrain))
+                .lte('ts', convertToUTC(endOfWeek(lastWeek), dailyGrain))
+                .eq('grain', dailyGrain);
             break;
 
         // Month Range
         case 'thisMonth':
             queryBuilder = queryBuilder
-                .eq('ts', convertToUTC(today, 'monthly'))
-                .eq('grain', 'monthly');
+                .eq('ts', convertToUTC(today, monthlyGrain))
+                .eq('grain', monthlyGrain);
 
             break;
         case 'lastMonth':
             queryBuilder = queryBuilder
-                .eq('ts', convertToUTC(lastMonth, 'monthly'))
-                .eq('grain', 'monthly');
+                .eq('ts', convertToUTC(lastMonth, monthlyGrain))
+                .eq('grain', monthlyGrain);
             break;
 
         default:
@@ -195,9 +198,9 @@ const getStatsForBilling = (tenants: string[], startDate: AllowedDates) => {
             flow_document
         `
         )
-        .eq('grain', 'monthly')
-        .gte('ts', convertToUTC(startDate, 'monthly'))
-        .lte('ts', convertToUTC(today, 'monthly'))
+        .eq('grain', monthlyGrain)
+        .gte('ts', convertToUTC(startDate, monthlyGrain))
+        .lte('ts', convertToUTC(today, monthlyGrain))
         .or(subjectRoleFilters)
         .order('ts', { ascending: false });
 };
@@ -211,8 +214,8 @@ const getStatsForDetails = (
     const current = new UTCDate();
     const past = duration ? sub(current, duration) : current;
 
-    const gt = convertToUTC(past, 'hourly');
-    const lte = convertToUTC(current, 'hourly');
+    const gt = convertToUTC(past, hourlyGrain);
+    const lte = convertToUTC(current, hourlyGrain);
 
     let query: string;
     switch (entityType) {
@@ -269,9 +272,9 @@ const getStatsForBillingHistoryTable = (
         `,
             { count: 'exact' }
         )
-        .eq('grain', 'monthly')
-        .gte('ts', convertToUTC(startMonth, 'monthly'))
-        .lte('ts', convertToUTC(today, 'monthly'))
+        .eq('grain', monthlyGrain)
+        .gte('ts', convertToUTC(startMonth, monthlyGrain))
+        .lte('ts', convertToUTC(today, monthlyGrain))
         .or(subjectRoleFilters);
 
     queryBuilder = defaultTableFilter<CatalogStats_Billing>(
