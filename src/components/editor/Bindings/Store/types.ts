@@ -92,9 +92,6 @@ export interface BindingsEditorState {
         initOnly?: boolean
     ) => void;
 
-    selectionActive: boolean;
-    setSelectionActive: (value: BindingsEditorState['selectionActive']) => void;
-
     selectionSaving: boolean;
     setSelectionSaving: (value: BindingsEditorState['selectionSaving']) => void;
 

@@ -29,7 +29,13 @@ import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store
 import ExternalLink from 'components/shared/ExternalLink';
 import FieldSelectionTable from 'components/tables/FieldSelection';
 import { isEqual } from 'lodash';
-import { SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import {
+    SyntheticEvent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import {
@@ -115,6 +121,8 @@ function FieldSelectionViewer({ collectionName }: Props) {
     const [data, setData] = useState<
         CompositeProjection[] | null | undefined
     >();
+
+    const [saveInProgress, setSaveInProgress] = useState(false);
 
     useEffect(() => {
         if (
@@ -222,25 +230,37 @@ function FieldSelectionViewer({ collectionName }: Props) {
         [setRecommendFields, setSingleSelection, data, recommendFields]
     );
 
+    const draftSpec = useMemo(
+        () =>
+            draftSpecs.length > 0 && draftSpecs[0].spec ? draftSpecs[0] : null,
+        [draftSpecs]
+    );
+
     useEffect(() => {
-        if (selectionSaving && draftSpecs.length > 0 && draftSpecs[0].spec) {
+        if (selectionSaving && !saveInProgress && draftSpec) {
             setFormState({ status: FormStatus.UPDATING });
+            setSaveInProgress(true);
 
             // TODO (field selection): Extend error handling.
-            applyFieldSelections(draftSpecs[0])
+            applyFieldSelections(draftSpec)
                 .then(
                     () => setFormState({ status: FormStatus.UPDATED }),
                     (error) =>
                         setFormState({ status: FormStatus.FAILED, error })
                 )
-                .finally(() => setSelectionSaving(false));
+                .finally(() => {
+                    setSelectionSaving(false);
+                    setSaveInProgress(false);
+                });
         }
     }, [
         applyFieldSelections,
-        setFormState,
-        setSelectionSaving,
-        draftSpecs,
+        draftSpec,
+        saveInProgress,
         selectionSaving,
+        setFormState,
+        setSaveInProgress,
+        setSelectionSaving,
     ]);
 
     return (

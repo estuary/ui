@@ -1,47 +1,26 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
 import {
     useBindingsEditorStore_recommendFields,
-    useBindingsEditorStore_selectionActive,
     useBindingsEditorStore_selections,
-    useBindingsEditorStore_setSelectionActive,
-    useBindingsEditorStore_setSelectionSaving,
 } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { debounce, omit } from 'lodash';
-import { useCallback, useEffect, useRef } from 'react';
+import { omit } from 'lodash';
+import { useCallback } from 'react';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 function useFieldSelection(collectionName: string) {
     // Bindings Editor Store
     const recommendFields = useBindingsEditorStore_recommendFields();
-
     const selections = useBindingsEditorStore_selections();
-    const selectionActive = useBindingsEditorStore_selectionActive();
-    const setSelectionActive = useBindingsEditorStore_setSelectionActive();
-    const setSelectionSaving = useBindingsEditorStore_setSelectionSaving();
 
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
-
-    // TODO (field selection): remove the debouncer entirely, to my dismay.
-    const debouncedUpdate = useRef(
-        debounce(() => {
-            setSelectionActive(false);
-            setSelectionSaving(true);
-        }, 0)
-    );
-
-    useEffect(() => {
-        if (selectionActive) {
-            debouncedUpdate.current();
-        }
-    }, [selectionActive, selections]);
 
     return useCallback(
         async (draftSpec: DraftSpecQuery) => {
