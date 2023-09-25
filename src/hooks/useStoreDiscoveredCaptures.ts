@@ -78,7 +78,7 @@ function useStoreDiscoveredCaptures() {
                         ? { catalogName: entityName, lastPubId }
                         : null;
 
-                if (!skipDraftUpdate) {
+                if (!supabaseConfig && !skipDraftUpdate) {
                     const updatedDraftSpecsResponse =
                         await modifyDiscoveredDraftSpec(
                             draftSpecsResponse,
