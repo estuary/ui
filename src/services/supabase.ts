@@ -130,25 +130,16 @@ export const defaultTableFilter = <Data>(
         const { pagination, protocol, compoundSearchParams } = options;
 
         if (searchQuery) {
-            const queryElements = searchQuery
-                .split(',')
-                .map((el) => el.trim())
-                .filter((el) => hasLength(el));
-
             const scalarFilter = scalarSearchParams
                 .map((param) => {
-                    return queryElements
-                        .map((el) => `${param}.ilike.*${el}*`)
-                        .join(',');
+                    return `${param}.ilike.*${searchQuery}*`;
                 })
                 .join(',');
 
             const compoundFilter = compoundSearchParams
                 ? compoundSearchParams
                       .map((param) => {
-                          return `${String(param)}.cs.{${queryElements.join(
-                              ','
-                          )}}`;
+                          return `${String(param)}.cs.{${searchQuery}}`;
                       })
                       .join(',')
                 : '';
