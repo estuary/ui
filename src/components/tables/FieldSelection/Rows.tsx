@@ -38,7 +38,11 @@ function Row({ row }: RowProps) {
                 <Typography>{row.ptr}</Typography>
             </TableCell>
 
-            <ChipListCell values={row.inference.types} stripPath={false} />
+            {row.inference?.types ? (
+                <ChipListCell values={row.inference.types} stripPath={false} />
+            ) : (
+                <TableCell />
+            )}
 
             {row.constraint ? (
                 <>

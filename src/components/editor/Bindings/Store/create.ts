@@ -167,7 +167,6 @@ const getInitialStateData = (): Pick<
     | 'hasIncompatibleCollections'
     | 'recommendFields'
     | 'selections'
-    | 'selectionActive'
     | 'selectionSaving'
 > => ({
     collectionData: null,
@@ -189,7 +188,6 @@ const getInitialStateData = (): Pick<
     hasIncompatibleCollections: false,
     recommendFields: true,
     selections: {},
-    selectionActive: false,
     selectionSaving: false,
 });
 
@@ -416,26 +414,16 @@ const getInitialState = (
     setSingleSelection: (field, selectionType, initOnly) => {
         set(
             produce((state: BindingsEditorState) => {
-                const { selectionActive } = get();
-
-                if (!selectionActive && !initOnly) {
-                    state.selectionActive = true;
-                }
+                const { selectionSaving } = get();
 
                 state.selections[field] = selectionType;
+
+                if (!selectionSaving && !initOnly) {
+                    state.selectionSaving = true;
+                }
             }),
             false,
             'Custom Selections Set'
-        );
-    },
-
-    setSelectionActive: (value) => {
-        set(
-            produce((state: BindingsEditorState) => {
-                state.selectionActive = value;
-            }),
-            false,
-            'Selection Active Set'
         );
     },
 
