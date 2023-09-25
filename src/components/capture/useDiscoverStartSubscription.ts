@@ -71,7 +71,8 @@ function useDiscoverStartSubscription(
     return useCallback(
         (
             discoverDraftId: string,
-            existingEndpointConfig: any // JsonFormsData,
+            existingEndpointConfig: any, // JsonFormsData
+            skipUpdate?: boolean
         ) => {
             setDraftId(null);
             setDiscoveredDraftId(discoverDraftId);
@@ -95,7 +96,8 @@ function useDiscoverStartSubscription(
                     await storeDiscoveredCollections(
                         payload.draft_id,
                         entityType,
-                        callFailed
+                        callFailed,
+                        skipUpdate
                     );
 
                     void postGenerateMutate();

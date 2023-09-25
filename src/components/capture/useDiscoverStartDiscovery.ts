@@ -38,7 +38,9 @@ function useDiscoverStartDiscovery(
             // If we are doing a rediscovery and we have a draft then go ahead and use that draft
             //  that way the most recent changes to bindings and endpoints will get added to the draft before rediscovery
             // This seems to be what users are expecting to happen.
-            const updateBeforeRediscovery = persistedDraftId && rediscover;
+            const updateBeforeRediscovery = Boolean(
+                persistedDraftId && rediscover
+            );
 
             const draftsResponse = updateBeforeRediscovery
                 ? { data: [{ id: persistedDraftId }] }
@@ -73,7 +75,11 @@ function useDiscoverStartDiscovery(
 
                 return false;
             }
-            createDiscoversSubscription(newDraftId, endpointConfigData);
+            createDiscoversSubscription(
+                newDraftId,
+                endpointConfigData,
+                updateBeforeRediscovery
+            );
 
             setFormState({
                 logToken: discoverResponse.data[0].logs_token,
