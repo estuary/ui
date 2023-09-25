@@ -122,7 +122,7 @@ function CaptureCreate() {
                             <RediscoverButton
                                 entityType={entityType}
                                 disabled={!hasConnectors}
-                                postGenerateMutate={mutateDraftSpecs}
+                                postGenerateMutate={updateDraftSpecs}
                             />
                         }
                     />
