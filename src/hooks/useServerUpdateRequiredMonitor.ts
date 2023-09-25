@@ -4,7 +4,6 @@ import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import {
     useResourceConfig_resourceConfig,
-    useResourceConfig_setRediscoveryRequired,
     useResourceConfig_setServerUpdateRequired,
 } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
@@ -21,7 +20,6 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
 
     const resourceConfig = useResourceConfig_resourceConfig();
     const setServerUpdateRequired = useResourceConfig_setServerUpdateRequired();
-    const setRediscoveryRequired = useResourceConfig_setRediscoveryRequired();
 
     const collectionNameProp = useMemo(
         () => getCollectionNameProp(entityType),
@@ -45,10 +43,11 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     const { resource, disable } = binding;
                     const disableProp = getDisableProps(disable);
 
+                    // TODO (enabled rediscovery)
                     // If we're enabling something then make sure we know to rediscover
-                    if (disable && !resourceConfig[collectionName].disable) {
-                        setRediscoveryRequired(true);
-                    }
+                    // if (disable && !resourceConfig[collectionName].disable) {
+                    //     setRediscoveryRequired(true);
+                    // }
 
                     // See if anything has changed
                     return !isEqual(resourceConfig[collectionName], {
