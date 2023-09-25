@@ -34,7 +34,7 @@ const trackEvent = (payload: any) => {
     });
 };
 
-function useDiscoverSubscription(
+function useDiscoverStartSubscription(
     entityType: Entity,
     postGenerateMutate: Function
 ) {
@@ -149,4 +149,4 @@ function useDiscoverSubscription(
     );
 }
 
-export default useDiscoverSubscription;
+export default useDiscoverStartSubscription;
