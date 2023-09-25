@@ -80,7 +80,7 @@ const getLiveSpecs_captures = (
 
     queryBuilder = defaultTableFilter<CaptureQuery>(
         queryBuilder,
-        ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE, 'test'],
+        ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE],
         searchQuery,
         sorting,
         { pagination, compoundSearchParams: ['writes_to'] }
