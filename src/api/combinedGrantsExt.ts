@@ -34,7 +34,7 @@ const getGrants = (
         ['subject_role', 'object_role'],
         searchQuery,
         sorting,
-        pagination
+        { pagination }
     );
 
     return queryBuilder;
@@ -69,7 +69,7 @@ const getGrants_Users = (
         ['user_full_name', 'user_email', 'object_role'],
         searchQuery,
         sorting,
-        pagination
+        { pagination }
     );
 
     return queryBuilder;
@@ -103,4 +103,4 @@ export const getAuthRoles = async (capability: string) => {
         .throwOnError();
 };
 
-export { getGrantsForAuthToken, getGrants, getGrants_Users, getGrantsForUser };
+export { getGrants, getGrants_Users, getGrantsForAuthToken, getGrantsForUser };

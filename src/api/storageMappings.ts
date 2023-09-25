@@ -28,7 +28,7 @@ const getStorageMappings = (
         ['catalog_prefix'],
         searchQuery,
         sorting,
-        pagination
+        { pagination }
     );
 
     return queryBuilder;
@@ -49,4 +49,4 @@ const getStorageMapping = (catalog_prefix: string) => {
     return queryBuilder;
 };
 
-export { getStorageMappings, getStorageMapping };
+export { getStorageMapping, getStorageMappings };

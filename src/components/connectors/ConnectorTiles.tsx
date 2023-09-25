@@ -8,8 +8,8 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import ConnectorCard from 'components/connectors/card';
 import ConnectorToolbar from 'components/connectors/ConnectorToolbar';
+import ConnectorCard from 'components/connectors/card';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import {
     semiTransparentBackground,
@@ -17,8 +17,8 @@ import {
 } from 'context/Theme';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
 import {
-    ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
+    ConnectorWithTagDetailQuery,
 } from 'hooks/useConnectorWithTagDetail';
 import { AddSquare } from 'iconoir-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -26,8 +26,8 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import {
     CONNECTOR_NAME,
     CONNECTOR_RECOMMENDED,
-    defaultTableFilter,
     TABLES,
+    defaultTableFilter,
 } from 'services/supabase';
 import {
     BaseComponentProps,
@@ -129,8 +129,12 @@ function ConnectorTiles({
                             direction: sortDirection,
                         },
                     ],
-                    undefined,
-                    { column: 'connector_tags.protocol', value: protocol }
+                    {
+                        protocol: {
+                            column: 'connector_tags.protocol',
+                            value: protocol,
+                        },
+                    }
                 );
             },
         },

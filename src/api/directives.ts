@@ -16,8 +16,8 @@ import {
     AppliedDirective,
     Directive,
     GrantDirective,
-    GrantDirectiveSpec,
     GrantDirective_AccessLinks,
+    GrantDirectiveSpec,
     JoinedAppliedDirective,
     Schema,
 } from 'types';
@@ -177,7 +177,7 @@ const getDirectivesByType = (
         ['catalog_prefix', `spec->>capability`, `spec->>grantedPrefix`],
         searchQuery,
         sorting,
-        pagination
+        { pagination }
     );
 
     return queryBuilder;
@@ -196,7 +196,7 @@ export {
     exchangeBearerToken,
     generateGrantDirective,
     getAppliedDirectives,
-    getDirectivesByType,
     getDirectiveByToken,
+    getDirectivesByType,
     submitDirective,
 };

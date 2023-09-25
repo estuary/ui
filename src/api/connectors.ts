@@ -1,15 +1,15 @@
 import {
-    ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
+    ConnectorWithTagDetailQuery,
 } from 'hooks/useConnectorWithTagDetail';
 import {
     CONNECTOR_NAME,
+    SortingProps,
+    TABLES,
     defaultTableFilter,
     handleFailure,
     handleSuccess,
-    SortingProps,
     supabaseClient,
-    TABLES,
 } from 'services/supabase';
 
 // Table-specific queries
@@ -29,7 +29,7 @@ const getConnectors = (
         [CONNECTOR_NAME],
         searchQuery,
         sorting,
-        pagination
+        { pagination }
     );
 
     return queryBuilder;

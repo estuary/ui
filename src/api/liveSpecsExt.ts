@@ -80,10 +80,10 @@ const getLiveSpecs_captures = (
 
     queryBuilder = defaultTableFilter<CaptureQuery>(
         queryBuilder,
-        ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE],
+        ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE, 'test'],
         searchQuery,
         sorting,
-        pagination
+        { pagination, compoundSearchParams: ['writes_to'] }
     ).eq('spec_type', 'capture');
 
     return queryBuilder;
@@ -105,7 +105,7 @@ const getLiveSpecs_materializations = (
         ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE],
         searchQuery,
         sorting,
-        pagination
+        { pagination, compoundSearchParams: ['reads_from'] }
     ).eq('spec_type', 'materialization');
 
     return queryBuilder;
@@ -127,7 +127,7 @@ const getLiveSpecs_collections = (
         ['catalog_name'],
         searchQuery,
         sorting,
-        pagination
+        { pagination }
     ).eq('spec_type', 'collection');
 
     return queryBuilder;
@@ -166,7 +166,7 @@ const getLiveSpecs_collectionsSelector = (
         ['catalog_name'],
         searchQuery,
         sorting,
-        pagination
+        { pagination }
     ).eq('spec_type', specType);
 
     return queryBuilder;
@@ -371,9 +371,9 @@ export {
     getLiveSpecs_captures,
     getLiveSpecs_collections,
     getLiveSpecs_collectionsSelector,
+    getLiveSpecs_detailsForm,
     getLiveSpecs_existingTasks,
     getLiveSpecs_materializations,
-    getLiveSpecs_detailsForm,
     getLiveSpecsByCatalogName,
     getLiveSpecsByCatalogNames,
     getLiveSpecsByConnectorId,

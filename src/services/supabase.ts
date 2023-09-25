@@ -1,5 +1,5 @@
 import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { createClient, User } from '@supabase/supabase-js';
+import { User, createClient } from '@supabase/supabase-js';
 import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { forEach, isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
@@ -93,6 +93,13 @@ export const supabaseClient = createClient(
     }
 );
 
+type KeysOfType<T, V> = {
+    [K in keyof T]-?: T[K] extends V ? K : never;
+}[keyof T];
+
+type Scalars = string | boolean | number | null;
+type Compounds = string[] | boolean[] | number[] | null[] | object;
+
 export interface SortingProps<Data> {
     col: keyof Data;
     direction: SortDirection;
@@ -102,23 +109,16 @@ export type Pagination = { from: number; to: number };
 export type Protocol<Data> = { column: keyof Data; value: string | null };
 export const defaultTableFilter = <Data>(
     query: PostgrestFilterBuilder<Data>,
-    searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
+    scalarSearchParams: Array<KeysOfType<Data, Scalars> | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
     searchQuery: string | null,
     sorting: SortingProps<Data>[],
-    pagination?: Pagination,
-    protocol?: Protocol<Data>
+    options?: {
+        pagination?: Pagination;
+        protocol?: Protocol<Data>;
+        compoundSearchParams?: Array<KeysOfType<Data, Compounds>>;
+    }
 ) => {
     let queryBuilder = query;
-
-    if (searchQuery) {
-        queryBuilder = queryBuilder.or(
-            searchParam
-                .map((param) => {
-                    return `${param}.ilike.*${searchQuery}*`;
-                })
-                .join(',')
-        );
-    }
 
     forEach(sorting, (sort) => {
         queryBuilder = queryBuilder.order(sort.col, {
@@ -126,16 +126,51 @@ export const defaultTableFilter = <Data>(
         });
     });
 
-    if (pagination) {
-        queryBuilder = queryBuilder.range(pagination.from, pagination.to);
-    }
+    if (options) {
+        const { pagination, protocol, compoundSearchParams } = options;
 
-    if (protocol?.value) {
-        queryBuilder = queryBuilder.filter(
-            protocol.column,
-            'eq',
-            protocol.value
-        );
+        if (searchQuery) {
+            const queryElements = searchQuery
+                .split(',')
+                .map((el) => el.trim())
+                .filter((el) => hasLength(el));
+
+            const scalarFilter = scalarSearchParams
+                .map((param) => {
+                    return queryElements
+                        .map((el) => `${param}.ilike.*${el}*`)
+                        .join(',');
+                })
+                .join(',');
+
+            const compoundFilter = compoundSearchParams
+                ? compoundSearchParams
+                      .map((param) => {
+                          return `${String(param)}.cs.{${queryElements.join(
+                              ','
+                          )}}`;
+                      })
+                      .join(',')
+                : '';
+
+            queryBuilder = queryBuilder.or(
+                compoundFilter
+                    ? `${scalarFilter},${compoundFilter}`
+                    : scalarFilter
+            );
+        }
+
+        if (pagination) {
+            queryBuilder = queryBuilder.range(pagination.from, pagination.to);
+        }
+
+        if (protocol?.value) {
+            queryBuilder = queryBuilder.filter(
+                protocol.column,
+                'eq',
+                protocol.value
+            );
+        }
     }
 
     return queryBuilder;
