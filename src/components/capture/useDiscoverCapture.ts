@@ -10,29 +10,17 @@ import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
-    useEditorStore_setDiscoveredDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { useClient } from 'hooks/supabase-swr';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
-import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback, useMemo } from 'react';
-import { CustomEvents, logRocketEvent } from 'services/logrocket';
-import {
-    DEFAULT_FILTER,
-    DEFAULT_POLLER_ERROR,
-    JOB_STATUS_POLLER_ERROR,
-    jobStatusPoller,
-    TABLES,
-} from 'services/supabase';
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
     useDetailsForm_connectorImage_imagePath,
     useDetailsForm_errorsExist,
-    useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfig_serverUpdateRequired,
@@ -42,7 +30,6 @@ import {
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setPreviousEndpointConfig,
-    useEndpointConfig_setServerUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
@@ -53,39 +40,29 @@ import { FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
-    useResourceConfig_setRediscoveryRequired,
 } from 'stores/ResourceConfig/hooks';
 import { Entity } from 'types';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { modifyExistingCaptureDraftSpec } from 'utils/workflow-utils';
-
-const trackEvent = (payload: any) => {
-    logRocketEvent(CustomEvents.CAPTURE_DISCOVER, {
-        name: payload.capture_name ?? DEFAULT_FILTER,
-        id: payload.id ?? DEFAULT_FILTER,
-        draft_id: payload.draft_id ?? DEFAULT_FILTER,
-        logs_token: payload.logs_token ?? DEFAULT_FILTER,
-        status: payload.job_status?.type ?? DEFAULT_FILTER,
-    });
-};
+import useDiscoverSubscription from './useDiscoverSubscription';
 
 function useDiscoverCapture(
     entityType: Entity,
     postGenerateMutate: Function,
     options?: { initiateRediscovery?: boolean; initiateDiscovery?: boolean }
 ) {
-    const supabaseClient = useClient();
+    const createDiscoversSubscription = useDiscoverSubscription(
+        entityType,
+        postGenerateMutate
+    );
 
     const isEdit = useEntityWorkflow_Editing();
     const { callFailed } = useEntityWorkflowHelpers();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
-
     const persistedDraftId = useEditorStore_persistedDraftId();
     const setDraftId = useEditorStore_setId();
-    const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
-
     const isSaving = useEditorStore_isSaving();
     const resetEditorState = useEditorStore_resetState();
 
@@ -99,7 +76,6 @@ function useDiscoverCapture(
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
     const imagePath = useDetailsForm_connectorImage_imagePath();
-    const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
 
     // Endpoint Config Store
     const setEncryptedEndpointConfig =
@@ -110,18 +86,13 @@ function useDiscoverCapture(
         useEndpointConfigStore_encryptedEndpointConfig_data();
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
-    const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
     const setPreviousEndpointConfig =
         useEndpointConfigStore_setPreviousEndpointConfig();
-
-    const setRediscoveryRequired = useResourceConfig_setRediscoveryRequired();
 
     // Resource Config Store
     const resourceConfig = useResourceConfig_resourceConfig();
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
-
-    const storeDiscoveredCollections = useStoreDiscoveredCaptures();
 
     // If we are doing an initial discovery add the name name to the name
     // If not we are either refreshing collections during create OR during edit
@@ -131,96 +102,6 @@ function useDiscoverCapture(
     //                                        we do not have a draftedEntityName yet
     const processedEntityName = useEntityNameSuffix(
         !isEdit && options?.initiateDiscovery
-    );
-
-    const jobFailed = useCallback(
-        (error) => {
-            setFormState({
-                error,
-                status: FormStatus.FAILED,
-            });
-        },
-        [setFormState]
-    );
-
-    const createDiscoversSubscription = useCallback(
-        (
-            discoverDraftId: string,
-            existingEndpointConfig: any // JsonFormsData,
-        ) => {
-            setDraftId(null);
-            setDiscoveredDraftId(discoverDraftId);
-
-            jobStatusPoller(
-                supabaseClient
-                    .from(TABLES.DISCOVERS)
-                    .select(
-                        `
-                        capture_name,
-                        draft_id,
-                        job_status,
-                        created_at
-                    `
-                    )
-                    .match({
-                        draft_id: discoverDraftId,
-                    })
-                    .order('created_at', { ascending: false }),
-                async (payload: any) => {
-                    await storeDiscoveredCollections(
-                        payload.draft_id,
-                        entityType,
-                        callFailed
-                    );
-
-                    void postGenerateMutate();
-
-                    setDraftedEntityName(payload.capture_name);
-
-                    setPreviousEndpointConfig({ data: existingEndpointConfig });
-
-                    setFormState({
-                        status: FormStatus.GENERATED,
-                    });
-
-                    // We have ran a discover so we know the endpoint was able to be submitted
-                    //  Should fix the issue called out here:
-                    //      https://github.com/estuary/ui/pull/650#pullrequestreview-1466195898
-                    setServerUpdateRequired(false);
-
-                    setRediscoveryRequired(false);
-
-                    trackEvent(payload);
-                },
-                (payload: any) => {
-                    if (payload.error === JOB_STATUS_POLLER_ERROR) {
-                        jobFailed(DEFAULT_POLLER_ERROR);
-                    } else {
-                        jobFailed({
-                            title: 'discovery.failed.title',
-                            error: {
-                                message: 'discovery.failed.message',
-                            },
-                        });
-                    }
-                }
-            );
-        },
-        [
-            callFailed,
-            entityType,
-            jobFailed,
-            postGenerateMutate,
-            setDiscoveredDraftId,
-            setDraftId,
-            setDraftedEntityName,
-            setFormState,
-            setPreviousEndpointConfig,
-            setRediscoveryRequired,
-            setServerUpdateRequired,
-            storeDiscoveredCollections,
-            supabaseClient,
-        ]
     );
 
     const generateCatalog = useCallback(
