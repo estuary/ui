@@ -131,6 +131,13 @@ function MonacoEditor({
 
     const updateValue = useCallback(
         (isUndo: boolean) => {
+            if (!isUndo && status !== EditorStatus.EDITING) {
+                logRocketConsole('editor:update:skipped', {
+                    status,
+                });
+                return;
+            }
+
             // Fetch the current value of the editor
             const currentValue = editorRef.current?.getValue();
 
@@ -224,14 +231,15 @@ function MonacoEditor({
             }
         },
         [
-            doneUpdatingValue,
-            onChange,
-            setStatus,
             catalogName,
             catalogType,
             defaultLanguage,
+            doneUpdatingValue,
             editorSchemaScope,
             evaluatedPath,
+            onChange,
+            setStatus,
+            status,
         ]
     );
 
