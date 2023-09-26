@@ -66,7 +66,7 @@ function BillingHistoryTable() {
                     id: 'entityTable.title',
                 })}
                 size="small"
-                sx={{ minWidth: 350 }}
+                sx={{ minWidth: 450 }}
             >
                 <EntityTableHeader columns={columns} noBackgroundColor />
 

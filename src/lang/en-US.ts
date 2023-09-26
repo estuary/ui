@@ -443,6 +443,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.error.undefinedPricingTier.docPath': `mailto:support@estuary.dev`,
     'admin.billing.label.tiers': `Pricing Tier`,
     'admin.billing.label.lineItems': `Your bill for:`,
+    'admin.billing.label.lineItems.loading': `Loading your bill`,
     'admin.billing.tier.free': `Free`,
     'admin.billing.tier.personal': `Cloud`,
     'admin.billing.tier.enterprise': `Enterprise`,

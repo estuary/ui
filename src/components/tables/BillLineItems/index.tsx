@@ -59,10 +59,7 @@ function BillingLineItemsTable() {
     useEffect(() => {
         setStripeInvoice(null);
         void (async () => {
-            if (
-                selectedInvoice &&
-                selectedInvoice.invoice_type !== 'current_month'
-            ) {
+            if (selectedInvoice && selectedInvoice.invoice_type !== 'preview') {
                 const resp = await getTenantInvoice(
                     selectedTenant,
                     selectedInvoice.date_start,
@@ -115,7 +112,7 @@ function BillingLineItemsTable() {
                     alignItems: 'end',
                 }}
             >
-                {selectedInvoice?.invoice_type !== 'current_month' ? (
+                {selectedInvoice?.invoice_type !== 'preview' ? (
                     hydrated ? (
                         <Box>
                             <Button

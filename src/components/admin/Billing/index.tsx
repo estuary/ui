@@ -8,6 +8,7 @@ import PricingTierDetails from 'components/admin/Billing/PricingTierDetails';
 import TenantOptions from 'components/admin/Billing/TenantOptions';
 import AdminTabs from 'components/admin/Tabs';
 import UsageByMonthGraph from 'components/graphs/UsageByMonthGraph';
+import GraphLoadingState from 'components/graphs/states/Loading';
 import GraphStateWrapper from 'components/graphs/states/Wrapper';
 import AlertBox from 'components/shared/AlertBox';
 import BillingLineItemsTable from 'components/tables/BillLineItems';
@@ -217,28 +218,33 @@ function AdminBilling() {
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}
                         message={
-                            <>
-                                <FormattedMessage id="admin.billing.label.lineItems" />
-
-                                {selectedInvoice ? (
+                            hydrated && selectedInvoice ? (
+                                <>
+                                    <FormattedMessage id="admin.billing.label.lineItems" />
                                     <DateRange
                                         start_date={selectedInvoice.date_start}
                                         end_date={selectedInvoice.date_end}
                                     />
-                                ) : (
-                                    ' ...'
-                                )}
-                            </>
+                                </>
+                            ) : (
+                                <FormattedMessage id="admin.billing.label.lineItems.loading" />
+                            )
                         }
                     >
-                        {/* The key here makes sure that any stateful fetching logic doesn't get confused. */}
-                        <BillingLineItemsTable
-                            key={
-                                selectedInvoice
-                                    ? invoiceId(selectedInvoice)
-                                    : null
-                            }
-                        />
+                        {hydrated ? (
+                            <>
+                                {/* The key here makes sure that any stateful fetching logic doesn't get confused. */}
+                                <BillingLineItemsTable
+                                    key={
+                                        selectedInvoice
+                                            ? invoiceId(selectedInvoice)
+                                            : null
+                                    }
+                                />
+                            </>
+                        ) : (
+                            <GraphLoadingState />
+                        )}
                     </CardWrapper>
                 </Grid>
 

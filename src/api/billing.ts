@@ -27,7 +27,7 @@ export const getTenantInvoice = (
     tenant: string,
     date_start: string,
     date_end: string,
-    type: 'manual' | 'usage'
+    type: 'manual' | 'final'
 ) => {
     return invokeSupabase<{ invoice?: StripeInvoice | null }>(
         FUNCTIONS.BILLING,
@@ -84,7 +84,7 @@ export interface Invoice {
     date_end: string; // Timestamp
     line_items: InvoiceLineItem[];
     subtotal: number;
-    invoice_type: 'usage' | 'manual' | 'current_month';
+    invoice_type: 'final' | 'preview' | 'manual';
     extra?: {
         processed_data_gb: number;
         task_usage_hours: number;

@@ -56,8 +56,7 @@ function TaskHoursByMonthGraph() {
         return invoices
             .filter(({ invoice_type, date_start, date_end }) => {
                 return (
-                    (invoice_type === 'current_month' ||
-                        invoice_type === 'usage') &&
+                    (invoice_type === 'final' || invoice_type === 'preview') &&
                     isWithinInterval(stripTimeFromDate(date_start), {
                         start: startDate,
                         end: today,
