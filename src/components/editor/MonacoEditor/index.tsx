@@ -131,12 +131,14 @@ function MonacoEditor({
 
     const updateValue = useCallback(
         (isUndo: boolean) => {
-            if (!isUndo && status !== EditorStatus.EDITING) {
-                logRocketConsole('editor:update:skipped', {
-                    status,
-                });
-                return;
-            }
+            // TODO (editor) need to get the status set before coming into this function so we can
+            //   easily implement this. The one I found that didn't work like this is the collection schema editor.
+            // if (!isUndo && status !== EditorStatus.EDITING) {
+            //     logRocketConsole('editor:update:skipped', {
+            //         status,
+            //     });
+            //     return;
+            // }
 
             // Fetch the current value of the editor
             const currentValue = editorRef.current?.getValue();
