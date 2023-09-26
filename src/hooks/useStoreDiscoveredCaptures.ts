@@ -78,6 +78,10 @@ function useStoreDiscoveredCaptures() {
                         ? { catalogName: entityName, lastPubId }
                         : null;
 
+                // Skip this section if the setting is set AND we don't have the config stuff
+                // This check was added a long time after this function initially was written so wanted to keep the
+                //   scope as small as possible. Generally, this will happen when a use is editing their
+                //   capture and trying to fire off a refresh directly after updating the form
                 if (!supabaseConfig && !skipDraftUpdate) {
                     const updatedDraftSpecsResponse =
                         await modifyDiscoveredDraftSpec(
