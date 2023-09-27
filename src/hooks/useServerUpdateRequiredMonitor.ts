@@ -16,6 +16,7 @@ import {
 const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     const entityType = useEntityType();
 
+    // TODO (enabled rediscovery)
     // Need to fetch if we're in edit or not
 
     const resourceConfig = useResourceConfig_resourceConfig();
