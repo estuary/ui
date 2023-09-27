@@ -1033,6 +1033,7 @@ const Details: ResolvedIntlConfig['messages'] = {
     'details.tabs.overview': `Overview`,
     'details.tabs.spec': `Spec`,
     'details.tabs.shardStatus': `Status`,
+    'details.tabs.settings': `Settings`,
     'details.tabs.history': `History`,
 };
 

@@ -346,6 +346,15 @@ export interface AutoDiscoverySettings {
     evolveIncompatibleCollections: boolean;
 }
 
+export interface AlertMessage {
+    id: string;
+    detail: string;
+    created_at: string;
+    updated_at: string;
+    title: string;
+    message: string;
+}
+
 export interface AlertMethod {
     id: string;
     detail: string;

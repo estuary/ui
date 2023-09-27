@@ -38,6 +38,8 @@ const admin = {
     },
 };
 
+// TODO (alerts | lang): Determine whether a message ID should be defined for the settings details tab.
+//   The title message IDs for the overview, spec, and history capture details tabs do not appear to be in use.
 const captures = {
     title: 'routeTitle.captures',
     path: 'captures',
@@ -65,6 +67,10 @@ const captures = {
             title: 'routeTitle.captureDetails.spec',
             path: 'spec',
             fullPath: '/captures/details/spec',
+        },
+        settings: {
+            path: 'settings',
+            fullPath: '/captures/details/settings',
         },
         history: {
             title: 'routeTitle.captureDetails.history',

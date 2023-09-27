@@ -1,11 +1,13 @@
 import {
     defaultTableFilter,
+    handleFailure,
+    handleSuccess,
     insertSupabase,
     SortingProps,
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { AlertMethod } from 'types';
+import { AlertMessage, AlertMethod } from 'types';
 
 const createPendingAlertMethod = (
     detail: string,
@@ -19,10 +21,34 @@ const createPendingAlertMethod = (
     });
 };
 
-export type AlertMethodQuery = Pick<
+export type AlertMessageQuery = Pick<AlertMessage, 'id' | 'detail'>;
+
+export type AlertMethodQuery = Pick<AlertMethod, 'id' | 'prefix'>;
+
+export type AlertMethodTableQuery = Pick<
     AlertMethod,
     'id' | 'updated_at' | 'prefix' | 'unverified_emails' | 'verified_emails'
 >;
+
+const getAlertMessageByName = async (name: string) => {
+    const data = await supabaseClient
+        .from<AlertMessageQuery>(TABLES.ALERT_MESSAGES)
+        .select(`id, detail`)
+        .eq('detail', name)
+        .then(handleSuccess<AlertMessageQuery[]>, handleFailure);
+
+    return data;
+};
+
+const getAlertMethodByPrefix = async (prefix: string) => {
+    const data = await supabaseClient
+        .from<AlertMethodQuery>(TABLES.ALERT_METHODS)
+        .select(`id, prefix`)
+        .eq('prefix', `${prefix}/`)
+        .then(handleSuccess<AlertMethodQuery[]>, handleFailure);
+
+    return data;
+};
 
 const getPrefixAlertMethod = (
     pagination: any,
@@ -30,7 +56,7 @@ const getPrefixAlertMethod = (
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<AlertMethodQuery>(TABLES.ALERT_METHODS)
+        .from<AlertMethodTableQuery>(TABLES.ALERT_METHODS)
         .select(
             `    
                 id,
@@ -44,7 +70,7 @@ const getPrefixAlertMethod = (
 
     // TODO (alerts): Determine means to evaluate whether a key of the data type passed to defaultTableFilter is a compound type.
     //   Presently, only scalar types are able to be queried by the search bar.
-    queryBuilder = defaultTableFilter<AlertMethodQuery>(
+    queryBuilder = defaultTableFilter<AlertMethodTableQuery>(
         queryBuilder,
         ['prefix'],
         searchQuery,
@@ -55,4 +81,9 @@ const getPrefixAlertMethod = (
     return queryBuilder;
 };
 
-export { createPendingAlertMethod, getPrefixAlertMethod };
+export {
+    createPendingAlertMethod,
+    getAlertMessageByName,
+    getAlertMethodByPrefix,
+    getPrefixAlertMethod,
+};
