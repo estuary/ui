@@ -1,12 +1,16 @@
 import { AlertColor } from '@mui/material';
+import { ReactNode } from 'react';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 export interface Notification {
-    title: string;
-    description: string;
+    title: string | ReactNode;
+    description: string | ReactNode;
     severity: AlertColor;
+    options?: {
+        persist?: boolean;
+    };
 }
 
 export interface NotificationState {
