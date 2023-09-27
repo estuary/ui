@@ -49,6 +49,7 @@ function EntityTableHeader({
                     return (
                         <TableCell
                             key={`${column.field}-${index}`}
+                            align={column.align}
                             sortDirection={
                                 enableSort
                                     ? columnToSort === column.field

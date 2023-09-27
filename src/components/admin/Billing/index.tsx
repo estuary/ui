@@ -1,20 +1,21 @@
 import { Divider, Grid, Typography } from '@mui/material';
-import { BillingRecord, getBillingHistory } from 'api/billing';
+import { Invoice, getInvoicesBetween } from 'api/billing';
 import { authenticatedRoutes } from 'app/routes';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
+import DateRange from 'components/admin/Billing/DateRange';
 import PaymentMethods from 'components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'components/admin/Billing/PricingTierDetails';
 import TenantOptions from 'components/admin/Billing/TenantOptions';
 import AdminTabs from 'components/admin/Tabs';
-import DataByMonthGraph from 'components/graphs/DataByMonthGraph';
-import DataByTaskGraph from 'components/graphs/DataByTaskGraph';
+import UsageByMonthGraph from 'components/graphs/UsageByMonthGraph';
+import GraphLoadingState from 'components/graphs/states/Loading';
 import GraphStateWrapper from 'components/graphs/states/Wrapper';
-import TaskHoursByMonthGraph from 'components/graphs/TaskHoursByMonthGraph';
 import AlertBox from 'components/shared/AlertBox';
+import BillingLineItemsTable from 'components/tables/BillLineItems';
 import BillingHistoryTable from 'components/tables/Billing';
-import { eachMonthOfInterval, format, startOfMonth, subMonths } from 'date-fns';
+import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
-import useBillingRecord from 'hooks/billing/useBillingRecord';
+import useInvoice from 'hooks/billing/useBillingRecord';
 import usePageTitle from 'hooks/usePageTitle';
 import { isArray, isEmpty } from 'lodash';
 import { useEffect, useMemo } from 'react';
@@ -23,19 +24,20 @@ import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
-    useBilling_billingHistoryInitialized,
     useBilling_hydrated,
+    useBilling_invoicesInitialized,
     useBilling_resetState,
+    useBilling_selectedInvoice,
     useBilling_selectedTenant,
-    useBilling_setBillingHistory,
-    useBilling_setBillingHistoryInitialized,
     useBilling_setDataByTaskGraphDetails,
     useBilling_setHydrated,
     useBilling_setHydrationErrorsExist,
-    useBilling_updateBillingHistory,
+    useBilling_setInvoices,
+    useBilling_setInvoicesInitialized,
+    useBilling_updateInvoices,
 } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
-import { TOTAL_CARD_HEIGHT } from 'utils/billing-utils';
+import { TOTAL_CARD_HEIGHT, invoiceId } from 'utils/billing-utils';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
@@ -45,12 +47,13 @@ function AdminBilling() {
     const setHydrated = useBilling_setHydrated();
     const setHydrationErrorsExist = useBilling_setHydrationErrorsExist();
 
-    const historyInitialized = useBilling_billingHistoryInitialized();
-    const setHistoryInitialized = useBilling_setBillingHistoryInitialized();
-    const setBillingHistory = useBilling_setBillingHistory();
-    const updateBillingHistory = useBilling_updateBillingHistory();
+    const historyInitialized = useBilling_invoicesInitialized();
+    const setHistoryInitialized = useBilling_setInvoicesInitialized();
+    const setInvoices = useBilling_setInvoices();
+    const updateBillingHistory = useBilling_updateInvoices();
 
     const selectedTenant = useBilling_selectedTenant();
+    const selectedInvoice = useBilling_selectedInvoice();
     const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
 
     const resetBillingState = useBilling_resetState();
@@ -58,16 +61,13 @@ function AdminBilling() {
     const currentMonth = useConstant(() => {
         const today = new Date();
 
-        return startOfMonth(today);
+        return endOfMonth(today);
     });
 
     const dateRange = useMemo(() => {
         const startMonth = startOfMonth(subMonths(currentMonth, 5));
 
-        return eachMonthOfInterval({
-            start: startMonth,
-            end: currentMonth,
-        }).map((date) => format(date, "yyyy-MM-dd' 00:00:00+00'"));
+        return { start: startMonth, end: currentMonth };
     }, [currentMonth]);
 
     const {
@@ -76,47 +76,38 @@ function AdminBilling() {
         isValidating: isValidatingStats,
     } = useBillingCatalogStats();
 
-    const { billingRecord, isValidating: isValidatingRecord } =
-        useBillingRecord(currentMonth);
+    const { invoices: currentMonthInvoices, isValidating: isValidatingRecord } =
+        useInvoice(startOfMonth(currentMonth));
 
     useEffect(() => {
-        if (
-            selectedTenant &&
-            dateRange.length > 0 &&
-            !hydrated &&
-            !historyInitialized
-        ) {
-            getBillingHistory(selectedTenant, dateRange)
-                .then(
-                    (responses) => {
-                        const data: BillingRecord[] = [];
-
-                        responses.forEach((response) => {
-                            if (response.error) {
-                                throw new Error(response.error.message);
-                            }
-
-                            if (
-                                typeof response.data.task_usage_hours ===
-                                    'number' &&
-                                typeof response.data.processed_data_gb ===
-                                    'number'
-                            ) {
-                                data.push(response.data);
-                            }
-                        });
-
-                        setBillingHistory(data);
-                    },
-                    () => {
-                        setHydrationErrorsExist(true);
-                        setHydrated(true);
+        if (selectedTenant && !hydrated && !historyInitialized) {
+            void (async () => {
+                try {
+                    const response = await getInvoicesBetween(
+                        selectedTenant,
+                        dateRange.start,
+                        dateRange.end
+                    );
+                    if (response.error) {
+                        throw new Error(response.error.message);
                     }
-                )
-                .finally(() => setHistoryInitialized(true));
+                    const data: Invoice[] = [];
+
+                    response.data.forEach((invoice) => {
+                        data.push(invoice);
+                    });
+
+                    setInvoices(data);
+                } catch {
+                    setHydrationErrorsExist(true);
+                    setHydrated(true);
+                } finally {
+                    setHistoryInitialized(true);
+                }
+            })();
         }
     }, [
-        setBillingHistory,
+        setInvoices,
         setHistoryInitialized,
         setHydrated,
         setHydrationErrorsExist,
@@ -153,15 +144,17 @@ function AdminBilling() {
         if (
             historyInitialized &&
             !isValidatingRecord &&
-            !isEmpty(billingRecord)
+            !isEmpty(currentMonthInvoices)
         ) {
             updateBillingHistory(
-                isArray(billingRecord) ? billingRecord : [billingRecord]
+                isArray(currentMonthInvoices)
+                    ? currentMonthInvoices
+                    : [currentMonthInvoices]
             );
         }
     }, [
         updateBillingHistory,
-        billingRecord,
+        currentMonthInvoices,
         historyInitialized,
         isValidatingRecord,
     ]);
@@ -212,39 +205,46 @@ function AdminBilling() {
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}
                         message={
-                            <FormattedMessage id="admin.billing.graph.dataByMonth.header" />
+                            <FormattedMessage id="admin.billing.graph.usageByMonth.header" />
                         }
                     >
                         <GraphStateWrapper>
-                            <DataByMonthGraph />
+                            <UsageByMonthGraph />
                         </GraphStateWrapper>
                     </CardWrapper>
                 </Grid>
 
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={12}>
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}
                         message={
-                            <FormattedMessage id="admin.billing.graph.taskHoursByMonth.header" />
+                            hydrated && selectedInvoice ? (
+                                <>
+                                    <FormattedMessage id="admin.billing.label.lineItems" />
+                                    <DateRange
+                                        start_date={selectedInvoice.date_start}
+                                        end_date={selectedInvoice.date_end}
+                                    />
+                                </>
+                            ) : (
+                                <FormattedMessage id="admin.billing.label.lineItems.loading" />
+                            )
                         }
                     >
-                        <GraphStateWrapper>
-                            <TaskHoursByMonthGraph />
-                        </GraphStateWrapper>
-                    </CardWrapper>
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                    <CardWrapper
-                        height={TOTAL_CARD_HEIGHT}
-                        message={
-                            <FormattedMessage id="admin.billing.graph.dataByTask.header" />
-                        }
-                        tooltipMessageId="admin.billing.graph.dataByTask.tooltip"
-                    >
-                        <GraphStateWrapper>
-                            <DataByTaskGraph />
-                        </GraphStateWrapper>
+                        {hydrated ? (
+                            <>
+                                {/* The key here makes sure that any stateful fetching logic doesn't get confused. */}
+                                <BillingLineItemsTable
+                                    key={
+                                        selectedInvoice
+                                            ? invoiceId(selectedInvoice)
+                                            : null
+                                    }
+                                />
+                            </>
+                        ) : (
+                            <GraphLoadingState />
+                        )}
                     </CardWrapper>
                 </Grid>
 

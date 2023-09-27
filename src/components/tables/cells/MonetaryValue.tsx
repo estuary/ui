@@ -9,9 +9,9 @@ function MonetaryValue({ amount }: Props) {
     const intl = useIntl();
 
     return (
-        <TableCell>
+        <TableCell align="right">
             <Typography>
-                {intl.formatNumber(amount, {
+                {intl.formatNumber(amount / 100, {
                     style: 'currency',
                     currency: 'USD',
                 })}
