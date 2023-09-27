@@ -241,7 +241,6 @@ function MonacoEditor({
             evaluatedPath,
             onChange,
             setStatus,
-            status,
         ]
     );
 
