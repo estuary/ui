@@ -3,7 +3,6 @@ import { Invoice } from 'api/billing';
 import MonetaryValue from 'components/tables/cells/MonetaryValue';
 import DataVolume from 'components/tables/cells/billing/DataVolume';
 import TimeStamp from 'components/tables/cells/billing/TimeStamp';
-import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useBilling_setSelectedInvoice } from 'stores/Billing/hooks';
 import { InvoiceId, invoiceId } from 'utils/billing-utils';
@@ -56,26 +55,15 @@ function Row({ row, isSelected }: RowProps) {
 
 // TODO (billing): Remove pagination placeholder when the new RPC is available.
 function Rows({ data, selectedInvoice }: RowsProps) {
-    // The table should only show the four, most recent months of billing history.
-    // If the user has accrued more than four months worth of billing data, calculate
-    // the adjusted start index.
-    const startIndex = useMemo(
-        () => (data.length > 4 ? data.length - 4 : 0),
-        [data.length]
-    );
-
     return (
         <>
-            {data
-                .slice(startIndex, data.length)
-                .reverse()
-                .map((record, index) => (
-                    <Row
-                        row={record}
-                        key={index}
-                        isSelected={invoiceId(record) === selectedInvoice}
-                    />
-                ))}
+            {data.slice(0, 4).map((record, index) => (
+                <Row
+                    row={record}
+                    key={index}
+                    isSelected={invoiceId(record) === selectedInvoice}
+                />
+            ))}
         </>
     );
 }

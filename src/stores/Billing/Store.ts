@@ -105,7 +105,7 @@ export const getInitialState = (
                                 record.date_end !== value[0].date_end
                         );
 
-                        evaluatedBillingHistory.push(value[0]);
+                        evaluatedBillingHistory.unshift(value[0]);
 
                         if (
                             !evaluatedBillingHistory.find(
