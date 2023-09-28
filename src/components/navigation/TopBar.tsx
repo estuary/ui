@@ -1,48 +1,16 @@
-import { Divider, Stack, Toolbar, Typography } from '@mui/material';
+import { Divider, Stack, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import { useTheme } from '@mui/material/styles';
-import { authenticatedRoutes } from 'app/routes';
 import CompanyLogo from 'components/graphics/CompanyLogo';
 import HelpMenu from 'components/menus/HelpMenu';
+import TenantMenu from 'components/menus/TenantMenu';
 import UserMenu from 'components/menus/UserMenu';
 import PageTitle from 'components/navigation/PageTitle';
 import SidePanelDocsOpenButton from 'components/sidePanelDocs/OpenButton';
 import { zIndexIncrement } from 'context/Theme';
-import { useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
-import useNotificationStore, {
-    notificationStoreSelectors,
-} from 'stores/NotificationStore';
 
 const Topbar = () => {
     const theme = useTheme();
-
-    const showNotification = useNotificationStore(
-        notificationStoreSelectors.showNotification
-    );
-
-    useEffect(() => {
-        showNotification({
-            description: (
-                <Typography>
-                    To provide payment details,{' '}
-                    <NavLink to={authenticatedRoutes.admin.billing.fullPath}>
-                        click here
-                    </NavLink>
-                    .
-                </Typography>
-            ),
-            severity: 'error',
-            title: (
-                <Typography>
-                    Your tenant has exceeded free tier usage limit
-                </Typography>
-            ),
-            options: {
-                persist: true,
-            },
-        });
-    });
 
     return (
         <MuiAppBar
@@ -72,6 +40,8 @@ const Topbar = () => {
 
                 <Stack direction="row" sx={{ alignItems: 'center' }}>
                     <HelpMenu />
+
+                    <TenantMenu />
 
                     <UserMenu iconColor={theme.palette.text.primary} />
 

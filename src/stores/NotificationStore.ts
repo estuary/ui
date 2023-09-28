@@ -1,4 +1,4 @@
-import { AlertColor } from '@mui/material';
+import { AlertColor, SnackbarProps } from '@mui/material';
 import { ReactNode } from 'react';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
@@ -8,9 +8,8 @@ export interface Notification {
     title: string | ReactNode;
     description: string | ReactNode;
     severity: AlertColor;
-    options?: {
-        persist?: boolean;
-    };
+    uniqueID?: string; // Used in case you need to trigger some action elsewhere based on a notification
+    options?: SnackbarProps;
 }
 
 export interface NotificationState {

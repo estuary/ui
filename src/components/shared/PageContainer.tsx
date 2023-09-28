@@ -3,6 +3,7 @@ import Topbar from 'components/navigation/TopBar';
 import { paperBackground } from 'context/Theme';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import useNotificationStore, {
+    Notification,
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
 import AlertBox from './AlertBox';
@@ -31,9 +32,9 @@ function PageContainer({ children, hideBackground }: Props) {
     useEffect(() => setDisplayAlert(!!notification), [notification]);
 
     const handlers = {
-        notificationClose: () => {
-            if (notification) {
-                updateNotificationHistory(notification);
+        notificationClose: (notificationBeingClosed?: Notification) => {
+            if (notificationBeingClosed) {
+                updateNotificationHistory(notificationBeingClosed);
                 hideNotification();
             }
         },
@@ -47,7 +48,13 @@ function PageContainer({ children, hideBackground }: Props) {
         ? 'none'
         : 'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px';
 
+    const otherOptions = useMemo(() => {
+        console.log('otherOptions');
+        return notification?.options ?? {};
+    }, [notification]);
+
     const alertBody = useMemo(() => {
+        console.log('alertBody');
         if (!notification) {
             return null;
         }
@@ -78,26 +85,18 @@ function PageContainer({ children, hideBackground }: Props) {
                 <Snackbar
                     anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                     open={displayAlert}
-                    autoHideDuration={
-                        notification.options?.persist ? null : 7500
-                    }
-                    onClose={
-                        notification.options?.persist
-                            ? undefined
-                            : handlers.notificationClose
-                    }
-                    sx={{
-                        '& .MuiAlert-action': {
-                            display: notification.options?.persist
-                                ? 'none'
-                                : undefined,
-                        },
+                    autoHideDuration={7500}
+                    onClose={() => {
+                        handlers.notificationClose(notification);
                     }}
+                    {...otherOptions}
                 >
                     <AlertBox
                         severity={notification.severity}
                         short
-                        onClose={handlers.notificationClose}
+                        onClose={() => {
+                            handlers.notificationClose(notification);
+                        }}
                     >
                         {alertBody}
                     </AlertBox>
