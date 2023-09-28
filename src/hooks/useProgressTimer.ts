@@ -1,8 +1,16 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useInterval } from 'react-use';
 
 const linearProgressInterval = 500;
 const maxProgress = 100;
+
+const calculateProgression = (
+    wait: number | undefined,
+    interval: number | null
+) =>
+    interval && wait
+        ? Math.round((maxProgress / wait) * interval)
+        : maxProgress;
 
 // Hook used to return a progress indicator from 0 - 100 over a certain wait time
 //  wait MUST be passed in as milliseconds
@@ -14,23 +22,25 @@ function useProgressTimer(wait?: number) {
 
     // Figure out how much each tick should add to the progress
     const progression = useMemo(
-        () =>
-            interval && wait
-                ? Math.round((maxProgress / wait) * interval)
-                : maxProgress,
+        () => calculateProgression(wait, interval),
         [wait, interval]
     );
 
     // Start right away with some progress
     const [progress, setProgress] = useState(progression);
 
+    // Handle if wait is flipping back to not being set and force the interval to stop
+    useEffect(() => {
+        setInterval(wait ? linearProgressInterval : null);
+    }, [wait]);
+
     // Start loop that will keep updating the progress
     useInterval(() => {
         setProgress((oldProgress) => {
             if (oldProgress === maxProgress) {
-                // Now that we're done we can stop the interval
-                setInterval(null);
-                return maxProgress;
+                // Now that we're done we should restart if there is a wait time
+                setInterval(wait ? linearProgressInterval : null);
+                return calculateProgression(wait, interval);
             }
 
             // Calculate the new progress and make sure it doesn't go over 100

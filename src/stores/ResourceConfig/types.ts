@@ -80,6 +80,9 @@ export interface ResourceConfigState {
     serverUpdateRequired: boolean;
     setServerUpdateRequired: (value: boolean) => void;
 
+    rediscoveryRequired: boolean;
+    setRediscoveryRequired: (value: boolean) => void;
+
     evaluateDiscoveredCollections: (
         response: CallSupabaseResponse<any>
     ) => void;

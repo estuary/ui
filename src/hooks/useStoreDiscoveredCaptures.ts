@@ -46,7 +46,12 @@ function useStoreDiscoveredCaptures() {
     const resetCollections = useResourceConfig_resetConfigAndCollections();
 
     const storeDiscoveredCollections = useCallback(
-        async (newDraftId: string, entityType: Entity, callFailed: any) => {
+        async (
+            newDraftId: string,
+            entityType: Entity,
+            callFailed: any,
+            skipDraftUpdate?: boolean
+        ) => {
             // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
             //   More columns are selected than required to appease the typing of the editor store.
             const draftSpecsResponse = await getDraftSpecsBySpecType(
@@ -73,30 +78,45 @@ function useStoreDiscoveredCaptures() {
                         ? { catalogName: entityName, lastPubId }
                         : null;
 
-                const updatedDraftSpecsResponse =
-                    await modifyDiscoveredDraftSpec(
-                        draftSpecsResponse,
-                        supabaseConfig
-                    );
+                // Skip this section if the setting is set AND we don't have the config stuff
+                // This check was added a long time after this function initially was written so wanted to keep the
+                //   scope as small as possible. Generally, this will happen when a use is editing their
+                //   capture and trying to fire off a refresh directly after updating the form
+                if (!supabaseConfig && !skipDraftUpdate) {
+                    const updatedDraftSpecsResponse =
+                        await modifyDiscoveredDraftSpec(
+                            draftSpecsResponse,
+                            supabaseConfig
+                        );
 
-                if (updatedDraftSpecsResponse.error) {
-                    return callFailed({
-                        error: {
-                            title: 'captureCreate.generate.failedErrorTitle',
-                            error: updatedDraftSpecsResponse.error,
-                        },
-                    });
-                }
+                    if (updatedDraftSpecsResponse.error) {
+                        return callFailed({
+                            error: {
+                                title: 'captureCreate.generate.failedErrorTitle',
+                                error: updatedDraftSpecsResponse.error,
+                            },
+                        });
+                    }
 
-                if (
-                    updatedDraftSpecsResponse.data &&
-                    updatedDraftSpecsResponse.data.length > 0
-                ) {
-                    evaluateDiscoveredCollections(updatedDraftSpecsResponse);
+                    if (
+                        updatedDraftSpecsResponse.data &&
+                        updatedDraftSpecsResponse.data.length > 0
+                    ) {
+                        evaluateDiscoveredCollections(
+                            updatedDraftSpecsResponse
+                        );
+
+                        setEncryptedEndpointConfig({
+                            data: updatedDraftSpecsResponse.data[0].spec
+                                .endpoint.connector.config,
+                        });
+                    }
+                } else {
+                    evaluateDiscoveredCollections(draftSpecsResponse);
 
                     setEncryptedEndpointConfig({
-                        data: updatedDraftSpecsResponse.data[0].spec.endpoint
-                            .connector.config,
+                        data: draftSpecsResponse.data[0].spec.endpoint.connector
+                            .config,
                     });
                 }
 
