@@ -7,70 +7,77 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { AlertMessage, AlertMethod } from 'types';
+import { NotificationMessage, NotificationPreference } from 'types';
 
-const createPendingAlertMethod = (
+const createNotificationMethod = (
     detail: string,
     prefix: string,
-    unverified_emails: string[]
+    user_id: string
 ) => {
-    return insertSupabase(TABLES.ALERT_METHODS, {
+    return insertSupabase(TABLES.NOTIFICATION_PREFERENCES, {
         detail,
         prefix,
-        unverified_emails,
+        user_id,
     });
 };
 
-export type AlertMessageQuery = Pick<AlertMessage, 'id' | 'detail'>;
-
-export type AlertMethodQuery = Pick<AlertMethod, 'id' | 'prefix'>;
-
-export type AlertMethodTableQuery = Pick<
-    AlertMethod,
-    'id' | 'updated_at' | 'prefix' | 'unverified_emails' | 'verified_emails'
+export type NotificationMessageQuery = Pick<
+    NotificationMessage,
+    'id' | 'detail'
 >;
 
-const getAlertMessageByName = async (name: string) => {
+export type NotificationMethodQuery = Pick<
+    NotificationPreference,
+    'id' | 'prefix'
+>;
+
+export type NotificationPreferencesTableQuery = Pick<
+    NotificationPreference,
+    'id' | 'updated_at' | 'prefix' | 'user_id'
+>;
+
+const getNotificationMessageByName = async (name: string) => {
     const data = await supabaseClient
-        .from<AlertMessageQuery>(TABLES.ALERT_MESSAGES)
+        .from<NotificationMessageQuery>(TABLES.NOTIFICATION_MESSAGES)
         .select(`id, detail`)
         .eq('detail', name)
-        .then(handleSuccess<AlertMessageQuery[]>, handleFailure);
+        .then(handleSuccess<NotificationMessageQuery[]>, handleFailure);
 
     return data;
 };
 
-const getAlertMethodByPrefix = async (prefix: string) => {
+const getNotificationMethodByPrefix = async (prefix: string) => {
     const data = await supabaseClient
-        .from<AlertMethodQuery>(TABLES.ALERT_METHODS)
+        .from<NotificationMethodQuery>(TABLES.NOTIFICATION_PREFERENCES)
         .select(`id, prefix`)
         .eq('prefix', `${prefix}/`)
-        .then(handleSuccess<AlertMethodQuery[]>, handleFailure);
+        .then(handleSuccess<NotificationMethodQuery[]>, handleFailure);
 
     return data;
 };
 
-const getPrefixAlertMethod = (
+const getNotificationPreference = (
     pagination: any,
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<AlertMethodTableQuery>(TABLES.ALERT_METHODS)
+        .from<NotificationPreferencesTableQuery>(
+            TABLES.NOTIFICATION_PREFERENCES
+        )
         .select(
             `    
                 id,
                 updated_at,
                 prefix,
-                unverified_emails,
-                verified_emails
+                user_id
             `,
             { count: 'exact' }
         );
 
     // TODO (alerts): Determine means to evaluate whether a key of the data type passed to defaultTableFilter is a compound type.
     //   Presently, only scalar types are able to be queried by the search bar.
-    queryBuilder = defaultTableFilter<AlertMethodTableQuery>(
+    queryBuilder = defaultTableFilter<NotificationPreferencesTableQuery>(
         queryBuilder,
         ['prefix'],
         searchQuery,
@@ -82,8 +89,8 @@ const getPrefixAlertMethod = (
 };
 
 export {
-    createPendingAlertMethod,
-    getAlertMessageByName,
-    getAlertMethodByPrefix,
-    getPrefixAlertMethod,
+    createNotificationMethod,
+    getNotificationMessageByName,
+    getNotificationMethodByPrefix,
+    getNotificationPreference,
 };

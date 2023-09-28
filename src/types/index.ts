@@ -346,7 +346,7 @@ export interface AutoDiscoverySettings {
     evolveIncompatibleCollections: boolean;
 }
 
-export interface AlertMessage {
+export interface NotificationMessage {
     id: string;
     detail: string;
     created_at: string;
@@ -355,12 +355,12 @@ export interface AlertMessage {
     message: string;
 }
 
-export interface AlertMethod {
+export interface NotificationPreference {
     id: string;
     detail: string;
     created_at: string;
     updated_at: string;
     prefix: string;
-    unverified_emails: string[];
-    verified_emails: string[];
+    user_id: string;
+    method: string;
 }

@@ -36,9 +36,6 @@ export const ERROR_MESSAGES = {
 export const DEFAULT_FILTER = '__unknown__';
 
 export enum TABLES {
-    ALERTS = 'alerts',
-    ALERT_METHODS = 'alert_methods',
-    ALERT_MESSAGES = 'alert_messages',
     APPLIED_DIRECTIVES = 'applied_directives',
     BILLING_HISTORICALS = 'billing_historicals',
     CATALOG_STATS = 'catalog_stats',
@@ -57,6 +54,10 @@ export enum TABLES {
     LIVE_SPEC_FLOW = 'live_spec_flow',
     LIVE_SPECS = 'live_specs',
     LIVE_SPECS_EXT = 'live_specs_ext',
+    NOTIFICATION_MESSAGES = 'notification_messages',
+    NOTIFICATION_PREFERENCES = 'notification_methods',
+    NOTIFICATIONS = 'notifications',
+    NOTIFICATIONS_EXT = 'notifications_ext',
     PUBLICATION_SPECS = 'publication_specs',
     PUBLICATION_SPECS_EXT = 'publication_specs_ext',
     PUBLICATIONS = 'publications',

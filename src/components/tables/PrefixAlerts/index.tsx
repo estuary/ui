@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { getPrefixAlertMethod } from 'api/alerts';
+import { getNotificationPreference } from 'api/alerts';
 import EntityTable from 'components/tables/EntityTable';
 import Rows from 'components/tables/PrefixAlerts/Rows';
 import RowSelector from 'components/tables/RowActions/PrefixAlerts/RowSelector';
@@ -46,7 +46,7 @@ function PrefixAlertTable() {
     } = useTableState(TablePrefixes.prefixAlerts, 'updated_at', 'desc');
 
     const query = useMemo(() => {
-        return getPrefixAlertMethod(pagination, searchQuery, [
+        return getNotificationPreference(pagination, searchQuery, [
             {
                 col: columnToSort,
                 direction: sortDirection,

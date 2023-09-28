@@ -1,5 +1,5 @@
 import { TableCell, TableRow, useTheme } from '@mui/material';
-import { AlertMethodTableQuery } from 'api/alerts';
+import { NotificationPreferencesTableQuery } from 'api/alerts';
 import ChipListCell from 'components/tables/cells/ChipList';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
@@ -12,11 +12,11 @@ import {
 import { SelectTableStoreNames } from 'stores/names';
 
 interface RowsProps {
-    data: AlertMethodTableQuery[];
+    data: NotificationPreferencesTableQuery[];
 }
 
 interface RowProps {
-    row: AlertMethodTableQuery;
+    row: NotificationPreferencesTableQuery;
     isSelected: boolean;
     setRow: any;
 }

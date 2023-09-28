@@ -6,7 +6,10 @@ import {
     Typography,
 } from '@mui/material';
 import { Auth } from '@supabase/ui';
-import { getAlertMessageByName, getAlertMethodByPrefix } from 'api/alerts';
+import {
+    getNotificationMessageByName,
+    getNotificationMethodByPrefix,
+} from 'api/alerts';
 import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -29,9 +32,9 @@ function Settings() {
     getLiveSpecsByCatalogName(catalogName, 'capture');
 
     const [prefix] = catalogName.split('/', 1);
-    getAlertMethodByPrefix(prefix);
+    getNotificationMethodByPrefix(prefix);
 
-    getAlertMessageByName('data-not-processed-in-interval');
+    getNotificationMessageByName('data-not-processed-in-interval');
 
     return (
         <Stack spacing={1}>

@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import { createPendingAlertMethod } from 'api/alerts';
+import { createNotificationMethod } from 'api/alerts';
 import { useZustandStore } from 'context/Zustand/provider';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -36,7 +36,8 @@ function SaveButton({ disabled, emails, prefix, setOpen }: Props) {
 
         const processedPrefix = appendWithForwardSlash(prefix);
 
-        createPendingAlertMethod(detail, processedPrefix, emails).then(
+        // Bundle insertions
+        createNotificationMethod(detail, processedPrefix, emails).then(
             (response) => {
                 if (response.error) {
                     console.log('save error 1', response.error);
