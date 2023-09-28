@@ -3,7 +3,6 @@ import MuiAppBar from '@mui/material/AppBar';
 import { useTheme } from '@mui/material/styles';
 import CompanyLogo from 'components/graphics/CompanyLogo';
 import HelpMenu from 'components/menus/HelpMenu';
-import TenantMenu from 'components/menus/TenantMenu';
 import UserMenu from 'components/menus/UserMenu';
 import PageTitle from 'components/navigation/PageTitle';
 import SidePanelDocsOpenButton from 'components/sidePanelDocs/OpenButton';
@@ -40,8 +39,6 @@ const Topbar = () => {
 
                 <Stack direction="row" sx={{ alignItems: 'center' }}>
                     <HelpMenu />
-
-                    <TenantMenu />
 
                     <UserMenu iconColor={theme.palette.text.primary} />
 
