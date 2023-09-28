@@ -290,6 +290,13 @@ export const useBindingsEditorStore_selections = () => {
     >(BindingsEditorStoreNames.GENERAL, (state) => state.selections);
 };
 
+export const useBindingsEditorStore_initializeSelections = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['initializeSelections']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.initializeSelections);
+};
+
 export const useBindingsEditorStore_setSingleSelection = () => {
     return useZustandStore<
         BindingsEditorState,
