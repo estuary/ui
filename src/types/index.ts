@@ -1,4 +1,5 @@
 import { JsonFormsCore } from '@jsonforms/core';
+import { TableCellProps } from '@mui/material';
 import { PostgrestError } from '@supabase/supabase-js';
 import { ReactNode } from 'react';
 
@@ -289,6 +290,7 @@ export interface TableColumns {
     headerIntlKey?: string | null;
     width?: number;
     sticky?: boolean;
+    align?: TableCellProps['align'];
 }
 
 export interface TableState {

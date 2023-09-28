@@ -5,15 +5,21 @@ import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
-    useBilling_billingHistory,
     useBilling_hydrated,
+    useBilling_invoices,
+    useBilling_selectedInvoice,
 } from 'stores/Billing/hooks';
 import { TableColumns, TableStatuses } from 'types';
+import { invoiceId } from 'utils/billing-utils';
 
 export const columns: TableColumns[] = [
     {
-        field: 'month',
-        headerIntlKey: 'admin.billing.table.history.label.month',
+        field: 'date_start',
+        headerIntlKey: 'admin.billing.table.history.label.date_start',
+    },
+    {
+        field: 'date_end',
+        headerIntlKey: 'admin.billing.table.history.label.date_end',
     },
     {
         field: 'data_volume',
@@ -26,6 +32,7 @@ export const columns: TableColumns[] = [
     {
         field: 'total_cost',
         headerIntlKey: 'admin.billing.table.history.label.totalCost',
+        align: 'right',
     },
 ];
 
@@ -34,13 +41,22 @@ export const columns: TableColumns[] = [
 function BillingHistoryTable() {
     const intl = useIntl();
 
+    const selectedInvoice = useBilling_selectedInvoice();
+
     const hydrated = useBilling_hydrated();
-    const billingHistory = useBilling_billingHistory();
+    const billingHistory = useBilling_invoices();
 
     const dataRows = useMemo(
         () =>
-            billingHistory.length > 0 ? <Rows data={billingHistory} /> : null,
-        [billingHistory]
+            billingHistory.length > 0 ? (
+                <Rows
+                    data={billingHistory}
+                    selectedInvoice={
+                        selectedInvoice ? invoiceId(selectedInvoice) : null
+                    }
+                />
+            ) : null,
+        [billingHistory, selectedInvoice]
     );
 
     return (
@@ -50,7 +66,7 @@ function BillingHistoryTable() {
                     id: 'entityTable.title',
                 })}
                 size="small"
-                sx={{ minWidth: 350 }}
+                sx={{ minWidth: 450 }}
             >
                 <EntityTableHeader columns={columns} noBackgroundColor />
 

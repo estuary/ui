@@ -104,7 +104,7 @@ function CaptureEdit() {
                                 <RediscoverButton
                                     entityType={entityType}
                                     disabled={!hasConnectors}
-                                    postGenerateMutate={mutateDraftSpecs}
+                                    postGenerateMutate={updateDraftSpecs}
                                 />
                             }
                         />

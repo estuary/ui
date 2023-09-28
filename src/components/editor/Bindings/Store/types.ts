@@ -86,10 +86,15 @@ export interface BindingsEditorState {
     setRecommendFields: (value: BindingsEditorState['recommendFields']) => void;
 
     selections: { [field: string]: FieldSelectionType | null };
+    initializeSelections: (
+        selection: {
+            field: string;
+            selectionType: FieldSelectionType | null;
+        }[]
+    ) => void;
     setSingleSelection: (
         field: string,
-        selectionType: FieldSelectionType | null,
-        initOnly?: boolean
+        selectionType: FieldSelectionType | null
     ) => void;
 
     selectionSaving: boolean;

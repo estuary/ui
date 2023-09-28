@@ -7,6 +7,7 @@ import {
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
+    useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { useEntityType } from 'context/EntityContext';
@@ -56,6 +57,8 @@ function SchemaEvolution({ onFailure }: Props) {
     const setIncompatibleCollections =
         useBindingsEditorStore_setIncompatibleCollections();
 
+    const mutate_advancedEditor = useEditorStore_queryResponse_mutate();
+
     const jobFailed = useCallback(
         (error) => {
             setFormState({
@@ -98,6 +101,10 @@ function SchemaEvolution({ onFailure }: Props) {
                 // Now that the collections are updated we can clear out the list so
                 //  the error section is no longer displayed.
                 setIncompatibleCollections([]);
+
+                if (mutate_advancedEditor) {
+                    await mutate_advancedEditor();
+                }
             },
             async (payload: any) => {
                 if (payload.error === JOB_STATUS_POLLER_ERROR) {

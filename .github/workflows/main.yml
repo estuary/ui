@@ -61,6 +61,9 @@ jobs:
             - name: Prettier
               run: npm run format
 
+            - name: Licenses
+              run: npm run licenses
+
             #  We currently don't have tests to run
             # - name: Jest
             #   run: npm run test

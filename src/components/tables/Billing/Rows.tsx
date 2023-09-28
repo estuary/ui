@@ -1,58 +1,69 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
-import { BillingRecord } from 'api/billing';
+import { Invoice } from 'api/billing';
+import MonetaryValue from 'components/tables/cells/MonetaryValue';
 import DataVolume from 'components/tables/cells/billing/DataVolume';
 import TimeStamp from 'components/tables/cells/billing/TimeStamp';
-import MonetaryValue from 'components/tables/cells/MonetaryValue';
-import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useBilling_setSelectedInvoice } from 'stores/Billing/hooks';
+import { InvoiceId, invoiceId } from 'utils/billing-utils';
 
 interface RowProps {
-    row: BillingRecord;
+    row: Invoice;
+    isSelected: boolean;
 }
 
 interface RowsProps {
-    data: BillingRecord[];
+    data: Invoice[];
+    selectedInvoice: InvoiceId | null;
 }
 
-function Row({ row }: RowProps) {
+function Row({ row, isSelected }: RowProps) {
+    const setSelectedInvoice = useBilling_setSelectedInvoice();
     return (
-        <TableRow hover>
-            <TimeStamp date={row.billed_month} />
+        <TableRow
+            hover
+            selected={isSelected}
+            onClick={() => setSelectedInvoice(invoiceId(row))}
+            sx={{ cursor: 'pointer' }}
+        >
+            <TimeStamp
+                date={row.date_start}
+                asLink
+                tooltipMessageId="admin.billing.table.history.tooltip.date_start"
+            />
+            <TimeStamp
+                date={row.date_end}
+                asLink
+                tooltipMessageId="admin.billing.table.history.tooltip.date_end"
+            />
 
-            <DataVolume volumeInGB={row.processed_data_gb ?? 0} />
+            <DataVolume volumeInGB={row.extra?.processed_data_gb ?? 0} />
 
             <TableCell>
                 <Typography>
                     <FormattedMessage
                         id="admin.billing.graph.taskHoursByMonth.formatValue"
-                        values={{ taskUsage: row.task_usage_hours }}
+                        values={{ taskUsage: row.extra?.task_usage_hours ?? 0 }}
                     />
                 </Typography>
             </TableCell>
 
-            <MonetaryValue amount={row.subtotal / 100} />
+            <MonetaryValue amount={row.subtotal} />
         </TableRow>
     );
 }
 
 // TODO (billing): Remove pagination placeholder when the new RPC is available.
-function Rows({ data }: RowsProps) {
-    // The table should only show the four, most recent months of billing history.
-    // If the user has accrued more than four months worth of billing data, calculate
-    // the adjusted start index.
-    const startIndex = useMemo(
-        () => (data.length > 4 ? data.length - 4 : 0),
-        [data.length]
-    );
-
+function Rows({ data, selectedInvoice }: RowsProps) {
     return (
         <>
-            {data
-                .slice(startIndex, data.length)
-                .reverse()
-                .map((record, index) => (
-                    <Row row={record} key={index} />
-                ))}
+            {data.slice(0, 4).map((record, index) => (
+                <Row
+                    row={record}
+                    key={index}
+                    isSelected={invoiceId(record) === selectedInvoice}
+                />
+            ))}
         </>
     );
 }

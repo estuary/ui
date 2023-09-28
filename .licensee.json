@@ -1,0 +1,10 @@
+{
+    "licenses": {
+        "spdx": ["MIT", "BSD-2-Clause", "BSD-3-Clause", "Apache-2.0"],
+        "blueOak": "bronze"
+    },
+    "packages": {
+        "optimist": "<=0.6.1"
+    },
+    "corrections": false
+}

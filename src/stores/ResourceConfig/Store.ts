@@ -122,6 +122,7 @@ const getInitialMiscStoreData = (): Pick<
     | 'resourceSchema'
     | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
+    | 'rediscoveryRequired'
 > => ({
     discoveredCollections: null,
     hydrated: false,
@@ -132,6 +133,7 @@ const getInitialMiscStoreData = (): Pick<
     resourceSchema: {},
     restrictedDiscoveredCollections: [],
     serverUpdateRequired: false,
+    rediscoveryRequired: false,
 });
 
 const getInitialStateData = () => ({
@@ -678,6 +680,16 @@ const getInitialState = (
             }),
             false,
             'Server Update Required Flag Changed'
+        );
+    },
+
+    setRediscoveryRequired: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                state.rediscoveryRequired = value;
+            }),
+            false,
+            'Rediscovery Required Flag Changed'
         );
     },
 
