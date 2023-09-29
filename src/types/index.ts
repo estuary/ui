@@ -150,6 +150,7 @@ export interface Tenants {
     collections_quota: number;
     detail: string;
     tenant: string;
+    trial_start: string;
     created_at: string;
     updated_at: string;
 }

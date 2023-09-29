@@ -132,16 +132,20 @@ export interface MultiplePaymentMethods {
     errors: any[];
 }
 
+const MAX_TENANTS = 3;
 export const getPaymentMethodsForTenants = async (
     tenants: Tenants[]
 ): Promise<MultiplePaymentMethods> => {
     const limiter = pLimit(3);
     const promises: Array<Promise<any>> = [];
+    let count = 0;
 
-    tenants.forEach((tenantDetail) => {
+    tenants.some((tenantDetail) => {
         promises.push(
             limiter(() => getTenantPaymentMethods(tenantDetail.tenant))
         );
+        count += 1;
+        return count < MAX_TENANTS;
     });
 
     const responses = await Promise.all(promises);
