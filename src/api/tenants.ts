@@ -1,20 +1,12 @@
 import { supabaseClient, TABLES } from 'services/supabase';
 import { Tenants } from 'types';
 
-const getTenantDetails = (tenants?: string[]) => {
-    let queryBuilder = supabaseClient.from<Tenants>(TABLES.TENANTS).select(
-        `    
-            tasks_quota,
-            collections_quota,
-            tenant
-        `
-    );
+const COLUMNS = ['tasks_quota', 'collections_quota', 'tenant', 'trial_start'];
 
-    if (tenants && tenants.length > 0) {
-        queryBuilder = queryBuilder.in('tenant', tenants);
-    }
-
-    return queryBuilder;
+const getTenantDetails = () => {
+    return supabaseClient
+        .from<Tenants>(TABLES.TENANTS)
+        .select(COLUMNS.join(','));
 };
 
 export { getTenantDetails };
