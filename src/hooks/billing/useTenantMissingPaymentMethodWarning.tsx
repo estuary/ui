@@ -95,12 +95,18 @@ function useTenantMissingPaymentMethodWarning() {
                         })
                         .startOf('day');
 
+                    // If a trial is set to a future date just ignore for now
+                    if (trialStart > today) {
+                        return true;
+                    }
+
                     // See how many days we have left
                     const daysLeft =
                         today <= trialEnd
                             ? trialEnd.diff(today, 'days').days
                             : -1;
 
+                    // Since if we have daysleft so we can set the alert as a warning and not an error
                     const trialCurrent = daysLeft > 0;
 
                     const descriptionID = trialCurrent
@@ -109,6 +115,7 @@ function useTenantMissingPaymentMethodWarning() {
                         ? 'notifications.paymentMethods.missing.trialEndsToday'
                         : 'notifications.paymentMethods.missing.trialPast';
 
+                    // Just always pass the same values even if all the messages do not need them
                     const descriptionValues: Schema = {
                         daysLeft,
                         tenant: (
@@ -123,10 +130,12 @@ function useTenantMissingPaymentMethodWarning() {
                         ),
                     };
 
+                    // Show notification and disable auto hide so the user has to manually close it
                     showNotification({
                         options: {
                             autoHideDuration: null,
                         },
+                        disableClickAwayClose: true,
                         severity: trialCurrent ? 'warning' : 'error',
                         description: (
                             <Stack spacing={1} sx={{ mt: 1 }}>

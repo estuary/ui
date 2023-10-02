@@ -49,12 +49,10 @@ function PageContainer({ children, hideBackground }: Props) {
         : 'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px';
 
     const otherOptions = useMemo(() => {
-        console.log('otherOptions');
         return notification?.options ?? {};
     }, [notification]);
 
     const alertBody = useMemo(() => {
-        console.log('alertBody');
         if (!notification) {
             return null;
         }
@@ -86,7 +84,14 @@ function PageContainer({ children, hideBackground }: Props) {
                     anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                     open={displayAlert}
                     autoHideDuration={7500}
-                    onClose={() => {
+                    onClose={(_event, reason) => {
+                        if (
+                            notification.disableClickAwayClose &&
+                            reason === 'clickaway'
+                        ) {
+                            return;
+                        }
+
                         handlers.notificationClose(notification);
                     }}
                     {...otherOptions}
