@@ -4,48 +4,20 @@ import {
     MultiplePaymentMethods,
 } from 'api/billing';
 import { useEffect, useState } from 'react';
-import { find } from 'lodash';
-import { UTCDate } from '@date-fns/utc';
-import { differenceInCalendarDays } from 'date-fns';
-import { convertToUTC } from 'api/stats';
+import { hasLength } from 'utils/misc-utils';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import { logRocketConsole } from 'services/logrocket';
+import { DateTime } from 'luxon';
+
+const TRIAL_LENGTH = 30;
 
 function useTenantMissingPaymentMethodWarning() {
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
     );
-    //                     showNotification({
-    //                     description: (
-    //                         <Box>
-    //                             <Chip label={paymentMethodsResponse.tenant} /> is missing payment
-    //                             information and has an unpaid invoice. This can
-    //                             lead to the tenant being disabled if not
-    //                             corrected in a timely manner. Please provide
-    //                             your payment details by{' '}
-    //                             <NavLink
-    //                                 to={
-    //                                     authenticatedRoutes.admin.billing
-    //                                         .fullPath
-    //                                 }
-    //                             >
-    //                                 clicking here
-    //                             </NavLink>
-    //                             .
-    //                         </Box>
-    //                     ),
-    //                     severity: 'error',
-    //                     title: (
-    //                         <Typography sx={{ fontWeight: 'bold' }}>
-    //                             Missing payment information
-    //                         </Typography>
-    //                     ),
-    //                     options: {
-    //                         autoHideDuration: null,
-    //                     },
-    //                 });
 
     const tenantDetails = useTenantDetails();
 
@@ -55,9 +27,9 @@ function useTenantMissingPaymentMethodWarning() {
     useEffect(() => {
         const fetchData = async () => {
             if (tenantDetails) {
-                const paymentMethodsResponse =
-                    await getPaymentMethodsForTenants(tenantDetails);
-                setPaymentMethods(paymentMethodsResponse);
+                setPaymentMethods(
+                    await getPaymentMethodsForTenants(tenantDetails)
+                );
             }
         };
 
@@ -69,73 +41,102 @@ function useTenantMissingPaymentMethodWarning() {
             return;
         }
 
+        // Log if there was _some_ errors. However, do not stop because one call could fail and another succeeds
         if (paymentMethods.errors.length > 0) {
-            console.log('had issues fetching payment methods');
-        } else if (paymentMethods.responses.length > 0) {
-            paymentMethods.responses.some((paymentMethodsResponse) => {
-                const details = find(
-                    tenantDetails,
-                    (tenantDetail) =>
-                        tenantDetail.tenant === paymentMethodsResponse.tenant
-                );
-
-                const hasPaymentMethod =
-                    paymentMethodsResponse.paymentMethods.length > 0;
-
-                // The tenant
-                if (details?.trial_start) {
-                    const trialStart = convertToUTC(
-                        details.trial_start,
-                        'daily',
-                        true
-                    );
-                    const trialStartLength = differenceInCalendarDays(
-                        trialStart,
-                        convertToUTC(new UTCDate(), 'daily', true)
-                    );
-                    const daysLeft = 30 - trialStartLength;
-
-                    if (!hasPaymentMethod) {
-                        if (daysLeft > 0) {
-                            showNotification({
-                                description: `${paymentMethodsResponse.tenant} is in the free trial but have no payment methods saved. You have ${daysLeft} days left. Please provide a method before the trial ends.`,
-                                severity: 'error',
-                                title: (
-                                    <Typography sx={{ fontWeight: 'bold' }}>
-                                        Missing payment information
-                                    </Typography>
-                                ),
-                                options: {
-                                    autoHideDuration: null,
-                                },
-                            });
-                        } else {
-                            // The trial is over and
-                            showNotification({
-                                description: `${paymentMethodsResponse.tenant} is accruing charges without a payment method. Please provide a method as soon as possible.`,
-                                severity: 'error',
-                                title: (
-                                    <Typography sx={{ fontWeight: 'bold' }}>
-                                        Missing payment information
-                                    </Typography>
-                                ),
-                                options: {
-                                    autoHideDuration: null,
-                                },
-                            });
-                        }
-
-                        return true;
-                    }
-
-                    return false;
-                }
-
-                return false;
-            });
+            logRocketConsole(
+                'useTenantMissingPaymentMethodWarning: unable to fetch payment methods for tenants'
+            );
         }
 
-        console.log('fetched payment methods', paymentMethods);
+        // Find all the tenants the user can access that are in the trial period
+        const tenantsInTrial = tenantDetails.filter(
+            (tenantDetail) => tenantDetail.trial_start
+        );
+
+        // If there are no tenants in trial then we are good and can move on
+        if (tenantsInTrial.length === 0) {
+            return;
+        }
+
+        // We have tenant in trial and now need to go through all the payment methods and see if any are missing
+        if (paymentMethods.responses.length > 0) {
+            // Go through each tenant to try to find the payment methods
+            tenantsInTrial.some((tenantInTrial) => {
+                const currentTenant = tenantInTrial.tenant;
+
+                // Find the payment method for this tenant
+                const paymentMethodForTenant = paymentMethods.responses.find(
+                    (paymentMethod) => {
+                        return currentTenant === paymentMethod.tenant;
+                    }
+                );
+
+                // We check the methods list and see if one exists. We are not checking if a primary card is set
+                //   at this time (Q4 2023) but that might change based on experience.
+                const hasPaymentMethod = hasLength(
+                    paymentMethodForTenant.payment_methods
+                );
+
+                if (!hasPaymentMethod) {
+                    // Make sure we fetch everything as utc and start of day
+                    //   so we can easily ignore hours/mins/etc.
+                    const today = DateTime.utc().startOf('day');
+                    const trialStart = DateTime.fromISO(
+                        tenantInTrial.trial_start,
+                        { zone: 'utc' }
+                    ).startOf('day');
+                    const trialEnd = trialStart
+                        .plus({
+                            days: TRIAL_LENGTH,
+                        })
+                        .startOf('day');
+
+                    if (today > trialEnd) {
+                        showNotification({
+                            description: `${currentTenant} is accruing charges without a payment method. Please provide a method as soon as possible.`,
+                            severity: 'error',
+                            title: (
+                                <Typography sx={{ fontWeight: 'bold' }}>
+                                    Missing payment information
+                                </Typography>
+                            ),
+                            options: {
+                                autoHideDuration: null,
+                            },
+                        });
+                    } else {
+                        const daysLeft = today.diff(trialEnd, 'days').days;
+
+                        showNotification({
+                            description: (
+                                <Box>
+                                    <Typography sx={{ fontWeight: 'bold' }}>
+                                        {currentTenant}
+                                    </Typography>
+                                    is in the free trial but have no payment
+                                    methods saved. You have {daysLeft} of{' '}
+                                    {TRIAL_LENGTH} days left. Please provide a
+                                    method before the trial ends.
+                                </Box>
+                            ),
+                            severity: 'error',
+                            title: (
+                                <Typography sx={{ fontWeight: 'bold' }}>
+                                    Missing payment information
+                                </Typography>
+                            ),
+                            options: {
+                                autoHideDuration: null,
+                            },
+                        });
+                    }
+
+                    return true;
+                }
+
+                return true;
+            });
+        }
     }, [paymentMethods, showNotification, tenantDetails]);
 
     return paymentMethods;
