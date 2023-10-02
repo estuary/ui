@@ -1259,6 +1259,15 @@ const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.table.label.unknown': `Unknown`,
 };
 
+const Notifications: ResolvedIntlConfig['messages'] = {
+    'notifications.paymentMethods.missing.title': `Missing Payment Methods`,
+    'notifications.paymentMethods.missing.trialCurrent': `The free trial for {tenant} has {daysLeft} days left and no payment method. Please enter a payment method before the trial ends.`,
+    'notifications.paymentMethods.missing.trialEndsToday': `The free trial for {tenant} is ending today and has no payment method. Please enter a payment method today.`,
+    'notifications.paymentMethods.missing.trialPast': `{tenant} is accruing charges without a payment method. Please enter a payment method immedietly.`,
+    'notifications.paymentMethods.missing.instructions': `{cta} to provide a payment method.`,
+    'notifications.paymentMethods.missing.instructions.button': `Visit Billing`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1317,6 +1326,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...PrefixedName,
     ...Graphs,
     ...FieldSelection,
+    ...Notifications,
 };
 
 export default enUSMessages;

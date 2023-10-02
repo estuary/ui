@@ -8,9 +8,13 @@ import { hasLength } from 'utils/misc-utils';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
-import { Box, Typography } from '@mui/material';
+import { Box, Divider, Stack, Typography } from '@mui/material';
 import { logRocketConsole } from 'services/logrocket';
 import { DateTime } from 'luxon';
+import { FormattedMessage } from 'react-intl';
+import { Schema } from 'types';
+import { NavLink } from 'react-router-dom';
+import { authenticatedRoutes } from 'app/routes';
 
 const TRIAL_LENGTH = 30;
 
@@ -91,47 +95,74 @@ function useTenantMissingPaymentMethodWarning() {
                         })
                         .startOf('day');
 
-                    if (today > trialEnd) {
-                        showNotification({
-                            description: `${currentTenant} is accruing charges without a payment method. Please provide a method as soon as possible.`,
-                            severity: 'error',
-                            title: (
-                                <Typography sx={{ fontWeight: 'bold' }}>
-                                    Missing payment information
-                                </Typography>
-                            ),
-                            options: {
-                                autoHideDuration: null,
-                            },
-                        });
-                    } else {
-                        const daysLeft = today.diff(trialEnd, 'days').days;
+                    // See how many days we have left
+                    const daysLeft = trialEnd.diff(today, 'days').days;
 
-                        showNotification({
-                            description: (
+                    const descriptionID =
+                        daysLeft > 0
+                            ? 'notifications.paymentMethods.missing.trialCurrent'
+                            : daysLeft === 0
+                            ? 'notifications.paymentMethods.missing.trialEndsToday'
+                            : 'notifications.paymentMethods.missing.trialPast';
+
+                    const descriptionValues: Schema = {
+                        daysLeft,
+                        tenant: (
+                            <Box
+                                component="span"
+                                sx={{
+                                    fontWeight: 'bold',
+                                }}
+                            >
+                                {currentTenant}
+                            </Box>
+                        ),
+                    };
+
+                    showNotification({
+                        options: {
+                            autoHideDuration: null,
+                        },
+                        severity: 'error',
+                        description: (
+                            <Stack spacing={1}>
                                 <Box>
-                                    <Typography sx={{ fontWeight: 'bold' }}>
-                                        {currentTenant}
-                                    </Typography>
-                                    is in the free trial but have no payment
-                                    methods saved. You have {daysLeft} of{' '}
-                                    {TRIAL_LENGTH} days left. Please provide a
-                                    method before the trial ends.
+                                    <FormattedMessage
+                                        id={descriptionID}
+                                        values={descriptionValues}
+                                    />
                                 </Box>
-                            ),
-                            severity: 'error',
-                            title: (
+                                <Box>
+                                    <FormattedMessage
+                                        id="notifications.paymentMethods.missing.instructions"
+                                        values={{
+                                            cta: (
+                                                <NavLink
+                                                    to={
+                                                        authenticatedRoutes
+                                                            .admin.billing
+                                                            .fullPath
+                                                    }
+                                                >
+                                                    <FormattedMessage id="notifications.paymentMethods.missing.instructions.button" />
+                                                </NavLink>
+                                            ),
+                                        }}
+                                    />
+                                </Box>
+                            </Stack>
+                        ),
+                        title: (
+                            <Box>
                                 <Typography sx={{ fontWeight: 'bold' }}>
-                                    Missing payment information
+                                    <FormattedMessage id="notifications.paymentMethods.missing.title" />
                                 </Typography>
-                            ),
-                            options: {
-                                autoHideDuration: null,
-                            },
-                        });
-                    }
+                                <Divider />
+                            </Box>
+                        ),
+                    });
 
-                    return true;
+                    return false;
                 }
 
                 return true;
