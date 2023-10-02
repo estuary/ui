@@ -8,7 +8,7 @@ import { hasLength } from 'utils/misc-utils';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
-import { Box, Divider, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import { logRocketConsole } from 'services/logrocket';
 import { DateTime } from 'luxon';
 import { FormattedMessage } from 'react-intl';
@@ -96,14 +96,18 @@ function useTenantMissingPaymentMethodWarning() {
                         .startOf('day');
 
                     // See how many days we have left
-                    const daysLeft = trialEnd.diff(today, 'days').days;
+                    const daysLeft =
+                        today <= trialEnd
+                            ? trialEnd.diff(today, 'days').days
+                            : -1;
 
-                    const descriptionID =
-                        daysLeft > 0
-                            ? 'notifications.paymentMethods.missing.trialCurrent'
-                            : daysLeft === 0
-                            ? 'notifications.paymentMethods.missing.trialEndsToday'
-                            : 'notifications.paymentMethods.missing.trialPast';
+                    const trialCurrent = daysLeft > 0;
+
+                    const descriptionID = trialCurrent
+                        ? 'notifications.paymentMethods.missing.trialCurrent'
+                        : daysLeft === 0
+                        ? 'notifications.paymentMethods.missing.trialEndsToday'
+                        : 'notifications.paymentMethods.missing.trialPast';
 
                     const descriptionValues: Schema = {
                         daysLeft,
@@ -123,9 +127,9 @@ function useTenantMissingPaymentMethodWarning() {
                         options: {
                             autoHideDuration: null,
                         },
-                        severity: 'error',
+                        severity: trialCurrent ? 'warning' : 'error',
                         description: (
-                            <Stack spacing={1}>
+                            <Stack spacing={1} sx={{ mt: 1 }}>
                                 <Box>
                                     <FormattedMessage
                                         id={descriptionID}
@@ -134,7 +138,7 @@ function useTenantMissingPaymentMethodWarning() {
                                 </Box>
                                 <Box>
                                     <FormattedMessage
-                                        id="notifications.paymentMethods.missing.instructions"
+                                        id={`${descriptionID}.instructions`}
                                         values={{
                                             cta: (
                                                 <NavLink
@@ -144,7 +148,7 @@ function useTenantMissingPaymentMethodWarning() {
                                                             .fullPath
                                                     }
                                                 >
-                                                    <FormattedMessage id="notifications.paymentMethods.missing.instructions.button" />
+                                                    <FormattedMessage id="notifications.paymentMethods.missing.cta" />
                                                 </NavLink>
                                             ),
                                         }}
@@ -153,12 +157,9 @@ function useTenantMissingPaymentMethodWarning() {
                             </Stack>
                         ),
                         title: (
-                            <Box>
-                                <Typography sx={{ fontWeight: 'bold' }}>
-                                    <FormattedMessage id="notifications.paymentMethods.missing.title" />
-                                </Typography>
-                                <Divider />
-                            </Box>
+                            <Typography sx={{ fontWeight: 'bold' }}>
+                                <FormattedMessage id="notifications.paymentMethods.missing.title" />
+                            </Typography>
                         ),
                     });
 

@@ -1260,12 +1260,14 @@ const FieldSelection: ResolvedIntlConfig['messages'] = {
 };
 
 const Notifications: ResolvedIntlConfig['messages'] = {
-    'notifications.paymentMethods.missing.title': `Missing Payment Methods`,
-    'notifications.paymentMethods.missing.trialCurrent': `The free trial for {tenant} has {daysLeft} days left and no payment method. Please enter a payment method before the trial ends.`,
-    'notifications.paymentMethods.missing.trialEndsToday': `The free trial for {tenant} is ending today and has no payment method. Please enter a payment method today.`,
-    'notifications.paymentMethods.missing.trialPast': `{tenant} is accruing charges without a payment method. Please enter a payment method immedietly.`,
-    'notifications.paymentMethods.missing.instructions': `{cta} to provide a payment method.`,
-    'notifications.paymentMethods.missing.instructions.button': `Visit Billing`,
+    'notifications.paymentMethods.missing.title': `Missing Payment Method`,
+    'notifications.paymentMethods.missing.cta': `add a payment method`,
+    'notifications.paymentMethods.missing.trialCurrent': `The free trial for {tenant} ends in {daysLeft} days, but no payment method has been added to your account.`,
+    'notifications.paymentMethods.missing.trialCurrent.instructions': `Please {cta} before your trial ends to continue using Estuary Flow.`,
+    'notifications.paymentMethods.missing.trialEndsToday': `The free trial for {tenant} ends today, but no payment method has been added to your account`,
+    'notifications.paymentMethods.missing.trialEndsToday.instructions': `Please {cta} today to continue using Estuary Flow.`,
+    'notifications.paymentMethods.missing.trialPast': `{tenant} is past it's free trial without a payment method.`,
+    'notifications.paymentMethods.missing.trialPast.instructions': `Please {cta} to continue using Estuary Flow.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
