@@ -145,13 +145,13 @@ export const getPaymentMethodsForTenants = async (
             limiter(() => getTenantPaymentMethods(tenantDetail.tenant))
         );
         count += 1;
-        return count < MAX_TENANTS;
+        return count >= MAX_TENANTS;
     });
 
     const responses = await Promise.all(promises);
 
     return {
-        responses: responses.filter((r) => r.data),
-        errors: responses.filter((r) => r.error),
+        responses: responses.filter((r) => r.data).map((r) => r.data),
+        errors: responses.filter((r) => r.error).map((r) => r.error),
     };
 };
