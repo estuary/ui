@@ -1263,6 +1263,7 @@ const FieldSelection: ResolvedIntlConfig['messages'] = {
 const Notifications: ResolvedIntlConfig['messages'] = {
     'notifications.paymentMethods.missing.title': `Missing Payment Method`,
     'notifications.paymentMethods.missing.cta': `add a payment method`,
+    'notifications.paymentMethods.missing.cta.alreadyThere': `add a payment method below`,
     'notifications.paymentMethods.missing.trialCurrent': `The free trial for {tenant} ends in {daysLeft} days, but no payment method has been added to your account.`,
     'notifications.paymentMethods.missing.trialCurrent.instructions': `Please {cta} before your trial ends to continue using Estuary Flow.`,
     'notifications.paymentMethods.missing.trialEndsToday': `The free trial for {tenant} ends today, but no payment method has been added to your account`,

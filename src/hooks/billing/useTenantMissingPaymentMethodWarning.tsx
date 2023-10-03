@@ -3,7 +3,7 @@ import {
     getPaymentMethodsForTenants,
     MultiplePaymentMethods,
 } from 'api/billing';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { hasLength, getPathWithParams } from 'utils/misc-utils';
 import useNotificationStore, {
     notificationStoreSelectors,
@@ -13,7 +13,7 @@ import { logRocketConsole } from 'services/logrocket';
 import { DateTime } from 'luxon';
 import { FormattedMessage } from 'react-intl';
 import { Schema } from 'types';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { authenticatedRoutes } from 'app/routes';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 
@@ -24,6 +24,10 @@ const TRIAL_LENGTH = 30;
 
 // TODO (store payment method info) we load the same thing twice for this and billing. Billing should try to pull these first
 function useTenantMissingPaymentMethodWarning() {
+    const { pathname } = useLocation();
+
+    const showedNotificationOnce = useRef(false);
+
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
     );
@@ -36,6 +40,11 @@ function useTenantMissingPaymentMethodWarning() {
 
     const [paymentMethods, setPaymentMethods] =
         useState<MultiplePaymentMethods | null>(null);
+
+    const alreadyOnBilling = useMemo(
+        () => pathname.startsWith(authenticatedRoutes.admin.billing.fullPath),
+        [pathname]
+    );
 
     useEffect(() => {
         const fetchData = async () => {
@@ -50,7 +59,11 @@ function useTenantMissingPaymentMethodWarning() {
     }, [tenantDetails]);
 
     useEffect(() => {
-        if (!tenantDetails || !paymentMethods) {
+        if (
+            showedNotificationOnce.current ||
+            !tenantDetails ||
+            !paymentMethods
+        ) {
             return;
         }
 
@@ -139,6 +152,25 @@ function useTenantMissingPaymentMethodWarning() {
                         ),
                     };
 
+                    const cta = alreadyOnBilling ? (
+                        <FormattedMessage id="notifications.paymentMethods.missing.cta.alreadyThere" />
+                    ) : (
+                        <NavLink
+                            onClick={() => {
+                                hideNotification();
+                            }}
+                            to={getPathWithParams(
+                                authenticatedRoutes.admin.billing.addPayment
+                                    .fullPath,
+                                {
+                                    [GlobalSearchParams.PREFIX]: currentTenant,
+                                }
+                            )}
+                        >
+                            <FormattedMessage id="notifications.paymentMethods.missing.cta" />
+                        </NavLink>
+                    );
+
                     // Show notification and disable auto hide so the user has to manually close it
                     showNotification({
                         options: {
@@ -158,25 +190,7 @@ function useTenantMissingPaymentMethodWarning() {
                                     <FormattedMessage
                                         id={`${descriptionID}.instructions`}
                                         values={{
-                                            cta: (
-                                                <NavLink
-                                                    onClick={() => {
-                                                        hideNotification();
-                                                    }}
-                                                    to={getPathWithParams(
-                                                        authenticatedRoutes
-                                                            .admin.billing
-                                                            .addPayment
-                                                            .fullPath,
-                                                        {
-                                                            [GlobalSearchParams.PREFIX]:
-                                                                currentTenant,
-                                                        }
-                                                    )}
-                                                >
-                                                    <FormattedMessage id="notifications.paymentMethods.missing.cta" />
-                                                </NavLink>
-                                            ),
+                                            cta,
                                         }}
                                     />
                                 </Box>
@@ -189,13 +203,20 @@ function useTenantMissingPaymentMethodWarning() {
                         ),
                     });
 
+                    showedNotificationOnce.current = true;
                     return false;
                 }
 
                 return true;
             });
         }
-    }, [paymentMethods, showNotification, tenantDetails]);
+    }, [
+        alreadyOnBilling,
+        hideNotification,
+        paymentMethods,
+        showNotification,
+        tenantDetails,
+    ]);
 
     return paymentMethods;
 }
