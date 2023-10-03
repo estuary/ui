@@ -1,6 +1,5 @@
 import { Button } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
-import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useCallback, useMemo } from 'react';
@@ -15,7 +14,7 @@ function EditButton() {
 
     const entityType = useEntityType();
 
-    const spec = useEditorStore_specs({ localScope: true });
+    // const spec = useEditorStore_specs({ localScope: true });
 
     const connectorId = '';
     const liveSpec = '';
