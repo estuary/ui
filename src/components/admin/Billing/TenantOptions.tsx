@@ -2,7 +2,11 @@ import { Skeleton } from '@mui/material';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useZustandStore } from 'context/Zustand/provider';
-import { useEffect } from 'react';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
+import { noop } from 'lodash';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useBilling_resetState,
@@ -17,17 +21,27 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
+import { hasLength } from 'utils/misc-utils';
 
 function TenantOptions() {
     const intl = useIntl();
 
     const tenants = useTenantDetails();
 
-    // Billing Store
+    // AutoComplete
+    const handledDefault = useRef(false);
+    const defaultSelectedTenant = useGlobalSearchParams(
+        GlobalSearchParams.PREFIX
+    );
+    const [autoCompleteValue, setAutoCompleteValue] = useState<string | null>(
+        null
+    );
+    const [inputValue, setInputValue] = useState('');
+    const [defaultValue, setDefaultValue] = useState<string | null>(null);
+
     const setSelectedTenant = useBilling_setSelectedTenant();
     const resetBillingState = useBilling_resetState();
 
-    // Billing Select Table Store
     const setHydrated = useBillingTable_setHydrated();
     const setHydrationErrorsExist = useBillingTable_setHydrationErrorsExist();
 
@@ -36,28 +50,71 @@ function TenantOptions() {
         SelectableTableStore['resetState']
     >(SelectTableStoreNames.BILLING, selectableTableStoreSelectors.state.reset);
 
-    useEffect(() => {
-        if (tenants && tenants.length > 0) {
-            setSelectedTenant(tenants[0].tenant);
-        }
-    }, [setSelectedTenant, tenants]);
+    const tenantNames = useMemo<string[] | null>(
+        () =>
+            tenants && tenants.length > 0
+                ? tenants.map(({ tenant }) => tenant)
+                : null,
+        [tenants]
+    );
 
-    return tenants && tenants.length > 0 ? (
+    const updateStateAndStore = useCallback(
+        (newValue: string) => {
+            resetBillingState();
+            setSelectedTenant(newValue);
+            setInputValue(newValue);
+            setAutoCompleteValue(newValue);
+
+            resetBillingSelectTableState();
+            setHydrated(false);
+            setHydrationErrorsExist(false);
+        },
+        [
+            resetBillingSelectTableState,
+            resetBillingState,
+            setHydrated,
+            setHydrationErrorsExist,
+            setSelectedTenant,
+        ]
+    );
+
+    useEffect(() => {
+        if (tenantNames) {
+            // Try using the value from the URL first so if the param gets updated the dropdown changes
+            const newVal =
+                hasLength(defaultSelectedTenant) &&
+                tenantNames.includes(defaultSelectedTenant)
+                    ? defaultSelectedTenant
+                    : tenantNames[0];
+
+            updateStateAndStore(newVal);
+
+            if (!handledDefault.current) {
+                setDefaultValue(newVal);
+                handledDefault.current = true;
+            }
+        }
+    }, [defaultSelectedTenant, tenantNames, updateStateAndStore]);
+
+    return defaultValue && tenantNames ? (
         <AutocompletedField
             label={intl.formatMessage({
                 id: 'common.tenant',
             })}
-            options={tenants.map(({ tenant }) => tenant)}
-            defaultValue={tenants[0].tenant}
-            changeHandler={(_event, value) => {
-                resetBillingState();
-                setSelectedTenant(value);
-
-                resetBillingSelectTableState();
-                setHydrated(false);
-                setHydrationErrorsExist(false);
-            }}
+            options={tenantNames}
+            defaultValue={defaultValue}
+            changeHandler={noop}
             autocompleteSx={{ flexGrow: 1 }}
+            AutoCompleteOptions={{
+                inputValue,
+                onInputChange: (_event, newInputValue) => {
+                    setInputValue(newInputValue);
+                },
+                onChange: (_event, newAutoCompleteValue) => {
+                    updateStateAndStore(newAutoCompleteValue);
+                },
+                value: autoCompleteValue,
+            }}
         />
     ) : (
         <Skeleton sx={{ flexGrow: 1 }} />

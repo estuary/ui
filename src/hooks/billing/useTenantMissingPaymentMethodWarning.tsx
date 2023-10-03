@@ -4,7 +4,7 @@ import {
     MultiplePaymentMethods,
 } from 'api/billing';
 import { useEffect, useState } from 'react';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength, getPathWithParams } from 'utils/misc-utils';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
@@ -15,6 +15,7 @@ import { FormattedMessage } from 'react-intl';
 import { Schema } from 'types';
 import { NavLink } from 'react-router-dom';
 import { authenticatedRoutes } from 'app/routes';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 
 const TRIAL_LENGTH = 30;
 
@@ -151,11 +152,15 @@ function useTenantMissingPaymentMethodWarning() {
                                         values={{
                                             cta: (
                                                 <NavLink
-                                                    to={
+                                                    to={getPathWithParams(
                                                         authenticatedRoutes
                                                             .admin.billing
-                                                            .fullPath
-                                                    }
+                                                            .fullPath,
+                                                        {
+                                                            [GlobalSearchParams.PREFIX]:
+                                                                currentTenant,
+                                                        }
+                                                    )}
                                                 >
                                                     <FormattedMessage id="notifications.paymentMethods.missing.cta" />
                                                 </NavLink>
