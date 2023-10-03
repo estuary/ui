@@ -17,8 +17,6 @@ function EditButton() {
 
     const spec = useEditorStore_specs({ localScope: true });
 
-    console.log('spec', spec);
-
     const connectorId = '';
     const liveSpec = '';
     const lastPubId = ''; //useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID)

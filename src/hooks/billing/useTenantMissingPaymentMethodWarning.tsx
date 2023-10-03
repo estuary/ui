@@ -19,9 +19,17 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 
 const TRIAL_LENGTH = 30;
 
+// TODO (payment method notification) we should eventually more the "component type stuff" out of here
+//      and into a component that this hook can interact with.
+
+// TODO (store payment method info) we load the same thing twice for this and billing. Billing should try to pull these first
 function useTenantMissingPaymentMethodWarning() {
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
+    );
+
+    const hideNotification = useNotificationStore(
+        notificationStoreSelectors.hideNotification
     );
 
     const tenantDetails = useTenantDetails();
@@ -152,9 +160,13 @@ function useTenantMissingPaymentMethodWarning() {
                                         values={{
                                             cta: (
                                                 <NavLink
+                                                    onClick={() => {
+                                                        hideNotification();
+                                                    }}
                                                     to={getPathWithParams(
                                                         authenticatedRoutes
                                                             .admin.billing
+                                                            .addPayment
                                                             .fullPath,
                                                         {
                                                             [GlobalSearchParams.PREFIX]:

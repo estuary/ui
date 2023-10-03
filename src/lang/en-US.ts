@@ -489,6 +489,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.paymentMethods.table.label.primary': `Primary`,
     'admin.billing.paymentMethods.table.label.actions': `Actions`,
     'admin.billing.paymentMethods.table.emptyTableDefault.message': `No payment methods available.`,
+    'admin.billing.addPaymentMethods.title': `Add a payment method`,
 
     'admin.users.cta.prefixInvitation': `Manage Invitations`,
     'admin.users.prefixInvitation.header': `Manage Invitations`,
