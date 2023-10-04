@@ -4,7 +4,7 @@ import {
     MultiplePaymentMethods,
 } from 'api/billing';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { hasLength, getPathWithParams } from 'utils/misc-utils';
+import { getPathWithParams, basicSort } from 'utils/misc-utils';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
@@ -75,9 +75,13 @@ function useTenantMissingPaymentMethodWarning() {
         }
 
         // Find all the tenants the user can access that are in the trial period
-        const tenantsInTrial = tenantDetails.filter(
-            (tenantDetail) => tenantDetail.trial_start
-        );
+        const tenantsInTrial = tenantDetails
+            .filter((tenantDetail) => tenantDetail.trial_start)
+            .sort((first, second) =>
+                basicSort(first.trial_start, second.trial_start, 'asc')
+            );
+
+        console.log('tenantsInTrial', tenantsInTrial);
 
         // If there are no tenants in trial then we are good and can move on
         if (tenantsInTrial.length === 0) {
@@ -99,9 +103,9 @@ function useTenantMissingPaymentMethodWarning() {
 
                 // We check the methods list and see if one exists. We are not checking if a primary card is set
                 //   at this time (Q4 2023) but that might change based on experience.
-                const hasPaymentMethod = hasLength(
-                    paymentMethodForTenant.payment_methods
-                );
+                const hasPaymentMethod =
+                    paymentMethodForTenant?.payment_methods &&
+                    paymentMethodForTenant.payment_methods.length > 0;
 
                 if (!hasPaymentMethod) {
                     // Make sure we fetch everything as utc and start of day
