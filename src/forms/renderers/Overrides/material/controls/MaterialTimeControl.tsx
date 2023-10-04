@@ -31,20 +31,12 @@ import {
 } from '@jsonforms/core';
 import { MuiInputText } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { Box, Hidden, IconButton, Popover, Stack } from '@mui/material';
-import { LocalizationProvider, StaticTimePicker } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { format } from 'date-fns';
-import { Clock } from 'iconoir-react';
-import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
+import { Hidden, Stack } from '@mui/material';
+import TimePickerCTA from 'components/shared/pickers/TimePickerCTA';
+import useDatePickerState from 'components/shared/pickers/useDatePickerState';
 import { useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
-import { Patterns } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
 import { CustomMaterialInputControl } from './MaterialInputControl';
-import useDatePickerState from './useDatePickerState';
-
-const INVALID_TIME = 'Invalid Time';
 
 // This is pretty customized
 //  Look at MaterialDateTimeControl for extra notes
@@ -52,7 +44,6 @@ const INVALID_TIME = 'Invalid Time';
 export const Custom_MaterialTimeControl = (props: ControlProps) => {
     const { data, id, visible, enabled, path, handleChange, label } = props;
 
-    const intl = useIntl();
     const { state, buttonRef, events } = useDatePickerState(
         `time-picker-${id}`
     );
@@ -83,27 +74,9 @@ export const Custom_MaterialTimeControl = (props: ControlProps) => {
 
     const [timePickerValue, setTimePickerValue] = useState(defaultTime);
 
-    const formatDate = (value: Date) => {
-        try {
-            return format(value, Patterns.time);
-        } catch (e: unknown) {
-            return INVALID_TIME;
-        }
-    };
-
-    const onChange = (value: any, keyboardInput?: string | undefined) => {
-        if (value) {
-            const formattedValue = formatDate(value);
-            if (formattedValue && formattedValue !== INVALID_TIME) {
-                setTimePickerValue(value);
-                return handleChange(path, formattedValue);
-            }
-        }
-
-        // Default to setting to what user typed
-        //  This is a super backup as with the Date Fn adapter
-        //  it never fell through to this... but wanted to be safe
-        return handleChange(path, keyboardInput);
+    const onChange = (formattedValue: any, value: any) => {
+        setTimePickerValue(value);
+        return handleChange(path, formattedValue);
     };
 
     return (
@@ -119,50 +92,14 @@ export const Custom_MaterialTimeControl = (props: ControlProps) => {
                     input={MuiInputText}
                     {...props}
                 />
-                <Box sx={{ paddingTop: 2 }}>
-                    <IconButton
-                        aria-label={intl.formatMessage(
-                            {
-                                id: 'timePicker.button.ariaLabel',
-                            },
-                            {
-                                label,
-                            }
-                        )}
-                        disabled={!enabled}
-                        ref={buttonRef}
-                        {...bindFocus(state)}
-                    >
-                        <Clock />
-                    </IconButton>
-                </Box>
-
-                <Popover
-                    {...bindPopover(state)}
-                    anchorOrigin={{
-                        vertical: 'center',
-                        horizontal: 'left',
-                    }}
-                    transformOrigin={{
-                        vertical: 'center',
-                        horizontal: 'right',
-                    }}
-                >
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <StaticTimePicker
-                            displayStaticWrapperAs="desktop"
-                            ampm={false}
-                            disabled={!enabled}
-                            value={timePickerValue}
-                            onChange={onChange}
-                            onAccept={state.close}
-                            closeOnSelect={true}
-                            // We don't need an input
-                            // eslint-disable-next-line react/jsx-no-useless-fragment
-                            renderInput={() => <></>}
-                        />
-                    </LocalizationProvider>
-                </Popover>
+                <TimePickerCTA
+                    enabled={enabled}
+                    label={label}
+                    buttonRef={buttonRef}
+                    state={state}
+                    value={timePickerValue}
+                    onChange={onChange}
+                />
             </Stack>
         </Hidden>
     );

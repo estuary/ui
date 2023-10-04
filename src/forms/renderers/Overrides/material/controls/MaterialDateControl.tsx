@@ -31,18 +31,10 @@ import {
 } from '@jsonforms/core';
 import { MuiInputText } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { Box, Hidden, IconButton, Popover, Stack } from '@mui/material';
-import { LocalizationProvider, StaticDatePicker } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { format } from 'date-fns';
-import { Calendar } from 'iconoir-react';
-import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
-import { useIntl } from 'react-intl';
-import { Patterns } from 'types/jsonforms';
+import { Hidden, Stack } from '@mui/material';
+import DatePickerCTA from 'components/shared/pickers/DatePickerCTA';
+import useDatePickerState from 'components/shared/pickers/useDatePickerState';
 import { CustomMaterialInputControl } from './MaterialInputControl';
-import useDatePickerState from './useDatePickerState';
-
-const INVALID_DATE = 'Invalid Date';
 
 // This is pretty customized
 //  Look at MaterialDateTimeControl for extra notes
@@ -50,31 +42,12 @@ const INVALID_DATE = 'Invalid Date';
 export const Custom_MaterialDateControl = (props: ControlProps) => {
     const { data, id, visible, enabled, path, handleChange, label } = props;
 
-    const intl = useIntl();
     const { state, buttonRef, events } = useDatePickerState(
         `date-picker-${id}`
     );
 
-    const formatDate = (value: Date) => {
-        try {
-            return format(value, Patterns.date);
-        } catch (e: unknown) {
-            return INVALID_DATE;
-        }
-    };
-
-    const onChange = (value: any, keyboardInput?: string | undefined) => {
-        if (value) {
-            const formattedValue = formatDate(value);
-            if (formattedValue && formattedValue !== INVALID_DATE) {
-                return handleChange(path, formattedValue);
-            }
-        }
-
-        // Default to setting to what user typed
-        //  This is a super backup as with the Date Fn adapter
-        //  it never fell through to this... but wanted to be safe
-        return handleChange(path, keyboardInput);
+    const onChange = (formattedValue: any) => {
+        return handleChange(path, formattedValue);
     };
 
     return (
@@ -90,52 +63,14 @@ export const Custom_MaterialDateControl = (props: ControlProps) => {
                     input={MuiInputText}
                     {...props}
                 />
-                <Box sx={{ paddingTop: 2 }}>
-                    <IconButton
-                        aria-label={intl.formatMessage(
-                            {
-                                id: 'datePicker.button.ariaLabel',
-                            },
-                            {
-                                label,
-                            }
-                        )}
-                        disabled={!enabled}
-                        ref={buttonRef}
-                        {...bindFocus(state)}
-                    >
-                        <Calendar />
-                    </IconButton>
-                </Box>
-
-                <Popover
-                    {...bindPopover(state)}
-                    anchorOrigin={{
-                        vertical: 'center',
-                        horizontal: 'left',
-                    }}
-                    transformOrigin={{
-                        vertical: 'center',
-                        horizontal: 'right',
-                    }}
-                >
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <StaticDatePicker
-                            ignoreInvalidInputs
-                            disableMaskedInput
-                            displayStaticWrapperAs="desktop"
-                            openTo="day"
-                            disabled={!enabled}
-                            value={data}
-                            onChange={onChange}
-                            onAccept={state.close}
-                            closeOnSelect={true}
-                            // We don't need an input
-                            // eslint-disable-next-line react/jsx-no-useless-fragment
-                            renderInput={() => <></>}
-                        />
-                    </LocalizationProvider>
-                </Popover>
+                <DatePickerCTA
+                    enabled={enabled}
+                    label={label}
+                    buttonRef={buttonRef}
+                    state={state}
+                    value={data}
+                    onChange={onChange}
+                />
             </Stack>
         </Hidden>
     );
