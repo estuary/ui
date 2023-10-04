@@ -81,8 +81,6 @@ function useTenantMissingPaymentMethodWarning() {
                 basicSort_string(first.trial_start, second.trial_start, 'asc')
             );
 
-        console.log('tenantsInTrial', tenantsInTrial);
-
         // If there are no tenants in trial then we are good and can move on
         if (tenantsInTrial.length === 0) {
             return;
