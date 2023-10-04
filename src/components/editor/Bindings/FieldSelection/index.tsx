@@ -19,6 +19,7 @@ import {
 } from 'components/editor/Bindings/FieldSelection/types';
 import useFieldSelection from 'components/editor/Bindings/FieldSelection/useFieldSelection';
 import {
+    useBindingsEditorStore_initializeSelections,
     useBindingsEditorStore_recommendFields,
     useBindingsEditorStore_selectionSaving,
     useBindingsEditorStore_setRecommendFields,
@@ -106,6 +107,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
     const recommendFields = useBindingsEditorStore_recommendFields();
     const setRecommendFields = useBindingsEditorStore_setRecommendFields();
 
+    const initializeSelections = useBindingsEditorStore_initializeSelections();
     const setSingleSelection = useBindingsEditorStore_setSingleSelection();
 
     const selectionSaving = useBindingsEditorStore_selectionSaving();
@@ -185,10 +187,11 @@ function FieldSelectionViewer({ collectionName }: Props) {
                         evaluatedFieldMetadata
                     );
 
-                    compositeProjections.forEach(({ field, selectionType }) =>
-                        setSingleSelection(field, selectionType, true)
+                    const selections = compositeProjections.map(
+                        ({ field, selectionType }) => ({ field, selectionType })
                     );
 
+                    initializeSelections(selections);
                     setData(compositeProjections);
                 } else {
                     setData(null);
@@ -200,11 +203,11 @@ function FieldSelectionViewer({ collectionName }: Props) {
             setData(null);
         }
     }, [
-        setData,
-        setRecommendFields,
-        setSingleSelection,
         collectionName,
         draftSpecs,
+        initializeSelections,
+        setData,
+        setRecommendFields,
     ]);
 
     const toggleRecommendFields = useCallback(
