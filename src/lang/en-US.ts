@@ -1228,6 +1228,15 @@ const Graphs: ResolvedIntlConfig['messages'] = {
     'graphs.entityDetails.empty.message': `Unable to fetch details for data usage graph.`,
 };
 
+const NotBeforeNotAfter: ResolvedIntlConfig['messages'] = {
+    'notBeforeNotAfter.header': `Filters`,
+    'notBeforeNotAfter.message': `By setting values below, source collection documents will be filtered based on publish date and time. Please remember, these are only filters. Updating will not cause Flow to re-process documents that have already been read.`,
+    'notBefore.input.label': `Start fetching data`,
+    'notBefore.input.description': `documents published before this date-time are filtered`,
+    'notAfter.input.label': `Stop fetching data`,
+    'notAfter.input.description': `documents published after this date-time are filtered`,
+};
+
 const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.header': `Field Selection`,
     'fieldSelection.message': `Determine which fields in your collection get materialized. By default, the connector dynamically selects the fields exported by your materialization. Click "See Fields" to update the table below.`,
@@ -1317,6 +1326,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...PrefixedName,
     ...Graphs,
     ...FieldSelection,
+    ...NotBeforeNotAfter,
 };
 
 export default enUSMessages;
