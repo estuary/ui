@@ -9,7 +9,6 @@ export interface Notification {
     description: string | ReactNode;
     severity: AlertColor;
     disableClickAwayClose?: boolean;
-    uniqueID?: string; // Used in case you need to trigger some action elsewhere based on a notification
     options?: SnackbarProps;
 }
 
