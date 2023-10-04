@@ -204,10 +204,10 @@ function useTenantMissingPaymentMethodWarning() {
                     });
 
                     showedNotificationOnce.current = true;
-                    return false;
+                    return true;
                 }
 
-                return true;
+                return false;
             });
         }
     }, [
