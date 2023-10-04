@@ -4,7 +4,7 @@ import {
     MultiplePaymentMethods,
 } from 'api/billing';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { getPathWithParams, basicSort } from 'utils/misc-utils';
+import { getPathWithParams, basicSort_string } from 'utils/misc-utils';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
@@ -78,7 +78,7 @@ function useTenantMissingPaymentMethodWarning() {
         const tenantsInTrial = tenantDetails
             .filter((tenantDetail) => tenantDetail.trial_start)
             .sort((first, second) =>
-                basicSort(first.trial_start, second.trial_start, 'asc')
+                basicSort_string(first.trial_start, second.trial_start, 'asc')
             );
 
         console.log('tenantsInTrial', tenantsInTrial);

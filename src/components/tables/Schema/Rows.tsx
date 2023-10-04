@@ -1,7 +1,7 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
 import { orderBy } from 'lodash';
 import { InferSchemaResponseProperty, Schema, SortDirection } from 'types';
-import { basicSort } from 'utils/misc-utils';
+import { basicSort_string } from 'utils/misc-utils';
 import ChipListCell from '../cells/ChipList';
 
 interface RowProps {
@@ -52,7 +52,7 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
                             first: InferSchemaResponseProperty,
                             second: InferSchemaResponseProperty
                         ) =>
-                            basicSort(
+                            basicSort_string(
                                 first.name ?? '',
                                 second.name ?? '',
                                 sortDirection

@@ -9,7 +9,7 @@ import {
 } from 'context/Theme';
 import { orderBy } from 'lodash';
 import { SortDirection } from 'types';
-import { basicSort } from 'utils/misc-utils';
+import { basicSort_string } from 'utils/misc-utils';
 
 interface RowProps {
     row: CompositeProjection;
@@ -81,7 +81,12 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
                         (
                             first: CompositeProjection,
                             second: CompositeProjection
-                        ) => basicSort(first.field, second.field, sortDirection)
+                        ) =>
+                            basicSort_string(
+                                first.field,
+                                second.field,
+                                sortDirection
+                            )
                     )
                     .map((record: CompositeProjection, index: number) => (
                         <Row

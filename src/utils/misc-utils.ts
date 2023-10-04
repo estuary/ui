@@ -109,7 +109,11 @@ export const specContainsDerivation = (
     return { isDerivation, derivationKey };
 };
 
-export const basicSort = (a: any, b: any, sortDirection: SortDirection) => {
+export const basicSort_string = (
+    a: any,
+    b: any,
+    sortDirection: SortDirection
+) => {
     // See if the values start with alphanumeric
     const aIsAlphabetical = a.localeCompare('a') >= 0;
     const bIsAlphabetical = b.localeCompare('a') >= 0;
