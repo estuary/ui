@@ -491,6 +491,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.paymentMethods.table.label.actions': `Actions`,
     'admin.billing.paymentMethods.table.emptyTableDefault.message': `No payment methods available.`,
     'admin.billing.addPaymentMethods.title': `Add a payment method`,
+    'admin.billing.addPaymentMethods.stripeLoadError': `Unable to load the forms from Stripe. ${Error['error.tryAgain']}`,
 
     'admin.users.cta.prefixInvitation': `Manage Invitations`,
     'admin.users.prefixInvitation.header': `Manage Invitations`,
