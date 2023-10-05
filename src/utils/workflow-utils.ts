@@ -79,18 +79,56 @@ export const generateTaskSpec = (
             const { disable } = resourceConfigs[collectionName];
             const resourceDisable = isBoolean(disable) ? disable : false;
 
+            // See if there are any settings that need use to convert this to a fullSource style
+            const { fullSource } = resourceConfigs[collectionName];
+            const newNameValue = !isEmpty(fullSource)
+                ? {
+                      ...fullSource,
+                      name: collectionName,
+                  }
+                : collectionName;
+
             // See which binding we need to update
             const existingBindingIndex = draftSpec.bindings.findIndex(
                 (binding: any) => getCollectionName(binding) === collectionName
             );
 
             if (existingBindingIndex > -1) {
+                // Grab the existing name so we know if it is a name or fullSource
+                const existingNameValue =
+                    draftSpec.bindings[existingBindingIndex][
+                        collectionNameProp
+                    ];
+
                 // Include disable otherwise totally remove it
                 if (resourceDisable) {
                     draftSpec.bindings[existingBindingIndex].disable =
                         resourceDisable;
                 } else {
                     delete draftSpec.bindings[existingBindingIndex].disable;
+                }
+
+                if (typeof newNameValue === 'string') {
+                    // There is no new fullSource props so switch back to just a string for the name
+                    draftSpec.bindings[existingBindingIndex][
+                        collectionNameProp
+                    ] = newNameValue;
+                } else {
+                    // See if we need to merge with existing stuff
+                    const noExistingFullSource =
+                        typeof existingNameValue === 'string';
+
+                    if (noExistingFullSource) {
+                        // We can safely just set the props we have as we won't override anything existing
+                        draftSpec.bindings[existingBindingIndex][
+                            collectionNameProp
+                        ] = newNameValue;
+                    } else {
+                        // Make sure we start with the existing so only new props override
+                        draftSpec.bindings[existingBindingIndex][
+                            collectionNameProp
+                        ] = { ...existingNameValue, ...newNameValue };
+                    }
                 }
 
                 draftSpec.bindings[existingBindingIndex].resource = {
@@ -100,7 +138,7 @@ export const generateTaskSpec = (
                 const disabledProps = getDisableProps(resourceDisable);
 
                 draftSpec.bindings.push({
-                    [collectionNameProp]: collectionName,
+                    [collectionNameProp]: newNameValue,
                     ...disabledProps,
                     resource: {
                         ...resourceConfig,

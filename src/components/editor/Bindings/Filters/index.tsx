@@ -33,7 +33,7 @@ function Filters({ collectionName }: Props) {
                         label={intl.formatMessage({
                             id: 'notBefore.input.label',
                         })}
-                        period="before"
+                        setting="notBefore"
                     />
                     <NotDateTime
                         collectionName={collectionName}
@@ -43,7 +43,7 @@ function Filters({ collectionName }: Props) {
                         label={intl.formatMessage({
                             id: 'notAfter.input.label',
                         })}
-                        period="after"
+                        setting="notAfter"
                     />
                 </Stack>
             </Stack>

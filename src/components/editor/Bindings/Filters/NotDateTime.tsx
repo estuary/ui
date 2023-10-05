@@ -8,27 +8,39 @@ import {
 import DateTimePickerCTA from 'components/shared/pickers/DateTimePickerCTA';
 import useDatePickerState from 'components/shared/pickers/useDatePickerState';
 import { useState } from 'react';
+import {
+    useResourceConfig_fullSourceOfCollectionProperty,
+    useResourceConfig_updateFullSourceProperty,
+} from 'stores/ResourceConfig/hooks';
+import { FilterProperties } from 'stores/ResourceConfig/types';
 
 interface Props {
     collectionName: string;
     description: string;
     label: string;
-    period: 'before' | 'after';
+    setting: FilterProperties;
 }
 
-function NotDateTime({ collectionName, description, label, period }: Props) {
-    const idValue = `not-${period}-picker__${collectionName}`;
+function NotDateTime({ collectionName, description, label, setting }: Props) {
+    const idValue = `${setting}-picker__${collectionName}`;
     const { state, buttonRef, events } = useDatePickerState(idValue);
 
-    const [localValue, setLocalValue] = useState<string>('');
+    const updateFullSourceProperty =
+        useResourceConfig_updateFullSourceProperty();
+    const propertyBeingControlled =
+        useResourceConfig_fullSourceOfCollectionProperty(
+            collectionName,
+            setting
+        );
 
-    const onFocusHandler = () => {
-        events.focus();
+    const [localValue, setLocalValue] = useState<string>(
+        propertyBeingControlled ?? ''
+    );
+
+    const updateState = (updateValue: any) => {
+        setLocalValue(updateValue);
+        updateFullSourceProperty(collectionName, setting, updateValue);
     };
-
-    // const dateTimePickerValue = localValue
-    // ? localValue.replace(TIMEZONE_OFFSET_REPLACEMENT, '')
-    // : null;
 
     return (
         <Stack
@@ -41,7 +53,7 @@ function NotDateTime({ collectionName, description, label, period }: Props) {
             <FormControl
                 fullWidth
                 variant="standard"
-                onFocus={onFocusHandler}
+                onFocus={events.focus}
                 onKeyDown={events.keyDown}
             >
                 <InputLabel htmlFor={`${idValue}__input`} required={false}>
@@ -52,7 +64,7 @@ function NotDateTime({ collectionName, description, label, period }: Props) {
                     id={`${idValue}__input`}
                     value={localValue}
                     onChange={(event) => {
-                        setLocalValue(event.target.value);
+                        updateState(event.target.value);
                     }}
                     onKeyDown={events.keyDown}
                 />
@@ -64,9 +76,9 @@ function NotDateTime({ collectionName, description, label, period }: Props) {
                 label={label}
                 buttonRef={buttonRef}
                 state={state}
-                value={localValue}
+                value={propertyBeingControlled}
                 onChange={(value) => {
-                    setLocalValue(value);
+                    updateState(value);
                 }}
             />
         </Stack>

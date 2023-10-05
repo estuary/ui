@@ -20,6 +20,7 @@ import {
 import { createJSONFormDefaults } from 'services/ajv';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
 import { create, StoreApi } from 'zustand';
@@ -422,6 +423,24 @@ const getInitialState = (
             });
             setResourceConfig(key, updatedConfig);
         }
+    },
+
+    updateFullSourceProperty: (collectionName, key, value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const configToUpdate = state.resourceConfig[collectionName];
+
+                if (!configToUpdate.fullSource) {
+                    configToUpdate.fullSource = {};
+                }
+
+                configToUpdate.fullSource[key] = hasLength(value)
+                    ? value
+                    : null;
+            }),
+            false,
+            'Updating Property Within Full Source'
+        );
     },
 
     setResourceConfig: (key, value, disableCheckingErrors, disableOmit) => {
