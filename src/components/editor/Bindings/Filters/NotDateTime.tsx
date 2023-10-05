@@ -66,7 +66,6 @@ function NotDateTime({ collectionName, description, label, period }: Props) {
                 state={state}
                 value={localValue}
                 onChange={(value) => {
-                    console.log('picker changed', value);
                     setLocalValue(value);
                 }}
             />
