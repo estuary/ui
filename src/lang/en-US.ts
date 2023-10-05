@@ -1231,9 +1231,9 @@ const Graphs: ResolvedIntlConfig['messages'] = {
 const NotBeforeNotAfter: ResolvedIntlConfig['messages'] = {
     'notBeforeNotAfter.header': `Filters`,
     'notBeforeNotAfter.message': `By setting values below, source collection documents will be filtered based on publish date and time. Please remember, these are only filters. Updating will not cause Flow to re-process documents that have already been read.`,
-    'notBefore.input.label': `Start fetching data`,
+    'notBefore.input.label': `Prevent documents before`,
     'notBefore.input.description': `documents published before this date-time are filtered`,
-    'notAfter.input.label': `Stop fetching data`,
+    'notAfter.input.label': `Prevent documents after`,
     'notAfter.input.description': `documents published after this date-time are filtered`,
 };
 

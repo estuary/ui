@@ -17,28 +17,39 @@ interface Props {
 }
 
 function NotDateTime({ collectionName, description, label, period }: Props) {
-    const idValue = `not-${period}-picker__${collectionName}`;
+    console.log('collectionName', collectionName);
+    const idValue = `not-${period}-picker`;
     const { state, buttonRef, events } = useDatePickerState(idValue);
 
     const [localValue, setLocalValue] = useState<string>('');
+
+    const onFocusHandler = () => {
+        events.focus();
+    };
+
+    // const dateTimePickerValue = localValue
+    // ? localValue.replace(TIMEZONE_OFFSET_REPLACEMENT, '')
+    // : null;
 
     return (
         <Stack
             sx={{
                 alignItems: 'center',
+                width: '100%',
             }}
             direction="row"
         >
             <FormControl
                 fullWidth
-                onFocus={events.focus}
                 id={idValue}
                 variant="standard"
+                onFocus={onFocusHandler}
                 onKeyDown={events.keyDown}
             >
                 <InputLabel htmlFor={`${idValue}-input`} required={false}>
                     {label}
                 </InputLabel>
+
                 <Input
                     id={`${idValue}-input`}
                     value={localValue}
