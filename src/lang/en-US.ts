@@ -1269,7 +1269,7 @@ const Notifications: ResolvedIntlConfig['messages'] = {
     'notifications.paymentMethods.missing.cta.alreadyThere': `add a payment method below`,
     'notifications.paymentMethods.missing.trialCurrent': `The free trial for {tenant} ends in {daysLeft} days, but no payment method has been added to your account.`,
     'notifications.paymentMethods.missing.trialCurrent.instructions': `Please {cta} before your trial ends to continue using Estuary Flow.`,
-    'notifications.paymentMethods.missing.trialEndsToday': `The free trial for {tenant} ends today, but no payment method has been added to your account`,
+    'notifications.paymentMethods.missing.trialEndsToday': `The free trial for {tenant} ends today, but no payment method has been added to your account.`,
     'notifications.paymentMethods.missing.trialEndsToday.instructions': `Please {cta} today to continue using Estuary Flow.`,
     'notifications.paymentMethods.missing.trialPast': `{tenant} is past it's free trial without a payment method.`,
     'notifications.paymentMethods.missing.trialPast.instructions': `Please {cta} to continue using Estuary Flow.`,
