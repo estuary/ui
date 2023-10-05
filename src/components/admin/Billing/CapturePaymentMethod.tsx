@@ -15,6 +15,7 @@ import { Auth } from '@supabase/ui';
 import AlertBox from 'components/shared/AlertBox';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import { getUserDetails } from 'services/supabase';
 
 export interface PaymentFormProps {
@@ -36,6 +37,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
     const [loadingError, setLoadingError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
+    // Handle errors when stripe is loading in the forms
     useEffect(() => {
         if (setupEvents.current || !elements) {
             return;
@@ -55,6 +57,10 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                     id: 'admin.billing.addPaymentMethods.stripeLoadError',
                 })
             );
+
+            logRocketEvent(CustomEvents.STRIPE_FORM_LOADING_FAILED, {
+                formName: 'payment',
+            });
         });
         addressElement.on('loaderror', () => {
             setLoadingError(
@@ -62,6 +68,10 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                     id: 'admin.billing.addPaymentMethods.stripeLoadError',
                 })
             );
+
+            logRocketEvent(CustomEvents.STRIPE_FORM_LOADING_FAILED, {
+                formName: 'address',
+            });
         });
 
         // Set so we only do this once
