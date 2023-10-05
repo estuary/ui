@@ -189,7 +189,9 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                     loading={saving}
                     disabled={saving}
                 >
-                    <FormattedMessage id="cta.continue" />
+                    <span>
+                        <FormattedMessage id="cta.continue" />
+                    </span>
                 </LoadingButton>
             </form>
         </>

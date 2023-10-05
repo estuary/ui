@@ -228,10 +228,12 @@ function GitPodButton({
                 }
             }}
         >
-            {submitButtonError ??
-                intl.formatMessage({
-                    id: 'newTransform.button.cta',
-                })}
+            <span>
+                {submitButtonError ??
+                    intl.formatMessage({
+                        id: 'newTransform.button.cta',
+                    })}
+            </span>
         </LoadingButton>
     );
 }
