@@ -29,6 +29,7 @@ import {
 } from 'stores/Billing/hooks';
 import { TableColumns } from 'types';
 import AddPaymentMethod from './AddPaymentMethod';
+import { INTENT_SECRET_ERROR, INTENT_SECRET_LOADING } from './shared';
 import { AdminBillingProps } from './types';
 
 const columns: TableColumns[] = [
@@ -70,8 +71,8 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
 
     const [refreshCounter, setRefreshCounter] = useState(0);
 
-    const [setupIntentSecret, setSetupIntentSecret] = useState<string | null>(
-        null
+    const [setupIntentSecret, setSetupIntentSecret] = useState(
+        INTENT_SECRET_LOADING
     );
     const [newMethodOpen, setNewMethodOpen] = useState(showAddPayment ?? false);
 
@@ -88,7 +89,12 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                 const setupResponse = await getSetupIntentSecret(
                     selectedTenant
                 );
-                setSetupIntentSecret(setupResponse.data.intent_secret);
+
+                if (setupResponse.data.intent_secret) {
+                    setSetupIntentSecret(setupResponse.data.intent_secret);
+                } else {
+                    setSetupIntentSecret(INTENT_SECRET_ERROR);
+                }
             }
         })();
 
@@ -141,6 +147,14 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
 
     return (
         <Stack spacing={serverErrored ? 0 : 3}>
+            {setupIntentSecret === INTENT_SECRET_ERROR ? (
+                <AlertBox short severity="error">
+                    <Typography component="div">
+                        <FormattedMessage id="admin.billing.paymentMethods.cta.addPaymentMethod.error" />
+                    </Typography>
+                </AlertBox>
+            ) : null}
+
             <Stack
                 spacing={2}
                 direction="row"

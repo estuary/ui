@@ -4,12 +4,14 @@ import { Elements } from '@stripe/react-stripe-js';
 import { Stripe } from '@stripe/stripe-js';
 import { setTenantPrimaryPaymentMethod } from 'api/billing';
 import { PaymentForm } from 'components/admin/Billing/CapturePaymentMethod';
+import { Plus } from 'iconoir-react';
 
 import { FormattedMessage } from 'react-intl';
+import { INTENT_SECRET_ERROR, INTENT_SECRET_LOADING } from './shared';
 
 interface Props {
     show: boolean;
-    setupIntentSecret: string | null;
+    setupIntentSecret: string;
     setOpen: (val: boolean) => void;
     onSuccess: () => void;
     stripePromise: Promise<Stripe | null>;
@@ -24,17 +26,25 @@ function AddPaymentMethod({
     stripePromise,
     tenant,
 }: Props) {
+    const enableButton =
+        setupIntentSecret !== INTENT_SECRET_LOADING &&
+        setupIntentSecret !== INTENT_SECRET_ERROR;
+
     return (
         <>
             <Box>
                 <LoadingButton
-                    variant="contained"
-                    disabled={!setupIntentSecret}
-                    loading={!setupIntentSecret}
+                    loadingPosition="start"
+                    disabled={!enableButton}
+                    loading={setupIntentSecret === INTENT_SECRET_LOADING}
                     onClick={() => setOpen(true)}
+                    startIcon={<Plus style={{ fontSize: 15 }} />}
                     sx={{ whiteSpace: 'nowrap' }}
+                    variant="contained"
                 >
-                    <FormattedMessage id="admin.billing.paymentMethods.cta.addPaymentMethod" />
+                    <span>
+                        <FormattedMessage id="admin.billing.paymentMethods.cta.addPaymentMethod" />
+                    </span>
                 </LoadingButton>
             </Box>
 
