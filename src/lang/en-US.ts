@@ -41,6 +41,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.outOfSync': `Out of Sync`,
     'common.readOnly': `Read-Only`,
     'common.failedFetch': `Unable to reach server`,
+    'common.missingError': `Something went wrong`,
 
     // Aria
     'aria.openExpand': `show more`,

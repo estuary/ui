@@ -108,7 +108,10 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                     setError(result.error.message);
                 }
                 // Show error to your customer (for example, payment details incomplete)
-                await onError?.(result.error.message ?? 'Something went wrong');
+                await onError?.(
+                    result.error.message ??
+                        intl.formatMessage({ id: 'common.missingError' })
+                );
                 elements.getElement('payment')?.update({ readOnly: false });
             } else {
                 // Your customer will be redirected to your `return_url`. For some payment
@@ -121,7 +124,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
         } finally {
             setLoading(false);
         }
-    }, [elements, email, onError, onSuccess, stripe]);
+    }, [elements, email, intl, onError, onSuccess, stripe]);
 
     return (
         <>
