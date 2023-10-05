@@ -1,6 +1,6 @@
-import Settings from 'components/shared/Entity/Details/Settings';
 import History from './History';
 import Overview from './Overview';
+import Settings from './Settings';
 import Spec from './Spec';
 import { useDetailsPage } from './context';
 

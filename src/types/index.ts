@@ -363,6 +363,25 @@ export interface NotificationPreference {
     created_at: string;
     updated_at: string;
     prefix: string;
-    user_id: string;
+    subscribed_by: string;
     method: string;
+    user_id: string | null;
+    verified_email: string | null;
+}
+
+export interface Notification_EvaluationInterval {
+    duration: number;
+    cadence: string;
+}
+
+export interface NotificationFullQuery {
+    id: string;
+    detail: string;
+    created_at: string;
+    updated_at: string;
+    method_id: string;
+    message_id: string;
+    acknowledged: boolean;
+    evaluation_interval: Notification_EvaluationInterval | null;
+    live_spec_id: string | null;
 }

@@ -245,6 +245,7 @@ const getLiveSpecs_detailsForm = async (
 
 // Multipurpose queries
 export interface LiveSpecsExtQuery_ByCatalogName {
+    id: string;
     catalog_name: string;
     spec_type: string;
     spec: any;
@@ -257,7 +258,7 @@ const getLiveSpecsByCatalogName = async (
 ) => {
     const data = await supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
-        .select(`catalog_name,spec_type,spec,last_pub_id`)
+        .select(`id,catalog_name,spec_type,spec,last_pub_id`)
         .eq('catalog_name', catalogName)
         .eq('spec_type', specType)
         .then(handleSuccess<LiveSpecsExtQuery_ByCatalogName[]>, handleFailure);
@@ -371,9 +372,9 @@ export {
     getLiveSpecs_captures,
     getLiveSpecs_collections,
     getLiveSpecs_collectionsSelector,
+    getLiveSpecs_detailsForm,
     getLiveSpecs_existingTasks,
     getLiveSpecs_materializations,
-    getLiveSpecs_detailsForm,
     getLiveSpecsByCatalogName,
     getLiveSpecsByCatalogNames,
     getLiveSpecsByConnectorId,

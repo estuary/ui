@@ -55,7 +55,7 @@ export enum TABLES {
     LIVE_SPECS = 'live_specs',
     LIVE_SPECS_EXT = 'live_specs_ext',
     NOTIFICATION_MESSAGES = 'notification_messages',
-    NOTIFICATION_PREFERENCES = 'notification_methods',
+    NOTIFICATION_PREFERENCES = 'notification_preferences',
     NOTIFICATIONS = 'notifications',
     NOTIFICATIONS_EXT = 'notifications_ext',
     PUBLICATION_SPECS = 'publication_specs',

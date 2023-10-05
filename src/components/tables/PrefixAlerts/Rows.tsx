@@ -41,7 +41,10 @@ function Row({ row, isSelected, setRow }: RowProps) {
 
             <TableCell>{row.prefix}</TableCell>
 
-            <ChipListCell values={row.unverified_emails} stripPath={false} />
+            <ChipListCell
+                values={row.verified_email ? [row.verified_email] : []}
+                stripPath={false}
+            />
 
             <TimeStamp time={row.updated_at} enableRelative />
         </TableRow>

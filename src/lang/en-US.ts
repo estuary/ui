@@ -509,7 +509,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.prefix.issueGrant.notification.success.message': `{objectRole} has been shared with {subjectRole}.`,
     'admin.prefix.issueGrant.error.invalidPrefix': `The value entered in the Shared Prefix text field is not an extension of an existing prefix.`,
 
-    'admin.alerts.header': `Prefix Alerts`,
+    'admin.alerts.header': `Organization Alerts`,
     'admin.alerts.cta.addAlertMethod': `Configure`,
     'admin.alerts.dialog.generate.header': `Add Alert Method`,
     'admin.alerts.table.filterLabel': `Filter by Prefix`,
@@ -1053,6 +1053,10 @@ const Details: ResolvedIntlConfig['messages'] = {
     'details.tabs.shardStatus': `Status`,
     'details.tabs.settings': `Settings`,
     'details.tabs.history': `History`,
+
+    'details.settings.notifications.header': `Notification Settings`,
+    'details.settings.notifications.dataProcessing.header': `Data Processing`,
+    'details.settings.notifications.dataProcessing.label.noDataProcessedInInterval': `Data has not been processed in a given window of time.`,
 };
 
 const Docs: ResolvedIntlConfig['messages'] = {
