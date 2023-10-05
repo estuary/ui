@@ -17,8 +17,7 @@ interface Props {
 }
 
 function NotDateTime({ collectionName, description, label, period }: Props) {
-    console.log('collectionName', collectionName);
-    const idValue = `not-${period}-picker`;
+    const idValue = `not-${period}-picker__${collectionName}`;
     const { state, buttonRef, events } = useDatePickerState(idValue);
 
     const [localValue, setLocalValue] = useState<string>('');
@@ -41,17 +40,16 @@ function NotDateTime({ collectionName, description, label, period }: Props) {
         >
             <FormControl
                 fullWidth
-                id={idValue}
                 variant="standard"
                 onFocus={onFocusHandler}
                 onKeyDown={events.keyDown}
             >
-                <InputLabel htmlFor={`${idValue}-input`} required={false}>
+                <InputLabel htmlFor={`${idValue}__input`} required={false}>
                     {label}
                 </InputLabel>
 
                 <Input
-                    id={`${idValue}-input`}
+                    id={`${idValue}__input`}
                     value={localValue}
                     onChange={(event) => {
                         setLocalValue(event.target.value);

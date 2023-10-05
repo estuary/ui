@@ -7,7 +7,6 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { formatRFC3339 } from 'date-fns';
 import { Calendar } from 'iconoir-react';
 import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
-import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { INVALID_DATE, TIMEZONE_OFFSET_REPLACEMENT } from './shared';
 import { PickerProps } from './types';
@@ -39,13 +38,6 @@ function DateTimePickerCTA({
         }
     };
 
-    const focusProps = useMemo(() => bindFocus(state), [state]);
-    const popoverProps = useMemo(() => bindPopover(state), [state]);
-
-    console.log('buttonRef.current ', buttonRef.current);
-    console.log('focusProps', focusProps);
-    console.log('popoverProps', popoverProps);
-
     return (
         <>
             <Box sx={{ paddingTop: 2 }}>
@@ -60,14 +52,14 @@ function DateTimePickerCTA({
                     )}
                     disabled={!enabled}
                     ref={buttonRef}
-                    {...focusProps}
+                    {...bindFocus(state)}
                 >
                     <Calendar />
                 </IconButton>
             </Box>
 
             <Popover
-                {...popoverProps}
+                {...bindPopover(state)}
                 anchorOrigin={{
                     vertical: 'center',
                     horizontal: 'left',
