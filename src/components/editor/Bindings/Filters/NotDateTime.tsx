@@ -76,7 +76,8 @@ function NotDateTime({ collectionName, description, label, setting }: Props) {
                 label={label}
                 buttonRef={buttonRef}
                 state={state}
-                value={propertyBeingControlled}
+                removeOffset
+                value={localValue}
                 onChange={(value) => {
                     updateState(value);
                 }}

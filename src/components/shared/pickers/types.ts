@@ -8,4 +8,5 @@ export interface PickerProps {
     onChange: (formattedValue: any, rawValue: any) => void;
     state: PopupState;
     value: any;
+    removeOffset?: boolean;
 }

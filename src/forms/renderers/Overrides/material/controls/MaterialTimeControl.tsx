@@ -54,6 +54,7 @@ export const Custom_MaterialTimeControl = (props: ControlProps) => {
     const defaultTime = useMemo(() => {
         let args: [number, number?, number?];
         const defaultValue = new Date();
+
         if (hasLength(data)) {
             args = data.split(':').map((val: string) => {
                 const response = Number.parseInt(val, 10);

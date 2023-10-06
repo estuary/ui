@@ -34,7 +34,6 @@ import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Hidden, Stack } from '@mui/material';
 
 import DateTimePickerCTA from 'components/shared/pickers/DateTimePickerCTA';
-import { TIMEZONE_OFFSET_REPLACEMENT } from 'components/shared/pickers/shared';
 import useDatePickerState from 'components/shared/pickers/useDatePickerState';
 import { CustomMaterialInputControl } from './MaterialInputControl';
 
@@ -70,13 +69,6 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
         return handleChange(path, formattedValue);
     };
 
-    // We need to remove the Z here so that the date time picker
-    //  can open up to the proper date time but not try to adjust
-    //  it with the local timezone offset
-    const dateTimePickerValue = data
-        ? data.replace(TIMEZONE_OFFSET_REPLACEMENT, '')
-        : null;
-
     return (
         <Hidden xsUp={!visible}>
             <Stack
@@ -94,8 +86,9 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
                     enabled={enabled}
                     label={label}
                     buttonRef={buttonRef}
+                    removeOffset
                     state={state}
-                    value={dateTimePickerValue}
+                    value={data}
                     onChange={onChange}
                 />
             </Stack>

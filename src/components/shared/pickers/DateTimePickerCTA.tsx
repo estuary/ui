@@ -7,6 +7,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { formatRFC3339 } from 'date-fns';
 import { Calendar } from 'iconoir-react';
 import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { INVALID_DATE, TIMEZONE_OFFSET_REPLACEMENT } from './shared';
 import { PickerProps } from './types';
@@ -20,6 +21,7 @@ function DateTimePickerCTA({
     state,
     value,
     onChange,
+    removeOffset,
 }: PickerProps) {
     const intl = useIntl();
 
@@ -37,6 +39,19 @@ function DateTimePickerCTA({
             return INVALID_DATE;
         }
     };
+
+    // We need to remove the Z here so that the date time picker
+    //  can open up to the proper date time but not try to adjust
+    //  it with the local timezone offset
+    const cleanedValue = useMemo(() => {
+        if (removeOffset) {
+            return value
+                ? value.replace(TIMEZONE_OFFSET_REPLACEMENT, '')
+                : null;
+        }
+
+        return value;
+    }, []);
 
     return (
         <>
@@ -77,7 +92,7 @@ function DateTimePickerCTA({
                         openTo="day"
                         ampm={false}
                         disabled={!enabled}
-                        value={value}
+                        value={cleanedValue}
                         onChange={(
                             onChangeValue: any,
                             keyboardInput?: string | undefined
