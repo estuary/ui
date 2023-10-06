@@ -16,7 +16,6 @@ function useDatePickerState(key: string) {
     const events = useMemo(() => {
         return {
             focus: () => {
-                console.log('focusing here', buttonRef.current);
                 state.open(buttonRef.current);
             },
             keyDown: () => {
