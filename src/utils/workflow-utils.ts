@@ -44,25 +44,35 @@ export const getFullSource = (
     fullSource: FullSource | string | undefined,
     filterOutName?: boolean,
     filterOutNulls?: boolean
-) => {
+): {
+    fullSource?: FullSource;
+} => {
     if (typeof fullSource === 'string') {
         return {};
     }
 
-    const response = fullSource ? { ...fullSource } : {};
+    const response = {
+        fullSource: fullSource ? { ...fullSource } : {},
+    };
+
     if (filterOutName) {
-        delete response.name;
+        delete response.fullSource.name;
     }
 
     if (filterOutNulls) {
-        const foo = Object.values(response).reduce(
-            (responseVal) => (responseVal ? responseVal : undefined),
+        response.fullSource = Object.entries(response.fullSource).reduce(
+            (filtered, [key, val]) => {
+                if (val !== null) {
+                    filtered[key] = val;
+                }
+
+                return filtered;
+            },
             {}
         );
-        console.log('foo', foo);
     }
 
-    return { fullSource: response };
+    return response;
 };
 
 export const addOrRemoveSourceCapture = (
@@ -109,12 +119,20 @@ export const generateTaskSpec = (
 
             // See if there are any settings that need use to convert this to a fullSource style
             const { fullSource } = resourceConfigs[collectionName];
-            const newNameValue = !isEmpty(fullSource)
-                ? {
+
+            // We set non-dates to null so here we see
+            const onlyHasName = fullSource
+                ? Object.entries(fullSource).every(([key, val]) =>
+                      key === 'name' ? true : val === null
+                  )
+                : true;
+
+            const newNameValue = onlyHasName
+                ? collectionName
+                : {
                       ...fullSource,
                       name: collectionName,
-                  }
-                : collectionName;
+                  };
 
             // See which binding we need to update
             const existingBindingIndex = draftSpec.bindings.findIndex(
@@ -122,12 +140,6 @@ export const generateTaskSpec = (
             );
 
             if (existingBindingIndex > -1) {
-                // Grab the existing name so we know if it is a name or fullSource
-                const existingNameValue =
-                    draftSpec.bindings[existingBindingIndex][
-                        collectionNameProp
-                    ];
-
                 // Include disable otherwise totally remove it
                 if (resourceDisable) {
                     draftSpec.bindings[existingBindingIndex].disable =
@@ -135,6 +147,12 @@ export const generateTaskSpec = (
                 } else {
                     delete draftSpec.bindings[existingBindingIndex].disable;
                 }
+
+                // Grab the existing name so we know if it is a name or fullSource
+                const existingNameValue =
+                    draftSpec.bindings[existingBindingIndex][
+                        collectionNameProp
+                    ];
 
                 if (typeof newNameValue === 'string') {
                     // There is no new fullSource props so switch back to just a string for the name
@@ -152,10 +170,17 @@ export const generateTaskSpec = (
                             collectionNameProp
                         ] = newNameValue;
                     } else {
+                        // We want to filter out nulls but only AFTER merging with existing
+                        const filteredOutNullValues = getFullSource(
+                            { ...existingNameValue, ...newNameValue },
+                            false,
+                            true
+                        );
+
                         // Make sure we start with the existing so only new props override
                         draftSpec.bindings[existingBindingIndex][
                             collectionNameProp
-                        ] = { ...existingNameValue, ...newNameValue };
+                        ] = filteredOutNullValues.fullSource;
                     }
                 }
 
