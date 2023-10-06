@@ -22,6 +22,13 @@ interface Props {
     setting: FilterProperties;
 }
 
+// TODO (time travel)
+// So I started making this able to be done outside of JSON Forms in case we wanted super custom styling
+//      however, we are not currently (Q4 2023) going after that. Also, this became a huge page when it came time to
+//      validate the inputs as that is basically just duplicating what JSONForms helps us with already.
+//  In the future this might be used again so leaving it here. Also, I never fully made the validation work. To make this all
+//      nice we should probably create a reusable input that is based on the PrefixedName one... but that seems like a lot of work
+//      might be easier to figure out custom styling within JSON Forms just for the "Time Travel" forms
 function NotDateTime({ collectionName, description, label, setting }: Props) {
     const idValue = `${setting}-picker__${collectionName}`;
     const { state, buttonRef, events } = useDatePickerState(idValue);
