@@ -101,7 +101,6 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     }, [collectionNameProp, draftSpecs, resourceConfig]);
 
     useEffect(() => {
-        console.log('use effect being called', resourceConfigUpdated);
         setServerUpdateRequired(resourceConfigUpdated);
     }, [setServerUpdateRequired, resourceConfigUpdated]);
 };
