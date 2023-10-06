@@ -1,24 +1,14 @@
-import { Box, IconButton, Popover } from '@mui/material';
-import { LocalizationProvider, StaticTimePicker } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { StaticTimePicker } from '@mui/x-date-pickers';
 import { format } from 'date-fns';
 import { Clock } from 'iconoir-react';
-import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
-import { useIntl } from 'react-intl';
 import { Patterns } from 'types/jsonforms';
 import { PickerProps } from './types';
+import DateOrTimePickerWrapper from './DateOrTimePickerWrapper';
 
 const INVALID_TIME = 'Invalid Time';
 
-function TimePickerCTA({
-    enabled,
-    label,
-    buttonRef,
-    state,
-    value,
-    onChange,
-}: PickerProps) {
-    const intl = useIntl();
+function TimePickerCTA(props: PickerProps) {
+    const { enabled, state, value, onChange } = props;
 
     const formatDate = (formatValue: Date) => {
         try {
@@ -29,74 +19,39 @@ function TimePickerCTA({
     };
 
     return (
-        <>
-            <Box sx={{ paddingTop: 2 }}>
-                <IconButton
-                    aria-label={intl.formatMessage(
-                        {
-                            id: 'timePicker.button.ariaLabel',
-                        },
-                        {
-                            label,
+        <DateOrTimePickerWrapper
+            icon={<Clock />}
+            iconAriaId="timePicker.button.ariaLabel"
+            {...props}
+        >
+            <StaticTimePicker
+                displayStaticWrapperAs="desktop"
+                ampm={false}
+                disabled={!enabled}
+                value={value}
+                onChange={(
+                    onChangeValue: any,
+                    keyboardInput?: string | undefined
+                ) => {
+                    if (onChangeValue) {
+                        const formattedValue = formatDate(onChangeValue);
+                        if (formattedValue && formattedValue !== INVALID_TIME) {
+                            return onChange(formattedValue, onChangeValue);
                         }
-                    )}
-                    disabled={!enabled}
-                    ref={buttonRef}
-                    {...bindFocus(state)}
-                >
-                    <Clock />
-                </IconButton>
-            </Box>
+                    }
 
-            <Popover
-                {...bindPopover(state)}
-                anchorOrigin={{
-                    vertical: 'center',
-                    horizontal: 'left',
+                    // Default to setting to what user typed
+                    //  This is a super backup as with the Date Fn adapter
+                    //  it never fell through to this... but wanted to be safe
+                    return onChange(keyboardInput, keyboardInput);
                 }}
-                transformOrigin={{
-                    vertical: 'center',
-                    horizontal: 'right',
-                }}
-            >
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <StaticTimePicker
-                        displayStaticWrapperAs="desktop"
-                        ampm={false}
-                        disabled={!enabled}
-                        value={value}
-                        onChange={(
-                            onChangeValue: any,
-                            keyboardInput?: string | undefined
-                        ) => {
-                            if (onChangeValue) {
-                                const formattedValue =
-                                    formatDate(onChangeValue);
-                                if (
-                                    formattedValue &&
-                                    formattedValue !== INVALID_TIME
-                                ) {
-                                    return onChange(
-                                        formattedValue,
-                                        onChangeValue
-                                    );
-                                }
-                            }
-
-                            // Default to setting to what user typed
-                            //  This is a super backup as with the Date Fn adapter
-                            //  it never fell through to this... but wanted to be safe
-                            return onChange(keyboardInput, keyboardInput);
-                        }}
-                        onAccept={state.close}
-                        closeOnSelect={true}
-                        // We don't need an input
-                        // eslint-disable-next-line react/jsx-no-useless-fragment
-                        renderInput={() => <></>}
-                    />
-                </LocalizationProvider>
-            </Popover>
-        </>
+                onAccept={state.close}
+                closeOnSelect={true}
+                // We don't need an input
+                // eslint-disable-next-line react/jsx-no-useless-fragment
+                renderInput={() => <></>}
+            />
+        </DateOrTimePickerWrapper>
     );
 }
 
