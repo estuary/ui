@@ -56,7 +56,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                         resourceConfig: resourceConfig[collectionName],
                         comparing: {
                             ...existingDisableProp,
-                            fullSource: existingFullSource,
+                            ...existingFullSource,
                             data: resource,
                             errors: [],
                         },
@@ -71,7 +71,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     // See if anything has changed
                     const response = !isEqual(resourceConfig[collectionName], {
                         ...existingDisableProp,
-                        fullSource: existingFullSource,
+                        ...existingFullSource,
                         data: resource,
                         errors: [],
                     });

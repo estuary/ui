@@ -22,7 +22,11 @@ import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
+import {
+    getCollectionName,
+    getDisableProps,
+    getFullSource,
+} from 'utils/workflow-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
@@ -44,11 +48,12 @@ const getNewCollectionList = (adds: string[], curr: string[] | null) => {
 };
 
 const getResourceConfig = (binding: any) => {
-    const { resource, disable } = binding;
+    const { resource, disable, source } = binding;
 
     // Snag the name so we can add it to the config and list of collections
     const name = getCollectionName(binding);
     const disableProp = getDisableProps(disable);
+    const fullSourceProp = getFullSource(source ?? {}, true);
 
     // Take the binding resource and place into config OR
     //  generate a default in case there are any issues with it
@@ -56,6 +61,7 @@ const getResourceConfig = (binding: any) => {
         name,
         {
             ...disableProp,
+            ...fullSourceProp,
             data: resource,
             errors: [],
         },
@@ -661,6 +667,21 @@ const getInitialState = (
 
                 // TODO (direct bindings) We can remove this when/if we move the UI
                 //   to using the bindings directly and save a lot of processing
+                const newSorting = sortBy(data[0].spec.bindings, [
+                    (binding) => {
+                        return (
+                            binding[collectionNameProp].name ??
+                            binding[collectionNameProp]
+                        );
+
+                        if (typeof binding[collectionNameProp] === 'string') {
+                            return;
+                        }
+                    },
+                ]);
+
+                console.log('newSorting', newSorting);
+
                 const sortedBindings = sortBy(data[0].spec.bindings, [
                     collectionNameProp,
                 ]);

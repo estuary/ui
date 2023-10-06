@@ -59,11 +59,10 @@ export const getFullSource = (
             (responseVal) => (responseVal ? responseVal : undefined),
             {}
         );
-
         console.log('foo', foo);
     }
 
-    return response;
+    return { fullSource: response };
 };
 
 export const addOrRemoveSourceCapture = (
