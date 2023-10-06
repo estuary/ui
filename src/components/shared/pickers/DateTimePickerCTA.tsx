@@ -46,6 +46,7 @@ function DateTimePickerCTA(props: PickerProps) {
             {...props}
         >
             <StaticDateTimePicker
+                inputFormat="YYYY-mm-ddTHH:mm:ssZ"
                 ignoreInvalidInputs
                 disableMaskedInput
                 displayStaticWrapperAs="desktop"

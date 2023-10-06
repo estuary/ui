@@ -6,6 +6,7 @@ import {
     Stack,
 } from '@mui/material';
 import DateTimePickerCTA from 'components/shared/pickers/DateTimePickerCTA';
+import { validateDateTime } from 'components/shared/pickers/shared';
 import useDatePickerState from 'components/shared/pickers/useDatePickerState';
 import { useState } from 'react';
 import {
@@ -33,9 +34,17 @@ function NotDateTime({ collectionName, description, label, setting }: Props) {
             setting
         );
 
-    const [localValue, setLocalValue] = useState<string>(
-        propertyBeingControlled ?? ''
-    );
+    const [localValue, setLocalValue] = useState(propertyBeingControlled ?? '');
+
+    const [errors, setErrors] = useState<string | null>(null);
+
+    const showErrors = Boolean(errors);
+    const firstFormHelperText = description
+        ? description
+        : showErrors
+        ? errors
+        : null;
+    const secondFormHelperText = description && showErrors ? errors : null;
 
     const updateState = (updateValue: any) => {
         setLocalValue(updateValue);
@@ -64,11 +73,26 @@ function NotDateTime({ collectionName, description, label, setting }: Props) {
                     id={`${idValue}__input`}
                     value={localValue}
                     onChange={(event) => {
-                        updateState(event.target.value);
+                        const newVal = event.target.value;
+
+                        updateState(newVal);
+                        const validationResponse = validateDateTime(newVal);
+
+                        console.log('validationResponse', validationResponse);
+                        setErrors(validationResponse[0] ?? null);
                     }}
                     onKeyDown={events.keyDown}
+                    onError={(errorValue) => {
+                        console.log('error', errorValue);
+                        setErrors('');
+                    }}
                 />
-                <FormHelperText>{description}</FormHelperText>
+                <FormHelperText error={showErrors ? !description : undefined}>
+                    {firstFormHelperText}
+                </FormHelperText>
+                <FormHelperText error={showErrors}>
+                    {secondFormHelperText}
+                </FormHelperText>
             </FormControl>
 
             <DateTimePickerCTA

@@ -1229,12 +1229,12 @@ const Graphs: ResolvedIntlConfig['messages'] = {
 };
 
 const NotBeforeNotAfter: ResolvedIntlConfig['messages'] = {
-    'notBeforeNotAfter.header': `Filters`,
-    'notBeforeNotAfter.message': `By setting values below, source collection documents will be filtered based on publish date and time. Please remember, these are only filters. Updating will not cause Flow to re-process documents that have already been read.`,
-    'notBefore.input.label': `Prevent documents before`,
-    'notBefore.input.description': `documents published before this date-time are filtered`,
-    'notAfter.input.label': `Prevent documents after`,
-    'notAfter.input.description': `documents published after this date-time are filtered`,
+    'notBeforeNotAfter.header': `Time Travel`,
+    'notBeforeNotAfter.message': `Include only data from before or after a specific time period.  This should only be used when first setting up your destination or it will not have an effect.`,
+    'notAfter.input.label': `Only Before`,
+    'notAfter.input.description': `only include data from before this time`,
+    'notBefore.input.label': `Only After`,
+    'notBefore.input.description': `only include data from after this time`,
 };
 
 const FieldSelection: ResolvedIntlConfig['messages'] = {
