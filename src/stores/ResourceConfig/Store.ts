@@ -29,6 +29,7 @@ import {
 } from 'utils/workflow-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
+import { REMOVE_DURING_GENERATION } from './shared';
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
 
 const populateCollections = (
@@ -442,7 +443,7 @@ const getInitialState = (
 
                 configToUpdate.fullSource[key] = hasLength(value)
                     ? value
-                    : null;
+                    : REMOVE_DURING_GENERATION;
             }),
             false,
             'Updating Property Within Full Source'

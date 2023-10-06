@@ -6,6 +6,7 @@ import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
+import { REMOVE_DURING_GENERATION } from 'stores/ResourceConfig/shared';
 import {
     FullSource,
     ResourceConfigDictionary,
@@ -43,7 +44,7 @@ export const getDisableProps = (disable: boolean | undefined) => {
 export const getFullSource = (
     fullSource: FullSource | string | undefined,
     filterOutName?: boolean,
-    filterOutNulls?: boolean
+    filterOutRemovable?: boolean
 ): {
     fullSource?: FullSource;
 } => {
@@ -59,10 +60,10 @@ export const getFullSource = (
         delete response.fullSource.name;
     }
 
-    if (filterOutNulls) {
+    if (filterOutRemovable) {
         response.fullSource = Object.entries(response.fullSource).reduce(
             (filtered, [key, val]) => {
-                if (val !== null) {
+                if (val !== REMOVE_DURING_GENERATION) {
                     filtered[key] = val;
                 }
 
@@ -160,7 +161,6 @@ export const generateTaskSpec = (
                         collectionNameProp
                     ] = newNameValue;
                 } else {
-                    // See if we need to merge with existing stuff
                     const noExistingFullSource =
                         typeof existingNameValue === 'string';
 

@@ -50,33 +50,46 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                         true
                     );
 
-                    console.log('sup', {
-                        source,
-                        existingFullSource,
-                        resourceConfig: resourceConfig[collectionName],
-                        comparing: {
-                            ...existingDisableProp,
-                            ...existingFullSource,
-                            data: resource,
-                            errors: [],
-                        },
-                    });
-
                     // TODO (enabled rediscovery)
                     // If we're enabling something then make sure we know to rediscover
                     // if (disable && !resourceConfig[collectionName].disable) {
                     //     setRediscoveryRequired(true);
                     // }
 
+                    // First check if disabled has changed cause it is a simple boolean
+                    if (
+                        existingDisableProp.disable !==
+                        resourceConfig[collectionName].disable
+                    ) {
+                        return true;
+                    }
+
+                    // TODO (draft updates)
+                    // Since we are marking some items for clean up we need to fetched the
+                    //      "cleaned up" version to compare but not actually mess with our local copy.
+                    // This is messy and very hacky and something we need to fix by just updating
+                    //      the draft directly.
+                    let filteredNew;
+                    if (resourceConfig[collectionName].fullSource) {
+                        filteredNew = {
+                            ...resourceConfig[collectionName],
+                            ...getFullSource(
+                                resourceConfig[collectionName].fullSource,
+                                false,
+                                true
+                            ),
+                        };
+                    } else {
+                        filteredNew = resourceConfig[collectionName];
+                    }
+
                     // See if anything has changed
-                    const response = !isEqual(resourceConfig[collectionName], {
+                    return !isEqual(filteredNew, {
                         ...existingDisableProp,
                         ...existingFullSource,
                         data: resource,
                         errors: [],
                     });
-
-                    return response;
                 });
             } else {
                 // Lengths do not match so we know the update is needed
@@ -88,6 +101,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     }, [collectionNameProp, draftSpecs, resourceConfig]);
 
     useEffect(() => {
+        console.log('use effect being called', resourceConfigUpdated);
         setServerUpdateRequired(resourceConfigUpdated);
     }, [setServerUpdateRequired, resourceConfigUpdated]);
 };
