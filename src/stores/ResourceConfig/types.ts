@@ -6,6 +6,7 @@ import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
 export type FilterProperties = 'notBefore' | 'notAfter';
 
 export interface FullSource {
+    name?: string;
     notAfter?: string | null; // controlled by the NotDateTime
     notBefore?: string | null; // controlled by the NotDateTime
     partitions?: any; // not set in the UI today

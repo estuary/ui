@@ -6,7 +6,10 @@ import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
-import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
+import {
+    FullSource,
+    ResourceConfigDictionary,
+} from 'stores/ResourceConfig/types';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
@@ -35,6 +38,32 @@ export const getCollectionName = (binding: any) => {
 
 export const getDisableProps = (disable: boolean | undefined) => {
     return disable ? { disable } : {};
+};
+
+export const getFullSource = (
+    fullSource: FullSource | string | undefined,
+    filterOutName?: boolean,
+    filterOutNulls?: boolean
+) => {
+    if (typeof fullSource === 'string') {
+        return {};
+    }
+
+    const response = fullSource ? { ...fullSource } : {};
+    if (filterOutName) {
+        delete response.name;
+    }
+
+    if (filterOutNulls) {
+        const foo = Object.values(response).reduce(
+            (responseVal) => (responseVal ? responseVal : undefined),
+            {}
+        );
+
+        console.log('foo', foo);
+    }
+
+    return response;
 };
 
 export const addOrRemoveSourceCapture = (

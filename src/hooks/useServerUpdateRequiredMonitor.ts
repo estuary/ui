@@ -11,6 +11,7 @@ import {
     getCollectionName,
     getCollectionNameProp,
     getDisableProps,
+    getFullSource,
 } from 'utils/workflow-utils';
 
 const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
@@ -41,8 +42,25 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     );
 
                     //Pull out resource as that is moved into `data`
-                    const { resource, disable } = binding;
-                    const disableProp = getDisableProps(disable);
+                    const { resource, disable, source } = binding;
+                    const existingDisableProp = getDisableProps(disable);
+                    const existingFullSource = getFullSource(
+                        source,
+                        true,
+                        true
+                    );
+
+                    console.log('sup', {
+                        source,
+                        existingFullSource,
+                        resourceConfig: resourceConfig[collectionName],
+                        comparing: {
+                            ...existingDisableProp,
+                            fullSource: existingFullSource,
+                            data: resource,
+                            errors: [],
+                        },
+                    });
 
                     // TODO (enabled rediscovery)
                     // If we're enabling something then make sure we know to rediscover
@@ -51,11 +69,14 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     // }
 
                     // See if anything has changed
-                    return !isEqual(resourceConfig[collectionName], {
-                        ...disableProp,
+                    const response = !isEqual(resourceConfig[collectionName], {
+                        ...existingDisableProp,
+                        fullSource: existingFullSource,
                         data: resource,
                         errors: [],
                     });
+
+                    return response;
                 });
             } else {
                 // Lengths do not match so we know the update is needed
