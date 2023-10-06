@@ -13,6 +13,8 @@ export const DEFAULT_TRANSFORM_ORIGIN: PopoverOrigin = {
     horizontal: 'right',
 };
 
+// TODO (time travel)
+// Never fully tested or implemented
 export const validateDateTime = (value: string, allowBlank?: boolean): any => {
     const isBlank = !hasLength(value);
 
