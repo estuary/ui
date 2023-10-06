@@ -667,7 +667,7 @@ const getInitialState = (
 
                 // TODO (direct bindings) We can remove this when/if we move the UI
                 //   to using the bindings directly and save a lot of processing
-                const newSorting = sortBy(data[0].spec.bindings, [
+                const sortedBindings = sortBy(data[0].spec.bindings, [
                     (binding) => {
                         return (
                             binding[collectionNameProp].name ??
@@ -680,11 +680,6 @@ const getInitialState = (
                     },
                 ]);
 
-                console.log('newSorting', newSorting);
-
-                const sortedBindings = sortBy(data[0].spec.bindings, [
-                    collectionNameProp,
-                ]);
                 prefillResourceConfig(sortedBindings);
             }
         }
