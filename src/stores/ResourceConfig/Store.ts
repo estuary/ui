@@ -76,6 +76,8 @@ const populateResourceConfigErrors = (
     let resourceConfigErrors: any[] = [];
     const hasConfigs = Object.keys(resourceConfig).length > 0;
 
+    state.fullSourceErrorsExist = false;
+
     if (hasConfigs) {
         map(resourceConfig, (config) => {
             const { errors, fullSourceErrors } = config;
@@ -88,6 +90,7 @@ const populateResourceConfigErrors = (
             if (fullSourceErrors && fullSourceErrors.length > 0) {
                 resourceConfigErrors =
                     resourceConfigErrors.concat(fullSourceErrors);
+                state.fullSourceErrorsExist = true;
             }
         });
     } else {
@@ -136,6 +139,7 @@ const getInitialMiscStoreData = (): Pick<
     | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
     | 'rediscoveryRequired'
+    | 'fullSourceErrorsExist'
 > => ({
     discoveredCollections: null,
     hydrated: false,
@@ -147,6 +151,7 @@ const getInitialMiscStoreData = (): Pick<
     restrictedDiscoveredCollections: [],
     serverUpdateRequired: false,
     rediscoveryRequired: false,
+    fullSourceErrorsExist: false,
 });
 
 const getInitialStateData = () => ({

@@ -14,7 +14,13 @@ function BindingsSelectorErrorIndicator({ collection }: Props) {
         'errors'
     );
 
-    if (configErrors?.length > 0) {
+    const fullSourceErrors =
+        useResourceConfig_resourceConfigOfCollectionProperty(
+            collection,
+            'fullSourceErrors'
+        );
+
+    if (fullSourceErrors?.length > 0 || configErrors?.length > 0) {
         return (
             <Typography>
                 <WarningCircle

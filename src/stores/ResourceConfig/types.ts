@@ -76,6 +76,7 @@ export interface ResourceConfigState {
         value: FilterProperties | null
     ) => void;
     updateFullSourceErrors: (collection: string, errors?: any[]) => void;
+    fullSourceErrorsExist: boolean;
 
     // Resource Schema
     resourceSchema: Schema;

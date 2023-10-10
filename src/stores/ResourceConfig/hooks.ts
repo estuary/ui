@@ -1,7 +1,7 @@
 import { useZustandStore } from 'context/Zustand/provider';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { shallow } from 'zustand/shallow';
-import { ResourceConfigState } from './types';
+import { FullSource, ResourceConfig, ResourceConfigState } from './types';
 
 // Selector Hooks
 export const useResourceConfig_collections = () => {
@@ -127,7 +127,7 @@ export const useResourceConfig_resourceConfigOfCollection = (
 
 export const useResourceConfig_resourceConfigOfCollectionProperty = (
     collection: any,
-    property: any
+    property: keyof ResourceConfig
 ) => {
     return useZustandStore<ResourceConfigState, any>(
         ResourceConfigStoreNames.GENERAL,
@@ -144,7 +144,7 @@ export const useResourceConfig_resourceConfigOfCollectionProperty = (
 
 export const useResourceConfig_fullSourceOfCollectionProperty = (
     collection: any,
-    property: any
+    property: keyof FullSource
 ) => {
     return useZustandStore<ResourceConfigState, any>(
         ResourceConfigStoreNames.GENERAL,
@@ -198,6 +198,13 @@ export const useResourceConfig_updateFullSourceErrors = () => {
         ResourceConfigStoreNames.GENERAL,
         (state) => state.updateFullSourceErrors
     );
+};
+
+export const useResourceConfig_fullSourceErrorsExist = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['fullSourceErrorsExist']
+    >(ResourceConfigStoreNames.GENERAL, (state) => state.fullSourceErrorsExist);
 };
 
 export const useResourceConfig_resetResourceConfigAndCollections = () => {

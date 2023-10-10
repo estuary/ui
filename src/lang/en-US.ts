@@ -662,7 +662,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.endpointConfig.endpointConfigMissing': `${endpointConfigHeader} empty`,
     'entityCreate.endpointConfig.collectionsMissing': `${CommonMessages['terms.collections']} missing`,
     'entityCreate.endpointConfig.resourceConfigInvalid': `Resource Config invalid`,
-    'entityCreate.endpointConfig.timeTravelInvalid': `Time Travel invalid`,
+    'entityCreate.endpointConfig.fullSourceInvalid': `Time Travel invalid`,
 
     'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
 
