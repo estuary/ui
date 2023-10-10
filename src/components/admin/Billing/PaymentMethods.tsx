@@ -1,9 +1,5 @@
 import {
     Box,
-    Button,
-    Dialog,
-    DialogContent,
-    DialogTitle,
     Stack,
     Table,
     TableBody,
@@ -13,7 +9,6 @@ import {
     TableRow,
     Typography,
 } from '@mui/material';
-import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import {
     deleteTenantPaymentMethod,
@@ -21,7 +16,6 @@ import {
     getTenantPaymentMethods,
     setTenantPrimaryPaymentMethod,
 } from 'api/billing';
-import { PaymentForm } from 'components/admin/Billing/CapturePaymentMethod';
 import { PaymentMethod } from 'components/admin/Billing/PaymentMethodRow';
 import AlertBox from 'components/shared/AlertBox';
 import TableLoadingRows from 'components/tables/Loading';
@@ -34,6 +28,9 @@ import {
     useBilling_setPaymentMethodExists,
 } from 'stores/Billing/hooks';
 import { TableColumns } from 'types';
+import AddPaymentMethod from './AddPaymentMethod';
+import { INTENT_SECRET_ERROR, INTENT_SECRET_LOADING } from './shared';
+import { AdminBillingProps } from './types';
 
 const columns: TableColumns[] = [
     {
@@ -63,7 +60,7 @@ const columns: TableColumns[] = [
     },
 ];
 
-const PaymentMethods = () => {
+const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
     const stripePromise = useMemo(
         () => loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ?? ''),
         []
@@ -74,10 +71,10 @@ const PaymentMethods = () => {
 
     const [refreshCounter, setRefreshCounter] = useState(0);
 
-    const [setupIntentSecret, setSetupIntentSecret] = useState<string | null>(
-        null
+    const [setupIntentSecret, setSetupIntentSecret] = useState(
+        INTENT_SECRET_LOADING
     );
-    const [newMethodOpen, setNewMethodOpen] = useState(false);
+    const [newMethodOpen, setNewMethodOpen] = useState(showAddPayment ?? false);
 
     const [methodsLoading, setMethodsLoading] = useState(false);
     const [methods, setMethods] = useState<any[] | undefined>([]);
@@ -85,17 +82,34 @@ const PaymentMethods = () => {
         string | null | undefined
     >(null);
 
+    // These are two different iifes so this component loads just a _tiny bit_ faster
     useEffect(() => {
         void (async () => {
             if (selectedTenant) {
-                try {
-                    setMethodsLoading(true);
+                const setupResponse = await getSetupIntentSecret(
+                    selectedTenant
+                );
 
+                if (setupResponse.data.intent_secret) {
+                    setSetupIntentSecret(setupResponse.data.intent_secret);
+                } else {
+                    setSetupIntentSecret(INTENT_SECRET_ERROR);
+                }
+            }
+        })();
+
+        void (async () => {
+            if (selectedTenant) {
+                setMethodsLoading(true);
+
+                try {
                     // TODO (optimization): Add proper typing and error handling for this service call. The response assumes
                     //  an unexpected shape when the service errors. The error property is null and the data property
                     //  is an object with the following shape: { error: string; }. Consequently, an undefined value is passed
                     //  to the setters below (unbeknownst to the compiler given the state typing defined above), causing the
                     //  the component to lean on the ErrorBoundary wrapper for its display in the presence of an error.
+
+                    // TODO (store payment method info) we load this for the first 5 tenants so we should just pull that info
                     const methodsResponse = await getTenantPaymentMethods(
                         selectedTenant
                     );
@@ -105,11 +119,6 @@ const PaymentMethods = () => {
                 } finally {
                     setMethodsLoading(false);
                 }
-
-                const setupResponse = await getSetupIntentSecret(
-                    selectedTenant
-                );
-                setSetupIntentSecret(setupResponse.data.intent_secret);
             }
         })();
     }, [selectedTenant, refreshCounter]);
@@ -138,6 +147,14 @@ const PaymentMethods = () => {
 
     return (
         <Stack spacing={serverErrored ? 0 : 3}>
+            {setupIntentSecret === INTENT_SECRET_ERROR ? (
+                <AlertBox short severity="error">
+                    <Typography component="div">
+                        <FormattedMessage id="admin.billing.paymentMethods.cta.addPaymentMethod.error" />
+                    </Typography>
+                </AlertBox>
+            ) : null}
+
             <Stack
                 spacing={2}
                 direction="row"
@@ -162,14 +179,14 @@ const PaymentMethods = () => {
                 </Box>
 
                 {serverErrored ? null : (
-                    <Box>
-                        <Button
-                            onClick={() => setNewMethodOpen(true)}
-                            sx={{ whiteSpace: 'nowrap' }}
-                        >
-                            <FormattedMessage id="admin.billing.paymentMethods.cta.addPaymentMethod" />
-                        </Button>
-                    </Box>
+                    <AddPaymentMethod
+                        show={newMethodOpen}
+                        setOpen={setNewMethodOpen}
+                        tenant={selectedTenant}
+                        onSuccess={() => setRefreshCounter((r) => r + 1)}
+                        stripePromise={stripePromise}
+                        setupIntentSecret={setupIntentSecret}
+                    />
                 )}
             </Stack>
 
@@ -248,38 +265,6 @@ const PaymentMethods = () => {
                     </Table>
                 </TableContainer>
             )}
-
-            <Dialog
-                maxWidth="sm"
-                fullWidth
-                sx={{ padding: 2 }}
-                open={newMethodOpen}
-                onClose={() => setNewMethodOpen(false)}
-            >
-                <DialogTitle>Add a payment method</DialogTitle>
-                {selectedTenant && setupIntentSecret ? (
-                    <Elements
-                        stripe={stripePromise}
-                        options={{ clientSecret: setupIntentSecret }}
-                    >
-                        <PaymentForm
-                            onSuccess={async (id) => {
-                                if (id) {
-                                    await setTenantPrimaryPaymentMethod(
-                                        selectedTenant,
-                                        id
-                                    );
-                                }
-                                setNewMethodOpen(false);
-                                setRefreshCounter((r) => r + 1);
-                            }}
-                            onError={console.log}
-                        />
-                    </Elements>
-                ) : (
-                    <DialogContent>Loading...</DialogContent>
-                )}
-            </Dialog>
         </Stack>
     );
 };

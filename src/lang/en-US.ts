@@ -41,6 +41,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.outOfSync': `Out of Sync`,
     'common.readOnly': `Read-Only`,
     'common.failedFetch': `Unable to reach server`,
+    'common.missingError': `Something went wrong`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -482,6 +483,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.paymentMethods.header': `Payment Information`,
     'admin.billing.paymentMethods.description': `Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.`,
     'admin.billing.paymentMethods.cta.addPaymentMethod': `Add Payment Method`,
+    'admin.billing.paymentMethods.cta.addPaymentMethod.error': `There was an issue attempting to get a token from Stripe. You cannot currently add a payment method. ${Error['error.tryAgain']}`,
     'admin.billing.paymentMethods.table.label.cardType': `Type`,
     'admin.billing.paymentMethods.table.label.name': `Name`,
     'admin.billing.paymentMethods.table.label.lastFour': `Last 4 Digits`,
@@ -489,6 +491,8 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.paymentMethods.table.label.primary': `Primary`,
     'admin.billing.paymentMethods.table.label.actions': `Actions`,
     'admin.billing.paymentMethods.table.emptyTableDefault.message': `No payment methods available.`,
+    'admin.billing.addPaymentMethods.title': `Add a payment method`,
+    'admin.billing.addPaymentMethods.stripeLoadError': `Unable to load the forms from Stripe. ${Error['error.tryAgain']}`,
 
     'admin.users.cta.prefixInvitation': `Manage Invitations`,
     'admin.users.prefixInvitation.header': `Manage Invitations`,
@@ -1259,6 +1263,18 @@ const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.table.label.unknown': `Unknown`,
 };
 
+const Notifications: ResolvedIntlConfig['messages'] = {
+    'notifications.paymentMethods.missing.title': `Missing Payment Method`,
+    'notifications.paymentMethods.missing.cta': `add a payment method`,
+    'notifications.paymentMethods.missing.cta.alreadyThere': `add a payment method below`,
+    'notifications.paymentMethods.missing.trialCurrent': `The free trial for {tenant} ends in {daysLeft} days, but no payment method has been added to your account.`,
+    'notifications.paymentMethods.missing.trialCurrent.instructions': `Please {cta} before your trial ends to continue using Estuary Flow.`,
+    'notifications.paymentMethods.missing.trialEndsToday': `The free trial for {tenant} ends today, but no payment method has been added to your account.`,
+    'notifications.paymentMethods.missing.trialEndsToday.instructions': `Please {cta} today to continue using Estuary Flow.`,
+    'notifications.paymentMethods.missing.trialPast': `{tenant} is past its free trial without a payment method.`,
+    'notifications.paymentMethods.missing.trialPast.instructions': `Please {cta} to continue using Estuary Flow.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1317,6 +1333,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...PrefixedName,
     ...Graphs,
     ...FieldSelection,
+    ...Notifications,
 };
 
 export default enUSMessages;

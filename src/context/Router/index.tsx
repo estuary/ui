@@ -449,14 +449,32 @@ const router = createBrowserRouter(
                                 </Suspense>
                             }
                         />
+
                         <Route
-                            path={authenticatedRoutes.admin.billing.path}
-                            element={
-                                <Suspense fallback={null}>
-                                    <AdminBilling />
-                                </Suspense>
-                            }
-                        />
+                            path={`${authenticatedRoutes.admin.billing.path}/*`}
+                        >
+                            <Route
+                                path={
+                                    authenticatedRoutes.admin.billing.addPayment
+                                        .path
+                                }
+                                element={
+                                    <Suspense fallback={null}>
+                                        <AdminBilling showAddPayment />
+                                    </Suspense>
+                                }
+                            />
+
+                            <Route
+                                path={authenticatedRoutes.admin.billing.path}
+                                element={
+                                    <Suspense fallback={null}>
+                                        <AdminBilling />
+                                    </Suspense>
+                                }
+                            />
+                        </Route>
+
                         <Route
                             path={authenticatedRoutes.admin.connectors.path}
                             element={

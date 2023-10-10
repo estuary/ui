@@ -154,7 +154,9 @@ function UpdateDraftButton({ toggle }: AddCollectionDialogCTAProps) {
             disabled={selected.size < 1 || catalogUpdating}
             onClick={updateDerivationSpec}
         >
-            <FormattedMessage id="cta.continue" />
+            <span>
+                <FormattedMessage id="cta.continue" />
+            </span>
         </LoadingButton>
     );
 }

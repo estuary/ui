@@ -9,6 +9,7 @@ import {
 } from 'context/Theme';
 import { orderBy } from 'lodash';
 import { SortDirection } from 'types';
+import { basicSort_string } from 'utils/misc-utils';
 
 interface RowProps {
     row: CompositeProjection;
@@ -80,34 +81,12 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
                         (
                             first: CompositeProjection,
                             second: CompositeProjection
-                        ) => {
-                            // Fetch the field
-                            const a = first.field;
-                            const b = second.field;
-
-                            // See if the values start with alphanumeric
-                            const aIsAlphabetical = a.localeCompare('a') >= 0;
-                            const bIsAlphabetical = b.localeCompare('a') >= 0;
-
-                            // If a is alpha and b isn't then return >0 to put b first
-                            if (!aIsAlphabetical && bIsAlphabetical) {
-                                return 1;
-                            }
-
-                            // If a is alpha and b isn't then return <0 to put a first
-                            if (aIsAlphabetical && !bIsAlphabetical) {
-                                return -1;
-                            }
-
-                            // If we're here we know both strings are alphanumeric and can do normal sorts
-                            // ascending means compare a to b
-                            if (sortDirection === 'asc') {
-                                return a.localeCompare(b);
-                            }
-
-                            // descending means to flip the comparison order
-                            return b.localeCompare(a);
-                        }
+                        ) =>
+                            basicSort_string(
+                                first.field,
+                                second.field,
+                                sortDirection
+                            )
                     )
                     .map((record: CompositeProjection, index: number) => (
                         <Row

@@ -2,6 +2,7 @@ import {
     Autocomplete,
     AutocompleteChangeDetails,
     AutocompleteChangeReason,
+    AutocompleteProps,
     AutocompleteRenderInputParams,
     SxProps,
     TextField,
@@ -21,6 +22,9 @@ interface Props {
     autocompleteSx?: SxProps<Theme>;
     id?: string;
     required?: boolean;
+    AutoCompleteOptions?: Partial<
+        AutocompleteProps<any, false, true, false, 'div'>
+    >;
 }
 
 function AutocompletedField({
@@ -31,6 +35,7 @@ function AutocompletedField({
     label,
     options,
     required,
+    AutoCompleteOptions,
 }: Props) {
     return (
         <Autocomplete
@@ -40,6 +45,7 @@ function AutocompletedField({
             onChange={changeHandler}
             options={options}
             sx={autocompleteSx}
+            {...AutoCompleteOptions}
             renderInput={({
                 InputProps,
                 ...params

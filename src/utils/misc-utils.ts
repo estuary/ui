@@ -1,3 +1,4 @@
+import { SortDirection } from '@mui/material';
 import { createSearchParams } from 'react-router-dom';
 
 // Based on pattern taken from
@@ -106,4 +107,33 @@ export const specContainsDerivation = (
     });
 
     return { isDerivation, derivationKey };
+};
+
+export const basicSort_string = (
+    a: any,
+    b: any,
+    sortDirection: SortDirection
+) => {
+    // See if the values start with alphanumeric
+    const aIsAlphabetical = a.localeCompare('a') >= 0;
+    const bIsAlphabetical = b.localeCompare('a') >= 0;
+
+    // If a is alpha and b isn't then return >0 to put b first
+    if (!aIsAlphabetical && bIsAlphabetical) {
+        return 1;
+    }
+
+    // If a is alpha and b isn't then return <0 to put a first
+    if (aIsAlphabetical && !bIsAlphabetical) {
+        return -1;
+    }
+
+    // If we're here we know both strings are alphanumeric and can do normal sorts
+    // ascending means compare a to b
+    if (sortDirection === 'asc') {
+        return a.localeCompare(b);
+    }
+
+    // descending means to flip the comparison order
+    return b.localeCompare(a);
 };

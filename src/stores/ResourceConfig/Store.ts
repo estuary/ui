@@ -204,10 +204,6 @@ const getInitialState = (
     prefillResourceConfig: (bindings) => {
         set(
             produce((state: ResourceConfigState) => {
-                console.log('prefillResourceConfig', {
-                    bindings,
-                });
-
                 // As we go through and fetch all the names for collections go ahead and also
                 // populate the resource config
                 const collections = bindings.map((binding: any) => {
@@ -416,10 +412,6 @@ const getInitialState = (
         // This might be related to how immer handles what is updated vs what
         //  is not during changes. Need to really dig into this later.
         if (!isEqual(existingConfig, updatedConfig)) {
-            console.log('setting the resource config', {
-                existingConfig,
-                updatedConfig,
-            });
             setResourceConfig(key, updatedConfig);
         }
     },
