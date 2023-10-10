@@ -78,11 +78,16 @@ const populateResourceConfigErrors = (
 
     if (hasConfigs) {
         map(resourceConfig, (config) => {
-            const { errors } = config;
+            const { errors, fullSourceErrors } = config;
 
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (errors && errors.length > 0) {
                 resourceConfigErrors = resourceConfigErrors.concat(errors);
+            }
+
+            if (fullSourceErrors && fullSourceErrors.length > 0) {
+                resourceConfigErrors =
+                    resourceConfigErrors.concat(fullSourceErrors);
             }
         });
     } else {
@@ -439,6 +444,20 @@ const getInitialState = (
             }),
             false,
             'Updating Property Within Full Source'
+        );
+    },
+
+    updateFullSourceErrors: (collectionName, errors) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const configToUpdate = state.resourceConfig[collectionName];
+
+                configToUpdate.fullSourceErrors = errors;
+
+                populateResourceConfigErrors(state.resourceConfig, state);
+            }),
+            false,
+            'Updating Full Source Error'
         );
     },
 

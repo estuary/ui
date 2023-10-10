@@ -190,6 +190,16 @@ export const useResourceConfig_updateFullSourceProperty = () => {
     );
 };
 
+export const useResourceConfig_updateFullSourceErrors = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['updateFullSourceErrors']
+    >(
+        ResourceConfigStoreNames.GENERAL,
+        (state) => state.updateFullSourceErrors
+    );
+};
+
 export const useResourceConfig_resetResourceConfigAndCollections = () => {
     return useZustandStore<
         ResourceConfigState,

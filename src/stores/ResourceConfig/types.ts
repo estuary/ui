@@ -16,6 +16,7 @@ export interface ResourceConfig extends JsonFormsData {
     errors: any[];
     disable?: boolean;
     fullSource?: FullSource;
+    fullSourceErrors?: any[];
 }
 
 export interface ResourceConfigDictionary {
@@ -74,6 +75,7 @@ export interface ResourceConfigState {
         key: string,
         value: FilterProperties | null
     ) => void;
+    updateFullSourceErrors: (collection: string, errors?: any[]) => void;
 
     // Resource Schema
     resourceSchema: Schema;

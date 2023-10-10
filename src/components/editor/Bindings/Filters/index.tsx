@@ -8,6 +8,7 @@ import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import {
     useResourceConfig_fullSourceOfCollectionProperty,
+    useResourceConfig_updateFullSourceErrors,
     useResourceConfig_updateFullSourceProperty,
 } from 'stores/ResourceConfig/hooks';
 
@@ -23,6 +24,7 @@ function Filters({ collectionName }: Props) {
 
     const updateFullSourceProperty =
         useResourceConfig_updateFullSourceProperty();
+    const updateFullSourceErrors = useResourceConfig_updateFullSourceErrors();
 
     const notBefore = useResourceConfig_fullSourceOfCollectionProperty(
         collectionName,
@@ -111,6 +113,10 @@ function Filters({ collectionName }: Props) {
                                 collectionName,
                                 'notAfter',
                                 state.data.notAfter
+                            );
+                            updateFullSourceErrors(
+                                collectionName,
+                                state.errors
                             );
                         }}
                     />
