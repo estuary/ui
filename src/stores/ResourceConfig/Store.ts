@@ -74,11 +74,10 @@ const populateResourceConfigErrors = (
     state: ResourceConfigState
 ): void => {
     let resourceConfigErrors: any[] = [];
-    const hasConfigs = Object.keys(resourceConfig).length > 0;
+    let fullSourceErrorsUpdate: any[] = [];
 
-    state.fullSourceErrorsExist = false;
-
-    if (hasConfigs) {
+    // TODO (errors) When there are not configs do we need to populate this object with something?
+    if (Object.keys(resourceConfig).length > 0) {
         map(resourceConfig, (config) => {
             const { errors, fullSourceErrors } = config;
 
@@ -88,18 +87,15 @@ const populateResourceConfigErrors = (
             }
 
             if (fullSourceErrors && fullSourceErrors.length > 0) {
-                resourceConfigErrors =
-                    resourceConfigErrors.concat(fullSourceErrors);
-                state.fullSourceErrorsExist = true;
+                fullSourceErrorsUpdate =
+                    fullSourceErrorsUpdate.concat(fullSourceErrors);
             }
         });
-    } else {
-        // TODO (errors) Need to populate this object with something?
-        resourceConfigErrors = [];
     }
 
     state.resourceConfigErrors = resourceConfigErrors;
     state.resourceConfigErrorsExist = !isEmpty(resourceConfigErrors);
+    state.fullSourceErrorsExist = !isEmpty(fullSourceErrorsUpdate);
 };
 
 const whatChanged = (

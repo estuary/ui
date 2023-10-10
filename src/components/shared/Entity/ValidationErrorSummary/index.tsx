@@ -15,6 +15,7 @@ import {
 } from 'stores/EndpointConfig/hooks';
 import { useFormStateStore_displayValidation } from 'stores/FormState/hooks';
 import {
+    useResourceConfig_fullSourceErrorsExist,
     useResourceConfig_hydrationErrorsExist,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
@@ -52,6 +53,8 @@ function ValidationErrorSummary({
     const resourceConfigErrorsExist =
         useResourceConfig_resourceConfigErrorsExist();
 
+    const fullSourceErrorsExist = useResourceConfig_fullSourceErrorsExist();
+
     const hydrationErrorsExist =
         endpointConfigHydrationErrorsExist ||
         resourceConfigHydrationErrorsExist;
@@ -59,7 +62,8 @@ function ValidationErrorSummary({
     const formErrorsExist =
         detailsFormErrorsExist ||
         endpointConfigErrorsExist ||
-        resourceConfigErrorsExist;
+        resourceConfigErrorsExist ||
+        fullSourceErrorsExist;
 
     const defaultHeaderMessageId = hydrationErrorsExist
         ? 'workflows.error.initForm'
@@ -82,7 +86,7 @@ function ValidationErrorSummary({
 
                         <EndpointConfigErrors />
 
-                        {resourceConfigErrorsExist ? (
+                        {resourceConfigErrorsExist || fullSourceErrorsExist ? (
                             <ResourceConfigErrors />
                         ) : null}
                     </>
