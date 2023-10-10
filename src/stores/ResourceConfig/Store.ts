@@ -29,7 +29,6 @@ import {
 } from 'utils/workflow-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
-import { REMOVE_DURING_GENERATION } from './shared';
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
 
 const populateCollections = (
@@ -439,9 +438,15 @@ const getInitialState = (
                     configToUpdate.fullSource = {};
                 }
 
-                configToUpdate.fullSource[key] = hasLength(value)
-                    ? value
-                    : REMOVE_DURING_GENERATION;
+                console.log('updateFullSourceProperty', value);
+
+                if (hasLength(value)) {
+                    configToUpdate.fullSource[key] = value;
+                } else {
+                    // We are only passing an allowed key to the function
+                    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+                    delete configToUpdate.fullSource[key];
+                }
             }),
             false,
             'Updating Property Within Full Source'
@@ -453,7 +458,11 @@ const getInitialState = (
             produce((state: ResourceConfigState) => {
                 const configToUpdate = state.resourceConfig[collectionName];
 
-                configToUpdate.fullSourceErrors = errors;
+                if (hasLength(errors)) {
+                    configToUpdate.fullSourceErrors = (
+                        configToUpdate.fullSourceErrors ?? []
+                    ).concat(errors);
+                }
 
                 populateResourceConfigErrors(state.resourceConfig, state);
             }),

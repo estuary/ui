@@ -48,12 +48,12 @@ export const getFullSource = (
 ): {
     fullSource?: FullSource;
 } => {
-    if (typeof fullSource === 'string') {
+    if (typeof fullSource === 'string' || fullSource === undefined) {
         return {};
     }
 
     const response = {
-        fullSource: fullSource ? { ...fullSource } : {},
+        fullSource: { ...fullSource },
     };
 
     if (filterOutName) {

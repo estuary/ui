@@ -1,6 +1,6 @@
 import { useEntityType } from 'context/EntityContext';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isEqual } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import {
     useResourceConfig_resourceConfig,
@@ -44,17 +44,6 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     //Pull out resource as that is moved into `data`
                     const { resource, disable, source } = binding;
                     const existingDisableProp = getDisableProps(disable);
-                    const existingFullSource = getFullSource(
-                        source,
-                        true,
-                        true
-                    );
-
-                    // TODO (enabled rediscovery)
-                    // If we're enabling something then make sure we know to rediscover
-                    // if (disable && !resourceConfig[collectionName].disable) {
-                    //     setRediscoveryRequired(true);
-                    // }
 
                     // First check if disabled has changed cause it is a simple boolean
                     if (
@@ -62,6 +51,37 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                         resourceConfig[collectionName].disable
                     ) {
                         return true;
+                    }
+
+                    // TODO (enabled rediscovery)
+                    // If we're enabling something then make sure we know to rediscover
+                    // if (disable && !resourceConfig[collectionName].disable) {
+                    //     setRediscoveryRequired(true);
+                    // }
+
+                    const existingFullSource = getFullSource(
+                        source,
+                        true,
+                        true
+                    );
+
+                    const newFullSource = getFullSource(
+                        resourceConfig[collectionName].fullSource,
+                        false,
+                        true
+                    );
+
+                    if (
+                        typeof source === 'string' &&
+                        !isEmpty(newFullSource.fullSource)
+                    ) {
+                        if (!isEqual(existingFullSource, newFullSource)) {
+                            console.log('full source did not match', {
+                                existingFullSource,
+                                newFullSource,
+                            });
+                            return true;
+                        }
                     }
 
                     // TODO (draft updates)
@@ -72,24 +92,25 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     let filteredNew;
                     if (resourceConfig[collectionName].fullSource) {
                         filteredNew = {
-                            ...resourceConfig[collectionName],
-                            ...getFullSource(
-                                resourceConfig[collectionName].fullSource,
-                                false,
-                                true
-                            ),
+                            data: resourceConfig[collectionName].data,
                         };
                     } else {
-                        filteredNew = resourceConfig[collectionName];
+                        filteredNew = {
+                            data: resourceConfig[collectionName],
+                        };
                     }
 
-                    // See if anything has changed
-                    return !isEqual(filteredNew, {
-                        ...existingDisableProp,
-                        ...existingFullSource,
+                    const existing = {
                         data: resource,
-                        errors: [],
+                    };
+
+                    const response = !isEqual(filteredNew, existing);
+                    console.log(`comparing data ${response}`, {
+                        filteredNew,
+                        existing,
                     });
+
+                    return response;
                 });
             } else {
                 // Lengths do not match so we know the update is needed
