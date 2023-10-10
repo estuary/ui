@@ -43,6 +43,7 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import {
+    useResourceConfig_fullSourceErrorsExist,
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
@@ -106,6 +107,7 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
     const resourceConfig = useResourceConfig_resourceConfig();
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
+    const fullSourceErrorsExist = useResourceConfig_fullSourceErrorsExist();
 
     // Source Capture Store
     const sourceCapture = useStore(
@@ -135,7 +137,8 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
         if (
             resourceConfigHasErrors ||
             detailsFormsHasErrors ||
-            endpointConfigHasErrors
+            endpointConfigHasErrors ||
+            fullSourceErrorsExist
         ) {
             setFormState({
                 status: FormStatus.FAILED,
