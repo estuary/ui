@@ -38,10 +38,11 @@ import {
 } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
 import { TOTAL_CARD_HEIGHT, invoiceId } from 'utils/billing-utils';
+import { AdminBillingProps } from './types';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
-function AdminBilling() {
+function AdminBilling({ showAddPayment }: AdminBillingProps) {
     // Billing Store
     const hydrated = useBilling_hydrated();
     const setHydrated = useBilling_setHydrated();
@@ -281,7 +282,7 @@ function AdminBilling() {
                             );
                         }}
                     >
-                        <PaymentMethods />
+                        <PaymentMethods showAddPayment={showAddPayment} />
                     </ErrorBoundary>
                 </Grid>
             </Grid>

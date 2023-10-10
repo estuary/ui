@@ -35,7 +35,6 @@ function EntityList({ content, header, primaryCTA, toggle }: Props) {
                     />
                 }
                 addButtonClickHandler={() => {
-                    console.log('addButtonClickHandler');
                     toggle(true);
                 }}
                 height={532}

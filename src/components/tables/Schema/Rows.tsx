@@ -1,6 +1,7 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
 import { orderBy } from 'lodash';
 import { InferSchemaResponseProperty, Schema, SortDirection } from 'types';
+import { basicSort_string } from 'utils/misc-utils';
 import ChipListCell from '../cells/ChipList';
 
 interface RowProps {
@@ -50,34 +51,12 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
                         (
                             first: InferSchemaResponseProperty,
                             second: InferSchemaResponseProperty
-                        ) => {
-                            // Try fetching the name and if it isn't there then set to empty string
-                            const a = first.name ?? '';
-                            const b = second.name ?? '';
-
-                            // See if the values start with alphanumeric
-                            const aIsAlphabetical = a.localeCompare('a') >= 0;
-                            const bIsAlphabetical = b.localeCompare('a') >= 0;
-
-                            // If a is alpha and b isn't then return >0 to put b first
-                            if (!aIsAlphabetical && bIsAlphabetical) {
-                                return 1;
-                            }
-
-                            // If a is alpha and b isn't then return <0 to put a first
-                            if (aIsAlphabetical && !bIsAlphabetical) {
-                                return -1;
-                            }
-
-                            // If we're here we know both strings are alphanumeric and can do normal sorts
-                            // ascending means compare a to b
-                            if (sortDirection === 'asc') {
-                                return a.localeCompare(b);
-                            }
-
-                            // descending means to flip the comparison order
-                            return b.localeCompare(a);
-                        }
+                        ) =>
+                            basicSort_string(
+                                first.name ?? '',
+                                second.name ?? '',
+                                sortDirection
+                            )
                     )
                     .map(
                         (

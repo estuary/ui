@@ -38,6 +38,7 @@ export enum CustomEvents {
     ERROR_BOUNDARY_DISPLAYED = 'Error_Boundary_Displayed',
     ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
     FULL_PAGE_ERROR_DISPLAYED = 'Full_Page_Error_Displayed',
+    STRIPE_FORM_LOADING_FAILED = 'Stripe_Form_Loading_Failed',
 }
 
 const logRocketSettings = getLogRocketSettings();

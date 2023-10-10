@@ -118,7 +118,7 @@ function BillingLineItemsTable() {
                             <Button
                                 href={stripeInvoice?.invoice_pdf}
                                 disabled={!stripeInvoice}
-                                endIcon={<Download />}
+                                startIcon={<Download />}
                                 variant="outlined"
                                 size="small"
                             >
@@ -129,7 +129,7 @@ function BillingLineItemsTable() {
                             {stripeInvoice?.status === 'open' ? (
                                 <Button
                                     href={stripeInvoice.hosted_invoice_url}
-                                    endIcon={<CreditCard />}
+                                    startIcon={<CreditCard />}
                                     sx={{ marginLeft: 1 }}
                                     variant="outlined"
                                     size="small"
@@ -140,7 +140,7 @@ function BillingLineItemsTable() {
                                 </Button>
                             ) : stripeInvoice?.status === 'paid' ? (
                                 <Button
-                                    endIcon={<CreditCard />}
+                                    startIcon={<CreditCard />}
                                     disabled
                                     sx={{ marginLeft: 1 }}
                                     variant="outlined"
@@ -152,7 +152,7 @@ function BillingLineItemsTable() {
                                 </Button>
                             ) : (
                                 <Button
-                                    endIcon={<CreditCard />}
+                                    startIcon={<CreditCard />}
                                     disabled
                                     sx={{ marginLeft: 1 }}
                                     variant="outlined"

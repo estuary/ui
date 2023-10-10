@@ -1,10 +1,12 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
+import pLimit from 'p-limit';
 import {
     FUNCTIONS,
     TABLES,
     invokeSupabase,
     supabaseClient,
 } from 'services/supabase';
+import { Tenants } from 'types';
 import { formatDateForApi } from 'utils/billing-utils';
 
 const OPERATIONS = {
@@ -123,4 +125,36 @@ export const getInvoicesBetween = (
         )
         .order('date_start', { ascending: false })
         .throwOnError();
+};
+
+export interface MultiplePaymentMethods {
+    responses: any[];
+    errors: any[];
+}
+
+// Very few people are using multiple prefixes (Q4 2023) so allowing us to check 5 for now
+//  is more than enough. This also prevents people in the support role from hammering the server
+//  fetching payment methods for tenants they do now "own"
+const MAX_TENANTS = 5;
+export const getPaymentMethodsForTenants = async (
+    tenants: Tenants[]
+): Promise<MultiplePaymentMethods> => {
+    const limiter = pLimit(3);
+    const promises: Array<Promise<any>> = [];
+    let count = 0;
+
+    tenants.some((tenantDetail) => {
+        promises.push(
+            limiter(() => getTenantPaymentMethods(tenantDetail.tenant))
+        );
+        count += 1;
+        return count >= MAX_TENANTS;
+    });
+
+    const responses = await Promise.all(promises);
+
+    return {
+        responses: responses.filter((r) => r.data).map((r) => r.data),
+        errors: responses.filter((r) => r.error).map((r) => r.error),
+    };
 };

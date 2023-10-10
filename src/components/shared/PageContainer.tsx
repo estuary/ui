@@ -1,9 +1,10 @@
 import { Container, Paper, Snackbar, useTheme } from '@mui/material';
 import Topbar from 'components/navigation/TopBar';
 import { paperBackground } from 'context/Theme';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import useNotificationStore, {
-    NotificationState,
+    Notification,
+    notificationStoreSelectors,
 } from 'stores/NotificationStore';
 import AlertBox from './AlertBox';
 
@@ -12,31 +13,28 @@ interface Props {
     hideBackground?: boolean;
 }
 
-const selectors = {
-    hideNotification: (state: NotificationState) => state.hideNotification,
-    notification: (state: NotificationState) => state.notification,
-    updateNotificationHistory: (state: NotificationState) =>
-        state.updateNotificationHistory,
-};
-
 function PageContainer({ children, hideBackground }: Props) {
     const theme = useTheme();
 
-    const notification = useNotificationStore(selectors.notification);
+    const notification = useNotificationStore(
+        notificationStoreSelectors.notification
+    );
 
     const updateNotificationHistory = useNotificationStore(
-        selectors.updateNotificationHistory
+        notificationStoreSelectors.updateNotificationHistory
     );
-    const hideNotification = useNotificationStore(selectors.hideNotification);
+    const hideNotification = useNotificationStore(
+        notificationStoreSelectors.hideNotification
+    );
 
     const [displayAlert, setDisplayAlert] = useState(false);
 
     useEffect(() => setDisplayAlert(!!notification), [notification]);
 
     const handlers = {
-        notificationClose: () => {
-            if (notification) {
-                updateNotificationHistory(notification);
+        notificationClose: (notificationBeingClosed?: Notification) => {
+            if (notificationBeingClosed) {
+                updateNotificationHistory(notificationBeingClosed);
                 hideNotification();
             }
         },
@@ -50,6 +48,30 @@ function PageContainer({ children, hideBackground }: Props) {
         ? 'none'
         : 'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px';
 
+    const otherOptions = useMemo(() => {
+        return notification?.options ?? {};
+    }, [notification]);
+
+    const alertBody = useMemo(() => {
+        if (!notification) {
+            return null;
+        }
+
+        if (
+            typeof notification.title === 'string' &&
+            typeof notification.description === 'string'
+        ) {
+            return `${notification.title}. ${notification.description}`;
+        } else {
+            return (
+                <>
+                    {notification.title}
+                    {notification.description}
+                </>
+            );
+        }
+    }, [notification]);
+
     return (
         <Container
             maxWidth={false}
@@ -57,19 +79,31 @@ function PageContainer({ children, hideBackground }: Props) {
                 paddingTop: 3,
             }}
         >
-            {notification ? (
+            {notification && alertBody ? (
                 <Snackbar
                     anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                     open={displayAlert}
                     autoHideDuration={7500}
-                    onClose={handlers.notificationClose}
+                    onClose={(_event, reason) => {
+                        if (
+                            notification.disableClickAwayClose &&
+                            reason === 'clickaway'
+                        ) {
+                            return;
+                        }
+
+                        handlers.notificationClose(notification);
+                    }}
+                    {...otherOptions}
                 >
                     <AlertBox
                         severity={notification.severity}
                         short
-                        onClose={handlers.notificationClose}
+                        onClose={() => {
+                            handlers.notificationClose(notification);
+                        }}
                     >
-                        {`${notification.title}. ${notification.description}`}
+                        {alertBody}
                     </AlertBox>
                 </Snackbar>
             ) : null}

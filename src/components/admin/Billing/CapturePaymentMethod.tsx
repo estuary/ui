@@ -12,7 +12,10 @@ import {
     useStripe,
 } from '@stripe/react-stripe-js';
 import { Auth } from '@supabase/ui';
-import { useCallback, useState } from 'react';
+import AlertBox from 'components/shared/AlertBox';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import { getUserDetails } from 'services/supabase';
 
 export interface PaymentFormProps {
@@ -21,14 +24,59 @@ export interface PaymentFormProps {
 }
 
 export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
+    const intl = useIntl();
+
     const stripe = useStripe();
     const elements = useElements();
 
     const { user } = Auth.useUser();
     const { email } = getUserDetails(user);
 
+    const setupEvents = useRef(false);
     const [error, setError] = useState('');
+    const [loadingError, setLoadingError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+
+    // Handle errors when stripe is loading in the forms
+    useEffect(() => {
+        if (setupEvents.current || !elements) {
+            return;
+        }
+
+        // Try to fetch botht the elements we're gonna need to make sure load
+        const addressElement = elements.getElement('address');
+        const paymentElement = elements.getElement('payment');
+        if (!addressElement || !paymentElement) {
+            return;
+        }
+
+        // Wire up handlers
+        paymentElement.on('loaderror', () => {
+            setLoadingError(
+                intl.formatMessage({
+                    id: 'admin.billing.addPaymentMethods.stripeLoadError',
+                })
+            );
+
+            logRocketEvent(CustomEvents.STRIPE_FORM_LOADING_FAILED, {
+                formName: 'payment',
+            });
+        });
+        addressElement.on('loaderror', () => {
+            setLoadingError(
+                intl.formatMessage({
+                    id: 'admin.billing.addPaymentMethods.stripeLoadError',
+                })
+            );
+
+            logRocketEvent(CustomEvents.STRIPE_FORM_LOADING_FAILED, {
+                formName: 'address',
+            });
+        });
+
+        // Set so we only do this once
+        setupEvents.current = true;
+    }, [elements, intl]);
 
     const handleSubmit = useCallback(async () => {
         if (!stripe || !elements) {
@@ -60,7 +108,10 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                     setError(result.error.message);
                 }
                 // Show error to your customer (for example, payment details incomplete)
-                await onError?.(result.error.message ?? 'Something went wrong');
+                await onError?.(
+                    result.error.message ??
+                        intl.formatMessage({ id: 'common.missingError' })
+                );
                 elements.getElement('payment')?.update({ readOnly: false });
             } else {
                 // Your customer will be redirected to your `return_url`. For some payment
@@ -73,11 +124,16 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
         } finally {
             setLoading(false);
         }
-    }, [elements, email, onError, onSuccess, stripe]);
+    }, [elements, email, intl, onError, onSuccess, stripe]);
 
     return (
         <>
             <DialogContent sx={{ overflowY: 'scroll' }}>
+                {loadingError ? (
+                    <AlertBox short severity="error">
+                        {loadingError}
+                    </AlertBox>
+                ) : null}
                 <AddressElement
                     options={{
                         mode: 'billing',
@@ -115,7 +171,10 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                         {error}
                     </Typography>
                 ) : null}
-                <Button onClick={handleSubmit} disabled={loading}>
+                <Button
+                    onClick={handleSubmit}
+                    disabled={Boolean(loading || loadingError)}
+                >
                     {loading ? <CircularProgress size={15} /> : 'Submit'}
                 </Button>
             </DialogActions>

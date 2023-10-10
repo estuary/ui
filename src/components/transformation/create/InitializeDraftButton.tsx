@@ -168,7 +168,9 @@ function InitializeDraftButton({
             disabled={formInvalid}
             onClick={initializeTransformation}
         >
-            <FormattedMessage id="cta.next" />
+            <span>
+                <FormattedMessage id="cta.next" />
+            </span>
         </LoadingButton>
     );
 }
