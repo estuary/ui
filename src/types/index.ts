@@ -153,6 +153,7 @@ export interface Tenants {
     trial_start: string;
     created_at: string;
     updated_at: string;
+    pays_externally: boolean;
 }
 
 export type Capability = 'admin' | 'read' | 'write';
