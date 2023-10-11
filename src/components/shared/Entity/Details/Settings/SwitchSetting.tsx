@@ -1,18 +1,25 @@
-import { Stack, Switch, Typography } from '@mui/material';
-import { getNotificationMessageByName } from 'api/alerts';
+import {
+    Autocomplete,
+    AutocompleteRenderInputParams,
+    Skeleton,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material';
+import {
+    NotificationQuery,
+    createNotification,
+    deleteNotification,
+    getNotificationMessage,
+    updateNotificationInterval,
+} from 'api/alerts';
 import { defaultOutline } from 'context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useInitializeTaskNotification from 'hooks/useInitializeTaskNotification';
-import {
-    MouseEvent as ReactMouseEvent,
-    useCallback,
-    useEffect,
-    useState,
-} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     headerId: string;
@@ -20,9 +27,20 @@ interface Props {
     messageName: string;
     liveSpecId: string | null;
     preferenceId: string | null;
-    notificationSettings: any | null;
     hideBorder?: boolean;
 }
+
+const noIntervalOption = 'None';
+
+const options = {
+    'none': noIntervalOption,
+    '01:00:00': '1 hour',
+    '02:00:00': '2 hours',
+    '04:00:00': '4 hours',
+    '08:00:00': '8 hours',
+    '12:00:00': '12 hours',
+    '24:00:00': '24 hours',
+};
 
 function SwitchSetting({
     headerId,
@@ -30,19 +48,20 @@ function SwitchSetting({
     liveSpecId,
     preferenceId,
     messageName,
-    notificationSettings,
     hideBorder,
 }: Props) {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
-    const [notificationId, setNotificationId] = useState<string | null>(null);
+    const [notification, setNotification] = useState<
+        NotificationQuery | null | undefined
+    >(undefined);
     const [messageId, setMessageId] = useState<string | null>(null);
 
     const { getNotificationSubscription } =
         useInitializeTaskNotification(catalogName);
 
     useEffect(() => {
-        getNotificationMessageByName(messageName).then(
+        getNotificationMessage({ value: messageName, column: 'detail' }).then(
             (response) => {
                 if (response.data && response.data.length > 0) {
                     setMessageId(response.data[0].id);
@@ -57,60 +76,67 @@ function SwitchSetting({
     useEffect(() => {
         if (liveSpecId && preferenceId && messageId) {
             getNotificationSubscription(
-                messageName,
+                messageId,
                 liveSpecId,
-                preferenceId,
-                notificationSettings
+                preferenceId
             ).then(
                 (response) => {
                     console.log('init switch success', response);
+                    console.log('convert', notification?.evaluation_interval);
 
-                    if (response.data) {
-                        setNotificationId(response.data.notificationId);
-                        setMessageId(response.data.messageId);
-                    }
+                    setNotification(response.data);
                 },
                 () => {
                     console.log('init switch error');
                 }
             );
         }
-    }, [
-        liveSpecId,
-        messageId,
-        messageName,
-        preferenceId,
-        setMessageId,
-        setNotificationId,
-    ]);
+    }, [liveSpecId, messageId, preferenceId, setNotification]);
 
-    const handleClick = useCallback(
-        (event: ReactMouseEvent<HTMLButtonElement, MouseEvent>) => {
-            event.preventDefault();
-            event.stopPropagation();
+    const updateEvaluationInterval = useCallback(
+        (_event: React.SyntheticEvent, value: string) => {
+            console.log('auto val', value);
 
-            if (notificationId) {
-                // Delete
-            } else if (liveSpecId && preferenceId && messageId) {
-            }
+            if (notification) {
+                // Delete notification
+                console.log('notification');
 
-            if (liveSpecId && preferenceId) {
-                getNotificationSubscription(
-                    messageName,
-                    liveSpecId,
+                if (value === 'none') {
+                    deleteNotification(notification.id).then(
+                        () => {
+                            console.log('deleted notification');
+                        },
+                        () => {
+                            console.log('failed to delete notification');
+                        }
+                    );
+                } else {
+                    updateNotificationInterval(notification.id, value).then(
+                        () => {
+                            console.log('updated notification');
+                        },
+                        () => {
+                            console.log('failed to update notification');
+                        }
+                    );
+                }
+            } else if (messageId && preferenceId && liveSpecId) {
+                createNotification(
                     preferenceId,
-                    notificationSettings
+                    messageId,
+                    value,
+                    liveSpecId
                 ).then(
                     (response) => {
-                        console.log('success', response);
+                        console.log('created notification', response);
                     },
                     () => {
-                        console.log('error');
+                        console.log('failed to create notification');
                     }
                 );
             }
         },
-        [liveSpecId, notificationId, notificationSettings, preferenceId]
+        [liveSpecId, messageId, notification?.id, preferenceId, setNotification]
     );
 
     return (
@@ -119,30 +145,59 @@ function SwitchSetting({
             direction="row"
             sx={{
                 py: 2,
-                alignItems: 'center',
+                alignItems: 'end',
                 justifyContent: 'space-between',
                 borderBottom: hideBorder
                     ? 'none'
                     : (theme) => defaultOutline[theme.palette.mode],
             }}
         >
-            <Stack spacing={1}>
-                <Typography sx={{ fontSize: 16, fontWeight: 500 }}>
-                    <FormattedMessage id={headerId} />
-                </Typography>
+            {notification === undefined ? (
+                <>
+                    <Skeleton sx={{ flexGrow: 1 }} />
 
-                <Typography>
-                    <FormattedMessage id={labelId} />
-                </Typography>
-            </Stack>
+                    <Skeleton width={150} />
+                </>
+            ) : (
+                <>
+                    <Stack spacing={1}>
+                        <Typography sx={{ fontSize: 16, fontWeight: 500 }}>
+                            <FormattedMessage id={headerId} />
+                        </Typography>
 
-            <Switch
-                size="small"
-                value={hasLength(notificationId)}
-                checked={hasLength(notificationId)}
-                disabled={!liveSpecId || !preferenceId}
-                onClick={handleClick}
-            />
+                        <Typography>
+                            <FormattedMessage id={labelId} />
+                        </Typography>
+                    </Stack>
+
+                    <Autocomplete
+                        defaultValue={
+                            notification?.evaluation_interval
+                                ? options[notification.evaluation_interval]
+                                : noIntervalOption
+                        }
+                        disableClearable
+                        onChange={updateEvaluationInterval}
+                        options={Object.values(options)}
+                        sx={{ width: 150 }}
+                        renderInput={({
+                            InputProps,
+                            ...params
+                        }: AutocompleteRenderInputParams) => (
+                            <TextField
+                                {...params}
+                                InputProps={{
+                                    ...InputProps,
+                                    sx: { borderRadius: 3 },
+                                }}
+                                label="Interval"
+                                size="small"
+                                variant="outlined"
+                            />
+                        )}
+                    />
+                </>
+            )}
         </Stack>
     );
 }

@@ -15,9 +15,6 @@ function Settings() {
 
     const [liveSpecId, setLiveSpecId] = useState<string | null>(null);
     const [preferenceId, setPreferenceId] = useState<string | null>(null);
-    const [notificationSettings, setNotificationSettings] = useState<
-        any | null
-    >(null);
 
     const { getNotificationSettingsMetadata } =
         useInitializeTaskNotification(catalogName);
@@ -30,19 +27,13 @@ function Settings() {
                 } else {
                     setLiveSpecId(response.liveSpecId);
                     setPreferenceId(response.preferenceId);
-                    setNotificationSettings(response.notificationSettings);
                 }
             },
             () => {
                 console.log('settings init failed');
             }
         );
-    }, [
-        getNotificationSettingsMetadata,
-        setLiveSpecId,
-        setNotificationSettings,
-        setPreferenceId,
-    ]);
+    }, [getNotificationSettingsMetadata, setLiveSpecId, setPreferenceId]);
 
     return (
         <Stack sx={{ mx: 2 }}>
@@ -55,7 +46,6 @@ function Settings() {
                     headerId="details.settings.notifications.dataProcessing.header"
                     labelId="details.settings.notifications.dataProcessing.label.noDataProcessedInInterval"
                     liveSpecId={liveSpecId}
-                    notificationSettings={notificationSettings}
                     preferenceId={preferenceId}
                     messageName="data-not-processed-in-interval"
                     hideBorder

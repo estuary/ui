@@ -1,14 +1,15 @@
 import {
     defaultTableFilter,
+    deleteSupabase,
     handleFailure,
     handleSuccess,
     insertSupabase,
     SortingProps,
     supabaseClient,
     TABLES,
+    updateSupabase,
 } from 'services/supabase';
 import {
-    Notification_EvaluationInterval,
     NotificationFullQuery,
     NotificationMessage,
     NotificationPreference,
@@ -30,14 +31,14 @@ const createNotificationPreference = (
 interface CreateNotificationMatchData {
     method_id: string;
     message_id: string;
-    evaluation_interval?: Notification_EvaluationInterval;
+    evaluation_interval?: string;
     live_spec_id?: string;
 }
 
 const createNotification = (
     method_id: string,
     message_id: string,
-    evaluation_interval?: Notification_EvaluationInterval,
+    evaluation_interval?: string,
     live_spec_id?: string
 ) => {
     let matchData: CreateNotificationMatchData = {
@@ -54,6 +55,23 @@ const createNotification = (
     }
 
     return insertSupabase(TABLES.NOTIFICATIONS, matchData);
+};
+
+const updateNotificationInterval = (
+    notificationId: string,
+    evaluationInterval: string
+) => {
+    return updateSupabase(
+        TABLES.NOTIFICATIONS,
+        { evaluation_interval: evaluationInterval },
+        { id: notificationId }
+    );
+};
+
+const deleteNotification = (notificationId: string) => {
+    return deleteSupabase(TABLES.NOTIFICATIONS, {
+        id: notificationId,
+    });
 };
 
 export type NotificationMessageQuery = Pick<
@@ -76,11 +94,19 @@ export type NotificationQuery = Pick<
     'id' | 'method_id' | 'message_id' | 'live_spec_id' | 'evaluation_interval'
 >;
 
-const getNotificationMessageByName = async (name: string) => {
+interface NotificationMessageOptions {
+    value: string;
+    column: keyof NotificationMessageQuery;
+}
+
+const getNotificationMessage = async ({
+    value,
+    column,
+}: NotificationMessageOptions) => {
     const data = await supabaseClient
         .from<NotificationMessageQuery>(TABLES.NOTIFICATION_MESSAGES)
         .select(`id, detail`)
-        .eq('detail', name)
+        .eq(column, value)
         .then(handleSuccess<NotificationMessageQuery[]>, handleFailure);
 
     return data;
@@ -150,8 +176,10 @@ const getTaskNotification = async (
 export {
     createNotification,
     createNotificationPreference,
-    getNotificationMessageByName,
+    deleteNotification,
+    getNotificationMessage,
     getNotificationPreference,
     getNotificationPreferenceByPrefix,
     getTaskNotification,
+    updateNotificationInterval,
 };

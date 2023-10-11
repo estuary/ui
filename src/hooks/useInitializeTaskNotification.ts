@@ -1,15 +1,13 @@
 import { Auth } from '@supabase/ui';
 import {
-    createNotification,
+    NotificationQuery,
     createNotificationPreference,
-    getNotificationMessageByName,
     getNotificationPreferenceByPrefix,
     getTaskNotification,
 } from 'api/alerts';
 import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { useEntityType } from 'context/EntityContext';
 import { useCallback } from 'react';
-import { NotificationFullQuery, Notification_EvaluationInterval } from 'types';
 
 const createPreference = async (
     catalogName: string,
@@ -27,22 +25,6 @@ const createPreference = async (
         : null;
 };
 
-const createTaskNotification = async (
-    preferenceId: string,
-    messageId: string,
-    liveSpecId: string,
-    evaluationInterval?: Notification_EvaluationInterval
-): Promise<NotificationFullQuery | null> => {
-    const response = await createNotification(
-        preferenceId,
-        messageId,
-        evaluationInterval,
-        liveSpecId
-    );
-
-    return response.data && response.data.length > 0 ? response.data[0] : null;
-};
-
 function useInitializeTaskNotification(catalogName: string) {
     const { user } = Auth.useUser();
 
@@ -51,7 +33,7 @@ function useInitializeTaskNotification(catalogName: string) {
     const getNotificationPreferenceId = useCallback(async (): Promise<
         string | null
     > => {
-        if (!user?.id || !user?.email) {
+        if (!user?.id || !user.email) {
             // Error if the system cannot determine the user ID or email.
             return null;
         }
@@ -103,36 +85,19 @@ function useInitializeTaskNotification(catalogName: string) {
 
         return {
             liveSpecId: liveSpecResponse[0].id,
-            notificationSettings: liveSpecResponse[0].spec?.notification,
             preferenceId,
         };
     }, [catalogName, entityType, getNotificationPreferenceId]);
 
     const getNotificationSubscription = useCallback(
         async (
-            messageName: string,
+            messageId: string,
             liveSpecId: string,
-            preferenceId: string,
-            notificationSettings?: any
+            preferenceId: string
         ): Promise<{
-            data: { notificationId: string | null; messageId: string } | null;
+            data: NotificationQuery | null;
             error?: any;
         }> => {
-            const { data: messageResponse, error: messageError } =
-                await getNotificationMessageByName(messageName);
-
-            if (
-                messageError ||
-                !messageResponse ||
-                messageResponse.length === 0
-            ) {
-                // Failed to retrieve the message ID for the notification.
-
-                return { data: null, error: messageError };
-            }
-
-            const { id: messageId } = messageResponse[0];
-
             const {
                 data: existingNotification,
                 error: existingNotificationError,
@@ -146,7 +111,7 @@ function useInitializeTaskNotification(catalogName: string) {
                 );
 
                 return {
-                    data: { notificationId: null, messageId },
+                    data: null,
                     error: existingNotificationError,
                 };
             }
@@ -154,17 +119,10 @@ function useInitializeTaskNotification(catalogName: string) {
             if (!existingNotification || existingNotification.length === 0) {
                 // A notification for the task has not been defined for the user.
 
-                const newNotification = await createTaskNotification(
-                    preferenceId,
-                    messageId,
-                    liveSpecId,
-                    notificationSettings?.dataProcessingInterval
-                );
-
                 return { data: null };
             }
 
-            return { data: existingNotification[0].id };
+            return { data: existingNotification[0] };
         },
         [catalogName, entityType]
     );

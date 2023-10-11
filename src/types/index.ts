@@ -369,11 +369,6 @@ export interface NotificationPreference {
     verified_email: string | null;
 }
 
-export interface Notification_EvaluationInterval {
-    duration: number;
-    cadence: string;
-}
-
 export interface NotificationFullQuery {
     id: string;
     detail: string;
@@ -382,6 +377,6 @@ export interface NotificationFullQuery {
     method_id: string;
     message_id: string;
     acknowledged: boolean;
-    evaluation_interval: Notification_EvaluationInterval | null;
+    evaluation_interval: string | null;
     live_spec_id: string | null;
 }
