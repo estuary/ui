@@ -144,7 +144,10 @@ export const getPaymentMethodsForTenants = async (
     let count = 0;
 
     tenants.some((tenantDetail) => {
-        if (tenantDetail.pays_externally || !tenantDetail.trial_start) {
+        if (
+            tenantDetail.payment_provider === 'external' ||
+            !tenantDetail.trial_start
+        ) {
             promises.push(
                 new Promise((resolve) => {
                     resolve({

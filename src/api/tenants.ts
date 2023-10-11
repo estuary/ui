@@ -3,7 +3,7 @@ import { Tenants } from 'types';
 
 const COLUMNS = [
     'collections_quota',
-    'pays_externally',
+    'payment_provider',
     'tasks_quota',
     'tenant',
     'trial_start',
