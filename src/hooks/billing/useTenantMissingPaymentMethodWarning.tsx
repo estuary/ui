@@ -99,6 +99,11 @@ function useTenantMissingPaymentMethodWarning() {
                     }
                 );
 
+                // We skip those tenants with their payments handled outside of our provider
+                if (paymentMethodForTenant.paysExternally) {
+                    return false;
+                }
+
                 // We check the methods list and see if one exists. We are not checking if a primary card is set
                 //   at this time (Q4 2023) but that might change based on experience.
                 const hasPaymentMethod =

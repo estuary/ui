@@ -145,12 +145,22 @@ export const getPaymentMethodsForTenants = async (
 
     tenants.some((tenantDetail) => {
         if (tenantDetail.pays_externally) {
-            return count;
+            promises.push(
+                new Promise((resolve) => {
+                    resolve({
+                        data: {
+                            tenant: tenantDetail.tenant,
+                            paysExternally: true,
+                        },
+                    });
+                })
+            );
+        } else {
+            promises.push(
+                limiter(() => getTenantPaymentMethods(tenantDetail.tenant))
+            );
         }
 
-        promises.push(
-            limiter(() => getTenantPaymentMethods(tenantDetail.tenant))
-        );
         count += 1;
         return count >= MAX_TENANTS;
     });
