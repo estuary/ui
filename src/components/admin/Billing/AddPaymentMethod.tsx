@@ -58,7 +58,7 @@ function AddPaymentMethod({
                 <DialogTitle>
                     <FormattedMessage id="admin.billing.addPaymentMethods.title" />
                 </DialogTitle>
-                {setupIntentSecret ? (
+                {enableButton ? (
                     <Elements
                         stripe={stripePromise}
                         options={{
