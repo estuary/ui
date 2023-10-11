@@ -99,8 +99,8 @@ function useTenantMissingPaymentMethodWarning() {
                     }
                 );
 
-                // We skip those tenants with their payments handled outside of our provider
-                if (paymentMethodForTenant.paysExternally) {
+                // We skip those not in a trial OR have payment methods outside our provider
+                if (paymentMethodForTenant?.skipPaymentMethod) {
                     return false;
                 }
 
