@@ -1,7 +1,13 @@
 import { supabaseClient, TABLES } from 'services/supabase';
 import { Tenants } from 'types';
 
-const COLUMNS = ['tasks_quota', 'collections_quota', 'tenant', 'trial_start'];
+const COLUMNS = [
+    'collections_quota',
+    'pays_externally',
+    'tasks_quota',
+    'tenant',
+    'trial_start',
+];
 
 const getTenantDetails = () => {
     return supabaseClient

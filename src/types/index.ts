@@ -145,13 +145,14 @@ export interface StorageMappings {
 }
 
 export interface Tenants {
-    id: string;
-    tasks_quota: number;
     collections_quota: number;
+    created_at: string;
     detail: string;
+    id: string;
+    pays_externally: boolean;
+    tasks_quota: number;
     tenant: string;
     trial_start: string;
-    created_at: string;
     updated_at: string;
 }
 
