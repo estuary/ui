@@ -144,14 +144,17 @@ export interface StorageMappings {
     updated_at: string;
 }
 
+export type TenantPaymentProviders = 'external' | 'stripe';
+
 export interface Tenants {
-    id: string;
-    tasks_quota: number;
     collections_quota: number;
+    created_at: string;
     detail: string;
+    id: string;
+    payment_provider: TenantPaymentProviders;
+    tasks_quota: number;
     tenant: string;
     trial_start: string;
-    created_at: string;
     updated_at: string;
 }
 
