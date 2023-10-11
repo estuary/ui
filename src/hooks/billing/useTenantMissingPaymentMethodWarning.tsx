@@ -88,16 +88,26 @@ function useTenantMissingPaymentMethodWarning() {
 
         // We have tenant in trial and now need to go through all the payment methods and see if any are missing
         if (paymentMethods.responses.length > 0) {
-            // Go through each tenant to try to find the payment methods
-            tenantsInTrial.some((tenantInTrial) => {
-                const currentTenant = tenantInTrial.tenant;
+            //  Step through the responses we have to see if the tenant is missing details
+            //      we do not step through the tenants so if any calls to fetch payment methods
+            //      failed we do not show a warning accidently
+            paymentMethods.responses.some((paymentMethodForTenant) => {
+                const currentTenant = paymentMethodForTenant.tenant;
 
-                // Find the payment method for this tenant
-                const paymentMethodForTenant = paymentMethods.responses.find(
-                    (paymentMethod) => {
-                        return currentTenant === paymentMethod.tenant;
+                const tenantInTrial = tenantsInTrial.find(
+                    (tenantInTrialCurr) => {
+                        return tenantInTrialCurr.tenant === currentTenant;
                     }
                 );
+
+                // We can skip if there are no tenant details found
+                // We skip those not in a trial OR have payment methods outside our provider
+                if (
+                    !tenantInTrial ||
+                    paymentMethodForTenant?.skipPaymentMethod
+                ) {
+                    return false;
+                }
 
                 // We check the methods list and see if one exists. We are not checking if a primary card is set
                 //   at this time (Q4 2023) but that might change based on experience.

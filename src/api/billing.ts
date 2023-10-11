@@ -144,9 +144,26 @@ export const getPaymentMethodsForTenants = async (
     let count = 0;
 
     tenants.some((tenantDetail) => {
-        promises.push(
-            limiter(() => getTenantPaymentMethods(tenantDetail.tenant))
-        );
+        if (
+            tenantDetail.payment_provider === 'external' ||
+            !tenantDetail.trial_start
+        ) {
+            promises.push(
+                new Promise((resolve) => {
+                    resolve({
+                        data: {
+                            tenant: tenantDetail.tenant,
+                            skipPaymentMethod: true,
+                        },
+                    });
+                })
+            );
+        } else {
+            promises.push(
+                limiter(() => getTenantPaymentMethods(tenantDetail.tenant))
+            );
+        }
+
         count += 1;
         return count >= MAX_TENANTS;
     });

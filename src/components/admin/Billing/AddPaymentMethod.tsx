@@ -26,7 +26,7 @@ function AddPaymentMethod({
     stripePromise,
     tenant,
 }: Props) {
-    const enableButton =
+    const enable =
         setupIntentSecret !== INTENT_SECRET_LOADING &&
         setupIntentSecret !== INTENT_SECRET_ERROR;
 
@@ -35,7 +35,7 @@ function AddPaymentMethod({
             <Box>
                 <LoadingButton
                     loadingPosition="start"
-                    disabled={!enableButton}
+                    disabled={!enable}
                     loading={setupIntentSecret === INTENT_SECRET_LOADING}
                     onClick={() => setOpen(true)}
                     startIcon={<Plus style={{ fontSize: 15 }} />}
@@ -58,7 +58,7 @@ function AddPaymentMethod({
                 <DialogTitle>
                     <FormattedMessage id="admin.billing.addPaymentMethods.title" />
                 </DialogTitle>
-                {setupIntentSecret ? (
+                {enable ? (
                     <Elements
                         stripe={stripePromise}
                         options={{
