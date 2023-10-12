@@ -1,5 +1,5 @@
 import { User } from '@supabase/supabase-js';
-import { OAUTH_OPERATIONS, OAUTH_URL_SUFFIX } from 'api/shared';
+import { OAUTH_OPERATIONS } from 'api/shared';
 import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
@@ -51,6 +51,12 @@ export const MASKED = '**MASKED**';
 const maskEverythingURLs = ['config-encryption.estuary.dev'];
 const shouldMaskEverything = (url?: string) =>
     maskEverythingURLs.some((el) => url?.toLowerCase().includes(el));
+
+const maskEverythingOperations = [OAUTH_OPERATIONS.ENCRYPT_CONFIG];
+const shouldMaskEverythingInOperation = (operation?: string) =>
+    maskEverythingOperations.some(
+        (el) => operation?.toLowerCase().includes(el)
+    );
 
 // for endpoints where we do not want to mess with the request at all
 const ignoreURLs = ['lr-in-prod'];
@@ -105,7 +111,6 @@ const processBody = (
     return originalIsArray ? response : response[0];
 };
 
-// DISABLE BODY FILTERING
 // Used to parse the body of a request/response. Will handle very basic use of just
 //  a string or object body. To keep stuff safe if we cannot parse the string we
 //  set everything to masked.
@@ -138,14 +143,17 @@ const maskContent = (requestResponse: any) => {
     //   SOPs encryption endpoint we don't really want to accidently leak anything.
     if (shouldMaskEverything(requestResponse.url)) {
         requestResponse.body = MASKED;
-    } else if (requestResponse.url.includes(OAUTH_URL_SUFFIX)) {
+    } else {
+        // If we are not masking everything then we need to check if the operation being called
+        //  is one that requires extra masking. This is mainly for the oauth "encrypt-config" call
         const parsedBody = parseBody(requestResponse.body);
 
         if (
-            parsedBody?.operation?.toLowerCase() ===
-            OAUTH_OPERATIONS.ENCRYPT_CONFIG
+            parsedBody &&
+            typeof parsedBody !== 'string' &&
+            shouldMaskEverythingInOperation(parsedBody?.operation)
         ) {
-            requestResponse.body = `${MASKED}_${OAUTH_OPERATIONS.ENCRYPT_CONFIG}`;
+            requestResponse.body = `${MASKED}_${parsedBody?.operation}`;
         }
     }
 
