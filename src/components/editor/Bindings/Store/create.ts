@@ -168,6 +168,7 @@ const getInitialStateData = (): Pick<
     | 'recommendFields'
     | 'selections'
     | 'selectionSaving'
+    | 'fullSourceConfigs'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -189,6 +190,7 @@ const getInitialStateData = (): Pick<
     recommendFields: true,
     selections: {},
     selectionSaving: false,
+    fullSourceConfigs: {},
 });
 
 const getInitialState = (
@@ -285,6 +287,16 @@ const getInitialState = (
             }),
             false,
             'Inferred Schema Application Errored Set'
+        );
+    },
+
+    updateFullSourceConfig: (collection, fullSource) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.fullSourceConfigs[collection] = fullSource;
+            }),
+            false,
+            'Updating full source config of a collection'
         );
     },
 

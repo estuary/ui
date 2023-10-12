@@ -43,7 +43,6 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import {
-    useResourceConfig_fullSourceErrorsExist,
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
@@ -107,7 +106,11 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
     const resourceConfig = useResourceConfig_resourceConfig();
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
-    const fullSourceErrorsExist = useResourceConfig_fullSourceErrorsExist();
+
+    const fullSourceConfigs = useStore(
+        invariableStores.general_bindings_editor,
+        (state) => state.fullSourceConfigs
+    );
 
     // Source Capture Store
     const sourceCapture = useStore(
@@ -137,8 +140,7 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
         if (
             resourceConfigHasErrors ||
             detailsFormsHasErrors ||
-            endpointConfigHasErrors ||
-            fullSourceErrorsExist
+            endpointConfigHasErrors
         ) {
             setFormState({
                 status: FormStatus.FAILED,
@@ -212,7 +214,8 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
                 { image: imagePath, config: encryptedEndpointConfig.data },
                 resourceConfig,
                 existingTaskData,
-                sourceCapture
+                sourceCapture,
+                fullSourceConfigs
             );
 
             // If there is a draft already with task data then update. We do not match on

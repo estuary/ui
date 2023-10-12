@@ -1,16 +1,13 @@
 import { Box, Stack, Typography, StyledEngineProvider } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
-import {
-    useResourceConfig_fullSourceOfCollectionProperty,
-    useResourceConfig_updateFullSourceErrors,
-    useResourceConfig_updateFullSourceProperty,
-} from 'stores/ResourceConfig/hooks';
+import { useBindingsEditorStore_fullSourceOfCollectionProperty } from '../Store/hooks';
+import useTimeTravel from './useTimeTravel';
 
 interface Props {
     collectionName: string;
@@ -22,20 +19,18 @@ interface Props {
 function Filters({ collectionName }: Props) {
     const intl = useIntl();
 
-    const updateFullSourceProperty =
-        useResourceConfig_updateFullSourceProperty();
-    const updateFullSourceErrors = useResourceConfig_updateFullSourceErrors();
+    const startUpdating = useRef(false);
 
-    const notBefore = useResourceConfig_fullSourceOfCollectionProperty(
+    const updateDraft = useTimeTravel(collectionName);
+
+    const notBefore = useBindingsEditorStore_fullSourceOfCollectionProperty(
         collectionName,
         'notBefore'
     );
-
-    const notAfter = useResourceConfig_fullSourceOfCollectionProperty(
+    const notAfter = useBindingsEditorStore_fullSourceOfCollectionProperty(
         collectionName,
-        'notAfter'
+        'notBefore'
     );
-
     const [formData, setFormData] = useState<{
         notBefore: string | undefined;
         notAfter: string | undefined;
@@ -99,28 +94,14 @@ function Filters({ collectionName }: Props) {
                         cells={materialCells}
                         config={defaultOptions}
                         validationMode={showValidation()}
-                        onChange={(state) => {
-                            console.log('setting state', {
-                                state,
-                                setFormData,
-                            });
+                        onChange={async (state) => {
+                            if (!startUpdating.current) {
+                                startUpdating.current = true;
+                                return;
+                            }
 
-                            updateFullSourceProperty(
-                                collectionName,
-                                'notBefore',
-                                state.data.notBefore
-                            );
-
-                            updateFullSourceProperty(
-                                collectionName,
-                                'notAfter',
-                                state.data.notAfter
-                            );
-
-                            updateFullSourceErrors(
-                                collectionName,
-                                state.errors
-                            );
+                            setFormData(state.data);
+                            await updateDraft(state.data);
                         }}
                     />
                 </StyledEngineProvider>

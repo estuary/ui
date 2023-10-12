@@ -20,13 +20,8 @@ import {
 import { createJSONFormDefaults } from 'services/ajv';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import {
-    getCollectionName,
-    getDisableProps,
-    getFullSource,
-} from 'utils/workflow-utils';
+import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
@@ -48,12 +43,11 @@ const getNewCollectionList = (adds: string[], curr: string[] | null) => {
 };
 
 const getResourceConfig = (binding: any) => {
-    const { resource, disable, source } = binding;
+    const { resource, disable } = binding;
 
     // Snag the name so we can add it to the config and list of collections
     const name = getCollectionName(binding);
     const disableProp = getDisableProps(disable);
-    const fullSourceProp = getFullSource(source ?? {}, true);
 
     // Take the binding resource and place into config OR
     //  generate a default in case there are any issues with it
@@ -61,7 +55,6 @@ const getResourceConfig = (binding: any) => {
         name,
         {
             ...disableProp,
-            ...fullSourceProp,
             data: resource,
             errors: [],
         },
@@ -73,28 +66,21 @@ const populateResourceConfigErrors = (
     state: ResourceConfigState
 ): void => {
     let resourceConfigErrors: any[] = [];
-    let fullSourceErrorsUpdate: any[] = [];
 
     // TODO (errors) When there are not configs do we need to populate this object with something?
     if (Object.keys(resourceConfig).length > 0) {
         map(resourceConfig, (config) => {
-            const { errors, fullSourceErrors } = config;
+            const { errors } = config;
 
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (errors && errors.length > 0) {
                 resourceConfigErrors = resourceConfigErrors.concat(errors);
-            }
-
-            if (fullSourceErrors && fullSourceErrors.length > 0) {
-                fullSourceErrorsUpdate =
-                    fullSourceErrorsUpdate.concat(fullSourceErrors);
             }
         });
     }
 
     state.resourceConfigErrors = resourceConfigErrors;
     state.resourceConfigErrorsExist = !isEmpty(resourceConfigErrors);
-    state.fullSourceErrorsExist = !isEmpty(fullSourceErrorsUpdate);
 };
 
 const whatChanged = (
@@ -134,7 +120,6 @@ const getInitialMiscStoreData = (): Pick<
     | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
     | 'rediscoveryRequired'
-    | 'fullSourceErrorsExist'
 > => ({
     discoveredCollections: null,
     hydrated: false,
@@ -146,7 +131,6 @@ const getInitialMiscStoreData = (): Pick<
     restrictedDiscoveredCollections: [],
     serverUpdateRequired: false,
     rediscoveryRequired: false,
-    fullSourceErrorsExist: false,
 });
 
 const getInitialStateData = () => ({
@@ -427,48 +411,6 @@ const getInitialState = (
         if (!isEqual(existingConfig, updatedConfig)) {
             setResourceConfig(key, updatedConfig);
         }
-    },
-
-    updateFullSourceProperty: (collectionName, key, value) => {
-        set(
-            produce((state: ResourceConfigState) => {
-                const configToUpdate = state.resourceConfig[collectionName];
-
-                if (!configToUpdate.fullSource) {
-                    configToUpdate.fullSource = {};
-                }
-
-                console.log('updateFullSourceProperty', value);
-
-                if (hasLength(value)) {
-                    configToUpdate.fullSource[key] = value;
-                } else {
-                    // We are only passing an allowed key to the function
-                    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-                    delete configToUpdate.fullSource[key];
-                }
-            }),
-            false,
-            'Updating Property Within Full Source'
-        );
-    },
-
-    updateFullSourceErrors: (collectionName, errors) => {
-        set(
-            produce((state: ResourceConfigState) => {
-                const configToUpdate = state.resourceConfig[collectionName];
-
-                if (hasLength(errors)) {
-                    configToUpdate.fullSourceErrors = (
-                        configToUpdate.fullSourceErrors ?? []
-                    ).concat(errors);
-                }
-
-                populateResourceConfigErrors(state.resourceConfig, state);
-            }),
-            false,
-            'Updating Full Source Error'
-        );
     },
 
     setResourceConfig: (key, value, disableCheckingErrors, disableOmit) => {

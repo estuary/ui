@@ -1,6 +1,6 @@
 import { useEntityType } from 'context/EntityContext';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isEmpty, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import {
     useResourceConfig_resourceConfig,
@@ -11,7 +11,6 @@ import {
     getCollectionName,
     getCollectionNameProp,
     getDisableProps,
-    getFullSource,
 } from 'utils/workflow-utils';
 
 const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
@@ -42,16 +41,8 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     );
 
                     //Pull out resource as that is moved into `data`
-                    const { resource, disable, source } = binding;
-                    const existingDisableProp = getDisableProps(disable);
-
-                    // First check if disabled has changed cause it is a simple boolean
-                    if (
-                        existingDisableProp.disable !==
-                        resourceConfig[collectionName].disable
-                    ) {
-                        return true;
-                    }
+                    const { resource, disable } = binding;
+                    const disableProp = getDisableProps(disable);
 
                     // TODO (enabled rediscovery)
                     // If we're enabling something then make sure we know to rediscover
@@ -59,58 +50,12 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     //     setRediscoveryRequired(true);
                     // }
 
-                    const existingFullSource = getFullSource(
-                        source,
-                        true,
-                        true
-                    );
-
-                    const newFullSource = getFullSource(
-                        resourceConfig[collectionName].fullSource,
-                        false,
-                        true
-                    );
-
-                    if (
-                        typeof source === 'string' &&
-                        !isEmpty(newFullSource.fullSource)
-                    ) {
-                        if (!isEqual(existingFullSource, newFullSource)) {
-                            console.log('full source did not match', {
-                                existingFullSource,
-                                newFullSource,
-                            });
-                            return true;
-                        }
-                    }
-
-                    // TODO (draft updates)
-                    // Since we are marking some items for clean up we need to fetched the
-                    //      "cleaned up" version to compare but not actually mess with our local copy.
-                    // This is messy and very hacky and something we need to fix by just updating
-                    //      the draft directly.
-                    let filteredNew;
-                    if (resourceConfig[collectionName].fullSource) {
-                        filteredNew = {
-                            data: resourceConfig[collectionName].data,
-                        };
-                    } else {
-                        filteredNew = {
-                            data: resourceConfig[collectionName],
-                        };
-                    }
-
-                    const existing = {
+                    // See if anything has changed
+                    return !isEqual(resourceConfig[collectionName], {
+                        ...disableProp,
                         data: resource,
-                    };
-
-                    const response = !isEqual(filteredNew, existing);
-                    console.log(`comparing data ${response}`, {
-                        filteredNew,
-                        existing,
+                        errors: [],
                     });
-
-                    return response;
                 });
             } else {
                 // Lengths do not match so we know the update is needed

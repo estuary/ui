@@ -5,6 +5,17 @@ import { CollectionData } from 'components/editor/Bindings/types';
 import { Dispatch, SetStateAction } from 'react';
 import { InferSchemaPropertyForRender, Schema } from 'types';
 
+export interface FullSource {
+    name?: string;
+    notAfter?: string | null; // controlled by the NotDateTime
+    notBefore?: string | null; // controlled by the NotDateTime
+    partitions?: any; // not set in the UI today
+}
+
+export interface FullSourceDictionary {
+    [k: string]: FullSource;
+}
+
 export interface BindingsEditorState {
     collectionData: CollectionData | null | undefined;
     setCollectionData: (value: BindingsEditorState['collectionData']) => void;
@@ -99,6 +110,13 @@ export interface BindingsEditorState {
 
     selectionSaving: boolean;
     setSelectionSaving: (value: BindingsEditorState['selectionSaving']) => void;
+
+    // Time Travel
+    fullSourceConfigs: FullSourceDictionary;
+    updateFullSourceConfig: (
+        collection: string,
+        fullSource: FullSource
+    ) => void;
 
     // Misc.
     resetState: () => void;

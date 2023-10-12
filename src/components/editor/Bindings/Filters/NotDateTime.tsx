@@ -9,17 +9,12 @@ import DateTimePickerCTA from 'components/shared/pickers/DateTimePickerCTA';
 import { validateDateTime } from 'components/shared/pickers/shared';
 import useDatePickerState from 'components/shared/pickers/useDatePickerState';
 import { useState } from 'react';
-import {
-    useResourceConfig_fullSourceOfCollectionProperty,
-    useResourceConfig_updateFullSourceProperty,
-} from 'stores/ResourceConfig/hooks';
-import { FilterProperties } from 'stores/ResourceConfig/types';
 
 interface Props {
     collectionName: string;
     description: string;
     label: string;
-    setting: FilterProperties;
+    setting: any; //FilterProperties;
 }
 
 // TODO (time travel)
@@ -33,15 +28,16 @@ function NotDateTime({ collectionName, description, label, setting }: Props) {
     const idValue = `${setting}-picker__${collectionName}`;
     const { state, buttonRef, events } = useDatePickerState(idValue);
 
-    const updateFullSourceProperty =
-        useResourceConfig_updateFullSourceProperty();
-    const propertyBeingControlled =
-        useResourceConfig_fullSourceOfCollectionProperty(
-            collectionName,
-            setting
-        );
+    // const updateFullSourceProperty =
+    //     useResourceConfig_updateFullSourceProperty();
+    // const propertyBeingControlled =
+    //     useResourceConfig_fullSourceOfCollectionProperty(
+    //         collectionName,
+    //         setting
+    //     );
 
-    const [localValue, setLocalValue] = useState(propertyBeingControlled ?? '');
+    // const [localValue, setLocalValue] = useState(propertyBeingControlled ?? '');
+    const [localValue, setLocalValue] = useState('');
 
     const [errors, setErrors] = useState<string | null>(null);
 
@@ -55,7 +51,7 @@ function NotDateTime({ collectionName, description, label, setting }: Props) {
 
     const updateState = (updateValue: any) => {
         setLocalValue(updateValue);
-        updateFullSourceProperty(collectionName, setting, updateValue);
+        // updateFullSourceProperty(collectionName, setting, updateValue);
     };
 
     return (

@@ -11,7 +11,6 @@ import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 import {
     useResourceConfig_collectionErrorsExist,
-    useResourceConfig_fullSourceErrorsExist,
     useResourceConfig_hydrationErrorsExist,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
@@ -41,14 +40,13 @@ function CollectionConfig({
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
 
-    const fullSourceErrorsExist = useResourceConfig_fullSourceErrorsExist();
+    // const fullSourceErrorsExist = useResourceConfig_fullSourceErrorsExist();
 
     const collectionsHasErrors = useResourceConfig_collectionErrorsExist();
 
     const hasErrors =
-        resourceConfigHydrationErrorsExist ||
-        resourceConfigHasErrors ||
-        fullSourceErrorsExist;
+        resourceConfigHydrationErrorsExist || resourceConfigHasErrors;
+    // fullSourceErrorsExist;
 
     const hasWarnings = collectionsHasErrors;
 

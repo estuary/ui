@@ -3,20 +3,9 @@ import { LiveSpecsExt_MaterializeCapture } from 'hooks/useLiveSpecsExt';
 import { CallSupabaseResponse } from 'services/supabase';
 import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
 
-export type FilterProperties = 'notBefore' | 'notAfter';
-
-export interface FullSource {
-    name?: string;
-    notAfter?: string | null; // controlled by the NotDateTime
-    notBefore?: string | null; // controlled by the NotDateTime
-    partitions?: any; // not set in the UI today
-}
-
 export interface ResourceConfig extends JsonFormsData {
     errors: any[];
     disable?: boolean;
-    fullSource?: FullSource;
-    fullSourceErrors?: any[];
 }
 
 export interface ResourceConfigDictionary {
@@ -69,14 +58,6 @@ export interface ResourceConfigState {
 
     resourceConfigErrorsExist: boolean;
     resourceConfigErrors: (string | undefined)[];
-
-    updateFullSourceProperty: (
-        collection: string,
-        key: string,
-        value: FilterProperties | null
-    ) => void;
-    updateFullSourceErrors: (collection: string, errors?: any[]) => void;
-    fullSourceErrorsExist: boolean;
 
     // Resource Schema
     resourceSchema: Schema;

@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useResourceConfig_collections,
-    useResourceConfig_fullSourceErrorsExist,
     useResourceConfig_resourceConfigErrors,
 } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
@@ -14,8 +13,6 @@ function ResourceConfigErrors() {
 
     const filteredResourceConfigErrors =
         useResourceConfig_resourceConfigErrors();
-
-    const fullSourceErrorsExist = useResourceConfig_fullSourceErrorsExist();
 
     const errorMessages = useMemo(() => {
         const response = [];
@@ -28,16 +25,8 @@ function ResourceConfigErrors() {
             });
         }
 
-        if (fullSourceErrorsExist) {
-            response.push({
-                message: intl.formatMessage({
-                    id: 'entityCreate.endpointConfig.fullSourceInvalid',
-                }),
-            });
-        }
-
         return response;
-    }, [filteredResourceConfigErrors, fullSourceErrorsExist, intl]);
+    }, [filteredResourceConfigErrors, intl]);
 
     console.log('errorMessages', errorMessages);
 

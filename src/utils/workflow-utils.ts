@@ -3,14 +3,15 @@ import {
     modifyDraftSpec,
 } from 'api/draftSpecs';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
+import {
+    FullSource,
+    FullSourceDictionary,
+} from 'components/editor/Bindings/Store/types';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { REMOVE_DURING_GENERATION } from 'stores/ResourceConfig/shared';
-import {
-    FullSource,
-    ResourceConfigDictionary,
-} from 'stores/ResourceConfig/types';
+import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
@@ -95,8 +96,10 @@ export const generateTaskSpec = (
     connectorConfig: ConnectorConfig,
     resourceConfigs: ResourceConfigDictionary | null,
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
-    sourceCapture: string | null
+    sourceCapture: string | null,
+    fullSource: FullSourceDictionary
 ) => {
+    console.log('fullSource', fullSource);
     const draftSpec = isEmpty(existingTaskData)
         ? {
               bindings: [],
@@ -113,27 +116,11 @@ export const generateTaskSpec = (
 
         boundCollectionNames.forEach((collectionName) => {
             const resourceConfig = resourceConfigs[collectionName].data;
+            const fullSourceConfig = fullSource[collectionName];
 
             // Check if disable is a boolean otherwise default to false
             const { disable } = resourceConfigs[collectionName];
             const resourceDisable = isBoolean(disable) ? disable : false;
-
-            // See if there are any settings that need use to convert this to a fullSource style
-            const { fullSource } = resourceConfigs[collectionName];
-
-            // We set non-dates to null so here we see
-            const onlyHasName = fullSource
-                ? Object.entries(fullSource).every(([key, val]) =>
-                      key === 'name' ? true : val === null
-                  )
-                : true;
-
-            const newNameValue = onlyHasName
-                ? collectionName
-                : {
-                      ...fullSource,
-                      name: collectionName,
-                  };
 
             // See which binding we need to update
             const existingBindingIndex = draftSpec.bindings.findIndex(
@@ -149,41 +136,6 @@ export const generateTaskSpec = (
                     delete draftSpec.bindings[existingBindingIndex].disable;
                 }
 
-                // Grab the existing name so we know if it is a name or fullSource
-                const existingNameValue =
-                    draftSpec.bindings[existingBindingIndex][
-                        collectionNameProp
-                    ];
-
-                if (typeof newNameValue === 'string') {
-                    // There is no new fullSource props so switch back to just a string for the name
-                    draftSpec.bindings[existingBindingIndex][
-                        collectionNameProp
-                    ] = newNameValue;
-                } else {
-                    const noExistingFullSource =
-                        typeof existingNameValue === 'string';
-
-                    if (noExistingFullSource) {
-                        // We can safely just set the props we have as we won't override anything existing
-                        draftSpec.bindings[existingBindingIndex][
-                            collectionNameProp
-                        ] = newNameValue;
-                    } else {
-                        // We want to filter out nulls but only AFTER merging with existing
-                        const filteredOutNullValues = getFullSource(
-                            { ...existingNameValue, ...newNameValue },
-                            false,
-                            true
-                        );
-
-                        // Make sure we start with the existing so only new props override
-                        draftSpec.bindings[existingBindingIndex][
-                            collectionNameProp
-                        ] = filteredOutNullValues.fullSource;
-                    }
-                }
-
                 draftSpec.bindings[existingBindingIndex].resource = {
                     ...resourceConfig,
                 };
@@ -191,7 +143,10 @@ export const generateTaskSpec = (
                 const disabledProps = getDisableProps(resourceDisable);
 
                 draftSpec.bindings.push({
-                    [collectionNameProp]: newNameValue,
+                    [collectionNameProp]: {
+                        name: collectionName,
+                        ...fullSourceConfig,
+                    },
                     ...disabledProps,
                     resource: {
                         ...resourceConfig,
