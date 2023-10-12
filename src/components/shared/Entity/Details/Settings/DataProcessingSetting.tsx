@@ -45,10 +45,76 @@ function DataProcessingSetting({
     const [notification, setNotification] = useState<
         NotificationQuery | null | undefined
     >(undefined);
+
     const [messageId, setMessageId] = useState<string | null>(null);
 
-    const { getNotificationSubscription } =
-        useInitializeTaskNotification(catalogName);
+    const options = useMemo(
+        () => ({
+            'none': intl.formatMessage({
+                id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.unsetOption',
+            }),
+            '01:00:00': intl.formatMessage(intervalOptionId, { interval: 1 }),
+            '02:00:00': intl.formatMessage(intervalOptionId, { interval: 2 }),
+            '04:00:00': intl.formatMessage(intervalOptionId, { interval: 4 }),
+            '08:00:00': intl.formatMessage(intervalOptionId, { interval: 8 }),
+            '12:00:00': intl.formatMessage(intervalOptionId, { interval: 12 }),
+            '24:00:00': intl.formatMessage(intervalOptionId, { interval: 24 }),
+        }),
+        [intl]
+    );
+
+    const updateEvaluationInterval = useCallback(
+        (_event: React.SyntheticEvent, value: string) => {
+            if (notification) {
+                if (value === options.none) {
+                    deleteNotification(notification.id).then(
+                        (response) => {
+                            console.log('deleted notification');
+
+                            if (response.data && response.data.length > 0) {
+                                setNotification(null);
+                            }
+                        },
+                        () => {
+                            console.log('failed to delete notification');
+                        }
+                    );
+                } else {
+                    updateNotificationInterval(notification.id, value).then(
+                        (response) => {
+                            console.log('updated notification');
+
+                            if (response.data && response.data.length > 0) {
+                                setNotification(response.data[0]);
+                            }
+                        },
+                        () => {
+                            console.log('failed to update notification');
+                        }
+                    );
+                }
+            } else if (messageId && preferenceId && liveSpecId) {
+                createNotification(
+                    preferenceId,
+                    messageId,
+                    value,
+                    liveSpecId
+                ).then(
+                    (response) => {
+                        console.log('created notification', response);
+
+                        if (response.data && response.data.length > 0) {
+                            setNotification(response.data[0]);
+                        }
+                    },
+                    () => {
+                        console.log('failed to create notification');
+                    }
+                );
+            }
+        },
+        [liveSpecId, messageId, notification?.id, preferenceId, setNotification]
+    );
 
     useEffect(() => {
         getNotificationMessage({ value: messageName, column: 'detail' }).then(
@@ -65,6 +131,9 @@ function DataProcessingSetting({
             }
         );
     }, [messageName, setMessageId, setNotification]);
+
+    const { getNotificationSubscription } =
+        useInitializeTaskNotification(catalogName);
 
     useEffect(() => {
         if (
@@ -90,62 +159,6 @@ function DataProcessingSetting({
             );
         }
     }, [liveSpecId, messageId, preferenceId, notification, setNotification]);
-
-    const updateEvaluationInterval = useCallback(
-        (_event: React.SyntheticEvent, value: string) => {
-            if (notification) {
-                if (value === 'none') {
-                    deleteNotification(notification.id).then(
-                        () => {
-                            console.log('deleted notification');
-                        },
-                        () => {
-                            console.log('failed to delete notification');
-                        }
-                    );
-                } else {
-                    updateNotificationInterval(notification.id, value).then(
-                        () => {
-                            console.log('updated notification');
-                        },
-                        () => {
-                            console.log('failed to update notification');
-                        }
-                    );
-                }
-            } else if (messageId && preferenceId && liveSpecId) {
-                createNotification(
-                    preferenceId,
-                    messageId,
-                    value,
-                    liveSpecId
-                ).then(
-                    (response) => {
-                        console.log('created notification', response);
-                    },
-                    () => {
-                        console.log('failed to create notification');
-                    }
-                );
-            }
-        },
-        [liveSpecId, messageId, notification?.id, preferenceId, setNotification]
-    );
-
-    const options = useMemo(
-        () => ({
-            'none': intl.formatMessage({
-                id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.unsetOption',
-            }),
-            '01:00:00': intl.formatMessage(intervalOptionId, { interval: 1 }),
-            '02:00:00': intl.formatMessage(intervalOptionId, { interval: 2 }),
-            '04:00:00': intl.formatMessage(intervalOptionId, { interval: 4 }),
-            '08:00:00': intl.formatMessage(intervalOptionId, { interval: 8 }),
-            '12:00:00': intl.formatMessage(intervalOptionId, { interval: 12 }),
-            '24:00:00': intl.formatMessage(intervalOptionId, { interval: 24 }),
-        }),
-        [intl]
-    );
 
     return (
         <Stack
@@ -186,15 +199,10 @@ function DataProcessingSetting({
                                 notification.evaluation_interval
                             )
                                 ? options[notification.evaluation_interval]
-                                : options[0]
+                                : options.none
                         }
                         disableClearable
-                        disabled={
-                            !preferenceId ||
-                            !liveSpecId ||
-                            !messageId ||
-                            !notification
-                        }
+                        disabled={!preferenceId || !liveSpecId || !messageId}
                         onChange={updateEvaluationInterval}
                         options={Object.values(options)}
                         sx={{ width: 150 }}
