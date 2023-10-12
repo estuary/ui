@@ -192,7 +192,7 @@ function DataProcessingSetting({
                     </Stack>
 
                     <Autocomplete
-                        defaultValue={
+                        value={
                             notification?.evaluation_interval &&
                             Object.hasOwn(
                                 options,
