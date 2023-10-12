@@ -71,6 +71,8 @@ jobs:
     # Deployment steps undertaken on a merge to `main`.
     deploy:
         name: Deploy
+        env:
+            NODE_OPTIONS: '--max_old_space_size=4096'
         needs: quality
         runs-on: ubuntu-latest
         if: ${{ github.ref == 'refs/heads/main' }}
