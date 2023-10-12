@@ -1,5 +1,6 @@
-import { FUNCTIONS, invokeSupabase } from 'services/supabase';
-import { OAUTH_OPERATIONS, OAUTH_URL_SUFFIX } from './shared';
+import { FUNCTIONS, invokeSupabase, OAUTH_OPERATIONS } from 'services/supabase';
+
+const OAUTH_URL_SUFFIX = '/oauth';
 
 export interface AccessTokenResponse {
     [k: string]: any;
