@@ -1,5 +1,5 @@
 import { Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
-import SwitchSetting from 'components/shared/Entity/Details/Settings/SwitchSetting';
+import DataProcessingSetting from 'components/shared/Entity/Details/Settings/DataProcessingSetting';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -42,9 +42,7 @@ function Settings() {
                     <FormattedMessage id="details.settings.notifications.header" />
                 </Typography>
 
-                <SwitchSetting
-                    headerId="details.settings.notifications.dataProcessing.header"
-                    labelId="details.settings.notifications.dataProcessing.label.noDataProcessedInInterval"
+                <DataProcessingSetting
                     liveSpecId={liveSpecId}
                     preferenceId={preferenceId}
                     messageName="data-not-processed-in-interval"

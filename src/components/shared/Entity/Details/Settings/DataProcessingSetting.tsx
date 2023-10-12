@@ -18,38 +18,28 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useInitializeTaskNotification from 'hooks/useInitializeTaskNotification';
-import { useCallback, useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {
-    headerId: string;
-    labelId: string;
     messageName: string;
     liveSpecId: string | null;
     preferenceId: string | null;
     hideBorder?: boolean;
 }
 
-const noIntervalOption = 'None';
-
-const options = {
-    'none': noIntervalOption,
-    '01:00:00': '1 hour',
-    '02:00:00': '2 hours',
-    '04:00:00': '4 hours',
-    '08:00:00': '8 hours',
-    '12:00:00': '12 hours',
-    '24:00:00': '24 hours',
+const intervalOptionId = {
+    id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.intervalOptions',
 };
 
-function SwitchSetting({
-    headerId,
-    labelId,
+function DataProcessingSetting({
     liveSpecId,
     preferenceId,
     messageName,
     hideBorder,
 }: Props) {
+    const intl = useIntl();
+
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
     const [notification, setNotification] = useState<
@@ -65,16 +55,24 @@ function SwitchSetting({
             (response) => {
                 if (response.data && response.data.length > 0) {
                     setMessageId(response.data[0].id);
+                } else {
+                    setNotification(null);
                 }
             },
             () => {
                 console.log('init message error');
+                setNotification(null);
             }
         );
-    }, [messageName, setMessageId]);
+    }, [messageName, setMessageId, setNotification]);
 
     useEffect(() => {
-        if (liveSpecId && preferenceId && messageId) {
+        if (
+            liveSpecId &&
+            preferenceId &&
+            messageId &&
+            notification === undefined
+        ) {
             getNotificationSubscription(
                 messageId,
                 liveSpecId,
@@ -82,25 +80,20 @@ function SwitchSetting({
             ).then(
                 (response) => {
                     console.log('init switch success', response);
-                    console.log('convert', notification?.evaluation_interval);
 
                     setNotification(response.data);
                 },
                 () => {
                     console.log('init switch error');
+                    setNotification(null);
                 }
             );
         }
-    }, [liveSpecId, messageId, preferenceId, setNotification]);
+    }, [liveSpecId, messageId, preferenceId, notification, setNotification]);
 
     const updateEvaluationInterval = useCallback(
         (_event: React.SyntheticEvent, value: string) => {
-            console.log('auto val', value);
-
             if (notification) {
-                // Delete notification
-                console.log('notification');
-
                 if (value === 'none') {
                     deleteNotification(notification.id).then(
                         () => {
@@ -139,6 +132,21 @@ function SwitchSetting({
         [liveSpecId, messageId, notification?.id, preferenceId, setNotification]
     );
 
+    const options = useMemo(
+        () => ({
+            'none': intl.formatMessage({
+                id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.unsetOption',
+            }),
+            '01:00:00': intl.formatMessage(intervalOptionId, { interval: 1 }),
+            '02:00:00': intl.formatMessage(intervalOptionId, { interval: 2 }),
+            '04:00:00': intl.formatMessage(intervalOptionId, { interval: 4 }),
+            '08:00:00': intl.formatMessage(intervalOptionId, { interval: 8 }),
+            '12:00:00': intl.formatMessage(intervalOptionId, { interval: 12 }),
+            '24:00:00': intl.formatMessage(intervalOptionId, { interval: 24 }),
+        }),
+        [intl]
+    );
+
     return (
         <Stack
             spacing={2}
@@ -162,21 +170,31 @@ function SwitchSetting({
                 <>
                     <Stack spacing={1}>
                         <Typography sx={{ fontSize: 16, fontWeight: 500 }}>
-                            <FormattedMessage id={headerId} />
+                            <FormattedMessage id="details.settings.notifications.dataProcessing.header" />
                         </Typography>
 
                         <Typography>
-                            <FormattedMessage id={labelId} />
+                            <FormattedMessage id="details.settings.notifications.dataProcessing.noDataProcessedInInterval.message" />
                         </Typography>
                     </Stack>
 
                     <Autocomplete
                         defaultValue={
-                            notification?.evaluation_interval
+                            notification?.evaluation_interval &&
+                            Object.hasOwn(
+                                options,
+                                notification.evaluation_interval
+                            )
                                 ? options[notification.evaluation_interval]
-                                : noIntervalOption
+                                : options[0]
                         }
                         disableClearable
+                        disabled={
+                            !preferenceId ||
+                            !liveSpecId ||
+                            !messageId ||
+                            !notification
+                        }
                         onChange={updateEvaluationInterval}
                         options={Object.values(options)}
                         sx={{ width: 150 }}
@@ -190,7 +208,9 @@ function SwitchSetting({
                                     ...InputProps,
                                     sx: { borderRadius: 3 },
                                 }}
-                                label="Interval"
+                                label={intl.formatMessage({
+                                    id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.label',
+                                })}
                                 size="small"
                                 variant="outlined"
                             />
@@ -202,4 +222,4 @@ function SwitchSetting({
     );
 }
 
-export default SwitchSetting;
+export default DataProcessingSetting;

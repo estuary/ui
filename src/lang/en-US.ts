@@ -1056,7 +1056,10 @@ const Details: ResolvedIntlConfig['messages'] = {
 
     'details.settings.notifications.header': `Notification Settings`,
     'details.settings.notifications.dataProcessing.header': `Data Processing`,
-    'details.settings.notifications.dataProcessing.label.noDataProcessedInInterval': `Data has not been processed in a given window of time.`,
+    'details.settings.notifications.dataProcessing.noDataProcessedInInterval.message': `Data has not been processed in a given window of time.`,
+    'details.settings.notifications.dataProcessing.noDataProcessedInInterval.label': `Interval`,
+    'details.settings.notifications.dataProcessing.noDataProcessedInInterval.intervalOptions': `{interval} {interval, plural, one {Hour} other {Hours}}`,
+    'details.settings.notifications.dataProcessing.noDataProcessedInInterval.unsetOption': `None`,
 };
 
 const Docs: ResolvedIntlConfig['messages'] = {
