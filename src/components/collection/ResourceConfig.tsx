@@ -7,7 +7,7 @@ import {
     useResourceConfig_hydrated,
     useResourceConfig_resourceConfigOfCollectionProperty,
 } from 'stores/ResourceConfig/hooks';
-import TimeTravel from 'components/editor/Bindings/Filters/TimeTravel';
+import TimeTravel from 'components/editor/Bindings/TimeTravel';
 import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
 
 interface Props {

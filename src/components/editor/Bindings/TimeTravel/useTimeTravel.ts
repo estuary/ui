@@ -12,8 +12,8 @@ import {
     getCollectionNameProp,
     getFullSource,
 } from 'utils/workflow-utils';
-import { useBindingsEditorStore_updateFullSourceConfig } from '../../Store/hooks';
-import { FullSource } from '../../Store/types';
+import { useBindingsEditorStore_updateFullSourceConfig } from '../Store/hooks';
+import { FullSource } from '../Store/types';
 
 function useTimeTravel(collectionName: string) {
     // Draft Editor Store
