@@ -348,6 +348,7 @@ export const useBindingsEditorStore_fullSourceOfCollectionProperty = (
             if (!collection) {
                 return null;
             }
+
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             return state.fullSourceConfigs[collection]?.[property];
         }
