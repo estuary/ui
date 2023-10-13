@@ -198,42 +198,36 @@ const getInitialState = (
         const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
         const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
 
+        get().setHydrated(false);
+
         if (
             workflow === 'capture_create' ||
             workflow === 'materialization_create'
         ) {
-            const { setServerUpdateRequired } = get();
-
-            setServerUpdateRequired(true);
+            get().setServerUpdateRequired(true);
         }
 
-        if (connectorId) {
+        if (get().active && connectorId) {
             const { data, error } = await getSchema_Endpoint(connectorId);
 
             if (error) {
-                const { setHydrationErrorsExist } = get();
-
-                setHydrationErrorsExist(true);
+                get().setHydrationErrorsExist(true);
             }
 
-            if (data && data.length > 0) {
-                const { setEndpointSchema } = get();
-
-                setEndpointSchema(
+            if (get().active && data && data.length > 0) {
+                get().setEndpointSchema(
                     data[0].endpoint_spec_schema as unknown as Schema
                 );
             }
         }
 
-        if (liveSpecId) {
+        if (get().active && liveSpecId) {
             const { data, error } = draftId
                 ? await getDraftSpecsByDraftId(draftId, entityType)
                 : await getLiveSpecsByLiveSpecId(liveSpecId, entityType);
 
             if (error) {
-                const { setHydrationErrorsExist } = get();
-
-                setHydrationErrorsExist(true);
+                get().setHydrationErrorsExist(true);
             }
 
             if (data && data.length > 0) {

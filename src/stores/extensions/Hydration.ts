@@ -10,12 +10,18 @@ export interface StoreWithHydration {
 
     hydrationErrorsExist: boolean;
     setHydrationErrorsExist: (value: boolean) => void;
+
+    // TODO (store hydration) we need to make store hydration better
+    // Used to keep track if the store should be getting hydrated
+    active: boolean;
+    setActive: (val: boolean) => void;
 }
 
 export const getInitialHydrationData = (): Pick<
     StoreWithHydration,
-    'hydrated' | 'hydrationErrorsExist'
+    'hydrated' | 'hydrationErrorsExist' | 'active'
 > => ({
+    active: false,
     hydrated: false,
     hydrationErrorsExist: false,
 });
@@ -34,7 +40,7 @@ export const getStoreWithHydrationSettings = (
         setHydrated: (value) => {
             set(
                 produce((state: StoreWithHydration) => {
-                    state.hydrated = value;
+                    state.hydrated = value && state.active ? value : false;
                 }),
                 false,
                 `${key} State Hydrated`
@@ -44,10 +50,21 @@ export const getStoreWithHydrationSettings = (
         setHydrationErrorsExist: (value) => {
             set(
                 produce((state: StoreWithHydration) => {
-                    state.hydrationErrorsExist = value;
+                    state.hydrationErrorsExist =
+                        value && state.active ? value : false;
                 }),
                 false,
                 `${key} Hydration Errors Detected`
+            );
+        },
+
+        setActive: (val) => {
+            set(
+                produce((state: StoreWithHydration) => {
+                    state.active = val;
+                }),
+                false,
+                `${key} Active Set`
             );
         },
     };
