@@ -230,7 +230,7 @@ const getInitialState = (
                 get().setHydrationErrorsExist(true);
             }
 
-            if (data && data.length > 0) {
+            if (get().active && data && data.length > 0) {
                 const {
                     setEncryptedEndpointConfig,
                     setEndpointConfig,
