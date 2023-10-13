@@ -29,6 +29,7 @@ import {
     useBilling_resetState,
     useBilling_selectedInvoice,
     useBilling_selectedTenant,
+    useBilling_setActive,
     useBilling_setDataByTaskGraphDetails,
     useBilling_setHydrated,
     useBilling_setHydrationErrorsExist,
@@ -52,6 +53,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     const setHistoryInitialized = useBilling_setInvoicesInitialized();
     const setInvoices = useBilling_setInvoices();
     const updateBillingHistory = useBilling_updateInvoices();
+    const setActive = useBilling_setActive();
 
     const selectedTenant = useBilling_selectedTenant();
     const selectedInvoice = useBilling_selectedInvoice();
@@ -83,6 +85,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     useEffect(() => {
         if (selectedTenant && !hydrated && !historyInitialized) {
             void (async () => {
+                setActive(true);
                 try {
                     const response = await getInvoicesBetween(
                         selectedTenant,
@@ -116,6 +119,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         historyInitialized,
         hydrated,
         selectedTenant,
+        setActive,
     ]);
 
     useEffect(() => {

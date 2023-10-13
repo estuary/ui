@@ -68,6 +68,13 @@ export const useBilling_setHydrated = () => {
     );
 };
 
+export const useBilling_setActive = () => {
+    return useZustandStore<BillingState, BillingState['setActive']>(
+        BillingStoreNames.GENERAL,
+        (state) => state.setActive
+    );
+};
+
 export const useBilling_setHydrationErrorsExist = () => {
     return useZustandStore<
         BillingState,
