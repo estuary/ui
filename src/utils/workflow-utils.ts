@@ -97,7 +97,7 @@ export const generateTaskSpec = (
     resourceConfigs: ResourceConfigDictionary | null,
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
     sourceCapture: string | null,
-    fullSource: FullSourceDictionary
+    fullSource: FullSourceDictionary | null
 ) => {
     console.log('fullSource', fullSource);
     const draftSpec = isEmpty(existingTaskData)
@@ -116,7 +116,9 @@ export const generateTaskSpec = (
 
         boundCollectionNames.forEach((collectionName) => {
             const resourceConfig = resourceConfigs[collectionName].data;
-            const fullSourceConfig = fullSource[collectionName];
+            const fullSourceConfig = fullSource
+                ? fullSource[collectionName]
+                : {};
 
             // Check if disable is a boolean otherwise default to false
             const { disable } = resourceConfigs[collectionName];
@@ -238,6 +240,7 @@ export const modifyExistingCaptureDraftSpec = async (
         { image: connectorImage, config: encryptedEndpointConfig },
         resourceConfig,
         existingTaskData,
+        null,
         null
     );
 
