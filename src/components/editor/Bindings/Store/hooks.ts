@@ -328,6 +328,16 @@ export const useBindingsEditorStore_fullSourceConfigs = () => {
     >(BindingsEditorStoreNames.GENERAL, (state) => state.fullSourceConfigs);
 };
 
+export const useBindingsEditorStore_prefillFullSourceConfigs = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['prefillFullSourceConfigs']
+    >(
+        BindingsEditorStoreNames.GENERAL,
+        (state) => state.prefillFullSourceConfigs
+    );
+};
+
 export const useBindingsEditorStore_fullSourceOfCollectionProperty = (
     collection: any,
     property: keyof FullSource

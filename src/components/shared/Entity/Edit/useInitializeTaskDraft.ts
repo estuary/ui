@@ -16,12 +16,14 @@ import {
 } from 'components/editor/Store/hooks';
 import useEntityEditNavigate from 'components/shared/Entity/hooks/useEntityEditNavigate';
 import { useEntityType } from 'context/EntityContext';
+import invariableStores from 'context/Zustand/invariableStores';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { Dispatch, SetStateAction, useCallback } from 'react';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import { useStore } from 'zustand';
 
 interface SupabaseConfig {
     createNew: boolean;
@@ -60,6 +62,11 @@ function useInitializeTaskDraft() {
 
     // Form State Store
     const setFormState = useFormStateStore_setFormState();
+
+    const prefillFullSourceConfigs = useStore(
+        invariableStores.general_bindings_editor,
+        (state) => state.prefillFullSourceConfigs
+    );
 
     // Get catalog name and task spec from live specs
     const getTask =
@@ -217,6 +224,8 @@ function useInitializeTaskDraft() {
                         setPersistedDraftId(evaluatedDraftId);
 
                         setFormState({ status: FormStatus.GENERATED });
+
+                        prefillFullSourceConfigs(task.spec.bindings);
 
                         navigateToEdit(
                             taskSpecType,

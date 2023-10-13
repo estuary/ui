@@ -117,6 +117,7 @@ export interface BindingsEditorState {
         collection: string,
         fullSource: FullSource
     ) => void;
+    prefillFullSourceConfigs: (val: any[] | null) => void;
 
     // Misc.
     resetState: () => void;

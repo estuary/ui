@@ -22,6 +22,7 @@ import {
 import { hasLength } from 'utils/misc-utils';
 import { filterInferSchemaResponse, hasReadSchema } from 'utils/schema-utils';
 import { devtoolsOptions } from 'utils/store-utils';
+import { getSourceOrTarget } from 'utils/workflow-utils';
 import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 
@@ -297,6 +298,32 @@ const getInitialState = (
             }),
             false,
             'Updating full source config of a collection'
+        );
+    },
+
+    prefillFullSourceConfigs: (bindings) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                const newConfig = {};
+
+                if (bindings && bindings.length > 0) {
+                    bindings.forEach((binding) => {
+                        const bindingSource = getSourceOrTarget(binding);
+                        const nameOnly = typeof bindingSource === 'string';
+
+                        if (nameOnly) {
+                            newConfig[bindingSource] = {};
+                        } else {
+                            const { name, ...restOfFullSource } = bindingSource;
+                            newConfig[name] = restOfFullSource;
+                        }
+                    });
+                }
+
+                state.fullSourceConfigs = newConfig;
+            }),
+            false,
+            'Prefilling full source configs'
         );
     },
 

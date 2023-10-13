@@ -19,6 +19,14 @@ import { ConnectorConfig } from '../../flow_deps/flow';
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
 
+export const getSourceOrTarget = (binding: any) => {
+    return Object.hasOwn(binding, 'source')
+        ? binding.source
+        : Object.hasOwn(binding, 'target')
+        ? binding.target
+        : binding;
+};
+
 export const getCollectionNameProp = (entityType: Entity) => {
     return entityType === 'materialization' ? 'source' : 'target';
 };
@@ -26,11 +34,7 @@ export const getCollectionNameProp = (entityType: Entity) => {
 export const getCollectionName = (binding: any) => {
     // First see if we've already been passed a scoped binding
     //  or if we need to find the proper scope ourselves.
-    const scopedBinding = Object.hasOwn(binding, 'source')
-        ? binding.source
-        : Object.hasOwn(binding, 'target')
-        ? binding.target
-        : binding;
+    const scopedBinding = getSourceOrTarget(binding);
 
     // Check if we're dealing with a FullSource or just a string
     return Object.hasOwn(scopedBinding, 'name')
