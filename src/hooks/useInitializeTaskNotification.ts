@@ -11,14 +11,9 @@ import { useCallback } from 'react';
 
 const createPreference = async (
     catalogName: string,
-    userId: string,
-    email: string
+    userId: string
 ): Promise<string | null> => {
-    const response = await createNotificationPreference(
-        catalogName,
-        userId,
-        email
-    );
+    const response = await createNotificationPreference(catalogName, userId);
 
     return response.data && response.data.length > 0
         ? response.data[0].id
@@ -33,8 +28,8 @@ function useInitializeTaskNotification(catalogName: string) {
     const getNotificationPreferenceId = useCallback(async (): Promise<
         string | null
     > => {
-        if (!user?.id || !user.email) {
-            // Error if the system cannot determine the user ID or email.
+        if (!user?.id) {
+            // Error if the system cannot determine the user ID.
             return null;
         }
 
@@ -53,15 +48,14 @@ function useInitializeTaskNotification(catalogName: string) {
 
             const newPreferenceId = await createPreference(
                 catalogName,
-                user.id,
-                user.email
+                user.id
             );
 
             return newPreferenceId;
         }
 
         return existingPreference[0].id;
-    }, [catalogName, user?.id, user?.email]);
+    }, [catalogName, user?.id]);
 
     const getNotificationSettingsMetadata = useCallback(async () => {
         const { data: liveSpecResponse, error: liveSpecError } =
@@ -124,7 +118,7 @@ function useInitializeTaskNotification(catalogName: string) {
 
             return { data: existingNotification[0] };
         },
-        [catalogName, entityType]
+        []
     );
 
     return { getNotificationSettingsMetadata, getNotificationSubscription };

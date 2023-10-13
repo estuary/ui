@@ -363,10 +363,11 @@ export interface NotificationPreference {
     created_at: string;
     updated_at: string;
     prefix: string;
-    subscribed_by: string;
-    method: string;
-    user_id: string | null;
-    verified_email: string | null;
+    user_id: string;
+}
+
+export interface NotificationPreferenceExt extends NotificationPreference {
+    verified_email: string;
 }
 
 export interface NotificationFullQuery {

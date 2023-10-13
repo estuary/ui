@@ -13,18 +13,21 @@ import {
     NotificationFullQuery,
     NotificationMessage,
     NotificationPreference,
+    NotificationPreferenceExt,
 } from 'types';
 
-const createNotificationPreference = (
-    scope: string,
-    userId: string,
-    email: string
-) => {
+const createNotificationPreference = (prefix: string, userId: string) => {
     return insertSupabase(TABLES.NOTIFICATION_PREFERENCES, {
-        prefix: scope,
+        prefix,
         subscribed_by: userId,
         user_id: userId,
-        verified_email: email,
+    });
+};
+
+const deleteNotificationPreference = (preferenceId: string, userId: string) => {
+    return deleteSupabase(TABLES.NOTIFICATION_PREFERENCES, {
+        id: preferenceId,
+        user_id: userId,
     });
 };
 
@@ -85,7 +88,7 @@ export type NotificationPreferenceQuery = Pick<
 >;
 
 export type NotificationPreferencesTableQuery = Pick<
-    NotificationPreference,
+    NotificationPreferenceExt,
     'id' | 'updated_at' | 'prefix' | 'user_id' | 'verified_email'
 >;
 
@@ -113,13 +116,13 @@ const getNotificationMessage = async ({
 };
 
 const getNotificationPreferenceByPrefix = async (
-    scope: string,
+    prefix: string,
     userId: string
 ) => {
     const data = await supabaseClient
         .from<NotificationPreferenceQuery>(TABLES.NOTIFICATION_PREFERENCES)
         .select(`id, prefix, user_id`)
-        .eq('prefix', scope)
+        .eq('prefix', prefix)
         .eq('user_id', userId)
         .then(handleSuccess<NotificationPreferenceQuery[]>, handleFailure);
 
@@ -132,9 +135,7 @@ const getNotificationPreference = (
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<NotificationPreferencesTableQuery>(
-            TABLES.NOTIFICATION_PREFERENCES
-        )
+        .from<NotificationPreferenceExt>(TABLES.NOTIFICATION_PREFERENCES)
         .select(
             `    
                 id,
@@ -146,7 +147,7 @@ const getNotificationPreference = (
             { count: 'exact' }
         );
 
-    queryBuilder = defaultTableFilter<NotificationPreferencesTableQuery>(
+    queryBuilder = defaultTableFilter<NotificationPreferenceExt>(
         queryBuilder,
         ['prefix', 'verified_email'],
         searchQuery,
@@ -177,6 +178,7 @@ export {
     createNotification,
     createNotificationPreference,
     deleteNotification,
+    deleteNotificationPreference,
     getNotificationMessage,
     getNotificationPreference,
     getNotificationPreferenceByPrefix,
