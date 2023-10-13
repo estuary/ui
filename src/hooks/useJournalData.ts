@@ -11,9 +11,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 
 enum ErrorFlags {
+    // TOKEN_PARSING_ISSUE = 'parsing jwt:', // useful for testing just add it to the onError
     TOKEN_NOT_FOUND = 'Unauthenticated',
     TOKEN_INVALID = 'Authentication failed',
-    TOKEN_PARSING_ISSUE = 'parsing jwt:', // Very broad match for any issues with the jwt token being invalid
     OPERATION_INVALID = 'Unauthorized',
 }
 
@@ -72,8 +72,7 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
                 if (
                     session &&
                     (errorAsString.includes(ErrorFlags.TOKEN_INVALID) ||
-                        errorAsString.includes(ErrorFlags.TOKEN_NOT_FOUND) ||
-                        errorAsString.includes(ErrorFlags.TOKEN_PARSING_ISSUE))
+                        errorAsString.includes(ErrorFlags.TOKEN_NOT_FOUND))
                 ) {
                     await refreshAuthToken();
                 }
