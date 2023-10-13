@@ -64,7 +64,7 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
         {
             // TODO (data preview refresh) no polling right now we should add a manual refresh button
             ...singleCallSettings,
-            errorRetryCount: 3,
+            errorRetryCount: 2,
             refreshInterval: undefined,
             revalidateOnFocus: false,
             onError: async (error) => {
