@@ -103,7 +103,6 @@ export const generateTaskSpec = (
     sourceCapture: string | null,
     fullSource: FullSourceDictionary | null
 ) => {
-    console.log('fullSource', fullSource);
     const draftSpec = isEmpty(existingTaskData)
         ? {
               bindings: [],

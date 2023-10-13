@@ -294,7 +294,10 @@ const getInitialState = (
     updateFullSourceConfig: (collection, fullSource) => {
         set(
             produce((state: BindingsEditorState) => {
-                state.fullSourceConfigs[collection] = fullSource;
+                state.fullSourceConfigs[collection] = {
+                    ...state.fullSourceConfigs[collection],
+                    ...fullSource,
+                };
             }),
             false,
             'Updating full source config of a collection'

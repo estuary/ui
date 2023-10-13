@@ -220,12 +220,13 @@ function useInitializeTaskDraft() {
                     );
 
                     if (!draftSpecsError) {
+                        if (task.spec_type === 'materialization') {
+                            prefillFullSourceConfigs(task.spec.bindings);
+                        }
                         setDraftId(evaluatedDraftId);
                         setPersistedDraftId(evaluatedDraftId);
 
                         setFormState({ status: FormStatus.GENERATED });
-
-                        prefillFullSourceConfigs(task.spec.bindings);
 
                         navigateToEdit(
                             taskSpecType,
@@ -261,17 +262,18 @@ function useInitializeTaskDraft() {
             setLoading(false);
         },
         [
+            connectorId,
             getTask,
             getTaskDraft,
             getTaskDraftSpecs,
+            liveSpecId,
             navigateToEdit,
+            prefillFullSourceConfigs,
+            prefillPubIds,
             setDraftId,
             setDraftInitializationError,
             setFormState,
             setPersistedDraftId,
-            connectorId,
-            liveSpecId,
-            prefillPubIds,
             taskSpecType,
         ]
     );
