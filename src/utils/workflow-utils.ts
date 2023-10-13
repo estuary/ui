@@ -120,9 +120,12 @@ export const generateTaskSpec = (
 
         boundCollectionNames.forEach((collectionName) => {
             const resourceConfig = resourceConfigs[collectionName].data;
-            const fullSourceConfig = fullSource
-                ? fullSource[collectionName]
-                : {};
+
+            // Prep the fullSource to either be fullSource [mat with settings] or just string [cap, mat without settings]
+            const fullSourceConfig = fullSource?.[collectionName];
+            const newSourceOrTargetSettings = !isEmpty(fullSourceConfig)
+                ? { ...fullSourceConfig, name: collectionName }
+                : collectionName;
 
             // Check if disable is a boolean otherwise default to false
             const { disable } = resourceConfigs[collectionName];
@@ -145,14 +148,16 @@ export const generateTaskSpec = (
                 draftSpec.bindings[existingBindingIndex].resource = {
                     ...resourceConfig,
                 };
+
+                // Only update if there is a fullSource to populate. Otherwise just set the name.
+                //  This handles both captures that do not have these settings AND when
+                draftSpec.bindings[existingBindingIndex][collectionNameProp] =
+                    newSourceOrTargetSettings;
             } else if (Object.keys(resourceConfig).length > 0) {
                 const disabledProps = getDisableProps(resourceDisable);
 
                 draftSpec.bindings.push({
-                    [collectionNameProp]: {
-                        name: collectionName,
-                        ...fullSourceConfig,
-                    },
+                    [collectionNameProp]: newSourceOrTargetSettings,
                     ...disabledProps,
                     resource: {
                         ...resourceConfig,
