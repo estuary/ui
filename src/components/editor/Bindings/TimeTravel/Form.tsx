@@ -1,14 +1,13 @@
 import { StyledEngineProvider } from '@mui/material';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
-import { useStore } from 'zustand';
-import invariableStores from 'context/Zustand/invariableStores';
-import { FullSource } from '../Store/types';
+import { useSnackbar } from 'notistack';
+import { snackbarSettings } from 'utils/notification-utils';
 import useTimeTravel from './useTimeTravel';
 
 interface Props {
@@ -20,26 +19,22 @@ interface Props {
 //      "Only After"    controls notBefore
 function TimeTravelForm({ collectionName }: Props) {
     const intl = useIntl();
+    const { enqueueSnackbar } = useSnackbar();
+    const { updateTimeTravel, fullSource } = useTimeTravel(collectionName);
+
+    const [localCopy, setLocalCopy] = useState(fullSource);
 
     const startUpdating = useRef(false);
 
-    const updateDraft = useTimeTravel(collectionName);
+    // When the collection name chagnes we do not want to fire a change right away
+    useEffect(() => {
+        startUpdating.current = false;
+        setLocalCopy(fullSource);
+        // We only want to force the local copy when the collection name changes
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [collectionName]);
 
-    const [notAfter, notBefore] = useStore(
-        invariableStores.general_bindings_editor,
-        (state) => {
-            const binding = state.fullSourceConfigs[collectionName];
-
-            return [binding.notAfter, binding.notBefore];
-        }
-    );
-
-    console.log('fullSource', { notBefore, notAfter });
-
-    const [formData, setFormData] = useState<FullSource>({
-        notBefore,
-        notAfter,
-    });
+    console.log('Time Travel Rendering', { fullSource });
 
     const [schema, uiSchema] = useMemo(() => {
         const schemaVal = {
@@ -81,7 +76,7 @@ function TimeTravelForm({ collectionName }: Props) {
                 readonly={false}
                 schema={schema}
                 uischema={uiSchema}
-                data={formData}
+                data={localCopy}
                 renderers={defaultRenderers}
                 cells={materialCells}
                 config={defaultOptions}
@@ -92,8 +87,20 @@ function TimeTravelForm({ collectionName }: Props) {
                         return;
                     }
 
-                    setFormData(state.data);
-                    await updateDraft(state.data);
+                    // setFormData(state.data);
+                    updateTimeTravel(state.data)
+                        .then(() => {})
+                        .catch((err) => {
+                            enqueueSnackbar(
+                                intl.formatMessage({
+                                    id:
+                                        err === 'no binding'
+                                            ? 'notBeforeNotAfter.update.error.noBinding'
+                                            : 'notBeforeNotAfter.update.error',
+                                }),
+                                { ...snackbarSettings, variant: 'error' }
+                            );
+                        });
                 }}
             />
         </StyledEngineProvider>

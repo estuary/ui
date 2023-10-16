@@ -4,19 +4,21 @@ import {
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { Schema } from 'types';
 import {
     getCollectionName,
     getCollectionNameProp,
-    getFullSource,
+    getFullSourceSetting,
 } from 'utils/workflow-utils';
-import { useBindingsEditorStore_updateFullSourceConfig } from '../Store/hooks';
+import {
+    useBindingsEditorStore_fullSourceOfCollection,
+    useBindingsEditorStore_updateFullSourceConfig,
+} from '../Store/hooks';
 import { FullSource } from '../Store/types';
 
 function useTimeTravel(collectionName: string) {
-    // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
@@ -36,81 +38,50 @@ function useTimeTravel(collectionName: string) {
                     getCollectionNameProp('materialization');
                 const spec: Schema = draftSpecs[0].spec;
 
-                // We set non-dates to null so here we see
-                const onlyHasName =
-                    !fullSource.notAfter && !fullSource.notBefore;
-
-                const newNameValue = onlyHasName
-                    ? collectionName
-                    : {
-                          ...fullSource,
-                          name: collectionName,
-                      };
-
                 // See which binding we need to update
                 const existingBindingIndex = spec.bindings.findIndex(
                     (binding: any) =>
                         getCollectionName(binding) === collectionName
                 );
 
+                // We only want to update existing bindings here. If they do not exist then we can just
+                //  save the changes in the store and apply them when the user clicks to generate the spec
                 if (existingBindingIndex > -1) {
-                    // Grab the existing name so we know if it is a name or fullSource
-                    const existingNameValue =
-                        spec.bindings[existingBindingIndex][collectionNameProp];
-
-                    if (typeof newNameValue === 'string') {
-                        // There is no new fullSource props so switch back to just a string for the name
-                        spec.bindings[existingBindingIndex][
+                    const noMergingNeeded =
+                        typeof spec.bindings[existingBindingIndex][
                             collectionNameProp
-                        ] = newNameValue;
-                    } else {
-                        const noExistingFullSource =
-                            typeof existingNameValue === 'string';
+                        ] === 'string';
 
-                        if (noExistingFullSource) {
-                            // We can safely just set the props we have as we won't override anything existing
-                            spec.bindings[existingBindingIndex][
-                                collectionNameProp
-                            ] = newNameValue;
-                        } else {
-                            // We want to filter out nulls but only AFTER merging with existing
-                            const filteredOutNullValues = getFullSource(
-                                { ...existingNameValue, ...newNameValue },
-                                false,
-                                true
-                            );
+                    spec.bindings[existingBindingIndex][collectionNameProp] =
+                        getFullSourceSetting(
+                            noMergingNeeded
+                                ? { [collectionName]: fullSource }
+                                : {
+                                      [collectionName]: {
+                                          ...spec.bindings[
+                                              existingBindingIndex
+                                          ][collectionNameProp],
+                                          ...fullSource,
+                                      },
+                                  },
+                            collectionName
+                        );
 
-                            // Make sure we start with the existing so only new props override
-                            spec.bindings[existingBindingIndex][
-                                collectionNameProp
-                            ] = filteredOutNullValues.fullSource;
-                        }
+                    const updateResponse = await modifyDraftSpec(spec, {
+                        draft_id: draftId,
+                        catalog_name: draftSpecs[0].catalog_name,
+                        spec_type: 'materialization',
+                    });
+
+                    if (updateResponse.error) {
+                        return Promise.reject('update failed');
                     }
 
-                    // spec.bindings[existingBindingIndex].resource = {
-                    //     ...resourceConfig,
-                    // };
-                }
-                // else if (Object.keys(resourceConfig).length > 0) {
-                //     spec.bindings.push({
-                //         [collectionNameProp]: newNameValue,
-                //         resource: {
-                //             ...resourceConfig,
-                //         },
-                //     });
-                // }
-
-                const updateResponse = await modifyDraftSpec(spec, {
-                    draft_id: draftId,
-                    catalog_name: draftSpecs[0].catalog_name,
-                    spec_type: 'materialization',
-                });
-
-                if (updateResponse.error) {
-                    return Promise.reject();
+                    return mutateDraftSpecs();
                 }
 
-                return mutateDraftSpecs();
+                // If nothing was updated we can just keep going like nothing happened
+                return Promise.resolve();
             }
         },
         [
@@ -122,7 +93,13 @@ function useTimeTravel(collectionName: string) {
         ]
     );
 
-    return updateTimeTravel;
+    const fullSource =
+        useBindingsEditorStore_fullSourceOfCollection(collectionName);
+
+    return useMemo(
+        () => ({ updateTimeTravel, fullSource }),
+        [fullSource, updateTimeTravel]
+    );
 }
 
 export default useTimeTravel;

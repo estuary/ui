@@ -338,6 +338,21 @@ export const useBindingsEditorStore_prefillFullSourceConfigs = () => {
     );
 };
 
+export const useBindingsEditorStore_fullSourceOfCollection = (
+    collection: any
+) => {
+    return useZustandStore<BindingsEditorState, FullSource | null | undefined>(
+        BindingsEditorStoreNames.GENERAL,
+        (state) => {
+            if (!collection) {
+                return null;
+            }
+
+            return state.fullSourceConfigs[collection];
+        }
+    );
+};
+
 export const useBindingsEditorStore_fullSourceOfCollectionProperty = (
     collection: any,
     property: keyof FullSource

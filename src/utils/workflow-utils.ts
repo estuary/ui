@@ -94,6 +94,18 @@ export const addOrRemoveSourceCapture = (
     return draftSpec;
 };
 
+export const getFullSourceSetting = (
+    fullSource: FullSourceDictionary | null,
+    collectionName: string
+) => {
+    const fullSourceConfig = fullSource?.[collectionName];
+    return !isEmpty(fullSourceConfig)
+        ? { ...fullSourceConfig, name: collectionName }
+        : collectionName;
+};
+
+export const updateFullSource = () => {};
+
 // TODO (typing): Narrow the return type for this function.
 export const generateTaskSpec = (
     entityType: EntityWithCreateWorkflow,
@@ -120,12 +132,6 @@ export const generateTaskSpec = (
         boundCollectionNames.forEach((collectionName) => {
             const resourceConfig = resourceConfigs[collectionName].data;
 
-            // Prep the fullSource to either be fullSource [mat with settings] or just string [cap, mat without settings]
-            const fullSourceConfig = fullSource?.[collectionName];
-            const newSourceOrTargetSettings = !isEmpty(fullSourceConfig)
-                ? { ...fullSourceConfig, name: collectionName }
-                : collectionName;
-
             // Check if disable is a boolean otherwise default to false
             const { disable } = resourceConfigs[collectionName];
             const resourceDisable = isBoolean(disable) ? disable : false;
@@ -151,12 +157,15 @@ export const generateTaskSpec = (
                 // Only update if there is a fullSource to populate. Otherwise just set the name.
                 //  This handles both captures that do not have these settings AND when
                 draftSpec.bindings[existingBindingIndex][collectionNameProp] =
-                    newSourceOrTargetSettings;
+                    getFullSourceSetting(fullSource, collectionName);
             } else if (Object.keys(resourceConfig).length > 0) {
                 const disabledProps = getDisableProps(resourceDisable);
 
                 draftSpec.bindings.push({
-                    [collectionNameProp]: newSourceOrTargetSettings,
+                    [collectionNameProp]: getFullSourceSetting(
+                        fullSource,
+                        collectionName
+                    ),
                     ...disabledProps,
                     resource: {
                         ...resourceConfig,

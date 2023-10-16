@@ -13,7 +13,7 @@ export interface FullSource {
 }
 
 export interface FullSourceDictionary {
-    [k: string]: FullSource;
+    [k: string]: FullSource | undefined | null;
 }
 
 export interface BindingsEditorState {
