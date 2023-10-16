@@ -55,17 +55,16 @@ function useTimeTravel(collectionName: string) {
                     spec.bindings[existingBindingIndex][collectionNameProp] =
                         getFullSourceSetting(
                             noMergingNeeded
-                                ? { [collectionName]: formData.data }
+                                ? { [collectionName]: { data: formData.data } }
                                 : {
                                       [collectionName]: {
                                           ...spec.bindings[
                                               existingBindingIndex
                                           ][collectionNameProp],
-                                          ...formData.data,
+                                          ...{ data: formData.data },
                                       },
                                   },
-                            collectionName,
-                            true
+                            collectionName
                         );
 
                     const updateResponse = await modifyDraftSpec(spec, {
