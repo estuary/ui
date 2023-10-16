@@ -300,6 +300,10 @@ export const jobSucceeded = (jobStatus?: JobStatus) => {
 // START: Poller
 type PollerTimeout = number | undefined;
 
+const RETRY_POLLER_REASONS = ['failed to fetch'];
+const shouldTryAfterFailure = (message?: string | null | undefined) =>
+    RETRY_POLLER_REASONS.some((el) => message?.toLowerCase().includes(el));
+
 export const JOB_STATUS_POLLER_ERROR = 'supabase.poller.failed';
 export const DEFAULT_POLLER_ERROR_TITLE_KEY = 'supabase.poller.failed.title';
 export const DEFAULT_POLLER_ERROR_MESSAGE_KEY =
@@ -321,6 +325,7 @@ export const jobStatusPoller = (
 ) => {
     let pollerTimeout: PollerTimeout;
     let interval = DEFAULT_POLLING_INTERVAL;
+    let attempts = 0;
     const makeApiCall = () => {
         LogRocket.log('Poller : start ');
 
@@ -344,6 +349,7 @@ export const jobStatusPoller = (
                         LogRocket.log(
                             `Poller : response : ${response.job_status.type}`
                         );
+
                         if (response.job_status.type === 'success') {
                             success(response);
                         } else {
@@ -358,10 +364,21 @@ export const jobStatusPoller = (
                     }
                 }
             },
-            (error: unknown) => {
-                LogRocket.log('Poller : error : ', error);
-                timeoutCleanUp(pollerTimeout);
-                failure(handleFailure(JOB_STATUS_POLLER_ERROR));
+            (error: any) => {
+                const tryOnceMore =
+                    attempts === 0 &&
+                    typeof error?.message === 'string' &&
+                    shouldTryAfterFailure(error.message);
+
+                if (tryOnceMore) {
+                    LogRocket.log('Poller : error : second attempt starting ');
+                    attempts += 1;
+                    pollerTimeout = window.setTimeout(makeApiCall, interval);
+                } else {
+                    LogRocket.log('Poller : error : ', error);
+                    timeoutCleanUp(pollerTimeout);
+                    failure(handleFailure(JOB_STATUS_POLLER_ERROR));
+                }
             }
         );
     };
