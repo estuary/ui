@@ -236,11 +236,11 @@ function EntityCreateSave({
                     },
                 });
             } else {
-                waitForPublishToFinish(response.data[0].id);
                 setFormState({
                     logToken: response.data[0].logs_token,
                     showLogs: true,
                 });
+                waitForPublishToFinish(response.data[0].id);
             }
         } else {
             logRocketEvent('Entity:Create:Missing draftId');
