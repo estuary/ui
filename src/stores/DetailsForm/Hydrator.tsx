@@ -5,6 +5,7 @@ import { logRocketConsole } from 'services/logrocket';
 import {
     useDetailsForm_hydrated,
     useDetailsForm_hydrateState,
+    useDetailsForm_setActive,
     useDetailsForm_setHydrated,
     useDetailsForm_setHydrationErrorsExist,
 } from 'stores/DetailsForm/hooks';
@@ -16,7 +17,7 @@ export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
 
     const hydrated = useDetailsForm_hydrated();
     const setHydrated = useDetailsForm_setHydrated();
-
+    const setActive = useDetailsForm_setActive();
     const setHydrationErrorsExist = useDetailsForm_setHydrationErrorsExist();
 
     const hydrateState = useDetailsForm_hydrateState();
@@ -26,6 +27,7 @@ export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
             !hydrated &&
             (entityType === 'capture' || entityType === 'materialization')
         ) {
+            setActive(true);
             hydrateState(entityType, workflow).then(
                 () => {
                     setHydrated(true);

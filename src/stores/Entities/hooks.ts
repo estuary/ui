@@ -72,6 +72,12 @@ export const useEntitiesStore_setHydrated = () => {
         (state) => state.setHydrated
     );
 };
+export const useEntitiesStore_setActive = () => {
+    return useZustandStore<EntitiesState, EntitiesState['setActive']>(
+        GlobalStoreNames.ENTITIES,
+        (state) => state.setActive
+    );
+};
 export const useEntitiesStore_hydrationErrors = () => {
     return useZustandStore<EntitiesState, EntitiesState['hydrationErrors']>(
         GlobalStoreNames.ENTITIES,
@@ -107,10 +113,12 @@ export const useSidePanelDocsStore_resetState = () => {
 // We hardcode the key here as we only call once
 export const useHydrateState = () => {
     const hydrateState = useEntitiesStore_hydrateState();
+    const setActive = useEntitiesStore_setActive();
 
     const response = useSWR(
         'entities_hydrator',
         () => {
+            setActive(true);
             return hydrateState();
         },
         singleCallSettings

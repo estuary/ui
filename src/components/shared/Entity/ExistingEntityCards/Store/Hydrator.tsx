@@ -1,6 +1,7 @@
 import {
     useExistingEntity_hydrated,
     useExistingEntity_hydrateState,
+    useExistingEntity_setActive,
     useExistingEntity_setHydrated,
     useExistingEntity_setHydrationErrorsExist,
 } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
@@ -17,7 +18,7 @@ function ExistingEntityHydrator({ children }: BaseComponentProps) {
 
     const hydrated = useExistingEntity_hydrated();
     const setHydrated = useExistingEntity_setHydrated();
-
+    const setActive = useExistingEntity_setActive();
     const setHydrationErrorsExist = useExistingEntity_setHydrationErrorsExist();
 
     const hydrateState = useExistingEntity_hydrateState();
@@ -28,6 +29,7 @@ function ExistingEntityHydrator({ children }: BaseComponentProps) {
             connectorId &&
             (entityType === 'capture' || entityType === 'materialization')
         ) {
+            setActive(true);
             hydrateState(entityType, connectorId).then(
                 () => {
                     setHydrated(true);
@@ -39,12 +41,13 @@ function ExistingEntityHydrator({ children }: BaseComponentProps) {
             );
         }
     }, [
-        hydrateState,
-        setHydrated,
-        setHydrationErrorsExist,
         connectorId,
         entityType,
+        hydrateState,
         hydrated,
+        setActive,
+        setHydrated,
+        setHydrationErrorsExist,
     ]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment

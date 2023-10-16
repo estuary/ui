@@ -30,6 +30,15 @@ export const useExistingEntity_setHydrated = () => {
     >(getStoreName(entityType), (state) => state.setHydrated);
 };
 
+export const useExistingEntity_setActive = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ExistingEntityState,
+        ExistingEntityState['setActive']
+    >(getStoreName(entityType), (state) => state.setActive);
+};
+
 export const useExistingEntity_setHydrationErrorsExist = () => {
     const entityType = useEntityType();
 
