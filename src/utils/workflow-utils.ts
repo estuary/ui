@@ -96,9 +96,12 @@ export const addOrRemoveSourceCapture = (
 
 export const getFullSourceSetting = (
     fullSource: FullSourceDictionary | null,
-    collectionName: string
+    collectionName: string,
+    skipData?: boolean
 ) => {
-    const fullSourceConfig = fullSource?.[collectionName]?.data;
+    const fullSourceConfig = skipData
+        ? fullSource?.[collectionName]
+        : fullSource?.[collectionName]?.data;
     return !isEmpty(fullSourceConfig)
         ? { ...fullSourceConfig, name: collectionName }
         : collectionName;

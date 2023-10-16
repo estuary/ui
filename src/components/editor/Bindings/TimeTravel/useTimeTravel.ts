@@ -28,7 +28,6 @@ function useTimeTravel(collectionName: string) {
 
     const updateTimeTravel = useCallback(
         async (formData: FullSourceJsonForms) => {
-            const fullSource = formData.data;
             // Make sure we update the store so it stays in sync also in case we need to run this through generate button
             updateFullSourceConfig(collectionName, formData);
 
@@ -56,16 +55,17 @@ function useTimeTravel(collectionName: string) {
                     spec.bindings[existingBindingIndex][collectionNameProp] =
                         getFullSourceSetting(
                             noMergingNeeded
-                                ? { [collectionName]: fullSource }
+                                ? { [collectionName]: formData.data }
                                 : {
                                       [collectionName]: {
                                           ...spec.bindings[
                                               existingBindingIndex
                                           ][collectionNameProp],
-                                          ...fullSource,
+                                          ...formData.data,
                                       },
                                   },
-                            collectionName
+                            collectionName,
+                            true
                         );
 
                     const updateResponse = await modifyDraftSpec(spec, {
