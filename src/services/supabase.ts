@@ -365,17 +365,19 @@ export const jobStatusPoller = (
                 }
             },
             (error: any) => {
+                LogRocket.log('Poller : error : ', error);
+
                 const tryOnceMore =
                     attempts === 0 &&
                     typeof error?.message === 'string' &&
                     shouldTryAfterFailure(error.message);
 
                 if (tryOnceMore) {
-                    LogRocket.log('Poller : error : second attempt starting ');
+                    LogRocket.log('Poller : error : trying again');
                     attempts += 1;
                     pollerTimeout = window.setTimeout(makeApiCall, interval);
                 } else {
-                    LogRocket.log('Poller : error : ', error);
+                    LogRocket.log('Poller : error : returning failure');
                     timeoutCleanUp(pollerTimeout);
                     failure(handleFailure(JOB_STATUS_POLLER_ERROR));
                 }
