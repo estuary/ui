@@ -9,6 +9,7 @@ import {
     getLiveSpecsByLiveSpecId,
     LiveSpecsExtQuery_ByLiveSpecId,
 } from 'api/liveSpecsExt';
+import { useBindingsEditorStore_prefillFullSourceConfigs } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_setDraftInitializationError,
     useEditorStore_setId,
@@ -16,14 +17,12 @@ import {
 } from 'components/editor/Store/hooks';
 import useEntityEditNavigate from 'components/shared/Entity/hooks/useEntityEditNavigate';
 import { useEntityType } from 'context/EntityContext';
-import invariableStores from 'context/Zustand/invariableStores';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { Dispatch, SetStateAction, useCallback } from 'react';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useStore } from 'zustand';
 
 interface SupabaseConfig {
     createNew: boolean;
@@ -63,10 +62,8 @@ function useInitializeTaskDraft() {
     // Form State Store
     const setFormState = useFormStateStore_setFormState();
 
-    const prefillFullSourceConfigs = useStore(
-        invariableStores.general_bindings_editor,
-        (state) => state.prefillFullSourceConfigs
-    );
+    const prefillFullSourceConfigs =
+        useBindingsEditorStore_prefillFullSourceConfigs();
 
     // Get catalog name and task spec from live specs
     const getTask =

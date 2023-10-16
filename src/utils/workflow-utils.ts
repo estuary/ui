@@ -98,7 +98,7 @@ export const getFullSourceSetting = (
     fullSource: FullSourceDictionary | null,
     collectionName: string
 ) => {
-    const fullSourceConfig = fullSource?.[collectionName];
+    const fullSourceConfig = fullSource?.[collectionName]?.data;
     return !isEmpty(fullSourceConfig)
         ? { ...fullSourceConfig, name: collectionName }
         : collectionName;

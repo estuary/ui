@@ -7,7 +7,6 @@ import { Dispatch, SetStateAction } from 'react';
 import { InferSchemaPropertyForRender, Schema } from 'types';
 
 export interface FullSource {
-    hasError?: boolean; // THIS SHOULD NOT BE SENT TO THE SERVER/DRAFT EVER
     name?: string;
     notAfter?: string | null; // controlled by the NotDateTime
     notBefore?: string | null; // controlled by the NotDateTime

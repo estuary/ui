@@ -6,6 +6,7 @@ import {
     getDraftSpecsByDraftId,
     modifyDraftSpec,
 } from 'api/draftSpecs';
+import { useBindingsEditorStore_fullSourceConfigs } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
@@ -107,10 +108,7 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
 
-    const fullSourceConfigs = useStore(
-        invariableStores.general_bindings_editor,
-        (state) => state.fullSourceConfigs
-    );
+    const fullSourceConfigs = useBindingsEditorStore_fullSourceConfigs();
 
     // Source Capture Store
     const sourceCapture = useStore(
