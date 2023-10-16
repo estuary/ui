@@ -149,9 +149,10 @@ const updateReadSchema = async (
 
 const getInitialFullSourceData = (): Pick<
     BindingsEditorState,
-    'fullSourceConfigs'
+    'fullSourceConfigs' | 'fullSourceHasErrors'
 > => ({
     fullSourceConfigs: {},
+    fullSourceHasErrors: false,
 });
 
 const getInitialFieldSelectionData = (): Pick<
@@ -206,30 +207,7 @@ const getInitialMiscData = (): Pick<
     ...getInitialFieldSelectionData(),
 });
 
-const getInitialStateData = (): Pick<
-    BindingsEditorState,
-    | 'collectionData'
-    | 'collectionInitializationAlert'
-    | 'documentsRead'
-    | 'inferredSchemaApplicationErrored'
-    | 'inferredSpec'
-    | 'loadingInferredSchema'
-    | 'schemaInferenceDisabled'
-    | 'schemaUpdateErrored'
-    | 'schemaUpdated'
-    | 'editModeEnabled'
-    | 'inferSchemaResponse'
-    | 'inferSchemaResponseError'
-    | 'inferSchemaResponseDoneProcessing'
-    | 'inferSchemaResponseEmpty'
-    | 'inferSchemaResponse_Keys'
-    | 'incompatibleCollections'
-    | 'hasIncompatibleCollections'
-    | 'recommendFields'
-    | 'selections'
-    | 'selectionSaving'
-    | 'fullSourceConfigs'
-> => ({
+const getInitialStateData = () => ({
     ...getInitialMiscData(),
     ...getInitialFullSourceData(),
 });
@@ -345,6 +323,15 @@ const getInitialState = (
                     },
                     errors: formData.errors,
                 };
+
+                state.fullSourceHasErrors =
+                    formData.errors && formData.errors.length > 0
+                        ? true
+                        : Object.values(state.fullSourceConfigs).some(
+                              (fullSourceConfig) =>
+                                  fullSourceConfig?.errors &&
+                                  fullSourceConfig.errors.length > 0
+                          );
             }),
             false,
             'Updating full source config of a collection'

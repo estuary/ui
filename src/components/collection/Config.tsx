@@ -1,6 +1,7 @@
 import { Typography, useTheme } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import BindingsMultiEditor from 'components/editor/Bindings';
+import { useBindingsEditorStore_fullSourceHasErrors } from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
@@ -39,14 +40,14 @@ function CollectionConfig({
 
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
-
-    // const fullSourceErrorsExist = useResourceConfig_fullSourceErrorsExist();
+    const fullSourceErrorsExist = useBindingsEditorStore_fullSourceHasErrors();
 
     const collectionsHasErrors = useResourceConfig_collectionErrorsExist();
 
     const hasErrors =
-        resourceConfigHydrationErrorsExist || resourceConfigHasErrors;
-    // fullSourceErrorsExist;
+        resourceConfigHydrationErrorsExist ||
+        resourceConfigHasErrors ||
+        fullSourceErrorsExist;
 
     const hasWarnings = collectionsHasErrors;
 

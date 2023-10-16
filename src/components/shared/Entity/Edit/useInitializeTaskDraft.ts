@@ -218,6 +218,7 @@ function useInitializeTaskDraft() {
 
                     if (!draftSpecsError) {
                         if (task.spec_type === 'materialization') {
+                            console.log('prefilling', task.spec.bindings);
                             prefillFullSourceConfigs(task.spec.bindings);
                         }
                         setDraftId(evaluatedDraftId);

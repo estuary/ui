@@ -329,6 +329,13 @@ export const useBindingsEditorStore_fullSourceConfigs = () => {
     >(BindingsEditorStoreNames.GENERAL, (state) => state.fullSourceConfigs);
 };
 
+export const useBindingsEditorStore_fullSourceHasErrors = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['fullSourceHasErrors']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.fullSourceHasErrors);
+};
+
 export const useBindingsEditorStore_prefillFullSourceConfigs = () => {
     return useZustandStore<
         BindingsEditorState,
