@@ -316,6 +316,7 @@ export const DEFAULT_POLLER_ERROR = {
 };
 
 // These columns are not always what you want... but okay for a "default" constant
+const JOB_STATUS_SUCCESS = ['emptyDraft', 'success'];
 export const JOB_STATUS_COLUMNS = `job_status, logs_token, id`;
 export const jobStatusPoller = (
     query: any,
@@ -350,7 +351,11 @@ export const jobStatusPoller = (
                             `Poller : response : ${response.job_status.type}`
                         );
 
-                        if (response.job_status.type === 'success') {
+                        if (
+                            JOB_STATUS_SUCCESS.includes(
+                                response.job_status.type
+                            )
+                        ) {
                             success(response);
                         } else {
                             failure(response);
