@@ -22,14 +22,14 @@ function TimeTravelForm({ collectionName }: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const { updateTimeTravel, fullSource } = useTimeTravel(collectionName);
 
-    const [localCopy, setLocalCopy] = useState(fullSource);
+    const [localCopy, setLocalCopy] = useState(fullSource ?? {});
 
     const startUpdating = useRef(false);
 
     // When the collection name chagnes we do not want to fire a change right away
     useEffect(() => {
         startUpdating.current = false;
-        setLocalCopy(fullSource);
+        setLocalCopy(fullSource ?? {});
         // We only want to force the local copy when the collection name changes
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [collectionName]);
