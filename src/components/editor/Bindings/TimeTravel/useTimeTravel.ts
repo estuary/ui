@@ -16,7 +16,7 @@ import {
     useBindingsEditorStore_fullSourceOfCollection,
     useBindingsEditorStore_updateFullSourceConfig,
 } from '../Store/hooks';
-import { FullSource } from '../Store/types';
+import { FullSourceJsonForms } from '../Store/types';
 
 function useTimeTravel(collectionName: string) {
     const draftId = useEditorStore_persistedDraftId();
@@ -27,9 +27,10 @@ function useTimeTravel(collectionName: string) {
         useBindingsEditorStore_updateFullSourceConfig();
 
     const updateTimeTravel = useCallback(
-        async (fullSource: FullSource) => {
+        async (formData: FullSourceJsonForms) => {
+            const fullSource = formData.data;
             // Make sure we update the store so it stays in sync also in case we need to run this through generate button
-            updateFullSourceConfig(collectionName, fullSource);
+            updateFullSourceConfig(collectionName, formData);
 
             if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {
                 return Promise.reject();

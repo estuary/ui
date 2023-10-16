@@ -1,6 +1,7 @@
 import {
     BindingsEditorState,
     FullSource,
+    FullSourceDictionary,
 } from 'components/editor/Bindings/Store/types';
 import { useZustandStore } from 'context/Zustand/provider';
 import { BindingsEditorStoreNames } from 'stores/names';
@@ -348,14 +349,14 @@ export const useBindingsEditorStore_fullSourceOfCollection = (
                 return null;
             }
 
-            return state.fullSourceConfigs[collection];
+            return state.fullSourceConfigs[collection]?.data;
         }
     );
 };
 
 export const useBindingsEditorStore_fullSourceOfCollectionProperty = (
     collection: any,
-    property: keyof FullSource
+    property: keyof FullSourceDictionary
 ) => {
     return useZustandStore<BindingsEditorState, any>(
         BindingsEditorStoreNames.GENERAL,

@@ -1,3 +1,4 @@
+import { JsonFormsCore } from '@jsonforms/core';
 import { AlertColor } from '@mui/material';
 import { IncompatibleCollections } from 'api/evolutions';
 import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
@@ -6,14 +7,20 @@ import { Dispatch, SetStateAction } from 'react';
 import { InferSchemaPropertyForRender, Schema } from 'types';
 
 export interface FullSource {
+    hasError?: boolean; // THIS SHOULD NOT BE SENT TO THE SERVER/DRAFT EVER
     name?: string;
     notAfter?: string | null; // controlled by the NotDateTime
     notBefore?: string | null; // controlled by the NotDateTime
     partitions?: any; // not set in the UI today
 }
 
+export interface FullSourceJsonForms
+    extends Pick<JsonFormsCore, 'data' | 'errors'> {
+    data: FullSource;
+}
+
 export interface FullSourceDictionary {
-    [k: string]: FullSource | undefined | null;
+    [k: string]: FullSourceJsonForms | undefined | null;
 }
 
 export interface BindingsEditorState {
@@ -115,7 +122,7 @@ export interface BindingsEditorState {
     fullSourceConfigs: FullSourceDictionary;
     updateFullSourceConfig: (
         collection: string,
-        fullSource: FullSource
+        formData: FullSourceJsonForms
     ) => void;
     prefillFullSourceConfigs: (val: any[] | null) => void;
 

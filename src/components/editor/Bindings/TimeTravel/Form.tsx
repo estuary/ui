@@ -87,8 +87,7 @@ function TimeTravelForm({ collectionName }: Props) {
                         return;
                     }
 
-                    // setFormData(state.data);
-                    updateTimeTravel(state.data)
+                    updateTimeTravel(state)
                         .then(() => {})
                         .catch((err) => {
                             enqueueSnackbar(

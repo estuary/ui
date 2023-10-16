@@ -291,12 +291,19 @@ const getInitialState = (
         );
     },
 
-    updateFullSourceConfig: (collection, fullSource) => {
+    updateFullSourceConfig: (collection, formData) => {
         set(
             produce((state: BindingsEditorState) => {
+                const existingData =
+                    state.fullSourceConfigs[collection]?.data ?? {};
+                const fullSource = formData.data;
+
                 state.fullSourceConfigs[collection] = {
-                    ...state.fullSourceConfigs[collection],
-                    ...fullSource,
+                    data: {
+                        ...existingData,
+                        ...fullSource,
+                    },
+                    errors: formData.errors,
                 };
             }),
             false,
@@ -318,7 +325,10 @@ const getInitialState = (
                             newConfig[bindingSource] = {};
                         } else {
                             const { name, ...restOfFullSource } = bindingSource;
-                            newConfig[name] = restOfFullSource;
+                            newConfig[name] = {
+                                data: restOfFullSource,
+                                errors: [],
+                            };
                         }
                     });
                 }
