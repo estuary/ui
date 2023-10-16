@@ -380,7 +380,13 @@ export const jobStatusPoller = (
                 if (tryOnceMore) {
                     LogRocket.log('Poller : error : trying again');
                     attempts += 1;
-                    pollerTimeout = window.setTimeout(makeApiCall, interval);
+
+                    // We do not update the interval here like we do up above
+                    //  because we just want this one time to wait a bit longer
+                    pollerTimeout = window.setTimeout(
+                        makeApiCall,
+                        incrementInterval(interval)
+                    );
                 } else {
                     LogRocket.log('Poller : error : returning failure');
                     timeoutCleanUp(pollerTimeout);
