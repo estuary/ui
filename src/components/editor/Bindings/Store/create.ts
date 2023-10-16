@@ -147,6 +147,65 @@ const updateReadSchema = async (
     return response;
 };
 
+const getInitialFullSourceData = (): Pick<
+    BindingsEditorState,
+    'fullSourceConfigs'
+> => ({
+    fullSourceConfigs: {},
+});
+
+const getInitialFieldSelectionData = (): Pick<
+    BindingsEditorState,
+    'recommendFields' | 'selections' | 'selectionSaving'
+> => ({
+    recommendFields: true,
+    selections: {},
+    selectionSaving: false,
+});
+
+const getInitialMiscData = (): Pick<
+    BindingsEditorState,
+    | 'collectionData'
+    | 'collectionInitializationAlert'
+    | 'documentsRead'
+    | 'inferredSchemaApplicationErrored'
+    | 'inferredSpec'
+    | 'loadingInferredSchema'
+    | 'schemaInferenceDisabled'
+    | 'schemaUpdateErrored'
+    | 'schemaUpdated'
+    | 'editModeEnabled'
+    | 'inferSchemaResponse'
+    | 'inferSchemaResponseError'
+    | 'inferSchemaResponseDoneProcessing'
+    | 'inferSchemaResponseEmpty'
+    | 'inferSchemaResponse_Keys'
+    | 'incompatibleCollections'
+    | 'hasIncompatibleCollections'
+    | 'recommendFields'
+    | 'selections'
+    | 'selectionSaving'
+> => ({
+    collectionData: null,
+    collectionInitializationAlert: null,
+    documentsRead: null,
+    inferredSchemaApplicationErrored: false,
+    inferredSpec: null,
+    loadingInferredSchema: false,
+    schemaInferenceDisabled: false,
+    schemaUpdateErrored: false,
+    schemaUpdated: true,
+    editModeEnabled: false,
+    inferSchemaResponse: null,
+    inferSchemaResponse_Keys: [],
+    inferSchemaResponseError: null,
+    inferSchemaResponseDoneProcessing: false,
+    inferSchemaResponseEmpty: false,
+    incompatibleCollections: [],
+    hasIncompatibleCollections: false,
+    ...getInitialFieldSelectionData(),
+});
+
 const getInitialStateData = (): Pick<
     BindingsEditorState,
     | 'collectionData'
@@ -171,27 +230,8 @@ const getInitialStateData = (): Pick<
     | 'selectionSaving'
     | 'fullSourceConfigs'
 > => ({
-    collectionData: null,
-    collectionInitializationAlert: null,
-    documentsRead: null,
-    inferredSchemaApplicationErrored: false,
-    inferredSpec: null,
-    loadingInferredSchema: false,
-    schemaInferenceDisabled: false,
-    schemaUpdateErrored: false,
-    schemaUpdated: true,
-    editModeEnabled: false,
-    inferSchemaResponse: null,
-    inferSchemaResponse_Keys: [],
-    inferSchemaResponseError: null,
-    inferSchemaResponseDoneProcessing: false,
-    inferSchemaResponseEmpty: false,
-    incompatibleCollections: [],
-    hasIncompatibleCollections: false,
-    recommendFields: true,
-    selections: {},
-    selectionSaving: false,
-    fullSourceConfigs: {},
+    ...getInitialMiscData(),
+    ...getInitialFullSourceData(),
 });
 
 const getInitialState = (
@@ -612,8 +652,12 @@ const getInitialState = (
         }
     },
 
-    resetState: () => {
-        set(getInitialStateData(), false, 'Bindings Editor State Reset');
+    resetState: (skipFullSource) => {
+        set(
+            skipFullSource ? getInitialMiscData() : getInitialStateData(),
+            false,
+            'Bindings Editor State Reset'
+        );
     },
 });
 

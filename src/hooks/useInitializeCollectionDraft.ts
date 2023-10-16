@@ -235,7 +235,7 @@ function useInitializeCollectionDraft() {
 
     return useCallback(
         async (collection: string): Promise<void> => {
-            resetBindingsEditorState();
+            resetBindingsEditorState(true);
 
             if (collection) {
                 const publishedCollection = await getCollection(collection);
