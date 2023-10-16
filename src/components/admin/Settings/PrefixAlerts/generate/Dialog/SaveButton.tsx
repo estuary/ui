@@ -12,14 +12,12 @@ import { appendWithForwardSlash, hasLength } from 'utils/misc-utils';
 
 interface Props {
     disabled: boolean;
-    emails: string[];
     prefix: string;
     setOpen: Dispatch<SetStateAction<boolean>>;
+    userId?: string;
 }
 
-const detail = 'Email';
-
-function SaveButton({ disabled, emails, prefix, setOpen }: Props) {
+function SaveButton({ disabled, prefix, setOpen, userId }: Props) {
     const hydrate = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['hydrate']
@@ -34,32 +32,34 @@ function SaveButton({ disabled, emails, prefix, setOpen }: Props) {
         event.preventDefault();
         setLoading(true);
 
-        const processedPrefix = appendWithForwardSlash(prefix);
+        if (userId) {
+            const processedPrefix = appendWithForwardSlash(prefix);
 
-        // Bundle insertions
-        createNotificationPreference(detail, processedPrefix, emails).then(
-            (response) => {
-                if (response.error) {
-                    console.log('save error 1', response.error);
-                } else if (hasLength(response.data)) {
-                    hydrate();
-                    setOpen(false);
+            // Bundle insertions
+            createNotificationPreference(processedPrefix, userId).then(
+                (response) => {
+                    if (response.error) {
+                        console.log('save error 1', response.error);
+                    } else if (hasLength(response.data)) {
+                        hydrate();
+                        setOpen(false);
+                    }
+
+                    setLoading(false);
+                },
+                (error) => {
+                    console.log('save error 2', error);
+                    setLoading(false);
                 }
-
-                setLoading(false);
-            },
-            (error) => {
-                console.log('save error 2', error);
-                setLoading(false);
-            }
-        );
+            );
+        }
     };
 
     return (
         <LoadingButton
             variant="contained"
             size="small"
-            disabled={disabled || !hasLength(prefix) || !hasLength(emails)}
+            disabled={disabled || !hasLength(prefix) || !userId}
             loading={loading}
             onClick={onClick}
         >
