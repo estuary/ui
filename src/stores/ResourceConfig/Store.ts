@@ -18,6 +18,10 @@ import {
     sortBy,
 } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
+import {
+    getInitialHydrationData,
+    getStoreWithHydrationSettings,
+} from 'stores/extensions/Hydration';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
@@ -25,6 +29,8 @@ import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
+
+const STORE_KEY = 'Resource Config';
 
 const populateCollections = (
     state: ResourceConfigState,
@@ -136,6 +142,7 @@ const getInitialMiscStoreData = (): Pick<
 const getInitialStateData = () => ({
     ...getInitialCollectionStateData(),
     ...getInitialMiscStoreData(),
+    ...getInitialHydrationData(),
 });
 
 const getInitialState = (
@@ -143,6 +150,7 @@ const getInitialState = (
     get: StoreApi<ResourceConfigState>['getState']
 ): ResourceConfigState => ({
     ...getInitialStateData(),
+    ...getStoreWithHydrationSettings(STORE_KEY, set),
 
     preFillEmptyCollections: (value, rehydrating) => {
         set(

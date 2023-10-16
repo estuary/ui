@@ -232,6 +232,13 @@ export const useResourceConfig_setHydrated = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.setHydrated);
 };
 
+export const useResourceConfig_setActive = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setActive']
+    >(ResourceConfigStoreNames.GENERAL, (state) => state.setActive);
+};
+
 export const useResourceConfig_hydrationErrorsExist = () => {
     return useZustandStore<
         ResourceConfigState,

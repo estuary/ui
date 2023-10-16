@@ -5,6 +5,7 @@ import { logRocketConsole } from 'services/logrocket';
 import {
     useEndpointConfig_hydrated,
     useEndpointConfig_hydrateState,
+    useEndpointConfig_setActive,
     useEndpointConfig_setHydrated,
     useEndpointConfig_setHydrationErrorsExist,
 } from 'stores/EndpointConfig/hooks';
@@ -18,12 +19,14 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
     const setHydrated = useEndpointConfig_setHydrated();
     const setHydrationErrorsExist = useEndpointConfig_setHydrationErrorsExist();
     const hydrateState = useEndpointConfig_hydrateState();
+    const setActive = useEndpointConfig_setActive();
 
     useEffectOnce(() => {
         if (
             !hydrated &&
             (entityType === 'capture' || entityType === 'materialization')
         ) {
+            setActive(true);
             hydrateState(entityType, workflow).then(
                 () => {
                     setHydrated(true);

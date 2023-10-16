@@ -58,7 +58,7 @@ const getInitialState = (
         },
 
         hydrateState: async (entityType, connectorId) => {
-            if (connectorId) {
+            if (get().active && connectorId) {
                 const { setCreateNewTask, setHydrationErrorsExist } = get();
 
                 const { data, error } = await getLiveSpecsByConnectorId(

@@ -72,8 +72,10 @@ export const getInitialState = (
         setInvoices: (value) => {
             set(
                 produce((state: BillingState) => {
-                    state.invoices = value;
-                    state.selectedInvoiceId = invoiceId(value[0]);
+                    if (state.active) {
+                        state.invoices = value;
+                        state.selectedInvoiceId = invoiceId(value[0]);
+                    }
                 }),
                 false,
                 'Billing Details Set'
@@ -83,7 +85,8 @@ export const getInitialState = (
         setInvoicesInitialized: (value) => {
             set(
                 produce((state: BillingState) => {
-                    state.invoicesInitialized = value;
+                    state.invoicesInitialized =
+                        value && state.active ? value : false;
                 }),
                 false,
                 'Billing History Initialized'

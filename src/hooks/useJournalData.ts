@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import { Auth } from '@supabase/ui';
+import { singleCallSettings } from 'context/SWR';
 import {
     JournalClient,
     JournalSelector,
@@ -10,6 +11,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 
 enum ErrorFlags {
+    // TOKEN_PARSING_ISSUE = 'parsing jwt:', // useful for testing just add it to the onError
     TOKEN_NOT_FOUND = 'Unauthenticated',
     TOKEN_INVALID = 'Authentication failed',
     OPERATION_INVALID = 'Unauthorized',
@@ -61,14 +63,16 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
         fetcher,
         {
             // TODO (data preview refresh) no polling right now we should add a manual refresh button
-            errorRetryInterval: undefined,
+            ...singleCallSettings,
+            errorRetryCount: 2,
             refreshInterval: undefined,
             revalidateOnFocus: false,
             onError: async (error) => {
+                const errorAsString = `${error}`;
                 if (
                     session &&
-                    (`${error}`.includes(ErrorFlags.TOKEN_INVALID) ||
-                        `${error}`.includes(ErrorFlags.TOKEN_NOT_FOUND))
+                    (errorAsString.includes(ErrorFlags.TOKEN_INVALID) ||
+                        errorAsString.includes(ErrorFlags.TOKEN_NOT_FOUND))
                 ) {
                     await refreshAuthToken();
                 }
