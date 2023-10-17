@@ -642,14 +642,15 @@ const getInitialState = (
                     ? 'source'
                     : 'target';
 
-                // TODO (direct bindings) We can remove this when/if we move the UI
+                // TODO (direct bindings) We can remove the ordering when/if we move the UI
                 //   to using the bindings directly and save a lot of processing
-                const sortedBindings = orderBy(
-                    data[0].spec.bindings,
-                    ['disable', collectionNameProp],
-                    ['desc', 'asc']
+                prefillResourceConfig(
+                    orderBy(
+                        data[0].spec.bindings,
+                        ['disable', collectionNameProp],
+                        ['desc', 'asc']
+                    )
                 );
-                prefillResourceConfig(sortedBindings);
             }
         }
 
