@@ -50,8 +50,11 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     //     setRediscoveryRequired(true);
                     // }
 
+                    const { previouslyDisabled, ...restOfConfig } =
+                        resourceConfig[collectionName];
+
                     // See if anything has changed
-                    return !isEqual(resourceConfig[collectionName], {
+                    return !isEqual(restOfConfig, {
                         ...disableProp,
                         data: resource,
                         errors: [],
