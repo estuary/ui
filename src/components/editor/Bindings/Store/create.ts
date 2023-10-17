@@ -309,6 +309,17 @@ const getInitialState = (
         );
     },
 
+    removeFullSourceConfig: (collection) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+                delete state.fullSourceConfigs[collection];
+            }),
+            false,
+            'Removing full source config of a collection'
+        );
+    },
+
     updateFullSourceConfig: (collection, formData) => {
         set(
             produce((state: BindingsEditorState) => {

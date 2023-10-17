@@ -388,6 +388,16 @@ export const useBindingsEditorStore_updateFullSourceConfig = () => {
     );
 };
 
+export const useBindingsEditorStore_removeFullSourceConfig = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['removeFullSourceConfig']
+    >(
+        BindingsEditorStoreNames.GENERAL,
+        (state) => state.removeFullSourceConfig
+    );
+};
+
 export const useBindingsEditorStore_resetState = () => {
     return useZustandStore<
         BindingsEditorState,

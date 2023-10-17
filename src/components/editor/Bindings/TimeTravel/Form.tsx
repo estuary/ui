@@ -34,8 +34,6 @@ function TimeTravelForm({ collectionName }: Props) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [collectionName]);
 
-    console.log('Time Travel Rendering', { fullSource });
-
     const [schema, uiSchema] = useMemo(() => {
         const schemaVal = {
             additionalProperties: true,

@@ -119,6 +119,7 @@ export interface BindingsEditorState {
 
     // Time Travel
     fullSourceConfigs: FullSourceDictionary;
+    removeFullSourceConfig: (collection: string) => void;
     updateFullSourceConfig: (
         collection: string,
         formData: FullSourceJsonForms
