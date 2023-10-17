@@ -34,7 +34,7 @@ import { Hidden, Stack } from '@mui/material';
 
 import DateTimePickerCTA from 'components/shared/pickers/DateTimePickerCTA';
 import useDatePickerState from 'components/shared/pickers/useDatePickerState';
-import { CustomMaterialInputControl } from './MaterialInputControl';
+import { Custom_MaterialInputControl } from './MaterialInputControl';
 import { CustomMuiInputText } from './MuiInputText';
 
 // This is SUPER customized
@@ -76,7 +76,7 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
                 }}
                 direction="row"
             >
-                <CustomMaterialInputControl
+                <Custom_MaterialInputControl
                     inputEvents={events}
                     input={CustomMuiInputText}
                     {...props}

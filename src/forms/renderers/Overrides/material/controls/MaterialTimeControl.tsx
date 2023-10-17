@@ -35,7 +35,7 @@ import TimePickerCTA from 'components/shared/pickers/TimePickerCTA';
 import useDatePickerState from 'components/shared/pickers/useDatePickerState';
 import { useMemo, useState } from 'react';
 import { hasLength } from 'utils/misc-utils';
-import { CustomMaterialInputControl } from './MaterialInputControl';
+import { Custom_MaterialInputControl } from './MaterialInputControl';
 import { CustomMuiInputText } from './MuiInputText';
 
 // This is pretty customized
@@ -88,7 +88,7 @@ export const Custom_MaterialTimeControl = (props: ControlProps) => {
                 }}
                 direction="row"
             >
-                <CustomMaterialInputControl
+                <Custom_MaterialInputControl
                     inputEvents={events}
                     input={CustomMuiInputText}
                     {...props}
