@@ -8,34 +8,38 @@ import DateOrTimePickerWrapper from './DateOrTimePickerWrapper';
 
 const TIMEZONE_OFFSET = new RegExp('([+-][0-9]{2}:[0-9]{2})$');
 
+// We have a special handler that formats the date so that
+//  it can handle if there was an error formatting, always
+//  use RFC3339, replace the seconds with 'OO'
+//  and replace the TZ Offset with an actual "Z"
+const formatDate = (formatValue: Date) => {
+    try {
+        return formatRFC3339(formatValue).replace(
+            TIMEZONE_OFFSET,
+            TIMEZONE_OFFSET_REPLACEMENT
+        );
+    } catch (e: unknown) {
+        return INVALID_DATE;
+    }
+};
+
+// TODO (date time picker) weird date formatting issue
+// If the user types in a short value (that can be parsed as a date. ex: "1", "12", etc.) If they open the date picker
+//  and then select the same date that was parsed no change event is fired. This is a weird edge case so not
+//  going to handle it right now (Q4 2023)
 function DateTimePickerCTA(props: PickerProps) {
     const { enabled, state, value, onChange, removeOffset } = props;
-
-    // We have a special handler that formats the date so that
-    //  it can handle if there was an error formatting, always
-    //  use RFC3339, replace the seconds with 'OO'
-    //  and replace the TZ Offset with an actual "Z"
-    const formatDate = (formatValue: Date) => {
-        try {
-            return formatRFC3339(formatValue).replace(
-                TIMEZONE_OFFSET,
-                TIMEZONE_OFFSET_REPLACEMENT
-            );
-        } catch (e: unknown) {
-            return INVALID_DATE;
-        }
-    };
 
     // We need to remove the Z here so that the date time picker
     //  can open up to the proper date time but not try to adjust
     //  it with the local timezone offset
     const cleanedValue = useMemo(() => {
+        // If we can format then we're good to use that value
         if (removeOffset) {
             return value
                 ? value.replace(TIMEZONE_OFFSET_REPLACEMENT, '')
                 : null;
         }
-
         return value;
     }, [removeOffset, value]);
 
@@ -46,14 +50,19 @@ function DateTimePickerCTA(props: PickerProps) {
             {...props}
         >
             <StaticDateTimePicker
-                inputFormat="YYYY-mm-ddTHH:mm:ssZ"
-                ignoreInvalidInputs
+                // We don't need an input
+                // eslint-disable-next-line react/jsx-no-useless-fragment
+                renderInput={() => <></>}
+                ampm={false}
+                closeOnSelect={true}
+                disabled={!enabled}
                 disableMaskedInput
                 displayStaticWrapperAs="desktop"
+                ignoreInvalidInputs
+                inputFormat="YYYY-mm-ddTHH:mm:ssZ"
                 openTo="day"
-                ampm={false}
-                disabled={!enabled}
                 value={cleanedValue}
+                onAccept={state.close}
                 onChange={(
                     onChangeValue: any,
                     keyboardInput?: string | undefined
@@ -70,11 +79,6 @@ function DateTimePickerCTA(props: PickerProps) {
                     //  it never fell through to this... but wanted to be safe
                     return onChange(keyboardInput, keyboardInput);
                 }}
-                onAccept={state.close}
-                closeOnSelect={true}
-                // We don't need an input
-                // eslint-disable-next-line react/jsx-no-useless-fragment
-                renderInput={() => <></>}
             />
         </DateOrTimePickerWrapper>
     );
