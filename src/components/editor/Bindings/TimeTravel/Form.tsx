@@ -14,9 +14,6 @@ interface Props {
     collectionName: string;
 }
 
-// Just to make it clear... we make the labels positive so the labels are kind "reversed"
-//      "Only Before" controls notAfter
-//      "Only After"    controls notBefore
 function TimeTravelForm({ collectionName }: Props) {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
