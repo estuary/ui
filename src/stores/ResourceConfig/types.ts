@@ -38,6 +38,8 @@ export interface ResourceConfigState extends StoreWithHydration {
     discoveredCollections: string[] | null;
     setDiscoveredCollections: (value: DraftSpecQuery) => void;
 
+    previouslyDisabledCollections: string[];
+
     restrictedDiscoveredCollections: string[];
     setRestrictedDiscoveredCollections: (
         collection: string,
