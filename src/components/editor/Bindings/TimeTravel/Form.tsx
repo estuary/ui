@@ -23,11 +23,10 @@ function TimeTravelForm({ collectionName }: Props) {
 
     const startUpdating = useRef(false);
 
-    // When the collection name chagnes we do not want to fire a change right away
     useEffect(() => {
         startUpdating.current = false;
         setLocalCopy(fullSource ?? {});
-        // We only want to force the local copy when the collection name changes
+        // When the collection name changes we want to basically do a mini-reset of the form state
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [collectionName]);
 
