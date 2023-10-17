@@ -32,7 +32,9 @@ function useTimeTravel(collectionName: string) {
             updateFullSourceConfig(collectionName, formData);
 
             if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {
-                return Promise.reject();
+                // This means we are calling before a draft was made and that is okay. We'll use the values
+                //      from the store while generating the spec
+                return Promise.resolve();
             } else {
                 const collectionNameProp =
                     getCollectionNameProp('materialization');
