@@ -14,8 +14,8 @@ import {
     isEqual,
     map,
     omit,
+    orderBy,
     pick,
-    sortBy,
 } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
@@ -120,6 +120,7 @@ const getInitialCollectionStateData = (): Pick<
 const getInitialMiscStoreData = (): Pick<
     ResourceConfigState,
     | 'discoveredCollections'
+    | 'previouslyDisabledCollections'
     | 'hydrated'
     | 'hydrationErrorsExist'
     | 'resourceConfig'
@@ -131,6 +132,7 @@ const getInitialMiscStoreData = (): Pick<
     | 'rediscoveryRequired'
 > => ({
     discoveredCollections: null,
+    previouslyDisabledCollections: [],
     hydrated: false,
     hydrationErrorsExist: false,
     resourceConfig: {},
@@ -642,9 +644,11 @@ const getInitialState = (
 
                 // TODO (direct bindings) We can remove this when/if we move the UI
                 //   to using the bindings directly and save a lot of processing
-                const sortedBindings = sortBy(data[0].spec.bindings, [
-                    collectionNameProp,
-                ]);
+                const sortedBindings = orderBy(
+                    data[0].spec.bindings,
+                    ['disable', collectionNameProp],
+                    ['desc', 'asc']
+                );
                 prefillResourceConfig(sortedBindings);
             }
         }
