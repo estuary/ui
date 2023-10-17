@@ -125,7 +125,7 @@ export interface BindingsEditorState {
         formData: FullSourceJsonForms
     ) => void;
     prefillFullSourceConfigs: (val: any[] | null) => void;
-    fullSourceHasErrors: boolean;
+    fullSourceErrorsExist: boolean;
 
     // Misc.
     resetState: (skipFullSource?: boolean) => void;

@@ -12,7 +12,6 @@ import {
     isBoolean,
     isEmpty,
     isEqual,
-    map,
     omit,
     pick,
     sortBy,
@@ -23,6 +22,7 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { ResourceConfigStoreNames } from 'stores/names';
+import { populateErrors } from 'stores/utils';
 import { Schema } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
@@ -71,22 +71,10 @@ const populateResourceConfigErrors = (
     resourceConfig: ResourceConfigDictionary,
     state: ResourceConfigState
 ): void => {
-    let resourceConfigErrors: any[] = [];
+    const { configErrors, hasErrors } = populateErrors(resourceConfig);
 
-    // TODO (errors) When there are not configs do we need to populate this object with something?
-    if (Object.keys(resourceConfig).length > 0) {
-        map(resourceConfig, (config) => {
-            const { errors } = config;
-
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (errors && errors.length > 0) {
-                resourceConfigErrors = resourceConfigErrors.concat(errors);
-            }
-        });
-    }
-
-    state.resourceConfigErrors = resourceConfigErrors;
-    state.resourceConfigErrorsExist = !isEmpty(resourceConfigErrors);
+    state.resourceConfigErrors = configErrors;
+    state.resourceConfigErrorsExist = hasErrors;
 };
 
 const whatChanged = (

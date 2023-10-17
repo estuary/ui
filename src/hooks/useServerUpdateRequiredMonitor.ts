@@ -1,3 +1,4 @@
+import { useBindingsEditorStore_fullSourceErrorsExist } from 'components/editor/Bindings/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEqual } from 'lodash';
@@ -22,6 +23,9 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     const resourceConfig = useResourceConfig_resourceConfig();
     const setServerUpdateRequired = useResourceConfig_setServerUpdateRequired();
 
+    const fullSourceErrorsExist =
+        useBindingsEditorStore_fullSourceErrorsExist();
+
     const collectionNameProp = useMemo(
         () => getCollectionNameProp(entityType),
         [entityType]
@@ -44,6 +48,19 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     const { resource, disable } = binding;
                     const disableProp = getDisableProps(disable);
 
+                    // If there are full source errors we want to show the next button to trigger an error
+                    if (fullSourceErrorsExist) {
+                        return true;
+                    }
+
+                    // Do a quick simple disabled check before comparing the entire object
+                    if (
+                        resourceConfig[collectionName].disable !==
+                        disableProp.disable
+                    ) {
+                        return true;
+                    }
+
                     // TODO (enabled rediscovery)
                     // If we're enabling something then make sure we know to rediscover
                     // if (disable && !resourceConfig[collectionName].disable) {
@@ -64,7 +81,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
         }
 
         return false;
-    }, [collectionNameProp, draftSpecs, resourceConfig]);
+    }, [collectionNameProp, draftSpecs, fullSourceErrorsExist, resourceConfig]);
 
     useEffect(() => {
         setServerUpdateRequired(resourceConfigUpdated);

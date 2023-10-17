@@ -651,6 +651,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
 
     'entityCreate.endpointConfig.detailsHaveErrors': `The Details section has errors:`,
     'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections section has errors:`,
+    'entityCreate.endpointConfig.fullSourceHaveErrors': `The Time Travel section has errors:`,
     'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${endpointConfigHeader} section has errors:`,
 
     'entityCreate.endpointConfig.noConnectorSelectedTitle': `Please select a Connector to begin`,

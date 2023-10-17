@@ -27,11 +27,16 @@ function useTimeTravel(collectionName: string) {
         useBindingsEditorStore_updateFullSourceConfig();
 
     const updateTimeTravel = useCallback(
-        async (formData: FullSourceJsonForms) => {
+        async (formData: FullSourceJsonForms, skipServerUpdate?: boolean) => {
             // Make sure we update the store so it stays in sync also in case we need to run this through generate button
             updateFullSourceConfig(collectionName, formData);
 
-            if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {
+            if (
+                skipServerUpdate === true ||
+                !mutateDraftSpecs ||
+                !draftId ||
+                draftSpecs.length === 0
+            ) {
                 // This means we are calling before a draft was made and that is okay. We'll use the values
                 //      from the store while generating the spec
                 return Promise.resolve();

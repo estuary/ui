@@ -329,11 +329,11 @@ export const useBindingsEditorStore_fullSourceConfigs = () => {
     >(BindingsEditorStoreNames.GENERAL, (state) => state.fullSourceConfigs);
 };
 
-export const useBindingsEditorStore_fullSourceHasErrors = () => {
+export const useBindingsEditorStore_fullSourceErrorsExist = () => {
     return useZustandStore<
         BindingsEditorState,
-        BindingsEditorState['fullSourceHasErrors']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.fullSourceHasErrors);
+        BindingsEditorState['fullSourceErrorsExist']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.fullSourceErrorsExist);
 };
 
 export const useBindingsEditorStore_prefillFullSourceConfigs = () => {

@@ -21,10 +21,10 @@ function TimeTravelForm({ collectionName }: Props) {
 
     const [localCopy, setLocalCopy] = useState(fullSource ?? {});
 
-    const startUpdating = useRef(false);
+    const skipServer = useRef(true);
 
     useEffect(() => {
-        startUpdating.current = false;
+        skipServer.current = true;
         setLocalCopy(fullSource ?? {});
         // When the collection name changes we want to basically do a mini-reset of the form state
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,12 +76,7 @@ function TimeTravelForm({ collectionName }: Props) {
                 config={defaultOptions}
                 validationMode={showValidation()}
                 onChange={async (state) => {
-                    if (!startUpdating.current) {
-                        startUpdating.current = true;
-                        return;
-                    }
-
-                    updateTimeTravel(state)
+                    updateTimeTravel(state, skipServer.current)
                         .then(() => {})
                         .catch((err) => {
                             enqueueSnackbar(
@@ -93,6 +88,11 @@ function TimeTravelForm({ collectionName }: Props) {
                                 }),
                                 { ...snackbarSettings, variant: 'error' }
                             );
+                        })
+                        .finally(() => {
+                            if (skipServer.current) {
+                                skipServer.current = false;
+                            }
                         });
                 }}
             />

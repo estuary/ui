@@ -1,3 +1,4 @@
+import { useBindingsEditorStore_fullSourceErrorsExist } from 'components/editor/Bindings/Store/hooks';
 import SectionError from 'components/shared/Entity/ValidationErrorSummary/SectionError';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -14,6 +15,9 @@ function ResourceConfigErrors() {
     const filteredResourceConfigErrors =
         useResourceConfig_resourceConfigErrors();
 
+    const fullSourceErrorsExist =
+        useBindingsEditorStore_fullSourceErrorsExist();
+
     const errorMessages = useMemo(() => {
         const response = [];
 
@@ -25,10 +29,16 @@ function ResourceConfigErrors() {
             });
         }
 
-        return response;
-    }, [filteredResourceConfigErrors, intl]);
+        if (fullSourceErrorsExist) {
+            response.push({
+                message: intl.formatMessage({
+                    id: 'entityCreate.endpointConfig.fullSourceInvalid',
+                }),
+            });
+        }
 
-    console.log('errorMessages', errorMessages);
+        return response;
+    }, [filteredResourceConfigErrors, fullSourceErrorsExist, intl]);
 
     return (
         <SectionError

@@ -14,6 +14,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { logRocketEvent } from 'services/logrocket';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
+import { checkForErrors } from 'stores/utils';
 import {
     InferSchemaPropertyForRender,
     InferSchemaResponse,
@@ -147,14 +148,12 @@ const updateReadSchema = async (
     return response;
 };
 
-const checkForErrors = (obj: any) => obj?.errors && obj.errors.length > 0;
-
 const getInitialFullSourceData = (): Pick<
     BindingsEditorState,
-    'fullSourceConfigs' | 'fullSourceHasErrors'
+    'fullSourceConfigs' | 'fullSourceErrorsExist'
 > => ({
     fullSourceConfigs: {},
-    fullSourceHasErrors: false,
+    fullSourceErrorsExist: false,
 });
 
 const getInitialFieldSelectionData = (): Pick<
@@ -337,7 +336,7 @@ const getInitialState = (
                     errors: formData.errors,
                 };
 
-                state.fullSourceHasErrors = checkForErrors(formData)
+                state.fullSourceErrorsExist = checkForErrors(formData)
                     ? true
                     : Object.values(state.fullSourceConfigs).some(
                           (fullSourceConfig) => checkForErrors(fullSourceConfig)
