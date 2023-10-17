@@ -120,7 +120,6 @@ const getInitialCollectionStateData = (): Pick<
 const getInitialMiscStoreData = (): Pick<
     ResourceConfigState,
     | 'discoveredCollections'
-    | 'previouslyDisabledCollections'
     | 'hydrated'
     | 'hydrationErrorsExist'
     | 'resourceConfig'
@@ -132,7 +131,6 @@ const getInitialMiscStoreData = (): Pick<
     | 'rediscoveryRequired'
 > => ({
     discoveredCollections: null,
-    previouslyDisabledCollections: [],
     hydrated: false,
     hydrationErrorsExist: false,
     resourceConfig: {},
@@ -219,7 +217,8 @@ const getInitialState = (
                 const collections = bindings.map((binding: any) => {
                     const [name, configVal] = getResourceConfig(binding);
                     state.resourceConfig[name] = configVal;
-
+                    state.resourceConfig[name].previouslyDisabled =
+                        configVal.disable === true;
                     return name;
                 });
 

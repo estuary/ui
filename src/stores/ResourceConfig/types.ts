@@ -7,6 +7,7 @@ import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
 export interface ResourceConfig extends JsonFormsData {
     errors: any[];
     disable?: boolean;
+    previouslyDisabled?: boolean;
 }
 
 export interface ResourceConfigDictionary {
@@ -37,8 +38,6 @@ export interface ResourceConfigState extends StoreWithHydration {
 
     discoveredCollections: string[] | null;
     setDiscoveredCollections: (value: DraftSpecQuery) => void;
-
-    previouslyDisabledCollections: string[];
 
     restrictedDiscoveredCollections: string[];
     setRestrictedDiscoveredCollections: (
