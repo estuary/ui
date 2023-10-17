@@ -4,7 +4,10 @@ import {
     getDraftSpecsBySpecTypeReduced,
 } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
-import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
+import {
+    useBindingsEditorStore_fullSourceErrorsExist,
+    useBindingsEditorStore_setIncompatibleCollections,
+} from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
@@ -70,33 +73,29 @@ function EntityCreateSave({
 
     const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
 
-    // Draft Editor Store
     const draftId = useEditorStore_id();
     const setPubId = useEditorStore_setPubId();
     const isSaving = useEditorStore_isSaving();
-
     const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
-    // Details Form Store
     const entityDescription = useDetailsForm_details_description();
-
     const setIncompatibleCollections =
         useBindingsEditorStore_setIncompatibleCollections();
 
-    // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
     const setFormState = useFormStateStore_setFormState();
     const updateFormStatus = useFormStateStore_updateStatus();
     const formActive = useFormStateStore_isActive();
 
-    // Notification Store
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
     );
 
-    // Resource Config Store
     const collections = useResourceConfig_collections();
+
+    const fullSourceErrorsExist =
+        useBindingsEditorStore_fullSourceErrorsExist();
 
     const waitForPublishToFinish = (
         logTokenVal: string,
@@ -181,74 +180,18 @@ function EntityCreateSave({
     const save = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        updateFormStatus(status);
+        // FullSource updates the draft directly and does not require a new generattion so
+        //  need to check for errors. We might want to add all the errors here just to be safe or
+        //  in the future when we directly update drafts
+        if (fullSourceErrorsExist) {
+            setFormState({
+                status: FormStatus.FAILED,
+                displayValidation: true,
+            });
+            return;
+        }
 
-        if (draftId) {
-            // If there are bound collections then we need to potentially handle clean up
-            if (collections && collections.length > 0) {
-                const draftSpecResponse = await getDraftSpecsBySpecTypeReduced(
-                    draftId,
-                    'collection'
-                );
-
-                if (draftSpecResponse.error) {
-                    return onFailure({
-                        error: {
-                            title: 'captureEdit.generate.failedErrorTitle',
-                            error: draftSpecResponse.error,
-                        },
-                    });
-                } else if (
-                    draftSpecResponse.data &&
-                    draftSpecResponse.data.length > 0
-                ) {
-                    // Now that we are making a call we can delete the
-                    //  draftId used for showing discovery errors
-                    setDiscoveredDraftId(null);
-
-                    const unboundCollections = draftSpecResponse.data
-                        .map((query) => query.catalog_name)
-                        .filter(
-                            (collection) => !collections.includes(collection)
-                        );
-
-                    const deleteDraftSpecsResponse =
-                        await deleteDraftSpecsByCatalogName(
-                            draftId,
-                            'collection',
-                            unboundCollections
-                        );
-                    if (deleteDraftSpecsResponse.error) {
-                        return onFailure({
-                            error: {
-                                title: 'captureEdit.generate.failedErrorTitle',
-                                error: deleteDraftSpecsResponse.error,
-                            },
-                        });
-                    }
-                }
-            }
-
-            const response = await createPublication(
-                draftId,
-                dryRun ?? false,
-                entityDescription
-            );
-            if (response.error) {
-                onFailure({
-                    error: {
-                        title: `${messagePrefix}.save.failure.errorTitle`,
-                        error: response.error,
-                    },
-                });
-            } else {
-                waitForPublishToFinish(response.data[0].logs_token, draftId);
-                setFormState({
-                    logToken: response.data[0].logs_token,
-                    showLogs: true,
-                });
-            }
-        } else {
+        if (!draftId) {
             logRocketEvent('Entity:Create:Missing draftId');
             onFailure({
                 error: {
@@ -258,7 +201,78 @@ function EntityCreateSave({
                     }),
                 },
             });
+
+            return;
         }
+
+        // All the validation is done and we can start saving
+        updateFormStatus(status);
+
+        // If there are bound collections then we need to potentially handle clean up
+        if (collections && collections.length > 0) {
+            const draftSpecResponse = await getDraftSpecsBySpecTypeReduced(
+                draftId,
+                'collection'
+            );
+
+            if (draftSpecResponse.error) {
+                return onFailure({
+                    error: {
+                        title: 'captureEdit.generate.failedErrorTitle',
+                        error: draftSpecResponse.error,
+                    },
+                });
+            } else if (
+                draftSpecResponse.data &&
+                draftSpecResponse.data.length > 0
+            ) {
+                // Now that we are making a call we can delete the
+                //  draftId used for showing discovery errors
+                setDiscoveredDraftId(null);
+
+                const unboundCollections = draftSpecResponse.data
+                    .map((query) => query.catalog_name)
+                    .filter((collection) => !collections.includes(collection));
+
+                const deleteDraftSpecsResponse =
+                    await deleteDraftSpecsByCatalogName(
+                        draftId,
+                        'collection',
+                        unboundCollections
+                    );
+                if (deleteDraftSpecsResponse.error) {
+                    return onFailure({
+                        error: {
+                            title: 'captureEdit.generate.failedErrorTitle',
+                            error: deleteDraftSpecsResponse.error,
+                        },
+                    });
+                }
+            }
+        }
+
+        const response = await createPublication(
+            draftId,
+            dryRun ?? false,
+            entityDescription
+        );
+
+        if (response.error) {
+            onFailure({
+                error: {
+                    title: `${messagePrefix}.save.failure.errorTitle`,
+                    error: response.error,
+                },
+            });
+
+            return;
+        }
+
+        waitForPublishToFinish(response.data[0].logs_token, draftId);
+        setFormState({
+            logToken: response.data[0].logs_token,
+            showLogs: true,
+        });
     };
 
     return (
