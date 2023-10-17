@@ -51,7 +51,7 @@ interface Props {
 //  1. inputEvents
 //    Allows you to pass in a focus function that fires when the input is focused
 //
-export const Custom_MaterialInputControl = (
+export const CustomMaterialInputControl = (
     props: Props & ControlProps & WithInput
 ) => {
     const [focused, onFocus, onBlur] = useFocus();

@@ -34,7 +34,7 @@ import { Hidden, Stack } from '@mui/material';
 
 import DateTimePickerCTA from 'components/shared/pickers/DateTimePickerCTA';
 import useDatePickerState from 'components/shared/pickers/useDatePickerState';
-import { Custom_MaterialInputControl } from './MaterialInputControl';
+import { CustomMaterialInputControl } from './MaterialInputControl';
 import { CustomMuiInputText } from './MuiInputText';
 
 // This is SUPER customized
@@ -58,7 +58,7 @@ import { CustomMuiInputText } from './MuiInputText';
 //      This requires that we remove the "Z" (that we inject) before opening the picker
 //      otherwise the picker will try to adjust the timezone again.
 
-export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
+export const CustomMaterialDateTimeControl = (props: ControlProps) => {
     const { data, id, visible, enabled, path, handleChange, label } = props;
     const { state, buttonRef, events } = useDatePickerState(
         `date-time-picker-${id}`
@@ -76,7 +76,7 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
                 }}
                 direction="row"
             >
-                <Custom_MaterialInputControl
+                <CustomMaterialInputControl
                     inputEvents={events}
                     input={CustomMuiInputText}
                     {...props}
@@ -100,4 +100,4 @@ export const materialDateTimeControlTester: RankedTester = rankWith(
     isDateTimeControl
 );
 
-export default withJsonFormsControlProps(Custom_MaterialDateTimeControl);
+export default withJsonFormsControlProps(CustomMaterialDateTimeControl);

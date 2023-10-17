@@ -35,13 +35,13 @@ import TimePickerCTA from 'components/shared/pickers/TimePickerCTA';
 import useDatePickerState from 'components/shared/pickers/useDatePickerState';
 import { useMemo, useState } from 'react';
 import { hasLength } from 'utils/misc-utils';
-import { Custom_MaterialInputControl } from './MaterialInputControl';
+import { CustomMaterialInputControl } from './MaterialInputControl';
 import { CustomMuiInputText } from './MuiInputText';
 
 // This is pretty customized
 //  Look at MaterialDateTimeControl for extra notes
 //  as this is based on that but made to support Date Picker
-export const Custom_MaterialTimeControl = (props: ControlProps) => {
+export const CustomMaterialTimeControl = (props: ControlProps) => {
     const { data, id, visible, enabled, path, handleChange, label } = props;
 
     const { state, buttonRef, events } = useDatePickerState(
@@ -88,7 +88,7 @@ export const Custom_MaterialTimeControl = (props: ControlProps) => {
                 }}
                 direction="row"
             >
-                <Custom_MaterialInputControl
+                <CustomMaterialInputControl
                     inputEvents={events}
                     input={CustomMuiInputText}
                     {...props}
@@ -111,4 +111,4 @@ export const materialTimeControlTester: RankedTester = rankWith(
     isTimeControl
 );
 
-export default withJsonFormsControlProps(Custom_MaterialTimeControl);
+export default withJsonFormsControlProps(CustomMaterialTimeControl);

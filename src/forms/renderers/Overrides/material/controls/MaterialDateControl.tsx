@@ -33,13 +33,13 @@ import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Hidden, Stack } from '@mui/material';
 import DatePickerCTA from 'components/shared/pickers/DatePickerCTA';
 import useDatePickerState from 'components/shared/pickers/useDatePickerState';
-import { Custom_MaterialInputControl } from './MaterialInputControl';
+import { CustomMaterialInputControl } from './MaterialInputControl';
 import { CustomMuiInputText } from './MuiInputText';
 
 // This is pretty customized
 //  Look at MaterialDateTimeControl for extra notes
 //  as this is based on that but made to support Date Picker
-export const Custom_MaterialDateControl = (props: ControlProps) => {
+export const CustomMaterialDateControl = (props: ControlProps) => {
     const { data, id, visible, enabled, path, handleChange, label } = props;
 
     const { state, buttonRef, events } = useDatePickerState(
@@ -58,7 +58,7 @@ export const Custom_MaterialDateControl = (props: ControlProps) => {
                 }}
                 direction="row"
             >
-                <Custom_MaterialInputControl
+                <CustomMaterialInputControl
                     inputEvents={events}
                     input={CustomMuiInputText}
                     {...props}
@@ -81,4 +81,4 @@ export const materialDateControlTester: RankedTester = rankWith(
     isDateControl
 );
 
-export default withJsonFormsControlProps(Custom_MaterialDateControl);
+export default withJsonFormsControlProps(CustomMaterialDateControl);
