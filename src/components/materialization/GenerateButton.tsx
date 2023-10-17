@@ -71,35 +71,26 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
 
     // Draft Editor Store
     const isSaving = useEditorStore_isSaving();
-
     const resetEditorState = useEditorStore_resetState();
-
     const setDraftId = useEditorStore_setId();
-
     const persistedDraftId = useEditorStore_persistedDraftId();
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     // Endpoint Config Store
     const endpointSchema = useEndpointConfigStore_endpointSchema();
-
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
-
     const serverEndpointConfigData =
         useEndpointConfigStore_encryptedEndpointConfig_data();
     const setEncryptedEndpointConfig =
         useEndpointConfigStore_setEncryptedEndpointConfig();
-
     const setPreviousEndpointConfig =
         useEndpointConfigStore_setPreviousEndpointConfig();
-
     const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
-
     const setFormState = useFormStateStore_setFormState();
-
     const updateFormStatus = useFormStateStore_updateStatus();
 
     // Resource Config Store
