@@ -147,6 +147,8 @@ const updateReadSchema = async (
     return response;
 };
 
+const checkForErrors = (obj: any) => obj?.errors && obj.errors.length > 0;
+
 const getInitialFullSourceData = (): Pick<
     BindingsEditorState,
     'fullSourceConfigs' | 'fullSourceHasErrors'
@@ -335,14 +337,11 @@ const getInitialState = (
                     errors: formData.errors,
                 };
 
-                state.fullSourceHasErrors =
-                    formData.errors && formData.errors.length > 0
-                        ? true
-                        : Object.values(state.fullSourceConfigs).some(
-                              (fullSourceConfig) =>
-                                  fullSourceConfig?.errors &&
-                                  fullSourceConfig.errors.length > 0
-                          );
+                state.fullSourceHasErrors = checkForErrors(formData)
+                    ? true
+                    : Object.values(state.fullSourceConfigs).some(
+                          (fullSourceConfig) => checkForErrors(fullSourceConfig)
+                      );
             }),
             false,
             'Updating full source config of a collection'
