@@ -1,4 +1,3 @@
-import { useBindingsEditorStore_fullSourceErrorsExist } from 'components/editor/Bindings/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEqual } from 'lodash';
@@ -23,9 +22,6 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     const resourceConfig = useResourceConfig_resourceConfig();
     const setServerUpdateRequired = useResourceConfig_setServerUpdateRequired();
 
-    const fullSourceErrorsExist =
-        useBindingsEditorStore_fullSourceErrorsExist();
-
     const collectionNameProp = useMemo(
         () => getCollectionNameProp(entityType),
         [entityType]
@@ -47,11 +43,6 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     //Pull out resource as that is moved into `data`
                     const { resource, disable } = binding;
                     const disableProp = getDisableProps(disable);
-
-                    // If there are full source errors we want to show the next button to trigger an error
-                    if (fullSourceErrorsExist) {
-                        return true;
-                    }
 
                     // Do a quick simple disabled check before comparing the entire object
                     if (
@@ -81,7 +72,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
         }
 
         return false;
-    }, [collectionNameProp, draftSpecs, fullSourceErrorsExist, resourceConfig]);
+    }, [collectionNameProp, draftSpecs, resourceConfig]);
 
     useEffect(() => {
         setServerUpdateRequired(resourceConfigUpdated);
