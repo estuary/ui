@@ -1,37 +1,29 @@
 import FullPageSpinner from 'components/fullPage/Spinner';
-import { createContext, useContext, useMemo, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { BaseComponentProps } from 'types';
 
 const OnLoadSpinnerContext = createContext<{
-    toggleWaiting: (val: boolean) => void;
-    waiting: boolean;
+    setLoading: (val: boolean) => void;
+    loading: boolean;
 }>({
-    toggleWaiting: () => {},
-    waiting: true,
+    setLoading: () => {},
+    loading: true,
 });
 
 const OnLoadSpinnerProvider = ({ children }: BaseComponentProps) => {
-    const [waiting, setWaiting] = useState(false);
-
-    const toggler = useMemo(() => {
-        return (val: boolean) => {
-            setWaiting(val);
-        };
-    }, []);
+    const [loading, setLoading] = useState(false);
 
     return (
-        <OnLoadSpinnerContext.Provider
-            value={{ toggleWaiting: toggler, waiting }}
-        >
-            {waiting ? <FullPageSpinner /> : null}
+        <OnLoadSpinnerContext.Provider value={{ loading, setLoading }}>
+            {loading ? <FullPageSpinner /> : null}
 
             {children}
         </OnLoadSpinnerContext.Provider>
     );
 };
 
-const useGuardWaiting = () => {
+const useOnLoadSpinner = () => {
     return useContext(OnLoadSpinnerContext);
 };
 
-export { OnLoadSpinnerProvider, useGuardWaiting };
+export { OnLoadSpinnerProvider, useOnLoadSpinner };

@@ -1,5 +1,4 @@
 import AppGuards from 'app/guards';
-import OnLoadSpinnerHide from 'app/guards/WaitingComplete';
 import ConfirmationModalContextProvider from 'context/Confirmation';
 import { ZustandProvider } from 'context/Zustand/provider';
 import { BaseComponentProps } from 'types';
@@ -25,9 +24,7 @@ export function AuthenticatedOnlyContext({ children }: BaseComponentProps) {
                                     <AuthEvents>
                                         <PreFetchDataProvider>
                                             <ConfirmationModalContextProvider>
-                                                <OnLoadSpinnerHide>
-                                                    {children}
-                                                </OnLoadSpinnerHide>
+                                                {children}
                                             </ConfirmationModalContextProvider>
                                         </PreFetchDataProvider>
                                     </AuthEvents>

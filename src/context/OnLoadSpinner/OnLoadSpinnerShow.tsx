@@ -1,12 +1,12 @@
 import { useEffectOnce } from 'react-use';
 import { BaseComponentProps } from 'types';
-import { useGuardWaiting } from './GuardWaiting';
+import { useOnLoadSpinner } from './OnLoadSpinnerContext';
 
 function OnLoadSpinnerShow({ children }: BaseComponentProps) {
-    const { toggleWaiting } = useGuardWaiting();
+    const { setLoading } = useOnLoadSpinner();
 
     useEffectOnce(() => {
-        toggleWaiting(true);
+        setLoading(true);
     });
 
     return (
