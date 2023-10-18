@@ -41,6 +41,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     const { resource, disable } = binding;
                     const disableProp = getDisableProps(disable);
 
+                    // Make sure we remove the local only props before comparing
                     const { previouslyDisabled, ...restOfConfig } =
                         resourceConfig[collectionName];
 
