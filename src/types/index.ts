@@ -351,8 +351,8 @@ export interface AutoDiscoverySettings {
 export interface NotificationMessage {
     id: string;
     detail: string;
-    created_at: string;
-    updated_at: string;
+    created_at: Date;
+    updated_at: Date;
     title: string;
     message: string;
 }
@@ -360,8 +360,8 @@ export interface NotificationMessage {
 export interface NotificationPreference {
     id: string;
     detail: string;
-    created_at: string;
-    updated_at: string;
+    created_at: Date;
+    updated_at: Date;
     prefix: string;
     user_id: string;
 }
@@ -373,9 +373,9 @@ export interface NotificationPreferenceExt extends NotificationPreference {
 export interface NotificationFullQuery {
     id: string;
     detail: string;
-    created_at: string;
-    updated_at: string;
-    method_id: string;
+    created_at: Date;
+    updated_at: Date;
+    preference_id: string;
     message_id: string;
     acknowledged: boolean;
     evaluation_interval: string | null;

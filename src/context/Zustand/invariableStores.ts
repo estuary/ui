@@ -34,6 +34,7 @@ import { createSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 import { createSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
 import { createBillingTableStore } from 'stores/Tables/Billing/Store';
+import { createPrefixAlertTableStore } from 'stores/Tables/PrefixAlerts/Store';
 import { createSelectableTableStore } from 'stores/Tables/Store';
 import { createTopBarStore } from 'stores/TopBar/Store';
 import { createTransformationCreateStore } from 'stores/TransformationCreate/Store';
@@ -135,7 +136,7 @@ const invariableStores = {
     [SelectTableStoreNames.MATERIALIZATION]: createSelectableTableStore(
         SelectTableStoreNames.MATERIALIZATION
     ),
-    [SelectTableStoreNames.PREFIX_ALERTS]: createSelectableTableStore(
+    [SelectTableStoreNames.PREFIX_ALERTS]: createPrefixAlertTableStore(
         SelectTableStoreNames.PREFIX_ALERTS
     ),
 

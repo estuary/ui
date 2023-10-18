@@ -1,5 +1,4 @@
 import { TableCell, TableRow, useTheme } from '@mui/material';
-import { NotificationPreferencesTableQuery } from 'api/alerts';
 import ChipListCell from 'components/tables/cells/ChipList';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
@@ -10,13 +9,17 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
+import {
+    PrefixPreference,
+    PrefixPreferenceDictionary,
+} from 'utils/notification-utils';
 
 interface RowsProps {
-    data: NotificationPreferencesTableQuery[];
+    data: PrefixPreferenceDictionary;
 }
 
 interface RowProps {
-    row: NotificationPreferencesTableQuery;
+    row: [string, PrefixPreference];
     isSelected: boolean;
     setRow: any;
 }
@@ -30,23 +33,26 @@ function Row({ row, isSelected, setRow }: RowProps) {
         },
     };
 
+    const prefix = row[0];
+    const data = row[1];
+
     return (
         <TableRow
             hover
-            onClick={() => handlers.clickRow(row.id)}
+            onClick={() => handlers.clickRow(prefix)}
             selected={isSelected}
             sx={getEntityTableRowSx(theme)}
         >
-            <RowSelect isSelected={isSelected} name={row.prefix} />
+            <RowSelect isSelected={isSelected} name={prefix} />
 
-            <TableCell>{row.prefix}</TableCell>
+            <TableCell>{prefix}</TableCell>
 
             <ChipListCell
-                values={row.verified_email ? [row.verified_email] : []}
+                values={data.userPreferences.map(({ email }) => email)}
                 stripPath={false}
             />
 
-            <TimeStamp time={row.updated_at} enableRelative />
+            <TimeStamp time={data.lastUpdated} enableRelative />
         </TableRow>
     );
 }
@@ -67,11 +73,11 @@ function Rows({ data }: RowsProps) {
 
     return (
         <>
-            {data.map((row) => (
+            {Object.entries(data).map((row) => (
                 <Row
-                    key={row.id}
+                    key={row[0]}
                     row={row}
-                    isSelected={selected.has(row.id)}
+                    isSelected={selected.has(row[0])}
                     setRow={setRow}
                 />
             ))}

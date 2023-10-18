@@ -32,20 +32,20 @@ const deleteNotificationPreference = (preferenceId: string, userId: string) => {
 };
 
 interface CreateNotificationMatchData {
-    method_id: string;
+    preference_id: string;
     message_id: string;
     evaluation_interval?: string;
     live_spec_id?: string;
 }
 
 const createNotification = (
-    method_id: string,
+    preference_id: string,
     message_id: string,
     evaluation_interval?: string,
     live_spec_id?: string
 ) => {
     let matchData: CreateNotificationMatchData = {
-        method_id,
+        preference_id,
         message_id,
     };
 
@@ -94,7 +94,11 @@ export type NotificationPreferencesTableQuery = Pick<
 
 export type NotificationQuery = Pick<
     NotificationFullQuery,
-    'id' | 'method_id' | 'message_id' | 'live_spec_id' | 'evaluation_interval'
+    | 'id'
+    | 'preference_id'
+    | 'message_id'
+    | 'live_spec_id'
+    | 'evaluation_interval'
 >;
 
 interface NotificationMessageOptions {
@@ -135,7 +139,7 @@ const getNotificationPreference = (
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<NotificationPreferenceExt>(TABLES.NOTIFICATION_PREFERENCES)
+        .from<NotificationPreferenceExt>(TABLES.NOTIFICATION_PREFERENCES_EXT)
         .select(
             `    
                 id,
@@ -165,8 +169,10 @@ const getTaskNotification = async (
 ) => {
     const data = await supabaseClient
         .from<NotificationQuery>(TABLES.NOTIFICATIONS)
-        .select(`id, method_id, message_id, live_spec_id, evaluation_interval`)
-        .eq('method_id', preferenceId)
+        .select(
+            `id, preference_id, message_id, live_spec_id, evaluation_interval`
+        )
+        .eq('preference_id', preferenceId)
         .eq('message_id', messageId)
         .eq('live_spec_id', liveSpecId)
         .then(handleSuccess<NotificationQuery[]>, handleFailure);

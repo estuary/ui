@@ -1,20 +1,33 @@
 import { PostgrestError } from '@supabase/postgrest-js';
+import { isFinite } from 'lodash';
 import { supabaseClient } from 'services/supabase';
+
+// interface BaseTableColumns {
+//     id: string;
+//     detail: string | null;
+//     created_at: Date;
+//     updated_at: Date;
+// }
+
+// interface NotificationPreferenceExt extends BaseTableColumns {
+//     prefix: string;
+//     subscribed_by: string;
+//     user_id: string | null;
+//     verified_email: string | null;
+// }
 
 interface NotificationQuery {
     notification_id: string;
-    notification_interval: string;
-    checkpoint_start: string;
-    checkpoint_end: string;
-    active_condition: boolean;
-    subscribed: boolean;
-    alert_title: string;
-    alert_message: string;
-    verified_emails: string[];
+    evaluation_interval: string;
+    acknowledged: boolean;
+    notification_title: string;
+    notification_message: string;
+    classification: string | null;
+    preference_id: string;
+    verified_email: string;
     live_spec_id: string;
     catalog_name: string;
     spec_type: string;
-    user_email: string;
 }
 
 interface CatalogStatsQuery {
@@ -42,6 +55,24 @@ const returnPostgresError = (error: PostgrestError) => {
     console.log(error);
 };
 
+export const handleSuccess = <T>(response: any) => {
+    return response.error
+        ? {
+              data: null,
+              error: response.error,
+          }
+        : {
+              data: response.data as T,
+          };
+};
+
+export const handleFailure = (error: any) => {
+    return {
+        data: null,
+        error,
+    };
+};
+
 const getDataProcessedInInterval = (
     startStat: CatalogStatsQuery,
     endStat: CatalogStatsQuery,
@@ -67,12 +98,88 @@ const getDataProcessedInInterval = (
     }
 };
 
+const getAlertEmailConfigurations = (
+    notifications: NotificationQuery[],
+    catalogStats: CatalogStatsQuery[]
+): EmailConfig[] => {
+    return notifications
+        .filter(({ evaluation_interval, catalog_name, spec_type }) => {
+            const taskStats = catalogStats.filter(
+                (stat) => stat.catalog_name === catalog_name
+            );
+
+            const timeOffset = evaluation_interval.split(':');
+            const hourOffset = Number(timeOffset[0]);
+
+            if (isFinite(hourOffset)) {
+                const endStat = taskStats[0];
+
+                const intervalStart = new Date(endStat.ts);
+                const intervalHours = intervalStart.getUTCHours() - hourOffset;
+
+                intervalStart.setUTCHours(intervalHours);
+
+                console.log('interval start', intervalStart.toUTCString());
+
+                const startStat = taskStats.find((stat) => {
+                    const statDate = new Date(stat.ts);
+
+                    return (
+                        statDate.toUTCString() === intervalStart.toUTCString()
+                    );
+                });
+
+                console.log('start stat', startStat);
+                console.log('end stat', endStat);
+
+                if (startStat && endStat) {
+                    const dataProcessed = getDataProcessedInInterval(
+                        startStat,
+                        endStat,
+                        spec_type
+                    );
+
+                    return !Boolean(dataProcessed);
+                }
+            }
+
+            return false;
+        })
+        .map(
+            ({
+                notification_title,
+                notification_message,
+                catalog_name,
+                notification_id,
+                evaluation_interval,
+                spec_type,
+                verified_email,
+            }) => {
+                const subject = notification_title
+                    .replaceAll('{spec_type}', spec_type)
+                    .replaceAll('{catalog_name}', catalog_name);
+
+                const html = notification_message
+                    .replaceAll('{spec_type}', spec_type)
+                    .replaceAll('{catalog_name}', catalog_name)
+                    .replaceAll('{notification_interval}', evaluation_interval);
+
+                return {
+                    notification_id,
+                    emails: [verified_email],
+                    subject,
+                    html,
+                };
+            }
+        );
+};
+
 export const serve = async (_request: Request): Promise<Response> => {
     const { data: notifications, error: notificationError } =
         await supabaseClient
-            .from<NotificationQuery>('alerts_ext')
+            .from<NotificationQuery>('notifications_ext')
             .select('*')
-            .eq('subscribed', true);
+            .eq('classification', 'data-not-processed-in-interval');
 
     if (notificationError !== null) {
         returnPostgresError(notificationError);
@@ -99,23 +206,26 @@ export const serve = async (_request: Request): Promise<Response> => {
     startDate.setUTCHours(0);
     startDate.setUTCDate(yesterday);
 
-    const catalogNames = notifications.map(({ catalog_name }) => catalog_name);
+    const catalogNames = notifications
+        .filter(({ acknowledged }) => !acknowledged)
+        .map(({ catalog_name }) => catalog_name);
 
     const { data: catalogStats, error: catalogStatsError } =
         await supabaseClient
             .from<CatalogStatsQuery>('catalog_stats')
             .select(
                 `catalog_name,
-                 grain,
-                 ts,
-                 bytes_written_by_me,
-                 bytes_written_to_me,
-                 bytes_read_by_me,
-                 bytes_read_from_me`
+             grain,
+             ts,
+             bytes_written_by_me,
+             bytes_written_to_me,
+             bytes_read_by_me,
+             bytes_read_from_me`
             )
             .in('catalog_name', catalogNames)
             .eq('grain', 'hourly')
-            .gte('ts', startDate.toUTCString());
+            .gte('ts', startDate.toUTCString())
+            .order('ts', { ascending: false });
 
     if (catalogStatsError !== null) {
         returnPostgresError(catalogStatsError);
@@ -141,87 +251,76 @@ export const serve = async (_request: Request): Promise<Response> => {
     console.log('CATALOG NAMES', catalogNames);
     console.log('CATALOG STATS', catalogStats);
 
-    const alertEmailConfig: EmailConfig[] = notifications
-        .filter(
-            ({
-                active_condition,
-                catalog_name,
-                checkpoint_end,
-                checkpoint_start,
-                spec_type,
-            }) => {
-                const startStat = catalogStats.find(
-                    (stat) =>
-                        stat.catalog_name === catalog_name &&
-                        stat.ts === checkpoint_start
-                );
+    const alertEmailConfigs: EmailConfig[] = getAlertEmailConfigurations(
+        notifications,
+        catalogStats
+    );
 
-                const endStat = catalogStats.find(
-                    (stat) =>
-                        stat.catalog_name === catalog_name &&
-                        stat.ts === checkpoint_end
-                );
+    console.log('ALERTS EMAIL CONFIG', alertEmailConfigs);
 
-                if (startStat && endStat) {
-                    return (
-                        !active_condition &&
-                        getDataProcessedInInterval(
-                            startStat,
-                            endStat,
-                            spec_type
-                        )
-                    );
+    if (alertEmailConfigs.length === 0) {
+        console.log('no alert emails');
+        return new Response(null, {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200,
+        });
+    }
+
+    const alertEmailSent: string[] = [];
+
+    const alertPromises = alertEmailConfigs.map(
+        ({ notification_id, emails, subject, html }) =>
+            fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                    ...corsHeaders,
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${RESEND_API_KEY}`,
+                },
+                body: JSON.stringify({
+                    from: 'Resend Test <onboarding@resend.dev>',
+                    to: ['tucker.kiahna@gmail.com'],
+                    subject,
+                    html,
+                }),
+            }).then(
+                (response) => {
+                    console.log('email response', response);
+                    if (response.ok) {
+                        console.log('email sent successfully');
+                        alertEmailSent.push(notification_id);
+                    }
+                },
+                () => {
+                    console.log('email error');
                 }
+            )
+    );
 
-                return false;
-            }
-        )
-        .map(
-            ({
-                alert_title,
-                alert_message,
-                catalog_name,
-                notification_id,
-                notification_interval,
-                spec_type,
-                user_email,
-            }) => {
-                const subject = alert_title
-                    .replaceAll('{spec_type}', spec_type)
-                    .replaceAll('{catalog_name}', catalog_name);
+    await Promise.all(alertPromises);
 
-                const html = alert_message
-                    .replaceAll('{spec_type}', spec_type)
-                    .replaceAll('{catalog_name}', catalog_name)
-                    .replaceAll(
-                        '{notification_interval}',
-                        notification_interval
-                    );
+    if (alertEmailSent.length === 0) {
+        console.log('no confirmation flag changes needed');
 
-                return { notification_id, emails: [user_email], subject, html };
-            }
-        );
+        return new Response(null, {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200,
+        });
+    }
 
-    console.log('ALERTS EMAIL CONFIG', alertEmailConfig);
+    const acknowledgementPromises = alertEmailSent.map((notificationId) =>
+        supabaseClient
+            .from('notifications')
+            .update({ acknowledged: true })
+            .match({ id: notificationId })
+            .then(handleSuccess, handleFailure)
+    );
 
-    const res = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${RESEND_API_KEY}`,
-        },
-        body: JSON.stringify({
-            from: 'Acme <onboarding@resend.dev>',
-            to: ['delivered@resend.dev'],
-            subject: 'hello world',
-            html: '<strong>it works!</strong>',
-        }),
-    });
+    const res = await Promise.all(acknowledgementPromises);
 
-    const data = await res.json();
+    console.log('final', res);
 
-    return new Response(JSON.stringify(data), {
+    return new Response(null, {
         status: 200,
         headers: {
             'Content-Type': 'application/json',

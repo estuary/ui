@@ -1,4 +1,3 @@
-import { Box } from '@mui/material';
 import { getNotificationPreference } from 'api/alerts';
 import EntityTable from 'components/tables/EntityTable';
 import Rows from 'components/tables/PrefixAlerts/Rows';
@@ -6,8 +5,7 @@ import RowSelector from 'components/tables/RowActions/PrefixAlerts/RowSelector';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
-import TableHydrator from 'stores/Tables/Hydrator';
-import StatsHydrator from 'stores/Tables/StatsHydrator';
+import PrefixAlertTableHydrator from 'stores/Tables/PrefixAlerts/Hydrator';
 import { TableColumns } from 'types';
 
 const columns: TableColumns[] = [
@@ -55,47 +53,36 @@ function PrefixAlertTable() {
     }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     return (
-        <Box>
-            <TableHydrator
-                query={query}
+        <PrefixAlertTableHydrator query={query}>
+            <EntityTable
+                noExistingDataContentIds={{
+                    header: 'admin.alerts.table.noContent.header',
+                    message: 'admin.alerts.table.noContent.message',
+                    disableDoclink: true,
+                }}
+                columns={columns}
+                renderTableRows={(data) => <Rows data={data} />}
+                rowsPerPage={rowsPerPage}
+                setRowsPerPage={setRowsPerPage}
+                pagination={pagination}
+                setPagination={setPagination}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                sortDirection={sortDirection}
+                setSortDirection={setSortDirection}
+                columnToSort={columnToSort}
+                setColumnToSort={setColumnToSort}
+                header={null}
+                filterLabel="admin.alerts.table.filterLabel"
                 selectableTableStoreName={selectableTableStoreName}
-            >
-                <StatsHydrator
-                    selectableTableStoreName={selectableTableStoreName}
-                >
-                    <EntityTable
-                        noExistingDataContentIds={{
-                            header: 'admin.alerts.table.noContent.header',
-                            message: 'admin.alerts.table.noContent.message',
-                            disableDoclink: true,
-                        }}
-                        columns={columns}
-                        renderTableRows={(data) => <Rows data={data} />}
-                        rowsPerPage={rowsPerPage}
-                        setRowsPerPage={setRowsPerPage}
-                        pagination={pagination}
-                        setPagination={setPagination}
-                        searchQuery={searchQuery}
-                        setSearchQuery={setSearchQuery}
-                        sortDirection={sortDirection}
-                        setSortDirection={setSortDirection}
-                        columnToSort={columnToSort}
-                        setColumnToSort={setColumnToSort}
-                        header={null}
-                        filterLabel="admin.alerts.table.filterLabel"
+                showToolbar
+                toolbar={
+                    <RowSelector
                         selectableTableStoreName={selectableTableStoreName}
-                        showToolbar
-                        toolbar={
-                            <RowSelector
-                                selectableTableStoreName={
-                                    selectableTableStoreName
-                                }
-                            />
-                        }
                     />
-                </StatsHydrator>
-            </TableHydrator>
-        </Box>
+                }
+            />
+        </PrefixAlertTableHydrator>
     );
 }
 
