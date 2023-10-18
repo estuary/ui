@@ -372,12 +372,11 @@ export const jobStatusPoller = (
             (error: any) => {
                 LogRocket.log('Poller : error : ', error);
 
-                const tryOnceMore =
+                if (
                     attempts === 0 &&
                     typeof error?.message === 'string' &&
-                    shouldTryAfterFailure(error.message);
-
-                if (tryOnceMore) {
+                    shouldTryAfterFailure(error.message)
+                ) {
                     LogRocket.log('Poller : error : trying again');
                     attempts += 1;
 
