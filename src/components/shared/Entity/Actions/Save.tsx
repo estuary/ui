@@ -262,13 +262,15 @@ function EntityCreateSave({
                     error: response.error,
                 },
             });
-        } else {
-            waitForPublishToFinish(response.data[0].id);
-            setFormState({
-                logToken: response.data[0].logs_token,
-                showLogs: true,
-            });
+
+            return;
         }
+
+        waitForPublishToFinish(response.data[0].id);
+        setFormState({
+            logToken: response.data[0].logs_token,
+            showLogs: true,
+        });
     };
 
     return (
