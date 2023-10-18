@@ -77,6 +77,7 @@ export interface ResourceConfigState extends StoreWithHydration {
 
     collectionsRequiringRediscovery: string[];
     rediscoveryRequired: boolean;
+    resetRediscoverySettings: () => void;
 
     evaluateDiscoveredCollections: (
         response: CallSupabaseResponse<any>

@@ -336,13 +336,23 @@ const getInitialState = (
             produce((state: ResourceConfigState) => {
                 populateCollections(state, []);
 
-                state.rediscoveryRequired = false;
-                state.collectionsRequiringRediscovery = [];
                 state.restrictedDiscoveredCollections = [];
                 state.resourceConfig = {};
+                state.resetRediscoverySettings();
             }),
             false,
             'Resource Config and Collections Reset'
+        );
+    },
+
+    resetRediscoverySettings: () => {
+        set(
+            produce((state: ResourceConfigState) => {
+                state.rediscoveryRequired = false;
+                state.collectionsRequiringRediscovery = [];
+            }),
+            false,
+            'Rediscovery Related Settings Reset'
         );
     },
 

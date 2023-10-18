@@ -4,19 +4,17 @@ import {
     getDraftSpecsBySpecTypeReduced,
 } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
-import useDiscoverCapture from 'components/capture/useDiscoverCapture';
 import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
+    useEditorStore_isSaving,
     useEditorStore_queryResponse_mutate,
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setPubId,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import { useEntityType } from 'context/EntityContext';
 import { useClient } from 'hooks/supabase-swr';
-import { noop } from 'lodash';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import {
@@ -27,6 +25,7 @@ import {
 } from 'services/supabase';
 import { useDetailsForm_details_description } from 'stores/DetailsForm/hooks';
 import {
+    useFormStateStore_isActive,
     useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
@@ -35,10 +34,7 @@ import { FormStatus } from 'stores/FormState/types';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
-import {
-    useResourceConfig_collections,
-    useResourceConfig_collectionsRequiringRediscovery,
-} from 'stores/ResourceConfig/hooks';
+import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -71,19 +67,13 @@ function EntityCreateSave({
     const intl = useIntl();
     const supabaseClient = useClient();
     const { closeLogs } = useEntityWorkflowHelpers();
-    const entityType = useEntityType();
 
     const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
-
-    const { generateCatalog, isSaving, formActive } = useDiscoverCapture(
-        entityType,
-        noop,
-        { initiateRediscovery: true }
-    );
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
     const setPubId = useEditorStore_setPubId();
+    const isSaving = useEditorStore_isSaving();
 
     const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
@@ -96,14 +86,13 @@ function EntityCreateSave({
     const messagePrefix = useFormStateStore_messagePrefix();
     const setFormState = useFormStateStore_setFormState();
     const updateFormStatus = useFormStateStore_updateStatus();
+    const formActive = useFormStateStore_isActive();
 
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
     );
 
     const collections = useResourceConfig_collections();
-    const collectionsRequiringRediscovery =
-        useResourceConfig_collectionsRequiringRediscovery();
 
     const waitForPublishToFinish = (
         logTokenVal: string,
@@ -191,16 +180,6 @@ function EntityCreateSave({
         updateFormStatus(status);
 
         if (draftId) {
-            if (
-                entityType === 'capture' &&
-                hasLength(collectionsRequiringRediscovery)
-            ) {
-                console.log('Need to run a discover before we save');
-                const foo = await generateCatalog(event);
-
-                console.log('foo', foo);
-            }
-
             // If there are bound collections then we need to potentially handle clean up
             if (collections && collections.length > 0) {
                 const draftSpecResponse = await getDraftSpecsBySpecTypeReduced(

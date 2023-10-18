@@ -280,21 +280,21 @@ export const useResourceConfig_setServerUpdateRequired = () => {
     );
 };
 
-export const useResourceConfig_collectionsRequiringRediscovery = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['collectionsRequiringRediscovery']
-    >(
-        ResourceConfigStoreNames.GENERAL,
-        (state) => state.collectionsRequiringRediscovery
-    );
-};
-
 export const useResourceConfig_rediscoveryRequired = () => {
     return useZustandStore<
         ResourceConfigState,
         ResourceConfigState['rediscoveryRequired']
     >(ResourceConfigStoreNames.GENERAL, (state) => state.rediscoveryRequired);
+};
+
+export const useResourceConfig_resetRediscoverySettings = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resetRediscoverySettings']
+    >(
+        ResourceConfigStoreNames.GENERAL,
+        (state) => state.resetRediscoverySettings
+    );
 };
 
 export const useResourceConfig_evaluateDiscoveredCollections = () => {
