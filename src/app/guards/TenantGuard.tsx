@@ -1,5 +1,4 @@
 import FullPageError from 'components/fullPage/Error';
-import FullPageSpinner from 'components/fullPage/Spinner';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -32,7 +31,7 @@ function TenantGuard({ children }: BaseComponentProps) {
     });
 
     if (checkingGrants) {
-        return <FullPageSpinner />;
+        return null;
     }
 
     if (error) {

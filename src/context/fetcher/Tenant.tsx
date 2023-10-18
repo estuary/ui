@@ -1,4 +1,3 @@
-import FullPageSpinner from 'components/fullPage/Spinner';
 import useTenants from 'hooks/useTenants';
 import { createContext, useContext } from 'react';
 import { BaseComponentProps, Tenants } from 'types';
@@ -8,7 +7,7 @@ const TenantContextProvider = ({ children }: BaseComponentProps) => {
     const { tenants, isValidating } = useTenants();
 
     if (isValidating) {
-        return <FullPageSpinner />;
+        return null;
     }
 
     return (

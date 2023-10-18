@@ -1,5 +1,4 @@
 import FullPageError from 'components/fullPage/Error';
-import FullPageSpinner from 'components/fullPage/Spinner';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
 import {
@@ -17,7 +16,7 @@ export const EntitiesHydrator = ({ children }: BaseComponentProps) => {
     const hydrationErrors = useEntitiesStore_hydrationErrors();
 
     if (!hydrated) {
-        return <FullPageSpinner />;
+        return null;
     }
 
     if (hydrationErrors) {

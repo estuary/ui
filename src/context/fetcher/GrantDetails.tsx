@@ -1,4 +1,3 @@
-import FullPageSpinner from 'components/fullPage/Spinner';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
 import { createContext, useContext } from 'react';
 import { TABLES } from 'services/supabase';
@@ -25,7 +24,7 @@ const GrantDetailsContextProvider = ({ children }: BaseComponentProps) => {
     const value = grants?.data ? grants.data : null;
 
     if (isValidating || value === null) {
-        return <FullPageSpinner />;
+        return null;
     }
 
     return (

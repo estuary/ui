@@ -1,5 +1,4 @@
 import FullPageError from 'components/fullPage/Error';
-import FullPageSpinner from 'components/fullPage/Spinner';
 import ClickToAccept from 'directives/ClickToAccept';
 import FullPageWrapper from 'directives/FullPageWrapper';
 import { FormattedMessage } from 'react-intl';
@@ -13,7 +12,7 @@ function LegalGuard({ children }: BaseComponentProps) {
         useDirectiveGuard(SELECTED_DIRECTIVE);
 
     if (loading || status === null) {
-        return <FullPageSpinner />;
+        return null;
     }
 
     if (error) {

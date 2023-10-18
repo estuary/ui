@@ -2,6 +2,7 @@ import { Divider, Stack, Typography } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import Error from 'components/shared/Error';
 import { ErrorDetails } from 'components/shared/Error/types';
+import OnLoadSpinnerHide from 'context/OnLoadSpinner/OnLoadSpinnerHide';
 import FullPageWrapper from 'directives/FullPageWrapper';
 import { ReactElement } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -19,25 +20,27 @@ function FullPageError({ error, message, title }: Props) {
     });
 
     return (
-        <FullPageWrapper>
-            <Stack spacing={2}>
-                <Typography variant="h5">
-                    {title ? (
-                        title
-                    ) : (
-                        <FormattedMessage id="common.failedFetch" />
-                    )}
-                </Typography>
-                {message ? (
-                    <Typography variant="subtitle1">{message}</Typography>
-                ) : null}
-                <Typography variant="subtitle1">
-                    <MessageWithLink messageID="fullPage.instructions" />
-                </Typography>
-                <Divider />
-                <Error error={error} condensed />
-            </Stack>
-        </FullPageWrapper>
+        <OnLoadSpinnerHide>
+            <FullPageWrapper>
+                <Stack spacing={2}>
+                    <Typography variant="h5">
+                        {title ? (
+                            title
+                        ) : (
+                            <FormattedMessage id="common.failedFetch" />
+                        )}
+                    </Typography>
+                    {message ? (
+                        <Typography variant="subtitle1">{message}</Typography>
+                    ) : null}
+                    <Typography variant="subtitle1">
+                        <MessageWithLink messageID="fullPage.instructions" />
+                    </Typography>
+                    <Divider />
+                    <Error error={error} condensed />
+                </Stack>
+            </FullPageWrapper>
+        </OnLoadSpinnerHide>
     );
 }
 

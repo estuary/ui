@@ -1,10 +1,12 @@
 import AppGuards from 'app/guards';
-import { GuardWaitingProvider } from 'app/guards/GuardWaiting';
+import OnLoadSpinnerHide from 'app/guards/WaitingComplete';
 import ConfirmationModalContextProvider from 'context/Confirmation';
 import { ZustandProvider } from 'context/Zustand/provider';
 import { BaseComponentProps } from 'types';
 import AuthEvents from './AuthEvents';
 import PreFetchDataProvider from './fetcher';
+import { OnLoadSpinnerProvider } from './OnLoadSpinner/OnLoadSpinnerContext';
+import OnLoadSpinnerShow from './OnLoadSpinner/OnLoadSpinnerShow';
 import Osano from './Osano';
 import QueryParamProvider from './QueryParam';
 import RequireAuth from './Router/RequireAuth';
@@ -14,23 +16,27 @@ import RequireAuth from './Router/RequireAuth';
 export function AuthenticatedOnlyContext({ children }: BaseComponentProps) {
     return (
         <RequireAuth>
-            <Osano>
-                <QueryParamProvider>
-                    <ZustandProvider>
-                        <GuardWaitingProvider>
-                            <AppGuards>
-                                <AuthEvents>
-                                    <PreFetchDataProvider>
-                                        <ConfirmationModalContextProvider>
-                                            {children}
-                                        </ConfirmationModalContextProvider>
-                                    </PreFetchDataProvider>
-                                </AuthEvents>
-                            </AppGuards>
-                        </GuardWaitingProvider>
-                    </ZustandProvider>
-                </QueryParamProvider>
-            </Osano>
+            <OnLoadSpinnerProvider>
+                <Osano>
+                    <QueryParamProvider>
+                        <ZustandProvider>
+                            <OnLoadSpinnerShow>
+                                <AppGuards>
+                                    <AuthEvents>
+                                        <PreFetchDataProvider>
+                                            <ConfirmationModalContextProvider>
+                                                <OnLoadSpinnerHide>
+                                                    {children}
+                                                </OnLoadSpinnerHide>
+                                            </ConfirmationModalContextProvider>
+                                        </PreFetchDataProvider>
+                                    </AuthEvents>
+                                </AppGuards>
+                            </OnLoadSpinnerShow>
+                        </ZustandProvider>
+                    </QueryParamProvider>
+                </Osano>
+            </OnLoadSpinnerProvider>
         </RequireAuth>
     );
 }
