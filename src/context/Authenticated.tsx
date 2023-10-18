@@ -1,4 +1,5 @@
 import AppGuards from 'app/guards';
+import { GuardWaitingProvider } from 'app/guards/GuardWaiting';
 import ConfirmationModalContextProvider from 'context/Confirmation';
 import { ZustandProvider } from 'context/Zustand/provider';
 import { BaseComponentProps } from 'types';
@@ -16,15 +17,17 @@ export function AuthenticatedOnlyContext({ children }: BaseComponentProps) {
             <Osano>
                 <QueryParamProvider>
                     <ZustandProvider>
-                        <AppGuards>
-                            <AuthEvents>
-                                <PreFetchDataProvider>
-                                    <ConfirmationModalContextProvider>
-                                        {children}
-                                    </ConfirmationModalContextProvider>
-                                </PreFetchDataProvider>
-                            </AuthEvents>
-                        </AppGuards>
+                        <GuardWaitingProvider>
+                            <AppGuards>
+                                <AuthEvents>
+                                    <PreFetchDataProvider>
+                                        <ConfirmationModalContextProvider>
+                                            {children}
+                                        </ConfirmationModalContextProvider>
+                                    </PreFetchDataProvider>
+                                </AuthEvents>
+                            </AppGuards>
+                        </GuardWaitingProvider>
                     </ZustandProvider>
                 </QueryParamProvider>
             </Osano>

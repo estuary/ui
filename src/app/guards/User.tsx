@@ -1,10 +1,8 @@
 import { Auth } from '@supabase/ui';
 import { unauthenticatedRoutes } from 'app/routes';
-import FullPageSpinner from 'components/fullPage/Spinner';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import * as React from 'react';
 import { useEffect } from 'react';
 import 'react-reflex/styles.css';
 import { Navigate } from 'react-router';
@@ -23,7 +21,8 @@ function UserGuard({ children }: BaseComponentProps) {
     }, [user]);
 
     return (
-        <React.Suspense fallback={<FullPageSpinner />}>
+        // eslint-disable-next-line react/jsx-no-useless-fragment
+        <>
             {user ? (
                 children
             ) : (
@@ -36,7 +35,7 @@ function UserGuard({ children }: BaseComponentProps) {
                     replace
                 />
             )}
-        </React.Suspense>
+        </>
     );
 }
 
