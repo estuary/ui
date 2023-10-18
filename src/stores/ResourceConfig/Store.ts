@@ -24,6 +24,7 @@ import {
 } from 'stores/extensions/Hydration';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
 import { create, StoreApi } from 'zustand';
@@ -129,6 +130,7 @@ const getInitialMiscStoreData = (): Pick<
     | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
     | 'collectionsRequiringRediscovery'
+    | 'rediscoveryRequired'
 > => ({
     discoveredCollections: null,
     hydrated: false,
@@ -140,6 +142,7 @@ const getInitialMiscStoreData = (): Pick<
     restrictedDiscoveredCollections: [],
     serverUpdateRequired: false,
     collectionsRequiringRediscovery: [],
+    rediscoveryRequired: false,
 });
 
 const getInitialStateData = () => ({
@@ -218,8 +221,9 @@ const getInitialState = (
                     // Keep in sync with evaluateDiscoveredCollections
                     const [name, configVal] = getResourceConfig(binding);
                     state.resourceConfig[name] = configVal;
-                    state.resourceConfig[name].previouslyDisabled =
-                        configVal.disable === true;
+                    if (configVal.disable === true) {
+                        state.resourceConfig[name].previouslyDisabled = true;
+                    }
                     return name;
                 });
 
@@ -332,8 +336,9 @@ const getInitialState = (
             produce((state: ResourceConfigState) => {
                 populateCollections(state, []);
 
+                state.rediscoveryRequired = false;
+                state.collectionsRequiringRediscovery = [];
                 state.restrictedDiscoveredCollections = [];
-
                 state.resourceConfig = {};
             }),
             false,
@@ -535,12 +540,17 @@ const getInitialState = (
                                     existingIndex,
                                     1
                                 );
+
+                                state.rediscoveryRequired = hasLength(
+                                    state.collectionsRequiringRediscovery
+                                );
                             }
                         } else {
                             delete state.resourceConfig[key].disable;
 
                             if (state.resourceConfig[key].previouslyDisabled) {
                                 state.collectionsRequiringRediscovery.push(key);
+                                state.rediscoveryRequired = true;
                             }
                         }
                     });
@@ -727,8 +737,10 @@ const getInitialState = (
                         // Keep in sync with prefillResourceConfig
                         const [name, configVal] = getResourceConfig(binding);
                         modifiedResourceConfig[name] = configVal;
-                        modifiedResourceConfig[name].previouslyDisabled =
-                            configVal.disable === true;
+                        if (configVal.disable === true) {
+                            modifiedResourceConfig[name].previouslyDisabled =
+                                true;
+                        }
                     }
                 });
 
