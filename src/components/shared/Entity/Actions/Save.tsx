@@ -94,10 +94,7 @@ function EntityCreateSave({
 
     const collections = useResourceConfig_collections();
 
-    const waitForPublishToFinish = (
-        logTokenVal: string,
-        draftIdVal: string
-    ) => {
+    const waitForPublishToFinish = (publicationId: string) => {
         updateFormStatus(status);
         setIncompatibleCollections([]);
 
@@ -105,10 +102,7 @@ function EntityCreateSave({
             supabaseClient
                 .from(TABLES.PUBLICATIONS)
                 .select(JOB_STATUS_COLUMNS)
-                .match({
-                    draft_id: draftIdVal,
-                    logs_token: logTokenVal,
-                }),
+                .eq('id', publicationId),
             async (payload: any) => {
                 const formStatus = dryRun
                     ? FormStatus.TESTED
@@ -238,7 +232,7 @@ function EntityCreateSave({
                     },
                 });
             } else {
-                waitForPublishToFinish(response.data[0].logs_token, draftId);
+                waitForPublishToFinish(response.data[0].id);
                 setFormState({
                     logToken: response.data[0].logs_token,
                     showLogs: true,
