@@ -300,6 +300,10 @@ export const jobSucceeded = (jobStatus?: JobStatus) => {
 // START: Poller
 type PollerTimeout = number | undefined;
 
+const RETRY_POLLER_REASONS = ['failed to fetch'];
+const shouldTryAfterFailure = (message?: string | null | undefined) =>
+    RETRY_POLLER_REASONS.some((el) => message?.toLowerCase().includes(el));
+
 export const JOB_STATUS_POLLER_ERROR = 'supabase.poller.failed';
 export const DEFAULT_POLLER_ERROR_TITLE_KEY = 'supabase.poller.failed.title';
 export const DEFAULT_POLLER_ERROR_MESSAGE_KEY =
@@ -312,6 +316,7 @@ export const DEFAULT_POLLER_ERROR = {
 };
 
 // These columns are not always what you want... but okay for a "default" constant
+const JOB_STATUS_SUCCESS = ['emptyDraft', 'success'];
 export const JOB_STATUS_COLUMNS = `job_status, logs_token, id`;
 export const jobStatusPoller = (
     query: any,
@@ -321,6 +326,7 @@ export const jobStatusPoller = (
 ) => {
     let pollerTimeout: PollerTimeout;
     let interval = DEFAULT_POLLING_INTERVAL;
+    let attempts = 0;
     const makeApiCall = () => {
         LogRocket.log('Poller : start ');
 
@@ -344,7 +350,12 @@ export const jobStatusPoller = (
                         LogRocket.log(
                             `Poller : response : ${response.job_status.type}`
                         );
-                        if (response.job_status.type === 'success') {
+
+                        if (
+                            JOB_STATUS_SUCCESS.includes(
+                                response.job_status.type
+                            )
+                        ) {
                             success(response);
                         } else {
                             failure(response);
@@ -358,10 +369,28 @@ export const jobStatusPoller = (
                     }
                 }
             },
-            (error: unknown) => {
+            (error: any) => {
                 LogRocket.log('Poller : error : ', error);
-                timeoutCleanUp(pollerTimeout);
-                failure(handleFailure(JOB_STATUS_POLLER_ERROR));
+
+                if (
+                    attempts === 0 &&
+                    typeof error?.message === 'string' &&
+                    shouldTryAfterFailure(error.message)
+                ) {
+                    LogRocket.log('Poller : error : trying again');
+                    attempts += 1;
+
+                    // We do not update the interval here like we do up above
+                    //  because we just want this one time to wait a bit longer
+                    pollerTimeout = window.setTimeout(
+                        makeApiCall,
+                        incrementInterval(interval)
+                    );
+                } else {
+                    LogRocket.log('Poller : error : returning failure');
+                    timeoutCleanUp(pollerTimeout);
+                    failure(handleFailure(JOB_STATUS_POLLER_ERROR));
+                }
             }
         );
     };

@@ -73,34 +73,37 @@ function EntityCreateSave({
 
     const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
 
+    // Draft Editor Store
     const draftId = useEditorStore_id();
     const setPubId = useEditorStore_setPubId();
     const isSaving = useEditorStore_isSaving();
+
     const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
+    // Details Form Store
     const entityDescription = useDetailsForm_details_description();
+
     const setIncompatibleCollections =
         useBindingsEditorStore_setIncompatibleCollections();
 
+    // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
     const setFormState = useFormStateStore_setFormState();
     const updateFormStatus = useFormStateStore_updateStatus();
     const formActive = useFormStateStore_isActive();
 
+    // Notification Store
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
     );
 
+    // Resource Config Store
     const collections = useResourceConfig_collections();
-
     const fullSourceErrorsExist =
         useBindingsEditorStore_fullSourceErrorsExist();
 
-    const waitForPublishToFinish = (
-        logTokenVal: string,
-        draftIdVal: string
-    ) => {
+    const waitForPublishToFinish = (publicationId: string) => {
         updateFormStatus(status);
         setIncompatibleCollections([]);
 
@@ -108,10 +111,7 @@ function EntityCreateSave({
             supabaseClient
                 .from(TABLES.PUBLICATIONS)
                 .select(JOB_STATUS_COLUMNS)
-                .match({
-                    draft_id: draftIdVal,
-                    logs_token: logTokenVal,
-                }),
+                .eq('id', publicationId),
             async (payload: any) => {
                 const formStatus = dryRun
                     ? FormStatus.TESTED
@@ -201,7 +201,6 @@ function EntityCreateSave({
                     }),
                 },
             });
-
             return;
         }
 
@@ -256,7 +255,6 @@ function EntityCreateSave({
             dryRun ?? false,
             entityDescription
         );
-
         if (response.error) {
             onFailure({
                 error: {
@@ -264,15 +262,13 @@ function EntityCreateSave({
                     error: response.error,
                 },
             });
-
-            return;
+        } else {
+            waitForPublishToFinish(response.data[0].id);
+            setFormState({
+                logToken: response.data[0].logs_token,
+                showLogs: true,
+            });
         }
-
-        waitForPublishToFinish(response.data[0].logs_token, draftId);
-        setFormState({
-            logToken: response.data[0].logs_token,
-            showLogs: true,
-        });
     };
 
     return (
