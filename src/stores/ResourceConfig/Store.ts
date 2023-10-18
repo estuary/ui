@@ -14,8 +14,8 @@ import {
     isEqual,
     map,
     omit,
-    orderBy,
     pick,
+    sortBy,
 } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
@@ -128,7 +128,7 @@ const getInitialMiscStoreData = (): Pick<
     | 'resourceSchema'
     | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
-    | 'rediscoveryRequired'
+    | 'collectionsRequiringRediscovery'
 > => ({
     discoveredCollections: null,
     hydrated: false,
@@ -139,7 +139,7 @@ const getInitialMiscStoreData = (): Pick<
     resourceSchema: {},
     restrictedDiscoveredCollections: [],
     serverUpdateRequired: false,
-    rediscoveryRequired: false,
+    collectionsRequiringRediscovery: [],
 });
 
 const getInitialStateData = () => ({
@@ -215,6 +215,7 @@ const getInitialState = (
                 // As we go through and fetch all the names for collections go ahead and also
                 // populate the resource config
                 const collections = bindings.map((binding: any) => {
+                    // Keep in sync with evaluateDiscoveredCollections
                     const [name, configVal] = getResourceConfig(binding);
                     state.resourceConfig[name] = configVal;
                     state.resourceConfig[name].previouslyDisabled =
@@ -523,8 +524,24 @@ const getInitialState = (
 
                         if (newValue) {
                             state.resourceConfig[key].disable = newValue;
+
+                            const existingIndex =
+                                state.collectionsRequiringRediscovery.findIndex(
+                                    (collectionRequiringRediscovery) =>
+                                        collectionRequiringRediscovery === key
+                                );
+                            if (existingIndex > -1) {
+                                state.collectionsRequiringRediscovery.splice(
+                                    existingIndex,
+                                    1
+                                );
+                            }
                         } else {
                             delete state.resourceConfig[key].disable;
+
+                            if (state.resourceConfig[key].previouslyDisabled) {
+                                state.collectionsRequiringRediscovery.push(key);
+                            }
                         }
                     });
                 }),
@@ -644,11 +661,7 @@ const getInitialState = (
                 // TODO (direct bindings) We can remove the ordering when/if we move the UI
                 //   to using the bindings directly and save a lot of processing
                 prefillResourceConfig(
-                    orderBy(
-                        data[0].spec.bindings,
-                        ['disable', collectionNameProp],
-                        ['desc', 'asc']
-                    )
+                    sortBy(data[0].spec.bindings, [collectionNameProp])
                 );
             }
         }
@@ -687,16 +700,6 @@ const getInitialState = (
         );
     },
 
-    setRediscoveryRequired: (value) => {
-        set(
-            produce((state: ResourceConfigState) => {
-                state.rediscoveryRequired = value;
-            }),
-            false,
-            'Rediscovery Required Flag Changed'
-        );
-    },
-
     evaluateDiscoveredCollections: (draftSpecResponse) => {
         set(
             produce((state: ResourceConfigState) => {
@@ -704,7 +707,7 @@ const getInitialState = (
                     collections,
                     resourceConfig,
                     restrictedDiscoveredCollections,
-                } = get();
+                } = state;
 
                 const existingCollections = Object.keys(resourceConfig);
                 const updatedBindings = draftSpecResponse.data[0].spec.bindings;
@@ -721,8 +724,11 @@ const getInitialState = (
                     ) {
                         collectionsToAdd.push(binding.target);
 
+                        // Keep in sync with prefillResourceConfig
                         const [name, configVal] = getResourceConfig(binding);
                         modifiedResourceConfig[name] = configVal;
+                        modifiedResourceConfig[name].previouslyDisabled =
+                            configVal.disable === true;
                     }
                 });
 

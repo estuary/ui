@@ -13,13 +13,6 @@ import {
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import {
-    useResourceConfig_collections,
-    useResourceConfig_discoveredCollections,
-} from 'stores/ResourceConfig/hooks';
-import { useMemo } from 'react';
-import { hasLength } from 'utils/misc-utils';
-import { isEqual } from 'lodash';
 
 interface Props {
     logEvent:
@@ -46,30 +39,6 @@ function EntitySaveButton({ disabled, taskNames, logEvent }: Props) {
     const showLogs = useFormStateStore_showLogs();
     const logToken = useFormStateStore_logToken();
     const formStatus = useFormStateStore_status();
-
-    const collections = useResourceConfig_collections();
-    const discoveredCollections = useResourceConfig_discoveredCollections();
-
-    useMemo(() => {
-        if (entityType === 'capture') {
-            const collectionsExist = hasLength(collections);
-            const discoveredCollectionsExist = hasLength(discoveredCollections);
-            const collectionsAndDiscoveredMatch = isEqual(
-                collections,
-                discoveredCollections
-            );
-
-            console.log('checking collections', {
-                collectionsExist,
-                discoveredCollectionsExist,
-                collectionsAndDiscoveredMatch,
-            });
-
-            return collectionsAndDiscoveredMatch;
-        } else {
-            return null;
-        }
-    }, [collections, discoveredCollections, entityType]);
 
     return (
         <>

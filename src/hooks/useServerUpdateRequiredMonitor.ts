@@ -16,9 +16,6 @@ import {
 const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     const entityType = useEntityType();
 
-    // TODO (enabled rediscovery)
-    // Need to fetch if we're in edit or not
-
     const resourceConfig = useResourceConfig_resourceConfig();
     const setServerUpdateRequired = useResourceConfig_setServerUpdateRequired();
 
@@ -43,12 +40,6 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     //Pull out resource as that is moved into `data`
                     const { resource, disable } = binding;
                     const disableProp = getDisableProps(disable);
-
-                    // TODO (enabled rediscovery)
-                    // If we're enabling something then make sure we know to rediscover
-                    // if (disable && !resourceConfig[collectionName].disable) {
-                    //     setRediscoveryRequired(true);
-                    // }
 
                     const { previouslyDisabled, ...restOfConfig } =
                         resourceConfig[collectionName];

@@ -280,20 +280,13 @@ export const useResourceConfig_setServerUpdateRequired = () => {
     );
 };
 
-export const useResourceConfig_rediscoveryRequired = () => {
+export const useResourceConfig_collectionsRequiringRediscovery = () => {
     return useZustandStore<
         ResourceConfigState,
-        ResourceConfigState['rediscoveryRequired']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.rediscoveryRequired);
-};
-
-export const useResourceConfig_setRediscoveryRequired = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setRediscoveryRequired']
+        ResourceConfigState['collectionsRequiringRediscovery']
     >(
         ResourceConfigStoreNames.GENERAL,
-        (state) => state.setRediscoveryRequired
+        (state) => state.collectionsRequiringRediscovery
     );
 };
 
