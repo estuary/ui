@@ -3,7 +3,6 @@ import { PostgrestError } from '@supabase/postgrest-js';
 import { getDirectiveByToken } from 'api/directives';
 import { authenticatedRoutes } from 'app/routes';
 import MessageWithLink from 'components/content/MessageWithLink';
-import FullPageSpinner from 'components/fullPage/Spinner';
 import AcceptGrant from 'directives/AcceptGrant';
 import FullPageWrapper from 'directives/FullPageWrapper';
 
@@ -13,6 +12,7 @@ import { Navigate } from 'react-router';
 import { getPathWithParams } from 'utils/misc-utils';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { HomePageErrors } from 'components/login/shared';
+import FullPageSpinner from 'components/fullPage/Spinner';
 import useDirectiveGuard from '../hooks';
 
 const SELECTED_DIRECTIVE = 'grant';
@@ -90,7 +90,11 @@ function GrantGuardProcessor({ grantToken }: Props) {
                 );
             }
 
-            return <FullPageSpinner />;
+            return (
+                <FullPageWrapper>
+                    <FullPageSpinner />
+                </FullPageWrapper>
+            );
         } else if (
             serverError ||
             configError ||
