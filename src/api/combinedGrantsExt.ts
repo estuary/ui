@@ -5,7 +5,7 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { AuthRoles, Grants } from 'types';
+import { AuthRoles } from 'types';
 
 // Used to display prefix grants in admin page
 const getGrants = (
@@ -75,26 +75,6 @@ const getGrants_Users = (
     return queryBuilder;
 };
 
-// Used when getting grants for a user to know what tenant to list
-const getGrantsForUser = (userId: string, adminOnly?: boolean) => {
-    let queryBuilder = supabaseClient
-        .from<Grants>(TABLES.COMBINED_GRANTS_EXT)
-        .select(`*`);
-
-    if (adminOnly) {
-        queryBuilder = queryBuilder.eq('capability', 'admin');
-    }
-
-    return queryBuilder.eq('user_id', userId);
-};
-
-// Used to find out what prefixes we can use in the data plane gateway
-const getGrantsForAuthToken = () => {
-    return supabaseClient
-        .from<Grants>(TABLES.COMBINED_GRANTS_EXT)
-        .select(`id, object_role`);
-};
-
 export const getAuthRoles = async (capability: string) => {
     return supabaseClient
         .rpc<AuthRoles>(RPCS.AUTH_ROLES, {
@@ -103,4 +83,4 @@ export const getAuthRoles = async (capability: string) => {
         .throwOnError();
 };
 
-export { getGrantsForAuthToken, getGrants, getGrants_Users, getGrantsForUser };
+export { getGrants, getGrants_Users };
