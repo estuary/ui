@@ -47,6 +47,7 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import {
+    useResourceConfig_resetRediscoverySettings,
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
@@ -101,6 +102,8 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
     const resourceConfig = useResourceConfig_resourceConfig();
     const resourceConfigErrorsExist =
         useResourceConfig_resourceConfigErrorsExist();
+    const resetRediscoverySettings =
+        useResourceConfig_resetRediscoverySettings();
 
     // Bindings store
     const fullSourceConfigs = useBindingsEditorStore_fullSourceConfigs();
@@ -256,6 +259,11 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
             setFormState({
                 status: FormStatus.GENERATED,
             });
+
+            // Materializations do not use this setting but still letting it get populated to keep
+            //  the stores simpler. Also, I could easily see us needing to know what collections
+            //  were enabled during an edit in materializations.
+            resetRediscoverySettings();
 
             return mutateDraftSpecs();
         }

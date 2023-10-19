@@ -287,13 +287,13 @@ export const useResourceConfig_rediscoveryRequired = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.rediscoveryRequired);
 };
 
-export const useResourceConfig_setRediscoveryRequired = () => {
+export const useResourceConfig_resetRediscoverySettings = () => {
     return useZustandStore<
         ResourceConfigState,
-        ResourceConfigState['setRediscoveryRequired']
+        ResourceConfigState['resetRediscoverySettings']
     >(
         ResourceConfigStoreNames.GENERAL,
-        (state) => state.setRediscoveryRequired
+        (state) => state.resetRediscoverySettings
     );
 };
 

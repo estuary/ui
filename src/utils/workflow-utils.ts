@@ -31,15 +31,17 @@ export const getCollectionNameProp = (entityType: Entity) => {
     return entityType === 'materialization' ? 'source' : 'target';
 };
 
+export const getCollectionNameDirectly = (binding: any) => {
+    // Check if we're dealing with a FullSource or just a string
+    return Object.hasOwn(binding, 'name') ? binding.name : binding;
+};
+
 export const getCollectionName = (binding: any) => {
     // First see if we've already been passed a scoped binding
     //  or if we need to find the proper scope ourselves.
     const scopedBinding = getSourceOrTarget(binding);
 
-    // Check if we're dealing with a FullSource or just a string
-    return Object.hasOwn(scopedBinding, 'name')
-        ? scopedBinding.name
-        : scopedBinding;
+    return getCollectionNameDirectly(scopedBinding);
 };
 
 export const getDisableProps = (disable: boolean | undefined) => {

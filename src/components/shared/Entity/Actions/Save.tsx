@@ -81,24 +81,20 @@ function EntityCreateSave({
     const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
-    // Details Form Store
     const entityDescription = useDetailsForm_details_description();
 
     const setIncompatibleCollections =
         useBindingsEditorStore_setIncompatibleCollections();
 
-    // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
     const setFormState = useFormStateStore_setFormState();
     const updateFormStatus = useFormStateStore_updateStatus();
     const formActive = useFormStateStore_isActive();
 
-    // Notification Store
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
     );
 
-    // Resource Config Store
     const collections = useResourceConfig_collections();
     const fullSourceErrorsExist =
         useBindingsEditorStore_fullSourceErrorsExist();

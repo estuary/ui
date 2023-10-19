@@ -7,6 +7,7 @@ import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
 export interface ResourceConfig extends JsonFormsData {
     errors: any[];
     disable?: boolean;
+    previouslyDisabled?: boolean; // Used to store if the binding was disabled last time we loaded in bindings
 }
 
 export interface ResourceConfigDictionary {
@@ -74,8 +75,9 @@ export interface ResourceConfigState extends StoreWithHydration {
     serverUpdateRequired: boolean;
     setServerUpdateRequired: (value: boolean) => void;
 
+    collectionsRequiringRediscovery: string[];
     rediscoveryRequired: boolean;
-    setRediscoveryRequired: (value: boolean) => void;
+    resetRediscoverySettings: () => void;
 
     evaluateDiscoveredCollections: (
         response: CallSupabaseResponse<any>

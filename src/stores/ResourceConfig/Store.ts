@@ -24,8 +24,13 @@ import {
 import { ResourceConfigStoreNames } from 'stores/names';
 import { populateErrors } from 'stores/utils';
 import { Schema } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
+import {
+    getCollectionNameDirectly,
+    getCollectionName,
+    getDisableProps,
+} from 'utils/workflow-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
@@ -113,6 +118,7 @@ const getInitialMiscStoreData = (): Pick<
     | 'resourceSchema'
     | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
+    | 'collectionsRequiringRediscovery'
     | 'rediscoveryRequired'
 > => ({
     discoveredCollections: null,
@@ -124,6 +130,7 @@ const getInitialMiscStoreData = (): Pick<
     resourceSchema: {},
     restrictedDiscoveredCollections: [],
     serverUpdateRequired: false,
+    collectionsRequiringRediscovery: [],
     rediscoveryRequired: false,
 });
 
@@ -200,9 +207,12 @@ const getInitialState = (
                 // As we go through and fetch all the names for collections go ahead and also
                 // populate the resource config
                 const collections = bindings.map((binding: any) => {
+                    // Keep in sync with evaluateDiscoveredCollections
                     const [name, configVal] = getResourceConfig(binding);
                     state.resourceConfig[name] = configVal;
-
+                    if (configVal.disable === true) {
+                        state.resourceConfig[name].previouslyDisabled = true;
+                    }
                     return name;
                 });
 
@@ -316,11 +326,22 @@ const getInitialState = (
                 populateCollections(state, []);
 
                 state.restrictedDiscoveredCollections = [];
-
                 state.resourceConfig = {};
+                state.resetRediscoverySettings();
             }),
             false,
             'Resource Config and Collections Reset'
+        );
+    },
+
+    resetRediscoverySettings: () => {
+        set(
+            produce((state: ResourceConfigState) => {
+                state.rediscoveryRequired = false;
+                state.collectionsRequiringRediscovery = [];
+            }),
+            false,
+            'Rediscovery Related Settings Reset'
         );
     },
 
@@ -507,8 +528,29 @@ const getInitialState = (
 
                         if (newValue) {
                             state.resourceConfig[key].disable = newValue;
+
+                            const existingIndex =
+                                state.collectionsRequiringRediscovery.findIndex(
+                                    (collectionRequiringRediscovery) =>
+                                        collectionRequiringRediscovery === key
+                                );
+                            if (existingIndex > -1) {
+                                state.collectionsRequiringRediscovery.splice(
+                                    existingIndex,
+                                    1
+                                );
+
+                                state.rediscoveryRequired = hasLength(
+                                    state.collectionsRequiringRediscovery
+                                );
+                            }
                         } else {
                             delete state.resourceConfig[key].disable;
+
+                            if (state.resourceConfig[key].previouslyDisabled) {
+                                state.collectionsRequiringRediscovery.push(key);
+                                state.rediscoveryRequired = true;
+                            }
                         }
                     });
                 }),
@@ -625,18 +667,13 @@ const getInitialState = (
                     ? 'source'
                     : 'target';
 
-                // TODO (direct bindings) We can remove this when/if we move the UI
+                // TODO (direct bindings) We can remove the ordering when/if we move the UI
                 //   to using the bindings directly and save a lot of processing
                 const sortedBindings = sortBy(data[0].spec.bindings, [
                     (binding) => {
-                        return (
-                            binding[collectionNameProp].name ??
+                        return getCollectionNameDirectly(
                             binding[collectionNameProp]
                         );
-
-                        if (typeof binding[collectionNameProp] === 'string') {
-                            return;
-                        }
                     },
                 ]);
 
@@ -678,16 +715,6 @@ const getInitialState = (
         );
     },
 
-    setRediscoveryRequired: (value) => {
-        set(
-            produce((state: ResourceConfigState) => {
-                state.rediscoveryRequired = value;
-            }),
-            false,
-            'Rediscovery Required Flag Changed'
-        );
-    },
-
     evaluateDiscoveredCollections: (draftSpecResponse) => {
         set(
             produce((state: ResourceConfigState) => {
@@ -695,7 +722,7 @@ const getInitialState = (
                     collections,
                     resourceConfig,
                     restrictedDiscoveredCollections,
-                } = get();
+                } = state;
 
                 const existingCollections = Object.keys(resourceConfig);
                 const updatedBindings = draftSpecResponse.data[0].spec.bindings;
@@ -712,8 +739,13 @@ const getInitialState = (
                     ) {
                         collectionsToAdd.push(binding.target);
 
+                        // Keep in sync with prefillResourceConfig
                         const [name, configVal] = getResourceConfig(binding);
                         modifiedResourceConfig[name] = configVal;
+                        if (configVal.disable === true) {
+                            modifiedResourceConfig[name].previouslyDisabled =
+                                true;
+                        }
                     }
                 });
 
