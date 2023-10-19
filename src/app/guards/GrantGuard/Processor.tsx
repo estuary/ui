@@ -90,11 +90,7 @@ function GrantGuardProcessor({ grantToken }: Props) {
                 );
             }
 
-            return (
-                <FullPageWrapper>
-                    <FullPageSpinner />
-                </FullPageWrapper>
-            );
+            return <FullPageSpinner />;
         } else if (
             serverError ||
             configError ||
