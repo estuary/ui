@@ -3,20 +3,38 @@ import MessageWithLink from 'components/content/MessageWithLink';
 import Error from 'components/shared/Error';
 import { ErrorDetails } from 'components/shared/Error/types';
 import FullPageWrapper from 'directives/FullPageWrapper';
-import { ReactElement } from 'react';
+import { ReactElement, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
 import { CustomEvents, logRocketEvent } from 'services/logrocket';
 
 interface Props {
     error: ErrorDetails;
+    disableMessageWrapping?: boolean;
     message?: ReactElement;
     title?: ReactElement | string;
 }
-function FullPageError({ error, message, title }: Props) {
+function FullPageError({
+    disableMessageWrapping,
+    error,
+    message,
+    title,
+}: Props) {
     useMount(() => {
         logRocketEvent(CustomEvents.FULL_PAGE_ERROR_DISPLAYED);
     });
+
+    const messageContent = useMemo(() => {
+        if (message) {
+            if (disableMessageWrapping) {
+                return message;
+            }
+
+            return <Typography variant="subtitle1">{message}</Typography>;
+        }
+
+        return null;
+    }, [disableMessageWrapping, message]);
 
     return (
         <FullPageWrapper>
@@ -28,9 +46,7 @@ function FullPageError({ error, message, title }: Props) {
                         <FormattedMessage id="common.failedFetch" />
                     )}
                 </Typography>
-                {message ? (
-                    <Typography variant="subtitle1">{message}</Typography>
-                ) : null}
+                {messageContent}
                 <Typography variant="subtitle1">
                     <MessageWithLink messageID="fullPage.instructions" />
                 </Typography>

@@ -1,5 +1,7 @@
+import FullPageError from 'components/fullPage/Error';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
 import { createContext, useContext } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { TABLES } from 'services/supabase';
 import { BaseComponentProps } from 'types';
 
@@ -19,12 +21,25 @@ const GrantDetailsContextProvider = ({ children }: BaseComponentProps) => {
         { columns: `id, object_role` },
         []
     );
-    const { data: grants, isValidating } = useSelect(combinedGrantsQuery);
+    const {
+        data: grants,
+        isValidating,
+        error,
+    } = useSelect(combinedGrantsQuery);
 
     const value = grants?.data ? grants.data : null;
 
     if (isValidating || value === null) {
         return null;
+    }
+
+    if (error) {
+        return (
+            <FullPageError
+                error={error}
+                message={<FormattedMessage id="fetcher.grants.error.message" />}
+            />
+        );
     }
 
     return (

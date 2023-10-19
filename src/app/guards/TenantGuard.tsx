@@ -39,7 +39,7 @@ function TenantGuard({ children }: BaseComponentProps) {
             <FullPageError
                 error={error}
                 message={
-                    <FormattedMessage id="tenant.error.failedToFetch.message" />
+                    <FormattedMessage id="fetcher.tenants.error.message" />
                 }
             />
         );

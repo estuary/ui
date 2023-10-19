@@ -9,6 +9,8 @@ interface Props extends BaseComponentProps {
 function OnLoadSpinner({ children, display }: Props) {
     const { setLoading } = useOnLoadSpinner();
 
+    console.log('OnLoadSpinner', display);
+
     useEffect(() => {
         setLoading(display);
     }, [display, setLoading]);
