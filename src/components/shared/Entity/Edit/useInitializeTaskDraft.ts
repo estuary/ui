@@ -2,6 +2,7 @@ import { PostgrestError } from '@supabase/postgrest-js';
 import { createEntityDraft, getDraftsByCatalogName } from 'api/drafts';
 import {
     createDraftSpec,
+    DraftSpecsExtQuery_ByCatalogName,
     getDraftSpecsByCatalogName,
     modifyDraftSpec,
 } from 'api/draftSpecs';
@@ -9,6 +10,7 @@ import {
     getLiveSpecsByLiveSpecId,
     LiveSpecsExtQuery_ByLiveSpecId,
 } from 'api/liveSpecsExt';
+import { useBindingsEditorStore_prefillFullSourceConfigs } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_setDraftInitializationError,
     useEditorStore_setId,
@@ -61,6 +63,9 @@ function useInitializeTaskDraft() {
     // Form State Store
     const setFormState = useFormStateStore_setFormState();
 
+    const prefillFullSourceConfigs =
+        useBindingsEditorStore_prefillFullSourceConfigs();
+
     // Get catalog name and task spec from live specs
     const getTask =
         useCallback(async (): Promise<LiveSpecsExtQuery_ByLiveSpecId | null> => {
@@ -86,6 +91,7 @@ function useInitializeTaskDraft() {
             catalog_name,
             spec,
         }: LiveSpecsExtQuery_ByLiveSpecId): Promise<{
+            existingDraftSpecsResponse: DraftSpecsExtQuery_ByCatalogName | null;
             evaluatedDraftId: string | null;
             draftSpecsRequestConfig: SupabaseConfig | null;
         }> => {
@@ -115,6 +121,8 @@ function useInitializeTaskDraft() {
                     existingDraftSpecsResponse.data.length > 0
                 ) {
                     return {
+                        existingDraftSpecsResponse:
+                            existingDraftSpecsResponse.data[0],
                         evaluatedDraftId: existingDraftId,
                         draftSpecsRequestConfig: null,
                     };
@@ -148,6 +156,7 @@ function useInitializeTaskDraft() {
                     });
 
                     return {
+                        existingDraftSpecsResponse: null,
                         evaluatedDraftId: existingDraftId,
                         draftSpecsRequestConfig: {
                             createNew: false,
@@ -159,6 +168,7 @@ function useInitializeTaskDraft() {
                 const newDraftId = await createTaskDraft(catalog_name);
 
                 return {
+                    existingDraftSpecsResponse: null,
                     evaluatedDraftId: newDraftId,
                     draftSpecsRequestConfig: { createNew: true, spec },
                 };
@@ -202,8 +212,11 @@ function useInitializeTaskDraft() {
             const task = await getTask();
 
             if (task) {
-                const { evaluatedDraftId, draftSpecsRequestConfig } =
-                    await getTaskDraft(task);
+                const {
+                    existingDraftSpecsResponse,
+                    evaluatedDraftId,
+                    draftSpecsRequestConfig,
+                } = await getTaskDraft(task);
 
                 if (evaluatedDraftId) {
                     const draftSpecsError = await getTaskDraftSpecs(
@@ -213,6 +226,13 @@ function useInitializeTaskDraft() {
                     );
 
                     if (!draftSpecsError) {
+                        if (task.spec_type === 'materialization') {
+                            prefillFullSourceConfigs(
+                                existingDraftSpecsResponse
+                                    ? existingDraftSpecsResponse.spec.bindings
+                                    : task.spec.bindings
+                            );
+                        }
                         setDraftId(evaluatedDraftId);
                         setPersistedDraftId(evaluatedDraftId);
 
@@ -252,17 +272,18 @@ function useInitializeTaskDraft() {
             setLoading(false);
         },
         [
+            connectorId,
             getTask,
             getTaskDraft,
             getTaskDraftSpecs,
+            liveSpecId,
             navigateToEdit,
+            prefillFullSourceConfigs,
+            prefillPubIds,
             setDraftId,
             setDraftInitializationError,
             setFormState,
             setPersistedDraftId,
-            connectorId,
-            liveSpecId,
-            prefillPubIds,
             taskSpecType,
         ]
     );

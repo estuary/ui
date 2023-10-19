@@ -7,6 +7,10 @@ import {
     modifyDraftSpec,
 } from 'api/draftSpecs';
 import {
+    useBindingsEditorStore_fullSourceConfigs,
+    useBindingsEditorStore_fullSourceErrorsExist,
+} from 'components/editor/Bindings/Store/hooks';
+import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
@@ -63,7 +67,7 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
     const { callFailed } = useEntityWorkflowHelpers();
 
     // Details Form Store
-    const detailsFormsHasErrors = useDetailsForm_errorsExist();
+    const detailsFormsErrorsExist = useDetailsForm_errorsExist();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imagePath = useDetailsForm_connectorImage_imagePath();
@@ -86,7 +90,7 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
         useEndpointConfigStore_setEncryptedEndpointConfig();
     const setPreviousEndpointConfig =
         useEndpointConfigStore_setPreviousEndpointConfig();
-    const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
+    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
 
     // Form State Store
@@ -96,10 +100,15 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
 
     // Resource Config Store
     const resourceConfig = useResourceConfig_resourceConfig();
-    const resourceConfigHasErrors =
+    const resourceConfigErrorsExist =
         useResourceConfig_resourceConfigErrorsExist();
     const resetRediscoverySettings =
         useResourceConfig_resetRediscoverySettings();
+
+    // Bindings store
+    const fullSourceConfigs = useBindingsEditorStore_fullSourceConfigs();
+    const fullSourceErrorsExist =
+        useBindingsEditorStore_fullSourceErrorsExist();
 
     // Source Capture Store
     const sourceCapture = useStore(
@@ -127,9 +136,10 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
         updateFormStatus(FormStatus.GENERATING);
 
         if (
-            resourceConfigHasErrors ||
-            detailsFormsHasErrors ||
-            endpointConfigHasErrors
+            resourceConfigErrorsExist ||
+            detailsFormsErrorsExist ||
+            endpointConfigErrorsExist ||
+            fullSourceErrorsExist
         ) {
             setFormState({
                 status: FormStatus.FAILED,
@@ -203,7 +213,8 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
                 { image: imagePath, config: encryptedEndpointConfig.data },
                 resourceConfig,
                 existingTaskData,
-                sourceCapture
+                sourceCapture,
+                fullSourceConfigs
             );
 
             // If there is a draft already with task data then update. We do not match on

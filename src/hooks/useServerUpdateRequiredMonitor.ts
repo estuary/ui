@@ -32,25 +32,27 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
             ) {
                 // The lengths have not changed so we need to check each binding
                 return draftSpecs[0]?.spec.bindings.some((binding: any) => {
+                    //Pull out resource as that is moved into `data`
+                    const { resource, disable } = binding;
+
                     // Snag the name so we know which resource config to check
                     const collectionName = getCollectionName(
                         binding[collectionNameProp]
                     );
 
-                    //Pull out resource as that is moved into `data`
-                    const { resource, disable } = binding;
-                    const disableProp = getDisableProps(disable);
+                    // Do a quick simple disabled check before comparing the entire object
+                    if (
+                        resourceConfig[collectionName].disable !==
+                        getDisableProps(disable).disable
+                    ) {
+                        return true;
+                    }
 
-                    // Make sure we remove the local only props before comparing
-                    const { previouslyDisabled, ...restOfConfig } =
-                        resourceConfig[collectionName];
-
-                    // See if anything has changed
-                    return !isEqual(restOfConfig, {
-                        ...disableProp,
-                        data: resource,
-                        errors: [],
-                    });
+                    // Since we checked disabled up above we can not just check if the data changed
+                    return !isEqual(
+                        resourceConfig[collectionName].data,
+                        resource
+                    );
                 });
             } else {
                 // Lengths do not match so we know the update is needed

@@ -1,4 +1,5 @@
 import { AlertTitle, Collapse } from '@mui/material';
+import { useBindingsEditorStore_fullSourceErrorsExist } from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/DetailsErrors';
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
@@ -48,9 +49,11 @@ function ValidationErrorSummary({
     // Resource Config Store
     const resourceConfigHydrationErrorsExist =
         useResourceConfig_hydrationErrorsExist();
-
     const resourceConfigErrorsExist =
         useResourceConfig_resourceConfigErrorsExist();
+
+    const fullSourceErrorsExist =
+        useBindingsEditorStore_fullSourceErrorsExist();
 
     const hydrationErrorsExist =
         endpointConfigHydrationErrorsExist ||
@@ -59,7 +62,8 @@ function ValidationErrorSummary({
     const formErrorsExist =
         detailsFormErrorsExist ||
         endpointConfigErrorsExist ||
-        resourceConfigErrorsExist;
+        resourceConfigErrorsExist ||
+        fullSourceErrorsExist;
 
     const defaultHeaderMessageId = hydrationErrorsExist
         ? 'workflows.error.initForm'
@@ -82,7 +86,7 @@ function ValidationErrorSummary({
 
                         <EndpointConfigErrors />
 
-                        {resourceConfigErrorsExist ? (
+                        {resourceConfigErrorsExist || fullSourceErrorsExist ? (
                             <ResourceConfigErrors />
                         ) : null}
                     </>

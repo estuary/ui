@@ -1,7 +1,7 @@
 import { useZustandStore } from 'context/Zustand/provider';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { shallow } from 'zustand/shallow';
-import { ResourceConfigState } from './types';
+import { ResourceConfig, ResourceConfigState } from './types';
 
 // Selector Hooks
 export const useResourceConfig_collections = () => {
@@ -127,7 +127,7 @@ export const useResourceConfig_resourceConfigOfCollection = (
 
 export const useResourceConfig_resourceConfigOfCollectionProperty = (
     collection: any,
-    property: any
+    property: keyof ResourceConfig
 ) => {
     return useZustandStore<ResourceConfigState, any>(
         ResourceConfigStoreNames.GENERAL,

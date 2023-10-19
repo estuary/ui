@@ -1,4 +1,8 @@
-import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
+import {
+    BindingsEditorState,
+    FullSource,
+    FullSourceDictionary,
+} from 'components/editor/Bindings/Store/types';
 import { useZustandStore } from 'context/Zustand/provider';
 import { BindingsEditorStoreNames } from 'stores/names';
 
@@ -316,6 +320,82 @@ export const useBindingsEditorStore_setSelectionSaving = () => {
         BindingsEditorState,
         BindingsEditorState['setSelectionSaving']
     >(BindingsEditorStoreNames.GENERAL, (state) => state.setSelectionSaving);
+};
+
+export const useBindingsEditorStore_fullSourceConfigs = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['fullSourceConfigs']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.fullSourceConfigs);
+};
+
+export const useBindingsEditorStore_fullSourceErrorsExist = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['fullSourceErrorsExist']
+    >(BindingsEditorStoreNames.GENERAL, (state) => state.fullSourceErrorsExist);
+};
+
+export const useBindingsEditorStore_prefillFullSourceConfigs = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['prefillFullSourceConfigs']
+    >(
+        BindingsEditorStoreNames.GENERAL,
+        (state) => state.prefillFullSourceConfigs
+    );
+};
+
+export const useBindingsEditorStore_fullSourceOfCollection = (
+    collection: any
+) => {
+    return useZustandStore<BindingsEditorState, FullSource | null | undefined>(
+        BindingsEditorStoreNames.GENERAL,
+        (state) => {
+            if (!collection) {
+                return null;
+            }
+
+            return state.fullSourceConfigs[collection]?.data;
+        }
+    );
+};
+
+export const useBindingsEditorStore_fullSourceOfCollectionProperty = (
+    collection: any,
+    property: keyof FullSourceDictionary
+) => {
+    return useZustandStore<BindingsEditorState, any>(
+        BindingsEditorStoreNames.GENERAL,
+        (state) => {
+            if (!collection) {
+                return null;
+            }
+
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            return state.fullSourceConfigs[collection]?.[property];
+        }
+    );
+};
+
+export const useBindingsEditorStore_updateFullSourceConfig = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['updateFullSourceConfig']
+    >(
+        BindingsEditorStoreNames.GENERAL,
+        (state) => state.updateFullSourceConfig
+    );
+};
+
+export const useBindingsEditorStore_removeFullSourceConfig = () => {
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['removeFullSourceConfig']
+    >(
+        BindingsEditorStoreNames.GENERAL,
+        (state) => state.removeFullSourceConfig
+    );
 };
 
 export const useBindingsEditorStore_resetState = () => {

@@ -5,6 +5,10 @@ import { createSearchParams } from 'react-router-dom';
 //  https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
 export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
 
+// Based on the patterns connectors use for date time
+// eslint-disable-next-line no-useless-escape
+export const DATE_TIME_PATTERN = `[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z`;
+
 // Max time stored in
 //  go/flowctl-go/cmd-api-discover.go
 //  go/flowctl-go/cmd-discover.go

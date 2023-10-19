@@ -31,10 +31,8 @@ function EntitySaveButton({ disabled, taskNames, logEvent }: Props) {
     const { callFailed, closeLogs, materializeCollections } =
         useEntityWorkflowHelpers();
 
-    // Draft Editor Store
     const draftId = useEditorStore_id();
 
-    // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
     const showLogs = useFormStateStore_showLogs();
     const logToken = useFormStateStore_logToken();

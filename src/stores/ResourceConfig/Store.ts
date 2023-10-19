@@ -12,10 +12,9 @@ import {
     isBoolean,
     isEmpty,
     isEqual,
-    map,
     omit,
+    orderBy,
     pick,
-    sortBy,
 } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
@@ -23,6 +22,7 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { ResourceConfigStoreNames } from 'stores/names';
+import { populateErrors } from 'stores/utils';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
@@ -72,25 +72,10 @@ const populateResourceConfigErrors = (
     resourceConfig: ResourceConfigDictionary,
     state: ResourceConfigState
 ): void => {
-    let resourceConfigErrors: any[] = [];
-    const hasConfigs = Object.keys(resourceConfig).length > 0;
+    const { configErrors, hasErrors } = populateErrors(resourceConfig);
 
-    if (hasConfigs) {
-        map(resourceConfig, (config) => {
-            const { errors } = config;
-
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (errors && errors.length > 0) {
-                resourceConfigErrors = resourceConfigErrors.concat(errors);
-            }
-        });
-    } else {
-        // TODO (errors) Need to populate this object with something?
-        resourceConfigErrors = [];
-    }
-
-    state.resourceConfigErrors = resourceConfigErrors;
-    state.resourceConfigErrorsExist = !isEmpty(resourceConfigErrors);
+    state.resourceConfigErrors = configErrors;
+    state.resourceConfigErrorsExist = hasErrors;
 };
 
 const whatChanged = (
@@ -107,6 +92,14 @@ const whatChanged = (
     const newCollections = difference(newResourceKeys, currentCollections);
 
     return [removedCollections, newCollections];
+};
+
+const sortBindings = (bindings: any) => {
+    return orderBy(
+        bindings,
+        ['disable', (binding) => getCollectionName(binding)],
+        ['desc', 'asc']
+    );
 };
 
 const getInitialCollectionStateData = (): Pick<
@@ -673,16 +666,7 @@ const getInitialState = (
                 setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
                 const { prefillResourceConfig } = get();
-
-                const collectionNameProp = materializationHydrating
-                    ? 'source'
-                    : 'target';
-
-                // TODO (direct bindings) We can remove the ordering when/if we move the UI
-                //   to using the bindings directly and save a lot of processing
-                prefillResourceConfig(
-                    sortBy(data[0].spec.bindings, [collectionNameProp])
-                );
+                prefillResourceConfig(sortBindings(data[0].spec.bindings));
             }
         }
 
@@ -735,7 +719,7 @@ const getInitialState = (
                 const collectionsToAdd: string[] = [];
                 const modifiedResourceConfig: ResourceConfigDictionary = {};
 
-                updatedBindings.forEach((binding: any) => {
+                sortBindings(updatedBindings).forEach((binding: any) => {
                     if (
                         !existingCollections.includes(binding.target) &&
                         !restrictedDiscoveredCollections.includes(
