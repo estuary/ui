@@ -4,7 +4,6 @@ import { ZustandProvider } from 'context/Zustand/provider';
 import { BaseComponentProps } from 'types';
 import AuthEvents from './AuthEvents';
 import PreFetchDataProvider from './fetcher';
-import OnLoadSpinner from './OnLoadSpinner/OnLoadSpinner';
 import { OnLoadSpinnerProvider } from './OnLoadSpinner/OnLoadSpinnerContext';
 import Osano from './Osano';
 import QueryParamProvider from './QueryParam';
@@ -20,22 +19,20 @@ export function AuthenticatedOnlyContext({ children, hideSpinner }: Props) {
     return (
         <RequireAuth>
             <Osano>
-                <OnLoadSpinnerProvider>
-                    <OnLoadSpinner display={!hideSpinner}>
-                        <QueryParamProvider>
-                            <ZustandProvider>
-                                <AppGuards>
-                                    <AuthEvents>
-                                        <PreFetchDataProvider>
-                                            <ConfirmationModalContextProvider>
-                                                {children}
-                                            </ConfirmationModalContextProvider>
-                                        </PreFetchDataProvider>
-                                    </AuthEvents>
-                                </AppGuards>
-                            </ZustandProvider>
-                        </QueryParamProvider>
-                    </OnLoadSpinner>
+                <OnLoadSpinnerProvider defaultState={!hideSpinner}>
+                    <QueryParamProvider>
+                        <ZustandProvider>
+                            <AppGuards>
+                                <AuthEvents>
+                                    <PreFetchDataProvider>
+                                        <ConfirmationModalContextProvider>
+                                            {children}
+                                        </ConfirmationModalContextProvider>
+                                    </PreFetchDataProvider>
+                                </AuthEvents>
+                            </AppGuards>
+                        </ZustandProvider>
+                    </QueryParamProvider>
                 </OnLoadSpinnerProvider>
             </Osano>
         </RequireAuth>

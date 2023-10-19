@@ -10,8 +10,12 @@ const OnLoadSpinnerContext = createContext<{
     loading: true,
 });
 
-const OnLoadSpinnerProvider = ({ children }: BaseComponentProps) => {
-    const [loading, setLoading] = useState(false);
+interface Props extends BaseComponentProps {
+    defaultState: boolean;
+}
+
+const OnLoadSpinnerProvider = ({ children, defaultState }: Props) => {
+    const [loading, setLoading] = useState(defaultState);
 
     return (
         <OnLoadSpinnerContext.Provider value={{ loading, setLoading }}>
