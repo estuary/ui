@@ -36,10 +36,8 @@ function EntitySaveButton({ disabled, taskNames, logEvent }: Props) {
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
-
     const showLogs = useFormStateStore_showLogs();
     const logToken = useFormStateStore_logToken();
-
     const formStatus = useFormStateStore_status();
 
     return (

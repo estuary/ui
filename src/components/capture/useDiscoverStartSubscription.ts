@@ -21,7 +21,6 @@ import {
 } from 'stores/EndpointConfig/hooks';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useResourceConfig_setRediscoveryRequired } from 'stores/ResourceConfig/hooks';
 import { Entity } from 'types';
 
 const trackEvent = (payload: any) => {
@@ -53,8 +52,6 @@ function useDiscoverStartSubscription(
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
     const setPreviousEndpointConfig =
         useEndpointConfigStore_setPreviousEndpointConfig();
-
-    const setRediscoveryRequired = useResourceConfig_setRediscoveryRequired();
 
     const storeDiscoveredCollections = useStoreDiscoveredCaptures();
 
@@ -115,8 +112,6 @@ function useDiscoverStartSubscription(
                     //      https://github.com/estuary/ui/pull/650#pullrequestreview-1466195898
                     setServerUpdateRequired(false);
 
-                    setRediscoveryRequired(false);
-
                     trackEvent(payload);
                 },
                 (payload: any) => {
@@ -143,7 +138,6 @@ function useDiscoverStartSubscription(
             setDraftedEntityName,
             setFormState,
             setPreviousEndpointConfig,
-            setRediscoveryRequired,
             setServerUpdateRequired,
             storeDiscoveredCollections,
             supabaseClient,

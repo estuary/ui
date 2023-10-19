@@ -16,9 +16,6 @@ import {
 const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     const entityType = useEntityType();
 
-    // TODO (enabled rediscovery)
-    // Need to fetch if we're in edit or not
-
     const resourceConfig = useResourceConfig_resourceConfig();
     const setServerUpdateRequired = useResourceConfig_setServerUpdateRequired();
 
@@ -44,14 +41,12 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     const { resource, disable } = binding;
                     const disableProp = getDisableProps(disable);
 
-                    // TODO (enabled rediscovery)
-                    // If we're enabling something then make sure we know to rediscover
-                    // if (disable && !resourceConfig[collectionName].disable) {
-                    //     setRediscoveryRequired(true);
-                    // }
+                    // Make sure we remove the local only props before comparing
+                    const { previouslyDisabled, ...restOfConfig } =
+                        resourceConfig[collectionName];
 
                     // See if anything has changed
-                    return !isEqual(resourceConfig[collectionName], {
+                    return !isEqual(restOfConfig, {
                         ...disableProp,
                         data: resource,
                         errors: [],
