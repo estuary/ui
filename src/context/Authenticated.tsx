@@ -10,14 +10,18 @@ import Osano from './Osano';
 import QueryParamProvider from './QueryParam';
 import RequireAuth from './Router/RequireAuth';
 
+interface Props extends BaseComponentProps {
+    hideSpinner?: boolean;
+}
+
 // This includes some Guards as well as the contexts we only ever want
 //      loaded when a user is logged in.
-export function AuthenticatedOnlyContext({ children }: BaseComponentProps) {
+export function AuthenticatedOnlyContext({ children, hideSpinner }: Props) {
     return (
         <RequireAuth>
             <Osano>
                 <OnLoadSpinnerProvider>
-                    <OnLoadSpinner display>
+                    <OnLoadSpinner display={!hideSpinner}>
                         <QueryParamProvider>
                             <ZustandProvider>
                                 <AppGuards>
