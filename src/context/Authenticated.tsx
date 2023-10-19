@@ -4,8 +4,8 @@ import { ZustandProvider } from 'context/Zustand/provider';
 import { BaseComponentProps } from 'types';
 import AuthEvents from './AuthEvents';
 import PreFetchDataProvider from './fetcher';
+import OnLoadSpinner from './OnLoadSpinner/OnLoadSpinner';
 import { OnLoadSpinnerProvider } from './OnLoadSpinner/OnLoadSpinnerContext';
-import OnLoadSpinnerShow from './OnLoadSpinner/OnLoadSpinnerShow';
 import Osano from './Osano';
 import QueryParamProvider from './QueryParam';
 import RequireAuth from './Router/RequireAuth';
@@ -15,11 +15,11 @@ import RequireAuth from './Router/RequireAuth';
 export function AuthenticatedOnlyContext({ children }: BaseComponentProps) {
     return (
         <RequireAuth>
-            <OnLoadSpinnerProvider>
-                <Osano>
-                    <QueryParamProvider>
-                        <ZustandProvider>
-                            <OnLoadSpinnerShow>
+            <Osano>
+                <OnLoadSpinnerProvider>
+                    <OnLoadSpinner display>
+                        <QueryParamProvider>
+                            <ZustandProvider>
                                 <AppGuards>
                                     <AuthEvents>
                                         <PreFetchDataProvider>
@@ -29,11 +29,11 @@ export function AuthenticatedOnlyContext({ children }: BaseComponentProps) {
                                         </PreFetchDataProvider>
                                     </AuthEvents>
                                 </AppGuards>
-                            </OnLoadSpinnerShow>
-                        </ZustandProvider>
-                    </QueryParamProvider>
-                </Osano>
-            </OnLoadSpinnerProvider>
+                            </ZustandProvider>
+                        </QueryParamProvider>
+                    </OnLoadSpinner>
+                </OnLoadSpinnerProvider>
+            </Osano>
         </RequireAuth>
     );
 }

@@ -3,6 +3,7 @@ import Navigation from 'components/navigation/Navigation';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import DocsSidePanel from 'components/sidePanelDocs/SidePanel';
+import OnLoadSpinner from 'context/OnLoadSpinner/OnLoadSpinner';
 import { NavWidths } from 'context/Theme';
 import { useEffect, useState } from 'react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
@@ -61,70 +62,72 @@ function AppLayout() {
     };
 
     return (
-        <Box sx={{ height: '100vh' }}>
-            <Box>
-                <Navigation
-                    open={navigationOpen}
-                    width={navigationWidth}
-                    onNavigationToggle={toggleNavigationDrawer}
-                />
-            </Box>
-
-            <Box
-                sx={{
-                    ml: `${navigationWidth}px`,
-                    height: '100%',
-                }}
-            >
-                <ReflexContainer orientation="vertical">
-                    <ReflexElement
-                        className="left-pane"
-                        minSize={theme.breakpoints.values.sm / 2}
-                        flex={leftPaneFlex}
-                        style={{
-                            transitionDuration: animateOpening
-                                ? `${theme.transitions.duration.shortest}ms`
-                                : undefined,
-                        }}
-                    >
-                        <Box className="pane-content">
-                            <ErrorBoundryWrapper>
-                                <Toolbar />
-                                <PageContainer>
-                                    <Outlet />
-                                </PageContainer>
-                            </ErrorBoundryWrapper>
-                        </Box>
-                    </ReflexElement>
-
-                    <ReflexSplitter
-                        onStartResize={resizeHandlers.start}
-                        onStopResize={resizeHandlers.stop}
-                        style={{
-                            height: 'auto',
-                            width: displaySidePanel ? 5 : 0,
-                            display: displaySidePanel ? 'flex' : 'none',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}
+        <OnLoadSpinner display={false}>
+            <Box sx={{ height: '100vh' }}>
+                <Box>
+                    <Navigation
+                        open={navigationOpen}
+                        width={navigationWidth}
+                        onNavigationToggle={toggleNavigationDrawer}
                     />
+                </Box>
 
-                    <ReflexElement
-                        className="right-pane"
-                        minSize={displaySidePanel ? 350 : 0}
-                        maxSize={displaySidePanel ? 825 : 0}
-                        flex={rightPaneFlex}
-                        style={{
-                            transitionDuration: animateOpening
-                                ? `${theme.transitions.duration.shortest}ms`
-                                : undefined,
-                        }}
-                    >
-                        <DocsSidePanel show={displaySidePanel} />
-                    </ReflexElement>
-                </ReflexContainer>
+                <Box
+                    sx={{
+                        ml: `${navigationWidth}px`,
+                        height: '100%',
+                    }}
+                >
+                    <ReflexContainer orientation="vertical">
+                        <ReflexElement
+                            className="left-pane"
+                            minSize={theme.breakpoints.values.sm / 2}
+                            flex={leftPaneFlex}
+                            style={{
+                                transitionDuration: animateOpening
+                                    ? `${theme.transitions.duration.shortest}ms`
+                                    : undefined,
+                            }}
+                        >
+                            <Box className="pane-content">
+                                <ErrorBoundryWrapper>
+                                    <Toolbar />
+                                    <PageContainer>
+                                        <Outlet />
+                                    </PageContainer>
+                                </ErrorBoundryWrapper>
+                            </Box>
+                        </ReflexElement>
+
+                        <ReflexSplitter
+                            onStartResize={resizeHandlers.start}
+                            onStopResize={resizeHandlers.stop}
+                            style={{
+                                height: 'auto',
+                                width: displaySidePanel ? 5 : 0,
+                                display: displaySidePanel ? 'flex' : 'none',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                        />
+
+                        <ReflexElement
+                            className="right-pane"
+                            minSize={displaySidePanel ? 350 : 0}
+                            maxSize={displaySidePanel ? 825 : 0}
+                            flex={rightPaneFlex}
+                            style={{
+                                transitionDuration: animateOpening
+                                    ? `${theme.transitions.duration.shortest}ms`
+                                    : undefined,
+                            }}
+                        >
+                            <DocsSidePanel show={displaySidePanel} />
+                        </ReflexElement>
+                    </ReflexContainer>
+                </Box>
             </Box>
-        </Box>
+        </OnLoadSpinner>
     );
 }
 
