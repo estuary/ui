@@ -30,10 +30,6 @@ function TenantGuard({ children }: BaseComponentProps) {
         singleCall: true,
     });
 
-    if (checkingGrants) {
-        return null;
-    }
-
     if (error) {
         return (
             <FullPageError
@@ -43,6 +39,10 @@ function TenantGuard({ children }: BaseComponentProps) {
                 }
             />
         );
+    }
+
+    if (checkingGrants) {
+        return null;
     }
 
     const showOnboarding = userGrants.length === 0 || showBeta;

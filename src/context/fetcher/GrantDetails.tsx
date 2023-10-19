@@ -21,17 +21,12 @@ const GrantDetailsContextProvider = ({ children }: BaseComponentProps) => {
         { columns: `id, object_role` },
         []
     );
+
     const {
         data: grants,
         isValidating,
         error,
     } = useSelect(combinedGrantsQuery);
-
-    const value = grants?.data ? grants.data : null;
-
-    if (isValidating || value === null) {
-        return null;
-    }
 
     if (error) {
         return (
@@ -40,6 +35,12 @@ const GrantDetailsContextProvider = ({ children }: BaseComponentProps) => {
                 message={<FormattedMessage id="fetcher.grants.error.message" />}
             />
         );
+    }
+
+    const value = grants?.data ? grants.data : null;
+
+    if (isValidating || value === null) {
+        return null;
     }
 
     return (
