@@ -651,6 +651,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
 
     'entityCreate.endpointConfig.detailsHaveErrors': `The Details section has errors:`,
     'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections section has errors:`,
+    'entityCreate.endpointConfig.fullSourceHaveErrors': `The Time Travel section has errors:`,
     'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${endpointConfigHeader} section has errors:`,
 
     'entityCreate.endpointConfig.noConnectorSelectedTitle': `Please select a Connector to begin`,
@@ -662,6 +663,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.endpointConfig.endpointConfigMissing': `${endpointConfigHeader} empty`,
     'entityCreate.endpointConfig.collectionsMissing': `${CommonMessages['terms.collections']} missing`,
     'entityCreate.endpointConfig.resourceConfigInvalid': `Resource Config invalid`,
+    'entityCreate.endpointConfig.fullSourceInvalid': `Time Travel invalid`,
 
     'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
 
@@ -1232,6 +1234,16 @@ const Graphs: ResolvedIntlConfig['messages'] = {
     'graphs.entityDetails.empty.message': `Unable to fetch details for data usage graph.`,
 };
 
+const NotBeforeNotAfter: ResolvedIntlConfig['messages'] = {
+    'notBeforeNotAfter.header': `Time Travel`,
+    'notBeforeNotAfter.message': `Include only data from before or after a specific time period.  This should only be used when first setting up your destination or it will not have an effect.`,
+    'notBeforeNotAfter.update.error': `Changes to draft not saved.`,
+    'notAfter.input.label': `Not After`,
+    'notAfter.input.description': `only include data from before this time`,
+    'notBefore.input.label': `Not Before`,
+    'notBefore.input.description': `only include data from after this time`,
+};
+
 const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.header': `Field Selection`,
     'fieldSelection.message': `Determine which fields in your collection get materialized. By default, the connector dynamically selects the fields exported by your materialization. Click "See Fields" to update the table below.`,
@@ -1333,6 +1345,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...PrefixedName,
     ...Graphs,
     ...FieldSelection,
+    ...NotBeforeNotAfter,
     ...Notifications,
 };
 

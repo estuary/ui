@@ -29,24 +29,13 @@ import {
     RankedTester,
     rankWith,
 } from '@jsonforms/core';
-import { MuiInputText } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { Box, Hidden, IconButton, Popover, Stack } from '@mui/material';
-import {
-    LocalizationProvider,
-    StaticDateTimePicker,
-} from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { formatRFC3339 } from 'date-fns';
-import { Calendar } from 'iconoir-react';
-import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
-import { useIntl } from 'react-intl';
-import { CustomMaterialInputControl } from './MaterialInputControl';
-import useDatePickerState from './useDatePickerState';
+import { Hidden, Stack } from '@mui/material';
 
-const INVALID_DATE = 'Invalid Date';
-const TIMEZONE_OFFSET = new RegExp('([+-][0-9]{2}:[0-9]{2})$');
-const TIMEZONE_OFFSET_REPLACEMENT = 'Z';
+import DateTimePickerCTA from 'components/shared/pickers/DateTimePickerCTA';
+import useDatePickerState from 'components/shared/pickers/useDatePickerState';
+import { CustomMaterialInputControl } from './MaterialInputControl';
+import { CustomMuiInputText } from './MuiInputText';
 
 // This is SUPER customized
 // Customizations:
@@ -69,49 +58,15 @@ const TIMEZONE_OFFSET_REPLACEMENT = 'Z';
 //      This requires that we remove the "Z" (that we inject) before opening the picker
 //      otherwise the picker will try to adjust the timezone again.
 
-export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
+export const CustomMaterialDateTimeControl = (props: ControlProps) => {
     const { data, id, visible, enabled, path, handleChange, label } = props;
-
-    const intl = useIntl();
     const { state, buttonRef, events } = useDatePickerState(
         `date-time-picker-${id}`
     );
 
-    // We have a special handler that formats the date so that
-    //  it can handle if there was an error formatting, always
-    //  use RFC3339, replace the seconds with 'OO'
-    //  and replace the TZ Offset with an actual "Z"
-    const formatDate = (value: Date) => {
-        try {
-            return formatRFC3339(value).replace(
-                TIMEZONE_OFFSET,
-                TIMEZONE_OFFSET_REPLACEMENT
-            );
-        } catch (e: unknown) {
-            return INVALID_DATE;
-        }
+    const onChange = (formattedValue: any) => {
+        return handleChange(path, formattedValue);
     };
-
-    const onChange = (value: any, keyboardInput?: string | undefined) => {
-        if (value) {
-            const formattedValue = formatDate(value);
-            if (formattedValue && formattedValue !== INVALID_DATE) {
-                return handleChange(path, formattedValue);
-            }
-        }
-
-        // Default to setting to what user typed
-        //  This is a super backup as with the Date Fn adapter
-        //  it never fell through to this... but wanted to be safe
-        return handleChange(path, keyboardInput);
-    };
-
-    // We need to remove the Z here so that the date time picker
-    //  can open up to the proper date time but not try to adjust
-    //  it with the local timezone offset
-    const dateTimePickerValue = data
-        ? data.replace(TIMEZONE_OFFSET_REPLACEMENT, '')
-        : null;
 
     return (
         <Hidden xsUp={!visible}>
@@ -123,56 +78,18 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
             >
                 <CustomMaterialInputControl
                     inputEvents={events}
-                    input={MuiInputText}
+                    input={CustomMuiInputText}
                     {...props}
                 />
-                <Box sx={{ paddingTop: 2 }}>
-                    <IconButton
-                        aria-label={intl.formatMessage(
-                            {
-                                id: 'dateTimePicker.button.ariaLabel',
-                            },
-                            {
-                                label,
-                            }
-                        )}
-                        disabled={!enabled}
-                        ref={buttonRef}
-                        {...bindFocus(state)}
-                    >
-                        <Calendar />
-                    </IconButton>
-                </Box>
-
-                <Popover
-                    {...bindPopover(state)}
-                    anchorOrigin={{
-                        vertical: 'center',
-                        horizontal: 'left',
-                    }}
-                    transformOrigin={{
-                        vertical: 'center',
-                        horizontal: 'right',
-                    }}
-                >
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <StaticDateTimePicker
-                            ignoreInvalidInputs
-                            disableMaskedInput
-                            displayStaticWrapperAs="desktop"
-                            openTo="day"
-                            ampm={false}
-                            disabled={!enabled}
-                            value={dateTimePickerValue}
-                            onChange={onChange}
-                            onAccept={state.close}
-                            closeOnSelect={true}
-                            // We don't need an input
-                            // eslint-disable-next-line react/jsx-no-useless-fragment
-                            renderInput={() => <></>}
-                        />
-                    </LocalizationProvider>
-                </Popover>
+                <DateTimePickerCTA
+                    enabled={enabled}
+                    label={label}
+                    buttonRef={buttonRef}
+                    removeOffset
+                    state={state}
+                    value={data}
+                    onChange={onChange}
+                />
             </Stack>
         </Hidden>
     );
@@ -183,4 +100,4 @@ export const materialDateTimeControlTester: RankedTester = rankWith(
     isDateTimeControl
 );
 
-export default withJsonFormsControlProps(Custom_MaterialDateTimeControl);
+export default withJsonFormsControlProps(CustomMaterialDateTimeControl);

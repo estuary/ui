@@ -7,6 +7,7 @@ import {
     useResourceConfig_hydrated,
     useResourceConfig_resourceConfigOfCollectionProperty,
 } from 'stores/ResourceConfig/hooks';
+import TimeTravel from 'components/editor/Bindings/TimeTravel';
 import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
 
 interface Props {
@@ -44,6 +45,10 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
                     <BindingsEditorConfigSkeleton />
                 )}
             </Box>
+
+            {entityType === 'materialization' ? (
+                <TimeTravel collectionName={collectionName} />
+            ) : null}
 
             {entityType === 'materialization' && !collectionDisabled ? (
                 <FieldSelectionViewer collectionName={collectionName} />

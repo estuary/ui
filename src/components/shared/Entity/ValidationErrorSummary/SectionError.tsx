@@ -5,17 +5,17 @@ import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     errors: any;
-    errorMessage?: string;
     config?: any;
     configEmptyMessage?: string;
+    errorMessage?: string;
     title?: string;
 }
 
 function SectionError({
     config,
-    errors,
-    errorMessage,
     configEmptyMessage,
+    errorMessage,
+    errors,
     title,
 }: Props) {
     const intl = useIntl();

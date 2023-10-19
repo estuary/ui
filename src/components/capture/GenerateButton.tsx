@@ -9,6 +9,7 @@ import {
 } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import { useResourceConfig_rediscoveryRequired } from 'stores/ResourceConfig/hooks';
 import { Entity } from 'types';
 import useDiscoverCapture from './useDiscoverCapture';
 
@@ -28,10 +29,15 @@ function CaptureGenerateButton({
     postGenerateMutate,
     createWorkflowMetadata,
 }: Props) {
+    const rediscoveryRequired = useResourceConfig_rediscoveryRequired();
+
     const { generateCatalog, isSaving, formActive } = useDiscoverCapture(
         entityType,
         postGenerateMutate,
-        { initiateDiscovery: createWorkflowMetadata?.initiateDiscovery }
+        {
+            initiateDiscovery: createWorkflowMetadata?.initiateDiscovery,
+            initiateRediscovery: rediscoveryRequired,
+        }
     );
 
     // Details Form Store
