@@ -4,12 +4,16 @@ import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useTimeout } from 'react-use';
 
-function FullPageSpinner() {
+interface Props {
+    delay?: number;
+}
+
+function FullPageSpinner({ delay }: Props) {
     const intl = useIntl();
 
     // We want to block the page right away but give it a half second before showing
     //  anything. That way if the network calls are quick then the user never sees anything
-    const [isReady, cancel] = useTimeout(500);
+    const [isReady, cancel] = useTimeout(delay ?? 500);
     useEffect(() => {
         return () => {
             cancel();
