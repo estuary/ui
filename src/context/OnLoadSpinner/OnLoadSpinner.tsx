@@ -1,4 +1,4 @@
-import { useEffectOnce } from 'react-use';
+import { useEffect } from 'react';
 import { BaseComponentProps } from 'types';
 import { useOnLoadSpinner } from './OnLoadSpinnerContext';
 
@@ -9,9 +9,9 @@ interface Props extends BaseComponentProps {
 function OnLoadSpinner({ children, display }: Props) {
     const { setLoading } = useOnLoadSpinner();
 
-    useEffectOnce(() => {
+    useEffect(() => {
         setLoading(display);
-    });
+    }, [display, setLoading]);
 
     return (
         // eslint-disable-next-line react/jsx-no-useless-fragment
