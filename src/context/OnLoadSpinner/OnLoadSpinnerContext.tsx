@@ -14,6 +14,10 @@ interface Props extends BaseComponentProps {
     defaultState: boolean;
 }
 
+//      NOT INTENDED FOR ALL FULL PAGE SPINNERS
+// This is used only for the initial loading of the application.
+//  It only works if some component later in the nexting sets this
+//   back to false so it won't show anymore.
 const OnLoadSpinnerProvider = ({ children, defaultState }: Props) => {
     const [loading, setLoading] = useState(defaultState);
 
