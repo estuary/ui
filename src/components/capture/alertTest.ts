@@ -2,46 +2,29 @@ import { PostgrestError } from '@supabase/postgrest-js';
 import { isFinite } from 'lodash';
 import { supabaseClient } from 'services/supabase';
 
-// interface BaseTableColumns {
-//     id: string;
-//     detail: string | null;
-//     created_at: Date;
-//     updated_at: Date;
-// }
-
-// interface NotificationPreferenceExt extends BaseTableColumns {
-//     prefix: string;
-//     subscribed_by: string;
-//     user_id: string | null;
-//     verified_email: string | null;
-// }
-
-interface NotificationQuery {
-    notification_id: string;
-    evaluation_interval: string;
-    acknowledged: boolean;
-    notification_title: string;
-    notification_message: string;
-    classification: string | null;
-    preference_id: string;
-    verified_email: string;
+interface DataProcessingNotification {
     live_spec_id: string;
-    catalog_name: string;
-    spec_type: string;
+    acknowledged: boolean;
+    evaluation_interval: string;
 }
 
-interface CatalogStatsQuery {
+interface DataProcessingNotificationExt {
+    live_spec_id: string;
+    acknowledged: boolean;
+    evaluation_interval: string;
+    notification_title: string;
+    notification_message: string;
+    confirmation_title: string;
+    confirmation_message: string;
+    classification: string | null;
+    verified_email: string;
     catalog_name: string;
-    grain: string;
-    ts: string;
-    bytes_written_by_me: number;
-    bytes_written_to_me: number;
-    bytes_read_by_me: number;
-    bytes_read_from_me: number;
+    spec_type: string;
+    bytes_processed: number;
 }
 
 interface EmailConfig {
-    notification_id: string;
+    live_spec_id: string;
     emails: string[];
     subject: string;
     html: string;
@@ -73,113 +56,81 @@ export const handleFailure = (error: any) => {
     };
 };
 
-const getDataProcessedInInterval = (
-    startStat: CatalogStatsQuery,
-    endStat: CatalogStatsQuery,
-    specType: string
-): boolean => {
-    if (specType === 'capture') {
-        const dataProcessed =
-            endStat.bytes_written_by_me - startStat.bytes_written_by_me;
-
-        return dataProcessed > 0;
-    } else if (specType === 'materialization') {
-        const dataProcessed =
-            endStat.bytes_read_by_me - startStat.bytes_read_by_me;
-
-        return dataProcessed > 0;
-    } else {
-        const dataWritten =
-            endStat.bytes_written_to_me - startStat.bytes_written_to_me;
-        const dataRead =
-            endStat.bytes_read_from_me - startStat.bytes_read_from_me;
-
-        return dataWritten > 0 || dataRead > 0;
-    }
+const TABLES = {
+    DATA_PROCESSING_NOTIFICATIONS: 'data_processing_notifications',
+    DATA_PROCESSING_NOTIFICATIONS_EXT: 'data_processing_notifications_ext',
 };
 
-const getAlertEmailConfigurations = (
-    notifications: NotificationQuery[],
-    catalogStats: CatalogStatsQuery[]
-): EmailConfig[] => {
-    return notifications
-        .filter(({ evaluation_interval, catalog_name, spec_type }) => {
-            const taskStats = catalogStats.filter(
-                (stat) => stat.catalog_name === catalog_name
-            );
+const emailNotifications = async (
+    pendingNotifications: EmailConfig[]
+): Promise<string[]> => {
+    const notificationsDelivered: string[] = [];
 
-            const timeOffset = evaluation_interval.split(':');
-            const hourOffset = Number(timeOffset[0]);
-
-            if (isFinite(hourOffset)) {
-                const endStat = taskStats[0];
-
-                const intervalStart = new Date(endStat.ts);
-                const intervalHours = intervalStart.getUTCHours() - hourOffset;
-
-                intervalStart.setUTCHours(intervalHours);
-
-                console.log('interval start', intervalStart.toUTCString());
-
-                const startStat = taskStats.find((stat) => {
-                    const statDate = new Date(stat.ts);
-
-                    return (
-                        statDate.toUTCString() === intervalStart.toUTCString()
-                    );
-                });
-
-                console.log('start stat', startStat);
-                console.log('end stat', endStat);
-
-                if (startStat && endStat) {
-                    const dataProcessed = getDataProcessedInInterval(
-                        startStat,
-                        endStat,
-                        spec_type
-                    );
-
-                    return !Boolean(dataProcessed);
-                }
-            }
-
-            return false;
-        })
-        .map(
-            ({
-                notification_title,
-                notification_message,
-                catalog_name,
-                notification_id,
-                evaluation_interval,
-                spec_type,
-                verified_email,
-            }) => {
-                const subject = notification_title
-                    .replaceAll('{spec_type}', spec_type)
-                    .replaceAll('{catalog_name}', catalog_name);
-
-                const html = notification_message
-                    .replaceAll('{spec_type}', spec_type)
-                    .replaceAll('{catalog_name}', catalog_name)
-                    .replaceAll('{notification_interval}', evaluation_interval);
-
-                return {
-                    notification_id,
-                    emails: [verified_email],
+    // TODO: Replace hardcoded sender and recipient address with the destructured `emails` property.
+    const notificationPromises = pendingNotifications.map(
+        ({ live_spec_id, emails, subject, html }) =>
+            fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                    ...corsHeaders,
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${RESEND_API_KEY}`,
+                },
+                body: JSON.stringify({
+                    from: 'Estuary <onboarding@resend.dev>',
+                    to: ['tucker.kiahna@gmail.com'],
                     subject,
                     html,
-                };
-            }
-        );
+                }),
+            }).then(
+                (response) => {
+                    if (response.ok) {
+                        notificationsDelivered.push(live_spec_id);
+                    }
+                },
+                () => {}
+            )
+    );
+
+    await Promise.all(notificationPromises);
+
+    return notificationsDelivered;
+};
+
+const updateAcknowledgementFlag = async (
+    alertEmailsDelivered: string[],
+    confirmationEmailsDelivered: string[]
+) => {
+    const alertUpdates = alertEmailsDelivered.map((liveSpecId) =>
+        supabaseClient
+            .from<DataProcessingNotification>(
+                TABLES.DATA_PROCESSING_NOTIFICATIONS
+            )
+            .update({ acknowledged: true })
+            .match({ live_spec_id: liveSpecId })
+            .then(handleSuccess, handleFailure)
+    );
+
+    const confirmationUpdates = confirmationEmailsDelivered.map((liveSpecId) =>
+        supabaseClient
+            .from<DataProcessingNotification>(
+                TABLES.DATA_PROCESSING_NOTIFICATIONS
+            )
+            .update({ acknowledged: false })
+            .match({ live_spec_id: liveSpecId })
+            .then(handleSuccess, handleFailure)
+    );
+
+    await Promise.all([...alertUpdates, ...confirmationUpdates]);
 };
 
 export const serve = async (_request: Request): Promise<Response> => {
     const { data: notifications, error: notificationError } =
         await supabaseClient
-            .from<NotificationQuery>('notifications_ext')
-            .select('*')
-            .eq('classification', 'data-not-processed-in-interval');
+            .from<DataProcessingNotificationExt>(
+                TABLES.DATA_PROCESSING_NOTIFICATIONS_EXT
+            )
+            .select('*');
 
     if (notificationError !== null) {
         returnPostgresError(notificationError);
@@ -193,132 +144,95 @@ export const serve = async (_request: Request): Promise<Response> => {
         });
     }
 
-    console.log('NOTIFICATIONS', notifications);
+    const pendingAlertEmails: EmailConfig[] = notifications
+        .filter(
+            ({ bytes_processed, acknowledged }) =>
+                !acknowledged && bytes_processed === 0
+        )
+        .map(
+            ({
+                catalog_name,
+                evaluation_interval,
+                live_spec_id,
+                notification_message,
+                notification_title,
+                spec_type,
+                verified_email,
+            }) => {
+                const timeOffset = evaluation_interval.split(':');
+                const hours = Number(timeOffset[0]);
 
-    // Determine a date to use to narrow the catalog stats query results. The largest notification interval
-    // supported at this time is 24 hours.
-    const startDate = new Date();
-    const yesterday = startDate.getUTCDate() - 1;
+                const subject = notification_title
+                    .replaceAll('{spec_type}', spec_type)
+                    .replaceAll('{catalog_name}', catalog_name);
 
-    startDate.setUTCMilliseconds(0);
-    startDate.setUTCSeconds(0);
-    startDate.setUTCMinutes(0);
-    startDate.setUTCHours(0);
-    startDate.setUTCDate(yesterday);
+                const html = notification_message
+                    .replaceAll('{spec_type}', spec_type)
+                    .replaceAll('{catalog_name}', catalog_name)
+                    .replaceAll(
+                        '{evaluation_interval}',
+                        isFinite(hours) ? hours.toString() : timeOffset[0]
+                    );
 
-    const catalogNames = notifications
-        .filter(({ acknowledged }) => !acknowledged)
-        .map(({ catalog_name }) => catalog_name);
-
-    const { data: catalogStats, error: catalogStatsError } =
-        await supabaseClient
-            .from<CatalogStatsQuery>('catalog_stats')
-            .select(
-                `catalog_name,
-             grain,
-             ts,
-             bytes_written_by_me,
-             bytes_written_to_me,
-             bytes_read_by_me,
-             bytes_read_from_me`
-            )
-            .in('catalog_name', catalogNames)
-            .eq('grain', 'hourly')
-            .gte('ts', startDate.toUTCString())
-            .order('ts', { ascending: false });
-
-    if (catalogStatsError !== null) {
-        returnPostgresError(catalogStatsError);
-    }
-
-    if (!catalogStats || catalogStats.length === 0) {
-        return new Response(
-            JSON.stringify({
-                error: {
-                    code: 'catalog_stats_missing',
-                    message: `Catalog stats not found.`,
-                    description: `Failed to fetch the catalog stats of the requested entities.`,
-                },
-            }),
-            {
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                status: 500,
-            }
-        );
-    }
-
-    console.log('START DATE', startDate);
-    console.log('CATALOG NAMES', catalogNames);
-    console.log('CATALOG STATS', catalogStats);
-
-    const alertEmailConfigs: EmailConfig[] = getAlertEmailConfigurations(
-        notifications,
-        catalogStats
-    );
-
-    console.log('ALERTS EMAIL CONFIG', alertEmailConfigs);
-
-    if (alertEmailConfigs.length === 0) {
-        console.log('no alert emails');
-        return new Response(null, {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 200,
-        });
-    }
-
-    const alertEmailSent: string[] = [];
-
-    const alertPromises = alertEmailConfigs.map(
-        ({ notification_id, emails, subject, html }) =>
-            fetch('https://api.resend.com/emails', {
-                method: 'POST',
-                headers: {
-                    ...corsHeaders,
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${RESEND_API_KEY}`,
-                },
-                body: JSON.stringify({
-                    from: 'Resend Test <onboarding@resend.dev>',
-                    to: ['tucker.kiahna@gmail.com'],
+                return {
+                    live_spec_id,
+                    emails: [verified_email],
                     subject,
                     html,
-                }),
-            }).then(
-                (response) => {
-                    console.log('email response', response);
-                    if (response.ok) {
-                        console.log('email sent successfully');
-                        alertEmailSent.push(notification_id);
-                    }
-                },
-                () => {
-                    console.log('email error');
-                }
-            )
-    );
+                };
+            }
+        );
 
-    await Promise.all(alertPromises);
+    const pendingConfirmationEmails: EmailConfig[] = notifications
+        .filter(
+            ({ bytes_processed, acknowledged }) =>
+                acknowledged && bytes_processed > 0
+        )
+        .map(
+            ({
+                catalog_name,
+                confirmation_message,
+                confirmation_title,
+                live_spec_id,
+                spec_type,
+                verified_email,
+            }) => {
+                const subject = confirmation_title
+                    .replaceAll('{spec_type}', spec_type)
+                    .replaceAll('{catalog_name}', catalog_name);
 
-    if (alertEmailSent.length === 0) {
-        console.log('no confirmation flag changes needed');
+                const html = confirmation_message
+                    .replaceAll('{spec_type}', spec_type)
+                    .replaceAll('{catalog_name}', catalog_name);
 
+                return {
+                    live_spec_id,
+                    emails: [verified_email],
+                    subject,
+                    html,
+                };
+            }
+        );
+
+    if (
+        pendingAlertEmails.length === 0 &&
+        pendingConfirmationEmails.length === 0
+    ) {
         return new Response(null, {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 200,
         });
     }
 
-    const acknowledgementPromises = alertEmailSent.map((notificationId) =>
-        supabaseClient
-            .from('notifications')
-            .update({ acknowledged: true })
-            .match({ id: notificationId })
-            .then(handleSuccess, handleFailure)
+    const alertEmailsDelivered = await emailNotifications(pendingAlertEmails);
+    const confirmationEmailsDelivered = await emailNotifications(
+        pendingConfirmationEmails
     );
 
-    const res = await Promise.all(acknowledgementPromises);
-
-    console.log('final', res);
+    await updateAcknowledgementFlag(
+        alertEmailsDelivered,
+        confirmationEmailsDelivered
+    );
 
     return new Response(null, {
         status: 200,
