@@ -13,8 +13,8 @@ import {
     isEmpty,
     isEqual,
     omit,
+    orderBy,
     pick,
-    sortBy,
 } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
@@ -26,11 +26,7 @@ import { populateErrors } from 'stores/utils';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import {
-    getCollectionNameDirectly,
-    getCollectionName,
-    getDisableProps,
-} from 'utils/workflow-utils';
+import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
@@ -96,6 +92,14 @@ const whatChanged = (
     const newCollections = difference(newResourceKeys, currentCollections);
 
     return [removedCollections, newCollections];
+};
+
+const sortBindings = (bindings: any) => {
+    return orderBy(
+        bindings,
+        ['disable', (binding) => getCollectionName(binding)],
+        ['desc', 'asc']
+    );
 };
 
 const getInitialCollectionStateData = (): Pick<
@@ -662,22 +666,7 @@ const getInitialState = (
                 setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
                 const { prefillResourceConfig } = get();
-
-                const collectionNameProp = materializationHydrating
-                    ? 'source'
-                    : 'target';
-
-                // TODO (direct bindings) We can remove the ordering when/if we move the UI
-                //   to using the bindings directly and save a lot of processing
-                const sortedBindings = sortBy(data[0].spec.bindings, [
-                    (binding) => {
-                        return getCollectionNameDirectly(
-                            binding[collectionNameProp]
-                        );
-                    },
-                ]);
-
-                prefillResourceConfig(sortedBindings);
+                prefillResourceConfig(sortBindings(data[0].spec.bindings));
             }
         }
 
@@ -730,7 +719,7 @@ const getInitialState = (
                 const collectionsToAdd: string[] = [];
                 const modifiedResourceConfig: ResourceConfigDictionary = {};
 
-                updatedBindings.forEach((binding: any) => {
+                sortBindings(updatedBindings).forEach((binding: any) => {
                     if (
                         !existingCollections.includes(binding.target) &&
                         !restrictedDiscoveredCollections.includes(
