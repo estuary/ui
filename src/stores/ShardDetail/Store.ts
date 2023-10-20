@@ -121,22 +121,30 @@ const getTaskEndpoints = (dataPlaneHostname: string, taskShards: Shard[]) => {
 // const validationMessage = 'document failed validation against its collection JSON Schema';
 // const inferredSchemaRegEx =new RegExp(`absoluteKeywordLocation\\": \\"flow:\/\/inferred-schema#/`);
 const shardHasInferredSchemaError = (shard: Shard) => {
-    const shardContains = shard.status.some((shardStatus) => {
-        const errorsContain = shardStatus.errors?.some((error) => {
-            return (
+    const { status } = shard;
+    let errorCount = 0;
+    let warningCount = 0;
+
+    status.forEach(({ errors }) => {
+        errors?.forEach((error) => {
+            if (
                 error.includes('document failed validation') &&
                 error.includes(
                     'absoluteKeywordLocation": "flow://inferred-schema#/'
                 )
-            );
+            ) {
+                warningCount += 1;
+            } else {
+                errorCount += 1;
+            }
         });
-
-        console.log('errorsContain', errorsContain);
-        return errorsContain;
     });
 
-    console.log('shardContains', shardContains);
-    return shardContains;
+    console.log('shardContains', {
+        errorCount,
+        warningCount,
+    });
+    return warningCount > errorCount;
 };
 
 // TODO: Consider unifying this function with the one below in a similar fashion as evaluateTaskShardStatus.
