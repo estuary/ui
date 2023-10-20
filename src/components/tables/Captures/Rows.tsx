@@ -8,12 +8,11 @@ import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import useShardHydration from 'hooks/shards/useShardHydration';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
-import useShardsList from 'hooks/useShardsList';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SelectTableStoreNames } from 'stores/names';
-import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -114,6 +113,8 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
 }
 
 function Rows({ data, showEntityStatus }: RowsProps) {
+    const { mutate: mutateShardsList } = useShardHydration(data);
+
     // Select Table Store
     const selectTableStoreName = SelectTableStoreNames.CAPTURE;
 
@@ -139,17 +140,6 @@ function Rows({ data, showEntityStatus }: RowsProps) {
         SelectableTableStore,
         SelectableTableStore['stats']
     >(selectTableStoreName, selectableTableStoreSelectors.stats.get);
-
-    // Shard Detail Store
-    const setShards = useShardDetail_setShards();
-
-    const { data: shardsData, mutate: mutateShardsList } = useShardsList(data);
-
-    useEffect(() => {
-        if (shardsData && shardsData.shards.length > 0) {
-            setShards(shardsData.shards, '#40B763');
-        }
-    }, [setShards, shardsData]);
 
     useEffect(() => {
         mutateShardsList().catch(() => {});

@@ -1,13 +1,12 @@
 import { Box, Tooltip, Typography } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import ExternalLink from 'components/shared/ExternalLink';
+import useShardHydration from 'hooks/shards/useShardHydration';
 import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
-import useShardsList from 'hooks/useShardsList';
 import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useShardDetail_getTaskEndpoints,
-    useShardDetail_setShards,
     useShardDetail_shards,
 } from 'stores/ShardDetail/hooks';
 import { Endpoint } from 'stores/ShardDetail/types';
@@ -154,14 +153,11 @@ export function TaskEndpoint({ taskName }: Props) {
     const gateway = useScopedGatewayAuthToken(taskName);
 
     // The id and spec_type are irrelevant in useShardsList, but they're required to be there.
-    const listShards = useShardsList([
+    useShardHydration([
         { catalog_name: taskName, id: '', spec_type: 'collection' },
     ]);
-    const setShards = useShardDetail_setShards();
+
     const getTaskEndpoints = useShardDetail_getTaskEndpoints();
-    if (listShards.data) {
-        setShards(listShards.data.shards, '#40B763');
-    }
 
     let gatewayHostname = null;
     if (gateway.data?.gateway_url) {

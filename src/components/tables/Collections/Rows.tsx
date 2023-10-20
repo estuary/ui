@@ -5,14 +5,11 @@ import TimeStamp from 'components/tables/cells/TimeStamp';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
+import useShardHydration from 'hooks/shards/useShardHydration';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
-import useShardsList from 'hooks/useShardsList';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
-import {
-    useShardDetail_setError,
-    useShardDetail_setShards,
-} from 'stores/ShardDetail/hooks';
+
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -96,26 +93,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
 }
 
 function Rows({ data, showEntityStatus }: RowsProps) {
-    // Shard Detail Store
-    const setShards = useShardDetail_setShards();
-    const setShardsError = useShardDetail_setError();
-
-    const { data: shardsData, error: shardsError } = useShardsList(data);
-
-    // Collection is the only entity (as of Dec 2022) that actually checks
-    //  the error. This is because the default color for Collections is
-    //  success and the other ones default to nothing.
-    useEffect(() => {
-        // Set the error or default back to null
-        setShardsError(shardsError ?? null);
-
-        // Try to set the data returned
-        if (shardsData) {
-            if (shardsData.shards.length > 0) {
-                setShards(shardsData.shards, '#40B763');
-            }
-        }
-    }, [setShards, setShardsError, shardsData, shardsError]);
+    useShardHydration(data);
 
     const selectTableStoreName = SelectTableStoreNames.COLLECTION;
 
