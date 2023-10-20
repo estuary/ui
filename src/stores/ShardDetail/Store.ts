@@ -251,7 +251,10 @@ export const getInitialState = (
                         const key = getCollectionName(shard.spec);
 
                         if (key) {
-                            if (newDictionary[key].length === 0) {
+                            if (
+                                !newDictionary[key] ||
+                                newDictionary[key].length === 0
+                            ) {
                                 newDictionary[key] = [];
                             }
 
