@@ -118,31 +118,41 @@ const getTaskEndpoints = (dataPlaneHostname: string, taskShards: Shard[]) => {
     return [];
 };
 
+// const validationMessage = 'document failed validation against its collection JSON Schema';
+// const inferredSchemaRegEx =new RegExp(`absoluteKeywordLocation\\": \\"flow:\/\/inferred-schema#/`);
+const shardHasInferredSchemaError = (shard: Shard) => {
+    const shardContains = shard.status.some((shardStatus) => {
+        const errorsContain = shardStatus.errors?.some((error) => {
+            return (
+                error.includes('document failed validation') &&
+                error.includes(
+                    'absoluteKeywordLocation": "flow://inferred-schema#/'
+                )
+            );
+        });
+
+        console.log('errorsContain', errorsContain);
+        return errorsContain;
+    });
+
+    console.log('shardContains', shardContains);
+    return shardContains;
+};
+
 // TODO: Consider unifying this function with the one below in a similar fashion as evaluateTaskShardStatus.
 const evaluateShardStatusColor = (
-    { status }: Shard,
+    shard: Shard,
     defaultStatusColor: ShardStatusColor
 ): ShardStatusColor => {
-    if (status.length === 1) {
-        switch (status[0].code) {
-            case 'PRIMARY':
-                return successMain;
-            case 'IDLE':
-            case 'STANDBY':
-            case 'BACKFILL':
-                return warningMain;
-            case 'FAILED':
-                return errorMain;
-            default:
-                return defaultStatusColor;
-        }
-    } else if (status.length > 1) {
+    const { status } = shard;
+
+    if (status.length > 0) {
         const statusCodes: (ReplicaStatusCode | undefined)[] = status.map(
             ({ code }) => code
         );
 
         if (statusCodes.find((code) => code === 'FAILED')) {
-            return errorMain;
+            return shardHasInferredSchemaError(shard) ? warningMain : errorMain;
         } else if (statusCodes.find((code) => code === 'PRIMARY')) {
             return successMain;
         } else if (
@@ -160,38 +170,26 @@ const evaluateShardStatusColor = (
     }
 };
 
-const evaluateShardStatusCode = ({
-    spec,
-    status,
-}: Shard): ShardStatusMessageIds => {
-    if (status.length === 1) {
-        switch (status[0].code) {
-            case 'FAILED':
-                return ShardStatusMessageIds.FAILED;
-            case 'PRIMARY':
-                return ShardStatusMessageIds.PRIMARY;
-            case 'IDLE':
-                return ShardStatusMessageIds.IDLE;
-            case 'STANDBY':
-                return ShardStatusMessageIds.STANDBY;
-            case 'BACKFILL':
-                return ShardStatusMessageIds.BACKFILL;
-            default:
-                return ShardStatusMessageIds.NONE;
-        }
-    } else if (status.length > 1) {
+const evaluateShardStatusCode = (shard: Shard): ShardStatusMessageIds => {
+    const { spec, status } = shard;
+
+    if (status.length > 0) {
         const statusCodes: (ReplicaStatusCode | undefined)[] = status.map(
             ({ code }) => code
         );
 
         if (statusCodes.find((code) => code === 'FAILED')) {
-            return ShardStatusMessageIds.FAILED;
+            return shardHasInferredSchemaError(shard)
+                ? ShardStatusMessageIds.SCHEMA
+                : ShardStatusMessageIds.FAILED;
         } else if (statusCodes.find((code) => code === 'PRIMARY')) {
             return ShardStatusMessageIds.PRIMARY;
         } else if (statusCodes.find((code) => code === 'IDLE')) {
             return ShardStatusMessageIds.IDLE;
         } else if (statusCodes.find((code) => code === 'STANDBY')) {
-            return ShardStatusMessageIds.STANDBY;
+            return shardHasInferredSchemaError(shard)
+                ? ShardStatusMessageIds.SCHEMA
+                : ShardStatusMessageIds.STANDBY;
         } else if (statusCodes.find((code) => code === 'BACKFILL')) {
             return ShardStatusMessageIds.BACKFILL;
         } else {
@@ -213,6 +211,12 @@ const evaluateTaskShardStatus = (
         color: evaluateShardStatusColor(shard, defaultStatusColor),
         disabled: shard.spec.disable,
     };
+};
+
+const findShard = (shards: Shard[], shardId: string) => {
+    return shards.find(({ spec }) =>
+        spec.id ? spec.id === shardId : undefined
+    );
 };
 
 export const getInitialState = (
@@ -291,11 +295,16 @@ export const getInitialState = (
         },
         getTaskStatusColor: (taskShardDetails, defaultStatusColor) => {
             const { error } = get();
+
             if (error) {
                 return defaultStatusColor;
-            } else if (taskShardDetails.length === 1) {
+            }
+
+            if (taskShardDetails.length === 1) {
                 return taskShardDetails[0].color;
-            } else if (taskShardDetails.length > 1) {
+            }
+
+            if (taskShardDetails.length > 1) {
                 const statusMessageIds: ShardStatusMessageIds[] =
                     taskShardDetails.map(
                         ({ messageId: statusCode }) => statusCode
@@ -308,30 +317,37 @@ export const getInitialState = (
                     )
                 ) {
                     return errorMain;
-                } else if (
+                }
+
+                if (
                     statusMessageIds.find(
                         (messageId) =>
                             messageId === ShardStatusMessageIds.PRIMARY
                     )
                 ) {
                     return successMain;
-                } else if (
+                }
+
+                if (
                     statusMessageIds.find(
                         (messageId) =>
                             messageId === ShardStatusMessageIds.IDLE ||
                             messageId === ShardStatusMessageIds.STANDBY ||
-                            messageId === ShardStatusMessageIds.BACKFILL
+                            messageId === ShardStatusMessageIds.BACKFILL ||
+                            messageId === ShardStatusMessageIds.SCHEMA
                     )
                 ) {
                     return warningMain;
-                } else {
-                    return defaultStatusColor;
                 }
-            } else if (entityType === 'collection') {
-                return successMain;
-            } else {
+
                 return defaultStatusColor;
             }
+
+            if (entityType === 'collection') {
+                return successMain;
+            }
+
+            return defaultStatusColor;
         },
         getShardDetails: (shards: Shard[]): ShardDetails[] => {
             return shards.map((shard) => ({
@@ -356,9 +372,8 @@ export const getInitialState = (
             const { shards } = get();
 
             if (shards.length > 0) {
-                const selectedShard = shards.find(({ spec }) =>
-                    spec.id ? spec.id === shardId : undefined
-                );
+                findShard(shards, shardId);
+                const selectedShard = findShard(shards, shardId);
 
                 return selectedShard
                     ? evaluateShardStatusColor(
@@ -374,9 +389,7 @@ export const getInitialState = (
             const { shards } = get();
 
             if (shards.length > 0) {
-                const selectedShard = shards.find(({ spec }) =>
-                    spec.id ? spec.id === shardId : undefined
-                );
+                const selectedShard = findShard(shards, shardId);
 
                 return selectedShard
                     ? evaluateShardStatusCode(selectedShard)
@@ -389,11 +402,7 @@ export const getInitialState = (
             const { shards } = get();
 
             if (shards.length > 0) {
-                const selectedShard = shards.find(({ spec }) =>
-                    spec.id ? spec.id === shardId : undefined
-                );
-
-                return !!selectedShard?.spec.disable;
+                return !!findShard(shards, shardId)?.spec.disable;
             } else {
                 return false;
             }

@@ -9,6 +9,7 @@ export enum ShardStatusMessageIds {
     PRIMARY = 'shardStatus.primary',
     FAILED = 'shardStatus.failed',
     IDLE = 'shardStatus.idle',
+    SCHEMA = 'shardStatus.schema',
     STANDBY = 'shardStatus.standby',
     BACKFILL = 'shardStatus.backfill',
     DISABLED = 'shardStatus.disabled',
