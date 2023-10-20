@@ -1,28 +1,16 @@
-import {
-    Grid,
-    Stack,
-    SxProps,
-    Table,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Theme,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { Grid, Stack, Table, TableContainer } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import MessageWithLink from 'components/content/MessageWithLink';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
-import { semiTransparentBackground } from 'context/Theme';
-import { MouseEvent, useState } from 'react';
+import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useShardDetail_error } from 'stores/ShardDetail/hooks';
 import { Entity, TableColumns } from 'types';
 import ShardAlerts from './Alerts';
 import InformationTableBody from './TableBody';
 import InformationTableFooter from './TableFooter';
+import InformationTableHeader from './TableHeader';
 
 interface Props {
     taskType: Entity;
@@ -43,21 +31,11 @@ const columns: TableColumns[] = [
 ];
 
 function ShardInformation({ taskName, taskType }: Props) {
-    const theme = useTheme();
     const intl = useIntl();
 
     const [page, setPage] = useState(0);
 
     const error = useShardDetail_error();
-
-    const changePage = (
-        _event: MouseEvent<HTMLButtonElement> | null,
-        newPage: number
-    ) => setPage(newPage);
-
-    const tableHeaderFooterSx: SxProps<Theme> = {
-        bgcolor: semiTransparentBackground[theme.palette.mode],
-    };
 
     return (
         <CardWrapper
@@ -97,25 +75,7 @@ function ShardInformation({ taskName, taskType }: Props) {
                     <Grid item xs={12}>
                         <TableContainer>
                             <Table size="small">
-                                <TableHead>
-                                    <TableRow sx={{ ...tableHeaderFooterSx }}>
-                                        {columns.map((column, index) => (
-                                            <TableCell
-                                                key={`${column.field}-${index}`}
-                                            >
-                                                <Typography>
-                                                    {column.headerIntlKey ? (
-                                                        <FormattedMessage
-                                                            id={
-                                                                column.headerIntlKey
-                                                            }
-                                                        />
-                                                    ) : null}
-                                                </Typography>
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-                                </TableHead>
+                                <InformationTableHeader columns={columns} />
 
                                 <InformationTableBody
                                     taskType={taskType}
@@ -126,7 +86,9 @@ function ShardInformation({ taskName, taskType }: Props) {
                                 />
 
                                 <InformationTableFooter
-                                    changePage={changePage}
+                                    changePage={(_event, newPage) => {
+                                        setPage(newPage);
+                                    }}
                                     page={page}
                                     rowsPerPage={rowsPerPage}
                                     taskName={taskName}
