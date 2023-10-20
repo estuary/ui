@@ -112,7 +112,7 @@ function Rows({ data, showEntityStatus }: RowsProps) {
         // Try to set the data returned
         if (shardsData) {
             if (shardsData.shards.length > 0) {
-                setShards(shardsData.shards);
+                setShards(shardsData.shards, '#40B763');
             }
         }
     }, [setShards, setShardsError, shardsData, shardsError]);

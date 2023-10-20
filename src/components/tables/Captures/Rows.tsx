@@ -147,7 +147,7 @@ function Rows({ data, showEntityStatus }: RowsProps) {
 
     useEffect(() => {
         if (shardsData && shardsData.shards.length > 0) {
-            setShards(shardsData.shards);
+            setShards(shardsData.shards, '#40B763');
         }
     }, [setShards, shardsData]);
 

@@ -160,7 +160,7 @@ export function TaskEndpoint({ taskName }: Props) {
     const setShards = useShardDetail_setShards();
     const getTaskEndpoints = useShardDetail_getTaskEndpoints();
     if (listShards.data) {
-        setShards(listShards.data.shards);
+        setShards(listShards.data.shards, '#40B763');
     }
 
     let gatewayHostname = null;
