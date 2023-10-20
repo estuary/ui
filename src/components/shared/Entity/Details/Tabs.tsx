@@ -1,8 +1,11 @@
 import { Box, Tab, Tabs } from '@mui/material';
+import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
+import { useEntityType } from 'context/EntityContext';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import useConstant from 'use-constant';
+import { specContainsDerivation } from 'utils/misc-utils';
 
 function DetailTabs() {
     const intl = useIntl();
@@ -10,7 +13,15 @@ function DetailTabs() {
     const [searchParams] = useSearchParams();
     const { pathname } = useLocation();
 
+    const entityType = useEntityType();
+
     const [selectedTab, setSelectedTab] = useState(0);
+
+    const currentCatalog = useEditorStore_currentCatalog({
+        localScope: true,
+    });
+    const catalogSpec = currentCatalog?.spec ?? null;
+    const { isDerivation } = specContainsDerivation(catalogSpec);
 
     const tabProps = useConstant(() => {
         const response = [
@@ -36,32 +47,35 @@ function DetailTabs() {
         return response;
     });
 
-    const tabs = useMemo(
-        () =>
-            tabProps.map((tabProp, index) => {
-                // Since we have capture, materialization, and collection paths
-                //  it is easier to just make the link go "up" once and then
-                //  change the path. Hardcoding the search params here so they
-                //  do not get removed during navigation.
-                const to = `../${tabProp.path}?${searchParams}`;
+    const tabs = useMemo(() => {
+        const evaluatedTabProps =
+            entityType === 'collection' && !isDerivation
+                ? tabProps.filter(({ path }) => path !== 'settings')
+                : tabProps;
 
-                if (pathname.includes(tabProp.path)) {
-                    setSelectedTab(index);
-                }
+        return evaluatedTabProps.map((tabProp, index) => {
+            // Since we have capture, materialization, and collection paths
+            //  it is easier to just make the link go "up" once and then
+            //  change the path. Hardcoding the search params here so they
+            //  do not get removed during navigation.
+            const to = `../${tabProp.path}?${searchParams}`;
 
-                return (
-                    <Tab
-                        key={`details-tabs-${tabProp.label}`}
-                        label={intl.formatMessage({
-                            id: tabProp.label,
-                        })}
-                        component={Link}
-                        to={to}
-                    />
-                );
-            }),
-        [intl, pathname, searchParams, tabProps]
-    );
+            if (pathname.includes(tabProp.path)) {
+                setSelectedTab(index);
+            }
+
+            return (
+                <Tab
+                    key={`details-tabs-${tabProp.label}`}
+                    label={intl.formatMessage({
+                        id: tabProp.label,
+                    })}
+                    component={Link}
+                    to={to}
+                />
+            );
+        });
+    }, [entityType, intl, isDerivation, pathname, searchParams, tabProps]);
 
     return (
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

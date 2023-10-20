@@ -10,8 +10,7 @@ import {
     updateSupabase,
 } from 'services/supabase';
 import {
-    NotificationFullQuery,
-    NotificationMessage,
+    DataProcessingNotification,
     NotificationPreference,
     NotificationPreferenceExt,
 } from 'types';
@@ -32,55 +31,41 @@ const deleteNotificationPreference = (preferenceId: string, userId: string) => {
 };
 
 interface CreateNotificationMatchData {
-    preference_id: string;
-    message_id: string;
+    live_spec_id: string;
     evaluation_interval?: string;
-    live_spec_id?: string;
 }
 
-const createNotification = (
-    preference_id: string,
-    message_id: string,
-    evaluation_interval?: string,
-    live_spec_id?: string
+const createDataProcessingNotification = (
+    liveSpecId: string,
+    evaluation_interval?: string
 ) => {
     let matchData: CreateNotificationMatchData = {
-        preference_id,
-        message_id,
+        live_spec_id: liveSpecId,
     };
 
     if (evaluation_interval) {
         matchData = { ...matchData, evaluation_interval };
     }
 
-    if (live_spec_id) {
-        matchData = { ...matchData, live_spec_id };
-    }
-
-    return insertSupabase(TABLES.NOTIFICATIONS, matchData);
+    return insertSupabase(TABLES.DATA_PROCESSING_NOTIFICATIONS, matchData);
 };
 
-const updateNotificationInterval = (
-    notificationId: string,
+const updateDataProcessingNotificationInterval = (
+    liveSpecId: string,
     evaluationInterval: string
 ) => {
     return updateSupabase(
-        TABLES.NOTIFICATIONS,
+        TABLES.DATA_PROCESSING_NOTIFICATIONS,
         { evaluation_interval: evaluationInterval },
-        { id: notificationId }
+        { live_spec_id: liveSpecId }
     );
 };
 
-const deleteNotification = (notificationId: string) => {
-    return deleteSupabase(TABLES.NOTIFICATIONS, {
-        id: notificationId,
+const deleteDataProcessingNotification = (liveSpecId: string) => {
+    return deleteSupabase(TABLES.DATA_PROCESSING_NOTIFICATIONS, {
+        live_spec_id: liveSpecId,
     });
 };
-
-export type NotificationMessageQuery = Pick<
-    NotificationMessage,
-    'id' | 'detail'
->;
 
 export type NotificationPreferenceQuery = Pick<
     NotificationPreference,
@@ -92,32 +77,10 @@ export type NotificationPreferencesTableQuery = Pick<
     'id' | 'updated_at' | 'prefix' | 'user_id' | 'verified_email'
 >;
 
-export type NotificationQuery = Pick<
-    NotificationFullQuery,
-    | 'id'
-    | 'preference_id'
-    | 'message_id'
-    | 'live_spec_id'
-    | 'evaluation_interval'
+export type DataProcessingNotificationQuery = Pick<
+    DataProcessingNotification,
+    'live_spec_id' | 'evaluation_interval'
 >;
-
-interface NotificationMessageOptions {
-    value: string;
-    column: keyof NotificationMessageQuery;
-}
-
-const getNotificationMessage = async ({
-    value,
-    column,
-}: NotificationMessageOptions) => {
-    const data = await supabaseClient
-        .from<NotificationMessageQuery>(TABLES.NOTIFICATION_MESSAGES)
-        .select(`id, detail`)
-        .eq(column, value)
-        .then(handleSuccess<NotificationMessageQuery[]>, handleFailure);
-
-    return data;
-};
 
 const getNotificationPreferenceByPrefix = async (
     prefix: string,
@@ -162,32 +125,25 @@ const getNotificationPreference = (
     return queryBuilder;
 };
 
-const getTaskNotification = async (
-    preferenceId: string,
-    messageId: string,
-    liveSpecId: string
-) => {
+const getTaskNotification = async (liveSpecId: string) => {
     const data = await supabaseClient
-        .from<NotificationQuery>(TABLES.NOTIFICATIONS)
-        .select(
-            `id, preference_id, message_id, live_spec_id, evaluation_interval`
+        .from<DataProcessingNotificationQuery>(
+            TABLES.DATA_PROCESSING_NOTIFICATIONS
         )
-        .eq('preference_id', preferenceId)
-        .eq('message_id', messageId)
+        .select(`live_spec_id, evaluation_interval`)
         .eq('live_spec_id', liveSpecId)
-        .then(handleSuccess<NotificationQuery[]>, handleFailure);
+        .then(handleSuccess<DataProcessingNotificationQuery[]>, handleFailure);
 
     return data;
 };
 
 export {
-    createNotification,
+    createDataProcessingNotification,
     createNotificationPreference,
-    deleteNotification,
+    deleteDataProcessingNotification,
     deleteNotificationPreference,
-    getNotificationMessage,
     getNotificationPreference,
     getNotificationPreferenceByPrefix,
     getTaskNotification,
-    updateNotificationInterval,
+    updateDataProcessingNotificationInterval,
 };

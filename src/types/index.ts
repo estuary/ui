@@ -352,15 +352,6 @@ export interface AutoDiscoverySettings {
     evolveIncompatibleCollections: boolean;
 }
 
-export interface NotificationMessage {
-    id: string;
-    detail: string;
-    created_at: Date;
-    updated_at: Date;
-    title: string;
-    message: string;
-}
-
 export interface NotificationPreference {
     id: string;
     detail: string;
@@ -374,14 +365,22 @@ export interface NotificationPreferenceExt extends NotificationPreference {
     verified_email: string;
 }
 
-export interface NotificationFullQuery {
-    id: string;
-    detail: string;
-    created_at: Date;
-    updated_at: Date;
-    preference_id: string;
-    message_id: string;
+export interface DataProcessingNotification {
     acknowledged: boolean;
     evaluation_interval: string | null;
-    live_spec_id: string | null;
+    live_spec_id: string;
+}
+
+export interface DataProcessingNotificationExt {
+    acknowledged: boolean;
+    catalog_name: string;
+    classification: string;
+    confirmation_message: string;
+    confirmation_title: string;
+    evaluation_interval: string | null;
+    live_spec_id: string;
+    notification_message: string;
+    notification_title: string;
+    spec_type: string;
+    verified_email: string;
 }

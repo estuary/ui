@@ -4,7 +4,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useInitializeTaskNotification from 'hooks/useInitializeTaskNotification';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 function Settings() {
@@ -13,27 +13,21 @@ function Settings() {
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
-    const [liveSpecId, setLiveSpecId] = useState<string | null>(null);
-    const [preferenceId, setPreferenceId] = useState<string | null>(null);
-
-    const { getNotificationSettingsMetadata } =
+    const { getNotificationPreference } =
         useInitializeTaskNotification(catalogName);
 
     useEffect(() => {
-        getNotificationSettingsMetadata().then(
+        getNotificationPreference().then(
             (response) => {
                 if (!response) {
                     // Failed to retrieve the live specification for this task
-                } else {
-                    setLiveSpecId(response.liveSpecId);
-                    setPreferenceId(response.preferenceId);
                 }
             },
             () => {
                 console.log('settings init failed');
             }
         );
-    }, [getNotificationSettingsMetadata, setLiveSpecId, setPreferenceId]);
+    }, [getNotificationPreference]);
 
     return (
         <Stack sx={{ mx: 2 }}>
@@ -42,12 +36,7 @@ function Settings() {
                     <FormattedMessage id="details.settings.notifications.header" />
                 </Typography>
 
-                <DataProcessingSetting
-                    liveSpecId={liveSpecId}
-                    preferenceId={preferenceId}
-                    messageName="data-not-processed-in-interval"
-                    hideBorder
-                />
+                <DataProcessingSetting hideBorder />
             </Stack>
         </Stack>
     );

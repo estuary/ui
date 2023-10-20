@@ -1,40 +1,48 @@
 import { Auth } from '@supabase/ui';
 import {
-    NotificationQuery,
+    DataProcessingNotificationQuery,
     createNotificationPreference,
     getNotificationPreferenceByPrefix,
     getTaskNotification,
 } from 'api/alerts';
-import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
-import { useEntityType } from 'context/EntityContext';
 import { useCallback } from 'react';
+import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
+import { hasLength } from 'utils/misc-utils';
 
 const createPreference = async (
-    catalogName: string,
+    prefix: string,
     userId: string
 ): Promise<string | null> => {
-    const response = await createNotificationPreference(catalogName, userId);
+    const response = await createNotificationPreference(prefix, userId);
 
     return response.data && response.data.length > 0
-        ? response.data[0].id
+        ? response.data[0].catalog_prefix
         : null;
 };
 
 function useInitializeTaskNotification(catalogName: string) {
     const { user } = Auth.useUser();
 
-    const entityType = useEntityType();
+    const adminCapabilities = useEntitiesStore_capabilities_adminable();
+    const objectRoles = Object.keys(adminCapabilities);
 
-    const getNotificationPreferenceId = useCallback(async (): Promise<
+    const getNotificationPreference = useCallback(async (): Promise<
         string | null
     > => {
-        if (!user?.id) {
-            // Error if the system cannot determine the user ID.
+        if (!user?.id || !hasLength(objectRoles)) {
+            // Error if the system cannot determine the user ID or object roles cannot be found for the user.
             return null;
         }
 
+        const prefix =
+            objectRoles.length === 1
+                ? objectRoles[0]
+                : objectRoles
+                      .filter((role) => catalogName.startsWith(role))
+                      .sort((a, b) => b.length - a.length)[0];
+
         const { data: existingPreference, error: existingPreferenceError } =
-            await getNotificationPreferenceByPrefix(catalogName, user.id);
+            await getNotificationPreferenceByPrefix(prefix, user.id);
 
         if (existingPreferenceError) {
             // Failed to determine the existence of a notification preference for the task.
@@ -46,56 +54,25 @@ function useInitializeTaskNotification(catalogName: string) {
         if (!existingPreference || existingPreference.length === 0) {
             // A notification preference for the task has not been defined for the user.
 
-            const newPreferenceId = await createPreference(
-                catalogName,
-                user.id
-            );
+            const response = await createPreference(prefix, user.id);
 
-            return newPreferenceId;
+            return response;
         }
 
-        return existingPreference[0].id;
-    }, [catalogName, user?.id]);
-
-    const getNotificationSettingsMetadata = useCallback(async () => {
-        const { data: liveSpecResponse, error: liveSpecError } =
-            await getLiveSpecsByCatalogName(catalogName, entityType);
-
-        if (
-            liveSpecError ||
-            !liveSpecResponse ||
-            liveSpecResponse.length === 0
-        ) {
-            // Failed to retrieve the live specification for this task
-
-            return null;
-        }
-
-        const preferenceId = await getNotificationPreferenceId();
-
-        if (!preferenceId) {
-            return null;
-        }
-
-        return {
-            liveSpecId: liveSpecResponse[0].id,
-            preferenceId,
-        };
-    }, [catalogName, entityType, getNotificationPreferenceId]);
+        return existingPreference[0].catalog_prefix;
+    }, [catalogName, objectRoles, user?.id]);
 
     const getNotificationSubscription = useCallback(
         async (
-            messageId: string,
-            liveSpecId: string,
-            preferenceId: string
+            liveSpecId: string
         ): Promise<{
-            data: NotificationQuery | null;
+            data: DataProcessingNotificationQuery | null;
             error?: any;
         }> => {
             const {
                 data: existingNotification,
                 error: existingNotificationError,
-            } = await getTaskNotification(preferenceId, messageId, liveSpecId);
+            } = await getTaskNotification(liveSpecId);
 
             if (existingNotificationError) {
                 // Failed to determine the existence of a notification for the task.
@@ -121,7 +98,7 @@ function useInitializeTaskNotification(catalogName: string) {
         []
     );
 
-    return { getNotificationSettingsMetadata, getNotificationSubscription };
+    return { getNotificationSubscription, getNotificationPreference };
 }
 
 export default useInitializeTaskNotification;

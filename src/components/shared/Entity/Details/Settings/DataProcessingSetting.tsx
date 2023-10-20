@@ -7,12 +7,12 @@ import {
     Typography,
 } from '@mui/material';
 import {
-    NotificationQuery,
-    createNotification,
-    deleteNotification,
-    getNotificationMessage,
-    updateNotificationInterval,
+    DataProcessingNotificationQuery,
+    createDataProcessingNotification,
+    deleteDataProcessingNotification,
+    updateDataProcessingNotificationInterval,
 } from 'api/alerts';
+import { useEditorStore_id } from 'components/editor/Store/hooks';
 import { defaultOutline } from 'context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -22,9 +22,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {
-    messageName: string;
-    liveSpecId: string | null;
-    preferenceId: string | null;
     hideBorder?: boolean;
 }
 
@@ -32,21 +29,16 @@ const intervalOptionId = {
     id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.intervalOptions',
 };
 
-function DataProcessingSetting({
-    liveSpecId,
-    preferenceId,
-    messageName,
-    hideBorder,
-}: Props) {
+function DataProcessingSetting({ hideBorder }: Props) {
     const intl = useIntl();
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
-    const [notification, setNotification] = useState<
-        NotificationQuery | null | undefined
-    >(undefined);
+    const liveSpecId = useEditorStore_id({ localScope: true });
 
-    const [messageId, setMessageId] = useState<string | null>(null);
+    const [notification, setNotification] = useState<
+        DataProcessingNotificationQuery | null | undefined
+    >(undefined);
 
     const options = useMemo(
         () => ({
@@ -67,7 +59,9 @@ function DataProcessingSetting({
         (_event: React.SyntheticEvent, value: string) => {
             if (notification) {
                 if (value === options.none) {
-                    deleteNotification(notification.id).then(
+                    deleteDataProcessingNotification(
+                        notification.live_spec_id
+                    ).then(
                         (response) => {
                             console.log('deleted notification');
 
@@ -80,7 +74,10 @@ function DataProcessingSetting({
                         }
                     );
                 } else {
-                    updateNotificationInterval(notification.id, value).then(
+                    updateDataProcessingNotificationInterval(
+                        notification.live_spec_id,
+                        value
+                    ).then(
                         (response) => {
                             console.log('updated notification');
 
@@ -93,13 +90,8 @@ function DataProcessingSetting({
                         }
                     );
                 }
-            } else if (messageId && preferenceId && liveSpecId) {
-                createNotification(
-                    preferenceId,
-                    messageId,
-                    value,
-                    liveSpecId
-                ).then(
+            } else if (liveSpecId) {
+                createDataProcessingNotification(liveSpecId, value).then(
                     (response) => {
                         console.log('created notification', response);
 
@@ -113,40 +105,15 @@ function DataProcessingSetting({
                 );
             }
         },
-        [liveSpecId, messageId, notification?.id, preferenceId, setNotification]
+        [liveSpecId, notification, setNotification]
     );
-
-    useEffect(() => {
-        getNotificationMessage({ value: messageName, column: 'detail' }).then(
-            (response) => {
-                if (response.data && response.data.length > 0) {
-                    setMessageId(response.data[0].id);
-                } else {
-                    setNotification(null);
-                }
-            },
-            () => {
-                console.log('init message error');
-                setNotification(null);
-            }
-        );
-    }, [messageName, setMessageId, setNotification]);
 
     const { getNotificationSubscription } =
         useInitializeTaskNotification(catalogName);
 
     useEffect(() => {
-        if (
-            liveSpecId &&
-            preferenceId &&
-            messageId &&
-            notification === undefined
-        ) {
-            getNotificationSubscription(
-                messageId,
-                liveSpecId,
-                preferenceId
-            ).then(
+        if (liveSpecId && notification === undefined) {
+            getNotificationSubscription(liveSpecId).then(
                 (response) => {
                     console.log('init switch success', response);
 
@@ -158,7 +125,7 @@ function DataProcessingSetting({
                 }
             );
         }
-    }, [liveSpecId, messageId, preferenceId, notification, setNotification]);
+    }, [liveSpecId, notification, setNotification]);
 
     return (
         <Stack
@@ -202,7 +169,7 @@ function DataProcessingSetting({
                                 : options.none
                         }
                         disableClearable
-                        disabled={!preferenceId || !liveSpecId || !messageId}
+                        disabled={!liveSpecId}
                         onChange={updateEvaluationInterval}
                         options={Object.values(options)}
                         sx={{ width: 150 }}
