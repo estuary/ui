@@ -2,9 +2,6 @@ import { SemanticColor } from 'context/Theme';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { ResponseError } from 'data-plane-gateway/types/util';
 
-// TODO: Determine a way to access an interface property with a function type.
-export type SetShards = (shards: Shard[]) => void;
-
 export enum ShardStatusMessageIds {
     PRIMARY = 'shardStatus.primary',
     FAILED = 'shardStatus.failed',
@@ -35,6 +32,16 @@ export interface ShardDetails {
     errors: string[] | undefined;
 }
 
+interface ShardDictionary {
+    [k: string]: TaskShardDetailsWithShard[];
+}
+
+// TODO: Determine a way to access an interface property with a function type.
+export type SetShards = (
+    shards: Shard[],
+    defaultStatusColor: ShardStatusColor
+) => void;
+
 // Represents an endpoint that is exposed by a connector. Connectors may expose 0 or more
 // endpoints, and each one will have a unique hostname that is a subdomain of the data-plane.
 // An endpoint _may_ be served by multiple task processing shards if you have a task with split
@@ -59,6 +66,7 @@ export interface Endpoint {
 
 export interface ShardDetailStore {
     shards: Shard[];
+    shardDictionary: ShardDictionary;
     setShards: SetShards;
     error: ResponseError['body'] | string | null;
     setError: (val: ShardDetailStore['error']) => void;

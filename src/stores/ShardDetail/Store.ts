@@ -227,6 +227,12 @@ const findShard = (shards: Shard[], shardId: string) => {
     );
 };
 
+const getCollectionName = (spec: Shard['spec']) => {
+    return (spec.labels ? spec.labels.labels : [])?.find(
+        (label) => label.name === 'estuary.dev/task-name'
+    )?.value;
+};
+
 export const getInitialState = (
     set: NamedSet<ShardDetailStore>,
     get: StoreApi<ShardDetailStore>['getState'],
@@ -234,10 +240,33 @@ export const getInitialState = (
 ): ShardDetailStore => {
     return {
         shards: [],
-        setShards: (shards) => {
+        shardDictionary: {},
+        setShards: (shards, defaultStatusColor) => {
             set(
                 produce((state) => {
+                    const newDictionary = {};
+
                     state.shards = shards;
+                    shards.forEach((shard) => {
+                        const key = getCollectionName(shard.spec);
+
+                        if (key) {
+                            if (newDictionary[key].length === 0) {
+                                newDictionary[key] = [];
+                            }
+
+                            newDictionary[key].push({
+                                ...evaluateTaskShardStatus(
+                                    shard,
+                                    defaultStatusColor
+                                ),
+                            });
+                        } else {
+                            console.error('Unable to find name from shard');
+                        }
+                    });
+
+                    state.shardDictionary = newDictionary;
                 }),
                 false,
                 'Shard List Set'
