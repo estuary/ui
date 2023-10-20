@@ -40,7 +40,7 @@ function AdminTabs() {
     const tabs = useMemo(
         () =>
             tabProps.map((tabProp, index) => {
-                if (tabProp.path === pathname) {
+                if (pathname.startsWith(tabProp.path)) {
                     setSelectedTab(index);
                 }
 

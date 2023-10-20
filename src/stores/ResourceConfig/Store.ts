@@ -12,19 +12,26 @@ import {
     isBoolean,
     isEmpty,
     isEqual,
-    map,
     omit,
+    orderBy,
     pick,
-    sortBy,
 } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
+import {
+    getInitialHydrationData,
+    getStoreWithHydrationSettings,
+} from 'stores/extensions/Hydration';
 import { ResourceConfigStoreNames } from 'stores/names';
+import { populateErrors } from 'stores/utils';
 import { Schema } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
+
+const STORE_KEY = 'Resource Config';
 
 const populateCollections = (
     state: ResourceConfigState,
@@ -65,25 +72,10 @@ const populateResourceConfigErrors = (
     resourceConfig: ResourceConfigDictionary,
     state: ResourceConfigState
 ): void => {
-    let resourceConfigErrors: any[] = [];
-    const hasConfigs = Object.keys(resourceConfig).length > 0;
+    const { configErrors, hasErrors } = populateErrors(resourceConfig);
 
-    if (hasConfigs) {
-        map(resourceConfig, (config) => {
-            const { errors } = config;
-
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (errors && errors.length > 0) {
-                resourceConfigErrors = resourceConfigErrors.concat(errors);
-            }
-        });
-    } else {
-        // TODO (errors) Need to populate this object with something?
-        resourceConfigErrors = [];
-    }
-
-    state.resourceConfigErrors = resourceConfigErrors;
-    state.resourceConfigErrorsExist = !isEmpty(resourceConfigErrors);
+    state.resourceConfigErrors = configErrors;
+    state.resourceConfigErrorsExist = hasErrors;
 };
 
 const whatChanged = (
@@ -100,6 +92,14 @@ const whatChanged = (
     const newCollections = difference(newResourceKeys, currentCollections);
 
     return [removedCollections, newCollections];
+};
+
+const sortBindings = (bindings: any) => {
+    return orderBy(
+        bindings,
+        ['disable', (binding) => getCollectionName(binding)],
+        ['desc', 'asc']
+    );
 };
 
 const getInitialCollectionStateData = (): Pick<
@@ -122,6 +122,7 @@ const getInitialMiscStoreData = (): Pick<
     | 'resourceSchema'
     | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
+    | 'collectionsRequiringRediscovery'
     | 'rediscoveryRequired'
 > => ({
     discoveredCollections: null,
@@ -133,12 +134,14 @@ const getInitialMiscStoreData = (): Pick<
     resourceSchema: {},
     restrictedDiscoveredCollections: [],
     serverUpdateRequired: false,
+    collectionsRequiringRediscovery: [],
     rediscoveryRequired: false,
 });
 
 const getInitialStateData = () => ({
     ...getInitialCollectionStateData(),
     ...getInitialMiscStoreData(),
+    ...getInitialHydrationData(),
 });
 
 const getInitialState = (
@@ -146,6 +149,7 @@ const getInitialState = (
     get: StoreApi<ResourceConfigState>['getState']
 ): ResourceConfigState => ({
     ...getInitialStateData(),
+    ...getStoreWithHydrationSettings(STORE_KEY, set),
 
     preFillEmptyCollections: (value, rehydrating) => {
         set(
@@ -204,16 +208,15 @@ const getInitialState = (
     prefillResourceConfig: (bindings) => {
         set(
             produce((state: ResourceConfigState) => {
-                console.log('prefillResourceConfig', {
-                    bindings,
-                });
-
                 // As we go through and fetch all the names for collections go ahead and also
                 // populate the resource config
                 const collections = bindings.map((binding: any) => {
+                    // Keep in sync with evaluateDiscoveredCollections
                     const [name, configVal] = getResourceConfig(binding);
                     state.resourceConfig[name] = configVal;
-
+                    if (configVal.disable === true) {
+                        state.resourceConfig[name].previouslyDisabled = true;
+                    }
                     return name;
                 });
 
@@ -327,11 +330,22 @@ const getInitialState = (
                 populateCollections(state, []);
 
                 state.restrictedDiscoveredCollections = [];
-
                 state.resourceConfig = {};
+                state.resetRediscoverySettings();
             }),
             false,
             'Resource Config and Collections Reset'
+        );
+    },
+
+    resetRediscoverySettings: () => {
+        set(
+            produce((state: ResourceConfigState) => {
+                state.rediscoveryRequired = false;
+                state.collectionsRequiringRediscovery = [];
+            }),
+            false,
+            'Rediscovery Related Settings Reset'
         );
     },
 
@@ -416,10 +430,6 @@ const getInitialState = (
         // This might be related to how immer handles what is updated vs what
         //  is not during changes. Need to really dig into this later.
         if (!isEqual(existingConfig, updatedConfig)) {
-            console.log('setting the resource config', {
-                existingConfig,
-                updatedConfig,
-            });
             setResourceConfig(key, updatedConfig);
         }
     },
@@ -522,8 +532,29 @@ const getInitialState = (
 
                         if (newValue) {
                             state.resourceConfig[key].disable = newValue;
+
+                            const existingIndex =
+                                state.collectionsRequiringRediscovery.findIndex(
+                                    (collectionRequiringRediscovery) =>
+                                        collectionRequiringRediscovery === key
+                                );
+                            if (existingIndex > -1) {
+                                state.collectionsRequiringRediscovery.splice(
+                                    existingIndex,
+                                    1
+                                );
+
+                                state.rediscoveryRequired = hasLength(
+                                    state.collectionsRequiringRediscovery
+                                );
+                            }
                         } else {
                             delete state.resourceConfig[key].disable;
+
+                            if (state.resourceConfig[key].previouslyDisabled) {
+                                state.collectionsRequiringRediscovery.push(key);
+                                state.rediscoveryRequired = true;
+                            }
                         }
                     });
                 }),
@@ -635,17 +666,7 @@ const getInitialState = (
                 setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
                 const { prefillResourceConfig } = get();
-
-                const collectionNameProp = materializationHydrating
-                    ? 'source'
-                    : 'target';
-
-                // TODO (direct bindings) We can remove this when/if we move the UI
-                //   to using the bindings directly and save a lot of processing
-                const sortedBindings = sortBy(data[0].spec.bindings, [
-                    collectionNameProp,
-                ]);
-                prefillResourceConfig(sortedBindings);
+                prefillResourceConfig(sortBindings(data[0].spec.bindings));
             }
         }
 
@@ -683,16 +704,6 @@ const getInitialState = (
         );
     },
 
-    setRediscoveryRequired: (value) => {
-        set(
-            produce((state: ResourceConfigState) => {
-                state.rediscoveryRequired = value;
-            }),
-            false,
-            'Rediscovery Required Flag Changed'
-        );
-    },
-
     evaluateDiscoveredCollections: (draftSpecResponse) => {
         set(
             produce((state: ResourceConfigState) => {
@@ -700,7 +711,7 @@ const getInitialState = (
                     collections,
                     resourceConfig,
                     restrictedDiscoveredCollections,
-                } = get();
+                } = state;
 
                 const existingCollections = Object.keys(resourceConfig);
                 const updatedBindings = draftSpecResponse.data[0].spec.bindings;
@@ -708,7 +719,7 @@ const getInitialState = (
                 const collectionsToAdd: string[] = [];
                 const modifiedResourceConfig: ResourceConfigDictionary = {};
 
-                updatedBindings.forEach((binding: any) => {
+                sortBindings(updatedBindings).forEach((binding: any) => {
                     if (
                         !existingCollections.includes(binding.target) &&
                         !restrictedDiscoveredCollections.includes(
@@ -717,8 +728,13 @@ const getInitialState = (
                     ) {
                         collectionsToAdd.push(binding.target);
 
+                        // Keep in sync with prefillResourceConfig
                         const [name, configVal] = getResourceConfig(binding);
                         modifiedResourceConfig[name] = configVal;
+                        if (configVal.disable === true) {
+                            modifiedResourceConfig[name].previouslyDisabled =
+                                true;
+                        }
                     }
                 });
 

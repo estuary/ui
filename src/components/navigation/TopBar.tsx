@@ -7,9 +7,12 @@ import UserMenu from 'components/menus/UserMenu';
 import PageTitle from 'components/navigation/PageTitle';
 import SidePanelDocsOpenButton from 'components/sidePanelDocs/OpenButton';
 import { zIndexIncrement } from 'context/Theme';
+import useTenantMissingPaymentMethodWarning from 'hooks/billing/useTenantMissingPaymentMethodWarning';
 
 const Topbar = () => {
     const theme = useTheme();
+
+    useTenantMissingPaymentMethodWarning();
 
     return (
         <MuiAppBar

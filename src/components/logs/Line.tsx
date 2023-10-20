@@ -48,13 +48,15 @@ function LogLine({ line, lineNumber, disableSelect }: Props) {
                     {lineNumber}
                 </Box>
 
-                {parsedLine.spans.map((span, index, array) => (
-                    <LinePart
-                        key={`${span.text}-linePart-${index}`}
-                        parsedLine={span}
-                        lastPart={index + 1 === array.length}
-                    />
-                ))}
+                <Stack direction="row">
+                    {parsedLine.spans.map((span, index, array) => (
+                        <LinePart
+                            key={`${span.text}-linePart-${index}`}
+                            parsedLine={span}
+                            lastPart={index + 1 === array.length}
+                        />
+                    ))}
+                </Stack>
             </Stack>
         </ListItem>
     );

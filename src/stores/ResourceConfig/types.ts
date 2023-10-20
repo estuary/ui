@@ -1,11 +1,13 @@
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsExt_MaterializeCapture } from 'hooks/useLiveSpecsExt';
 import { CallSupabaseResponse } from 'services/supabase';
+import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
 
 export interface ResourceConfig extends JsonFormsData {
     errors: any[];
     disable?: boolean;
+    previouslyDisabled?: boolean; // Used to store if the binding was disabled last time we loaded in bindings
 }
 
 export interface ResourceConfigDictionary {
@@ -14,7 +16,7 @@ export interface ResourceConfigDictionary {
 
 // TODO (naming): Determine whether the resourceConfig state property should be made plural.
 //   It is a dictionary of individual resource configs, so I am leaning "yes."
-export interface ResourceConfigState {
+export interface ResourceConfigState extends StoreWithHydration {
     // Collection Selector
     collections: string[] | null;
     preFillEmptyCollections: (
@@ -63,13 +65,6 @@ export interface ResourceConfigState {
     resourceSchema: Schema;
     setResourceSchema: (val: ResourceConfigState['resourceSchema']) => void;
 
-    // Hydration
-    hydrated: boolean;
-    setHydrated: (value: boolean) => void;
-
-    hydrationErrorsExist: boolean;
-    setHydrationErrorsExist: (value: boolean) => void;
-
     hydrateState: (
         editWorkflow: boolean,
         entityType: Entity,
@@ -80,8 +75,9 @@ export interface ResourceConfigState {
     serverUpdateRequired: boolean;
     setServerUpdateRequired: (value: boolean) => void;
 
+    collectionsRequiringRediscovery: string[];
     rediscoveryRequired: boolean;
-    setRediscoveryRequired: (value: boolean) => void;
+    resetRediscoverySettings: () => void;
 
     evaluateDiscoveredCollections: (
         response: CallSupabaseResponse<any>

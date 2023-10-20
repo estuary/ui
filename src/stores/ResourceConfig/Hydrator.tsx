@@ -8,6 +8,7 @@ import { BaseComponentProps } from 'types';
 import {
     useResourceConfig_hydrated,
     useResourceConfig_hydrateState,
+    useResourceConfig_setActive,
     useResourceConfig_setHydrated,
     useResourceConfig_setHydrationErrorsExist,
 } from './hooks';
@@ -23,12 +24,13 @@ export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
 
     const hydrated = useResourceConfig_hydrated();
     const setHydrated = useResourceConfig_setHydrated();
-
+    const setActive = useResourceConfig_setActive();
     const setHydrationErrorsExist = useResourceConfig_setHydrationErrorsExist();
 
     const hydrateState = useResourceConfig_hydrateState();
 
     const hydrateTheState = (rehydrating: boolean) => {
+        setActive(true);
         hydrateState(editWorkflow, entityType, rehydrating).then(
             () => {
                 setHydrated(true);

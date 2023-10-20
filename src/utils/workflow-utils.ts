@@ -3,9 +3,14 @@ import {
     modifyDraftSpec,
 } from 'api/draftSpecs';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
+import {
+    FullSource,
+    FullSourceDictionary,
+} from 'components/editor/Bindings/Store/types';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
+import { REMOVE_DURING_GENERATION } from 'stores/ResourceConfig/shared';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -14,27 +19,68 @@ import { ConnectorConfig } from '../../flow_deps/flow';
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
 
+export const getSourceOrTarget = (binding: any) => {
+    return Object.hasOwn(binding, 'source')
+        ? binding.source
+        : Object.hasOwn(binding, 'target')
+        ? binding.target
+        : binding;
+};
+
 export const getCollectionNameProp = (entityType: Entity) => {
     return entityType === 'materialization' ? 'source' : 'target';
+};
+
+export const getCollectionNameDirectly = (binding: any) => {
+    // Check if we're dealing with a FullSource or just a string
+    return Object.hasOwn(binding, 'name') ? binding.name : binding;
 };
 
 export const getCollectionName = (binding: any) => {
     // First see if we've already been passed a scoped binding
     //  or if we need to find the proper scope ourselves.
-    const scopedBinding = Object.hasOwn(binding, 'source')
-        ? binding.source
-        : Object.hasOwn(binding, 'target')
-        ? binding.target
-        : binding;
+    const scopedBinding = getSourceOrTarget(binding);
 
-    // Check if we're dealing with a FullSource or just a string
-    return Object.hasOwn(scopedBinding, 'name')
-        ? scopedBinding.name
-        : scopedBinding;
+    return getCollectionNameDirectly(scopedBinding);
 };
 
 export const getDisableProps = (disable: boolean | undefined) => {
     return disable ? { disable } : {};
+};
+
+export const getFullSource = (
+    fullSource: FullSource | string | undefined,
+    filterOutName?: boolean,
+    filterOutRemovable?: boolean
+): {
+    fullSource?: FullSource;
+} => {
+    if (typeof fullSource === 'string' || fullSource === undefined) {
+        return {};
+    }
+
+    const response = {
+        fullSource: { ...fullSource },
+    };
+
+    if (filterOutName) {
+        delete response.fullSource.name;
+    }
+
+    if (filterOutRemovable) {
+        response.fullSource = Object.entries(response.fullSource).reduce(
+            (filtered, [key, val]) => {
+                if (val !== REMOVE_DURING_GENERATION) {
+                    filtered[key] = val;
+                }
+
+                return filtered;
+            },
+            {}
+        );
+    }
+
+    return response;
 };
 
 export const addOrRemoveSourceCapture = (
@@ -50,13 +96,26 @@ export const addOrRemoveSourceCapture = (
     return draftSpec;
 };
 
+export const getFullSourceSetting = (
+    fullSource: FullSourceDictionary | null,
+    collectionName: string
+) => {
+    const fullSourceConfig = fullSource?.[collectionName]?.data;
+    return !isEmpty(fullSourceConfig)
+        ? { ...fullSourceConfig, name: collectionName }
+        : collectionName;
+};
+
+export const updateFullSource = () => {};
+
 // TODO (typing): Narrow the return type for this function.
 export const generateTaskSpec = (
     entityType: EntityWithCreateWorkflow,
     connectorConfig: ConnectorConfig,
     resourceConfigs: ResourceConfigDictionary | null,
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
-    sourceCapture: string | null
+    sourceCapture: string | null,
+    fullSource: FullSourceDictionary | null
 ) => {
     const draftSpec = isEmpty(existingTaskData)
         ? {
@@ -96,11 +155,19 @@ export const generateTaskSpec = (
                 draftSpec.bindings[existingBindingIndex].resource = {
                     ...resourceConfig,
                 };
+
+                // Only update if there is a fullSource to populate. Otherwise just set the name.
+                //  This handles both captures that do not have these settings AND when
+                draftSpec.bindings[existingBindingIndex][collectionNameProp] =
+                    getFullSourceSetting(fullSource, collectionName);
             } else if (Object.keys(resourceConfig).length > 0) {
                 const disabledProps = getDisableProps(resourceDisable);
 
                 draftSpec.bindings.push({
-                    [collectionNameProp]: collectionName,
+                    [collectionNameProp]: getFullSourceSetting(
+                        fullSource,
+                        collectionName
+                    ),
                     ...disabledProps,
                     resource: {
                         ...resourceConfig,
@@ -192,6 +259,7 @@ export const modifyExistingCaptureDraftSpec = async (
         { image: connectorImage, config: encryptedEndpointConfig },
         resourceConfig,
         existingTaskData,
+        null,
         null
     );
 

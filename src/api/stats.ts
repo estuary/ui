@@ -97,7 +97,12 @@ type AllowedDates = Date | string | number;
 // Make sure that this matched the derivation closely
 //      Function : grainsFromTS
 //      Source : https://github.com/estuary/flow/blob/master/ops-catalog/catalog-stats.ts
-export const convertToUTC = (date: AllowedDates, grain: Grains) => {
+// TODO (typing)
+export const convertToUTC = (
+    date: AllowedDates,
+    grain: Grains,
+    skipConversion?: boolean
+): any => {
     const isoUTC = new UTCDate(
         typeof date === 'string' ? parseISO(date) : date
     );
@@ -115,7 +120,7 @@ export const convertToUTC = (date: AllowedDates, grain: Grains) => {
         isoUTC.setUTCDate(1);
     }
 
-    return isoUTC.toISOString();
+    return skipConversion ? isoUTC : isoUTC.toISOString();
 };
 
 // TODO (stats) add support for which stats columns each entity wants

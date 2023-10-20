@@ -1,7 +1,7 @@
 import { useZustandStore } from 'context/Zustand/provider';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { shallow } from 'zustand/shallow';
-import { ResourceConfigState } from './types';
+import { ResourceConfig, ResourceConfigState } from './types';
 
 // Selector Hooks
 export const useResourceConfig_collections = () => {
@@ -127,7 +127,7 @@ export const useResourceConfig_resourceConfigOfCollection = (
 
 export const useResourceConfig_resourceConfigOfCollectionProperty = (
     collection: any,
-    property: any
+    property: keyof ResourceConfig
 ) => {
     return useZustandStore<ResourceConfigState, any>(
         ResourceConfigStoreNames.GENERAL,
@@ -232,6 +232,13 @@ export const useResourceConfig_setHydrated = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.setHydrated);
 };
 
+export const useResourceConfig_setActive = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setActive']
+    >(ResourceConfigStoreNames.GENERAL, (state) => state.setActive);
+};
+
 export const useResourceConfig_hydrationErrorsExist = () => {
     return useZustandStore<
         ResourceConfigState,
@@ -280,13 +287,13 @@ export const useResourceConfig_rediscoveryRequired = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.rediscoveryRequired);
 };
 
-export const useResourceConfig_setRediscoveryRequired = () => {
+export const useResourceConfig_resetRediscoverySettings = () => {
     return useZustandStore<
         ResourceConfigState,
-        ResourceConfigState['setRediscoveryRequired']
+        ResourceConfigState['resetRediscoverySettings']
     >(
         ResourceConfigStoreNames.GENERAL,
-        (state) => state.setRediscoveryRequired
+        (state) => state.resetRediscoverySettings
     );
 };
 

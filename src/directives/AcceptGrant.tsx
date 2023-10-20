@@ -126,7 +126,9 @@ function AcceptGrant({
                     onClick={applyDirective}
                     sx={{ mt: 2 }}
                 >
-                    <FormattedMessage id="cta.continue" />
+                    <span>
+                        <FormattedMessage id="cta.continue" />
+                    </span>
                 </LoadingButton>
             </Box>
         </Stack>

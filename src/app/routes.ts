@@ -30,6 +30,11 @@ const admin = {
         title: 'routeTitle.admin.billing',
         path: 'billing',
         fullPath: '/admin/billing',
+        addPayment: {
+            title: 'routeTitle.admin.billing',
+            path: `paymentMethod/new`,
+            fullPath: '/admin/billing/paymentMethod/new',
+        },
     },
     settings: {
         title: 'routeTitle.admin.settings',

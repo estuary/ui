@@ -7,6 +7,10 @@ import {
     modifyDraftSpec,
 } from 'api/draftSpecs';
 import {
+    useBindingsEditorStore_fullSourceConfigs,
+    useBindingsEditorStore_fullSourceErrorsExist,
+} from 'components/editor/Bindings/Store/hooks';
+import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
@@ -43,6 +47,7 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import {
+    useResourceConfig_resetRediscoverySettings,
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
@@ -62,7 +67,7 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
     const { callFailed } = useEntityWorkflowHelpers();
 
     // Details Form Store
-    const detailsFormsHasErrors = useDetailsForm_errorsExist();
+    const detailsFormsErrorsExist = useDetailsForm_errorsExist();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imagePath = useDetailsForm_connectorImage_imagePath();
@@ -71,41 +76,39 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
 
     // Draft Editor Store
     const isSaving = useEditorStore_isSaving();
-
     const resetEditorState = useEditorStore_resetState();
-
     const setDraftId = useEditorStore_setId();
-
     const persistedDraftId = useEditorStore_persistedDraftId();
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     // Endpoint Config Store
     const endpointSchema = useEndpointConfigStore_endpointSchema();
-
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
-
     const serverEndpointConfigData =
         useEndpointConfigStore_encryptedEndpointConfig_data();
     const setEncryptedEndpointConfig =
         useEndpointConfigStore_setEncryptedEndpointConfig();
-
     const setPreviousEndpointConfig =
         useEndpointConfigStore_setPreviousEndpointConfig();
-
-    const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
+    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
-
     const setFormState = useFormStateStore_setFormState();
-
     const updateFormStatus = useFormStateStore_updateStatus();
 
     // Resource Config Store
     const resourceConfig = useResourceConfig_resourceConfig();
-    const resourceConfigHasErrors =
+    const resourceConfigErrorsExist =
         useResourceConfig_resourceConfigErrorsExist();
+    const resetRediscoverySettings =
+        useResourceConfig_resetRediscoverySettings();
+
+    // Bindings store
+    const fullSourceConfigs = useBindingsEditorStore_fullSourceConfigs();
+    const fullSourceErrorsExist =
+        useBindingsEditorStore_fullSourceErrorsExist();
 
     // Source Capture Store
     const sourceCapture = useStore(
@@ -133,9 +136,10 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
         updateFormStatus(FormStatus.GENERATING);
 
         if (
-            resourceConfigHasErrors ||
-            detailsFormsHasErrors ||
-            endpointConfigHasErrors
+            resourceConfigErrorsExist ||
+            detailsFormsErrorsExist ||
+            endpointConfigErrorsExist ||
+            fullSourceErrorsExist
         ) {
             setFormState({
                 status: FormStatus.FAILED,
@@ -209,7 +213,8 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
                 { image: imagePath, config: encryptedEndpointConfig.data },
                 resourceConfig,
                 existingTaskData,
-                sourceCapture
+                sourceCapture,
+                fullSourceConfigs
             );
 
             // If there is a draft already with task data then update. We do not match on
@@ -254,6 +259,11 @@ function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
             setFormState({
                 status: FormStatus.GENERATED,
             });
+
+            // Materializations do not use this setting but still letting it get populated to keep
+            //  the stores simpler. Also, I could easily see us needing to know what collections
+            //  were enabled during an edit in materializations.
+            resetRediscoverySettings();
 
             return mutateDraftSpecs();
         }

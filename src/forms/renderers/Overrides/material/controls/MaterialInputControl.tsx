@@ -31,6 +31,8 @@ import {
 import { useFocus } from '@jsonforms/material-renderers';
 
 import { FormControl, FormHelperText, Hidden, InputLabel } from '@mui/material';
+import { CLEAR_BUTTON_ID_SUFFIX } from 'components/shared/pickers/shared';
+import { endsWith } from 'lodash';
 import merge from 'lodash/merge';
 
 export interface WithInput {
@@ -83,24 +85,27 @@ export const CustomMaterialInputControl = (
     const secondFormHelperText = showDescription && !isValid ? errors : null;
     const InnerComponent = input;
 
-    const onFocusHandler = () => {
-        inputEvents.focus();
-        onFocus();
-    };
-
-    const onKeydown = () => {
-        inputEvents.keyDown();
-    };
-
     return (
         <Hidden xsUp={!visible}>
             <FormControl
                 fullWidth={!appliedUiSchemaOptions.trim}
-                onFocus={onFocusHandler}
-                onBlur={onBlur}
                 id={id}
                 variant="standard"
-                onKeyDown={onKeydown}
+                onBlur={onBlur}
+                onFocus={(event) => {
+                    if (endsWith(event.target.id, CLEAR_BUTTON_ID_SUFFIX)) {
+                        // Clear button was clicked so we do not want to fire the focus event
+                        // Return here so we do not fire the focus events. This way when a user
+                        //  clicks on the reset button the date picker is not opened right up
+                        return;
+                    }
+
+                    inputEvents.focus();
+                    onFocus();
+                }}
+                onKeyDown={() => {
+                    inputEvents.keyDown();
+                }}
             >
                 <InputLabel
                     htmlFor={`${id}-input`}

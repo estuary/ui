@@ -9,6 +9,7 @@ import {
     useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
+import { useBindingsEditorStore_removeFullSourceConfig } from '../Store/hooks';
 
 interface Props {
     collection: string;
@@ -28,12 +29,15 @@ function BindingsSelectorRemove({
     const removeCollection = useResourceConfig_removeCollection();
     const setRestrictedDiscoveredCollections =
         useResourceConfig_setRestrictedDiscoveredCollections();
+    const removeFullSourceConfig =
+        useBindingsEditorStore_removeFullSourceConfig();
 
     const handlers = {
         removeCollection: (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
             removeCollection(collection);
+            removeFullSourceConfig(collection);
 
             if (
                 workflow === 'capture_edit' &&

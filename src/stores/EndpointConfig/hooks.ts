@@ -183,6 +183,15 @@ export const useEndpointConfig_hydrateState = () => {
     >(getStoreName(entityType), (state) => state.hydrateState);
 };
 
+export const useEndpointConfig_setActive = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['setActive']
+    >(getStoreName(entityType), (state) => state.setActive);
+};
+
 export const useEndpointConfig_serverUpdateRequired = () => {
     const entityType = useEntityType();
 

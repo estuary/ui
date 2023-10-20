@@ -29,6 +29,7 @@ import {
     useBilling_resetState,
     useBilling_selectedInvoice,
     useBilling_selectedTenant,
+    useBilling_setActive,
     useBilling_setDataByTaskGraphDetails,
     useBilling_setHydrated,
     useBilling_setHydrationErrorsExist,
@@ -38,10 +39,11 @@ import {
 } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
 import { TOTAL_CARD_HEIGHT, invoiceId } from 'utils/billing-utils';
+import { AdminBillingProps } from './types';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
-function AdminBilling() {
+function AdminBilling({ showAddPayment }: AdminBillingProps) {
     // Billing Store
     const hydrated = useBilling_hydrated();
     const setHydrated = useBilling_setHydrated();
@@ -51,6 +53,7 @@ function AdminBilling() {
     const setHistoryInitialized = useBilling_setInvoicesInitialized();
     const setInvoices = useBilling_setInvoices();
     const updateBillingHistory = useBilling_updateInvoices();
+    const setActive = useBilling_setActive();
 
     const selectedTenant = useBilling_selectedTenant();
     const selectedInvoice = useBilling_selectedInvoice();
@@ -82,6 +85,7 @@ function AdminBilling() {
     useEffect(() => {
         if (selectedTenant && !hydrated && !historyInitialized) {
             void (async () => {
+                setActive(true);
                 try {
                     const response = await getInvoicesBetween(
                         selectedTenant,
@@ -115,6 +119,7 @@ function AdminBilling() {
         historyInitialized,
         hydrated,
         selectedTenant,
+        setActive,
     ]);
 
     useEffect(() => {
@@ -281,7 +286,7 @@ function AdminBilling() {
                             );
                         }}
                     >
-                        <PaymentMethods />
+                        <PaymentMethods showAddPayment={showAddPayment} />
                     </ErrorBoundary>
                 </Grid>
             </Grid>

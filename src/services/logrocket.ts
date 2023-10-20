@@ -3,7 +3,7 @@ import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
-import { getUserDetails } from 'services/supabase';
+import { getUserDetails, OAUTH_OPERATIONS } from 'services/supabase';
 import { getAppVersion, getLogRocketSettings } from 'utils/env-utils';
 
 // Based on node_modules/logrocket/dist/types.d.ts
@@ -19,7 +19,7 @@ interface Settings {
     serverURL?: any;
 }
 
-type ParsedBody = [{ [k: string]: any }] | { [k: string]: any } | undefined;
+type ParsedBody = any | undefined;
 
 export enum CustomEvents {
     CAPTURE_TEST = 'Capture_Test',
@@ -38,6 +38,7 @@ export enum CustomEvents {
     ERROR_BOUNDARY_DISPLAYED = 'Error_Boundary_Displayed',
     ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
     FULL_PAGE_ERROR_DISPLAYED = 'Full_Page_Error_Displayed',
+    STRIPE_FORM_LOADING_FAILED = 'Stripe_Form_Loading_Failed',
 }
 
 const logRocketSettings = getLogRocketSettings();
@@ -48,7 +49,13 @@ export const MASKED = '**MASKED**';
 // for endspoints where we want nothing ever logged
 const maskEverythingURLs = ['config-encryption.estuary.dev'];
 const shouldMaskEverything = (url?: string) =>
-    maskEverythingURLs.some((el) => url?.includes(el));
+    maskEverythingURLs.some((el) => url?.toLowerCase().includes(el));
+
+const maskEverythingOperations = [OAUTH_OPERATIONS.ENCRYPT_CONFIG];
+const shouldMaskEverythingInOperation = (operation?: string) =>
+    maskEverythingOperations.some(
+        (el) => operation?.toLowerCase().includes(el)
+    );
 
 // for endpoints where we do not want to mess with the request at all
 const ignoreURLs = ['lr-in-prod'];
@@ -103,27 +110,26 @@ const processBody = (
     return originalIsArray ? response : response[0];
 };
 
-// DISABLE BODY FILTERING
 // Used to parse the body of a request/response. Will handle very basic use of just
 //  a string or object body. To keep stuff safe if we cannot parse the string we
 //  set everything to masked.
-// const parseBody = (body: any): ParsedBody => {
-//     let formattedContent;
+const parseBody = (body: any): ParsedBody => {
+    let formattedContent;
 
-//     if (typeof body === 'string') {
-//         try {
-//             // If the body has length parse it otherwise leave it as a blank string
-//             formattedContent = body.length > 0 ? JSON.parse(body) : '';
-//         } catch (error: unknown) {
-//             // If the JSON messes up getting parsed just be safe and mask everything
-//             formattedContent = MASKED;
-//         }
-//     } else if (typeof body === 'object') {
-//         formattedContent = body;
-//     }
+    if (typeof body === 'string') {
+        try {
+            // If the body has length parse it otherwise leave it as a blank string
+            formattedContent = body.length > 0 ? JSON.parse(body) : '';
+        } catch (error: unknown) {
+            // If the JSON messes up getting parsed just be safe and mask everything
+            formattedContent = MASKED;
+        }
+    } else if (typeof body === 'object') {
+        formattedContent = body;
+    }
 
-//     return formattedContent;
-// };
+    return formattedContent;
+};
 
 // Go through the request and handle the skipping, masking, filtering
 const maskContent = (requestResponse: any) => {
@@ -136,7 +142,18 @@ const maskContent = (requestResponse: any) => {
     //   SOPs encryption endpoint we don't really want to accidently leak anything.
     if (shouldMaskEverything(requestResponse.url)) {
         requestResponse.body = MASKED;
-        return requestResponse;
+    } else {
+        // If we are not masking everything then we need to check if the operation being called
+        //  is one that requires extra masking. This is mainly for the oauth "encrypt-config" call
+        const parsedBody = parseBody(requestResponse.body);
+
+        if (
+            parsedBody &&
+            typeof parsedBody !== 'string' &&
+            shouldMaskEverythingInOperation(parsedBody?.operation)
+        ) {
+            requestResponse.body = `${MASKED}_${parsedBody?.operation}`;
+        }
     }
 
     //  DISABLE BODY FILTERING

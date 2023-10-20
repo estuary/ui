@@ -1,10 +1,6 @@
-import { FUNCTIONS, invokeSupabase } from 'services/supabase';
+import { FUNCTIONS, invokeSupabase, OAUTH_OPERATIONS } from 'services/supabase';
 
-const OPERATIONS = {
-    AUTH_URL: 'auth-url',
-    ACCESS_TOKEN: 'access-token',
-    ENCRYPT_CONFIG: 'encrypt-config',
-};
+const OAUTH_URL_SUFFIX = '/oauth';
 
 export interface AccessTokenResponse {
     [k: string]: any;
@@ -18,9 +14,9 @@ export interface AuthURLResponse {
 
 export const authURL = (connectorId: string, config: any) => {
     return invokeSupabase<AuthURLResponse>(FUNCTIONS.OAUTH, {
-        operation: OPERATIONS.AUTH_URL,
+        operation: OAUTH_OPERATIONS.AUTH_URL,
         connector_id: connectorId,
-        redirect_uri: `${window.location.origin}/oauth`,
+        redirect_uri: `${window.location.origin}${OAUTH_URL_SUFFIX}`,
         config,
     });
 };
@@ -32,8 +28,8 @@ export const accessToken = (
     code_verifier: string | null
 ) => {
     return invokeSupabase<AccessTokenResponse>(FUNCTIONS.OAUTH, {
-        operation: OPERATIONS.ACCESS_TOKEN,
-        redirect_uri: `${window.location.origin}/oauth`,
+        operation: OAUTH_OPERATIONS.ACCESS_TOKEN,
+        redirect_uri: `${window.location.origin}${OAUTH_URL_SUFFIX}`,
         state,
         code,
         config,
@@ -47,7 +43,7 @@ export const encryptConfig = (
     config: any
 ) => {
     return invokeSupabase<any>(FUNCTIONS.OAUTH, {
-        operation: OPERATIONS.ENCRYPT_CONFIG,
+        operation: OAUTH_OPERATIONS.ENCRYPT_CONFIG,
         connector_id: connectorId,
         connector_tag_id: connectorTagId,
         config,

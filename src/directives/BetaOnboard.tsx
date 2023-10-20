@@ -189,7 +189,9 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                                 loading={saving}
                                 disabled={saving}
                             >
-                                <FormattedMessage id="cta.continue" />
+                                <span>
+                                    <FormattedMessage id="cta.continue" />
+                                </span>
                             </LoadingButton>
                         </Toolbar>
                     </Stack>

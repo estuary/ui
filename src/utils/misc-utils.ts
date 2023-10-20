@@ -1,8 +1,13 @@
+import { SortDirection } from '@mui/material';
 import { createSearchParams } from 'react-router-dom';
 
 // Based on pattern taken from
 //  https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
 export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
+
+// Based on the patterns connectors use for date time
+// eslint-disable-next-line no-useless-escape
+export const DATE_TIME_PATTERN = `[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z`;
 
 // Max time stored in
 //  go/flowctl-go/cmd-api-discover.go
@@ -106,4 +111,33 @@ export const specContainsDerivation = (
     });
 
     return { isDerivation, derivationKey };
+};
+
+export const basicSort_string = (
+    a: any,
+    b: any,
+    sortDirection: SortDirection
+) => {
+    // See if the values start with alphanumeric
+    const aIsAlphabetical = a.localeCompare('a') >= 0;
+    const bIsAlphabetical = b.localeCompare('a') >= 0;
+
+    // If a is alpha and b isn't then return >0 to put b first
+    if (!aIsAlphabetical && bIsAlphabetical) {
+        return 1;
+    }
+
+    // If a is alpha and b isn't then return <0 to put a first
+    if (aIsAlphabetical && !bIsAlphabetical) {
+        return -1;
+    }
+
+    // If we're here we know both strings are alphanumeric and can do normal sorts
+    // ascending means compare a to b
+    if (sortDirection === 'asc') {
+        return a.localeCompare(b);
+    }
+
+    // descending means to flip the comparison order
+    return b.localeCompare(a);
 };
