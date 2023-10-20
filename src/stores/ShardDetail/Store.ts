@@ -1,5 +1,8 @@
 import { errorMain, successMain, warningMain } from 'context/Theme';
-import { ReplicaStatusCode } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
+import {
+    ConsumerReplicaStatus,
+    ReplicaStatusCode,
+} from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import produce from 'immer';
 import { ShardDetailStoreNames } from 'stores/names';
@@ -11,6 +14,7 @@ import {
     Endpoint,
     ShardDetails,
     ShardDetailStore,
+    ShardDictionary,
     ShardStatusColor,
     ShardStatusMessageIds,
     TaskShardDetails,
@@ -118,31 +122,113 @@ const getTaskEndpoints = (dataPlaneHostname: string, taskShards: Shard[]) => {
     return [];
 };
 
-const shardHasInferredSchemaError = (shard: Shard) => {
+const findAllErrorsAndWarnings = (shard: Shard) => {
     const { status } = shard;
-    let errorCount = 0;
-    let warningCount = 0;
+    const errors: any[] = [];
+    const warnings: any[] = [];
 
-    status.forEach(({ errors }) => {
-        errors?.forEach((error) => {
+    status.forEach(({ errors: statusErrors }) => {
+        statusErrors?.forEach((error) => {
             if (
                 error.includes(
                     'absoluteKeywordLocation": "flow://inferred-schema#/'
                 )
             ) {
-                warningCount += 1;
+                warnings.push(error);
             } else {
-                errorCount += 1;
+                errors.push(error);
             }
         });
     });
 
+    return { errors, warnings };
+};
+
+const shardHasInferredSchemaError = (shard: Shard) => {
+    const { errors, warnings } = findAllErrorsAndWarnings(shard);
+
+    console.log('{ errors, warnings }', { errors, warnings });
+
     // If there are ANY errors then make sure we do not hide those
-    if (errorCount > 0) {
-        return false;
+    return {
+        errors,
+        warnings,
+        response: errors.length === 0 && warnings.length > 0,
+    };
+};
+
+const getEverythingForDictionary = (
+    shard: Shard,
+    defaultStatusColor: ShardStatusColor
+): TaskShardDetails => {
+    const { spec, status } = shard;
+
+    const response: TaskShardDetails = {
+        color: defaultStatusColor,
+        messageId: ShardStatusMessageIds.NONE,
+        errors: [],
+        warnings: [],
+    };
+
+    if (status.length > 0) {
+        const statusCodes: (ReplicaStatusCode | undefined)[] = status.map(
+            ({ code }) => code
+        );
+
+        if (statusCodes.find((code) => code === 'FAILED')) {
+            const {
+                errors,
+                warnings,
+                response: hasInferredSchema,
+            } = shardHasInferredSchemaError(shard);
+
+            response.errors = errors;
+            response.warnings = warnings;
+
+            response.color = hasInferredSchema ? warningMain : errorMain;
+            response.messageId = hasInferredSchema
+                ? ShardStatusMessageIds.SCHEMA
+                : ShardStatusMessageIds.FAILED;
+        } else if (statusCodes.find((code) => code === 'PRIMARY')) {
+            response.color = successMain;
+            response.messageId = ShardStatusMessageIds.PRIMARY;
+        } else if (statusCodes.find((code) => code === 'IDLE')) {
+            response.color = warningMain;
+            response.messageId = ShardStatusMessageIds.IDLE;
+        } else if (statusCodes.find((code) => code === 'STANDBY')) {
+            response.color = warningMain;
+            response.messageId = ShardStatusMessageIds.STANDBY;
+        } else if (statusCodes.find((code) => code === 'BACKFILL')) {
+            response.color = warningMain;
+            response.messageId = ShardStatusMessageIds.BACKFILL;
+        }
     }
 
-    return warningCount > 0;
+    spec.labels?.labels?.forEach((label) => {
+        switch (label.name) {
+            case 'estuary.dev/task-name':
+                response.entityType = label.value;
+                break;
+            case 'estuary.dev/expose-port':
+                response.exposePort = label.value;
+                break;
+            case PORT_PUBLIC_PREFIX:
+                response.publicPrefix = label.value;
+                break;
+            case PORT_PROTO_PREFIX:
+                response.protoPrefix = label.value;
+                break;
+            default:
+                console.error('cannot find useful labels', label);
+        }
+    });
+    response.entityType = 'capture';
+
+    response.messageId = spec.disable
+        ? ShardStatusMessageIds.DISABLED
+        : ShardStatusMessageIds.NONE;
+
+    return response;
 };
 
 // TODO: Consider unifying this function with the one below in a similar fashion as evaluateTaskShardStatus.
@@ -158,7 +244,9 @@ const evaluateShardStatusColor = (
         );
 
         if (statusCodes.find((code) => code === 'FAILED')) {
-            return shardHasInferredSchemaError(shard) ? warningMain : errorMain;
+            return shardHasInferredSchemaError(shard).response
+                ? warningMain
+                : errorMain;
         } else if (statusCodes.find((code) => code === 'PRIMARY')) {
             return successMain;
         } else if (
@@ -185,7 +273,7 @@ const evaluateShardStatusCode = (shard: Shard): ShardStatusMessageIds => {
         );
 
         if (statusCodes.find((code) => code === 'FAILED')) {
-            return shardHasInferredSchemaError(shard)
+            return shardHasInferredSchemaError(shard).response
                 ? ShardStatusMessageIds.SCHEMA
                 : ShardStatusMessageIds.FAILED;
         } else if (statusCodes.find((code) => code === 'PRIMARY')) {
@@ -193,7 +281,7 @@ const evaluateShardStatusCode = (shard: Shard): ShardStatusMessageIds => {
         } else if (statusCodes.find((code) => code === 'IDLE')) {
             return ShardStatusMessageIds.IDLE;
         } else if (statusCodes.find((code) => code === 'STANDBY')) {
-            return shardHasInferredSchemaError(shard)
+            return shardHasInferredSchemaError(shard).response
                 ? ShardStatusMessageIds.SCHEMA
                 : ShardStatusMessageIds.STANDBY;
         } else if (statusCodes.find((code) => code === 'BACKFILL')) {
@@ -219,6 +307,17 @@ const evaluateTaskShardStatus = (
     };
 };
 
+const findShardErrors = (status: ConsumerReplicaStatus[]) => {
+    return status.find(({ code }) => code === 'FAILED')?.errors;
+};
+
+const findShardDetails = (shards: Shard[]) => {
+    return shards.map((shard) => ({
+        id: shard.spec.id,
+        errors: findShardErrors(shard.status),
+    }));
+};
+
 const findShard = (shards: Shard[], shardId: string) => {
     return shards.find(({ spec }) =>
         spec.id ? spec.id === shardId : undefined
@@ -242,26 +341,19 @@ export const getInitialState = (
         setShards: (shards, defaultStatusColor) => {
             set(
                 produce((state) => {
-                    const newDictionary = {};
+                    const newDictionary: ShardDictionary = {};
 
                     state.shards = shards;
                     shards.forEach((shard) => {
                         const key = getCollectionName(shard.spec);
 
                         if (key) {
-                            if (
-                                !newDictionary[key] ||
-                                newDictionary[key].length === 0
-                            ) {
-                                newDictionary[key] = [];
-                            }
-
-                            newDictionary[key].push({
-                                ...evaluateTaskShardStatus(
+                            newDictionary[key] = newDictionary[key] ?? [];
+                            newDictionary[key]?.push({
+                                ...getEverythingForDictionary(
                                     shard,
                                     defaultStatusColor
                                 ),
-                                ...shard,
                             });
                         } else {
                             console.error('Unable to find name from shard');
@@ -287,13 +379,7 @@ export const getInitialState = (
         getTaskShards: (catalogNamespace, shards) => {
             return catalogNamespace && shards.length > 0
                 ? shards.filter(({ spec }) => {
-                      const labels = spec.labels ? spec.labels.labels : [];
-
-                      const taskName = labels?.find(
-                          (label) => label.name === 'estuary.dev/task-name'
-                      )?.value;
-
-                      return taskName === catalogNamespace;
+                      return getCollectionName(spec) === catalogNamespace;
                   })
                 : [];
         },
@@ -389,11 +475,7 @@ export const getInitialState = (
             return defaultStatusColor;
         },
         getShardDetails: (shards: Shard[]): ShardDetails[] => {
-            return shards.map((shard) => ({
-                id: shard.spec.id,
-                errors: shard.status.find(({ code }) => code === 'FAILED')
-                    ?.errors,
-            }));
+            return findShardDetails(shards);
         },
         getTaskEndpoints: (
             taskName: string,

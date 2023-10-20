@@ -21,6 +21,16 @@ export interface TaskShardDetails {
     messageId: ShardStatusMessageIds;
     color: ShardStatusColor;
     disabled?: boolean;
+
+    // Newly added
+    errors?: any[];
+    warnings?: any[];
+    spec?: Shard['spec'];
+    status?: Shard['status'];
+    entityType?: string;
+    exposePort?: any;
+    publicPrefix?: any;
+    protoPrefix?: any;
 }
 
 export interface TaskShardDetailsWithShard extends TaskShardDetails {
@@ -32,8 +42,8 @@ export interface ShardDetails {
     errors: string[] | undefined;
 }
 
-interface ShardDictionary {
-    [k: string]: TaskShardDetailsWithShard[];
+export interface ShardDictionary {
+    [k: string]: TaskShardDetails[] | undefined;
 }
 
 // TODO: Determine a way to access an interface property with a function type.
