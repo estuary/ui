@@ -1,5 +1,4 @@
 import FullPageError from 'components/fullPage/Error';
-import FullPageSpinner from 'components/fullPage/Spinner';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -31,19 +30,19 @@ function TenantGuard({ children }: BaseComponentProps) {
         singleCall: true,
     });
 
-    if (checkingGrants) {
-        return <FullPageSpinner />;
-    }
-
     if (error) {
         return (
             <FullPageError
                 error={error}
                 message={
-                    <FormattedMessage id="tenant.error.failedToFetch.message" />
+                    <FormattedMessage id="fetcher.tenants.error.message" />
                 }
             />
         );
+    }
+
+    if (checkingGrants) {
+        return null;
     }
 
     const showOnboarding = userGrants.length === 0 || showBeta;

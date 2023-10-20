@@ -26,7 +26,7 @@ const sendMessage = (body: any) => {
 };
 
 const OAuthPopup = (props: Props) => {
-    const { Component = <FullPageSpinner /> } = props;
+    const { Component = <FullPageSpinner delay={0} /> } = props;
 
     // On mount
     useEffect(() => {

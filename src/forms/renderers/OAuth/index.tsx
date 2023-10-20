@@ -164,7 +164,7 @@ const OAuthproviderRenderer = ({
                 mt: 2,
             }}
         >
-            {loading ? <FullPageSpinner /> : null}
+            {loading ? <FullPageSpinner delay={0} /> : null}
 
             <Stack direction="column" spacing={2}>
                 <Typography>

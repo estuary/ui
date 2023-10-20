@@ -1044,6 +1044,11 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.error.failedToFetch.message': `There was an issue while checking if you have access to a tenant.`,
 };
 
+const Fetchers: ResolvedIntlConfig['messages'] = {
+    'fetcher.grants.error.message': `There was an issue while checking your user grants.`,
+    'fetcher.tenants.error.message': `There was an issue while checking what tenants you have access to.`,
+};
+
 const Details: ResolvedIntlConfig['messages'] = {
     'details.tabs.overview': `Overview`,
     'details.tabs.spec': `Spec`,
@@ -1347,6 +1352,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...FieldSelection,
     ...NotBeforeNotAfter,
     ...Notifications,
+    ...Fetchers,
 };
 
 export default enUSMessages;

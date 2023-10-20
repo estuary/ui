@@ -143,7 +143,7 @@ const router = createBrowserRouter(
             <Route
                 path={authenticatedRoutes.oauth.path}
                 element={
-                    <AuthenticatedOnlyContext>
+                    <AuthenticatedOnlyContext hideSpinner>
                         <OAuthPopup />
                     </AuthenticatedOnlyContext>
                 }

@@ -32,8 +32,8 @@ const useDirectiveGuard = (
             return null;
         }
 
+        setServerError(error ?? null);
         if (error) {
-            setServerError(error);
             return 'errored';
         }
 
