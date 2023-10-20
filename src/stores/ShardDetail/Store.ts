@@ -261,6 +261,7 @@ export const getInitialState = (
                                     shard,
                                     defaultStatusColor
                                 ),
+                                ...shard,
                             });
                         } else {
                             console.error('Unable to find name from shard');
