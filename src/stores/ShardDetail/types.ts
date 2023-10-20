@@ -27,6 +27,7 @@ export interface TaskShardDetails {
     warnings?: any[];
     spec?: Shard['spec'];
     status?: Shard['status'];
+    id?: string;
     entityType?: string;
     exposePort?: any;
     publicPrefix?: any;
@@ -40,6 +41,12 @@ export interface TaskShardDetailsWithShard extends TaskShardDetails {
 export interface ShardDetails {
     id: string | undefined;
     errors: string[] | undefined;
+}
+
+export interface ShardReadDictionaryResponse {
+    shardsHaveErrors: boolean;
+    shardsHaveWarnings: boolean;
+    allShards: TaskShardDetails[];
 }
 
 export interface ShardDictionary {

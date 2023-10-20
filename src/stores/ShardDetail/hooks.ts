@@ -1,8 +1,9 @@
 import { useEntityType } from 'context/EntityContext';
 import { useZustandStore } from 'context/Zustand/provider';
+import { isEmpty } from 'lodash';
 import { ShardDetailStoreNames } from 'stores/names';
 import { Entity } from 'types';
-import { ShardDetailStore } from './types';
+import { ShardDetailStore, ShardReadDictionaryResponse } from './types';
 
 const storeName = (entityType: Entity): ShardDetailStoreNames => {
     switch (entityType) {
@@ -124,4 +125,34 @@ export const useShardDetail_evaluateShardProcessingState = () => {
         ShardDetailStore,
         ShardDetailStore['evaluateShardProcessingState']
     >(storeName(entityType), (state) => state.evaluateShardProcessingState);
+};
+
+export const useShardDetail_readDictionary = (
+    taskName: string,
+    taskType?: string
+) => {
+    const entityType = useEntityType();
+
+    return useZustandStore<ShardDetailStore, ShardReadDictionaryResponse>(
+        storeName(entityType),
+        (state) => {
+            const filteredValues = (
+                state.shardDictionary[taskName] ?? []
+            ).filter((value) => value.entityType === taskType);
+
+            console.log('filteredValues', filteredValues);
+
+            return {
+                allShards: filteredValues,
+                shardsHaveErrors:
+                    filteredValues.filter(
+                        (filteredValue) => !isEmpty(filteredValue.errors)
+                    ).length > 0,
+                shardsHaveWarnings:
+                    filteredValues.filter(
+                        (filteredValue) => !isEmpty(filteredValue.warnings)
+                    ).length > 0,
+            };
+        }
+    );
 };

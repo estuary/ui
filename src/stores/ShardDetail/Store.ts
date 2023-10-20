@@ -164,6 +164,7 @@ const getEverythingForDictionary = (
     const { spec, status } = shard;
 
     const response: TaskShardDetails = {
+        id: spec.id,
         color: defaultStatusColor,
         messageId: ShardStatusMessageIds.NONE,
         errors: [],
@@ -207,6 +208,7 @@ const getEverythingForDictionary = (
     spec.labels?.labels?.forEach((label) => {
         switch (label.name) {
             case 'estuary.dev/task-name':
+            case 'estuary.dev/task-type':
                 response.entityType = label.value;
                 break;
             case 'estuary.dev/expose-port':
@@ -219,7 +221,7 @@ const getEverythingForDictionary = (
                 response.protoPrefix = label.value;
                 break;
             default:
-                console.error('cannot find useful labels', label);
+            // left blank on purpose
         }
     });
     response.entityType = 'capture';

@@ -1,0 +1,118 @@
+import Editor from '@monaco-editor/react';
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Alert,
+    AlertTitle,
+    Box,
+    Grid,
+    Typography,
+    useTheme,
+} from '@mui/material';
+import { NavArrowDown } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+import { useShardDetail_readDictionary } from 'stores/ShardDetail/hooks';
+import { Entity } from 'types';
+import { unescapeString } from 'utils/misc-utils';
+
+interface Props {
+    showWarnings?: boolean;
+    taskType: Entity;
+    taskName: string;
+}
+
+const NEW_LINE = '\r\n';
+
+function ShardAlerts({ showWarnings, taskName, taskType }: Props) {
+    const theme = useTheme();
+    const dictionaryVals = useShardDetail_readDictionary(taskName, taskType);
+
+    if (!showWarnings && !dictionaryVals.shardsHaveErrors) {
+        return null;
+    }
+
+    if (showWarnings && !dictionaryVals.shardsHaveWarnings) {
+        return null;
+    }
+
+    return (
+        <Grid item xs={12}>
+            <Alert
+                severity={showWarnings ? 'warning' : 'error'}
+                sx={{
+                    'mb': 1,
+                    '& .MuiAlert-message': {
+                        width: '100%',
+                    },
+                }}
+            >
+                <AlertTitle>
+                    <Typography>
+                        <FormattedMessage
+                            id={
+                                showWarnings
+                                    ? 'detailsPanel.shardDetails.warningTitle'
+                                    : 'detailsPanel.shardDetails.errorTitle'
+                            }
+                        />
+                    </Typography>
+                </AlertTitle>
+
+                {dictionaryVals.allShards.map((shardDetails) => {
+                    const listToUse =
+                        shardDetails[showWarnings ? 'warnings' : 'errors'];
+                    if (shardDetails.id && listToUse && listToUse.length > 0) {
+                        return (
+                            <Accordion key={shardDetails.id} defaultExpanded>
+                                <AccordionSummary
+                                    expandIcon={
+                                        <NavArrowDown
+                                            style={{
+                                                color: theme.palette.text
+                                                    .primary,
+                                            }}
+                                        />
+                                    }
+                                >
+                                    <Typography>{shardDetails.id}</Typography>
+                                </AccordionSummary>
+
+                                <AccordionDetails>
+                                    <Box sx={{ height: 250 }}>
+                                        <Editor
+                                            defaultLanguage=""
+                                            theme={
+                                                theme.palette.mode === 'light'
+                                                    ? 'vs'
+                                                    : 'vs-dark'
+                                            }
+                                            options={{
+                                                lineNumbers: 'off',
+                                                readOnly: true,
+                                                scrollBeyondLastLine: false,
+                                                minimap: {
+                                                    enabled: false,
+                                                },
+                                            }}
+                                            value={unescapeString(
+                                                listToUse
+                                                    .join(NEW_LINE)
+                                                    .split(/\\n/)
+                                                    .join(NEW_LINE)
+                                            )}
+                                        />
+                                    </Box>
+                                </AccordionDetails>
+                            </Accordion>
+                        );
+                    }
+
+                    return null;
+                })}
+            </Alert>
+        </Grid>
+    );
+}
+
+export default ShardAlerts;

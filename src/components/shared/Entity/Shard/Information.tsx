@@ -26,14 +26,16 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useShardDetail_error,
     useShardDetail_getTaskShards,
+    useShardDetail_readDictionary,
     useShardDetail_shards,
 } from 'stores/ShardDetail/hooks';
 import { Entity, TableColumns } from 'types';
-import ShardErrors from './Errors';
+import ShardAlerts from './Alerts';
 import InformationTableBody from './TableBody';
 
 interface Props {
-    entityType?: Entity;
+    taskType: Entity;
+    taskName: string;
 }
 
 const rowsPerPage = 3;
@@ -49,7 +51,7 @@ const columns: TableColumns[] = [
     },
 ];
 
-function ShardInformation({ entityType }: Props) {
+function ShardInformation({ taskName, taskType }: Props) {
     const theme = useTheme();
     const intl = useIntl();
 
@@ -64,17 +66,22 @@ function ShardInformation({ entityType }: Props) {
         localScope: true,
     });
 
+    const dictionaryVals = useShardDetail_readDictionary(taskName, taskType);
+
+    console.log('dictionaryVals', dictionaryVals);
+
     useEffect(() => {
         if (specs && specs.length > 0) {
-            setTaskShards(
-                getTaskShards(
-                    specs.find(({ spec_type }) => spec_type === entityType)
-                        ?.catalog_name,
-                    shards
-                )
+            const taskShardValues = getTaskShards(
+                specs.find(({ spec_type }) => spec_type === taskType)
+                    ?.catalog_name,
+                shards
             );
+
+            console.log('taskShardValues', taskShardValues);
+            setTaskShards(taskShardValues);
         }
-    }, [setTaskShards, getTaskShards, entityType, specs, shards]);
+    }, [setTaskShards, getTaskShards, taskType, specs, shards]);
 
     const changePage = (
         _event: MouseEvent<HTMLButtonElement> | null,
@@ -112,7 +119,13 @@ function ShardInformation({ entityType }: Props) {
                 </AlertBox>
             ) : (
                 <>
-                    <ShardErrors shards={taskShards} />
+                    <ShardAlerts taskName={taskName} taskType={taskType} />
+
+                    <ShardAlerts
+                        showWarnings
+                        taskName={taskName}
+                        taskType={taskType}
+                    />
 
                     <Grid item xs={12}>
                         <TableContainer>
