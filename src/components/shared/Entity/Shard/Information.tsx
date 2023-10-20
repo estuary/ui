@@ -5,9 +5,7 @@ import {
     Table,
     TableCell,
     TableContainer,
-    TableFooter,
     TableHead,
-    TablePagination,
     TableRow,
     Theme,
     Typography,
@@ -15,23 +13,16 @@ import {
 } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import MessageWithLink from 'components/content/MessageWithLink';
-import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
 import { semiTransparentBackground } from 'context/Theme';
-import { Shard } from 'data-plane-gateway/types/shard_client';
-import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
-import { MouseEvent, useEffect, useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import {
-    useShardDetail_error,
-    useShardDetail_getTaskShards,
-    useShardDetail_readDictionary,
-    useShardDetail_shards,
-} from 'stores/ShardDetail/hooks';
+import { useShardDetail_error } from 'stores/ShardDetail/hooks';
 import { Entity, TableColumns } from 'types';
 import ShardAlerts from './Alerts';
 import InformationTableBody from './TableBody';
+import InformationTableFooter from './TableFooter';
 
 interface Props {
     taskType: Entity;
@@ -56,32 +47,8 @@ function ShardInformation({ taskName, taskType }: Props) {
     const intl = useIntl();
 
     const [page, setPage] = useState(0);
-    const [taskShards, setTaskShards] = useState<Shard[] | null>(null);
 
-    const shards = useShardDetail_shards();
     const error = useShardDetail_error();
-    const getTaskShards = useShardDetail_getTaskShards();
-
-    const specs = useEditorStore_specs<LiveSpecsQuery_spec>({
-        localScope: true,
-    });
-
-    const dictionaryVals = useShardDetail_readDictionary(taskName, taskType);
-
-    console.log('dictionaryVals', dictionaryVals);
-
-    useEffect(() => {
-        if (specs && specs.length > 0) {
-            const taskShardValues = getTaskShards(
-                specs.find(({ spec_type }) => spec_type === taskType)
-                    ?.catalog_name,
-                shards
-            );
-
-            console.log('taskShardValues', taskShardValues);
-            setTaskShards(taskShardValues);
-        }
-    }, [setTaskShards, getTaskShards, taskType, specs, shards]);
 
     const changePage = (
         _event: MouseEvent<HTMLButtonElement> | null,
@@ -151,27 +118,20 @@ function ShardInformation({ taskName, taskType }: Props) {
                                 </TableHead>
 
                                 <InformationTableBody
-                                    shards={taskShards}
+                                    taskType={taskType}
+                                    columns={columns}
                                     page={page}
                                     rowsPerPage={rowsPerPage}
-                                    columns={columns}
+                                    taskName={taskName}
                                 />
 
-                                <TableFooter>
-                                    <TableRow sx={{ ...tableHeaderFooterSx }}>
-                                        {taskShards && taskShards.length > 0 ? (
-                                            <TablePagination
-                                                count={taskShards.length}
-                                                rowsPerPageOptions={[
-                                                    rowsPerPage,
-                                                ]}
-                                                rowsPerPage={rowsPerPage}
-                                                page={page}
-                                                onPageChange={changePage}
-                                            />
-                                        ) : null}
-                                    </TableRow>
-                                </TableFooter>
+                                <InformationTableFooter
+                                    changePage={changePage}
+                                    page={page}
+                                    rowsPerPage={rowsPerPage}
+                                    taskName={taskName}
+                                    taskType={taskType}
+                                />
                             </Table>
                         </TableContainer>
                     </Grid>

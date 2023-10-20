@@ -203,6 +203,10 @@ const getEverythingForDictionary = (
             response.color = warningMain;
             response.messageId = ShardStatusMessageIds.BACKFILL;
         }
+    } else {
+        response.messageId = spec.disable
+            ? ShardStatusMessageIds.DISABLED
+            : ShardStatusMessageIds.NONE;
     }
 
     spec.labels?.labels?.forEach((label) => {
@@ -225,10 +229,6 @@ const getEverythingForDictionary = (
         }
     });
     response.entityType = 'capture';
-
-    response.messageId = spec.disable
-        ? ShardStatusMessageIds.DISABLED
-        : ShardStatusMessageIds.NONE;
 
     return response;
 };

@@ -62,9 +62,13 @@ function ShardAlerts({ showWarnings, taskName, taskType }: Props) {
                 {dictionaryVals.allShards.map((shardDetails) => {
                     const listToUse =
                         shardDetails[showWarnings ? 'warnings' : 'errors'];
-                    if (shardDetails.id && listToUse && listToUse.length > 0) {
+                    const listLength = listToUse?.length ?? 0;
+                    if (shardDetails.id && listToUse && listLength > 0) {
                         return (
-                            <Accordion key={shardDetails.id} defaultExpanded>
+                            <Accordion
+                                key={shardDetails.id}
+                                defaultExpanded // maybe check this to keep page smaller?{listLength === 1}
+                            >
                                 <AccordionSummary
                                     expandIcon={
                                         <NavArrowDown
