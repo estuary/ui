@@ -5,6 +5,7 @@ import {
 } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import produce from 'immer';
+import { logRocketConsole } from 'services/logrocket';
 import { ShardDetailStoreNames } from 'stores/names';
 import { Entity } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
@@ -378,7 +379,7 @@ export const getInitialState = (
                                 ),
                             });
                         } else {
-                            console.error('Unable to find name from shard');
+                            logRocketConsole('Unable to find name from shard');
                         }
                     });
 
