@@ -5,7 +5,10 @@ import useShardHydration from 'hooks/shards/useShardHydration';
 import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
 import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useShardDetail_getTaskEndpoints } from 'stores/ShardDetail/hooks';
+import {
+    useShardDetail_getTaskEndpoints,
+    useShardDetail_shards,
+} from 'stores/ShardDetail/hooks';
 import { Endpoint } from 'stores/ShardDetail/types';
 
 interface Props {
@@ -84,6 +87,7 @@ export function EndpointLink({ endpoint }: EndpointLinkProps) {
 //  make the experience better and consistent.
 export function TaskEndpoints({ taskName }: Props) {
     const gateway = useScopedGatewayAuthToken(taskName);
+    const shards = useShardDetail_shards();
     const getTaskEndpoints = useShardDetail_getTaskEndpoints();
 
     const gatewayHostname = useMemo(() => {
