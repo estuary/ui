@@ -1,7 +1,11 @@
 import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
+import TableLoadingRows from 'components/tables/Loading';
 import { semiTransparentBackgroundIntensified } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
-import { useShardDetail_readDictionary } from 'stores/ShardDetail/hooks';
+import {
+    useShardDetail_dictionaryHydrated,
+    useShardDetail_readDictionary,
+} from 'stores/ShardDetail/hooks';
 import { Entity, TableColumns } from 'types';
 import StatusIndicatorAndLabel from './StatusIndicatorAndLabel';
 
@@ -22,16 +26,15 @@ function InformationTableBody({
 }: Props) {
     const dictionaryVals = useShardDetail_readDictionary(taskName, taskType);
 
-    console.log('columns', columns);
+    const dictionaryHydrated = useShardDetail_dictionaryHydrated();
 
-    // need to get loading status working again
-    // if (shards === null) {
-    //     return (
-    //         <TableBody>
-    //             <TableLoadingRows columns={columns} singleRow />
-    //         </TableBody>
-    //     );
-    // }
+    if (!dictionaryHydrated) {
+        return (
+            <TableBody>
+                <TableLoadingRows columns={columns} singleRow />
+            </TableBody>
+        );
+    }
 
     if (dictionaryVals.allShards.length === 0) {
         return (

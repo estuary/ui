@@ -1,6 +1,7 @@
 import { useTheme } from '@mui/material';
 import { useEffect, useMemo } from 'react';
 import {
+    useShardDetail_setDictionaryHydrated,
     useShardDetail_setError,
     useShardDetail_setShards,
 } from 'stores/ShardDetail/hooks';
@@ -19,9 +20,11 @@ function useShardHydration(querySettings: any[]) {
 
     const setShards = useShardDetail_setShards();
     const setError = useShardDetail_setError();
+    const setDictionaryHydrated = useShardDetail_setDictionaryHydrated();
 
     useEffect(() => {
-        // Set the error or default back to null
+        // Reset the state
+        setDictionaryHydrated(false);
         setError(error ?? null);
 
         // Try to set the data returned
@@ -31,8 +34,17 @@ function useShardHydration(querySettings: any[]) {
             } else {
                 setShards([], defaultStatusColor);
             }
+
+            setDictionaryHydrated(true);
         }
-    }, [data, defaultStatusColor, error, setError, setShards]);
+    }, [
+        data,
+        defaultStatusColor,
+        error,
+        setDictionaryHydrated,
+        setError,
+        setShards,
+    ]);
 
     return useMemo(
         () => ({

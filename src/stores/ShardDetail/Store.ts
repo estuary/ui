@@ -332,6 +332,53 @@ const getCollectionName = (spec: Shard['spec']) => {
     )?.value;
 };
 
+export const getCompositeColor = (
+    taskShardDetails: TaskShardDetails[],
+    defaultStatusColor: ShardStatusColor
+) => {
+    if (taskShardDetails.length === 1) {
+        return taskShardDetails[0].color;
+    }
+
+    if (taskShardDetails.length > 1) {
+        const statusMessageIds: ShardStatusMessageIds[] = taskShardDetails.map(
+            ({ messageId: statusCode }) => statusCode
+        );
+
+        if (
+            statusMessageIds.find(
+                (messageId) => messageId === ShardStatusMessageIds.FAILED
+            )
+        ) {
+            return errorMain;
+        }
+
+        if (
+            statusMessageIds.find(
+                (messageId) => messageId === ShardStatusMessageIds.PRIMARY
+            )
+        ) {
+            return successMain;
+        }
+
+        if (
+            statusMessageIds.find(
+                (messageId) =>
+                    messageId === ShardStatusMessageIds.IDLE ||
+                    messageId === ShardStatusMessageIds.STANDBY ||
+                    messageId === ShardStatusMessageIds.BACKFILL ||
+                    messageId === ShardStatusMessageIds.SCHEMA
+            )
+        ) {
+            return warningMain;
+        }
+
+        return defaultStatusColor;
+    }
+
+    return defaultStatusColor;
+};
+
 export const getInitialState = (
     set: NamedSet<ShardDetailStore>,
     get: StoreApi<ShardDetailStore>['getState'],
@@ -340,12 +387,23 @@ export const getInitialState = (
     return {
         shards: [],
         shardDictionary: {},
+        shardDictionaryHydrated: false,
+        // This will get overwritten but defaulting to something so we don't have to handle null
+        defaultStatusColor: '#C4D3E9',
+        setDictionaryHydrated: (val) => {
+            set(
+                produce((state) => {
+                    state.shardDictionaryHydrated = val;
+                }),
+                false,
+                'Shard Dictionary Hydrated Set'
+            );
+        },
         setShards: (shards, defaultStatusColor) => {
             set(
                 produce((state) => {
                     const newDictionary: ShardDictionary = {};
 
-                    state.shards = shards;
                     shards.forEach((shard) => {
                         const key = getCollectionName(shard.spec);
 
@@ -362,7 +420,9 @@ export const getInitialState = (
                         }
                     });
 
+                    state.shards = shards;
                     state.shardDictionary = newDictionary;
+                    state.defaultStatusColor = defaultStatusColor;
                 }),
                 false,
                 'Shard List Set'

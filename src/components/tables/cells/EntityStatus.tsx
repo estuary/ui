@@ -1,18 +1,10 @@
-import { Box, Tooltip, Typography, useTheme } from '@mui/material';
-import { Shard } from 'data-plane-gateway/types/shard_client';
-import { useEffect, useState } from 'react';
+import { Box, CircularProgress, Tooltip, Typography } from '@mui/material';
+import { useEntityType } from 'context/EntityContext';
 import { FormattedMessage } from 'react-intl';
 import {
-    useShardDetail_error,
-    useShardDetail_getTaskShardDetails,
-    useShardDetail_getTaskShards,
-    useShardDetail_getTaskStatusColor,
-    useShardDetail_shards,
+    useShardDetail_dictionaryHydrated,
+    useShardDetail_readDictionary,
 } from 'stores/ShardDetail/hooks';
-import {
-    ShardStatusColor,
-    TaskShardDetailsWithShard,
-} from 'stores/ShardDetail/types';
 
 interface Props {
     name: string;
@@ -21,61 +13,18 @@ interface Props {
 const indicatorSize = 16;
 
 function EntityStatus({ name }: Props) {
-    const theme = useTheme();
+    const taskType = useEntityType();
 
-    const defaultStatusColor: ShardStatusColor =
-        theme.palette.mode === 'dark' ? '#E1E9F4' : '#C4D3E9';
+    const dictionaryHydrated = useShardDetail_dictionaryHydrated();
+    const dictionaryVals = useShardDetail_readDictionary(name, taskType);
 
-    const [taskShardDetails, setTaskShardDetails] = useState<
-        TaskShardDetailsWithShard[]
-    >([]);
-    const [compositeStatusColor, setCompositeStatusColor] =
-        useState<ShardStatusColor>(defaultStatusColor);
-    const [taskDisabled, setTaskDisabled] = useState<boolean>(false);
-
-    const shards = useShardDetail_shards();
-    const shardError = useShardDetail_error();
-
-    const getTaskShards = useShardDetail_getTaskShards();
-    const getTaskShardDetails = useShardDetail_getTaskShardDetails();
-    const getTaskStatusColor = useShardDetail_getTaskStatusColor();
-
-    // TODO (shards) the details and color should be put into the store
-    //  similar to stats so we can control this stuff from within the store
-    useEffect(() => {
-        const taskShards: Shard[] = getTaskShards(name, shards);
-
-        const shardDetails: TaskShardDetailsWithShard[] = getTaskShardDetails(
-            taskShards,
-            defaultStatusColor
-        );
-
-        const statusColor: ShardStatusColor = getTaskStatusColor(
-            shardDetails,
-            defaultStatusColor
-        );
-
-        const disabled =
-            shardDetails.filter((shard) => !shard.disabled).length === 0;
-
-        setTaskShardDetails(shardDetails);
-        setCompositeStatusColor(statusColor);
-        setTaskDisabled(disabled);
-    }, [
-        shardError, // Need to rerun this if there is an error
-        getTaskShards,
-        getTaskShardDetails,
-        setTaskShardDetails,
-        setTaskDisabled,
-        getTaskStatusColor,
-        name,
-        shards,
-        defaultStatusColor,
-    ]);
+    if (!dictionaryHydrated) {
+        return <CircularProgress />;
+    }
 
     return (
         <Tooltip
-            title={taskShardDetails.map((shard, index) => (
+            title={dictionaryVals.allShards.map((shard, index) => (
                 <Box
                     key={`${index}-shard-status-tooltip`}
                     sx={{ display: 'flex', alignItems: 'center' }}
@@ -115,10 +64,12 @@ function EntityStatus({ name }: Props) {
                     maxHeight: indicatorSize,
 
                     marginRight: 12,
-                    border: taskDisabled
-                        ? `solid 2px ${compositeStatusColor}`
+                    border: dictionaryVals.disabled
+                        ? `solid 2px ${dictionaryVals.compositeColor}`
                         : 0,
-                    backgroundColor: taskDisabled ? '' : compositeStatusColor,
+                    backgroundColor: dictionaryVals.disabled
+                        ? ''
+                        : dictionaryVals.compositeColor,
                     borderRadius: 50,
                     display: 'inline-block',
                     verticalAlign: 'middle',

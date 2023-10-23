@@ -9,8 +9,6 @@ interface Props {
 function StatusIndicatorAndLabel({ shard }: Props) {
     const { id, color, disabled, messageId } = shard;
 
-    console.log('messageId', messageId);
-
     return (
         <TableCell width={250} key={`status-indicator-for-shard__${id}`}>
             <span

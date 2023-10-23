@@ -46,6 +46,8 @@ export interface ShardDetails {
 export interface ShardReadDictionaryResponse {
     shardsHaveErrors: boolean;
     shardsHaveWarnings: boolean;
+    compositeColor: ShardStatusColor;
+    disabled: boolean;
     allShards: TaskShardDetails[];
 }
 
@@ -83,10 +85,16 @@ export interface Endpoint {
 
 export interface ShardDetailStore {
     shards: Shard[];
-    shardDictionary: ShardDictionary;
     setShards: SetShards;
+
+    shardDictionary: ShardDictionary;
+    shardDictionaryHydrated: boolean;
+    setDictionaryHydrated: (val: boolean) => void;
+    defaultStatusColor: ShardStatusColor;
+
     error: ResponseError['body'] | string | null;
     setError: (val: ShardDetailStore['error']) => void;
+
     getTaskShards: (
         catalogNamespace: string | undefined,
         shards: Shard[]

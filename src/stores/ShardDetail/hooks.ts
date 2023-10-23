@@ -1,8 +1,10 @@
 import { useEntityType } from 'context/EntityContext';
+import { successMain } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
 import { isEmpty } from 'lodash';
 import { ShardDetailStoreNames } from 'stores/names';
 import { Entity } from 'types';
+import { getCompositeColor } from './Store';
 import { ShardDetailStore, ShardReadDictionaryResponse } from './types';
 
 const storeName = (entityType: Entity): ShardDetailStoreNames => {
@@ -127,6 +129,24 @@ export const useShardDetail_evaluateShardProcessingState = () => {
     >(storeName(entityType), (state) => state.evaluateShardProcessingState);
 };
 
+export const useShardDetail_dictionaryHydrated = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['shardDictionaryHydrated']
+    >(storeName(entityType), (state) => state.shardDictionaryHydrated);
+};
+
+export const useShardDetail_setDictionaryHydrated = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['setDictionaryHydrated']
+    >(storeName(entityType), (state) => state.setDictionaryHydrated);
+};
+
 export const useShardDetail_readDictionary = (
     taskName: string,
     taskType?: string
@@ -144,6 +164,18 @@ export const useShardDetail_readDictionary = (
 
             return {
                 allShards: filteredValues,
+                compositeColor:
+                    taskType === 'collection'
+                        ? successMain
+                        : state.error
+                        ? state.defaultStatusColor
+                        : getCompositeColor(
+                              filteredValues,
+                              state.defaultStatusColor
+                          ),
+                disabled:
+                    filteredValues.filter((shard) => !shard.disabled).length ===
+                    0,
                 shardsHaveErrors:
                     filteredValues.filter(
                         (filteredValue) => !isEmpty(filteredValue.errors)
