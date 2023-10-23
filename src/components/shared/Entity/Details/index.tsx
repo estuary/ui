@@ -1,8 +1,7 @@
-import { Box, Divider, Stack, Typography } from '@mui/material';
-import { createEditorStore } from 'components/editor/Store/create';
 import LiveSpecsHydrator from 'components/editor/Store/LiveSpecsHydrator';
+import { createEditorStore } from 'components/editor/Store/create';
+import DetailContent from 'components/shared/Entity/Details/Content';
 import { LocalZustandProvider } from 'context/LocalZustand';
-import { truncateTextSx } from 'context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -10,8 +9,6 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useMemo } from 'react';
 import { EditorStoreNames } from 'stores/names';
 import ShardHydrator from '../Shard/Hydrator';
-import RenderTab from './RenderTab';
-import DetailTabs from './Tabs';
 
 function EntityDetails() {
     useBrowserTitle('routeTitle.details');
@@ -34,30 +31,7 @@ function EntityDetails() {
                 localZustandScope={true}
             >
                 <ShardHydrator lastPubId={lastPubId} catalogName={catalogName}>
-                    <Box>
-                        <Stack spacing={2} sx={{ m: 1 }}>
-                            <Stack direction="row" spacing={1}>
-                                <Typography
-                                    component="span"
-                                    variant="h6"
-                                    sx={{
-                                        ...truncateTextSx,
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    {catalogName}
-                                </Typography>
-                                {/*TODO (details) need to wire in edit button*/}
-                                {/*<EditButton />*/}
-                            </Stack>
-                            <Divider />
-                            <DetailTabs />
-                        </Stack>
-
-                        <Box sx={{ m: 1 }}>
-                            <RenderTab />
-                        </Box>
-                    </Box>
+                    <DetailContent />
                 </ShardHydrator>
             </LiveSpecsHydrator>
         </LocalZustandProvider>

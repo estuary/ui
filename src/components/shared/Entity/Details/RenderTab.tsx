@@ -4,7 +4,11 @@ import Settings from './Settings';
 import Spec from './Spec';
 import { useDetailsPage } from './context';
 
-function RenderTab() {
+interface Props {
+    isDerivation: boolean;
+}
+
+function RenderTab({ isDerivation }: Props) {
     const page = useDetailsPage();
 
     switch (page) {
@@ -18,7 +22,7 @@ function RenderTab() {
             return <History />;
 
         default:
-            return <Overview />;
+            return <Overview isDerivation={isDerivation} />;
     }
 }
 

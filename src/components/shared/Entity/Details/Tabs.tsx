@@ -1,13 +1,15 @@
 import { Box, Tab, Tabs } from '@mui/material';
-import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import useConstant from 'use-constant';
-import { specContainsDerivation } from 'utils/misc-utils';
 
-function DetailTabs() {
+interface Props {
+    isDerivation: boolean;
+}
+
+function DetailTabs({ isDerivation }: Props) {
     const intl = useIntl();
 
     const [searchParams] = useSearchParams();
@@ -16,12 +18,6 @@ function DetailTabs() {
     const entityType = useEntityType();
 
     const [selectedTab, setSelectedTab] = useState(0);
-
-    const currentCatalog = useEditorStore_currentCatalog({
-        localScope: true,
-    });
-    const catalogSpec = currentCatalog?.spec ?? null;
-    const { isDerivation } = specContainsDerivation(catalogSpec);
 
     const tabProps = useConstant(() => {
         const response = [
