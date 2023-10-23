@@ -24,6 +24,7 @@ function EntityStatus({ name }: Props) {
 
     return (
         <Tooltip
+            disableInteractive={dictionaryVals.allShards.length === 0}
             title={dictionaryVals.allShards.map((shard, index) => (
                 <Box
                     key={`${index}-shard-status-tooltip`}

@@ -162,6 +162,21 @@ export const useShardDetail_readDictionary = (
 
             console.log('filteredValues', filteredValues);
 
+            let disabled = false;
+            let shardsHaveErrors = false;
+            let shardsHaveWarnings = false;
+
+            filteredValues.some((filteredValue) => {
+                disabled = Boolean(!disabled && filteredValue.disabled);
+                shardsHaveErrors =
+                    !shardsHaveErrors && !isEmpty(filteredValue.errors);
+                shardsHaveWarnings =
+                    !shardsHaveWarnings && !isEmpty(filteredValue.warnings);
+
+                // We need to check for all three so only stop if they're all this
+                return disabled && shardsHaveErrors && shardsHaveWarnings;
+            });
+
             return {
                 allShards: filteredValues,
                 compositeColor:
@@ -173,17 +188,9 @@ export const useShardDetail_readDictionary = (
                               filteredValues,
                               state.defaultStatusColor
                           ),
-                disabled:
-                    filteredValues.filter((shard) => !shard.disabled).length ===
-                    0,
-                shardsHaveErrors:
-                    filteredValues.filter(
-                        (filteredValue) => !isEmpty(filteredValue.errors)
-                    ).length > 0,
-                shardsHaveWarnings:
-                    filteredValues.filter(
-                        (filteredValue) => !isEmpty(filteredValue.warnings)
-                    ).length > 0,
+                disabled,
+                shardsHaveErrors,
+                shardsHaveWarnings,
             };
         }
     );
