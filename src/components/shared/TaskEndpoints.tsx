@@ -97,8 +97,6 @@ export function TaskEndpoints({ taskName }: Props) {
         entityType
     );
 
-    console.log('endpoints', endpoints);
-
     return endpoints.length > 0 ? (
         <CardWrapper
             message={<FormattedMessage id="taskEndpoint.list.title" />}

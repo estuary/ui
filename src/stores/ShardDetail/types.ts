@@ -93,9 +93,7 @@ export interface Endpoint {
 }
 
 export interface ShardDetailStore {
-    shards: Shard[];
     setShards: SetShards;
-
     shardDictionary: ShardDictionary;
     shardDictionaryHydrated: boolean;
     setDictionaryHydrated: (val: boolean) => void;
@@ -103,24 +101,4 @@ export interface ShardDetailStore {
 
     error: ResponseError['body'] | string | null;
     setError: (val: ShardDetailStore['error']) => void;
-
-    getTaskShards: (
-        catalogNamespace: string | undefined,
-        shards: Shard[]
-    ) => Shard[];
-    getTaskShardDetails: (
-        taskShards: Shard[],
-        defaultStatusColor: ShardStatusColor
-    ) => TaskShardDetailsWithShard[];
-    getTaskStatusColor: (
-        taskShardDetails: TaskShardDetails[],
-        defaultStatusColor: ShardStatusColor
-    ) => ShardStatusColor;
-    getShardDetails: (shards: Shard[]) => ShardDetails[];
-    getShardStatusColor: (
-        shardId: string,
-        defaultStatusColor: ShardStatusColor
-    ) => ShardStatusColor;
-    getShardStatusMessageId: (shardId: string) => ShardStatusMessageIds;
-    evaluateShardProcessingState: (shardId: string) => boolean;
 }

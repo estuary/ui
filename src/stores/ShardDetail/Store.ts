@@ -1,20 +1,15 @@
 import { errorMain, successMain, warningMain } from 'context/Theme';
-import {
-    ConsumerReplicaStatus,
-    ReplicaStatusCode,
-} from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
+import { ReplicaStatusCode } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import produce from 'immer';
 import { logRocketConsole } from 'services/logrocket';
 import { ShardDetailStoreNames } from 'stores/names';
-import { Entity } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
+import { create } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import {
     Endpoint,
     EndpointsDictionary,
-    ShardDetails,
     ShardDetailStore,
     ShardDictionary,
     ShardStatusColor,
@@ -102,8 +97,6 @@ const findAllErrorsAndWarnings = (shard: Shard) => {
 const shardHasInferredSchemaError = (shard: Shard) => {
     const { errors, warnings } = findAllErrorsAndWarnings(shard);
 
-    console.log('{ errors, warnings }', { errors, warnings });
-
     // If there are ANY errors then make sure we do not hide those
     return {
         errors,
@@ -189,104 +182,9 @@ const getEverythingForDictionary = (
         }
     });
 
-    const endpointStuff = getShardEndpointsForDictionary(response);
-    console.log('endpointStuff', endpointStuff);
-    response.shardEndpoints = endpointStuff;
+    response.shardEndpoints = getShardEndpointsForDictionary(response);
 
     return response;
-};
-
-// TODO: Consider unifying this function with the one below in a similar fashion as evaluateTaskShardStatus.
-const evaluateShardStatusColor = (
-    shard: Shard,
-    defaultStatusColor: ShardStatusColor
-): ShardStatusColor => {
-    const { status } = shard;
-
-    if (status.length > 0) {
-        const statusCodes: (ReplicaStatusCode | undefined)[] = status.map(
-            ({ code }) => code
-        );
-
-        if (statusCodes.find((code) => code === 'FAILED')) {
-            return shardHasInferredSchemaError(shard).response
-                ? warningMain
-                : errorMain;
-        } else if (statusCodes.find((code) => code === 'PRIMARY')) {
-            return successMain;
-        } else if (
-            statusCodes.find(
-                (code) =>
-                    code === 'IDLE' || code === 'STANDBY' || code === 'BACKFILL'
-            )
-        ) {
-            return warningMain;
-        } else {
-            return defaultStatusColor;
-        }
-    } else {
-        return defaultStatusColor;
-    }
-};
-
-const evaluateShardStatusCode = (shard: Shard): ShardStatusMessageIds => {
-    const { spec, status } = shard;
-
-    if (status.length > 0) {
-        const statusCodes: (ReplicaStatusCode | undefined)[] = status.map(
-            ({ code }) => code
-        );
-
-        if (statusCodes.find((code) => code === 'FAILED')) {
-            return shardHasInferredSchemaError(shard).response
-                ? ShardStatusMessageIds.SCHEMA
-                : ShardStatusMessageIds.FAILED;
-        } else if (statusCodes.find((code) => code === 'PRIMARY')) {
-            return ShardStatusMessageIds.PRIMARY;
-        } else if (statusCodes.find((code) => code === 'IDLE')) {
-            return ShardStatusMessageIds.IDLE;
-        } else if (statusCodes.find((code) => code === 'STANDBY')) {
-            return shardHasInferredSchemaError(shard).response
-                ? ShardStatusMessageIds.SCHEMA
-                : ShardStatusMessageIds.STANDBY;
-        } else if (statusCodes.find((code) => code === 'BACKFILL')) {
-            return ShardStatusMessageIds.BACKFILL;
-        } else {
-            return ShardStatusMessageIds.NONE;
-        }
-    } else {
-        return spec.disable
-            ? ShardStatusMessageIds.DISABLED
-            : ShardStatusMessageIds.NONE;
-    }
-};
-
-const evaluateTaskShardStatus = (
-    shard: Shard,
-    defaultStatusColor: ShardStatusColor
-): TaskShardDetails => {
-    return {
-        messageId: evaluateShardStatusCode(shard),
-        color: evaluateShardStatusColor(shard, defaultStatusColor),
-        disabled: shard.spec.disable,
-    };
-};
-
-const findShardErrors = (status: ConsumerReplicaStatus[]) => {
-    return status.find(({ code }) => code === 'FAILED')?.errors;
-};
-
-const findShardDetails = (shards: Shard[]) => {
-    return shards.map((shard) => ({
-        id: shard.spec.id,
-        errors: findShardErrors(shard.status),
-    }));
-};
-
-const findShard = (shards: Shard[], shardId: string) => {
-    return shards.find(({ spec }) =>
-        spec.id ? spec.id === shardId : undefined
-    );
 };
 
 const getCollectionName = (spec: Shard['spec']) => {
@@ -343,12 +241,10 @@ export const getCompositeColor = (
 };
 
 export const getInitialState = (
-    set: NamedSet<ShardDetailStore>,
-    get: StoreApi<ShardDetailStore>['getState'],
-    entityType: Entity
+    set: NamedSet<ShardDetailStore>
+    // get: StoreApi<ShardDetailStore>['getState']
 ): ShardDetailStore => {
     return {
-        shards: [],
         shardDictionary: {},
         shardDictionaryHydrated: false,
         // This will get overwritten but defaulting to something so we don't have to handle null
@@ -401,157 +297,11 @@ export const getInitialState = (
                 'Shard List Error Set'
             );
         },
-        getTaskShards: (catalogNamespace, shards) => {
-            return catalogNamespace && shards.length > 0
-                ? shards.filter(({ spec }) => {
-                      return getCollectionName(spec) === catalogNamespace;
-                  })
-                : [];
-        },
-        getTaskShardDetails: (taskShards, defaultStatusColor) => {
-            const { error } = get();
-
-            const defaultTaskShardDetail = {
-                messageId: ShardStatusMessageIds.NONE,
-                color: defaultStatusColor,
-                shard: null,
-            };
-
-            if (taskShards.length > 0) {
-                const statusIndicators = taskShards.map((shard) => ({
-                    ...evaluateTaskShardStatus(shard, defaultStatusColor),
-                    shard,
-                }));
-
-                return statusIndicators.length > 0
-                    ? statusIndicators
-                    : [defaultTaskShardDetail];
-            } else if (entityType === 'collection') {
-                const messageId = error
-                    ? ShardStatusMessageIds.NONE
-                    : ShardStatusMessageIds.COLLECTION;
-                const color = error ? defaultStatusColor : successMain;
-
-                return [
-                    {
-                        messageId,
-                        color,
-                        shard: null,
-                    },
-                ];
-            } else {
-                return [defaultTaskShardDetail];
-            }
-        },
-        getTaskStatusColor: (taskShardDetails, defaultStatusColor) => {
-            const { error } = get();
-
-            if (error) {
-                return defaultStatusColor;
-            }
-
-            if (taskShardDetails.length === 1) {
-                return taskShardDetails[0].color;
-            }
-
-            if (taskShardDetails.length > 1) {
-                const statusMessageIds: ShardStatusMessageIds[] =
-                    taskShardDetails.map(
-                        ({ messageId: statusCode }) => statusCode
-                    );
-
-                if (
-                    statusMessageIds.find(
-                        (messageId) =>
-                            messageId === ShardStatusMessageIds.FAILED
-                    )
-                ) {
-                    return errorMain;
-                }
-
-                if (
-                    statusMessageIds.find(
-                        (messageId) =>
-                            messageId === ShardStatusMessageIds.PRIMARY
-                    )
-                ) {
-                    return successMain;
-                }
-
-                if (
-                    statusMessageIds.find(
-                        (messageId) =>
-                            messageId === ShardStatusMessageIds.IDLE ||
-                            messageId === ShardStatusMessageIds.STANDBY ||
-                            messageId === ShardStatusMessageIds.BACKFILL ||
-                            messageId === ShardStatusMessageIds.SCHEMA
-                    )
-                ) {
-                    return warningMain;
-                }
-
-                return defaultStatusColor;
-            }
-
-            if (entityType === 'collection') {
-                return successMain;
-            }
-
-            return defaultStatusColor;
-        },
-        getShardDetails: (shards: Shard[]): ShardDetails[] => {
-            return findShardDetails(shards);
-        },
-        getShardStatusColor: (shardId, defaultStatusColor) => {
-            const { shards } = get();
-
-            if (shards.length > 0) {
-                findShard(shards, shardId);
-                const selectedShard = findShard(shards, shardId);
-
-                return selectedShard
-                    ? evaluateShardStatusColor(
-                          selectedShard,
-                          defaultStatusColor
-                      )
-                    : defaultStatusColor;
-            } else {
-                return defaultStatusColor;
-            }
-        },
-        getShardStatusMessageId: (shardId) => {
-            const { shards } = get();
-
-            if (shards.length > 0) {
-                const selectedShard = findShard(shards, shardId);
-
-                return selectedShard
-                    ? evaluateShardStatusCode(selectedShard)
-                    : ShardStatusMessageIds.NONE;
-            } else {
-                return ShardStatusMessageIds.NONE;
-            }
-        },
-        evaluateShardProcessingState: (shardId) => {
-            const { shards } = get();
-
-            if (shards.length > 0) {
-                return !!findShard(shards, shardId)?.spec.disable;
-            } else {
-                return false;
-            }
-        },
     };
 };
 
-export const createShardDetailStore = (
-    key: ShardDetailStoreNames,
-    entityType: Entity
-) => {
+export const createShardDetailStore = (key: ShardDetailStoreNames) => {
     return create<ShardDetailStore>()(
-        devtools(
-            (set, get) => getInitialState(set, get, entityType),
-            devtoolsOptions(key)
-        )
+        devtools((set, _get) => getInitialState(set), devtoolsOptions(key))
     );
 };
