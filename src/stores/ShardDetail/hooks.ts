@@ -93,15 +93,6 @@ export const useShardDetail_getShardDetails = () => {
     >(storeName(entityType), (state) => state.getShardDetails);
 };
 
-export const useShardDetail_getTaskEndpoints = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['getTaskEndpoints']
-    >(storeName(entityType), (state) => state.getTaskEndpoints);
-};
-
 export const useShardDetail_getShardStatusColor = () => {
     const entityType = useEntityType();
 
@@ -160,21 +151,18 @@ export const useShardDetail_readDictionary = (
                 state.shardDictionary[taskName] ?? []
             ).filter((value) => value.entityType === taskType);
 
-            console.log('filteredValues', filteredValues);
-
             let disabled = false;
             let shardsHaveErrors = false;
             let shardsHaveWarnings = false;
 
-            filteredValues.some((filteredValue) => {
+            filteredValues.forEach((filteredValue) => {
                 disabled = Boolean(!disabled && filteredValue.disabled);
+
                 shardsHaveErrors =
                     !shardsHaveErrors && !isEmpty(filteredValue.errors);
+
                 shardsHaveWarnings =
                     !shardsHaveWarnings && !isEmpty(filteredValue.warnings);
-
-                // We need to check for all three so only stop if they're all this
-                return disabled && shardsHaveErrors && shardsHaveWarnings;
             });
 
             return {

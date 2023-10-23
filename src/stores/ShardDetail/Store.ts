@@ -12,6 +12,7 @@ import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import {
     Endpoint,
+    EndpointsDictionary,
     ShardDetails,
     ShardDetailStore,
     ShardDictionary,
@@ -23,72 +24,25 @@ import {
 const PORT_PUBLIC_PREFIX = 'estuary.dev/port-public/';
 const PORT_PROTO_PREFIX = 'estuary.dev/port-proto/';
 
-const getShardEndpoints = (
-    dataPlaneHostname: string,
-    shard: Shard
-): Map<string, Endpoint> => {
-    const byPort = new Map<string, Endpoint>();
-    const labels = shard.spec.labels?.labels;
-    if (!labels) {
-        return byPort;
-    }
-    const hostname = labels.find((label) => {
-        return label.name === 'estuary.dev/hostname' && label.value;
-    })?.value;
+const getShardEndpointsForDictionary = (shard: TaskShardDetails) => {
+    const byPort: EndpointsDictionary = {};
+    const { hostname, exposePort, shardIsUp } = shard;
 
-    const exposeIdx = labels.findIndex((label) => {
-        return label.name === 'estuary.dev/expose-port';
-    });
-    if (!hostname || exposeIdx === -1) {
+    if (!hostname || !exposePort) {
         return byPort;
     }
 
-    // We consider the endpoint to be "up" if the shard has a primary.
-    // This does not necessarily mean that the container is up and reachable, but
-    // it's the closest approximation we have.
-    const shardIsUp =
-        shard.status.findIndex(({ code }) => code === 'PRIMARY') >= 0;
-
-    for (let i = exposeIdx; i < labels.length; i++) {
-        const port = labels[i].value;
-        if (labels[i].name === 'estuary.dev/expose-port' && port) {
-            byPort.set(port, {
-                fullHostname: `${hostname}-${port}.${dataPlaneHostname}`,
-                isUp: shardIsUp,
-                // Add defaults for these fields, which may be updated as we continue to parse labels.
-                isPublic: false,
-                protocol: null,
-            });
-        } else {
-            break;
-        }
-    }
-
-    labels.forEach((label) => {
-        if (label.name?.startsWith(PORT_PROTO_PREFIX)) {
-            const portValue = label.name.substring(PORT_PROTO_PREFIX.length);
-            const port = byPort.get(portValue);
-            if (port && label.value) {
-                port.protocol = label.value;
-            }
-        } else if (label.name?.startsWith(PORT_PUBLIC_PREFIX)) {
-            const portValue = label.name.substring(PORT_PUBLIC_PREFIX.length);
-            const port = byPort.get(portValue);
-            if (port) {
-                port.isPublic = label.value === 'true';
-            }
-        }
-    });
+    byPort[exposePort] = {
+        hostPrefix: `${hostname}-${exposePort}`, //The rest of the URL is added in when the component renders
+        isUp: Boolean(shardIsUp),
+        isPublic: shard.portIsPublic ?? false,
+        protocol: shard.portProtocol ?? null,
+    };
 
     return byPort;
 };
 
-const getTaskEndpoints = (dataPlaneHostname: string, taskShards: Shard[]) => {
-    const endpointMaps = taskShards.map(
-        (shard: Shard): Map<string, Endpoint> => {
-            return getShardEndpoints(dataPlaneHostname, shard);
-        }
-    );
+export const mergeEndpoints = (endpointMaps: Map<string, Endpoint>[]) => {
     if (endpointMaps.length > 0) {
         // Merge the endpoints of each shard into a single map.
         // Generally, we expect that all shards for a given task will
@@ -99,7 +53,7 @@ const getTaskEndpoints = (dataPlaneHostname: string, taskShards: Shard[]) => {
                 const leftEp = left.get(key);
                 if (leftEp) {
                     const merged = {
-                        fullHostname: leftEp.fullHostname,
+                        hostPrefix: leftEp.hostPrefix,
                         isPublic: leftEp.isPublic,
                         protocol: leftEp.protocol,
                         // isUp is really the only field that it makes sense to merge.
@@ -193,6 +147,10 @@ const getEverythingForDictionary = (
         } else if (statusCodes.find((code) => code === 'PRIMARY')) {
             response.color = successMain;
             response.messageId = ShardStatusMessageIds.PRIMARY;
+            // We consider the endpoint to be "up" if the shard has a primary.
+            // This does not necessarily mean that the container is up and reachable, but
+            // it's the closest approximation we have.
+            response.shardIsUp = true;
         } else if (statusCodes.find((code) => code === 'IDLE')) {
             response.color = warningMain;
             response.messageId = ShardStatusMessageIds.IDLE;
@@ -218,17 +176,21 @@ const getEverythingForDictionary = (
             case 'estuary.dev/expose-port':
                 response.exposePort = label.value;
                 break;
-            case PORT_PUBLIC_PREFIX:
-                response.publicPrefix = label.value;
-                break;
-            case PORT_PROTO_PREFIX:
-                response.protoPrefix = label.value;
+            case 'estuary.dev/hostname':
+                response.hostname = label.value;
                 break;
             default:
-            // left blank on purpose
+                if (label.name?.startsWith(PORT_PROTO_PREFIX)) {
+                    response.portProtocol = label.value;
+                } else if (label.name?.startsWith(PORT_PUBLIC_PREFIX)) {
+                    response.portIsPublic = label.value === 'true';
+                }
         }
     });
-    response.entityType = 'capture';
+
+    const endpointStuff = getShardEndpointsForDictionary(response);
+    console.log('endpointStuff', endpointStuff);
+    response.shardEndpoints = endpointStuff;
 
     return response;
 };
@@ -538,18 +500,6 @@ export const getInitialState = (
         },
         getShardDetails: (shards: Shard[]): ShardDetails[] => {
             return findShardDetails(shards);
-        },
-        getTaskEndpoints: (
-            taskName: string,
-            dataPlaneHostname: string | null
-        ) => {
-            const { shards, getTaskShards } = get();
-            if (dataPlaneHostname) {
-                const taskShards = getTaskShards(taskName, shards);
-                return getTaskEndpoints(dataPlaneHostname, taskShards);
-            } else {
-                return [];
-            }
         },
         getShardStatusColor: (shardId, defaultStatusColor) => {
             const { shards } = get();

@@ -17,6 +17,10 @@ export enum ShardStatusMessageIds {
 // The hex string additions correspond to sample_grey[500] | sample_grey[300].
 export type ShardStatusColor = SemanticColor | '#C4D3E9' | '#E1E9F4';
 
+export interface EndpointsDictionary {
+    [k: string]: Endpoint;
+}
+
 export interface TaskShardDetails {
     messageId: ShardStatusMessageIds;
     color: ShardStatusColor;
@@ -30,8 +34,13 @@ export interface TaskShardDetails {
     id?: string;
     entityType?: string;
     exposePort?: any;
+    hostname?: string;
     publicPrefix?: any;
     protoPrefix?: any;
+    shardEndpoints?: EndpointsDictionary;
+    shardIsUp?: boolean;
+    portProtocol?: any;
+    portIsPublic?: boolean;
 }
 
 export interface TaskShardDetailsWithShard extends TaskShardDetails {
@@ -69,7 +78,7 @@ export type SetShards = (
 // just one member of a split task group.
 export interface Endpoint {
     // The complete hostname to use for connecting to the given endpoint.
-    fullHostname: string;
+    hostPrefix: string;
     // Whether the endpoint allows unauthenticated connections. If `isPublic` is
     // `false`, then HTTP requests made to the endpoint must contain a data-plane JWT
     // that's been signed by the control plane.
@@ -103,13 +112,6 @@ export interface ShardDetailStore {
         taskShards: Shard[],
         defaultStatusColor: ShardStatusColor
     ) => TaskShardDetailsWithShard[];
-    // Returns an array of endpoints for the task. In the case that the task has multiple shards,
-    // this will _only_ return endpoints that are served by all of the shards. In other words, endpoints
-    // for connecting to specific shards will be omitted from the results.
-    getTaskEndpoints: (
-        taskName: string,
-        dataPlaneHostname: string | null
-    ) => Endpoint[];
     getTaskStatusColor: (
         taskShardDetails: TaskShardDetails[],
         defaultStatusColor: ShardStatusColor

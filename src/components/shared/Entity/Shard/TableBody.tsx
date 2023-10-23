@@ -24,9 +24,8 @@ function InformationTableBody({
     taskType,
     taskName,
 }: Props) {
-    const dictionaryVals = useShardDetail_readDictionary(taskName, taskType);
-
     const dictionaryHydrated = useShardDetail_dictionaryHydrated();
+    const dictionaryVals = useShardDetail_readDictionary(taskName, taskType);
 
     if (!dictionaryHydrated) {
         return (

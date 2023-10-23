@@ -1,14 +1,12 @@
 import { Box, Tooltip, Typography } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import ExternalLink from 'components/shared/ExternalLink';
+import { useEntityType } from 'context/EntityContext';
+import { useShardEndpoints } from 'hooks/shards/useShardEndpoints';
 import useShardHydration from 'hooks/shards/useShardHydration';
-import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
 import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import {
-    useShardDetail_getTaskEndpoints,
-    useShardDetail_shards,
-} from 'stores/ShardDetail/hooks';
+
 import { Endpoint } from 'stores/ShardDetail/types';
 
 interface Props {
@@ -17,6 +15,7 @@ interface Props {
 
 interface EndpointLinkProps {
     endpoint: Endpoint;
+    hostName: string | null;
 }
 
 const isHttp = (ep: Endpoint): boolean => {
@@ -27,12 +26,17 @@ const isHttp = (ep: Endpoint): boolean => {
     }
 };
 
-const httpUrl = (ep: Endpoint): string => {
-    return `https://${ep.fullHostname}/`;
+const httpUrl = (fullHostName: string): string => {
+    return `https://${fullHostName}/`;
 };
 
-export function EndpointLink({ endpoint }: EndpointLinkProps) {
+export function EndpointLink({ endpoint, hostName }: EndpointLinkProps) {
     const intl = useIntl();
+
+    const fullHostName = useMemo(
+        () => `${endpoint.hostPrefix}.${hostName}`,
+        [endpoint.hostPrefix, hostName]
+    );
 
     const visibility = endpoint.isPublic ? 'public' : 'private';
     const tooltip = intl.formatMessage({
@@ -42,7 +46,7 @@ export function EndpointLink({ endpoint }: EndpointLinkProps) {
 
     let linky = null;
     if (isHttp(endpoint)) {
-        const linkText = httpUrl(endpoint);
+        const linkText = httpUrl(fullHostName);
 
         linky = (
             <ExternalLink
@@ -61,7 +65,7 @@ export function EndpointLink({ endpoint }: EndpointLinkProps) {
                     id="taskEndpoint.otherProtocol.message"
                     values={{
                         protocol: endpoint.protocol,
-                        hostname: endpoint.fullHostname,
+                        hostname: fullHostName,
                     }}
                 />
             </Typography>
@@ -86,28 +90,14 @@ export function EndpointLink({ endpoint }: EndpointLinkProps) {
 //  exists and has other lists we should work on getting this redesigned to
 //  make the experience better and consistent.
 export function TaskEndpoints({ taskName }: Props) {
-    const gateway = useScopedGatewayAuthToken(taskName);
-    const shards = useShardDetail_shards();
-    const getTaskEndpoints = useShardDetail_getTaskEndpoints();
+    const entityType = useEntityType();
 
-    const gatewayHostname = useMemo(() => {
-        if (gateway.data?.gateway_url) {
-            // Even though `gateway_url` is already a `URL` object, the
-            // `host` property returns `null` for some $jsReason
-            const url = new URL(gateway.data.gateway_url.toString());
-            return url.host;
-        }
+    const { endpoints, gatewayHostname } = useShardEndpoints(
+        taskName,
+        entityType
+    );
 
-        return null;
-    }, [gateway.data?.gateway_url]);
-
-    const endpoints = useMemo(() => {
-        return getTaskEndpoints(taskName, gatewayHostname);
-        // TODO (details) Need to make a better solution now that shards are not
-        //  always loaded before details is shown
-        // We need to listen to shards changing as this function relies on that
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [gatewayHostname, getTaskEndpoints, taskName, shards]);
+    console.log('endpoints', endpoints);
 
     return endpoints.length > 0 ? (
         <CardWrapper
@@ -135,7 +125,10 @@ export function TaskEndpoints({ taskName }: Props) {
                                 flexGrow: 1,
                             }}
                         >
-                            <EndpointLink endpoint={ep} />
+                            <EndpointLink
+                                endpoint={ep}
+                                hostName={gatewayHostname}
+                            />
                         </Box>
                     );
                 })}
@@ -150,23 +143,16 @@ export function TaskEndpoints({ taskName }: Props) {
 // directing the user to the task details where they can see a complete listing.
 // If the task doesn't expose any endpoints, then nothing will be rendered.
 export function TaskEndpoint({ taskName }: Props) {
-    const gateway = useScopedGatewayAuthToken(taskName);
-
     // The id and spec_type are irrelevant in useShardsList, but they're required to be there.
     useShardHydration([
         { catalog_name: taskName, id: '', spec_type: 'collection' },
     ]);
 
-    const getTaskEndpoints = useShardDetail_getTaskEndpoints();
-
-    let gatewayHostname = null;
-    if (gateway.data?.gateway_url) {
-        // Even though `gateway_url` is already a `URL` object, the
-        // `host` property returns `null` for some $jsReason
-        const url = new URL(gateway.data.gateway_url.toString());
-        gatewayHostname = url.host;
-    }
-    const endpoints = getTaskEndpoints(taskName, gatewayHostname);
+    const entityType = useEntityType();
+    const { endpoints, gatewayHostname } = useShardEndpoints(
+        taskName,
+        entityType
+    );
 
     // Only one endpoint can be rendered due to space limitations, so we
     // generally expect that the task only has one. If multiple endpoints exist
@@ -176,7 +162,9 @@ export function TaskEndpoint({ taskName }: Props) {
     // on the protocol.
     let message = null;
     if (endpoints.length === 1) {
-        message = <EndpointLink endpoint={endpoints[0]} />;
+        message = (
+            <EndpointLink endpoint={endpoints[0]} hostName={gatewayHostname} />
+        );
     } else if (endpoints.length > 1) {
         // We really ought to link them to the details page here, but that page doesn't exist yet.
         message = (
