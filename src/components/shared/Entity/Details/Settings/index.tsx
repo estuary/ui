@@ -1,10 +1,12 @@
 import { Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
+import MessageWithButton from 'components/content/MessageWithButton';
+import AlertBox from 'components/shared/AlertBox';
 import DataProcessingSetting from 'components/shared/Entity/Details/Settings/DataProcessingSetting';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useInitializeTaskNotification from 'hooks/useInitializeTaskNotification';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 function Settings() {
@@ -13,21 +15,27 @@ function Settings() {
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
-    const { getNotificationPreference } =
+    const { createSubscription, getNotificationPreference } =
         useInitializeTaskNotification(catalogName);
+
+    const [subscriptionExists, setSubscriptionExists] = useState(false);
 
     useEffect(() => {
         getNotificationPreference().then(
             (response) => {
-                if (!response) {
-                    // Failed to retrieve the live specification for this task
+                if (!response.data) {
+                    // Failed to determine whether the user has subscribed to notifications for this prefix.
+                } else if (response.data.length === 0) {
+                    // The user has not subscribed to notifications for this prefix.
+                } else {
+                    setSubscriptionExists(true);
                 }
             },
-            () => {
-                console.log('settings init failed');
+            (error) => {
+                console.log('settings init failed', error);
             }
         );
-    }, [getNotificationPreference]);
+    }, [getNotificationPreference, setSubscriptionExists]);
 
     return (
         <Stack sx={{ mx: 2 }}>
@@ -35,6 +43,15 @@ function Settings() {
                 <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
                     <FormattedMessage id="details.settings.notifications.header" />
                 </Typography>
+
+                {subscriptionExists ? null : (
+                    <AlertBox short severity="info">
+                        <MessageWithButton
+                            messageId="details.settings.notifications.alert.userNotSubscribed.message"
+                            clickHandler={createSubscription}
+                        />
+                    </AlertBox>
+                )}
 
                 <DataProcessingSetting hideBorder />
             </Stack>

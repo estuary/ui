@@ -1,24 +1,15 @@
+import { PostgrestError } from '@supabase/postgrest-js';
 import { Auth } from '@supabase/ui';
 import {
     DataProcessingNotificationQuery,
-    createNotificationPreference,
-    getNotificationPreferenceByPrefix,
+    NotificationSubscriptionQuery,
+    createNotificationSubscription,
+    getNotificationSubscriptionByPrefix,
     getTaskNotification,
 } from 'api/alerts';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { hasLength } from 'utils/misc-utils';
-
-const createPreference = async (
-    prefix: string,
-    userId: string
-): Promise<string | null> => {
-    const response = await createNotificationPreference(prefix, userId);
-
-    return response.data && response.data.length > 0
-        ? response.data[0].catalog_prefix
-        : null;
-};
 
 function useInitializeTaskNotification(catalogName: string) {
     const { user } = Auth.useUser();
@@ -26,41 +17,61 @@ function useInitializeTaskNotification(catalogName: string) {
     const adminCapabilities = useEntitiesStore_capabilities_adminable();
     const objectRoles = Object.keys(adminCapabilities);
 
-    const getNotificationPreference = useCallback(async (): Promise<
-        string | null
-    > => {
-        if (!user?.id || !hasLength(objectRoles)) {
-            // Error if the system cannot determine the user ID or object roles cannot be found for the user.
+    const prefix = useMemo(() => {
+        if (!hasLength(objectRoles)) {
             return null;
         }
 
-        const prefix =
-            objectRoles.length === 1
-                ? objectRoles[0]
-                : objectRoles
-                      .filter((role) => catalogName.startsWith(role))
-                      .sort((a, b) => b.length - a.length)[0];
+        return objectRoles.length === 1
+            ? objectRoles[0]
+            : objectRoles
+                  .filter((role) => catalogName.startsWith(role))
+                  .sort((a, b) => b.length - a.length)[0];
+    }, [objectRoles]);
+
+    const createSubscription = useCallback(() => {
+        if (!user?.id || !prefix) {
+            // Error if the system cannot determine the user ID or object roles cannot be found for the user.
+            return {
+                data: null,
+                error: { message: '', details: '', hint: '', code: '' },
+            };
+        }
+
+        return createNotificationSubscription(prefix, user.id);
+    }, [prefix, user?.id]);
+
+    const getNotificationPreference = useCallback(async (): Promise<{
+        data: NotificationSubscriptionQuery[] | null;
+        error?: PostgrestError;
+    }> => {
+        if (!user?.id || !prefix) {
+            // Error if the system cannot determine the user ID or object roles cannot be found for the user.
+            return {
+                data: null,
+                error: { message: '', details: '', hint: '', code: '' },
+            };
+        }
+
+        // const prefix =
+        //     objectRoles.length === 1
+        //         ? objectRoles[0]
+        //         : objectRoles
+        //               .filter((role) => catalogName.startsWith(role))
+        //               .sort((a, b) => b.length - a.length)[0];
 
         const { data: existingPreference, error: existingPreferenceError } =
-            await getNotificationPreferenceByPrefix(prefix, user.id);
+            await getNotificationSubscriptionByPrefix(prefix, user.id);
 
         if (existingPreferenceError) {
             // Failed to determine the existence of a notification preference for the task.
             console.log('existing preference error', existingPreferenceError);
 
-            return null;
+            return { data: null, error: existingPreferenceError };
         }
 
-        if (!existingPreference || existingPreference.length === 0) {
-            // A notification preference for the task has not been defined for the user.
-
-            const response = await createPreference(prefix, user.id);
-
-            return response;
-        }
-
-        return existingPreference[0].catalog_prefix;
-    }, [catalogName, objectRoles, user?.id]);
+        return { data: existingPreference };
+    }, [catalogName, prefix, user?.id]);
 
     const getNotificationSubscription = useCallback(
         async (
@@ -98,7 +109,11 @@ function useInitializeTaskNotification(catalogName: string) {
         []
     );
 
-    return { getNotificationSubscription, getNotificationPreference };
+    return {
+        createSubscription,
+        getNotificationSubscription,
+        getNotificationPreference,
+    };
 }
 
 export default useInitializeTaskNotification;

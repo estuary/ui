@@ -11,21 +11,23 @@ import {
 } from 'services/supabase';
 import {
     DataProcessingNotification,
-    NotificationPreference,
-    NotificationPreferenceExt,
+    NotificationSubscription,
+    NotificationSubscriptionExt,
 } from 'types';
 
-const createNotificationPreference = (prefix: string, userId: string) => {
-    return insertSupabase(TABLES.NOTIFICATION_PREFERENCES, {
-        prefix,
-        subscribed_by: userId,
+const createNotificationSubscription = (prefix: string, userId: string) => {
+    return insertSupabase(TABLES.NOTIFICATION_SUBSCRIPTIONS, {
+        catalog_prefix: prefix,
         user_id: userId,
     });
 };
 
-const deleteNotificationPreference = (preferenceId: string, userId: string) => {
-    return deleteSupabase(TABLES.NOTIFICATION_PREFERENCES, {
-        id: preferenceId,
+const deleteNotificationSubscription = (
+    subscriptionId: string,
+    userId: string
+) => {
+    return deleteSupabase(TABLES.NOTIFICATION_SUBSCRIPTIONS, {
+        id: subscriptionId,
         user_id: userId,
     });
 };
@@ -67,14 +69,14 @@ const deleteDataProcessingNotification = (liveSpecId: string) => {
     });
 };
 
-export type NotificationPreferenceQuery = Pick<
-    NotificationPreference,
-    'id' | 'prefix' | 'user_id'
+export type NotificationSubscriptionQuery = Pick<
+    NotificationSubscription,
+    'id' | 'catalog_prefix' | 'user_id'
 >;
 
-export type NotificationPreferencesTableQuery = Pick<
-    NotificationPreferenceExt,
-    'id' | 'updated_at' | 'prefix' | 'user_id' | 'verified_email'
+export type NotificationSubscriptionsTableQuery = Pick<
+    NotificationSubscriptionExt,
+    'id' | 'updated_at' | 'catalog_prefix' | 'user_id' | 'verified_email'
 >;
 
 export type DataProcessingNotificationQuery = Pick<
@@ -82,41 +84,45 @@ export type DataProcessingNotificationQuery = Pick<
     'live_spec_id' | 'evaluation_interval'
 >;
 
-const getNotificationPreferenceByPrefix = async (
+const getNotificationSubscriptionByPrefix = async (
     prefix: string,
     userId: string
 ) => {
     const data = await supabaseClient
-        .from<NotificationPreferenceQuery>(TABLES.NOTIFICATION_PREFERENCES)
-        .select(`id, prefix, user_id`)
-        .eq('prefix', prefix)
+        .from<NotificationSubscriptionQuery>(TABLES.NOTIFICATION_SUBSCRIPTIONS)
+        .select(`id, catalog_prefix, user_id`)
+        .eq('catalog_prefix', prefix)
         .eq('user_id', userId)
-        .then(handleSuccess<NotificationPreferenceQuery[]>, handleFailure);
+        .then(handleSuccess<NotificationSubscriptionQuery[]>, handleFailure);
 
     return data;
 };
 
-const getNotificationPreference = (
+const getNotificationSubscription = (
     pagination: any,
     searchQuery: any,
-    sorting: SortingProps<any>[]
+    sorting: SortingProps<any>[],
+    objectRoles: string[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<NotificationPreferenceExt>(TABLES.NOTIFICATION_PREFERENCES_EXT)
+        .from<NotificationSubscriptionExt>(
+            TABLES.NOTIFICATION_SUBSCRIPTIONS_EXT
+        )
         .select(
             `    
                 id,
                 updated_at,
-                prefix,
+                catalog_prefix,
                 user_id,
                 verified_email
             `,
             { count: 'exact' }
-        );
+        )
+        .in('catalog_prefix', objectRoles);
 
-    queryBuilder = defaultTableFilter<NotificationPreferenceExt>(
+    queryBuilder = defaultTableFilter<NotificationSubscriptionExt>(
         queryBuilder,
-        ['prefix', 'verified_email'],
+        ['catalog_prefix', 'verified_email'],
         searchQuery,
         sorting,
         pagination
@@ -139,11 +145,11 @@ const getTaskNotification = async (liveSpecId: string) => {
 
 export {
     createDataProcessingNotification,
-    createNotificationPreference,
+    createNotificationSubscription,
     deleteDataProcessingNotification,
-    deleteNotificationPreference,
-    getNotificationPreference,
-    getNotificationPreferenceByPrefix,
+    deleteNotificationSubscription,
+    getNotificationSubscription,
+    getNotificationSubscriptionByPrefix,
     getTaskNotification,
     updateDataProcessingNotificationInterval,
 };

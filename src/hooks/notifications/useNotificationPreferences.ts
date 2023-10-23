@@ -1,16 +1,16 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { extendedPollSettings } from 'context/SWR';
 import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
-import { NotificationPreferenceExt } from 'types';
+import { NotificationSubscriptionExt } from 'types';
 import { condenseNotificationPreferences } from 'utils/notification-utils';
 
 interface Props {
-    query: PostgrestFilterBuilder<NotificationPreferenceExt>;
+    query: PostgrestFilterBuilder<NotificationSubscriptionExt>;
 }
 
 function useNotificationPreferences({ query }: Props) {
     const { data, error, mutate, isValidating } =
-        useSelectNew<NotificationPreferenceExt>(query, extendedPollSettings);
+        useSelectNew<NotificationSubscriptionExt>(query, extendedPollSettings);
 
     return {
         data: data ? condenseNotificationPreferences(data.data) : {},

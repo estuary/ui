@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import { createNotificationPreference } from 'api/alerts';
+import { createNotificationSubscription } from 'api/alerts';
 import { useZustandStore } from 'context/Zustand/provider';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -36,7 +36,7 @@ function SaveButton({ disabled, prefix, setOpen, userId }: Props) {
             const processedPrefix = appendWithForwardSlash(prefix);
 
             // Bundle insertions
-            createNotificationPreference(processedPrefix, userId).then(
+            createNotificationSubscription(processedPrefix, userId).then(
                 (response) => {
                     if (response.error) {
                         console.log('save error 1', response.error);

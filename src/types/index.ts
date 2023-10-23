@@ -352,16 +352,16 @@ export interface AutoDiscoverySettings {
     evolveIncompatibleCollections: boolean;
 }
 
-export interface NotificationPreference {
+export interface NotificationSubscription {
     id: string;
     detail: string;
     created_at: Date;
     updated_at: Date;
-    prefix: string;
+    catalog_prefix: string;
     user_id: string;
 }
 
-export interface NotificationPreferenceExt extends NotificationPreference {
+export interface NotificationSubscriptionExt extends NotificationSubscription {
     verified_email: string;
 }
 

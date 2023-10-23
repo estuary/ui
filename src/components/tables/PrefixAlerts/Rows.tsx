@@ -9,13 +9,10 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
-import {
-    PrefixPreference,
-    PrefixPreferenceDictionary,
-} from 'utils/notification-utils';
+import { PrefixPreference } from 'utils/notification-utils';
 
 interface RowsProps {
-    data: PrefixPreferenceDictionary;
+    data: [string, PrefixPreference][];
 }
 
 interface RowProps {
@@ -73,7 +70,7 @@ function Rows({ data }: RowsProps) {
 
     return (
         <>
-            {Object.entries(data).map((row) => (
+            {data.map((row) => (
                 <Row
                     key={row[0]}
                     row={row}

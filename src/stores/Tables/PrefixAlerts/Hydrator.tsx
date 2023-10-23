@@ -9,11 +9,11 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { BaseComponentProps, NotificationPreferenceExt } from 'types';
+import { BaseComponentProps, NotificationSubscriptionExt } from 'types';
 
 // Hydrator
 interface TableHydratorProps extends BaseComponentProps {
-    query: PostgrestFilterBuilder<NotificationPreferenceExt>;
+    query: PostgrestFilterBuilder<NotificationSubscriptionExt>;
 }
 
 export const PrefixAlertTableHydrator = ({

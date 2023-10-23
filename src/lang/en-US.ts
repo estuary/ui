@@ -1061,6 +1061,8 @@ const Details: ResolvedIntlConfig['messages'] = {
     'details.tabs.history': `History`,
 
     'details.settings.notifications.header': `Notification Settings`,
+    'details.settings.notifications.alert.userNotSubscribed.message': `You have not subscribed to notifications for tasks beneath this tenant. {button}`,
+    'details.settings.notifications.alert.userNotSubscribed.message.button': `Subscribe`,
     'details.settings.notifications.dataProcessing.header': `Data Processing`,
     'details.settings.notifications.dataProcessing.noDataProcessedInInterval.message': `Data has not been processed in a given window of time.`,
     'details.settings.notifications.dataProcessing.noDataProcessedInInterval.label': `Interval`,

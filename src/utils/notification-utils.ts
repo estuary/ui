@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import { OptionsObject } from 'notistack';
-import { NotificationPreferenceExt } from 'types';
+import { NotificationSubscriptionExt } from 'types';
 
 export const snackbarSettings: OptionsObject = {
     anchorOrigin: {
@@ -38,20 +38,20 @@ interface CondensedPreferenceDictionary {
 }
 
 export const condenseNotificationPreferences = (
-    data: NotificationPreferenceExt[]
+    data: NotificationSubscriptionExt[]
 ) => {
     const processedQuery: CondensedPreferenceDictionary = {};
 
-    data.filter((query) => query.prefix.endsWith('/')).forEach((query) => {
-        if (Object.hasOwn(processedQuery, query.prefix)) {
-            processedQuery[query.prefix].push({
+    data.forEach((query) => {
+        if (Object.hasOwn(processedQuery, query.catalog_prefix)) {
+            processedQuery[query.catalog_prefix].push({
                 id: query.id,
                 userId: query.user_id,
                 email: query.verified_email,
                 lastUpdated: query.updated_at,
             });
         } else {
-            processedQuery[query.prefix] = [
+            processedQuery[query.catalog_prefix] = [
                 {
                     id: query.id,
                     userId: query.user_id,
@@ -66,8 +66,12 @@ export const condenseNotificationPreferences = (
 
     if (!isEmpty(processedQuery)) {
         Object.entries(processedQuery).forEach(([prefix, configs]) => {
+            const updateTimestamps = configs.map((config) =>
+                new Date(config.lastUpdated).valueOf()
+            );
+
             const lastUpdated = new Date(
-                Math.max.apply(configs.map((config) => config.lastUpdated))
+                Math.max(...updateTimestamps)
             ).toUTCString();
 
             preferences[prefix] = {

@@ -47,7 +47,7 @@ export const getInitialState = (
                     state.hydrated = true;
 
                     state.query.count = Object.keys(data).length;
-                    state.query.response = data;
+                    state.query.response = Object.entries(data);
                     state.query.loading = false;
                 }),
                 false,
