@@ -1,10 +1,7 @@
-import { Box, CircularProgress, Tooltip, Typography } from '@mui/material';
+import { Box, Tooltip, Typography } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
 import { FormattedMessage } from 'react-intl';
-import {
-    useShardDetail_dictionaryHydrated,
-    useShardDetail_readDictionary,
-} from 'stores/ShardDetail/hooks';
+import { useShardDetail_readDictionary } from 'stores/ShardDetail/hooks';
 
 interface Props {
     name: string;
@@ -15,12 +12,7 @@ const indicatorSize = 16;
 function EntityStatus({ name }: Props) {
     const taskType = useEntityType();
 
-    const dictionaryHydrated = useShardDetail_dictionaryHydrated();
     const dictionaryVals = useShardDetail_readDictionary(name, taskType);
-
-    if (!dictionaryHydrated) {
-        return <CircularProgress />;
-    }
 
     return (
         <Tooltip
