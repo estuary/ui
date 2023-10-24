@@ -21,7 +21,7 @@ const PORT_PROTO_PREFIX = 'estuary.dev/port-proto/';
 
 const getShardEndpointsForDictionary = (shard: TaskShardDetails) => {
     const byPort: EndpointsDictionary = {};
-    const { hostname, exposePort, shardIsUp } = shard;
+    const { hostname, exposePort } = shard;
 
     if (!hostname || !exposePort) {
         return byPort;
@@ -30,12 +30,6 @@ const getShardEndpointsForDictionary = (shard: TaskShardDetails) => {
     byPort[exposePort] = {
         //The rest of the URL is added in when the component renders
         hostPrefix: `${hostname}-${exposePort}`,
-
-        // We consider the endpoint to be "up" if the shard has a primary.
-        // This does not necessarily mean that the container is up and reachable, but
-        // it's the closest approximation we have.
-        isUp: Boolean(shardIsUp),
-
         isPublic: shard.portIsPublic ?? false,
         protocol: shard.portProtocol ?? null,
     };
@@ -112,7 +106,6 @@ const getEverythingForDictionary = (
         } else if (statusCodes.find((code) => code === 'PRIMARY')) {
             response.color = successMain;
             response.messageId = ShardStatusMessageIds.PRIMARY;
-            response.shardIsUp = true;
         } else if (statusCodes.find((code) => code === 'IDLE')) {
             response.color = warningMain;
             response.messageId = ShardStatusMessageIds.IDLE;

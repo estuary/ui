@@ -39,7 +39,6 @@ export interface TaskShardDetails {
     publicPrefix?: any;
     protoPrefix?: any;
     shardEndpoints?: EndpointsDictionary;
-    shardIsUp?: boolean;
     portProtocol?: any;
     portIsPublic?: boolean;
 }
@@ -85,13 +84,15 @@ export interface Endpoint {
     // `false`, then HTTP requests made to the endpoint must contain a data-plane JWT
     // that's been signed by the control plane.
     isPublic: boolean;
-    // True if any shards for the endpoint are in PRIMARY status.
-    isUp: boolean;
     // The name of the protocol associated with the endpoint. A `null` protocol here
     // is a special case that means that both HTTP2 and HTTP/1.1 are supported.
     // All protocol names are given as their official (if there is one) ALPN designations,
     // for example `h2` and `http/1.1`.
     protocol: string | null;
+
+    // Removed isUp in Q4 2023 as it was not used
+    // True if any shards for the endpoint are in PRIMARY status.
+    // isUp: boolean;
 }
 
 export interface ShardDetailStore {
