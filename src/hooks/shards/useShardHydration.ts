@@ -1,4 +1,3 @@
-import { useTheme } from '@mui/material';
 import { useEffect, useMemo } from 'react';
 import {
     useShardDetail_setDefaultMessageId,
@@ -7,22 +6,15 @@ import {
     useShardDetail_setError,
     useShardDetail_setShards,
 } from 'stores/ShardDetail/hooks';
-import {
-    ShardStatusColor,
-    ShardStatusMessageIds,
-} from 'stores/ShardDetail/types';
+import { ShardStatusMessageIds } from 'stores/ShardDetail/types';
 import useShardsList from './useShardsList';
+import useShardStatusDefaultColor from './useShardStatusDefaultColor';
 
 function useShardHydration(
     querySettings: any[],
     defaultMessageId?: ShardStatusMessageIds
 ) {
-    const theme = useTheme();
-
-    const defaultStatusColor: ShardStatusColor = useMemo(
-        () => (theme.palette.mode === 'dark' ? '#E1E9F4' : '#C4D3E9'),
-        [theme.palette.mode]
-    );
+    const defaultStatusColor = useShardStatusDefaultColor();
 
     const { data, error, ...queryResponse } = useShardsList(querySettings);
 
