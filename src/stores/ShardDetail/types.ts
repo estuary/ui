@@ -30,20 +30,20 @@ export interface TaskShardDetails {
     disabled?: boolean;
 
     // Newly added
-    errors?: any[];
-    warnings?: any[];
-    spec?: Shard['spec'];
-    status?: Shard['status'];
-    id?: string;
     entityName?: string;
     entityType?: ShardEntityTypes;
+    errors?: any[];
     exposePort?: any;
     hostname?: string;
-    publicPrefix?: any;
-    protoPrefix?: any;
-    shardEndpoints?: EndpointsDictionary;
-    portProtocol?: any;
+    id?: string;
     portIsPublic?: boolean;
+    portProtocol?: any;
+    protoPrefix?: any;
+    publicPrefix?: any;
+    shardEndpoints?: EndpointsDictionary;
+    spec?: Shard['spec'];
+    status?: Shard['status'];
+    warnings?: any[];
 }
 
 export interface TaskShardDetailsWithShard extends TaskShardDetails {
