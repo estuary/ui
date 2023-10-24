@@ -33,16 +33,16 @@ const httpUrl = (fullHostName: string): string => {
 export function EndpointLink({ endpoint, hostName }: EndpointLinkProps) {
     const intl = useIntl();
 
-    const fullHostName = useMemo(
-        () => `${endpoint.hostPrefix}.${hostName}`,
-        [endpoint.hostPrefix, hostName]
-    );
-
     const visibility = endpoint.isPublic ? 'public' : 'private';
     const tooltip = intl.formatMessage({
         id: `taskEndpoint.visibility.${visibility}.tooltip`,
     });
     const labelMessage = `taskEndpoint.link.${visibility}.label`;
+
+    const fullHostName = useMemo(
+        () => `${endpoint.hostPrefix}.${hostName}`,
+        [endpoint.hostPrefix, hostName]
+    );
 
     let linky = null;
     if (isHttp(endpoint)) {
@@ -164,7 +164,7 @@ export function TaskEndpoint({ taskName }: Props) {
             <EndpointLink endpoint={endpoints[0]} hostName={gatewayHostname} />
         );
     } else if (endpoints.length > 1) {
-        // We really ought to link them to the details page here, but that page doesn't exist yet.
+        // TODO (task endpoints) We really ought to link them to the details page here, but that page doesn't exist yet.
         message = (
             <Typography>
                 <FormattedMessage id="taskEndpoint.multipleEndpoints.message" />
