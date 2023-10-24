@@ -111,10 +111,10 @@ export function TaskEndpoints({ taskName }: Props) {
                     flexGrow: 1,
                 }}
             >
-                {endpoints.map((ep) => {
+                {endpoints.map((ep, index) => {
                     return (
                         <Box
-                            key={ep.fullHostname}
+                            key={`${ep.fullHostname}_${index}`}
                             sx={{
                                 gap: '10px',
                                 display: 'flex',
