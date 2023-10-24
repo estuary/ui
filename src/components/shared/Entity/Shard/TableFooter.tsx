@@ -8,12 +8,12 @@ import {
 } from '@mui/material';
 import { semiTransparentBackground } from 'context/Theme';
 import { useShardDetail_readDictionary } from 'stores/ShardDetail/hooks';
-import { Entity } from 'types';
+import { ShardEntityTypes } from 'stores/ShardDetail/types';
 
 interface Props {
     page: number;
     rowsPerPage: number;
-    taskType: Entity;
+    taskTypes: ShardEntityTypes[];
     taskName: string;
     changePage: (event: any, newPage: number) => void;
 }
@@ -22,14 +22,14 @@ function InformationTableFooter({
     changePage,
     page,
     rowsPerPage,
-    taskType,
+    taskTypes,
     taskName,
 }: Props) {
     const theme = useTheme();
     const tableHeaderFooterSx: SxProps<Theme> = {
         bgcolor: semiTransparentBackground[theme.palette.mode],
     };
-    const dictionaryVals = useShardDetail_readDictionary(taskName, taskType);
+    const dictionaryVals = useShardDetail_readDictionary(taskName, taskTypes);
     const count = dictionaryVals.allShards.length;
 
     return (

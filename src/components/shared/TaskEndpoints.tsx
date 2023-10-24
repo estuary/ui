@@ -92,10 +92,9 @@ export function EndpointLink({ endpoint, hostName }: EndpointLinkProps) {
 export function TaskEndpoints({ taskName }: Props) {
     const entityType = useEntityType();
 
-    const { endpoints, gatewayHostname } = useShardEndpoints(
-        taskName,
-        entityType
-    );
+    const { endpoints, gatewayHostname } = useShardEndpoints(taskName, [
+        entityType,
+    ]);
 
     return endpoints.length > 0 ? (
         <CardWrapper
@@ -147,10 +146,9 @@ export function TaskEndpoint({ taskName }: Props) {
     ]);
 
     const entityType = useEntityType();
-    const { endpoints, gatewayHostname } = useShardEndpoints(
-        taskName,
-        entityType
-    );
+    const { endpoints, gatewayHostname } = useShardEndpoints(taskName, [
+        entityType,
+    ]);
 
     // Only one endpoint can be rendered due to space limitations, so we
     // generally expect that the task only has one. If multiple endpoints exist

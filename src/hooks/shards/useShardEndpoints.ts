@@ -1,10 +1,13 @@
 import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
 import { useMemo } from 'react';
 import { useShardDetail_readDictionary } from 'stores/ShardDetail/hooks';
-import { Entity } from 'types';
+import { ShardEntityTypes } from 'stores/ShardDetail/types';
 
-export const useShardEndpoints = (taskName: string, taskType: Entity) => {
-    const dictionaryVal = useShardDetail_readDictionary(taskName, taskType);
+export const useShardEndpoints = (
+    taskName: string,
+    taskTypes: ShardEntityTypes[]
+) => {
+    const dictionaryVal = useShardDetail_readDictionary(taskName, taskTypes);
 
     const gateway = useScopedGatewayAuthToken(taskName);
     const gatewayHostname = useMemo(() => {

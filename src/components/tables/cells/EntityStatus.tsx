@@ -1,23 +1,22 @@
 import { Box, Tooltip, Typography } from '@mui/material';
-import { useEntityType } from 'context/EntityContext';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useShardDetail_dictionaryHydrated,
     useShardDetail_readDictionary,
 } from 'stores/ShardDetail/hooks';
+import { ShardEntityTypes } from 'stores/ShardDetail/types';
 
 interface Props {
     name: string;
+    taskTypes: ShardEntityTypes[];
 }
 
 const indicatorSize = 16;
 
-function EntityStatus({ name }: Props) {
-    const taskType = useEntityType();
-
+function EntityStatus({ name, taskTypes }: Props) {
     const dictionaryHydrated = useShardDetail_dictionaryHydrated();
-    const dictionaryVals = useShardDetail_readDictionary(name, taskType);
+    const dictionaryVals = useShardDetail_readDictionary(name, taskTypes);
 
     const shards = useMemo(() => {
         if (dictionaryHydrated) {

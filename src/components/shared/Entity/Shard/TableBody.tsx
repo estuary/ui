@@ -6,14 +6,15 @@ import {
     useShardDetail_dictionaryHydrated,
     useShardDetail_readDictionary,
 } from 'stores/ShardDetail/hooks';
-import { Entity, TableColumns } from 'types';
+import { ShardEntityTypes } from 'stores/ShardDetail/types';
+import { TableColumns } from 'types';
 import StatusIndicatorAndLabel from './StatusIndicatorAndLabel';
 
 interface Props {
     page: number;
     rowsPerPage: number;
     columns: TableColumns[];
-    taskType: Entity;
+    taskTypes: ShardEntityTypes[];
     taskName: string;
 }
 
@@ -21,11 +22,11 @@ function InformationTableBody({
     columns,
     page,
     rowsPerPage,
-    taskType,
+    taskTypes,
     taskName,
 }: Props) {
     const dictionaryHydrated = useShardDetail_dictionaryHydrated();
-    const dictionaryVals = useShardDetail_readDictionary(taskName, taskType);
+    const dictionaryVals = useShardDetail_readDictionary(taskName, taskTypes);
 
     if (!dictionaryHydrated) {
         return (

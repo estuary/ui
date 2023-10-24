@@ -5,7 +5,11 @@ import { isEmpty } from 'lodash';
 import { ShardDetailStoreNames } from 'stores/names';
 import { Entity } from 'types';
 import { getCompositeColor } from './Store';
-import { ShardDetailStore, ShardReadDictionaryResponse } from './types';
+import {
+    ShardDetailStore,
+    ShardEntityTypes,
+    ShardReadDictionaryResponse,
+} from './types';
 
 const storeName = (entityType: Entity): ShardDetailStoreNames => {
     switch (entityType) {
@@ -86,7 +90,7 @@ export const useShardDetail_setDictionaryHydrated = () => {
 
 export const useShardDetail_readDictionary = (
     taskName: string,
-    taskType?: string
+    taskTypes?: ShardEntityTypes[]
 ) => {
     const entityType = useEntityType();
 
@@ -95,7 +99,11 @@ export const useShardDetail_readDictionary = (
         (state) => {
             const filteredValues = (
                 state.shardDictionary[taskName] ?? []
-            ).filter((value) => value.entityType === taskType);
+            ).filter((value) =>
+                taskTypes && value.entityType
+                    ? taskTypes.includes(value.entityType)
+                    : true
+            );
 
             let disabled = false;
             let shardsHaveErrors = false;
@@ -113,15 +121,14 @@ export const useShardDetail_readDictionary = (
 
             return {
                 allShards: filteredValues,
-                compositeColor:
-                    taskType === 'collection'
-                        ? successMain
-                        : state.error
-                        ? state.defaultStatusColor
-                        : getCompositeColor(
-                              filteredValues,
-                              state.defaultStatusColor
-                          ),
+                compositeColor: taskTypes?.includes('collection')
+                    ? successMain
+                    : state.error
+                    ? state.defaultStatusColor
+                    : getCompositeColor(
+                          filteredValues,
+                          state.defaultStatusColor
+                      ),
                 disabled,
                 defaultMessageId: state.defaultMessageId,
                 shardsHaveErrors,

@@ -6,14 +6,15 @@ import ExternalLink from 'components/shared/ExternalLink';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useShardDetail_error } from 'stores/ShardDetail/hooks';
-import { Entity, TableColumns } from 'types';
+import { ShardEntityTypes } from 'stores/ShardDetail/types';
+import { TableColumns } from 'types';
 import ShardAlerts from './Alerts';
 import InformationTableBody from './TableBody';
 import InformationTableFooter from './TableFooter';
 import InformationTableHeader from './TableHeader';
 
 interface Props {
-    taskType: Entity;
+    taskTypes: ShardEntityTypes[];
     taskName: string;
 }
 
@@ -30,7 +31,7 @@ const columns: TableColumns[] = [
     },
 ];
 
-function ShardInformation({ taskName, taskType }: Props) {
+function ShardInformation({ taskName, taskTypes }: Props) {
     const intl = useIntl();
 
     const [page, setPage] = useState(0);
@@ -64,12 +65,12 @@ function ShardInformation({ taskName, taskType }: Props) {
                 </AlertBox>
             ) : (
                 <>
-                    <ShardAlerts taskName={taskName} taskType={taskType} />
+                    <ShardAlerts taskName={taskName} taskTypes={taskTypes} />
 
                     <ShardAlerts
                         showWarnings
                         taskName={taskName}
-                        taskType={taskType}
+                        taskTypes={taskTypes}
                     />
 
                     <Grid item xs={12}>
@@ -78,7 +79,7 @@ function ShardInformation({ taskName, taskType }: Props) {
                                 <InformationTableHeader columns={columns} />
 
                                 <InformationTableBody
-                                    taskType={taskType}
+                                    taskTypes={taskTypes}
                                     columns={columns}
                                     page={page}
                                     rowsPerPage={rowsPerPage}
@@ -92,7 +93,7 @@ function ShardInformation({ taskName, taskType }: Props) {
                                     page={page}
                                     rowsPerPage={rowsPerPage}
                                     taskName={taskName}
-                                    taskType={taskType}
+                                    taskTypes={taskTypes}
                                 />
                             </Table>
                         </TableContainer>

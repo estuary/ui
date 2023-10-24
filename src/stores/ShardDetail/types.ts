@@ -1,6 +1,7 @@
 import { SemanticColor } from 'context/Theme';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { ResponseError } from 'data-plane-gateway/types/util';
+import { Entity } from 'types';
 
 export enum ShardStatusMessageIds {
     PRIMARY = 'shardStatus.primary',
@@ -13,6 +14,8 @@ export enum ShardStatusMessageIds {
     COLLECTION = 'shardStatus.basicCollection',
     NONE = 'shardStatus.none',
 }
+
+export type ShardEntityTypes = Entity | 'derivation';
 
 // The hex string additions correspond to sample_grey[500] | sample_grey[300].
 export type ShardStatusColor = SemanticColor | '#C4D3E9' | '#E1E9F4';
@@ -33,7 +36,7 @@ export interface TaskShardDetails {
     status?: Shard['status'];
     id?: string;
     entityName?: string;
-    entityType?: string;
+    entityType?: ShardEntityTypes;
     exposePort?: any;
     hostname?: string;
     publicPrefix?: any;

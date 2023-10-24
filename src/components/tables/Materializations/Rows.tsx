@@ -4,6 +4,7 @@ import { authenticatedRoutes } from 'app/routes';
 import Connector from 'components/tables/cells/Connector';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
+import { useEntityType } from 'context/EntityContext';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
@@ -42,6 +43,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const navigate = useNavigate();
     const theme = useTheme();
     const tenantDetails = useTenantDetails();
+    const entityType = useEntityType();
 
     const { generatePath } = useDetailsNavigator(
         authenticatedRoutes.materializations.details.overview.fullPath
@@ -78,6 +80,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                 name={row.catalog_name}
                 showEntityStatus={showEntityStatus}
                 detailsLink={generatePath(row)}
+                entityStatusTypes={[entityType]}
             />
 
             <Connector

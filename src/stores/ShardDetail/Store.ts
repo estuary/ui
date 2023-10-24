@@ -11,6 +11,7 @@ import {
     EndpointsDictionary,
     ShardDetailStore,
     ShardDictionary,
+    ShardEntityTypes,
     ShardStatusColor,
     ShardStatusMessageIds,
     TaskShardDetails,
@@ -128,7 +129,7 @@ const getEverythingForDictionary = (
                 response.entityName = label.value;
                 break;
             case 'estuary.dev/task-type':
-                response.entityType = label.value;
+                response.entityType = label.value as ShardEntityTypes;
                 break;
             case 'estuary.dev/expose-port':
                 response.exposePort = label.value;

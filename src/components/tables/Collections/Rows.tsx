@@ -2,6 +2,7 @@ import { TableRow, useTheme } from '@mui/material';
 import { CollectionQueryWithStats } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import TimeStamp from 'components/tables/cells/TimeStamp';
+import { useEntityType } from 'context/EntityContext';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
@@ -38,6 +39,7 @@ interface RowsProps {
 function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const theme = useTheme();
     const tenantDetails = useTenantDetails();
+    const entityType = useEntityType();
 
     const { generatePath } = useDetailsNavigator(
         authenticatedRoutes.collections.details.overview.fullPath
@@ -78,6 +80,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                 name={row.catalog_name}
                 showEntityStatus={showEntityStatus}
                 detailsLink={generatePath(row)}
+                entityStatusTypes={[entityType, 'derivation']}
             />
 
             {hasLength(tenantDetails) ? (

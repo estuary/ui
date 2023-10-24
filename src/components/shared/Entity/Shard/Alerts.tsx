@@ -13,20 +13,20 @@ import {
 import { NavArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { useShardDetail_readDictionary } from 'stores/ShardDetail/hooks';
-import { Entity } from 'types';
+import { ShardEntityTypes } from 'stores/ShardDetail/types';
 import { unescapeString } from 'utils/misc-utils';
 
 interface Props {
     showWarnings?: boolean;
-    taskType: Entity;
+    taskTypes: ShardEntityTypes[];
     taskName: string;
 }
 
 const NEW_LINE = '\r\n';
 
-function ShardAlerts({ showWarnings, taskName, taskType }: Props) {
+function ShardAlerts({ showWarnings, taskName, taskTypes }: Props) {
     const theme = useTheme();
-    const dictionaryVals = useShardDetail_readDictionary(taskName, taskType);
+    const dictionaryVals = useShardDetail_readDictionary(taskName, taskTypes);
 
     if (!showWarnings && !dictionaryVals.shardsHaveErrors) {
         return null;
