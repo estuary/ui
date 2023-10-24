@@ -9,6 +9,7 @@ import useShardHydration from 'hooks/shards/useShardHydration';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
+import { ShardStatusMessageIds } from 'stores/ShardDetail/types';
 
 import {
     SelectableTableStore,
@@ -93,7 +94,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
 }
 
 function Rows({ data, showEntityStatus }: RowsProps) {
-    useShardHydration(data);
+    useShardHydration(data, ShardStatusMessageIds.COLLECTION);
 
     const selectTableStoreName = SelectTableStoreNames.COLLECTION;
 

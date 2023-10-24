@@ -58,6 +58,7 @@ export interface ShardReadDictionaryResponse {
     compositeColor: ShardStatusColor;
     disabled: boolean;
     allShards: TaskShardDetails[];
+    defaultMessageId: ShardStatusMessageIds;
 }
 
 export interface ShardDictionary {
@@ -65,11 +66,7 @@ export interface ShardDictionary {
 }
 
 // TODO: Determine a way to access an interface property with a function type.
-export type SetShards = (
-    shards: Shard[],
-    defaultStatusColor: ShardStatusColor,
-    defaultMessageId?: ShardStatusMessageIds
-) => void;
+export type SetShards = (shards: Shard[]) => void;
 
 // Represents an endpoint that is exposed by a connector. Connectors may expose 0 or more
 // endpoints, and each one will have a unique hostname that is a subdomain of the data-plane.
@@ -101,6 +98,9 @@ export interface ShardDetailStore {
     shardDictionaryHydrated: boolean;
     setDictionaryHydrated: (val: boolean) => void;
     defaultStatusColor: ShardStatusColor;
+    setDefaultStatusColor: (val: ShardStatusColor) => void;
+    defaultMessageId: ShardStatusMessageIds;
+    setDefaultMessageId: (val: ShardStatusMessageIds) => void;
 
     error: ResponseError['body'] | string | null;
     setError: (val: ShardDetailStore['error']) => void;

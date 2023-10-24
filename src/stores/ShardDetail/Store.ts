@@ -206,6 +206,7 @@ export const getInitialState = (
         shardDictionaryHydrated: false,
         // This will get overwritten but defaulting to something so we don't have to handle null
         defaultStatusColor: '#C4D3E9',
+        defaultMessageId: ShardStatusMessageIds.NONE,
         setDictionaryHydrated: (val) => {
             set(
                 produce((state) => {
@@ -215,7 +216,25 @@ export const getInitialState = (
                 'Shard Dictionary Hydrated Set'
             );
         },
-        setShards: (shards, defaultStatusColor) => {
+        setDefaultMessageId: (val) => {
+            set(
+                produce((state) => {
+                    state.defaultMessageId = val;
+                }),
+                false,
+                'Shard Dictionary Default Message ID Set'
+            );
+        },
+        setDefaultStatusColor: (val) => {
+            set(
+                produce((state) => {
+                    state.defaultStatusColor = val;
+                }),
+                false,
+                'Shard Dictionary Default Status Color Set'
+            );
+        },
+        setShards: (shards) => {
             set(
                 produce((state) => {
                     const newDictionary: ShardDictionary = {};
@@ -223,7 +242,7 @@ export const getInitialState = (
                     shards.forEach((shard) => {
                         const dictionaryVal = getEverythingForDictionary(
                             shard,
-                            defaultStatusColor
+                            state.defaultStatusColor
                         );
 
                         if (dictionaryVal.entityName) {
@@ -239,7 +258,6 @@ export const getInitialState = (
 
                     state.shards = shards;
                     state.shardDictionary = newDictionary;
-                    state.defaultStatusColor = defaultStatusColor;
                 }),
                 false,
                 'Shard List Set'

@@ -30,6 +30,24 @@ export const useShardDetail_setShards = () => {
     );
 };
 
+export const useShardDetail_setDefaultMessageId = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['setDefaultMessageId']
+    >(storeName(entityType), (state) => state.setDefaultMessageId);
+};
+
+export const useShardDetail_setDefaultStatusColor = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['setDefaultStatusColor']
+    >(storeName(entityType), (state) => state.setDefaultStatusColor);
+};
+
 export const useShardDetail_error = () => {
     const entityType = useEntityType();
 
@@ -105,6 +123,7 @@ export const useShardDetail_readDictionary = (
                               state.defaultStatusColor
                           ),
                 disabled,
+                defaultMessageId: state.defaultMessageId,
                 shardsHaveErrors,
                 shardsHaveWarnings,
             };

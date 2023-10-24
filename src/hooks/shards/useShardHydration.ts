@@ -1,14 +1,22 @@
 import { useTheme } from '@mui/material';
 import { useEffect, useMemo } from 'react';
 import {
+    useShardDetail_setDefaultMessageId,
+    useShardDetail_setDefaultStatusColor,
     useShardDetail_setDictionaryHydrated,
     useShardDetail_setError,
     useShardDetail_setShards,
 } from 'stores/ShardDetail/hooks';
-import { ShardStatusColor } from 'stores/ShardDetail/types';
+import {
+    ShardStatusColor,
+    ShardStatusMessageIds,
+} from 'stores/ShardDetail/types';
 import useShardsList from './useShardsList';
 
-function useShardHydration(querySettings: any[]) {
+function useShardHydration(
+    querySettings: any[],
+    defaultMessageId?: ShardStatusMessageIds
+) {
     const theme = useTheme();
 
     const defaultStatusColor: ShardStatusColor = useMemo(
@@ -21,29 +29,36 @@ function useShardHydration(querySettings: any[]) {
     const setShards = useShardDetail_setShards();
     const setError = useShardDetail_setError();
     const setDictionaryHydrated = useShardDetail_setDictionaryHydrated();
+    const setDefaultMessageId = useShardDetail_setDefaultMessageId();
+    const setDefaultStatusColor = useShardDetail_setDefaultStatusColor();
 
+    // Handle setting the defaults
     useEffect(() => {
-        // Reset the state
+        if (defaultMessageId) {
+            setDefaultMessageId(defaultMessageId);
+        }
+
+        setDefaultStatusColor(defaultStatusColor);
+    }, [
+        defaultMessageId,
+        defaultStatusColor,
+        setDefaultMessageId,
+        setDefaultStatusColor,
+    ]);
+
+    // Handle data
+    useEffect(() => {
         setError(error ?? null);
 
-        // Try to set the data returned
         if (data) {
             if (data.shards.length > 0) {
-                setShards(data.shards, defaultStatusColor);
+                setShards(data.shards);
             } else {
-                setShards([], defaultStatusColor);
+                setShards([]);
             }
-
             setDictionaryHydrated(true);
         }
-    }, [
-        data,
-        defaultStatusColor,
-        error,
-        setDictionaryHydrated,
-        setError,
-        setShards,
-    ]);
+    }, [data, error, setDictionaryHydrated, setError, setShards]);
 
     return useMemo(
         () => ({

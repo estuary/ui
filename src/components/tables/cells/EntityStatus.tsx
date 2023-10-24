@@ -23,15 +23,15 @@ function EntityStatus({ name }: Props) {
         if (dictionaryHydrated) {
             if (dictionaryVals.allShards.length > 0) {
                 return dictionaryVals.allShards;
-            } else {
-                return [
-                    {
-                        color: dictionaryVals.compositeColor,
-                        disabled: dictionaryVals.disabled,
-                        messageId: 'shardStatus.basicCollection',
-                    },
-                ];
             }
+
+            return [
+                {
+                    color: dictionaryVals.compositeColor,
+                    disabled: dictionaryVals.disabled,
+                    messageId: dictionaryVals.defaultMessageId,
+                },
+            ];
         }
 
         return [];
@@ -39,6 +39,7 @@ function EntityStatus({ name }: Props) {
         dictionaryHydrated,
         dictionaryVals.allShards,
         dictionaryVals.compositeColor,
+        dictionaryVals.defaultMessageId,
         dictionaryVals.disabled,
     ]);
 
