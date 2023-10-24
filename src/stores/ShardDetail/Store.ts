@@ -28,52 +28,20 @@ const getShardEndpointsForDictionary = (shard: TaskShardDetails) => {
     }
 
     byPort[exposePort] = {
-        hostPrefix: `${hostname}-${exposePort}`, //The rest of the URL is added in when the component renders
+        //The rest of the URL is added in when the component renders
+        hostPrefix: `${hostname}-${exposePort}`,
+
+        // We consider the endpoint to be "up" if the shard has a primary.
+        // This does not necessarily mean that the container is up and reachable, but
+        // it's the closest approximation we have.
         isUp: Boolean(shardIsUp),
+
         isPublic: shard.portIsPublic ?? false,
         protocol: shard.portProtocol ?? null,
     };
 
     return byPort;
 };
-
-/*
-export const mergeEndpoints = (endpointMaps: EndpointsDictionary[]) => {
-    // TODO - check with Phil to see why this exists
-
-    if (endpointMaps.length > 0) {
-        // Merge the endpoints of each shard into a single map.
-        // Generally, we expect that all shards for a given task will
-        // have identicall configuration of exposed ports. But technically
-        // nothing requires that to be the case.
-        const endpoints = endpointMaps.reduce((left, right) => {
-            right.forEach((value, key) => {
-                const leftEp = left.get(key);
-                if (leftEp) {
-                    const merged = {
-                        hostPrefix: leftEp.hostPrefix,
-                        isPublic: leftEp.isPublic,
-                        protocol: leftEp.protocol,
-                        // isUp is really the only field that it makes sense to merge.
-                        // This resolution makes sense because we are constructing endpoints
-                        // that address any/all shards of a task, so if any of them are up,
-                        // then requests ought to be routed to it and thus the endpoint itself
-                        // could be considered "up".
-                        isUp: leftEp.isUp || value.isUp,
-                    };
-                    left.set(key, merged);
-                } else {
-                    left.set(key, value);
-                }
-            });
-            return left;
-        }, new Map<string, Endpoint>());
-
-        return Array.from(endpoints.values());
-    }
-    return [];
-};
-*/
 
 const findAllErrorsAndWarnings = (shard: Shard) => {
     const { status } = shard;
@@ -144,9 +112,6 @@ const getEverythingForDictionary = (
         } else if (statusCodes.find((code) => code === 'PRIMARY')) {
             response.color = successMain;
             response.messageId = ShardStatusMessageIds.PRIMARY;
-            // We consider the endpoint to be "up" if the shard has a primary.
-            // This does not necessarily mean that the container is up and reachable, but
-            // it's the closest approximation we have.
             response.shardIsUp = true;
         } else if (statusCodes.find((code) => code === 'IDLE')) {
             response.color = warningMain;
