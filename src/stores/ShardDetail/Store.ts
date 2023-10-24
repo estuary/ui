@@ -167,6 +167,8 @@ const getEverythingForDictionary = (
     spec.labels?.labels?.forEach((label) => {
         switch (label.name) {
             case 'estuary.dev/task-name':
+                response.entityName = label.value;
+                break;
             case 'estuary.dev/task-type':
                 response.entityType = label.value;
                 break;
@@ -188,12 +190,6 @@ const getEverythingForDictionary = (
     response.shardEndpoints = getShardEndpointsForDictionary(response);
 
     return response;
-};
-
-const getCollectionName = (spec: Shard['spec']) => {
-    return (spec.labels ? spec.labels.labels : [])?.find(
-        (label) => label.name === 'estuary.dev/task-name'
-    )?.value;
 };
 
 export const getCompositeColor = (
@@ -267,16 +263,17 @@ export const getInitialState = (
                     const newDictionary: ShardDictionary = {};
 
                     shards.forEach((shard) => {
-                        const key = getCollectionName(shard.spec);
+                        const dictionaryVal = getEverythingForDictionary(
+                            shard,
+                            defaultStatusColor
+                        );
 
-                        if (key) {
-                            newDictionary[key] = newDictionary[key] ?? [];
-                            newDictionary[key]?.push({
-                                ...getEverythingForDictionary(
-                                    shard,
-                                    defaultStatusColor
-                                ),
-                            });
+                        if (dictionaryVal.entityName) {
+                            newDictionary[dictionaryVal.entityName] =
+                                newDictionary[dictionaryVal.entityName] ?? [];
+                            newDictionary[dictionaryVal.entityName]?.push(
+                                dictionaryVal
+                            );
                         } else {
                             logRocketConsole('Unable to find name from shard');
                         }

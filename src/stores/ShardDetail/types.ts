@@ -32,6 +32,7 @@ export interface TaskShardDetails {
     spec?: Shard['spec'];
     status?: Shard['status'];
     id?: string;
+    entityName?: string;
     entityType?: string;
     exposePort?: any;
     hostname?: string;
