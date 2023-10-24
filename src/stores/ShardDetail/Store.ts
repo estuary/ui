@@ -39,6 +39,7 @@ const getShardEndpointsForDictionary = (shard: TaskShardDetails) => {
 };
 
 export const mergeEndpoints = (endpointMaps: Map<string, Endpoint>[]) => {
+    // TODO - travis fix this
     if (endpointMaps.length > 0) {
         // Merge the endpoints of each shard into a single map.
         // Generally, we expect that all shards for a given task will
