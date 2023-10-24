@@ -8,7 +8,6 @@ import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import {
-    Endpoint,
     EndpointsDictionary,
     ShardDetailStore,
     ShardDictionary,
@@ -38,8 +37,10 @@ const getShardEndpointsForDictionary = (shard: TaskShardDetails) => {
     return byPort;
 };
 
-export const mergeEndpoints = (endpointMaps: Map<string, Endpoint>[]) => {
-    // TODO - travis fix this
+/*
+export const mergeEndpoints = (endpointMaps: EndpointsDictionary[]) => {
+    // TODO - check with Phil to see why this exists
+
     if (endpointMaps.length > 0) {
         // Merge the endpoints of each shard into a single map.
         // Generally, we expect that all shards for a given task will
@@ -72,6 +73,7 @@ export const mergeEndpoints = (endpointMaps: Map<string, Endpoint>[]) => {
     }
     return [];
 };
+*/
 
 const findAllErrorsAndWarnings = (shard: Shard) => {
     const { status } = shard;
