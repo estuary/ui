@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, TableCell } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -7,15 +7,17 @@ interface Props {
 
 function EditTask({ clickHandler }: Props) {
     return (
-        <Button
-            variant="text"
-            size="small"
-            disableElevation
-            onClick={clickHandler}
-            sx={{ mr: 1 }}
-        >
-            <FormattedMessage id="cta.edit" />
-        </Button>
+        <TableCell>
+            <Button
+                variant="text"
+                size="small"
+                disableElevation
+                onClick={clickHandler}
+                sx={{ mr: 1 }}
+            >
+                <FormattedMessage id="cta.edit" />
+            </Button>
+        </TableCell>
     );
 }
 
