@@ -1,7 +1,11 @@
 import { Box, Tooltip, Typography } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
+import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useShardDetail_readDictionary } from 'stores/ShardDetail/hooks';
+import {
+    useShardDetail_dictionaryHydrated,
+    useShardDetail_readDictionary,
+} from 'stores/ShardDetail/hooks';
 
 interface Props {
     name: string;
@@ -12,12 +16,35 @@ const indicatorSize = 16;
 function EntityStatus({ name }: Props) {
     const taskType = useEntityType();
 
+    const dictionaryHydrated = useShardDetail_dictionaryHydrated();
     const dictionaryVals = useShardDetail_readDictionary(name, taskType);
+
+    const shards = useMemo(() => {
+        if (dictionaryHydrated) {
+            if (dictionaryVals.allShards.length > 0) {
+                return dictionaryVals.allShards;
+            } else {
+                return [
+                    {
+                        color: dictionaryVals.compositeColor,
+                        disabled: dictionaryVals.disabled,
+                        messageId: 'shardStatus.basicCollection',
+                    },
+                ];
+            }
+        }
+
+        return [];
+    }, [
+        dictionaryHydrated,
+        dictionaryVals.allShards,
+        dictionaryVals.compositeColor,
+        dictionaryVals.disabled,
+    ]);
 
     return (
         <Tooltip
-            disableInteractive={dictionaryVals.allShards.length === 0}
-            title={dictionaryVals.allShards.map((shard, index) => (
+            title={shards.map((shard, index) => (
                 <Box
                     key={`${index}-shard-status-tooltip`}
                     sx={{ display: 'flex', alignItems: 'center' }}
