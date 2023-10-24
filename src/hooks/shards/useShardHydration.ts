@@ -24,7 +24,6 @@ function useShardHydration(querySettings: any[]) {
 
     useEffect(() => {
         // Reset the state
-        setDictionaryHydrated(false);
         setError(error ?? null);
 
         // Try to set the data returned

@@ -68,7 +68,8 @@ export interface ShardDictionary {
 // TODO: Determine a way to access an interface property with a function type.
 export type SetShards = (
     shards: Shard[],
-    defaultStatusColor: ShardStatusColor
+    defaultStatusColor: ShardStatusColor,
+    defaultMessageId?: ShardStatusMessageIds
 ) => void;
 
 // Represents an endpoint that is exposed by a connector. Connectors may expose 0 or more
