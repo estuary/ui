@@ -46,12 +46,12 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
                 )}
             </Box>
 
-            {entityType === 'materialization' ? (
-                <TimeTravel collectionName={collectionName} />
-            ) : null}
-
             {entityType === 'materialization' && !collectionDisabled ? (
                 <FieldSelectionViewer collectionName={collectionName} />
+            ) : null}
+
+            {entityType === 'materialization' ? (
+                <TimeTravel collectionName={collectionName} />
             ) : null}
         </>
     );
