@@ -20,8 +20,8 @@ import {
     StatsResponse,
 } from 'stores/Tables/Store';
 import { getPathWithParams, hasLength } from 'utils/misc-utils';
+import EditTask from '../cells/EditTask';
 import EntityNameLink from '../cells/EntityNameLink';
-import OptionsMenu from '../cells/OptionsMenu';
 import RelatedCollectionsCell from '../cells/RelatedCollectionsCell';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
@@ -110,7 +110,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
 
             <TimeStamp time={row.updated_at} />
 
-            <OptionsMenu editTask={handlers.editTask} />
+            <EditTask clickHandler={handlers.editTask} />
         </TableRow>
     );
 }
