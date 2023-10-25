@@ -100,7 +100,9 @@ function Rows({ data, showEntityStatus }: RowsProps) {
     const setShards = useShardDetail_setShards();
     const setShardsError = useShardDetail_setError();
 
-    const { data: shardsData, error: shardsError } = useShardsList(data);
+    const { data: shardsData, error: shardsError } = useShardsList(
+        data.map((datum) => datum.catalog_name)
+    );
 
     // Collection is the only entity (as of Dec 2022) that actually checks
     //  the error. This is because the default color for Collections is

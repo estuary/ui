@@ -6,25 +6,18 @@ import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
-import { useZustandStore } from 'context/Zustand/provider';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
-import useShardsList from 'hooks/useShardsList';
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { SelectTableStoreNames } from 'stores/names';
-import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-    StatsResponse,
-} from 'stores/Tables/Store';
+import { StatsResponse } from 'stores/Tables/Store';
 import { getPathWithParams, hasLength } from 'utils/misc-utils';
 import EditTask from '../cells/EditTask';
 import EntityNameLink from '../cells/EntityNameLink';
 import RelatedCollectionsCell from '../cells/RelatedCollectionsCell';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
+import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
 
 interface RowsProps {
     data: MaterializationQueryWithStats[];
@@ -119,46 +112,10 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
 }
 
 function Rows({ data, showEntityStatus }: RowsProps) {
-    // Select Table Store
-    const selectTableStoreName = SelectTableStoreNames.MATERIALIZATION;
-
-    const selected = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['selected']
-    >(selectTableStoreName, selectableTableStoreSelectors.selected.get);
-
-    const setRow = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['setSelected']
-    >(selectTableStoreName, selectableTableStoreSelectors.selected.set);
-
-    const successfulTransformations = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['successfulTransformations']
-    >(
-        selectTableStoreName,
-        selectableTableStoreSelectors.successfulTransformations.get
+    const { stats, selected, setRow } = useRowsWithStatsState(
+        SelectTableStoreNames.MATERIALIZATION,
+        data
     );
-
-    const stats = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['stats']
-    >(selectTableStoreName, selectableTableStoreSelectors.stats.get);
-
-    // Shard Detail Store
-    const setShards = useShardDetail_setShards();
-
-    const { data: shardsData, mutate: mutateShardsList } = useShardsList(data);
-
-    useEffect(() => {
-        if (shardsData && shardsData.shards.length > 0) {
-            setShards(shardsData.shards);
-        }
-    }, [setShards, shardsData]);
-
-    useEffect(() => {
-        mutateShardsList().catch(() => {});
-    }, [mutateShardsList, successfulTransformations]);
 
     return (
         <>

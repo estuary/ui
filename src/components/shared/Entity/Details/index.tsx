@@ -24,9 +24,6 @@ function EntityDetails() {
 
     // Fetch params from URL
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
-    const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
-
-    console.log('lastPubId', lastPubId);
 
     return (
         <LocalZustandProvider createStore={localStore}>
@@ -34,7 +31,7 @@ function EntityDetails() {
                 collectionNames={[catalogName]}
                 localZustandScope={true}
             >
-                <ShardHydrator lastPubId={lastPubId} catalogName={catalogName}>
+                <ShardHydrator catalogName={catalogName}>
                     <Box>
                         <Stack spacing={2} sx={{ m: 1 }}>
                             <Stack direction="row" spacing={1}>

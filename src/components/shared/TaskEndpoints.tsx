@@ -153,10 +153,7 @@ export function TaskEndpoints({ taskName }: Props) {
 export function TaskEndpoint({ taskName }: Props) {
     const gateway = useScopedGatewayAuthToken(taskName);
 
-    // The id and spec_type are irrelevant in useShardsList, but they're required to be there.
-    const listShards = useShardsList([
-        { catalog_name: taskName, id: '', spec_type: 'collection' },
-    ]);
+    const listShards = useShardsList([taskName]);
     const setShards = useShardDetail_setShards();
     const getTaskEndpoints = useShardDetail_getTaskEndpoints();
     if (listShards.data) {
