@@ -5,7 +5,6 @@ import { GlobalSearchParams } from './searchParams/useGlobalSearchParams';
 
 interface Data {
     catalog_name: string;
-    last_pub_id: string;
 }
 
 function useDetailsNavigator(path: string) {
