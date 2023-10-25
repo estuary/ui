@@ -26,11 +26,12 @@ function EntityDetails() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
 
+    console.log('lastPubId', lastPubId);
+
     return (
         <LocalZustandProvider createStore={localStore}>
             <LiveSpecsHydrator
                 collectionNames={[catalogName]}
-                lastPubId={lastPubId}
                 localZustandScope={true}
             >
                 <ShardHydrator lastPubId={lastPubId} catalogName={catalogName}>
