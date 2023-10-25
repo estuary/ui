@@ -1,10 +1,10 @@
 import { Button } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
+import { useEntityType } from 'context/EntityContext';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { NavLink } from 'react-router-dom';
-import { Entity } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 
 type AllowedPaths = keyof Pick<
@@ -15,16 +15,17 @@ type AllowedPaths = keyof Pick<
 interface Props {
     liveSpecId: string;
     name: string;
-    pathPrefix: Entity;
 }
 
-function EditLink({ liveSpecId, name, pathPrefix }: Props) {
+function EditLink({ liveSpecId, name }: Props) {
+    const entityType = useEntityType();
+
     const intl = useIntl();
     const to = useMemo(() => {
         const path: AllowedPaths | null =
-            pathPrefix === 'capture'
+            entityType === 'capture'
                 ? 'captures'
-                : pathPrefix === 'materialization'
+                : entityType === 'materialization'
                 ? 'materializations'
                 : null;
 
@@ -35,7 +36,7 @@ function EditLink({ liveSpecId, name, pathPrefix }: Props) {
         }
 
         return null;
-    }, [liveSpecId, pathPrefix]);
+    }, [liveSpecId, entityType]);
 
     // We currently do not allow users to edit derivations so just return nothing
     if (!to) {

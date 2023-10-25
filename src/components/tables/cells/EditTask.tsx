@@ -1,6 +1,5 @@
 import { TableCell } from '@mui/material';
 import EditLink from 'components/shared/Entity/Shard/EditLink';
-import { useEntityType } from 'context/EntityContext';
 
 interface Props {
     liveSpecId: string;
@@ -8,15 +7,9 @@ interface Props {
 }
 
 function EditTask({ liveSpecId, name }: Props) {
-    const entityType = useEntityType();
-
     return (
         <TableCell>
-            <EditLink
-                liveSpecId={liveSpecId}
-                name={name}
-                pathPrefix={entityType}
-            />
+            <EditLink liveSpecId={liveSpecId} name={name} />
         </TableCell>
     );
 }
