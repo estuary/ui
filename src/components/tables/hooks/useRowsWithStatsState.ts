@@ -1,19 +1,25 @@
 import {
     CaptureQueryWithStats,
+    CollectionQueryWithStats,
     MaterializationQueryWithStats,
 } from 'api/liveSpecsExt';
 import { useZustandStore } from 'context/Zustand/provider';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
-import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
+import {
+    useShardDetail_setError,
+    useShardDetail_setShards,
+} from 'stores/ShardDetail/hooks';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 
-type Data = CaptureQueryWithStats[] | MaterializationQueryWithStats[];
-// | CollectionQueryWithStats[]; not switched over just yet as collection has some custom code in the rows
+type Data =
+    | CaptureQueryWithStats[]
+    | MaterializationQueryWithStats[]
+    | CollectionQueryWithStats[];
 
 function useRowsWithStatsState(
     selectTableStoreName: SelectTableStoreNames,
@@ -44,20 +50,26 @@ function useRowsWithStatsState(
 
     // Shard Detail Store
     const setShards = useShardDetail_setShards();
+    const setShardsError = useShardDetail_setError();
 
     const catalogNames = useMemo(
         () => data.map((datum) => datum.catalog_name),
         [data]
     );
 
-    const { data: shardsData, mutate: mutateShardsList } =
-        useShardsList(catalogNames);
+    const {
+        data: shardsData,
+        mutate: mutateShardsList,
+        error: shardsError,
+    } = useShardsList(catalogNames);
 
     useEffect(() => {
+        setShardsError(shardsError ?? null);
+
         if (shardsData && shardsData.shards.length > 0) {
             setShards(shardsData.shards);
         }
-    }, [setShards, shardsData]);
+    }, [setShards, setShardsError, shardsData, shardsError]);
 
     useEffect(() => {
         mutateShardsList().catch(() => {});
