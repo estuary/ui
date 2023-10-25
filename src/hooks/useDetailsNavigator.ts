@@ -15,7 +15,6 @@ function useDetailsNavigator(path: string) {
         (data: Data) => {
             return getPathWithParams(path, {
                 [GlobalSearchParams.CATALOG_NAME]: data.catalog_name,
-                [GlobalSearchParams.LAST_PUB_ID]: data.last_pub_id,
             });
         },
         [path]
@@ -26,7 +25,6 @@ function useDetailsNavigator(path: string) {
             navigate(
                 getPathWithParams(path, {
                     [GlobalSearchParams.CATALOG_NAME]: data.catalog_name,
-                    [GlobalSearchParams.LAST_PUB_ID]: data.last_pub_id,
                 })
             );
         },
