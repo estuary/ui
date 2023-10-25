@@ -77,6 +77,7 @@ function CapturesTable() {
                                 selectableTableStoreName={
                                     selectableTableStoreName
                                 }
+                                selectKeyValueName="last_pub_id"
                                 showMaterialize={true}
                             />
                         }
