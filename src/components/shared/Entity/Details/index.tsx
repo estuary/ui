@@ -37,7 +37,7 @@ function EntityDetails() {
                 <ShardHydrator lastPubId={lastPubId} catalogName={catalogName}>
                     <Box>
                         <Stack spacing={2} sx={{ m: 1 }}>
-                            <Stack direction="row" spacing={1}>
+                            <Stack direction="row" spacing={3}>
                                 <Typography
                                     component="span"
                                     variant="h6"

@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, ButtonProps } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import { useEntityType } from 'context/EntityContext';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
@@ -15,9 +15,10 @@ type AllowedPaths = keyof Pick<
 interface Props {
     liveSpecId: string;
     name: string;
+    variant?: ButtonProps['variant'];
 }
 
-function EditLink({ liveSpecId, name }: Props) {
+function EditLink({ liveSpecId, name, variant }: Props) {
     const entityType = useEntityType();
 
     const intl = useIntl();
@@ -52,7 +53,12 @@ function EditLink({ liveSpecId, name }: Props) {
                 { name }
             )}
         >
-            <Button variant="text" size="small" disableElevation sx={{ mr: 1 }}>
+            <Button
+                variant={variant ?? 'text'}
+                size="small"
+                disableElevation
+                sx={{ mr: 1 }}
+            >
                 <FormattedMessage id="cta.edit" />
             </Button>
         </NavLink>
