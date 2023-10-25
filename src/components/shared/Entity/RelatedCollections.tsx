@@ -19,7 +19,6 @@ function RelatedCollections({ collections }: Props) {
             display: collection,
             link: generatePath({
                 catalog_name: collection,
-                last_pub_id: '',
             }),
             title: intl.formatMessage(
                 {
