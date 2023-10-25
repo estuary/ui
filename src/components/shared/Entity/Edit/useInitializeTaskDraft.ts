@@ -84,7 +84,7 @@ function useInitializeTaskDraft() {
 
                 return null;
             }
-        }, [setDraftInitializationError, liveSpecId, taskSpecType]);
+        }, [setDraftInitializationError, liveSpecId]);
 
     const getTaskDraft = useCallback(
         async ({
@@ -241,8 +241,9 @@ function useInitializeTaskDraft() {
                         navigateToEdit(
                             taskSpecType,
                             {
-                                [GlobalSearchParams.CONNECTOR_ID]: connectorId,
                                 [GlobalSearchParams.LIVE_SPEC_ID]: liveSpecId,
+                                [GlobalSearchParams.CONNECTOR_ID]:
+                                    task.connector_id,
                                 [GlobalSearchParams.LAST_PUB_ID]:
                                     task.last_pub_id,
                             },
@@ -272,7 +273,6 @@ function useInitializeTaskDraft() {
             setLoading(false);
         },
         [
-            connectorId,
             getTask,
             getTaskDraft,
             getTaskDraftSpecs,
