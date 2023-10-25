@@ -39,8 +39,7 @@ const createTaskDraft = async (catalogName: string): Promise<string | null> => {
 };
 
 function useInitializeTaskDraft() {
-    const [connectorId, liveSpecId, draftIdInURL] = useGlobalSearchParams([
-        GlobalSearchParams.CONNECTOR_ID,
+    const [liveSpecId, draftIdInURL] = useGlobalSearchParams([
         GlobalSearchParams.LIVE_SPEC_ID,
         GlobalSearchParams.DRAFT_ID,
     ]);
@@ -69,10 +68,7 @@ function useInitializeTaskDraft() {
     // Get catalog name and task spec from live specs
     const getTask =
         useCallback(async (): Promise<LiveSpecsExtQuery_ByLiveSpecId | null> => {
-            const liveSpecResponse = await getLiveSpecsByLiveSpecId(
-                liveSpecId,
-                taskSpecType
-            );
+            const liveSpecResponse = await getLiveSpecsByLiveSpecId(liveSpecId);
 
             if (liveSpecResponse.data && liveSpecResponse.data.length > 0) {
                 return liveSpecResponse.data[0];
