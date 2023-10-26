@@ -11,6 +11,7 @@ import { useMemo } from 'react';
 import { EditorStoreNames } from 'stores/names';
 import ShardHydrator from '../Shard/Hydrator';
 import EditButton from './EditButton';
+import MaterializeButton from './MaterializeButton';
 import RenderTab from './RenderTab';
 import DetailTabs from './Tabs';
 
@@ -47,6 +48,7 @@ function EntityDetails() {
                                     {catalogName}
                                 </Typography>
                                 <EditButton />
+                                <MaterializeButton />
                             </Stack>
                             <Divider />
                             <DetailTabs />
