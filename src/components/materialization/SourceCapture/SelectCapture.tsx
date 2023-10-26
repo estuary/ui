@@ -52,8 +52,6 @@ function SelectCapture() {
         [draftSpecs, isEdit]
     );
 
-    console.log('select source', { showLoading, draftSpecs });
-
     useEffect(() => {
         // First see if there is a value and then use the prefill if it exists. That way a user does not
         //  accidently override their existing setting without noticing

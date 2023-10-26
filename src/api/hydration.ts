@@ -68,7 +68,7 @@ export const getLiveSpecsById_writesTo = async (
 ) => {
     const data = await supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
-        .select(`catalog_name,writes_to`)
+        .select(`catalog_name,writes_to,spec_type`)
         .in('id', typeof liveSpecId === 'string' ? [liveSpecId] : liveSpecId)
         .then(handleSuccess<LiveSpecsExt_MaterializeCapture>, handleFailure);
 

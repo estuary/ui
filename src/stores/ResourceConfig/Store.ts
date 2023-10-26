@@ -161,12 +161,18 @@ const getInitialState = (
                     rehydrating && collections ? collections : [];
 
                 // Get a list of all the new collections that will be added
-                value.forEach((capture) => {
-                    capture?.writes_to.forEach((collection) => {
-                        if (!emptyCollections.includes(collection)) {
-                            emptyCollections.push(collection);
+                value.forEach((datum) => {
+                    if (datum?.spec_type === 'collection') {
+                        if (!emptyCollections.includes(datum.catalog_name)) {
+                            emptyCollections.push(datum.catalog_name);
                         }
-                    });
+                    } else {
+                        datum?.writes_to.forEach((collection) => {
+                            if (!emptyCollections.includes(collection)) {
+                                emptyCollections.push(collection);
+                            }
+                        });
+                    }
                 });
 
                 // Filter out any collections that are not in the emptyCollections list
@@ -677,8 +683,6 @@ const getInitialState = (
             const { data, error } = await getLiveSpecsById_writesTo(
                 prefillLiveSpecIds
             );
-
-            console.log('data', data);
 
             if (error) {
                 setHydrationErrorsExist(true);

@@ -9,12 +9,13 @@ export interface LiveSpecsExtQuery {
     spec: any;
     reads_from: string[];
     writes_to: string[];
-    spec_type: string;
+    spec_type: Entity;
     last_pub_id: string;
 }
 
 export type LiveSpecsExt_MaterializeCapture = {
     catalog_name: string;
+    spec_type: LiveSpecsExtQuery['spec_type'];
     writes_to: LiveSpecsExtQuery['writes_to'];
 }[];
 

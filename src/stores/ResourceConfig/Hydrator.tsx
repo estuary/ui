@@ -41,7 +41,11 @@ export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
         setActive(true);
         hydrateState(editWorkflow, entityType, rehydrating).then(
             (response) => {
-                if (response && response.length === 1) {
+                if (
+                    response &&
+                    response.length === 1 &&
+                    response[0].spec_type === 'capture'
+                ) {
                     setPrefilledCapture(response[0].catalog_name);
                 }
 
