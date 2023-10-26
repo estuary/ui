@@ -229,15 +229,11 @@ const DETAILS_FORM_QUERY = `
     connector_logo_url:connector_logo_url->>en-US::text
 `;
 
-const getLiveSpecs_detailsForm = async (
-    liveSpecId: string,
-    specType: Entity
-) => {
+const getLiveSpecs_detailsForm = async (liveSpecId: string) => {
     const data = await supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
         .select(DETAILS_FORM_QUERY)
         .eq('id', liveSpecId)
-        .eq('spec_type', specType)
         .then(handleSuccess<LiveSpecsExtQuery_DetailsForm[]>, handleFailure);
 
     return data;
