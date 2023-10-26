@@ -1,5 +1,5 @@
 import { supabaseClient, TABLES } from 'services/supabase';
-import { Schema } from 'types';
+import { Entity, Schema } from 'types';
 
 export interface PublicationSpecsExt_PublicationHistory {
     live_spec_id: string;
@@ -26,4 +26,17 @@ export const getPublicationHistoryByCatalogName = (catalogName: string) => {
         .order('published_at', {
             ascending: false,
         });
+};
+
+export const getLiveSpecIdByPublication = (
+    pubId: string | null, // Do not actually pass null... just making typing easiser
+    entityType: Entity
+) => {
+    return supabaseClient
+        .from<PublicationSpecsExt_PublicationHistory>(
+            TABLES.PUBLICATION_SPECS_EXT
+        )
+        .select(`live_spec_id`)
+        .eq('pub_id', pubId)
+        .eq('spec_type', entityType);
 };
