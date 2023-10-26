@@ -412,11 +412,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.rowSelector.all': `All`,
     'entityTable.rowSelector.none': `None`,
 
-    'optionMenu.ariaLabel': `Open Option Menu`,
-    'optionMenu.tooltip': `Options`,
-    'optionMenu.option.detailsPanel.display': `View details`,
-    'optionMenu.option.detailsPanel.hide': `Hide details`,
-    'optionMenu.option.edit': `Edit specification`,
+    'entityTable.edit.aria': `Edit specification of {name}`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {

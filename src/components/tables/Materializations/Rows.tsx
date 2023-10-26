@@ -7,12 +7,10 @@ import TimeStamp from 'components/tables/cells/TimeStamp';
 import { useEntityType } from 'context/EntityContext';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
-import { useNavigate } from 'react-router';
 import { SelectTableStoreNames } from 'stores/names';
 import { StatsResponse } from 'stores/Tables/Store';
-import { getPathWithParams, hasLength } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
 import EditTask from '../cells/EditTask';
 import EntityNameLink from '../cells/EntityNameLink';
 import RelatedCollectionsCell from '../cells/RelatedCollectionsCell';
@@ -34,7 +32,6 @@ interface RowProps {
 }
 
 function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
-    const navigate = useNavigate();
     const theme = useTheme();
     const tenantDetails = useTenantDetails();
     const entityType = useEntityType();
@@ -46,18 +43,6 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const handlers = {
         clickRow: (rowId: string, lastPubId: string) => {
             setRow(rowId, lastPubId, !isSelected);
-        },
-        editTask: () => {
-            navigate(
-                getPathWithParams(
-                    authenticatedRoutes.materializations.edit.fullPath,
-                    {
-                        [GlobalSearchParams.CONNECTOR_ID]: row.connector_id,
-                        [GlobalSearchParams.LIVE_SPEC_ID]: row.id,
-                        [GlobalSearchParams.LAST_PUB_ID]: row.last_pub_id,
-                    }
-                )
-            );
         },
     };
 
@@ -109,7 +94,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
 
             <TimeStamp time={row.updated_at} />
 
-            <EditTask clickHandler={handlers.editTask} />
+            <EditTask name={row.catalog_name} liveSpecId={row.id} />
         </TableRow>
     );
 }
