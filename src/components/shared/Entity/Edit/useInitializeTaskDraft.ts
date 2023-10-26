@@ -43,8 +43,8 @@ function useInitializeTaskDraft() {
         GlobalSearchParams.LIVE_SPEC_ID,
         GlobalSearchParams.DRAFT_ID,
     ]);
-    const prefillPubIds = useGlobalSearchParams(
-        GlobalSearchParams.PREFILL_PUB_ID,
+    const prefillLiveSpecIds = useGlobalSearchParams(
+        GlobalSearchParams.PREFILL_LIVE_SPEC_ID,
         true
     );
     const navigateToEdit = useEntityEditNavigate();
@@ -244,8 +244,8 @@ function useInitializeTaskDraft() {
                                     task.last_pub_id,
                             },
                             {
-                                [GlobalSearchParams.PREFILL_PUB_ID]:
-                                    prefillPubIds,
+                                [GlobalSearchParams.PREFILL_LIVE_SPEC_ID]:
+                                    prefillLiveSpecIds,
                                 [GlobalSearchParams.DRAFT_ID]: evaluatedDraftId,
                             },
                             true
@@ -275,7 +275,7 @@ function useInitializeTaskDraft() {
             liveSpecId,
             navigateToEdit,
             prefillFullSourceConfigs,
-            prefillPubIds,
+            prefillLiveSpecIds,
             setDraftId,
             setDraftInitializationError,
             setFormState,

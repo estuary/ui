@@ -3,8 +3,9 @@ import MessageWithLink from 'components/content/MessageWithLink';
 import { useEditorStore_draftInitializationError } from 'components/editor/Store/hooks';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import useInitializeTaskDraft from 'components/shared/Entity/Edit/useInitializeTaskDraft';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useUpdateEffect } from 'react-use';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { BaseComponentProps } from 'types';
@@ -20,11 +21,15 @@ function DraftInitializer({ children }: BaseComponentProps) {
 
     const [loading, setLoading] = useState<boolean>(true);
 
-    useEffect(() => {
-        if (formStatus === FormStatus.INIT) {
+    useUpdateEffect(() => {
+        // This is pretty hacky but we need to check the loading because while we go from capture
+        //  to materializing the initTaskDraft can pick up the URL changes. It does make sense to only fire
+        //  this when the page is loading though. This does mean that we currently cannot set the form state
+        //  back to INIT and get this to run again. Seems like a good trade off for now Q4 2023
+        if (loading && formStatus === FormStatus.INIT) {
             void initializeTaskDraft(setLoading);
         }
-    }, [initializeTaskDraft, setLoading, formStatus]);
+    }, [initializeTaskDraft, setLoading, formStatus, loading]);
 
     if (loading) {
         return <FullPageSpinner />;
