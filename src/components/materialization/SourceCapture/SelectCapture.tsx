@@ -38,9 +38,13 @@ function SelectCapture() {
         [draftSpecs]
     );
 
+    // We only care about not used the prefilled capture if we're in edit.
+    //  Otherwise we don't need to wait for the drafts to load and can just set the value.
     const prefilledExists = useMemo(
-        () => draftSpecs.length > 0 && isString(prefilledCapture),
-        [draftSpecs, prefilledCapture]
+        () =>
+            (isEdit && draftSpecs.length > 0 && isString(prefilledCapture)) ||
+            (!isEdit && isString(prefilledCapture)),
+        [draftSpecs.length, isEdit, prefilledCapture]
     );
 
     const showLoading = useMemo(
