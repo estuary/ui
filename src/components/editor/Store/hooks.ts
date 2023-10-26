@@ -512,40 +512,6 @@ export const useEditorStore_resetState = (
     >(storeName(entityType, localScope), (state) => state.resetState);
 };
 
-export const useEditorStore_lastPubId = (
-    params?: SelectorParams | undefined
-) => {
-    const localScope = params?.localScope;
-
-    const useZustandStore = localScope
-        ? useLocalZustandStore
-        : useGlobalZustandStore;
-
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['lastPubId']
-    >(storeName(entityType, localScope), (state) => state.lastPubId);
-};
-
-export const useEditorStore_setLastPubId = (
-    params?: SelectorParams | undefined
-) => {
-    const localScope = params?.localScope;
-
-    const useZustandStore = localScope
-        ? useLocalZustandStore
-        : useGlobalZustandStore;
-
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setLastPubId']
-    >(storeName(entityType, localScope), (state) => state.setLastPubId);
-};
-
 export const useHydrateEditorState = (
     specType: Entity,
     catalogName?: string,

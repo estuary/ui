@@ -30,9 +30,6 @@ export interface EditorStoreState<T> {
         newVal: EditorStoreState<T>['persistedDraftId']
     ) => void;
 
-    lastPubId: string | null;
-    setLastPubId: (newVal: EditorStoreState<T>['lastPubId']) => void;
-
     discoveredDraftId: string | null;
     setDiscoveredDraftId: (
         newVal: EditorStoreState<T>['discoveredDraftId']
