@@ -24,6 +24,7 @@ const getInitialStateData = <T>(): Pick<
     | 'serverUpdate'
     | 'specs'
     | 'statuses'
+    | 'lastPubId'
 > => {
     return {
         currentCatalog: null,
@@ -39,6 +40,7 @@ const getInitialStateData = <T>(): Pick<
         draftInitializationError: null,
         queryResponse: { draftSpecs: [], isValidating: false, mutate: null },
         invalidEditors: [],
+        lastPubId: null,
     };
 };
 
@@ -65,6 +67,16 @@ const getInitialState = <T>(
                 }),
                 false,
                 'Set persisted draft id'
+            );
+        },
+
+        setLastPubId: (newVal) => {
+            set(
+                produce((state) => {
+                    state.lastPubId = newVal;
+                }),
+                false,
+                'Set last pub id'
             );
         },
 
