@@ -27,7 +27,7 @@ function useInitializeTaskNotification(catalogName: string) {
             : objectRoles
                   .filter((role) => catalogName.startsWith(role))
                   .sort((a, b) => b.length - a.length)[0];
-    }, [objectRoles]);
+    }, [catalogName, objectRoles]);
 
     const createSubscription = useCallback(async (): Promise<{
         data: NotificationSubscriptionQuery[] | null;
@@ -58,13 +58,6 @@ function useInitializeTaskNotification(catalogName: string) {
             };
         }
 
-        // const prefix =
-        //     objectRoles.length === 1
-        //         ? objectRoles[0]
-        //         : objectRoles
-        //               .filter((role) => catalogName.startsWith(role))
-        //               .sort((a, b) => b.length - a.length)[0];
-
         const { data: existingPreference, error: existingPreferenceError } =
             await getNotificationSubscriptionByPrefix(prefix, user.id);
 
@@ -76,7 +69,7 @@ function useInitializeTaskNotification(catalogName: string) {
         }
 
         return { data: existingPreference };
-    }, [catalogName, prefix, user?.id]);
+    }, [prefix, user?.id]);
 
     const getNotificationSubscription = useCallback(
         async (

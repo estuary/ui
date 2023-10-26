@@ -1063,6 +1063,8 @@ const Details: ResolvedIntlConfig['messages'] = {
     'details.settings.notifications.header': `Notification Settings`,
     'details.settings.notifications.alert.userNotSubscribed.message': `You are not subscribed to notifications for this tenant. If you would like to receive notifications for this task, {button} to subscribe.`,
     'details.settings.notifications.alert.userNotSubscribed.message.button': `click here`,
+    'details.settings.notifications.alert.createSubscriptionFailed.message': `A issue was encountered subscribing you to notifications for this tenant. Please try again. If the issue persists, contact support.`,
+    'details.settings.notifications.alert.updateSettingsFailed.message': `A issue was encountered updating a notification setting for this task. Please try again. If the issue persists, contact support.`,
     'details.settings.notifications.dataProcessing.header': `Data Processing`,
     'details.settings.notifications.dataProcessing.noDataProcessedInInterval.message': `Data has not been processed in a given window of time.`,
     'details.settings.notifications.dataProcessing.noDataProcessedInInterval.label': `Interval`,

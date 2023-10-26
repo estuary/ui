@@ -5,6 +5,7 @@ import {
     Stack,
     TextField,
     Typography,
+    useTheme,
 } from '@mui/material';
 import {
     DataProcessingNotificationQuery,
@@ -13,16 +14,26 @@ import {
     updateDataProcessingNotificationInterval,
 } from 'api/alerts';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
+import { ErrorDetails } from 'components/shared/Error/types';
 import { defaultOutline } from 'context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useInitializeTaskNotification from 'hooks/useInitializeTaskNotification';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+    Dispatch,
+    SetStateAction,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {
+    errored: boolean;
     loading: boolean;
+    setUpdateSettingsError: Dispatch<SetStateAction<ErrorDetails>>;
     hideBorder?: boolean;
 }
 
@@ -30,8 +41,19 @@ const intervalOptionId = {
     id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.intervalOptions',
 };
 
-function DataProcessingSetting({ loading, hideBorder }: Props) {
+const defaultUpdateSettingsError = {
+    message:
+        'details.settings.notifications.alert.updateSettingsFailed.message',
+};
+
+function DataProcessingSetting({
+    errored,
+    loading,
+    setUpdateSettingsError,
+    hideBorder,
+}: Props) {
     const intl = useIntl();
+    const theme = useTheme();
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
@@ -40,6 +62,8 @@ function DataProcessingSetting({ loading, hideBorder }: Props) {
     const [notification, setNotification] = useState<
         DataProcessingNotificationQuery | null | undefined
     >(undefined);
+
+    // const [errorSeverity, setErrorSeverity] = useState<AlertColor | null>(null);
 
     const options = useMemo(
         () => ({
@@ -64,14 +88,17 @@ function DataProcessingSetting({ loading, hideBorder }: Props) {
                         notification.live_spec_id
                     ).then(
                         (response) => {
-                            console.log('deleted notification');
-
                             if (response.data && response.data.length > 0) {
                                 setNotification(null);
+                                setUpdateSettingsError(null);
+                            } else {
+                                setUpdateSettingsError(
+                                    response.error ?? defaultUpdateSettingsError
+                                );
                             }
                         },
-                        () => {
-                            console.log('failed to delete notification');
+                        (error) => {
+                            setUpdateSettingsError(error);
                         }
                     );
                 } else {
@@ -80,33 +107,45 @@ function DataProcessingSetting({ loading, hideBorder }: Props) {
                         value
                     ).then(
                         (response) => {
-                            console.log('updated notification');
-
                             if (response.data && response.data.length > 0) {
                                 setNotification(response.data[0]);
+                                setUpdateSettingsError(null);
+                            } else {
+                                setUpdateSettingsError(
+                                    response.error ?? defaultUpdateSettingsError
+                                );
                             }
                         },
-                        () => {
-                            console.log('failed to update notification');
+                        (error) => {
+                            setUpdateSettingsError(error);
                         }
                     );
                 }
             } else if (liveSpecId) {
                 createDataProcessingNotification(liveSpecId, value).then(
                     (response) => {
-                        console.log('created notification', response);
-
                         if (response.data && response.data.length > 0) {
                             setNotification(response.data[0]);
+                            setUpdateSettingsError(null);
+                        } else {
+                            setUpdateSettingsError(
+                                response.error ?? defaultUpdateSettingsError
+                            );
                         }
                     },
-                    () => {
-                        console.log('failed to create notification');
+                    (error) => {
+                        setUpdateSettingsError(error);
                     }
                 );
             }
         },
-        [liveSpecId, notification, setNotification]
+        [
+            liveSpecId,
+            notification,
+            options.none,
+            setNotification,
+            setUpdateSettingsError,
+        ]
     );
 
     const { getNotificationSubscription } =
@@ -119,14 +158,21 @@ function DataProcessingSetting({ loading, hideBorder }: Props) {
                     console.log('init switch success', response);
 
                     setNotification(response.data);
+                    // setErrorSeverity(null);
                 },
                 () => {
                     console.log('init switch error');
+                    // setErrorSeverity('error');
                     setNotification(null);
                 }
             );
         }
-    }, [liveSpecId, notification, setNotification]);
+    }, [
+        liveSpecId,
+        notification,
+        getNotificationSubscription,
+        setNotification,
+    ]);
 
     return (
         <Stack
@@ -138,7 +184,7 @@ function DataProcessingSetting({ loading, hideBorder }: Props) {
                 justifyContent: 'space-between',
                 borderBottom: hideBorder
                     ? 'none'
-                    : (theme) => defaultOutline[theme.palette.mode],
+                    : defaultOutline[theme.palette.mode],
             }}
         >
             {loading || notification === undefined ? (
@@ -187,6 +233,7 @@ function DataProcessingSetting({ loading, hideBorder }: Props) {
                                 label={intl.formatMessage({
                                     id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.label',
                                 })}
+                                error={errored}
                                 size="small"
                                 variant="outlined"
                             />
