@@ -1,4 +1,5 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
+import { getLiveSpecIdByPublication } from 'api/publicationSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import { useBindingsEditorStore_resetState } from 'components/editor/Bindings/Store/hooks';
 import {
@@ -112,24 +113,30 @@ function useEntityWorkflowHelpers() {
         [setFormState, supabaseClient]
     );
 
-    const exit = useCallback(() => {
-        resetState();
+    const exit = useCallback(
+        (customRoute?: string) => {
+            resetState();
 
-        let route: string;
+            let route: string;
+            if (!customRoute) {
+                switch (entityType) {
+                    case 'capture':
+                        route = authenticatedRoutes.captures.fullPath;
+                        break;
+                    case 'materialization':
+                        route = authenticatedRoutes.materializations.fullPath;
+                        break;
+                    default:
+                        route = authenticatedRoutes.collections.fullPath;
+                }
+            } else {
+                route = customRoute;
+            }
 
-        switch (entityType) {
-            case 'capture':
-                route = authenticatedRoutes.captures.fullPath;
-                break;
-            case 'materialization':
-                route = authenticatedRoutes.materializations.fullPath;
-                break;
-            default:
-                route = authenticatedRoutes.collections.fullPath;
-        }
-
-        navigate(route, { replace: true });
-    }, [navigate, resetState, entityType]);
+            navigate(route, { replace: true });
+        },
+        [navigate, resetState, entityType]
+    );
 
     // Form Event Handlers
     const closeLogs = useCallback(() => {
@@ -142,20 +149,29 @@ function useEntityWorkflowHelpers() {
         }
     }, [exit, setFormState, exitWhenLogsClose]);
 
-    const materializeCollections = useCallback(() => {
-        exit();
-
-        navigate(
-            pubId
-                ? getPathWithParams(
-                      authenticatedRoutes.materializations.create.fullPath,
-                      {
-                          [GlobalSearchParams.PREFILL_PUB_ID]: pubId,
-                      }
-                  )
-                : authenticatedRoutes.materializations.create.fullPath
+    const materializeCollections = useCallback(async () => {
+        // Go fetch the live spec that we want to materialize
+        const liveSpecResponse = await getLiveSpecIdByPublication(
+            pubId,
+            entityType
         );
-    }, [exit, navigate, pubId]);
+
+        const liveSpecId = liveSpecResponse.data?.[0]?.live_spec_id;
+
+        if (!liveSpecId) {
+            // TODO need to show an error here
+            console.error('uh oh');
+        } else {
+            exit(
+                getPathWithParams(
+                    authenticatedRoutes.materializations.create.fullPath,
+                    {
+                        [GlobalSearchParams.PREFILL_LIVE_SPEC_ID]: liveSpecId,
+                    }
+                )
+            );
+        }
+    }, [entityType, exit, pubId]);
 
     return { callFailed, closeLogs, exit, materializeCollections, resetState };
 }
