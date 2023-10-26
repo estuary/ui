@@ -41,6 +41,7 @@ const useShardsList = <T extends LiveSpecsExtBareMinimum>(specs: T[]) => {
         .forEach((name) => taskSelector.task(name));
 
     const fetcher = async (_url: string) => {
+        // We check this in the swrKey memo so this should never actually happen
         if (!(shardClient && session)) {
             return { shards: [] };
         }
@@ -70,12 +71,12 @@ const useShardsList = <T extends LiveSpecsExtBareMinimum>(specs: T[]) => {
 
     const swrKey = useMemo(
         () =>
-            specs.length > 0
+            shardClient && session && specs.length > 0
                 ? `shards-${
                       gatewayConfig?.gateway_url ?? '__missing_gateway_url__'
                   }-${specs.map((spec) => spec.id).join('-')}`
                 : null,
-        [gatewayConfig?.gateway_url, specs]
+        [gatewayConfig?.gateway_url, session, shardClient, specs]
     );
 
     return useSWR(swrKey, fetcher, {

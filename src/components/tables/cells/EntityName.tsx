@@ -6,13 +6,15 @@ import {
     useTheme,
 } from '@mui/material';
 import EntityStatus from 'components/tables/cells/EntityStatus';
+import { ShardEntityTypes } from 'stores/ShardDetail/types';
 
 interface Props {
     name: string;
     showEntityStatus: boolean;
+    entityStatusTypes: ShardEntityTypes[];
 }
 
-function EntityName({ name, showEntityStatus }: Props) {
+function EntityName({ name, showEntityStatus, entityStatusTypes }: Props) {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -29,7 +31,9 @@ function EntityName({ name, showEntityStatus }: Props) {
                     alignItems: 'center',
                 }}
             >
-                {showEntityStatus ? <EntityStatus name={name} /> : null}
+                {showEntityStatus ? (
+                    <EntityStatus name={name} taskTypes={entityStatusTypes} />
+                ) : null}
 
                 <Typography
                     sx={

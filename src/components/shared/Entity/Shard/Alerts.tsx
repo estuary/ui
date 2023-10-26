@@ -10,30 +10,36 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { Shard } from 'data-plane-gateway/types/shard_client';
 import { NavArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import { useShardDetail_getShardDetails } from 'stores/ShardDetail/hooks';
-import { ShardDetails } from 'stores/ShardDetail/types';
+import { useShardDetail_readDictionary } from 'stores/ShardDetail/hooks';
+import { ShardEntityTypes } from 'stores/ShardDetail/types';
 import { unescapeString } from 'utils/misc-utils';
 
 interface Props {
-    shards: Shard[];
+    showWarnings?: boolean;
+    taskTypes: ShardEntityTypes[];
+    taskName: string;
 }
 
 const NEW_LINE = '\r\n';
 
-function ShardErrors({ shards }: Props) {
+function ShardAlerts({ showWarnings, taskName, taskTypes }: Props) {
     const theme = useTheme();
+    const dictionaryVals = useShardDetail_readDictionary(taskName, taskTypes);
 
-    const getShardDetails = useShardDetail_getShardDetails();
+    if (!showWarnings && !dictionaryVals.shardsHaveErrors) {
+        return null;
+    }
 
-    return getShardDetails(shards).filter(
-        ({ errors }: ShardDetails) => !!errors
-    ).length > 0 ? (
+    if (showWarnings && !dictionaryVals.shardsHaveWarnings) {
+        return null;
+    }
+
+    return (
         <Grid item xs={12}>
             <Alert
-                severity="error"
+                severity={showWarnings ? 'warning' : 'error'}
                 sx={{
                     'mb': 1,
                     '& .MuiAlert-message': {
@@ -43,15 +49,26 @@ function ShardErrors({ shards }: Props) {
             >
                 <AlertTitle>
                     <Typography>
-                        <FormattedMessage id="detailsPanel.shardDetails.errorTitle" />
+                        <FormattedMessage
+                            id={
+                                showWarnings
+                                    ? 'detailsPanel.shardDetails.warningTitle'
+                                    : 'detailsPanel.shardDetails.errorTitle'
+                            }
+                        />
                     </Typography>
                 </AlertTitle>
 
-                {getShardDetails(shards).map(
-                    (shardDetails: ShardDetails) =>
-                        shardDetails.id &&
-                        shardDetails.errors && (
-                            <Accordion key={shardDetails.id} defaultExpanded>
+                {dictionaryVals.allShards.map((shardDetails) => {
+                    const listToUse =
+                        shardDetails[showWarnings ? 'warnings' : 'errors'];
+                    const listLength = listToUse?.length ?? 0;
+                    if (shardDetails.id && listToUse && listLength > 0) {
+                        return (
+                            <Accordion
+                                key={shardDetails.id}
+                                defaultExpanded // maybe check this to keep page smaller?{listLength === 1}
+                            >
                                 <AccordionSummary
                                     expandIcon={
                                         <NavArrowDown
@@ -83,7 +100,7 @@ function ShardErrors({ shards }: Props) {
                                                 },
                                             }}
                                             value={unescapeString(
-                                                shardDetails.errors
+                                                listToUse
                                                     .join(NEW_LINE)
                                                     .split(/\\n/)
                                                     .join(NEW_LINE)
@@ -92,11 +109,14 @@ function ShardErrors({ shards }: Props) {
                                     </Box>
                                 </AccordionDetails>
                             </Accordion>
-                        )
-                )}
+                        );
+                    }
+
+                    return null;
+                })}
             </Alert>
         </Grid>
-    ) : null;
+    );
 }
 
-export default ShardErrors;
+export default ShardAlerts;
