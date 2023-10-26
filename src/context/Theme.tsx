@@ -339,6 +339,11 @@ export const detailsPanelBgColor = {
     dark: sample_grey[900],
 };
 
+export const shardStatusDefaultColor = {
+    light: '#C4D3E9',
+    dark: '#E1E9F4',
+};
+
 export const truncateTextSx: SxProps<Theme> = {
     whiteSpace: 'nowrap',
     overflow: 'hidden',

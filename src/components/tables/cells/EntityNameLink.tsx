@@ -2,14 +2,21 @@ import { Box, Stack, TableCell, Tooltip } from '@mui/material';
 import LinkWrapper from 'components/shared/LinkWrapper';
 import EntityStatus from 'components/tables/cells/EntityStatus';
 import { useIntl } from 'react-intl';
+import { ShardEntityTypes } from 'stores/ShardDetail/types';
 
 interface Props {
     name: string;
     showEntityStatus: boolean;
+    entityStatusTypes: ShardEntityTypes[];
     detailsLink: string;
 }
 
-function EntityNameLink({ name, detailsLink, showEntityStatus }: Props) {
+function EntityNameLink({
+    name,
+    detailsLink,
+    entityStatusTypes,
+    showEntityStatus,
+}: Props) {
     const intl = useIntl();
 
     return (
@@ -25,7 +32,9 @@ function EntityNameLink({ name, detailsLink, showEntityStatus }: Props) {
                     alignItems: 'center',
                 }}
             >
-                {showEntityStatus ? <EntityStatus name={name} /> : null}
+                {showEntityStatus ? (
+                    <EntityStatus name={name} taskTypes={entityStatusTypes} />
+                ) : null}
 
                 <Tooltip
                     title={intl.formatMessage({

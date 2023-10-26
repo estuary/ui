@@ -771,6 +771,7 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.shardDetails.status.label': `Status`,
     'detailsPanel.shardDetails.id.label': `ID`,
     'detailsPanel.shardDetails.errorTitle': `Shard Replica Processing Errors`,
+    'detailsPanel.shardDetails.warningTitle': `Shard Replica Processing Warnings`,
     'detailsPanel.shardDetails.noStatusFound': `No shard status to report`,
     'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
     'detailsPanel.dataPreview.header': `Data Preview`,
@@ -968,6 +969,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
 const ShardStatus: ResolvedIntlConfig['messages'] = {
     'shardStatus.primary': `PRIMARY`,
     'shardStatus.failed': `FAILED`,
+    'shardStatus.schema': `SCHEMA UPDATING`,
     'shardStatus.idle': `PENDING`,
     'shardStatus.standby': `PENDING`,
     'shardStatus.backfill': `PENDING`,

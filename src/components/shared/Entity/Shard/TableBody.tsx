@@ -1,20 +1,34 @@
 import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import TableLoadingRows from 'components/tables/Loading';
 import { semiTransparentBackgroundIntensified } from 'context/Theme';
-import { Shard } from 'data-plane-gateway/types/shard_client';
 import { FormattedMessage } from 'react-intl';
+import {
+    useShardDetail_dictionaryHydrated,
+    useShardDetail_readDictionary,
+} from 'stores/ShardDetail/hooks';
+import { ShardEntityTypes } from 'stores/ShardDetail/types';
 import { TableColumns } from 'types';
 import StatusIndicatorAndLabel from './StatusIndicatorAndLabel';
 
 interface Props {
-    shards: Shard[] | null;
     page: number;
     rowsPerPage: number;
     columns: TableColumns[];
+    taskTypes: ShardEntityTypes[];
+    taskName: string;
 }
 
-function InformationTableBody({ columns, page, rowsPerPage, shards }: Props) {
-    if (shards === null) {
+function InformationTableBody({
+    columns,
+    page,
+    rowsPerPage,
+    taskTypes,
+    taskName,
+}: Props) {
+    const dictionaryHydrated = useShardDetail_dictionaryHydrated();
+    const dictionaryVals = useShardDetail_readDictionary(taskName, taskTypes);
+
+    if (!dictionaryHydrated) {
         return (
             <TableBody>
                 <TableLoadingRows columns={columns} singleRow />
@@ -22,7 +36,7 @@ function InformationTableBody({ columns, page, rowsPerPage, shards }: Props) {
         );
     }
 
-    if (shards.length === 0) {
+    if (dictionaryVals.allShards.length === 0) {
         return (
             <TableBody>
                 <TableRow
@@ -51,11 +65,11 @@ function InformationTableBody({ columns, page, rowsPerPage, shards }: Props) {
 
     return (
         <TableBody>
-            {shards
+            {dictionaryVals.allShards
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((shard) => (
                     <TableRow
-                        key={shard.spec.id}
+                        key={shard.id}
                         sx={{
                             bgcolor: (theme) =>
                                 semiTransparentBackgroundIntensified[
@@ -66,7 +80,7 @@ function InformationTableBody({ columns, page, rowsPerPage, shards }: Props) {
                         <StatusIndicatorAndLabel shard={shard} />
 
                         <TableCell>
-                            <Typography>{shard.spec.id}</Typography>
+                            <Typography>{shard.id}</Typography>
                         </TableCell>
                     </TableRow>
                 ))}

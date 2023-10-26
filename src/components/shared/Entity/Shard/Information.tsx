@@ -1,39 +1,21 @@
-import {
-    Grid,
-    Stack,
-    SxProps,
-    Table,
-    TableCell,
-    TableContainer,
-    TableFooter,
-    TableHead,
-    TablePagination,
-    TableRow,
-    Theme,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { Grid, Stack, Table, TableContainer } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import MessageWithLink from 'components/content/MessageWithLink';
-import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
-import { semiTransparentBackground } from 'context/Theme';
-import { Shard } from 'data-plane-gateway/types/shard_client';
-import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
-import { MouseEvent, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import {
-    useShardDetail_error,
-    useShardDetail_getTaskShards,
-    useShardDetail_shards,
-} from 'stores/ShardDetail/hooks';
-import { Entity, TableColumns } from 'types';
-import ShardErrors from './Errors';
+import { useShardDetail_error } from 'stores/ShardDetail/hooks';
+import { ShardEntityTypes } from 'stores/ShardDetail/types';
+import { TableColumns } from 'types';
+import ShardAlerts from './Alerts';
 import InformationTableBody from './TableBody';
+import InformationTableFooter from './TableFooter';
+import InformationTableHeader from './TableHeader';
 
 interface Props {
-    entityType?: Entity;
+    taskTypes: ShardEntityTypes[];
+    taskName: string;
 }
 
 const rowsPerPage = 3;
@@ -49,41 +31,12 @@ const columns: TableColumns[] = [
     },
 ];
 
-function ShardInformation({ entityType }: Props) {
-    const theme = useTheme();
+function ShardInformation({ taskName, taskTypes }: Props) {
     const intl = useIntl();
 
     const [page, setPage] = useState(0);
-    const [taskShards, setTaskShards] = useState<Shard[] | null>(null);
 
-    const shards = useShardDetail_shards();
     const error = useShardDetail_error();
-    const getTaskShards = useShardDetail_getTaskShards();
-
-    const specs = useEditorStore_specs<LiveSpecsQuery_spec>({
-        localScope: true,
-    });
-
-    useEffect(() => {
-        if (specs && specs.length > 0) {
-            setTaskShards(
-                getTaskShards(
-                    specs.find(({ spec_type }) => spec_type === entityType)
-                        ?.catalog_name,
-                    shards
-                )
-            );
-        }
-    }, [setTaskShards, getTaskShards, entityType, specs, shards]);
-
-    const changePage = (
-        _event: MouseEvent<HTMLButtonElement> | null,
-        newPage: number
-    ) => setPage(newPage);
-
-    const tableHeaderFooterSx: SxProps<Theme> = {
-        bgcolor: semiTransparentBackground[theme.palette.mode],
-    };
 
     return (
         <CardWrapper
@@ -112,53 +65,36 @@ function ShardInformation({ entityType }: Props) {
                 </AlertBox>
             ) : (
                 <>
-                    <ShardErrors shards={taskShards} />
+                    <ShardAlerts taskName={taskName} taskTypes={taskTypes} />
+
+                    <ShardAlerts
+                        showWarnings
+                        taskName={taskName}
+                        taskTypes={taskTypes}
+                    />
 
                     <Grid item xs={12}>
                         <TableContainer>
                             <Table size="small">
-                                <TableHead>
-                                    <TableRow sx={{ ...tableHeaderFooterSx }}>
-                                        {columns.map((column, index) => (
-                                            <TableCell
-                                                key={`${column.field}-${index}`}
-                                            >
-                                                <Typography>
-                                                    {column.headerIntlKey ? (
-                                                        <FormattedMessage
-                                                            id={
-                                                                column.headerIntlKey
-                                                            }
-                                                        />
-                                                    ) : null}
-                                                </Typography>
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-                                </TableHead>
+                                <InformationTableHeader columns={columns} />
 
                                 <InformationTableBody
-                                    shards={taskShards}
+                                    taskTypes={taskTypes}
+                                    columns={columns}
                                     page={page}
                                     rowsPerPage={rowsPerPage}
-                                    columns={columns}
+                                    taskName={taskName}
                                 />
 
-                                <TableFooter>
-                                    <TableRow sx={{ ...tableHeaderFooterSx }}>
-                                        {taskShards && taskShards.length > 0 ? (
-                                            <TablePagination
-                                                count={taskShards.length}
-                                                rowsPerPageOptions={[
-                                                    rowsPerPage,
-                                                ]}
-                                                rowsPerPage={rowsPerPage}
-                                                page={page}
-                                                onPageChange={changePage}
-                                            />
-                                        ) : null}
-                                    </TableRow>
-                                </TableFooter>
+                                <InformationTableFooter
+                                    changePage={(_event, newPage) => {
+                                        setPage(newPage);
+                                    }}
+                                    page={page}
+                                    rowsPerPage={rowsPerPage}
+                                    taskName={taskName}
+                                    taskTypes={taskTypes}
+                                />
                             </Table>
                         </TableContainer>
                     </Grid>

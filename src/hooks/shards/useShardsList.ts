@@ -36,6 +36,7 @@ const useShardsList = (catalogNames: string[]) => {
     catalogNames.forEach((name) => taskSelector.task(name));
 
     const fetcher = async (_url: string) => {
+        // We check this in the swrKey memo so this should never actually happen
         if (!(shardClient && session)) {
             return { shards: [] };
         }
@@ -65,12 +66,12 @@ const useShardsList = (catalogNames: string[]) => {
 
     const swrKey = useMemo(
         () =>
-            catalogNames.length > 0
+            shardClient && session && catalogNames.length > 0
                 ? `shards-${
                       gatewayConfig?.gateway_url ?? '__missing_gateway_url__'
                   }-${catalogNames.join('-')}`
                 : null,
-        [gatewayConfig?.gateway_url, catalogNames]
+        [shardClient, session, catalogNames, gatewayConfig?.gateway_url]
     );
 
     return useSWR(swrKey, fetcher, {
