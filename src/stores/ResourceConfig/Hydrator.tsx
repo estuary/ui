@@ -1,10 +1,12 @@
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
+import invariableStores from 'context/Zustand/invariableStores';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
 import { BaseComponentProps } from 'types';
+import { useStore } from 'zustand';
 import {
     useResourceConfig_hydrated,
     useResourceConfig_hydrateState,
@@ -26,13 +28,22 @@ export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
     const setHydrated = useResourceConfig_setHydrated();
     const setActive = useResourceConfig_setActive();
     const setHydrationErrorsExist = useResourceConfig_setHydrationErrorsExist();
-
     const hydrateState = useResourceConfig_hydrateState();
+
+    const setSourceCapture = useStore(
+        invariableStores['source-capture'],
+        (state) => {
+            return state.setSourceCapture;
+        }
+    );
 
     const hydrateTheState = (rehydrating: boolean) => {
         setActive(true);
         hydrateState(editWorkflow, entityType, rehydrating).then(
-            () => {
+            (response) => {
+                if (response[0]?.catalog_name) {
+                    setSourceCapture(response[0].catalog_name);
+                }
                 setHydrated(true);
             },
             () => {

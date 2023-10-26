@@ -3,7 +3,6 @@ import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import {
     getLiveSpecsById_writesTo,
     getLiveSpecsByLiveSpecId,
-    getLiveSpecs_writesTo,
     getSchema_Resource,
 } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
@@ -632,9 +631,6 @@ const getInitialState = (
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
-        const prefillPubIds = searchParams.getAll(
-            GlobalSearchParams.PREFILL_PUB_ID
-        );
         const prefillLiveSpecIds = searchParams.getAll(
             GlobalSearchParams.PREFILL_LIVE_SPEC_ID
         );
@@ -690,20 +686,8 @@ const getInitialState = (
                 const { preFillEmptyCollections } = get();
                 preFillEmptyCollections(data, rehydrating);
             }
-        } else if (prefillPubIds.length > 0) {
-            // Prefills collections in the materialization create workflow when the Materialize CTA
-            // on the Captures page or the capture publication log dialog is clicked.
-            const { data, error } = await getLiveSpecs_writesTo(
-                prefillPubIds,
-                'capture'
-            );
 
-            if (error) {
-                setHydrationErrorsExist(true);
-            } else if (data && data.length > 0) {
-                const { preFillEmptyCollections } = get();
-                preFillEmptyCollections(data, rehydrating);
-            }
+            return Promise.resolve(data);
         } else if (materializationReydrating) {
             // If there is nothign to prefill but we are rehydrating we want to make sure
             //  we prefill any collections the user already selected but only for materializations
@@ -712,6 +696,8 @@ const getInitialState = (
             const { preFillEmptyCollections } = get();
             preFillEmptyCollections([], rehydrating);
         }
+
+        return Promise.resolve();
     },
 
     setServerUpdateRequired: (value) => {

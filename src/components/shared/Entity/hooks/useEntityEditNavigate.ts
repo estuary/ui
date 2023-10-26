@@ -15,7 +15,6 @@ interface BaseSearchParams {
 
 interface OptionalSearchParams {
     [GlobalSearchParams.PREFILL_LIVE_SPEC_ID]?: string | string[];
-    [GlobalSearchParams.PREFILL_PUB_ID]?: string | string[];
     [GlobalSearchParams.DRAFT_ID]?: string;
 }
 

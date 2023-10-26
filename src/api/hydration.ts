@@ -63,30 +63,12 @@ export const getLiveSpecsByLiveSpecId = async (
     return data;
 };
 
-export const getLiveSpecs_writesTo = async (
-    lastPubId: string | string[],
-    specType: Entity
-) => {
-    const draftArray: string[] =
-        typeof lastPubId === 'string' ? [lastPubId] : lastPubId;
-
-    const data = await supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
-        .select(`writes_to`)
-        .eq('spec_type', specType)
-        .or(`last_pub_id.in.(${draftArray})`)
-        .order('updated_at', { ascending: false })
-        .then(handleSuccess<LiveSpecsExt_MaterializeCapture>, handleFailure);
-
-    return data;
-};
-
 export const getLiveSpecsById_writesTo = async (
     liveSpecId: string | string[]
 ) => {
     const data = await supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
-        .select(`writes_to`)
+        .select(`catalog_name,writes_to`)
         .in('id', typeof liveSpecId === 'string' ? [liveSpecId] : liveSpecId)
         .then(handleSuccess<LiveSpecsExt_MaterializeCapture>, handleFailure);
 

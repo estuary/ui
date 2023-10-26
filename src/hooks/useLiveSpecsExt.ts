@@ -14,6 +14,7 @@ export interface LiveSpecsExtQuery {
 }
 
 export type LiveSpecsExt_MaterializeCapture = {
+    catalog_name: string;
     writes_to: LiveSpecsExtQuery['writes_to'];
 }[];
 
