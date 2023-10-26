@@ -80,3 +80,15 @@ export const getLiveSpecs_writesTo = async (
 
     return data;
 };
+
+export const getLiveSpecsById_writesTo = async (
+    liveSpecId: string | string[]
+) => {
+    const data = await supabaseClient
+        .from(TABLES.LIVE_SPECS_EXT)
+        .select(`writes_to`)
+        .in('id', typeof liveSpecId === 'string' ? [liveSpecId] : liveSpecId)
+        .then(handleSuccess<LiveSpecsExt_MaterializeCapture>, handleFailure);
+
+    return data;
+};
