@@ -1,6 +1,7 @@
 import { Button } from '@mui/material';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import AddDialog from 'components/shared/Entity/AddDialog';
+import { useEntityWorkflow_Editing } from 'context/Workflow';
 import invariableStores from 'context/Zustand/invariableStores';
 import { isString } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
@@ -13,10 +14,15 @@ const DIALOG_ID = 'add-source-capture-search-dialog';
 
 function SelectCapture() {
     const formActive = useFormStateStore_isActive();
+    const isEdit = useEntityWorkflow_Editing();
 
-    const [sourceCapture, setSourceCapture] = useStore(
+    const [sourceCapture, setSourceCapture, prefilledCapture] = useStore(
         invariableStores['source-capture'],
-        (state) => [state.sourceCapture, state.setSourceCapture]
+        (state) => [
+            state.sourceCapture,
+            state.setSourceCapture,
+            state.prefilledCapture,
+        ]
     );
 
     const [open, setOpen] = useState<boolean>(false);
@@ -32,21 +38,48 @@ function SelectCapture() {
         [draftSpecs]
     );
 
+    const prefilledExists = useMemo(
+        () => draftSpecs.length > 0 && isString(prefilledCapture),
+        [draftSpecs, prefilledCapture]
+    );
+
+    const showLoading = useMemo(
+        () => isEdit && draftSpecs.length === 0,
+        [draftSpecs, isEdit]
+    );
+
+    console.log('select source', { showLoading, draftSpecs });
+
     useEffect(() => {
+        // First see if there is a value and then use the prefill if it exists. That way a user does not
+        //  accidently override their existing setting without noticing
         if (settingsExist) {
             const sourceCaptureSetting = draftSpecs[0].spec.sourceCapture;
             if (sourceCapture !== sourceCaptureSetting) {
                 setSourceCapture(sourceCaptureSetting);
             }
+        } else if (prefilledExists) {
+            if (sourceCapture !== prefilledCapture) {
+                setSourceCapture(prefilledCapture);
+            }
         }
-    }, [draftSpecs, setSourceCapture, settingsExist, sourceCapture]);
+    }, [
+        draftSpecs,
+        prefilledCapture,
+        prefilledExists,
+        setSourceCapture,
+        settingsExist,
+        sourceCapture,
+    ]);
 
     return (
         <>
-            <Button disabled={formActive} onClick={toggleDialog}>
+            <Button disabled={showLoading || formActive} onClick={toggleDialog}>
                 <FormattedMessage
                     id={
-                        sourceCapture
+                        showLoading
+                            ? 'workflows.sourceCapture.cta.loading'
+                            : sourceCapture
                             ? 'workflows.sourceCapture.cta.edit'
                             : 'workflows.sourceCapture.cta'
                     }

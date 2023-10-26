@@ -9,6 +9,7 @@ const getInitialStateData = () => ({
     error: null,
     sourceCapture: null,
     saving: false,
+    prefilledCapture: null,
 });
 
 const getInitialState = (
@@ -24,6 +25,16 @@ const getInitialState = (
             }),
             false,
             'Source Capture Set'
+        );
+    },
+
+    setPrefilledCapture: (value: SourceCaptureState['sourceCapture']) => {
+        set(
+            produce((state: SourceCaptureState) => {
+                state.prefilledCapture = value;
+            }),
+            false,
+            'Source Prefilled Capture Set'
         );
     },
 

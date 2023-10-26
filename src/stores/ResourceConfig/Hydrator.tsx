@@ -30,10 +30,10 @@ export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
     const setHydrationErrorsExist = useResourceConfig_setHydrationErrorsExist();
     const hydrateState = useResourceConfig_hydrateState();
 
-    const setSourceCapture = useStore(
+    const setPrefilledCapture = useStore(
         invariableStores['source-capture'],
         (state) => {
-            return state.setSourceCapture;
+            return state.setPrefilledCapture;
         }
     );
 
@@ -41,9 +41,10 @@ export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
         setActive(true);
         hydrateState(editWorkflow, entityType, rehydrating).then(
             (response) => {
-                if (response[0]?.catalog_name) {
-                    setSourceCapture(response[0].catalog_name);
+                if (response && response.length === 1) {
+                    setPrefilledCapture(response[0].catalog_name);
                 }
+
                 setHydrated(true);
             },
             () => {

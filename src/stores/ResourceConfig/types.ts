@@ -69,7 +69,7 @@ export interface ResourceConfigState extends StoreWithHydration {
         editWorkflow: boolean,
         entityType: Entity,
         rehydrating?: boolean
-    ) => Promise<LiveSpecsExt_MaterializeCapture | void>;
+    ) => Promise<LiveSpecsExt_MaterializeCapture | null>;
 
     // Server-Form Alignment
     serverUpdateRequired: boolean;

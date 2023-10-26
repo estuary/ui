@@ -697,7 +697,7 @@ const getInitialState = (
             preFillEmptyCollections([], rehydrating);
         }
 
-        return Promise.resolve();
+        return Promise.resolve(null);
     },
 
     setServerUpdateRequired: (value) => {
