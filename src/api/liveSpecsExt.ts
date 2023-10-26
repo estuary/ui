@@ -357,7 +357,7 @@ export interface LiveSpecsExtQuery_ByLiveSpecId {
 const getLiveSpecsByLiveSpecId = async (liveSpecId: string) => {
     const data = await supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
-        .select('catalog_name,id,spec_type,last_pub_id,spec')
+        .select('catalog_name,id,spec_type,last_pub_id,spec,connector_id')
         .eq('id', liveSpecId)
         .then(handleSuccess<LiveSpecsExtQuery_ByLiveSpecId[]>, handleFailure);
 
