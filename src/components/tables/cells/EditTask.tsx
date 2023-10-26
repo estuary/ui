@@ -8,7 +8,12 @@ interface Props {
 
 function EditTask({ liveSpecId, name }: Props) {
     return (
-        <TableCell align="right">
+        <TableCell
+            sx={{
+                maxWidth: 'min-content',
+                textAlign: 'right',
+            }}
+        >
             <EditLink liveSpecId={liveSpecId} name={name} />
         </TableCell>
     );

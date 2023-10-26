@@ -8,7 +8,12 @@ interface Props {
 
 function MaterializeCollection({ liveSpecId, name }: Props) {
     return (
-        <TableCell align="right">
+        <TableCell
+            sx={{
+                maxWidth: 'min-content',
+                textAlign: 'right',
+            }}
+        >
             <MaterializeLink liveSpecId={liveSpecId} name={name} />
         </TableCell>
     );

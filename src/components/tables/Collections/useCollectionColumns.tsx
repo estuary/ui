@@ -20,6 +20,7 @@ const defaultColumns: ColumnProps[] = [
     {
         field: null,
         headerIntlKey: null,
+        collapseHeader: true,
     },
 ];
 
