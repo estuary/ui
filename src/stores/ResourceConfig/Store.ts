@@ -1,5 +1,7 @@
+/* eslint-disable complexity */
 import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import {
+    getLiveSpecsById_writesTo,
     getLiveSpecsByLiveSpecId,
     getLiveSpecs_writesTo,
     getSchema_Resource,
@@ -633,6 +635,9 @@ const getInitialState = (
         const prefillPubIds = searchParams.getAll(
             GlobalSearchParams.PREFILL_PUB_ID
         );
+        const prefillLiveSpecIds = searchParams.getAll(
+            GlobalSearchParams.PREFILL_LIVE_SPEC_ID
+        );
         const liveSpecIds = searchParams.getAll(
             GlobalSearchParams.LIVE_SPEC_ID
         );
@@ -670,7 +675,22 @@ const getInitialState = (
             }
         }
 
-        if (prefillPubIds.length > 0) {
+        if (prefillLiveSpecIds.length > 0) {
+            // Prefills collections in the materialization create workflow when the Materialize CTA
+            // on the Captures page or the capture publication log dialog is clicked.
+            const { data, error } = await getLiveSpecsById_writesTo(
+                prefillLiveSpecIds
+            );
+
+            console.log('data', data);
+
+            if (error) {
+                setHydrationErrorsExist(true);
+            } else if (data && data.length > 0) {
+                const { preFillEmptyCollections } = get();
+                preFillEmptyCollections(data, rehydrating);
+            }
+        } else if (prefillPubIds.length > 0) {
             // Prefills collections in the materialization create workflow when the Materialize CTA
             // on the Captures page or the capture publication log dialog is clicked.
             const { data, error } = await getLiveSpecs_writesTo(
