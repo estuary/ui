@@ -1242,9 +1242,9 @@ const NotBeforeNotAfter: ResolvedIntlConfig['messages'] = {
     'notBeforeNotAfter.message': `Include only data from before or after a specific time period.  This should only be used when first setting up your destination or it will not have an effect.`,
     'notBeforeNotAfter.update.error': `Changes to draft not saved.`,
     'notAfter.input.label': `Not After`,
-    'notAfter.input.description': `only include data from before this time`,
+    'notAfter.input.description': `only include data from before this time (UTC)`,
     'notBefore.input.label': `Not Before`,
-    'notBefore.input.description': `only include data from after this time`,
+    'notBefore.input.description': `only include data from after this time (UTC)`,
 };
 
 const FieldSelection: ResolvedIntlConfig['messages'] = {
