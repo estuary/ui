@@ -17,6 +17,7 @@ import RelatedCollectionsCell from '../cells/RelatedCollectionsCell';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
 import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
+import { selectKeyValueName } from './shared';
 
 interface RowsProps {
     data: CaptureQueryWithStats[];
@@ -49,7 +50,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     return (
         <TableRow
             hover
-            onClick={() => handlers.clickRow(row.id, row.last_pub_id)}
+            onClick={() => handlers.clickRow(row.id, row[selectKeyValueName])}
             selected={isSelected}
             sx={getEntityTableRowSx(theme)}
         >
