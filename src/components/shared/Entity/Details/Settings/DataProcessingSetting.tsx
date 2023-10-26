@@ -22,6 +22,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {
+    loading: boolean;
     hideBorder?: boolean;
 }
 
@@ -29,7 +30,7 @@ const intervalOptionId = {
     id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.intervalOptions',
 };
 
-function DataProcessingSetting({ hideBorder }: Props) {
+function DataProcessingSetting({ loading, hideBorder }: Props) {
     const intl = useIntl();
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
@@ -140,7 +141,7 @@ function DataProcessingSetting({ hideBorder }: Props) {
                     : (theme) => defaultOutline[theme.palette.mode],
             }}
         >
-            {notification === undefined ? (
+            {loading || notification === undefined ? (
                 <>
                     <Skeleton sx={{ flexGrow: 1 }} />
 

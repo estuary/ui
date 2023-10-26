@@ -18,20 +18,26 @@ function Settings() {
     const { createSubscription, getNotificationPreference } =
         useInitializeTaskNotification(catalogName);
 
-    const [subscriptionExists, setSubscriptionExists] = useState(false);
+    const [subscriptionExists, setSubscriptionExists] = useState<
+        boolean | null
+    >(null);
 
     useEffect(() => {
         getNotificationPreference().then(
             (response) => {
                 if (!response.data) {
                     // Failed to determine whether the user has subscribed to notifications for this prefix.
+                    setSubscriptionExists(false);
                 } else if (response.data.length === 0) {
                     // The user has not subscribed to notifications for this prefix.
+                    setSubscriptionExists(false);
                 } else {
                     setSubscriptionExists(true);
                 }
             },
             (error) => {
+                setSubscriptionExists(false);
+
                 console.log('settings init failed', error);
             }
         );
@@ -48,12 +54,31 @@ function Settings() {
                     <AlertBox short severity="info">
                         <MessageWithButton
                             messageId="details.settings.notifications.alert.userNotSubscribed.message"
-                            clickHandler={createSubscription}
+                            clickHandler={() => {
+                                createSubscription().then(
+                                    (response) => {
+                                        if (
+                                            response.data &&
+                                            response.data.length > 0
+                                        ) {
+                                            setSubscriptionExists(true);
+                                        } else {
+                                            setSubscriptionExists(false);
+                                        }
+                                    },
+                                    () => {
+                                        setSubscriptionExists(false);
+                                    }
+                                );
+                            }}
                         />
                     </AlertBox>
                 )}
 
-                <DataProcessingSetting hideBorder />
+                <DataProcessingSetting
+                    loading={subscriptionExists === null}
+                    hideBorder
+                />
             </Stack>
         </Stack>
     );

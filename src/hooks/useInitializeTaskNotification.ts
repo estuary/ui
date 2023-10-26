@@ -29,7 +29,10 @@ function useInitializeTaskNotification(catalogName: string) {
                   .sort((a, b) => b.length - a.length)[0];
     }, [objectRoles]);
 
-    const createSubscription = useCallback(() => {
+    const createSubscription = useCallback(async (): Promise<{
+        data: NotificationSubscriptionQuery[] | null;
+        error?: PostgrestError;
+    }> => {
         if (!user?.id || !prefix) {
             // Error if the system cannot determine the user ID or object roles cannot be found for the user.
             return {
@@ -38,7 +41,9 @@ function useInitializeTaskNotification(catalogName: string) {
             };
         }
 
-        return createNotificationSubscription(prefix, user.id);
+        const response = await createNotificationSubscription(prefix, user.id);
+
+        return response;
     }, [prefix, user?.id]);
 
     const getNotificationPreference = useCallback(async (): Promise<{
