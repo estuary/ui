@@ -3,7 +3,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
-import EditLink from '../Shard/EditLink';
+import EditLink from '../EditLink';
 
 function EditButton() {
     const spec = useEditorStore_specs<LiveSpecsQuery_spec>({

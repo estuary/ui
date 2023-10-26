@@ -1,5 +1,5 @@
 import { TableCell } from '@mui/material';
-import EditLink from 'components/shared/Entity/Shard/EditLink';
+import EditLink from 'components/shared/Entity/EditLink';
 
 interface Props {
     liveSpecId: string;

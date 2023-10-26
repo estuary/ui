@@ -17,7 +17,7 @@ import RelatedCollectionsCell from '../cells/RelatedCollectionsCell';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
 import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
-import { selectKeyValueName } from './shared';
+import { selectKeyValueName } from '../shared';
 
 interface RowsProps {
     data: CaptureQueryWithStats[];

@@ -413,6 +413,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.rowSelector.none': `None`,
 
     'entityTable.edit.aria': `Edit specification of {name}`,
+    'entityTable.materialize.aria': `Materialize {name}`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
