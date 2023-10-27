@@ -80,6 +80,7 @@ const getEverythingForDictionary = (
     const response: TaskShardDetails = {
         id: spec.id,
         color: defaultStatusColor,
+        disabled: spec.disable,
         messageId: ShardStatusMessageIds.NONE,
         errors: [],
         warnings: [],
