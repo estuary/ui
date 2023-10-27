@@ -12,6 +12,7 @@ import {
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import useEntityWorkflowHydrated from '../hooks/useEntityWorkflowHydrated';
 
 interface Props {
     disabled: boolean;
@@ -20,16 +21,15 @@ interface Props {
 
 function EntityTestButton({ disabled, logEvent }: Props) {
     const { callFailed, closeLogs } = useEntityWorkflowHelpers();
+    const formsHydrated = useEntityWorkflowHydrated();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
-
     const showLogs = useFormStateStore_showLogs();
     const logToken = useFormStateStore_logToken();
-
     const formStatus = useFormStateStore_status();
 
     return (
@@ -56,7 +56,7 @@ function EntityTestButton({ disabled, logEvent }: Props) {
             />
             <EntityCreateSave
                 dryRun
-                disabled={disabled || !draftId}
+                disabled={Boolean(disabled || !draftId) || !formsHydrated}
                 onFailure={callFailed}
                 logEvent={logEvent}
             />
