@@ -687,18 +687,17 @@ const getInitialState = (
             if (error) {
                 setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
-                const { preFillEmptyCollections } = get();
-                preFillEmptyCollections(data, rehydrating);
-            }
+                get().preFillEmptyCollections(data, rehydrating);
 
-            return Promise.resolve(data);
+                return Promise.resolve(data);
+            }
         } else if (materializationReydrating) {
             // If there is nothign to prefill but we are rehydrating we want to make sure
             //  we prefill any collections the user already selected but only for materializations
             //  because for a Capture the collections are discovered and if the hydration is kicked
             //  off then they will need to rediscover everything again
-            const { preFillEmptyCollections } = get();
-            preFillEmptyCollections([], rehydrating);
+            get().preFillEmptyCollections([], rehydrating);
+            return Promise.resolve([]);
         }
 
         return Promise.resolve(null);
