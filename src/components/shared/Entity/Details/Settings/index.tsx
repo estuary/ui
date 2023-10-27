@@ -17,7 +17,7 @@ function Settings() {
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
-    const { createSubscription, getNotificationPreference } =
+    const { createSubscription, getNotificationSubscription } =
         useInitializeTaskNotification(catalogName);
 
     const [subscriptionExists, setSubscriptionExists] = useState<
@@ -30,7 +30,7 @@ function Settings() {
         useState<ErrorDetails>(null);
 
     useEffect(() => {
-        getNotificationPreference().then(
+        getNotificationSubscription().then(
             (response) => {
                 if (!response.data) {
                     // Failed to determine whether the user has subscribed to notifications for this prefix.
@@ -48,7 +48,7 @@ function Settings() {
                 console.log('settings init failed', error);
             }
         );
-    }, [getNotificationPreference, setSubscriptionExists]);
+    }, [getNotificationSubscription, setSubscriptionExists]);
 
     return (
         <Stack sx={{ mx: 2 }}>

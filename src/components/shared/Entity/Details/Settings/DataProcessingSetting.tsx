@@ -148,12 +148,11 @@ function DataProcessingSetting({
         ]
     );
 
-    const { getNotificationSubscription } =
-        useInitializeTaskNotification(catalogName);
+    const { getNotifications } = useInitializeTaskNotification(catalogName);
 
     useEffect(() => {
         if (liveSpecId && notification === undefined) {
-            getNotificationSubscription(liveSpecId).then(
+            getNotifications(liveSpecId).then(
                 (response) => {
                     console.log('init switch success', response);
 
@@ -167,12 +166,7 @@ function DataProcessingSetting({
                 }
             );
         }
-    }, [
-        liveSpecId,
-        notification,
-        getNotificationSubscription,
-        setNotification,
-    ]);
+    }, [liveSpecId, notification, getNotifications, setNotification]);
 
     return (
         <Stack

@@ -9,14 +9,14 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
-import { PrefixPreference } from 'utils/notification-utils';
+import { PrefixSubscription } from 'utils/notification-utils';
 
 interface RowsProps {
-    data: [string, PrefixPreference][];
+    data: [string, PrefixSubscription][];
 }
 
 interface RowProps {
-    row: [string, PrefixPreference];
+    row: [string, PrefixSubscription];
     isSelected: boolean;
     setRow: any;
 }
@@ -45,7 +45,7 @@ function Row({ row, isSelected, setRow }: RowProps) {
             <TableCell>{prefix}</TableCell>
 
             <ChipListCell
-                values={data.userPreferences.map(({ email }) => email)}
+                values={data.userSubscriptions.map(({ email }) => email)}
                 stripPath={false}
             />
 

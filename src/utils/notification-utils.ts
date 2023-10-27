@@ -11,36 +11,36 @@ export const snackbarSettings: OptionsObject = {
     variant: 'info',
 };
 
-export interface UserPreference {
-    preferenceId: string;
+export interface UserSubscription {
+    subscriptionId: string;
     userId: string | null;
     email: string;
 }
 
-export interface PrefixPreference {
-    userPreferences: UserPreference[];
+export interface PrefixSubscription {
+    userSubscriptions: UserSubscription[];
     lastUpdated: string;
 }
 
-export interface PrefixPreferenceDictionary {
-    [prefix: string]: PrefixPreference;
+export interface PrefixSubscriptionDictionary {
+    [prefix: string]: PrefixSubscription;
 }
 
-interface CondensedPreference {
+interface SubscriptionMetadata {
     id: string;
     userId: string | null;
     email: string;
     lastUpdated: Date;
 }
 
-interface CondensedPreferenceDictionary {
-    [prefix: string]: CondensedPreference[];
+interface SubscriptionDictionary {
+    [prefix: string]: SubscriptionMetadata[];
 }
 
-export const condenseNotificationPreferences = (
+export const formatNotificationSubscriptionsByPrefix = (
     data: NotificationSubscriptionExt[]
 ) => {
-    const processedQuery: CondensedPreferenceDictionary = {};
+    const processedQuery: SubscriptionDictionary = {};
 
     data.forEach((query) => {
         if (Object.hasOwn(processedQuery, query.catalog_prefix)) {
@@ -62,7 +62,7 @@ export const condenseNotificationPreferences = (
         }
     });
 
-    const preferences: { [prefix: string]: PrefixPreference } = {};
+    const subscriptions: { [prefix: string]: PrefixSubscription } = {};
 
     if (!isEmpty(processedQuery)) {
         Object.entries(processedQuery).forEach(([prefix, configs]) => {
@@ -74,9 +74,9 @@ export const condenseNotificationPreferences = (
                 Math.max(...updateTimestamps)
             ).toUTCString();
 
-            preferences[prefix] = {
-                userPreferences: configs.map(({ id, userId, email }) => ({
-                    preferenceId: id,
+            subscriptions[prefix] = {
+                userSubscriptions: configs.map(({ id, userId, email }) => ({
+                    subscriptionId: id,
                     userId,
                     email,
                 })),
@@ -85,5 +85,5 @@ export const condenseNotificationPreferences = (
         });
     }
 
-    return preferences;
+    return subscriptions;
 };

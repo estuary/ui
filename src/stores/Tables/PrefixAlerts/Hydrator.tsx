@@ -1,6 +1,6 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { useZustandStore } from 'context/Zustand/provider';
-import useNotificationPreferences from 'hooks/notifications/useNotificationPreferences';
+import useNotificationSubscriptions from 'hooks/notifications/useNotificationSubscriptions';
 import { useEffect } from 'react';
 import { useUnmount } from 'react-use';
 import { SelectTableStoreNames } from 'stores/names';
@@ -38,7 +38,7 @@ export const PrefixAlertTableHydrator = ({
 
     const hydrateState = usePrefixAlertTable_hydrateContinuously();
 
-    const { data, error, isValidating } = useNotificationPreferences({
+    const { data, error, isValidating } = useNotificationSubscriptions({
         query,
     });
 

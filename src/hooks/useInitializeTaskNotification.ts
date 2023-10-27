@@ -46,7 +46,7 @@ function useInitializeTaskNotification(catalogName: string) {
         return response;
     }, [prefix, user?.id]);
 
-    const getNotificationPreference = useCallback(async (): Promise<{
+    const getNotificationSubscription = useCallback(async (): Promise<{
         data: NotificationSubscriptionQuery[] | null;
         error?: PostgrestError;
     }> => {
@@ -58,20 +58,18 @@ function useInitializeTaskNotification(catalogName: string) {
             };
         }
 
-        const { data: existingPreference, error: existingPreferenceError } =
+        const { data: existingSubscription, error: existingSubscriptionError } =
             await getNotificationSubscriptionByPrefix(prefix, user.id);
 
-        if (existingPreferenceError) {
-            // Failed to determine the existence of a notification preference for the task.
-            console.log('existing preference error', existingPreferenceError);
-
-            return { data: null, error: existingPreferenceError };
+        if (existingSubscriptionError) {
+            // Failed to determine the existence of a notification subscription for the task.
+            return { data: null, error: existingSubscriptionError };
         }
 
-        return { data: existingPreference };
+        return { data: existingSubscription };
     }, [prefix, user?.id]);
 
-    const getNotificationSubscription = useCallback(
+    const getNotifications = useCallback(
         async (
             liveSpecId: string
         ): Promise<{
@@ -85,11 +83,6 @@ function useInitializeTaskNotification(catalogName: string) {
 
             if (existingNotificationError) {
                 // Failed to determine the existence of a notification for the task.
-                console.log(
-                    'existing preference error',
-                    existingNotificationError
-                );
-
                 return {
                     data: null,
                     error: existingNotificationError,
@@ -109,8 +102,8 @@ function useInitializeTaskNotification(catalogName: string) {
 
     return {
         createSubscription,
+        getNotifications,
         getNotificationSubscription,
-        getNotificationPreference,
     };
 }
 
