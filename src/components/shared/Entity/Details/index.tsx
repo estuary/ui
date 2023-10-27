@@ -36,7 +36,12 @@ function EntityDetails() {
                 <ShardHydrator catalogName={catalogName}>
                     <Box>
                         <Stack spacing={2} sx={{ m: 1 }}>
-                            <Stack direction="row" spacing={1}>
+                            <Stack
+                                direction="row"
+                                sx={{
+                                    justifyContent: 'space-between',
+                                }}
+                            >
                                 <Typography
                                     component="span"
                                     variant="h6"
