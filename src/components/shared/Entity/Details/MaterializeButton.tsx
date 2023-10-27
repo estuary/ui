@@ -18,7 +18,13 @@ function MaterializeButton() {
         return null;
     }
 
-    return <MaterializeLink liveSpecId={spec[0].id} name={catalogName} />;
+    return (
+        <MaterializeLink
+            liveSpecId={spec[0].id}
+            name={catalogName}
+            variant="contained"
+        />
+    );
 }
 
 export default MaterializeButton;
