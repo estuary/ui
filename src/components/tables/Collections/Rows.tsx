@@ -12,7 +12,6 @@ import { SelectTableStoreNames } from 'stores/names';
 import { StatsResponse } from 'stores/Tables/Store';
 import { hasLength } from 'utils/misc-utils';
 import EntityNameLink from '../cells/EntityNameLink';
-import MaterializeCollection from '../cells/MaterializeCollection';
 import RowSelect from '../cells/RowSelect';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
@@ -88,10 +87,10 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
 
             <TimeStamp time={row.updated_at} />
 
-            <MaterializeCollection
+            {/*            <MaterializeCollection
                 liveSpecId={row.id}
                 name={row.catalog_name}
-            />
+            />*/}
         </TableRow>
     );
 }

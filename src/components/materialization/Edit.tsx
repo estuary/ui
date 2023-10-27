@@ -23,7 +23,6 @@ import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 
 function MaterializationEdit() {
-    console.log('MaterializationEdit');
     usePageTitle({
         header: authenticatedRoutes.materializations.edit.title,
     });
