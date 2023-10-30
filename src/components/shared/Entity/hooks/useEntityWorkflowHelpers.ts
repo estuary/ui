@@ -10,8 +10,11 @@ import { useEntityType } from 'context/EntityContext';
 import invariableStores from 'context/Zustand/invariableStores';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
+import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
+import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig/hooks';
 import {
@@ -24,15 +27,15 @@ import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
 import { useSchemaEvolution_resetState } from 'stores/SchemaEvolution/hooks';
 import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
+import { snackbarSettings } from 'utils/notification-utils';
 import { useStore } from 'zustand';
 
 function useEntityWorkflowHelpers() {
-    const navigate = useNavigate();
-
-    const entityType = useEntityType();
-
-    // Supabase
+    const { enqueueSnackbar } = useSnackbar();
     const supabaseClient = useClient();
+    const navigate = useNavigate();
+    const entityType = useEntityType();
+    const intl = useIntl();
 
     // Bindings Editor Store
     const resetBindingsEditorStore = useBindingsEditorStore_resetState();
@@ -159,8 +162,16 @@ function useEntityWorkflowHelpers() {
         const liveSpecId = liveSpecResponse.data?.[0]?.live_spec_id;
 
         if (!liveSpecId) {
-            // TODO need to show an error here
-            console.error('uh oh');
+            enqueueSnackbar(
+                intl.formatMessage({
+                    id: 'entityCreate.errors.cannotFetchLiveSpec',
+                }),
+                {
+                    ...snackbarSettings,
+                    variant: 'error',
+                }
+            );
+            logRocketEvent(CustomEvents.CAPTURE_MATERIALIZE_FAILED);
         } else {
             exit(
                 getPathWithParams(
@@ -171,7 +182,7 @@ function useEntityWorkflowHelpers() {
                 )
             );
         }
-    }, [entityType, exit, pubId]);
+    }, [enqueueSnackbar, entityType, exit, intl, pubId]);
 
     return { callFailed, closeLogs, exit, materializeCollections, resetState };
 }

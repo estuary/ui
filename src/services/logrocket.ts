@@ -28,6 +28,7 @@ export enum CustomEvents {
     CAPTURE_CREATE_CONFIG_EDIT = 'Capture_Create_Config_Edit',
     CAPTURE_DISCOVER = 'Capture_Discover',
     CAPTURE_EDIT = 'Capture_Edit',
+    CAPTURE_MATERIALIZE_FAILED = 'Capture_Materialize_Failed',
     MATERIALIZATION_CREATE = 'Materialization_Create',
     MATERIALIZATION_CREATE_CONFIG_CREATE = 'Materialization_Create_Config_Create',
     MATERIALIZATION_CREATE_CONFIG_EDIT = 'Materialization_Create_Config_Edit',

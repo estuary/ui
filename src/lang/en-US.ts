@@ -673,6 +673,8 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
     'entityCreate.errors.missingDraftId': `Missing Draft ID.`,
 
+    'entityCreate.errors.cannotFetchLiveSpec': `Unable to fetch the proper details to materialize. Try again.`,
+
     'discovery.failed.title': `Generating Specification Failed`,
     'discovery.failed.message': `There was an issue attempting to discover your endpoint. Please review details below.`,
 };
