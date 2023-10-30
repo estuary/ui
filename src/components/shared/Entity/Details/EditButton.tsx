@@ -15,7 +15,13 @@ function EditButton() {
         return null;
     }
 
-    return <EditLink liveSpecId={spec[0].id} name={catalogName} />;
+    return (
+        <EditLink
+            liveSpecId={spec[0].id}
+            name={catalogName}
+            variant="contained"
+        />
+    );
 }
 
 export default EditButton;
