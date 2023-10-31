@@ -244,6 +244,10 @@ function useGenerateCatalog() {
                     return Promise.reject(null);
                 }
 
+                // Mutate the draft first so that we are not running
+                //  update _after_ the form is showing as "done" wit hthe update
+                await mutateDraftSpecs();
+
                 // Update all the store state
                 setEncryptedEndpointConfig({
                     data: draftSpecsResponse.data[0].spec.endpoint.connector
@@ -262,7 +266,6 @@ function useGenerateCatalog() {
                 //  were enabled during an edit in materializations.
                 resetRediscoverySettings();
 
-                await mutateDraftSpecs();
                 return Promise.resolve(evaluatedDraftId);
             }
         },

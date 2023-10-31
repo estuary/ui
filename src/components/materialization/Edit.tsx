@@ -77,9 +77,6 @@ function MaterializationEdit() {
                                         GenerateButton={
                                             <MaterializeGenerateButton
                                                 disabled={!hasConnectors}
-                                                mutateDraftSpecs={
-                                                    updateDraftSpecs
-                                                }
                                             />
                                         }
                                         TestButton={
