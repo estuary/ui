@@ -11,6 +11,7 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
 import DraftInitializer from 'components/shared/Entity/Edit/DraftInitializer';
 import EntityToolbar from 'components/shared/Entity/Header';
+import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -68,46 +69,50 @@ function CaptureEdit() {
             <DetailsFormHydrator>
                 <EndpointConfigHydrator>
                     <ResourceConfigHydrator>
-                        <EntityEdit
-                            title="routeTitle.captureEdit"
-                            entityType={entityType}
-                            readOnly={{ detailsForm: true }}
-                            draftSpecMetadata={draftSpecsMetadata}
-                            toolbar={
-                                <EntityToolbar
-                                    waitTimes={{ generate: MAX_DISCOVER_TIME }}
-                                    GenerateButton={
-                                        <CaptureGenerateButton
-                                            entityType={entityType}
-                                            disabled={!hasConnectors}
-                                            postGenerateMutate={
-                                                updateDraftSpecs
-                                            }
-                                        />
-                                    }
-                                    TestButton={
-                                        <EntityTestButton
-                                            disabled={!hasConnectors}
-                                            logEvent={CustomEvents.CAPTURE_TEST}
-                                        />
-                                    }
-                                    SaveButton={
-                                        <EntitySaveButton
-                                            disabled={!draftId}
-                                            taskNames={taskNames}
-                                            logEvent={CustomEvents.CAPTURE_EDIT}
-                                        />
-                                    }
-                                />
-                            }
-                            RediscoverButton={
-                                <RediscoverButton
-                                    entityType={entityType}
-                                    disabled={!hasConnectors}
-                                    postGenerateMutate={updateDraftSpecs}
-                                />
-                            }
-                        />
+                        <MutateDraftSpecProvider value={updateDraftSpecs}>
+                            <EntityEdit
+                                title="routeTitle.captureEdit"
+                                entityType={entityType}
+                                readOnly={{ detailsForm: true }}
+                                draftSpecMetadata={draftSpecsMetadata}
+                                toolbar={
+                                    <EntityToolbar
+                                        waitTimes={{
+                                            generate: MAX_DISCOVER_TIME,
+                                        }}
+                                        GenerateButton={
+                                            <CaptureGenerateButton
+                                                entityType={entityType}
+                                                disabled={!hasConnectors}
+                                            />
+                                        }
+                                        TestButton={
+                                            <EntityTestButton
+                                                disabled={!hasConnectors}
+                                                logEvent={
+                                                    CustomEvents.CAPTURE_TEST
+                                                }
+                                            />
+                                        }
+                                        SaveButton={
+                                            <EntitySaveButton
+                                                disabled={!draftId}
+                                                taskNames={taskNames}
+                                                logEvent={
+                                                    CustomEvents.CAPTURE_EDIT
+                                                }
+                                            />
+                                        }
+                                    />
+                                }
+                                RediscoverButton={
+                                    <RediscoverButton
+                                        entityType={entityType}
+                                        disabled={!hasConnectors}
+                                    />
+                                }
+                            />
+                        </MutateDraftSpecProvider>
                     </ResourceConfigHydrator>
                 </EndpointConfigHydrator>
             </DetailsFormHydrator>

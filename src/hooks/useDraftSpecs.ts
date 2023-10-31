@@ -1,4 +1,5 @@
 import { PostgrestError } from '@supabase/postgrest-js';
+import { useMemo } from 'react';
 import { TABLES } from 'services/supabase';
 import { KeyedMutator } from 'swr';
 import { Entity, Schema } from 'types';
@@ -81,12 +82,17 @@ function useDraftSpecs(
         draftId ? draftSpecQuery : null
     );
 
-    return {
-        draftSpecs: data ? data.data : defaultResponse,
-        error,
-        mutate,
-        isValidating,
-    };
+    console.log('mutate', mutate);
+
+    return useMemo(
+        () => ({
+            draftSpecs: data ? data.data : defaultResponse,
+            error,
+            mutate,
+            isValidating,
+        }),
+        [data, error, isValidating, mutate]
+    );
 }
 
 export default useDraftSpecs;

@@ -8,7 +8,7 @@ interface Props extends BaseComponentProps {
 const MutateDraftSpec = createContext<Function | null>(null);
 
 const MutateDraftSpecProvider = ({ children, value }: Props) => {
-    console.log('MutateDraftSpecProvider');
+    console.log('MutateDraftSpecProvider', value);
     return (
         <MutateDraftSpec.Provider value={value}>
             {children}

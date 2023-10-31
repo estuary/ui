@@ -3,6 +3,7 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
 } from 'components/editor/Store/hooks';
+import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback, useMemo } from 'react';
@@ -27,9 +28,9 @@ import useDiscoverStartDiscovery from './useDiscoverStartDiscovery';
 
 function useDiscoverCapture(
     entityType: Entity,
-    postGenerateMutate: Function,
     options?: { initiateRediscovery?: boolean; initiateDiscovery?: boolean }
 ) {
+    const postGenerateMutate = useMutateDraftSpec();
     const draftUpdate = useDiscoverDraftUpdate(postGenerateMutate, options);
     const configEncrypt = useDiscoverConfigEncrypt();
     const startDiscovery = useDiscoverStartDiscovery(
