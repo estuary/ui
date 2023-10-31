@@ -12,6 +12,7 @@ import {
 } from 'api/liveSpecsExt';
 import { useBindingsEditorStore_prefillFullSourceConfigs } from 'components/editor/Bindings/Store/hooks';
 import {
+    useEditorStore_setCatalogName,
     useEditorStore_setDraftInitializationError,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
@@ -55,6 +56,7 @@ function useInitializeTaskDraft() {
     const setDraftId = useEditorStore_setId();
     const setDraftInitializationError =
         useEditorStore_setDraftInitializationError();
+    const setCatalogName = useEditorStore_setCatalogName();
 
     // const persistedDraftId = useEditorStore_persistedDraftId();
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
@@ -71,6 +73,7 @@ function useInitializeTaskDraft() {
             const liveSpecResponse = await getLiveSpecsByLiveSpecId(liveSpecId);
 
             if (liveSpecResponse.data && liveSpecResponse.data.length > 0) {
+                setCatalogName(liveSpecResponse.data[0].catalog_name);
                 return liveSpecResponse.data[0];
             } else {
                 setDraftInitializationError({
@@ -80,7 +83,7 @@ function useInitializeTaskDraft() {
 
                 return null;
             }
-        }, [setDraftInitializationError, liveSpecId]);
+        }, [liveSpecId, setCatalogName, setDraftInitializationError]);
 
     const getTaskDraft = useCallback(
         async ({
