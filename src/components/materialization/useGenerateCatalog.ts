@@ -134,6 +134,8 @@ function useGenerateCatalog() {
                     status: FormStatus.FAILED,
                     displayValidation: true,
                 });
+
+                return Promise.reject(null);
             } else {
                 resetEditorState(true);
 
@@ -162,12 +164,14 @@ function useGenerateCatalog() {
                         );
 
                     if (existingDraftSpecResponse.error) {
-                        return callFailed({
+                        callFailed({
                             error: {
                                 title: 'materializationCreate.generate.failure.errorTitle',
                                 error: existingDraftSpecResponse.error,
                             },
                         });
+
+                        return Promise.reject(null);
                     }
 
                     // Populate the existing if available. This might not exist if the user edited a collection
@@ -185,12 +189,13 @@ function useGenerateCatalog() {
                     );
 
                     if (draftsResponse.error) {
-                        return callFailed({
+                        callFailed({
                             error: {
                                 title: 'materializationCreate.generate.failure.errorTitle',
                                 error: draftsResponse.error,
                             },
                         });
+                        return Promise.reject(null);
                     }
 
                     // Since we made a new one override the current draft id
@@ -230,12 +235,13 @@ function useGenerateCatalog() {
                           );
 
                 if (draftSpecsResponse.error) {
-                    return callFailed({
+                    callFailed({
                         error: {
                             title: 'materializationCreate.generate.failure.errorTitle',
                             error: draftSpecsResponse.error,
                         },
                     });
+                    return Promise.reject(null);
                 }
 
                 // Update all the store state
@@ -256,7 +262,8 @@ function useGenerateCatalog() {
                 //  were enabled during an edit in materializations.
                 resetRediscoverySettings();
 
-                return mutateDraftSpecs();
+                await mutateDraftSpecs();
+                return Promise.resolve(evaluatedDraftId);
             }
         },
         [

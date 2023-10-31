@@ -1,7 +1,9 @@
-import { useEditorStore_id } from 'components/editor/Store/hooks';
+import { Button } from '@mui/material';
 import useGenerateCatalog from 'components/materialization/useGenerateCatalog';
-import EntityCreateSave from 'components/shared/Entity/Actions/Save';
+import useSave from 'components/shared/Entity/Actions/useSave';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
+import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 
 interface Props {
@@ -12,31 +14,26 @@ interface Props {
 
 function RefreshButton({ disabled, logEvent, buttonLabelId }: Props) {
     const { callFailed } = useEntityWorkflowHelpers();
-    const generateCatalog = useGenerateCatalog();
 
-    // Draft Editor Store
-    const draftId = useEditorStore_id();
+    const generateCatalog = useGenerateCatalog();
+    const mutateDraftSpec = useMutateDraftSpec();
+    const saveCatalog = useSave(logEvent, callFailed, true, true);
 
     return (
-        <EntityCreateSave
-            dryRun
+        <Button
             disabled={disabled}
-            onFailure={callFailed}
-            logEvent={logEvent}
-            buttonLabelId={buttonLabelId}
-            forceLogsClosed
-            preSave={
-                draftId
-                    ? undefined
-                    : () => {
-                          return generateCatalog(() => {
-                              console.log(
-                                  'We need to call updateDraftSpecs here'
-                              );
-                          });
-                      }
-            }
-        />
+            onClick={async () => {
+                const evaluatedDraftId = await generateCatalog(mutateDraftSpec);
+
+                if (!evaluatedDraftId) {
+                    console.log('failed to generate');
+                }
+
+                await saveCatalog(evaluatedDraftId);
+            }}
+        >
+            <FormattedMessage id={buttonLabelId} />
+        </Button>
     );
 }
 export default RefreshButton;
