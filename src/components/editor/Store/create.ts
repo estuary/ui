@@ -11,6 +11,7 @@ export const isEditorActive = (status: EditorStatus) => {
 
 const getInitialStateData = <T>(): Pick<
     EditorStoreState<T>,
+    | 'catalogName'
     | 'currentCatalog'
     | 'discoveredDraftId'
     | 'draftInitializationError'
@@ -26,6 +27,7 @@ const getInitialStateData = <T>(): Pick<
     | 'statuses'
 > => {
     return {
+        catalogName: '',
         currentCatalog: null,
         id: null,
         discoveredDraftId: null,
@@ -55,6 +57,16 @@ const getInitialState = <T>(
                 }),
                 false,
                 'Set draft id'
+            );
+        },
+
+        setCatalogName: (newVal) => {
+            set(
+                produce((state) => {
+                    state.catalogName = newVal;
+                }),
+                false,
+                'Set catalog name'
             );
         },
 

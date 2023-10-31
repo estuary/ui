@@ -3,6 +3,7 @@ import { getLiveSpecIdByPublication } from 'api/publicationSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import { useBindingsEditorStore_resetState } from 'components/editor/Bindings/Store/hooks';
 import {
+    useEditorStore_currentCatalog_catalogName,
     useEditorStore_pubId,
     useEditorStore_resetState,
 } from 'components/editor/Store/hooks';
@@ -46,6 +47,9 @@ function useEntityWorkflowHelpers() {
     // Draft Editor Store
     const pubId = useEditorStore_pubId();
     const resetEditorStore = useEditorStore_resetState();
+    const catalogName = useEditorStore_currentCatalog_catalogName();
+
+    console.log('catalogName', catalogName);
 
     // Endpoint Config Store
     const resetEndpointConfigState = useEndpointConfigStore_reset();
@@ -156,7 +160,7 @@ function useEntityWorkflowHelpers() {
         // Go fetch the live spec that we want to materialize
         const liveSpecResponse = await getLiveSpecIdByPublication(
             pubId,
-            entityType
+            catalogName ?? ''
         );
 
         const liveSpecId = liveSpecResponse.data?.[0]?.live_spec_id;
@@ -182,7 +186,7 @@ function useEntityWorkflowHelpers() {
                 )
             );
         }
-    }, [enqueueSnackbar, entityType, exit, intl, pubId]);
+    }, [catalogName, enqueueSnackbar, exit, intl, pubId]);
 
     return { callFailed, closeLogs, exit, materializeCollections, resetState };
 }
