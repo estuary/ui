@@ -49,8 +49,6 @@ function useEntityWorkflowHelpers() {
     const resetEditorStore = useEditorStore_resetState();
     const catalogName = useEditorStore_catalogName();
 
-    console.log('catalogName', catalogName);
-
     // Endpoint Config Store
     const resetEndpointConfigState = useEndpointConfigStore_reset();
 
