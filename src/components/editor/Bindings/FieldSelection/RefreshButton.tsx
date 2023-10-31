@@ -30,11 +30,11 @@ function RefreshButton({ disabled, logEvent, buttonLabelId }: Props) {
 
                 const evaluatedDraftId = await generateCatalog(mutateDraftSpec);
 
-                if (!evaluatedDraftId) {
-                    console.log('failed to generate');
+                // Make sure we have a draft id so we know the generate worked
+                //  if this is not returned then the function itself handled showing an error
+                if (evaluatedDraftId) {
+                    await saveCatalog(evaluatedDraftId);
                 }
-
-                await saveCatalog(evaluatedDraftId);
 
                 setUpdating(false);
             }}
