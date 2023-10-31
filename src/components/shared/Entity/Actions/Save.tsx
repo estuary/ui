@@ -42,11 +42,12 @@ import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     disabled: boolean;
-    onFailure: Function;
     logEvent: CustomEvents;
-    dryRun?: boolean;
+    onFailure: Function;
     buttonLabelId?: string;
+    dryRun?: boolean;
     forceLogsClosed?: boolean;
+    preSave?: () => Promise<any>;
 }
 
 const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
@@ -60,12 +61,13 @@ const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
 };
 
 function EntityCreateSave({
+    buttonLabelId,
     disabled,
     dryRun,
-    onFailure,
-    logEvent,
-    buttonLabelId,
     forceLogsClosed,
+    logEvent,
+    onFailure,
+    preSave,
 }: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
@@ -175,6 +177,10 @@ function EntityCreateSave({
 
     const save = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
+
+        if (preSave) {
+            await preSave();
+        }
 
         // FullSource updates the draft directly and does not require a new generattion so
         //  need to check for errors. We might want to add all the errors here just to be safe or
