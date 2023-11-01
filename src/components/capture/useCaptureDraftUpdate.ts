@@ -8,6 +8,7 @@ import {
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback } from 'react';
@@ -21,10 +22,11 @@ import {
 import { useResourceConfig_resourceConfig } from 'stores/ResourceConfig/hooks';
 import { modifyExistingCaptureDraftSpec } from 'utils/workflow-utils';
 
-function useDiscoverDraftUpdate(
-    postGenerateMutate: Function,
-    options?: { initiateRediscovery?: boolean; initiateDiscovery?: boolean }
-) {
+function useDiscoverDraftUpdate(options?: {
+    initiateRediscovery?: boolean;
+    initiateDiscovery?: boolean;
+}) {
+    const postGenerateMutate = useMutateDraftSpec();
     const isEdit = useEntityWorkflow_Editing();
     const { callFailed } = useEntityWorkflowHelpers();
 

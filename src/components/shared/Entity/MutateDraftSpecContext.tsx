@@ -1,3 +1,4 @@
+import { noop } from 'lodash';
 import { createContext, useContext } from 'react';
 import { BaseComponentProps } from 'types';
 
@@ -5,7 +6,7 @@ interface Props extends BaseComponentProps {
     value: Function;
 }
 
-const MutateDraftSpec = createContext<Function | null>(null);
+const MutateDraftSpec = createContext<Function | null>(noop);
 
 const MutateDraftSpecProvider = ({ children, value }: Props) => {
     return (

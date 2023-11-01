@@ -14,14 +14,9 @@ import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { Entity } from 'types';
 import useDiscoverStartSubscription from './useDiscoverStartSubscription';
 
-function useDiscoverStartDiscovery(
-    entityType: Entity,
-    postGenerateMutate: Function
-) {
-    const createDiscoversSubscription = useDiscoverStartSubscription(
-        entityType,
-        postGenerateMutate
-    );
+function useDiscoverStartDiscovery(entityType: Entity) {
+    const createDiscoversSubscription =
+        useDiscoverStartSubscription(entityType);
     const { callFailed } = useEntityWorkflowHelpers();
 
     const persistedDraftId = useEditorStore_persistedDraftId();
