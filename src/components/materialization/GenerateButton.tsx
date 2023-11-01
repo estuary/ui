@@ -1,8 +1,5 @@
 import { Button } from '@mui/material';
-import {
-    useEditorStore_isSaving,
-    useEditorStore_isSaving,
-} from 'components/editor/Store/hooks';
+import { useEditorStore_isSaving } from 'components/editor/Store/hooks';
 
 import { buttonSx } from 'components/shared/Entity/Header';
 import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
