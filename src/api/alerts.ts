@@ -9,91 +9,77 @@ import {
     TABLES,
     updateSupabase,
 } from 'services/supabase';
-import {
-    DataProcessingNotification,
-    NotificationSubscription,
-    NotificationSubscriptionExt,
-} from 'types';
+import { AlertSubscription, DataProcessingAlert } from 'types';
 
-const createNotificationSubscription = (prefix: string, userId: string) => {
-    return insertSupabase(TABLES.NOTIFICATION_SUBSCRIPTIONS, {
+const createNotificationSubscription = (prefix: string, email: string) => {
+    return insertSupabase(TABLES.ALERT_SUBSCRIPTIONS, {
         catalog_prefix: prefix,
-        user_id: userId,
+        email,
     });
 };
 
 const deleteNotificationSubscription = (
     subscriptionId: string,
-    userId: string
+    email: string
 ) => {
-    return deleteSupabase(TABLES.NOTIFICATION_SUBSCRIPTIONS, {
+    return deleteSupabase(TABLES.ALERT_SUBSCRIPTIONS, {
         id: subscriptionId,
-        user_id: userId,
+        email,
     });
 };
 
-interface CreateNotificationMatchData {
-    live_spec_id: string;
-    evaluation_interval?: string;
-}
-
 const createDataProcessingNotification = (
-    liveSpecId: string,
-    evaluation_interval?: string
+    catalogName: string,
+    evaluationInterval: string
 ) => {
-    let matchData: CreateNotificationMatchData = {
-        live_spec_id: liveSpecId,
-    };
-
-    if (evaluation_interval) {
-        matchData = { ...matchData, evaluation_interval };
-    }
-
-    return insertSupabase(TABLES.DATA_PROCESSING_NOTIFICATIONS, matchData);
+    return insertSupabase(TABLES.ALERT_DATA_PROCESSING, {
+        catalog_name: catalogName,
+        evaluation_interval: evaluationInterval,
+    });
 };
 
 const updateDataProcessingNotificationInterval = (
-    liveSpecId: string,
+    catalogName: string,
     evaluationInterval: string
 ) => {
     return updateSupabase(
-        TABLES.DATA_PROCESSING_NOTIFICATIONS,
+        TABLES.ALERT_DATA_PROCESSING,
         { evaluation_interval: evaluationInterval },
-        { live_spec_id: liveSpecId }
+        { catalog_name: catalogName }
     );
 };
 
-const deleteDataProcessingNotification = (liveSpecId: string) => {
-    return deleteSupabase(TABLES.DATA_PROCESSING_NOTIFICATIONS, {
-        live_spec_id: liveSpecId,
+const deleteDataProcessingNotification = (catalogName: string) => {
+    return deleteSupabase(TABLES.ALERT_DATA_PROCESSING, {
+        catalog_name: catalogName,
     });
 };
 
-export type NotificationSubscriptionQuery = Pick<
-    NotificationSubscription,
-    'id' | 'catalog_prefix' | 'user_id'
+export type AlertSubscriptionQuery = Pick<
+    AlertSubscription,
+    'id' | 'catalog_prefix' | 'email'
 >;
 
-export type NotificationSubscriptionsTableQuery = Pick<
-    NotificationSubscriptionExt,
-    'id' | 'updated_at' | 'catalog_prefix' | 'user_id' | 'verified_email'
+export type AlertSubscriptionsTableQuery = Pick<
+    AlertSubscription,
+    'id' | 'updated_at' | 'catalog_prefix' | 'email'
 >;
 
-export type DataProcessingNotificationQuery = Pick<
-    DataProcessingNotification,
-    'live_spec_id' | 'evaluation_interval'
+export type DataProcessingAlertQuery = Pick<
+    DataProcessingAlert,
+    'catalog_name' | 'evaluation_interval'
 >;
 
 const getNotificationSubscriptionByPrefix = async (
     prefix: string,
-    userId: string
+    email: string
 ) => {
     const data = await supabaseClient
-        .from<NotificationSubscriptionQuery>(TABLES.NOTIFICATION_SUBSCRIPTIONS)
-        .select(`id, catalog_prefix, user_id`)
+        .from<AlertSubscriptionQuery>(TABLES.ALERT_SUBSCRIPTIONS)
+        .select(`id, catalog_prefix, email`)
         .eq('catalog_prefix', prefix)
-        .eq('user_id', userId)
-        .then(handleSuccess<NotificationSubscriptionQuery[]>, handleFailure);
+        .eq('email', email)
+        .then(handleSuccess<AlertSubscriptionQuery[]>, handleFailure);
 
     return data;
 };
@@ -105,24 +91,21 @@ const getNotificationSubscription = (
     objectRoles: string[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<NotificationSubscriptionExt>(
-            TABLES.NOTIFICATION_SUBSCRIPTIONS_EXT
-        )
+        .from<AlertSubscriptionsTableQuery>(TABLES.ALERT_SUBSCRIPTIONS)
         .select(
             `    
                 id,
                 updated_at,
                 catalog_prefix,
-                user_id,
-                verified_email
+                email
             `,
             { count: 'exact' }
         )
         .in('catalog_prefix', objectRoles);
 
-    queryBuilder = defaultTableFilter<NotificationSubscriptionExt>(
+    queryBuilder = defaultTableFilter<AlertSubscriptionsTableQuery>(
         queryBuilder,
-        ['catalog_prefix', 'verified_email'],
+        ['catalog_prefix', 'email'],
         searchQuery,
         sorting,
         pagination
@@ -131,14 +114,12 @@ const getNotificationSubscription = (
     return queryBuilder;
 };
 
-const getTaskNotification = async (liveSpecId: string) => {
+const getTaskNotification = async (catalogName: string) => {
     const data = await supabaseClient
-        .from<DataProcessingNotificationQuery>(
-            TABLES.DATA_PROCESSING_NOTIFICATIONS
-        )
-        .select(`live_spec_id, evaluation_interval`)
-        .eq('live_spec_id', liveSpecId)
-        .then(handleSuccess<DataProcessingNotificationQuery[]>, handleFailure);
+        .from<DataProcessingAlertQuery>(TABLES.ALERT_DATA_PROCESSING)
+        .select(`catalog_name, evaluation_interval`)
+        .eq('catalog_name', catalogName)
+        .then(handleSuccess<DataProcessingAlertQuery[]>, handleFailure);
 
     return data;
 };

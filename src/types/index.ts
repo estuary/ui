@@ -352,35 +352,17 @@ export interface AutoDiscoverySettings {
     evolveIncompatibleCollections: boolean;
 }
 
-export interface NotificationSubscription {
+export interface AlertSubscription {
     id: string;
     detail: string;
     created_at: Date;
     updated_at: Date;
     catalog_prefix: string;
-    user_id: string;
+    email: string;
 }
 
-export interface NotificationSubscriptionExt extends NotificationSubscription {
-    verified_email: string;
-}
-
-export interface DataProcessingNotification {
-    acknowledged: boolean;
-    evaluation_interval: string | null;
-    live_spec_id: string;
-}
-
-export interface DataProcessingNotificationExt {
-    acknowledged: boolean;
+export interface DataProcessingAlert {
+    alert_type: string;
     catalog_name: string;
-    classification: string;
-    confirmation_message: string;
-    confirmation_title: string;
-    evaluation_interval: string | null;
-    live_spec_id: string;
-    notification_message: string;
-    notification_title: string;
-    spec_type: string;
-    verified_email: string;
+    evaluation_interval: string;
 }

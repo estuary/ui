@@ -516,7 +516,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.alerts.header': `Organization Alerts`,
     'admin.alerts.cta.addAlertMethod': `Configure`,
     'admin.alerts.dialog.generate.header': `Add Alert Method`,
-    'admin.alerts.table.filterLabel': `Filter by Prefix`,
+    'admin.alerts.table.filterLabel': `Filter by Prefix or Email`,
     'admin.alerts.table.noContent.header': `No results found.`,
     'admin.alerts.table.noContent.message': `We couldn't find any results matching your search. Please try a different filter.`,
     'admin.alerts.table.label.alertMethod': `Alert Method`,

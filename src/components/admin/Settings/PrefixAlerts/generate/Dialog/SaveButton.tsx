@@ -12,12 +12,12 @@ import { appendWithForwardSlash, hasLength } from 'utils/misc-utils';
 
 interface Props {
     disabled: boolean;
+    emails: string[];
     prefix: string;
     setOpen: Dispatch<SetStateAction<boolean>>;
-    userId?: string;
 }
 
-function SaveButton({ disabled, prefix, setOpen, userId }: Props) {
+function SaveButton({ disabled, prefix, setOpen, emails }: Props) {
     const hydrate = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['hydrate']
@@ -28,38 +28,34 @@ function SaveButton({ disabled, prefix, setOpen, userId }: Props) {
 
     const [loading, setLoading] = useState(false);
 
-    const onClick = (event: React.MouseEvent<HTMLElement>) => {
+    const onClick = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         setLoading(true);
 
-        if (userId) {
-            const processedPrefix = appendWithForwardSlash(prefix);
+        const processedPrefix = appendWithForwardSlash(prefix);
 
-            // Bundle insertions
-            createNotificationSubscription(processedPrefix, userId).then(
-                (response) => {
-                    if (response.error) {
-                        console.log('save error 1', response.error);
-                    } else if (hasLength(response.data)) {
-                        hydrate();
-                        setOpen(false);
-                    }
+        // Bundle insertions
+        const pendingSubscriptions = emails.map((email) =>
+            createNotificationSubscription(processedPrefix, email)
+        );
 
-                    setLoading(false);
-                },
-                (error) => {
-                    console.log('save error 2', error);
-                    setLoading(false);
-                }
-            );
+        const responses = await Promise.all(pendingSubscriptions);
+
+        const errors = responses.filter((r) => r.error);
+
+        if (!hasLength(errors)) {
+            hydrate();
+            setOpen(false);
         }
+
+        setLoading(false);
     };
 
     return (
         <LoadingButton
             variant="contained"
             size="small"
-            disabled={disabled || !hasLength(prefix) || !userId}
+            disabled={disabled || !hasLength(prefix) || !hasLength(emails)}
             loading={loading}
             onClick={onClick}
         >

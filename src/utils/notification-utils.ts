@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import { OptionsObject } from 'notistack';
-import { NotificationSubscriptionExt } from 'types';
+import { AlertSubscription } from 'types';
 
 export const snackbarSettings: OptionsObject = {
     anchorOrigin: {
@@ -13,7 +13,6 @@ export const snackbarSettings: OptionsObject = {
 
 export interface UserSubscription {
     subscriptionId: string;
-    userId: string | null;
     email: string;
 }
 
@@ -28,7 +27,6 @@ export interface PrefixSubscriptionDictionary {
 
 interface SubscriptionMetadata {
     id: string;
-    userId: string | null;
     email: string;
     lastUpdated: Date;
 }
@@ -38,7 +36,7 @@ interface SubscriptionDictionary {
 }
 
 export const formatNotificationSubscriptionsByPrefix = (
-    data: NotificationSubscriptionExt[]
+    data: AlertSubscription[]
 ) => {
     const processedQuery: SubscriptionDictionary = {};
 
@@ -46,16 +44,14 @@ export const formatNotificationSubscriptionsByPrefix = (
         if (Object.hasOwn(processedQuery, query.catalog_prefix)) {
             processedQuery[query.catalog_prefix].push({
                 id: query.id,
-                userId: query.user_id,
-                email: query.verified_email,
+                email: query.email,
                 lastUpdated: query.updated_at,
             });
         } else {
             processedQuery[query.catalog_prefix] = [
                 {
                     id: query.id,
-                    userId: query.user_id,
-                    email: query.verified_email,
+                    email: query.email,
                     lastUpdated: query.updated_at,
                 },
             ];
@@ -75,9 +71,8 @@ export const formatNotificationSubscriptionsByPrefix = (
             ).toUTCString();
 
             subscriptions[prefix] = {
-                userSubscriptions: configs.map(({ id, userId, email }) => ({
+                userSubscriptions: configs.map(({ id, email }) => ({
                     subscriptionId: id,
-                    userId,
                     email,
                 })),
                 lastUpdated,

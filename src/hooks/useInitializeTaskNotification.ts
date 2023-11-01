@@ -1,8 +1,8 @@
 import { PostgrestError } from '@supabase/postgrest-js';
 import { Auth } from '@supabase/ui';
 import {
-    DataProcessingNotificationQuery,
-    NotificationSubscriptionQuery,
+    AlertSubscriptionQuery,
+    DataProcessingAlertQuery,
     createNotificationSubscription,
     getNotificationSubscriptionByPrefix,
     getTaskNotification,
@@ -30,28 +30,31 @@ function useInitializeTaskNotification(catalogName: string) {
     }, [catalogName, objectRoles]);
 
     const createSubscription = useCallback(async (): Promise<{
-        data: NotificationSubscriptionQuery[] | null;
+        data: AlertSubscriptionQuery[] | null;
         error?: PostgrestError;
     }> => {
-        if (!user?.id || !prefix) {
-            // Error if the system cannot determine the user ID or object roles cannot be found for the user.
+        if (!user?.email || !prefix) {
+            // Error if the system cannot determine the user email or object roles cannot be found for the user.
             return {
                 data: null,
                 error: { message: '', details: '', hint: '', code: '' },
             };
         }
 
-        const response = await createNotificationSubscription(prefix, user.id);
+        const response = await createNotificationSubscription(
+            prefix,
+            user.email
+        );
 
         return response;
-    }, [prefix, user?.id]);
+    }, [prefix, user?.email]);
 
     const getNotificationSubscription = useCallback(async (): Promise<{
-        data: NotificationSubscriptionQuery[] | null;
+        data: AlertSubscriptionQuery[] | null;
         error?: PostgrestError;
     }> => {
-        if (!user?.id || !prefix) {
-            // Error if the system cannot determine the user ID or object roles cannot be found for the user.
+        if (!user?.email || !prefix) {
+            // Error if the system cannot determine the user email or object roles cannot be found for the user.
             return {
                 data: null,
                 error: { message: '', details: '', hint: '', code: '' },
@@ -59,7 +62,7 @@ function useInitializeTaskNotification(catalogName: string) {
         }
 
         const { data: existingSubscription, error: existingSubscriptionError } =
-            await getNotificationSubscriptionByPrefix(prefix, user.id);
+            await getNotificationSubscriptionByPrefix(prefix, user.email);
 
         if (existingSubscriptionError) {
             // Failed to determine the existence of a notification subscription for the task.
@@ -67,38 +70,31 @@ function useInitializeTaskNotification(catalogName: string) {
         }
 
         return { data: existingSubscription };
-    }, [prefix, user?.id]);
+    }, [prefix, user?.email]);
 
-    const getNotifications = useCallback(
-        async (
-            liveSpecId: string
-        ): Promise<{
-            data: DataProcessingNotificationQuery | null;
-            error?: any;
-        }> => {
-            const {
-                data: existingNotification,
+    const getNotifications = useCallback(async (): Promise<{
+        data: DataProcessingAlertQuery | null;
+        error?: any;
+    }> => {
+        const { data: existingNotification, error: existingNotificationError } =
+            await getTaskNotification(catalogName);
+
+        if (existingNotificationError) {
+            // Failed to determine the existence of a notification for the task.
+            return {
+                data: null,
                 error: existingNotificationError,
-            } = await getTaskNotification(liveSpecId);
+            };
+        }
 
-            if (existingNotificationError) {
-                // Failed to determine the existence of a notification for the task.
-                return {
-                    data: null,
-                    error: existingNotificationError,
-                };
-            }
+        if (!existingNotification || existingNotification.length === 0) {
+            // A notification for the task has not been defined for the user.
 
-            if (!existingNotification || existingNotification.length === 0) {
-                // A notification for the task has not been defined for the user.
+            return { data: null };
+        }
 
-                return { data: null };
-            }
-
-            return { data: existingNotification[0] };
-        },
-        []
-    );
+        return { data: existingNotification[0] };
+    }, [catalogName]);
 
     return {
         createSubscription,

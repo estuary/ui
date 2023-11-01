@@ -1,4 +1,5 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import { AlertSubscriptionsTableQuery } from 'api/alerts';
 import { useZustandStore } from 'context/Zustand/provider';
 import useNotificationSubscriptions from 'hooks/notifications/useNotificationSubscriptions';
 import { useEffect } from 'react';
@@ -9,11 +10,11 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { BaseComponentProps, NotificationSubscriptionExt } from 'types';
+import { BaseComponentProps } from 'types';
 
 // Hydrator
 interface TableHydratorProps extends BaseComponentProps {
-    query: PostgrestFilterBuilder<NotificationSubscriptionExt>;
+    query: PostgrestFilterBuilder<AlertSubscriptionsTableQuery>;
 }
 
 export const PrefixAlertTableHydrator = ({

@@ -82,7 +82,6 @@ function RowSelector({
                     disabled={!selectionsExist}
                 >
                     <Button variant="outlined">Update</Button>
-                    <Button variant="outlined">Delete</Button>
                 </ButtonGroup>
             )}
 

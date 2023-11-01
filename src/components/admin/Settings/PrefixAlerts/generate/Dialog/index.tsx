@@ -8,7 +8,6 @@ import {
     Grid,
     TextField,
 } from '@mui/material';
-import { Auth } from '@supabase/ui';
 import SaveButton from 'components/admin/Settings/PrefixAlerts/generate/Dialog/SaveButton';
 import PrefixSelector from 'components/inputs/PrefixedName/PrefixSelector';
 import { Dispatch, SetStateAction, useState } from 'react';
@@ -25,12 +24,12 @@ const TITLE_ID = 'generate-prefix-alert-dialog-title';
 function GenerateAlertDialog({ open, setOpen }: Props) {
     const intl = useIntl();
 
-    const { user } = Auth.useUser();
+    // const { user } = Auth.useUser();
 
     const [prefix, setPrefix] = useState('');
     const [prefixHasErrors, setPrefixHasErrors] = useState(false);
 
-    // const [emails, setEmails] = useState<string[]>([]);
+    const [emails, setEmails] = useState<string[]>([]);
 
     const updatePrefix = (value: string, errors: string | null) => {
         // if (serverError) {
@@ -41,13 +40,13 @@ function GenerateAlertDialog({ open, setOpen }: Props) {
         setPrefixHasErrors(Boolean(errors));
     };
 
-    // const updateEmailList = (value: string, _errors: string | null) => {
-    //     // if (serverError) {
-    //     //     setServerError(null);
-    //     // }
+    const updateEmailList = (value: string, _errors: string | null) => {
+        // if (serverError) {
+        //     setServerError(null);
+        // }
 
-    //     setEmails(value.split(','));
-    // };
+        setEmails(value.split(','));
+    };
 
     return (
         <Dialog open={open} maxWidth="md" fullWidth aria-labelledby={TITLE_ID}>
@@ -101,8 +100,9 @@ function GenerateAlertDialog({ open, setOpen }: Props) {
                                 sx: { borderRadius: 3 },
                             }}
                             onChange={
-                                () => console.log('email changed')
-                                // updateEmailList(event.target.value, null)
+                                // () => console.log('email changed')
+                                (event) =>
+                                    updateEmailList(event.target.value, null)
                             }
                             sx={{ flexGrow: 1 }}
                         />
@@ -134,10 +134,10 @@ function GenerateAlertDialog({ open, setOpen }: Props) {
                 </Button>
 
                 <SaveButton
-                    disabled={prefixHasErrors || !user?.id}
+                    disabled={prefixHasErrors}
                     prefix={prefix}
                     setOpen={setOpen}
-                    userId={user?.id}
+                    emails={emails}
                 />
             </DialogActions>
         </Dialog>

@@ -8,12 +8,11 @@ import {
     useTheme,
 } from '@mui/material';
 import {
-    DataProcessingNotificationQuery,
+    DataProcessingAlertQuery,
     createDataProcessingNotification,
     deleteDataProcessingNotification,
     updateDataProcessingNotificationInterval,
 } from 'api/alerts';
-import { useEditorStore_id } from 'components/editor/Store/hooks';
 import { ErrorDetails } from 'components/shared/Error/types';
 import { defaultOutline } from 'context/Theme';
 import useGlobalSearchParams, {
@@ -57,10 +56,8 @@ function DataProcessingSetting({
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
-    const liveSpecId = useEditorStore_id({ localScope: true });
-
     const [notification, setNotification] = useState<
-        DataProcessingNotificationQuery | null | undefined
+        DataProcessingAlertQuery | null | undefined
     >(undefined);
 
     // const [errorSeverity, setErrorSeverity] = useState<AlertColor | null>(null);
@@ -85,7 +82,7 @@ function DataProcessingSetting({
             if (notification) {
                 if (value === options.none) {
                     deleteDataProcessingNotification(
-                        notification.live_spec_id
+                        notification.catalog_name
                     ).then(
                         (response) => {
                             if (response.data && response.data.length > 0) {
@@ -103,7 +100,7 @@ function DataProcessingSetting({
                     );
                 } else {
                     updateDataProcessingNotificationInterval(
-                        notification.live_spec_id,
+                        notification.catalog_name,
                         value
                     ).then(
                         (response) => {
@@ -121,8 +118,8 @@ function DataProcessingSetting({
                         }
                     );
                 }
-            } else if (liveSpecId) {
-                createDataProcessingNotification(liveSpecId, value).then(
+            } else if (catalogName) {
+                createDataProcessingNotification(catalogName, value).then(
                     (response) => {
                         if (response.data && response.data.length > 0) {
                             setNotification(response.data[0]);
@@ -140,7 +137,7 @@ function DataProcessingSetting({
             }
         },
         [
-            liveSpecId,
+            catalogName,
             notification,
             options.none,
             setNotification,
@@ -151,8 +148,8 @@ function DataProcessingSetting({
     const { getNotifications } = useInitializeTaskNotification(catalogName);
 
     useEffect(() => {
-        if (liveSpecId && notification === undefined) {
-            getNotifications(liveSpecId).then(
+        if (catalogName && notification === undefined) {
+            getNotifications().then(
                 (response) => {
                     console.log('init switch success', response);
 
@@ -166,7 +163,7 @@ function DataProcessingSetting({
                 }
             );
         }
-    }, [liveSpecId, notification, getNotifications, setNotification]);
+    }, [catalogName, notification, getNotifications, setNotification]);
 
     return (
         <Stack
@@ -210,7 +207,7 @@ function DataProcessingSetting({
                                 : options.none
                         }
                         disableClearable
-                        disabled={!liveSpecId}
+                        disabled={!catalogName}
                         onChange={updateEvaluationInterval}
                         options={Object.values(options)}
                         sx={{ width: 150 }}
