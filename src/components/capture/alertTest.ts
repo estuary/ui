@@ -1,30 +1,23 @@
 import { PostgrestError } from '@supabase/postgrest-js';
-import { isFinite } from 'lodash';
+import { isEmpty, isFinite } from 'lodash';
 import { supabaseClient } from 'services/supabase';
 
-interface DataProcessingNotification {
-    live_spec_id: string;
-    acknowledged: boolean;
+interface DataProcessingArguments {
+    bytes_processed: number;
+    email: string;
     evaluation_interval: string;
+    spec_type: string;
 }
 
-interface DataProcessingNotificationExt {
-    live_spec_id: string;
-    acknowledged: boolean;
-    evaluation_interval: string;
-    notification_title: string;
-    notification_message: string;
-    confirmation_title: string;
-    confirmation_message: string;
-    classification: string | null;
-    verified_email: string;
+interface AlertRecord {
+    alert_type: string;
     catalog_name: string;
-    spec_type: string;
-    bytes_processed: number;
+    fired_at: string;
+    resolved_at: string | null;
+    arguments: DataProcessingArguments;
 }
 
 interface EmailConfig {
-    live_spec_id: string;
     emails: string[];
     subject: string;
     html: string;
@@ -56,19 +49,16 @@ export const handleFailure = (error: any) => {
     };
 };
 
-const TABLES = {
-    DATA_PROCESSING_NOTIFICATIONS: 'data_processing_notifications',
-    DATA_PROCESSING_NOTIFICATIONS_EXT: 'data_processing_notifications_ext',
-};
+const dataProcessingAlertType = 'data_not_processed_in_interval';
+
+const TABLES = { ALERT_HISTORY: 'alert_history' };
 
 const emailNotifications = async (
     pendingNotifications: EmailConfig[]
-): Promise<string[]> => {
-    const notificationsDelivered: string[] = [];
-
+): Promise<void> => {
     // TODO: Replace hardcoded sender and recipient address with the destructured `emails` property.
     const notificationPromises = pendingNotifications.map(
-        ({ live_spec_id, emails, subject, html }) =>
+        ({ emails, html, subject }) =>
             fetch('https://api.resend.com/emails', {
                 method: 'POST',
                 headers: {
@@ -82,157 +72,102 @@ const emailNotifications = async (
                     subject,
                     html,
                 }),
-            }).then(
-                (response) => {
-                    if (response.ok) {
-                        notificationsDelivered.push(live_spec_id);
-                    }
-                },
-                () => {}
-            )
+            })
     );
 
     await Promise.all(notificationPromises);
-
-    return notificationsDelivered;
-};
-
-const updateAcknowledgementFlag = async (
-    alertEmailsDelivered: string[],
-    confirmationEmailsDelivered: string[]
-) => {
-    const alertUpdates = alertEmailsDelivered.map((liveSpecId) =>
-        supabaseClient
-            .from<DataProcessingNotification>(
-                TABLES.DATA_PROCESSING_NOTIFICATIONS
-            )
-            .update({ acknowledged: true })
-            .match({ live_spec_id: liveSpecId })
-            .then(handleSuccess, handleFailure)
-    );
-
-    const confirmationUpdates = confirmationEmailsDelivered.map((liveSpecId) =>
-        supabaseClient
-            .from<DataProcessingNotification>(
-                TABLES.DATA_PROCESSING_NOTIFICATIONS
-            )
-            .update({ acknowledged: false })
-            .match({ live_spec_id: liveSpecId })
-            .then(handleSuccess, handleFailure)
-    );
-
-    await Promise.all([...alertUpdates, ...confirmationUpdates]);
 };
 
 export const serve = async (_request: Request): Promise<Response> => {
-    const { data: notifications, error: notificationError } =
+    const startTimestamp = new Date();
+    const minuteOffset = startTimestamp.getUTCMinutes() - 5;
+
+    startTimestamp.setUTCMilliseconds(0);
+    startTimestamp.setUTCSeconds(0);
+    startTimestamp.setUTCMinutes(minuteOffset);
+
+    const { data: alerts, error: alertsError } = await supabaseClient
+        .from<AlertRecord>(TABLES.ALERT_HISTORY)
+        .select('*')
+        .eq('alert_type', dataProcessingAlertType)
+        .eq('resolved_at', null)
+        .gt('fired_at', startTimestamp.toUTCString());
+
+    if (alertsError !== null) {
+        returnPostgresError(alertsError);
+    }
+
+    const { data: confirmations, error: confirmationsError } =
         await supabaseClient
-            .from<DataProcessingNotificationExt>(
-                TABLES.DATA_PROCESSING_NOTIFICATIONS_EXT
-            )
-            .select('*');
+            .from<AlertRecord>(TABLES.ALERT_HISTORY)
+            .select('*')
+            .eq('alert_type', dataProcessingAlertType)
+            .gt('resolved_at', startTimestamp.toUTCString());
 
-    if (notificationError !== null) {
-        returnPostgresError(notificationError);
+    if (confirmationsError !== null) {
+        returnPostgresError(confirmationsError);
     }
 
-    if (!notifications || notifications.length === 0) {
-        // Terminate the function without error if there aren't any active notification subscriptions in the system.
+    if (isEmpty(alerts) && isEmpty(confirmations)) {
+        // Terminate the function without error if there aren't any active notifications in the system.
         return new Response(null, {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 200,
         });
     }
 
-    const pendingAlertEmails: EmailConfig[] = notifications
-        .filter(
-            ({ bytes_processed, acknowledged }) =>
-                !acknowledged && bytes_processed === 0
-        )
-        .map(
-            ({
-                catalog_name,
-                evaluation_interval,
-                live_spec_id,
-                notification_message,
-                notification_title,
-                spec_type,
-                verified_email,
-            }) => {
-                const timeOffset = evaluation_interval.split(':');
-                const hours = Number(timeOffset[0]);
+    const pendingAlertEmails: EmailConfig[] = alerts
+        ? alerts.map(
+              ({
+                  arguments: { email, evaluation_interval, spec_type },
+                  catalog_name,
+              }) => {
+                  const timeOffset = evaluation_interval.split(':');
+                  const hours = Number(timeOffset[0]);
 
-                const subject = notification_title
-                    .replaceAll('{spec_type}', spec_type)
-                    .replaceAll('{catalog_name}', catalog_name);
+                  const formattedEvaluationInterval = isFinite(hours)
+                      ? hours.toString()
+                      : timeOffset[0];
 
-                const html = notification_message
-                    .replaceAll('{spec_type}', spec_type)
-                    .replaceAll('{catalog_name}', catalog_name)
-                    .replaceAll(
-                        '{evaluation_interval}',
-                        isFinite(hours) ? hours.toString() : timeOffset[0]
-                    );
+                  const subject = `Estuary Flow: Alert for ${spec_type} ${catalog_name}`;
 
-                return {
-                    live_spec_id,
-                    emails: [verified_email],
-                    subject,
-                    html,
-                };
-            }
-        );
+                  const html = `<p>You are receiving this alert because your task, ${spec_type} ${catalog_name} hasn't seen new data in ${formattedEvaluationInterval}.  You can locate your task <a href="https://dashboard.estuary.dev/captures/details/overview?catalogName=${catalog_name}" target="_blank" rel="noopener">here</a> to make changes or update its alerting settings.</p>`;
 
-    const pendingConfirmationEmails: EmailConfig[] = notifications
-        .filter(
-            ({ bytes_processed, acknowledged }) =>
-                acknowledged && bytes_processed > 0
-        )
-        .map(
-            ({
-                catalog_name,
-                confirmation_message,
-                confirmation_title,
-                live_spec_id,
-                spec_type,
-                verified_email,
-            }) => {
-                const subject = confirmation_title
-                    .replaceAll('{spec_type}', spec_type)
-                    .replaceAll('{catalog_name}', catalog_name);
+                  return {
+                      emails: [email],
+                      html,
+                      subject,
+                  };
+              }
+          )
+        : [];
 
-                const html = confirmation_message
-                    .replaceAll('{spec_type}', spec_type)
-                    .replaceAll('{catalog_name}', catalog_name);
+    const pendingConfirmationEmails: EmailConfig[] = confirmations
+        ? confirmations.map(
+              ({ arguments: { email, spec_type }, catalog_name }) => {
+                  const subject = `Estuary Flow: Alert for ${spec_type} ${catalog_name}`;
 
-                return {
-                    live_spec_id,
-                    emails: [verified_email],
-                    subject,
-                    html,
-                };
-            }
-        );
+                  const html = `<p>You are receiving this alert because your task, ${spec_type} ${catalog_name} has resumed processing data.  You can locate your task <a href="https://dashboard.estuary.dev/captures/details/overview?catalogName=${catalog_name}" target="_blank" rel="noopener">here</a> to make changes or update its alerting settings.</p>`;
 
-    if (
-        pendingAlertEmails.length === 0 &&
-        pendingConfirmationEmails.length === 0
-    ) {
+                  return {
+                      emails: [email],
+                      subject,
+                      html,
+                  };
+              }
+          )
+        : [];
+
+    const pendingEmails = [...pendingAlertEmails, ...pendingConfirmationEmails];
+
+    if (pendingEmails.length === 0) {
         return new Response(null, {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 200,
         });
     }
 
-    const alertEmailsDelivered = await emailNotifications(pendingAlertEmails);
-    const confirmationEmailsDelivered = await emailNotifications(
-        pendingConfirmationEmails
-    );
-
-    await updateAcknowledgementFlag(
-        alertEmailsDelivered,
-        confirmationEmailsDelivered
-    );
+    await emailNotifications(pendingEmails);
 
     return new Response(null, {
         status: 200,
