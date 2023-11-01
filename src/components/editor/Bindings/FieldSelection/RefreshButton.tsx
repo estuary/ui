@@ -8,11 +8,12 @@ import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 
 interface Props {
-    logEvent: CustomEvents.MATERIALIZATION_TEST;
     buttonLabelId: string;
+    logEvent: CustomEvents.MATERIALIZATION_TEST;
+    disabled?: boolean;
 }
 
-function RefreshButton({ logEvent, buttonLabelId }: Props) {
+function RefreshButton({ disabled, logEvent, buttonLabelId }: Props) {
     const { callFailed } = useEntityWorkflowHelpers();
 
     const [updating, setUpdating] = useState(false);
@@ -23,7 +24,7 @@ function RefreshButton({ logEvent, buttonLabelId }: Props) {
 
     return (
         <Button
-            disabled={updating}
+            disabled={Boolean(updating || disabled)}
             onClick={async () => {
                 setUpdating(true);
 
