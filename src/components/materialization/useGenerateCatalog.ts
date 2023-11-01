@@ -12,6 +12,7 @@ import {
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
+    useEditorStore_setCatalogName,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
@@ -70,6 +71,7 @@ function useGenerateCatalog() {
     const setDraftId = useEditorStore_setId();
     const persistedDraftId = useEditorStore_persistedDraftId();
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
+    const setCatalogName = useEditorStore_setCatalogName();
 
     // Endpoint Config Store
     const endpointSchema = useEndpointConfigStore_endpointSchema();
@@ -249,6 +251,7 @@ function useGenerateCatalog() {
                 await mutateDraftSpecs();
 
                 // Update all the store state
+                setCatalogName(processedEntityName);
                 setEncryptedEndpointConfig({
                     data: draftSpecsResponse.data[0].spec.endpoint.connector
                         .config,
@@ -288,6 +291,7 @@ function useGenerateCatalog() {
             resourceConfigErrorsExist,
             serverEndpointConfigData,
             serverUpdateRequired,
+            setCatalogName,
             setDraftId,
             setDraftedEntityName,
             setEncryptedEndpointConfig,

@@ -10,6 +10,8 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useMemo } from 'react';
 import { EditorStoreNames } from 'stores/names';
 import ShardHydrator from '../Shard/Hydrator';
+import EditButton from './EditButton';
+import MaterializeButton from './MaterializeButton';
 import RenderTab from './RenderTab';
 import DetailTabs from './Tabs';
 
@@ -24,19 +26,22 @@ function EntityDetails() {
 
     // Fetch params from URL
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
-    const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
 
     return (
         <LocalZustandProvider createStore={localStore}>
             <LiveSpecsHydrator
                 collectionNames={[catalogName]}
-                lastPubId={lastPubId}
                 localZustandScope={true}
             >
-                <ShardHydrator lastPubId={lastPubId} catalogName={catalogName}>
+                <ShardHydrator catalogName={catalogName}>
                     <Box>
                         <Stack spacing={2} sx={{ m: 1 }}>
-                            <Stack direction="row" spacing={1}>
+                            <Stack
+                                direction="row"
+                                sx={{
+                                    justifyContent: 'space-between',
+                                }}
+                            >
                                 <Typography
                                     component="span"
                                     variant="h6"
@@ -47,8 +52,8 @@ function EntityDetails() {
                                 >
                                     {catalogName}
                                 </Typography>
-                                {/*TODO (details) need to wire in edit button*/}
-                                {/*<EditButton />*/}
+                                <EditButton />
+                                <MaterializeButton />
                             </Stack>
                             <Divider />
                             <DetailTabs />

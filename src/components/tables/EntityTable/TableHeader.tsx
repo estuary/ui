@@ -39,6 +39,23 @@ function EntityTableHeader({
                 }}
             >
                 {columns.map((column, index) => {
+                    let tableCellSX = {};
+
+                    if (column.sticky) {
+                        tableCellSX = {
+                            ...getStickyTableCell(true),
+                        };
+                    }
+
+                    // If we have no message let the width be 0 so the cell can collapse
+                    //   to the min-content of the column. Helpful for the button at the end of the table
+                    if (column.collapseHeader) {
+                        tableCellSX = {
+                            ...tableCellSX,
+                            width: 0,
+                        };
+                    }
+
                     if (column.renderHeader && selectableTableStoreName) {
                         return column.renderHeader(
                             index,
@@ -57,11 +74,7 @@ function EntityTableHeader({
                                         : false
                                     : undefined
                             }
-                            sx={
-                                column.sticky
-                                    ? getStickyTableCell(true)
-                                    : undefined
-                            }
+                            sx={tableCellSX}
                         >
                             {selectData && column.field && !hide ? (
                                 <TableSortLabel

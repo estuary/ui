@@ -173,7 +173,7 @@ export const getInitialState = (
         );
     },
 
-    hydrateState: async (entityType, workflow): Promise<void> => {
+    hydrateState: async (workflow): Promise<void> => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
@@ -219,8 +219,7 @@ export const getInitialState = (
                 }
             } else if (liveSpecId) {
                 const { data, error } = await getLiveSpecs_detailsForm(
-                    liveSpecId,
-                    entityType
+                    liveSpecId
                 );
 
                 if (!error && data && data.length > 0) {

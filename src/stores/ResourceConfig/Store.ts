@@ -1,7 +1,8 @@
+/* eslint-disable complexity */
 import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import {
+    getLiveSpecsById_writesTo,
     getLiveSpecsByLiveSpecId,
-    getLiveSpecs_writesTo,
     getSchema_Resource,
 } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
@@ -160,12 +161,18 @@ const getInitialState = (
                     rehydrating && collections ? collections : [];
 
                 // Get a list of all the new collections that will be added
-                value.forEach((capture) => {
-                    capture?.writes_to.forEach((collection) => {
-                        if (!emptyCollections.includes(collection)) {
-                            emptyCollections.push(collection);
+                value.forEach((datum) => {
+                    if (datum?.spec_type === 'collection') {
+                        if (!emptyCollections.includes(datum.catalog_name)) {
+                            emptyCollections.push(datum.catalog_name);
                         }
-                    });
+                    } else {
+                        datum?.writes_to.forEach((collection) => {
+                            if (!emptyCollections.includes(collection)) {
+                                emptyCollections.push(collection);
+                            }
+                        });
+                    }
                 });
 
                 // Filter out any collections that are not in the emptyCollections list
@@ -630,8 +637,8 @@ const getInitialState = (
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
-        const prefillPubIds = searchParams.getAll(
-            GlobalSearchParams.PREFILL_PUB_ID
+        const prefillLiveSpecIds = searchParams.getAll(
+            GlobalSearchParams.PREFILL_LIVE_SPEC_ID
         );
         const liveSpecIds = searchParams.getAll(
             GlobalSearchParams.LIVE_SPEC_ID
@@ -670,28 +677,30 @@ const getInitialState = (
             }
         }
 
-        if (prefillPubIds.length > 0) {
+        if (prefillLiveSpecIds.length > 0) {
             // Prefills collections in the materialization create workflow when the Materialize CTA
             // on the Captures page or the capture publication log dialog is clicked.
-            const { data, error } = await getLiveSpecs_writesTo(
-                prefillPubIds,
-                'capture'
+            const { data, error } = await getLiveSpecsById_writesTo(
+                prefillLiveSpecIds
             );
 
             if (error) {
                 setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
-                const { preFillEmptyCollections } = get();
-                preFillEmptyCollections(data, rehydrating);
+                get().preFillEmptyCollections(data, rehydrating);
+
+                return Promise.resolve(data);
             }
         } else if (materializationReydrating) {
             // If there is nothign to prefill but we are rehydrating we want to make sure
             //  we prefill any collections the user already selected but only for materializations
             //  because for a Capture the collections are discovered and if the hydration is kicked
             //  off then they will need to rediscover everything again
-            const { preFillEmptyCollections } = get();
-            preFillEmptyCollections([], rehydrating);
+            get().preFillEmptyCollections([], rehydrating);
+            return Promise.resolve([]);
         }
+
+        return Promise.resolve(null);
     },
 
     setServerUpdateRequired: (value) => {

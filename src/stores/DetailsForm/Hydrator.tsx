@@ -29,7 +29,7 @@ export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
             (entityType === 'capture' || entityType === 'materialization')
         ) {
             setActive(true);
-            hydrateState(entityType, workflow).then(
+            hydrateState(workflow).then(
                 () => {
                     setHydrated(true);
                 },

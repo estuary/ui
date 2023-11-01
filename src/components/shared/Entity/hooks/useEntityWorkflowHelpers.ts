@@ -1,7 +1,9 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
+import { getLiveSpecIdByPublication } from 'api/publicationSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import { useBindingsEditorStore_resetState } from 'components/editor/Bindings/Store/hooks';
 import {
+    useEditorStore_catalogName,
     useEditorStore_pubId,
     useEditorStore_resetState,
 } from 'components/editor/Store/hooks';
@@ -9,8 +11,11 @@ import { useEntityType } from 'context/EntityContext';
 import invariableStores from 'context/Zustand/invariableStores';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
+import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
+import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { CustomEvents, logRocketEvent } from 'services/logrocket';
 import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig/hooks';
 import {
@@ -23,15 +28,15 @@ import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
 import { useSchemaEvolution_resetState } from 'stores/SchemaEvolution/hooks';
 import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
+import { snackbarSettings } from 'utils/notification-utils';
 import { useStore } from 'zustand';
 
 function useEntityWorkflowHelpers() {
-    const navigate = useNavigate();
-
-    const entityType = useEntityType();
-
-    // Supabase
+    const { enqueueSnackbar } = useSnackbar();
     const supabaseClient = useClient();
+    const navigate = useNavigate();
+    const entityType = useEntityType();
+    const intl = useIntl();
 
     // Bindings Editor Store
     const resetBindingsEditorStore = useBindingsEditorStore_resetState();
@@ -42,6 +47,7 @@ function useEntityWorkflowHelpers() {
     // Draft Editor Store
     const pubId = useEditorStore_pubId();
     const resetEditorStore = useEditorStore_resetState();
+    const catalogName = useEditorStore_catalogName();
 
     // Endpoint Config Store
     const resetEndpointConfigState = useEndpointConfigStore_reset();
@@ -112,24 +118,30 @@ function useEntityWorkflowHelpers() {
         [setFormState, supabaseClient]
     );
 
-    const exit = useCallback(() => {
-        resetState();
+    const exit = useCallback(
+        (customRoute?: string) => {
+            resetState();
 
-        let route: string;
+            let route: string;
+            if (!customRoute) {
+                switch (entityType) {
+                    case 'capture':
+                        route = authenticatedRoutes.captures.fullPath;
+                        break;
+                    case 'materialization':
+                        route = authenticatedRoutes.materializations.fullPath;
+                        break;
+                    default:
+                        route = authenticatedRoutes.collections.fullPath;
+                }
+            } else {
+                route = customRoute;
+            }
 
-        switch (entityType) {
-            case 'capture':
-                route = authenticatedRoutes.captures.fullPath;
-                break;
-            case 'materialization':
-                route = authenticatedRoutes.materializations.fullPath;
-                break;
-            default:
-                route = authenticatedRoutes.collections.fullPath;
-        }
-
-        navigate(route, { replace: true });
-    }, [navigate, resetState, entityType]);
+            navigate(route, { replace: true });
+        },
+        [navigate, resetState, entityType]
+    );
 
     // Form Event Handlers
     const closeLogs = useCallback(() => {
@@ -142,20 +154,37 @@ function useEntityWorkflowHelpers() {
         }
     }, [exit, setFormState, exitWhenLogsClose]);
 
-    const materializeCollections = useCallback(() => {
-        exit();
-
-        navigate(
-            pubId
-                ? getPathWithParams(
-                      authenticatedRoutes.materializations.create.fullPath,
-                      {
-                          [GlobalSearchParams.PREFILL_PUB_ID]: pubId,
-                      }
-                  )
-                : authenticatedRoutes.materializations.create.fullPath
+    const materializeCollections = useCallback(async () => {
+        // Go fetch the live spec that we want to materialize
+        const liveSpecResponse = await getLiveSpecIdByPublication(
+            pubId,
+            catalogName
         );
-    }, [exit, navigate, pubId]);
+
+        const liveSpecId = liveSpecResponse.data?.[0]?.live_spec_id;
+
+        if (!liveSpecId) {
+            enqueueSnackbar(
+                intl.formatMessage({
+                    id: 'entityCreate.errors.cannotFetchLiveSpec',
+                }),
+                {
+                    ...snackbarSettings,
+                    variant: 'error',
+                }
+            );
+            logRocketEvent(CustomEvents.CAPTURE_MATERIALIZE_FAILED);
+        } else {
+            exit(
+                getPathWithParams(
+                    authenticatedRoutes.materializations.create.fullPath,
+                    {
+                        [GlobalSearchParams.PREFILL_LIVE_SPEC_ID]: liveSpecId,
+                    }
+                )
+            );
+        }
+    }, [catalogName, enqueueSnackbar, exit, intl, pubId]);
 
     return { callFailed, closeLogs, exit, materializeCollections, resetState };
 }
