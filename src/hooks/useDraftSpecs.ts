@@ -82,8 +82,6 @@ function useDraftSpecs(
         draftId ? draftSpecQuery : null
     );
 
-    console.log('mutate', mutate);
-
     return useMemo(
         () => ({
             draftSpecs: data ? data.data : defaultResponse,
