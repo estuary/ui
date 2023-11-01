@@ -74,13 +74,15 @@ function ValidationErrorSummary({
         ? 'workflows.error.initForm'
         : 'entityCreate.endpointConfig.errorSummary';
 
+    const show = displayValidation || hydrationErrorsExist;
+
     useEffect(() => {
-        if (displayValidation || hydrationErrorsExist) {
+        if (show) {
             scrollIntoView(scrollToTarget);
         }
-    }, [displayValidation, hydrationErrorsExist, scrollIntoView]);
+    }, [show, scrollIntoView]);
 
-    return displayValidation || hydrationErrorsExist ? (
+    return show ? (
         <Collapse in={formErrorsExist} timeout="auto" unmountOnExit>
             <AlertBox severity="error" hideIcon={hideIcon} ref={scrollToTarget}>
                 <AlertTitle>
