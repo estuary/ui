@@ -269,6 +269,12 @@ function useGenerateCatalog() {
                 //  were enabled during an edit in materializations.
                 resetRediscoverySettings();
 
+                //  TODO (Reuse)
+                //  Eventually, we might want to come up with a good pattern of how async functions return the results of their updates
+                //  especially when they make several calls. Maybe we do not worry about it and just handle case by case... but feels like
+                //  something we could use a good approach to.
+
+                // Need to pass the draftId so that other places that use this function (`see fields` button) can do other stuff with it.
                 return Promise.resolve(evaluatedDraftId);
             }
         },
