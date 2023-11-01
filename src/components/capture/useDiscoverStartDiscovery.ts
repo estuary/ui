@@ -99,6 +99,7 @@ function useDiscoverStartDiscovery(
             endpointConfigData,
             imageConnectorTagId,
             persistedDraftId,
+            setCatalogName,
             setFormState,
         ]
     );
