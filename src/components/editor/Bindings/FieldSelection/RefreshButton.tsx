@@ -8,12 +8,11 @@ import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 
 interface Props {
-    disabled: boolean;
     logEvent: CustomEvents.MATERIALIZATION_TEST;
     buttonLabelId: string;
 }
 
-function RefreshButton({ disabled, logEvent, buttonLabelId }: Props) {
+function RefreshButton({ logEvent, buttonLabelId }: Props) {
     const { callFailed } = useEntityWorkflowHelpers();
 
     const [updating, setUpdating] = useState(false);
@@ -24,18 +23,28 @@ function RefreshButton({ disabled, logEvent, buttonLabelId }: Props) {
 
     return (
         <Button
-            disabled={disabled || updating}
+            disabled={updating}
             onClick={async () => {
                 setUpdating(true);
 
-                const evaluatedDraftId = await generateCatalog(mutateDraftSpec);
+                let evaluatedDraftId;
+                try {
+                    evaluatedDraftId = await generateCatalog(mutateDraftSpec);
+                } catch (_error: unknown) {
+                    setUpdating(false);
+                }
 
                 // Make sure we have a draft id so we know the generate worked
                 //  if this is not returned then the function itself handled showing an error
                 if (evaluatedDraftId) {
-                    await saveCatalog(evaluatedDraftId);
+                    try {
+                        await saveCatalog(evaluatedDraftId);
+                    } catch (_error: unknown) {
+                        setUpdating(false);
+                    }
                 }
 
+                // I do not think this is truly needed but being safe so the user is not stuck with a disabled button
                 setUpdating(false);
             }}
         >

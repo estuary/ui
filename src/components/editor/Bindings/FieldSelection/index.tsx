@@ -295,7 +295,6 @@ function FieldSelectionViewer({ collectionName }: Props) {
                     {/* The shared test and save button component is disabled when the form is active.
                         No additional disabled conditions are needed. */}
                     <RefreshButton
-                        disabled={false}
                         logEvent={CustomEvents.MATERIALIZATION_TEST}
                         buttonLabelId="fieldSelection.cta.populateTable"
                     />
