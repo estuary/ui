@@ -6,8 +6,7 @@ function useScrollIntoView(target: RefObject<HTMLDivElement>) {
             scrollTarget?: RefObject<HTMLDivElement | null>,
             options?: ScrollIntoViewOptions | boolean
         ) => {
-            const el = scrollTarget ?? target;
-            el.current?.scrollIntoView(
+            (scrollTarget ?? target).current?.scrollIntoView(
                 options ?? {
                     behavior: 'smooth',
                     block: 'center',

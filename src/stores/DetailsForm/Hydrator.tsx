@@ -12,7 +12,6 @@ import {
 import { BaseComponentProps } from 'types';
 
 export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
-    console.log('DetailsFormHydrator');
     const entityType = useEntityType();
     const workflow = useEntityWorkflow();
 
