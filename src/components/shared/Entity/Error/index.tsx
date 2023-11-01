@@ -30,6 +30,8 @@ function EntityError({ logToken, error, title, draftId }: Props) {
         ? draftId
         : null;
 
+    // The parent component hides this unless there is an error to show so we should be
+    //  fine only calling this once.
     useEffect(() => {
         scrollIntoView(scrollToTarget);
     });
