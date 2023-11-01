@@ -412,11 +412,8 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.rowSelector.all': `All`,
     'entityTable.rowSelector.none': `None`,
 
-    'optionMenu.ariaLabel': `Open Option Menu`,
-    'optionMenu.tooltip': `Options`,
-    'optionMenu.option.detailsPanel.display': `View details`,
-    'optionMenu.option.detailsPanel.hide': `Hide details`,
-    'optionMenu.option.edit': `Edit specification`,
+    'entityTable.edit.aria': `Edit specification of {name}`,
+    'entityTable.materialize.aria': `Materialize {name}`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
@@ -675,6 +672,8 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
 
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
     'entityCreate.errors.missingDraftId': `Missing Draft ID.`,
+
+    'entityCreate.errors.cannotFetchLiveSpec': `Unable to fetch the proper details to materialize. Try again.`,
 
     'discovery.failed.title': `Generating Specification Failed`,
     'discovery.failed.message': `There was an issue attempting to discover your endpoint. Please review details below.`,
@@ -957,6 +956,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
 
     'workflows.sourceCapture.header': `Link Capture`,
     'workflows.sourceCapture.cta': `link capture`,
+    'workflows.sourceCapture.cta.loading': `${CommonMessages['common.loading']}`,
     'workflows.sourceCapture.cta.edit': `edit capture`,
     'workflows.sourceCapture.selected.none': `no linked capture`,
     'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization.  Collections added to your capture will automatically be added to your materialization.`,
@@ -1246,9 +1246,9 @@ const NotBeforeNotAfter: ResolvedIntlConfig['messages'] = {
     'notBeforeNotAfter.message': `Include only data from before or after a specific time period.  This should only be used when first setting up your destination or it will not have an effect.`,
     'notBeforeNotAfter.update.error': `Changes to draft not saved.`,
     'notAfter.input.label': `Not After`,
-    'notAfter.input.description': `only include data from before this time`,
+    'notAfter.input.description': `only include data from before this time (UTC)`,
     'notBefore.input.label': `Not Before`,
-    'notBefore.input.description': `only include data from after this time`,
+    'notBefore.input.description': `only include data from after this time (UTC)`,
 };
 
 const FieldSelection: ResolvedIntlConfig['messages'] = {

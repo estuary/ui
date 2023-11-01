@@ -34,8 +34,8 @@ const trackEvent = (
 };
 
 function ExistingEntityCard({ queryData }: Props) {
-    const prefillPubIds = useGlobalSearchParams(
-        GlobalSearchParams.PREFILL_PUB_ID,
+    const prefillLiveSpecIds = useGlobalSearchParams(
+        GlobalSearchParams.PREFILL_LIVE_SPEC_ID,
         true
     );
     const navigateToEdit = useEntityEditNavigate();
@@ -53,8 +53,11 @@ function ExistingEntityCard({ queryData }: Props) {
             };
 
             const optionalParams =
-                prefillPubIds.length > 0
-                    ? { [GlobalSearchParams.PREFILL_PUB_ID]: prefillPubIds }
+                prefillLiveSpecIds.length > 0
+                    ? {
+                          [GlobalSearchParams.PREFILL_LIVE_SPEC_ID]:
+                              prefillLiveSpecIds,
+                      }
                     : null;
 
             // TODO (routes): Allow the user to return to the existing entity check page on browser back.

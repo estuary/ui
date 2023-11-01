@@ -5,23 +5,17 @@ import TimeStamp from 'components/tables/cells/TimeStamp';
 import { useEntityType } from 'context/EntityContext';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
-import { useZustandStore } from 'context/Zustand/provider';
-import useShardHydration from 'hooks/shards/useShardHydration';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
-import { ShardStatusMessageIds } from 'stores/ShardDetail/types';
 
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-    StatsResponse,
-} from 'stores/Tables/Store';
+import { StatsResponse } from 'stores/Tables/Store';
 import { hasLength } from 'utils/misc-utils';
 import EntityNameLink from '../cells/EntityNameLink';
 import RowSelect from '../cells/RowSelect';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
+import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
 
 interface RowProps {
     isSelected: boolean;
@@ -92,29 +86,20 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
             ) : null}
 
             <TimeStamp time={row.updated_at} />
+
+            {/*            <MaterializeCollection
+                liveSpecId={row.id}
+                name={row.catalog_name}
+            />*/}
         </TableRow>
     );
 }
 
 function Rows({ data, showEntityStatus }: RowsProps) {
-    useShardHydration(data, ShardStatusMessageIds.COLLECTION);
-
-    const selectTableStoreName = SelectTableStoreNames.COLLECTION;
-
-    const selected = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['selected']
-    >(selectTableStoreName, selectableTableStoreSelectors.selected.get);
-
-    const setRow = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['setSelected']
-    >(selectTableStoreName, selectableTableStoreSelectors.selected.set);
-
-    const stats = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['stats']
-    >(selectTableStoreName, selectableTableStoreSelectors.stats.get);
+    const { stats, selected, setRow } = useRowsWithStatsState(
+        SelectTableStoreNames.COLLECTION,
+        data
+    );
 
     return (
         <>

@@ -141,9 +141,7 @@ export function TaskEndpoints({ taskName }: Props) {
 // If the task doesn't expose any endpoints, then nothing will be rendered.
 export function TaskEndpoint({ taskName }: Props) {
     // The id and spec_type are irrelevant in useShardsList, but they're required to be there.
-    useShardHydration([
-        { catalog_name: taskName, id: '', spec_type: 'collection' },
-    ]);
+    useShardHydration([taskName]);
 
     const entityType = useEntityType();
     const { endpoints, gatewayHostname } = useShardEndpoints(taskName, [

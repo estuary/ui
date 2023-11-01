@@ -12,6 +12,7 @@ import {
 } from 'api/liveSpecsExt';
 import { useBindingsEditorStore_prefillFullSourceConfigs } from 'components/editor/Bindings/Store/hooks';
 import {
+    useEditorStore_setCatalogName,
     useEditorStore_setDraftInitializationError,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
@@ -39,13 +40,12 @@ const createTaskDraft = async (catalogName: string): Promise<string | null> => {
 };
 
 function useInitializeTaskDraft() {
-    const [connectorId, liveSpecId, draftIdInURL] = useGlobalSearchParams([
-        GlobalSearchParams.CONNECTOR_ID,
+    const [liveSpecId, draftIdInURL] = useGlobalSearchParams([
         GlobalSearchParams.LIVE_SPEC_ID,
         GlobalSearchParams.DRAFT_ID,
     ]);
-    const prefillPubIds = useGlobalSearchParams(
-        GlobalSearchParams.PREFILL_PUB_ID,
+    const prefillLiveSpecIds = useGlobalSearchParams(
+        GlobalSearchParams.PREFILL_LIVE_SPEC_ID,
         true
     );
     const navigateToEdit = useEntityEditNavigate();
@@ -56,6 +56,7 @@ function useInitializeTaskDraft() {
     const setDraftId = useEditorStore_setId();
     const setDraftInitializationError =
         useEditorStore_setDraftInitializationError();
+    const setCatalogName = useEditorStore_setCatalogName();
 
     // const persistedDraftId = useEditorStore_persistedDraftId();
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
@@ -69,12 +70,10 @@ function useInitializeTaskDraft() {
     // Get catalog name and task spec from live specs
     const getTask =
         useCallback(async (): Promise<LiveSpecsExtQuery_ByLiveSpecId | null> => {
-            const liveSpecResponse = await getLiveSpecsByLiveSpecId(
-                liveSpecId,
-                taskSpecType
-            );
+            const liveSpecResponse = await getLiveSpecsByLiveSpecId(liveSpecId);
 
             if (liveSpecResponse.data && liveSpecResponse.data.length > 0) {
+                setCatalogName(liveSpecResponse.data[0].catalog_name);
                 return liveSpecResponse.data[0];
             } else {
                 setDraftInitializationError({
@@ -84,7 +83,7 @@ function useInitializeTaskDraft() {
 
                 return null;
             }
-        }, [setDraftInitializationError, liveSpecId, taskSpecType]);
+        }, [liveSpecId, setCatalogName, setDraftInitializationError]);
 
     const getTaskDraft = useCallback(
         async ({
@@ -241,14 +240,15 @@ function useInitializeTaskDraft() {
                         navigateToEdit(
                             taskSpecType,
                             {
-                                [GlobalSearchParams.CONNECTOR_ID]: connectorId,
                                 [GlobalSearchParams.LIVE_SPEC_ID]: liveSpecId,
+                                [GlobalSearchParams.CONNECTOR_ID]:
+                                    task.connector_id,
                                 [GlobalSearchParams.LAST_PUB_ID]:
                                     task.last_pub_id,
                             },
                             {
-                                [GlobalSearchParams.PREFILL_PUB_ID]:
-                                    prefillPubIds,
+                                [GlobalSearchParams.PREFILL_LIVE_SPEC_ID]:
+                                    prefillLiveSpecIds,
                                 [GlobalSearchParams.DRAFT_ID]: evaluatedDraftId,
                             },
                             true
@@ -272,14 +272,13 @@ function useInitializeTaskDraft() {
             setLoading(false);
         },
         [
-            connectorId,
             getTask,
             getTaskDraft,
             getTaskDraftSpecs,
             liveSpecId,
             navigateToEdit,
             prefillFullSourceConfigs,
-            prefillPubIds,
+            prefillLiveSpecIds,
             setDraftId,
             setDraftInitializationError,
             setFormState,

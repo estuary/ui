@@ -13,6 +13,7 @@ import {
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import useEntityWorkflowHydrated from '../hooks/useEntityWorkflowHydrated';
 
 interface Props {
     logEvent:
@@ -30,6 +31,7 @@ function EntitySaveButton({ disabled, taskNames, logEvent }: Props) {
 
     const { callFailed, closeLogs, materializeCollections } =
         useEntityWorkflowHelpers();
+    const formsHydrated = useEntityWorkflowHydrated();
 
     const draftId = useEditorStore_id();
 
@@ -69,7 +71,7 @@ function EntitySaveButton({ disabled, taskNames, logEvent }: Props) {
                 }
             />
             <EntityCreateSave
-                disabled={disabled ?? !draftId}
+                disabled={Boolean(disabled ?? !draftId) || !formsHydrated}
                 onFailure={callFailed}
                 logEvent={logEvent}
             />

@@ -1,12 +1,12 @@
 import { TableCell } from '@mui/material';
-import EditLink from 'components/shared/Entity/EditLink';
+import MaterializeLink from 'components/shared/Entity/MaterializeLink';
 
 interface Props {
     liveSpecId: string;
     name: string;
 }
 
-function EditTask({ liveSpecId, name }: Props) {
+function MaterializeCollection({ liveSpecId, name }: Props) {
     return (
         <TableCell
             sx={{
@@ -14,9 +14,9 @@ function EditTask({ liveSpecId, name }: Props) {
                 textAlign: 'right',
             }}
         >
-            <EditLink liveSpecId={liveSpecId} name={name} />
+            <MaterializeLink liveSpecId={liveSpecId} name={name} />
         </TableCell>
     );
 }
 
-export default EditTask;
+export default MaterializeCollection;

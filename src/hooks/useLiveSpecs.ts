@@ -101,7 +101,7 @@ export interface LiveSpecsQuery_spec extends LiveSpecsQuery {
         key: string[];
     };
 }
-const specQuery = queryColumns.concat(['id', 'spec']);
+const specQuery = queryColumns.concat(['id', 'spec', 'last_pub_id']);
 
 export function useLiveSpecs_spec(id: string, collectionNames?: string[]) {
     const liveSpecQuery = useQuery<LiveSpecsQuery_spec>(

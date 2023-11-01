@@ -1,22 +1,25 @@
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
+import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
-import EditLink from '../EditLink';
+import MaterializeLink from '../MaterializeLink';
 
-function EditButton() {
+function MaterializeButton() {
+    const entityType = useEntityType();
+
     const spec = useEditorStore_specs<LiveSpecsQuery_spec>({
         localScope: true,
     });
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
-    if (!spec?.[0].id) {
+    if (entityType !== 'collection' || !spec?.[0].id) {
         return null;
     }
 
     return (
-        <EditLink
+        <MaterializeLink
             liveSpecId={spec[0].id}
             name={catalogName}
             variant="contained"
@@ -24,4 +27,4 @@ function EditButton() {
     );
 }
 
-export default EditButton;
+export default MaterializeButton;

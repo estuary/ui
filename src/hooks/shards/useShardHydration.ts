@@ -19,7 +19,7 @@ function useShardHydration(
     const { data, error, ...queryResponse } = useShardsList(querySettings);
 
     const setShards = useShardDetail_setShards();
-    const setError = useShardDetail_setError();
+    const setShardsError = useShardDetail_setError();
     const setDictionaryHydrated = useShardDetail_setDictionaryHydrated();
     const setDefaultMessageId = useShardDetail_setDefaultMessageId();
     const setDefaultStatusColor = useShardDetail_setDefaultStatusColor();
@@ -40,7 +40,7 @@ function useShardHydration(
 
     // Handle data
     useEffect(() => {
-        setError(error ?? null);
+        setShardsError(error ?? null);
 
         if (data) {
             if (data.shards.length > 0) {
@@ -50,7 +50,7 @@ function useShardHydration(
             }
             setDictionaryHydrated(true);
         }
-    }, [data, error, setDictionaryHydrated, setError, setShards]);
+    }, [data, error, setDictionaryHydrated, setShardsError, setShards]);
 
     return useMemo(
         () => ({

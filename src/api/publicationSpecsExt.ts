@@ -27,3 +27,16 @@ export const getPublicationHistoryByCatalogName = (catalogName: string) => {
             ascending: false,
         });
 };
+
+export const getLiveSpecIdByPublication = (
+    pubId: string | null, // Do not actually pass null... just making typing easiser
+    catalogName: string
+) => {
+    return supabaseClient
+        .from<PublicationSpecsExt_PublicationHistory>(
+            TABLES.PUBLICATION_SPECS_EXT
+        )
+        .select(`live_spec_id`)
+        .eq('pub_id', pubId)
+        .eq('catalog_name', catalogName);
+};

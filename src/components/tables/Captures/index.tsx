@@ -8,6 +8,7 @@ import { SelectTableStoreNames } from 'stores/names';
 import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import StatsHydrator from 'stores/Tables/StatsHydrator';
+import { selectKeyValueName } from '../shared';
 import useCaptureColumns from './useCaptureColumns';
 
 const selectableTableStoreName = SelectTableStoreNames.CAPTURE;
@@ -77,7 +78,7 @@ function CapturesTable() {
                                 selectableTableStoreName={
                                     selectableTableStoreName
                                 }
-                                selectKeyValueName="last_pub_id"
+                                selectKeyValueName={selectKeyValueName}
                                 showMaterialize={true}
                             />
                         }

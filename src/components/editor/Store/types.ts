@@ -38,6 +38,9 @@ export interface EditorStoreState<T> {
     pubId: string | null;
     setPubId: (newVal: EditorStoreState<T>['pubId']) => void;
 
+    catalogName: string;
+    setCatalogName: (newVal: EditorStoreState<T>['catalogName']) => void;
+
     // TODO: Resolve conflicting type. Determine whether current catalog can be a DraftSpecQuery, LiveSpecsQuery_spec, or null.
     //   See the FileSelector component for reference.
     currentCatalog: DraftSpec;

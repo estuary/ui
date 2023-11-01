@@ -8,6 +8,7 @@ import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import StatsHydrator from 'stores/Tables/StatsHydrator';
 import RowSelector from '../RowActions/RowSelector';
+import { selectKeyValueName } from '../shared';
 import useCollectionColumns from './useCollectionColumns';
 
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION;
@@ -77,7 +78,8 @@ function CollectionsTable() {
                                 selectableTableStoreName={
                                     selectableTableStoreName
                                 }
-                                showMaterialize={false}
+                                selectKeyValueName={selectKeyValueName}
+                                showMaterialize={true}
                             />
                         }
                     />
