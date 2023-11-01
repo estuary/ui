@@ -8,6 +8,8 @@ import ResourceConfigErrors from 'components/shared/Entity/ValidationErrorSummar
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
+import useScrollIntoView from 'hooks/useScrollIntoView';
+import { useEffect, useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useDetailsForm_errorsExist } from 'stores/DetailsForm/hooks';
 import {
@@ -32,6 +34,9 @@ function ValidationErrorSummary({
     hideIcon,
     ErrorComponent,
 }: Props) {
+    const scrollToTarget = useRef<HTMLDivElement>(null);
+    const scrollIntoView = useScrollIntoView(scrollToTarget);
+
     const connectorID = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     // Details form
@@ -69,9 +74,15 @@ function ValidationErrorSummary({
         ? 'workflows.error.initForm'
         : 'entityCreate.endpointConfig.errorSummary';
 
+    useEffect(() => {
+        if (displayValidation || hydrationErrorsExist) {
+            scrollIntoView(scrollToTarget);
+        }
+    }, [displayValidation, hydrationErrorsExist, scrollIntoView]);
+
     return displayValidation || hydrationErrorsExist ? (
         <Collapse in={formErrorsExist} timeout="auto" unmountOnExit>
-            <AlertBox severity="error" hideIcon={hideIcon}>
+            <AlertBox severity="error" hideIcon={hideIcon} ref={scrollToTarget}>
                 <AlertTitle>
                     <FormattedMessage
                         id={headerMessageId ?? defaultHeaderMessageId}
