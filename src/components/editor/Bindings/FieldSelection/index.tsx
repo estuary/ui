@@ -38,7 +38,7 @@ import {
     useState,
 } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { CustomEvents } from 'services/logrocket';
+import { CustomEvents } from 'services/types';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,

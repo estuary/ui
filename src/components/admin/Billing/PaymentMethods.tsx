@@ -22,7 +22,8 @@ import TableLoadingRows from 'components/tables/Loading';
 
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { CustomEvents, logRocketEvent } from 'services/logrocket';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import {
     useBilling_selectedTenant,
     useBilling_setPaymentMethodExists,

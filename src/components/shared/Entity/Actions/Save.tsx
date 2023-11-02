@@ -19,7 +19,8 @@ import { buttonSx } from 'components/shared/Entity/Header';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useClient } from 'hooks/supabase-swr';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { CustomEvents, logRocketEvent } from 'services/logrocket';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import {
     DEFAULT_FILTER,
     JOB_STATUS_COLUMNS,

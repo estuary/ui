@@ -5,6 +5,9 @@ import { forEach, isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { JobStatus, SortDirection } from 'types';
 import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
+import pRetry, { AbortError } from 'p-retry';
+import { logRocketEvent } from './shared';
+import { CustomEvents } from './types';
 
 if (
     !process.env.REACT_APP_SUPABASE_URL ||
@@ -87,16 +90,7 @@ export const OAUTH_OPERATIONS = {
 
 export const supabaseClient = createClient(
     supabaseSettings.url,
-    supabaseSettings.anonKey,
-    {
-        // TODO (realtime) This is temporary until we figure out why some
-        //      subscriptions just hang forever.
-        realtime: {
-            logger: (kind: string, msg: string, data?: any) => {
-                LogRocket.log('Realtime : ', kind, msg, data);
-            },
-        },
-    }
+    supabaseSettings.anonKey
 );
 
 export interface SortingProps<Data> {
@@ -221,6 +215,7 @@ export interface CallSupabaseResponse<T> {
 }
 
 export const handleSuccess = <T>(response: any) => {
+    console.log('handleSuccess', response);
     return response.error
         ? {
               data: null,
@@ -232,23 +227,40 @@ export const handleSuccess = <T>(response: any) => {
 };
 
 export const handleFailure = (error: any) => {
+    console.log('handleFailure', error);
     return {
         data: null,
         error,
     };
 };
 
+// Retry calls
+const RETRY_REASONS = ['failed to fetch'];
+
+const shouldTryAfterFailure = (message?: string | null | undefined) =>
+    RETRY_REASONS.some((el) => message?.toLowerCase().includes(el));
+
+const callSupabaseWithRetry = (makeCall: () => any, action: string) => {
+    return pRetry(makeCall, {
+        retries: 2,
+        onFailedAttempt: (error) => {
+            logRocketEvent(CustomEvents.SUPABASE_CALL_FAILED, action);
+
+            if (!shouldTryAfterFailure(error.message)) {
+                throw new AbortError(error.message);
+            }
+        },
+    }).then(handleSuccess, handleFailure);
+};
+
 export const insertSupabase = (
     table: TABLES,
     data: any
 ): PromiseLike<CallSupabaseResponse<any>> => {
-    const query = supabaseClient.from(table);
-
-    const makeCall = () => {
-        return query.insert([data]).then(handleSuccess, handleFailure);
-    };
-
-    return makeCall();
+    return callSupabaseWithRetry(
+        () => supabaseClient.from(table).insert([data]).throwOnError(),
+        'insert'
+    );
 };
 
 // Makes update calls. Mainly consumed in the src/api folder
@@ -257,32 +269,26 @@ export const updateSupabase = (
     data: any,
     matchData: any
 ): PromiseLike<CallSupabaseResponse<any>> => {
-    const query = supabaseClient.from(table);
-
-    const makeCall = () => {
-        return query
-            .update(data)
-            .match(matchData)
-            .then(handleSuccess, handleFailure);
-    };
-
-    return makeCall();
+    return callSupabaseWithRetry(
+        () =>
+            supabaseClient
+                .from(table)
+                .update(data)
+                .match(matchData)
+                .throwOnError(),
+        'update'
+    );
 };
 
 export const deleteSupabase = (
     table: TABLES,
     matchData: any
 ): PromiseLike<CallSupabaseResponse<any>> => {
-    const query = supabaseClient.from(table);
-
-    const makeCall = () => {
-        return query
-            .delete()
-            .match(matchData)
-            .then(handleSuccess, handleFailure);
-    };
-
-    return makeCall();
+    return callSupabaseWithRetry(
+        () =>
+            supabaseClient.from(table).delete().match(matchData).throwOnError(),
+        'delete'
+    );
 };
 
 export const jobSucceeded = (jobStatus?: JobStatus) => {
@@ -299,11 +305,6 @@ export const jobSucceeded = (jobStatus?: JobStatus) => {
 
 // START: Poller
 type PollerTimeout = number | undefined;
-
-const RETRY_POLLER_REASONS = ['failed to fetch'];
-const shouldTryAfterFailure = (message?: string | null | undefined) =>
-    RETRY_POLLER_REASONS.some((el) => message?.toLowerCase().includes(el));
-
 export const JOB_STATUS_POLLER_ERROR = 'supabase.poller.failed';
 export const DEFAULT_POLLER_ERROR_TITLE_KEY = 'supabase.poller.failed.title';
 export const DEFAULT_POLLER_ERROR_MESSAGE_KEY =
@@ -402,62 +403,16 @@ export const jobStatusPoller = (
 };
 // END: Poller
 
-// DO NOT USE WITHOUT TALKING TO SOMEONE
-// TODO (Realtime) - fix the "hanging" isue where realtime does not always come back with a response
-//  We have found some weird issues with the RealTime stuff
-//  Eventually we want to go back to this but need to research the issues first.
-
-// export const endSubscription = (subscription: RealtimeSubscription) => {
-//     return supabaseClient
-//         .removeSubscription(subscription)
-//         .then(() => {})
-//         .catch(() => {});
-// };
-
-// export const startSubscription = (
-//     query: SupabaseQueryBuilder<any>,
-//     success: Function,
-//     failure: Function,
-//     keepSubscription?: boolean
-// ) => {
-//     const subscription = query
-//         .on('*', async (payload: any) => {
-//             const response = payload.new
-//                 ? payload.new
-//                 : // TODO (typing) during manual testing I have seen record be in the response
-//                 //      even though the type says it is not there. Needs more research
-//                 // eslint-disable-next-line @typescript-eslint/dot-notation
-//                 payload['record']
-//                 ? // eslint-disable-next-line @typescript-eslint/dot-notation
-//                   payload['record']
-//                 : null;
-
-//             if (response) {
-//                 if (response.job_status.type !== 'queued') {
-//                     if (response.job_status.type === 'success') {
-//                         success(response);
-//                     } else {
-//                         failure(response);
-//                     }
-
-//                     if (!keepSubscription) {
-//                         await endSubscription(subscription);
-//                     }
-//                 }
-//             } else {
-//                 // TODO (error handling) Do not know how this path could happen but wanted to be safe
-//                 failure(payload);
-//             }
-//         })
-//         .subscribe();
-
-//     return subscription;
-// };
-// DO NOT USE WITHOUT TALKING TO SOMEONE
-
 // Invoke supabase edge functions.
 export function invokeSupabase<T>(fn: FUNCTIONS, body: any) {
     return supabaseClient.functions.invoke<T>(fn, {
         body: JSON.stringify(body),
     });
 }
+// return callSupabaseWithRetry(
+//     () =>
+//         supabaseClient.functions.invoke<T>(fn, {
+//             body: JSON.stringify(body),
+//         }),
+//     `fn:${fn}`
+// );

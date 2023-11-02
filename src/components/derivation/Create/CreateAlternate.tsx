@@ -16,7 +16,7 @@ import PatchDraftButton from 'components/transformation/create/PatchDraftButton'
 import DerivationSchema from 'components/transformation/create/Schema';
 import usePageTitle from 'hooks/usePageTitle';
 import { useUnmount } from 'react-use';
-import { CustomEvents } from 'services/logrocket';
+import { CustomEvents } from 'services/types';
 import {
     useFormStateStore_error,
     useFormStateStore_logToken,

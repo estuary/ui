@@ -6,7 +6,8 @@ import FullPageWrapper from 'directives/FullPageWrapper';
 import { ReactElement, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
-import { CustomEvents, logRocketEvent } from 'services/logrocket';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 
 interface Props {
     error: ErrorDetails;

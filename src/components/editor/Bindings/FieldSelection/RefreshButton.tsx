@@ -1,7 +1,7 @@
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import { CustomEvents } from 'services/logrocket';
+import { CustomEvents } from 'services/types';
 
 interface Props {
     disabled: boolean;

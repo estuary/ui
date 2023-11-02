@@ -11,7 +11,7 @@ import { CollectionData } from 'components/editor/Bindings/types';
 import produce from 'immer';
 import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
-import { logRocketEvent } from 'services/logrocket';
+import { logRocketEvent } from 'services/shared';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
 import { checkForErrors } from 'stores/utils';

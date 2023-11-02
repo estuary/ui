@@ -6,7 +6,8 @@ import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWo
 import { useClient } from 'hooks/supabase-swr';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback } from 'react';
-import { CustomEvents, logRocketEvent } from 'services/logrocket';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import {
     DEFAULT_POLLER_ERROR,
     JOB_STATUS_POLLER_ERROR,

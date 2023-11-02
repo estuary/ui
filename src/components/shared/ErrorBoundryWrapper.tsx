@@ -4,7 +4,8 @@ import { ReactNode, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
-import { CustomEvents, logRocketEvent } from 'services/logrocket';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import AlertBox from './AlertBox';
 import MustReloadDialog from './MustReloadDialog';
 
