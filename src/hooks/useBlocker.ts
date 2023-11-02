@@ -1,13 +1,25 @@
 import { useConfirmationModalContext } from 'context/Confirmation';
-import { useEffect } from 'react';
-import { unstable_useBlocker as useBlocker } from 'react-router-dom';
+import { useCallback, useEffect } from 'react';
+import {
+    unstable_useBlocker as useBlocker,
+    unstable_BlockerFunction as BlockerFunction,
+} from 'react-router-dom';
 
-/**
- * Based on https://github.com/remix-run/react-router/issues/8139#issuecomment-1021457943
- */
+// Based on
+//  https://github.com/remix-run/react-router/issues/8139#issuecomment-1021457943
+//   and
+//  https://github.com/remix-run/react-router/discussions/10898
 export function usePrompt(message: string, when = true) {
     const confirmationModalContext = useConfirmationModalContext();
-    const { proceed, state, reset } = useBlocker(when);
+
+    const shouldBlock = useCallback<BlockerFunction>(
+        ({ currentLocation, nextLocation }) => {
+            // We only care about the path otherwise we get errors when the search params change
+            return when && currentLocation.pathname !== nextLocation.pathname;
+        },
+        [when]
+    );
+    const { proceed, state, reset } = useBlocker(shouldBlock);
 
     useEffect(() => {
         if (state === 'blocked') {
