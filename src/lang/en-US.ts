@@ -1292,7 +1292,7 @@ const Notifications: ResolvedIntlConfig['messages'] = {
     'notifications.paymentMethods.missing.trialEndsToday.instructions': `Please {cta} today to continue using Estuary Flow.`,
     'notifications.paymentMethods.missing.trialPast': `{tenant} is past its free trial without a payment method.`,
     'notifications.paymentMethods.missing.trialPast.instructions': `Please {cta} to continue using Estuary Flow.`,
-    'notifications.networkState.down': `Please check your network connection.`,
+    'notifications.networkState.down': `Network connection may be down`,
     'notifications.networkState.restored': `Network connection restored`,
 };
 

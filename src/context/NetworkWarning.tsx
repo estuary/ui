@@ -1,7 +1,9 @@
+import { Stack, Typography } from '@mui/material';
+import { Wifi, WifiOff } from 'iconoir-react';
 import { debounce } from 'lodash';
 import { SnackbarKey, useSnackbar } from 'notistack';
 import { useEffect, useRef } from 'react';
-import { useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { useNetworkState } from 'react-use';
 import { BaseComponentProps } from 'types';
 import { snackbarSettings } from 'utils/notification-utils';
@@ -11,7 +13,6 @@ import { snackbarSettings } from 'utils/notification-utils';
 const WAIT_TIME = 2000;
 
 function NetworkWarning({ children }: BaseComponentProps) {
-    const intl = useIntl();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const { previous, online } = useNetworkState();
 
@@ -26,11 +27,21 @@ function NetworkWarning({ children }: BaseComponentProps) {
 
             if (!curr) {
                 networkDownSnackbar.current = enqueueSnackbar(
-                    intl.formatMessage({
-                        id: 'notifications.networkState.down',
-                    }),
+                    <Stack
+                        direction="row"
+                        spacing={2}
+                        sx={{ alignItems: 'center' }}
+                    >
+                        <Typography>
+                            <WifiOff />
+                        </Typography>
+                        <Typography>
+                            <FormattedMessage id="notifications.networkState.down" />
+                        </Typography>
+                    </Stack>,
                     {
                         ...snackbarSettings,
+                        hideIconVariant: true,
                         variant: 'warning',
                     }
                 );
@@ -46,11 +57,21 @@ function NetworkWarning({ children }: BaseComponentProps) {
                 }
 
                 enqueueSnackbar(
-                    intl.formatMessage({
-                        id: 'notifications.networkState.restored',
-                    }),
+                    <Stack
+                        direction="row"
+                        spacing={2}
+                        sx={{ alignItems: 'center' }}
+                    >
+                        <Typography>
+                            <Wifi />
+                        </Typography>
+                        <Typography>
+                            <FormattedMessage id="notifications.networkState.restored" />
+                        </Typography>
+                    </Stack>,
                     {
                         ...snackbarSettings,
+                        hideIconVariant: true,
                         variant: 'success',
                     }
                 );
