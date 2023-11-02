@@ -32,11 +32,6 @@ export const TableHydrator = ({
         SelectableTableStore['hydrate']
     >(selectableTableStoreName, selectableTableStoreSelectors.query.hydrate);
 
-    const resetState = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['resetState']
-    >(selectableTableStoreName, selectableTableStoreSelectors.state.reset);
-
     const setDisableMultiSelect = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['setDisableMultiSelect']
@@ -57,7 +52,6 @@ export const TableHydrator = ({
     // Reset state when leaving until we work out how we want to cache table stuff
     useUnmount(() => {
         setDisableMultiSelect(false);
-        resetState();
     });
 
     // eslint-disable-next-line react/jsx-no-useless-fragment

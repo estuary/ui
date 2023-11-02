@@ -215,7 +215,6 @@ export interface CallSupabaseResponse<T> {
 }
 
 export const handleSuccess = <T>(response: any) => {
-    console.log('handleSuccess', response);
     return response.error
         ? {
               data: null,
@@ -227,7 +226,6 @@ export const handleSuccess = <T>(response: any) => {
 };
 
 export const handleFailure = (error: any) => {
-    console.log('handleFailure', error);
     return {
         data: null,
         error,

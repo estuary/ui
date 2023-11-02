@@ -4,6 +4,7 @@ import SwrConfigProvider from 'context/SWR';
 import { BaseComponentProps } from 'types';
 import ClientProvider from './Client';
 import ContentProvider from './Content';
+import NetworkWarning from './NetworkWarning';
 import ThemeProvider from './Theme';
 import { UserProvider } from './User';
 
@@ -15,7 +16,9 @@ const AppProviders = ({ children }: BaseComponentProps) => {
                     <ClientProvider>
                         <NotificationProvider>
                             <SwrConfigProvider>
-                                <UserProvider>{children}</UserProvider>
+                                <NetworkWarning>
+                                    <UserProvider>{children}</UserProvider>
+                                </NetworkWarning>
                             </SwrConfigProvider>
                         </NotificationProvider>
                     </ClientProvider>
