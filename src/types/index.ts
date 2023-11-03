@@ -233,6 +233,16 @@ export interface Grants {
     id: string;
 }
 
+export interface Grants_User {
+    capability: string;
+    object_role: string;
+    subject_role: string;
+    user_avatar_url: string;
+    user_email: string;
+    user_full_name: string;
+    user_id: string;
+}
+
 export interface LiveSpecsExtBareMinimum {
     catalog_name: string;
     id: string;

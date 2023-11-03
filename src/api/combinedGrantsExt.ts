@@ -5,7 +5,7 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { AuthRoles, Grants } from 'types';
+import { AuthRoles, Capability, Grants, Grants_User } from 'types';
 
 // Used to display prefix grants in admin page
 const getGrants = (
@@ -103,4 +103,33 @@ export const getAuthRoles = async (capability: string) => {
         .throwOnError();
 };
 
-export { getGrantsForAuthToken, getGrants, getGrants_Users, getGrantsForUser };
+const getUserInformationByPrefix = (
+    objectRole: string,
+    capability: Capability
+) => {
+    return (
+        supabaseClient
+            .from<Grants_User>(TABLES.COMBINED_GRANTS_EXT)
+            .select(
+                `
+            capability,
+            object_role,
+            subject_role,
+            user_avatar_url,
+            user_email,
+            user_full_name,
+            user_id
+            `
+            )
+            // .eq('object_role', objectRole)
+            .eq('capability', capability)
+    );
+};
+
+export {
+    getGrants,
+    getGrants_Users,
+    getGrantsForAuthToken,
+    getGrantsForUser,
+    getUserInformationByPrefix,
+};
