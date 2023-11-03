@@ -5,6 +5,8 @@ import { SnackbarKey, useSnackbar } from 'notistack';
 import { useEffect, useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNetworkState } from 'react-use';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { BaseComponentProps } from 'types';
 import { snackbarSettings } from 'utils/notification-utils';
 
@@ -26,6 +28,10 @@ function NetworkWarning({ children }: BaseComponentProps) {
             }
 
             if (!curr) {
+                // There is a solid chance this will not actually make it to LR... but want this here
+                //  just in case we start showing this to folks that are not having network issues.
+                logRocketEvent(CustomEvents.NOTIFICATION_NETWORK_WARNING);
+
                 networkDownSnackbar.current = enqueueSnackbar(
                     <Stack
                         direction="row"
