@@ -6,6 +6,8 @@ import DraftErrors, {
 import ErrorLogs, { ErrorLogsProps } from 'components/shared/Entity/Error/Logs';
 import HeaderSummary from 'components/shared/Entity/HeaderSummary';
 import Error, { ErrorProps } from 'components/shared/Error';
+import useScrollIntoView from 'hooks/useScrollIntoView';
+import { useEffect, useRef } from 'react';
 
 interface Props {
     title: string;
@@ -15,6 +17,8 @@ interface Props {
 }
 
 function EntityError({ logToken, error, title, draftId }: Props) {
+    const scrollToTarget = useRef<HTMLDivElement>(null);
+    const scrollIntoView = useScrollIntoView(scrollToTarget);
     const discoveredDraftId = useEditorStore_discoveredDraftId();
 
     // When a user is discovering we need to make sure we show those errors
@@ -26,28 +30,37 @@ function EntityError({ logToken, error, title, draftId }: Props) {
         ? draftId
         : null;
 
+    // The parent component hides this unless there is an error to show so we should be
+    //  fine only calling this once.
+    useEffect(() => {
+        scrollIntoView(scrollToTarget);
+    });
+
     return (
-        <HeaderSummary severity="error" title={title}>
-            <Stack direction="column" spacing={2}>
-                <Box>
-                    <Error error={error} hideTitle={true} noAlertBox />
+        <>
+            <Box ref={scrollToTarget} />
+            <HeaderSummary severity="error" title={title}>
+                <Stack direction="column" spacing={2}>
+                    <Box>
+                        <Error error={error} hideTitle={true} noAlertBox />
 
-                    {idForDraftErrors ? (
-                        <>
-                            <Divider />
-                            <DraftErrors draftId={idForDraftErrors} />
-                        </>
-                    ) : null}
-                </Box>
+                        {idForDraftErrors ? (
+                            <>
+                                <Divider />
+                                <DraftErrors draftId={idForDraftErrors} />
+                            </>
+                        ) : null}
+                    </Box>
 
-                <ErrorLogs
-                    logToken={logToken}
-                    logProps={{
-                        fetchAll: true,
-                    }}
-                />
-            </Stack>
-        </HeaderSummary>
+                    <ErrorLogs
+                        logToken={logToken}
+                        logProps={{
+                            fetchAll: true,
+                        }}
+                    />
+                </Stack>
+            </HeaderSummary>
+        </>
     );
 }
 

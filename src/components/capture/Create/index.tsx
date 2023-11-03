@@ -11,6 +11,7 @@ import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import EntityToolbar from 'components/shared/Entity/Header';
+import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
@@ -86,46 +87,48 @@ function CaptureCreate() {
         <DetailsFormHydrator>
             <EndpointConfigHydrator>
                 <ResourceConfigHydrator>
-                    <EntityCreate
-                        entityType={entityType}
-                        draftSpecMetadata={draftSpecsMetadata}
-                        toolbar={
-                            <EntityToolbar
-                                waitTimes={{ generate: MAX_DISCOVER_TIME }}
-                                GenerateButton={
-                                    <CaptureGenerateButton
-                                        entityType={entityType}
-                                        disabled={!hasConnectors}
-                                        postGenerateMutate={updateDraftSpecs}
-                                        createWorkflowMetadata={{
-                                            initiateDiscovery,
-                                            setInitiateDiscovery,
-                                        }}
-                                    />
-                                }
-                                TestButton={
-                                    <EntityTestButton
-                                        disabled={!hasConnectors}
-                                        logEvent={CustomEvents.CAPTURE_TEST}
-                                    />
-                                }
-                                SaveButton={
-                                    <EntitySaveButton
-                                        disabled={!draftId}
-                                        taskNames={tasks}
-                                        logEvent={CustomEvents.CAPTURE_CREATE}
-                                    />
-                                }
-                            />
-                        }
-                        RediscoverButton={
-                            <RediscoverButton
-                                entityType={entityType}
-                                disabled={!hasConnectors}
-                                postGenerateMutate={updateDraftSpecs}
-                            />
-                        }
-                    />
+                    <MutateDraftSpecProvider value={updateDraftSpecs}>
+                        <EntityCreate
+                            entityType={entityType}
+                            draftSpecMetadata={draftSpecsMetadata}
+                            toolbar={
+                                <EntityToolbar
+                                    waitTimes={{ generate: MAX_DISCOVER_TIME }}
+                                    GenerateButton={
+                                        <CaptureGenerateButton
+                                            entityType={entityType}
+                                            disabled={!hasConnectors}
+                                            createWorkflowMetadata={{
+                                                initiateDiscovery,
+                                                setInitiateDiscovery,
+                                            }}
+                                        />
+                                    }
+                                    TestButton={
+                                        <EntityTestButton
+                                            disabled={!hasConnectors}
+                                            logEvent={CustomEvents.CAPTURE_TEST}
+                                        />
+                                    }
+                                    SaveButton={
+                                        <EntitySaveButton
+                                            disabled={!draftId}
+                                            taskNames={tasks}
+                                            logEvent={
+                                                CustomEvents.CAPTURE_CREATE
+                                            }
+                                        />
+                                    }
+                                />
+                            }
+                            RediscoverButton={
+                                <RediscoverButton
+                                    entityType={entityType}
+                                    disabled={!hasConnectors}
+                                />
+                            }
+                        />
+                    </MutateDraftSpecProvider>
                 </ResourceConfigHydrator>
             </EndpointConfigHydrator>
         </DetailsFormHydrator>

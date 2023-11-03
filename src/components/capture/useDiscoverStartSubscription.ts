@@ -3,6 +3,7 @@ import {
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
 import { useClient } from 'hooks/supabase-swr';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback } from 'react';
@@ -33,10 +34,9 @@ const trackEvent = (payload: any) => {
     });
 };
 
-function useDiscoverStartSubscription(
-    entityType: Entity,
-    postGenerateMutate: Function
-) {
+function useDiscoverStartSubscription(entityType: Entity) {
+    const postGenerateMutate = useMutateDraftSpec();
+
     const supabaseClient = useClient();
 
     const { callFailed } = useEntityWorkflowHelpers();
