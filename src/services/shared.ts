@@ -11,3 +11,9 @@ export const logRocketEvent = (
         LogRocket.track(event, eventProperties);
     }
 };
+
+export const FAILED_TO_FETCH = 'failed to fetch';
+export const RETRY_REASONS = [FAILED_TO_FETCH];
+
+export const retryAfterFailure = (message?: string | null | undefined) =>
+    RETRY_REASONS.some((el) => message?.toLowerCase().includes(el));

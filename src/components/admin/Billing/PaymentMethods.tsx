@@ -91,7 +91,7 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                     selectedTenant
                 );
 
-                if (setupResponse.data.intent_secret) {
+                if (setupResponse.data?.intent_secret) {
                     setSetupIntentSecret(setupResponse.data.intent_secret);
                 } else {
                     setSetupIntentSecret(INTENT_SECRET_ERROR);

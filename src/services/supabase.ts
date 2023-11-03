@@ -6,7 +6,7 @@ import LogRocket from 'logrocket';
 import { JobStatus, SortDirection } from 'types';
 import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 import pRetry, { AbortError } from 'p-retry';
-import { logRocketEvent } from './shared';
+import { logRocketEvent, retryAfterFailure } from './shared';
 import { CustomEvents } from './types';
 
 if (
@@ -49,7 +49,7 @@ export enum TABLES {
     DRAFT_ERRORS = 'draft_errors',
     DRAFT_SPECS = 'draft_specs',
     DRAFT_SPECS_EXT = 'draft_specs_ext',
-    DRAFTS = 'drafts',
+    DRAFTS = 'drafts1',
     DRAFTS_EXT = 'drafts_ext',
     EVOLUTIONS = 'evolutions',
     INFERRED_SCHEMAS = 'inferred_schemas',
@@ -226,6 +226,7 @@ export const handleSuccess = <T>(response: any) => {
 };
 
 export const handleFailure = (error: any) => {
+    console.log('handleFailue', error);
     return {
         data: null,
         error,
@@ -233,23 +234,47 @@ export const handleFailure = (error: any) => {
 };
 
 // Retry calls
-const RETRY_REASONS = ['failed to fetch'];
+const RETRY_ATTEMPTS = 2;
 
-const shouldTryAfterFailure = (message?: string | null | undefined) =>
-    RETRY_REASONS.some((el) => message?.toLowerCase().includes(el));
+const onFailedAttempt = (error: Error, action: string) => {
+    logRocketEvent(CustomEvents.SUPABASE_CALL_FAILED, action);
 
-const callSupabaseWithRetry = (makeCall: () => any, action: string) => {
-    return pRetry(makeCall, {
-        retries: 2,
-        onFailedAttempt: (error) => {
-            logRocketEvent(CustomEvents.SUPABASE_CALL_FAILED, action);
-
-            if (!shouldTryAfterFailure(error.message)) {
-                throw new AbortError(error.message);
-            }
-        },
-    }).then(handleSuccess, handleFailure);
+    if (!retryAfterFailure(error.message)) {
+        throw new AbortError({
+            ...error,
+            code: 'stopped_retry',
+        } as Error);
+    }
 };
+
+const callSupabaseWithRetry = <T>(makeCall: () => any, action: string) => {
+    return pRetry(makeCall, {
+        retries: RETRY_ATTEMPTS,
+        onFailedAttempt: (error) => {
+            onFailedAttempt(error, action);
+        },
+    }).then(handleSuccess<T>, handleFailure);
+};
+
+// Invoke supabase edge functions. Does not use the he
+export function invokeSupabase<T>(fn: FUNCTIONS, body: any) {
+    return supabaseClient.functions.invoke<T>(fn, {
+        body: JSON.stringify(body),
+    });
+
+    // return pRetry(
+    //     () =>
+    //         supabaseClient.functions.invoke<T>(fn, {
+    //             body: JSON.stringify(body),
+    //         }),
+    //     {
+    //         retries: RETRY_ATTEMPTS,
+    //         onFailedAttempt: (error) => {
+    //             onFailedAttempt(error, `fn:${fn}`);
+    //         },
+    //     }
+    // ).then(handleSuccess<T>, handleFailure);
+}
 
 export const insertSupabase = (
     table: TABLES,
@@ -374,7 +399,7 @@ export const jobStatusPoller = (
                 if (
                     attempts === 0 &&
                     typeof error?.message === 'string' &&
-                    shouldTryAfterFailure(error.message)
+                    retryAfterFailure(error.message)
                 ) {
                     LogRocket.log('Poller : error : trying again');
                     attempts += 1;
@@ -400,17 +425,3 @@ export const jobStatusPoller = (
     );
 };
 // END: Poller
-
-// Invoke supabase edge functions.
-export function invokeSupabase<T>(fn: FUNCTIONS, body: any) {
-    return supabaseClient.functions.invoke<T>(fn, {
-        body: JSON.stringify(body),
-    });
-}
-// return callSupabaseWithRetry(
-//     () =>
-//         supabaseClient.functions.invoke<T>(fn, {
-//             body: JSON.stringify(body),
-//         }),
-//     `fn:${fn}`
-// );

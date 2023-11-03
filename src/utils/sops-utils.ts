@@ -1,13 +1,7 @@
 import { encryptConfig } from 'api/oauth';
 import { isPlainObject } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
-import { JsonFormsData, Schema } from 'types';
-
-// TODO (typing): Consider adding a type annotation for the promise returned by
-//   the invokeSupabase() function (i.e., src/services/supabase.ts).
-type SupabaseInvokeResponse =
-    | { data: null; error: Error }
-    | { data: any; error: null };
+import { JsonFormsData, Schema, SupabaseInvokeResponse } from 'types';
 
 const sopsKey = 'sops';
 
