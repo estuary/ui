@@ -1,6 +1,6 @@
+import { AlertSubscriptionsExtendedQuery } from 'api/alerts';
 import { isEmpty } from 'lodash';
 import { OptionsObject } from 'notistack';
-import { AlertSubscription } from 'types';
 
 export const snackbarSettings: OptionsObject = {
     anchorOrigin: {
@@ -36,7 +36,7 @@ interface SubscriptionDictionary {
 }
 
 export const formatNotificationSubscriptionsByPrefix = (
-    data: AlertSubscription[]
+    data: AlertSubscriptionsExtendedQuery[]
 ) => {
     const processedQuery: SubscriptionDictionary = {};
 

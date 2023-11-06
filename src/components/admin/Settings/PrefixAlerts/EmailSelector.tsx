@@ -15,20 +15,27 @@ interface Props {
     emails: string[];
     prefix: string;
     setEmails: Dispatch<SetStateAction<string[]>>;
+    setSubscriptionsToCancel: Dispatch<SetStateAction<string[]>>;
+    subscribedEmails: string[];
+    subscriptionsToCancel: string[];
 }
 
 const simpleEmailRegEx = new RegExp(/.+@.+/m);
 
-function EmailSelector({ emails, prefix, setEmails }: Props) {
+function EmailSelector({
+    emails,
+    prefix,
+    setEmails,
+    setSubscriptionsToCancel,
+    subscribedEmails,
+    subscriptionsToCancel,
+}: Props) {
     const intl = useIntl();
 
     const [inputValue, setInputValue] = useState('');
     const [inputError, setInputError] = useState<string | null>(null);
 
-    const { data, isValidating } = useUserInformationByPrefix(prefix, 'admin');
-
-    console.log('prefix', prefix);
-    console.log('validating', isValidating);
+    const { data } = useUserInformationByPrefix(prefix, 'admin');
 
     return (
         <Autocomplete
@@ -40,22 +47,62 @@ function EmailSelector({ emails, prefix, setEmails }: Props) {
             }
             inputValue={inputValue}
             multiple
-            onChange={(_event, values, reason) => {
+            onChange={(_event, values, reason, details) => {
                 if (inputError) {
                     setInputError(null);
                 }
 
                 const newValue = values[values.length - 1];
 
-                if (
-                    reason === 'createOption' &&
-                    typeof newValue === 'string' &&
-                    !simpleEmailRegEx.test(newValue)
-                ) {
-                    setInputError('Email is not formatted properly.');
-                    setInputValue(newValue);
+                if (reason === 'createOption') {
+                    if (
+                        typeof newValue === 'string' &&
+                        !simpleEmailRegEx.test(newValue)
+                    ) {
+                        setInputError('Email is not formatted properly.');
+                        setInputValue(newValue);
 
-                    return;
+                        return;
+                    }
+
+                    const updatedPendingCancellations =
+                        subscriptionsToCancel.filter(
+                            (email) => email !== newValue
+                        );
+
+                    setSubscriptionsToCancel(updatedPendingCancellations);
+                }
+
+                if (reason === 'selectOption' && details) {
+                    const value =
+                        typeof details.option !== 'string'
+                            ? details.option.user_email
+                            : details.option;
+
+                    const updatedPendingCancellations =
+                        subscriptionsToCancel.filter(
+                            (email) => email !== value
+                        );
+
+                    setSubscriptionsToCancel(updatedPendingCancellations);
+                }
+
+                if (reason === 'removeOption' && details) {
+                    const email =
+                        typeof details.option !== 'string'
+                            ? details.option.user_email
+                            : details.option;
+
+                    if (subscribedEmails.includes(email)) {
+                        setSubscriptionsToCancel([
+                            ...subscriptionsToCancel,
+                            email,
+                        ]);
+                    }
+                }
+
+                if (reason === 'clear') {
+                    setSubscriptionsToCancel(subscribedEmails);
                 }
 
                 const updatedEmails = values.map((value) =>

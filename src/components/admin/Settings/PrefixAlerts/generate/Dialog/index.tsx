@@ -9,7 +9,7 @@ import {
 import EmailSelector from 'components/admin/Settings/PrefixAlerts/EmailSelector';
 import SaveButton from 'components/admin/Settings/PrefixAlerts/generate/Dialog/SaveButton';
 import PrefixedName from 'components/inputs/PrefixedName';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { PrefixSubscriptionDictionary } from 'utils/notification-utils';
@@ -26,8 +26,6 @@ const TITLE_ID = 'generate-prefix-alert-dialog-title';
 function GenerateAlertDialog({ open, setOpen, subscriptions }: Props) {
     const intl = useIntl();
 
-    // const { data, isValidating } = useNotificationSubscriptions();
-
     const adminCapabilities = useEntitiesStore_capabilities_adminable();
     const objectRoles = Object.keys(adminCapabilities);
     const singleOption = objectRoles.length === 1;
@@ -36,16 +34,23 @@ function GenerateAlertDialog({ open, setOpen, subscriptions }: Props) {
     const [prefixHasErrors, setPrefixHasErrors] = useState(false);
 
     const [emails, setEmails] = useState<string[]>([]);
+    const [subscriptionsToCancel, setSubscriptionsToCancel] = useState<
+        string[]
+    >([]);
+
+    const subscribedEmails = useMemo(
+        () =>
+            prefix && Object.hasOwn(subscriptions, prefix)
+                ? subscriptions[prefix].userSubscriptions.map(
+                      ({ email }) => email
+                  )
+                : [],
+        [prefix, subscriptions]
+    );
 
     useEffect(() => {
-        if (prefix && Object.hasOwn(subscriptions, prefix)) {
-            const subscribedEmails = subscriptions[
-                prefix
-            ].userSubscriptions.map(({ email }) => email);
-
-            setEmails(subscribedEmails);
-        }
-    }, [prefix, setEmails, subscriptions]);
+        setEmails(subscribedEmails);
+    }, [setEmails, subscribedEmails]);
 
     const updatePrefix = (value: string, errors: string | null) => {
         // if (serverError) {
@@ -54,6 +59,8 @@ function GenerateAlertDialog({ open, setOpen, subscriptions }: Props) {
 
         setPrefix(value);
         setPrefixHasErrors(Boolean(errors));
+
+        setSubscriptionsToCancel([]);
     };
 
     return (
@@ -82,13 +89,14 @@ function GenerateAlertDialog({ open, setOpen, subscriptions }: Props) {
 
                     <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
                         <PrefixedName
+                            defaultPrefix
                             label={intl.formatMessage({
                                 id: 'common.tenant',
                             })}
-                            required
-                            size="small"
                             onChange={updatePrefix}
                             prefixOnly
+                            required
+                            size="small"
                             validateOnLoad
                         />
                     </Grid>
@@ -98,6 +106,9 @@ function GenerateAlertDialog({ open, setOpen, subscriptions }: Props) {
                             emails={emails}
                             prefix={prefix}
                             setEmails={setEmails}
+                            setSubscriptionsToCancel={setSubscriptionsToCancel}
+                            subscribedEmails={subscribedEmails}
+                            subscriptionsToCancel={subscriptionsToCancel}
                         />
                     </Grid>
 
@@ -132,7 +143,10 @@ function GenerateAlertDialog({ open, setOpen, subscriptions }: Props) {
                     disabled={Boolean(prefixHasErrors)}
                     prefix={prefix}
                     setOpen={setOpen}
-                    emails={emails}
+                    subscriptionsToCancel={subscriptionsToCancel}
+                    subscriptionsToCreate={emails.filter(
+                        (email) => !subscribedEmails.includes(email)
+                    )}
                 />
             </DialogActions>
         </Dialog>

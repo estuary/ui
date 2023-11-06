@@ -1,43 +1,69 @@
 import { Button } from '@mui/material';
+import { getNotificationSubscriptions } from 'api/alerts';
 import GenerateAlertDialog from 'components/admin/Settings/PrefixAlerts/generate/Dialog';
-import useNotificationSubscriptions from 'hooks/notifications/useNotificationSubscriptions';
-import { isEmpty } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { PrefixSubscriptionDictionary } from 'utils/notification-utils';
+import { useMount } from 'react-use';
+import {
+    PrefixSubscriptionDictionary,
+    formatNotificationSubscriptionsByPrefix,
+} from 'utils/notification-utils';
+
+const initializeNotificationSubscriptions = async () => {
+    const { data } = await getNotificationSubscriptions();
+
+    if (data) {
+        const processedData = formatNotificationSubscriptionsByPrefix(data);
+
+        return processedData;
+    }
+
+    return null;
+};
 
 function AlertGenerateButton() {
+    const [open, setOpen] = useState(false);
     const [subscriptions, setSubscriptions] =
         useState<PrefixSubscriptionDictionary | null>(null);
-    const [open, setOpen] = useState(false);
 
-    const openGenerateAlertDialog = (event: React.MouseEvent<HTMLElement>) => {
+    const openGenerateAlertDialog = async (
+        event: React.MouseEvent<HTMLElement>
+    ) => {
         event.preventDefault();
 
+        const existingSubscriptions =
+            await initializeNotificationSubscriptions();
+
+        setSubscriptions(existingSubscriptions);
         setOpen(true);
     };
 
-    const { data, isValidating } = useNotificationSubscriptions();
+    useMount(async () => {
+        const existingSubscriptions =
+            await initializeNotificationSubscriptions();
 
-    useEffect(() => {
-        if (!isValidating && !isEmpty(data) && subscriptions === null) {
-            setSubscriptions(data);
-        }
-    }, [data, isValidating, setSubscriptions]);
+        setSubscriptions(existingSubscriptions);
+    });
 
-    return subscriptions ? (
+    return (
         <>
-            <Button variant="outlined" onClick={openGenerateAlertDialog}>
+            <Button
+                disabled={subscriptions === null}
+                variant="outlined"
+                onClick={openGenerateAlertDialog}
+            >
                 <FormattedMessage id="admin.alerts.cta.addAlertMethod" />
             </Button>
 
-            <GenerateAlertDialog
-                open={open}
-                setOpen={setOpen}
-                subscriptions={subscriptions}
-            />
+            {subscriptions === null ? null : (
+                <GenerateAlertDialog
+                    open={open}
+                    setOpen={setOpen}
+                    subscriptions={subscriptions}
+                />
+            )}
         </>
-    ) : null;
+    );
 }
 
 export default AlertGenerateButton;

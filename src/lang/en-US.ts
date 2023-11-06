@@ -514,7 +514,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.prefix.issueGrant.error.invalidPrefix': `The value entered in the Shared Prefix text field is not an extension of an existing prefix.`,
 
     'admin.alerts.header': `Organization Alerts`,
-    'admin.alerts.cta.addAlertMethod': `Configure`,
+    'admin.alerts.cta.addAlertMethod': `Manage Alerts`,
     'admin.alerts.dialog.generate.header': `Add Alert Method`,
     'admin.alerts.table.filterLabel': `Filter by Prefix or Email`,
     'admin.alerts.table.noContent.header': `No results found.`,

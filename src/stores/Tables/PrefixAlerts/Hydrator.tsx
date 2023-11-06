@@ -41,7 +41,6 @@ export const PrefixAlertTableHydrator = ({
 
     const { data, error, isValidating } = useNotificationSubscriptions({
         query,
-        poll: true,
     });
 
     useEffect(() => {

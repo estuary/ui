@@ -193,6 +193,13 @@ function PrefixedName({
                         </MenuItem>
                     ))}
                 </Select>
+
+                <FormHelperText
+                    id={DESCRIPTION_ID}
+                    error={showErrors ? !description : undefined}
+                >
+                    {firstFormHelperText}
+                </FormHelperText>
             </FormControl>
         );
     }

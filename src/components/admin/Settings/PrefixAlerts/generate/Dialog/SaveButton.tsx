@@ -1,5 +1,8 @@
 import { LoadingButton } from '@mui/lab';
-import { createNotificationSubscription } from 'api/alerts';
+import {
+    createNotificationSubscription,
+    deleteNotificationSubscription,
+} from 'api/alerts';
 import { useZustandStore } from 'context/Zustand/provider';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -12,12 +15,19 @@ import { appendWithForwardSlash, hasLength } from 'utils/misc-utils';
 
 interface Props {
     disabled: boolean;
-    emails: string[];
     prefix: string;
     setOpen: Dispatch<SetStateAction<boolean>>;
+    subscriptionsToCancel: string[];
+    subscriptionsToCreate: string[];
 }
 
-function SaveButton({ disabled, prefix, setOpen, emails }: Props) {
+function SaveButton({
+    disabled,
+    prefix,
+    setOpen,
+    subscriptionsToCancel,
+    subscriptionsToCreate,
+}: Props) {
     const hydrate = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['hydrate']
@@ -34,12 +44,18 @@ function SaveButton({ disabled, prefix, setOpen, emails }: Props) {
 
         const processedPrefix = appendWithForwardSlash(prefix);
 
-        // Bundle insertions
-        const pendingSubscriptions = emails.map((email) =>
+        const createdSubscriptions = subscriptionsToCreate.map((email) =>
             createNotificationSubscription(processedPrefix, email)
         );
 
-        const responses = await Promise.all(pendingSubscriptions);
+        const cancelledSubscriptions = subscriptionsToCancel.map((email) =>
+            deleteNotificationSubscription(email, processedPrefix)
+        );
+
+        const responses = await Promise.all([
+            ...createdSubscriptions,
+            ...cancelledSubscriptions,
+        ]);
 
         const errors = responses.filter((r) => r.error);
 
@@ -51,15 +67,11 @@ function SaveButton({ disabled, prefix, setOpen, emails }: Props) {
         setLoading(false);
     };
 
-    console.log('dis', disabled);
-    console.log('pref', prefix);
-    console.log('em', emails);
-
     return (
         <LoadingButton
             variant="contained"
             size="small"
-            disabled={disabled || !hasLength(prefix) || !hasLength(emails)}
+            disabled={disabled || !hasLength(prefix)}
             loading={loading}
             onClick={onClick}
         >

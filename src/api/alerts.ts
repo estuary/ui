@@ -18,14 +18,28 @@ const createNotificationSubscription = (prefix: string, email: string) => {
     });
 };
 
+interface DeleteSubscriptionMatchData {
+    email: string;
+    catalog_prefix?: string;
+    subscription_id?: string;
+}
+
 const deleteNotificationSubscription = (
-    subscriptionId: string,
-    email: string
+    email: string,
+    prefix?: string,
+    subscriptionId?: string
 ) => {
-    return deleteSupabase(TABLES.ALERT_SUBSCRIPTIONS, {
-        id: subscriptionId,
-        email,
-    });
+    let matchData: DeleteSubscriptionMatchData = { email };
+
+    if (prefix) {
+        matchData = { ...matchData, catalog_prefix: prefix };
+    }
+
+    if (subscriptionId) {
+        matchData = { ...matchData, subscription_id: subscriptionId };
+    }
+
+    return deleteSupabase(TABLES.ALERT_SUBSCRIPTIONS, matchData);
 };
 
 const createDataProcessingNotification = (
@@ -119,8 +133,8 @@ const getNotificationSubscriptionsForTable = (
     return queryBuilder;
 };
 
-const getNotificationSubscriptions = () => {
-    return supabaseClient
+const getNotificationSubscriptions = async () => {
+    const data = await supabaseClient
         .from<AlertSubscriptionsExtendedQuery>(TABLES.ALERT_SUBSCRIPTIONS)
         .select(
             `    
@@ -129,7 +143,10 @@ const getNotificationSubscriptions = () => {
                 catalog_prefix,
                 email
             `
-        );
+        )
+        .then(handleSuccess<AlertSubscriptionsExtendedQuery[]>, handleFailure);
+
+    return data;
 };
 
 const getTaskNotification = async (catalogName: string) => {
