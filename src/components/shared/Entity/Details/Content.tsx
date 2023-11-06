@@ -1,5 +1,7 @@
 import { Box, Divider, Stack, Typography } from '@mui/material';
 import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
+import EditButton from 'components/shared/Entity/Details/EditButton';
+import MaterializeButton from 'components/shared/Entity/Details/MaterializeButton';
 import RenderTab from 'components/shared/Entity/Details/RenderTab';
 import DetailTabs from 'components/shared/Entity/Details/Tabs';
 import { truncateTextSx } from 'context/Theme';
@@ -20,7 +22,12 @@ function DetailContent() {
     return (
         <Box>
             <Stack spacing={2} sx={{ m: 1 }}>
-                <Stack direction="row" spacing={1}>
+                <Stack
+                    direction="row"
+                    sx={{
+                        justifyContent: 'space-between',
+                    }}
+                >
                     <Typography
                         component="span"
                         variant="h6"
@@ -31,10 +38,14 @@ function DetailContent() {
                     >
                         {catalogName}
                     </Typography>
-                    {/*TODO (details) need to wire in edit button*/}
-                    {/*<EditButton />*/}
+
+                    <EditButton />
+
+                    <MaterializeButton />
                 </Stack>
+
                 <Divider />
+
                 <DetailTabs isDerivation={isDerivation} />
             </Stack>
 
