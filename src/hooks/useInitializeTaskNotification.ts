@@ -4,7 +4,7 @@ import {
     AlertSubscriptionQuery,
     DataProcessingAlertQuery,
     createNotificationSubscription,
-    getNotificationSubscriptionByPrefix,
+    getNotificationSubscriptionForUser,
     getTaskNotification,
 } from 'api/alerts';
 import { useCallback, useMemo } from 'react';
@@ -62,7 +62,7 @@ function useInitializeTaskNotification(catalogName: string) {
         }
 
         const { data: existingSubscription, error: existingSubscriptionError } =
-            await getNotificationSubscriptionByPrefix(prefix, user.email);
+            await getNotificationSubscriptionForUser(prefix, user.email);
 
         if (existingSubscriptionError) {
             // Failed to determine the existence of a notification subscription for the task.

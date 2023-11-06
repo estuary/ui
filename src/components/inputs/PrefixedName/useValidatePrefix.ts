@@ -15,6 +15,7 @@ interface Options {
     onChange?: PrefixedName_Change;
     onNameChange?: PrefixedName_Change;
     onPrefixChange?: PrefixedName_Change;
+    prefixOnly?: boolean;
 }
 
 function useValidatePrefix({
@@ -24,6 +25,7 @@ function useValidatePrefix({
     onChange,
     onNameChange,
     onPrefixChange,
+    prefixOnly,
 }: Options) {
     const intl = useIntl();
 
@@ -70,7 +72,7 @@ function useValidatePrefix({
         if (prefixErrors) {
             generateErrorList('prefix', prefixErrors);
         }
-        if (nameErrors) {
+        if (!prefixOnly && nameErrors) {
             generateErrorList('name', nameErrors);
         }
 

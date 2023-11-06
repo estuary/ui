@@ -1,17 +1,24 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { AlertSubscriptionsTableQuery } from 'api/alerts';
-import { extendedPollSettings } from 'context/SWR';
+import {
+    AlertSubscriptionsExtendedQuery,
+    getNotificationSubscriptions,
+} from 'api/alerts';
+import { extendedPollSettings, singleCallSettings } from 'context/SWR';
 import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { AlertSubscription } from 'types';
 import { formatNotificationSubscriptionsByPrefix } from 'utils/notification-utils';
 
 interface Props {
-    query: PostgrestFilterBuilder<AlertSubscriptionsTableQuery>;
+    query?: PostgrestFilterBuilder<AlertSubscriptionsExtendedQuery>;
+    poll?: boolean;
 }
 
-function useNotificationSubscriptions({ query }: Props) {
+function useNotificationSubscriptions(options?: Props) {
     const { data, error, mutate, isValidating } =
-        useSelectNew<AlertSubscription>(query, extendedPollSettings);
+        useSelectNew<AlertSubscription>(
+            options?.query ? options.query : getNotificationSubscriptions(),
+            options?.poll ? extendedPollSettings : singleCallSettings
+        );
 
     return {
         data: data ? formatNotificationSubscriptionsByPrefix(data.data) : {},

@@ -77,6 +77,7 @@ function PrefixedName({
         onChange,
         onNameChange,
         onPrefixChange,
+        prefixOnly,
     });
 
     // For rendering input as MUI splits up variants between components

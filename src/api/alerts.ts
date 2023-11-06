@@ -60,7 +60,12 @@ export type AlertSubscriptionQuery = Pick<
     'id' | 'catalog_prefix' | 'email'
 >;
 
-export type AlertSubscriptionsTableQuery = Pick<
+export type ExistingAlertSubscriptionQuery = Pick<
+    AlertSubscription,
+    'catalog_prefix'
+>;
+
+export type AlertSubscriptionsExtendedQuery = Pick<
     AlertSubscription,
     'id' | 'updated_at' | 'catalog_prefix' | 'email'
 >;
@@ -70,7 +75,7 @@ export type DataProcessingAlertQuery = Pick<
     'catalog_name' | 'evaluation_interval'
 >;
 
-const getNotificationSubscriptionByPrefix = async (
+const getNotificationSubscriptionForUser = async (
     prefix: string,
     email: string
 ) => {
@@ -84,14 +89,14 @@ const getNotificationSubscriptionByPrefix = async (
     return data;
 };
 
-const getNotificationSubscription = (
+const getNotificationSubscriptionsForTable = (
     pagination: any,
     searchQuery: any,
     sorting: SortingProps<any>[],
     objectRoles: string[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<AlertSubscriptionsTableQuery>(TABLES.ALERT_SUBSCRIPTIONS)
+        .from<AlertSubscriptionsExtendedQuery>(TABLES.ALERT_SUBSCRIPTIONS)
         .select(
             `    
                 id,
@@ -103,7 +108,7 @@ const getNotificationSubscription = (
         )
         .in('catalog_prefix', objectRoles);
 
-    queryBuilder = defaultTableFilter<AlertSubscriptionsTableQuery>(
+    queryBuilder = defaultTableFilter<AlertSubscriptionsExtendedQuery>(
         queryBuilder,
         ['catalog_prefix', 'email'],
         searchQuery,
@@ -112,6 +117,19 @@ const getNotificationSubscription = (
     );
 
     return queryBuilder;
+};
+
+const getNotificationSubscriptions = () => {
+    return supabaseClient
+        .from<AlertSubscriptionsExtendedQuery>(TABLES.ALERT_SUBSCRIPTIONS)
+        .select(
+            `    
+                id,
+                updated_at,
+                catalog_prefix,
+                email
+            `
+        );
 };
 
 const getTaskNotification = async (catalogName: string) => {
@@ -129,8 +147,9 @@ export {
     createNotificationSubscription,
     deleteDataProcessingNotification,
     deleteNotificationSubscription,
-    getNotificationSubscription,
-    getNotificationSubscriptionByPrefix,
+    getNotificationSubscriptionForUser,
+    getNotificationSubscriptions,
+    getNotificationSubscriptionsForTable,
     getTaskNotification,
     updateDataProcessingNotificationInterval,
 };

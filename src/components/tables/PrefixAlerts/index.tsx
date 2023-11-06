@@ -1,4 +1,4 @@
-import { getNotificationSubscription } from 'api/alerts';
+import { getNotificationSubscriptionsForTable } from 'api/alerts';
 import EntityTable from 'components/tables/EntityTable';
 import Rows from 'components/tables/PrefixAlerts/Rows';
 import RowSelector from 'components/tables/RowActions/PrefixAlerts/RowSelector';
@@ -48,7 +48,7 @@ function PrefixAlertTable() {
     const objectRoles = Object.keys(adminCapabilities);
 
     const query = useMemo(() => {
-        return getNotificationSubscription(
+        return getNotificationSubscriptionsForTable(
             pagination,
             searchQuery,
             [

@@ -51,6 +51,10 @@ function SaveButton({ disabled, prefix, setOpen, emails }: Props) {
         setLoading(false);
     };
 
+    console.log('dis', disabled);
+    console.log('pref', prefix);
+    console.log('em', emails);
+
     return (
         <LoadingButton
             variant="contained"
