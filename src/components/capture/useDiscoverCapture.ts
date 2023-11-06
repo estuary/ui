@@ -27,15 +27,11 @@ import useDiscoverStartDiscovery from './useDiscoverStartDiscovery';
 
 function useDiscoverCapture(
     entityType: Entity,
-    postGenerateMutate: Function,
     options?: { initiateRediscovery?: boolean; initiateDiscovery?: boolean }
 ) {
-    const draftUpdate = useDiscoverDraftUpdate(postGenerateMutate, options);
+    const draftUpdate = useDiscoverDraftUpdate(options);
     const configEncrypt = useDiscoverConfigEncrypt();
-    const startDiscovery = useDiscoverStartDiscovery(
-        entityType,
-        postGenerateMutate
-    );
+    const startDiscovery = useDiscoverStartDiscovery(entityType);
 
     const isEdit = useEntityWorkflow_Editing();
 

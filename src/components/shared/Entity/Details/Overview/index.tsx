@@ -55,7 +55,10 @@ function Overview({ isDerivation, name }: Props) {
 
             {!isCollection || isDerivation ? (
                 <Grid item xs={12}>
-                    <ShardInformation entityType={entityType} />
+                    <ShardInformation
+                        taskTypes={[entityType]}
+                        taskName={entityName}
+                    />
                 </Grid>
             ) : null}
 

@@ -177,6 +177,40 @@ export const useEditorStore_currentCatalog = (
     >(storeName(entityType, localScope), (state) => state.currentCatalog);
 };
 
+export const useEditorStore_catalogName = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['catalogName']
+    >(storeName(entityType, localScope), (state) => state.catalogName);
+};
+
+export const useEditorStore_setCatalogName = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setCatalogName']
+    >(storeName(entityType, localScope), (state) => state.setCatalogName);
+};
+
 export const useEditorStore_setCurrentCatalog = (
     params?: SelectorParams | undefined
 ) => {

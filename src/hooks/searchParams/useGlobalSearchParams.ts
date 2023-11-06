@@ -9,7 +9,7 @@ export enum GlobalSearchParams {
     HIDDEN_SHOW_BETA = 'showBetaOnboard',
     LAST_PUB_ID = 'lastPubId',
     LIVE_SPEC_ID = 'liveSpecId',
-    PREFILL_PUB_ID = 'prefillPubId',
+    PREFILL_LIVE_SPEC_ID = 'prefillLiveSpecId',
     PREFIX = 'prefix',
     HOME_PAGE_ERROR = 'homePageError',
 }

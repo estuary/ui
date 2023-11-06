@@ -142,16 +142,13 @@ const invariableStores = {
 
     // Shard Detail Store
     [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
-        ShardDetailStoreNames.CAPTURE,
-        'capture'
+        ShardDetailStoreNames.CAPTURE
     ),
     [ShardDetailStoreNames.MATERIALIZATION]: createShardDetailStore(
-        ShardDetailStoreNames.MATERIALIZATION,
-        'materialization'
+        ShardDetailStoreNames.MATERIALIZATION
     ),
     [ShardDetailStoreNames.COLLECTION]: createShardDetailStore(
-        ShardDetailStoreNames.COLLECTION,
-        'collection'
+        ShardDetailStoreNames.COLLECTION
     ),
     [SelectTableStoreNames.STORAGE_MAPPINGS]: createSelectableTableStore(
         SelectTableStoreNames.STORAGE_MAPPINGS

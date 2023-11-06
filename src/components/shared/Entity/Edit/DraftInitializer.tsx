@@ -21,10 +21,14 @@ function DraftInitializer({ children }: BaseComponentProps) {
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        if (formStatus === FormStatus.INIT) {
+        // This is pretty hacky but we need to check the loading because while we go from capture
+        //  to materializing the initTaskDraft can pick up the URL changes. It does make sense to only fire
+        //  this when the page is loading though. This does mean that we currently cannot set the form state
+        //  back to INIT and get this to run again. Seems like a good trade off for now Q4 2023
+        if (loading && formStatus === FormStatus.INIT) {
             void initializeTaskDraft(setLoading);
         }
-    }, [initializeTaskDraft, setLoading, formStatus]);
+    }, [initializeTaskDraft, setLoading, formStatus, loading]);
 
     if (loading) {
         return <FullPageSpinner />;

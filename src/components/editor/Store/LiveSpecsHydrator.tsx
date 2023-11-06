@@ -9,13 +9,11 @@ import { BaseComponentProps } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props extends BaseComponentProps {
-    lastPubId: string;
     localZustandScope: boolean;
     collectionNames?: string[];
 }
 
 function LiveSpecsHydrator({
-    lastPubId,
     localZustandScope,
     collectionNames,
     children,
@@ -30,14 +28,11 @@ function LiveSpecsHydrator({
     const setId = useEditorStore_setId({ localScope: localZustandScope });
 
     useEffect(() => {
-        setId(lastPubId);
-    }, [lastPubId, setId]);
-
-    useEffect(() => {
         if (hasLength(publicationSpecs)) {
             setSpecs(publicationSpecs);
+            setId(publicationSpecs[0].last_pub_id);
         }
-    }, [publicationSpecs, setSpecs]);
+    }, [publicationSpecs, setId, setSpecs]);
 
     // TODO (details) make this error handling better
     // 1. Store this in the store

@@ -229,15 +229,11 @@ const DETAILS_FORM_QUERY = `
     connector_logo_url:connector_logo_url->>en-US::text
 `;
 
-const getLiveSpecs_detailsForm = async (
-    liveSpecId: string,
-    specType: Entity
-) => {
+const getLiveSpecs_detailsForm = async (liveSpecId: string) => {
     const data = await supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
         .select(DETAILS_FORM_QUERY)
         .eq('id', liveSpecId)
-        .eq('spec_type', specType)
         .then(handleSuccess<LiveSpecsExtQuery_DetailsForm[]>, handleFailure);
 
     return data;
@@ -352,17 +348,14 @@ export interface LiveSpecsExtQuery_ByLiveSpecId {
     spec_type: Entity;
     last_pub_id: string;
     spec: any;
+    connector_id: string;
 }
 
-const getLiveSpecsByLiveSpecId = async (
-    liveSpecId: string,
-    specType: Entity
-) => {
+const getLiveSpecsByLiveSpecId = async (liveSpecId: string) => {
     const data = await supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
-        .select('catalog_name,id,spec_type,last_pub_id,spec')
+        .select('catalog_name,id,spec_type,last_pub_id,spec,connector_id')
         .eq('id', liveSpecId)
-        .eq('spec_type', specType)
         .then(handleSuccess<LiveSpecsExtQuery_ByLiveSpecId[]>, handleFailure);
 
     return data;

@@ -42,7 +42,8 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
 
                     // Do a quick simple disabled check before comparing the entire object
                     if (
-                        resourceConfig[collectionName].disable !==
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                        resourceConfig[collectionName]?.disable !==
                         getDisableProps(disable).disable
                     ) {
                         return true;

@@ -40,6 +40,9 @@ function SourceCaptureChip() {
             color="success"
             disabled={disabled}
             label={sourceCapture}
+            sx={{
+                maxWidth: '50%',
+            }}
             onDelete={async () => {
                 setSourceCapture(null);
                 await updateDraft(null);

@@ -2,27 +2,20 @@ import { TableRow, useTheme } from '@mui/material';
 import { CollectionQueryWithStats } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import TimeStamp from 'components/tables/cells/TimeStamp';
+import { useEntityType } from 'context/EntityContext';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
-import { useZustandStore } from 'context/Zustand/provider';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
-import useShardsList from 'hooks/useShardsList';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
-import {
-    useShardDetail_setError,
-    useShardDetail_setShards,
-} from 'stores/ShardDetail/hooks';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-    StatsResponse,
-} from 'stores/Tables/Store';
+
+import { StatsResponse } from 'stores/Tables/Store';
 import { hasLength } from 'utils/misc-utils';
 import EntityNameLink from '../cells/EntityNameLink';
 import RowSelect from '../cells/RowSelect';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
+import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
 
 interface RowProps {
     isSelected: boolean;
@@ -40,6 +33,7 @@ interface RowsProps {
 function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const theme = useTheme();
     const tenantDetails = useTenantDetails();
+    const entityType = useEntityType();
 
     const { generatePath } = useDetailsNavigator(
         authenticatedRoutes.collections.details.overview.fullPath
@@ -80,6 +74,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                 name={row.catalog_name}
                 showEntityStatus={showEntityStatus}
                 detailsLink={generatePath(row)}
+                entityStatusTypes={[entityType, 'derivation']}
             />
 
             {hasLength(tenantDetails) ? (
@@ -91,48 +86,20 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
             ) : null}
 
             <TimeStamp time={row.updated_at} />
+
+            {/*            <MaterializeCollection
+                liveSpecId={row.id}
+                name={row.catalog_name}
+            />*/}
         </TableRow>
     );
 }
 
 function Rows({ data, showEntityStatus }: RowsProps) {
-    // Shard Detail Store
-    const setShards = useShardDetail_setShards();
-    const setShardsError = useShardDetail_setError();
-
-    const { data: shardsData, error: shardsError } = useShardsList(data);
-
-    // Collection is the only entity (as of Dec 2022) that actually checks
-    //  the error. This is because the default color for Collections is
-    //  success and the other ones default to nothing.
-    useEffect(() => {
-        // Set the error or default back to null
-        setShardsError(shardsError ?? null);
-
-        // Try to set the data returned
-        if (shardsData) {
-            if (shardsData.shards.length > 0) {
-                setShards(shardsData.shards);
-            }
-        }
-    }, [setShards, setShardsError, shardsData, shardsError]);
-
-    const selectTableStoreName = SelectTableStoreNames.COLLECTION;
-
-    const selected = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['selected']
-    >(selectTableStoreName, selectableTableStoreSelectors.selected.get);
-
-    const setRow = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['setSelected']
-    >(selectTableStoreName, selectableTableStoreSelectors.selected.set);
-
-    const stats = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['stats']
-    >(selectTableStoreName, selectableTableStoreSelectors.stats.get);
+    const { stats, selected, setRow } = useRowsWithStatsState(
+        SelectTableStoreNames.COLLECTION,
+        data
+    );
 
     return (
         <>

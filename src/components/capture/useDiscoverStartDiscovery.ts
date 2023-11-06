@@ -1,7 +1,10 @@
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
 
-import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
+import {
+    useEditorStore_persistedDraftId,
+    useEditorStore_setCatalogName,
+} from 'components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useCallback } from 'react';
 import { useDetailsForm_connectorImage_id } from 'stores/DetailsForm/hooks';
@@ -11,17 +14,13 @@ import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { Entity } from 'types';
 import useDiscoverStartSubscription from './useDiscoverStartSubscription';
 
-function useDiscoverStartDiscovery(
-    entityType: Entity,
-    postGenerateMutate: Function
-) {
-    const createDiscoversSubscription = useDiscoverStartSubscription(
-        entityType,
-        postGenerateMutate
-    );
+function useDiscoverStartDiscovery(entityType: Entity) {
+    const createDiscoversSubscription =
+        useDiscoverStartSubscription(entityType);
     const { callFailed } = useEntityWorkflowHelpers();
 
     const persistedDraftId = useEditorStore_persistedDraftId();
+    const setCatalogName = useEditorStore_setCatalogName();
 
     const setFormState = useFormStateStore_setFormState();
 
@@ -56,6 +55,8 @@ function useDiscoverStartDiscovery(
 
                 return false;
             }
+
+            setCatalogName(processedEntityName);
 
             const newDraftId = draftsResponse.data[0].id;
 
@@ -93,6 +94,7 @@ function useDiscoverStartDiscovery(
             endpointConfigData,
             imageConnectorTagId,
             persistedDraftId,
+            setCatalogName,
             setFormState,
         ]
     );

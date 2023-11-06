@@ -6,7 +6,7 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 const OAuth = () => {
     useBrowserTitle('routeTitle.loginLoading');
 
-    return <FullPageSpinner />;
+    return <FullPageSpinner delay={0} />;
 };
 
 export default OAuth;

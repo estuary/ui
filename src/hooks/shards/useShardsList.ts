@@ -4,7 +4,6 @@ import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useMemo } from 'react';
 import { logRocketConsole } from 'services/logrocket';
 import useSWR from 'swr';
-import { LiveSpecsExtBareMinimum } from 'types';
 
 enum ErrorFlags {
     OPERATION_INVALID = 'Unauthorized',
@@ -16,12 +15,11 @@ enum ErrorFlags {
 // These status do not change often so checking every 30 seconds is probably enough
 const INTERVAL = 30000;
 
-const useShardsList = <T extends LiveSpecsExtBareMinimum>(specs: T[]) => {
+const useShardsList = (catalogNames: string[]) => {
     const { session } = Auth.useUser();
 
-    const { data: gatewayConfig, refresh: refreshAccess } = useGatewayAuthToken(
-        specs.map((spec) => spec.catalog_name)
-    );
+    const { data: gatewayConfig, refresh: refreshAccess } =
+        useGatewayAuthToken(catalogNames);
 
     const shardClient = useMemo(() => {
         if (gatewayConfig?.gateway_url && gatewayConfig.token) {
@@ -35,12 +33,10 @@ const useShardsList = <T extends LiveSpecsExtBareMinimum>(specs: T[]) => {
     }, [gatewayConfig]);
 
     const taskSelector = new ShardSelector();
-
-    specs
-        .map((spec) => spec.catalog_name)
-        .forEach((name) => taskSelector.task(name));
+    catalogNames.forEach((name) => taskSelector.task(name));
 
     const fetcher = async (_url: string) => {
+        // We check this in the swrKey memo so this should never actually happen
         if (!(shardClient && session)) {
             return { shards: [] };
         }
@@ -70,12 +66,12 @@ const useShardsList = <T extends LiveSpecsExtBareMinimum>(specs: T[]) => {
 
     const swrKey = useMemo(
         () =>
-            specs.length > 0
+            shardClient && session && catalogNames.length > 0
                 ? `shards-${
                       gatewayConfig?.gateway_url ?? '__missing_gateway_url__'
-                  }-${specs.map((spec) => spec.id).join('-')}`
+                  }-${catalogNames.join('-')}`
                 : null,
-        [gatewayConfig?.gateway_url, specs]
+        [shardClient, session, catalogNames, gatewayConfig?.gateway_url]
     );
 
     return useSWR(swrKey, fetcher, {

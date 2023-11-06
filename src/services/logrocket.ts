@@ -28,6 +28,7 @@ export enum CustomEvents {
     CAPTURE_CREATE_CONFIG_EDIT = 'Capture_Create_Config_Edit',
     CAPTURE_DISCOVER = 'Capture_Discover',
     CAPTURE_EDIT = 'Capture_Edit',
+    CAPTURE_MATERIALIZE_FAILED = 'Capture_Materialize_Failed',
     MATERIALIZATION_CREATE = 'Materialization_Create',
     MATERIALIZATION_CREATE_CONFIG_CREATE = 'Materialization_Create_Config_Create',
     MATERIALIZATION_CREATE_CONFIG_EDIT = 'Materialization_Create_Config_Edit',
@@ -39,6 +40,7 @@ export enum CustomEvents {
     ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
     FULL_PAGE_ERROR_DISPLAYED = 'Full_Page_Error_Displayed',
     STRIPE_FORM_LOADING_FAILED = 'Stripe_Form_Loading_Failed',
+    SWR_LOADING_SLOW = 'SWR_Loading_Slow',
 }
 
 const logRocketSettings = getLogRocketSettings();

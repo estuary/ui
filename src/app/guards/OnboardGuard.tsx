@@ -1,4 +1,3 @@
-import FullPageSpinner from 'components/fullPage/Spinner';
 import { LocalZustandProvider } from 'context/LocalZustand';
 import BetaOnboard from 'directives/BetaOnboard';
 import FullPageWrapper from 'directives/FullPageWrapper';
@@ -32,7 +31,7 @@ function OnboardGuard({ children, forceDisplay, grantsMutate }: Props) {
     );
 
     if (loading || status === null) {
-        return <FullPageSpinner />;
+        return null;
     } else if (forceDisplay || status !== 'fulfilled') {
         return (
             <FullPageWrapper fullWidth={true}>

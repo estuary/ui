@@ -413,11 +413,8 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.rowSelector.all': `All`,
     'entityTable.rowSelector.none': `None`,
 
-    'optionMenu.ariaLabel': `Open Option Menu`,
-    'optionMenu.tooltip': `Options`,
-    'optionMenu.option.detailsPanel.display': `View details`,
-    'optionMenu.option.detailsPanel.hide': `Hide details`,
-    'optionMenu.option.edit': `Edit specification`,
+    'entityTable.edit.aria': `Edit specification of {name}`,
+    'entityTable.materialize.aria': `Materialize {name}`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
@@ -685,6 +682,8 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
     'entityCreate.errors.missingDraftId': `Missing Draft ID.`,
 
+    'entityCreate.errors.cannotFetchLiveSpec': `Unable to fetch the proper details to materialize. Try again.`,
+
     'discovery.failed.title': `Generating Specification Failed`,
     'discovery.failed.message': `There was an issue attempting to discover your endpoint. Please review details below.`,
 };
@@ -780,6 +779,7 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.shardDetails.status.label': `Status`,
     'detailsPanel.shardDetails.id.label': `ID`,
     'detailsPanel.shardDetails.errorTitle': `Shard Replica Processing Errors`,
+    'detailsPanel.shardDetails.warningTitle': `Shard Replica Processing Warnings`,
     'detailsPanel.shardDetails.noStatusFound': `No shard status to report`,
     'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
     'detailsPanel.dataPreview.header': `Data Preview`,
@@ -965,6 +965,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
 
     'workflows.sourceCapture.header': `Link Capture`,
     'workflows.sourceCapture.cta': `link capture`,
+    'workflows.sourceCapture.cta.loading': `${CommonMessages['common.loading']}`,
     'workflows.sourceCapture.cta.edit': `edit capture`,
     'workflows.sourceCapture.selected.none': `no linked capture`,
     'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization.  Collections added to your capture will automatically be added to your materialization.`,
@@ -977,6 +978,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
 const ShardStatus: ResolvedIntlConfig['messages'] = {
     'shardStatus.primary': `PRIMARY`,
     'shardStatus.failed': `FAILED`,
+    'shardStatus.schema': `SCHEMA UPDATING`,
     'shardStatus.idle': `PENDING`,
     'shardStatus.standby': `PENDING`,
     'shardStatus.backfill': `PENDING`,
@@ -1051,6 +1053,11 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.grantDirective.error.message.help.docPath': `mailto:support@estuary.dev`,
 
     'tenant.error.failedToFetch.message': `There was an issue while checking if you have access to a tenant.`,
+};
+
+const Fetchers: ResolvedIntlConfig['messages'] = {
+    'fetcher.grants.error.message': `There was an issue while checking your user grants.`,
+    'fetcher.tenants.error.message': `There was an issue while checking what tenants you have access to.`,
 };
 
 const Details: ResolvedIntlConfig['messages'] = {
@@ -1260,9 +1267,9 @@ const NotBeforeNotAfter: ResolvedIntlConfig['messages'] = {
     'notBeforeNotAfter.message': `Include only data from before or after a specific time period.  This should only be used when first setting up your destination or it will not have an effect.`,
     'notBeforeNotAfter.update.error': `Changes to draft not saved.`,
     'notAfter.input.label': `Not After`,
-    'notAfter.input.description': `only include data from before this time`,
+    'notAfter.input.description': `only include data from before this time (UTC)`,
     'notBefore.input.label': `Not Before`,
-    'notBefore.input.description': `only include data from after this time`,
+    'notBefore.input.description': `only include data from after this time (UTC)`,
 };
 
 const FieldSelection: ResolvedIntlConfig['messages'] = {
@@ -1368,6 +1375,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...FieldSelection,
     ...NotBeforeNotAfter,
     ...Notifications,
+    ...Fetchers,
 };
 
 export default enUSMessages;

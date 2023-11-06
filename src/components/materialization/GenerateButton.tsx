@@ -1,277 +1,29 @@
 import { Button } from '@mui/material';
-import { createEntityDraft } from 'api/drafts';
-import {
-    createDraftSpec,
-    DraftSpecsExtQuery_ByCatalogName,
-    getDraftSpecsByDraftId,
-    modifyDraftSpec,
-} from 'api/draftSpecs';
-import {
-    useBindingsEditorStore_fullSourceConfigs,
-    useBindingsEditorStore_fullSourceErrorsExist,
-} from 'components/editor/Bindings/Store/hooks';
-import {
-    useEditorStore_isSaving,
-    useEditorStore_persistedDraftId,
-    useEditorStore_resetState,
-    useEditorStore_setId,
-    useEditorStore_setPersistedDraftId,
-} from 'components/editor/Store/hooks';
+import { useEditorStore_isSaving } from 'components/editor/Store/hooks';
+
 import { buttonSx } from 'components/shared/Entity/Header';
-import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
-import invariableStores from 'context/Zustand/invariableStores';
-import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
+import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
 import { FormattedMessage } from 'react-intl';
-import {
-    useDetailsForm_connectorImage_connectorId,
-    useDetailsForm_connectorImage_id,
-    useDetailsForm_connectorImage_imagePath,
-    useDetailsForm_entityNameChanged,
-    useDetailsForm_errorsExist,
-    useDetailsForm_setDraftedEntityName,
-} from 'stores/DetailsForm/hooks';
-import {
-    useEndpointConfig_serverUpdateRequired,
-    useEndpointConfigStore_encryptedEndpointConfig_data,
-    useEndpointConfigStore_endpointConfig_data,
-    useEndpointConfigStore_endpointSchema,
-    useEndpointConfigStore_errorsExist,
-    useEndpointConfigStore_setEncryptedEndpointConfig,
-    useEndpointConfigStore_setPreviousEndpointConfig,
-} from 'stores/EndpointConfig/hooks';
-import {
-    useFormStateStore_isActive,
-    useFormStateStore_setFormState,
-    useFormStateStore_updateStatus,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import {
-    useResourceConfig_resetRediscoverySettings,
-    useResourceConfig_resourceConfig,
-    useResourceConfig_resourceConfigErrorsExist,
-} from 'stores/ResourceConfig/hooks';
-import { encryptEndpointConfig } from 'utils/sops-utils';
-import { generateTaskSpec } from 'utils/workflow-utils';
-import { useStore } from 'zustand';
+
+import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+
+import useGenerateCatalog from './useGenerateCatalog';
 
 interface Props {
     disabled: boolean;
-    mutateDraftSpecs: Function;
 }
 
-const ENTITY_TYPE = 'materialization';
-
-function MaterializeGenerateButton({ disabled, mutateDraftSpecs }: Props) {
-    const isEdit = useEntityWorkflow_Editing();
-    const { callFailed } = useEntityWorkflowHelpers();
-
-    // Details Form Store
-    const detailsFormsErrorsExist = useDetailsForm_errorsExist();
-    const imageConnectorTagId = useDetailsForm_connectorImage_id();
-    const imageConnectorId = useDetailsForm_connectorImage_connectorId();
-    const imagePath = useDetailsForm_connectorImage_imagePath();
-    const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
-    const entityNameChanged = useDetailsForm_entityNameChanged();
-
-    // Draft Editor Store
+function MaterializeGenerateButton({ disabled }: Props) {
+    const generateCatalog = useGenerateCatalog();
     const isSaving = useEditorStore_isSaving();
-    const resetEditorState = useEditorStore_resetState();
-    const setDraftId = useEditorStore_setId();
-    const persistedDraftId = useEditorStore_persistedDraftId();
-    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
-
-    // Endpoint Config Store
-    const endpointSchema = useEndpointConfigStore_endpointSchema();
-    const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
-    const serverEndpointConfigData =
-        useEndpointConfigStore_encryptedEndpointConfig_data();
-    const setEncryptedEndpointConfig =
-        useEndpointConfigStore_setEncryptedEndpointConfig();
-    const setPreviousEndpointConfig =
-        useEndpointConfigStore_setPreviousEndpointConfig();
-    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
-    const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
-
-    // Form State Store
     const formActive = useFormStateStore_isActive();
-    const setFormState = useFormStateStore_setFormState();
-    const updateFormStatus = useFormStateStore_updateStatus();
-
-    // Resource Config Store
-    const resourceConfig = useResourceConfig_resourceConfig();
-    const resourceConfigErrorsExist =
-        useResourceConfig_resourceConfigErrorsExist();
-    const resetRediscoverySettings =
-        useResourceConfig_resetRediscoverySettings();
-
-    // Bindings store
-    const fullSourceConfigs = useBindingsEditorStore_fullSourceConfigs();
-    const fullSourceErrorsExist =
-        useBindingsEditorStore_fullSourceErrorsExist();
-
-    // Source Capture Store
-    const sourceCapture = useStore(
-        invariableStores['source-capture'],
-        (state) => state.sourceCapture
-    );
-
-    // After the first generation we already have a name with the
-    //  image name suffix (unless name changed)
-
-    // The order of the OR statement below is SUPER important because the
-    //  entity name change variable will flip to true more often
-    //      If there is NO persisted draft ID
-    //          - process the name
-    //      If there is a persisted draft ID BUT the name changed
-    //          - process the name
-    //      If there is persisted draft ID
-    //          - get the draft name
-    const processedEntityName = useEntityNameSuffix(
-        !isEdit && (!persistedDraftId || entityNameChanged)
-    );
-
-    const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
-        event.preventDefault();
-        updateFormStatus(FormStatus.GENERATING);
-
-        if (
-            resourceConfigErrorsExist ||
-            detailsFormsErrorsExist ||
-            endpointConfigErrorsExist ||
-            fullSourceErrorsExist
-        ) {
-            setFormState({
-                status: FormStatus.FAILED,
-                displayValidation: true,
-            });
-        } else {
-            resetEditorState(true);
-
-            const encryptedEndpointConfig = await encryptEndpointConfig(
-                serverUpdateRequired
-                    ? endpointConfigData
-                    : serverEndpointConfigData,
-                endpointSchema,
-                serverUpdateRequired,
-                imageConnectorId,
-                imageConnectorTagId,
-                callFailed,
-                { overrideJsonFormDefaults: true }
-            );
-
-            let evaluatedDraftId = persistedDraftId;
-            let existingTaskData: DraftSpecsExtQuery_ByCatalogName | null =
-                null;
-
-            if (persistedDraftId) {
-                // See if there is an existing materialization tied to the persisted draft id
-                const existingDraftSpecResponse = await getDraftSpecsByDraftId(
-                    persistedDraftId,
-                    ENTITY_TYPE
-                );
-
-                if (existingDraftSpecResponse.error) {
-                    return callFailed({
-                        error: {
-                            title: 'materializationCreate.generate.failure.errorTitle',
-                            error: existingDraftSpecResponse.error,
-                        },
-                    });
-                }
-
-                // Populate the existing if available. This might not exist if the user edited a collection
-                //  as their first action before clicking this button
-                if (
-                    existingDraftSpecResponse.data &&
-                    existingDraftSpecResponse.data.length > 0
-                ) {
-                    existingTaskData = existingDraftSpecResponse.data[0];
-                }
-            } else {
-                // No existing draft so start a new one
-                const draftsResponse = await createEntityDraft(
-                    processedEntityName
-                );
-
-                if (draftsResponse.error) {
-                    return callFailed({
-                        error: {
-                            title: 'materializationCreate.generate.failure.errorTitle',
-                            error: draftsResponse.error,
-                        },
-                    });
-                }
-
-                // Since we made a new one override the current draft id
-                evaluatedDraftId = draftsResponse.data[0].id;
-            }
-
-            // Generate the draft spec that will be sent to the server next
-            const draftSpec = generateTaskSpec(
-                ENTITY_TYPE,
-                { image: imagePath, config: encryptedEndpointConfig.data },
-                resourceConfig,
-                existingTaskData,
-                sourceCapture,
-                fullSourceConfigs
-            );
-
-            // If there is a draft already with task data then update. We do not match on
-            //   the catalog name as the user could change the name. There is a small issue
-            //      if someone updates their draft on the CLI and adds multiple materializations
-            //      there will be an issue. This will need to be handled eventually but by then
-            //      we should move the UI to the "shopping cart" approach.
-            const draftSpecsResponse =
-                persistedDraftId && existingTaskData
-                    ? await modifyDraftSpec(
-                          draftSpec,
-                          {
-                              draft_id: evaluatedDraftId,
-                              spec_type: ENTITY_TYPE,
-                          },
-                          processedEntityName
-                      )
-                    : await createDraftSpec(
-                          evaluatedDraftId,
-                          processedEntityName,
-                          draftSpec,
-                          ENTITY_TYPE
-                      );
-
-            if (draftSpecsResponse.error) {
-                return callFailed({
-                    error: {
-                        title: 'materializationCreate.generate.failure.errorTitle',
-                        error: draftSpecsResponse.error,
-                    },
-                });
-            }
-
-            // Update all the store state
-            setEncryptedEndpointConfig({
-                data: draftSpecsResponse.data[0].spec.endpoint.connector.config,
-            });
-            setPreviousEndpointConfig({ data: endpointConfigData });
-            setDraftId(evaluatedDraftId);
-            setPersistedDraftId(evaluatedDraftId);
-            setDraftedEntityName(draftSpecsResponse.data[0].catalog_name);
-            setFormState({
-                status: FormStatus.GENERATED,
-            });
-
-            // Materializations do not use this setting but still letting it get populated to keep
-            //  the stores simpler. Also, I could easily see us needing to know what collections
-            //  were enabled during an edit in materializations.
-            resetRediscoverySettings();
-
-            return mutateDraftSpecs();
-        }
-    };
+    const mutateDraftSpecs = useMutateDraftSpec();
 
     return (
         <Button
-            onClick={generateCatalog}
+            onClick={async () => {
+                await generateCatalog(mutateDraftSpecs);
+            }}
             disabled={disabled || isSaving || formActive}
             sx={buttonSx}
         >

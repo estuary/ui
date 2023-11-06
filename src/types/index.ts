@@ -301,6 +301,7 @@ export enum TableStatuses {
 
 export interface TableColumns {
     field: string | null;
+    collapseHeader?: boolean;
     headerIntlKey?: string | null;
     width?: number;
     sticky?: boolean;

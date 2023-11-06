@@ -1,21 +1,21 @@
-import { Button } from '@mui/material';
-import { FormattedMessage } from 'react-intl';
+import { TableCell } from '@mui/material';
+import EditLink from 'components/shared/Entity/EditLink';
 
 interface Props {
-    clickHandler: () => void;
+    liveSpecId: string;
+    name: string;
 }
 
-function EditTask({ clickHandler }: Props) {
+function EditTask({ liveSpecId, name }: Props) {
     return (
-        <Button
-            variant="text"
-            size="small"
-            disableElevation
-            onClick={clickHandler}
-            sx={{ mr: 1 }}
+        <TableCell
+            sx={{
+                maxWidth: 'min-content',
+                textAlign: 'right',
+            }}
         >
-            <FormattedMessage id="cta.edit" />
-        </Button>
+            <EditLink liveSpecId={liveSpecId} name={name} />
+        </TableCell>
     );
 }
 
