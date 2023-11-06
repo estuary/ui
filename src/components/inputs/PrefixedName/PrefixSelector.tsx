@@ -85,11 +85,18 @@ function PrefixSelector({
     return prefixOnly ? (
         <>
             <InputLabel
+                color="secondary"
                 disabled={disabled}
                 focused
-                required
                 htmlFor={INPUT_ID}
+                required
                 variant="outlined"
+                sx={{
+                    'top': -6,
+                    '&.MuiInputLabel-shrink': {
+                        top: 0,
+                    },
+                }}
             >
                 {label}
             </InputLabel>
