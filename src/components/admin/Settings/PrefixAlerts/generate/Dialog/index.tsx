@@ -4,12 +4,11 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    FormControl,
     Grid,
 } from '@mui/material';
 import EmailSelector from 'components/admin/Settings/PrefixAlerts/EmailSelector';
 import SaveButton from 'components/admin/Settings/PrefixAlerts/generate/Dialog/SaveButton';
-import PrefixSelector from 'components/inputs/PrefixedName/PrefixSelector';
+import PrefixedName from 'components/inputs/PrefixedName';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
@@ -55,7 +54,7 @@ function GenerateAlertDialog({ open, setOpen }: Props) {
                     spacing={2}
                     sx={{ mb: 3, pt: 1, alignItems: 'flex-start' }}
                 >
-                    <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
+                    {/* <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
                         <FormControl fullWidth>
                             <PrefixSelector
                                 label={intl.formatMessage({
@@ -65,22 +64,20 @@ function GenerateAlertDialog({ open, setOpen }: Props) {
                                 onChange={updatePrefix}
                             />
                         </FormControl>
-                    </Grid>
+                    </Grid> */}
 
-                    {/* <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
+                    <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
                         <PrefixedName
-                            allowBlankName
-                            allowEndSlash
-                            defaultPrefix
                             label={intl.formatMessage({
                                 id: 'common.tenant',
                             })}
                             required
                             size="small"
-                            validateOnLoad
                             onChange={updatePrefix}
+                            prefixOnly
+                            validateOnLoad
                         />
-                    </Grid> */}
+                    </Grid>
 
                     <Grid item xs={12} md={7} sx={{ display: 'flex' }}>
                         <EmailSelector
@@ -118,7 +115,7 @@ function GenerateAlertDialog({ open, setOpen }: Props) {
                 </Button>
 
                 <SaveButton
-                    disabled={prefixHasErrors}
+                    disabled={Boolean(prefixHasErrors)}
                     prefix={prefix}
                     setOpen={setOpen}
                     emails={emails}

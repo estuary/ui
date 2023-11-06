@@ -9,29 +9,28 @@ import {
     Select,
     TextField,
 } from '@mui/material';
+import useValidatePrefix from 'components/inputs/PrefixedName/useValidatePrefix';
 import AlertBox from 'components/shared/AlertBox';
-import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
-import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { hasLength } from 'utils/misc-utils';
-import { validateCatalogName } from './shared';
-import { PrefixedName_Change, PrefixedName_Errors } from './types';
+import { PrefixedName_Change } from './types';
 
 export interface Props {
     label: string | null;
-    onChange?: PrefixedName_Change;
     allowBlankName?: boolean;
     allowEndSlash?: boolean;
     defaultPrefix?: boolean;
-    showDescription?: boolean;
     disabled?: boolean;
     hideErrorMessage?: boolean;
+    onChange?: PrefixedName_Change;
     onNameChange?: PrefixedName_Change;
     onPrefixChange?: PrefixedName_Change;
     required?: boolean;
+    showDescription?: boolean;
     size?: 'small' | 'medium';
     standardVariant?: boolean;
+    prefixOnly?: boolean;
     validateOnLoad?: boolean;
     value?: string;
 }
@@ -54,25 +53,31 @@ function PrefixedName({
     showDescription,
     size,
     standardVariant,
+    prefixOnly,
     validateOnLoad,
     value,
 }: Props) {
     // Hooks
     const intl = useIntl();
 
-    // Store stuff
-    const adminCapabilities = useEntitiesStore_capabilities_adminable();
-    const objectRoles = Object.keys(adminCapabilities);
-    const singleOption = objectRoles.length === 1;
-
-    // Local State for editing
-    const [errors, setErrors] = useState<string | null>(null);
-    const [name, setName] = useState('');
-    const [nameError, setNameError] = useState<PrefixedName_Errors>(null);
-    const [prefix, setPrefix] = useState(
-        singleOption || defaultPrefix ? objectRoles[0] : ''
-    );
-    const [prefixError, setPrefixError] = useState<PrefixedName_Errors>(null);
+    const {
+        errors,
+        handlers,
+        name,
+        nameError,
+        objectRoles,
+        prefix,
+        prefixError,
+        singleOption,
+        updateErrors,
+    } = useValidatePrefix({
+        allowBlankName,
+        allowEndSlash,
+        defaultPrefix,
+        onChange,
+        onNameChange,
+        onPrefixChange,
+    });
 
     // For rendering input as MUI splits up variants between components
     const InputComponent = standardVariant ? Input : OutlinedInput;
@@ -93,103 +98,6 @@ function PrefixedName({
         ? errors
         : null;
     const secondFormHelperText = description && showErrors ? errors : null;
-
-    const updateErrors = (prefixValue: string, nameValue: string) => {
-        // Validate both inputs
-        const prefixErrors = validateCatalogName(prefixValue, false, true);
-        const nameErrors = validateCatalogName(
-            nameValue,
-            allowBlankName,
-            allowEndSlash
-        );
-
-        // Array to keep list of errors in by going through each returned
-        //  error and populating with the translated message
-        const updatedErrors: string[] = [];
-        const generateErrorList = (
-            inputName: string,
-            inputErrors: PrefixedName_Errors
-        ) => {
-            inputErrors?.forEach((inputError) => {
-                updatedErrors.push(
-                    intl.formatMessage({
-                        id: `custom.prefixedName.${inputName}.${inputError}`,
-                    })
-                );
-            });
-        };
-
-        // If there are any errors then populate the list
-        if (prefixErrors) {
-            generateErrorList('prefix', prefixErrors);
-        }
-        if (nameErrors) {
-            generateErrorList('name', nameErrors);
-        }
-
-        // Generate the string by concat with space.
-        //  Follows the style of JSONForms
-        const errorString = hasLength(updatedErrors)
-            ? updatedErrors.join(' \n')
-            : null;
-
-        // Set the local state
-        setErrors(errorString);
-        setPrefixError(prefixErrors);
-        setNameError(nameErrors);
-
-        return { prefixErrors, nameErrors, errorString };
-    };
-
-    const handlers = {
-        setPrefix: (prefixValue: string) => {
-            const { nameErrors, prefixErrors, errorString } = updateErrors(
-                prefixValue,
-                name
-            );
-
-            setPrefix(prefixValue);
-
-            if (onPrefixChange) {
-                onPrefixChange(prefixValue, errorString, {
-                    prefix: prefixErrors,
-                    name: nameError,
-                });
-            }
-
-            if (onChange) {
-                onChange(`${prefixValue}${name}`, errorString, {
-                    prefix: prefixErrors,
-                    name: nameErrors,
-                });
-            }
-        },
-        setName: (nameValue: string) => {
-            // We don't allow spaces in names but users keep trying
-            //      so making it easier on them and just replacing
-            const processedValue = nameValue.replaceAll(/\s/g, '_');
-            const { nameErrors, prefixErrors, errorString } = updateErrors(
-                prefix,
-                processedValue
-            );
-
-            setName(processedValue);
-
-            if (onNameChange) {
-                onNameChange(processedValue, errorString, {
-                    prefix: prefixError,
-                    name: nameError,
-                });
-            }
-
-            if (onChange) {
-                onChange(`${prefix}${processedValue}`, errorString, {
-                    prefix: prefixErrors,
-                    name: nameErrors,
-                });
-            }
-        },
-    };
 
     // If needed we will validate on load. This is mainly just for
     //      the details form right now
@@ -229,6 +137,62 @@ function PrefixedName({
             <AlertBox short severity="warning">
                 <FormattedMessage id="custom.prefixedName.noAccessGrants" />
             </AlertBox>
+        );
+    }
+
+    if (prefixOnly) {
+        return (
+            <FormControl
+                error={Boolean(prefixError)}
+                fullWidth
+                variant={variantString}
+                sx={{
+                    '& .MuiFormHelperText-root.Mui-error': {
+                        whiteSpace: 'break-spaces',
+                    },
+                }}
+            >
+                <InputLabel
+                    color="secondary"
+                    disabled={disabled}
+                    focused
+                    htmlFor={INPUT_ID}
+                    required
+                    variant="outlined"
+                    sx={{
+                        'top': -6,
+                        '&.MuiInputLabel-shrink': {
+                            top: 0,
+                        },
+                    }}
+                >
+                    {label}
+                </InputLabel>
+
+                <Select
+                    label={label}
+                    labelId={INPUT_ID}
+                    disabled={disabled}
+                    error={Boolean(prefixError)}
+                    required
+                    size="small"
+                    value={prefix}
+                    variant="outlined"
+                    sx={{
+                        minWidth: 75,
+                        borderRadius: 3,
+                    }}
+                    onChange={(event) => {
+                        handlers.setPrefix(event.target.value);
+                    }}
+                >
+                    {objectRoles.map((objectRole) => (
+                        <MenuItem key={objectRole} value={objectRole}>
+                            {objectRole}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
         );
     }
 
