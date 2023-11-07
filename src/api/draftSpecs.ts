@@ -7,6 +7,7 @@ import {
     handleSuccess,
     insertSupabase,
     supabaseClient,
+    supabaseRetry,
     TABLES,
     updateSupabase,
 } from 'services/supabase';
@@ -88,12 +89,15 @@ export const getDraftSpecsBySpecType = async (
     draftId: string,
     specType: Entity
 ) => {
-    return supabaseClient
-        .from(TABLES.DRAFT_SPECS_EXT)
-        .select(`catalog_name,draft_id,expect_pub_id,spec,spec_type`)
-        .eq('draft_id', draftId)
-        .eq('spec_type', specType)
-        .then(handleSuccess<DraftSpecQuery[]>, handleFailure);
+    return supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.DRAFT_SPECS_EXT)
+                .select(`catalog_name,draft_id,expect_pub_id,spec,spec_type`)
+                .eq('draft_id', draftId)
+                .eq('spec_type', specType),
+        'getDraftSpecsBySpecType'
+    ).then(handleSuccess<DraftSpecQuery[]>, handleFailure);
 };
 
 interface DraftSpecsExtQuery_BySpecTypeReduced {
@@ -106,15 +110,19 @@ export const getDraftSpecsBySpecTypeReduced = async (
     draftId: string,
     specType: Entity
 ) => {
-    const data = await supabaseClient
-        .from(TABLES.DRAFT_SPECS_EXT)
-        .select(`draft_id,catalog_name,spec_type`)
-        .eq('draft_id', draftId)
-        .eq('spec_type', specType)
-        .then(
-            handleSuccess<DraftSpecsExtQuery_BySpecTypeReduced[]>,
-            handleFailure
-        );
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.DRAFT_SPECS_EXT)
+                .select(`draft_id,catalog_name,spec_type`)
+                .eq('draft_id', draftId)
+                .eq('spec_type', specType)
+                .then(
+                    handleSuccess<DraftSpecsExtQuery_BySpecTypeReduced[]>,
+                    handleFailure
+                ),
+        'getDraftSpecsBySpecTypeReduced'
+    );
 
     return data;
 };
@@ -134,13 +142,16 @@ export const getDraftSpecsByCatalogName = async (
     catalogName: string,
     specType: Entity
 ) => {
-    const data = await supabaseClient
-        .from(TABLES.DRAFT_SPECS_EXT)
-        .select(`draft_id,catalog_name,spec_type,spec,expect_pub_id`)
-        .eq('draft_id', draftId)
-        .eq('catalog_name', catalogName)
-        .eq('spec_type', specType)
-        .then(handleSuccess<DraftSpecsExtQuery_ByCatalogName[]>, handleFailure);
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.DRAFT_SPECS_EXT)
+                .select(`draft_id,catalog_name,spec_type,spec,expect_pub_id`)
+                .eq('draft_id', draftId)
+                .eq('catalog_name', catalogName)
+                .eq('spec_type', specType),
+        'getDraftSpecsByCatalogName'
+    ).then(handleSuccess<DraftSpecsExtQuery_ByCatalogName[]>, handleFailure);
 
     return data;
 };
@@ -208,12 +219,15 @@ export const getDraftSpecsByDraftId = async (
     draftId: string,
     specType: Entity
 ) => {
-    const data = await supabaseClient
-        .from(TABLES.DRAFT_SPECS_EXT)
-        .select(`draft_id,catalog_name,spec_type,spec,expect_pub_id`)
-        .eq('draft_id', draftId)
-        .eq('spec_type', specType)
-        .then(handleSuccess<DraftSpecsExtQuery_ByDraftId[]>, handleFailure);
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.DRAFT_SPECS_EXT)
+                .select(`draft_id,catalog_name,spec_type,spec,expect_pub_id`)
+                .eq('draft_id', draftId)
+                .eq('spec_type', specType),
+        'getDraftSpecsByDraftId'
+    ).then(handleSuccess<DraftSpecsExtQuery_ByDraftId[]>, handleFailure);
 
     return data;
 };

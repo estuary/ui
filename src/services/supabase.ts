@@ -236,7 +236,7 @@ export const handleFailure = (error: any) => {
 // Retry calls
 const RETRY_ATTEMPTS = 2;
 
-const supabaseRetry = <T>(makeCall: Function, action: string) => {
+export const supabaseRetry = <T>(makeCall: Function, action: string) => {
     const operation = retry.operation({
         retries: RETRY_ATTEMPTS,
         randomize: true,
@@ -255,13 +255,6 @@ const supabaseRetry = <T>(makeCall: Function, action: string) => {
             }
 
             resolve(response);
-
-            // if (response.data) {
-            //     resolve(response);
-            // } else {
-            //     const finalError = operation.mainError() ?? error;
-            //     reject(finalError);
-            // }
         });
     });
 };
