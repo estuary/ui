@@ -116,12 +116,11 @@ export const getDraftSpecsBySpecTypeReduced = async (
                 .from(TABLES.DRAFT_SPECS_EXT)
                 .select(`draft_id,catalog_name,spec_type`)
                 .eq('draft_id', draftId)
-                .eq('spec_type', specType)
-                .then(
-                    handleSuccess<DraftSpecsExtQuery_BySpecTypeReduced[]>,
-                    handleFailure
-                ),
+                .eq('spec_type', specType),
         'getDraftSpecsBySpecTypeReduced'
+    ).then(
+        handleSuccess<DraftSpecsExtQuery_BySpecTypeReduced[]>,
+        handleFailure
     );
 
     return data;
