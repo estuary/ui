@@ -5,7 +5,7 @@ import { forEach, isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { JobStatus, SortDirection } from 'types';
 import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
-import pRetry, { AbortError } from 'p-retry';
+import retry from 'retry';
 import { logRocketEvent, retryAfterFailure } from './shared';
 import { CustomEvents } from './types';
 
@@ -49,7 +49,7 @@ export enum TABLES {
     DRAFT_ERRORS = 'draft_errors',
     DRAFT_SPECS = 'draft_specs',
     DRAFT_SPECS_EXT = 'draft_specs_ext',
-    DRAFTS = 'drafts1',
+    DRAFTS = 'drafts',
     DRAFTS_EXT = 'drafts_ext',
     EVOLUTIONS = 'evolutions',
     INFERRED_SCHEMAS = 'inferred_schemas',
@@ -236,54 +236,60 @@ export const handleFailure = (error: any) => {
 // Retry calls
 const RETRY_ATTEMPTS = 2;
 
-const onFailedAttempt = (error: Error, action: string) => {
-    logRocketEvent(CustomEvents.SUPABASE_CALL_FAILED, action);
-
-    if (!retryAfterFailure(error.message)) {
-        throw new AbortError({
-            ...error,
-            code: 'stopped_retry',
-        } as Error);
-    }
-};
-
-const callSupabaseWithRetry = <T>(makeCall: () => any, action: string) => {
-    return pRetry(makeCall, {
+const supabaseRetry = <T>(makeCall: Function, action: string) => {
+    const operation = retry.operation({
         retries: RETRY_ATTEMPTS,
-        onFailedAttempt: (error) => {
-            onFailedAttempt(error, action);
-        },
-    }).then(handleSuccess<T>, handleFailure);
+        randomize: true,
+    });
+
+    return new Promise<T>((resolve) => {
+        operation.attempt(async () => {
+            const response = await makeCall();
+
+            const error = response.error;
+            const shouldRetry = retryAfterFailure(error?.message);
+
+            if (shouldRetry && operation.retry(error)) {
+                logRocketEvent(CustomEvents.SUPABASE_CALL_FAILED, action);
+                return;
+            }
+
+            resolve(response);
+
+            // if (response.data) {
+            //     resolve(response);
+            // } else {
+            //     const finalError = operation.mainError() ?? error;
+            //     reject(finalError);
+            // }
+        });
+    });
 };
+
+export interface InvokeResponse<T> {
+    data?: T;
+    error?: PostgrestError;
+}
 
 // Invoke supabase edge functions. Does not use the he
 export function invokeSupabase<T>(fn: FUNCTIONS, body: any) {
-    return supabaseClient.functions.invoke<T>(fn, {
-        body: JSON.stringify(body),
-    });
-
-    // return pRetry(
-    //     () =>
-    //         supabaseClient.functions.invoke<T>(fn, {
-    //             body: JSON.stringify(body),
-    //         }),
-    //     {
-    //         retries: RETRY_ATTEMPTS,
-    //         onFailedAttempt: (error) => {
-    //             onFailedAttempt(error, `fn:${fn}`);
-    //         },
-    //     }
-    // ).then(handleSuccess<T>, handleFailure);
+    return supabaseRetry<InvokeResponse<T>>(
+        () =>
+            supabaseClient.functions.invoke<T>(fn, {
+                body: JSON.stringify(body),
+            }),
+        `fn:${fn}`
+    );
 }
 
 export const insertSupabase = (
     table: TABLES,
     data: any
 ): PromiseLike<CallSupabaseResponse<any>> => {
-    return callSupabaseWithRetry(
-        () => supabaseClient.from(table).insert([data]).throwOnError(),
+    return supabaseRetry(
+        () => supabaseClient.from(table).insert([data]),
         'insert'
-    );
+    ).then(handleSuccess, handleFailure);
 };
 
 // Makes update calls. Mainly consumed in the src/api folder
@@ -292,26 +298,20 @@ export const updateSupabase = (
     data: any,
     matchData: any
 ): PromiseLike<CallSupabaseResponse<any>> => {
-    return callSupabaseWithRetry(
-        () =>
-            supabaseClient
-                .from(table)
-                .update(data)
-                .match(matchData)
-                .throwOnError(),
+    return supabaseRetry(
+        () => supabaseClient.from(table).update(data).match(matchData),
         'update'
-    );
+    ).then(handleSuccess, handleFailure);
 };
 
 export const deleteSupabase = (
     table: TABLES,
     matchData: any
 ): PromiseLike<CallSupabaseResponse<any>> => {
-    return callSupabaseWithRetry(
-        () =>
-            supabaseClient.from(table).delete().match(matchData).throwOnError(),
+    return supabaseRetry(
+        () => supabaseClient.from(table).delete().match(matchData),
         'delete'
-    );
+    ).then(handleSuccess, handleFailure);
 };
 
 export const jobSucceeded = (jobStatus?: JobStatus) => {
