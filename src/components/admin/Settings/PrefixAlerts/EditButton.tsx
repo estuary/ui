@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import { getNotificationSubscriptions } from 'api/alerts';
-import GenerateAlertDialog from 'components/admin/Settings/PrefixAlerts/generate/Dialog';
+import AlertSubscriptionDialog from 'components/admin/Settings/PrefixAlerts/Dialog';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
@@ -9,8 +9,12 @@ import {
     formatNotificationSubscriptionsByPrefix,
 } from 'utils/notification-utils';
 
-const initializeNotificationSubscriptions = async () => {
-    const { data } = await getNotificationSubscriptions();
+interface Props {
+    prefix: string;
+}
+
+const initializeNotificationSubscription = async (prefix: string) => {
+    const { data } = await getNotificationSubscriptions(prefix);
 
     if (data) {
         const processedData = formatNotificationSubscriptionsByPrefix(data);
@@ -21,7 +25,7 @@ const initializeNotificationSubscriptions = async () => {
     return null;
 };
 
-function AlertGenerateButton() {
+function AlertEditButton({ prefix }: Props) {
     const [open, setOpen] = useState(false);
     const [subscriptions, setSubscriptions] =
         useState<PrefixSubscriptionDictionary | null>(null);
@@ -31,39 +35,39 @@ function AlertGenerateButton() {
     ) => {
         event.preventDefault();
 
-        const existingSubscriptions =
-            await initializeNotificationSubscriptions();
+        const existingSubscriptions = await initializeNotificationSubscription(
+            prefix
+        );
 
         setSubscriptions(existingSubscriptions);
         setOpen(true);
     };
 
     useMount(async () => {
-        const existingSubscriptions =
-            await initializeNotificationSubscriptions();
+        const existingSubscriptions = await initializeNotificationSubscription(
+            prefix
+        );
 
         setSubscriptions(existingSubscriptions);
     });
 
     return (
         <>
-            <Button
-                disabled={subscriptions === null}
-                variant="outlined"
-                onClick={openGenerateAlertDialog}
-            >
-                <FormattedMessage id="admin.alerts.cta.addAlertMethod" />
+            <Button variant="text" onClick={openGenerateAlertDialog}>
+                <FormattedMessage id="cta.edit" />
             </Button>
 
             {subscriptions === null ? null : (
-                <GenerateAlertDialog
+                <AlertSubscriptionDialog
+                    headerId="admin.alerts.dialog.update.header"
                     open={open}
                     setOpen={setOpen}
                     subscriptions={subscriptions}
+                    staticPrefix={prefix}
                 />
             )}
         </>
     );
 }
 
-export default AlertGenerateButton;
+export default AlertEditButton;

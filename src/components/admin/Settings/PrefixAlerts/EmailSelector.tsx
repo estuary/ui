@@ -2,13 +2,15 @@ import {
     Autocomplete,
     AutocompleteRenderInputParams,
     Chip,
+    FormControl,
+    FormHelperText,
     ListItem,
     TextField,
     Typography,
 } from '@mui/material';
 import useUserInformationByPrefix from 'hooks/useUserInformationByPrefix';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { Grants_User } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
@@ -34,177 +36,186 @@ function EmailSelector({
     const intl = useIntl();
 
     const [inputValue, setInputValue] = useState('');
-    const [inputError, setInputError] = useState<string | null>(null);
+    const [inputErrorExists, setInputErrorExists] = useState<boolean>(false);
 
     const { data } = useUserInformationByPrefix(prefix, 'admin');
 
     return (
-        <Autocomplete
-            disableCloseOnSelect
-            filterSelectedOptions
-            freeSolo
-            getOptionLabel={(option) =>
-                typeof option !== 'string' ? option.user_email : option
-            }
-            handleHomeEndKeys
-            inputValue={inputValue}
-            multiple
-            onChange={(_event, values, reason, details) => {
-                if (inputError) {
-                    setInputError(null);
+        <FormControl fullWidth>
+            <Autocomplete
+                disabled={!prefix}
+                disableCloseOnSelect
+                filterSelectedOptions
+                freeSolo
+                getOptionLabel={(option) =>
+                    typeof option !== 'string' ? option.user_email : option
                 }
-
-                const newValue = values[values.length - 1];
-
-                if (reason === 'createOption') {
-                    if (
-                        typeof newValue === 'string' &&
-                        !simpleEmailRegEx.test(newValue)
-                    ) {
-                        setInputError('Email is not formatted properly.');
-                        setInputValue(newValue);
-
-                        return;
+                handleHomeEndKeys
+                inputValue={inputValue}
+                multiple
+                onChange={(_event, values, reason, details) => {
+                    if (inputErrorExists) {
+                        setInputErrorExists(false);
                     }
 
-                    const updatedPendingCancellations =
-                        subscriptionsToCancel.filter(
-                            (email) => email !== newValue
-                        );
+                    const newValue = values[values.length - 1];
 
-                    setSubscriptionsToCancel(updatedPendingCancellations);
-                }
+                    if (reason === 'createOption') {
+                        if (
+                            typeof newValue === 'string' &&
+                            !simpleEmailRegEx.test(newValue)
+                        ) {
+                            setInputErrorExists(true);
+                            setInputValue(newValue);
 
-                if (reason === 'selectOption' && details) {
-                    const value =
-                        typeof details.option !== 'string'
-                            ? details.option.user_email
-                            : details.option;
+                            return;
+                        }
 
-                    const updatedPendingCancellations =
-                        subscriptionsToCancel.filter(
-                            (email) => email !== value
-                        );
+                        const updatedPendingCancellations =
+                            subscriptionsToCancel.filter(
+                                (email) => email !== newValue
+                            );
 
-                    setSubscriptionsToCancel(updatedPendingCancellations);
-                }
-
-                if (reason === 'removeOption' && details) {
-                    const email =
-                        typeof details.option !== 'string'
-                            ? details.option.user_email
-                            : details.option;
-
-                    if (subscribedEmails.includes(email)) {
-                        setSubscriptionsToCancel([
-                            ...subscriptionsToCancel,
-                            email,
-                        ]);
+                        setSubscriptionsToCancel(updatedPendingCancellations);
                     }
-                }
 
-                if (reason === 'clear') {
-                    setSubscriptionsToCancel(subscribedEmails);
-                }
+                    if (reason === 'selectOption' && details) {
+                        const value =
+                            typeof details.option !== 'string'
+                                ? details.option.user_email
+                                : details.option;
 
-                const updatedEmails = values.map((value) =>
-                    typeof value === 'string' ? value : value.user_email
-                );
+                        const updatedPendingCancellations =
+                            subscriptionsToCancel.filter(
+                                (email) => email !== value
+                            );
 
-                setEmails(updatedEmails);
-            }}
-            onInputChange={(_event, value) => {
-                setInputValue(value);
+                        setSubscriptionsToCancel(updatedPendingCancellations);
+                    }
 
-                if (inputError) {
-                    setInputError(null);
-                }
+                    if (reason === 'removeOption' && details) {
+                        const email =
+                            typeof details.option !== 'string'
+                                ? details.option.user_email
+                                : details.option;
 
-                if (value.includes(',') || value.endsWith(',')) {
-                    const enteredEmails = value
-                        .split(',')
-                        .map((email) => email.trim())
-                        .filter((email) => hasLength(email));
+                        if (subscribedEmails.includes(email)) {
+                            setSubscriptionsToCancel([
+                                ...subscriptionsToCancel,
+                                email,
+                            ]);
+                        }
+                    }
 
-                    const formatErrorExists = enteredEmails.some(
-                        (email) => !simpleEmailRegEx.test(email)
+                    if (reason === 'clear') {
+                        setSubscriptionsToCancel(subscribedEmails);
+                    }
+
+                    const updatedEmails = values.map((value) =>
+                        typeof value === 'string' ? value : value.user_email
                     );
-
-                    if (formatErrorExists) {
-                        setInputError('Email is not formatted properly.');
-
-                        return;
-                    }
-
-                    const updatedEmails = [...emails, ...enteredEmails];
 
                     setEmails(updatedEmails);
-                    setInputValue('');
+                }}
+                onInputChange={(_event, value) => {
+                    setInputValue(value);
 
-                    const updatedPendingCancellations =
-                        subscriptionsToCancel.filter(
-                            (email) => !updatedEmails.includes(email)
+                    if (inputErrorExists) {
+                        setInputErrorExists(false);
+                    }
+
+                    if (value.includes(',') || value.endsWith(',')) {
+                        const enteredEmails = value
+                            .split(',')
+                            .map((email) => email.trim())
+                            .filter((email) => hasLength(email));
+
+                        const formatErrorExists = enteredEmails.some(
+                            (email) => !simpleEmailRegEx.test(email)
                         );
 
-                    setSubscriptionsToCancel(updatedPendingCancellations);
+                        if (formatErrorExists) {
+                            setInputErrorExists(true);
+
+                            return;
+                        }
+
+                        const updatedEmails = [...emails, ...enteredEmails];
+
+                        setEmails(updatedEmails);
+                        setInputValue('');
+
+                        const updatedPendingCancellations =
+                            subscriptionsToCancel.filter(
+                                (email) => !updatedEmails.includes(email)
+                            );
+
+                        setSubscriptionsToCancel(updatedPendingCancellations);
+                    }
+                }}
+                options={
+                    data.filter(
+                        ({ user_email }) => !emails.includes(user_email)
+                    ) as (Grants_User | string)[]
                 }
-            }}
-            options={
-                data.filter(
-                    ({ user_email }) => !emails.includes(user_email)
-                ) as (Grants_User | string)[]
-            }
-            renderInput={({
-                InputProps,
-                ...params
-            }: AutocompleteRenderInputParams) => (
-                <TextField
-                    {...params}
-                    InputProps={{
-                        ...InputProps,
-                        sx: { borderRadius: 3 },
-                    }}
-                    error={inputError !== null}
-                    label={intl.formatMessage({
-                        id: 'data.email',
-                    })}
-                    required
-                    size="small"
-                    variant="outlined"
-                />
-            )}
-            renderOption={(renderOptionProps, option) => {
-                return typeof option === 'string' ? (
-                    <Typography>{option}</Typography>
-                ) : (
-                    <ListItem key={option.user_id} {...renderOptionProps}>
-                        {option.user_full_name ? (
-                            <Typography>{option.user_full_name}</Typography>
-                        ) : null}
+                renderInput={({
+                    InputProps,
+                    ...params
+                }: AutocompleteRenderInputParams) => (
+                    <TextField
+                        {...params}
+                        InputProps={{
+                            ...InputProps,
+                            sx: { borderRadius: 3 },
+                        }}
+                        error={inputErrorExists}
+                        label={intl.formatMessage({
+                            id: 'data.email',
+                        })}
+                        required
+                        size="small"
+                        variant="outlined"
+                    />
+                )}
+                renderOption={(renderOptionProps, option) => {
+                    return typeof option === 'string' ? (
+                        <Typography>{option}</Typography>
+                    ) : (
+                        <ListItem key={option.user_id} {...renderOptionProps}>
+                            {option.user_full_name ? (
+                                <Typography>{option.user_full_name}</Typography>
+                            ) : null}
 
-                        {option.user_email ? (
-                            <Typography>{option.user_email}</Typography>
-                        ) : null}
-                    </ListItem>
-                );
-            }}
-            renderTags={(values, getTagProps) => {
-                return values.map((value, index) => {
-                    const tagProps = getTagProps({ index });
-
-                    return (
-                        <Chip
-                            {...tagProps}
-                            key={`email-tag-${index}`}
-                            label={value}
-                            size="small"
-                        />
+                            {option.user_email ? (
+                                <Typography>{option.user_email}</Typography>
+                            ) : null}
+                        </ListItem>
                     );
-                });
-            }}
-            sx={{ flexGrow: 1 }}
-            value={emails}
-        />
+                }}
+                renderTags={(values, getTagProps) => {
+                    return values.map((value, index) => {
+                        const tagProps = getTagProps({ index });
+
+                        return (
+                            <Chip
+                                {...tagProps}
+                                key={`email-tag-${index}`}
+                                label={value}
+                                size="small"
+                            />
+                        );
+                    });
+                }}
+                sx={{ flexGrow: 1 }}
+                value={emails}
+            />
+
+            {inputErrorExists ? (
+                <FormHelperText error={inputErrorExists}>
+                    <FormattedMessage id="admin.alerts.dialog.emailSelector.error" />
+                </FormHelperText>
+            ) : null}
+        </FormControl>
     );
 }
 

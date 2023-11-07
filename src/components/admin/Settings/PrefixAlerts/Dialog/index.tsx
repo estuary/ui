@@ -5,33 +5,36 @@ import {
     DialogContent,
     DialogTitle,
     Grid,
+    TextField,
     Typography,
 } from '@mui/material';
+import SaveButton from 'components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
 import EmailSelector from 'components/admin/Settings/PrefixAlerts/EmailSelector';
-import SaveButton from 'components/admin/Settings/PrefixAlerts/generate/Dialog/SaveButton';
 import PrefixedName from 'components/inputs/PrefixedName';
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { PrefixSubscriptionDictionary } from 'utils/notification-utils';
 
 interface Props {
+    headerId: string;
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
     subscriptions: PrefixSubscriptionDictionary;
-    height?: number;
+    staticPrefix?: string;
 }
 
-const TITLE_ID = 'generate-prefix-alert-dialog-title';
+const TITLE_ID = 'alert-subscription-dialog-title';
 
-function GenerateAlertDialog({ open, setOpen, subscriptions }: Props) {
+function AlertSubscriptionDialog({
+    headerId,
+    open,
+    setOpen,
+    subscriptions,
+    staticPrefix,
+}: Props) {
     const intl = useIntl();
 
-    const adminCapabilities = useEntitiesStore_capabilities_adminable();
-    const objectRoles = Object.keys(adminCapabilities);
-    const singleOption = objectRoles.length === 1;
-
-    const [prefix, setPrefix] = useState(singleOption ? objectRoles[0] : '');
+    const [prefix, setPrefix] = useState(staticPrefix ? staticPrefix : '');
     const [prefixHasErrors, setPrefixHasErrors] = useState(false);
 
     const [emails, setEmails] = useState<string[]>([]);
@@ -50,8 +53,10 @@ function GenerateAlertDialog({ open, setOpen, subscriptions }: Props) {
     );
 
     useEffect(() => {
-        setEmails(subscribedEmails);
-    }, [setEmails, subscribedEmails]);
+        if (open) {
+            setEmails(subscribedEmails);
+        }
+    }, [open, setEmails, subscribedEmails]);
 
     const updatePrefix = (value: string, errors: string | null) => {
         // if (serverError) {
@@ -67,12 +72,12 @@ function GenerateAlertDialog({ open, setOpen, subscriptions }: Props) {
     return (
         <Dialog open={open} maxWidth="md" fullWidth aria-labelledby={TITLE_ID}>
             <DialogTitle>
-                <FormattedMessage id="admin.alerts.dialog.generate.header" />
+                <FormattedMessage id={headerId} />
             </DialogTitle>
 
             <DialogContent sx={{ mt: 1 }}>
                 <Typography sx={{ mb: 2 }}>
-                    <FormattedMessage id="admin.alerts.dialog.generate.description" />
+                    <FormattedMessage id="admin.alerts.dialog.description" />
                 </Typography>
 
                 <Grid
@@ -81,17 +86,32 @@ function GenerateAlertDialog({ open, setOpen, subscriptions }: Props) {
                     sx={{ mb: 3, pt: 1, alignItems: 'flex-start' }}
                 >
                     <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
-                        <PrefixedName
-                            defaultPrefix
-                            label={intl.formatMessage({
-                                id: 'common.tenant',
-                            })}
-                            onChange={updatePrefix}
-                            prefixOnly
-                            required
-                            size="small"
-                            validateOnLoad
-                        />
+                        {staticPrefix ? (
+                            <TextField
+                                InputProps={{
+                                    sx: { borderRadius: 3 },
+                                }}
+                                fullWidth
+                                label={intl.formatMessage({
+                                    id: 'common.tenant',
+                                })}
+                                required
+                                size="small"
+                                value={staticPrefix}
+                                variant="outlined"
+                            />
+                        ) : (
+                            <PrefixedName
+                                label={intl.formatMessage({
+                                    id: 'common.tenant',
+                                })}
+                                onChange={updatePrefix}
+                                prefixOnly
+                                required
+                                size="small"
+                                validateOnLoad
+                            />
+                        )}
                     </Grid>
 
                     <Grid item xs={12} md={7} sx={{ display: 'flex' }}>
@@ -123,8 +143,6 @@ function GenerateAlertDialog({ open, setOpen, subscriptions }: Props) {
                     size="small"
                     onClick={(event: React.MouseEvent<HTMLElement>) => {
                         event.preventDefault();
-                        setPrefix('');
-                        setEmails([]);
 
                         setOpen(false);
                     }}
@@ -146,4 +164,4 @@ function GenerateAlertDialog({ open, setOpen, subscriptions }: Props) {
     );
 }
 
-export default GenerateAlertDialog;
+export default AlertSubscriptionDialog;

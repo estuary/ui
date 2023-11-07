@@ -133,18 +133,26 @@ const getNotificationSubscriptionsForTable = (
     return queryBuilder;
 };
 
-const getNotificationSubscriptions = async () => {
-    const data = await supabaseClient
+const getNotificationSubscriptions = async (prefix?: string) => {
+    let queryBuilder = supabaseClient
         .from<AlertSubscriptionsExtendedQuery>(TABLES.ALERT_SUBSCRIPTIONS)
         .select(
             `    
-                id,
-                updated_at,
-                catalog_prefix,
-                email
-            `
-        )
-        .then(handleSuccess<AlertSubscriptionsExtendedQuery[]>, handleFailure);
+            id,
+            updated_at,
+            catalog_prefix,
+            email
+        `
+        );
+
+    if (prefix) {
+        queryBuilder = queryBuilder.eq('catalog_prefix', prefix);
+    }
+
+    const data = await queryBuilder.then(
+        handleSuccess<AlertSubscriptionsExtendedQuery[]>,
+        handleFailure
+    );
 
     return data;
 };

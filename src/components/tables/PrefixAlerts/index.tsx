@@ -1,7 +1,7 @@
 import { getNotificationSubscriptionsForTable } from 'api/alerts';
+import AlertGenerateButton from 'components/admin/Settings/PrefixAlerts/GenerateButton';
 import EntityTable from 'components/tables/EntityTable';
 import Rows from 'components/tables/PrefixAlerts/Rows';
-import RowSelector from 'components/tables/RowActions/PrefixAlerts/RowSelector';
 import { useMemo } from 'react';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { SelectTableStoreNames } from 'stores/names';
@@ -10,10 +10,6 @@ import PrefixAlertTableHydrator from 'stores/Tables/PrefixAlerts/Hydrator';
 import { TableColumns } from 'types';
 
 const columns: TableColumns[] = [
-    {
-        field: null,
-        headerIntlKey: '',
-    },
     {
         field: 'prefix',
         headerIntlKey: 'entityTable.data.catalogPrefix',
@@ -25,6 +21,10 @@ const columns: TableColumns[] = [
     {
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastUpdated',
+    },
+    {
+        field: null,
+        headerIntlKey: 'entityTable.data.actions',
     },
 ];
 
@@ -85,11 +85,7 @@ function PrefixAlertTable() {
                 filterLabel="admin.alerts.table.filterLabel"
                 selectableTableStoreName={selectableTableStoreName}
                 showToolbar
-                toolbar={
-                    <RowSelector
-                        selectableTableStoreName={selectableTableStoreName}
-                    />
-                }
+                toolbar={<AlertGenerateButton />}
             />
         </PrefixAlertTableHydrator>
     );

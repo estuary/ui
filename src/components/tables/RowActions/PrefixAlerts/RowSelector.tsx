@@ -17,7 +17,7 @@ interface Props {
 
 function RowSelector({
     hideActions,
-    // selectKeyValueName,
+    selectKeyValueName,
     selectableTableStoreName = SelectTableStoreNames.PREFIX_ALERTS,
 }: Props) {
     const intl = useIntl();
@@ -45,7 +45,7 @@ function RowSelector({
             setAnchorEl(event.currentTarget);
         },
         toggleSelection: () => {
-            setAll(!selectionsExist, 'token');
+            setAll(!selectionsExist, selectKeyValueName);
         },
     };
 
