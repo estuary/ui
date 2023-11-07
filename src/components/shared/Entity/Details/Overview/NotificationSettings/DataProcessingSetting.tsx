@@ -36,8 +36,13 @@ interface Props {
     hideBorder?: boolean;
 }
 
-const intervalOptionId = {
-    id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.intervalOptions',
+const intervalOptionIds = {
+    hour: {
+        id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.intervalOptions.hour',
+    },
+    day: {
+        id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.intervalOptions.day',
+    },
 };
 
 const defaultUpdateSettingsError = {
@@ -62,17 +67,29 @@ function DataProcessingSetting({
 
     // const [errorSeverity, setErrorSeverity] = useState<AlertColor | null>(null);
 
-    const options = useMemo(
+    const options: { [interval: string]: string } = useMemo(
         () => ({
+            '2 days': intl.formatMessage(intervalOptionIds.day, {
+                interval: 2,
+            }),
+            '24:00:00': intl.formatMessage(intervalOptionIds.hour, {
+                interval: 24,
+            }),
+            '12:00:00': intl.formatMessage(intervalOptionIds.hour, {
+                interval: 12,
+            }),
+            '08:00:00': intl.formatMessage(intervalOptionIds.hour, {
+                interval: 8,
+            }),
+            '04:00:00': intl.formatMessage(intervalOptionIds.hour, {
+                interval: 4,
+            }),
+            '02:00:00': intl.formatMessage(intervalOptionIds.hour, {
+                interval: 2,
+            }),
             'none': intl.formatMessage({
                 id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.unsetOption',
             }),
-            '01:00:00': intl.formatMessage(intervalOptionId, { interval: 1 }),
-            '02:00:00': intl.formatMessage(intervalOptionId, { interval: 2 }),
-            '04:00:00': intl.formatMessage(intervalOptionId, { interval: 4 }),
-            '08:00:00': intl.formatMessage(intervalOptionId, { interval: 8 }),
-            '12:00:00': intl.formatMessage(intervalOptionId, { interval: 12 }),
-            '24:00:00': intl.formatMessage(intervalOptionId, { interval: 24 }),
         }),
         [intl]
     );
@@ -80,7 +97,7 @@ function DataProcessingSetting({
     const updateEvaluationInterval = useCallback(
         (_event: React.SyntheticEvent, value: string) => {
             if (notification) {
-                if (value === options.none) {
+                if (value === 'none') {
                     deleteDataProcessingNotification(
                         notification.catalog_name
                     ).then(
@@ -170,7 +187,7 @@ function DataProcessingSetting({
             spacing={2}
             direction="row"
             sx={{
-                py: 2,
+                pb: 2,
                 alignItems: 'end',
                 justifyContent: 'space-between',
                 borderBottom: hideBorder
@@ -197,20 +214,11 @@ function DataProcessingSetting({
                     </Stack>
 
                     <Autocomplete
-                        value={
-                            notification?.evaluation_interval &&
-                            Object.hasOwn(
-                                options,
-                                notification.evaluation_interval
-                            )
-                                ? options[notification.evaluation_interval]
-                                : options.none
-                        }
-                        disableClearable
                         disabled={!catalogName}
+                        disableClearable
+                        getOptionLabel={(interval) => options[interval]}
                         onChange={updateEvaluationInterval}
-                        options={Object.values(options)}
-                        sx={{ width: 150 }}
+                        options={Object.keys(options)}
                         renderInput={({
                             InputProps,
                             ...params
@@ -229,6 +237,8 @@ function DataProcessingSetting({
                                 variant="outlined"
                             />
                         )}
+                        sx={{ width: 150 }}
+                        value={notification?.evaluation_interval ?? 'none'}
                     />
                 </>
             )}

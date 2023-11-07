@@ -54,6 +54,7 @@ function Overview({ name }: Props) {
                 />
             </Grid>
 
+            {/* The grid item below exists when no children are present which creates 16 pixels of unnecessary, vertical padding. */}
             {!isCollection ? (
                 <Grid item xs={12}>
                     <TaskEndpoints taskName={catalogName} />

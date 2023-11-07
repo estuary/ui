@@ -6,7 +6,7 @@ import DataProcessingSetting from 'components/shared/Entity/Details/Overview/Not
 import Error from 'components/shared/Error';
 import { ErrorDetails } from 'components/shared/Error/types';
 import useInitializeTaskNotification from 'hooks/useInitializeTaskNotification';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -50,6 +50,14 @@ function NotificationSettings({ taskName }: Props) {
         );
     }, [getNotificationSubscription, setSubscriptionExists]);
 
+    const alertsExist = useMemo(
+        () =>
+            subscriptionError ||
+            updateSettingsError ||
+            subscriptionExists === false,
+        [subscriptionError, subscriptionExists, updateSettingsError]
+    );
+
     return (
         <CardWrapper
             message={
@@ -57,7 +65,7 @@ function NotificationSettings({ taskName }: Props) {
             }
         >
             <Stack sx={{ width: aboveMd ? 720 : 'unset' }}>
-                <Stack spacing={1}>
+                <Stack spacing={1} sx={{ mb: alertsExist ? 2 : undefined }}>
                     {subscriptionError ? (
                         <Error error={subscriptionError} condensed hideTitle />
                     ) : null}
