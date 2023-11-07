@@ -512,7 +512,8 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
 
     'admin.alerts.header': `Organization Alerts`,
     'admin.alerts.cta.addAlertMethod': `Manage Alerts`,
-    'admin.alerts.dialog.generate.header': `Add Alert Method`,
+    'admin.alerts.dialog.generate.header': `Manage Alert Methods`,
+    'admin.alerts.dialog.generate.description': `Choose where you'd like alerts to be sent. To add an email address, select from the list of admin user emails or enter custom email addresses as a comma separated list.`,
     'admin.alerts.table.filterLabel': `Filter by Prefix or Email`,
     'admin.alerts.table.noContent.header': `No results found.`,
     'admin.alerts.table.noContent.message': `We couldn't find any results matching your search. Please try a different filter.`,

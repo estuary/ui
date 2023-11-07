@@ -5,6 +5,7 @@ import {
     DialogContent,
     DialogTitle,
     Grid,
+    Typography,
 } from '@mui/material';
 import EmailSelector from 'components/admin/Settings/PrefixAlerts/EmailSelector';
 import SaveButton from 'components/admin/Settings/PrefixAlerts/generate/Dialog/SaveButton';
@@ -70,23 +71,15 @@ function GenerateAlertDialog({ open, setOpen, subscriptions }: Props) {
             </DialogTitle>
 
             <DialogContent sx={{ mt: 1 }}>
+                <Typography sx={{ mb: 2 }}>
+                    <FormattedMessage id="admin.alerts.dialog.generate.description" />
+                </Typography>
+
                 <Grid
                     container
                     spacing={2}
                     sx={{ mb: 3, pt: 1, alignItems: 'flex-start' }}
                 >
-                    {/* <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
-                        <FormControl fullWidth>
-                            <PrefixSelector
-                                label={intl.formatMessage({
-                                    id: 'common.tenant',
-                                })}
-                                prefixOnly
-                                onChange={updatePrefix}
-                            />
-                        </FormControl>
-                    </Grid> */}
-
                     <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
                         <PrefixedName
                             defaultPrefix

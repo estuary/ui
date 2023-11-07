@@ -10,6 +10,7 @@ import useUserInformationByPrefix from 'hooks/useUserInformationByPrefix';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Grants_User } from 'types';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     emails: string[];
@@ -45,6 +46,7 @@ function EmailSelector({
             getOptionLabel={(option) =>
                 typeof option !== 'string' ? option.user_email : option
             }
+            handleHomeEndKeys
             inputValue={inputValue}
             multiple
             onChange={(_event, values, reason, details) => {
@@ -118,20 +120,33 @@ function EmailSelector({
                     setInputError(null);
                 }
 
-                if (value.endsWith(',')) {
-                    if (!simpleEmailRegEx.test(value)) {
+                if (value.includes(',') || value.endsWith(',')) {
+                    const enteredEmails = value
+                        .split(',')
+                        .map((email) => email.trim())
+                        .filter((email) => hasLength(email));
+
+                    const formatErrorExists = enteredEmails.some(
+                        (email) => !simpleEmailRegEx.test(email)
+                    );
+
+                    if (formatErrorExists) {
                         setInputError('Email is not formatted properly.');
 
                         return;
                     }
 
-                    const updatedEmails = [
-                        ...emails,
-                        value.substring(0, value.length - 1),
-                    ];
+                    const updatedEmails = [...emails, ...enteredEmails];
 
                     setEmails(updatedEmails);
                     setInputValue('');
+
+                    const updatedPendingCancellations =
+                        subscriptionsToCancel.filter(
+                            (email) => !updatedEmails.includes(email)
+                        );
+
+                    setSubscriptionsToCancel(updatedPendingCancellations);
                 }
             }}
             options={
