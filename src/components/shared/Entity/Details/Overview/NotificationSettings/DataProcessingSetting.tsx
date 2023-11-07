@@ -153,13 +153,7 @@ function DataProcessingSetting({
                 );
             }
         },
-        [
-            catalogName,
-            notification,
-            options.none,
-            setNotification,
-            setUpdateSettingsError,
-        ]
+        [catalogName, notification, setNotification, setUpdateSettingsError]
     );
 
     const { getNotifications } = useInitializeTaskNotification(catalogName);
