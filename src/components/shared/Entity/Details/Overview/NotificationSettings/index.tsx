@@ -1,24 +1,24 @@
-import { Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Stack, useMediaQuery, useTheme } from '@mui/material';
+import CardWrapper from 'components/admin/Billing/CardWrapper';
 import MessageWithButton from 'components/content/MessageWithButton';
 import AlertBox from 'components/shared/AlertBox';
-import DataProcessingSetting from 'components/shared/Entity/Details/Settings/DataProcessingSetting';
+import DataProcessingSetting from 'components/shared/Entity/Details/Overview/NotificationSettings/DataProcessingSetting';
 import Error from 'components/shared/Error';
 import { ErrorDetails } from 'components/shared/Error/types';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
 import useInitializeTaskNotification from 'hooks/useInitializeTaskNotification';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-function Settings() {
+interface Props {
+    taskName: string;
+}
+
+function NotificationSettings({ taskName }: Props) {
     const theme = useTheme();
     const aboveMd = useMediaQuery(theme.breakpoints.up('md'));
 
-    const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
-
     const { createSubscription, getNotificationSubscription } =
-        useInitializeTaskNotification(catalogName);
+        useInitializeTaskNotification(taskName);
 
     const [subscriptionExists, setSubscriptionExists] = useState<
         boolean | null
@@ -51,12 +51,12 @@ function Settings() {
     }, [getNotificationSubscription, setSubscriptionExists]);
 
     return (
-        <Stack sx={{ mx: 2 }}>
+        <CardWrapper
+            message={
+                <FormattedMessage id="details.settings.notifications.header" />
+            }
+        >
             <Stack sx={{ width: aboveMd ? 720 : 'unset' }}>
-                <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
-                    <FormattedMessage id="details.settings.notifications.header" />
-                </Typography>
-
                 <Stack spacing={1}>
                     {subscriptionError ? (
                         <Error error={subscriptionError} condensed hideTitle />
@@ -111,8 +111,8 @@ function Settings() {
                     hideBorder
                 />
             </Stack>
-        </Stack>
+        </CardWrapper>
     );
 }
 
-export default Settings;
+export default NotificationSettings;

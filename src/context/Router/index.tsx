@@ -324,18 +324,6 @@ const router = createBrowserRouter(
 
                             <Route
                                 path={
-                                    authenticatedRoutes.captures.details
-                                        .settings.path
-                                }
-                                element={
-                                    <Suspense fallback={null}>
-                                        <CaptureDetailsRoute tab="settings" />
-                                    </Suspense>
-                                }
-                            />
-
-                            <Route
-                                path={
                                     authenticatedRoutes.captures.details.history
                                         .path
                                 }

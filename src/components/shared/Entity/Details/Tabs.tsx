@@ -1,21 +1,14 @@
 import { Box, Tab, Tabs } from '@mui/material';
-import { useEntityType } from 'context/EntityContext';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import useConstant from 'use-constant';
 
-interface Props {
-    isDerivation: boolean;
-}
-
-function DetailTabs({ isDerivation }: Props) {
+function DetailTabs() {
     const intl = useIntl();
 
     const [searchParams] = useSearchParams();
     const { pathname } = useLocation();
-
-    const entityType = useEntityType();
 
     const [selectedTab, setSelectedTab] = useState(0);
 
@@ -29,10 +22,6 @@ function DetailTabs({ isDerivation }: Props) {
                 label: 'details.tabs.spec',
                 path: 'spec',
             },
-            {
-                label: 'details.tabs.settings',
-                path: 'settings',
-            },
             // TODO (details:history) not currently live but is here to make sure it can render
             // {
             //     label: 'details.tabs.history',
@@ -43,35 +32,32 @@ function DetailTabs({ isDerivation }: Props) {
         return response;
     });
 
-    const tabs = useMemo(() => {
-        const evaluatedTabProps =
-            entityType === 'collection' && !isDerivation
-                ? tabProps.filter(({ path }) => path !== 'settings')
-                : tabProps;
+    const tabs = useMemo(
+        () =>
+            tabProps.map((tabProp, index) => {
+                // Since we have capture, materialization, and collection paths
+                //  it is easier to just make the link go "up" once and then
+                //  change the path. Hardcoding the search params here so they
+                //  do not get removed during navigation.
+                const to = `../${tabProp.path}?${searchParams}`;
 
-        return evaluatedTabProps.map((tabProp, index) => {
-            // Since we have capture, materialization, and collection paths
-            //  it is easier to just make the link go "up" once and then
-            //  change the path. Hardcoding the search params here so they
-            //  do not get removed during navigation.
-            const to = `../${tabProp.path}?${searchParams}`;
+                if (pathname.includes(tabProp.path)) {
+                    setSelectedTab(index);
+                }
 
-            if (pathname.includes(tabProp.path)) {
-                setSelectedTab(index);
-            }
-
-            return (
-                <Tab
-                    key={`details-tabs-${tabProp.label}`}
-                    label={intl.formatMessage({
-                        id: tabProp.label,
-                    })}
-                    component={Link}
-                    to={to}
-                />
-            );
-        });
-    }, [entityType, intl, isDerivation, pathname, searchParams, tabProps]);
+                return (
+                    <Tab
+                        key={`details-tabs-${tabProp.label}`}
+                        label={intl.formatMessage({
+                            id: tabProp.label,
+                        })}
+                        component={Link}
+                        to={to}
+                    />
+                );
+            }),
+        [intl, pathname, searchParams, tabProps]
+    );
 
     return (
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

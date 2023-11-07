@@ -1,5 +1,7 @@
 import { Grid } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
+import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
+import NotificationSettings from 'components/shared/Entity/Details/Overview/NotificationSettings';
 import { TaskEndpoints } from 'components/shared/TaskEndpoints';
 import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
@@ -7,7 +9,7 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useLiveSpecs_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength, specContainsDerivation } from 'utils/misc-utils';
 import ShardInformation from '../../Shard/Information';
 import Usage from '../Usage';
 import DetailsSection from './DetailsSection';
@@ -15,17 +17,22 @@ import DetailsSection from './DetailsSection';
 // TODO (details page)
 // Temporary - allow to pass in the name
 interface Props {
-    isDerivation: boolean;
     name?: string;
 }
 
-function Overview({ isDerivation, name }: Props) {
+function Overview({ name }: Props) {
     const entityType = useEntityType();
     const isCollection = entityType === 'collection';
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const entityName = name ?? catalogName;
     const { liveSpecs, isValidating: validatingLiveSpecs } =
         useLiveSpecs_details(entityType, entityName);
+
+    const currentCatalog = useEditorStore_currentCatalog({
+        localScope: true,
+    });
+    const catalogSpec = currentCatalog?.spec ?? null;
+    const { isDerivation } = specContainsDerivation(catalogSpec);
 
     const latestLiveSpec = useMemo(
         () =>
@@ -65,6 +72,12 @@ function Overview({ isDerivation, name }: Props) {
             {isCollection && entityName ? (
                 <Grid item xs={12}>
                     <DataPreview collectionName={entityName} />
+                </Grid>
+            ) : null}
+
+            {!isCollection && entityName ? (
+                <Grid item xs={12}>
+                    <NotificationSettings taskName={entityName} />
                 </Grid>
             ) : null}
         </Grid>
