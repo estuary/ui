@@ -3,7 +3,7 @@ import { User, createClient } from '@supabase/supabase-js';
 import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { forEach, isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
-import { JobStatus, SortDirection } from 'types';
+import { JobStatus, SortDirection, SupabaseInvokeResponse } from 'types';
 import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 import retry from 'retry';
 import { logRocketEvent, retryAfterFailure } from './shared';
@@ -259,14 +259,9 @@ export const supabaseRetry = <T>(makeCall: Function, action: string) => {
     });
 };
 
-export interface InvokeResponse<T> {
-    data?: T;
-    error?: PostgrestError;
-}
-
 // Invoke supabase edge functions. Does not use the he
 export function invokeSupabase<T>(fn: FUNCTIONS, body: any) {
-    return supabaseRetry<InvokeResponse<T>>(
+    return supabaseRetry<SupabaseInvokeResponse<T>>(
         () =>
             supabaseClient.functions.invoke<T>(fn, {
                 body: JSON.stringify(body),

@@ -88,7 +88,7 @@ export async function encryptEndpointConfig(
     imageConnectorTagId: string,
     callFailed: Function,
     { overrideJsonFormDefaults }: { overrideJsonFormDefaults: boolean }
-): Promise<SupabaseInvokeResponse> {
+): Promise<SupabaseInvokeResponse<any>> {
     const selectedEndpointConfig =
         serverUpdateRequired && Object.hasOwn(endpointConfig, sopsKey)
             ? parseEncryptedEndpointConfig(
@@ -98,7 +98,7 @@ export async function encryptEndpointConfig(
               ).data
             : endpointConfig;
 
-    let encryptedEndpointConfig: SupabaseInvokeResponse = {
+    let encryptedEndpointConfig: SupabaseInvokeResponse<any> = {
         data: null,
         error: {
             name: 'Object Not Reassigned',

@@ -15,10 +15,10 @@ export enum MessagePrefixes {
 
 // TODO (typing): Consider adding a type annotation for the promise returned by
 //   the invokeSupabase() function (i.e., src/services/supabase.ts).
-export type SupabaseInvokeResponse =
+export type SupabaseInvokeResponse<T> =
     | { data: null; error: Error }
-    // | { data: null; error: any }
-    | { data: any; error: null };
+    | { data: null; error: PostgrestError }
+    | { data: T; error: null };
 
 // TODO (typing): The type annotation for the data property of the JsonFormsData object
 //   mirrors the Schema interface. Consider using the Schema interface to type this property.
