@@ -168,7 +168,7 @@ export const deleteDraftSpecsByCatalogName = async (
         const promises: Array<Promise<PostgrestResponse<any>>> = [];
         let index = 0;
 
-        // TODO (retry) need to figure how we want to handle this kind of action in retrying
+        // TODO (retry) promise generator
         const deletePromiseGenerator = (idx: number) => {
             return supabaseClient
                 .from(TABLES.DRAFT_SPECS)
