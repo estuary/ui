@@ -16,7 +16,6 @@ import useDiscoverCapture from './useDiscoverCapture';
 interface Props {
     entityType: Entity;
     disabled: boolean;
-    postGenerateMutate: Function;
     createWorkflowMetadata?: {
         initiateDiscovery: boolean;
         setInitiateDiscovery: Dispatch<SetStateAction<boolean>>;
@@ -26,14 +25,11 @@ interface Props {
 function CaptureGenerateButton({
     entityType,
     disabled,
-    postGenerateMutate,
     createWorkflowMetadata,
 }: Props) {
     const rediscoveryRequired = useResourceConfig_rediscoveryRequired();
-
     const { generateCatalog, isSaving, formActive } = useDiscoverCapture(
         entityType,
-        postGenerateMutate,
         {
             initiateDiscovery: createWorkflowMetadata?.initiateDiscovery,
             initiateRediscovery: rediscoveryRequired,

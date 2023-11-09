@@ -8,13 +8,11 @@ import { Entity } from 'types';
 interface Props {
     entityType: Entity;
     disabled: boolean;
-    postGenerateMutate: Function;
 }
 
-function RediscoverButton({ entityType, disabled, postGenerateMutate }: Props) {
+function RediscoverButton({ entityType, disabled }: Props) {
     const { generateCatalog, isSaving, formActive } = useDiscoverCapture(
         entityType,
-        postGenerateMutate,
         { initiateRediscovery: true }
     );
 
