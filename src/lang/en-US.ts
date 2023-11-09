@@ -170,8 +170,6 @@ const Data: ResolvedIntlConfig['messages'] = {
 
 const Error: ResolvedIntlConfig['messages'] = {
     'error.title': `Error`,
-    'error.reason': `The server returned an error. Please review the error and try again.`,
-    'error.reason.retry': `This is not something you did wrong. There was a technical issue.`,
     'error.reason.fetchFailed': `There was a network issue while contacting our servers. Please make sure your network is available and try again.`,
 
     'error.instructions': `If the issue persists please {docLink}.`,
