@@ -1,12 +1,15 @@
+import { PostgrestResponse } from '@supabase/postgrest-js';
 import {
     defaultTableFilter,
     RPCS,
     SortingProps,
     supabaseClient,
+    supabaseRetry,
     TABLES,
 } from 'services/supabase';
 import { AuthRoles } from 'types';
 
+// Retrying handled in .../src/stores/Tables/Hydrator.tsx
 // Used to display prefix grants in admin page
 const getGrants = (
     pagination: any,
@@ -40,6 +43,7 @@ const getGrants = (
     return queryBuilder;
 };
 
+// Retrying handled in .../src/stores/Tables/Hydrator.tsx
 // Used to display user grants in admin page
 const getGrants_Users = (
     pagination: any,
@@ -76,11 +80,15 @@ const getGrants_Users = (
 };
 
 export const getAuthRoles = async (capability: string) => {
-    return supabaseClient
-        .rpc<AuthRoles>(RPCS.AUTH_ROLES, {
-            min_capability: capability,
-        })
-        .throwOnError();
+    return supabaseRetry<PostgrestResponse<AuthRoles>>(
+        () =>
+            supabaseClient
+                .rpc<AuthRoles>(RPCS.AUTH_ROLES, {
+                    min_capability: capability,
+                })
+                .throwOnError(),
+        'getAuthRoles'
+    );
 };
 
 export { getGrants, getGrants_Users };

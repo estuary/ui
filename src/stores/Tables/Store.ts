@@ -1,9 +1,13 @@
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import {
+    PostgrestFilterBuilder,
+    PostgrestResponse,
+} from '@supabase/postgrest-js';
 import { getStatsByName, StatsFilter } from 'api/stats';
 import { EVERYTHING } from 'components/collection/Selector/Table/shared';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { flatMap } from 'lodash';
+import { supabaseRetry } from 'services/supabase';
 import {
     AsyncOperationProps,
     getAsyncDefault,
@@ -360,7 +364,10 @@ export const getInitialState = (
                 'Table Store Hydration Start'
             );
 
-            const response = await fetcher.throwOnError();
+            const response = await supabaseRetry<PostgrestResponse<any>>(
+                () => fetcher.throwOnError(),
+                'tablesHydrateStore'
+            );
 
             if (response.error) {
                 set(
