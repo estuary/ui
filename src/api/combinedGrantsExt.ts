@@ -80,11 +80,9 @@ const getGrants_Users = (
 export const getAuthRoles = async (capability: string) => {
     return supabaseRetry<PostgrestResponse<AuthRoles>>(
         () =>
-            supabaseClient
-                .rpc<AuthRoles>(RPCS.AUTH_ROLES, {
-                    min_capability: capability,
-                })
-                .throwOnError(),
+            supabaseClient.rpc<AuthRoles>(RPCS.AUTH_ROLES, {
+                min_capability: capability,
+            }),
         'getAuthRoles'
     );
 };

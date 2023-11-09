@@ -64,7 +64,6 @@ const exchangeBearerToken = async (token: string) => {
                 .rpc(RPCS.EXCHANGE_DIRECTIVES, {
                     bearer_token: token,
                 })
-                .throwOnError()
                 .single(),
         'exchangeBearerToken'
     );
