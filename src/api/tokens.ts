@@ -1,16 +1,22 @@
 // {"multi_use": true, "valid_for": "10 days"}
 
-import { RPCS, supabaseClient } from 'services/supabase';
+import { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import { RPCS, supabaseClient, supabaseRetry } from 'services/supabase';
 
 export const createRefreshToken = async (
     multi_use: boolean,
     valid_for: string
 ) => {
-    return supabaseClient
-        .rpc<{ id: string; secret: string }>(RPCS.CREATE_REFRESH_TOKEN, {
-            multi_use,
-            valid_for,
-        })
-        .throwOnError()
-        .single();
+    return supabaseRetry<
+        PostgrestSingleResponse<{ id: string; secret: string }>
+    >(
+        () =>
+            supabaseClient
+                .rpc(RPCS.CREATE_REFRESH_TOKEN, {
+                    multi_use,
+                    valid_for,
+                })
+                .single(),
+        'createRefreshToken'
+    );
 };

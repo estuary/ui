@@ -99,7 +99,6 @@ const submitDirective = async (
     }
 };
 
-// Called through SWR so do not need to manually retry
 const getAppliedDirectives = (
     type: keyof typeof DIRECTIVES,
     userId: string,
