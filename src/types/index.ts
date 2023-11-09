@@ -17,7 +17,7 @@ export enum MessagePrefixes {
 //   the invokeSupabase() function (i.e., src/services/supabase.ts).
 export type SupabaseInvokeResponse =
     | { data: null; error: Error }
-    | { data: null; error: any }
+    // | { data: null; error: any }
     | { data: any; error: null };
 
 // TODO (typing): The type annotation for the data property of the JsonFormsData object

@@ -16,13 +16,14 @@ import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWo
 import { useClient } from 'hooks/supabase-swr';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
-import { CustomEvents, logRocketEvent } from 'services/logrocket';
+import { logRocketEvent } from 'services/shared';
 import {
     DEFAULT_FILTER,
     JOB_STATUS_COLUMNS,
     TABLES,
     jobStatusPoller,
 } from 'services/supabase';
+import { CustomEvents } from 'services/types';
 import { useDetailsForm_details_description } from 'stores/DetailsForm/hooks';
 import {
     useFormStateStore_messagePrefix,
