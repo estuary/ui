@@ -365,7 +365,7 @@ export const getInitialState = (
             );
 
             const response = await supabaseRetry<PostgrestResponse<any>>(
-                () => fetcher.throwOnError(),
+                () => fetcher,
                 'tablesHydrateStore'
             );
 
