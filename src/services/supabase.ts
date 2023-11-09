@@ -214,8 +214,8 @@ export interface CallSupabaseResponse<T> {
     data: T | null;
 }
 
-export const handleSuccess = <T>(response: any) => {
-    return response.error
+export const handleSuccess = <T>(response: any) =>
+    response.error
         ? {
               data: null,
               error: response.error,
@@ -223,15 +223,11 @@ export const handleSuccess = <T>(response: any) => {
         : {
               data: response.data as T,
           };
-};
 
-export const handleFailure = (error: any) => {
-    console.log('handleFailue', error);
-    return {
-        data: null,
-        error,
-    };
-};
+export const handleFailure = (error: any) => ({
+    data: null,
+    error,
+});
 
 // Retry calls
 const RETRY_ATTEMPTS = 2;
