@@ -8,6 +8,7 @@ import checker from 'vite-plugin-checker';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import vitePluginHtmlEnv from 'vite-plugin-html-env';
 import viteCompression from 'vite-plugin-compression';
+import { ViteImageOptimizer as viteImageOptimizer } from 'vite-plugin-image-optimizer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -34,6 +35,7 @@ export default defineConfig({
         svgr({ include: '**/*.svg?react' }),
         topLevelAwait(),
         viteCompression(),
+        viteImageOptimizer({}),
         vitePluginHtmlEnv({
             compiler: true,
             // compiler: false // old
