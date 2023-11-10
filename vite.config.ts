@@ -4,6 +4,7 @@ import viteTsconfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
 import topLevelAwait from 'vite-plugin-top-level-await';
 import wasm from 'vite-plugin-wasm';
+import checker from 'vite-plugin-checker';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,6 +12,13 @@ export default defineConfig({
         outDir: './build',
     },
     plugins: [
+        checker({
+            eslint: {
+                // for example, lint .ts and .tsx
+                lintCommand: 'lint',
+            },
+            typescript: true /** or an object config */,
+        }),
         react(),
         viteTsconfigPaths(),
         svgr({

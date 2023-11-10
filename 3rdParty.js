@@ -1,4 +1,6 @@
-import(import.meta.env.VITE_OSANO_PATH);
+if (import.meta.env.VITE_OSANO_PATH) {
+    import(import.meta.env.VITE_OSANO_PATH);
+}
 
 if (
     import.meta.env.VITE_LOGROCKET_CDN_URL &&
