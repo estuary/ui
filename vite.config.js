@@ -15,9 +15,8 @@ export default defineConfig({
     build: {
         outDir: './build',
     },
-    server: {
-        port: 3000,
-    },
+    preview: { port: 3000 },
+    server: { port: 3000 },
     plugins: [
         checker({
             eslint: {
