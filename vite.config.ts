@@ -6,6 +6,7 @@ import topLevelAwait from 'vite-plugin-top-level-await';
 import wasm from 'vite-plugin-wasm';
 import checker from 'vite-plugin-checker';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import VitePluginHtmlEnv from 'vite-plugin-html-env';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -28,6 +29,10 @@ export default defineConfig({
         react(),
         svgr({ include: '**/*.svg?react' }),
         topLevelAwait(),
+        VitePluginHtmlEnv({
+            compiler: true,
+            // compiler: false // old
+        }),
         viteTsconfigPaths(),
         wasm(),
     ],
