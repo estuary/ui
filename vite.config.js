@@ -15,8 +15,11 @@ export default defineConfig({
     build: {
         outDir: './build',
     },
+
     preview: { port: 3000 },
     server: { port: 3000 },
+
+    // https://github.com/vitejs/awesome-vite#plugins
     plugins: [
         checker({
             eslint: {
