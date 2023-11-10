@@ -36,6 +36,9 @@ export default defineConfig({
         viteTsconfigPaths(),
         wasm(),
     ],
+    optimizeDeps: {
+        include: ['@emotion/styled'],
+    },
     server: {
         port: 3000,
     },

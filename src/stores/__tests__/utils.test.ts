@@ -1,6 +1,6 @@
 // sum.test.js
 import { expect, test } from 'vitest';
-import { checkForErrors } from './utils';
+import { checkForErrors } from '../utils';
 
 test('checkForErrors will handle different states for errors', () => {
     expect(checkForErrors({})).toBe(undefined);
