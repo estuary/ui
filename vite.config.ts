@@ -5,6 +5,7 @@ import svgr from 'vite-plugin-svgr';
 import topLevelAwait from 'vite-plugin-top-level-await';
 import wasm from 'vite-plugin-wasm';
 import checker from 'vite-plugin-checker';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,14 +18,17 @@ export default defineConfig({
                 // for example, lint .ts and .tsx
                 lintCommand: 'lint',
             },
-            typescript: true /** or an object config */,
+            typescript: {
+                tsconfigPath: './tsconfig.json',
+            },
+        }),
+        nodePolyfills({
+            include: ['path', 'process', 'stream'],
         }),
         react(),
-        viteTsconfigPaths(),
-        svgr({
-            include: '**/*.svg?react',
-        }),
+        svgr({ include: '**/*.svg?react' }),
         topLevelAwait(),
+        viteTsconfigPaths(),
         wasm(),
     ],
     server: {
