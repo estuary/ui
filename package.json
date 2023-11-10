@@ -122,7 +122,6 @@
         "jest-mock-extended": "^3.0.1",
         "licensee": "^10.0.0",
         "lint-staged": "^13.1.0",
-        "node-polyfill-webpack-plugin": "^2.0.1",
         "prettier": "^3.0.0",
         "prettier-plugin-organize-imports": "^3.2.1",
         "react-app-rewired": "^2.2.1",
