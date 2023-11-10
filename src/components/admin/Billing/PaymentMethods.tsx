@@ -62,7 +62,7 @@ const columns: TableColumns[] = [
 
 const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
     const stripePromise = useMemo(
-        () => loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ?? ''),
+        () => loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ?? ''),
         []
     );
 
