@@ -7,6 +7,7 @@ import wasm from 'vite-plugin-wasm';
 import checker from 'vite-plugin-checker';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import vitePluginHtmlEnv from 'vite-plugin-html-env';
+import viteCompression from 'vite-plugin-compression';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -32,6 +33,7 @@ export default defineConfig({
         react(),
         svgr({ include: '**/*.svg?react' }),
         topLevelAwait(),
+        viteCompression(),
         vitePluginHtmlEnv({
             compiler: true,
             // compiler: false // old
