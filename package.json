@@ -18,7 +18,6 @@
         "lint-staged": "lint-staged --config .lint-staged.js",
         "typecheck": "tsc",
         "licenses": "licensee --errors-only",
-        "licenses:prod": "licensee --production --errors-only",
         "generate-flow-types": "cd flow_deps && ./fetch-flow.sh && ./flow-bin/flowctl json-schema | ./flow-bin/flowctl schemalate typescript --name Catalog --hoist-definitions > flow.d.ts",
         "__build_deploy__": "npm run build; serve -s build",
         "maintenance:on": "touch public/maintenance",
