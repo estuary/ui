@@ -23,7 +23,7 @@
         "__build_deploy__": "npm run build; serve -s build",
         "maintenance:on": "touch public/maintenance",
         "maintenance:off": "rm public/maintenance",
-        "pre_commit": "npm run lint-staged;"
+        "pre_commit": "npm run lint-staged; npm run licenses"
     },
     "dependencies": {
         "@date-fns/utc": "^1.0.0",
