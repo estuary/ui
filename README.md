@@ -36,3 +36,4 @@ The UI is built to hit our own instance of Supabase. That means you will need to
 -   [JSON Forms](https://github.com/eclipsesource/jsonforms) for many forms
 -   [SWR](https://github.com/vercel/swr) for server calls
 -   [Apache ECharts](https://github.com/apache/echarts) for charts
+-   [Vite](https://github.com/vitejs) for build
