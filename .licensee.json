@@ -10,6 +10,7 @@
         "blueOak": "bronze"
     },
     "packages": {
+        "@supabase/ui": "0.36.5",
         "caniuse-lite": "1.0.*",
         "console-browserify": "1.2.0",
         "docopt": "0.6.2",
