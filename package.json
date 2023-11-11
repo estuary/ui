@@ -154,11 +154,6 @@
         ".vscode",
         "flow_deps"
     ],
-    "jest": {
-        "resetMocks": false,
-        "verbose": true,
-        "testTimeout": 10000
-    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/estuary/ui.git"
