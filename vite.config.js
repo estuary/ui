@@ -8,6 +8,7 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import vitePluginHtmlEnv from 'vite-plugin-html-env';
 import viteCompression from 'vite-plugin-compression';
 import { ViteImageOptimizer as viteImageOptimizer } from 'vite-plugin-image-optimizer';
+import circleDependency from 'vite-plugin-circular-dependency';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -28,6 +29,7 @@ export default defineConfig({
                 tsconfigPath: './tsconfig.json',
             },
         }),
+        circleDependency({}),
         nodePolyfills({
             include: ['path', 'process', 'stream'],
         }),

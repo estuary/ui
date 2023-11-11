@@ -17,15 +17,13 @@
         "lint:fix": "eslint --fix --ext js,jsx,ts,tsx .",
         "lint-staged": "lint-staged --config .lint-staged.js",
         "typecheck": "tsc",
-        "depcheck": "madge -c src",
-        "depgraph": "madge --image flow_ui_dep_graph.svg src",
         "licenses": "licensee --errors-only || true",
         "licenses:prod": "licensee --production --errors-only || true",
         "generate-flow-types": "cd flow_deps && ./fetch-flow.sh && ./flow-bin/flowctl json-schema | ./flow-bin/flowctl schemalate typescript --name Catalog --hoist-definitions > flow.d.ts",
         "__build_deploy__": "npm run build; serve -s build",
         "maintenance:on": "touch public/maintenance",
         "maintenance:off": "rm public/maintenance",
-        "pre_commit": "npm run lint-staged; npm run depcheck"
+        "pre_commit": "npm run lint-staged;"
     },
     "dependencies": {
         "@date-fns/utc": "^1.0.0",
@@ -65,7 +63,6 @@
         "logrocket-react": "^5.0.1",
         "lru-cache": "^9.1.2",
         "luxon": "^3.4.3",
-        "madge": "^5.0.2",
         "material-ui-popup-state": "^5.0.9",
         "monaco-editor": "^0.34.1",
         "notistack": "^2.0.8",
@@ -123,6 +120,7 @@
         "typescript": "^4.9.4",
         "vite": "^4.5.0",
         "vite-plugin-checker": "^0.6.2",
+        "vite-plugin-circular-dependency": "^0.2.1",
         "vite-plugin-compression": "^0.5.1",
         "vite-plugin-html-env": "^1.2.8",
         "vite-plugin-image-optimizer": "^1.1.7",
