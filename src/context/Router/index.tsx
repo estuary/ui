@@ -10,7 +10,7 @@ import DataPlaneAuthReq from 'pages/DataPlaneAuthReq';
 import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
 import Login from 'pages/Login';
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import {
     createBrowserRouter,
     createRoutesFromElements,
@@ -18,46 +18,29 @@ import {
     RouterProvider,
     Routes,
 } from 'react-router-dom';
+import HomePage from 'pages/Home';
+import DerivationCreateComponent from 'components/derivation/Create';
+import Admin from 'pages/Admin';
+import AccessGrants from 'components/admin/AccessGrants';
+import AdminApi from 'components/admin/Api';
+import AdminConnectors from 'components/admin/Connectors';
+import AdminBilling from 'components/admin/Billing';
+import AdminSettings from 'components/admin/Settings';
 import RequireAuth from './RequireAuth';
-
-const Authenticated = lazy(() => import('./Authenticated'));
-const HomePage = lazy(() => import('pages/Home'));
-
-// Capture
-const CaptureCreateRoute = lazy(() => import('./CaptureCreate'));
-const CaptureCreateNewRoute = lazy(() => import('./CaptureCreateNew'));
-const CaptureDetailsRoute = lazy(() => import('./CaptureDetails'));
-const CaptureEditRoute = lazy(() => import('./CaptureEdit'));
-const CapturesTable = lazy(() => import('./CapturesTable'));
-
-// Collection
-const DerivationCreateComponent = lazy(
-    () => import('components/derivation/Create')
-);
-const CollectionCreateRoute = lazy(() => import('./CollectionCreate'));
-const CollectionCreateNewRoute = lazy(() => import('./CollectionCreateNew'));
-const CollectionDetailsRoute = lazy(() => import('./CollectionDetails'));
-
-//Materializations
-const MaterializationCreateRoute = lazy(
-    () => import('./MaterializationCreate')
-);
-const MaterializationCreateNewRoute = lazy(
-    () => import('./MaterializationCreateNew')
-);
-const MaterializationDetailsRoute = lazy(
-    () => import('./MaterializationDetails')
-);
-const MaterializationEditRoute = lazy(() => import('./MaterializationEdit'));
-const MaterializationsTable = lazy(() => import('./MaterializationsTable'));
-
-//Admin
-const Admin = lazy(() => import('pages/Admin'));
-const AccessGrants = lazy(() => import('components/admin/AccessGrants'));
-const AdminApi = lazy(() => import('components/admin/Api'));
-const AdminConnectors = lazy(() => import('components/admin/Connectors'));
-const AdminBilling = lazy(() => import('components/admin/Billing'));
-const AdminSettings = lazy(() => import('components/admin/Settings'));
+import Authenticated from './Authenticated';
+import CaptureCreateRoute from './CaptureCreate';
+import CaptureCreateNewRoute from './CaptureCreateNew';
+import CaptureDetailsRoute from './CaptureDetails';
+import CaptureEditRoute from './CaptureEdit';
+import CapturesTable from './CapturesTable';
+import CollectionCreateRoute from './CollectionCreate';
+import CollectionCreateNewRoute from './CollectionCreateNew';
+import CollectionDetailsRoute from './CollectionDetails';
+import MaterializationCreateRoute from './MaterializationCreate';
+import MaterializationCreateNewRoute from './MaterializationCreateNew';
+import MaterializationDetailsRoute from './MaterializationDetails';
+import MaterializationEditRoute from './MaterializationEdit';
+import MaterializationsTable from './MaterializationsTable';
 
 const router = createBrowserRouter(
     createRoutesFromElements(
