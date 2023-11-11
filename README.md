@@ -10,7 +10,7 @@ Run: `npm install`
 
 ## Troubleshooting
 
-### 401 error for `@estuary/flow-web`.
+### 401 error for `@estuary/flow-web`
 
 You need to update `~/.npmrc` with the following:
 
