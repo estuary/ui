@@ -16,8 +16,8 @@ export default defineConfig({
         outDir: './build',
     },
 
-    preview: { open: true, port: 3000 },
-    server: { open: true, port: 3000 },
+    preview: { open: true, port: 3000, strictPort: true },
+    server: { open: true, port: 3000, strictPort: true },
 
     // https://github.com/vitejs/awesome-vite#plugins
     plugins: [
