@@ -20,76 +20,44 @@ import {
 } from 'react-router-dom';
 import RequireAuth from './RequireAuth';
 
-const Authenticated = lazy(
-    () => import(/* webpackPrefetch: true */ './Authenticated')
-);
-const HomePage = lazy(() => import(/* webpackPrefetch: true */ 'pages/Home'));
+const Authenticated = lazy(() => import('./Authenticated'));
+const HomePage = lazy(() => import('pages/Home'));
 
 // Capture
-const CaptureCreateRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './CaptureCreate')
-);
-const CaptureCreateNewRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './CaptureCreateNew')
-);
-const CaptureDetailsRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './CaptureDetails')
-);
-const CaptureEditRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './CaptureEdit')
-);
-const CapturesTable = lazy(
-    () => import(/* webpackPrefetch: true */ './CapturesTable')
-);
+const CaptureCreateRoute = lazy(() => import('./CaptureCreate'));
+const CaptureCreateNewRoute = lazy(() => import('./CaptureCreateNew'));
+const CaptureDetailsRoute = lazy(() => import('./CaptureDetails'));
+const CaptureEditRoute = lazy(() => import('./CaptureEdit'));
+const CapturesTable = lazy(() => import('./CapturesTable'));
 
 // Collection
 const DerivationCreateComponent = lazy(
-    () => import(/* webpackPrefetch: true */ 'components/derivation/Create')
+    () => import('components/derivation/Create')
 );
-const CollectionCreateRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './CollectionCreate')
-);
-const CollectionCreateNewRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './CollectionCreateNew')
-);
-const CollectionDetailsRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './CollectionDetails')
-);
+const CollectionCreateRoute = lazy(() => import('./CollectionCreate'));
+const CollectionCreateNewRoute = lazy(() => import('./CollectionCreateNew'));
+const CollectionDetailsRoute = lazy(() => import('./CollectionDetails'));
 
 //Materializations
 const MaterializationCreateRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './MaterializationCreate')
+    () => import('./MaterializationCreate')
 );
 const MaterializationCreateNewRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './MaterializationCreateNew')
+    () => import('./MaterializationCreateNew')
 );
 const MaterializationDetailsRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './MaterializationDetails')
+    () => import('./MaterializationDetails')
 );
-const MaterializationEditRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './MaterializationEdit')
-);
-const MaterializationsTable = lazy(
-    () => import(/* webpackPrefetch: true */ './MaterializationsTable')
-);
+const MaterializationEditRoute = lazy(() => import('./MaterializationEdit'));
+const MaterializationsTable = lazy(() => import('./MaterializationsTable'));
 
 //Admin
-const Admin = lazy(() => import(/* webpackPrefetch: true */ 'pages/Admin'));
-const AccessGrants = lazy(
-    () => import(/* webpackPrefetch: true */ 'components/admin/AccessGrants')
-);
-const AdminApi = lazy(
-    () => import(/* webpackPrefetch: true */ 'components/admin/Api')
-);
-const AdminConnectors = lazy(
-    () => import(/* webpackPrefetch: true */ 'components/admin/Connectors')
-);
-const AdminBilling = lazy(
-    () => import(/* webpackPrefetch: true */ 'components/admin/Billing')
-);
-const AdminSettings = lazy(
-    () => import(/* webpackPrefetch: true */ 'components/admin/Settings')
-);
+const Admin = lazy(() => import('pages/Admin'));
+const AccessGrants = lazy(() => import('components/admin/AccessGrants'));
+const AdminApi = lazy(() => import('components/admin/Api'));
+const AdminConnectors = lazy(() => import('components/admin/Connectors'));
+const AdminBilling = lazy(() => import('components/admin/Billing'));
+const AdminSettings = lazy(() => import('components/admin/Settings'));
 
 const router = createBrowserRouter(
     createRoutesFromElements(
