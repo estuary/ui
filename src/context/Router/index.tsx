@@ -42,6 +42,45 @@ import MaterializationDetailsRoute from './MaterializationDetails';
 import MaterializationEditRoute from './MaterializationEdit';
 import MaterializationsTable from './MaterializationsTable';
 
+// const Authenticated = lazy(() => import('./Authenticated'));
+// const HomePage = lazy(() => import('pages/Home'));
+
+// // Capture
+// const CaptureCreateRoute = lazy(() => import('./CaptureCreate'));
+// const CaptureCreateNewRoute = lazy(() => import('./CaptureCreateNew'));
+// const CaptureDetailsRoute = lazy(() => import('./CaptureDetails'));
+// const CaptureEditRoute = lazy(() => import('./CaptureEdit'));
+// const CapturesTable = lazy(() => import('./CapturesTable'));
+
+// // Collection
+// const DerivationCreateComponent = lazy(
+//     () => import('components/derivation/Create')
+// );
+// const CollectionCreateRoute = lazy(() => import('./CollectionCreate'));
+// const CollectionCreateNewRoute = lazy(() => import('./CollectionCreateNew'));
+// const CollectionDetailsRoute = lazy(() => import('./CollectionDetails'));
+
+// //Materializations
+// const MaterializationCreateRoute = lazy(
+//     () => import('./MaterializationCreate')
+// );
+// const MaterializationCreateNewRoute = lazy(
+//     () => import('./MaterializationCreateNew')
+// );
+// const MaterializationDetailsRoute = lazy(
+//     () => import('./MaterializationDetails')
+// );
+// const MaterializationEditRoute = lazy(() => import('./MaterializationEdit'));
+// const MaterializationsTable = lazy(() => import('./MaterializationsTable'));
+
+// //Admin
+// const Admin = lazy(() => import('pages/Admin'));
+// const AccessGrants = lazy(() => import('components/admin/AccessGrants'));
+// const AdminApi = lazy(() => import('components/admin/Api'));
+// const AdminConnectors = lazy(() => import('components/admin/Connectors'));
+// const AdminBilling = lazy(() => import('components/admin/Billing'));
+// const AdminSettings = lazy(() => import('components/admin/Settings'));
+
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route>
