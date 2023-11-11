@@ -5,14 +5,24 @@
             "BSD-2-Clause",
             "BSD-3-Clause",
             "Apache-2.0",
-            "MPL-2.0",
-            "CC-BY-3.0",
-            "CC-BY-4.0"
+            "MPL-2.0"
         ],
         "blueOak": "bronze"
     },
     "packages": {
-        "optimist": "<=0.6.1"
+        "caniuse-lite": "1.0.*",
+        "console-browserify": "1.2.0",
+        "docopt": "0.6.2",
+        "fast-shallow-equal": "1.0.0",
+        "lz-string": "1.4.4",
+        "prelude-ls": "1.1.2",
+        "querystring": "0.2.0",
+        "querystring-es3": "0.2.1",
+        "react-universal-interface": "0.6.2",
+        "spdx-exceptions": "2.3.0",
+        "spdx-expression-validate": "2.0.0",
+        "spdx-ranges": "2.1.1",
+        "@supabase/ui": "0.36.5"
     },
     "ignore": [{ "prefix": "@estuary" }]
 }
