@@ -1,6 +1,6 @@
 {
     "name": "estuary-ui",
-    "version": "0.2.0-alpha",
+    "version": "0.3.0",
     "description": "A web based UI to assist in working with Estuary Flow",
     "main": "index.js",
     "private": true,
