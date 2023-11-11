@@ -53,7 +53,7 @@ jobs:
               run: npm install
 
             - name: Typecheck
-              run: npm run tsc
+              run: npm run typecheck
 
             - name: Linting
               run: npm run lint
