@@ -10,18 +10,29 @@
         "blueOak": "bronze"
     },
     "packages": {
+        "MIT License": "0.0.0",
         "@supabase/ui": "0.36.5",
-        "caniuse-lite": "1.0.*",
         "console-browserify": "1.2.0",
-        "docopt": "0.6.2",
-        "fast-shallow-equal": "1.0.0",
         "lz-string": "1.4.4",
         "prelude-ls": "1.1.2",
         "querystring": "0.2.0",
         "querystring-es3": "0.2.1",
-        "react-universal-interface": "0.6.2",
+
+        "CC by 3.0 License": "0.0.0",
         "spdx-exceptions": "2.3.0",
         "spdx-expression-validate": "2.0.0",
+
+        "CC by 4.0 License": "0.0.0",
+        "caniuse-lite": "1.0.*",
+
+        "Seems like MIT": "0.0.0",
+        "docopt": "0.6.2",
+
+        "Unlicense": "0.0.0",
+        "fast-shallow-equal": "1.0.0",
+        "react-universal-interface": "0.6.2",
+
+        "MIT and CC 3.0 License": "0.0.0",
         "spdx-ranges": "2.1.1"
     },
     "ignore": [{ "prefix": "@estuary" }]
