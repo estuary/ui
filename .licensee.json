@@ -13,6 +13,7 @@
         "// MIT License": "0.0.0",
         "@supabase/ui": "0.36.5",
         "console-browserify": "1.2.0",
+        "docopt": "0.6.2",
         "lz-string": "1.4.4",
         "prelude-ls": "1.1.2",
         "querystring": "0.2.0",
@@ -24,9 +25,6 @@
 
         "// CC by 4.0 License": "0.0.0",
         "caniuse-lite": "1.0.*",
-
-        "// Seems like MIT": "0.0.0",
-        "docopt": "0.6.2",
 
         "// Unlicense": "0.0.0",
         "fast-shallow-equal": "1.0.0",
