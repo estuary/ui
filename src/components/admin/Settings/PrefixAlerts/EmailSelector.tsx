@@ -5,6 +5,7 @@ import {
     FormControl,
     FormHelperText,
     ListItem,
+    ListItemText,
     TextField,
     Typography,
 } from '@mui/material';
@@ -45,7 +46,14 @@ function EmailSelector({
             <Autocomplete
                 disabled={!prefix}
                 disableCloseOnSelect
-                filterSelectedOptions
+                filterOptions={(options) =>
+                    options.filter((option) =>
+                        typeof option === 'string'
+                            ? option.includes(inputValue)
+                            : option.user_email.includes(inputValue) ||
+                              option.user_full_name.includes(inputValue)
+                    )
+                }
                 freeSolo
                 getOptionLabel={(option) =>
                     typeof option !== 'string' ? option.user_email : option
@@ -178,17 +186,38 @@ function EmailSelector({
                     />
                 )}
                 renderOption={(renderOptionProps, option) => {
+                    console.log('option', option);
                     return typeof option === 'string' ? (
                         <Typography>{option}</Typography>
                     ) : (
                         <ListItem key={option.user_id} {...renderOptionProps}>
-                            {option.user_full_name ? (
-                                <Typography>{option.user_full_name}</Typography>
+                            <ListItemText
+                                primary={option.user_full_name}
+                                secondary={option.user_email}
+                                primaryTypographyProps={{
+                                    sx: {
+                                        fontWeight: 500,
+                                        fontSize: 16,
+                                    },
+                                }}
+                                secondaryTypographyProps={{
+                                    sx: {
+                                        color: (theme) =>
+                                            theme.palette.text.primary,
+                                    },
+                                }}
+                            />
+                            {/* {option.user_full_name ||
+                            option.user_email.split('@')[0] ? (
+                                <Typography component={Box}>
+                                    {option.user_full_name ??
+                                        option.user_email.split('@')[0]}
+                                </Typography>
                             ) : null}
 
                             {option.user_email ? (
                                 <Typography>{option.user_email}</Typography>
-                            ) : null}
+                            ) : null} */}
                         </ListItem>
                     );
                 }}

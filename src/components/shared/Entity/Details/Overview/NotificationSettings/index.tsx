@@ -1,4 +1,4 @@
-import { Stack, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Stack, useMediaQuery, useTheme } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import MessageWithButton from 'components/content/MessageWithButton';
 import AlertBox from 'components/shared/AlertBox';
@@ -64,61 +64,57 @@ function NotificationSettings({ taskName }: Props) {
                 <FormattedMessage id="details.settings.notifications.header" />
             }
         >
-            <Stack sx={{ width: aboveMd ? 720 : 'unset' }}>
-                <Stack spacing={1} sx={{ mb: alertsExist ? 2 : undefined }}>
-                    {subscriptionError ? (
-                        <Error error={subscriptionError} condensed hideTitle />
-                    ) : null}
+            <Stack spacing={1} sx={{ mb: alertsExist ? 2 : undefined }}>
+                {subscriptionError ? (
+                    <Error error={subscriptionError} condensed hideTitle />
+                ) : null}
 
-                    {updateSettingsError ? (
-                        <Error
-                            error={updateSettingsError}
-                            condensed
-                            hideTitle
-                        />
-                    ) : null}
+                {updateSettingsError ? (
+                    <Error error={updateSettingsError} condensed hideTitle />
+                ) : null}
 
-                    {subscriptionExists === false ? (
-                        <AlertBox short severity="info">
-                            <MessageWithButton
-                                messageId="details.settings.notifications.alert.userNotSubscribed.message"
-                                clickHandler={() => {
-                                    createSubscription().then(
-                                        (response) => {
-                                            if (
-                                                response.data &&
-                                                response.data.length > 0
-                                            ) {
-                                                setSubscriptionExists(true);
-                                            } else {
-                                                setSubscriptionExists(false);
-                                                setSubscriptionError({
-                                                    message:
-                                                        'details.settings.notifications.alert.createSubscriptionFailed.message',
-                                                });
-                                            }
-                                        },
-                                        () => {
+                {subscriptionExists === false ? (
+                    <AlertBox short severity="info">
+                        <MessageWithButton
+                            messageId="details.settings.notifications.alert.userNotSubscribed.message"
+                            clickHandler={() => {
+                                createSubscription().then(
+                                    (response) => {
+                                        if (
+                                            response.data &&
+                                            response.data.length > 0
+                                        ) {
+                                            setSubscriptionExists(true);
+                                        } else {
                                             setSubscriptionExists(false);
                                             setSubscriptionError({
                                                 message:
                                                     'details.settings.notifications.alert.createSubscriptionFailed.message',
                                             });
                                         }
-                                    );
-                                }}
-                            />
-                        </AlertBox>
-                    ) : null}
-                </Stack>
+                                    },
+                                    () => {
+                                        setSubscriptionExists(false);
+                                        setSubscriptionError({
+                                            message:
+                                                'details.settings.notifications.alert.createSubscriptionFailed.message',
+                                        });
+                                    }
+                                );
+                            }}
+                        />
+                    </AlertBox>
+                ) : null}
+            </Stack>
 
+            <Box sx={{ width: aboveMd ? 720 : 'unset' }}>
                 <DataProcessingSetting
                     errored={updateSettingsError !== null}
                     loading={subscriptionExists === null}
                     setUpdateSettingsError={setUpdateSettingsError}
                     hideBorder
                 />
-            </Stack>
+            </Box>
         </CardWrapper>
     );
 }

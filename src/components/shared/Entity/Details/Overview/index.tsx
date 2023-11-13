@@ -54,7 +54,13 @@ function Overview({ name }: Props) {
                 />
             </Grid>
 
-            {/* The grid item below exists when no children are present which creates 16 pixels of unnecessary, vertical padding. */}
+            {!isCollection && entityName ? (
+                <Grid item xs={12}>
+                    <NotificationSettings taskName={entityName} />
+                </Grid>
+            ) : null}
+
+            {/* The grid item below exists when no children are present which creates 16 pixels of vertical padding. */}
             {!isCollection ? (
                 <Grid item xs={12}>
                     <TaskEndpoints taskName={catalogName} />
@@ -73,12 +79,6 @@ function Overview({ name }: Props) {
             {isCollection && entityName ? (
                 <Grid item xs={12}>
                     <DataPreview collectionName={entityName} />
-                </Grid>
-            ) : null}
-
-            {!isCollection && entityName ? (
-                <Grid item xs={12}>
-                    <NotificationSettings taskName={entityName} />
                 </Grid>
             ) : null}
         </Grid>
