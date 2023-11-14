@@ -4,6 +4,7 @@ import {
     handleSuccess,
     insertSupabase,
     supabaseClient,
+    supabaseRetry,
     TABLES,
 } from 'services/supabase';
 
@@ -37,10 +38,10 @@ const getDraftsByCatalogName = async (
         queryBuilder = queryBuilder.limit(1);
     }
 
-    const data = await queryBuilder.then(
-        handleSuccess<DraftsQuery_ByCatalogName[]>,
-        handleFailure
-    );
+    const data = await supabaseRetry(
+        () => queryBuilder,
+        'getDraftsByCatalogName'
+    ).then(handleSuccess<DraftsQuery_ByCatalogName[]>, handleFailure);
 
     return data;
 };

@@ -98,6 +98,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'filter.time.thisMonth': `This Month`,
 
     'catalogName.limitations': `letters, numbers, periods, underscores, and hyphens`,
+
+    'support.email': `mailto:support@estuary.dev`,
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -141,6 +143,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.showAll': `Show All`,
     'cta.reload': `Reload`,
     'cta.evolve': `Apply`,
+    'cta.support': `contact support`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -167,9 +170,12 @@ const Data: ResolvedIntlConfig['messages'] = {
 
 const Error: ResolvedIntlConfig['messages'] = {
     'error.title': `Error`,
-    'error.message': `This is not something you did wrong. There was a technical issue. Please {docLink}.`,
-    'error.message.docLink': `contact support`,
-    'error.message.docPath': `mailto:support@estuary.dev`,
+    'error.reason.fetchFailed': `There was a network issue while contacting our servers. Please make sure your network is available and try again.`,
+
+    'error.instructions': `If the issue persists please {docLink}.`,
+    'error.instructions.docLink': `${CTAs['cta.support']}`,
+    'error.instructions.docPath': `${CommonMessages['support.email']}`,
+
     'error.codeLabel': `Code:`,
     'error.messageLabel': `Message:`,
     'error.detailsLabel': `Details:`,

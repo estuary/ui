@@ -7,6 +7,7 @@ import {
     handleFailure,
     handleSuccess,
     supabaseClient,
+    supabaseRetry,
     TABLES,
 } from 'services/supabase';
 import { Entity } from 'types';
@@ -24,21 +25,27 @@ type ConnectorTagEndpointData = Pick<
 >;
 
 export const getSchema_Endpoint = async (connectorId: string | null) => {
-    const endpointSchema = await supabaseClient
-        .from(TABLES.CONNECTOR_TAGS)
-        .select(`connector_id,endpoint_spec_schema`)
-        .eq('connector_id', connectorId)
-        .then(handleSuccess<ConnectorTagEndpointData[]>, handleFailure);
+    const endpointSchema = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.CONNECTOR_TAGS)
+                .select(`connector_id,endpoint_spec_schema`)
+                .eq('connector_id', connectorId),
+        'getSchema_Endpoint'
+    ).then(handleSuccess<ConnectorTagEndpointData[]>, handleFailure);
 
     return endpointSchema;
 };
 
 export const getSchema_Resource = async (connectorId: string | null) => {
-    const resourceSchema = await supabaseClient
-        .from(TABLES.CONNECTOR_TAGS)
-        .select(`connector_id,resource_spec_schema`)
-        .eq('connector_id', connectorId)
-        .then(handleSuccess<ConnectorTagResourceData[]>, handleFailure);
+    const resourceSchema = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.CONNECTOR_TAGS)
+                .select(`connector_id,resource_spec_schema`)
+                .eq('connector_id', connectorId),
+        'getSchema_Resource'
+    ).then(handleSuccess<ConnectorTagResourceData[]>, handleFailure);
 
     return resourceSchema;
 };
@@ -52,13 +59,16 @@ export const getLiveSpecsByLiveSpecId = async (
     const draftArray: string[] =
         typeof liveSpecId === 'string' ? [liveSpecId] : liveSpecId;
 
-    const data = await supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
-        .select(liveSpecColumns)
-        .eq('spec_type', specType)
-        .or(`id.in.(${draftArray})`)
-        .order('updated_at', { ascending: false })
-        .then(handleSuccess<LiveSpecsExtQuery[]>, handleFailure);
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.LIVE_SPECS_EXT)
+                .select(liveSpecColumns)
+                .eq('spec_type', specType)
+                .or(`id.in.(${draftArray})`)
+                .order('updated_at', { ascending: false }),
+        'getLiveSpecsByLiveSpecId'
+    ).then(handleSuccess<LiveSpecsExtQuery[]>, handleFailure);
 
     return data;
 };
@@ -66,11 +76,17 @@ export const getLiveSpecsByLiveSpecId = async (
 export const getLiveSpecsById_writesTo = async (
     liveSpecId: string | string[]
 ) => {
-    const data = await supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
-        .select(`catalog_name,writes_to,spec_type`)
-        .in('id', typeof liveSpecId === 'string' ? [liveSpecId] : liveSpecId)
-        .then(handleSuccess<LiveSpecsExt_MaterializeCapture>, handleFailure);
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.LIVE_SPECS_EXT)
+                .select(`catalog_name,writes_to,spec_type`)
+                .in(
+                    'id',
+                    typeof liveSpecId === 'string' ? [liveSpecId] : liveSpecId
+                ),
+        'getLiveSpecsById_writesTo'
+    ).then(handleSuccess<LiveSpecsExt_MaterializeCapture>, handleFailure);
 
     return data;
 };
