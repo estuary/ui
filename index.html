@@ -2,7 +2,9 @@
 <html lang="en">
     <head>
         <!-- Need to set this !BEFORE! any loading of scripts is started -->
-        <script vite-if="VITE_LOGROCKET_CDN_URL && VITE_LOGROCKET_ENABLED">
+        <script
+            vite-if="VITE_LOGROCKET_CDN_URL && VITE_LOGROCKET_ENABLED === true"
+        >
             window._lrAsyncScript = '<{REACT_APP_LOGROCKET_CDN_URL}>';
         </script>
 
@@ -17,16 +19,10 @@
         </style>
 
         <meta charset="utf-8" />
-        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-        <!-- We might want to enable this preconnect given how often we make supabase calls -->
-        <!-- <link rel="preconnect" href="%VITE_SUPABASE_URL%" /> -->
         <meta name="viewport" content="initial-scale=1, width=device-width" />
         <meta name="theme-color" content="#000000" />
 
-        <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
         <link rel="manifest" href="/manifest.json" />
         <title><{VITE_DEFAULT_PAGE_TITLE}></title>
     </head>
