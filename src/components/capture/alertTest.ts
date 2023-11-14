@@ -4,7 +4,7 @@ import { supabaseClient } from 'services/supabase';
 
 interface DataProcessingArguments {
     bytes_processed: number;
-    email: string;
+    emails: string[];
     evaluation_interval: string;
     spec_type: string;
 }
@@ -20,7 +20,7 @@ interface AlertRecord {
 interface EmailConfig {
     emails: string[];
     subject: string;
-    html: string;
+    content: string;
 }
 
 const corsHeaders = {};
@@ -58,7 +58,7 @@ const emailNotifications = async (
 ): Promise<void> => {
     // TODO: Replace hardcoded sender and recipient address with the destructured `emails` property.
     const notificationPromises = pendingNotifications.map(
-        ({ emails, html, subject }) =>
+        ({ emails, content, subject }) =>
             fetch('https://api.resend.com/emails', {
                 method: 'POST',
                 headers: {
@@ -70,7 +70,14 @@ const emailNotifications = async (
                     from: 'Estuary <onboarding@resend.dev>',
                     to: ['tucker.kiahna@gmail.com'],
                     subject,
-                    html,
+                    html: `
+                      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+                        ${content}
+                      
+                        <p style="margin-bottom: 0;">Thanks,</p>
+                        <p style="margin-top: 0;">Estuary Team</p>
+                      </div>
+                    `,
                 }),
             })
     );
@@ -90,7 +97,7 @@ export const serve = async (_request: Request): Promise<Response> => {
         .from<AlertRecord>(TABLES.ALERT_HISTORY)
         .select('*')
         .eq('alert_type', dataProcessingAlertType)
-        .eq('resolved_at', null)
+        .is('resolved_at', null)
         .gt('fired_at', startTimestamp.toUTCString());
 
     if (alertsError !== null) {
@@ -119,23 +126,28 @@ export const serve = async (_request: Request): Promise<Response> => {
     const pendingAlertEmails: EmailConfig[] = alerts
         ? alerts.map(
               ({
-                  arguments: { email, evaluation_interval, spec_type },
+                  arguments: { emails, evaluation_interval, spec_type },
                   catalog_name,
               }) => {
-                  const timeOffset = evaluation_interval.split(':');
-                  const hours = Number(timeOffset[0]);
+                  let formattedEvaluationInterval = evaluation_interval;
 
-                  const formattedEvaluationInterval = isFinite(hours)
-                      ? hours.toString()
-                      : timeOffset[0];
+                  // A postgresql interval in hour increments has the following format: 'HH:MM:SS'.
+                  if (evaluation_interval.includes(':')) {
+                      const timeOffset = evaluation_interval.split(':');
+                      const hours = Number(timeOffset[0]);
+
+                      formattedEvaluationInterval = isFinite(hours)
+                          ? `${hours} hours`
+                          : `${timeOffset[0]} hours`;
+                  }
 
                   const subject = `Estuary Flow: Alert for ${spec_type} ${catalog_name}`;
 
-                  const html = `<p>You are receiving this alert because your task, ${spec_type} ${catalog_name} hasn't seen new data in ${formattedEvaluationInterval}.  You can locate your task <a href="https://dashboard.estuary.dev/captures/details/overview?catalogName=${catalog_name}" target="_blank" rel="noopener">here</a> to make changes or update its alerting settings.</p>`;
+                  const content = `<p>You are receiving this alert because your task, ${spec_type} ${catalog_name} hasn't seen new data in ${formattedEvaluationInterval}.  You can locate your task <a href="https://dashboard.estuary.dev/captures/details/overview?catalogName=${catalog_name}" target="_blank" rel="noopener">here</a> to make changes or update its alerting settings.</p>`;
 
                   return {
-                      emails: [email],
-                      html,
+                      content,
+                      emails,
                       subject,
                   };
               }
@@ -144,15 +156,15 @@ export const serve = async (_request: Request): Promise<Response> => {
 
     const pendingConfirmationEmails: EmailConfig[] = confirmations
         ? confirmations.map(
-              ({ arguments: { email, spec_type }, catalog_name }) => {
+              ({ arguments: { emails, spec_type }, catalog_name }) => {
                   const subject = `Estuary Flow: Alert for ${spec_type} ${catalog_name}`;
 
-                  const html = `<p>You are receiving this alert because your task, ${spec_type} ${catalog_name} has resumed processing data.  You can locate your task <a href="https://dashboard.estuary.dev/captures/details/overview?catalogName=${catalog_name}" target="_blank" rel="noopener">here</a> to make changes or update its alerting settings.</p>`;
+                  const content = `<p>You are receiving this alert because your task, ${spec_type} ${catalog_name} has resumed processing data.  You can locate your task <a href="https://dashboard.estuary.dev/captures/details/overview?catalogName=${catalog_name}" target="_blank" rel="noopener">here</a> to make changes or update its alerting settings.</p>`;
 
                   return {
-                      emails: [email],
+                      content,
+                      emails,
                       subject,
-                      html,
                   };
               }
           )
