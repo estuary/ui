@@ -1,8 +1,10 @@
+import { PostgrestResponse } from '@supabase/postgrest-js';
 import {
     defaultTableFilter,
     RPCS,
     SortingProps,
     supabaseClient,
+    supabaseRetry,
     TABLES,
 } from 'services/supabase';
 import { AuthRoles } from 'types';
@@ -76,11 +78,13 @@ const getGrants_Users = (
 };
 
 export const getAuthRoles = async (capability: string) => {
-    return supabaseClient
-        .rpc<AuthRoles>(RPCS.AUTH_ROLES, {
-            min_capability: capability,
-        })
-        .throwOnError();
+    return supabaseRetry<PostgrestResponse<AuthRoles>>(
+        () =>
+            supabaseClient.rpc<AuthRoles>(RPCS.AUTH_ROLES, {
+                min_capability: capability,
+            }),
+        'getAuthRoles'
+    );
 };
 
 export { getGrants, getGrants_Users };

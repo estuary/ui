@@ -57,6 +57,8 @@ export const TableHydrator = ({
     // Reset state when leaving until we work out how we want to cache table stuff
     useUnmount(() => {
         setDisableMultiSelect(false);
+
+        // TODO (https://github.com/estuary/ui/issues/815)
         resetState();
     });
 

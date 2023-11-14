@@ -1,4 +1,5 @@
-import { supabaseClient, TABLES } from 'services/supabase';
+import { PostgrestResponse } from '@supabase/postgrest-js';
+import { supabaseClient, supabaseRetry, TABLES } from 'services/supabase';
 import { Schema } from 'types';
 
 export interface PublicationSpecsExt_PublicationHistory {
@@ -32,11 +33,17 @@ export const getLiveSpecIdByPublication = (
     pubId: string | null, // Do not actually pass null... just making typing easiser
     catalogName: string
 ) => {
-    return supabaseClient
-        .from<PublicationSpecsExt_PublicationHistory>(
-            TABLES.PUBLICATION_SPECS_EXT
-        )
-        .select(`live_spec_id`)
-        .eq('pub_id', pubId)
-        .eq('catalog_name', catalogName);
+    return supabaseRetry<
+        PostgrestResponse<PublicationSpecsExt_PublicationHistory>
+    >(
+        () =>
+            supabaseClient
+                .from<PublicationSpecsExt_PublicationHistory>(
+                    TABLES.PUBLICATION_SPECS_EXT
+                )
+                .select(`live_spec_id`)
+                .eq('pub_id', pubId)
+                .eq('catalog_name', catalogName),
+        'getLiveSpecIdByPublication'
+    );
 };

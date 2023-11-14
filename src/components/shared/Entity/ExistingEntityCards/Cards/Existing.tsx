@@ -13,7 +13,8 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
-import { CustomEvents, logRocketEvent } from 'services/logrocket';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 
 interface Props {
     queryData: CaptureQueryWithSpec | MaterializationQueryWithSpec | null;

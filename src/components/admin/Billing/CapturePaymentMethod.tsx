@@ -15,8 +15,9 @@ import { Auth } from '@supabase/ui';
 import AlertBox from 'components/shared/AlertBox';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { CustomEvents, logRocketEvent } from 'services/logrocket';
+import { logRocketEvent } from 'services/shared';
 import { getUserDetails } from 'services/supabase';
+import { CustomEvents } from 'services/types';
 
 export interface PaymentFormProps {
     onSuccess?(id?: string): Promise<void> | void;

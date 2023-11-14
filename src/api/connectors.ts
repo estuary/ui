@@ -9,6 +9,7 @@ import {
     handleSuccess,
     SortingProps,
     supabaseClient,
+    supabaseRetry,
     TABLES,
 } from 'services/supabase';
 
@@ -59,12 +60,15 @@ const DETAILS_FORM_QUERY = `
 `;
 
 const getConnectors_detailsForm = async (connectorId: string) => {
-    const data = await supabaseClient
-        .from(TABLES.CONNECTORS)
-        .select(DETAILS_FORM_QUERY)
-        .eq('id', connectorId)
-        .eq('connector_tags.connector_id', connectorId)
-        .then(handleSuccess<ConnectorsQuery_DetailsForm[]>, handleFailure);
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.CONNECTORS)
+                .select(DETAILS_FORM_QUERY)
+                .eq('id', connectorId)
+                .eq('connector_tags.connector_id', connectorId),
+        'getConnectors_detailsForm'
+    ).then(handleSuccess<ConnectorsQuery_DetailsForm[]>, handleFailure);
 
     return data;
 };

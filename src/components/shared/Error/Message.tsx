@@ -1,7 +1,8 @@
 import { Box, Stack, Typography } from '@mui/material';
-import MessageWithLink from 'components/content/MessageWithLink';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { logRocketConsole } from 'services/logrocket';
+import { retryAfterFailure } from 'services/shared';
+import Instructions from './Instructions';
 import { ErrorDetails } from './types';
 
 interface Props {
@@ -13,21 +14,24 @@ function Message({ error }: Props) {
 
     const intl = useIntl();
 
-    // Check if the message object is coming from the server
-    //  Easiest check I could think of. Our shortest keys are
-    //      `cta.foo` which can look a lot like how Supabase returns
-    //      errors when fetching wrong keys from a table (`tableName.col`)
-    //      so we can not use a RegEx like originally planned.
-    //  Code seems to almost always come back.
-    const messageFromServer =
-        typeof error === 'object' && error.hasOwnProperty('code');
+    const failedAfterRetry = retryAfterFailure(error?.message ?? error);
+
+    // Check if we have retried making the call or if we think the message object
+    //      is from Supabase
+    //  Initially was going to write a RegEx that detects if the mesaage
+    //      needs translated. However, Our shortest keys (cta.foo)
+    //      can also look a lot like how Supabase returns
+    //      errors when fetching wrong keys from a table (tableName.col).
+    const displayErrorOnly =
+        (typeof error === 'object' && error.hasOwnProperty('code')) ||
+        failedAfterRetry;
 
     // We do not need to translate messages from Supabase as they comeback readable
-    const message = messageFromServer
+    const message = displayErrorOnly
         ? error.message
         : intl.formatMessage({ id: error.message });
 
-    if (!messageFromServer) {
+    if (!displayErrorOnly) {
         return (
             <Box sx={{ my: 1 }}>
                 <Typography>{message}</Typography>
@@ -37,9 +41,7 @@ function Message({ error }: Props) {
 
     return (
         <Stack spacing={2}>
-            <Box>
-                <MessageWithLink messageID="error.message" />
-            </Box>
+            <Instructions message={message} />
             <Stack direction="row" spacing={1}>
                 <Typography sx={{ fontWeight: 'bold' }}>
                     <FormattedMessage id="error.messageLabel" />

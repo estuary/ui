@@ -3,12 +3,10 @@ import { LRUCache } from 'lru-cache';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
-import {
-    CustomEvents,
-    logRocketConsole,
-    logRocketEvent,
-} from 'services/logrocket';
+import { logRocketConsole } from 'services/logrocket';
+import { logRocketEvent } from 'services/shared';
 import { ERROR_MESSAGES } from 'services/supabase';
+import { CustomEvents } from 'services/types';
 import { SWRConfig } from 'swr';
 import { BaseComponentProps } from 'types';
 
