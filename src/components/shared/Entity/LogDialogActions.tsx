@@ -58,10 +58,7 @@ function LogDialogActions({
                         disabled={formStatus !== FormStatus.SAVED}
                         onClick={async () => {
                             logRocketEvent(
-                                CustomEvents.CAPTURE_MATERIALIZE_ATTEMPT,
-                                {
-                                    catalogName,
-                                }
+                                CustomEvents.CAPTURE_MATERIALIZE_ATTEMPT
                             );
 
                             await materialize.action();
