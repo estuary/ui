@@ -228,7 +228,7 @@ export const logRocketConsole = (message: string, ...props: any[]) => {
         LogRocket.log(message, props);
     }
 
-    if (process.env.NODE_ENV === 'development') {
+    if (!import.meta.env.PROD) {
         console.log(message, props);
     }
 };

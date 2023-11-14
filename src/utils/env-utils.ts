@@ -16,7 +16,7 @@ declare global {
 
 const ENABLED = 'true';
 
-export const isProduction = process.env.NODE_ENV === 'production';
+export const isProduction = import.meta.env.PROD;
 
 export const getAppVersion = () => {
     return import.meta.env.VITE_VERSION;
