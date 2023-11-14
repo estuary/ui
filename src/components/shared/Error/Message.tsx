@@ -22,16 +22,16 @@ function Message({ error }: Props) {
     //      needs translated. However, Our shortest keys (cta.foo)
     //      can also look a lot like how Supabase returns
     //      errors when fetching wrong keys from a table (tableName.col).
-    const displayOnlyError =
+    const displayErrorOnly =
         (typeof error === 'object' && error.hasOwnProperty('code')) ||
         failedAfterRetry;
 
     // We do not need to translate messages from Supabase as they comeback readable
-    const message = displayOnlyError
+    const message = displayErrorOnly
         ? error.message
         : intl.formatMessage({ id: error.message });
 
-    if (!displayOnlyError) {
+    if (!displayErrorOnly) {
         return (
             <Box sx={{ my: 1 }}>
                 <Typography>{message}</Typography>
