@@ -2,18 +2,14 @@
 <html lang="en">
     <head>
         <!-- Need to set this !BEFORE! any loading of scripts is started -->
-        <script
-            vite-if="VITE_LOGROCKET_CDN_URL && VITE_LOGROCKET_ENABLED === true"
-        >
-            window._lrAsyncScript = '<{REACT_APP_LOGROCKET_CDN_URL}>';
+        <script vite-if="VITE_LOGROCKET_CDN_URL && VITE_LOGROCKET_ENABLED">
+            window._lrAsyncScript = '%VITE_LOGROCKET_CDN_URL%';
         </script>
 
         <!-- Make sure this loads quick -->
-        <script vite-if="VITE_OSANO_PATH" src="<{VITE_OSANO_PATH}>"></script>
-
-        <!-- Used to hide the Cookie Widget -->
-        <style type="text/css" vite-if="VITE_OSANO_PATH">
-            body.<{VITE_OSANO_HIDE_WIDGET_CLASS}> .osano-cm-widget {
+        <script src="%VITE_OSANO_PATH%" />
+        <style type="text/css">
+            body.%VITE_OSANO_HIDE_WIDGET_CLASS% .osano-cm-widget {
                 display: none;
             }
         </style>
@@ -24,7 +20,7 @@
 
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
         <link rel="manifest" href="/manifest.json" />
-        <title><{VITE_DEFAULT_PAGE_TITLE}></title>
+        <title>%VITE_DEFAULT_PAGE_TITLE%</title>
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
