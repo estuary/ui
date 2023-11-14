@@ -12,7 +12,7 @@ interface Props {
     closeCtaKey?: string;
     taskNames?: string[];
     materialize?: {
-        action: (catalogName: string) => Promise<void>;
+        action: () => Promise<void>;
         title: string;
     };
 }
