@@ -2,8 +2,11 @@
 <html lang="en">
     <head>
         <!-- Need to set this !BEFORE! any loading of scripts is started -->
-        <script vite-if="VITE_LOGROCKET_CDN_URL && VITE_LOGROCKET_ENABLED">
-            window._lrAsyncScript = '%VITE_LOGROCKET_CDN_URL%';
+        <script>
+            const lr_url = '%VITE_LOGROCKET_CDN_URL%';
+            if (lr_url.length > 0 && '%VITE_LOGROCKET_ENABLED%' === 'true') {
+                window._lrAsyncScript = lr_url;
+            }
         </script>
 
         <!-- Make sure this loads quick -->
