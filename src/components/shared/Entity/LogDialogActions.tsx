@@ -1,5 +1,4 @@
 import { Box, Button, Stack } from '@mui/material';
-import { useEditorStore_catalogName } from 'components/editor/Store/hooks';
 import Status from 'components/shared/Entity/Status';
 import { TaskEndpoint } from 'components/shared/TaskEndpoints';
 import { FormattedMessage } from 'react-intl';
@@ -25,7 +24,6 @@ function LogDialogActions({
     materialize,
 }: Props) {
     const formStatus = useFormStateStore_status();
-    const catalogName = useEditorStore_catalogName();
 
     // Only show endpoints after a completed publication, since publishing can potentially
     // change the endpoints.
@@ -66,7 +64,7 @@ function LogDialogActions({
                                 }
                             );
 
-                            await materialize.action(catalogName);
+                            await materialize.action();
                         }}
                     >
                         <FormattedMessage id={materialize.title} />
