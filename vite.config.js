@@ -5,7 +5,6 @@ import topLevelAwait from 'vite-plugin-top-level-await';
 import wasm from 'vite-plugin-wasm';
 import checker from 'vite-plugin-checker';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
-import vitePluginHtmlEnv from 'vite-plugin-html-env';
 import viteCompression from 'vite-plugin-compression';
 import { ViteImageOptimizer as viteImageOptimizer } from 'vite-plugin-image-optimizer';
 import circleDependency from 'vite-plugin-circular-dependency';
@@ -37,9 +36,6 @@ export default defineConfig({
         topLevelAwait(),
         viteCompression(),
         viteImageOptimizer({}),
-        vitePluginHtmlEnv({
-            compiler: true,
-        }),
         viteTsconfigPaths(),
         wasm(),
     ],
