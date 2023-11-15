@@ -176,6 +176,7 @@ function useEntityWorkflowHelpers() {
             );
             logRocketEvent(CustomEvents.CAPTURE_MATERIALIZE_FAILED);
         } else {
+            logRocketEvent(CustomEvents.CAPTURE_MATERIALIZE_SUCCESS);
             exit(
                 getPathWithParams(
                     authenticatedRoutes.materializations.create.fullPath,
