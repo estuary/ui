@@ -20,7 +20,8 @@
         "preview": "vite preview",
         "start": "vite",
         "test": "vitest",
-        "typecheck": "tsc"
+        "typecheck": "tsc",
+        "installDataPlane": "npm install 'https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main'"
     },
     "dependencies": {
         "@date-fns/utc": "^1.0.0",
