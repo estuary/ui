@@ -2,6 +2,7 @@ import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
+    useEditorStore_setCatalogName,
 } from 'components/editor/Store/hooks';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
@@ -39,6 +40,7 @@ function useDiscoverCapture(
     const persistedDraftId = useEditorStore_persistedDraftId();
     const isSaving = useEditorStore_isSaving();
     const resetEditorState = useEditorStore_resetState();
+    const setCatalogName = useEditorStore_setCatalogName();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
@@ -87,6 +89,7 @@ function useDiscoverCapture(
                 return false;
             }
             resetEditorState(true);
+            setCatalogName(processedEntityName);
 
             const encryptedEndpointConfig = await configEncrypt(
                 serverUpdateRequired
@@ -141,6 +144,7 @@ function useDiscoverCapture(
             resourceConfigHasErrors,
             serverEndpointConfigData,
             serverUpdateRequired,
+            setCatalogName,
             setFormState,
             startDiscovery,
             updateFormStatus,

@@ -2,6 +2,8 @@ import { Box, Button, Stack } from '@mui/material';
 import Status from 'components/shared/Entity/Status';
 import { TaskEndpoint } from 'components/shared/TaskEndpoints';
 import { FormattedMessage } from 'react-intl';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 
@@ -10,7 +12,7 @@ interface Props {
     closeCtaKey?: string;
     taskNames?: string[];
     materialize?: {
-        action: any;
+        action: () => Promise<void>;
         title: string;
     };
 }
@@ -54,7 +56,13 @@ function LogDialogActions({
                 {materialize ? (
                     <Button
                         disabled={formStatus !== FormStatus.SAVED}
-                        onClick={materialize.action}
+                        onClick={async () => {
+                            logRocketEvent(
+                                CustomEvents.CAPTURE_MATERIALIZE_ATTEMPT
+                            );
+
+                            await materialize.action();
+                        }}
                     >
                         <FormattedMessage id={materialize.title} />
                     </Button>
