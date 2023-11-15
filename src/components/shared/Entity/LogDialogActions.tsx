@@ -42,12 +42,11 @@ function LogDialogActions({
             <Box sx={{ pl: 2 }}>
                 <Status />
             </Box>
+
             {endpoints}
+
             <Stack direction="row" spacing={2}>
-                <Button
-                    variant={materialize ? 'outlined' : 'contained'}
-                    onClick={close}
-                >
+                <Button onClick={close}>
                     <FormattedMessage id={closeCtaKey ?? 'cta.close'} />
                 </Button>
 

@@ -31,9 +31,11 @@ function DetailContent() {
                         {catalogName}
                     </Typography>
 
-                    <EditButton />
+                    <Stack direction="row">
+                        <MaterializeButton />
 
-                    <MaterializeButton />
+                        <EditButton />
+                    </Stack>
                 </Stack>
 
                 <Divider />
