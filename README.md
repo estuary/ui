@@ -21,6 +21,14 @@ You need to update `~/.npmrc` with the following:
 
 [Github docs](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token).
 
+### npm ERR! code EINTEGRITY for `data-plane-gateway`
+
+Every so often we need to reinstall the data plane stuff to update the integrity with the following:
+
+```
+npm run installDataPlane
+```
+
 # How to start/run?
 
 Make sure [Estuary Flow](https://github.com/estuary/flow) and [Supabase CLI](https://github.com/supabase/cli) are installed and running.
