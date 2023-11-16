@@ -145,7 +145,7 @@ function useEntityWorkflowHelpers() {
 
             navigate(route, { replace: true });
         },
-        [catalogName, entityType, generatePath, navigate, resetState]
+        [catalogName, generatePath, navigate, resetState]
     );
 
     // Form Event Handlers

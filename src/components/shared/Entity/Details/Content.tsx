@@ -32,9 +32,9 @@ function DetailContent() {
                     </Typography>
 
                     <Stack direction="row">
-                        <MaterializeButton />
+                        <EditButton buttonVariant="outlined" />
 
-                        <EditButton />
+                        <MaterializeButton />
                     </Stack>
                 </Stack>
 
