@@ -10,30 +10,19 @@ import {
     Typography,
 } from '@mui/material';
 import useUserInformationByPrefix from 'hooks/useUserInformationByPrefix';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Grants_User } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
-    emails: string[];
     prefix: string;
-    setEmails: Dispatch<SetStateAction<string[]>>;
-    setSubscriptionsToCancel: Dispatch<SetStateAction<string[]>>;
-    subscribedEmails: string[];
-    subscriptionsToCancel: string[];
+    updates: { [prefix: string]: string[] };
 }
 
 const simpleEmailRegEx = new RegExp(/.+@.+/m);
 
-function EmailSelector({
-    emails,
-    prefix,
-    setEmails,
-    setSubscriptionsToCancel,
-    subscribedEmails,
-    subscriptionsToCancel,
-}: Props) {
+function EmailSelector({ prefix, updates }: Props) {
     const intl = useIntl();
 
     const [inputValue, setInputValue] = useState('');
@@ -41,18 +30,31 @@ function EmailSelector({
 
     const { data } = useUserInformationByPrefix(prefix, 'admin');
 
+    const emails = useMemo(
+        () => (Object.hasOwn(updates, prefix) ? updates[prefix] : []),
+        [prefix, updates]
+    );
+
     return (
         <FormControl fullWidth>
             <Autocomplete
                 disabled={!prefix}
                 disableCloseOnSelect
                 filterOptions={(options) =>
-                    options.filter((option) =>
-                        typeof option === 'string'
-                            ? option.includes(inputValue)
-                            : option.user_email.includes(inputValue) ||
-                              option.user_full_name.includes(inputValue)
-                    )
+                    options.filter((option) => {
+                        if (typeof option === 'string') {
+                            return option.includes(inputValue);
+                        }
+
+                        if (option.user_full_name) {
+                            return (
+                                option.user_email.includes(inputValue) ||
+                                option.user_full_name.includes(inputValue)
+                            );
+                        }
+
+                        return option.user_email.includes(inputValue);
+                    })
                 }
                 freeSolo
                 getOptionLabel={(option) =>
@@ -61,69 +63,29 @@ function EmailSelector({
                 handleHomeEndKeys
                 inputValue={inputValue}
                 multiple
-                onChange={(_event, values, reason, details) => {
+                onChange={(_event, values, reason) => {
                     if (inputErrorExists) {
                         setInputErrorExists(false);
                     }
 
                     const newValue = values[values.length - 1];
 
-                    if (reason === 'createOption') {
-                        if (
-                            typeof newValue === 'string' &&
-                            !simpleEmailRegEx.test(newValue)
-                        ) {
-                            setInputErrorExists(true);
-                            setInputValue(newValue);
+                    if (
+                        reason === 'createOption' &&
+                        typeof newValue === 'string' &&
+                        !simpleEmailRegEx.test(newValue)
+                    ) {
+                        setInputErrorExists(true);
+                        setInputValue(newValue);
 
-                            return;
-                        }
-
-                        const updatedPendingCancellations =
-                            subscriptionsToCancel.filter(
-                                (email) => email !== newValue
-                            );
-
-                        setSubscriptionsToCancel(updatedPendingCancellations);
-                    }
-
-                    if (reason === 'selectOption' && details) {
-                        const value =
-                            typeof details.option !== 'string'
-                                ? details.option.user_email
-                                : details.option;
-
-                        const updatedPendingCancellations =
-                            subscriptionsToCancel.filter(
-                                (email) => email !== value
-                            );
-
-                        setSubscriptionsToCancel(updatedPendingCancellations);
-                    }
-
-                    if (reason === 'removeOption' && details) {
-                        const email =
-                            typeof details.option !== 'string'
-                                ? details.option.user_email
-                                : details.option;
-
-                        if (subscribedEmails.includes(email)) {
-                            setSubscriptionsToCancel([
-                                ...subscriptionsToCancel,
-                                email,
-                            ]);
-                        }
-                    }
-
-                    if (reason === 'clear') {
-                        setSubscriptionsToCancel(subscribedEmails);
+                        return;
                     }
 
                     const updatedEmails = values.map((value) =>
                         typeof value === 'string' ? value : value.user_email
                     );
 
-                    setEmails(updatedEmails);
+                    updates[prefix] = updatedEmails;
                 }}
                 onInputChange={(_event, value) => {
                     setInputValue(value);
@@ -148,17 +110,9 @@ function EmailSelector({
                             return;
                         }
 
-                        const updatedEmails = [...emails, ...enteredEmails];
+                        updates[prefix].push(...enteredEmails);
 
-                        setEmails(updatedEmails);
                         setInputValue('');
-
-                        const updatedPendingCancellations =
-                            subscriptionsToCancel.filter(
-                                (email) => !updatedEmails.includes(email)
-                            );
-
-                        setSubscriptionsToCancel(updatedPendingCancellations);
                     }
                 }}
                 options={
@@ -186,7 +140,6 @@ function EmailSelector({
                     />
                 )}
                 renderOption={(renderOptionProps, option) => {
-                    console.log('option', option);
                     return typeof option === 'string' ? (
                         <Typography>{option}</Typography>
                     ) : (

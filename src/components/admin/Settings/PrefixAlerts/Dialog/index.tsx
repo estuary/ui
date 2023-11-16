@@ -25,6 +25,8 @@ interface Props {
 
 const TITLE_ID = 'alert-subscription-dialog-title';
 
+let emailDictionary: { [prefix: string]: string[] } = {};
+
 function AlertSubscriptionDialog({
     headerId,
     open,
@@ -57,6 +59,14 @@ function AlertSubscriptionDialog({
             setEmails(subscribedEmails);
         }
     }, [open, setEmails, subscribedEmails]);
+
+    useEffect(() => {
+        if (open && prefix && !Object.hasOwn(emailDictionary, prefix)) {
+            emailDictionary[prefix] = subscribedEmails;
+        }
+    }, [open, prefix, setEmails, subscribedEmails]);
+
+    console.log('email dictionary', emailDictionary);
 
     const updatePrefix = (value: string, errors: string | null) => {
         // if (serverError) {
@@ -116,24 +126,10 @@ function AlertSubscriptionDialog({
 
                     <Grid item xs={12} md={7} sx={{ display: 'flex' }}>
                         <EmailSelector
-                            emails={emails}
                             prefix={prefix}
-                            setEmails={setEmails}
-                            setSubscriptionsToCancel={setSubscriptionsToCancel}
-                            subscribedEmails={subscribedEmails}
-                            subscriptionsToCancel={subscriptionsToCancel}
+                            updates={emailDictionary}
                         />
                     </Grid>
-
-                    {/* <Grid item xs={12}>
-                        <Button
-                            size="small"
-                            variant="text"
-                            startIcon={<AddCircle />}
-                        >
-                            Add alert method
-                        </Button>
-                    </Grid> */}
                 </Grid>
             </DialogContent>
 
@@ -144,6 +140,7 @@ function AlertSubscriptionDialog({
                     onClick={(event: React.MouseEvent<HTMLElement>) => {
                         event.preventDefault();
 
+                        emailDictionary = {};
                         setOpen(false);
                     }}
                 >
