@@ -3,6 +3,7 @@ import {
     createNotificationSubscription,
     deleteNotificationSubscription,
 } from 'api/alerts';
+import { EmailDictionary } from 'components/admin/Settings/PrefixAlerts/types';
 import { useZustandStore } from 'context/Zustand/provider';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -11,22 +12,22 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
-import { appendWithForwardSlash, hasLength } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     disabled: boolean;
+    existingEmails: EmailDictionary;
     prefix: string;
     setOpen: Dispatch<SetStateAction<boolean>>;
-    subscriptionsToCancel: string[];
-    subscriptionsToCreate: string[];
+    updatedEmails: EmailDictionary;
 }
 
 function SaveButton({
     disabled,
+    existingEmails,
     prefix,
     setOpen,
-    subscriptionsToCancel,
-    subscriptionsToCreate,
+    updatedEmails,
 }: Props) {
     const hydrate = useZustandStore<
         SelectableTableStore,
@@ -42,14 +43,34 @@ function SaveButton({
         event.preventDefault();
         setLoading(true);
 
-        const processedPrefix = appendWithForwardSlash(prefix);
+        const subscriptionsToCreate: [string, string][] = [];
 
-        const createdSubscriptions = subscriptionsToCreate.map((email) =>
-            createNotificationSubscription(processedPrefix, email)
+        Object.entries(updatedEmails).forEach(([key, value]) => {
+            value
+                .filter((email) => !existingEmails[key].includes(email))
+                .map((email): [string, string] => [key, email])
+                .forEach((subscriptionMetadata) => {
+                    subscriptionsToCreate.push(subscriptionMetadata);
+                });
+        });
+
+        const createdSubscriptions = subscriptionsToCreate.map(([key, email]) =>
+            createNotificationSubscription(key, email)
         );
 
-        const cancelledSubscriptions = subscriptionsToCancel.map((email) =>
-            deleteNotificationSubscription(email, processedPrefix)
+        const subscriptionsToCancel: [string, string][] = [];
+
+        Object.entries(updatedEmails).forEach(([key, value]) => {
+            existingEmails[key]
+                .filter((email) => !value.includes(email))
+                .map((email): [string, string] => [key, email])
+                .forEach((subscriptionMetadata) => {
+                    subscriptionsToCancel.push(subscriptionMetadata);
+                });
+        });
+
+        const cancelledSubscriptions = subscriptionsToCancel.map(
+            ([key, email]) => deleteNotificationSubscription(email, key)
         );
 
         const responses = await Promise.all([

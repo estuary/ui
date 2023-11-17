@@ -9,20 +9,22 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
+import { EmailDictionary } from 'components/admin/Settings/PrefixAlerts/types';
 import useUserInformationByPrefix from 'hooks/useUserInformationByPrefix';
-import { useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Grants_User } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     prefix: string;
-    updates: { [prefix: string]: string[] };
+    emailsByPrefix: EmailDictionary;
+    setEmailsByPrefix: Dispatch<SetStateAction<EmailDictionary>>;
 }
 
 const simpleEmailRegEx = new RegExp(/.+@.+/m);
 
-function EmailSelector({ prefix, updates }: Props) {
+function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
     const intl = useIntl();
 
     const [inputValue, setInputValue] = useState('');
@@ -31,8 +33,9 @@ function EmailSelector({ prefix, updates }: Props) {
     const { data } = useUserInformationByPrefix(prefix, 'admin');
 
     const emails = useMemo(
-        () => (Object.hasOwn(updates, prefix) ? updates[prefix] : []),
-        [prefix, updates]
+        () =>
+            Object.hasOwn(emailsByPrefix, prefix) ? emailsByPrefix[prefix] : [],
+        [prefix, emailsByPrefix]
     );
 
     return (
@@ -81,11 +84,14 @@ function EmailSelector({ prefix, updates }: Props) {
                         return;
                     }
 
-                    const updatedEmails = values.map((value) =>
+                    const modifiedEmails = values.map((value) =>
                         typeof value === 'string' ? value : value.user_email
                     );
 
-                    updates[prefix] = updatedEmails;
+                    setEmailsByPrefix({
+                        ...emailsByPrefix,
+                        [prefix]: modifiedEmails,
+                    });
                 }}
                 onInputChange={(_event, value) => {
                     setInputValue(value);
@@ -110,7 +116,13 @@ function EmailSelector({ prefix, updates }: Props) {
                             return;
                         }
 
-                        updates[prefix].push(...enteredEmails);
+                        setEmailsByPrefix({
+                            ...emailsByPrefix,
+                            [prefix]: [
+                                ...emailsByPrefix[prefix],
+                                ...enteredEmails,
+                            ],
+                        });
 
                         setInputValue('');
                     }

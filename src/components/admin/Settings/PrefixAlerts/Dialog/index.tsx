@@ -10,8 +10,9 @@ import {
 } from '@mui/material';
 import SaveButton from 'components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
 import EmailSelector from 'components/admin/Settings/PrefixAlerts/EmailSelector';
+import { EmailDictionary } from 'components/admin/Settings/PrefixAlerts/types';
 import PrefixedName from 'components/inputs/PrefixedName';
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { PrefixSubscriptionDictionary } from 'utils/notification-utils';
 
@@ -25,8 +26,6 @@ interface Props {
 
 const TITLE_ID = 'alert-subscription-dialog-title';
 
-let emailDictionary: { [prefix: string]: string[] } = {};
-
 function AlertSubscriptionDialog({
     headerId,
     open,
@@ -39,34 +38,38 @@ function AlertSubscriptionDialog({
     const [prefix, setPrefix] = useState(staticPrefix ? staticPrefix : '');
     const [prefixHasErrors, setPrefixHasErrors] = useState(false);
 
-    const [emails, setEmails] = useState<string[]>([]);
-    const [subscriptionsToCancel, setSubscriptionsToCancel] = useState<
-        string[]
-    >([]);
-
-    const subscribedEmails = useMemo(
-        () =>
-            prefix && Object.hasOwn(subscriptions, prefix)
-                ? subscriptions[prefix].userSubscriptions.map(
-                      ({ email }) => email
-                  )
-                : [],
-        [prefix, subscriptions]
-    );
+    const [existingEmails, setExistingEmails] = useState<EmailDictionary>({});
+    const [updatedEmails, setUpdatedEmails] = useState<EmailDictionary>({});
 
     useEffect(() => {
         if (open) {
-            setEmails(subscribedEmails);
+            const emails = {};
+
+            Object.entries(subscriptions).forEach(([key, value]) => {
+                emails[key] = value.userSubscriptions.map(({ email }) => email);
+            });
+
+            setExistingEmails(emails);
         }
-    }, [open, setEmails, subscribedEmails]);
+    }, [open, subscriptions, setExistingEmails]);
+
+    console.log('exist', existingEmails);
 
     useEffect(() => {
-        if (open && prefix && !Object.hasOwn(emailDictionary, prefix)) {
-            emailDictionary[prefix] = subscribedEmails;
+        if (
+            open &&
+            prefix &&
+            Object.hasOwn(existingEmails, prefix) &&
+            !Object.hasOwn(updatedEmails, prefix)
+        ) {
+            setUpdatedEmails({
+                ...updatedEmails,
+                [prefix]: existingEmails[prefix],
+            });
         }
-    }, [open, prefix, setEmails, subscribedEmails]);
+    }, [open, prefix, existingEmails, setUpdatedEmails, updatedEmails]);
 
-    console.log('email dictionary', emailDictionary);
+    console.log('email dictionary', updatedEmails);
 
     const updatePrefix = (value: string, errors: string | null) => {
         // if (serverError) {
@@ -75,8 +78,6 @@ function AlertSubscriptionDialog({
 
         setPrefix(value);
         setPrefixHasErrors(Boolean(errors));
-
-        setSubscriptionsToCancel([]);
     };
 
     return (
@@ -127,7 +128,8 @@ function AlertSubscriptionDialog({
                     <Grid item xs={12} md={7} sx={{ display: 'flex' }}>
                         <EmailSelector
                             prefix={prefix}
-                            updates={emailDictionary}
+                            emailsByPrefix={updatedEmails}
+                            setEmailsByPrefix={setUpdatedEmails}
                         />
                     </Grid>
                 </Grid>
@@ -140,7 +142,7 @@ function AlertSubscriptionDialog({
                     onClick={(event: React.MouseEvent<HTMLElement>) => {
                         event.preventDefault();
 
-                        emailDictionary = {};
+                        setUpdatedEmails({});
                         setOpen(false);
                     }}
                 >
@@ -149,12 +151,10 @@ function AlertSubscriptionDialog({
 
                 <SaveButton
                     disabled={Boolean(prefixHasErrors)}
+                    existingEmails={existingEmails}
                     prefix={prefix}
                     setOpen={setOpen}
-                    subscriptionsToCancel={subscriptionsToCancel}
-                    subscriptionsToCreate={emails.filter(
-                        (email) => !subscribedEmails.includes(email)
-                    )}
+                    updatedEmails={updatedEmails}
                 />
             </DialogActions>
         </Dialog>
