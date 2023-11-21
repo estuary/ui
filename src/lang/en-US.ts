@@ -1300,6 +1300,10 @@ const Notifications: ResolvedIntlConfig['messages'] = {
     'notifications.paymentMethods.missing.trialPast.instructions': `Please {cta} to continue using Estuary Flow.`,
 };
 
+const JsonForms: ResolvedIntlConfig['messages'] = {
+    'jsonForms.clearInput': `Clear input field`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1361,6 +1365,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...NotBeforeNotAfter,
     ...Notifications,
     ...Fetchers,
+    ...JsonForms,
 };
 
 export default enUSMessages;
