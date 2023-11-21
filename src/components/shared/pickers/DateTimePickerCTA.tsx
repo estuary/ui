@@ -2,6 +2,9 @@ import { StaticDateTimePicker } from '@mui/x-date-pickers';
 import { formatRFC3339 } from 'date-fns';
 import { Calendar } from 'iconoir-react';
 import { useMemo } from 'react';
+import { BaseComponentProps } from 'types';
+import { Typography } from '@mui/material';
+import { FormattedMessage } from 'react-intl';
 import { INVALID_DATE, TIMEZONE_OFFSET_REPLACEMENT } from './shared';
 import { PickerProps } from './types';
 import DateOrTimePickerWrapper from './DateOrTimePickerWrapper';
@@ -22,6 +25,24 @@ const formatDate = (formatValue: Date) => {
         return INVALID_DATE;
     }
 };
+
+function PaperContent({ children }: BaseComponentProps) {
+    return (
+        <>
+            {children}
+            <Typography
+                sx={{
+                    textAlign: 'right',
+                    marginRight: 2,
+                    marginBottom: 1,
+                }}
+                variant="caption"
+            >
+                <FormattedMessage id="dateTimePicker.picker.footer" />
+            </Typography>
+        </>
+    );
+}
 
 // TODO (date time picker) weird date formatting issue
 // If the user types in a short value (that can be parsed as a date. ex: "1", "12", etc.) If they open the date picker
@@ -62,6 +83,9 @@ function DateTimePickerCTA(props: PickerProps) {
                 inputFormat="YYYY-mm-ddTHH:mm:ssZ"
                 openTo="day"
                 value={cleanedValue}
+                components={{
+                    PaperContent,
+                }}
                 onAccept={state.close}
                 onChange={(
                     onChangeValue: any,
