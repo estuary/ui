@@ -44,6 +44,12 @@ export const getCollectionName = (binding: any) => {
     return getCollectionNameDirectly(scopedBinding);
 };
 
+export const getBindingIndex = (bindings: any[], collectionName: string) => {
+    return bindings.findIndex(
+        (binding: any) => getCollectionName(binding) === collectionName
+    );
+};
+
 export const getDisableProps = (disable: boolean | undefined) => {
     return disable ? { disable } : {};
 };
