@@ -1,3 +1,4 @@
+import { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import { DIRECTIVES } from 'directives/shared';
 import { UserClaims } from 'directives/types';
 import {
@@ -9,6 +10,7 @@ import {
     RPCS,
     SortingProps,
     supabaseClient,
+    supabaseRetry,
     TABLES,
     updateSupabase,
 } from 'services/supabase';
@@ -56,12 +58,15 @@ const callUpdate = (
 };
 
 const exchangeBearerToken = async (token: string) => {
-    return supabaseClient
-        .rpc<ExchangeResponse>(RPCS.EXCHANGE_DIRECTIVES, {
-            bearer_token: token,
-        })
-        .throwOnError()
-        .single();
+    return supabaseRetry<PostgrestSingleResponse<ExchangeResponse>>(
+        () =>
+            supabaseClient
+                .rpc(RPCS.EXCHANGE_DIRECTIVES, {
+                    bearer_token: token,
+                })
+                .single(),
+        'exchangeBearerToken'
+    );
 };
 
 const submitDirective = async (
@@ -146,18 +151,22 @@ const generateGrantDirective = (
 };
 
 const getDirectiveByToken = async (token: string) => {
-    const data = await supabaseClient
-        .from(TABLES.DIRECTIVES)
-        .select(`spec,token`)
-        .eq('token', token)
-        .then(
-            handleSuccess<Pick<GrantDirective, 'spec' | 'token'>[]>,
-            handleFailure
-        );
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.DIRECTIVES)
+                .select(`spec,token`)
+                .eq('token', token),
+        'getDirectiveByToken'
+    ).then(
+        handleSuccess<Pick<GrantDirective, 'spec' | 'token'>[]>,
+        handleFailure
+    );
 
     return data;
 };
 
+// Used in table hydrator which handles the retrying
 const getDirectivesByType = (
     directiveType: keyof typeof DIRECTIVES,
     pagination: any,

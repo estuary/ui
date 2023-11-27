@@ -18,6 +18,7 @@ import {
     handleSuccess,
     SortingProps,
     supabaseClient,
+    supabaseRetry,
     TABLES,
 } from 'services/supabase';
 import {
@@ -187,7 +188,10 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
             throw new Error('Unsupported filter used in Stats Query');
     }
 
-    return queryBuilder.then(handleSuccess<CatalogStats[]>, handleFailure);
+    return supabaseRetry(() => queryBuilder, '').then(
+        handleSuccess<CatalogStats[]>,
+        handleFailure
+    );
 };
 
 const getStatsForBilling = (tenants: string[], startDate: AllowedDates) => {

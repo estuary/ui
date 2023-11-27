@@ -98,6 +98,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'filter.time.thisMonth': `This Month`,
 
     'catalogName.limitations': `letters, numbers, periods, underscores, and hyphens`,
+
+    'support.email': `mailto:support@estuary.dev`,
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -142,6 +144,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.showAll': `Show All`,
     'cta.reload': `Reload`,
     'cta.evolve': `Apply`,
+    'cta.support': `contact support`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -168,9 +171,12 @@ const Data: ResolvedIntlConfig['messages'] = {
 
 const Error: ResolvedIntlConfig['messages'] = {
     'error.title': `Error`,
-    'error.message': `This is not something you did wrong. There was a technical issue. Please {docLink}.`,
-    'error.message.docLink': `contact support`,
-    'error.message.docPath': `mailto:support@estuary.dev`,
+    'error.reason.fetchFailed': `There was a network issue while contacting our servers. Please make sure your network is available and try again.`,
+
+    'error.instructions': `If the issue persists please {docLink}.`,
+    'error.instructions.docLink': `${CTAs['cta.support']}`,
+    'error.instructions.docPath': `${CommonMessages['support.email']}`,
+
     'error.codeLabel': `Code:`,
     'error.messageLabel': `Message:`,
     'error.detailsLabel': `Details:`,
@@ -1163,6 +1169,7 @@ const NewTransform: ResolvedIntlConfig['messages'] = {
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
     'oauth.error.credentialsMissing': `need to complete OAuth`,
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
+    'dateTimePicker.picker.footer': `Timezone: UTC`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
     'timePicker.button.ariaLabel': `Open time picker for {label}`,
 };
@@ -1319,6 +1326,10 @@ const Notifications: ResolvedIntlConfig['messages'] = {
     'notifications.paymentMethods.missing.trialPast.instructions': `Please {cta} to continue using Estuary Flow.`,
 };
 
+const JsonForms: ResolvedIntlConfig['messages'] = {
+    'jsonForms.clearInput': `Clear input field`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1380,6 +1391,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...NotBeforeNotAfter,
     ...Notifications,
     ...Fetchers,
+    ...JsonForms,
 };
 
 export default enUSMessages;

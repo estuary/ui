@@ -10,6 +10,7 @@ import {
     QUERY_PARAM_CONNECTOR_TITLE,
     SortingProps,
     supabaseClient,
+    supabaseRetry,
     TABLES,
 } from 'services/supabase';
 import {
@@ -230,11 +231,14 @@ const DETAILS_FORM_QUERY = `
 `;
 
 const getLiveSpecs_detailsForm = async (liveSpecId: string) => {
-    const data = await supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
-        .select(DETAILS_FORM_QUERY)
-        .eq('id', liveSpecId)
-        .then(handleSuccess<LiveSpecsExtQuery_DetailsForm[]>, handleFailure);
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.LIVE_SPECS_EXT)
+                .select(DETAILS_FORM_QUERY)
+                .eq('id', liveSpecId),
+        'getLiveSpecs_detailsForm'
+    ).then(handleSuccess<LiveSpecsExtQuery_DetailsForm[]>, handleFailure);
 
     return data;
 };
@@ -252,12 +256,15 @@ const getLiveSpecsByCatalogName = async (
     catalogName: string,
     specType: Entity
 ) => {
-    const data = await supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
-        .select(`id,catalog_name,spec_type,spec,last_pub_id`)
-        .eq('catalog_name', catalogName)
-        .eq('spec_type', specType)
-        .then(handleSuccess<LiveSpecsExtQuery_ByCatalogName[]>, handleFailure);
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.LIVE_SPECS_EXT)
+                .select(`id,catalog_name,spec_type,spec,last_pub_id`)
+                .eq('catalog_name', catalogName)
+                .eq('spec_type', specType),
+        'getLiveSpecsByCatalogName'
+    ).then(handleSuccess<LiveSpecsExtQuery_ByCatalogName[]>, handleFailure);
 
     return data;
 };
@@ -280,6 +287,7 @@ const getLiveSpecsByCatalogNames = async (
     > = [];
     let index = 0;
 
+    // TODO (retry) promise generator
     const queryPromiseGenerator = (idx: number) => {
         let query = supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
@@ -334,7 +342,10 @@ const getLiveSpecsByConnectorId = async (
         });
     }
 
-    const data = await queryBuilder.then(
+    const data = await supabaseRetry(
+        () => queryBuilder,
+        'getLiveSpecsByConnectorId'
+    ).then(
         handleSuccess<CaptureQueryWithSpec[] | MaterializationQueryWithSpec[]>,
         handleFailure
     );
@@ -352,11 +363,16 @@ export interface LiveSpecsExtQuery_ByLiveSpecId {
 }
 
 const getLiveSpecsByLiveSpecId = async (liveSpecId: string) => {
-    const data = await supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
-        .select('catalog_name,id,spec_type,last_pub_id,spec,connector_id')
-        .eq('id', liveSpecId)
-        .then(handleSuccess<LiveSpecsExtQuery_ByLiveSpecId[]>, handleFailure);
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.LIVE_SPECS_EXT)
+                .select(
+                    'catalog_name,id,spec_type,last_pub_id,spec,connector_id'
+                )
+                .eq('id', liveSpecId),
+        'getLiveSpecsByLiveSpecId'
+    ).then(handleSuccess<LiveSpecsExtQuery_ByLiveSpecId[]>, handleFailure);
 
     return data;
 };

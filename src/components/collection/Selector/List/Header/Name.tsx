@@ -1,4 +1,5 @@
 import { TextField } from '@mui/material';
+import ClearInput from 'components/shared/Input/Clear';
 import { useIntl } from 'react-intl';
 
 interface Props {
@@ -30,6 +31,14 @@ function CollectionSelectorHeaderName({
             size="small"
             variant="outlined"
             value={inputValue}
+            InputProps={{
+                endAdornment: (
+                    <ClearInput
+                        show={Boolean(!disabled && inputValue)}
+                        onClear={onChange}
+                    />
+                ),
+            }}
             onChange={(event) => {
                 onChange(event.target.value);
             }}

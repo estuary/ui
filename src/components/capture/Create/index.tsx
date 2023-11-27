@@ -16,7 +16,7 @@ import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { CustomEvents } from 'services/logrocket';
+import { CustomEvents } from 'services/types';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_entityNameChanged,

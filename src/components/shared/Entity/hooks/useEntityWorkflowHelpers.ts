@@ -16,7 +16,8 @@ import { useSnackbar } from 'notistack';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import { CustomEvents, logRocketEvent } from 'services/logrocket';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig/hooks';
 import {
@@ -180,6 +181,7 @@ function useEntityWorkflowHelpers() {
             );
             logRocketEvent(CustomEvents.CAPTURE_MATERIALIZE_FAILED);
         } else {
+            logRocketEvent(CustomEvents.CAPTURE_MATERIALIZE_SUCCESS);
             exit(
                 getPathWithParams(
                     authenticatedRoutes.materializations.create.fullPath,

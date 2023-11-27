@@ -4,7 +4,7 @@ import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { FormattedMessage } from 'react-intl';
-import { CustomEvents } from 'services/logrocket';
+import { CustomEvents } from 'services/types';
 import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,

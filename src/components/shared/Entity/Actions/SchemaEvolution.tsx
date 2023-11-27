@@ -16,7 +16,7 @@ import { useClient } from 'hooks/supabase-swr';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { logRocketEvent } from 'services/logrocket';
+import { logRocketEvent } from 'services/shared';
 import {
     DEFAULT_POLLER_ERROR,
     JOB_STATUS_COLUMNS,

@@ -4,7 +4,7 @@ import GitPodButton from 'components/transformation/create/GitPodButton';
 import InitializeDraftButton from 'components/transformation/create/InitializeDraftButton';
 import invariableStores from 'context/Zustand/invariableStores';
 import { useMemo } from 'react';
-import { CustomEvents } from 'services/logrocket';
+import { CustomEvents } from 'services/types';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_language,

@@ -2,10 +2,10 @@ import { Button } from '@mui/material';
 import useGenerateCatalog from 'components/materialization/useGenerateCatalog';
 import useSave from 'components/shared/Entity/Actions/useSave';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { CustomEvents } from 'services/types';
 import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { CustomEvents } from 'services/logrocket';
 
 interface Props {
     buttonLabelId: string;

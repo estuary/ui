@@ -22,7 +22,8 @@ import { useEffect, useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
-import { CustomEvents, logRocketEvent } from 'services/logrocket';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import {
     useBilling_hydrated,
     useBilling_invoicesInitialized,

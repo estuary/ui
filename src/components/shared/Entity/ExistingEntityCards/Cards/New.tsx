@@ -9,7 +9,8 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import { CustomEvents, logRocketEvent } from 'services/logrocket';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { DEFAULT_FILTER } from 'services/supabase';
 import { EntityWithCreateWorkflow } from 'types';
 

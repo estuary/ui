@@ -6,9 +6,9 @@ import {
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { FormattedMessage } from 'react-intl';
-import { CustomEvents } from 'services/logrocket';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import { CustomEvents } from 'services/types';
 
+import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import useSave from './useSave';
 
 interface Props {
