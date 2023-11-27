@@ -1,6 +1,4 @@
-import { PostgrestError } from '@supabase/postgrest-js';
 import { isEmpty, isFinite } from 'lodash';
-import { supabaseClient } from 'services/supabase';
 
 interface DataProcessingArguments {
     bytes_processed: number;
@@ -23,14 +21,6 @@ interface EmailConfig {
     content: string;
 }
 
-const corsHeaders = {};
-
-const RESEND_API_KEY = 're_QyHcrzEv_MJA46bvn7bwCt7rPN4vNXjxT';
-
-const returnPostgresError = (error: PostgrestError) => {
-    console.log(error);
-};
-
 export const handleSuccess = <T>(response: any) => {
     return response.error
         ? {
@@ -49,73 +39,107 @@ export const handleFailure = (error: any) => {
     };
 };
 
-const dataProcessingAlertType = 'data_not_processed_in_interval';
+// const dataProcessingAlertType = 'data_not_processed_in_interval';
 
-const TABLES = { ALERT_HISTORY: 'alert_history' };
+// const TABLES = { ALERT_HISTORY: 'alert_history' };
 
-const emailNotifications = async (
-    pendingNotifications: EmailConfig[]
-): Promise<void> => {
-    // TODO: Replace hardcoded sender and recipient address with the destructured `emails` property.
-    const notificationPromises = pendingNotifications.map(
-        ({ emails, content, subject }) =>
-            fetch('https://api.resend.com/emails', {
-                method: 'POST',
-                headers: {
-                    ...corsHeaders,
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${RESEND_API_KEY}`,
-                },
-                body: JSON.stringify({
-                    from: 'Estuary <onboarding@resend.dev>',
-                    to: ['tucker.kiahna@gmail.com'],
-                    subject,
-                    html: `
-                      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
-                        ${content}
-                      
-                        <p style="margin-bottom: 0;">Thanks,</p>
-                        <p style="margin-top: 0;">Estuary Team</p>
-                      </div>
-                    `,
-                }),
-            })
-    );
+const getTaskDetailsPageURL = (catalogName: string, specType: string) =>
+    `https://dashboard.estuary.dev/${specType}s/details/overview?catalogName=${catalogName}`;
 
-    await Promise.all(notificationPromises);
+const formatAlertEmail = ({
+    arguments: { emails, evaluation_interval, spec_type },
+    catalog_name,
+}: AlertRecord): EmailConfig => {
+    let formattedEvaluationInterval = evaluation_interval;
+
+    // A postgresql interval in hour increments has the following format: 'HH:00:00'.
+    if (evaluation_interval.includes(':')) {
+        const timeOffset = evaluation_interval.split(':');
+        const hours = Number(timeOffset[0]);
+
+        // Ideally, an hour-based interval less than ten would be represented by a single digit. To accomplish this,
+        // the hour segment of the evaluation interval is selected (i.e., timeOffset[0]) and attempted to be converted to a number.
+        // This conditional is a failsafe, in the event the aforementioned conversion fails which would result in the display
+        // of two digits for the hour (e.g., 02 hours instead of 2 hours).
+        formattedEvaluationInterval = isFinite(hours)
+            ? `${hours} hours`
+            : `${timeOffset[0]} hours`;
+    }
+
+    const subject = `Estuary Flow: Alert for ${spec_type} ${catalog_name}`;
+
+    const detailsPageURL = getTaskDetailsPageURL(catalog_name, spec_type);
+
+    const content = `<p>You are receiving this alert because your task, ${spec_type} ${catalog_name} hasn't seen new data in ${formattedEvaluationInterval}.  You can locate your task <a href="${detailsPageURL}" target="_blank" rel="noopener">here</a> to make changes or update its alerting settings.</p>`;
+
+    return {
+        content,
+        emails,
+        subject,
+    };
 };
 
-export const serve = async (_request: Request): Promise<Response> => {
-    const startTimestamp = new Date();
-    const minuteOffset = startTimestamp.getUTCMinutes() - 5;
+const formatConfirmationEmail = ({
+    arguments: { emails, spec_type },
+    catalog_name,
+}: AlertRecord): EmailConfig => {
+    const subject = `Estuary Flow: Alert for ${spec_type} ${catalog_name}`;
 
-    startTimestamp.setUTCMilliseconds(0);
-    startTimestamp.setUTCSeconds(0);
-    startTimestamp.setUTCMinutes(minuteOffset);
+    const detailsPageURL = getTaskDetailsPageURL(catalog_name, spec_type);
 
-    const { data: alerts, error: alertsError } = await supabaseClient
-        .from<AlertRecord>(TABLES.ALERT_HISTORY)
-        .select('*')
-        .eq('alert_type', dataProcessingAlertType)
-        .is('resolved_at', null)
-        .gt('fired_at', startTimestamp.toUTCString());
+    const content = `<p>You are receiving this notice because a previous alert for your task, ${spec_type} ${catalog_name}, has now resolved.  You can locate your task <a href="${detailsPageURL}" target="_blank" rel="noopener">here</a> to make changes or update its alerting settings.</p>`;
 
-    if (alertsError !== null) {
-        returnPostgresError(alertsError);
-    }
+    return {
+        content,
+        emails,
+        subject,
+    };
+};
 
-    const { data: confirmations, error: confirmationsError } =
-        await supabaseClient
-            .from<AlertRecord>(TABLES.ALERT_HISTORY)
-            .select('*')
-            .eq('alert_type', dataProcessingAlertType)
-            .gt('resolved_at', startTimestamp.toUTCString());
+const emailNotifications = async (
+    pendingNotification: EmailConfig,
+    token: string,
+    senderAddress: string
+): Promise<Response[]> => {
+    const { content, emails, subject } = pendingNotification;
 
-    if (confirmationsError !== null) {
-        returnPostgresError(confirmationsError);
-    }
+    const notificationPromises = emails.map((email) => {
+        return fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                ...corsHeaders,
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                from: senderAddress,
+                to: email,
+                subject,
+                html: `
+                  <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+                    ${content}
 
-    if (isEmpty(alerts) && isEmpty(confirmations)) {
+                    <p style="margin-bottom: 0;">Thanks,</p>
+                    <p style="margin-top: 0;">Estuary Team</p>
+                  </div>
+                `,
+            }),
+        });
+    });
+
+    return Promise.all(notificationPromises);
+};
+
+const corsHeaders = {};
+
+// const returnPostgresError = (error: PostgrestError) => {
+//     console.log(error);
+// };
+
+export const serve = async (request: Request): Promise<Response> => {
+    const alertRecord: AlertRecord = await request.json();
+
+    if (isEmpty(alertRecord)) {
         // Terminate the function without error if there aren't any active notifications in the system.
         return new Response(null, {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -123,63 +147,64 @@ export const serve = async (_request: Request): Promise<Response> => {
         });
     }
 
-    const pendingAlertEmails: EmailConfig[] = alerts
-        ? alerts.map(
-              ({
-                  arguments: { emails, evaluation_interval, spec_type },
-                  catalog_name,
-              }) => {
-                  let formattedEvaluationInterval = evaluation_interval;
+    const pendingEmail: EmailConfig =
+        alertRecord.resolved_at === null
+            ? formatAlertEmail(alertRecord)
+            : formatConfirmationEmail(alertRecord);
 
-                  // A postgresql interval in hour increments has the following format: 'HH:MM:SS'.
-                  if (evaluation_interval.includes(':')) {
-                      const timeOffset = evaluation_interval.split(':');
-                      const hours = Number(timeOffset[0]);
+    const resendToken = `Deno.env.get('RESEND_API_KEY')`;
+    const senderAddress = `Deno.env.get('RESEND_EMAIL_ADDRESS')`;
 
-                      formattedEvaluationInterval = isFinite(hours)
-                          ? `${hours} hours`
-                          : `${timeOffset[0]} hours`;
-                  }
-
-                  const subject = `Estuary Flow: Alert for ${spec_type} ${catalog_name}`;
-
-                  const content = `<p>You are receiving this alert because your task, ${spec_type} ${catalog_name} hasn't seen new data in ${formattedEvaluationInterval}.  You can locate your task <a href="https://dashboard.estuary.dev/captures/details/overview?catalogName=${catalog_name}" target="_blank" rel="noopener">here</a> to make changes or update its alerting settings.</p>`;
-
-                  return {
-                      content,
-                      emails,
-                      subject,
-                  };
-              }
-          )
-        : [];
-
-    const pendingConfirmationEmails: EmailConfig[] = confirmations
-        ? confirmations.map(
-              ({ arguments: { emails, spec_type }, catalog_name }) => {
-                  const subject = `Estuary Flow: Alert for ${spec_type} ${catalog_name}`;
-
-                  const content = `<p>You are receiving this alert because your task, ${spec_type} ${catalog_name} has resumed processing data.  You can locate your task <a href="https://dashboard.estuary.dev/captures/details/overview?catalogName=${catalog_name}" target="_blank" rel="noopener">here</a> to make changes or update its alerting settings.</p>`;
-
-                  return {
-                      content,
-                      emails,
-                      subject,
-                  };
-              }
-          )
-        : [];
-
-    const pendingEmails = [...pendingAlertEmails, ...pendingConfirmationEmails];
-
-    if (pendingEmails.length === 0) {
-        return new Response(null, {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 200,
-        });
+    if (!resendToken || !senderAddress) {
+        return new Response(
+            JSON.stringify({
+                error: {
+                    code: 'invalid_resend_credentials',
+                    message: `Unauthorized: access is denied due to invalid credentials.`,
+                    description: `The server could not verify that you are authorized to access the desired resource with the credentials provided.`,
+                },
+            }),
+            {
+                headers: {
+                    ...corsHeaders,
+                    'Content-Type': 'application/json',
+                },
+                status: 401,
+            }
+        );
     }
 
-    await emailNotifications(pendingEmails);
+    const responses = await emailNotifications(
+        pendingEmail,
+        resendToken,
+        senderAddress
+    );
+
+    const errors = responses.filter((response) => response.status >= 400);
+
+    if (errors.length > 0) {
+        console.info(`${responses.length - errors.length} emails sent.`);
+
+        errors.forEach(async (error) => {
+            console.error(await error.text());
+        });
+
+        return new Response(
+            JSON.stringify({
+                error: {
+                    code: 'email_send_failure',
+                    message: `Sending email failed.`,
+                    description: `Failed to send ${errors.length} emails.`,
+                },
+            }),
+            {
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                status: 500,
+            }
+        );
+    } else {
+        console.info(`${responses.length} emails sent.`);
+    }
 
     return new Response(null, {
         status: 200,

@@ -8,7 +8,7 @@ function useUserInformationByPrefix(
     capability: Capability
 ) {
     const { data, error, mutate, isValidating } = useSelectNew<Grants_User>(
-        getUserInformationByPrefix(objectRole, capability)
+        getUserInformationByPrefix([objectRole], capability)
     );
 
     return {

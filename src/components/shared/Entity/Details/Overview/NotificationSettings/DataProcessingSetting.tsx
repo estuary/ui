@@ -15,10 +15,10 @@ import {
 } from 'api/alerts';
 import { ErrorDetails } from 'components/shared/Error/types';
 import { defaultOutline } from 'context/Theme';
+import useInitializeTaskNotification from 'hooks/notifications/useInitializeTaskNotification';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useInitializeTaskNotification from 'hooks/useInitializeTaskNotification';
 import {
     Dispatch,
     SetStateAction,

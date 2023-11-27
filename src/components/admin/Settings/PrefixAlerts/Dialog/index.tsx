@@ -53,8 +53,6 @@ function AlertSubscriptionDialog({
         }
     }, [open, subscriptions, setExistingEmails]);
 
-    console.log('exist', existingEmails);
-
     useEffect(() => {
         if (
             open &&
@@ -68,8 +66,6 @@ function AlertSubscriptionDialog({
             });
         }
     }, [open, prefix, existingEmails, setUpdatedEmails, updatedEmails]);
-
-    console.log('email dictionary', updatedEmails);
 
     const updatePrefix = (value: string, errors: string | null) => {
         // if (serverError) {

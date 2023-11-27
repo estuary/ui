@@ -236,10 +236,10 @@ export interface Grants {
 export interface Grants_User {
     capability: string;
     object_role: string;
-    subject_role: string;
-    user_avatar_url: string;
+    subject_role: null;
+    user_avatar_url: string | null;
     user_email: string;
-    user_full_name: string;
+    user_full_name: string | null;
     user_id: string;
 }
 

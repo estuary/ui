@@ -84,14 +84,13 @@ export const getAuthRoles = async (capability: string) => {
 };
 
 const getUserInformationByPrefix = (
-    objectRole: string,
+    objectRoles: string[],
     capability: Capability
 ) => {
-    return (
-        supabaseClient
-            .from<Grants_User>(TABLES.COMBINED_GRANTS_EXT)
-            .select(
-                `
+    return supabaseClient
+        .from<Grants_User>(TABLES.COMBINED_GRANTS_EXT)
+        .select(
+            `
             capability,
             object_role,
             subject_role,
@@ -100,10 +99,11 @@ const getUserInformationByPrefix = (
             user_full_name,
             user_id
             `
-            )
-            // .eq('object_role', objectRole)
-            .eq('capability', capability)
-    );
+        )
+        .eq('capability', capability)
+        .in('object_role', objectRoles)
+        .is('subject_role', null)
+        .filter('user_email', 'not.is', null);
 };
 
 export { getGrants, getGrants_Users, getUserInformationByPrefix };
