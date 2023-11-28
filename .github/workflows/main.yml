@@ -64,9 +64,8 @@ jobs:
             - name: Licenses
               run: npm run licenses
 
-            #  We currently don't have tests to run
-            # - name: Jest
-            #   run: npm run test
+            - name: Test
+              run: npm run test
 
     # Deployment steps undertaken on a merge to `main`.
     deploy:
