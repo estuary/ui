@@ -5,17 +5,21 @@ const defaultResponse = -1;
 const foundName = 'acme/found';
 
 describe('getBindingIndex', () => {
-    test('handles different empty states for bindings', () => {
-        expect(getBindingIndex(undefined, '')).toBe(defaultResponse);
-        expect(getBindingIndex(null, '')).toBe(defaultResponse);
+    describe('returns -1 when', () => {
+        test('bindings are missing', () => {
+            expect(getBindingIndex(undefined, '')).toBe(defaultResponse);
+            expect(getBindingIndex(null, '')).toBe(defaultResponse);
+        });
 
-        expect(getBindingIndex([], '')).toBe(defaultResponse);
-        expect(getBindingIndex([null], '')).toBe(defaultResponse);
-        expect(getBindingIndex([{}], '')).toBe(defaultResponse);
-    });
+        test('bindings are empty', () => {
+            expect(getBindingIndex([], '')).toBe(defaultResponse);
+            expect(getBindingIndex([null], '')).toBe(defaultResponse);
+            expect(getBindingIndex([{}], '')).toBe(defaultResponse);
+        });
 
-    test('returns -1 when collection name is not found', () => {
-        expect(getBindingIndex(['a', 'b', 'c'], foundName)).toBe(-1);
+        test('bindings do not contain collection', () => {
+            expect(getBindingIndex(['a', 'b', 'c'], foundName)).toBe(-1);
+        });
     });
 
     describe('returns index when ', () => {
@@ -49,6 +53,7 @@ describe('getBindingIndex', () => {
                     foundName
                 )
             ).toBe(1);
+
             expect(
                 getBindingIndex(
                     [
@@ -59,6 +64,7 @@ describe('getBindingIndex', () => {
                     foundName
                 )
             ).toBe(1);
+
             expect(
                 getBindingIndex(
                     [
