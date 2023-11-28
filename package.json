@@ -5,7 +5,7 @@
     "main": "index.js",
     "private": true,
     "scripts": {
-        "build": "npm run licenses && npm run typecheck && vite build",
+        "build": "vite build",
         "format": "prettier --check '**/*.{js,jsx,ts,tsx}'",
         "format:fix": "prettier --write '**/*.{js,jsx,ts,tsx}'",
         "generate-flow-types": "cd flow_deps && ./fetch-flow.sh && ./flow-bin/flowctl json-schema | ./flow-bin/flowctl schemalate typescript --name Catalog --hoist-definitions > flow.d.ts",
@@ -18,7 +18,7 @@
         "pre_commit": "npm run lint-staged; npm run licenses",
         "prepare": "husky install",
         "preview": "vite preview",
-        "start": "vite",
+        "start": "npm run licenses && vite",
         "test": "vitest",
         "test:ui": "vitest --ui",
         "typecheck": "tsc",
