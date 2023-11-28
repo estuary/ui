@@ -14,6 +14,7 @@ describe('getBindingIndex', () => {
         test('bindings are empty', () => {
             expect(getBindingIndex([], '')).toBe(defaultResponse);
             expect(getBindingIndex([null], '')).toBe(defaultResponse);
+            expect(getBindingIndex([undefined], '')).toBe(defaultResponse);
             expect(getBindingIndex([{}], '')).toBe(defaultResponse);
         });
 
