@@ -39,4 +39,8 @@ export default defineConfig({
         viteTsconfigPaths(),
         wasm(),
     ],
+    test: {
+        environment: 'jsdom',
+        setupFiles: './test-setup.js',
+    },
 });
