@@ -12,6 +12,7 @@ import { omit } from 'lodash';
 import { useCallback } from 'react';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
+import { getBindingIndex } from 'utils/workflow-utils';
 
 function useFieldSelection(collectionName: string) {
     // Bindings Editor Store
@@ -24,8 +25,12 @@ function useFieldSelection(collectionName: string) {
 
     return useCallback(
         async (draftSpec: DraftSpecQuery) => {
-            const bindingIndex: number = draftSpec.spec.bindings.findIndex(
-                (binding: any) => binding.source === collectionName
+            // TODO (field selection) we should make it so this does not need to be figured out
+            //  every call as it is pretty wasteful. Since we are passing in the spec already maybe
+            //  we just pass in the index along with it? Not sure how to do this and make it feel good.
+            const bindingIndex: number = getBindingIndex(
+                draftSpec.spec.bindings,
+                collectionName
             );
 
             if (!mutateDraftSpecs || bindingIndex === -1) {
