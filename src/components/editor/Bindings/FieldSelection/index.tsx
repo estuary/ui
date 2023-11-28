@@ -45,7 +45,10 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { Schema } from 'types';
-import { evaluateRequiredIncludedFields } from 'utils/workflow-utils';
+import {
+    evaluateRequiredIncludedFields,
+    getBindingIndex,
+} from 'utils/workflow-utils';
 
 interface Props {
     collectionName: string;
@@ -162,11 +165,14 @@ function FieldSelectionViewer({ collectionName }: Props) {
                         )
                     )?.constraints;
 
+                const bindingIndex: number = getBindingIndex(
+                    draftSpecs[0].spec.bindings,
+                    collectionName
+                );
                 const selectedBinding: Schema | undefined =
-                    draftSpecs[0].spec.bindings.find(
-                        (binding: any) => binding.source === collectionName
-                    );
-
+                    bindingIndex > -1
+                        ? draftSpecs[0].spec.bindings[bindingIndex]
+                        : undefined;
                 let evaluatedFieldMetadata: FieldMetadata | undefined;
 
                 if (
