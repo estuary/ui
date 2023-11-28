@@ -40,12 +40,6 @@ export default defineConfig({
         wasm(),
     ],
     test: {
-        // alias: {
-        //     '@estuary/flow-web': path.resolve(
-        //         './node_modules/@estuary/flow-web'
-        //     ),
-        // },
-        globals: true,
         environment: 'jsdom',
         setupFiles: './test-setup.js',
     },

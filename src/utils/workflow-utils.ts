@@ -20,9 +20,9 @@ import { ConnectorConfig } from '../../flow_deps/flow';
 export const MAX_BINDINGS = 300;
 
 export const getSourceOrTarget = (binding: any) => {
-    return Object.hasOwn(binding, 'source')
+    return Object.hasOwn(binding ?? {}, 'source')
         ? binding.source
-        : Object.hasOwn(binding, 'target')
+        : Object.hasOwn(binding ?? {}, 'target')
         ? binding.target
         : binding;
 };
@@ -33,7 +33,7 @@ export const getCollectionNameProp = (entityType: Entity) => {
 
 export const getCollectionNameDirectly = (binding: any) => {
     // Check if we're dealing with a FullSource or just a string
-    return Object.hasOwn(binding, 'name') ? binding.name : binding;
+    return Object.hasOwn(binding ?? {}, 'name') ? binding.name : binding;
 };
 
 export const getCollectionName = (binding: any) => {
