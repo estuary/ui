@@ -169,9 +169,10 @@ function FieldSelectionViewer({ collectionName }: Props) {
                     draftSpecs[0].spec.bindings,
                     collectionName
                 );
-                const selectedBinding: Schema | undefined = bindingIndex
-                    ? draftSpecs[0].spec.bindings[bindingIndex]
-                    : undefined;
+                const selectedBinding: Schema | undefined =
+                    bindingIndex > -1
+                        ? draftSpecs[0].spec.bindings[bindingIndex]
+                        : undefined;
                 let evaluatedFieldMetadata: FieldMetadata | undefined;
 
                 if (
