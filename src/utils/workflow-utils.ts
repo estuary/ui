@@ -150,8 +150,9 @@ export const generateTaskSpec = (
             const resourceDisable = isBoolean(disable) ? disable : false;
 
             // See which binding we need to update
-            const existingBindingIndex = draftSpec.bindings.findIndex(
-                (binding: any) => getCollectionName(binding) === collectionName
+            const existingBindingIndex = getBindingIndex(
+                draftSpec.bindings,
+                collectionName
             );
 
             if (existingBindingIndex > -1) {
