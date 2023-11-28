@@ -91,23 +91,27 @@ const getUserInformationByPrefix = (
     objectRoles: string[],
     capability: Capability
 ) => {
-    return supabaseClient
-        .from<Grants_User>(TABLES.COMBINED_GRANTS_EXT)
-        .select(
-            `
-            capability,
-            object_role,
-            subject_role,
-            user_avatar_url,
-            user_email,
-            user_full_name,
-            user_id
-            `
-        )
-        .eq('capability', capability)
-        .in('object_role', objectRoles)
-        .is('subject_role', null)
-        .filter('user_email', 'not.is', null);
+    return supabaseRetry<PostgrestResponse<Grants_User>>(
+        () =>
+            supabaseClient
+                .from<Grants_User>(TABLES.COMBINED_GRANTS_EXT)
+                .select(
+                    `
+                    capability,
+                    object_role,
+                    subject_role,
+                    user_avatar_url,
+                    user_email,
+                    user_full_name,
+                    user_id
+                    `
+                )
+                .eq('capability', capability)
+                .in('object_role', objectRoles)
+                .is('subject_role', null)
+                .filter('user_email', 'not.is', null),
+        'getUserInformationByPrefix'
+    );
 };
 
 export { getGrants, getGrants_Users, getUserInformationByPrefix };

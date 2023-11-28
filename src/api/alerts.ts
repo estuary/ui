@@ -6,6 +6,7 @@ import {
     insertSupabase,
     SortingProps,
     supabaseClient,
+    supabaseRetry,
     TABLES,
     updateSupabase,
 } from 'services/supabase';
@@ -93,12 +94,15 @@ const getNotificationSubscriptionForUser = async (
     prefix: string,
     email: string
 ) => {
-    const data = await supabaseClient
-        .from<AlertSubscriptionQuery>(TABLES.ALERT_SUBSCRIPTIONS)
-        .select(`id, catalog_prefix, email`)
-        .eq('catalog_prefix', prefix)
-        .eq('email', email)
-        .then(handleSuccess<AlertSubscriptionQuery[]>, handleFailure);
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from<AlertSubscriptionQuery>(TABLES.ALERT_SUBSCRIPTIONS)
+                .select(`id, catalog_prefix, email`)
+                .eq('catalog_prefix', prefix)
+                .eq('email', email),
+        'getNotificationSubscriptionForUser'
+    ).then(handleSuccess<AlertSubscriptionQuery[]>, handleFailure);
 
     return data;
 };
@@ -149,20 +153,23 @@ const getNotificationSubscriptions = async (prefix?: string) => {
         queryBuilder = queryBuilder.eq('catalog_prefix', prefix);
     }
 
-    const data = await queryBuilder.then(
-        handleSuccess<AlertSubscriptionsExtendedQuery[]>,
-        handleFailure
-    );
+    const data = await supabaseRetry(
+        () => queryBuilder,
+        'getNotificationSubscriptions'
+    ).then(handleSuccess<AlertSubscriptionsExtendedQuery[]>, handleFailure);
 
     return data;
 };
 
 const getTaskNotification = async (catalogName: string) => {
-    const data = await supabaseClient
-        .from<DataProcessingAlertQuery>(TABLES.ALERT_DATA_PROCESSING)
-        .select(`catalog_name, evaluation_interval`)
-        .eq('catalog_name', catalogName)
-        .then(handleSuccess<DataProcessingAlertQuery[]>, handleFailure);
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from<DataProcessingAlertQuery>(TABLES.ALERT_DATA_PROCESSING)
+                .select(`catalog_name, evaluation_interval`)
+                .eq('catalog_name', catalogName),
+        'getTaskNotification'
+    ).then(handleSuccess<DataProcessingAlertQuery[]>, handleFailure);
 
     return data;
 };
