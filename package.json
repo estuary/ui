@@ -4,6 +4,10 @@
     "description": "A web based UI to assist in working with Estuary Flow",
     "main": "index.js",
     "private": true,
+    "engines": {
+        "node": "20.10.0",
+        "npm": "10.2.3"
+    },
     "scripts": {
         "start": "set WDS_SOCKET_PORT=0 && react-app-rewired start",
         "build": "react-app-rewired build && compress-cra",
