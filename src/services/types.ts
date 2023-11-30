@@ -12,6 +12,7 @@ export enum CustomEvents {
     MATERIALIZATION_CREATE_CONFIG_CREATE = 'Materialization_Create_Config_Create',
     MATERIALIZATION_CREATE_CONFIG_EDIT = 'Materialization_Create_Config_Edit',
     MATERIALIZATION_TEST = 'Materialization_Test',
+    MATERIALIZATION_TEST_BACKGROUND = 'Materialization_Test_Background',
     MATERIALIZATION_EDIT = 'Materialization_Edit',
     NOTIFICATION_NETWORK_WARNING = 'Notification_Network_Warning',
     COLLECTION_CREATE = 'Collection_Create',
