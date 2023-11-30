@@ -15,12 +15,11 @@ jobs:
               uses: styfle/cancel-workflow-action@0.11.0
 
             - name: Checkout
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Setup Node
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
-                  node-version: 20
                   cache: 'npm'
                   cache-dependency-path: '**/package-lock.json'
                   registry-url: 'https://npm.pkg.github.com'
@@ -40,12 +39,11 @@ jobs:
               uses: styfle/cancel-workflow-action@0.11.0
 
             - name: Checkout
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Setup Node
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
-                  node-version: 20
                   cache: 'npm'
                   cache-dependency-path: '**/package-lock.json'
 
@@ -88,12 +86,11 @@ jobs:
               uses: styfle/cancel-workflow-action@0.11.0
 
             - name: Checkout
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Setup Node
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
-                  node-version: 20
                   cache: 'npm'
                   cache-dependency-path: '**/package-lock.json'
 
