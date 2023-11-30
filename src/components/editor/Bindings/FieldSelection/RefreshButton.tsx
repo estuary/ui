@@ -39,7 +39,7 @@ function RefreshButton({ disabled, logEvent, buttonLabelId }: Props) {
                 //  if this is not returned then the function itself handled showing an error
                 if (evaluatedDraftId) {
                     try {
-                        await saveCatalog(evaluatedDraftId);
+                        await saveCatalog(evaluatedDraftId, true);
                     } catch (_error: unknown) {
                         setUpdating(false);
                     }
