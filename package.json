@@ -4,6 +4,10 @@
     "description": "A web based UI to assist in working with Estuary Flow",
     "main": "index.js",
     "private": true,
+    "engines": {
+        "node": "20.10.0",
+        "npm": "10.2.3"
+    },
     "scripts": {
         "build": "vite build",
         "format": "prettier --check '**/*.{js,jsx,ts,tsx}'",
