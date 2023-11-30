@@ -68,6 +68,7 @@ const initialFormState = {
     exitWhenLogsClose: false,
     logToken: null,
     error: null,
+    runInBackground: false,
     message: {
         key: null,
         severity: null,
@@ -114,11 +115,16 @@ const getInitialState = (
         );
     },
 
-    updateStatus: (status) => {
+    updateStatus: (status, runInBackground) => {
         set(
             produce((state: EntityFormState) => {
                 state.formState = { ...initialFormState };
-                state.formState.status = status;
+                state.formState.status =
+                    runInBackground && status === FormStatus.TESTING
+                        ? FormStatus.TESTING_BACKGROUND
+                        : status;
+                state.formState.runInBackground = Boolean(runInBackground);
+
                 state.isIdle = formIdle(status);
 
                 const formIsActive = formActive(status);

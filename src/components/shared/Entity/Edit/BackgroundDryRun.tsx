@@ -21,10 +21,6 @@ function BackgroundDryRun({ children }: BaseComponentProps) {
     );
 
     useUpdateEffect(() => {
-        console.log('background dry run... running', {
-            draftId,
-            bool: ranOnce.current,
-        });
         if (draftId && !ranOnce.current) {
             ranOnce.current = true;
             void saveCatalog(draftId, true);

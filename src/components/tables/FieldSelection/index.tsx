@@ -61,16 +61,20 @@ function FieldSelectionTable({ projections }: Props) {
         },
     };
 
+    console.log('formStatus', { formStatus, projections });
+
     useEffect(() => {
         if (
             typeof projections === 'undefined' ||
-            formStatus === FormStatus.TESTING
+            projections === null ||
+            formStatus === FormStatus.TESTING ||
+            formStatus === FormStatus.TESTING_BACKGROUND
         ) {
             setTableState({ status: TableStatuses.LOADING });
         } else {
             setTableState({
                 status:
-                    projections && projections.length > 0
+                    projections.length > 0
                         ? TableStatuses.DATA_FETCHED
                         : TableStatuses.NO_EXISTING_DATA,
             });

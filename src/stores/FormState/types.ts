@@ -8,6 +8,7 @@ export interface FormState {
     showLogs: boolean;
     exitWhenLogsClose: boolean;
     logToken: string | null;
+    runInBackground: boolean;
     error: {
         title: string;
         error?: PostgrestError;
@@ -25,6 +26,7 @@ export enum FormStatus {
     SAVED = 'SAVED',
 
     TESTING = 'TESTING',
+    TESTING_BACKGROUND = 'TESTING_BACKGROUND',
     TESTED = 'TESTED',
 
     SCHEMA_EVOLVING = 'SCHEMA_EVOLVING',
@@ -49,7 +51,7 @@ export interface EntityFormState {
     isIdle: boolean;
     isActive: boolean;
 
-    updateStatus: (status: FormStatus) => void;
+    updateStatus: (status: FormStatus, background?: boolean) => void;
 
     // Misc.
     resetState: () => void;

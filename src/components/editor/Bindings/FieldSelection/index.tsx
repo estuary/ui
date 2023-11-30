@@ -42,6 +42,7 @@ import { CustomEvents } from 'services/types';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
+    useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { Schema } from 'types';
@@ -121,6 +122,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
+    const formStatus = useFormStateStore_status();
     const setFormState = useFormStateStore_setFormState();
 
     const [data, setData] = useState<
@@ -274,6 +276,8 @@ function FieldSelectionViewer({ collectionName }: Props) {
         setSelectionSaving,
     ]);
 
+    const loading = formActive || formStatus === FormStatus.TESTING_BACKGROUND;
+
     return (
         <Box sx={{ mt: 3 }}>
             <Stack
@@ -302,7 +306,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
                         No additional disabled conditions are needed. */}
                     <RefreshButton
                         buttonLabelId="fieldSelection.cta.populateTable"
-                        disabled={formActive}
+                        disabled={loading}
                         logEvent={CustomEvents.MATERIALIZATION_TEST}
                     />
                 </Box>
@@ -314,7 +318,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
                         <Checkbox
                             value={recommendFields}
                             checked={recommendFields}
-                            disabled={formActive || !data}
+                            disabled={loading || !data}
                         />
                     }
                     onChange={toggleRecommendFields}

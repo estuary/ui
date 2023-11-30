@@ -84,7 +84,7 @@ function useSave(
 
     const waitForPublishToFinish = useCallback(
         (publicationId: string, hideNotification?: boolean) => {
-            updateFormStatus(status);
+            updateFormStatus(status, hideNotification);
             setIncompatibleCollections([]);
 
             jobStatusPoller(
