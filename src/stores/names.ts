@@ -78,6 +78,7 @@ export enum AdminStoreNames {
 export enum GlobalStoreNames {
     ENTITIES = 'Entities',
     SIDE_PANEL_DOCS = 'Side-Panel-Docs',
+    QUEUED_TASKS = 'queuedTasks', // Not currently being used
     TOP_BAR = 'Top-Bar',
 }
 
