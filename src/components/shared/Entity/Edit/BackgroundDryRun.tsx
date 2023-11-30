@@ -27,7 +27,7 @@ function BackgroundDryRun({ children }: BaseComponentProps) {
         });
         if (draftId && !ranOnce.current) {
             ranOnce.current = true;
-            void saveCatalog(draftId);
+            void saveCatalog(draftId, true);
         }
     }, [draftId, saveCatalog]);
 

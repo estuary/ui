@@ -83,7 +83,7 @@ function useSave(
         useBindingsEditorStore_fullSourceErrorsExist();
 
     const waitForPublishToFinish = useCallback(
-        (publicationId: string) => {
+        (publicationId: string, hideNotification?: boolean) => {
             updateFormStatus(status);
             setIncompatibleCollections([]);
 
@@ -125,15 +125,17 @@ function useSave(
                         }
                     }
 
-                    showNotification({
-                        description: intl.formatMessage({
-                            id: description,
-                        }),
-                        severity: 'success',
-                        title: intl.formatMessage({
-                            id: title,
-                        }),
-                    });
+                    if (!hideNotification) {
+                        showNotification({
+                            description: intl.formatMessage({
+                                id: description,
+                            }),
+                            severity: 'success',
+                            title: intl.formatMessage({
+                                id: title,
+                            }),
+                        });
+                    }
 
                     trackEvent(logEvent, payload);
                 },
@@ -176,14 +178,14 @@ function useSave(
     );
 
     return useCallback(
-        async (draftId: string | null) => {
+        async (draftId: string | null, hideLogs?: boolean) => {
             // FullSource updates the draft directly and does not require a new generattion so
             //  need to check for errors. We might want to add all the errors here just to be safe or
             //  in the future when we directly update drafts
             if (fullSourceErrorsExist) {
                 setFormState({
                     status: FormStatus.FAILED,
-                    displayValidation: true,
+                    displayValidation: !hideLogs,
                 });
                 return;
             }
@@ -265,10 +267,10 @@ function useSave(
                 return;
             }
 
-            waitForPublishToFinish(response.data[0].id);
+            waitForPublishToFinish(response.data[0].id, hideLogs);
             setFormState({
                 logToken: response.data[0].logs_token,
-                showLogs: true,
+                showLogs: !hideLogs,
             });
         },
         [

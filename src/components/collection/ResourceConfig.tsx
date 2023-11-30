@@ -8,6 +8,7 @@ import {
     useResourceConfig_resourceConfigOfCollectionProperty,
 } from 'stores/ResourceConfig/hooks';
 import TimeTravel from 'components/editor/Bindings/TimeTravel';
+import BackgroundDryRun from 'components/shared/Entity/Edit/BackgroundDryRun';
 import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
 
 interface Props {
@@ -47,7 +48,9 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
             </Box>
 
             {entityType === 'materialization' && !collectionDisabled ? (
-                <FieldSelectionViewer collectionName={collectionName} />
+                <BackgroundDryRun>
+                    <FieldSelectionViewer collectionName={collectionName} />
+                </BackgroundDryRun>
             ) : null}
 
             {entityType === 'materialization' ? (
