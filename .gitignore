@@ -25,3 +25,6 @@ yarn-error.log*
 
 # Created by npm run `depgraph`
 flow_ui_dep_graph.svg
+
+# Ignore generated credentials from google-github-actions/auth
+gha-creds-*.json
