@@ -523,8 +523,8 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.alerts.dialog.generate.header': `Configure Alert Methods`,
     'admin.alerts.dialog.update.header': `Update Alert Methods`,
     'admin.alerts.table.filterLabel': `Filter by Prefix or Email`,
-    'admin.alerts.table.noContent.header': `No results found.`,
-    'admin.alerts.table.noContent.message': `We couldn't find any results matching your search. Please try a different filter.`,
+    'admin.alerts.table.noContent.header': `No subscriptions found.`,
+    'admin.alerts.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Configure Alerts" above to create a subscription.`,
     'admin.alerts.table.label.alertMethod': `Alert Method`,
 
     'admin.cookies': `Cookie Preferences`,
