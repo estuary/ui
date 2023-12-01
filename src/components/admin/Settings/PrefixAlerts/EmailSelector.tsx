@@ -10,6 +10,7 @@ import {
     Typography,
 } from '@mui/material';
 import { EmailDictionary } from 'components/admin/Settings/PrefixAlerts/types';
+import UserAvatar from 'components/shared/UserAvatar';
 import usePrefixAdministrators from 'hooks/usePrefixAdministrators';
 import useUserInformationByPrefix from 'hooks/useUserInformationByPrefix';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
@@ -161,6 +162,12 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
                         <Typography>{option}</Typography>
                     ) : (
                         <ListItem key={option.user_id} {...renderOptionProps}>
+                            <UserAvatar
+                                userName={option.user_full_name}
+                                avatarUrl={option.user_avatar_url}
+                                userEmail={option.user_email}
+                            />
+
                             <ListItemText
                                 primary={option.user_full_name}
                                 secondary={option.user_email}
@@ -176,6 +183,7 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
                                             theme.palette.text.primary,
                                     },
                                 }}
+                                sx={{ ml: 2 }}
                             />
                         </ListItem>
                     );
