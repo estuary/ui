@@ -1,7 +1,7 @@
-import { insertSupabase, TABLES } from 'services/supabase';
-import { Capability } from 'types';
+import { insertSupabase, supabaseClient, TABLES } from 'services/supabase';
+import { BaseGrant, Capability } from 'types';
 
-export const createRoleGrant = (
+const createRoleGrant = (
     subject_role: string,
     object_role: string,
     capability: Capability
@@ -12,3 +12,16 @@ export const createRoleGrant = (
         capability,
     });
 };
+
+const getPrefixAdministrators = (
+    objectRole: string,
+    capability: Capability
+) => {
+    return supabaseClient
+        .from<BaseGrant>(TABLES.ROLE_GRANTS)
+        .select(`capability, object_role, subject_role`)
+        .eq('capability', capability)
+        .eq('object_role', objectRole);
+};
+
+export { createRoleGrant, getPrefixAdministrators };

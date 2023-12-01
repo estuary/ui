@@ -1,3 +1,4 @@
+import { ButtonProps } from '@mui/material';
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -5,7 +6,11 @@ import useGlobalSearchParams, {
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import EditLink from '../EditLink';
 
-function EditButton() {
+interface Props {
+    buttonVariant?: ButtonProps['variant'];
+}
+
+function EditButton({ buttonVariant }: Props) {
     const spec = useEditorStore_specs<LiveSpecsQuery_spec>({
         localScope: true,
     });
@@ -19,7 +24,7 @@ function EditButton() {
         <EditLink
             liveSpecId={spec[0].id}
             name={catalogName}
-            variant="contained"
+            variant={buttonVariant ?? 'contained'}
         />
     );
 }

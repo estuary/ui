@@ -7,7 +7,7 @@ import {
     useQueryParams,
     withDefault,
 } from 'use-query-params';
-import { getPagination } from '../../components/tables/EntityTable';
+import { getPagination } from 'utils/table-utils';
 
 export enum TableFilterKeys {
     pagination = 'p',
@@ -27,6 +27,7 @@ export enum TablePrefixes {
     connectors = 'con',
     materializations = 'mat',
     prefixes = 'pr',
+    prefixAlerts = 'pal',
     schemaViewer = 'sv',
     storageMappings = 'sm',
 }

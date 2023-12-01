@@ -14,7 +14,7 @@ function MaterializeButton() {
     });
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
-    if (entityType !== 'collection' || !spec?.[0].id) {
+    if (entityType === 'materialization' || !spec?.[0].id) {
         return null;
     }
 

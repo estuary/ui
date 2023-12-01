@@ -43,6 +43,7 @@ const admin = {
     },
 };
 
+// The title message IDs for the overview, spec, and history capture details tabs do not appear to be in use.
 const captures = {
     title: 'routeTitle.captures',
     path: 'captures',

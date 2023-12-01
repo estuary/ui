@@ -312,6 +312,13 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
                     },
                 },
             ],
+            grid: {
+                left: 20,
+                top: 40,
+                right: 20,
+                bottom: 10,
+                containLabel: true,
+            },
         };
 
         myChart?.setOption(option);

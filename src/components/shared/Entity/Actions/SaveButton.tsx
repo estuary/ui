@@ -3,7 +3,6 @@ import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import { useEntityType } from 'context/EntityContext';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/types';
 import {
@@ -27,10 +26,7 @@ interface Props {
 }
 
 function EntitySaveButton({ disabled, taskNames, logEvent }: Props) {
-    const entityType = useEntityType();
-
-    const { callFailed, closeLogs, materializeCollections } =
-        useEntityWorkflowHelpers();
+    const { callFailed, closeLogs } = useEntityWorkflowHelpers();
     const formsHydrated = useEntityWorkflowHydrated();
 
     const draftId = useEditorStore_id();
@@ -56,18 +52,7 @@ function EntitySaveButton({ disabled, taskNames, logEvent }: Props) {
                     />
                 }
                 actionComponent={
-                    <LogDialogActions
-                        close={closeLogs}
-                        taskNames={taskNames}
-                        materialize={
-                            entityType !== 'materialization'
-                                ? {
-                                      action: materializeCollections,
-                                      title: `${messagePrefix}.ctas.materialize`,
-                                  }
-                                : undefined
-                        }
-                    />
+                    <LogDialogActions close={closeLogs} taskNames={taskNames} />
                 }
             />
             <EntityCreateSave

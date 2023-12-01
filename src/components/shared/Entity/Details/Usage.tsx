@@ -1,11 +1,14 @@
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import HourlyRangeFilter from 'components/filters/HourRange';
 import DataByHourGraph from 'components/graphs/DataByHourGraph';
+import EmptyGraphState from 'components/graphs/states/Empty';
 import GraphLoadingState from 'components/graphs/states/Loading';
 import { DataByHourRange } from 'components/graphs/types';
 import Error from 'components/shared/Error';
 import useDetailsStats from 'hooks/useDetailsStats';
 import { useState } from 'react';
+import { FormattedMessage } from 'react-intl';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     catalogName: string;
@@ -29,11 +32,17 @@ function Usage({ catalogName }: Props) {
                 <GraphLoadingState />
             ) : error ? (
                 <Error error={error} />
-            ) : (
+            ) : hasLength(stats) ? (
                 <DataByHourGraph
                     id="data-by-hour_entity-details"
                     stats={stats}
                     range={range}
+                />
+            ) : (
+                <EmptyGraphState
+                    message={
+                        <FormattedMessage id="graphs.entityDetails.empty.message" />
+                    }
                 />
             )}
         </CardWrapper>
