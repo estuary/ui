@@ -26,11 +26,11 @@ export interface Props {
     onChange?: PrefixedName_Change;
     onNameChange?: PrefixedName_Change;
     onPrefixChange?: PrefixedName_Change;
+    prefixOnly?: boolean;
     required?: boolean;
     showDescription?: boolean;
     size?: 'small' | 'medium';
     standardVariant?: boolean;
-    prefixOnly?: boolean;
     validateOnLoad?: boolean;
     value?: string;
 }
@@ -49,11 +49,11 @@ function PrefixedName({
     onChange,
     onNameChange,
     onPrefixChange,
+    prefixOnly,
     required,
     showDescription,
     size,
     standardVariant,
-    prefixOnly,
     validateOnLoad,
     value,
 }: Props) {
