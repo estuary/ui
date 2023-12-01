@@ -28,6 +28,7 @@ import {
     useState,
 } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { CallSupabaseResponse } from 'services/supabase';
 
 interface Props {
     errored: boolean;
@@ -39,6 +40,29 @@ interface Props {
 const defaultUpdateSettingsError = {
     message:
         'details.settings.notifications.alert.updateSettingsFailed.message',
+};
+
+const handleSuccess = (
+    notification: DataProcessingAlertQuery | null,
+    response: CallSupabaseResponse<any>,
+    setNotification: Dispatch<
+        SetStateAction<DataProcessingAlertQuery | null | undefined>
+    >,
+    setUpdateSettingsError: Dispatch<SetStateAction<ErrorDetails>>
+): void => {
+    if (response.data && response.data.length > 0) {
+        setNotification(notification);
+        setUpdateSettingsError(null);
+    } else {
+        setUpdateSettingsError(response.error ?? defaultUpdateSettingsError);
+    }
+};
+
+const handleFailure = (
+    error: any,
+    setUpdateSettingsError: Dispatch<SetStateAction<ErrorDetails>>
+): void => {
+    setUpdateSettingsError(error);
 };
 
 function DataProcessingSetting({
@@ -65,55 +89,40 @@ function DataProcessingSetting({
                     deleteDataProcessingNotification(
                         notification.catalog_name
                     ).then(
-                        (response) => {
-                            if (response.data && response.data.length > 0) {
-                                setNotification(null);
-                                setUpdateSettingsError(null);
-                            } else {
-                                setUpdateSettingsError(
-                                    response.error ?? defaultUpdateSettingsError
-                                );
-                            }
-                        },
-                        (error) => {
-                            setUpdateSettingsError(error);
-                        }
+                        (response) =>
+                            handleSuccess(
+                                null,
+                                response,
+                                setNotification,
+                                setUpdateSettingsError
+                            ),
+                        (error) => handleFailure(error, setUpdateSettingsError)
                     );
                 } else {
                     updateDataProcessingNotificationInterval(
                         notification.catalog_name,
                         value
                     ).then(
-                        (response) => {
-                            if (response.data && response.data.length > 0) {
-                                setNotification(response.data[0]);
-                                setUpdateSettingsError(null);
-                            } else {
-                                setUpdateSettingsError(
-                                    response.error ?? defaultUpdateSettingsError
-                                );
-                            }
-                        },
-                        (error) => {
-                            setUpdateSettingsError(error);
-                        }
+                        (response) =>
+                            handleSuccess(
+                                response.data[0],
+                                response,
+                                setNotification,
+                                setUpdateSettingsError
+                            ),
+                        (error) => handleFailure(error, setUpdateSettingsError)
                     );
                 }
             } else if (catalogName) {
                 createDataProcessingNotification(catalogName, value).then(
-                    (response) => {
-                        if (response.data && response.data.length > 0) {
-                            setNotification(response.data[0]);
-                            setUpdateSettingsError(null);
-                        } else {
-                            setUpdateSettingsError(
-                                response.error ?? defaultUpdateSettingsError
-                            );
-                        }
-                    },
-                    (error) => {
-                        setUpdateSettingsError(error);
-                    }
+                    (response) =>
+                        handleSuccess(
+                            response.data[0],
+                            response,
+                            setNotification,
+                            setUpdateSettingsError
+                        ),
+                    (error) => handleFailure(error, setUpdateSettingsError)
                 );
             }
         },
