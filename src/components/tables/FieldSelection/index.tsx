@@ -61,8 +61,6 @@ function FieldSelectionTable({ projections }: Props) {
         },
     };
 
-    console.log('formStatus', { formStatus, projections });
-
     useEffect(() => {
         if (
             typeof projections === 'undefined' ||
