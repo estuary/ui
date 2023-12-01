@@ -202,7 +202,7 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
                                         ? 'error'
                                         : 'default'
                                 }
-                                key={`email-tag-${email}`}
+                                key={`email-tag-${email}-${index}`}
                                 label={email}
                                 size="small"
                             />
