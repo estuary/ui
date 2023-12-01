@@ -37,17 +37,12 @@ function EntityDetails() {
                     <Stack spacing={2} sx={{ m: 1 }}>
                         <Stack
                             direction="row"
-                            sx={{
-                                justifyContent: 'space-between',
-                            }}
+                            sx={{ justifyContent: 'space-between' }}
                         >
                             <Typography
                                 component="span"
                                 variant="h6"
-                                sx={{
-                                    ...truncateTextSx,
-                                    alignItems: 'center',
-                                }}
+                                sx={{ ...truncateTextSx, alignItems: 'center' }}
                             >
                                 {catalogName}
                             </Typography>
