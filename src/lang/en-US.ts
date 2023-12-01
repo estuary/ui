@@ -519,7 +519,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.alerts.header': `Organization Alerts`,
     'admin.alerts.cta.addAlertMethod': `Configure Alerts`,
     'admin.alerts.dialog.description': `Choose where you'd like alerts to be sent. To add an email address, select from the list of admin user emails or enter custom email addresses as a comma separated list.`,
-    'admin.alerts.dialog.emailSelector.error': `Email is not formatted properly.`,
+    'admin.alerts.dialog.emailSelector.inputError': `One or more emails are not formatted properly.`,
     'admin.alerts.dialog.generate.header': `Configure Alert Methods`,
     'admin.alerts.dialog.update.header': `Update Alert Methods`,
     'admin.alerts.table.filterLabel': `Filter by Prefix or Email`,

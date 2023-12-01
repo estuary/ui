@@ -31,7 +31,7 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
     const intl = useIntl();
 
     const [inputValue, setInputValue] = useState('');
-    const [inputErrorExists, setInputErrorExists] = useState<boolean>(false);
+    // const [inputErrorExists, setInputErrorExists] = useState(false);
 
     const { data: adminPrefixes } = usePrefixAdministrators(
         prefix,
@@ -47,6 +47,11 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
         () =>
             Object.hasOwn(emailsByPrefix, prefix) ? emailsByPrefix[prefix] : [],
         [prefix, emailsByPrefix]
+    );
+
+    const inputErrorExists = useMemo(
+        () => emails.some((email) => !simpleEmailRegEx.test(email)),
+        [emails]
     );
 
     return (
@@ -78,10 +83,6 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
                 inputValue={inputValue}
                 multiple
                 onChange={(_event, values, reason) => {
-                    if (inputErrorExists) {
-                        setInputErrorExists(false);
-                    }
-
                     const newValue = values[values.length - 1];
 
                     if (
@@ -89,15 +90,25 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
                         typeof newValue === 'string' &&
                         !simpleEmailRegEx.test(newValue)
                     ) {
-                        setInputErrorExists(true);
-                        setInputValue(newValue);
-
-                        return;
+                        setInputValue('');
                     }
 
-                    const modifiedEmails = values.map((value) =>
-                        typeof value === 'string' ? value : value.user_email
-                    );
+                    const modifiedEmails = values.flatMap((value) => {
+                        if (typeof value === 'string') {
+                            if (value.includes(',') || value.endsWith(',')) {
+                                const enteredEmails = value
+                                    .split(',')
+                                    .map((email) => email.trim())
+                                    .filter((email) => hasLength(email));
+
+                                return enteredEmails;
+                            }
+
+                            return value;
+                        }
+
+                        return value.user_email;
+                    });
 
                     setEmailsByPrefix({
                         ...emailsByPrefix,
@@ -107,32 +118,15 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
                 onInputChange={(_event, value) => {
                     setInputValue(value);
 
-                    if (inputErrorExists) {
-                        setInputErrorExists(false);
-                    }
-
                     if (value.includes(',') || value.endsWith(',')) {
                         const enteredEmails = value
                             .split(',')
                             .map((email) => email.trim())
                             .filter((email) => hasLength(email));
 
-                        const formatErrorExists = enteredEmails.some(
-                            (email) => !simpleEmailRegEx.test(email)
-                        );
-
-                        if (formatErrorExists) {
-                            setInputErrorExists(true);
-
-                            return;
-                        }
-
                         setEmailsByPrefix({
                             ...emailsByPrefix,
-                            [prefix]: [
-                                ...emailsByPrefix[prefix],
-                                ...enteredEmails,
-                            ],
+                            [prefix]: [...emails, ...enteredEmails],
                         });
 
                         setInputValue('');
@@ -201,11 +195,21 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
                     return values.map((value, index) => {
                         const tagProps = getTagProps({ index });
 
+                        const email =
+                            typeof value === 'string'
+                                ? value
+                                : value.user_email;
+
                         return (
                             <Chip
                                 {...tagProps}
-                                key={`email-tag-${index}`}
-                                label={value}
+                                color={
+                                    !simpleEmailRegEx.test(email)
+                                        ? 'error'
+                                        : 'default'
+                                }
+                                key={`email-tag-${email}`}
+                                label={email}
                                 size="small"
                             />
                         );
@@ -217,7 +221,7 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
 
             {inputErrorExists ? (
                 <FormHelperText error={inputErrorExists}>
-                    <FormattedMessage id="admin.alerts.dialog.emailSelector.error" />
+                    <FormattedMessage id="admin.alerts.dialog.emailSelector.inputError" />
                 </FormHelperText>
             ) : null}
         </FormControl>
