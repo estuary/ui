@@ -46,8 +46,11 @@ function SaveButton({
         const subscriptionsToCreate: [string, string][] = [];
 
         Object.entries(updatedEmails).forEach(([key, value]) => {
-            value
-                .filter((email) => !existingEmails[key].includes(email))
+            const processedValues = Object.hasOwn(existingEmails, key)
+                ? value.filter((email) => !existingEmails[key].includes(email))
+                : value;
+
+            processedValues
                 .map((email): [string, string] => [key, email])
                 .forEach((subscriptionMetadata) => {
                     subscriptionsToCreate.push(subscriptionMetadata);
@@ -61,12 +64,14 @@ function SaveButton({
         const subscriptionsToCancel: [string, string][] = [];
 
         Object.entries(updatedEmails).forEach(([key, value]) => {
-            existingEmails[key]
-                .filter((email) => !value.includes(email))
-                .map((email): [string, string] => [key, email])
-                .forEach((subscriptionMetadata) => {
-                    subscriptionsToCancel.push(subscriptionMetadata);
-                });
+            if (Object.hasOwn(existingEmails, key)) {
+                existingEmails[key]
+                    .filter((email) => !value.includes(email))
+                    .map((email): [string, string] => [key, email])
+                    .forEach((subscriptionMetadata) => {
+                        subscriptionsToCancel.push(subscriptionMetadata);
+                    });
+            }
         });
 
         const cancelledSubscriptions = subscriptionsToCancel.map(
