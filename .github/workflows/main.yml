@@ -15,12 +15,12 @@ jobs:
               uses: styfle/cancel-workflow-action@0.11.0
 
             - name: Checkout
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Setup Node
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
-                  node-version: 16
+                  node-version: 20
                   cache: 'npm'
                   cache-dependency-path: '**/package-lock.json'
                   registry-url: 'https://npm.pkg.github.com'
@@ -40,12 +40,12 @@ jobs:
               uses: styfle/cancel-workflow-action@0.11.0
 
             - name: Checkout
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Setup Node
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
-                  node-version: 16
+                  node-version: 20
                   cache: 'npm'
                   cache-dependency-path: '**/package-lock.json'
 
@@ -88,12 +88,12 @@ jobs:
               uses: styfle/cancel-workflow-action@0.11.0
 
             - name: Checkout
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Setup Node
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
-                  node-version: 16
+                  node-version: 20
                   cache: 'npm'
                   cache-dependency-path: '**/package-lock.json'
 
@@ -105,7 +105,7 @@ jobs:
 
             # This was generated via `setup-workload-ident.sh` in the ops repo.
             - name: Set up Google Cloud SDK
-              uses: google-github-actions/auth@v0
+              uses: google-github-actions/auth@v2
               with:
                   service_account: cd-github-ui@estuary-control.iam.gserviceaccount.com
                   workload_identity_provider: projects/1084703453822/locations/global/workloadIdentityPools/github-actions/providers/github-actions-provider
