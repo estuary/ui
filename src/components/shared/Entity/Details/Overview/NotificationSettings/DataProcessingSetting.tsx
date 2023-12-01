@@ -13,6 +13,7 @@ import {
     deleteDataProcessingNotification,
     updateDataProcessingNotificationInterval,
 } from 'api/alerts';
+import useSettingIntervalOptions from 'components/shared/Entity/Details/Overview/NotificationSettings/useSettingIntervalOptions';
 import { ErrorDetails } from 'components/shared/Error/types';
 import { defaultOutline } from 'context/Theme';
 import useInitializeTaskNotification from 'hooks/notifications/useInitializeTaskNotification';
@@ -24,7 +25,6 @@ import {
     SetStateAction,
     useCallback,
     useEffect,
-    useMemo,
     useState,
 } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -35,15 +35,6 @@ interface Props {
     setUpdateSettingsError: Dispatch<SetStateAction<ErrorDetails>>;
     hideBorder?: boolean;
 }
-
-const intervalOptionIds = {
-    hour: {
-        id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.intervalOptions.hour',
-    },
-    day: {
-        id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.intervalOptions.day',
-    },
-};
 
 const defaultUpdateSettingsError = {
     message:
@@ -61,36 +52,11 @@ function DataProcessingSetting({
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
+    const { options } = useSettingIntervalOptions();
+
     const [notification, setNotification] = useState<
         DataProcessingAlertQuery | null | undefined
     >(undefined);
-
-    const options: { [interval: string]: string } = useMemo(
-        () => ({
-            '2 days': intl.formatMessage(intervalOptionIds.day, {
-                interval: 2,
-            }),
-            '24:00:00': intl.formatMessage(intervalOptionIds.hour, {
-                interval: 24,
-            }),
-            '12:00:00': intl.formatMessage(intervalOptionIds.hour, {
-                interval: 12,
-            }),
-            '08:00:00': intl.formatMessage(intervalOptionIds.hour, {
-                interval: 8,
-            }),
-            '04:00:00': intl.formatMessage(intervalOptionIds.hour, {
-                interval: 4,
-            }),
-            '02:00:00': intl.formatMessage(intervalOptionIds.hour, {
-                interval: 2,
-            }),
-            'none': intl.formatMessage({
-                id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.unsetOption',
-            }),
-        }),
-        [intl]
-    );
 
     const updateEvaluationInterval = useCallback(
         (_event: React.SyntheticEvent, value: string) => {
