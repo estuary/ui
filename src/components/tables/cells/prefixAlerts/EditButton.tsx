@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, TableCell } from '@mui/material';
 import AlertSubscriptionDialog from 'components/admin/Settings/PrefixAlerts/Dialog';
 import useAlertSubscriptionDialog from 'components/admin/Settings/PrefixAlerts/useAlertSubscriptionDialog';
 import { FormattedMessage } from 'react-intl';
@@ -12,7 +12,7 @@ function AlertEditButton({ prefix }: Props) {
         useAlertSubscriptionDialog(prefix);
 
     return (
-        <>
+        <TableCell>
             <Button variant="text" onClick={openGenerateAlertDialog}>
                 <FormattedMessage id="cta.edit" />
             </Button>
@@ -26,7 +26,7 @@ function AlertEditButton({ prefix }: Props) {
                     staticPrefix={prefix}
                 />
             )}
-        </>
+        </TableCell>
     );
 }
 

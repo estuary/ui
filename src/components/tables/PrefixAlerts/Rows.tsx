@@ -1,6 +1,6 @@
 import { TableCell, TableRow, useTheme } from '@mui/material';
-import AlertEditButton from 'components/admin/Settings/PrefixAlerts/EditButton';
 import ChipListCell from 'components/tables/cells/ChipList';
+import AlertEditButton from 'components/tables/cells/prefixAlerts/EditButton';
 import { getEntityTableRowSx } from 'context/Theme';
 import { PrefixSubscription } from 'utils/notification-utils';
 
@@ -28,9 +28,7 @@ function Row({ row }: RowProps) {
                 maxChips={3}
             />
 
-            <TableCell>
-                <AlertEditButton prefix={prefix} />
-            </TableCell>
+            <AlertEditButton prefix={prefix} />
         </TableRow>
     );
 }
