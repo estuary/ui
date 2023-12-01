@@ -32,11 +32,9 @@ function NotificationSettings({ taskName }: Props) {
     useEffect(() => {
         getNotificationSubscription().then(
             (response) => {
-                if (!response.data) {
-                    // Failed to determine whether the user has subscribed to notifications for this prefix.
-                    setSubscriptionExists(false);
-                } else if (response.data.length === 0) {
-                    // The user has not subscribed to notifications for this prefix.
+                if (!response.data || response.data.length === 0) {
+                    // Failed to determine whether the user has subscribed to notifications for this prefix
+                    // or the user has not subscribed to notifications for this prefix.
                     setSubscriptionExists(false);
                 } else {
                     setSubscriptionExists(true);
