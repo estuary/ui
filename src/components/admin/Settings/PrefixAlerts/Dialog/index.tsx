@@ -86,7 +86,11 @@ function AlertSubscriptionDialog({
                 <Grid
                     container
                     spacing={2}
-                    sx={{ mb: 3, pt: 1, alignItems: 'flex-start' }}
+                    sx={{
+                        mb: 3,
+                        pt: 1,
+                        alignItems: 'flex-start',
+                    }}
                 >
                     <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
                         {staticPrefix ? (
@@ -117,7 +121,16 @@ function AlertSubscriptionDialog({
                         )}
                     </Grid>
 
-                    <Grid item xs={12} md={7} sx={{ display: 'flex' }}>
+                    <Grid
+                        item
+                        xs={12}
+                        md={7}
+                        sx={{
+                            maxHeight: 250,
+                            overflow: 'auto',
+                            display: 'flex',
+                        }}
+                    >
                         <EmailSelector
                             prefix={prefix}
                             emailsByPrefix={updatedEmails}
