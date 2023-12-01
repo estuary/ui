@@ -1,6 +1,7 @@
 import { Grid } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
 import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
+import NotificationSettings from 'components/shared/Entity/Details/Overview/NotificationSettings';
 import { TaskEndpoints } from 'components/shared/TaskEndpoints';
 import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
@@ -53,6 +54,13 @@ function Overview({ name }: Props) {
                 />
             </Grid>
 
+            {!isCollection && entityName ? (
+                <Grid item xs={12}>
+                    <NotificationSettings taskName={entityName} />
+                </Grid>
+            ) : null}
+
+            {/* The grid item below exists when no children are present which creates 16 pixels of vertical padding. */}
             {!isCollection ? (
                 <Grid item xs={12}>
                     <TaskEndpoints taskName={catalogName} />

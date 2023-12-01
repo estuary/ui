@@ -39,6 +39,8 @@ export const ERROR_MESSAGES = {
 export const DEFAULT_FILTER = '__unknown__';
 
 export enum TABLES {
+    ALERT_DATA_PROCESSING = 'alert_data_processing',
+    ALERT_SUBSCRIPTIONS = 'alert_subscriptions',
     APPLIED_DIRECTIVES = 'applied_directives',
     CATALOG_STATS = 'catalog_stats',
     COMBINED_GRANTS_EXT = 'combined_grants_ext',

@@ -7,7 +7,7 @@ import {
     supabaseRetry,
     TABLES,
 } from 'services/supabase';
-import { AuthRoles } from 'types';
+import { AuthRoles, Capability, Grant_UserExt } from 'types';
 
 // Used to display prefix grants in admin page
 const getGrants = (
@@ -87,4 +87,33 @@ export const getAuthRoles = async (capability: string) => {
     );
 };
 
-export { getGrants, getGrants_Users };
+const getUserInformationByPrefix = (
+    objectRoles: string[],
+    capability: Capability
+) => {
+    // Very few people are using multiple prefixes (Q4 2023) so allowing us to check 5 for now
+    //  is more than enough. This also prevents people in the support role from hammering the server
+    //  fetching user information for tenants they do now "own."
+    const evaluatedObjectRoles =
+        objectRoles.length > 5 ? objectRoles.slice(0, 4) : objectRoles;
+
+    return supabaseClient
+        .from<Grant_UserExt>(TABLES.COMBINED_GRANTS_EXT)
+        .select(
+            `
+                    capability,
+                    object_role,
+                    subject_role,
+                    user_avatar_url,
+                    user_email,
+                    user_full_name,
+                    user_id
+                    `
+        )
+        .eq('capability', capability)
+        .in('object_role', evaluatedObjectRoles)
+        .is('subject_role', null)
+        .filter('user_email', 'not.is', null);
+};
+
+export { getGrants, getGrants_Users, getUserInformationByPrefix };

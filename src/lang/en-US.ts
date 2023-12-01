@@ -121,6 +121,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.clickHere': `Click here`,
     'cta.details': `Details`,
     'cta.preview': `Preview`,
+    'cta.save': `Save`,
     'cta.saveEntity': `Save and publish`,
     'cta.restart': `Restart`,
     'cta.enable': `Enable`,
@@ -514,6 +515,17 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.prefix.issueGrant.notification.success.title': `Grant Created Successfully`,
     'admin.prefix.issueGrant.notification.success.message': `{objectRole} has been shared with {subjectRole}.`,
     'admin.prefix.issueGrant.error.invalidPrefix': `The value entered in the Shared Prefix text field is not an extension of an existing prefix.`,
+
+    'admin.alerts.header': `Organization Alerts`,
+    'admin.alerts.cta.addAlertMethod': `Configure Alerts`,
+    'admin.alerts.dialog.description': `Choose where you'd like alerts to be sent. To add an email address, select from the list of admin user emails or enter custom email addresses as a comma separated list.`,
+    'admin.alerts.dialog.emailSelector.inputError': `One or more emails are not formatted properly.`,
+    'admin.alerts.dialog.generate.header': `Configure Alert Methods`,
+    'admin.alerts.dialog.update.header': `Update Alert Methods`,
+    'admin.alerts.table.filterLabel': `Filter by Prefix or Email`,
+    'admin.alerts.table.noContent.header': `No subscriptions found.`,
+    'admin.alerts.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Configure Alerts" above to create a subscription.`,
+    'admin.alerts.table.label.alertMethod': `Alert Method`,
 
     'admin.cookies': `Cookie Preferences`,
     'admin.cookies.message': `Click below to configure your cookie preferences.`,
@@ -1062,6 +1074,18 @@ const Details: ResolvedIntlConfig['messages'] = {
     'details.tabs.spec': `Spec`,
     'details.tabs.shardStatus': `Status`,
     'details.tabs.history': `History`,
+
+    'details.settings.notifications.header': `Notification Settings`,
+    'details.settings.notifications.alert.userNotSubscribed.message': `You are not subscribed to notifications for this tenant. If you would like to receive notifications for this task, {button} to subscribe.`,
+    'details.settings.notifications.alert.userNotSubscribed.message.button': `click here`,
+    'details.settings.notifications.alert.createSubscriptionFailed.message': `A issue was encountered subscribing you to notifications for this tenant. Please try again. If the issue persists, contact support.`,
+    'details.settings.notifications.alert.updateSettingsFailed.message': `A issue was encountered updating a notification setting for this task. Please try again. If the issue persists, contact support.`,
+    'details.settings.notifications.dataProcessing.header': `Data Processing`,
+    'details.settings.notifications.dataProcessing.noDataProcessedInInterval.message': `Data has not been processed in a given window of time.`,
+    'details.settings.notifications.dataProcessing.noDataProcessedInInterval.label': `Interval`,
+    'details.settings.notifications.dataProcessing.noDataProcessedInInterval.intervalOptions.hour': `{interval} {interval, plural, one {Hour} other {Hours}}`,
+    'details.settings.notifications.dataProcessing.noDataProcessedInInterval.intervalOptions.day': `{interval} {interval, plural, one {Day} other {Days}}`,
+    'details.settings.notifications.dataProcessing.noDataProcessedInInterval.unsetOption': `None`,
 };
 
 const Docs: ResolvedIntlConfig['messages'] = {

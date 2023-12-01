@@ -11,8 +11,9 @@ import { useEntityType } from 'context/EntityContext';
 import invariableStores from 'context/Zustand/invariableStores';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
+import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { useSnackbar } from 'notistack';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { logRocketEvent } from 'services/shared';
@@ -119,29 +120,33 @@ function useEntityWorkflowHelpers() {
         [setFormState, supabaseClient]
     );
 
+    const entityDetailsBaseURL = useMemo(() => {
+        if (entityType === 'capture') {
+            return authenticatedRoutes.captures.details.overview.fullPath;
+        } else if (entityType === 'materialization') {
+            return authenticatedRoutes.materializations.details.overview
+                .fullPath;
+        } else {
+            return authenticatedRoutes.collections.details.overview.fullPath;
+        }
+    }, [entityType]);
+
+    const { generatePath } = useDetailsNavigator(entityDetailsBaseURL);
+
     const exit = useCallback(
         (customRoute?: string) => {
             resetState();
 
             let route: string;
             if (!customRoute) {
-                switch (entityType) {
-                    case 'capture':
-                        route = authenticatedRoutes.captures.fullPath;
-                        break;
-                    case 'materialization':
-                        route = authenticatedRoutes.materializations.fullPath;
-                        break;
-                    default:
-                        route = authenticatedRoutes.collections.fullPath;
-                }
+                route = generatePath({ catalog_name: catalogName });
             } else {
                 route = customRoute;
             }
 
             navigate(route, { replace: true });
         },
-        [navigate, resetState, entityType]
+        [catalogName, generatePath, navigate, resetState]
     );
 
     // Form Event Handlers

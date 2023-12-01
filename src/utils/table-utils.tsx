@@ -1,5 +1,6 @@
 import MessageWithLink from 'components/content/MessageWithLink';
 import { FormattedMessage } from 'react-intl';
+import { Pagination } from 'services/supabase';
 import { TableIntlConfig, TableStatuses } from 'types';
 
 export const getEmptyTableHeader = (
@@ -40,3 +41,15 @@ export function getEmptyTableMessage(
         }
     }
 }
+
+export const getPagination = (currPage: number, size: number) => {
+    const limit = size;
+    const from = currPage ? currPage * limit : 0;
+    const to = (currPage ? from + size : size) - 1;
+
+    return { from, to };
+};
+
+export const getStartingPage = (val: Pagination, size: number) => {
+    return val.from / size;
+};
