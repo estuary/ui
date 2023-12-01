@@ -7,7 +7,7 @@ import {
     supabaseRetry,
     TABLES,
 } from 'services/supabase';
-import { AuthRoles, Capability, Grants_User } from 'types';
+import { AuthRoles, Capability, Grant_UserExt } from 'types';
 
 // Used to display prefix grants in admin page
 const getGrants = (
@@ -91,12 +91,10 @@ const getUserInformationByPrefix = (
     objectRoles: string[],
     capability: Capability
 ) => {
-    return supabaseRetry<PostgrestResponse<Grants_User>>(
-        () =>
-            supabaseClient
-                .from<Grants_User>(TABLES.COMBINED_GRANTS_EXT)
-                .select(
-                    `
+    return supabaseClient
+        .from<Grant_UserExt>(TABLES.COMBINED_GRANTS_EXT)
+        .select(
+            `
                     capability,
                     object_role,
                     subject_role,
@@ -105,13 +103,11 @@ const getUserInformationByPrefix = (
                     user_full_name,
                     user_id
                     `
-                )
-                .eq('capability', capability)
-                .in('object_role', objectRoles)
-                .is('subject_role', null)
-                .filter('user_email', 'not.is', null),
-        'getUserInformationByPrefix'
-    );
+        )
+        .eq('capability', capability)
+        .in('object_role', objectRoles)
+        .is('subject_role', null)
+        .filter('user_email', 'not.is', null);
 };
 
 export { getGrants, getGrants_Users, getUserInformationByPrefix };

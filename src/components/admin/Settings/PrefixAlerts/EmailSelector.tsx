@@ -10,10 +10,11 @@ import {
     Typography,
 } from '@mui/material';
 import { EmailDictionary } from 'components/admin/Settings/PrefixAlerts/types';
+import usePrefixAdministrators from 'hooks/usePrefixAdministrators';
 import useUserInformationByPrefix from 'hooks/useUserInformationByPrefix';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { Grants_User } from 'types';
+import { Grant_UserExt } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -24,13 +25,23 @@ interface Props {
 
 const simpleEmailRegEx = new RegExp(/.+@.+/m);
 
+const minCapability = 'admin';
+
 function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
     const intl = useIntl();
 
     const [inputValue, setInputValue] = useState('');
     const [inputErrorExists, setInputErrorExists] = useState<boolean>(false);
 
-    const { data } = useUserInformationByPrefix(prefix, 'admin');
+    const { data: adminPrefixes } = usePrefixAdministrators(
+        prefix,
+        minCapability
+    );
+
+    const { data: userInfo } = useUserInformationByPrefix(
+        [prefix, ...adminPrefixes],
+        minCapability
+    );
 
     const emails = useMemo(
         () =>
@@ -128,9 +139,9 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
                     }
                 }}
                 options={
-                    data.filter(
+                    userInfo.filter(
                         ({ user_email }) => !emails.includes(user_email)
-                    ) as (Grants_User | string)[]
+                    ) as (Grant_UserExt | string)[]
                 }
                 renderInput={({
                     InputProps,
