@@ -17,6 +17,9 @@ const intervalOptionIds = {
 function useSettingIntervalOptions() {
     const intl = useIntl();
 
+    // The keys of the object below are based on the returned, postgresql interval values.
+    // A postgresql interval in hour increments has the following format: 'HH:00:00'
+    // while a postgresql interval in day increments has the following format: '# day(s)'.
     const options: IntervalOptions = useMemo(
         () => ({
             '2 days': intl.formatMessage(intervalOptionIds.day, {
