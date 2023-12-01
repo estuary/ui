@@ -2,7 +2,6 @@ import { useZustandStore } from 'context/Zustand/provider';
 import { SelectTableStoreNames } from 'stores/names';
 import { PrefixAlertTableState } from 'stores/Tables/PrefixAlerts/types';
 
-// Selector Hooks
 export const usePrefixAlertTable_hydrateContinuously = () => {
     return useZustandStore<
         PrefixAlertTableState,
