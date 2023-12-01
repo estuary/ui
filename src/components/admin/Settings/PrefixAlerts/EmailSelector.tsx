@@ -28,6 +28,12 @@ const simpleEmailRegEx = new RegExp(/.+@.+/m);
 
 const minCapability = 'admin';
 
+const parseInputWithCommas = (value: string): string[] =>
+    value
+        .split(',')
+        .map((email) => email.trim())
+        .filter((email) => hasLength(email));
+
 function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
     const intl = useIntl();
 
@@ -96,12 +102,7 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
                     const modifiedEmails = values.flatMap((value) => {
                         if (typeof value === 'string') {
                             if (value.includes(',') || value.endsWith(',')) {
-                                const enteredEmails = value
-                                    .split(',')
-                                    .map((email) => email.trim())
-                                    .filter((email) => hasLength(email));
-
-                                return enteredEmails;
+                                return parseInputWithCommas(value);
                             }
 
                             return value;
@@ -119,10 +120,7 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
                     setInputValue(value);
 
                     if (value.includes(',') || value.endsWith(',')) {
-                        const enteredEmails = value
-                            .split(',')
-                            .map((email) => email.trim())
-                            .filter((email) => hasLength(email));
+                        const enteredEmails = parseInputWithCommas(value);
 
                         setEmailsByPrefix({
                             ...emailsByPrefix,
