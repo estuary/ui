@@ -12,7 +12,6 @@ import {
 } from 'stores/Tables/Store';
 import { BaseComponentProps } from 'types';
 
-// Hydrator
 interface TableHydratorProps extends BaseComponentProps {
     query: PostgrestFilterBuilder<AlertSubscriptionsExtendedQuery>;
 }
