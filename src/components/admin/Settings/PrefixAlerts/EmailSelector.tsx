@@ -177,17 +177,6 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
                                     },
                                 }}
                             />
-                            {/* {option.user_full_name ||
-                            option.user_email.split('@')[0] ? (
-                                <Typography component={Box}>
-                                    {option.user_full_name ??
-                                        option.user_email.split('@')[0]}
-                                </Typography>
-                            ) : null}
-
-                            {option.user_email ? (
-                                <Typography>{option.user_email}</Typography>
-                            ) : null} */}
                         </ListItem>
                     );
                 }}
