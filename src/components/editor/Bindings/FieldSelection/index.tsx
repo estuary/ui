@@ -27,6 +27,7 @@ import {
     useBindingsEditorStore_setSingleSelection,
 } from 'components/editor/Bindings/Store/hooks';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
+import useSaveInBackground from 'components/shared/Entity/Actions/useSaveInBackground';
 import ExternalLink from 'components/shared/ExternalLink';
 import FieldSelectionTable from 'components/tables/FieldSelection';
 import { isEqual } from 'lodash';
@@ -105,6 +106,8 @@ const mapConstraintsToProjections = (
     });
 
 function FieldSelectionViewer({ collectionName }: Props) {
+    useSaveInBackground();
+
     const applyFieldSelections = useFieldSelection(collectionName);
 
     // Bindings Editor Store
