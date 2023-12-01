@@ -8,7 +8,6 @@ export interface FormState {
     showLogs: boolean;
     exitWhenLogsClose: boolean;
     logToken: string | null;
-    runInBackground: boolean;
     error: {
         title: string;
         error?: PostgrestError;

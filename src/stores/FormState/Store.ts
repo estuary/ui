@@ -68,7 +68,6 @@ const initialFormState = {
     exitWhenLogsClose: false,
     logToken: null,
     error: null,
-    runInBackground: false,
     message: {
         key: null,
         severity: null,
@@ -123,7 +122,6 @@ const getInitialState = (
                     runInBackground && status === FormStatus.TESTING
                         ? FormStatus.TESTING_BACKGROUND
                         : status;
-                state.formState.runInBackground = Boolean(runInBackground);
 
                 state.isIdle = formIdle(status);
 
