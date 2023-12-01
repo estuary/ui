@@ -204,7 +204,7 @@ function useSave(
             }
 
             // All the validation is done and we can start saving
-            updateFormStatus(status);
+            updateFormStatus(status, hideLogs);
 
             // If there are bound collections then we need to potentially handle clean up
             if (collections && collections.length > 0) {
