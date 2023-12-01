@@ -32,7 +32,6 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
     const intl = useIntl();
 
     const [inputValue, setInputValue] = useState('');
-    // const [inputErrorExists, setInputErrorExists] = useState(false);
 
     const { data: adminPrefixes } = usePrefixAdministrators(
         prefix,

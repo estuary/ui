@@ -42,10 +42,8 @@ function NotificationSettings({ taskName }: Props) {
                     setSubscriptionExists(true);
                 }
             },
-            (error) => {
+            () => {
                 setSubscriptionExists(false);
-
-                console.log('settings init failed', error);
             }
         );
     }, [getNotificationSubscription, setSubscriptionExists]);

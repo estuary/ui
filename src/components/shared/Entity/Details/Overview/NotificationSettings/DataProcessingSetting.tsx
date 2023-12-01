@@ -65,8 +65,6 @@ function DataProcessingSetting({
         DataProcessingAlertQuery | null | undefined
     >(undefined);
 
-    // const [errorSeverity, setErrorSeverity] = useState<AlertColor | null>(null);
-
     const options: { [interval: string]: string } = useMemo(
         () => ({
             '2 days': intl.formatMessage(intervalOptionIds.day, {
@@ -162,14 +160,9 @@ function DataProcessingSetting({
         if (catalogName && notification === undefined) {
             getNotifications().then(
                 (response) => {
-                    console.log('init switch success', response);
-
                     setNotification(response.data);
-                    // setErrorSeverity(null);
                 },
                 () => {
-                    console.log('init switch error');
-                    // setErrorSeverity('error');
                     setNotification(null);
                 }
             );
