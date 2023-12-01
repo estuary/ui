@@ -232,12 +232,22 @@ export interface InferredSchemas {
     flow_document: any; //InferredSchemaFlowDocument
 }
 
-export interface Grants {
+export interface BaseGrant {
     capability: string;
     object_role: string;
     subject_role: string;
+}
+
+export interface Grants extends BaseGrant {
     user_id: string;
     id: string;
+}
+
+export interface Grant_UserExt extends BaseGrant {
+    user_avatar_url: string | null;
+    user_email: string;
+    user_full_name: string | null;
+    user_id: string;
 }
 
 export interface LiveSpecsExtBareMinimum {
@@ -358,4 +368,19 @@ export interface InferSchemaPropertyForRender
 export interface AutoDiscoverySettings {
     addNewBindings: boolean;
     evolveIncompatibleCollections: boolean;
+}
+
+export interface AlertSubscription {
+    id: string;
+    detail: string;
+    created_at: Date;
+    updated_at: Date;
+    catalog_prefix: string;
+    email: string;
+}
+
+export interface DataProcessingAlert {
+    alert_type: string;
+    catalog_name: string;
+    evaluation_interval: string;
 }

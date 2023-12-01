@@ -7,16 +7,16 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import Auth from 'pages/Auth';
 import Collections from 'pages/Collections';
 import DataPlaneAuthReq from 'pages/DataPlaneAuthReq';
+import Login from 'pages/Login';
 import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
-import Login from 'pages/Login';
-import { lazy, Suspense } from 'react';
+import { Suspense, lazy } from 'react';
 import {
-    createBrowserRouter,
-    createRoutesFromElements,
     Route,
     RouterProvider,
     Routes,
+    createBrowserRouter,
+    createRoutesFromElements,
 } from 'react-router-dom';
 import Admin from 'pages/Admin';
 import AccessGrants from 'components/admin/AccessGrants';

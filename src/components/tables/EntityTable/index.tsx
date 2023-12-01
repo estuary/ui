@@ -24,11 +24,11 @@ import {
 import { useIntl } from 'react-intl';
 import { useEffectOnce } from 'react-use';
 import { Pagination } from 'services/supabase';
-import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
+import { SelectTableStoreNames } from 'stores/names';
 import {
     SortDirection,
     TableColumns,
@@ -36,6 +36,7 @@ import {
     TableState,
     TableStatuses,
 } from 'types';
+import { getPagination, getStartingPage } from 'utils/table-utils';
 import EntityTableBody from './TableBody';
 import EntityTableFooter from './TableFooter';
 import EntityTableHeader from './TableHeader';
@@ -73,18 +74,6 @@ interface Props {
     showToolbar?: boolean;
     toolbar?: ReactNode;
 }
-
-export const getPagination = (currPage: number, size: number) => {
-    const limit = size;
-    const from = currPage ? currPage * limit : 0;
-    const to = (currPage ? from + size : size) - 1;
-
-    return { from, to };
-};
-
-const getStartingPage = (val: Pagination, size: number) => {
-    return val.from / size;
-};
 
 // TODO (tables) I think we should switch this to React Table soon
 //   Also - you MUST include a count with your query or else pagination breaks
@@ -189,6 +178,7 @@ function EntityTable({
         }
     }, [resetRows, setAll, toolbar]);
 
+    // TODO (tables | optimization): Evaluate whether the hacky fix below is needed and remove if not.
     // Weird way but works for clear out the input. This is really only needed when
     //  a user enters text into the input on a page and then clicks the left nav of
     //  the page they are already on

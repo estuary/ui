@@ -1,7 +1,7 @@
-import { useDetailsPage } from './context';
 import History from './History';
 import Overview from './Overview';
 import Spec from './Spec';
+import { useDetailsPage } from './context';
 
 function RenderTab() {
     const page = useDetailsPage();
