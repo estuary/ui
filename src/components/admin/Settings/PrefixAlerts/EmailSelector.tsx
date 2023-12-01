@@ -50,8 +50,8 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
     );
 
     const emails = useMemo(
-        () =>
-            Object.hasOwn(emailsByPrefix, prefix) ? emailsByPrefix[prefix] : [],
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        () => emailsByPrefix[prefix] ?? [],
         [prefix, emailsByPrefix]
     );
 
