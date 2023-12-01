@@ -1,5 +1,6 @@
 import { getNotificationSubscriptions } from 'api/alerts';
 import { useEffect, useState } from 'react';
+import { useUnmount } from 'react-use';
 import {
     PrefixSubscriptionDictionary,
     formatNotificationSubscriptionsByPrefix,
@@ -44,7 +45,11 @@ function useAlertSubscriptionDialog(prefix?: string) {
                 setSubscriptions(existingSubscriptions);
             }
         })();
-    }, [open]);
+    }, [open, prefix]);
+
+    useUnmount(() => {
+        setSubscriptions(null);
+    });
 
     return { open, openGenerateAlertDialog, setOpen, subscriptions };
 }
