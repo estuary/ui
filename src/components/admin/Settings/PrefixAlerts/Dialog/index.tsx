@@ -5,13 +5,16 @@ import {
     DialogContent,
     DialogTitle,
     Grid,
+    IconButton,
     TextField,
     Typography,
+    useTheme,
 } from '@mui/material';
 import SaveButton from 'components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
 import EmailSelector from 'components/admin/Settings/PrefixAlerts/EmailSelector';
 import { EmailDictionary } from 'components/admin/Settings/PrefixAlerts/types';
 import PrefixedName from 'components/inputs/PrefixedName';
+import { Cancel } from 'iconoir-react';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { PrefixSubscriptionDictionary } from 'utils/notification-utils';
@@ -34,6 +37,7 @@ function AlertSubscriptionDialog({
     staticPrefix,
 }: Props) {
     const intl = useIntl();
+    const theme = useTheme();
 
     const [prefix, setPrefix] = useState(staticPrefix ? staticPrefix : '');
     const [prefixHasErrors, setPrefixHasErrors] = useState(false);
@@ -72,10 +76,35 @@ function AlertSubscriptionDialog({
         setPrefixHasErrors(Boolean(errors));
     };
 
+    const closeDialog = (event: React.MouseEvent<HTMLElement>) => {
+        event.preventDefault();
+
+        setUpdatedEmails({});
+        setOpen(false);
+    };
+
     return (
         <Dialog open={open} maxWidth="md" fullWidth aria-labelledby={TITLE_ID}>
-            <DialogTitle>
-                <FormattedMessage id={headerId} />
+            <DialogTitle
+                component="div"
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <Typography variant="h6">
+                    <FormattedMessage id={headerId} />
+                </Typography>
+
+                <IconButton onClick={closeDialog}>
+                    <Cancel
+                        style={{
+                            fontSize: '1rem',
+                            color: theme.palette.text.primary,
+                        }}
+                    />
+                </IconButton>
             </DialogTitle>
 
             <DialogContent sx={{ mt: 1 }}>
@@ -141,16 +170,7 @@ function AlertSubscriptionDialog({
             </DialogContent>
 
             <DialogActions>
-                <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={(event: React.MouseEvent<HTMLElement>) => {
-                        event.preventDefault();
-
-                        setUpdatedEmails({});
-                        setOpen(false);
-                    }}
-                >
+                <Button variant="outlined" size="small" onClick={closeDialog}>
                     <FormattedMessage id="cta.cancel" />
                 </Button>
 
