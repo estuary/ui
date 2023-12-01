@@ -9,18 +9,19 @@ import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
 import PrefixAlertTableHydrator from 'stores/Tables/PrefixAlerts/Hydrator';
 import { TableColumns } from 'types';
 
+// TODO (optimization): The prefix alert table should have a last updated column
+//   however the current data model does not provide a means to reliably track
+//   when the emails subscribed to alerts under a given prefix were last updated.
+//   If the most recently subscribed email for a given prefix is removed,
+//   the latest `updated_at` value would be rolling back in time.
 const columns: TableColumns[] = [
     {
-        field: 'prefix',
+        field: 'catalog_prefix',
         headerIntlKey: 'entityTable.data.catalogPrefix',
     },
     {
         field: null,
         headerIntlKey: 'admin.alerts.table.label.alertMethod',
-    },
-    {
-        field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastUpdated',
     },
     {
         field: null,
@@ -42,7 +43,7 @@ function PrefixAlertTable() {
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState(TablePrefixes.prefixAlerts, 'updated_at', 'desc');
+    } = useTableState(TablePrefixes.prefixAlerts, 'catalog_prefix', 'asc');
 
     const adminCapabilities = useEntitiesStore_capabilities_adminable();
     const objectRoles = Object.keys(adminCapabilities);

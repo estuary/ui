@@ -1,7 +1,6 @@
 import { TableCell, TableRow, useTheme } from '@mui/material';
 import AlertEditButton from 'components/admin/Settings/PrefixAlerts/EditButton';
 import ChipListCell from 'components/tables/cells/ChipList';
-import TimeStamp from 'components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'context/Theme';
 import { PrefixSubscription } from 'utils/notification-utils';
 
@@ -28,8 +27,6 @@ function Row({ row }: RowProps) {
                 stripPath={false}
                 maxChips={3}
             />
-
-            <TimeStamp time={data.lastUpdated} enableRelative />
 
             <TableCell>
                 <AlertEditButton prefix={prefix} />
