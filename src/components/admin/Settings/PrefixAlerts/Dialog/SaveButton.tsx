@@ -43,10 +43,22 @@ function SaveButton({
         event.preventDefault();
         setLoading(true);
 
+        const subscriptionsToCancel: [string, string][] = [];
         const subscriptionsToCreate: [string, string][] = [];
 
         Object.entries(updatedEmails).forEach(([key, value]) => {
-            const processedValues = Object.hasOwn(existingEmails, key)
+            const emailsExistForPrefix = Object.hasOwn(existingEmails, key);
+
+            if (emailsExistForPrefix) {
+                existingEmails[key]
+                    .filter((email) => !value.includes(email))
+                    .map((email): [string, string] => [key, email])
+                    .forEach((subscriptionMetadata) => {
+                        subscriptionsToCancel.push(subscriptionMetadata);
+                    });
+            }
+
+            const processedValues = emailsExistForPrefix
                 ? value.filter((email) => !existingEmails[key].includes(email))
                 : value;
 
@@ -57,30 +69,17 @@ function SaveButton({
                 });
         });
 
-        const createdSubscriptions = subscriptionsToCreate.map(([key, email]) =>
-            createNotificationSubscription(key, email)
-        );
-
-        const subscriptionsToCancel: [string, string][] = [];
-
-        Object.entries(updatedEmails).forEach(([key, value]) => {
-            if (Object.hasOwn(existingEmails, key)) {
-                existingEmails[key]
-                    .filter((email) => !value.includes(email))
-                    .map((email): [string, string] => [key, email])
-                    .forEach((subscriptionMetadata) => {
-                        subscriptionsToCancel.push(subscriptionMetadata);
-                    });
-            }
-        });
-
         const cancelledSubscriptions = subscriptionsToCancel.map(
             ([key, email]) => deleteNotificationSubscription(email, key)
         );
 
+        const createdSubscriptions = subscriptionsToCreate.map(([key, email]) =>
+            createNotificationSubscription(key, email)
+        );
+
         const responses = await Promise.all([
-            ...createdSubscriptions,
             ...cancelledSubscriptions,
+            ...createdSubscriptions,
         ]);
 
         const errors = responses.filter((r) => r.error);
