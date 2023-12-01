@@ -68,10 +68,6 @@ function AlertSubscriptionDialog({
     }, [open, prefix, existingEmails, setUpdatedEmails, updatedEmails]);
 
     const updatePrefix = (value: string, errors: string | null) => {
-        // if (serverError) {
-        //     setServerError(null);
-        // }
-
         setPrefix(value);
         setPrefixHasErrors(Boolean(errors));
     };
