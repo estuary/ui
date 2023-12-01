@@ -65,6 +65,7 @@ function FieldSelectionTable({ projections }: Props) {
         if (
             typeof projections === 'undefined' ||
             projections === null ||
+            formStatus === FormStatus.GENERATING ||
             formStatus === FormStatus.TESTING ||
             formStatus === FormStatus.TESTING_BACKGROUND
         ) {
@@ -105,8 +106,9 @@ function FieldSelectionTable({ projections }: Props) {
                             disableDoclink: true,
                         }}
                         tableState={tableState}
-                        loading={formStatus === FormStatus.TESTING}
+                        loading={tableState.status === TableStatuses.LOADING}
                         rows={
+                            tableState.status !== TableStatuses.LOADING &&
                             projections &&
                             projections.length > 0 &&
                             formStatus !== FormStatus.TESTING ? (
