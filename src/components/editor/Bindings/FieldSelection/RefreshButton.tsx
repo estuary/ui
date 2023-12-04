@@ -6,6 +6,7 @@ import { CustomEvents } from 'services/types';
 import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { Refresh } from 'iconoir-react';
 
 interface Props {
     buttonLabelId: string;
@@ -25,6 +26,8 @@ function RefreshButton({ disabled, logEvent, buttonLabelId }: Props) {
     return (
         <Button
             disabled={Boolean(updating || disabled)}
+            startIcon={<Refresh style={{ fontSize: 12 }} />}
+            variant="text"
             onClick={async () => {
                 setUpdating(true);
 

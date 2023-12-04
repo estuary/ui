@@ -6,6 +6,7 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
+import MessageWithLink from 'components/content/MessageWithLink';
 import RefreshButton from 'components/editor/Bindings/FieldSelection/RefreshButton';
 import {
     BuiltSpec_Binding,
@@ -28,7 +29,6 @@ import {
 } from 'components/editor/Bindings/Store/hooks';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import useSaveInBackground from 'components/shared/Entity/Actions/useSaveInBackground';
-import ExternalLink from 'components/shared/ExternalLink';
 import FieldSelectionTable from 'components/tables/FieldSelection';
 import { isEqual } from 'lodash';
 import {
@@ -294,25 +294,17 @@ function FieldSelectionViewer({ collectionName }: Props) {
                             <FormattedMessage id="fieldSelection.header" />
                         </Typography>
 
-                        <ExternalLink link="https://docs.estuary.dev/guides/customize-materialization-fields/">
-                            <FormattedMessage id="terms.documentation" />
-                        </ExternalLink>
+                        <RefreshButton
+                            buttonLabelId="cta.refresh"
+                            disabled={loading}
+                            logEvent={CustomEvents.MATERIALIZATION_TEST}
+                        />
                     </Stack>
 
                     <Typography>
-                        <FormattedMessage id="fieldSelection.message" />
+                        <MessageWithLink messageID="fieldSelection.message" />
                     </Typography>
                 </Stack>
-
-                <Box sx={{ whiteSpace: 'nowrap' }}>
-                    {/* The shared test and save button component is disabled when the form is active.
-                        No additional disabled conditions are needed. */}
-                    <RefreshButton
-                        buttonLabelId="fieldSelection.cta.populateTable"
-                        disabled={loading}
-                        logEvent={CustomEvents.MATERIALIZATION_TEST}
-                    />
-                </Box>
             </Stack>
 
             <FormControl sx={{ mb: 1, mx: 0 }}>
