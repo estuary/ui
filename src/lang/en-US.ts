@@ -1285,7 +1285,7 @@ const NotBeforeNotAfter: ResolvedIntlConfig['messages'] = {
 const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.header': `Field Selection`,
     'fieldSelection.message': `Determine which fields in your collection get materialized. By default, the connector dynamically selects the fields exported by your materialization. Click "${CTAs['cta.refresh']}" to update the table below. For more details, please {docLink}.`,
-    'fieldSelection.message.docLink': `view the docs`,
+    'fieldSelection.message.docLink': `see the docs`,
     'fieldSelection.message.docPath': `https://docs.estuary.dev/guides/customize-materialization-fields/`,
 
     'fieldSelection.cta.defaultAllFields': `Include recommended fields`,
