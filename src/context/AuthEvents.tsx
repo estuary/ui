@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import { logRocketConsole } from 'services/logrocket';
 import { BaseComponentProps } from 'types';
-import { generateRedirectPath } from 'utils/misc-utils';
 
 function AuthEvents({ children }: BaseComponentProps) {
     const supabaseClient = useClient();
@@ -17,18 +16,12 @@ function AuthEvents({ children }: BaseComponentProps) {
                 // Need to use navigate here otherwise the RequireAuth code
                 //  would pick up the user logged out and handle the redirecting
                 //  to the login page.
-                navigate(
-                    generateRedirectPath(
-                        unauthenticatedRoutes.logout.path,
-                        `${window.location.pathname}${window.location.search}`
-                    ),
-                    {
-                        replace: true,
-                        state: {
-                            from: `${window.location.pathname}${window.location.search}`,
-                        },
-                    }
-                );
+                navigate(unauthenticatedRoutes.logout.path, {
+                    replace: true,
+                    state: {
+                        from: window.location,
+                    },
+                });
             }
         });
     });
