@@ -3,7 +3,7 @@ import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useLoginRedirectPath from 'hooks/useLoginRedirectPath';
+import useLoginRedirectPath from 'hooks/searchParams/useLoginRedirectPath';
 import { Navigate, useLocation } from 'react-router-dom';
 import { logRocketConsole } from 'services/logrocket';
 import { BaseComponentProps } from 'types';
