@@ -33,7 +33,7 @@ export const QUERY_PARAM_CONNECTOR_TITLE = `connector_title->>en-US`;
 
 export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',
-    jwsInvalid: 'JWSError JWSInvalidSignature',
+    jwsInvalid: 'JWSError',
 };
 
 export const DEFAULT_FILTER = '__unknown__';

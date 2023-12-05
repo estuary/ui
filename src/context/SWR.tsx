@@ -52,7 +52,7 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                     onError: async (error, _key, _config) => {
                         if (
                             error.message === ERROR_MESSAGES.jwtExpired ||
-                            error.message === ERROR_MESSAGES.jwsInvalid
+                            error.message.includes(ERROR_MESSAGES.jwsInvalid)
                         ) {
                             setTokenInvalid(true);
                             await supabaseClient.auth
