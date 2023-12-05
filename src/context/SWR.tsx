@@ -27,14 +27,12 @@ export const extendedPollSettings = {
     refreshInterval: EXTENDED_POLL_INTERVAL,
     revalidateOnFocus: false,
 };
-
 const SwrConfigProvider = ({ children }: BaseComponentProps) => {
     const supabaseClient = useClient();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const { 1: setTokenInvalid } = useLocalStorage(
-        LocalStorageKeys.TOKEN_INVALID,
-        false
+        LocalStorageKeys.TOKEN_INVALID
     );
 
     const cache = useCallback(() => {
