@@ -54,7 +54,10 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                         revalidateOpts
                     ) => {
                         // The server says they do not have access so don't try again
-                        if (err === AUTH_ERROR) {
+                        if (
+                            err &&
+                            (err === AUTH_ERROR || err.message === AUTH_ERROR)
+                        ) {
                             return;
                         }
 
