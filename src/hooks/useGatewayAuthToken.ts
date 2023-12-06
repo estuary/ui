@@ -27,9 +27,11 @@ export const gatewayFetcher = (
 ): Promise<GatewayAuthTokenResponse[]> => {
     const headers: HeadersInit = {};
 
+    // Use the supabase key because we're calling a Supabase function to fetch
+    //   the key we need to make calls to the Gateway
     const { supabaseAnonymousKey } = getSupabaseAnonymousKey();
-
     headers.apikey = supabaseAnonymousKey;
+
     headers.Authorization = `Bearer ${sessionKey}`;
     headers['Content-Type'] = 'application/json';
 
@@ -67,15 +69,16 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
         }
     }
 
-    const gatewayConfig = getStoredGatewayAuthConfig();
-
+    // Grab the Gateway token from local storage
     let jwt: JWTPayload | undefined;
     try {
+        const gatewayConfig = getStoredGatewayAuthConfig();
         jwt = gatewayConfig ? decodeJwt(gatewayConfig.token) : undefined;
     } catch {
         jwt = undefined;
     }
 
+    // Check if the Gateway token is expired and we need to get a new one
     let tokenExpired = true;
     if (jwt?.exp) {
         tokenExpired = isBefore(jwt.exp * 1000, Date.now());
