@@ -3,14 +3,12 @@ import { LRUCache } from 'lru-cache';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
-import { useLocalStorage } from 'react-use';
 import { logRocketConsole } from 'services/logrocket';
 import { logRocketEvent } from 'services/shared';
 import { ERROR_MESSAGES } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import { SWRConfig } from 'swr';
 import { BaseComponentProps } from 'types';
-import { LocalStorageKeys } from 'utils/localStorage-utils';
 
 export const DEFAULT_POLLING = 2500;
 export const EXTENDED_POLL_INTERVAL = 30000;
@@ -31,9 +29,6 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
     const supabaseClient = useClient();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const { 1: setTokenInvalid } = useLocalStorage(
-        LocalStorageKeys.TOKEN_INVALID
-    );
 
     const cache = useCallback(() => {
         return new LRUCache({
@@ -54,7 +49,6 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                             error.message === ERROR_MESSAGES.jwtExpired ||
                             error.message.includes(ERROR_MESSAGES.jwsInvalid)
                         ) {
-                            setTokenInvalid(true);
                             await supabaseClient.auth
                                 .signOut()
                                 .then(() => {

@@ -29,11 +29,6 @@ const bodyClass = 'loginPage';
 const Login = ({ showRegistration }: Props) => {
     useBrowserTitle('routeTitle.login');
 
-    const { 2: clearInvalidToken } = useLocalStorage(
-        LocalStorageKeys.TOKEN_INVALID
-    );
-    useEffectOnce(() => clearInvalidToken());
-
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
     const { 2: clearGatewayConfig } = useLocalStorage(LocalStorageKeys.GATEWAY);
     useEffectOnce(() => clearGatewayConfig());

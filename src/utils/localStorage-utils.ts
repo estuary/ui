@@ -4,7 +4,6 @@ export enum LocalStorageKeys {
     COLOR_MODE = 'estuary.color-mode',
     NAVIGATION_SETTINGS = 'estuary.navigation-settings',
     GATEWAY = 'estuary.gateway-auth-config',
-    TOKEN_INVALID = 'estuary.token-invalid',
 }
 
 export const storeGatewayAuthConfig = ({
