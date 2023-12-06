@@ -1,6 +1,5 @@
 import { Grid, Stack, Table, TableContainer } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
-import MessageWithLink from 'components/content/MessageWithLink';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
 import { useState } from 'react';
@@ -8,6 +7,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useShardDetail_error } from 'stores/ShardDetail/hooks';
 import { ShardEntityTypes } from 'stores/ShardDetail/types';
 import { TableColumns } from 'types';
+import Message from 'components/shared/Error/Message';
 import ShardAlerts from './Alerts';
 import InformationTableBody from './TableBody';
 import InformationTableFooter from './TableFooter';
@@ -61,7 +61,7 @@ function ShardInformation({ taskName, taskTypes }: Props) {
                         <FormattedMessage id="detailsPanel.shardDetails.fetchError" />
                     }
                 >
-                    <MessageWithLink messageID="error.message" />
+                    <Message error={error} />
                 </AlertBox>
             ) : (
                 <>
