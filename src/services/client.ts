@@ -34,7 +34,6 @@ export const client = <Response, Request = {}>(
         .fetch(endpoint, config)
         .then(async (response) => {
             if (response.status === 401) {
-                // await auth.signout();
                 return Promise.reject({ message: AUTH_ERROR });
             } else if (response.ok) {
                 return response.json();
