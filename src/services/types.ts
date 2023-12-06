@@ -19,6 +19,8 @@ export enum CustomEvents {
     ERROR_BOUNDARY_DISPLAYED = 'Error_Boundary_Displayed',
     ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
     FULL_PAGE_ERROR_DISPLAYED = 'Full_Page_Error_Displayed',
+    GATEWAY_TOKEN_FAILED = 'Gateway_Auth_Token:CallFailed',
+    GATEWAY_TOKEN_INVALID_PREFIX = 'Gateway_Auth_Token:InvalidPrefix',
     STRIPE_FORM_LOADING_FAILED = 'Stripe_Form_Loading_Failed',
     SUPABASE_CALL_FAILED = 'Supabase_Call_Failed',
     SWR_LOADING_SLOW = 'SWR_Loading_Slow',

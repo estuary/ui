@@ -3,6 +3,8 @@ import { isBefore } from 'date-fns';
 import { decodeJwt, JWTPayload } from 'jose';
 import { isEmpty } from 'lodash';
 import { client } from 'services/client';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { useEntitiesStore_capabilities_readable } from 'stores/Entities/hooks';
 import useSWR from 'swr';
 import { GatewayAuthTokenResponse } from 'types';
@@ -57,10 +59,11 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
 
     if (prefixes) {
         if (authorized_prefixes.length !== prefixes.length) {
-            console.warn(
-                'Attempt to fetch auth token for prefixes that you do not have permissions on: ',
-                prefixes.filter((prefix) => !allowed_prefixes.includes(prefix))
-            );
+            logRocketEvent(CustomEvents.GATEWAY_TOKEN_INVALID_PREFIX, {
+                prefixes: prefixes.filter(
+                    (prefix) => !allowed_prefixes.includes(prefix)
+                ),
+            });
         }
     }
 
@@ -92,8 +95,9 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
                 storeGatewayAuthConfig(config);
             },
             onError: (error) => {
-                // TODO: Remove console.log call.
-                console.error(error);
+                logRocketEvent(CustomEvents.GATEWAY_TOKEN_FAILED, {
+                    error,
+                });
             },
         }
     );
