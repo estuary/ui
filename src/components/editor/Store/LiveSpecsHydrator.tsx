@@ -50,7 +50,7 @@ function LiveSpecsHydrator({
     }
 
     // TODO (details) same as the error up above
-    // Targetting to handle when a user does not have access
+    // Targetting when a user does not have access to a spec or typoed the URL
     if (!pubSpecsValidating && !hasLength(publicationSpecs)) {
         return <EntityNotFound catalogName={catalogName} />;
     }
