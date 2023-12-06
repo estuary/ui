@@ -1,7 +1,7 @@
 import { Auth } from '@supabase/ui';
 import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
-import { logRocketConsole } from 'services/logrocket';
+import { logRocketConsole } from 'services/shared';
 
 function useUserDetails() {
     const { user } = Auth.useUser();

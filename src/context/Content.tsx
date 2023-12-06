@@ -1,6 +1,6 @@
 import enUSMessages from 'lang/en-US';
 import { IntlProvider } from 'react-intl';
-import { logRocketConsole } from 'services/logrocket';
+import { logRocketConsole } from 'services/shared';
 import { BaseComponentProps } from 'types';
 
 // TODO (intl) - Don't hard hardcode to EN

@@ -2,7 +2,7 @@ import { Auth } from '@supabase/ui';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useMemo } from 'react';
-import { logRocketConsole } from 'services/logrocket';
+import { logRocketConsole } from 'services/shared';
 import useSWR from 'swr';
 
 enum ErrorFlags {

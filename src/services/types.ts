@@ -23,5 +23,6 @@ export enum CustomEvents {
     GATEWAY_TOKEN_INVALID_PREFIX = 'Gateway_Auth_Token:InvalidPrefix',
     STRIPE_FORM_LOADING_FAILED = 'Stripe_Form_Loading_Failed',
     SUPABASE_CALL_FAILED = 'Supabase_Call_Failed',
+    SUPABASE_CALL_UNAUTHENTICATED = 'Supabase_Call_Unauthenticated',
     SWR_LOADING_SLOW = 'SWR_Loading_Slow',
 }
