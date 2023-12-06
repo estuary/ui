@@ -1,5 +1,6 @@
 import enUSMessages from 'lang/en-US';
 import { IntlProvider } from 'react-intl';
+import { logRocketConsole } from 'services/logrocket';
 import { BaseComponentProps } from 'types';
 
 // TODO (intl) - Don't hard hardcode to EN
@@ -9,9 +10,12 @@ const ContentProvider = ({ children }: BaseComponentProps) => {
 
     return (
         <IntlProvider
-            messages={enUSMessages}
-            locale={userLang}
             defaultLocale="en-US"
+            locale={userLang}
+            messages={enUSMessages}
+            onError={(err) => {
+                logRocketConsole('Intl:Translation:KeyMissing', err);
+            }}
         >
             {children}
         </IntlProvider>
