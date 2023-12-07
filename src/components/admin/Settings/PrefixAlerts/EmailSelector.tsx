@@ -45,7 +45,7 @@ const flattenValues = (values: Values, checkCommas: boolean): string[] => {
         typeof value === 'string'
             ? checkCommas && stringHasCommas(value)
                 ? parseInputWithCommas(value)
-                : value
+                : value.trim()
             : value.user_email
     );
 };

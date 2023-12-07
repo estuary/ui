@@ -14,6 +14,9 @@ export const DATE_TIME_PATTERN = `[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[
 //  go/flowctl-go/cmd-discover.go
 export const MAX_DISCOVER_TIME = 30000;
 
+// For chunking up large http calls
+export const CHUNK_SIZE = 10;
+
 // TODO (optimization): Combine the stripPathing and truncateCatalogName utility functions.
 export const stripPathing = (stringVal: string) => {
     if (!stringVal) return stringVal;

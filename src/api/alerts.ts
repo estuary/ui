@@ -1,3 +1,4 @@
+import pLimit from 'p-limit';
 import {
     defaultTableFilter,
     deleteSupabase,
@@ -11,36 +12,64 @@ import {
     updateSupabase,
 } from 'services/supabase';
 import { AlertSubscription, DataProcessingAlert } from 'types';
+import { CHUNK_SIZE } from 'utils/misc-utils';
 
-const createNotificationSubscription = (prefix: string, email: string) => {
-    return insertSupabase(TABLES.ALERT_SUBSCRIPTIONS, {
-        catalog_prefix: prefix,
-        email,
-    });
-};
-
-interface DeleteSubscriptionMatchData {
+interface CreateObject {
+    catalog_prefix: string;
     email: string;
-    catalog_prefix?: string;
-    subscription_id?: string;
 }
 
-const deleteNotificationSubscription = (
-    email: string,
-    prefix?: string,
-    subscriptionId?: string
+const createNotificationSubscription = async (
+    createObjects: CreateObject[]
 ) => {
-    let matchData: DeleteSubscriptionMatchData = { email };
+    const limiter = pLimit(3);
+    const promises = [];
+    let index = 0;
 
-    if (prefix) {
-        matchData = { ...matchData, catalog_prefix: prefix };
+    const promiseGenerator = (idx: number) => {
+        return insertSupabase(
+            TABLES.ALERT_SUBSCRIPTIONS,
+            createObjects.slice(idx, idx + CHUNK_SIZE)
+        );
+    };
+
+    while (index < createObjects.length) {
+        const prom = promiseGenerator(index);
+        promises.push(limiter(() => prom));
+        index = index + CHUNK_SIZE;
     }
 
-    if (subscriptionId) {
-        matchData = { ...matchData, subscription_id: subscriptionId };
+    const response = await Promise.all(promises);
+    const errors = response.filter((r) => r.error);
+    return errors[0] ?? response[0];
+};
+
+const deleteNotificationSubscription = async (
+    prefix: string,
+    emails: string[]
+) => {
+    const limiter = pLimit(3);
+    const promises = [];
+    let index = 0;
+
+    // TODO (retry) promise generator
+    const promiseGenerator = (idx: number) => {
+        return supabaseClient
+            .from(TABLES.ALERT_SUBSCRIPTIONS)
+            .delete()
+            .eq('catalog_prefix', prefix)
+            .in('email', emails.slice(idx, idx + CHUNK_SIZE));
+    };
+
+    while (index < emails.length) {
+        const prom = promiseGenerator(index);
+        promises.push(limiter(() => prom));
+        index = index + CHUNK_SIZE;
     }
 
-    return deleteSupabase(TABLES.ALERT_SUBSCRIPTIONS, matchData);
+    const response = await Promise.all(promises);
+    const errors = response.filter((r) => r.error);
+    return errors[0] ?? response[0];
 };
 
 const createDataProcessingNotification = (
