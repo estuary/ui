@@ -24,9 +24,13 @@ interface Props {
     setEmailsByPrefix: Dispatch<SetStateAction<EmailDictionary>>;
 }
 
-const simpleEmailRegEx = new RegExp(/.+@.+/m);
+// Validation is VERY basic 'non-whitespace@non-whitespace'
+const simpleEmailRegEx = new RegExp(/^\S+@\S+$/m);
 
 const minCapability = 'admin';
+
+const stringHasCommas = (value: string) =>
+    value.includes(',') || value.endsWith(',');
 
 const parseInputWithCommas = (value: string): string[] =>
     value
@@ -101,7 +105,7 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
 
                     const modifiedEmails = values.flatMap((value) => {
                         if (typeof value === 'string') {
-                            if (value.includes(',') || value.endsWith(',')) {
+                            if (stringHasCommas(value)) {
                                 return parseInputWithCommas(value);
                             }
 
@@ -119,7 +123,7 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
                 onInputChange={(_event, value) => {
                     setInputValue(value);
 
-                    if (value.includes(',') || value.endsWith(',')) {
+                    if (stringHasCommas(value)) {
                         const enteredEmails = parseInputWithCommas(value);
 
                         setEmailsByPrefix({
