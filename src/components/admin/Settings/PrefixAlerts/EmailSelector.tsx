@@ -24,7 +24,8 @@ interface Props {
     setEmailsByPrefix: Dispatch<SetStateAction<EmailDictionary>>;
 }
 
-const simpleEmailRegEx = new RegExp(/.+@.+/m);
+// Validation is VERY basic 'non-whitespace@non-whitespace'
+const simpleEmailRegEx = new RegExp(/^\S+@\S+$/m);
 
 const minCapability = 'admin';
 
