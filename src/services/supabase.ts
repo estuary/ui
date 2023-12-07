@@ -273,7 +273,10 @@ export const insertSupabase = (
     data: any
 ): PromiseLike<CallSupabaseResponse<any>> => {
     return supabaseRetry(
-        () => supabaseClient.from(table).insert([data]),
+        () =>
+            supabaseClient
+                .from(table)
+                .insert(Array.isArray(data) ? data : [data]),
         'insert'
     ).then(handleSuccess, handleFailure);
 };
