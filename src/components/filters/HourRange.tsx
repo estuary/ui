@@ -86,6 +86,14 @@ function HourlyRangeFilter({ range, setRange }: Props) {
                         }}
                     />
                 </MenuItem>
+                <MenuItem onClick={() => handlers.setFilter(48)}>
+                    <FormattedMessage
+                        id="detailsPanel.recentUsage.filter.label"
+                        values={{
+                            range: 48,
+                        }}
+                    />
+                </MenuItem>
             </Menu>
         </Stack>
     );
