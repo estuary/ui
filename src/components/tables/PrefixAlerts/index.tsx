@@ -3,7 +3,6 @@ import AlertGenerateButton from 'components/admin/Settings/PrefixAlerts/Generate
 import EntityTable from 'components/tables/EntityTable';
 import Rows from 'components/tables/PrefixAlerts/Rows';
 import { useMemo } from 'react';
-import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { SelectTableStoreNames } from 'stores/names';
 import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
 import PrefixAlertTableHydrator from 'stores/Tables/PrefixAlerts/Hydrator';
@@ -45,22 +44,14 @@ function PrefixAlertTable() {
         setColumnToSort,
     } = useTableState(TablePrefixes.prefixAlerts, 'catalog_prefix', 'asc');
 
-    const adminCapabilities = useEntitiesStore_capabilities_adminable();
-    const objectRoles = Object.keys(adminCapabilities);
-
     const query = useMemo(() => {
-        return getNotificationSubscriptionsForTable(
-            pagination,
-            searchQuery,
-            [
-                {
-                    col: columnToSort,
-                    direction: sortDirection,
-                },
-            ],
-            objectRoles
-        );
-    }, [columnToSort, objectRoles, pagination, searchQuery, sortDirection]);
+        return getNotificationSubscriptionsForTable(pagination, searchQuery, [
+            {
+                col: columnToSort,
+                direction: sortDirection,
+            },
+        ]);
+    }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     return (
         <PrefixAlertTableHydrator query={query}>
