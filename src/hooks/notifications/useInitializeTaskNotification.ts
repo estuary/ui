@@ -41,10 +41,12 @@ function useInitializeTaskNotification(catalogName: string) {
             };
         }
 
-        const response = await createNotificationSubscription(
-            prefix,
-            user.email
-        );
+        const response = await createNotificationSubscription([
+            {
+                catalog_prefix: prefix,
+                email: user.email,
+            },
+        ]);
 
         return response;
     }, [prefix, user?.email]);
