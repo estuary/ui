@@ -106,7 +106,7 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
                                 return parseInputWithCommas(value);
                             }
 
-                            return value;
+                            return value.trim();
                         }
 
                         return value.user_email;
