@@ -81,6 +81,9 @@ function FieldSelectionTable({ projections }: Props) {
         }
     }, [setTableState, formStatus, projections]);
 
+    const failed = formStatus === FormStatus.FAILED;
+    const loading = tableState.status === TableStatuses.LOADING;
+
     return (
         <Box>
             <TableContainer component={Box}>
@@ -103,16 +106,16 @@ function FieldSelectionTable({ projections }: Props) {
                         columns={columns}
                         noExistingDataContentIds={{
                             header: 'fieldSelection.table.empty.header',
-                            message:
-                                formStatus === FormStatus.FAILED
-                                    ? 'fieldSelection.table.error.message'
-                                    : 'fieldSelection.table.empty.message',
+                            message: failed
+                                ? 'fieldSelection.table.error.message'
+                                : 'fieldSelection.table.empty.message',
                             disableDoclink: true,
                         }}
                         tableState={tableState}
-                        loading={tableState.status === TableStatuses.LOADING}
+                        loading={loading}
                         rows={
-                            tableState.status !== TableStatuses.LOADING &&
+                            !failed &&
+                            !loading &&
                             projections &&
                             projections.length > 0 &&
                             formStatus !== FormStatus.TESTING ? (
