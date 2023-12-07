@@ -1297,7 +1297,7 @@ const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.dialog.updateProjection.label.fieldName': `Field Name:`,
     'fieldSelection.dialog.updateProjection.label.pointer': `JSON Pointer:`,
     'fieldSelection.dialog.updateProjection.label.type': `Type:`,
-    'fieldSelection.refresh.alert': `Refresh fields is recommended as some edits may not be represented below.`,
+    'fieldSelection.refresh.alert': `Refreshing the fields is recommended as some edits may not be represented below.`,
     'fieldSelection.table.cta.addProjection': `Add Projection`,
     'fieldSelection.table.cta.defaultField': `Default`,
     'fieldSelection.table.cta.excludeField': `Exclude`,

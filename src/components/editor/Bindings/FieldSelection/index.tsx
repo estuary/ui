@@ -43,12 +43,14 @@ import {
 } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { logRocketConsole } from 'services/logrocket';
+import { useEndpointConfig_serverUpdateRequired } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/hooks';
 import { Schema } from 'types';
 import {
     evaluateRequiredIncludedFields,
@@ -141,6 +143,9 @@ function FieldSelectionViewer({ collectionName }: Props) {
     const formStatus = useFormStateStore_status();
     const setFormState = useFormStateStore_setFormState();
 
+    const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
+    const resourceRequiresUpdate = useResourceConfig_serverUpdateRequired();
+
     useEffect(() => {
         return () => {
             // Mainly for when a user enters edit and their initial bg test fails
@@ -151,6 +156,16 @@ function FieldSelectionViewer({ collectionName }: Props) {
             }
         };
     }, [formStatus]);
+
+    useEffect(() => {
+        if (formStatus === FormStatus.TESTED) {
+            // If we have tested a spec then we should have fields
+            setRefreshRequired(false);
+        } else {
+            // If we aren't tested we need to see if there are updates required
+            setRefreshRequired(resourceRequiresUpdate || serverUpdateRequired);
+        }
+    }, [formStatus, resourceRequiresUpdate, serverUpdateRequired]);
 
     useEffect(() => {
         const hasDraftSpec = draftSpecs.length > 0;
