@@ -158,12 +158,18 @@ function FieldSelectionViewer({ collectionName }: Props) {
     }, [formStatus]);
 
     useEffect(() => {
-        if (formStatus === FormStatus.TESTED) {
-            // If we have tested a spec then we should have fields
+        // If we need an update at the same time we are generating then we need to show
+        //  the refresh message.
+        if (
+            (resourceRequiresUpdate || serverUpdateRequired) &&
+            formStatus === FormStatus.GENERATING
+        ) {
+            setRefreshRequired(true);
+        } else if (formStatus === FormStatus.TESTED) {
+            // If we are here then the flag might be true and we only can stop showing it
+            //  if there is a test ran. This is kinda janky as a test does not 100% garuntee
+            //  a built spec but it is pretty darn close.
             setRefreshRequired(false);
-        } else {
-            // If we aren't tested we need to see if there are updates required
-            setRefreshRequired(resourceRequiresUpdate || serverUpdateRequired);
         }
     }, [formStatus, resourceRequiresUpdate, serverUpdateRequired]);
 
