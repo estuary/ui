@@ -27,8 +27,10 @@ import {
     useBindingsEditorStore_setSelectionSaving,
     useBindingsEditorStore_setSingleSelection,
 } from 'components/editor/Bindings/Store/hooks';
-import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
-import useSaveInBackground from 'components/shared/Entity/Actions/useSaveInBackground';
+import {
+    useEditorStore_id,
+    useEditorStore_queryResponse_draftSpecs,
+} from 'components/editor/Store/hooks';
 import FieldSelectionTable from 'components/tables/FieldSelection';
 import { isEqual } from 'lodash';
 import {
@@ -36,10 +38,11 @@ import {
     useCallback,
     useEffect,
     useMemo,
+    useRef,
     useState,
 } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { CustomEvents } from 'services/types';
+import { logRocketConsole } from 'services/logrocket';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
@@ -51,6 +54,8 @@ import {
     evaluateRequiredIncludedFields,
     getBindingIndex,
 } from 'utils/workflow-utils';
+import RefreshStatus from './RefreshStatus';
+import useFieldSelectionRefresh from './useFieldSelectionRefresh';
 
 interface Props {
     collectionName: string;
@@ -106,9 +111,16 @@ const mapConstraintsToProjections = (
     });
 
 function FieldSelectionViewer({ collectionName }: Props) {
-    useSaveInBackground();
+    const fireBackgroundTest = useRef(true);
+
+    const [refreshRequired, setRefreshRequired] = useState(false);
+    const [saveInProgress, setSaveInProgress] = useState(false);
+    const [data, setData] = useState<
+        CompositeProjection[] | null | undefined
+    >();
 
     const applyFieldSelections = useFieldSelection(collectionName);
+    const { refresh } = useFieldSelectionRefresh();
 
     // Bindings Editor Store
     const recommendFields = useBindingsEditorStore_recommendFields();
@@ -122,21 +134,29 @@ function FieldSelectionViewer({ collectionName }: Props) {
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
+    const draftId = useEditorStore_id();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
     const formStatus = useFormStateStore_status();
     const setFormState = useFormStateStore_setFormState();
 
-    const [data, setData] = useState<
-        CompositeProjection[] | null | undefined
-    >();
-
-    const [saveInProgress, setSaveInProgress] = useState(false);
+    useEffect(() => {
+        return () => {
+            // Mainly for when a user enters edit and their initial bg test fails
+            //  want to make sure we fire off another bg test if they click on
+            //  next and not refresh after updating the config.
+            if (formStatus === FormStatus.FAILED) {
+                fireBackgroundTest.current = true;
+            }
+        };
+    }, [formStatus]);
 
     useEffect(() => {
+        const hasDraftSpec = draftSpecs.length > 0;
+
         if (
-            draftSpecs.length > 0 &&
+            hasDraftSpec &&
             draftSpecs[0].built_spec &&
             draftSpecs[0].validated
         ) {
@@ -211,13 +231,24 @@ function FieldSelectionViewer({ collectionName }: Props) {
                 setData(null);
             }
         } else {
+            if (hasDraftSpec && formStatus === FormStatus.GENERATED) {
+                if (fireBackgroundTest.current) {
+                    fireBackgroundTest.current = false;
+                    setRefreshRequired(false);
+                    logRocketConsole('Field Selection: refreshing');
+                    void refresh(draftId);
+                }
+            }
+
             setData(null);
         }
     }, [
         collectionName,
+        draftId,
         draftSpecs,
+        formStatus,
         initializeSelections,
-        setData,
+        refresh,
         setRecommendFields,
     ]);
 
@@ -261,8 +292,9 @@ function FieldSelectionViewer({ collectionName }: Props) {
             applyFieldSelections(draftSpec)
                 .then(
                     () => setFormState({ status: FormStatus.UPDATED }),
-                    (error) =>
-                        setFormState({ status: FormStatus.FAILED, error })
+                    (error) => {
+                        setFormState({ status: FormStatus.FAILED, error });
+                    }
                 )
                 .finally(() => {
                     setSelectionSaving(false);
@@ -297,11 +329,12 @@ function FieldSelectionViewer({ collectionName }: Props) {
                         <RefreshButton
                             buttonLabelId="cta.refresh"
                             disabled={loading}
-                            logEvent={CustomEvents.MATERIALIZATION_TEST}
                         />
                     </Stack>
 
-                    <Typography>
+                    <RefreshStatus show={refreshRequired ? true : undefined} />
+
+                    <Typography component="div">
                         <MessageWithLink messageID="fieldSelection.message" />
                     </Typography>
                 </Stack>
