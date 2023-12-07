@@ -72,7 +72,7 @@ function SaveButton({
                 });
         });
 
-        const deletedSubs = Object.entries(subscriptionsToCancel).map(
+        const deletedSubsriptions = Object.entries(subscriptionsToCancel).map(
             ([key, emails]) => {
                 return deleteNotificationSubscription(key, emails);
             }
@@ -86,11 +86,13 @@ function SaveButton({
         );
 
         const responses = await Promise.all([
-            ...deletedSubs,
+            ...deletedSubsriptions,
             createdSubscription,
         ]);
 
-        const errors = responses.filter((r) => r.error);
+        // The create could be undefined and this was easier to mark than tweak logic
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        const errors = responses.filter((r) => r?.error);
 
         if (!hasLength(errors)) {
             hydrate();
