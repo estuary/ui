@@ -110,8 +110,7 @@ const getNotificationSubscriptionForUser = async (
 const getNotificationSubscriptionsForTable = (
     pagination: any,
     searchQuery: any,
-    sorting: SortingProps<any>[],
-    objectRoles: string[]
+    sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
         .from<AlertSubscriptionsExtendedQuery>(TABLES.ALERT_SUBSCRIPTIONS)
@@ -123,8 +122,7 @@ const getNotificationSubscriptionsForTable = (
                 email
             `,
             { count: 'exact' }
-        )
-        .in('catalog_prefix', objectRoles);
+        );
 
     queryBuilder = defaultTableFilter<AlertSubscriptionsExtendedQuery>(
         queryBuilder,
