@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/dot-notation */
 import {
     Autocomplete,
     AutocompleteRenderInputParams,
@@ -18,6 +19,8 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { Grant_UserExt } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
+type Values = (Grant_UserExt | string)[];
+
 interface Props {
     prefix: string;
     emailsByPrefix: EmailDictionary;
@@ -29,14 +32,23 @@ const simpleEmailRegEx = new RegExp(/^\S+@\S+$/m);
 
 const minCapability = 'admin';
 
-const stringHasCommas = (value: string) =>
-    value.includes(',') || value.endsWith(',');
+const stringHasCommas = (value: string) => value.includes(',');
 
 const parseInputWithCommas = (value: string): string[] =>
     value
         .split(',')
         .map((email) => email.trim())
         .filter((email) => hasLength(email));
+
+const flattenValues = (values: Values, checkCommas: boolean): string[] => {
+    return values.flatMap((value) =>
+        typeof value === 'string'
+            ? checkCommas && stringHasCommas(value)
+                ? parseInputWithCommas(value)
+                : value
+            : value.user_email
+    );
+};
 
 function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
     const intl = useIntl();
@@ -64,6 +76,13 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
         [emails]
     );
 
+    const autoCompleteOptions = useMemo(
+        () =>
+            userInfo.filter(
+                ({ user_email }) => !emails.includes(user_email)
+            ) as Values,
+        [emails, userInfo]
+    );
     return (
         <FormControl fullWidth>
             <Autocomplete
@@ -92,53 +111,40 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
                 handleHomeEndKeys
                 inputValue={inputValue}
                 multiple
+                options={autoCompleteOptions}
                 onChange={(_event, values, reason) => {
-                    const newValue = values[values.length - 1];
+                    const creating = reason === 'createOption';
 
-                    if (
-                        reason === 'createOption' &&
-                        typeof newValue === 'string' &&
-                        !simpleEmailRegEx.test(newValue)
-                    ) {
-                        setInputValue('');
-                    }
-
-                    const modifiedEmails = values.flatMap((value) => {
-                        if (typeof value === 'string') {
-                            if (stringHasCommas(value)) {
-                                return parseInputWithCommas(value);
-                            }
-
-                            return value;
+                    if (creating) {
+                        const newValue = values[values.length - 1];
+                        if (
+                            typeof newValue === 'string' &&
+                            !simpleEmailRegEx.test(newValue)
+                        ) {
+                            setInputValue('');
                         }
-
-                        return value.user_email;
-                    });
+                    }
 
                     setEmailsByPrefix({
                         ...emailsByPrefix,
-                        [prefix]: modifiedEmails,
+                        [prefix]: flattenValues(values, creating),
                     });
                 }}
                 onInputChange={(_event, value) => {
                     setInputValue(value);
 
                     if (stringHasCommas(value)) {
-                        const enteredEmails = parseInputWithCommas(value);
-
                         setEmailsByPrefix({
                             ...emailsByPrefix,
-                            [prefix]: [...emails, ...enteredEmails],
+                            [prefix]: [
+                                ...emails,
+                                ...parseInputWithCommas(value),
+                            ],
                         });
 
                         setInputValue('');
                     }
                 }}
-                options={
-                    userInfo.filter(
-                        ({ user_email }) => !emails.includes(user_email)
-                    ) as (Grant_UserExt | string)[]
-                }
                 renderInput={({
                     InputProps,
                     ...params
