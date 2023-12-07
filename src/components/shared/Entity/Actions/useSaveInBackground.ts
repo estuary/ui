@@ -7,6 +7,7 @@ import { CustomEvents } from 'services/types';
 import useEntityWorkflowHelpers from '../hooks/useEntityWorkflowHelpers';
 import useSave from './useSave';
 
+// Probably can remove. Worked this directly into the field selection component
 function useSaveInBackground() {
     const fireBackgroundTest = useRef(true);
 
