@@ -17,9 +17,9 @@ import { NavArrowDown } from 'iconoir-react';
 import {
     ADVANCED,
     CONTAINS_REQUIRED_FIELDS,
-    CONTAINS_SSH_TUNNELING_FIELDS,
+    SHOW_INFO_SSH_ENDPOINT,
 } from 'services/jsonforms/shared';
-import SshPortForwardingWhiteList from './Informational/SshPortForwardingWhiteList';
+import SshEndpointInfo from './Informational/SshEndpoint';
 
 export const CollapsibleGroupType = 'CollapsibleGroup';
 
@@ -55,9 +55,6 @@ const CollapsibleGroupRenderer = ({
         uiSchemaOptions[ADVANCED] !== true ||
         false;
 
-    const showSshForwarding =
-        uiSchemaOptions[CONTAINS_SSH_TUNNELING_FIELDS] === true;
-
     return (
         <Hidden xsUp={!visible}>
             <Accordion
@@ -85,7 +82,9 @@ const CollapsibleGroupRenderer = ({
                 </AccordionSummary>
 
                 <AccordionDetails>
-                    {showSshForwarding ? <SshPortForwardingWhiteList /> : null}
+                    {uiSchemaOptions[SHOW_INFO_SSH_ENDPOINT] === true ? (
+                        <SshEndpointInfo />
+                    ) : null}
 
                     <MaterialLayoutRenderer {...layoutProps} />
                 </AccordionDetails>

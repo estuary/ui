@@ -3,7 +3,7 @@ import SingleLineCode from 'components/content/SingleLineCode';
 import AlertBox from 'components/shared/AlertBox';
 import { useIntl } from 'react-intl';
 
-function SshPortForwardingWhiteList() {
+function SshEndpointInfo() {
     const intl = useIntl();
 
     return (
@@ -11,7 +11,9 @@ function SshPortForwardingWhiteList() {
             <AlertBox
                 severity="info"
                 short
-                title={intl.formatMessage({ id: 'sshWhiteList.title' })}
+                title={intl.formatMessage({
+                    id: 'informational.sshEndpoint.title',
+                })}
             >
                 <Box
                     sx={{
@@ -21,7 +23,7 @@ function SshPortForwardingWhiteList() {
                 >
                     <SingleLineCode
                         value={intl.formatMessage({
-                            id: 'sshWhiteList.ipAddress',
+                            id: 'informational.sshEndpoint.ip',
                         })}
                     />
                 </Box>
@@ -30,4 +32,4 @@ function SshPortForwardingWhiteList() {
     );
 }
 
-export default SshPortForwardingWhiteList;
+export default SshEndpointInfo;

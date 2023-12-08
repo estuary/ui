@@ -46,7 +46,7 @@ import { Annotations, Formats, Options } from 'types/jsonforms';
 import {
     ADVANCED,
     CONTAINS_REQUIRED_FIELDS,
-    CONTAINS_SSH_TUNNELING_FIELDS,
+    SHOW_INFO_SSH_ENDPOINT,
 } from './shared';
 
 /////////////////////////////////////////////////////////
@@ -163,11 +163,9 @@ const addRequiredGroupOptions = (
     }
 };
 
-const addWhiteListInfoOptions = (
-    elem: Layout | ControlElement | GroupLayout
-) => {
-    if (!Object.hasOwn(elem.options ?? {}, CONTAINS_SSH_TUNNELING_FIELDS)) {
-        addOption(elem, CONTAINS_SSH_TUNNELING_FIELDS, true);
+const addInfoSshEndpoint = (elem: Layout | ControlElement | GroupLayout) => {
+    if (!Object.hasOwn(elem.options ?? {}, SHOW_INFO_SSH_ENDPOINT)) {
+        addOption(elem, SHOW_INFO_SSH_ENDPOINT, true);
     }
 };
 
@@ -501,7 +499,7 @@ const generateUISchema = (
                 // Checking if the group contains ssh forwarding so we can add a flag
                 //  to display an information block in the group
                 if (containsSshEndpoint(jsonSchema)) {
-                    addWhiteListInfoOptions(layout);
+                    addInfoSshEndpoint(layout);
                 }
             }
         } else {
