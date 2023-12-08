@@ -40,8 +40,9 @@ The UI is built to hit our own instance of Supabase. That means you will need to
 # Building Blocks
 
 -   [MUI](https://github.com/mui/material-ui) for components
--   [Zustand](https://github.com/pmndrs/zustand) for local state
 -   [JSON Forms](https://github.com/eclipsesource/jsonforms) for many forms
--   [SWR](https://github.com/vercel/swr) for server calls
 -   [Apache ECharts](https://github.com/apache/echarts) for charts
+-   [Zustand](https://github.com/pmndrs/zustand) for local state
+-   [Supabase](https://github.com/supabase) for server calls
+-   [SWR](https://github.com/vercel/swr) for server calls
 -   [Vite](https://github.com/vitejs) for build
