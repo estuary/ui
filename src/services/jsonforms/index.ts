@@ -43,7 +43,11 @@ import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
 import { Annotations, Formats, Options } from 'types/jsonforms';
-import { ADVANCED, CONTAINS_REQUIRED_FIELDS } from './shared';
+import {
+    ADVANCED,
+    CONTAINS_REQUIRED_FIELDS,
+    CONTAINS_SSH_TUNNELING_FIELDS,
+} from './shared';
 
 /////////////////////////////////////////////////////////
 //  CUSTOM FUNCTIONS AND SETTINGS
@@ -120,6 +124,16 @@ const isSecretText = (schema: JsonSchema): boolean => {
     }
 };
 
+const containsSshTunneling = (schema: any): boolean => {
+    if (Object.hasOwn(schema, 'properties')) {
+        if (Object.hasOwn(schema.properties, Options.sshForwarding)) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
 const isAdvancedConfig = (schema: JsonSchema): boolean => {
     // eslint-disable-next-line @typescript-eslint/dot-notation
     return schema[ADVANCED] === true;
@@ -146,6 +160,14 @@ const addRequiredGroupOptions = (
 ) => {
     if (!Object.hasOwn(elem.options ?? {}, CONTAINS_REQUIRED_FIELDS)) {
         addOption(elem, CONTAINS_REQUIRED_FIELDS, true);
+    }
+};
+
+const addWhiteListInfoOptions = (
+    elem: Layout | ControlElement | GroupLayout
+) => {
+    if (!Object.hasOwn(elem.options ?? {}, CONTAINS_SSH_TUNNELING_FIELDS)) {
+        addOption(elem, CONTAINS_SSH_TUNNELING_FIELDS, true);
     }
 };
 
@@ -475,6 +497,12 @@ const generateUISchema = (
                 layout = createLayout('Group');
 
                 copyRequiredOption(isRequired, layout);
+
+                // Checking if the group contains ssh forwarding so we can add a flag
+                //  to display an information block in the group
+                if (containsSshTunneling(jsonSchema)) {
+                    addWhiteListInfoOptions(layout);
+                }
             }
         } else {
             layout = createLayout(layoutType);

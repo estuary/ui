@@ -1,6 +1,7 @@
 import { ValidationMode } from '@jsonforms/core';
 
 export const CONTAINS_REQUIRED_FIELDS = 'containsRequiredFields';
+export const CONTAINS_SSH_TUNNELING_FIELDS = 'containsSshTunnelingFields';
 export const ADVANCED = 'advanced';
 
 export const defaultOptions = {
