@@ -1173,7 +1173,7 @@ const CustomRenderers: ResolvedIntlConfig['messages'] = {
     'dateTimePicker.picker.footer': `Timezone: UTC`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
     'informational.sshEndpoint.title': `All Estuary traffic comes from a single IP that can be whitelisted:`,
-    'informational.sshEndpoint.ip': `34.121.207.12`,
+    'informational.sshEndpoint.ip': `34.121.207.128`,
     'timePicker.button.ariaLabel': `Open time picker for {label}`,
 };
 
