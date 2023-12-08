@@ -43,7 +43,11 @@ import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
 import { Annotations, Formats, Options } from 'types/jsonforms';
-import { ADVANCED, CONTAINS_REQUIRED_FIELDS } from './shared';
+import {
+    ADVANCED,
+    CONTAINS_REQUIRED_FIELDS,
+    SHOW_INFO_SSH_ENDPOINT,
+} from './shared';
 
 /////////////////////////////////////////////////////////
 //  CUSTOM FUNCTIONS AND SETTINGS
@@ -120,6 +124,16 @@ const isSecretText = (schema: JsonSchema): boolean => {
     }
 };
 
+const containsSshEndpoint = (schema: any): boolean => {
+    if (Object.hasOwn(schema, 'properties')) {
+        if (Object.hasOwn(schema.properties, Options.sshEndpoint)) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
 const isAdvancedConfig = (schema: JsonSchema): boolean => {
     // eslint-disable-next-line @typescript-eslint/dot-notation
     return schema[ADVANCED] === true;
@@ -146,6 +160,12 @@ const addRequiredGroupOptions = (
 ) => {
     if (!Object.hasOwn(elem.options ?? {}, CONTAINS_REQUIRED_FIELDS)) {
         addOption(elem, CONTAINS_REQUIRED_FIELDS, true);
+    }
+};
+
+const addInfoSshEndpoint = (elem: Layout | ControlElement | GroupLayout) => {
+    if (!Object.hasOwn(elem.options ?? {}, SHOW_INFO_SSH_ENDPOINT)) {
+        addOption(elem, SHOW_INFO_SSH_ENDPOINT, true);
     }
 };
 
@@ -475,6 +495,12 @@ const generateUISchema = (
                 layout = createLayout('Group');
 
                 copyRequiredOption(isRequired, layout);
+
+                // Checking if the group contains ssh forwarding so we can add a flag
+                //  to display an information block in the group
+                if (containsSshEndpoint(jsonSchema)) {
+                    addInfoSshEndpoint(layout);
+                }
             }
         } else {
             layout = createLayout(layoutType);
