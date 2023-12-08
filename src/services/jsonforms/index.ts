@@ -124,9 +124,9 @@ const isSecretText = (schema: JsonSchema): boolean => {
     }
 };
 
-const containsSshTunneling = (schema: any): boolean => {
+const containsSshEndpoint = (schema: any): boolean => {
     if (Object.hasOwn(schema, 'properties')) {
-        if (Object.hasOwn(schema.properties, Options.sshForwarding)) {
+        if (Object.hasOwn(schema.properties, Options.sshEndpoint)) {
             return true;
         }
     }
@@ -500,7 +500,7 @@ const generateUISchema = (
 
                 // Checking if the group contains ssh forwarding so we can add a flag
                 //  to display an information block in the group
-                if (containsSshTunneling(jsonSchema)) {
+                if (containsSshEndpoint(jsonSchema)) {
                     addWhiteListInfoOptions(layout);
                 }
             }
