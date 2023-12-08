@@ -1,4 +1,5 @@
 import pLimit from 'p-limit';
+import { stringifyJSON } from 'services/stringify';
 import {
     defaultTableFilter,
     deleteSupabase,
@@ -58,7 +59,12 @@ const deleteNotificationSubscription = async (
             .from(TABLES.ALERT_SUBSCRIPTIONS)
             .delete()
             .eq('catalog_prefix', prefix)
-            .in('email', emails.slice(idx, idx + CHUNK_SIZE));
+            .in(
+                'email',
+                emails
+                    .slice(idx, idx + CHUNK_SIZE)
+                    .flatMap((email) => stringifyJSON(email)) // To handle if quotes were includes in the email names
+            );
     };
 
     while (index < emails.length) {

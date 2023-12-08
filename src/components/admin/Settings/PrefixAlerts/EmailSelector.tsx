@@ -28,20 +28,13 @@ interface Props {
 
 // Validation is VERY basic 'non-whitespace@non-whitespace'
 const simpleEmailRegEx = new RegExp(/^\S+@\S+$/m);
-const quoteRegEx = new RegExp(/['"]/g);
 
 const minCapability = 'admin';
 
 const stringHasCommas = (value: string) => value.includes(',');
 
-// TODO (email cleansing)
-// We are just removing all quotes right now because if a user enters
-//      an email as "foo@foo.com" then there are issue with them deleting
-//      that due to the quotes wrapping it
-// This is an issue because technically an email can contain quotes within
-//      the email. So we should support that eventually.
 const cleanupEmail = (value: string) => {
-    return value.replaceAll(quoteRegEx, '').trim();
+    return value.trim();
 };
 
 const parseInputWithCommas = (value: string): string[] =>
