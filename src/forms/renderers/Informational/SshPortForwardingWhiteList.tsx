@@ -7,20 +7,24 @@ function SshPortForwardingWhiteList() {
     const intl = useIntl();
 
     return (
-        <Box
-            sx={{
-                maxWidth: 'fit-content',
-                minWidth: 'fit-content',
-            }}
-        >
+        <Box>
             <AlertBox
                 severity="info"
-                title={intl.formatMessage({ id: 'sshWhiteList.title' })}
                 short
+                title={intl.formatMessage({ id: 'sshWhiteList.title' })}
             >
-                <SingleLineCode
-                    value={intl.formatMessage({ id: 'sshWhiteList.ipAddress' })}
-                />
+                <Box
+                    sx={{
+                        maxWidth: 'fit-content',
+                        minWidth: 'fit-content',
+                    }}
+                >
+                    <SingleLineCode
+                        value={intl.formatMessage({
+                            id: 'sshWhiteList.ipAddress',
+                        })}
+                    />
+                </Box>
             </AlertBox>
         </Box>
     );

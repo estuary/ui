@@ -10,7 +10,7 @@ export enum Options {
     oauthFields = 'oauth_fields',
     oauthPathToFields = 'oauth_path_to_fields',
     multiLineSecret = 'multiLineSecret',
-    sshForwarding = 'sshForwarding',
+    sshEndpoint = 'sshEndpoint',
 }
 
 export enum Formats {
