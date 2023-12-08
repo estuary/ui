@@ -14,7 +14,12 @@ import {
 } from '@mui/material';
 import { defaultOutline, jsonFormsGroupHeaders } from 'context/Theme';
 import { NavArrowDown } from 'iconoir-react';
-import { ADVANCED, CONTAINS_REQUIRED_FIELDS } from 'services/jsonforms/shared';
+import {
+    ADVANCED,
+    CONTAINS_REQUIRED_FIELDS,
+    SHOW_INFO_SSH_ENDPOINT,
+} from 'services/jsonforms/shared';
+import SshEndpointInfo from './Informational/SshEndpoint';
 
 export const CollapsibleGroupType = 'CollapsibleGroup';
 
@@ -77,6 +82,10 @@ const CollapsibleGroupRenderer = ({
                 </AccordionSummary>
 
                 <AccordionDetails>
+                    {uiSchemaOptions[SHOW_INFO_SSH_ENDPOINT] === true ? (
+                        <SshEndpointInfo />
+                    ) : null}
+
                     <MaterialLayoutRenderer {...layoutProps} />
                 </AccordionDetails>
             </Accordion>
