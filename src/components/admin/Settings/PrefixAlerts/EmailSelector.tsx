@@ -24,7 +24,8 @@ interface Props {
     setEmailsByPrefix: Dispatch<SetStateAction<EmailDictionary>>;
 }
 
-const simpleEmailRegEx = new RegExp(/.+@.+/m);
+// Validation is VERY basic 'non-whitespace@non-whitespace'
+const simpleEmailRegEx = new RegExp(/^\S+@\S+$/m);
 
 const minCapability = 'admin';
 
@@ -105,7 +106,7 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
                                 return parseInputWithCommas(value);
                             }
 
-                            return value;
+                            return value.trim();
                         }
 
                         return value.user_email;
