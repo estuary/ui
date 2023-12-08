@@ -6,7 +6,7 @@ import { client } from 'services/client';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useEntitiesStore_capabilities_readable } from 'stores/Entities/hooks';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import { GatewayAuthTokenResponse } from 'types';
 import {
     getGatewayAuthTokenSettings,
@@ -42,6 +42,7 @@ export const gatewayFetcher = (
 };
 
 const useGatewayAuthToken = (prefixes: string[] | null) => {
+    const { onError } = useSWRConfig();
     const { session } = Auth.useUser();
 
     const readable = useEntitiesStore_capabilities_readable();
@@ -97,10 +98,15 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
             onSuccess: ([config]) => {
                 storeGatewayAuthConfig(config);
             },
-            onError: (error) => {
+            onError: (error, key, config) => {
                 logRocketEvent(CustomEvents.GATEWAY_TOKEN_FAILED, {
                     error,
                 });
+
+                // TODO (typing | SWR)
+                // The config complains about the typing so just setting to any
+                // Similar to this issue : https://github.com/vercel/swr/discussions/1574#discussioncomment-4982649
+                onError(error, key, config as any);
             },
         }
     );

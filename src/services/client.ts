@@ -3,6 +3,7 @@ export interface ClientConfig<T> extends RequestInit {
 }
 
 export const AUTH_ERROR = 'common.loggedOut';
+const SERVER_ERROR = 'Server Error';
 
 export const client = <Response, Request = {}>(
     endpoint: string,
@@ -44,7 +45,8 @@ export const client = <Response, Request = {}>(
         })
         .catch((error) => {
             return Promise.reject({
-                message: 'Server Error',
+                message:
+                    error?.message === AUTH_ERROR ? AUTH_ERROR : SERVER_ERROR,
                 ...error,
             });
         });
