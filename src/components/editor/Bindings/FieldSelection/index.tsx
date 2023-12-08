@@ -42,7 +42,8 @@ import {
     useState,
 } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { logRocketConsole } from 'services/logrocket';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { useEndpointConfig_serverUpdateRequired } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
@@ -256,7 +257,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
                 if (fireBackgroundTest.current) {
                     fireBackgroundTest.current = false;
                     setRefreshRequired(false);
-                    logRocketConsole('Field Selection: refreshing');
+                    logRocketEvent(CustomEvents.FIELD_SELECTION_REFRESH_AUTO);
                     void refresh(draftId);
                 }
             }
