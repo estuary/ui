@@ -5,7 +5,6 @@ import { BaseComponentProps } from 'types';
 import AuthEvents from './AuthEvents';
 import PreFetchDataProvider from './fetcher';
 import { OnLoadSpinnerProvider } from './OnLoadSpinner/OnLoadSpinnerContext';
-import Osano from './Osano';
 import QueryParamProvider from './QueryParam';
 import RequireAuth from './Router/RequireAuth';
 
@@ -18,23 +17,21 @@ interface Props extends BaseComponentProps {
 export function AuthenticatedOnlyContext({ children, hideSpinner }: Props) {
     return (
         <RequireAuth>
-            <Osano>
-                <OnLoadSpinnerProvider defaultState={!hideSpinner}>
-                    <QueryParamProvider>
-                        <ZustandProvider>
-                            <AppGuards>
-                                <AuthEvents>
-                                    <PreFetchDataProvider>
-                                        <ConfirmationModalContextProvider>
-                                            {children}
-                                        </ConfirmationModalContextProvider>
-                                    </PreFetchDataProvider>
-                                </AuthEvents>
-                            </AppGuards>
-                        </ZustandProvider>
-                    </QueryParamProvider>
-                </OnLoadSpinnerProvider>
-            </Osano>
+            <OnLoadSpinnerProvider defaultState={!hideSpinner}>
+                <QueryParamProvider>
+                    <ZustandProvider>
+                        <AppGuards>
+                            <AuthEvents>
+                                <PreFetchDataProvider>
+                                    <ConfirmationModalContextProvider>
+                                        {children}
+                                    </ConfirmationModalContextProvider>
+                                </PreFetchDataProvider>
+                            </AuthEvents>
+                        </AppGuards>
+                    </ZustandProvider>
+                </QueryParamProvider>
+            </OnLoadSpinnerProvider>
         </RequireAuth>
     );
 }
