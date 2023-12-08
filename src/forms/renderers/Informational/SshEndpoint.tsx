@@ -7,7 +7,11 @@ function SshEndpointInfo() {
     const intl = useIntl();
 
     return (
-        <Box>
+        <Box
+            sx={{
+                mb: 2,
+            }}
+        >
             <AlertBox
                 severity="info"
                 short
