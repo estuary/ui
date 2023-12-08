@@ -1,1 +1,1 @@
-export type DataByHourRange = 6 | 12 | 24;
+export type DataByHourRange = 6 | 12 | 24 | 48;

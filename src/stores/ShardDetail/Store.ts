@@ -47,7 +47,7 @@ const findAllErrorsAndWarnings = (shard: Shard) => {
         statusErrors?.forEach((error) => {
             if (
                 error.includes(
-                    'absoluteKeywordLocation": "flow://inferred-schema#/'
+                    'absoluteKeywordLocation": "flow://inferred-schema'
                 )
             ) {
                 warnings.push(error);
