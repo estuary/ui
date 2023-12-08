@@ -37,7 +37,7 @@ Run: `npm start`
 
 The UI is built to hit our own instance of Supabase. That means you will need to have that running locally as well.
 
-# Building Blocks
+# Stuff we use
 
 -   [MUI](https://github.com/mui/material-ui) for components
 -   [JSON Forms](https://github.com/eclipsesource/jsonforms) for many forms
