@@ -9,6 +9,9 @@ export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
 // eslint-disable-next-line no-useless-escape
 export const DATE_TIME_PATTERN = `[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z`;
 
+// Default size used when splitting up larged promises
+export const CHUNK_SIZE = 10;
+
 // Max time stored in
 //  go/flowctl-go/cmd-api-discover.go
 //  go/flowctl-go/cmd-discover.go
