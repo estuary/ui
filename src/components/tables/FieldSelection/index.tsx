@@ -61,8 +61,6 @@ function FieldSelectionTable({ projections }: Props) {
         },
     };
 
-    console.log('fieldSelection', { formStatus, projections });
-
     useEffect(() => {
         if (
             formStatus === FormStatus.INIT ||
