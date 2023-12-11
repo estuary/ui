@@ -25,11 +25,16 @@ const colorModeMessage = 'estuary.colorMode';
 // This must be kept in sync with the docs site in flow/site
 const hideNavBarMessage = 'estuary.docs.hideNavBar';
 
-function SidePanelIframe() {
+interface Props {
+    show: boolean;
+}
+
+function SidePanelIframe({ show }: Props) {
     const intl = useIntl();
     const docsURL = useSidePanelDocsStore_url();
     const disabled = useSidePanelDocsStore_disabled();
     const setAnimateOpening = useSidePanelDocsStore_setAnimateOpening();
+
     const colorMode = useColorMode();
     const [loading, setLoading] = useState(true);
     const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -67,12 +72,11 @@ function SidePanelIframe() {
                 setLoading(false);
             }, 100);
         };
-        iframeCurrent?.addEventListener('load', hideNavBar);
 
-        return () => {
-            iframeCurrent?.removeEventListener('load', hideNavBar);
-        };
-    }, [iframeCurrent, setAnimateOpening]);
+        if (iframeCurrent && show && hasLength(docsURL)) {
+            hideNavBar();
+        }
+    }, [docsURL, iframeCurrent, setAnimateOpening, show]);
 
     // Make sure we don't include an iframe unless we actually need it
     if (!hasLength(docsURL)) {

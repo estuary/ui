@@ -10,11 +10,10 @@ const { iframeStringInclude } = getDocsSettings();
 
 const getInitialStateData = (): Pick<
     SidePanelDocsState,
-    'animateOpening' | 'disabled' | 'url' | 'show'
+    'animateOpening' | 'disabled' | 'url'
 > => ({
     animateOpening: false,
     disabled: false,
-    show: false,
     url: '',
 });
 
@@ -34,23 +33,13 @@ const getInitialState = (
         );
     },
 
-    setShow: (val) => {
-        set(
-            produce((state: SidePanelDocsState) => {
-                state.show = val;
-            }),
-            false,
-            'Side Panel Docs Show Updated'
-        );
-    },
-
     setUrl: (val) => {
         set(
             produce((state: SidePanelDocsState) => {
                 const urlIsFromEstuary = val.includes(iframeStringInclude);
 
                 state.url = val;
-                state.show = true;
+                // state.show = true;
                 state.disabled = !urlIsFromEstuary;
             }),
             false,
