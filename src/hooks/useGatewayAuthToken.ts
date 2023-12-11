@@ -3,8 +3,10 @@ import { isBefore } from 'date-fns';
 import { decodeJwt, JWTPayload } from 'jose';
 import { isEmpty } from 'lodash';
 import { client } from 'services/client';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { useEntitiesStore_capabilities_readable } from 'stores/Entities/hooks';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import { GatewayAuthTokenResponse } from 'types';
 import {
     getGatewayAuthTokenSettings,
@@ -25,9 +27,11 @@ export const gatewayFetcher = (
 ): Promise<GatewayAuthTokenResponse[]> => {
     const headers: HeadersInit = {};
 
+    // Use the supabase key because we're calling a Supabase function to fetch
+    //   the key we need to make calls to the Gateway
     const { supabaseAnonymousKey } = getSupabaseAnonymousKey();
-
     headers.apikey = supabaseAnonymousKey;
+
     headers.Authorization = `Bearer ${sessionKey}`;
     headers['Content-Type'] = 'application/json';
 
@@ -38,6 +42,7 @@ export const gatewayFetcher = (
 };
 
 const useGatewayAuthToken = (prefixes: string[] | null) => {
+    const { onError } = useSWRConfig();
     const { session } = Auth.useUser();
 
     const readable = useEntitiesStore_capabilities_readable();
@@ -57,29 +62,31 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
 
     if (prefixes) {
         if (authorized_prefixes.length !== prefixes.length) {
-            console.warn(
-                'Attempt to fetch auth token for prefixes that you do not have permissions on: ',
-                prefixes.filter((prefix) => !allowed_prefixes.includes(prefix))
-            );
+            logRocketEvent(CustomEvents.GATEWAY_TOKEN_INVALID_PREFIX, {
+                prefixes: prefixes.filter(
+                    (prefix) => !allowed_prefixes.includes(prefix)
+                ),
+            });
         }
     }
 
-    const gatewayConfig = getStoredGatewayAuthConfig();
-
+    // Grab the Gateway token from local storage
     let jwt: JWTPayload | undefined;
     try {
+        const gatewayConfig = getStoredGatewayAuthConfig();
         jwt = gatewayConfig ? decodeJwt(gatewayConfig.token) : undefined;
     } catch {
         jwt = undefined;
     }
 
+    // Check if the Gateway token is expired and we need to get a new one
     let tokenExpired = true;
     if (jwt?.exp) {
         tokenExpired = isBefore(jwt.exp * 1000, Date.now());
     }
 
     const { data, mutate } = useSWR(
-        tokenExpired || authorized_prefixes.length > 0
+        (jwt && tokenExpired) || authorized_prefixes.length > 0
             ? [
                   gatewayAuthTokenEndpoint,
                   authorized_prefixes,
@@ -91,9 +98,15 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
             onSuccess: ([config]) => {
                 storeGatewayAuthConfig(config);
             },
-            onError: (error) => {
-                // TODO: Remove console.log call.
-                console.error(error);
+            onError: (error, key, config) => {
+                logRocketEvent(CustomEvents.GATEWAY_TOKEN_FAILED, {
+                    error,
+                });
+
+                // TODO (typing | SWR)
+                // The config complains about the typing so just setting to any
+                // Similar to this issue : https://github.com/vercel/swr/discussions/1574#discussioncomment-4982649
+                onError(error, key, config as any);
             },
         }
     );

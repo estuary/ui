@@ -6,7 +6,7 @@ import LogRocket from 'logrocket';
 import { JobStatus, SortDirection, SupabaseInvokeResponse } from 'types';
 import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 import retry from 'retry';
-import { logRocketEvent, retryAfterFailure } from './shared';
+import { logRocketEvent, logRocketConsole, retryAfterFailure } from './shared';
 import { CustomEvents } from './types';
 
 if (
@@ -33,7 +33,17 @@ export const QUERY_PARAM_CONNECTOR_TITLE = `connector_title->>en-US`;
 
 export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',
-    jwsInvalid: 'JWSError JWSInvalidSignature',
+    jwtInvalid: 'invalid JWT',
+    jwsInvalid: 'JWSError',
+};
+
+export const tokenHasIssues = (errorMessage?: string) => {
+    return (
+        errorMessage &&
+        (errorMessage === ERROR_MESSAGES.jwtExpired ||
+            errorMessage.includes(ERROR_MESSAGES.jwsInvalid) ||
+            errorMessage.includes(ERROR_MESSAGES.jwtInvalid))
+    );
 };
 
 export const DEFAULT_FILTER = '__unknown__';
@@ -245,9 +255,21 @@ export const supabaseRetry = <T>(makeCall: Function, action: string) => {
             const response = await makeCall();
 
             const error = response.error;
-            const shouldRetry = retryAfterFailure(error?.message);
 
-            if (shouldRetry && operation.retry(error)) {
+            // If we got an error that needs to force the user out sign them out
+            if (
+                tokenHasIssues(error?.message) &&
+                Boolean(supabaseClient.auth.user())
+            ) {
+                logRocketConsole(
+                    CustomEvents.SUPABASE_CALL_UNAUTHENTICATED,
+                    error?.message
+                );
+                await supabaseClient.auth.signOut();
+                return;
+            }
+
+            if (retryAfterFailure(error?.message) && operation.retry(error)) {
                 logRocketEvent(CustomEvents.SUPABASE_CALL_FAILED, action);
                 return;
             }

@@ -1,7 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { logRocketConsole } from 'services/logrocket';
-import { retryAfterFailure } from 'services/shared';
+import { logRocketConsole, retryAfterFailure } from 'services/shared';
 import Instructions from './Instructions';
 import { ErrorDetails } from './types';
 

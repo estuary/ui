@@ -2,7 +2,6 @@ import AppGuards from 'app/guards';
 import ConfirmationModalContextProvider from 'context/Confirmation';
 import { ZustandProvider } from 'context/Zustand/provider';
 import { BaseComponentProps } from 'types';
-import AuthEvents from './AuthEvents';
 import PreFetchDataProvider from './fetcher';
 import { OnLoadSpinnerProvider } from './OnLoadSpinner/OnLoadSpinnerContext';
 import Osano from './Osano';
@@ -23,13 +22,11 @@ export function AuthenticatedOnlyContext({ children, hideSpinner }: Props) {
                     <QueryParamProvider>
                         <ZustandProvider>
                             <AppGuards>
-                                <AuthEvents>
-                                    <PreFetchDataProvider>
-                                        <ConfirmationModalContextProvider>
-                                            {children}
-                                        </ConfirmationModalContextProvider>
-                                    </PreFetchDataProvider>
-                                </AuthEvents>
+                                <PreFetchDataProvider>
+                                    <ConfirmationModalContextProvider>
+                                        {children}
+                                    </ConfirmationModalContextProvider>
+                                </PreFetchDataProvider>
                             </AppGuards>
                         </ZustandProvider>
                     </QueryParamProvider>
