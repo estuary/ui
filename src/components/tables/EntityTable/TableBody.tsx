@@ -50,7 +50,7 @@ function EntityTableBody({
                                     />
                                 </Typography>
 
-                                <Typography component="div">
+                                <Typography component="div" align="center">
                                     {getEmptyTableMessage(
                                         tableState.status,
                                         noExistingDataContentIds

@@ -1,4 +1,4 @@
-import { Collapse, Stack, SxProps, Theme, Toolbar } from '@mui/material';
+import { Box, Fade, Stack, SxProps, Theme, Toolbar } from '@mui/material';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import LinearProgressTimed from 'components/progress/LinearProgressTimed';
 import { ReactNode } from 'react';
@@ -63,11 +63,19 @@ function EntityToolbar({
                 </Stack>
             </Toolbar>
 
-            <Collapse in={formActive} unmountOnExit>
-                <LinearProgressTimed
-                    wait={discovering ? generateWaitTime : undefined}
-                />
-            </Collapse>
+            <Box
+                sx={{
+                    height: 2,
+                }}
+            >
+                <Fade in={formActive} mountOnEnter unmountOnExit>
+                    <Box>
+                        <LinearProgressTimed
+                            wait={discovering ? generateWaitTime : undefined}
+                        />
+                    </Box>
+                </Fade>
+            </Box>
         </Stack>
     );
 }
