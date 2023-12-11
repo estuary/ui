@@ -111,8 +111,10 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                         }
                     },
 
-                    onLoadingSlow: () => {
-                        logRocketEvent(CustomEvents.SWR_LOADING_SLOW);
+                    onLoadingSlow: (key) => {
+                        logRocketEvent(CustomEvents.SWR_LOADING_SLOW, {
+                            key,
+                        });
                     },
 
                     // Start with a quick retry in case the problem was ephemeral
