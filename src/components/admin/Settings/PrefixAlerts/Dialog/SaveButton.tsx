@@ -43,7 +43,7 @@ function SaveButton({
         event.preventDefault();
         setLoading(true);
 
-        const subscriptionsToCancel: [string, string][] = [];
+        const subscriptionsToCancel: { [K: string]: string[] } = {};
         const subscriptionsToCreate: [string, string][] = [];
 
         Object.entries(updatedEmails).forEach(([key, value]) => {
@@ -54,7 +54,10 @@ function SaveButton({
                     .filter((email) => !value.includes(email))
                     .map((email): [string, string] => [key, email])
                     .forEach((subscriptionMetadata) => {
-                        subscriptionsToCancel.push(subscriptionMetadata);
+                        subscriptionsToCancel[subscriptionMetadata[0]] ??= [];
+                        subscriptionsToCancel[subscriptionMetadata[0]].push(
+                            subscriptionMetadata[1]
+                        );
                     });
             }
 
@@ -69,20 +72,27 @@ function SaveButton({
                 });
         });
 
-        const cancelledSubscriptions = subscriptionsToCancel.map(
-            ([key, email]) => deleteNotificationSubscription(email, key)
+        const deletedSubsriptions = Object.entries(subscriptionsToCancel).map(
+            ([key, emails]) => {
+                return deleteNotificationSubscription(key, emails);
+            }
         );
 
-        const createdSubscriptions = subscriptionsToCreate.map(([key, email]) =>
-            createNotificationSubscription(key, email)
+        const createdSubscription = createNotificationSubscription(
+            subscriptionsToCreate.map(([key, email]) => ({
+                catalog_prefix: key,
+                email,
+            }))
         );
 
         const responses = await Promise.all([
-            ...cancelledSubscriptions,
-            ...createdSubscriptions,
+            ...deletedSubsriptions,
+            createdSubscription,
         ]);
 
-        const errors = responses.filter((r) => r.error);
+        // The create could be undefined and this was easier to mark than tweak logic
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        const errors = responses.filter((r) => r?.error);
 
         if (!hasLength(errors)) {
             hydrate();
