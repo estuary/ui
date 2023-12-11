@@ -19,6 +19,7 @@ import {
     EntityWithCreateWorkflow,
     LiveSpecsExtBaseQuery,
 } from 'types';
+import { CHUNK_SIZE } from 'utils/misc-utils';
 
 const baseColumns = [
     'catalog_name',
@@ -276,7 +277,6 @@ export interface LiveSpecsExtQuery_ByCatalogNames {
     last_pub_id: string;
 }
 
-const CHUNK_SIZE = 10;
 const getLiveSpecsByCatalogNames = async (
     specType: Entity | null,
     catalogNames: string[]

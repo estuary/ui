@@ -114,11 +114,15 @@ const getInitialState = (
         );
     },
 
-    updateStatus: (status) => {
+    updateStatus: (status, runInBackground) => {
         set(
             produce((state: EntityFormState) => {
                 state.formState = { ...initialFormState };
-                state.formState.status = status;
+                state.formState.status =
+                    runInBackground && status === FormStatus.TESTING
+                        ? FormStatus.TESTING_BACKGROUND
+                        : status;
+
                 state.isIdle = formIdle(status);
 
                 const formIsActive = formActive(status);

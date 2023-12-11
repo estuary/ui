@@ -220,15 +220,3 @@ export const identifyUser = (user: User) => {
         }
     }
 };
-
-export const logRocketConsole = (message: string, ...props: any[]) => {
-    // Just want to be very very safe
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (LogRocket?.log) {
-        LogRocket.log(message, props);
-    }
-
-    if (!import.meta.env.PROD) {
-        console.log(message, props);
-    }
-};

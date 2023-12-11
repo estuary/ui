@@ -30,7 +30,6 @@ const Login = ({ showRegistration }: Props) => {
     useBrowserTitle('routeTitle.login');
 
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
-
     const { 2: clearGatewayConfig } = useLocalStorage(LocalStorageKeys.GATEWAY);
     useEffectOnce(() => clearGatewayConfig());
 

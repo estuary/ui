@@ -114,7 +114,7 @@ export function useLiveSpecs_spec(id: string, collectionNames?: string[]) {
         [collectionNames]
     );
 
-    const { data, error } = useSelect(
+    const { data, error, isValidating } = useSelect(
         hasLength(collectionNames) ? liveSpecQuery : null,
         { use: [withKey(id)] }
     );
@@ -124,6 +124,7 @@ export function useLiveSpecs_spec(id: string, collectionNames?: string[]) {
             ? data.data
             : (defaultResponse as LiveSpecsQuery_spec[]),
         error,
+        isValidating,
     };
 }
 

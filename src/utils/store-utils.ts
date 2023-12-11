@@ -1,6 +1,8 @@
+import { isProduction } from './env-utils';
+
 export const devtoolsOptions = (name: string) => {
     return {
-        enabled: !import.meta.env.PROD,
+        enabled: !isProduction,
         name,
     };
 };

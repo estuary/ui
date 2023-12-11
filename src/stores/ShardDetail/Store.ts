@@ -2,7 +2,7 @@ import { errorMain, successMain, warningMain } from 'context/Theme';
 import { ReplicaStatusCode } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import produce from 'immer';
-import { logRocketConsole } from 'services/logrocket';
+import { logRocketConsole } from 'services/shared';
 import { ShardDetailStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';

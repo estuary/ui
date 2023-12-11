@@ -6,6 +6,7 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
+import MessageWithLink from 'components/content/MessageWithLink';
 import RefreshButton from 'components/editor/Bindings/FieldSelection/RefreshButton';
 import {
     BuiltSpec_Binding,
@@ -26,8 +27,10 @@ import {
     useBindingsEditorStore_setSelectionSaving,
     useBindingsEditorStore_setSingleSelection,
 } from 'components/editor/Bindings/Store/hooks';
-import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
-import ExternalLink from 'components/shared/ExternalLink';
+import {
+    useEditorStore_id,
+    useEditorStore_queryResponse_draftSpecs,
+} from 'components/editor/Store/hooks';
 import FieldSelectionTable from 'components/tables/FieldSelection';
 import { isEqual } from 'lodash';
 import {
@@ -35,20 +38,27 @@ import {
     useCallback,
     useEffect,
     useMemo,
+    useRef,
     useState,
 } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { useEndpointConfig_serverUpdateRequired } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
+    useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/hooks';
 import { Schema } from 'types';
 import {
     evaluateRequiredIncludedFields,
     getBindingIndex,
 } from 'utils/workflow-utils';
+import RefreshStatus from './RefreshStatus';
+import useFieldSelectionRefresh from './useFieldSelectionRefresh';
 
 interface Props {
     collectionName: string;
@@ -104,7 +114,16 @@ const mapConstraintsToProjections = (
     });
 
 function FieldSelectionViewer({ collectionName }: Props) {
+    const fireBackgroundTest = useRef(true);
+
+    const [refreshRequired, setRefreshRequired] = useState(false);
+    const [saveInProgress, setSaveInProgress] = useState(false);
+    const [data, setData] = useState<
+        CompositeProjection[] | null | undefined
+    >();
+
     const applyFieldSelections = useFieldSelection(collectionName);
+    const { refresh } = useFieldSelectionRefresh();
 
     // Bindings Editor Store
     const recommendFields = useBindingsEditorStore_recommendFields();
@@ -118,20 +137,48 @@ function FieldSelectionViewer({ collectionName }: Props) {
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
+    const draftId = useEditorStore_id();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
+    const formStatus = useFormStateStore_status();
     const setFormState = useFormStateStore_setFormState();
 
-    const [data, setData] = useState<
-        CompositeProjection[] | null | undefined
-    >();
-
-    const [saveInProgress, setSaveInProgress] = useState(false);
+    const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
+    const resourceRequiresUpdate = useResourceConfig_serverUpdateRequired();
 
     useEffect(() => {
+        return () => {
+            // Mainly for when a user enters edit and their initial bg test fails
+            //  want to make sure we fire off another bg test if they click on
+            //  next and not refresh after updating the config.
+            if (formStatus === FormStatus.FAILED) {
+                fireBackgroundTest.current = true;
+            }
+        };
+    }, [formStatus]);
+
+    useEffect(() => {
+        // If we need an update at the same time we are generating then we need to show
+        //  the refresh message.
         if (
-            draftSpecs.length > 0 &&
+            (resourceRequiresUpdate || serverUpdateRequired) &&
+            formStatus === FormStatus.GENERATING
+        ) {
+            setRefreshRequired(true);
+        } else if (formStatus === FormStatus.TESTED) {
+            // If we are here then the flag might be true and we only can stop showing it
+            //  if there is a test ran. This is kinda janky as a test does not 100% garuntee
+            //  a built spec but it is pretty darn close.
+            setRefreshRequired(false);
+        }
+    }, [formStatus, resourceRequiresUpdate, serverUpdateRequired]);
+
+    useEffect(() => {
+        const hasDraftSpec = draftSpecs.length > 0;
+
+        if (
+            hasDraftSpec &&
             draftSpecs[0].built_spec &&
             draftSpecs[0].validated
         ) {
@@ -206,13 +253,24 @@ function FieldSelectionViewer({ collectionName }: Props) {
                 setData(null);
             }
         } else {
+            if (hasDraftSpec && formStatus === FormStatus.GENERATED) {
+                if (fireBackgroundTest.current) {
+                    fireBackgroundTest.current = false;
+                    setRefreshRequired(false);
+                    logRocketEvent(CustomEvents.FIELD_SELECTION_REFRESH_AUTO);
+                    void refresh(draftId);
+                }
+            }
+
             setData(null);
         }
     }, [
         collectionName,
+        draftId,
         draftSpecs,
+        formStatus,
         initializeSelections,
-        setData,
+        refresh,
         setRecommendFields,
     ]);
 
@@ -256,8 +314,9 @@ function FieldSelectionViewer({ collectionName }: Props) {
             applyFieldSelections(draftSpec)
                 .then(
                     () => setFormState({ status: FormStatus.UPDATED }),
-                    (error) =>
-                        setFormState({ status: FormStatus.FAILED, error })
+                    (error) => {
+                        setFormState({ status: FormStatus.FAILED, error });
+                    }
                 )
                 .finally(() => {
                     setSelectionSaving(false);
@@ -274,6 +333,8 @@ function FieldSelectionViewer({ collectionName }: Props) {
         setSelectionSaving,
     ]);
 
+    const loading = formActive || formStatus === FormStatus.TESTING_BACKGROUND;
+
     return (
         <Box sx={{ mt: 3 }}>
             <Stack
@@ -287,25 +348,18 @@ function FieldSelectionViewer({ collectionName }: Props) {
                             <FormattedMessage id="fieldSelection.header" />
                         </Typography>
 
-                        <ExternalLink link="https://docs.estuary.dev/guides/customize-materialization-fields/">
-                            <FormattedMessage id="terms.documentation" />
-                        </ExternalLink>
+                        <RefreshButton
+                            buttonLabelId="cta.refresh"
+                            disabled={loading}
+                        />
                     </Stack>
 
-                    <Typography>
-                        <FormattedMessage id="fieldSelection.message" />
+                    <RefreshStatus show={refreshRequired ? true : undefined} />
+
+                    <Typography component="div">
+                        <MessageWithLink messageID="fieldSelection.message" />
                     </Typography>
                 </Stack>
-
-                <Box sx={{ whiteSpace: 'nowrap' }}>
-                    {/* The shared test and save button component is disabled when the form is active.
-                        No additional disabled conditions are needed. */}
-                    <RefreshButton
-                        buttonLabelId="fieldSelection.cta.populateTable"
-                        disabled={formActive}
-                        logEvent={CustomEvents.MATERIALIZATION_TEST}
-                    />
-                </Box>
             </Stack>
 
             <FormControl sx={{ mb: 1, mx: 0 }}>
@@ -314,7 +368,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
                         <Checkbox
                             value={recommendFields}
                             checked={recommendFields}
-                            disabled={formActive || !data}
+                            disabled={loading || !data}
                         />
                     }
                     onChange={toggleRecommendFields}

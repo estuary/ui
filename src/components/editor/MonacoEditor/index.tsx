@@ -22,7 +22,7 @@ import { editorToolBarSx } from 'context/Theme';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { logRocketConsole } from 'services/logrocket';
+import { logRocketConsole } from 'services/shared';
 import { stringifyJSON } from 'services/stringify';
 import { Entity } from 'types';
 import {
