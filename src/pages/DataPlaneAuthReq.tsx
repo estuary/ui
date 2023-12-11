@@ -6,7 +6,7 @@ import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
-import { logRocketConsole } from 'services/logrocket';
+import { logRocketConsole } from 'services/shared';
 
 const boxStyling: SxProps<Theme> = {
     marginBottom: 2,

@@ -63,8 +63,12 @@ function FieldSelectionTable({ projections }: Props) {
 
     useEffect(() => {
         if (
-            typeof projections === 'undefined' ||
-            formStatus === FormStatus.TESTING
+            formStatus !== FormStatus.FAILED &&
+            (typeof projections === 'undefined' ||
+                projections === null ||
+                formStatus === FormStatus.GENERATING ||
+                formStatus === FormStatus.TESTING ||
+                formStatus === FormStatus.TESTING_BACKGROUND)
         ) {
             setTableState({ status: TableStatuses.LOADING });
         } else {
@@ -76,6 +80,9 @@ function FieldSelectionTable({ projections }: Props) {
             });
         }
     }, [setTableState, formStatus, projections]);
+
+    const failed = formStatus === FormStatus.FAILED;
+    const loading = tableState.status === TableStatuses.LOADING;
 
     return (
         <Box>
@@ -99,12 +106,16 @@ function FieldSelectionTable({ projections }: Props) {
                         columns={columns}
                         noExistingDataContentIds={{
                             header: 'fieldSelection.table.empty.header',
-                            message: 'fieldSelection.table.empty.message',
+                            message: failed
+                                ? 'fieldSelection.table.error.message'
+                                : 'fieldSelection.table.empty.message',
                             disableDoclink: true,
                         }}
                         tableState={tableState}
-                        loading={formStatus === FormStatus.TESTING}
+                        loading={loading}
                         rows={
+                            !failed &&
+                            !loading &&
                             projections &&
                             projections.length > 0 &&
                             formStatus !== FormStatus.TESTING ? (

@@ -211,7 +211,7 @@ const useJournalData = (
     maxBytes: number = 16 * 10 ** 6
 ) => {
     const { data: gatewayConfig } = useGatewayAuthToken(
-        collectionName ? [collectionName] : []
+        collectionName ? [collectionName] : null
     );
 
     const journalClient = useMemo(() => {
