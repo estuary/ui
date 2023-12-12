@@ -9,7 +9,7 @@ function useAppliedDirectives(type: keyof typeof DIRECTIVES, token?: string) {
 
     const { data, error, mutate, isValidating } =
         useSelectNew<JoinedAppliedDirective>(
-            user?.id ? getAppliedDirectives(type, user.id, token) : null
+            user ? getAppliedDirectives(type, token) : null
         );
 
     return {
