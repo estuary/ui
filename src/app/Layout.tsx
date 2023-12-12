@@ -3,6 +3,7 @@ import Navigation from 'components/navigation/Navigation';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import DocsSidePanel from 'components/sidePanelDocs/SidePanel';
+import { useShowSidePanelDocs } from 'context/SidePanelDocs';
 import { NavWidths } from 'context/Theme';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
@@ -10,10 +11,11 @@ import { useLocalStorage } from 'react-use';
 import {
     useSidePanelDocsStore_animateOpening,
     useSidePanelDocsStore_setAnimateOpening,
-    useSidePanelDocsStore_show,
+    useSidePanelDocsStore_url,
 } from 'stores/SidePanelDocs/hooks';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 import { useEffect, useState } from 'react';
+import { hasLength } from 'utils/misc-utils';
 
 function AppLayout() {
     const theme = useTheme();
@@ -36,8 +38,13 @@ function AppLayout() {
     // Splitter for the side panel docs
     const [leftPaneFlex, setLeftPaneFlex] = useState<any>(0.0);
     const [rightPaneFlex, setRightPaneFlex] = useState<any>(0.0);
-    const showDocs = useSidePanelDocsStore_show();
-    const displaySidePanel = showDocs && !belowMd;
+
+    const { showDocs } = useShowSidePanelDocs();
+    const docsURL = useSidePanelDocsStore_url();
+
+    const displaySidePanel = Boolean(
+        showDocs && !belowMd && hasLength(docsURL)
+    );
 
     // We want to control the flex and not size as it seems to work better
     //  when showing/hiding and also allows a sort of percentage view instead

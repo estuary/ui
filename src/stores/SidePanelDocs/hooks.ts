@@ -22,19 +22,6 @@ export const useSidePanelDocsStore_disabled = () => {
     );
 };
 
-export const useSidePanelDocsStore_show = () => {
-    return useZustandStore<SidePanelDocsState, SidePanelDocsState['show']>(
-        GlobalStoreNames.SIDE_PANEL_DOCS,
-        (state) => state.show
-    );
-};
-export const useSidePanelDocsStore_setShow = () => {
-    return useZustandStore<SidePanelDocsState, SidePanelDocsState['setShow']>(
-        GlobalStoreNames.SIDE_PANEL_DOCS,
-        (state) => state.setShow
-    );
-};
-
 export const useSidePanelDocsStore_url = () => {
     return useZustandStore<SidePanelDocsState, SidePanelDocsState['url']>(
         GlobalStoreNames.SIDE_PANEL_DOCS,
