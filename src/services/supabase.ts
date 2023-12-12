@@ -6,7 +6,7 @@ import LogRocket from 'logrocket';
 import { JobStatus, SortDirection, SupabaseInvokeResponse } from 'types';
 import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 import retry from 'retry';
-import { logRocketEvent, logRocketConsole, retryAfterFailure } from './shared';
+import { logRocketEvent, retryAfterFailure } from './shared';
 import { CustomEvents } from './types';
 
 if (
@@ -261,9 +261,9 @@ export const supabaseRetry = <T>(makeCall: Function, action: string) => {
                 tokenHasIssues(error?.message) &&
                 Boolean(supabaseClient.auth.user())
             ) {
-                logRocketConsole(
+                logRocketEvent(
                     CustomEvents.SUPABASE_CALL_UNAUTHENTICATED,
-                    error?.message
+                    error?.message ?? 'no error'
                 );
                 await supabaseClient.auth.signOut();
                 return;
