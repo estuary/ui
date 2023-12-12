@@ -1,7 +1,7 @@
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import { useEffectOnce } from 'react-use';
-import { logRocketConsole } from 'services/logrocket';
+import { logRocketConsole } from 'services/shared';
 import {
     useDetailsForm_hydrated,
     useDetailsForm_hydrateState,

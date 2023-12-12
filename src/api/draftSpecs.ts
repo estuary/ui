@@ -12,6 +12,7 @@ import {
     updateSupabase,
 } from 'services/supabase';
 import { Entity } from 'types';
+import { CHUNK_SIZE } from 'utils/misc-utils';
 
 interface CreateMatchData {
     draft_id: string | null;
@@ -155,7 +156,6 @@ export const getDraftSpecsByCatalogName = async (
     return data;
 };
 
-const CHUNK_SIZE = 10;
 export const deleteDraftSpecsByCatalogName = async (
     draftId: string,
     specType: Entity,

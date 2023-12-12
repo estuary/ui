@@ -1,12 +1,12 @@
 import AppGuards from 'app/guards';
 import ConfirmationModalContextProvider from 'context/Confirmation';
+import { SidePanelDocsProvider } from 'context/SidePanelDocs';
 import { ZustandProvider } from 'context/Zustand/provider';
 import { BaseComponentProps } from 'types';
-import AuthEvents from './AuthEvents';
-import PreFetchDataProvider from './fetcher';
 import { OnLoadSpinnerProvider } from './OnLoadSpinner/OnLoadSpinnerContext';
 import QueryParamProvider from './QueryParam';
 import RequireAuth from './Router/RequireAuth';
+import PreFetchDataProvider from './fetcher';
 
 interface Props extends BaseComponentProps {
     hideSpinner?: boolean;
@@ -21,13 +21,13 @@ export function AuthenticatedOnlyContext({ children, hideSpinner }: Props) {
                 <QueryParamProvider>
                     <ZustandProvider>
                         <AppGuards>
-                            <AuthEvents>
-                                <PreFetchDataProvider>
-                                    <ConfirmationModalContextProvider>
+                            <PreFetchDataProvider>
+                                <ConfirmationModalContextProvider>
+                                    <SidePanelDocsProvider>
                                         {children}
-                                    </ConfirmationModalContextProvider>
-                                </PreFetchDataProvider>
-                            </AuthEvents>
+                                    </SidePanelDocsProvider>
+                                </ConfirmationModalContextProvider>
+                            </PreFetchDataProvider>
                         </AppGuards>
                     </ZustandProvider>
                 </QueryParamProvider>

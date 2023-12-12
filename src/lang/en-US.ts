@@ -318,7 +318,9 @@ const PageNotFound: ResolvedIntlConfig['messages'] = {
 
 const EntityNotFound: ResolvedIntlConfig['messages'] = {
     'entityNotFound.heading': `Sorry, that entity cannot be found.`,
-    'entityNotFound.message': `The entity you are looking for could not be found. This is likely because it has been deleted.`,
+    'entityNotFound.message.default': `The entity you are looking for`,
+    'entityNotFound.detail': `was unable to be found.`,
+    'entityNotFound.explanation': `This is likely because it has been deleted or you do not have access.`,
 };
 
 const Registration: ResolvedIntlConfig['messages'] = {
@@ -1284,9 +1286,11 @@ const NotBeforeNotAfter: ResolvedIntlConfig['messages'] = {
 
 const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.header': `Field Selection`,
-    'fieldSelection.message': `Determine which fields in your collection get materialized. By default, the connector dynamically selects the fields exported by your materialization. Click "See Fields" to update the table below.`,
+    'fieldSelection.message': `Determine which fields in your collection get materialized. By default, the connector dynamically selects the fields exported by your materialization. Click "${CTAs['cta.refresh']}" to update the table below. For more details, please {docLink}.`,
+    'fieldSelection.message.docLink': `see the docs`,
+    'fieldSelection.message.docPath': `https://docs.estuary.dev/guides/customize-materialization-fields/`,
+
     'fieldSelection.cta.defaultAllFields': `Include recommended fields`,
-    'fieldSelection.cta.populateTable': `See Fields`,
     'fieldSelection.dialog.refreshFields.header': `Please wait while we gather information about your resource fields`,
     'fieldSelection.dialog.updateProjection.header': `Update Projection`,
     'fieldSelection.dialog.updateProjection.header.new': `Add Projection`,
@@ -1295,13 +1299,15 @@ const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.dialog.updateProjection.label.fieldName': `Field Name:`,
     'fieldSelection.dialog.updateProjection.label.pointer': `JSON Pointer:`,
     'fieldSelection.dialog.updateProjection.label.type': `Type:`,
+    'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config can sometimes change the options below.`,
     'fieldSelection.table.cta.addProjection': `Add Projection`,
     'fieldSelection.table.cta.defaultField': `Default`,
     'fieldSelection.table.cta.excludeField': `Exclude`,
     'fieldSelection.table.cta.includeField': `Include`,
     'fieldSelection.table.cta.renameField': `Rename`,
     'fieldSelection.table.empty.header': `No information found`,
-    'fieldSelection.table.empty.message': `Click "See Fields" to evaluate the fields of the source collection.`,
+    'fieldSelection.table.empty.message': `Click "Refresh" to evaluate the fields of the source collection.`,
+    'fieldSelection.table.error.message': `There was an error attempting to fetch the list of fields.`,
     'fieldSelection.table.label.details': `Details`,
     'fieldSelection.table.label.actions': `Actions`,
     'fieldSelection.table.label.fieldRequired': `Field Required`,

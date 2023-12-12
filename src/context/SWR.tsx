@@ -3,13 +3,14 @@ import { LRUCache } from 'lru-cache';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
-import { logRocketConsole } from 'services/logrocket';
-import { logRocketEvent } from 'services/shared';
-import { ERROR_MESSAGES } from 'services/supabase';
+import { AUTH_ERROR } from 'services/client';
+import { logRocketConsole, logRocketEvent } from 'services/shared';
+import { tokenHasIssues } from 'services/supabase';
 import { CustomEvents } from 'services/types';
-import { SWRConfig } from 'swr';
+import { SWRConfig, useSWRConfig } from 'swr';
 import { BaseComponentProps } from 'types';
 
+const DEFAULT_RETRY_COUNT = 3;
 export const DEFAULT_POLLING = 2500;
 export const EXTENDED_POLL_INTERVAL = 30000;
 
@@ -20,20 +21,20 @@ export const singleCallSettings = {
 };
 
 export const extendedPollSettings = {
-    errorRetryCount: 3,
+    errorRetryCount: DEFAULT_RETRY_COUNT,
     errorRetryInterval: EXTENDED_POLL_INTERVAL / 2,
     refreshInterval: EXTENDED_POLL_INTERVAL,
     revalidateOnFocus: false,
 };
-
 const SwrConfigProvider = ({ children }: BaseComponentProps) => {
     const supabaseClient = useClient();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
+    const { onErrorRetry } = useSWRConfig();
 
     const cache = useCallback(() => {
         return new LRUCache({
-            max: 500,
+            max: 100,
         });
     }, []);
 
@@ -45,11 +46,43 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
         >
             <SWRConfig
                 value={{
-                    onError: async (error, _key, _config) => {
+                    onErrorRetry: (
+                        err,
+                        key,
+                        config,
+                        revalidate,
+                        revalidateOpts
+                    ) => {
+                        // The server says they do not have access so don't try again
                         if (
-                            error.message === ERROR_MESSAGES.jwtExpired ||
-                            error.message === ERROR_MESSAGES.jwsInvalid
+                            err &&
+                            (err === AUTH_ERROR || err.message === AUTH_ERROR)
                         ) {
+                            return;
+                        }
+
+                        // Make sure we don't spam ourselves so stop eventually
+                        if (revalidateOpts.retryCount >= DEFAULT_RETRY_COUNT) {
+                            return;
+                        }
+
+                        // Continue on using the normal retry handled so we get the exponential backoff
+                        onErrorRetry(
+                            err,
+                            key,
+                            config,
+                            revalidate,
+                            revalidateOpts
+                        );
+                    },
+                    onError: async (error, _key, _config) => {
+                        // This happens when a call to the server has returned a 401 but
+                        //      the UI thinks the User is still valid. So we need to log them out.
+                        const localUserInvalid =
+                            error.message === AUTH_ERROR &&
+                            Boolean(supabaseClient.auth.user());
+
+                        if (localUserInvalid || tokenHasIssues(error.message)) {
                             await supabaseClient.auth
                                 .signOut()
                                 .then(() => {
@@ -63,6 +96,7 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                                                 horizontal: 'center',
                                             },
                                             variant: 'error',
+                                            persist: true,
                                         }
                                     );
                                 })
@@ -77,8 +111,10 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                         }
                     },
 
-                    onLoadingSlow: () => {
-                        logRocketEvent(CustomEvents.SWR_LOADING_SLOW);
+                    onLoadingSlow: (key) => {
+                        logRocketEvent(CustomEvents.SWR_LOADING_SLOW, {
+                            key,
+                        });
                     },
 
                     // Start with a quick retry in case the problem was ephemeral

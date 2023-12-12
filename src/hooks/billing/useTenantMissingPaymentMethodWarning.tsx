@@ -9,7 +9,7 @@ import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
 import { Box, Stack, Typography } from '@mui/material';
-import { logRocketConsole } from 'services/logrocket';
+import { logRocketConsole } from 'services/shared';
 import { DateTime } from 'luxon';
 import { FormattedMessage } from 'react-intl';
 import { Schema } from 'types';

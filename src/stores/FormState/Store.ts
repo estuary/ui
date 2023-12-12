@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { logRocketConsole } from 'services/shared';
 import { MessagePrefixes } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
@@ -99,6 +100,19 @@ const getInitialState = (
         set(
             produce((state: EntityFormState) => {
                 const { formState } = get();
+
+                if (
+                    formState.status === FormStatus.INIT &&
+                    (newState.status === FormStatus.TESTED ||
+                        newState.status === FormStatus.SAVED)
+                ) {
+                    // If we are trying to go directly from init to tested/saved then
+                    //  we are probably still running an async task that is not needed.
+                    // Ex: enter edit materialization, click back quickly, and then  the test finishes
+                    logRocketConsole('FormState:Prevented');
+                    return;
+                }
+
                 state.formState = { ...formState, ...newState };
                 state.isIdle = formIdle(state.formState.status);
 
@@ -114,11 +128,15 @@ const getInitialState = (
         );
     },
 
-    updateStatus: (status) => {
+    updateStatus: (status, runInBackground) => {
         set(
             produce((state: EntityFormState) => {
                 state.formState = { ...initialFormState };
-                state.formState.status = status;
+                state.formState.status =
+                    runInBackground && status === FormStatus.TESTING
+                        ? FormStatus.TESTING_BACKGROUND
+                        : status;
+
                 state.isIdle = formIdle(status);
 
                 const formIsActive = formActive(status);

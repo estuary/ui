@@ -7,22 +7,19 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+import { useShowSidePanelDocs } from 'context/SidePanelDocs';
 import { SidebarCollapse } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import {
-    useSidePanelDocsStore_setShow,
-    useSidePanelDocsStore_show,
-    useSidePanelDocsStore_url,
-} from 'stores/SidePanelDocs/hooks';
+import { useSidePanelDocsStore_url } from 'stores/SidePanelDocs/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 function SidePanelDocsOpenButton() {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
+    const { showDocs, setShowDocs } = useShowSidePanelDocs();
+
     const docsURL = useSidePanelDocsStore_url();
-    const showDocs = useSidePanelDocsStore_show();
-    const setShowDocs = useSidePanelDocsStore_setShow();
     const showButton = !showDocs && !belowMd && hasLength(docsURL);
 
     return (
