@@ -58,9 +58,9 @@ function SidePanelIframe({ show }: Props) {
     }, [colorMode, iframeCurrent]);
 
     useEffect(() => {
-        // When the iframe loads fire message to hide the navbar and breadcrumbs
-        const hideNavBar = () => {
-            iframeCurrent?.contentWindow?.postMessage(
+        if (iframeCurrent && show && hasLength(docsURL)) {
+            // When the iframe loads fire message to hide the navbar and breadcrumbs
+            iframeCurrent.contentWindow?.postMessage(
                 { type: hideNavBarMessage },
                 origin
             );
@@ -71,10 +71,6 @@ function SidePanelIframe({ show }: Props) {
                 setAnimateOpening(true);
                 setLoading(false);
             }, 100);
-        };
-
-        if (iframeCurrent && show && hasLength(docsURL)) {
-            hideNavBar();
         }
     }, [docsURL, iframeCurrent, setAnimateOpening, show]);
 
