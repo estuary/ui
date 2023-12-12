@@ -120,7 +120,13 @@ function AutoDiscoverySettings({ readOnly }: Props) {
                     .then(
                         () => setFormState({ status: FormStatus.UPDATED }),
                         (error) =>
-                            setFormState({ status: FormStatus.FAILED, error })
+                            setFormState({
+                                status: FormStatus.FAILED,
+                                error: {
+                                    title: 'workflows.autoDiscovery.update.failed',
+                                    error,
+                                },
+                            })
                     )
                     .finally(() => setSettingsSaving(false));
             } else {
