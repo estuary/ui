@@ -39,7 +39,6 @@ const getInitialState = (
                 const urlIsFromEstuary = val.includes(iframeStringInclude);
 
                 state.url = val;
-                // state.show = true;
                 state.disabled = !urlIsFromEstuary;
             }),
             false,
