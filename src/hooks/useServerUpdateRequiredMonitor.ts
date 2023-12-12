@@ -40,13 +40,6 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                         binding[collectionNameProp]
                     );
 
-                    // If the collection is no longer there then we are probably applying a schema evolution so we
-                    //      should not require server update as we just got back from the server
-                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                    if (!resourceConfig[collectionName]?.data) {
-                        return false;
-                    }
-
                     // Do a quick simple disabled check before comparing the entire object
                     if (
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -58,7 +51,8 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
 
                     // Since we checked disabled up above we can not just check if the data changed
                     return !isEqual(
-                        resourceConfig[collectionName].data,
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                        resourceConfig[collectionName]?.data,
                         resource
                     );
                 });

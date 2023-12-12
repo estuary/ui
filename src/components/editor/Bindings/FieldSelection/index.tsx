@@ -32,6 +32,7 @@ import {
     useEditorStore_queryResponse_draftSpecs,
 } from 'components/editor/Store/hooks';
 import FieldSelectionTable from 'components/tables/FieldSelection';
+import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { isEqual } from 'lodash';
 import {
     SyntheticEvent,
@@ -114,7 +115,8 @@ const mapConstraintsToProjections = (
     });
 
 function FieldSelectionViewer({ collectionName }: Props) {
-    const fireBackgroundTest = useRef(true);
+    const isEdit = useEntityWorkflow_Editing();
+    const fireBackgroundTest = useRef(isEdit);
 
     const [refreshRequired, setRefreshRequired] = useState(false);
     const [saveInProgress, setSaveInProgress] = useState(false);
@@ -152,11 +154,11 @@ function FieldSelectionViewer({ collectionName }: Props) {
             // Mainly for when a user enters edit and their initial bg test fails
             //  want to make sure we fire off another bg test if they click on
             //  next and not refresh after updating the config.
-            if (formStatus === FormStatus.FAILED) {
+            if (isEdit && formStatus === FormStatus.FAILED) {
                 fireBackgroundTest.current = true;
             }
         };
-    }, [formStatus]);
+    }, [formStatus, isEdit]);
 
     useEffect(() => {
         // If we need an update at the same time we are generating then we need to show
