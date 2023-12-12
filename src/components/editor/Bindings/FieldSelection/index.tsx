@@ -315,9 +315,17 @@ function FieldSelectionViewer({ collectionName }: Props) {
             // TODO (field selection): Extend error handling.
             applyFieldSelections(draftSpec)
                 .then(
-                    () => setFormState({ status: FormStatus.UPDATED }),
+                    () => {
+                        setFormState({ status: FormStatus.UPDATED });
+                    },
                     (error) => {
-                        setFormState({ status: FormStatus.FAILED, error });
+                        setFormState({
+                            status: FormStatus.FAILED,
+                            error: {
+                                title: 'fieldSelection.update.failed',
+                                error,
+                            },
+                        });
                     }
                 )
                 .finally(() => {
