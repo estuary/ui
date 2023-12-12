@@ -3,19 +3,22 @@ import { unauthenticatedRoutes } from 'app/routes';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import 'react-reflex/styles.css';
 import { Navigate } from 'react-router';
 import { identifyUser } from 'services/logrocket';
 import { BaseComponentProps } from 'types';
 
 function UserGuard({ children }: BaseComponentProps) {
+    // We only want to idenfity users once. Since the user object changes
+    //  everytime the user focuses on the tab we could end up spamming calls.
+    const identifiedUser = useRef(false);
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
-
     const { user } = Auth.useUser();
 
     useEffect(() => {
-        if (user) {
+        if (user && !identifiedUser.current) {
+            identifiedUser.current = true;
             identifyUser(user);
         }
     }, [user]);
