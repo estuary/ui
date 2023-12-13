@@ -23,29 +23,29 @@ export default defineConfig({
         viteTsconfigPaths(),
 
         // Code injection
-        [
-            nodePolyfills({
-                include: ['path', 'process', 'stream'],
-            }),
-            topLevelAwait(),
-        ],
-        // Deps
-        [react(), wasm()],
-        // Performance
-        [viteImageOptimizer({}), viteCompression()],
+        nodePolyfills({
+            include: ['path', 'process', 'stream'],
+        }),
+        topLevelAwait(),
 
-        // Quality
-        [
-            checker({
-                eslint: {
-                    lintCommand: 'lint',
-                },
-                typescript: {
-                    tsconfigPath: './tsconfig.json',
-                },
-            }),
-            circleDependency({}),
-        ],
+        // Deps
+        react(),
+        wasm(),
+
+        // Performance
+        viteImageOptimizer({}),
+        viteCompression(),
+
+        // Quality Control
+        checker({
+            eslint: {
+                lintCommand: 'lint',
+            },
+            typescript: {
+                tsconfigPath: './tsconfig.json',
+            },
+        }),
+        circleDependency({}),
     ],
     test: {
         environment: 'jsdom',
