@@ -15,13 +15,6 @@ export default defineConfig({
         outDir: './build',
     },
 
-    optimizeDeps: {
-        needsInterop: [
-            'monaco-editor/esm/vs/editor/standalone/browser/accessibilityHelp/accessibilityHelp.js',
-            'monaco-editor/esm/vs/editor/standalone/browser/inspectTokens/inspectTokens.js',
-        ],
-    },
-
     preview: { port: 3000, strictPort: true },
     server: { port: 3000, strictPort: true },
 
