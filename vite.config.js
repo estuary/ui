@@ -15,29 +15,44 @@ export default defineConfig({
         outDir: './build',
     },
 
+    optimizeDeps: {
+        needsInterop: [
+            'monaco-editor/esm/vs/editor/standalone/browser/accessibilityHelp/accessibilityHelp.js',
+            'monaco-editor/esm/vs/editor/standalone/browser/inspectTokens/inspectTokens.js',
+        ],
+    },
+
     preview: { port: 3000, strictPort: true },
     server: { port: 3000, strictPort: true },
 
     // https://github.com/vitejs/awesome-vite#plugins
     plugins: [
-        checker({
-            eslint: {
-                lintCommand: 'lint',
-            },
-            typescript: {
-                tsconfigPath: './tsconfig.json',
-            },
-        }),
-        circleDependency({}),
-        nodePolyfills({
-            include: ['path', 'process', 'stream'],
-        }),
-        react(),
-        topLevelAwait(),
-        viteCompression(),
-        viteImageOptimizer({}),
         viteTsconfigPaths(),
-        wasm(),
+
+        // Code injection
+        [
+            nodePolyfills({
+                include: ['path', 'process', 'stream'],
+            }),
+            topLevelAwait(),
+        ],
+        // Deps
+        [react(), wasm()],
+        // Performance
+        [viteImageOptimizer({}), viteCompression()],
+
+        // Quality
+        [
+            checker({
+                eslint: {
+                    lintCommand: 'lint',
+                },
+                typescript: {
+                    tsconfigPath: './tsconfig.json',
+                },
+            }),
+            circleDependency({}),
+        ],
     ],
     test: {
         environment: 'jsdom',
