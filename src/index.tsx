@@ -25,8 +25,6 @@ setAutoFreeze(false);
 // Setup Monaco
 self.MonacoEnvironment = {
     getWorker(foo, label) {
-        console.log('getWorker', { foo, label });
-
         if (label === 'json') {
             return new JsonWorker();
         }
