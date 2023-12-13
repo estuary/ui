@@ -144,7 +144,10 @@ export const DIRECTIVES: Directives = {
         },
         calculateStatus: (appliedDirective?) => {
             const stillNeeded = () => {
-                logRocketConsole('clickToAccept:stillNeeded', appliedDirective);
+                logRocketConsole(
+                    'clickToAccept:calculateStatus:stillNeeded',
+                    appliedDirective
+                );
                 return (
                     appliedDirective?.user_claims?.version &&
                     appliedDirective.user_claims.version !==
