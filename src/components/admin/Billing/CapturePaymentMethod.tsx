@@ -30,8 +30,8 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
     const stripe = useStripe();
     const elements = useElements();
 
-    const { user } = Auth.useUser();
-    const { email } = getUserDetails(user);
+    const { session } = Auth.useUser();
+    const { email } = getUserDetails(session?.user);
 
     const setupEvents = useRef(false);
     const [error, setError] = useState('');
@@ -138,7 +138,9 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                 <AddressElement
                     options={{
                         mode: 'billing',
-                        defaultValues: { name: user?.user_metadata.full_name },
+                        defaultValues: {
+                            name: session?.user?.user_metadata.full_name,
+                        },
                         display: { name: 'organization' },
                     }}
                 />
@@ -152,7 +154,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                         readOnly: loading,
                         defaultValues: {
                             billingDetails: {
-                                name: user?.user_metadata.full_name,
+                                name: session?.user?.user_metadata.full_name,
                             },
                         },
                     }}

@@ -14,19 +14,19 @@ function UserGuard({ children }: BaseComponentProps) {
     //  everytime the user focuses on the tab we could end up spamming calls.
     const identifiedUser = useRef(false);
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
-    const { user } = Auth.useUser();
+    const { session } = Auth.useUser();
 
     useEffect(() => {
-        if (user && !identifiedUser.current) {
+        if (session?.user && !identifiedUser.current) {
             identifiedUser.current = true;
-            identifyUser(user);
+            identifyUser(session.user);
         }
-    }, [user]);
+    }, [session]);
 
     return (
         // eslint-disable-next-line react/jsx-no-useless-fragment
         <>
-            {user ? (
+            {session?.user ? (
                 children
             ) : (
                 <Navigate
