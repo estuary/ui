@@ -125,7 +125,7 @@ export const basicSort_string = (
     const aIsAlphabetical = a.localeCompare('a') >= 0;
     const bIsAlphabetical = b.localeCompare('a') >= 0;
 
-    // If a is alpha and b isn't then return >0 to put b first
+    // If a isn't alpha and b is then return >0 to put b first
     if (!aIsAlphabetical && bIsAlphabetical) {
         return 1;
     }
