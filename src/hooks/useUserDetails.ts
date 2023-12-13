@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { logRocketConsole } from 'services/shared';
 
 function useUserDetails() {
-    const { user } = Auth.useUser();
+    const { session } = Auth.useUser();
 
     const [avatar, setAvatar] = useState<string | null>(null);
     const [email, setEmail] = useState<string | undefined>(undefined);
@@ -13,8 +13,10 @@ function useUserDetails() {
     const [userName, setUserName] = useState<string | undefined>(undefined);
 
     useEffect(() => {
-        logRocketConsole('fetching user details for menu', user);
-        if (user) {
+        logRocketConsole('fetching user details for menu', session?.user);
+        if (session?.user) {
+            const { user } = session;
+
             if (!isEmpty(user.user_metadata)) {
                 setUserName(
                     user.user_metadata.full_name ?? user.user_metadata.email
@@ -30,7 +32,7 @@ function useUserDetails() {
 
             setId(user.id);
         }
-    }, [user]);
+    }, [session]);
 
     return {
         id,

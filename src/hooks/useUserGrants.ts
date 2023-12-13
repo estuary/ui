@@ -9,15 +9,15 @@ interface Props {
 }
 
 function useUserGrants({ adminOnly, singleCall }: Props) {
-    const { user } = Auth.useUser();
+    const { session } = Auth.useUser();
 
     const { data, error, mutate, isValidating } = useSelectNew(
-        user?.id ? getUserGrants(user.id, adminOnly) : null,
+        session?.user?.id ? getUserGrants(session.user.id, adminOnly) : null,
         singleCall ? singleCallSettings : undefined
     );
 
     return {
-        userGrants: data ? data.data : [],
+        userGrants: data ? data.data : null,
         error,
         mutate,
         isValidating,

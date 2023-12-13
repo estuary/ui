@@ -194,7 +194,7 @@ export const distributedTableFilter = <Data>(
     return queryBuilder;
 };
 
-export const getUserDetails = (user: User | null) => {
+export const getUserDetails = (user: User | null | undefined) => {
     let userName, email, emailVerified, avatar, id;
 
     if (user) {
