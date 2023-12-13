@@ -25,11 +25,16 @@ const colorModeMessage = 'estuary.colorMode';
 // This must be kept in sync with the docs site in flow/site
 const hideNavBarMessage = 'estuary.docs.hideNavBar';
 
-function SidePanelIframe() {
+interface Props {
+    show: boolean;
+}
+
+function SidePanelIframe({ show }: Props) {
     const intl = useIntl();
     const docsURL = useSidePanelDocsStore_url();
     const disabled = useSidePanelDocsStore_disabled();
     const setAnimateOpening = useSidePanelDocsStore_setAnimateOpening();
+
     const colorMode = useColorMode();
     const [loading, setLoading] = useState(true);
     const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -53,9 +58,9 @@ function SidePanelIframe() {
     }, [colorMode, iframeCurrent]);
 
     useEffect(() => {
-        // When the iframe loads fire message to hide the navbar and breadcrumbs
-        const hideNavBar = () => {
-            iframeCurrent?.contentWindow?.postMessage(
+        if (iframeCurrent && show && hasLength(docsURL)) {
+            // When the iframe loads fire message to hide the navbar and breadcrumbs
+            iframeCurrent.contentWindow?.postMessage(
                 { type: hideNavBarMessage },
                 origin
             );
@@ -66,13 +71,8 @@ function SidePanelIframe() {
                 setAnimateOpening(true);
                 setLoading(false);
             }, 100);
-        };
-        iframeCurrent?.addEventListener('load', hideNavBar);
-
-        return () => {
-            iframeCurrent?.removeEventListener('load', hideNavBar);
-        };
-    }, [iframeCurrent, setAnimateOpening]);
+        }
+    }, [docsURL, iframeCurrent, setAnimateOpening, show]);
 
     // Make sure we don't include an iframe unless we actually need it
     if (!hasLength(docsURL)) {

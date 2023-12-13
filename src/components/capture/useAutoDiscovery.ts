@@ -71,7 +71,7 @@ function useAutoDiscovery() {
             });
 
             if (updateResponse.error) {
-                return Promise.reject();
+                return Promise.reject(updateResponse.error);
             }
 
             return mutateDraftSpecs();
