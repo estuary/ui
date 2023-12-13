@@ -17,7 +17,7 @@ function useUserGrants({ adminOnly, singleCall }: Props) {
     );
 
     return {
-        userGrants: data ? data.data : null,
+        userGrants: data ? data.data : [],
         error,
         mutate,
         isValidating,
