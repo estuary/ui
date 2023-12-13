@@ -59,7 +59,7 @@ const callUpdate = (
 };
 
 const exchangeBearerToken = async (token: string) => {
-    logRocketConsole('directives:exchangeBearerToken', token);
+    logRocketConsole('directives:exchangeBearerToken');
     return supabaseRetry<PostgrestSingleResponse<ExchangeResponse>>(
         () =>
             supabaseClient

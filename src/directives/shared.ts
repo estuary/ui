@@ -1,5 +1,5 @@
 import { isEmpty } from 'lodash';
-import { logRocketEvent } from 'services/shared';
+import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { JOB_STATUS_COLUMNS, supabaseClient, TABLES } from 'services/supabase';
 import { AppliedDirective } from 'types';
@@ -144,6 +144,7 @@ export const DIRECTIVES: Directives = {
         },
         calculateStatus: (appliedDirective?) => {
             const stillNeeded = () => {
+                logRocketConsole('clickToAccept:stillNeeded', appliedDirective);
                 return (
                     appliedDirective?.user_claims?.version &&
                     appliedDirective.user_claims.version !==
