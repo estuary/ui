@@ -21,7 +21,7 @@
         "maintenance:on": "touch public/maintenance",
         "pre_commit": "npm run lint-staged; npm run licenses",
         "prepare": "husky install",
-        "preview": "vite preview",
+        "preview": "vite build && vite preview",
         "start": "npm run licenses && vite",
         "test": "vitest",
         "test:ui": "vitest --ui",
