@@ -10,7 +10,7 @@ import {
     useEntitiesStore_capabilities_readable,
 } from 'stores/Entities/hooks';
 import { TableFilterKeys, TablePrefixes } from 'stores/Tables/hooks';
-import { getPathWithParams } from 'utils/misc-utils';
+import { getPathWithParams, hasLength } from 'utils/misc-utils';
 
 export const FILTER_TABLE_PROPS = {
     captures: {
@@ -56,6 +56,10 @@ function DemoButton({ step, type }: Props) {
         () => (demoAccessExists ? goToFilteredTable() : setOpen(true)),
         [demoAccessExists, goToFilteredTable]
     );
+
+    if (!hasLength(objectRoles)) {
+        return null;
+    }
 
     return (
         <>

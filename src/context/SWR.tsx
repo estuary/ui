@@ -34,7 +34,7 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
 
     const cache = useCallback(() => {
         return new LRUCache({
-            max: 100,
+            max: 500,
         });
     }, []);
 

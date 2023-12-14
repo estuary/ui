@@ -23,7 +23,7 @@ import {
 import OnboardingSurvey from 'directives/Onboard/Survey';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useUnmount } from 'react-use';
+import { useMount, useUnmount } from 'react-use';
 import { fireGtmEvent } from 'services/gtm';
 import { jobStatusPoller } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
@@ -46,8 +46,6 @@ const submit_onboard = async (
 };
 
 const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
-    trackEvent(`${directiveName}:Viewed`);
-
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -77,21 +75,21 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                 setNameMissing(false);
                 setSaving(true);
 
-                const clickToAcceptResponse = await submit_onboard(
+                const onboardingResponse = await submit_onboard(
                     requestedTenant,
                     directive,
                     surveyResponse
                 );
 
-                if (clickToAcceptResponse.error) {
+                if (onboardingResponse.error) {
                     setSaving(false);
 
                     return setServerError(
-                        (clickToAcceptResponse.error as PostgrestError).message
+                        (onboardingResponse.error as PostgrestError).message
                     );
                 }
 
-                const data = clickToAcceptResponse.data[0];
+                const data = onboardingResponse.data[0];
                 jobStatusPoller(
                     jobStatusQuery(data),
                     async () => {
@@ -111,6 +109,9 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
         },
     };
 
+    useMount(() => {
+        trackEvent(`${directiveName}:Viewed`);
+    });
     useUnmount(() => resetOnboardingState());
 
     return (

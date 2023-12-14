@@ -6,6 +6,8 @@ import useAppliedDirectives from 'hooks/useAppliedDirectives';
 import { useSnackbar } from 'notistack';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { logRocketConsole, logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { AppliedDirective } from 'types';
 import { snackbarSettings } from 'utils/notification-utils';
 
@@ -13,6 +15,8 @@ const useDirectiveGuard = (
     selectedDirective: keyof typeof DIRECTIVES,
     options?: { forceNew?: boolean; token?: string; hideAlert?: boolean }
 ) => {
+    logRocketConsole('useDirectiveGuard', selectedDirective);
+
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
@@ -51,6 +55,11 @@ const useDirectiveGuard = (
         serverError,
     ]);
 
+    logRocketConsole(
+        `useDirectiveGuard:directiveState:${selectedDirective}`,
+        directiveState
+    );
+
     const [freshDirective, setFreshDirective] =
         useState<AppliedDirective<UserClaims> | null>(null);
 
@@ -71,6 +80,7 @@ const useDirectiveGuard = (
 
             if (DIRECTIVES[selectedDirective].token) {
                 const fetchDirective = async () => {
+                    logRocketEvent(CustomEvents.DIRECTIVE_EXCHANGE_TOKEN);
                     return exchangeBearerToken(
                         DIRECTIVES[selectedDirective].token
                     );

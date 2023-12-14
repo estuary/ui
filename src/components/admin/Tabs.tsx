@@ -1,16 +1,18 @@
 import { Box, Tab, Tabs } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
+import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Link, useLocation } from 'react-router-dom';
-import useConstant from 'use-constant';
+import { hasLength } from 'utils/misc-utils';
 
 function AdminTabs() {
     const intl = useIntl();
     const { pathname } = useLocation();
     const [selectedTab, setSelectedTab] = useState(0);
+    const tenantDetails = useTenantDetails();
 
-    const tabProps = useConstant(() => {
+    const tabProps = useMemo(() => {
         const response = [
             {
                 label: 'admin.tabs.users',
@@ -20,10 +22,16 @@ function AdminTabs() {
                 label: 'admin.tabs.settings',
                 path: authenticatedRoutes.admin.settings.fullPath,
             },
-            {
+        ];
+
+        if (hasLength(tenantDetails)) {
+            response.push({
                 label: 'admin.tabs.billing',
                 path: authenticatedRoutes.admin.billing.fullPath,
-            },
+            });
+        }
+
+        return response.concat([
             {
                 label: 'admin.tabs.connectors',
                 path: authenticatedRoutes.admin.connectors.fullPath,
@@ -32,10 +40,8 @@ function AdminTabs() {
                 label: 'admin.tabs.api',
                 path: authenticatedRoutes.admin.api.fullPath,
             },
-        ];
-
-        return response;
-    });
+        ]);
+    }, [tenantDetails]);
 
     const tabs = useMemo(
         () =>

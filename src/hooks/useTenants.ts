@@ -5,14 +5,11 @@ import { useSelectNew } from './supabase-swr/hooks/useSelect';
 const defaultResponse: Tenants[] = [];
 
 function useTenants() {
-    const { data, error, mutate, isValidating } = useSelectNew(
-        getTenantDetails()
-    );
+    const { data, error, isValidating } = useSelectNew(getTenantDetails());
 
     return {
         tenants: data ? (data.data as Tenants[]) : defaultResponse,
         error,
-        mutate,
         isValidating,
     };
 }

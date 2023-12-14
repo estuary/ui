@@ -1,6 +1,7 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import { DIRECTIVES } from 'directives/shared';
 import { UserClaims } from 'directives/types';
+import { logRocketConsole } from 'services/shared';
 import {
     CallSupabaseResponse,
     defaultTableFilter,
@@ -58,6 +59,7 @@ const callUpdate = (
 };
 
 const exchangeBearerToken = async (token: string) => {
+    logRocketConsole('directives:exchangeBearerToken');
     return supabaseRetry<PostgrestSingleResponse<ExchangeResponse>>(
         () =>
             supabaseClient
@@ -92,6 +94,7 @@ const submitDirective = async (
         console.error('error', error);
         return { data: [], error };
     } else {
+        logRocketConsole('submitDirective:callUpdate');
         return callUpdate(
             DIRECTIVES[type].generateUserClaim(dataForClaim),
             data.applied_directive
@@ -101,7 +104,6 @@ const submitDirective = async (
 
 const getAppliedDirectives = (
     type: keyof typeof DIRECTIVES,
-    userId: string,
     token?: string
 ) => {
     let queryBuilder = supabaseClient.from<JoinedAppliedDirective>(
@@ -118,7 +120,6 @@ const getAppliedDirectives = (
         `);
 
     queryBuilder = queryBuilder.eq('directives.spec->>type', type);
-    queryBuilder = queryBuilder.eq('user_id', userId);
 
     if (token) {
         queryBuilder = queryBuilder.eq('directives.token', token);
