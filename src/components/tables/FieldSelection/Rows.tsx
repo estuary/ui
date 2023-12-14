@@ -21,9 +21,10 @@ interface RowsProps {
     columnToSort: string;
 }
 
-const constraintTypeSort_ascending = (
+const evaluateConstraintTypes = (
     a: CompositeProjection,
-    b: CompositeProjection
+    b: CompositeProjection,
+    ascendingSort: boolean
 ): number => {
     // If a and b have constraint types but they are not equal, compare their severity.
     // The projection with the greater severity should appear first.
@@ -32,31 +33,16 @@ const constraintTypeSort_ascending = (
         b.constraint &&
         a.constraint.type !== b.constraint.type
     ) {
-        return a.constraint.type - b.constraint.type;
+        return ascendingSort
+            ? a.constraint.type - b.constraint.type
+            : b.constraint.type - a.constraint.type;
     }
 
     // If a and b do not have defined constraint types or their constraint types are equal,
     // perform an ascending, alphabetic sort on their fields.
-    return a.field.localeCompare(b.field);
-};
-
-const constraintTypeSort_descending = (
-    a: CompositeProjection,
-    b: CompositeProjection
-): number => {
-    // If a and b have constraint types but they are not equal, compare their severity.
-    // The projection with the greater severity should appear first.
-    if (
-        a.constraint &&
-        b.constraint &&
-        a.constraint.type !== b.constraint.type
-    ) {
-        return b.constraint.type - a.constraint.type;
-    }
-
-    // If a and b do not have defined constraint types or their constraint types are equal,
-    // perform an descending, alphabetic sort on their fields.
-    return b.field.localeCompare(a.field);
+    return ascendingSort
+        ? a.field.localeCompare(b.field)
+        : b.field.localeCompare(a.field);
 };
 
 const constraintTypeSort = (
@@ -88,9 +74,9 @@ const constraintTypeSort = (
         return -1;
     }
 
-    return sortDirection === 'asc'
-        ? constraintTypeSort_ascending(a, b)
-        : constraintTypeSort_descending(a, b);
+    const ascendingSort = sortDirection === 'asc';
+
+    return evaluateConstraintTypes(a, b, ascendingSort);
 };
 
 function Row({ row }: RowProps) {
