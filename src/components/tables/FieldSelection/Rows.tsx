@@ -24,7 +24,7 @@ interface RowsProps {
     columnToSort: string;
 }
 
-const evaluateConstraintTypes = (
+const compareConstraintTypes = (
     a: CompositeProjection,
     b: CompositeProjection,
     ascendingSort: boolean
@@ -71,7 +71,7 @@ const constraintTypeSort = (
 
     const ascendingSort = sortDirection === 'asc';
 
-    return evaluateConstraintTypes(a, b, ascendingSort);
+    return compareConstraintTypes(a, b, ascendingSort);
 };
 
 function Row({ row }: RowProps) {
