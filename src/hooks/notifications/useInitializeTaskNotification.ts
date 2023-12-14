@@ -12,7 +12,7 @@ import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 function useInitializeTaskNotification(catalogName: string) {
-    const { user } = Auth.useUser();
+    const { session } = Auth.useUser();
 
     const adminCapabilities = useEntitiesStore_capabilities_adminable();
     const objectRoles = Object.keys(adminCapabilities);
@@ -33,7 +33,7 @@ function useInitializeTaskNotification(catalogName: string) {
         data: AlertSubscriptionQuery[] | null;
         error?: PostgrestError;
     }> => {
-        if (!user?.email || !prefix) {
+        if (!session?.user?.email || !prefix) {
             // Error if the system cannot determine the user email or object roles cannot be found for the user.
             return {
                 data: null,
@@ -44,18 +44,18 @@ function useInitializeTaskNotification(catalogName: string) {
         const response = await createNotificationSubscription([
             {
                 catalog_prefix: prefix,
-                email: user.email,
+                email: session.user.email,
             },
         ]);
 
         return response;
-    }, [prefix, user?.email]);
+    }, [prefix, session?.user?.email]);
 
     const getNotificationSubscription = useCallback(async (): Promise<{
         data: AlertSubscriptionQuery[] | null;
         error?: PostgrestError;
     }> => {
-        if (!user?.email || !prefix) {
+        if (!session?.user?.email || !prefix) {
             // Error if the system cannot determine the user email or object roles cannot be found for the user.
             return {
                 data: null,
@@ -64,7 +64,10 @@ function useInitializeTaskNotification(catalogName: string) {
         }
 
         const { data: existingSubscription, error: existingSubscriptionError } =
-            await getNotificationSubscriptionForUser(prefix, user.email);
+            await getNotificationSubscriptionForUser(
+                prefix,
+                session.user.email
+            );
 
         if (existingSubscriptionError) {
             // Failed to determine the existence of a notification subscription for the task.
@@ -72,7 +75,7 @@ function useInitializeTaskNotification(catalogName: string) {
         }
 
         return { data: existingSubscription };
-    }, [prefix, user?.email]);
+    }, [prefix, session?.user?.email]);
 
     const getNotifications = useCallback(async (): Promise<{
         data: DataProcessingAlertQuery | null;

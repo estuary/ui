@@ -19,6 +19,8 @@ const Auth = () => {
     const navigate = useNavigate();
     const supabaseClient = useClient();
     const { enqueueSnackbar } = useSnackbar();
+    // We can fetch user here and not session because we are
+    //  potentially creating the session here down below.
     const { user } = SupabaseAuth.useUser();
 
     useEffect(() => {
