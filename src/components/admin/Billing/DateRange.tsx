@@ -1,12 +1,7 @@
-import {
-    endOfMonth,
-    getMonth,
-    parseISO,
-    startOfDay,
-    startOfMonth,
-} from 'date-fns';
+import { DateTime } from 'luxon';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { logRocketConsole } from 'services/shared';
 import { stripTimeFromDate } from 'utils/billing-utils';
 
 interface Props {
@@ -14,8 +9,8 @@ interface Props {
     end_date: string;
 }
 
-const getUTCDate = (date: Date) => {
-    return new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
+const getMonth = (date: string) => {
+    return DateTime.fromISO(date).startOf('month').month;
 };
 
 // TODO (MessageWithEmphasis) we can use MessageWithEmphasis as the basis of this
@@ -24,23 +19,19 @@ const getUTCDate = (date: Date) => {
 //      and just pass in the {start_date} and {end_date} as values.
 function DateRange({ start_date, end_date }: Props) {
     const intl = useIntl();
-    const [parsed_start, parsed_end] = useMemo(
-        () => [
-            getUTCDate(parseISO(start_date)),
-            getUTCDate(parseISO(end_date)),
-        ],
-        [end_date, start_date]
-    );
+    const [startMonth, endMonth] = useMemo(() => {
+        const response = [getMonth(start_date), getMonth(end_date)];
 
-    // If the start and end dates are the start and end of the same month,
-    // we just need to show that month
-    if (
-        startOfDay(parsed_start).getTime() ===
-            startOfDay(startOfMonth(parsed_start)).getTime() &&
-        startOfDay(parsed_end).getTime() ===
-            startOfDay(endOfMonth(parsed_end)).getTime() &&
-        getMonth(parsed_start) === getMonth(parsed_end)
-    ) {
+        logRocketConsole('Date range parsing', {
+            start_date,
+            end_date,
+            response,
+        });
+
+        return response;
+    }, [end_date, start_date]);
+
+    if (startMonth === endMonth) {
         return (
             <strong>
                 {' '}
