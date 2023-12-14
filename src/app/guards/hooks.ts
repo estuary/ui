@@ -15,6 +15,8 @@ const useDirectiveGuard = (
     selectedDirective: keyof typeof DIRECTIVES,
     options?: { forceNew?: boolean; token?: string; hideAlert?: boolean }
 ) => {
+    logRocketConsole('useDirectiveGuard', selectedDirective);
+
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
