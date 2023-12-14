@@ -13,17 +13,17 @@ const DRAFT_COLS = ['id', 'detail', 'updated_at', 'user_id'];
 const defaultResponse: DraftQuery[] = [];
 
 function useDraft(catalogName: string | null) {
-    const { user } = Auth.useUser();
+    const { session } = Auth.useUser();
 
     const draftQuery = useQuery<DraftQuery>(
         TABLES.DRAFTS_EXT,
         {
             columns: DRAFT_COLS,
             filter: (query) =>
-                user
+                session?.user
                     ? query
                           .eq('detail', catalogName as string)
-                          .eq('user_id', user.id)
+                          .eq('user_id', session.user.id)
                           .order('updated_at', { ascending: false })
                     : query
                           .eq('detail', catalogName as string)
@@ -33,7 +33,7 @@ function useDraft(catalogName: string | null) {
     );
 
     const { data, error, mutate, isValidating } = useSelect(
-        catalogName && user ? draftQuery : null
+        catalogName && session?.user ? draftQuery : null
     );
 
     return {

@@ -13,7 +13,7 @@ import { KeyedMutator } from 'swr';
 import { AppliedDirective, JoinedAppliedDirective } from 'types';
 
 interface Props {
-    directive: AppliedDirective<any> | null;
+    directive: AppliedDirective<any> | null | undefined;
     mutate: KeyedMutator<SuccessResponse<JoinedAppliedDirective>> | null;
     grantedPrefix: string;
     grantedCapability: string;

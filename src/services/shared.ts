@@ -11,6 +11,10 @@ export const logRocketEvent = (
     if (LogRocket?.track) {
         LogRocket.track(event, eventProperties);
     }
+
+    if (process.env.NODE_ENV === 'development') {
+        console.log(event, eventProperties);
+    }
 };
 
 export const logRocketConsole = (message: string, ...props: any[]) => {

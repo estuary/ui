@@ -6,7 +6,7 @@ import { BaseComponentProps, Tenants } from 'types';
 
 const TenantContext = createContext<Tenants[] | null>(null);
 const TenantContextProvider = ({ children }: BaseComponentProps) => {
-    const { tenants, error } = useTenants();
+    const { tenants, error, isValidating } = useTenants();
 
     if (error) {
         return (
@@ -19,7 +19,7 @@ const TenantContextProvider = ({ children }: BaseComponentProps) => {
         );
     }
 
-    if (tenants.length === 0) {
+    if (isValidating) {
         return null;
     }
 
