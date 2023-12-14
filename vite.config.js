@@ -8,6 +8,7 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import viteCompression from 'vite-plugin-compression';
 import { ViteImageOptimizer as viteImageOptimizer } from 'vite-plugin-image-optimizer';
 import circleDependency from 'vite-plugin-circular-dependency';
+import { vitePluginVersionMark } from 'vite-plugin-version-mark';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -32,9 +33,15 @@ export default defineConfig({
         react(),
         wasm(),
 
-        // Performance
+        // Build/Deploy stuff
         viteImageOptimizer({}),
         viteCompression(),
+        vitePluginVersionMark({
+            ifGitSHA: true,
+            ifMeta: false,
+            ifGlobal: true,
+            ifLog: true,
+        }),
 
         // Quality Control
         checker({
