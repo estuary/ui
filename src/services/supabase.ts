@@ -34,7 +34,7 @@ export const QUERY_PARAM_CONNECTOR_TITLE = `connector_title->>en-US`;
 export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',
     jwtInvalid: 'invalid JWT',
-    jwsInvalid: 'JWSError',
+    jwsInvalid: 'JWSError JWSInvalidSignature',
 };
 
 export const tokenHasIssues = (errorMessage?: string) => {
