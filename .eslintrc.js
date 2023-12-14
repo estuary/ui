@@ -4,6 +4,7 @@ module.exports = {
         'eslint-config-kentcdodds/jsx-a11y',
         'eslint-config-kentcdodds/react',
     ],
+    ignorePatterns: ['vite.config.ts'],
     parserOptions: {
         project: './tsconfig.json',
         tsconfigRootDir: __dirname,
