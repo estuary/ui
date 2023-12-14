@@ -9,7 +9,10 @@ import {
 } from 'context/Theme';
 import { orderBy } from 'lodash';
 import { SortDirection } from 'types';
-import { basicSort_string } from 'utils/misc-utils';
+import {
+    basicSort_string,
+    compareInitialCharacterType,
+} from 'utils/misc-utils';
 
 interface RowProps {
     row: CompositeProjection;
@@ -50,18 +53,10 @@ const constraintTypeSort = (
     b: CompositeProjection,
     sortDirection: SortDirection
 ) => {
-    // See if the values start with alphanumeric
-    const aIsAlphabetical = a.field.localeCompare('a') >= 0;
-    const bIsAlphabetical = b.field.localeCompare('a') >= 0;
+    const sortResult = compareInitialCharacterType(a.field, b.field);
 
-    // If a is not alpha and b is then return >0 to put b first
-    if (!aIsAlphabetical && bIsAlphabetical) {
-        return 1;
-    }
-
-    // If a is alpha and b isn't then return <0 to put a first
-    if (aIsAlphabetical && !bIsAlphabetical) {
-        return -1;
+    if (typeof sortResult === 'number') {
+        return sortResult;
     }
 
     // If a does not have a constraint type and b does then return >0 to put b first
