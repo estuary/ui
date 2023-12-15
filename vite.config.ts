@@ -71,6 +71,7 @@ export default defineConfig({
 
     // https://github.com/vitejs/awesome-vite#plugins
     plugins: [
+        writeVersionToFile(),
         viteTsconfigPaths(),
         // vitePluginVersionMark({
         //     ifGitSHA: false,
@@ -93,7 +94,8 @@ export default defineConfig({
         viteImageOptimizer({}),
         compression({
             algorithm: 'gzip',
-            exclude: [/\.(br)$/, /\.(gz)$/],
+            exclude: [/^.*$/],
+            include: [/\.(js)$/, /\.(css)$/, /\.(html)$/],
             deleteOriginalAssets: false,
         }),
 
@@ -107,6 +109,5 @@ export default defineConfig({
             },
         }),
         circleDependency({}),
-        writeVersionToFile(),
     ],
 });
