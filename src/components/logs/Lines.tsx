@@ -1,7 +1,9 @@
+import { List, Paper } from '@mui/material';
+import { useLayoutEffect, useRef } from 'react';
+import useStayScrolled from 'react-stay-scrolled';
 import { hasLength } from 'utils/misc-utils';
 import { useLogsContext } from './Context';
 import LogLine from './Line';
-import LogLinesWrapper from './LinesWrapper';
 import Spinner from './Spinner';
 import { SpinnerOptions } from './types';
 
@@ -18,9 +20,34 @@ function LogLines({ height, spinnerOptions }: Props) {
 
     const { logs } = useLogsContext();
 
+    const scrollElementRef = useRef<HTMLDivElement>(null);
+    const { stayScrolled } = useStayScrolled(scrollElementRef);
+
+    useLayoutEffect(() => {
+        stayScrolled();
+    }, [logs, stayScrolled]);
+
     return (
-        <LogLinesWrapper height={height} scrollTrigger={logs}>
-            <>
+        <Paper
+            variant="outlined"
+            ref={scrollElementRef}
+            sx={{
+                pt: 1,
+                pb: 2,
+                overflow: 'auto',
+                minHeight: height,
+                maxHeight: height,
+            }}
+        >
+            <List
+                dense
+                sx={{
+                    display: 'table',
+                    width: '100%',
+                    fontFamily: `'Monaco', monospace`,
+                    whiteSpace: 'pre',
+                }}
+            >
                 {logs.map((line, index) => (
                     <LogLine
                         key={`logLine-${index}`}
@@ -35,8 +62,8 @@ function LogLines({ height, spinnerOptions }: Props) {
                         severity={severity}
                     />
                 ) : null}
-            </>
-        </LogLinesWrapper>
+            </List>
+        </Paper>
     );
 }
 
