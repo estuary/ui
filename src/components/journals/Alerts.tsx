@@ -1,0 +1,53 @@
+import { Box } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
+import { FormattedMessage } from 'react-intl';
+import { hasLength } from 'utils/misc-utils';
+
+interface Props {
+    journalData: any;
+    journalsData: any;
+    notFoundTitleMessage: string;
+}
+
+function JournalAlerts({
+    journalsData,
+    journalData,
+    notFoundTitleMessage,
+}: Props) {
+    let title: string | null = null;
+    let message: string | null = null;
+    if (journalsData && !hasLength(journalsData.journals)) {
+        title = 'journals.notFound.title';
+        message = notFoundTitleMessage;
+    } else if (
+        journalData.data?.tooManyBytes &&
+        journalData.data.documents.length === 0
+    ) {
+        title = 'journals.tooManyBytesAndNoDocuments.title';
+        message = 'journals.tooManyBytesAndNoDocuments.message';
+    } else if (journalData.data?.tooFewDocuments) {
+        title = 'journals.tooFewDocuments.title';
+        message = 'journals.tooFewDocuments.message';
+    } else if (journalData.data?.tooManyBytes) {
+        title = 'journals.tooManyBytes.title';
+        message = 'journals.tooManyBytes.message';
+    }
+
+    if (title && message) {
+        return (
+            <Box sx={{ mb: 3 }}>
+                <AlertBox
+                    severity="warning"
+                    short
+                    title={<FormattedMessage id={title} />}
+                >
+                    <FormattedMessage id={message} />
+                </AlertBox>
+            </Box>
+        );
+    }
+
+    return null;
+}
+
+export default JournalAlerts;

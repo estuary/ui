@@ -3,7 +3,7 @@ import { DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import Error from 'components/shared/Error';
 import { dataGridListStyling, semiTransparentBackground } from 'context/Theme';
-import { JournalRecord, useJournalData } from 'hooks/useJournalData';
+import { JournalRecord, useJournalData } from 'hooks/journals/useJournalData';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { JsonPointer } from 'json-ptr';
 import { isEmpty } from 'lodash';
