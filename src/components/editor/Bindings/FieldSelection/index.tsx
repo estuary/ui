@@ -28,7 +28,7 @@ import {
     useBindingsEditorStore_setSingleSelection,
 } from 'components/editor/Bindings/Store/hooks';
 import {
-    useEditorStore_id,
+    useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_draftSpecs,
 } from 'components/editor/Store/hooks';
 import FieldSelectionTable from 'components/tables/FieldSelection';
@@ -139,7 +139,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
-    const draftId = useEditorStore_id();
+    const draftId = useEditorStore_persistedDraftId();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
