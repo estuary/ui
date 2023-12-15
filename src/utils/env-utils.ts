@@ -18,10 +18,6 @@ const ENABLED = 'true';
 
 export const isProduction = import.meta.env.PROD;
 
-export const getAppVersion = () => {
-    return import.meta.env.VITE_VERSION;
-};
-
 export const getAuthPath = () => {
     return window.Estuary?.auth_url
         ? window.Estuary.auth_url
