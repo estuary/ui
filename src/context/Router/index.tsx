@@ -198,6 +198,18 @@ const router = createBrowserRouter(
                                     </Suspense>
                                 }
                             />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.collections.details.ops
+                                        .path
+                                }
+                                element={
+                                    <Suspense fallback={null}>
+                                        <CollectionDetailsRoute tab="ops" />
+                                    </Suspense>
+                                }
+                            />
                         </Route>
 
                         <Route
@@ -298,6 +310,18 @@ const router = createBrowserRouter(
                                     </Suspense>
                                 }
                             />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.captures.details.ops
+                                        .path
+                                }
+                                element={
+                                    <Suspense fallback={null}>
+                                        <CaptureDetailsRoute tab="ops" />
+                                    </Suspense>
+                                }
+                            />
                         </Route>
                     </Route>
 
@@ -383,6 +407,18 @@ const router = createBrowserRouter(
                                 element={
                                     <Suspense fallback={null}>
                                         <MaterializationDetailsRoute tab="history" />
+                                    </Suspense>
+                                }
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.materializations.details
+                                        .ops.path
+                                }
+                                element={
+                                    <Suspense fallback={null}>
+                                        <MaterializationDetailsRoute tab="ops" />
                                     </Suspense>
                                 }
                             />
