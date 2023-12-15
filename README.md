@@ -37,6 +37,16 @@ Run: `npm start`
 
 The UI is built to hit our own instance of Supabase. That means you will need to have that running locally as well.
 
+# How to test against prod?
+
+Run: `npm run build`
+
+then
+
+Run : `npm run preview`
+
+This will run a build and then start previewing it. When running as `preview` you will be running production mode - meaning all the code that runs in prod will be running.
+
 # Stuff we use
 
 -   [TypeScript](https://github.com/microsoft/TypeScript) for code
