@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Need to set this !BEFORE! any loading of scripts is started -->
+        <script>
+            const lr_url = '%VITE_LOGROCKET_CDN_URL%';
+            if (lr_url.length > 0 && '%VITE_LOGROCKET_ENABLED%' === 'true') {
+                window._lrAsyncScript = lr_url;
+            }
+        </script>
+
+        <!-- Load this early in hopes it loads fast -->
+        <script>
+            const osano_url = '%VITE_OSANO_PATH%';
+            if (osano_url.length > 0) {
+                const script = document.createElement('script');
+                script.src = osano_url;
+            }
+        </script>
+
+        <style type="text/css">
+            body.%VITE_OSANO_HIDE_WIDGET_CLASS% .osano-cm-widget {
+                display: none;
+            }
+        </style>
+
+        <meta charset="utf-8" />
+        <meta name="viewport" content="initial-scale=1, width=device-width" />
+        <meta name="theme-color" content="#000000" />
+
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="manifest" href="/manifest.json" />
+        <title>%VITE_DEFAULT_PAGE_TITLE%</title>
+    </head>
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="root"></div>
+        <script type="module" src="/src/index.tsx"></script>
+    </body>
+</html>

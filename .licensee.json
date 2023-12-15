@@ -1,10 +1,37 @@
 {
     "licenses": {
-        "spdx": ["MIT", "BSD-2-Clause", "BSD-3-Clause", "Apache-2.0"],
+        "spdx": [
+            "MIT",
+            "BSD-2-Clause",
+            "BSD-3-Clause",
+            "Apache-2.0",
+            "MPL-2.0"
+        ],
         "blueOak": "bronze"
     },
     "packages": {
-        "optimist": "<=0.6.1"
+        "// MIT License": "0.0.0",
+        "@supabase/ui": "0.36.5",
+        "console-browserify": "1.2.0",
+        "docopt": "0.6.2",
+        "lz-string": "1.4.4",
+        "prelude-ls": "1.1.2",
+        "querystring": "0.2.0",
+        "querystring-es3": "0.2.1",
+
+        "// CC by 3.0 License": "0.0.0",
+        "spdx-exceptions": "2.3.0",
+        "spdx-expression-validate": "2.0.0",
+
+        "// CC by 4.0 License": "0.0.0",
+        "caniuse-lite": "1.0.*",
+
+        "// Unlicense": "0.0.0",
+        "fast-shallow-equal": "1.0.0",
+        "react-universal-interface": "0.6.2",
+
+        "// MIT and CC 3.0 License": "0.0.0",
+        "spdx-ranges": "2.1.1"
     },
-    "corrections": false
+    "ignore": [{ "prefix": "@estuary" }]
 }

@@ -52,6 +52,9 @@ jobs:
             - name: Get Deps
               run: npm install
 
+            - name: Licenses
+              run: npm run licenses
+
             - name: Typecheck
               run: npm run typecheck
 
@@ -61,12 +64,8 @@ jobs:
             - name: Prettier
               run: npm run format
 
-            - name: Licenses
-              run: npm run licenses
-
-            #  We currently don't have tests to run
-            # - name: Jest
-            #   run: npm run test
+            - name: Test
+              run: npm run test
 
     # Deployment steps undertaken on a merge to `main`.
     deploy:

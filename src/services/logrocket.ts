@@ -4,7 +4,7 @@ import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
 import { getUserDetails, OAUTH_OPERATIONS } from 'services/supabase';
-import { getAppVersion, getLogRocketSettings } from 'utils/env-utils';
+import { getLogRocketSettings } from 'utils/env-utils';
 
 // Based on node_modules/logrocket/dist/types.d.ts
 interface IUserTraits {
@@ -166,7 +166,7 @@ const maskContent = (requestResponse: any) => {
 export const initLogRocket = () => {
     if (logRocketSettings?.appID) {
         const settings: Settings = {
-            release: getAppVersion(),
+            release: __ESTUARY_UI_VERSION__,
             dom: {
                 inputSanitizer: logRocketSettings.sanitize.inputs,
                 textSanitizer: logRocketSettings.sanitize.text,

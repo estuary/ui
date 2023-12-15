@@ -10,8 +10,8 @@ import { logRocketEvent, retryAfterFailure } from './shared';
 import { CustomEvents } from './types';
 
 if (
-    !process.env.REACT_APP_SUPABASE_URL ||
-    !process.env.REACT_APP_SUPABASE_ANON_KEY
+    !import.meta.env.VITE_SUPABASE_URL ||
+    !import.meta.env.VITE_SUPABASE_ANON_KEY
 ) {
     throw new Error(
         'You must set the Supabase url and anon key in the env settings.'
@@ -19,8 +19,8 @@ if (
 }
 
 const supabaseSettings = {
-    url: process.env.REACT_APP_SUPABASE_URL,
-    anonKey: process.env.REACT_APP_SUPABASE_ANON_KEY,
+    url: import.meta.env.VITE_SUPABASE_URL,
+    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
 };
 
 // Little helper string that fetches the name from open graph

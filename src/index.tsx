@@ -7,21 +7,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { initGoogleTagManager } from 'services/gtm';
 import { initLogRocket } from 'services/logrocket';
-import AppProviders from './context';
 
-// export const profilerCallback = (
-//     id: any,
-//     phase: any,
-//     actual: number,
-//     base: number,
-//     start: any,
-//     commit: any,
-//     inter: any
-// ) => {
-//     console.log(`Render ${id} in ${actual}`);
-//     console.log('  Time > ', { actual, base, commit, start });
-//     console.log('  Deet > ', { inter, phase });
-// };
+import { loader } from '@monaco-editor/react';
+import * as monaco from 'monaco-editor';
+import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
+
+import AppProviders from './context';
 
 initGoogleTagManager();
 initLogRocket();
@@ -29,6 +21,17 @@ initLogRocket();
 // Setup immer
 enableMapSet();
 setAutoFreeze(false);
+
+// Setup Monaco
+self.MonacoEnvironment = {
+    getWorker(_, label) {
+        if (label === 'json') {
+            return new JsonWorker();
+        }
+        return new EditorWorker();
+    },
+};
+loader.config({ monaco });
 
 ReactDOM.render(
     <React.StrictMode>

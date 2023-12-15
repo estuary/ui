@@ -1,4 +1,5 @@
 import LogRocket from 'logrocket';
+import { isProduction } from 'utils/env-utils';
 import { CustomEvents } from './types';
 
 export const logRocketEvent = (
@@ -23,7 +24,7 @@ export const logRocketConsole = (message: string, ...props: any[]) => {
         LogRocket.log(message, props);
     }
 
-    if (process.env.NODE_ENV === 'development') {
+    if (!isProduction) {
         console.log(message, props);
     }
 };
