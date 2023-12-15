@@ -650,7 +650,7 @@ const Collections: ResolvedIntlConfig['messages'] = {
 const Journals: ResolvedIntlConfig['messages'] = {
     'journals.notFound.title': `Not Found`,
     'journals.tooFewDocuments.title': `Low document count`,
-    'journals.tooFewDocuments.message': `Fewer documents than desired were found. This could mean that your collection isn't seeing very much data.`,
+    'journals.tooFewDocuments.message': `Fewer documents than desired were found. This could mean that your entity isn't seeing very much data.`,
     'journals.tooManyBytes.title': `Large documents`,
     'journals.tooManyBytes.message': `Exceeded the maximum bytes before reaching the desired number of documents. This probably means that your documents are large.`,
     'journals.tooManyBytesAndNoDocuments.title': `Read limit reached`,

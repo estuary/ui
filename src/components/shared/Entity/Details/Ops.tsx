@@ -1,43 +1,72 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { Editor } from '@monaco-editor/react';
-import { Box, Button, LinearProgress, useTheme } from '@mui/material';
+import {
+    Box,
+    Button,
+    LinearProgress,
+    List,
+    ListItemText,
+    Stack,
+    useTheme,
+} from '@mui/material';
+import JournalAlerts from 'components/journals/Alerts';
 import UnderDev from 'components/shared/UnderDev';
-import { useEntityType } from 'context/EntityContext';
 import { monacoEditorComponentBackground } from 'context/Theme';
 import { useJournalData } from 'hooks/journals/useJournalData';
+import useJournalNameForLogs from 'hooks/journals/useJournalNameForLogs';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
+import { useMemo } from 'react';
 import { stringifyJSON } from 'services/stringify';
+
+const docsRequested = 25;
 
 function Ops() {
     const theme = useTheme();
 
-    const entityType = useEntityType();
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
-    const collectionName = `ops.us-central1.v1/logs`;
-    const name = `${collectionName}/kind=${entityType}/name=${encodeURIComponent(
-        catalogName
-    )}/pivot=00`;
 
-    const journalData = useJournalData(name, 20, collectionName);
+    const [name, collectionName] = useJournalNameForLogs(catalogName);
+
+    const journalData = useJournalData(name, docsRequested, collectionName);
+
+    const editorValue = useMemo(
+        () => stringifyJSON(journalData),
+        [journalData]
+    );
 
     return (
         <Box>
             <UnderDev />
-            {journalData.loading ? <LinearProgress /> : null}
             <Box>
                 <Button onClick={journalData.refresh}>Refresh</Button>
-                <Editor
-                    height={400}
-                    defaultValue="loading..."
-                    value={stringifyJSON(journalData)}
-                    defaultLanguage="json"
-                    theme={monacoEditorComponentBackground[theme.palette.mode]}
-                    saveViewState={false}
-                    path={name}
-                    options={{ readOnly: true }}
-                />
+                <Stack>
+                    {journalData.loading ? <LinearProgress /> : null}
+                    <List>
+                        <ListItemText
+                            primary="Documents"
+                            secondary={journalData.data?.documents.length}
+                        />
+                    </List>
+
+                    <JournalAlerts
+                        journalData={journalData}
+                        journalsData={undefined}
+                        notFoundTitleMessage="foo"
+                    />
+
+                    <Editor
+                        height={400}
+                        value={editorValue}
+                        defaultLanguage="json"
+                        theme={
+                            monacoEditorComponentBackground[theme.palette.mode]
+                        }
+                        saveViewState={false}
+                        path={name}
+                        options={{ readOnly: true }}
+                    />
+                </Stack>
             </Box>
         </Box>
     );

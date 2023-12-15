@@ -277,8 +277,8 @@ const useJournalData = (
         error,
         loading,
         refresh: () => {
-            setRefreshing(true);
             failures.current = 0;
+            setRefreshing(true);
         },
     };
 };
