@@ -1,7 +1,8 @@
-import { Box, ListItem, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import { parse } from 'ansicolor';
 import { ViewLogs_Line } from 'types';
 import LinePart from './LinePart';
+import LogLineWrapper from './LineWrapper';
 
 interface Props {
     line: ViewLogs_Line | string;
@@ -25,40 +26,17 @@ function LogLine({ line, lineNumber, disableSelect }: Props) {
     }
 
     return (
-        <ListItem
-            sx={{
-                'userSelect': disableSelect ? 'none' : undefined,
-                'py': 0,
-                '&:hover': {
-                    background: (theme) =>
-                        theme.palette.mode === 'dark' ? '#222' : '#eee',
-                },
-            }}
-        >
-            <Stack direction="row" spacing={2}>
-                <Box
-                    sx={{
-                        color: lineNumberColor,
-                        userSelect: 'none',
-                        minWidth: 50,
-                        textAlign: 'right',
-                        pt: 0.5,
-                    }}
-                >
-                    {lineNumber}
-                </Box>
-
-                <Stack direction="row">
-                    {parsedLine.spans.map((span, index, array) => (
-                        <LinePart
-                            key={`${span.text}-linePart-${index}`}
-                            parsedLine={span}
-                            lastPart={index + 1 === array.length}
-                        />
-                    ))}
-                </Stack>
+        <LogLineWrapper disableSelect={disableSelect} lineNumber={lineNumber}>
+            <Stack direction="row">
+                {parsedLine.spans.map((span, index, array) => (
+                    <LinePart
+                        key={`${span.text}-linePart-${index}`}
+                        parsedLine={span}
+                        lastPart={index + 1 === array.length}
+                    />
+                ))}
             </Stack>
-        </ListItem>
+        </LogLineWrapper>
     );
 }
 

@@ -1,12 +1,13 @@
 import { Box } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
+import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     journalData: any;
-    journalsData: any;
-    notFoundTitleMessage: string;
+    journalsData?: any;
+    notFoundTitleMessage: ReactNode;
 }
 
 function JournalAlerts({
@@ -15,7 +16,8 @@ function JournalAlerts({
     notFoundTitleMessage,
 }: Props) {
     let title: string | null = null;
-    let message: string | null = null;
+    let message: ReactNode | string | null = null;
+
     if (journalsData && !hasLength(journalsData.journals)) {
         title = 'journals.notFound.title';
         message = notFoundTitleMessage;
@@ -41,7 +43,11 @@ function JournalAlerts({
                     short
                     title={<FormattedMessage id={title} />}
                 >
-                    <FormattedMessage id={message} />
+                    {typeof message === 'string' ? (
+                        <FormattedMessage id={message} />
+                    ) : (
+                        message
+                    )}
                 </AlertBox>
             </Box>
         );

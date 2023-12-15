@@ -657,6 +657,16 @@ const Journals: ResolvedIntlConfig['messages'] = {
     'journals.tooManyBytesAndNoDocuments.message': `We reached the limit of how much data a web browser can comfortably read, and didn't find even reach the end of one document! This probably means that your documents are huge.`,
 };
 
+const Ops: ResolvedIntlConfig['messages'] = {
+    'ops.journals.notFound.message': `We were unable to find any logs for this {entityType}.`,
+    'ops.logsTable.label.level': `Level`,
+    'ops.logsTable.label.ts': `Timestamp`,
+    'ops.logsTable.label.message': `Message`,
+    'ops.logsTable.label.fields': `Fields`,
+    'ops.logsTable.emptyTableDefault.header': `No logs found.`,
+    'ops.logsTable.emptyTableDefault.message': `We were unable to find any logs. Please press refresh to try loading again.`,
+};
+
 const endpointConfigHeader = `Endpoint Config`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,
@@ -1405,6 +1415,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...Fetchers,
     ...JsonForms,
     ...Journals,
+    ...Ops,
 };
 
 export default enUSMessages;
