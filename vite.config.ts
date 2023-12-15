@@ -95,7 +95,7 @@ export default defineConfig({
         compression({
             algorithm: 'gzip',
             exclude: /\.(br|gz)$/i,
-            include: /\.(js|mjs|json|css|html)$/i,
+            include: /\.(js|mjs|json|css|html|wasm)$/i,
             deleteOriginalAssets: false,
         }),
 
