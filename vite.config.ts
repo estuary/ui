@@ -94,8 +94,8 @@ export default defineConfig({
         viteImageOptimizer({}),
         compression({
             algorithm: 'gzip',
-            exclude: [/^.*$/],
-            include: [/\.(js)$/, /\.(css)$/, /\.(html)$/],
+            exclude: /\.(br|gz)$/i,
+            include: /\.(js|mjs|json|css|html)$/i,
             deleteOriginalAssets: false,
         }),
 
