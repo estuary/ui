@@ -12,6 +12,7 @@ import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useMount } from 'react-use';
 import { jobStatusPoller } from 'services/supabase';
 import { getUrls } from 'utils/env-utils';
 import {
@@ -33,8 +34,6 @@ const submit_clickToAccept = async (directive: any) => {
 };
 
 const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
-    trackEvent(`${directiveName}:Viewed`);
-
     const [acknowledgedDocuments, setAcknowledgedDocuments] =
         useState<boolean>(false);
     const [saving, setSaving] = useState(false);
@@ -86,6 +85,10 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
             }
         },
     };
+
+    useMount(() => {
+        trackEvent(`${directiveName}:Viewed`);
+    });
 
     return (
         <>

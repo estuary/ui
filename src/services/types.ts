@@ -10,6 +10,7 @@ export enum CustomEvents {
     CAPTURE_TEST = 'Capture_Test',
     COLLECTION_CREATE = 'Collection_Create',
     DIRECTIVE = 'Directive',
+    DIRECTIVE_EXCHANGE_TOKEN = 'Directive:ExchangeToken',
     ERROR_BOUNDARY_DISPLAYED = 'Error_Boundary_Displayed',
     ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
     FIELD_SELECTION_REFRESH_AUTO = 'Field_Selection_Refresh:Auto',

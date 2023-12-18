@@ -18,78 +18,43 @@ import {
     createBrowserRouter,
     createRoutesFromElements,
 } from 'react-router-dom';
+import Admin from 'pages/Admin';
+import AccessGrants from 'components/admin/AccessGrants';
+import AdminApi from 'components/admin/Api';
+import AdminConnectors from 'components/admin/Connectors';
+import AdminBilling from 'components/admin/Billing';
+import AdminSettings from 'components/admin/Settings';
+import HomePage from 'pages/Home';
+import MaterializationsTable from './MaterializationsTable';
+import CapturesTable from './CapturesTable';
 import RequireAuth from './RequireAuth';
-
-const Authenticated = lazy(
-    () => import(/* webpackPrefetch: true */ './Authenticated')
-);
-const HomePage = lazy(() => import(/* webpackPrefetch: true */ 'pages/Home'));
+import Authenticated from './Authenticated';
 
 // Capture
-const CaptureCreateRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './CaptureCreate')
-);
-const CaptureCreateNewRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './CaptureCreateNew')
-);
-const CaptureDetailsRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './CaptureDetails')
-);
-const CaptureEditRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './CaptureEdit')
-);
-const CapturesTable = lazy(
-    () => import(/* webpackPrefetch: true */ './CapturesTable')
-);
+const CaptureCreateRoute = lazy(() => import('./CaptureCreate'));
+const CaptureCreateNewRoute = lazy(() => import('./CaptureCreateNew'));
+const CaptureDetailsRoute = lazy(() => import('./CaptureDetails'));
+const CaptureEditRoute = lazy(() => import('./CaptureEdit'));
 
 // Collection
 const DerivationCreateComponent = lazy(
-    () => import(/* webpackPrefetch: true */ 'components/derivation/Create')
+    () => import('components/derivation/Create')
 );
-const CollectionCreateRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './CollectionCreate')
-);
-const CollectionCreateNewRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './CollectionCreateNew')
-);
-const CollectionDetailsRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './CollectionDetails')
-);
+const CollectionCreateRoute = lazy(() => import('./CollectionCreate'));
+const CollectionCreateNewRoute = lazy(() => import('./CollectionCreateNew'));
+const CollectionDetailsRoute = lazy(() => import('./CollectionDetails'));
 
 //Materializations
 const MaterializationCreateRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './MaterializationCreate')
+    () => import('./MaterializationCreate')
 );
 const MaterializationCreateNewRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './MaterializationCreateNew')
+    () => import('./MaterializationCreateNew')
 );
 const MaterializationDetailsRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './MaterializationDetails')
+    () => import('./MaterializationDetails')
 );
-const MaterializationEditRoute = lazy(
-    () => import(/* webpackPrefetch: true */ './MaterializationEdit')
-);
-const MaterializationsTable = lazy(
-    () => import(/* webpackPrefetch: true */ './MaterializationsTable')
-);
-
-//Admin
-const Admin = lazy(() => import(/* webpackPrefetch: true */ 'pages/Admin'));
-const AccessGrants = lazy(
-    () => import(/* webpackPrefetch: true */ 'components/admin/AccessGrants')
-);
-const AdminApi = lazy(
-    () => import(/* webpackPrefetch: true */ 'components/admin/Api')
-);
-const AdminConnectors = lazy(
-    () => import(/* webpackPrefetch: true */ 'components/admin/Connectors')
-);
-const AdminBilling = lazy(
-    () => import(/* webpackPrefetch: true */ 'components/admin/Billing')
-);
-const AdminSettings = lazy(
-    () => import(/* webpackPrefetch: true */ 'components/admin/Settings')
-);
+const MaterializationEditRoute = lazy(() => import('./MaterializationEdit'));
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -233,6 +198,18 @@ const router = createBrowserRouter(
                                     </Suspense>
                                 }
                             />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.collections.details.ops
+                                        .path
+                                }
+                                element={
+                                    <Suspense fallback={null}>
+                                        <CollectionDetailsRoute tab="ops" />
+                                    </Suspense>
+                                }
+                            />
                         </Route>
 
                         <Route
@@ -333,6 +310,18 @@ const router = createBrowserRouter(
                                     </Suspense>
                                 }
                             />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.captures.details.ops
+                                        .path
+                                }
+                                element={
+                                    <Suspense fallback={null}>
+                                        <CaptureDetailsRoute tab="ops" />
+                                    </Suspense>
+                                }
+                            />
                         </Route>
                     </Route>
 
@@ -418,6 +407,18 @@ const router = createBrowserRouter(
                                 element={
                                     <Suspense fallback={null}>
                                         <MaterializationDetailsRoute tab="history" />
+                                    </Suspense>
+                                }
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.materializations.details
+                                        .ops.path
+                                }
+                                element={
+                                    <Suspense fallback={null}>
+                                        <MaterializationDetailsRoute tab="ops" />
                                     </Suspense>
                                 }
                             />

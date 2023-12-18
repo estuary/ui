@@ -87,14 +87,7 @@ function BindingSelector({
 
     const cellRenderers = {
         name: (params: GridRenderCellParams) => {
-            const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
-
-            return (
-                <BindingsSelectorName
-                    collection={collection}
-                    shortenName={isCapture}
-                />
-            );
+            return <BindingsSelectorName collection={params.value} />;
         },
         remove: (params: GridRenderCellParams) => {
             if (isCapture) {

@@ -1,6 +1,8 @@
+import { isProduction } from './env-utils';
+
 export const devtoolsOptions = (name: string) => {
     return {
-        enabled: process.env.NODE_ENV === 'development',
+        enabled: !isProduction,
         name,
     };
 };

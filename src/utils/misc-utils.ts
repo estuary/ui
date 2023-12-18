@@ -116,16 +116,12 @@ export const specContainsDerivation = (
     return { isDerivation, derivationKey };
 };
 
-export const basicSort_string = (
-    a: any,
-    b: any,
-    sortDirection: SortDirection
-) => {
+export const compareInitialCharacterType = (a: any, b: any): number | null => {
     // See if the values start with alphanumeric
     const aIsAlphabetical = a.localeCompare('a') >= 0;
     const bIsAlphabetical = b.localeCompare('a') >= 0;
 
-    // If a is alpha and b isn't then return >0 to put b first
+    // If a isn't alpha and b is then return >0 to put b first
     if (!aIsAlphabetical && bIsAlphabetical) {
         return 1;
     }
@@ -133,6 +129,23 @@ export const basicSort_string = (
     // If a is alpha and b isn't then return <0 to put a first
     if (aIsAlphabetical && !bIsAlphabetical) {
         return -1;
+    }
+
+    // If a and b have the same classification then return null
+    // to indicate that additional logic is required to determine
+    // the sort order.
+    return null;
+};
+
+export const basicSort_string = (
+    a: any,
+    b: any,
+    sortDirection: SortDirection
+) => {
+    const sortResult = compareInitialCharacterType(a, b);
+
+    if (typeof sortResult === 'number') {
+        return sortResult;
     }
 
     // If we're here we know both strings are alphanumeric and can do normal sorts

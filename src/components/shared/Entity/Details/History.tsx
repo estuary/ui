@@ -12,7 +12,7 @@ import {
     useTheme,
 } from '@mui/material';
 import ListAndDetails from 'components/editor/ListAndDetails';
-import AlertBox from 'components/shared/AlertBox';
+import UnderDev from 'components/shared/UnderDev';
 import {
     editorToolBarSx,
     monacoEditorComponentBackground,
@@ -93,20 +93,13 @@ function History() {
         }
     }, [publications, selectedPublication]);
 
-    console.log('publications', publications);
-
     if (isValidating || !publications) {
         return <CircularProgress />;
     }
 
     return (
         <Box>
-            <Box sx={{ m: 2 }}>
-                <AlertBox short severity="warning" title="Under Development">
-                    Please feel free to provide any and all feedback to the
-                    front end team.
-                </AlertBox>
-            </Box>
+            <UnderDev />
             <ListAndDetails
                 displayBorder
                 height={getEditorTotalHeight(HEIGHT)}

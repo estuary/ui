@@ -2,7 +2,10 @@ import { authenticatedRoutes } from 'app/routes';
 import { createContext, useContext } from 'react';
 import { BaseComponentProps } from 'types';
 
-export type Pages = keyof typeof authenticatedRoutes.captures.details;
+export type Pages =
+    | keyof typeof authenticatedRoutes.captures.details
+    | keyof typeof authenticatedRoutes.collections.details
+    | keyof typeof authenticatedRoutes.materializations.details;
 
 interface Props extends BaseComponentProps {
     value: Pages;

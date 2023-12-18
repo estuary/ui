@@ -1,6 +1,5 @@
 import AppGuards from 'app/guards';
 import ConfirmationModalContextProvider from 'context/Confirmation';
-import { SidePanelDocsProvider } from 'context/SidePanelDocs';
 import { ZustandProvider } from 'context/Zustand/provider';
 import { BaseComponentProps } from 'types';
 import { OnLoadSpinnerProvider } from './OnLoadSpinner/OnLoadSpinnerContext';
@@ -23,9 +22,7 @@ export function AuthenticatedOnlyContext({ children, hideSpinner }: Props) {
                         <AppGuards>
                             <PreFetchDataProvider>
                                 <ConfirmationModalContextProvider>
-                                    <SidePanelDocsProvider>
-                                        {children}
-                                    </SidePanelDocsProvider>
+                                    {children}
                                 </ConfirmationModalContextProvider>
                             </PreFetchDataProvider>
                         </AppGuards>

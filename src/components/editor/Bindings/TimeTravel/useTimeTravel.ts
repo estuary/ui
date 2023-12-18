@@ -8,7 +8,7 @@ import { useCallback, useMemo } from 'react';
 
 import { Schema } from 'types';
 import {
-    getCollectionName,
+    getBindingIndex,
     getCollectionNameProp,
     getFullSourceSetting,
 } from 'utils/workflow-utils';
@@ -46,9 +46,9 @@ function useTimeTravel(collectionName: string) {
                 const spec: Schema = draftSpecs[0].spec;
 
                 // See which binding we need to update
-                const existingBindingIndex = spec.bindings.findIndex(
-                    (binding: any) =>
-                        getCollectionName(binding) === collectionName
+                const existingBindingIndex = getBindingIndex(
+                    spec.bindings,
+                    collectionName
                 );
 
                 // We only want to update existing bindings here. If they do not exist then we can just

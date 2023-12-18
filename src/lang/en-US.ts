@@ -203,8 +203,8 @@ const ConfirmationDialog: ResolvedIntlConfig['messages'] = {
 
 const FullPage: ResolvedIntlConfig['messages'] = {
     'fullPage.instructions': `Please try again. If the error persists, {docLink}`,
-    'fullPage.instructions.docLink': `contact support`,
-    'fullPage.instructions.docPath': `mailto:support@estuary.dev`,
+    'fullPage.instructions.docLink': `${CTAs['cta.support']}`,
+    'fullPage.instructions.docPath': `${CommonMessages['support.email']}`,
 };
 
 const EntitiesHydrator: ResolvedIntlConfig['messages'] = {
@@ -446,8 +446,8 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.message.paidTier': `Cloud tier.`,
     'admin.billing.error.paymentMethodsError': `There was an error connecting with our payment provider. Please try again later.`,
     'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
-    'admin.billing.error.undefinedPricingTier.docLink': `contact support`,
-    'admin.billing.error.undefinedPricingTier.docPath': `mailto:support@estuary.dev`,
+    'admin.billing.error.undefinedPricingTier.docLink': `${CTAs['cta.support']}`,
+    'admin.billing.error.undefinedPricingTier.docPath': `${CommonMessages['support.email']}`,
     'admin.billing.label.tiers': `Pricing Tier`,
     'admin.billing.label.lineItems': `Your bill for:`,
     'admin.billing.label.lineItems.loading': `Loading your bill`,
@@ -575,7 +575,7 @@ const StorageMappings: ResolvedIntlConfig['messages'] = {
     'storageMappings.bucket.label': `Bucket`,
     'storageMappings.bucket.description': `The name of the bucket you have setup to store data in.`,
     'storageMappings.lastUpdated.label': `Last Updated`,
-    'storageMappings.message': `Below are all the ${CommonMessages['terms.storageMapping']} that you have read or admin access to. These are the locations that your data is stored. You currently cannot edit these in the UI. If you need an update please contact support.`,
+    'storageMappings.message': `Below are all the ${CommonMessages['terms.storageMapping']} that you have read or admin access to. These are the locations that your data is stored. You currently cannot edit these in the UI. If you need an update please ${CTAs['cta.support']}.`,
 };
 
 const ConnectorsPage: ResolvedIntlConfig['messages'] = {
@@ -642,14 +642,27 @@ const Collections: ResolvedIntlConfig['messages'] = {
     'collections.message2': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
     'collections.message2.docLink': `collections`,
     'collections.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
-    'collectionsPreview.notFound.title': `Not Found`,
     'collectionsPreview.notFound.message': `We were unable to find any data which could mean the capture has not ingested data yet or is not running. Check the status on the Captures page to make sure it is running.`,
-    'collectionsPreview.tooFewDocuments.title': `Low document count`,
-    'collectionsPreview.tooFewDocuments.message': `Fewer documents than desired were found. This could mean that your collection isn't seeing very much data.`,
-    'collectionsPreview.tooManyBytes.title': `Large documents`,
-    'collectionsPreview.tooManyBytes.message': `Exceeded the maximum bytes before reaching the desired number of documents. This probably means that your documents are large.`,
-    'collectionsPreview.tooManyBytesAndNoDocuments.title': `Read limit reached`,
-    'collectionsPreview.tooManyBytesAndNoDocuments.message': `We reached the limit of how much data a web browser can comfortably read, and didn't find even reach the end of one document! This probably means that your documents are huge.`,
+};
+
+const Journals: ResolvedIntlConfig['messages'] = {
+    'journals.notFound.title': `Not Found`,
+    'journals.tooFewDocuments.title': `Low document count`,
+    'journals.tooFewDocuments.message': `Fewer documents than desired were found. This could mean that your entity isn't seeing very much data.`,
+    'journals.tooManyBytes.title': `Large documents`,
+    'journals.tooManyBytes.message': `Exceeded the maximum bytes before reaching the desired number of documents. This probably means that your documents are large.`,
+    'journals.tooManyBytesAndNoDocuments.title': `Read limit reached`,
+    'journals.tooManyBytesAndNoDocuments.message': `We reached the limit of how much data a web browser can comfortably read, and didn't find even reach the end of one document! This probably means that your documents are huge.`,
+};
+
+const Ops: ResolvedIntlConfig['messages'] = {
+    'ops.journals.notFound.message': `We were unable to find any logs for this {entityType}.`,
+    'ops.logsTable.label.level': `Level`,
+    'ops.logsTable.label.ts': `Timestamp`,
+    'ops.logsTable.label.message': `Message`,
+    'ops.logsTable.label.fields': `Fields`,
+    'ops.logsTable.emptyTableDefault.header': `No logs found.`,
+    'ops.logsTable.emptyTableDefault.message': `We were unable to find any logs. Please press refresh to try loading again.`,
 };
 
 const endpointConfigHeader = `Endpoint Config`;
@@ -900,8 +913,8 @@ const Workflows: ResolvedIntlConfig['messages'] = {
 
     'workflows.initTask.alert.title.initFailed': `Form Initialization Error`,
     'workflows.initTask.alert.message.initFailed': `An issue was encountered initializing the form. Try refreshing the page and if the issue persists {docLink}.`,
-    'workflows.initTask.alert.message.initFailed.docLink': `contact support`,
-    'workflows.initTask.alert.message.initFailed.docPath': `mailto:support@estuary.dev`,
+    'workflows.initTask.alert.message.initFailed.docLink': `${CTAs['cta.support']}`,
+    'workflows.initTask.alert.message.initFailed.docPath': `${CommonMessages['support.email']}`,
     'workflows.initTask.alert.message.patchedSpec': `An issue was encountered recovering your changes. The latest, published record of the task was used to initialize the form.`,
 
     'workflows.collectionSelector.cta.rediscover': `Refresh`,
@@ -956,10 +969,10 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.schemaInference.alert.lowDocumentCount.header': `Low Document Count`,
     'workflows.collectionSelector.schemaInference.alert.lowDocumentCount.message': `Fewer documents than desired were found. This could mean that your collection isn't seeing very much data.`,
     'workflows.collectionSelector.schemaInference.alert.generalError.header': `Server Error`,
-    'workflows.collectionSelector.schemaInference.alert.inferenceService.message': `This is not something you did wrong. An error was encountered while inferring the shape of the documents in this collection.`,
-    'workflows.collectionSelector.schemaInference.alert.patchService.message': `This is not something you did wrong. An error was encountered while applying the inferred schema. Please try again. If the error persists, {docLink}`,
-    'workflows.collectionSelector.schemaInference.alert.patchService.message.docLink': `contact support`,
-    'workflows.collectionSelector.schemaInference.alert.patchService.message.docPath': `mailto:support@estuary.dev`,
+    'workflows.collectionSelector.schemaInference.alert.inferenceService.message': `An error was encountered while inferring the shape of the documents in this collection.`,
+    'workflows.collectionSelector.schemaInference.alert.patchService.message': `An error was encountered while applying the inferred schema. Please try again. If the error persists, {docLink}`,
+    'workflows.collectionSelector.schemaInference.alert.patchService.message.docLink': `${CTAs['cta.support']}`,
+    'workflows.collectionSelector.schemaInference.alert.patchService.message.docPath': `${CommonMessages['support.email']}`,
     'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
 
     'workflows.entityWarnings.title': `No collections`,
@@ -971,6 +984,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.autoDiscovery.label.optIntoDiscovery': `Automatically keep schemas up to date`,
     'workflows.autoDiscovery.label.addNewBindings': `Automatically add new collections`,
     'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Breaking changes re-version collections`,
+    'workflows.autoDiscovery.update.failed': `Schema evolution update failed`,
 
     'workflows.sourceCapture.header': `Link Capture`,
     'workflows.sourceCapture.cta': `link capture`,
@@ -1058,8 +1072,8 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.grantDirective.error.header': `Unable to Provision Access`,
     'tenant.grantDirective.error.message': `A problem was encountered provisioning access to the requested tenant. The access link could have been single-use or revoked by an administrator of the tenant.`,
     'tenant.grantDirective.error.message.help': `For additional context, please {docLink}.`,
-    'tenant.grantDirective.error.message.help.docLink': `contact support`,
-    'tenant.grantDirective.error.message.help.docPath': `mailto:support@estuary.dev`,
+    'tenant.grantDirective.error.message.help.docLink': `${CTAs['cta.support']}`,
+    'tenant.grantDirective.error.message.help.docPath': `${CommonMessages['support.email']}`,
 
     'tenant.error.failedToFetch.message': `There was an issue while checking if you have access to a tenant.`,
 };
@@ -1078,8 +1092,8 @@ const Details: ResolvedIntlConfig['messages'] = {
     'details.settings.notifications.header': `Notification Settings`,
     'details.settings.notifications.alert.userNotSubscribed.message': `You are not subscribed to notifications for this tenant. If you would like to receive notifications for this task, {button} to subscribe.`,
     'details.settings.notifications.alert.userNotSubscribed.message.button': `click here`,
-    'details.settings.notifications.alert.createSubscriptionFailed.message': `A issue was encountered subscribing you to notifications for this tenant. Please try again. If the issue persists, contact support.`,
-    'details.settings.notifications.alert.updateSettingsFailed.message': `A issue was encountered updating a notification setting for this task. Please try again. If the issue persists, contact support.`,
+    'details.settings.notifications.alert.createSubscriptionFailed.message': `A issue was encountered subscribing you to notifications for this tenant. Please try again. If the issue persists, ${CTAs['cta.support']}.`,
+    'details.settings.notifications.alert.updateSettingsFailed.message': `A issue was encountered updating a notification setting for this task. Please try again. If the issue persists, ${CTAs['cta.support']}.`,
     'details.settings.notifications.dataProcessing.header': `Data Processing`,
     'details.settings.notifications.dataProcessing.noDataProcessedInInterval.message': `Data has not been processed in a given window of time.`,
     'details.settings.notifications.dataProcessing.noDataProcessedInInterval.label': `Interval`,
@@ -1300,6 +1314,7 @@ const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.dialog.updateProjection.label.pointer': `JSON Pointer:`,
     'fieldSelection.dialog.updateProjection.label.type': `Type:`,
     'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config can sometimes change the options below.`,
+    'fieldSelection.update.failed': `Field selection update failed`,
     'fieldSelection.table.cta.addProjection': `Add Projection`,
     'fieldSelection.table.cta.defaultField': `Default`,
     'fieldSelection.table.cta.excludeField': `Exclude`,
@@ -1397,6 +1412,8 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...Notifications,
     ...Fetchers,
     ...JsonForms,
+    ...Journals,
+    ...Ops,
 };
 
 export default enUSMessages;

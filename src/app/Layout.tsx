@@ -5,7 +5,6 @@ import PageContainer from 'components/shared/PageContainer';
 import DocsSidePanel from 'components/sidePanelDocs/SidePanel';
 import { useShowSidePanelDocs } from 'context/SidePanelDocs';
 import { NavWidths } from 'context/Theme';
-import { useEffect, useState } from 'react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
 import { useLocalStorage } from 'react-use';
@@ -15,6 +14,7 @@ import {
     useSidePanelDocsStore_url,
 } from 'stores/SidePanelDocs/hooks';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
+import { useEffect, useState } from 'react';
 import { hasLength } from 'utils/misc-utils';
 
 function AppLayout() {
