@@ -644,14 +644,27 @@ const Collections: ResolvedIntlConfig['messages'] = {
     'collections.message2': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
     'collections.message2.docLink': `collections`,
     'collections.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
-    'collectionsPreview.notFound.title': `Not Found`,
     'collectionsPreview.notFound.message': `We were unable to find any data which could mean the capture has not ingested data yet or is not running. Check the status on the Captures page to make sure it is running.`,
-    'collectionsPreview.tooFewDocuments.title': `Low document count`,
-    'collectionsPreview.tooFewDocuments.message': `Fewer documents than desired were found. This could mean that your collection isn't seeing very much data.`,
-    'collectionsPreview.tooManyBytes.title': `Large documents`,
-    'collectionsPreview.tooManyBytes.message': `Exceeded the maximum bytes before reaching the desired number of documents. This probably means that your documents are large.`,
-    'collectionsPreview.tooManyBytesAndNoDocuments.title': `Read limit reached`,
-    'collectionsPreview.tooManyBytesAndNoDocuments.message': `We reached the limit of how much data a web browser can comfortably read, and didn't find even reach the end of one document! This probably means that your documents are huge.`,
+};
+
+const Journals: ResolvedIntlConfig['messages'] = {
+    'journals.notFound.title': `Not Found`,
+    'journals.tooFewDocuments.title': `Low document count`,
+    'journals.tooFewDocuments.message': `Fewer documents than desired were found. This could mean that your entity isn't seeing very much data.`,
+    'journals.tooManyBytes.title': `Large documents`,
+    'journals.tooManyBytes.message': `Exceeded the maximum bytes before reaching the desired number of documents. This probably means that your documents are large.`,
+    'journals.tooManyBytesAndNoDocuments.title': `Read limit reached`,
+    'journals.tooManyBytesAndNoDocuments.message': `We reached the limit of how much data a web browser can comfortably read, and didn't find even reach the end of one document! This probably means that your documents are huge.`,
+};
+
+const Ops: ResolvedIntlConfig['messages'] = {
+    'ops.journals.notFound.message': `We were unable to find any logs for this {entityType}.`,
+    'ops.logsTable.label.level': `Level`,
+    'ops.logsTable.label.ts': `Timestamp`,
+    'ops.logsTable.label.message': `Message`,
+    'ops.logsTable.label.fields': `Fields`,
+    'ops.logsTable.emptyTableDefault.header': `No logs found.`,
+    'ops.logsTable.emptyTableDefault.message': `We were unable to find any logs. Please press refresh to try loading again.`,
 };
 
 const endpointConfigHeader = `Endpoint Config`;
@@ -1401,6 +1414,8 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...Notifications,
     ...Fetchers,
     ...JsonForms,
+    ...Journals,
+    ...Ops,
 };
 
 export default enUSMessages;

@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import Error from 'components/shared/Error';
 import { tableAlternateRowsSx } from 'context/Theme';
-import { useJournalData } from 'hooks/useJournalData';
+import { useJournalData } from 'hooks/journals/useJournalData';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';

@@ -12,6 +12,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { DeleteCircle, Square } from 'iconoir-react';
 import CheckSquare from 'icons/CheckSquare';
 import React from 'react';
+import { ThemeKeys } from '@microlink/react-json-view';
 import { useLocalStorage } from 'react-use';
 import { BaseComponentProps } from 'types';
 import { DEFAULT_TOOLBAR_HEIGHT } from 'utils/editor-utils';
@@ -206,6 +207,14 @@ export const primaryColoredOutline = {
 export const primaryColoredOutline_disabled = {
     light: `1px solid rgba(58, 86, 202, 0.12)`,
     dark: `1px solid rgba(186, 205, 253, 0.12)`,
+};
+
+export const jsonViewTheme: {
+    light: ThemeKeys;
+    dark: ThemeKeys;
+} = {
+    light: `bright:inverted`,
+    dark: `bright`,
 };
 
 // Styles
