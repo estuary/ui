@@ -1,7 +1,6 @@
 import { getAuthRoles } from 'api/combinedGrantsExt';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
-import { http, HttpResponse } from 'msw';
-import { setupServer } from 'msw/node';
+import { describe, expect, test } from 'vitest';
+import { http, HttpResponse, server } from 'test/server/test-server';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const API_ENDPOINT = `${SUPABASE_URL}/rest/v1/rpc/auth_roles`;
@@ -17,31 +16,23 @@ const adminRows = [
     { role_prefix: 'h/', capability: 'read' },
 ];
 
-// TODO (testing)
-// Server setup needs to move to a more global space eventually
-
-const server = setupServer(
-    http.all(API_ENDPOINT, ({ request }) => {
-        const url = new URL(request.url);
-        const offset = Number.parseInt(
-            url.searchParams.get('offset') ?? '',
-            10
-        );
-        const limit = Number.parseInt(url.searchParams.get('limit') ?? '', 10);
-
-        return HttpResponse.json(adminRows.slice(offset, offset + limit));
-    })
-);
-
-// server.events.on('request:start', ({ request }) => {
-//     console.log('MSW intercepted:', request.method, request.url);
-// });
-
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
-
 test('getAuthRoles will fetch roles over multiple calls based on page size', async () => {
+    server.use(
+        http.all(API_ENDPOINT, ({ request }) => {
+            const url = new URL(request.url);
+            const offset = Number.parseInt(
+                url.searchParams.get('offset') ?? '',
+                10
+            );
+            const limit = Number.parseInt(
+                url.searchParams.get('limit') ?? '',
+                10
+            );
+
+            return HttpResponse.json(adminRows.slice(offset, offset + limit));
+        })
+    );
+
     const response = await getAuthRoles('read', 3);
     expect(response).toEqual({
         data: adminRows,
