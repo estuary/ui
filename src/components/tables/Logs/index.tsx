@@ -3,54 +3,35 @@ import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { TableColumns, TableStatuses } from 'types';
-import LogRows from './LogRows';
+import { TableStatuses } from 'types';
+import Rows from './Rows';
+import useLogColumns from './useLogColumns';
 
 interface Props {
     documents: any[];
     loading?: boolean;
 }
 
-export const columns: TableColumns[] = [
-    {
-        field: null,
-        collapseHeader: true,
-        headerIntlKey: 'ops.logsTable.label.level',
-    },
-    {
-        field: null,
-        collapseHeader: true,
-        headerIntlKey: 'ops.logsTable.label.ts',
-    },
-    {
-        field: null,
-        collapseHeader: true,
-        headerIntlKey: 'ops.logsTable.label.message',
-    },
-    {
-        field: null,
-        headerIntlKey: 'ops.logsTable.label.fields',
-    },
-];
-
 function LogsTable({ documents, loading }: Props) {
     const intl = useIntl();
+    const columns = useLogColumns();
 
     const dataRows = useMemo(
-        () => (documents.length > 0 ? <LogRows data={documents} /> : null),
+        () => (documents.length > 0 ? <Rows data={documents} /> : null),
         [documents]
     );
 
     return (
-        <TableContainer component={Box}>
+        <TableContainer component={Box} maxHeight={500}>
             <Table
                 aria-label={intl.formatMessage({
                     id: 'entityTable.title',
                 })}
                 size="small"
+                stickyHeader
                 sx={{ minWidth: 450 }}
             >
-                <EntityTableHeader columns={columns} noBackgroundColor />
+                <EntityTableHeader columns={columns} />
 
                 <EntityTableBody
                     columns={columns}

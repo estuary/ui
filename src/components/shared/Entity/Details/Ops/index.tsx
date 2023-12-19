@@ -1,11 +1,11 @@
 import { Box, Button, LinearProgress, Stack } from '@mui/material';
 import UnderDev from 'components/shared/UnderDev';
+import LogsTable from 'components/tables/Logs';
 import { useJournalData } from 'hooks/journals/useJournalData';
 import useJournalNameForLogs from 'hooks/journals/useJournalNameForLogs';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import LogsTable from './LogsTable';
 
 const docsRequested = 25;
 
