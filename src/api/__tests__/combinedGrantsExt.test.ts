@@ -16,6 +16,9 @@ const adminRows = [
     { role_prefix: 'h/', capability: 'read' },
 ];
 
+// TODO (testing)
+// Server setup needs to move to a more global space eventually
+
 const server = setupServer(
     http.all(`${SUPABASE_URL}/rest/v1/rpc/auth_roles`, ({ request }) => {
         const url = new URL(request.url);
