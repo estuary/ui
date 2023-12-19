@@ -77,7 +77,7 @@ const getGrants_Users = (
     return queryBuilder;
 };
 
-const getAuthPageSize = 500;
+const getAuthPageSize = 1000;
 export async function getAuthRoles(
     capability: string,
     pageSize: number = getAuthPageSize
