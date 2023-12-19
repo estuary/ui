@@ -1,4 +1,4 @@
-import { GetAuthRolesResponse } from 'api/combinedGrantsExt';
+import { ParsedPagedFetchAllResponse } from 'services/supabase';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { KeyedMutator } from 'swr';
 import { AuthRoles, Schema } from 'types';
@@ -18,12 +18,12 @@ export interface EntitiesState extends StoreWithHydration {
     };
     setCapabilities: (capabilities: (AuthRoles | null)[] | null) => void;
 
-    hydrateState: () => Promise<GetAuthRolesResponse>;
+    hydrateState: () => Promise<ParsedPagedFetchAllResponse<AuthRoles>>;
     resetState: () => void;
 
     hydrationErrors: any;
     setHydrationErrors: (val: EntitiesState['hydrationErrors']) => void;
 
-    mutate: KeyedMutator<GetAuthRolesResponse> | null;
+    mutate: KeyedMutator<ParsedPagedFetchAllResponse<AuthRoles>> | null;
     setMutate: (value: EntitiesState['mutate']) => void;
 }

@@ -1,10 +1,10 @@
-import { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
 import {
     defaultTableFilter,
+    parsePagedFetchAllResponse,
+    pagedFetchAll,
     RPCS,
     SortingProps,
     supabaseClient,
-    supabaseRetry,
     TABLES,
 } from 'services/supabase';
 import { AuthRoles, Capability, Grant_UserExt } from 'types';
@@ -78,68 +78,22 @@ const getGrants_Users = (
 };
 
 const getAuthPageSize = 500;
-export type GetAuthRolesResponse =
-    | { data: AuthRoles[] | null; error: null }
-    | { data: null; error: PostgrestError };
-
 export async function getAuthRoles(
     capability: string,
     pageSize: number = getAuthPageSize
-): Promise<GetAuthRolesResponse> {
-    const promises: Promise<PostgrestResponse<AuthRoles>>[] = [];
-    let hasMore = true;
+) {
+    const responses = await pagedFetchAll<AuthRoles>(
+        pageSize,
+        'getAuthRoles',
+        (start) =>
+            supabaseClient
+                .rpc<AuthRoles>(RPCS.AUTH_ROLES, {
+                    min_capability: capability,
+                })
+                .range(start, start + pageSize - 1)
+    );
 
-    while (hasMore) {
-        const currentCount = promises.length;
-        const start = currentCount * pageSize;
-
-        const prom = supabaseRetry<PostgrestResponse<AuthRoles>>(
-            () =>
-                supabaseClient
-                    .rpc<AuthRoles>(RPCS.AUTH_ROLES, {
-                        min_capability: capability,
-                    })
-                    .range(start, start + pageSize - 1),
-            'getAuthRoles'
-        );
-        promises.push(prom);
-
-        // We need to know what the response is before starting another call
-        //      so making this call from within the loop
-        // eslint-disable-next-line no-await-in-loop
-        const response = await prom;
-
-        // Got nothing back (end of list OR error)
-        //  or
-        // Got less than the page size (end of list)
-        if (!response.data || response.data.length < pageSize) {
-            hasMore = false;
-        }
-    }
-
-    const responses = await Promise.all(promises);
-
-    const data = responses
-        .filter((r) => r.data && r.data.length > 0)
-        .flatMap((r) => (r.data === null ? [] : r.data));
-
-    const error = responses
-        .filter((r) => r.error)
-        .flatMap((r) => (r.error === null ? [] : r.error));
-
-    // If we got a single error then skip returning data and just
-    //      return the error. This way an error page should show.
-    if (error[0]) {
-        return {
-            error: error[0],
-            data: null,
-        };
-    }
-
-    return {
-        error: null,
-        data,
-    };
+    return parsePagedFetchAllResponse<AuthRoles>(responses);
 }
 
 const getUserInformationByPrefix = (
