@@ -124,8 +124,6 @@ export const useHydrateState = () => {
         singleCallSettings
     );
 
-    console.log('response', response);
-
     // The rest of the stuff we need to handle hydration
     const setHydrationErrors = useEntitiesStore_setHydrationErrors();
     const setCapabilities = useEntitiesStore_setCapabilities();
