@@ -7,7 +7,7 @@ import {
     parseJournalDocuments,
 } from 'data-plane-gateway';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 
 enum ErrorFlags {
@@ -210,6 +210,8 @@ const useJournalData = (
     // 16mb, which is the max document size, ensuring we'll always get at least 1 doc if it exists
     maxBytes: number = 16 * 10 ** 6
 ) => {
+    const failures = useRef(0);
+
     const { data: gatewayConfig } = useGatewayAuthToken(
         collectionName ? [collectionName] : null
     );
@@ -235,7 +237,11 @@ const useJournalData = (
     useEffect(() => {
         void (async () => {
             if (
-                (journalName && journalClient && !loading && !data) ||
+                (failures.current < 2 &&
+                    journalName &&
+                    journalClient &&
+                    !loading &&
+                    !data) ||
                 refreshing
             ) {
                 try {
@@ -248,6 +254,7 @@ const useJournalData = (
                     });
                     setData(docs);
                 } catch (e: unknown) {
+                    failures.current += 1;
                     setError(e);
                 } finally {
                     setLoading(false);
@@ -269,7 +276,10 @@ const useJournalData = (
         data,
         error,
         loading,
-        refresh: () => setRefreshing(true),
+        refresh: () => {
+            failures.current = 0;
+            setRefreshing(true);
+        },
     };
 };
 

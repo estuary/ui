@@ -10,6 +10,7 @@ import {
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import AlertBox from 'components/shared/AlertBox';
+import { useEntityType } from 'context/EntityContext';
 import { dataGridListStyling } from 'context/Theme';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -21,11 +22,15 @@ import {
     useResourceConfig_currentCollection,
 } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength, stripPathing } from 'utils/misc-utils';
 import CollectionSelectorHeaderName from './Header/Name';
 import CollectionSelectorHeaderRemove from './Header/Remove';
 import CollectionSelectorHeaderToggle from './Header/Toggle';
-import { COLLECTION_SELECTOR_NAME_COL } from './shared';
+import {
+    COLLECTION_SELECTOR_NAME_COL,
+    COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
+    getCollectionSelector,
+} from './shared';
 
 interface Props {
     disableActions?: boolean;
@@ -67,6 +72,9 @@ function CollectionSelectorList({
     setCurrentCollection,
 }: Props) {
     const apiRef = useGridApiRef();
+
+    const entityType = useEntityType();
+    const isCapture = entityType === 'capture';
 
     const notificationAnchorEl = useRef<any | null>();
     const popperTimeout = useRef<number | null>(null);
@@ -118,6 +126,8 @@ function CollectionSelectorList({
         return collections.map((collectionName) => {
             return {
                 [COLLECTION_SELECTOR_NAME_COL]: collectionName,
+                [COLLECTION_SELECTOR_STRIPPED_PATH_NAME]:
+                    stripPathing(collectionName),
             };
         });
     }, [collections]);
@@ -139,11 +149,16 @@ function CollectionSelectorList({
         }, 1000);
     }, []);
 
+    const collectionSelector = useMemo(
+        () => getCollectionSelector(isCapture),
+        [isCapture]
+    );
+
     const columns = useMemo(() => {
         const response: GridColDef[] = [
             {
                 cellClassName: cellClass_noPadding,
-                field: COLLECTION_SELECTOR_NAME_COL,
+                field: collectionSelector,
                 flex: 1,
                 headerName: collectionsLabel,
                 sortable: false,
@@ -154,18 +169,16 @@ function CollectionSelectorList({
                         itemType={collectionsLabel}
                         onChange={(value) => {
                             setFilterValue(value);
-
-                            const newFilterMode: GridFilterModel = {
+                            setFilterModel({
                                 items: [
                                     {
                                         id: 1,
-                                        field: COLLECTION_SELECTOR_NAME_COL,
+                                        field: collectionSelector,
                                         value,
                                         operator: 'contains',
                                     },
                                 ],
-                            };
-                            setFilterModel(newFilterMode);
+                            });
                         }}
                     />
                 ),
@@ -263,6 +276,7 @@ function CollectionSelectorList({
         return response;
     }, [
         apiRef,
+        collectionSelector,
         collectionsLabel,
         disable,
         filterValue,
@@ -314,11 +328,12 @@ function CollectionSelectorList({
                     border: 0,
                     [`& .${cellClass_noPadding}`]: { padding: 0 },
                 }}
-                onCellClick={({ field, value }) => {
+                onCellClick={({ field, id }) => {
                     if (
                         selectionEnabled &&
-                        field === COLLECTION_SELECTOR_NAME_COL &&
-                        value !== currentCollection
+                        (field === COLLECTION_SELECTOR_STRIPPED_PATH_NAME ||
+                            field === COLLECTION_SELECTOR_NAME_COL) &&
+                        id !== currentCollection
                     ) {
                         // TODO (JSONForms) This is hacky but it works.
                         // It clears out the current collection before switching.
@@ -327,7 +342,7 @@ function CollectionSelectorList({
                         //  to go into the wrong form.
                         setCurrentCollection(null);
                         hackyTimeout.current = window.setTimeout(() => {
-                            setCurrentCollection(value);
+                            setCurrentCollection(id);
                         });
                     }
                 }}

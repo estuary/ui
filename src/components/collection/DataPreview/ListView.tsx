@@ -2,13 +2,17 @@ import { Box, Grid, useTheme } from '@mui/material';
 import { DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import Error from 'components/shared/Error';
-import { dataGridListStyling, semiTransparentBackground } from 'context/Theme';
-import { JournalRecord, useJournalData } from 'hooks/useJournalData';
+import {
+    dataGridListStyling,
+    jsonViewTheme,
+    semiTransparentBackground,
+} from 'context/Theme';
+import { JournalRecord, useJournalData } from 'hooks/journals/useJournalData';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { JsonPointer } from 'json-ptr';
 import { isEmpty } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import ReactJson from 'react-json-view';
+import ReactJson from '@microlink/react-json-view';
 
 interface PreviewJsonModeProps {
     spec: LiveSpecsQuery_spec;
@@ -25,8 +29,6 @@ function ListView({
     );
 
     const theme = useTheme();
-    const jsonTheme =
-        theme.palette.mode === 'dark' ? 'bright' : 'bright:inverted';
 
     const buildRecordKey = useCallback(
         (record: Record<string, any>) => {
@@ -103,7 +105,7 @@ function ListView({
                                 style={{ wordBreak: 'break-all' }}
                                 quotesOnKeys={false}
                                 src={rowsByKey[selectedKey]}
-                                theme={jsonTheme}
+                                theme={jsonViewTheme[theme.palette.mode]}
                                 displayObjectSize={false}
                                 displayDataTypes={false}
                             />

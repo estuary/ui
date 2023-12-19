@@ -4,14 +4,19 @@ https://github.com/estuary/ui/issues/{issue_number}
 
 ## Changes
 
--   {issue_number}
-    -   _list your changes_
+### {issue_number}
+
+-   changes...
 
 ## Tests
 
-Manually tested
+### Manually tested
 
--   _list the flows/cases you tested_
+-   scenarios you manually tested
+
+### Automated tests
+
+-   unit testing covered
 
 ## Screenshots
 
