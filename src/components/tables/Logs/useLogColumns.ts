@@ -20,7 +20,6 @@ const defaultColumns: TableColumns[] = [
     },
     {
         field: null,
-        collapseHeader: true,
         headerIntlKey: 'ops.logsTable.label.fields',
     },
 ];
