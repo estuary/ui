@@ -77,7 +77,7 @@ const getGrants_Users = (
     return queryBuilder;
 };
 
-const getAuthPageSize = 500;
+const getAuthPageSize = 3;
 export type GetAuthRolesResponse =
     | { data: AuthRoles[] | null; error: null }
     | { data: null; error: PostgrestError };
@@ -117,6 +117,7 @@ export async function getAuthRoles(
     }
 
     const responses = await Promise.all(promises);
+
     const data = responses
         .filter((r) => r.data && r.data.length > 0)
         .flatMap((r) => (r.data === null ? [] : r.data));
@@ -125,6 +126,8 @@ export async function getAuthRoles(
         .filter((r) => r.error)
         .flatMap((r) => (r.error === null ? [] : r.error));
 
+    // If we got a single error then skip returning data and just
+    //      return the error. This way an error page should show.
     if (error[0]) {
         return {
             error: error[0],
@@ -134,7 +137,7 @@ export async function getAuthRoles(
 
     return {
         error: null,
-        data: data.length > 0 ? data : null,
+        data,
     };
 }
 

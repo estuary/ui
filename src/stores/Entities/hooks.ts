@@ -124,6 +124,8 @@ export const useHydrateState = () => {
         singleCallSettings
     );
 
+    console.log('response', response);
+
     // The rest of the stuff we need to handle hydration
     const setHydrationErrors = useEntitiesStore_setHydrationErrors();
     const setCapabilities = useEntitiesStore_setCapabilities();
@@ -133,14 +135,14 @@ export const useHydrateState = () => {
     // Once we are done validating update all the settings
     useEffect(() => {
         if (!response.isValidating) {
-            setHydrationErrors(response.error);
+            setHydrationErrors(response.data?.error);
             setCapabilities(response.data?.data ?? null);
             setMutate(response.mutate);
             setHydrated(true);
         }
     }, [
         response.data?.data,
-        response.error,
+        response.data?.error,
         response.isValidating,
         response.mutate,
         setCapabilities,
