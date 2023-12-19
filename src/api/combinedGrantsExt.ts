@@ -77,20 +77,21 @@ const getGrants_Users = (
     return queryBuilder;
 };
 
-const getAuthPageSize = 3;
+const getAuthPageSize = 500;
 export type GetAuthRolesResponse =
     | { data: AuthRoles[] | null; error: null }
     | { data: null; error: PostgrestError };
 
 export async function getAuthRoles(
-    capability: string
+    capability: string,
+    pageSize: number = getAuthPageSize
 ): Promise<GetAuthRolesResponse> {
     const promises: Promise<PostgrestResponse<AuthRoles>>[] = [];
     let hasMore = true;
 
     while (hasMore) {
         const currentCount = promises.length;
-        const start = currentCount * getAuthPageSize;
+        const start = currentCount * pageSize;
 
         const prom = supabaseRetry<PostgrestResponse<AuthRoles>>(
             () =>
@@ -98,7 +99,7 @@ export async function getAuthRoles(
                     .rpc<AuthRoles>(RPCS.AUTH_ROLES, {
                         min_capability: capability,
                     })
-                    .range(start, start + getAuthPageSize - 1),
+                    .range(start, start + pageSize - 1),
             'getAuthRoles'
         );
         promises.push(prom);
@@ -111,7 +112,7 @@ export async function getAuthRoles(
         // Got nothing back (end of list OR error)
         //  or
         // Got less than the page size (end of list)
-        if (!response.data || response.data.length < getAuthPageSize) {
+        if (!response.data || response.data.length < pageSize) {
             hasMore = false;
         }
     }

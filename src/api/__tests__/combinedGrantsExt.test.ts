@@ -38,7 +38,7 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 test('getAuthRoles will fetch roles that match the capability', async () => {
-    const response = await getAuthRoles('read');
+    const response = await getAuthRoles('read', 3);
     expect(response).toEqual({
         data: adminRows,
         error: null,
