@@ -1,9 +1,10 @@
 import { getAuthRoles } from 'api/combinedGrantsExt';
-import { afterAll, afterEach, beforeAll, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const API_ENDPOINT = `${SUPABASE_URL}/rest/v1/rpc/auth_roles`;
 
 const adminRows = [
     { role_prefix: 'a/', capability: 'read' },
@@ -20,7 +21,7 @@ const adminRows = [
 // Server setup needs to move to a more global space eventually
 
 const server = setupServer(
-    http.all(`${SUPABASE_URL}/rest/v1/rpc/auth_roles`, ({ request }) => {
+    http.all(API_ENDPOINT, ({ request }) => {
         const url = new URL(request.url);
         const offset = Number.parseInt(
             url.searchParams.get('offset') ?? '',
@@ -45,5 +46,44 @@ test('getAuthRoles will fetch roles over multiple calls based on page size', asy
     expect(response).toEqual({
         data: adminRows,
         error: null,
+    });
+});
+
+describe('getAuthRoles handles errors by returning no data', () => {
+    test('server errors returns the specific error', async () => {
+        const fakeError = 'fake error message here';
+
+        server.use(
+            http.all(API_ENDPOINT, () => {
+                return new HttpResponse(fakeError, { status: 400 });
+            })
+        );
+
+        const response = await getAuthRoles('read', 3);
+        expect(response).toEqual({
+            data: null,
+            error: {
+                message: fakeError,
+            },
+        });
+    });
+
+    test('network errors return the "FetchError"', async () => {
+        server.use(
+            http.all(API_ENDPOINT, () => {
+                return HttpResponse.error();
+            })
+        );
+
+        const response = await getAuthRoles('read', 3);
+        expect(response).toEqual({
+            data: null,
+            error: {
+                code: '',
+                details: '',
+                hint: '',
+                message: 'FetchError: Failed to fetch',
+            },
+        });
     });
 });

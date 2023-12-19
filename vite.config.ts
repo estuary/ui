@@ -67,6 +67,7 @@ export default defineConfig({
     test: {
         environment: 'jsdom',
         setupFiles: './test-setup.js',
+        testTimeout: 10000, // more time for auto retries
     },
 
     // https://github.com/vitejs/awesome-vite#plugins
