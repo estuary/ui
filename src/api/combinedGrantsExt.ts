@@ -1,10 +1,10 @@
-import { PostgrestResponse } from '@supabase/postgrest-js';
 import {
     defaultTableFilter,
+    parsePagedFetchAllResponse,
+    pagedFetchAll,
     RPCS,
     SortingProps,
     supabaseClient,
-    supabaseRetry,
     TABLES,
 } from 'services/supabase';
 import { AuthRoles, Capability, Grant_UserExt } from 'types';
@@ -77,15 +77,24 @@ const getGrants_Users = (
     return queryBuilder;
 };
 
-export const getAuthRoles = async (capability: string) => {
-    return supabaseRetry<PostgrestResponse<AuthRoles>>(
-        () =>
-            supabaseClient.rpc<AuthRoles>(RPCS.AUTH_ROLES, {
-                min_capability: capability,
-            }),
-        'getAuthRoles'
+const getAuthPageSize = 1000;
+export async function getAuthRoles(
+    capability: string,
+    pageSize: number = getAuthPageSize
+) {
+    const responses = await pagedFetchAll<AuthRoles>(
+        pageSize,
+        'getAuthRoles',
+        (start) =>
+            supabaseClient
+                .rpc<AuthRoles>(RPCS.AUTH_ROLES, {
+                    min_capability: capability,
+                })
+                .range(start, start + pageSize - 1)
     );
-};
+
+    return parsePagedFetchAllResponse<AuthRoles>(responses);
+}
 
 const getUserInformationByPrefix = (
     objectRoles: string[],

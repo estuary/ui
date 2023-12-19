@@ -66,7 +66,8 @@ export default defineConfig({
     server: { port: 3000, strictPort: true },
     test: {
         environment: 'jsdom',
-        setupFiles: './test-setup.js',
+        setupFiles: './src/setupTests.ts',
+        testTimeout: 10000, // more time for auto retries
     },
 
     // https://github.com/vitejs/awesome-vite#plugins
