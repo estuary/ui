@@ -37,7 +37,7 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-test('getAuthRoles will fetch roles that match the capability', async () => {
+test('getAuthRoles will fetch roles over multiple calls based on page size', async () => {
     const response = await getAuthRoles('read', 3);
     expect(response).toEqual({
         data: adminRows,
