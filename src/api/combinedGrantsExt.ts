@@ -1,4 +1,4 @@
-import { PostgrestResponse } from '@supabase/postgrest-js';
+import { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
 import {
     defaultTableFilter,
     RPCS,
@@ -77,15 +77,66 @@ const getGrants_Users = (
     return queryBuilder;
 };
 
-export const getAuthRoles = async (capability: string) => {
-    return supabaseRetry<PostgrestResponse<AuthRoles>>(
-        () =>
-            supabaseClient.rpc<AuthRoles>(RPCS.AUTH_ROLES, {
-                min_capability: capability,
-            }),
-        'getAuthRoles'
-    );
-};
+const getAuthPageSize = 500;
+export type GetAuthRolesResponse =
+    | { data: AuthRoles[] | null; error: null }
+    | { data: null; error: PostgrestError };
+
+export async function getAuthRoles(
+    capability: string
+): Promise<GetAuthRolesResponse> {
+    const promises: Promise<PostgrestResponse<AuthRoles>>[] = [];
+    let hasMore = true;
+
+    while (hasMore) {
+        const currentCount = promises.length;
+        const start = currentCount * getAuthPageSize;
+
+        const prom = supabaseRetry<PostgrestResponse<AuthRoles>>(
+            () =>
+                supabaseClient
+                    .rpc<AuthRoles>(RPCS.AUTH_ROLES, {
+                        min_capability: capability,
+                    })
+                    .range(start, start + getAuthPageSize - 1),
+            'getAuthRoles'
+        );
+        promises.push(prom);
+
+        // We need to know what the response is before starting another call
+        //      so making this call from within the loop
+        // eslint-disable-next-line no-await-in-loop
+        const response = await prom;
+
+        // Got nothing back (end of list OR error)
+        //  or
+        // Got less than the page size (end of list)
+        if (!response.data || response.data.length < getAuthPageSize) {
+            hasMore = false;
+        }
+    }
+
+    const responses = await Promise.all(promises);
+    const data = responses
+        .filter((r) => r.data && r.data.length > 0)
+        .flatMap((r) => (r.data === null ? [] : r.data));
+
+    const error = responses
+        .filter((r) => r.error)
+        .flatMap((r) => (r.error === null ? [] : r.error));
+
+    if (error[0]) {
+        return {
+            error: error[0],
+            data: null,
+        };
+    }
+
+    return {
+        error: null,
+        data: data.length > 0 ? data : null,
+    };
+}
 
 const getUserInformationByPrefix = (
     objectRoles: string[],

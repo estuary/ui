@@ -80,6 +80,10 @@ const getInitialState = (
                 }
 
                 val.forEach(async (authRole) => {
+                    if (!authRole) {
+                        return;
+                    }
+
                     state.capabilities[authRole.capability] = {
                         ...state.capabilities[authRole.capability],
                         [authRole.role_prefix]: {},
