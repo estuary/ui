@@ -6,13 +6,14 @@ import { BaseCellSx } from './shared';
 interface Props {
     row: any;
     expanded: boolean;
+    disableExpand?: boolean;
 }
 
-function LevelCell({ expanded, row }: Props) {
+function LevelCell({ disableExpand, expanded, row }: Props) {
     return (
         <TableCell sx={BaseCellSx}>
             <Stack direction="row" sx={{ alignItems: 'center' }}>
-                <ExpandRowButton expanded={expanded} />
+                <ExpandRowButton disable={disableExpand} expanded={expanded} />
                 <LevelIcon level={row.level} />
             </Stack>
         </TableCell>
