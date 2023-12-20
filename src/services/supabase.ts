@@ -1,4 +1,8 @@
-import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import {
+    PostgrestError,
+    PostgrestFilterBuilder,
+    PostgrestResponse,
+} from '@supabase/postgrest-js';
 import { User, createClient } from '@supabase/supabase-js';
 import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { forEach, isEmpty } from 'lodash';
@@ -335,6 +339,72 @@ export const jobSucceeded = (jobStatus?: JobStatus) => {
     } else {
         return null;
     }
+};
+
+export type ParsedPagedFetchAllResponse<T> =
+    | { data: T[] | null; error: null }
+    | { data: null; error: PostgrestError };
+
+export const parsePagedFetchAllResponse = <T>(
+    responses: PostgrestResponse<T>[]
+): ParsedPagedFetchAllResponse<T> => {
+    const data = responses
+        .filter((r) => r.data && r.data.length > 0)
+        .flatMap((r) => (r.data === null ? [] : r.data));
+
+    const error = responses
+        .filter((r) => r.error)
+        .flatMap((r) => (r.error === null ? [] : r.error));
+
+    // If we got a single error then skip returning data and just
+    //      return the error. This way an error page should show.
+    if (error[0]) {
+        return {
+            error: error[0],
+            data: null,
+        };
+    }
+
+    return {
+        error: null,
+        data,
+    };
+};
+
+export const pagedFetchAll = async <T>(
+    pageSize: number,
+    retryKey: string,
+    fetcher: (start: number) => PostgrestFilterBuilder<T>
+) => {
+    const promises: Promise<PostgrestResponse<T>>[] = [];
+    let hasMore = true;
+
+    while (hasMore) {
+        const currentCount = promises.length;
+        const start = currentCount * pageSize;
+
+        const prom = supabaseRetry<PostgrestResponse<T>>(
+            () => fetcher(start),
+            retryKey
+        );
+        promises.push(prom);
+
+        // We need to know what the response is before starting another call
+        //      so making this call from within the loop
+        // eslint-disable-next-line no-await-in-loop
+        const response = await prom;
+
+        // Got nothing back (end of list OR error)
+        //  or
+        // Got less than the page size (end of list)
+        if (!response.data || response.data.length < pageSize) {
+            hasMore = false;
+        }
+    }
+
+    const responses = await Promise.all(promises);
+
+    return responses;
 };
 
 // START: Poller

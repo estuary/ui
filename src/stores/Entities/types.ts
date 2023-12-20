@@ -1,4 +1,4 @@
-import { PostgrestResponse } from '@supabase/postgrest-js';
+import { ParsedPagedFetchAllResponse } from 'services/supabase';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { KeyedMutator } from 'swr';
 import { AuthRoles, Schema } from 'types';
@@ -16,14 +16,14 @@ export interface EntitiesState extends StoreWithHydration {
         read: ObjectRoleMetadata | Schema | {};
         write: ObjectRoleMetadata | Schema | {};
     };
-    setCapabilities: (capabilities: AuthRoles[] | null) => void;
+    setCapabilities: (capabilities: (AuthRoles | null)[] | null) => void;
 
-    hydrateState: () => Promise<PostgrestResponse<AuthRoles>>;
+    hydrateState: () => Promise<ParsedPagedFetchAllResponse<AuthRoles>>;
     resetState: () => void;
 
     hydrationErrors: any;
     setHydrationErrors: (val: EntitiesState['hydrationErrors']) => void;
 
-    mutate: KeyedMutator<PostgrestResponse<AuthRoles>> | null;
+    mutate: KeyedMutator<ParsedPagedFetchAllResponse<AuthRoles>> | null;
     setMutate: (value: EntitiesState['mutate']) => void;
 }
