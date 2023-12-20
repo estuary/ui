@@ -5,8 +5,8 @@ import { ColumnProps } from '../EntityTable/types';
 const defaultColumns: TableColumns[] = [
     {
         field: null,
-        collapseHeader: true,
         align: 'right',
+        collapseHeader: true,
         headerIntlKey: 'ops.logsTable.label.level',
     },
     {
@@ -17,10 +17,6 @@ const defaultColumns: TableColumns[] = [
     {
         field: null,
         headerIntlKey: 'ops.logsTable.label.message',
-    },
-    {
-        field: null,
-        headerIntlKey: 'ops.logsTable.label.fields',
     },
 ];
 

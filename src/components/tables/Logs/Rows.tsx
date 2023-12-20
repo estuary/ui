@@ -95,8 +95,6 @@ function Row({ row }: RowProps) {
                         </Typography>
                     ) : null}
                 </TableCell>
-
-                <TableCell />
             </TableRow>
             {row.fields ? (
                 <TableRow>
