@@ -1,9 +1,9 @@
 import { Box, Table, TableContainer } from '@mui/material';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
-import { OpsLogFlowDocument, TableStatuses } from 'types';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { OpsLogFlowDocument, TableStatuses } from 'types';
 import Rows from './Rows';
 import useLogColumns from './useLogColumns';
 
@@ -15,8 +15,6 @@ interface Props {
 function LogsTable({ documents, loading }: Props) {
     const intl = useIntl();
     const columns = useLogColumns();
-
-    console.log('documents', documents);
 
     const dataRows = useMemo(
         () => (documents.length > 0 ? <Rows data={documents} /> : null),

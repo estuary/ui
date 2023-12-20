@@ -8,7 +8,6 @@ interface Props {
 }
 
 function MessageCell({ fields, message }: Props) {
-    console.log('MessageCell', message);
     return (
         <TableCell>
             <Typography
