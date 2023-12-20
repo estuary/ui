@@ -1,10 +1,11 @@
 import { Stack, TableCell } from '@mui/material';
+import { OpsLogFlowDocument } from 'types';
 import ExpandRowButton from './ExpandRowButton';
 import LevelIcon from './LevelIcon';
 import { BaseCellSx } from './shared';
 
 interface Props {
-    row: any;
+    row: OpsLogFlowDocument;
     expanded: boolean;
     disableExpand?: boolean;
 }

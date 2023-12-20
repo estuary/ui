@@ -6,13 +6,19 @@ import useJournalNameForLogs from 'hooks/journals/useJournalNameForLogs';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
+import { OpsLogFlowDocument } from 'types';
 
 const docsRequested = 25;
 
 function Ops() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const [name, collectionName] = useJournalNameForLogs(catalogName);
+
+    // TODO (typing)
+    //  need to handle typing
     const journalData = useJournalData(name, docsRequested, collectionName);
+    const documents = (journalData.data?.documents ??
+        []) as OpsLogFlowDocument[];
 
     return (
         <Box>
@@ -37,7 +43,7 @@ function Ops() {
 
                     {journalData.loading ? <LinearProgress /> : null}
 
-                    <LogsTable documents={journalData.data?.documents ?? []} />
+                    <LogsTable documents={documents} />
                 </Stack>
             </Box>
         </Box>

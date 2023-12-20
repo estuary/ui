@@ -1,59 +1,33 @@
-import {
-    Box,
-    Collapse,
-    SxProps,
-    TableCell,
-    TableRow,
-    Theme,
-    Typography,
-    useTheme,
-} from '@mui/material';
-import { DateTime } from 'luxon';
-import { FormattedMessage } from 'react-intl';
+import { TableRow } from '@mui/material';
 import { useToggle } from 'react-use';
-import ReactJson from '@microlink/react-json-view';
-import { jsonViewTheme } from 'context/Theme';
-import { ObjectPreview } from 'react-inspector';
+import { OpsLogFlowDocument } from 'types';
 import LevelCell from '../cells/logs/LevelCell';
-import useLogColumns from './useLogColumns';
+import TimestampCell from '../cells/logs/TimestampCell';
+import MessageCell from '../cells/logs/MessageCell';
+import FieldsExpandedCell from '../cells/logs/FieldsExpandedCell';
 
 interface RowProps {
-    row: any;
+    row: OpsLogFlowDocument;
 }
 
 interface RowsProps {
-    data: any[];
+    data: OpsLogFlowDocument[];
 }
 
-// const reactInspectorTheme = {
-//     light: chromeLight,
-//     dark: chromeDark,
-// };
-const BaseTypographySx: SxProps<Theme> = {
-    fontFamily: 'Monospace',
-};
-const BaseCellSx: SxProps<Theme> = {
-    py: 0,
-};
-
 function Row({ row }: RowProps) {
-    const theme = useTheme();
-    const columns = useLogColumns();
-
+    const hasFields = Boolean(row.fields);
     const [expanded, toggleExpanded] = useToggle(false);
-
-    const enableExpansion = Boolean(row.fields);
 
     return (
         <>
             <TableRow
-                hover={enableExpansion}
-                aria-expanded={expanded}
+                hover={hasFields}
+                aria-expanded={hasFields ? expanded : undefined}
                 sx={{
-                    cursor: enableExpansion ? 'pointer' : undefined,
+                    cursor: hasFields ? 'pointer' : undefined,
                 }}
                 onClick={
-                    enableExpansion
+                    hasFields
                         ? () => {
                               toggleExpanded();
                           }
@@ -61,90 +35,17 @@ function Row({ row }: RowProps) {
                 }
             >
                 <LevelCell
-                    disableExpand={!enableExpansion}
+                    disableExpand={!hasFields}
                     expanded={expanded}
                     row={row}
                 />
 
-                <TableCell sx={BaseCellSx}>
-                    <Typography noWrap sx={BaseTypographySx}>
-                        {DateTime.fromISO(row.ts).toFormat(
-                            'yyyy-LL-dd HH:mm:ss.SSS ZZZZ'
-                        )}
-                    </Typography>
-                </TableCell>
+                <TimestampCell ts={row.ts} />
 
-                <TableCell>
-                    <Typography
-                        component="div"
-                        sx={{
-                            ...BaseTypographySx,
-                            width: '100%',
-                        }}
-                    >
-                        {row.message}
-                    </Typography>
-
-                    {row.fields ? (
-                        <Typography component="div" sx={BaseTypographySx}>
-                            {row.fields ? (
-                                <ObjectPreview data={row.fields} />
-                            ) : (
-                                <FormattedMessage id="common.missing" />
-                            )}
-                        </Typography>
-                    ) : null}
-                </TableCell>
+                <MessageCell message={row.message} fields={row.fields} />
             </TableRow>
-            {row.fields ? (
-                <TableRow>
-                    <TableCell
-                        sx={{ ...BaseCellSx, pl: 5 }}
-                        colSpan={columns.length}
-                    >
-                        <Collapse
-                            in={expanded}
-                            timeout={100}
-                            sx={{
-                                mb: 1,
-                            }}
-                            unmountOnExit
-                        >
-                            <Box
-                                sx={{
-                                    '& .react-json-view': {
-                                        backgroundColor:
-                                            'transparent !important',
-                                    },
-                                }}
-                            >
-                                <ReactJson
-                                    collapsed={1}
-                                    displayDataTypes={false}
-                                    displayObjectSize={false}
-                                    enableClipboard={false}
-                                    name="fields"
-                                    quotesOnKeys={false}
-                                    src={row.fields ?? {}}
-                                    style={{ wordBreak: 'break-all' }}
-                                    theme={jsonViewTheme[theme.palette.mode]}
-                                />
-                            </Box>
-
-                            {/*                        <ObjectInspector
-                            data={row.fields ?? {}}
-                            name="fields"
-                            expandLevel={1}
-                            theme={
-                                {
-                                    ...reactInspectorTheme[theme.palette.mode],
-                                    TREENODE_FONT_SIZE: 14,
-                                } as any // hacky but the typing was complaining
-                            }
-                        />*/}
-                        </Collapse>
-                    </TableCell>
-                </TableRow>
+            {hasFields ? (
+                <FieldsExpandedCell expanded={expanded} fields={row.fields} />
             ) : null}
         </>
     );
@@ -153,8 +54,8 @@ function Row({ row }: RowProps) {
 function Rows({ data }: RowsProps) {
     return (
         <>
-            {data.map((record, index) => (
-                <Row row={record} key={index} />
+            {data.map((record) => (
+                <Row row={record} key={record._meta.uuid} />
             ))}
         </>
     );

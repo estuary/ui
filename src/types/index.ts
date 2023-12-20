@@ -384,3 +384,23 @@ export interface DataProcessingAlert {
     catalog_name: string;
     evaluation_interval: string;
 }
+
+export interface OpsLogFlowDocument {
+    _meta: Meta;
+    shard: Shard;
+    ts: string; //time stamp string
+    level: string;
+    message: string;
+    fields?: Schema;
+}
+
+export interface Meta {
+    uuid: string;
+}
+
+export interface Shard {
+    keyBegin: string;
+    kind: string;
+    name: string;
+    rClockBegin: string;
+}
