@@ -1,17 +1,19 @@
 import {
     Box,
     Collapse,
+    SxProps,
     TableCell,
     TableRow,
+    Theme,
     Typography,
     useTheme,
 } from '@mui/material';
 import { DateTime } from 'luxon';
-import { ObjectPreview } from 'react-inspector';
 import { FormattedMessage } from 'react-intl';
 import { useToggle } from 'react-use';
 import ReactJson from '@microlink/react-json-view';
 import { jsonViewTheme } from 'context/Theme';
+import { ObjectPreview } from 'react-inspector';
 import LevelCell from '../cells/logs/LevelCell';
 import useLogColumns from './useLogColumns';
 
@@ -27,8 +29,12 @@ interface RowsProps {
 //     light: chromeLight,
 //     dark: chromeDark,
 // };
-const BaseTypographySx = { fontFamily: 'Monospace', textWrap: 'nowrap' };
-const BaseCellSx = { maxWidth: 'min-content', py: 0 };
+const BaseTypographySx: SxProps<Theme> = {
+    fontFamily: 'Monospace',
+};
+const BaseCellSx: SxProps<Theme> = {
+    py: 0,
+};
 
 function Row({ row }: RowProps) {
     const theme = useTheme();
@@ -36,81 +42,98 @@ function Row({ row }: RowProps) {
 
     const [expanded, toggleExpanded] = useToggle(false);
 
+    const enableExpansion = Boolean(row.fields);
+
     return (
         <>
             <TableRow
-                hover
+                hover={enableExpansion}
                 aria-expanded={expanded}
                 sx={{
-                    cursor: 'pointer',
+                    cursor: enableExpansion ? 'pointer' : undefined,
                 }}
-                onClick={() => {
-                    toggleExpanded();
-                }}
+                onClick={
+                    enableExpansion
+                        ? () => {
+                              toggleExpanded();
+                          }
+                        : undefined
+                }
             >
-                <LevelCell row={row} expanded={expanded} />
+                <LevelCell
+                    disableExpand={!enableExpansion}
+                    expanded={expanded}
+                    row={row}
+                />
 
                 <TableCell sx={BaseCellSx}>
-                    <Typography sx={BaseTypographySx}>
+                    <Typography noWrap sx={BaseTypographySx}>
                         {DateTime.fromISO(row.ts).toFormat(
                             'yyyy-LL-dd HH:mm:ss.SSS ZZZZ'
                         )}
                     </Typography>
                 </TableCell>
 
-                <TableCell sx={BaseCellSx}>
-                    <Typography sx={BaseTypographySx}>{row.message}</Typography>
-                </TableCell>
-
-                <TableCell sx={BaseCellSx}>
-                    <Typography component="div" sx={BaseTypographySx}>
-                        {row.fields ? (
-                            <ObjectPreview
-                                data={row.fields}
-                                theme={{
-                                    BASE_COLOR: 'red',
-                                }}
-                            />
-                        ) : (
-                            <FormattedMessage id="common.missing" />
-                        )}
-                    </Typography>
-                </TableCell>
-            </TableRow>
-            <TableRow>
-                <TableCell
-                    sx={{ ...BaseCellSx, px: 3 }}
-                    colSpan={columns.length}
-                >
-                    <Collapse
-                        in={expanded}
-                        timeout={100}
+                <TableCell>
+                    <Typography
+                        component="div"
                         sx={{
-                            mb: 1,
+                            ...BaseTypographySx,
+                            width: '100%',
                         }}
-                        unmountOnExit
                     >
-                        <Box
-                            sx={{
-                                '& .react-json-view': {
-                                    backgroundColor: 'transparent !important',
-                                },
-                            }}
-                        >
-                            <ReactJson
-                                collapsed={1}
-                                displayDataTypes={false}
-                                displayObjectSize={false}
-                                enableClipboard={false}
-                                name="fields"
-                                quotesOnKeys={false}
-                                src={row.fields ?? {}}
-                                style={{ wordBreak: 'break-all' }}
-                                theme={jsonViewTheme[theme.palette.mode]}
-                            />
-                        </Box>
+                        {row.message}
+                    </Typography>
 
-                        {/*                        <ObjectInspector
+                    {row.fields ? (
+                        <Typography component="div" sx={BaseTypographySx}>
+                            {row.fields ? (
+                                <ObjectPreview data={row.fields} />
+                            ) : (
+                                <FormattedMessage id="common.missing" />
+                            )}
+                        </Typography>
+                    ) : null}
+                </TableCell>
+
+                <TableCell />
+            </TableRow>
+            {row.fields ? (
+                <TableRow>
+                    <TableCell
+                        sx={{ ...BaseCellSx, pl: 5 }}
+                        colSpan={columns.length}
+                    >
+                        <Collapse
+                            in={expanded}
+                            timeout={100}
+                            sx={{
+                                mb: 1,
+                            }}
+                            unmountOnExit
+                        >
+                            <Box
+                                sx={{
+                                    '& .react-json-view': {
+                                        backgroundColor:
+                                            'transparent !important',
+                                    },
+                                }}
+                            >
+                                <ReactJson
+                                    collapsed={1}
+                                    displayDataTypes={false}
+                                    displayObjectSize={false}
+                                    enableClipboard={false}
+                                    name="fields"
+                                    quotesOnKeys={false}
+                                    src={row.fields ?? {}}
+                                    style={{ wordBreak: 'break-all' }}
+                                    theme={jsonViewTheme[theme.palette.mode]}
+                                />
+                            </Box>
+
+                            {/*                        <ObjectInspector
                             data={row.fields ?? {}}
                             name="fields"
                             expandLevel={1}
@@ -121,9 +144,10 @@ function Row({ row }: RowProps) {
                                 } as any // hacky but the typing was complaining
                             }
                         />*/}
-                    </Collapse>
-                </TableCell>
-            </TableRow>
+                        </Collapse>
+                    </TableCell>
+                </TableRow>
+            ) : null}
         </>
     );
 }
