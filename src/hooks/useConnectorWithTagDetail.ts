@@ -18,7 +18,6 @@ export interface ConnectorWithTagDetailQuery {
     }[];
     id: string;
     detail: string;
-    updated_at: string;
     image_name: string;
     image: string;
     recommended: boolean;

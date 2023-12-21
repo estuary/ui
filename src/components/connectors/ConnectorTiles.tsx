@@ -5,23 +5,16 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+import { getConnectors } from 'api/connectors';
 import ConnectorCard from 'components/connectors/card';
 import ConnectorToolbar from 'components/connectors/ConnectorToolbar';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import { semiTransparentBackground } from 'context/Theme';
-import { useQuery, useSelect } from 'hooks/supabase-swr';
-import {
-    ConnectorWithTagDetailQuery,
-    CONNECTOR_WITH_TAG_QUERY,
-} from 'hooks/useConnectorWithTagDetail';
+import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
+import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import {
-    CONNECTOR_NAME,
-    CONNECTOR_RECOMMENDED,
-    defaultTableFilter,
-    TABLES,
-} from 'services/supabase';
+
 import {
     EntityWithCreateWorkflow,
     SortDirection,
@@ -67,34 +60,13 @@ function ConnectorTiles({
         status: TableStatuses.LOADING,
     });
 
-    const liveSpecQuery = useQuery<ConnectorWithTagDetailQuery>(
-        TABLES.CONNECTORS,
-        {
-            columns: CONNECTOR_WITH_TAG_QUERY,
-            filter: (query) => {
-                return defaultTableFilter<ConnectorWithTagDetailQuery>(
-                    query,
-                    [CONNECTOR_NAME],
-                    searchQuery,
-                    [
-                        {
-                            col: CONNECTOR_RECOMMENDED,
-                            direction: 'desc',
-                        },
-                        {
-                            col: CONNECTOR_NAME,
-                            direction: sortDirection,
-                        },
-                    ],
-                    undefined,
-                    { column: 'connector_tags.protocol', value: protocol }
-                );
-            },
-        },
-        [searchQuery, sortDirection, protocol]
-    );
+    const query = useMemo(() => {
+        return getConnectors(searchQuery, sortDirection, protocol);
+    }, [searchQuery, sortDirection, protocol]);
 
-    const { data: useSelectResponse, isValidating } = useSelect(liveSpecQuery);
+    const { data: useSelectResponse, isValidating } =
+        useSelectNew<ConnectorWithTagDetailQuery>(query);
+
     const selectData = useMemo(
         () => (useSelectResponse ? useSelectResponse.data : []),
         [useSelectResponse]
