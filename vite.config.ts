@@ -58,6 +58,10 @@ export default defineConfig({
         outDir: './build',
     },
 
+    optimizeDeps: {
+        exclude: ['@estuary/flow-web'],
+    },
+
     define: {
         [APP_VERSION]: JSON.stringify(process.env.npm_package_version),
     },
@@ -66,8 +70,11 @@ export default defineConfig({
     server: { port: 3000, strictPort: true },
     test: {
         environment: 'jsdom',
-        setupFiles: './src/setupTests.ts',
+        setupFiles: ['./src/setupTests.ts'],
         testTimeout: 10000, // more time for auto retries
+        // alias: {
+        //     '@estuary/flow-web': 'vue/dist/vue.esm-bundler.js',
+        // },
     },
 
     // https://github.com/vitejs/awesome-vite#plugins

@@ -13,6 +13,8 @@
 
 // Testing a component will not work until there is a solution to this issue
 // https://github.com/vitest-dev/vitest/issues/2910
+// might be related to his as well
+// https://github.com/Menci/vite-plugin-wasm/issues/46
 import { describe } from 'vitest';
 
 describe.skip('Field Selection Viewer', () => {});
