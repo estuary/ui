@@ -31,7 +31,7 @@
         "skipLibCheck": true,
         "resolveJsonModule": true,
         "typeRoots": ["src/types", "node_modules/@types"],
-        "types": ["vite/client"]
+        "types": ["vite/client", "vitest"]
     },
     "include": ["src", "flow_deps/flow.d.ts"],
     "exclude": ["node_modules", "build", "scripts", "flow_deps/flow-bin"]
