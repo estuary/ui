@@ -663,6 +663,7 @@ const Ops: ResolvedIntlConfig['messages'] = {
     'ops.logsTable.label.ts': `Timestamp`,
     'ops.logsTable.label.message': `Message`,
     'ops.logsTable.label.fields': `Fields`,
+    'ops.logsTable.expand.disabled': `no fields to display`,
     'ops.logsTable.emptyTableDefault.header': `No logs found.`,
     'ops.logsTable.emptyTableDefault.message': `We were unable to find any logs. Please press refresh to try loading again.`,
 };
