@@ -6,6 +6,14 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { logRocketEvent } from 'services/shared';
+import { CommonStatuses, CustomEvents } from 'services/types';
+
+const trackEvent = (status: CommonStatuses) => {
+    logRocketEvent(CustomEvents.LOGIN, {
+        status: `getSessionFromUrl ${status}`,
+    });
+};
 
 // This is the main "controller" for checking auth status for Supabase when coming into the app
 //    - This is used for both OIDC auth AND magic link auth.
@@ -33,6 +41,7 @@ const Auth = () => {
                 preventDuplicate: true,
                 variant: 'error',
             });
+
             await supabaseClient.auth.signOut();
         };
 
@@ -51,13 +60,20 @@ const Auth = () => {
                 })
                 .then(async (response) => {
                     if (response.error) {
-                        await failed(response.error.message);
+                        const error = response.error.message;
+
+                        trackEvent('failed');
+                        await failed(error);
                     }
 
+                    trackEvent('success');
                     success();
                 })
-                .catch(() => {});
+                .catch(() => {
+                    trackEvent('exception');
+                });
         } else {
+            trackEvent('skipped');
             success();
         }
     });

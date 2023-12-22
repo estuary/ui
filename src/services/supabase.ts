@@ -6,11 +6,10 @@ import {
 import { User, createClient } from '@supabase/supabase-js';
 import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { forEach, isEmpty } from 'lodash';
-import LogRocket from 'logrocket';
 import { JobStatus, SortDirection, SupabaseInvokeResponse } from 'types';
 import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 import retry from 'retry';
-import { logRocketEvent, retryAfterFailure } from './shared';
+import { logRocketConsole, logRocketEvent, retryAfterFailure } from './shared';
 import { CustomEvents } from './types';
 
 if (
@@ -341,6 +340,8 @@ export const jobSucceeded = (jobStatus?: JobStatus) => {
     }
 };
 
+export const DEFAULT_PAGING_SIZE = 1000;
+
 export type ParsedPagedFetchAllResponse<T> =
     | { data: T[] | null; error: null }
     | { data: null; error: PostgrestError };
@@ -433,11 +434,11 @@ export const jobStatusPoller = (
     let interval = DEFAULT_POLLING_INTERVAL;
     let attempts = 0;
     const makeApiCall = () => {
-        LogRocket.log('Poller : start ');
+        logRocketConsole('Poller : start ');
 
         return query.throwOnError().then(
             (payload: any) => {
-                LogRocket.log('Poller : response : ', payload);
+                logRocketConsole('Poller : response');
                 timeoutCleanUp(pollerTimeout);
 
                 if (payload.error) {
@@ -452,8 +453,9 @@ export const jobStatusPoller = (
                         response?.job_status?.type &&
                         response.job_status.type !== 'queued'
                     ) {
-                        LogRocket.log(
-                            `Poller : response : ${response.job_status.type}`
+                        logRocketConsole(
+                            `Poller : response : ${response.job_status.type}`,
+                            response
                         );
 
                         if (
@@ -466,6 +468,8 @@ export const jobStatusPoller = (
                             failure(response);
                         }
                     } else {
+                        logRocketConsole('Poller : response : trying again');
+
                         interval = incrementInterval(interval);
                         pollerTimeout = window.setTimeout(
                             makeApiCall,
@@ -475,14 +479,14 @@ export const jobStatusPoller = (
                 }
             },
             (error: any) => {
-                LogRocket.log('Poller : error : ', error);
+                logRocketConsole('Poller : error : ', error);
 
                 if (
                     attempts === 0 &&
                     typeof error?.message === 'string' &&
                     retryAfterFailure(error.message)
                 ) {
-                    LogRocket.log('Poller : error : trying again');
+                    logRocketConsole('Poller : error : trying again');
                     attempts += 1;
 
                     // We do not update the interval here like we do up above
@@ -492,7 +496,7 @@ export const jobStatusPoller = (
                         incrementInterval(interval)
                     );
                 } else {
-                    LogRocket.log('Poller : error : returning failure');
+                    logRocketConsole('Poller : error : returning failure');
                     timeoutCleanUp(pollerTimeout);
                     failure(handleFailure(JOB_STATUS_POLLER_ERROR));
                 }
