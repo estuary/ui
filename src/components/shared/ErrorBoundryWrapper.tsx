@@ -22,6 +22,9 @@ const logErrorToLogRocket = (error: Error) => {
     });
 };
 
+const ChunkError = 'ChunkLoadError';
+const FailedFetch_DynamicImport = 'Failed to fetch dynamically imported';
+
 function ErrorFallback({ error }: { error: Error }): JSX.Element {
     const intl = useIntl();
     const theme = useTheme();
@@ -36,7 +39,10 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
     useMount(() => {
         // In case the error is due to failing to fetch a chunk then show
         //  a reload dialog to inform the user what happened.
-        if (error.name === 'ChunkLoadError') {
+        if (
+            error.message.includes(FailedFetch_DynamicImport) ||
+            error.name === ChunkError
+        ) {
             setOfferReload(true);
         }
     });

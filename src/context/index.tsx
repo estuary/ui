@@ -2,6 +2,7 @@ import IconoirProvider from 'context/Iconoir';
 import NotificationProvider from 'context/Notifications';
 import SwrConfigProvider from 'context/SWR';
 import { BaseComponentProps } from 'types';
+import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import ClientProvider from './Client';
 import ContentProvider from './Content';
 import { SidePanelDocsProvider } from './SidePanelDocs';
@@ -15,13 +16,15 @@ const AppProviders = ({ children }: BaseComponentProps) => {
                 <IconoirProvider>
                     <ClientProvider>
                         <NotificationProvider>
-                            <SwrConfigProvider>
-                                <UserProvider>
-                                    <SidePanelDocsProvider>
-                                        {children}
-                                    </SidePanelDocsProvider>
-                                </UserProvider>
-                            </SwrConfigProvider>
+                            <ErrorBoundryWrapper>
+                                <SwrConfigProvider>
+                                    <UserProvider>
+                                        <SidePanelDocsProvider>
+                                            {children}
+                                        </SidePanelDocsProvider>
+                                    </UserProvider>
+                                </SwrConfigProvider>
+                            </ErrorBoundryWrapper>
                         </NotificationProvider>
                     </ClientProvider>
                 </IconoirProvider>
