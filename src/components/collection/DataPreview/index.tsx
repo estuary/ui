@@ -12,6 +12,7 @@ import { Refresh } from 'iconoir-react';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
+import ListViewSkeleton from './ListViewSkeleton';
 
 interface Props {
     collectionName: string;
@@ -104,7 +105,12 @@ export function DataPreview({ collectionName }: Props) {
 
                 {(journalData.data?.documents.length ?? 0) > 0 && spec ? (
                     <ListView journalData={journalData} spec={spec} />
+                ) : isLoading ? (
+                    <ListViewSkeleton />
                 ) : null}
+
+                <ListViewSkeleton />
+
                 {/*             : (
                 <TableView journalData={journalData} spec={spec} />
             )}*/}
