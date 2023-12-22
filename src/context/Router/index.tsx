@@ -10,7 +10,7 @@ import DataPlaneAuthReq from 'pages/DataPlaneAuthReq';
 import Login from 'pages/Login';
 import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
-import { Suspense, lazy } from 'react';
+import { Suspense } from 'react';
 import {
     Route,
     RouterProvider,
@@ -25,36 +25,41 @@ import AdminConnectors from 'components/admin/Connectors';
 import AdminBilling from 'components/admin/Billing';
 import AdminSettings from 'components/admin/Settings';
 import HomePage from 'pages/Home';
+import { handledLazy } from 'services/react';
 import MaterializationsTable from './MaterializationsTable';
 import CapturesTable from './CapturesTable';
 import RequireAuth from './RequireAuth';
 import Authenticated from './Authenticated';
 
 // Capture
-const CaptureCreateRoute = lazy(() => import('./CaptureCreate'));
-const CaptureCreateNewRoute = lazy(() => import('./CaptureCreateNew'));
-const CaptureDetailsRoute = lazy(() => import('./CaptureDetails'));
-const CaptureEditRoute = lazy(() => import('./CaptureEdit'));
+const CaptureCreateRoute = handledLazy(() => import('./CaptureCreate'));
+const CaptureCreateNewRoute = handledLazy(() => import('./CaptureCreateNew'));
+const CaptureDetailsRoute = handledLazy(() => import('./CaptureDetails'));
+const CaptureEditRoute = handledLazy(() => import('./CaptureEdit'));
 
 // Collection
-const DerivationCreateComponent = lazy(
+const DerivationCreateComponent = handledLazy(
     () => import('components/derivation/Create')
 );
-const CollectionCreateRoute = lazy(() => import('./CollectionCreate'));
-const CollectionCreateNewRoute = lazy(() => import('./CollectionCreateNew'));
-const CollectionDetailsRoute = lazy(() => import('./CollectionDetails'));
+const CollectionCreateRoute = handledLazy(() => import('./CollectionCreate'));
+const CollectionCreateNewRoute = handledLazy(
+    () => import('./CollectionCreateNew')
+);
+const CollectionDetailsRoute = handledLazy(() => import('./CollectionDetails'));
 
 //Materializations
-const MaterializationCreateRoute = lazy(
+const MaterializationCreateRoute = handledLazy(
     () => import('./MaterializationCreate')
 );
-const MaterializationCreateNewRoute = lazy(
+const MaterializationCreateNewRoute = handledLazy(
     () => import('./MaterializationCreateNew')
 );
-const MaterializationDetailsRoute = lazy(
+const MaterializationDetailsRoute = handledLazy(
     () => import('./MaterializationDetails')
 );
-const MaterializationEditRoute = lazy(() => import('./MaterializationEdit'));
+const MaterializationEditRoute = handledLazy(
+    () => import('./MaterializationEdit')
+);
 
 const router = createBrowserRouter(
     createRoutesFromElements(

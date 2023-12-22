@@ -18,6 +18,7 @@ export enum CustomEvents {
     FULL_PAGE_ERROR_DISPLAYED = 'Full_Page_Error_Displayed',
     GATEWAY_TOKEN_FAILED = 'Gateway_Auth_Token:CallFailed',
     GATEWAY_TOKEN_INVALID_PREFIX = 'Gateway_Auth_Token:InvalidPrefix',
+    LAZY_LOADING = 'Lazy Loading',
     LOGIN = 'Login',
     MATERIALIZATION_CREATE = 'Materialization_Create',
     MATERIALIZATION_CREATE_CONFIG_CREATE = 'Materialization_Create_Config_Create',
