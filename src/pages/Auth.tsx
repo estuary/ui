@@ -8,12 +8,10 @@ import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import { Schema } from 'types';
 
-const trackEvent = (status: string, args: Schema = {}) => {
+const trackEvent = (status: string) => {
     logRocketEvent(CustomEvents.LOGIN, {
         status: `getSessionFromUrl ${status}`,
-        ...args,
     });
 };
 
@@ -64,7 +62,7 @@ const Auth = () => {
                     if (response.error) {
                         const error = response.error.message;
 
-                        trackEvent('failed', { error });
+                        trackEvent('failed');
                         await failed(error);
                     }
 
