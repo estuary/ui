@@ -3,11 +3,9 @@ import { NavArrowDown } from 'iconoir-react';
 import { ReactNode, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useMount } from 'react-use';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import AlertBox from './AlertBox';
-import MustReloadDialog from './MustReloadDialog';
 
 interface Props {
     children: ReactNode;
@@ -22,34 +20,15 @@ const logErrorToLogRocket = (error: Error) => {
     });
 };
 
-const ChunkError = 'ChunkLoadError';
-const FailedFetch_DynamicImport = 'Failed to fetch dynamically imported';
-
 function ErrorFallback({ error }: { error: Error }): JSX.Element {
     const intl = useIntl();
     const theme = useTheme();
 
-    const [offerReload, setOfferReload] = useState(false);
     const [expanded, setExpanded] = useState(false);
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
-
-    useMount(() => {
-        // In case the error is due to failing to fetch a chunk then show
-        //  a reload dialog to inform the user what happened.
-        if (
-            error.message.includes(FailedFetch_DynamicImport) ||
-            error.name === ChunkError
-        ) {
-            setOfferReload(true);
-        }
-    });
-
-    if (offerReload) {
-        return <MustReloadDialog />;
-    }
 
     return (
         <AlertBox

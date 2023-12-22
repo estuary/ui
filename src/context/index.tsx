@@ -14,9 +14,9 @@ const AppProviders = ({ children }: BaseComponentProps) => {
         <ContentProvider>
             <ThemeProvider>
                 <IconoirProvider>
-                    <ClientProvider>
-                        <NotificationProvider>
-                            <ErrorBoundryWrapper>
+                    <ErrorBoundryWrapper>
+                        <ClientProvider>
+                            <NotificationProvider>
                                 <SwrConfigProvider>
                                     <UserProvider>
                                         <SidePanelDocsProvider>
@@ -24,9 +24,9 @@ const AppProviders = ({ children }: BaseComponentProps) => {
                                         </SidePanelDocsProvider>
                                     </UserProvider>
                                 </SwrConfigProvider>
-                            </ErrorBoundryWrapper>
-                        </NotificationProvider>
-                    </ClientProvider>
+                            </NotificationProvider>
+                        </ClientProvider>
+                    </ErrorBoundryWrapper>
                 </IconoirProvider>
             </ThemeProvider>
         </ContentProvider>
