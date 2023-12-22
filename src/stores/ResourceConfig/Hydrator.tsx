@@ -1,5 +1,5 @@
 import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow } from 'context/Workflow';
+import { useEntityWorkflow, useEntityWorkflow_Editing } from 'context/Workflow';
 import invariableStores from 'context/Zustand/invariableStores';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -8,8 +8,8 @@ import { useEffectOnce, useUpdateEffect } from 'react-use';
 import { BaseComponentProps } from 'types';
 import { useStore } from 'zustand';
 import {
-    useResourceConfig_hydrated,
     useResourceConfig_hydrateState,
+    useResourceConfig_hydrated,
     useResourceConfig_setActive,
     useResourceConfig_setHydrated,
     useResourceConfig_setHydrationErrorsExist,
@@ -21,8 +21,7 @@ export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
     const entityType = useEntityType();
 
     const workflow = useEntityWorkflow();
-    const editWorkflow =
-        workflow === 'materialization_edit' || workflow === 'capture_edit';
+    const editWorkflow = useEntityWorkflow_Editing();
 
     const hydrated = useResourceConfig_hydrated();
     const setHydrated = useResourceConfig_setHydrated();
@@ -44,7 +43,8 @@ export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
                 if (
                     response &&
                     response.length === 1 &&
-                    response[0].spec_type === 'capture'
+                    response[0].spec_type === 'capture' &&
+                    !editWorkflow
                 ) {
                     setPrefilledCapture(response[0].catalog_name);
                 }
