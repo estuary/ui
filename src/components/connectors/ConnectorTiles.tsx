@@ -67,8 +67,6 @@ function ConnectorTiles({
     const { data: useSelectResponse, isValidating } =
         useSelectNew<ConnectorWithTagDetailQuery>(query);
 
-    console.log('useSelectResponse', useSelectResponse);
-
     const selectData = useMemo(
         () => (useSelectResponse ? useSelectResponse.data : []),
         [useSelectResponse]
