@@ -16,6 +16,7 @@ import RowSelect from '../cells/RowSelect';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
 import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
+import { selectKeyValueName } from '../shared';
 
 interface RowProps {
     isSelected: boolean;
@@ -65,7 +66,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
         <TableRow
             key={`Entity-${row.id}`}
             selected={isSelected}
-            onClick={() => setRow(row.id, row.last_pub_id, !isSelected)}
+            onClick={() => setRow(row.id, row[selectKeyValueName], !isSelected)}
             sx={getEntityTableRowSx(theme)}
         >
             <RowSelect isSelected={isSelected} name={row.catalog_name} />
