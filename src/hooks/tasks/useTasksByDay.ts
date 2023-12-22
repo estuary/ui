@@ -1,21 +1,10 @@
 import { TABLES } from 'services/supabase';
-import { Entity } from 'types';
+import { Entity, Shard } from 'types';
 import { useQuery, useSelect } from '../supabase-swr/';
-
-export interface Meta {
-    uuid: string;
-}
 
 export interface Out {
     bytesTotal: number;
     docsTotal: number;
-}
-
-export interface Shard {
-    keyBegin: string;
-    kind: string;
-    name: string;
-    rClockBegin: string;
 }
 
 interface CaptureDetails {
@@ -24,7 +13,6 @@ interface CaptureDetails {
 }
 
 export interface TaskFlowDocument {
-    _meta: Meta;
     capture: {
         [k: string]: CaptureDetails;
     };
