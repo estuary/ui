@@ -5,11 +5,11 @@ import Connector from 'components/tables/cells/Connector';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { useEntityType } from 'context/EntityContext';
-import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
+import { useTenantDetails } from 'context/fetcher/Tenant';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
-import { SelectTableStoreNames } from 'stores/names';
 import { StatsResponse } from 'stores/Tables/Store';
+import { SelectTableStoreNames } from 'stores/names';
 import { hasLength } from 'utils/misc-utils';
 import EditTask from '../cells/EditTask';
 import EntityNameLink from '../cells/EntityNameLink';
@@ -41,16 +41,10 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
         authenticatedRoutes.captures.details.overview.fullPath
     );
 
-    const handlers = {
-        clickRow: (rowId: string, lastPubId: string) => {
-            setRow(rowId, lastPubId, !isSelected);
-        },
-    };
-
     return (
         <TableRow
             hover
-            onClick={() => handlers.clickRow(row.id, row[selectKeyValueName])}
+            onClick={() => setRow(row.id, row[selectKeyValueName], !isSelected)}
             selected={isSelected}
             sx={getEntityTableRowSx(theme)}
         >
