@@ -1,6 +1,8 @@
 import { setupServer } from 'msw/node';
+import { handlers } from 'test/handlers';
 
-const server = setupServer();
+const server = setupServer(...handlers);
+
 // use to make sure the test server is getting hit
 // server.events.on('request:start', ({ request }) => {
 //     console.log('MSW intercepted:', request.method, request.url);
