@@ -13,7 +13,7 @@ const connectors = [
         id: '00:00:00:00:00:00:00:00',
         detail: 'FooDB mock details',
         image_name: 'example.com/company/materialize-foo',
-        image: 'http://example.com/image/path',
+        // image: 'http://example.com/image/path',
         recommended: true,
         title: 'FooDB',
         connector_tags: [
