@@ -6,7 +6,7 @@ describe('Connector Tiles', () => {
     it('should display the connector details', async () => {
         const rendered = render(<ConnectorTiles />);
 
-        // TODO (testing)
+        // TODO (testing|expect)
         //      need to get the vitest `expect` wired up to handle matchers from other
         //      libraries and can allow us to wait for stuff to load in
         // await waitFor(() => {
