@@ -31,3 +31,5 @@ export enum CustomEvents {
     SUPABASE_CALL_UNAUTHENTICATED = 'Supabase_Call_Unauthenticated',
     SWR_LOADING_SLOW = 'SWR_Loading_Slow',
 }
+
+export type CommonStatuses = 'success' | 'failed' | 'exception' | 'skipped';

@@ -7,9 +7,9 @@ import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
+import { CommonStatuses, CustomEvents } from 'services/types';
 
-const trackEvent = (status: string) => {
+const trackEvent = (status: CommonStatuses) => {
     logRocketEvent(CustomEvents.LOGIN, {
         status: `getSessionFromUrl ${status}`,
     });
