@@ -1,6 +1,5 @@
 import { Skeleton } from '@mui/material';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useZustandStore } from 'context/Zustand/provider';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -12,6 +11,7 @@ import {
     useBilling_resetState,
     useBilling_setSelectedTenant,
 } from 'stores/Billing/hooks';
+import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     useBillingTable_setHydrated,
@@ -26,7 +26,8 @@ import { hasLength } from 'utils/misc-utils';
 function TenantOptions() {
     const intl = useIntl();
 
-    const tenants = useTenantDetails();
+    const adminCapabilities = useEntitiesStore_capabilities_adminable();
+    const objectRoles = Object.keys(adminCapabilities);
 
     // AutoComplete
     const handledDefault = useRef(false);
@@ -51,11 +52,8 @@ function TenantOptions() {
     >(SelectTableStoreNames.BILLING, selectableTableStoreSelectors.state.reset);
 
     const tenantNames = useMemo<string[] | null>(
-        () =>
-            tenants && tenants.length > 0
-                ? tenants.map(({ tenant }) => tenant)
-                : null,
-        [tenants]
+        () => (objectRoles.length > 0 ? objectRoles : null),
+        [objectRoles]
     );
 
     const updateStateAndStore = useCallback(
