@@ -340,6 +340,8 @@ export const jobSucceeded = (jobStatus?: JobStatus) => {
     }
 };
 
+export const DEFAULT_PAGING_SIZE = 1000;
+
 export type ParsedPagedFetchAllResponse<T> =
     | { data: T[] | null; error: null }
     | { data: null; error: PostgrestError };

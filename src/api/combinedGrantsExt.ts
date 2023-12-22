@@ -6,6 +6,7 @@ import {
     SortingProps,
     supabaseClient,
     TABLES,
+    DEFAULT_PAGING_SIZE,
 } from 'services/supabase';
 import { AuthRoles, Capability, Grant_UserExt } from 'types';
 
@@ -77,10 +78,9 @@ const getGrants_Users = (
     return queryBuilder;
 };
 
-const getAuthPageSize = 1000;
 export async function getAuthRoles(
     capability: string,
-    pageSize: number = getAuthPageSize
+    pageSize: number = DEFAULT_PAGING_SIZE
 ) {
     const responses = await pagedFetchAll<AuthRoles>(
         pageSize,
