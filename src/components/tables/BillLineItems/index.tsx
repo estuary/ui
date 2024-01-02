@@ -1,9 +1,10 @@
 import { Box, Button, Skeleton, Table, TableContainer } from '@mui/material';
-import { StripeInvoice, getTenantInvoice } from 'api/billing';
+import { StripeInvoice, getTenantInvoice, InvoiceLineItem } from 'api/billing';
 import Rows from 'components/tables/BillLineItems/Rows';
 import TotalLines from 'components/tables/BillLineItems/TotalLines';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
+import { getTableHeaderWithoutHeaderColor } from 'context/Theme';
 import { CreditCard, Download } from 'iconoir-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -48,8 +49,161 @@ function BillingLineItemsTable() {
     const invoices = useBilling_invoices();
 
     const dataRows = useMemo(
-        () => <Rows lineItems={selectedInvoice?.line_items ?? []} />,
-        [selectedInvoice]
+        () => (
+            <Rows
+                lineItems={
+                    // selectedInvoice?.line_items ??
+                    [
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                        {
+                            description: 'lorem ipsum',
+                            count: 3,
+                            rate: 2,
+                            subtotal: 1,
+                        },
+                    ] as InvoiceLineItem[]
+                }
+            />
+        ),
+        []
+        // [selectedInvoice]
     );
 
     const [stripeInvoice, setStripeInvoice] = useState<StripeInvoice | null>(
@@ -81,9 +235,13 @@ function BillingLineItemsTable() {
                         id: 'admin.billing.table.line_items.title',
                     })}
                     size="small"
-                    sx={{ minWidth: 350 }}
+                    stickyHeader
+                    sx={{
+                        ...getTableHeaderWithoutHeaderColor(),
+                        minWidth: 350,
+                    }}
                 >
-                    <EntityTableHeader columns={columns} noBackgroundColor />
+                    <EntityTableHeader columns={columns} />
 
                     <EntityTableBody
                         columns={columns}
