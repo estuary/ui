@@ -45,7 +45,7 @@ import { AdminBillingProps } from './types';
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
 // Adding a hair of height so that a slight amount of a line item
-//  is shown
+//  is shown and hope that'll make it clear the section can scroll
 const invoiceCardHeight = TOTAL_CARD_HEIGHT + 5;
 
 function AdminBilling({ showAddPayment }: AdminBillingProps) {
