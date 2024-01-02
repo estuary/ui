@@ -1,7 +1,6 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
 import { CompositeProjection } from 'components/editor/Bindings/FieldSelection/types';
 import ChipListCell from 'components/tables/cells/ChipList';
-import ConstraintDetails from 'components/tables/cells/fieldSelection/ConstraintDetails';
 import FieldActions from 'components/tables/cells/fieldSelection/FieldActions';
 import {
     doubleElevationHoverBackground,
@@ -99,21 +98,13 @@ function Row({ row }: RowProps) {
             )}
 
             {row.constraint ? (
-                <>
-                    <ConstraintDetails constraint={row.constraint} />
-
-                    <FieldActions
-                        field={row.field}
-                        constraint={row.constraint}
-                        selectionType={row.selectionType}
-                    />
-                </>
+                <FieldActions
+                    field={row.field}
+                    constraint={row.constraint}
+                    selectionType={row.selectionType}
+                />
             ) : (
-                <>
-                    <TableCell />
-
-                    <TableCell />
-                </>
+                <TableCell />
             )}
         </TableRow>
     );

@@ -28,10 +28,6 @@ export const columns: TableColumns[] = [
         headerIntlKey: 'data.type',
     },
     {
-        field: 'constraint.type',
-        headerIntlKey: 'fieldSelection.table.label.details',
-    },
-    {
         field: null,
         headerIntlKey: 'fieldSelection.table.label.actions',
     },
