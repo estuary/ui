@@ -71,6 +71,7 @@ function ListView({
                     backgroundColor={
                         semiTransparentBackground[theme.palette.mode]
                     }
+                    displayBorder
                     list={
                         <DataGrid
                             columns={[
@@ -97,7 +98,7 @@ function ListView({
                             onRowSelectionModelChange={(newSelectionModel) => {
                                 setSelectionModel(newSelectionModel);
                             }}
-                            sx={dataGridListStyling}
+                            sx={{ ...dataGridListStyling, border: 'none' }}
                         />
                     }
                     details={
