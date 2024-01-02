@@ -40,15 +40,18 @@ function useShardHydration(
 
     // Handle data
     useEffect(() => {
-        setShardsError(error ?? null);
-
         if (data) {
             if (data.shards.length > 0) {
                 setShards(data.shards);
             } else {
                 setShards([]);
             }
+
+            setShardsError(null);
             setDictionaryHydrated(true);
+        } else {
+            // Only show error if there is no data
+            setShardsError(error ?? null);
         }
     }, [data, error, setDictionaryHydrated, setShardsError, setShards]);
 

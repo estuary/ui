@@ -4,33 +4,42 @@ import {
 } from 'hooks/useConnectorWithTagDetail';
 import {
     CONNECTOR_NAME,
+    CONNECTOR_RECOMMENDED,
     defaultTableFilter,
     handleFailure,
     handleSuccess,
-    SortingProps,
     supabaseClient,
     supabaseRetry,
     TABLES,
 } from 'services/supabase';
+import { SortDirection } from 'types';
 
 // Table-specific queries
 const getConnectors = (
-    pagination: any,
     searchQuery: any,
-    sorting: SortingProps<any>[]
+    sortDirection: SortDirection,
+    protocol: string | null
 ) => {
     let queryBuilder = supabaseClient
         .from<ConnectorWithTagDetailQuery>(TABLES.CONNECTORS)
-        .select(CONNECTOR_WITH_TAG_QUERY, {
-            count: 'exact',
-        });
+        .select(CONNECTOR_WITH_TAG_QUERY);
 
     queryBuilder = defaultTableFilter<ConnectorWithTagDetailQuery>(
         queryBuilder,
         [CONNECTOR_NAME],
         searchQuery,
-        sorting,
-        pagination
+        [
+            {
+                col: CONNECTOR_RECOMMENDED,
+                direction: 'desc',
+            },
+            {
+                col: CONNECTOR_NAME,
+                direction: sortDirection,
+            },
+        ],
+        undefined,
+        { column: 'connector_tags.protocol', value: protocol }
     );
 
     return queryBuilder;

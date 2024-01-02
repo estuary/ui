@@ -1,8 +1,8 @@
 import { getAuthRoles } from 'api/combinedGrantsExt';
 import { describe, expect, test } from 'vitest';
 import { http, HttpResponse, server } from 'test/server/test-server';
+import { SUPABASE_URL } from 'test/shared';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const API_ENDPOINT = `${SUPABASE_URL}/rest/v1/rpc/auth_roles`;
 
 const adminRows = [

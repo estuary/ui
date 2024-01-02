@@ -18,7 +18,6 @@ export interface ConnectorWithTagDetailQuery {
     }[];
     id: string;
     detail: string;
-    updated_at: string;
     image_name: string;
     image: string;
     recommended: boolean;
@@ -32,7 +31,6 @@ export interface ConnectorWithTagDetailQuery {
 export const CONNECTOR_WITH_TAG_QUERY = `
     id,
     detail,
-    updated_at,
     image_name,
     image:logo_url->>en-US::text,
     ${CONNECTOR_RECOMMENDED},

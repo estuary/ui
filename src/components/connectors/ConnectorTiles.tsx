@@ -1,36 +1,21 @@
 import {
-    Box,
     Grid,
     Paper,
-    Skeleton,
-    Stack,
     Typography,
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+import { getConnectors } from 'api/connectors';
 import ConnectorCard from 'components/connectors/card';
 import ConnectorToolbar from 'components/connectors/ConnectorToolbar';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
-import {
-    semiTransparentBackground,
-    semiTransparentBackgroundIntensified,
-} from 'context/Theme';
-import { useQuery, useSelect } from 'hooks/supabase-swr';
-import {
-    ConnectorWithTagDetailQuery,
-    CONNECTOR_WITH_TAG_QUERY,
-} from 'hooks/useConnectorWithTagDetail';
-import { AddSquare } from 'iconoir-react';
+import { semiTransparentBackground } from 'context/Theme';
+import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
+import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
+
 import {
-    CONNECTOR_NAME,
-    CONNECTOR_RECOMMENDED,
-    defaultTableFilter,
-    TABLES,
-} from 'services/supabase';
-import {
-    BaseComponentProps,
     EntityWithCreateWorkflow,
     SortDirection,
     TableIntlConfig,
@@ -42,52 +27,18 @@ import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
 import ConnectorCardDetails from './card/Details';
 import ConnectorLogo from './card/Logo';
 import ConnectorCardTitle from './card/Title';
+import ConnectorRequestTile from './ConnectorRequestTile';
+import ConnectorsSkeleton from './Skeleton';
 
 interface ConnectorTilesProps {
     protocolPreset?: EntityWithCreateWorkflow;
     replaceOnNavigate?: boolean;
 }
 
-type TileProps = BaseComponentProps;
-
-const skeletonTileCount = 6;
-
 const intlConfig: TableIntlConfig = {
     header: 'connectors.main.message1',
     message: 'connectors.main.message2',
 };
-
-function Tile({ children }: TileProps) {
-    return (
-        <Paper
-            elevation={0}
-            sx={{
-                'height': '100%',
-                'padding': 1,
-                'background': (theme) =>
-                    semiTransparentBackground[theme.palette.mode],
-                'boxShadow':
-                    'rgb(50 50 93 / 7%) 0px 2px 5px -1px, rgb(0 0 0 / 10%) 0px 1px 3px -1px',
-                'borderRadius': 3,
-                '&:hover': {
-                    background: (theme) =>
-                        semiTransparentBackgroundIntensified[
-                            theme.palette.mode
-                        ],
-                },
-            }}
-        >
-            <Stack
-                style={{
-                    height: '100%',
-                    justifyContent: 'space-between',
-                }}
-            >
-                {children}
-            </Stack>
-        </Paper>
-    );
-}
 
 function ConnectorTiles({
     protocolPreset,
@@ -95,7 +46,6 @@ function ConnectorTiles({
 }: ConnectorTilesProps) {
     const navigateToCreate = useEntityCreateNavigate();
     const isFiltering = useRef(false);
-    const intl = useIntl();
 
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
@@ -110,34 +60,13 @@ function ConnectorTiles({
         status: TableStatuses.LOADING,
     });
 
-    const liveSpecQuery = useQuery<ConnectorWithTagDetailQuery>(
-        TABLES.CONNECTORS,
-        {
-            columns: CONNECTOR_WITH_TAG_QUERY,
-            filter: (query) => {
-                return defaultTableFilter<ConnectorWithTagDetailQuery>(
-                    query,
-                    [CONNECTOR_NAME],
-                    searchQuery,
-                    [
-                        {
-                            col: CONNECTOR_RECOMMENDED,
-                            direction: 'desc',
-                        },
-                        {
-                            col: CONNECTOR_NAME,
-                            direction: sortDirection,
-                        },
-                    ],
-                    undefined,
-                    { column: 'connector_tags.protocol', value: protocol }
-                );
-            },
-        },
-        [searchQuery, sortDirection, protocol]
-    );
+    const query = useMemo(() => {
+        return getConnectors(searchQuery, sortDirection, protocol);
+    }, [searchQuery, sortDirection, protocol]);
 
-    const { data: useSelectResponse, isValidating } = useSelect(liveSpecQuery);
+    const { data: useSelectResponse, isValidating } =
+        useSelectNew<ConnectorWithTagDetailQuery>(query);
+
     const selectData = useMemo(
         () => (useSelectResponse ? useSelectResponse.data : []),
         [useSelectResponse]
@@ -192,7 +121,6 @@ function ConnectorTiles({
                             details={
                                 <ConnectorCardDetails
                                     description={row.detail}
-                                    lastUpdate={row.updated_at}
                                 />
                             }
                             recommended={row.recommended}
@@ -201,69 +129,10 @@ function ConnectorTiles({
                         />
                     ))
                     .concat(
-                        <ConnectorCard
-                            key="connector-request-tile"
-                            logo={
-                                <AddSquare
-                                    style={{
-                                        fontSize: '3rem',
-                                        color: theme.palette.text.primary,
-                                    }}
-                                />
-                            }
-                            details={
-                                <Typography component="p" align="left">
-                                    <FormattedMessage id="connectors.main.message2.alt" />
-                                </Typography>
-                            }
-                            title={
-                                <ConnectorCardTitle
-                                    title={intl.formatMessage({
-                                        id: 'connectorTable.data.connectorRequest',
-                                    })}
-                                />
-                            }
-                            externalLink={{
-                                href: intl.formatMessage({
-                                    id: 'connectors.main.message2.docPath',
-                                }),
-                                target: '_blank',
-                                rel: 'noopener',
-                            }}
-                        />
+                        <ConnectorRequestTile key="connector-tile-request" />
                     )
             ) : isValidating || tableState.status === TableStatuses.LOADING ? (
-                Array(skeletonTileCount)
-                    .fill(
-                        <Tile>
-                            <Box>
-                                <Skeleton
-                                    variant="rectangular"
-                                    height={125}
-                                    sx={{ mb: 2, borderRadius: 3 }}
-                                />
-
-                                <Skeleton />
-
-                                <Skeleton />
-
-                                <Skeleton sx={{ mb: 5 }} />
-                            </Box>
-                        </Tile>
-                    )
-                    .map((skeleton, index) => (
-                        <Grid
-                            key={`connector-skeleton-${index}`}
-                            item
-                            xs={2}
-                            md={4}
-                            lg={2}
-                            xl={2}
-                            sx={{ maxWidth: 275 }}
-                        >
-                            {skeleton}
-                        </Grid>
-                    ))
+                <ConnectorsSkeleton />
             ) : (
                 <Grid item sx={{ width: '100%' }}>
                     <Paper
