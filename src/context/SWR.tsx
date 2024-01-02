@@ -96,6 +96,9 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                                                 horizontal: 'center',
                                             },
                                             variant: 'error',
+                                            // TODO (notification)
+                                            // If we ever let people log back in without navigation away first
+                                            //  this notification will always show and never go away.
                                             persist: true,
                                         }
                                     );

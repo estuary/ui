@@ -86,7 +86,7 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
     }
 
     const { data, mutate } = useSWR(
-        (jwt && tokenExpired) || authorized_prefixes.length > 0
+        tokenExpired || authorized_prefixes.length > 0
             ? [
                   gatewayAuthTokenEndpoint,
                   authorized_prefixes,
