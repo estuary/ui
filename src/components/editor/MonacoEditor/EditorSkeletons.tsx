@@ -10,9 +10,14 @@ import {
     getEditorTotalHeight,
 } from 'utils/editor-utils';
 
-function JsonSchemaSkeleton() {
+interface JsonSchemaSkeletonProps {
+    opacity?: number;
+    padding?: number;
+}
+
+function JsonSchemaSkeleton({ opacity, padding }: JsonSchemaSkeletonProps) {
     return (
-        <Box sx={{ p: 1 }}>
+        <Box sx={{ p: padding ?? 1, opacity }}>
             <Skeleton variant="rectangular" width={50} sx={{ mb: 1 }} />
 
             <Skeleton variant="rectangular" width={250} sx={{ mb: 1 }} />

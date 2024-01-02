@@ -19,7 +19,7 @@ interface Props {
 }
 
 // TODO (preview table) the table view has some issues so turning off before enabling it
-//      in production. Mainly that we should use projecttions to fetch data.
+//      in production. Mainly that we should use projections to fetch data.
 
 // enum Views {
 //     table = 'table',
@@ -108,8 +108,6 @@ export function DataPreview({ collectionName }: Props) {
                 ) : isLoading ? (
                     <ListViewSkeleton />
                 ) : null}
-
-                <ListViewSkeleton />
 
                 {/*             : (
                 <TableView journalData={journalData} spec={spec} />

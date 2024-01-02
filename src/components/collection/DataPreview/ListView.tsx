@@ -1,3 +1,4 @@
+import ReactJson from '@microlink/react-json-view';
 import { Box, Grid, useTheme } from '@mui/material';
 import { DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
 import ListAndDetails from 'components/editor/ListAndDetails';
@@ -12,7 +13,7 @@ import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { JsonPointer } from 'json-ptr';
 import { isEmpty } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import ReactJson from '@microlink/react-json-view';
+import { useIntl } from 'react-intl';
 
 interface PreviewJsonModeProps {
     spec: LiveSpecsQuery_spec;
@@ -29,6 +30,7 @@ function ListView({
     );
 
     const theme = useTheme();
+    const intl = useIntl();
 
     const buildRecordKey = useCallback(
         (record: Record<string, any>) => {
@@ -72,7 +74,13 @@ function ListView({
                     list={
                         <DataGrid
                             columns={[
-                                { field: 'key', headerName: 'Key', flex: 1 },
+                                {
+                                    field: 'key',
+                                    headerName: intl.formatMessage({
+                                        id: 'detailsPanel.dataPreview.listView.header',
+                                    }),
+                                    flex: 1,
+                                },
                             ]}
                             rows={Object.entries(rowsByKey).map(([k]) => ({
                                 key: k,
