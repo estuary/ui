@@ -65,7 +65,7 @@ const currentIntegrity = getIntegrity(CURRENT_SHA);
             exitTask(1);
         }
 
-        console.log('fetched', { filePath, downloadStatus });
+        console.log(`fetched ${downloadStatus}`);
         console.log(sectionBreak);
 
         const buff = readFileSync(filePath);
