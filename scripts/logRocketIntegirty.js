@@ -6,14 +6,14 @@ const Downloader = require('nodejs-file-downloader');
 const DELETE_TMP_AT_END = true;
 
 // Stand alone folder so we can clear everything out at the end
-const TEMP_FOLDER = './scripts/tmp/lrint';
+const TEMP_FOLDER = './scripts/tmp/logRocketIntegrity';
 
 // Helper functions
 const sectionBreak = '-------------------------';
 const taskDone = '********** END **********';
 const cleanUp = () => {
     if (DELETE_TMP_AT_END) {
-        console.log(`rm "${TEMP_FOLDER}"`);
+        console.log(`cleaning up "${TEMP_FOLDER}"`);
         rmSync(TEMP_FOLDER, { recursive: true });
     }
 

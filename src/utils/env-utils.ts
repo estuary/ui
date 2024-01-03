@@ -7,6 +7,7 @@ declare global {
         monaco: any;
         LogRocket?: {
             identify: Function;
+            init: Function;
             log: Function;
             track: Function;
         };
