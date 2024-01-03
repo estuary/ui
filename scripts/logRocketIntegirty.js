@@ -52,10 +52,16 @@ const currentIntegrity = getIntegrity(CURRENT_SHA);
 
         console.log(`fetching latest Log Rocket script from "${LATEST_URL}"`);
         const { filePath, downloadStatus } = await downloadLatestScript(
-            LATEST_URL
+            `${LATEST_URL}123`
         );
         if (downloadStatus !== 'COMPLETE') {
-            console.error(`fetching did not complete "${downloadStatus}"`);
+            console.log(
+                '\x1b[41m',
+                ' fetch failed ',
+                '\x1b[0m',
+                ':',
+                downloadStatus
+            );
             exitTask(1);
         }
 
@@ -86,7 +92,7 @@ const currentIntegrity = getIntegrity(CURRENT_SHA);
 
         exitTask(1);
     } catch (error) {
-        console.error('installLogRocket:error', error);
+        console.log('\x1b[41m', ' Error ', '\x1b[0m', ':', error.message);
         exitTask(1);
     }
 })();
