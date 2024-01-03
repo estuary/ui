@@ -87,7 +87,7 @@ const currentIntegrity = getIntegrity(CURRENT_SHA);
         console.log('\n');
 
         console.log('\x1b[43m', ' ! Check Change Log ! ', '\x1b[0m');
-        console.log(`changelog: ${CHANGE_LOG_URL}`);
+        console.log(CHANGE_LOG_URL);
         console.log('\n');
 
         exitTask(1);
