@@ -2,8 +2,13 @@ const { createHash } = require('crypto');
 const { readFileSync, rmSync } = require('fs');
 const Downloader = require('nodejs-file-downloader');
 
+// EDITABLE FIELDS - START ------------------
 // Set to false if you do not want the tmp files deleted
-const DELETE_TMP_AT_END = true;
+const RM_TMP_AT_END = true;
+// EDITABLE FIELDS - END ------------------
+
+// Used to check if there are breaking changes
+const CHANGE_LOG_URL = 'https://unpkg.com/logrocket/CHANGELOG.md';
 
 // Stand alone folder so we can clear everything out at the end
 const TEMP_FOLDER = './scripts/tmp/logRocketIntegrity';
@@ -11,13 +16,14 @@ const TEMP_FOLDER = './scripts/tmp/logRocketIntegrity';
 // Helper functions
 const sectionBreak = '-------------------------';
 const taskDone = '********** END **********';
-const cleanUp = () => {
-    if (DELETE_TMP_AT_END) {
-        console.log(`cleaning up "${TEMP_FOLDER}"`);
+const exitTask = (exitCode) => {
+    if (RM_TMP_AT_END) {
         rmSync(TEMP_FOLDER, { recursive: true });
     }
 
     console.log(taskDone);
+
+    process.exit(exitCode);
 };
 const downloadLatestScript = async (downloadURL) => {
     const downloader_script = new Downloader({
@@ -50,8 +56,7 @@ const currentIntegrity = getIntegrity(CURRENT_SHA);
         );
         if (downloadStatus !== 'COMPLETE') {
             console.error(`fetching did not complete "${downloadStatus}"`);
-            cleanUp();
-            return;
+            exitTask(1);
         }
 
         console.log('fetched', { filePath, downloadStatus });
@@ -67,20 +72,21 @@ const currentIntegrity = getIntegrity(CURRENT_SHA);
         console.log(sectionBreak);
 
         if (usingLatest) {
-            console.log(`no update required`);
-            cleanUp();
-            return;
+            console.log('\x1b[42m', ' USING LATEST ', '\x1b[0m');
+            exitTask(0);
         }
 
-        console.log('UPDATE REQUIRED!');
-        console.log('copy value below into .env');
+        console.log('\x1b[41m', ' ! UPDATE REQUIRED ! ', '\x1b[0m');
         console.log(`VITE_LOGROCKET_SHA=${latestHash}`);
-        console.log('sectionBreak');
+        console.log('\n');
 
-        console.log('cleaning up tmp');
-        cleanUp();
+        console.log('\x1b[43m', ' ! Check Change Log ! ', '\x1b[0m');
+        console.log(`changelog: ${CHANGE_LOG_URL}`);
+        console.log('\n');
+
+        exitTask(1);
     } catch (error) {
         console.error('installLogRocket:error', error);
-        cleanUp();
+        exitTask(1);
     }
 })();
