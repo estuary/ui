@@ -2,6 +2,7 @@ import { Box, Table, TableContainer } from '@mui/material';
 import Rows from 'components/tables/Billing/Rows';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
+import { getTableHeaderWithoutHeaderColor } from 'context/Theme';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
@@ -66,9 +67,12 @@ function BillingHistoryTable() {
                     id: 'entityTable.title',
                 })}
                 size="small"
-                sx={{ minWidth: 450 }}
+                sx={{
+                    ...getTableHeaderWithoutHeaderColor(),
+                    minWidth: 450,
+                }}
             >
-                <EntityTableHeader columns={columns} noBackgroundColor />
+                <EntityTableHeader columns={columns} />
 
                 <EntityTableBody
                     columns={columns}

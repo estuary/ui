@@ -44,6 +44,10 @@ import { AdminBillingProps } from './types';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
+// Adding a hair of height so that a slight amount of a line item
+//  is shown and hope that'll make it clear the section can scroll
+const invoiceCardHeight = TOTAL_CARD_HEIGHT + 5;
+
 function AdminBilling({ showAddPayment }: AdminBillingProps) {
     // Billing Store
     const hydrated = useBilling_hydrated();
@@ -222,7 +226,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
 
                 <Grid item xs={12} md={12}>
                     <CardWrapper
-                        height={TOTAL_CARD_HEIGHT}
+                        height={invoiceCardHeight}
                         message={
                             hydrated && selectedInvoice ? (
                                 <>
