@@ -1,8 +1,6 @@
 import { User } from '@supabase/supabase-js';
 import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
-import LogRocket from 'logrocket';
-import setupLogRocketReact from 'logrocket-react';
 import { getUserDetails, OAUTH_OPERATIONS } from 'services/supabase';
 import { getLogRocketSettings } from 'utils/env-utils';
 
@@ -195,8 +193,9 @@ export const initLogRocket = () => {
             }
         }
 
-        LogRocket.init(logRocketSettings.appID, settings);
-        setupLogRocketReact(LogRocket);
+        if (window.LogRocket) {
+            window.LogRocket.init(logRocketSettings.appID, settings);
+        }
     }
 };
 
@@ -213,10 +212,8 @@ export const identifyUser = (user: User) => {
             traits.email = userDetails.email;
         }
 
-        // Just want to be very very safe
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (LogRocket) {
-            LogRocket.identify(user.id, traits);
+        if (window.LogRocket) {
+            window.LogRocket.identify(user.id, traits);
         }
     }
 };

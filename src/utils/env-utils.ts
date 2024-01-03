@@ -5,6 +5,11 @@ declare global {
             auth_url: string | null;
         } | null;
         monaco: any;
+        LogRocket?: {
+            identify: Function;
+            log: Function;
+            track: Function;
+        };
         Osano?: {
             cm?: {
                 mode?: 'permissive' | 'debug' | 'production';
