@@ -52,7 +52,7 @@ const currentIntegrity = getIntegrity(CURRENT_SHA);
 
         console.log(`fetching latest Log Rocket script from "${LATEST_URL}"`);
         const { filePath, downloadStatus } = await downloadLatestScript(
-            `${LATEST_URL}123`
+            LATEST_URL
         );
         if (downloadStatus !== 'COMPLETE') {
             console.log(
