@@ -26,7 +26,8 @@
         "test": "vitest",
         "test:ui": "vitest --ui",
         "typecheck": "tsc",
-        "installDataPlane": "npm install 'https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main'"
+        "installDataPlane": "npm install 'https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main'",
+        "logRocketIntegrity": "node --env-file .env ./scripts/logRocketIntegirty"
     },
     "dependencies": {
         "@date-fns/utc": "^1.0.0",
@@ -63,7 +64,6 @@
         "jose": "^4.14.4",
         "json-ptr": "^3.1.1",
         "lodash": "^4.17.21",
-        "logrocket": "^3.0.1",
         "logrocket-react": "^5.0.1",
         "lru-cache": "^9.1.2",
         "luxon": "^3.4.3",
@@ -121,6 +121,7 @@
         "licensee": "^10.0.0",
         "lint-staged": "^13.1.0",
         "msw": "^2.0.11",
+        "nodejs-file-downloader": "^4.12.1",
         "prettier": "^3.0.0",
         "prettier-plugin-organize-imports": "^3.2.1",
         "sharp": "^0.32.6",

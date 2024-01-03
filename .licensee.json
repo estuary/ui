@@ -18,6 +18,8 @@
         "prelude-ls": "1.1.2",
         "querystring": "0.2.0",
         "querystring-es3": "0.2.1",
+        "truncate-utf8-bytes": "1.0.2",
+        "utf8-byte-length": "1.0.4",
 
         "// CC by 3.0 License": "0.0.0",
         "spdx-exceptions": "2.3.0",
