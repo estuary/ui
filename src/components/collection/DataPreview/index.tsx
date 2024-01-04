@@ -48,6 +48,13 @@ export function DataPreview({ collectionName }: Props) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const journal = useMemo(() => journalsData?.journals?.[0], [journalsData]);
     const journalData = useJournalData(journal?.name, 20, collectionName);
+
+    // There is a brief delay between when the data preview card is rendered and the two journal-related
+    // hooks are called, which resulted in `isLoading` being a false negative. If the journal client is
+    // `null` or the collection name undefined, `journalsData` will be `null` and this component will be
+    // stuck in a loading state. Ideally, this condition would specifically check whether `journalsData`
+    // is undefined; however it is possible for the variable to quickly switch from undefined to `null`
+    // then back to undefined while loading, resulting in a pseudo-inversion of the original problem.
     const isLoading = journalsLoading || !journalsData || journalData.loading;
 
     return (
