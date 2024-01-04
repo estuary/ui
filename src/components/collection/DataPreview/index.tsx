@@ -48,7 +48,7 @@ export function DataPreview({ collectionName }: Props) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const journal = useMemo(() => journalsData?.journals?.[0], [journalsData]);
     const journalData = useJournalData(journal?.name, 20, collectionName);
-    const isLoading = journalsLoading || journalData.loading;
+    const isLoading = journalsLoading || !journalsData || journalData.loading;
 
     return (
         <CardWrapper
