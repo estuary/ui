@@ -423,6 +423,10 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 
     'entityTable.edit.aria': `Edit specification of {name}`,
     'entityTable.materialize.aria': `Materialize {name}`,
+
+    'entityTable.selectColumn.menu.header': `Select Columns`,
+    'entityTable.selectColumn.button.ariaLabel': `Open Table Column Customization Menu`,
+    'entityTable.selectColumn.button.tooltip': `Select Columns`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {

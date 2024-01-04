@@ -12,6 +12,7 @@ import {
     basicSort_string,
     compareInitialCharacterType,
 } from 'utils/misc-utils';
+import ConstraintDetails from '../cells/fieldSelection/ConstraintDetails';
 
 interface RowProps {
     row: CompositeProjection;
@@ -98,13 +99,21 @@ function Row({ row }: RowProps) {
             )}
 
             {row.constraint ? (
-                <FieldActions
-                    field={row.field}
-                    constraint={row.constraint}
-                    selectionType={row.selectionType}
-                />
+                <>
+                    <ConstraintDetails constraint={row.constraint} />
+
+                    <FieldActions
+                        field={row.field}
+                        constraint={row.constraint}
+                        selectionType={row.selectionType}
+                    />
+                </>
             ) : (
-                <TableCell />
+                <>
+                    <TableCell />
+
+                    <TableCell />
+                </>
             )}
         </TableRow>
     );

@@ -535,7 +535,7 @@ export const errorOutlinedButtonBackground_disabled = {
 
 export const successButtonText = {
     light: '#2A7942',
-    dark: '#2A7942',
+    dark: '#66BB6A',
 };
 
 // Light is an RGB translation of #2A7942; Dark is an RGB translation of #66BB6A.

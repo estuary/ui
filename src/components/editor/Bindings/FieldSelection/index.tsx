@@ -3,8 +3,10 @@ import {
     Checkbox,
     FormControl,
     FormControlLabel,
+    IconButton,
     Stack,
     Typography,
+    useTheme,
 } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import RefreshButton from 'components/editor/Bindings/FieldSelection/RefreshButton';
@@ -31,8 +33,11 @@ import {
     useEditorStore_id,
     useEditorStore_queryResponse_draftSpecs,
 } from 'components/editor/Store/hooks';
-import FieldSelectionTable from 'components/tables/FieldSelection';
+import FieldSelectionTable, { columns } from 'components/tables/FieldSelection';
+import SelectColumnMenu from 'components/tables/SelectColumnMenu';
+import { primaryColoredOutline } from 'context/Theme';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
+import { ViewColumns3 } from 'iconoir-react';
 import { isEqual } from 'lodash';
 import {
     SyntheticEvent,
@@ -115,6 +120,8 @@ const mapConstraintsToProjections = (
     });
 
 function FieldSelectionViewer({ collectionName }: Props) {
+    const theme = useTheme();
+
     const isEdit = useEntityWorkflow_Editing();
     const fireBackgroundTest = useRef(isEdit);
 
@@ -347,11 +354,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
 
     return (
         <Box sx={{ mt: 3 }}>
-            <Stack
-                direction="row"
-                spacing={1}
-                sx={{ mb: 2, justifyContent: 'space-between' }}
-            >
+            <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
                 <Stack spacing={1}>
                     <Stack direction="row">
                         <Typography variant="h6" sx={{ mr: 0.5 }}>
@@ -372,21 +375,47 @@ function FieldSelectionViewer({ collectionName }: Props) {
                 </Stack>
             </Stack>
 
-            <FormControl sx={{ mb: 1, mx: 0 }}>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            value={recommendFields}
-                            checked={recommendFields}
-                            disabled={loading || !data}
-                        />
-                    }
-                    onChange={toggleRecommendFields}
-                    label={
-                        <FormattedMessage id="fieldSelection.cta.defaultAllFields" />
-                    }
+            <Stack
+                direction="row"
+                sx={{ mb: 1, justifyContent: 'space-between' }}
+            >
+                <FormControl sx={{ mx: 0 }}>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                value={recommendFields}
+                                checked={recommendFields}
+                                disabled={loading || !data}
+                            />
+                        }
+                        onChange={toggleRecommendFields}
+                        label={
+                            <FormattedMessage id="fieldSelection.cta.defaultAllFields" />
+                        }
+                    />
+                </FormControl>
+
+                <IconButton
+                    sx={{
+                        borderRadius: 2,
+                        border: primaryColoredOutline[theme.palette.mode],
+                    }}
+                >
+                    <ViewColumns3
+                        style={{ color: theme.palette.primary.main }}
+                    />
+                </IconButton>
+
+                <SelectColumnMenu
+                    columns={columns.filter(
+                        (column) =>
+                            column.headerIntlKey === 'data.pointer' ||
+                            column.headerIntlKey ===
+                                'fieldSelection.table.label.details'
+                    )}
+                    onChange={() => {}}
                 />
-            </FormControl>
+            </Stack>
 
             <FieldSelectionTable projections={data} />
         </Box>

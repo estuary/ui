@@ -28,6 +28,10 @@ export const columns: TableColumns[] = [
         headerIntlKey: 'data.type',
     },
     {
+        field: 'constraint.type',
+        headerIntlKey: 'fieldSelection.table.label.details',
+    },
+    {
         field: null,
         headerIntlKey: 'fieldSelection.table.label.actions',
     },
@@ -43,7 +47,7 @@ function FieldSelectionTable({ projections }: Props) {
     });
 
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-    const [columnToSort, setColumnToSort] = useState('constraint.type');
+    const [columnToSort, setColumnToSort] = useState('field');
 
     const handlers = {
         sortRequest: (_event: React.MouseEvent<unknown>, column: any) => {
