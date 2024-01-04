@@ -74,7 +74,7 @@ export const setTenantPrimaryPaymentMethod = (tenant: string, id: string) => {
 };
 
 export interface InvoiceLineItem {
-    description: 'string';
+    description: string;
     count: number;
     rate: number;
     subtotal: number;

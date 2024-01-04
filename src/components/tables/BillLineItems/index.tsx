@@ -4,6 +4,7 @@ import Rows from 'components/tables/BillLineItems/Rows';
 import TotalLines from 'components/tables/BillLineItems/TotalLines';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
+import { getTableHeaderWithoutHeaderColor } from 'context/Theme';
 import { CreditCard, Download } from 'iconoir-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -81,9 +82,13 @@ function BillingLineItemsTable() {
                         id: 'admin.billing.table.line_items.title',
                     })}
                     size="small"
-                    sx={{ minWidth: 350 }}
+                    stickyHeader
+                    sx={{
+                        ...getTableHeaderWithoutHeaderColor(),
+                        minWidth: 350,
+                    }}
                 >
-                    <EntityTableHeader columns={columns} noBackgroundColor />
+                    <EntityTableHeader columns={columns} />
 
                     <EntityTableBody
                         columns={columns}
