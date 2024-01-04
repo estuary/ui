@@ -3,6 +3,8 @@ import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import { getUserDetails, OAUTH_OPERATIONS } from 'services/supabase';
 import { getLogRocketSettings } from 'utils/env-utils';
+import LogRocket from 'logrocket';
+import setupLogRocketReact from 'logrocket-react';
 
 // Based on node_modules/logrocket/dist/types.d.ts
 interface IUserTraits {
@@ -193,9 +195,8 @@ export const initLogRocket = () => {
             }
         }
 
-        if (window.LogRocket) {
-            window.LogRocket.init(logRocketSettings.appID, settings);
-        }
+        LogRocket.init(logRocketSettings.appID, settings);
+        setupLogRocketReact(LogRocket);
     }
 };
 
@@ -212,8 +213,10 @@ export const identifyUser = (user: User) => {
             traits.email = userDetails.email;
         }
 
-        if (window.LogRocket) {
-            window.LogRocket.identify(user.id, traits);
+        // Just want to be very very safe
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (LogRocket) {
+            LogRocket.identify(user.id, traits);
         }
     }
 };

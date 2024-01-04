@@ -1,4 +1,5 @@
 import { isProduction } from 'utils/env-utils';
+import LogRocket from 'logrocket';
 import { CustomEvents } from './types';
 
 export const logRocketEvent = (
@@ -7,8 +8,8 @@ export const logRocketEvent = (
 ) => {
     // Just want to be very very safe
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (window.LogRocket?.track) {
-        window.LogRocket.track(event, eventProperties);
+    if (LogRocket?.track) {
+        LogRocket.track(event, eventProperties);
     }
 
     if (process.env.NODE_ENV === 'development') {
@@ -17,9 +18,10 @@ export const logRocketEvent = (
 };
 
 export const logRocketConsole = (message: string, ...props: any[]) => {
+    // Just want to be very very safe
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (window.LogRocket?.log) {
-        window.LogRocket.log(message, props);
+    if (LogRocket?.log) {
+        LogRocket.log(message, props);
     }
 
     if (!isProduction) {

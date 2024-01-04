@@ -5,18 +5,20 @@ declare global {
             auth_url: string | null;
         } | null;
         monaco: any;
-        LogRocket?: {
-            identify: Function;
-            init: Function;
-            log: Function;
-            track: Function;
-        };
         Osano?: {
             cm?: {
                 mode?: 'permissive' | 'debug' | 'production';
                 showDrawer?: (arg: string) => void;
             };
         };
+        // TODO (integrity | logrocket)
+        // When we load in LogRocket with a script tag we'll want this
+        // LogRocket?: {
+        //     identify: Function;
+        //     init: Function;
+        //     log: Function;
+        //     track: Function;
+        // };
     }
 }
 
