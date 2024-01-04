@@ -27,7 +27,7 @@
         "test:ui": "vitest --ui",
         "typecheck": "tsc",
         "installDataPlane": "npm install 'https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main'",
-        "logRocketIntegrity": "node --env-file .env ./scripts/logRocketIntegirty"
+        "beta_logRocketIntegrity": "node --env-file .env ./scripts/logRocketIntegirty"
     },
     "dependencies": {
         "@date-fns/utc": "^1.0.0",

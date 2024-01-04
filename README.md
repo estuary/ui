@@ -29,14 +29,6 @@ Every so often we need to reinstall the data plane stuff to update the integrity
 npm run installDataPlane
 ```
 
-### LogRocket is not loading
-
-We need to keep our `.env` updated with the latest SHA from LogRocket. If there are issues with it please run the script below and then update the `.env` file:
-
-```
-npm run logRocketIntegrity
-```
-
 # How to start/run?
 
 Make sure [Estuary Flow](https://github.com/estuary/flow) and [Supabase CLI](https://github.com/supabase/cli) are installed and running.
