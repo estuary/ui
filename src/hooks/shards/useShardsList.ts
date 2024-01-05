@@ -4,13 +4,7 @@ import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useMemo } from 'react';
 import { logRocketConsole } from 'services/shared';
 import useSWR from 'swr';
-
-enum ErrorFlags {
-    OPERATION_INVALID = 'Unauthorized',
-    TOKEN_EXPIRED = 'token is expired',
-    TOKEN_INVALID = 'Authentication failed',
-    TOKEN_NOT_FOUND = 'Unauthenticated',
-}
+import { ErrorFlags } from 'utils/dataPlane-utils';
 
 // These status do not change often so checking every 30 seconds is probably enough
 const INTERVAL = 30000;

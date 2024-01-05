@@ -9,13 +9,7 @@ import {
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
-
-enum ErrorFlags {
-    // TOKEN_PARSING_ISSUE = 'parsing jwt:', // useful for testing just add it to the onError
-    TOKEN_NOT_FOUND = 'Unauthenticated',
-    TOKEN_INVALID = 'Authentication failed',
-    OPERATION_INVALID = 'Unauthorized',
-}
+import { ErrorFlags } from 'utils/dataPlane-utils';
 
 const useJournalsForCollection = (collectionName: string | undefined) => {
     const { session } = Auth.useUser();
@@ -72,6 +66,7 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
                 if (
                     session &&
                     (errorAsString.includes(ErrorFlags.TOKEN_INVALID) ||
+                        errorAsString.includes(ErrorFlags.TOKEN_EXPIRED) ||
                         errorAsString.includes(ErrorFlags.TOKEN_NOT_FOUND))
                 ) {
                     await refreshAuthToken();
