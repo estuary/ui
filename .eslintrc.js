@@ -9,7 +9,7 @@ module.exports = {
         project: './tsconfig.json',
         tsconfigRootDir: __dirname,
     },
-    plugins: ['unused-imports', 'import'],
+    plugins: ['formatjs', 'unused-imports', 'import'],
     rules: {
         // Want to make sure imports and exports are always formatted correctly
         'unused-imports/no-unused-imports': 'error',
@@ -38,6 +38,9 @@ module.exports = {
 
         // Just do not agree with this one
         'no-negated-condition': 'off',
+
+        'formatjs/enforce-placeholders': 'error',
+        'formatjs/no-literal-string-in-jsx': 'error',
 
         'react/iframe-missing-sandbox': 'error',
         'react/jsx-no-leaked-render': 'error',
