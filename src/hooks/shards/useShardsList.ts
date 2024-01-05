@@ -72,12 +72,12 @@ const useShardsList = (catalogNames: string[]) => {
         onError: async (error: string | Error) => {
             logRocketConsole('useShardsList on error', { error });
 
-            // Try fetching the error message
-            const errorMessage =
-                typeof error === 'object' ? error.message : error;
-
             // Check if we need to refresh the access token before returning the error
-            if (shouldRefreshToken(errorMessage)) {
+            if (
+                shouldRefreshToken(
+                    typeof error === 'object' ? error.message : error
+                )
+            ) {
                 await refreshAccess();
             }
         },
