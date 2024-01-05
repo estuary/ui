@@ -96,7 +96,9 @@ export default defineConfig({
         topLevelAwait(),
 
         // Deps
-        react(),
+        react({
+            jsxImportSource: '@emotion/react',
+        }),
         wasm(),
 
         // Build/Deploy stuff
