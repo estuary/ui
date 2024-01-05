@@ -38,19 +38,21 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
                     collectionName
                 );
 
-                const journalsResponse = await dataPlaneFetcher_list(
+                const dataPlaneListResponse = await dataPlaneFetcher_list(
                     journalClient,
                     journalSelector,
                     'JournalData'
                 );
 
-                if (!Array.isArray(journalsResponse)) {
-                    return Promise.reject(journalsResponse);
+                if (!Array.isArray(dataPlaneListResponse)) {
+                    return Promise.reject(dataPlaneListResponse);
                 }
 
                 return {
                     journals:
-                        journalsResponse.length > 0 ? journalsResponse : [],
+                        dataPlaneListResponse.length > 0
+                            ? dataPlaneListResponse
+                            : [],
                 };
             } else {
                 return null;

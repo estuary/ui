@@ -38,18 +38,19 @@ const useShardsList = (catalogNames: string[]) => {
             return { shards: [] };
         }
 
-        const shardsResponse = await dataPlaneFetcher_list(
+        const dataPlaneListResponse = await dataPlaneFetcher_list(
             shardClient,
             taskSelector,
             'ShardsList'
         );
 
-        if (!Array.isArray(shardsResponse)) {
-            return Promise.reject(shardsResponse);
+        if (!Array.isArray(dataPlaneListResponse)) {
+            return Promise.reject(dataPlaneListResponse);
         }
 
         return {
-            shards: shardsResponse.length > 0 ? shardsResponse : [],
+            shards:
+                dataPlaneListResponse.length > 0 ? dataPlaneListResponse : [],
         };
     };
 
