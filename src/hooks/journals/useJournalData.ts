@@ -75,8 +75,7 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
             refreshInterval: undefined,
             revalidateOnFocus: false,
             onError: async (error) => {
-                const errorAsString = `${error}`;
-                if (session && shouldRefreshToken(errorAsString)) {
+                if (session && shouldRefreshToken(`${error}`)) {
                     await refreshAuthToken();
                 }
 
