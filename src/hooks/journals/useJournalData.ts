@@ -9,7 +9,7 @@ import {
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
-import { ErrorFlags } from 'utils/dataPlane-utils';
+import { shouldRefreshToken } from 'utils/dataPlane-utils';
 
 const useJournalsForCollection = (collectionName: string | undefined) => {
     const { session } = Auth.useUser();
@@ -63,12 +63,7 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
             revalidateOnFocus: false,
             onError: async (error) => {
                 const errorAsString = `${error}`;
-                if (
-                    session &&
-                    (errorAsString.includes(ErrorFlags.TOKEN_INVALID) ||
-                        errorAsString.includes(ErrorFlags.TOKEN_EXPIRED) ||
-                        errorAsString.includes(ErrorFlags.TOKEN_NOT_FOUND))
-                ) {
+                if (session && shouldRefreshToken(errorAsString)) {
                     await refreshAuthToken();
                 }
 

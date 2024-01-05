@@ -4,7 +4,10 @@ import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useMemo } from 'react';
 import { logRocketConsole } from 'services/shared';
 import useSWR from 'swr';
-import { ErrorFlags } from 'utils/dataPlane-utils';
+import {
+    dataPlaneFetcher_list,
+    shouldRefreshToken,
+} from 'utils/dataPlane-utils';
 
 // These status do not change often so checking every 30 seconds is probably enough
 const INTERVAL = 30000;
@@ -35,27 +38,19 @@ const useShardsList = (catalogNames: string[]) => {
             return { shards: [] };
         }
 
-        const result = await shardClient.list(taskSelector);
+        const shardsResponse = await dataPlaneFetcher_list(
+            shardClient,
+            taskSelector,
+            'ShardsList'
+        );
 
-        // Check for an error
-        if (result.err()) {
-            // Unwrap the error, log the error, and reject the response
-            const error = result.unwrap_err();
-            logRocketConsole('ShardsList : error : ', error);
-            return Promise.reject(error.body);
+        if (!Array.isArray(shardsResponse)) {
+            return Promise.reject(shardsResponse);
         }
 
-        try {
-            // No error so should be fine to unwrap
-            const shards = result.unwrap();
-            return {
-                shards: shards.length > 0 ? shards : [],
-            };
-        } catch (error: unknown) {
-            // This is just here to be safe. We'll keep an eye on it and possibly remove
-            logRocketConsole('ShardsList : unwrapError : ', error);
-            return Promise.reject(error);
-        }
+        return {
+            shards: shardsResponse.length > 0 ? shardsResponse : [],
+        };
     };
 
     const swrKey = useMemo(
@@ -81,12 +76,7 @@ const useShardsList = (catalogNames: string[]) => {
                 typeof error === 'object' ? error.message : error;
 
             // Check if we need to refresh the access token before returning the error
-            if (
-                errorMessage &&
-                (errorMessage.includes(ErrorFlags.TOKEN_INVALID) ||
-                    errorMessage.includes(ErrorFlags.TOKEN_NOT_FOUND) ||
-                    errorMessage.includes(ErrorFlags.TOKEN_EXPIRED))
-            ) {
+            if (shouldRefreshToken(errorMessage)) {
                 await refreshAccess();
             }
         },
