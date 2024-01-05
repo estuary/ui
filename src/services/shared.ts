@@ -1,5 +1,5 @@
-import { isProduction } from 'utils/env-utils';
 import LogRocket from 'logrocket';
+import { isProduction } from 'utils/env-utils';
 import { CustomEvents } from './types';
 
 export const logRocketEvent = (
