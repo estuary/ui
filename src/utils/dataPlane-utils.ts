@@ -42,9 +42,9 @@ export async function dataPlaneFetcher_list(
     selector: ShardSelector | JournalSelector,
     key: AllowedKeys
 ): Promise<Shard[] | broker.ProtocolJournalSpec[] | ResponseError['body']> {
+    // This can throw an error! Used within fetchers within SWR that is fine and SWR will handle it
     // TODO (typing)
     // I hate this but I need to get the bug finished
-    // This can throw an error! Used within fetchers within SWR that is fine and SWR will handle it
     const result = await client.list(selector as any);
 
     // Check for an error

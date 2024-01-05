@@ -9,7 +9,10 @@ import {
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
-import { shouldRefreshToken } from 'utils/dataPlane-utils';
+import {
+    dataPlaneFetcher_list,
+    shouldRefreshToken,
+} from 'utils/dataPlane-utils';
 
 const useJournalsForCollection = (collectionName: string | undefined) => {
     const { session } = Auth.useUser();
@@ -29,18 +32,26 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
     }, [gatewayConfig]);
 
     const fetcher = useCallback(
-        (_url: string) => {
+        async (_url: string) => {
             if (journalClient && collectionName) {
                 const journalSelector = new JournalSelector().collection(
                     collectionName
                 );
-                return journalClient.list(journalSelector).then((result) => {
-                    const journals = result.unwrap();
 
-                    return {
-                        journals: journals.length > 0 ? journals : [],
-                    };
-                });
+                const journalsResponse = await dataPlaneFetcher_list(
+                    journalClient,
+                    journalSelector,
+                    'JournalData'
+                );
+
+                if (!Array.isArray(journalsResponse)) {
+                    return Promise.reject(journalsResponse);
+                }
+
+                return {
+                    journals:
+                        journalsResponse.length > 0 ? journalsResponse : [],
+                };
             } else {
                 return null;
             }
