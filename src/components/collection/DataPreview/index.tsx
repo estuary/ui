@@ -3,6 +3,7 @@ import { Button, Stack, Typography } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import ListView from 'components/collection/DataPreview/ListView';
 import JournalAlerts from 'components/journals/Alerts';
+import Error from 'components/shared/Error';
 import {
     useJournalData,
     useJournalsForCollection,
@@ -42,7 +43,12 @@ export function DataPreview({ collectionName }: Props) {
     );
 
     const journals = useJournalsForCollection(spec?.catalog_name);
-    const { data: journalsData, isValidating: journalsLoading } = journals;
+
+    const {
+        data: journalsData,
+        isValidating: journalsLoading,
+        error: journalsError,
+    } = journals;
 
     // TODO (typing) we need to fix typing
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -110,10 +116,12 @@ export function DataPreview({ collectionName }: Props) {
                     notFoundTitleMessage="collectionsPreview.notFound.message"
                 />
 
-                {(journalData.data?.documents.length ?? 0) > 0 && spec ? (
-                    <ListView journalData={journalData} spec={spec} />
+                {journalsError ? (
+                    <Error error={journalsError} condensed />
                 ) : isLoading ? (
                     <ListViewSkeleton />
+                ) : (journalData.data?.documents.length ?? 0) > 0 && spec ? (
+                    <ListView journalData={journalData} spec={spec} />
                 ) : null}
 
                 {/*             : (
