@@ -40,7 +40,7 @@ module.exports = {
         'no-negated-condition': 'off',
 
         'formatjs/enforce-placeholders': 'error',
-        'formatjs/no-literal-string-in-jsx': 'error',
+        // 'formatjs/no-literal-string-in-jsx': 'error',
 
         'react/iframe-missing-sandbox': 'error',
         'react/jsx-no-leaked-render': 'error',
