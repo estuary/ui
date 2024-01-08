@@ -8,6 +8,7 @@ import {
 } from 'data-plane-gateway';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCounter } from 'react-use';
 import useSWR from 'swr';
 
 enum ErrorFlags {
@@ -17,8 +18,13 @@ enum ErrorFlags {
     OPERATION_INVALID = 'Unauthorized',
 }
 
+const errorRetryCount = 2;
+
 const useJournalsForCollection = (collectionName: string | undefined) => {
     const { session } = Auth.useUser();
+
+    const [attempts, { inc: incAttempts, reset: resetAttempts }] =
+        useCounter(0);
 
     const { data: gatewayConfig, refresh: refreshAuthToken } =
         useGatewayAuthToken(collectionName ? [collectionName] : []);
@@ -54,7 +60,7 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
         [collectionName, journalClient]
     );
 
-    return useSWR(
+    const response = useSWR(
         collectionName
             ? `journals-${collectionName}-${
                   gatewayConfig?.gateway_url ?? '__missing_gateway_url__'
@@ -64,10 +70,12 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
         {
             // TODO (data preview refresh) no polling right now we should add a manual refresh button
             ...singleCallSettings,
-            errorRetryCount: 2,
+            errorRetryCount,
             refreshInterval: undefined,
             revalidateOnFocus: false,
             onError: async (error) => {
+                incAttempts();
+
                 const errorAsString = `${error}`;
                 if (
                     session &&
@@ -75,14 +83,22 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
                         errorAsString.includes(ErrorFlags.TOKEN_NOT_FOUND))
                 ) {
                     await refreshAuthToken();
+                    resetAttempts();
                 }
-
-                console.error(error);
 
                 return Promise.reject(error);
             },
         }
     );
+
+    return {
+        ...response,
+        error: attempts > errorRetryCount ? response.error : null,
+        mutate: async () => {
+            resetAttempts();
+            await response.mutate();
+        },
+    };
 };
 
 async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {
