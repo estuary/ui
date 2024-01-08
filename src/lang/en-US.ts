@@ -809,6 +809,7 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
     'detailsPanel.dataPreview.header': `Data Preview`,
     'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
+    'detailsPanel.dataPreview.listView.header': `Key`,
     'detailsPanel.specification.header': `Specification`,
     'detailsPanel.status.header': `Status`,
     'detailsPanel.details.title': `Details`,
