@@ -10,13 +10,10 @@ import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCounter } from 'react-use';
 import useSWR from 'swr';
-
-enum ErrorFlags {
-    // TOKEN_PARSING_ISSUE = 'parsing jwt:', // useful for testing just add it to the onError
-    TOKEN_NOT_FOUND = 'Unauthenticated',
-    TOKEN_INVALID = 'Authentication failed',
-    OPERATION_INVALID = 'Unauthorized',
-}
+import {
+    dataPlaneFetcher_list,
+    shouldRefreshToken,
+} from 'utils/dataPlane-utils';
 
 const errorRetryCount = 2;
 
@@ -41,18 +38,28 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
     }, [gatewayConfig]);
 
     const fetcher = useCallback(
-        (_url: string) => {
+        async (_url: string) => {
             if (journalClient && collectionName) {
                 const journalSelector = new JournalSelector().collection(
                     collectionName
                 );
-                return journalClient.list(journalSelector).then((result) => {
-                    const journals = result.unwrap();
 
-                    return {
-                        journals: journals.length > 0 ? journals : [],
-                    };
-                });
+                const dataPlaneListResponse = await dataPlaneFetcher_list(
+                    journalClient,
+                    journalSelector,
+                    'JournalData'
+                );
+
+                if (!Array.isArray(dataPlaneListResponse)) {
+                    return Promise.reject(dataPlaneListResponse);
+                }
+
+                return {
+                    journals:
+                        dataPlaneListResponse.length > 0
+                            ? dataPlaneListResponse
+                            : [],
+                };
             } else {
                 return null;
             }
@@ -76,12 +83,7 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
             onError: async (error) => {
                 incAttempts();
 
-                const errorAsString = `${error}`;
-                if (
-                    session &&
-                    (errorAsString.includes(ErrorFlags.TOKEN_INVALID) ||
-                        errorAsString.includes(ErrorFlags.TOKEN_NOT_FOUND))
-                ) {
+                if (session && shouldRefreshToken(`${error}`)) {
                     await refreshAuthToken();
                     resetAttempts();
                 }

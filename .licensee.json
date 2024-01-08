@@ -31,7 +31,10 @@
         "react-universal-interface": "0.6.2",
 
         "// MIT and CC 3.0 License": "0.0.0",
-        "spdx-ranges": "2.1.1"
+        "spdx-ranges": "2.1.1",
+
+        "// Public Domain": "0.0.0",
+        "jsonify": "0.0.1"
     },
     "ignore": [{ "prefix": "@estuary" }]
 }
