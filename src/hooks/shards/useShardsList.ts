@@ -4,13 +4,10 @@ import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useMemo } from 'react';
 import { logRocketConsole } from 'services/shared';
 import useSWR from 'swr';
-
-enum ErrorFlags {
-    OPERATION_INVALID = 'Unauthorized',
-    TOKEN_EXPIRED = 'token is expired',
-    TOKEN_INVALID = 'Authentication failed',
-    TOKEN_NOT_FOUND = 'Unauthenticated',
-}
+import {
+    dataPlaneFetcher_list,
+    shouldRefreshToken,
+} from 'utils/dataPlane-utils';
 
 // These status do not change often so checking every 30 seconds is probably enough
 const INTERVAL = 30000;
@@ -41,27 +38,20 @@ const useShardsList = (catalogNames: string[]) => {
             return { shards: [] };
         }
 
-        const result = await shardClient.list(taskSelector);
+        const dataPlaneListResponse = await dataPlaneFetcher_list(
+            shardClient,
+            taskSelector,
+            'ShardsList'
+        );
 
-        // Check for an error
-        if (result.err()) {
-            // Unwrap the error, log the error, and reject the response
-            const error = result.unwrap_err();
-            logRocketConsole('ShardsList : error : ', error);
-            return Promise.reject(error.body);
+        if (!Array.isArray(dataPlaneListResponse)) {
+            return Promise.reject(dataPlaneListResponse);
         }
 
-        try {
-            // No error so should be fine to unwrap
-            const shards = result.unwrap();
-            return {
-                shards: shards.length > 0 ? shards : [],
-            };
-        } catch (error: unknown) {
-            // This is just here to be safe. We'll keep an eye on it and possibly remove
-            logRocketConsole('ShardsList : unwrapError : ', error);
-            return Promise.reject(error);
-        }
+        return {
+            shards:
+                dataPlaneListResponse.length > 0 ? dataPlaneListResponse : [],
+        };
     };
 
     const swrKey = useMemo(
@@ -82,16 +72,11 @@ const useShardsList = (catalogNames: string[]) => {
         onError: async (error: string | Error) => {
             logRocketConsole('useShardsList on error', { error });
 
-            // Try fetching the error message
-            const errorMessage =
-                typeof error === 'object' ? error.message : error;
-
             // Check if we need to refresh the access token before returning the error
             if (
-                errorMessage &&
-                (errorMessage.includes(ErrorFlags.TOKEN_INVALID) ||
-                    errorMessage.includes(ErrorFlags.TOKEN_NOT_FOUND) ||
-                    errorMessage.includes(ErrorFlags.TOKEN_EXPIRED))
+                shouldRefreshToken(
+                    typeof error === 'object' ? error.message : error
+                )
             ) {
                 await refreshAccess();
             }

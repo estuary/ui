@@ -183,6 +183,8 @@ const Error: ResolvedIntlConfig['messages'] = {
     'error.hintLabel': `Hint:`,
     'error.descriptionLabel': `Description:`,
     'error.tryAgain': `Try again and if the issue persists please contact support.`,
+
+    'error.fallBack': `no error details to display`,
 };
 
 const ErrorBoundry: ResolvedIntlConfig['messages'] = {
