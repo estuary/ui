@@ -8,17 +8,20 @@ import {
 } from 'data-plane-gateway';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCounter } from 'react-use';
 import useSWR from 'swr';
+import {
+    dataPlaneFetcher_list,
+    shouldRefreshToken,
+} from 'utils/dataPlane-utils';
 
-enum ErrorFlags {
-    // TOKEN_PARSING_ISSUE = 'parsing jwt:', // useful for testing just add it to the onError
-    TOKEN_NOT_FOUND = 'Unauthenticated',
-    TOKEN_INVALID = 'Authentication failed',
-    OPERATION_INVALID = 'Unauthorized',
-}
+const errorRetryCount = 2;
 
 const useJournalsForCollection = (collectionName: string | undefined) => {
     const { session } = Auth.useUser();
+
+    const [attempts, { inc: incAttempts, reset: resetAttempts }] =
+        useCounter(0);
 
     const { data: gatewayConfig, refresh: refreshAuthToken } =
         useGatewayAuthToken(collectionName ? [collectionName] : []);
@@ -35,18 +38,28 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
     }, [gatewayConfig]);
 
     const fetcher = useCallback(
-        (_url: string) => {
+        async (_url: string) => {
             if (journalClient && collectionName) {
                 const journalSelector = new JournalSelector().collection(
                     collectionName
                 );
-                return journalClient.list(journalSelector).then((result) => {
-                    const journals = result.unwrap();
 
-                    return {
-                        journals: journals.length > 0 ? journals : [],
-                    };
-                });
+                const dataPlaneListResponse = await dataPlaneFetcher_list(
+                    journalClient,
+                    journalSelector,
+                    'JournalData'
+                );
+
+                if (!Array.isArray(dataPlaneListResponse)) {
+                    return Promise.reject(dataPlaneListResponse);
+                }
+
+                return {
+                    journals:
+                        dataPlaneListResponse.length > 0
+                            ? dataPlaneListResponse
+                            : [],
+                };
             } else {
                 return null;
             }
@@ -54,7 +67,7 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
         [collectionName, journalClient]
     );
 
-    return useSWR(
+    const response = useSWR(
         collectionName
             ? `journals-${collectionName}-${
                   gatewayConfig?.gateway_url ?? '__missing_gateway_url__'
@@ -64,25 +77,30 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
         {
             // TODO (data preview refresh) no polling right now we should add a manual refresh button
             ...singleCallSettings,
-            errorRetryCount: 2,
+            errorRetryCount,
             refreshInterval: undefined,
             revalidateOnFocus: false,
             onError: async (error) => {
-                const errorAsString = `${error}`;
-                if (
-                    session &&
-                    (errorAsString.includes(ErrorFlags.TOKEN_INVALID) ||
-                        errorAsString.includes(ErrorFlags.TOKEN_NOT_FOUND))
-                ) {
-                    await refreshAuthToken();
-                }
+                incAttempts();
 
-                console.error(error);
+                if (session && shouldRefreshToken(`${error}`)) {
+                    await refreshAuthToken();
+                    resetAttempts();
+                }
 
                 return Promise.reject(error);
             },
         }
     );
+
+    return {
+        ...response,
+        error: attempts > errorRetryCount ? response.error : null,
+        mutate: async () => {
+            resetAttempts();
+            await response.mutate();
+        },
+    };
 };
 
 async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {

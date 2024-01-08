@@ -12,6 +12,7 @@ import circleDependency from 'vite-plugin-circular-dependency';
 import { vitePluginVersionMark } from 'vite-plugin-version-mark';
 import { type Plugin } from 'vite';
 import path from 'path';
+import { sri } from 'vite-plugin-sri3';
 
 const APP_VERSION = '__ESTUARY_UI_VERSION__';
 
@@ -95,11 +96,14 @@ export default defineConfig({
         topLevelAwait(),
 
         // Deps
-        react(),
+        react({
+            jsxImportSource: '@emotion/react',
+        }),
         wasm(),
 
         // Build/Deploy stuff
         viteImageOptimizer({}),
+        sri(), // make sure this is before compression
         compression({
             algorithm: 'gzip',
             exclude: /\.(br|gz)$/i,
