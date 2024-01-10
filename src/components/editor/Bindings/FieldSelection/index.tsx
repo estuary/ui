@@ -3,10 +3,8 @@ import {
     Checkbox,
     FormControl,
     FormControlLabel,
-    IconButton,
     Stack,
     Typography,
-    useTheme,
 } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import RefreshButton from 'components/editor/Bindings/FieldSelection/RefreshButton';
@@ -39,9 +37,7 @@ import FieldSelectionTable, {
 } from 'components/tables/FieldSelection';
 import SelectColumnMenu from 'components/tables/SelectColumnMenu';
 import { useDisplayTableColumns } from 'context/TableSettings';
-import { primaryColoredOutline } from 'context/Theme';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { ViewColumns3 } from 'iconoir-react';
 import { isEqual } from 'lodash';
 import {
     SyntheticEvent,
@@ -131,7 +127,6 @@ const optionalColumns = columns.filter((column) =>
 
 function FieldSelectionViewer({ collectionName }: Props) {
     const intl = useIntl();
-    const theme = useTheme();
 
     const { tableSettings, setTableSettings } = useDisplayTableColumns();
 
@@ -471,17 +466,6 @@ function FieldSelectionViewer({ collectionName }: Props) {
                         }
                     />
                 </FormControl>
-
-                <IconButton
-                    sx={{
-                        borderRadius: 2,
-                        border: primaryColoredOutline[theme.palette.mode],
-                    }}
-                >
-                    <ViewColumns3
-                        style={{ color: theme.palette.primary.main }}
-                    />
-                </IconButton>
 
                 <SelectColumnMenu
                     columns={optionalColumns}

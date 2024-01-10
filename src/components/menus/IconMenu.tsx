@@ -13,6 +13,8 @@ import {
     defaultOutline,
     paperBackground,
     paperBackgroundImage,
+    primaryColoredOutline,
+    primaryColoredOutline_hovered,
 } from 'context/Theme';
 import React, { ReactNode } from 'react';
 
@@ -30,6 +32,7 @@ interface Props {
     customMenuPosition?: CustomPopoverPosition;
     disableCloseOnClick?: boolean;
     hideArrow?: boolean;
+    outlinedButton?: boolean;
 }
 
 const IconMenu = ({
@@ -41,6 +44,7 @@ const IconMenu = ({
     customMenuPosition,
     disableCloseOnClick,
     hideArrow,
+    outlinedButton,
 }: Props) => {
     const [anchorEl, setAnchorEl] =
         React.useState<PopoverProps['anchorEl']>(null);
@@ -98,7 +102,28 @@ const IconMenu = ({
                         aria-haspopup="true"
                         aria-expanded={open ? 'true' : undefined}
                         onClick={handlers.click}
-                        sx={{ color: (theme) => theme.palette.text.primary }}
+                        sx={
+                            outlinedButton
+                                ? {
+                                      'borderRadius': 2,
+                                      'border': (theme) =>
+                                          primaryColoredOutline[
+                                              theme.palette.mode
+                                          ],
+                                      'color': (theme) =>
+                                          theme.palette.primary.main,
+                                      '&:hover': {
+                                          border: (theme) =>
+                                              primaryColoredOutline_hovered[
+                                                  theme.palette.mode
+                                              ],
+                                      },
+                                  }
+                                : {
+                                      color: (theme) =>
+                                          theme.palette.text.primary,
+                                  }
+                        }
                     >
                         {icon}
                     </IconButton>

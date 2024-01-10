@@ -209,6 +209,11 @@ export const primaryColoredOutline_disabled = {
     dark: `1px solid rgba(186, 205, 253, 0.12)`,
 };
 
+export const primaryColoredOutline_hovered = {
+    light: `1px solid #3A56CA`,
+    dark: `1px solid #BACDFD`,
+};
+
 // Light is an RGB translation of #2A7942; Dark is an RGB translation of #66BB6A.
 export const successColoredOutline = {
     light: `1px solid rgba(42, 121, 66, 0.5)`,

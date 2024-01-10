@@ -5,6 +5,7 @@ import {
     FormControlLabel,
     Stack,
     Typography,
+    useTheme,
 } from '@mui/material';
 import IconMenu from 'components/menus/IconMenu';
 import { useDisplayTableColumns } from 'context/TableSettings';
@@ -30,6 +31,7 @@ interface Props {
 
 function SelectColumnMenu({ columns, onChange }: Props) {
     const intl = useIntl();
+    const theme = useTheme();
 
     const { tableSettings } = useDisplayTableColumns();
 
@@ -39,8 +41,11 @@ function SelectColumnMenu({ columns, onChange }: Props) {
                 id: 'entityTable.selectColumn.button.ariaLabel',
             })}
             disableCloseOnClick
-            icon={<ViewColumns3 />}
+            icon={
+                <ViewColumns3 style={{ color: theme.palette.primary.main }} />
+            }
             identifier="select-table-columns-menu"
+            outlinedButton
             tooltip={intl.formatMessage({
                 id: 'entityTable.selectColumn.button.tooltip',
             })}
