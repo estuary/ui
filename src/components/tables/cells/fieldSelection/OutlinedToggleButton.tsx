@@ -65,6 +65,7 @@ function OutlinedToggleButton({
 
     const defaultStateSx: SxProps<Theme> = coloredDefaultState
         ? {
+              backgroundColor: (theme) => backgroundColor[theme.palette.mode],
               border: (theme) => outline[theme.palette.mode],
               color: (theme) => getTextColor(theme, value),
           }
@@ -72,6 +73,8 @@ function OutlinedToggleButton({
 
     const disabledStateSx: SxProps<Theme> = coloredDefaultState
         ? {
+              backgroundColor: (theme) =>
+                  disabledBackgroundColor[theme.palette.mode],
               border: (theme) => disabledOutline[theme.palette.mode],
               color: (theme) => getDisabledTextColor(theme, value),
           }
