@@ -3,6 +3,7 @@ import { Button, Stack, Typography } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import ListView from 'components/collection/DataPreview/ListView';
 import JournalAlerts from 'components/journals/Alerts';
+import Error from 'components/shared/Error';
 import {
     useJournalData,
     useJournalsForCollection,
@@ -12,13 +13,14 @@ import { Refresh } from 'iconoir-react';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
+import ListViewSkeleton from './ListViewSkeleton';
 
 interface Props {
     collectionName: string;
 }
 
 // TODO (preview table) the table view has some issues so turning off before enabling it
-//      in production. Mainly that we should use projecttions to fetch data.
+//      in production. Mainly that we should use projections to fetch data.
 
 // enum Views {
 //     table = 'table',
@@ -41,13 +43,25 @@ export function DataPreview({ collectionName }: Props) {
     );
 
     const journals = useJournalsForCollection(spec?.catalog_name);
-    const { data: journalsData, isValidating: journalsLoading } = journals;
+
+    const {
+        data: journalsData,
+        isValidating: journalsLoading,
+        error: journalsError,
+    } = journals;
 
     // TODO (typing) we need to fix typing
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const journal = useMemo(() => journalsData?.journals?.[0], [journalsData]);
     const journalData = useJournalData(journal?.name, 20, collectionName);
-    const isLoading = journalsLoading || journalData.loading;
+
+    // There is a brief delay between when the data preview card is rendered and the two journal-related
+    // hooks are called, which resulted in `isLoading` being a false negative. If the journal client is
+    // `null` or the collection name undefined, `journalsData` will be `null` and this component will be
+    // stuck in a loading state. Ideally, this condition would specifically check whether `journalsData`
+    // is undefined; however it is possible for the variable to quickly switch from undefined to `null`
+    // then back to undefined while loading, resulting in a pseudo-inversion of the original problem.
+    const isLoading = journalsLoading || !journalsData || journalData.loading;
 
     return (
         <CardWrapper
@@ -102,9 +116,14 @@ export function DataPreview({ collectionName }: Props) {
                     notFoundTitleMessage="collectionsPreview.notFound.message"
                 />
 
-                {(journalData.data?.documents.length ?? 0) > 0 && spec ? (
+                {journalsError ? (
+                    <Error error={journalsError} condensed />
+                ) : isLoading ? (
+                    <ListViewSkeleton />
+                ) : (journalData.data?.documents.length ?? 0) > 0 && spec ? (
                     <ListView journalData={journalData} spec={spec} />
                 ) : null}
+
                 {/*             : (
                 <TableView journalData={journalData} spec={spec} />
             )}*/}

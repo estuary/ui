@@ -486,6 +486,20 @@ const tableCellBackground = {
     dark: '#293341',
 };
 
+// Sticky headers mess with how the header color is set because it is coloring the
+//  row _behind_. This means we cannot do something simple like setting a bgcolor
+//  to transparent. Light mode will look normal like there is no heading but in darkmode
+//  there will be some color there. Given how darkmode colors stacks this is a fair trade-off
+export const getTableHeaderWithoutHeaderColor = (): SxProps<Theme> => {
+    return {
+        [`& .MuiTableHead-root .MuiTableRow-head,
+                    & .MuiTableHead-root .MuiTableRow-head .MuiTableCell-root`]:
+            {
+                bgcolor: (theme) => tableCellBackground[theme.palette.mode],
+            },
+    };
+};
+
 export const getStickyTableCell = (headerParent?: boolean): SxProps<Theme> => {
     return {
         position: 'sticky',

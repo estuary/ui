@@ -11,6 +11,14 @@ declare global {
                 showDrawer?: (arg: string) => void;
             };
         };
+        // TODO (integrity | logrocket)
+        // When we load in LogRocket with a script tag we'll want this
+        // LogRocket?: {
+        //     identify: Function;
+        //     init: Function;
+        //     log: Function;
+        //     track: Function;
+        // };
     }
 }
 
