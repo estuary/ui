@@ -183,8 +183,8 @@ export const defaultOutline = {
 };
 
 export const defaultOutline_hovered = {
-    light: `1px solid #0B131E`,
-    dark: `1px solid #F7F9FC`,
+    light: `1px solid rgba(11, 19, 30, 0.6)`,
+    dark: `1px solid rgba(247, 249, 252, 0.6)`,
 };
 
 export const defaultOutlineColor = {
