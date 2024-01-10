@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import IconMenu from 'components/menus/IconMenu';
 import { useDisplayTableColumns } from 'context/TableSettings';
+import { disabledButtonText_primary } from 'context/Theme';
 import { ViewColumns3 } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { TableColumns } from 'types';
@@ -27,9 +28,10 @@ interface Props {
         checked: boolean,
         column: string
     ) => void;
+    disabled?: boolean;
 }
 
-function SelectColumnMenu({ columns, onChange }: Props) {
+function SelectColumnMenu({ columns, onChange, disabled }: Props) {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -41,8 +43,15 @@ function SelectColumnMenu({ columns, onChange }: Props) {
                 id: 'entityTable.selectColumn.button.ariaLabel',
             })}
             disableCloseOnClick
+            disabled={disabled}
             icon={
-                <ViewColumns3 style={{ color: theme.palette.primary.main }} />
+                <ViewColumns3
+                    style={{
+                        color: disabled
+                            ? disabledButtonText_primary[theme.palette.mode]
+                            : theme.palette.primary.main,
+                    }}
+                />
             }
             identifier="select-table-columns-menu"
             outlinedButton

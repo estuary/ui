@@ -470,6 +470,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
                 <SelectColumnMenu
                     columns={optionalColumns}
                     onChange={updateTableSettings}
+                    disabled={loading}
                 />
             </Stack>
 

@@ -14,6 +14,7 @@ import {
     paperBackground,
     paperBackgroundImage,
     primaryColoredOutline,
+    primaryColoredOutline_disabled,
     primaryColoredOutline_hovered,
 } from 'context/Theme';
 import React, { ReactNode } from 'react';
@@ -31,6 +32,7 @@ interface Props {
     children: ReactNode;
     customMenuPosition?: CustomPopoverPosition;
     disableCloseOnClick?: boolean;
+    disabled?: boolean;
     hideArrow?: boolean;
     outlinedButton?: boolean;
 }
@@ -43,6 +45,7 @@ const IconMenu = ({
     children,
     customMenuPosition,
     disableCloseOnClick,
+    disabled,
     hideArrow,
     outlinedButton,
 }: Props) => {
@@ -102,6 +105,7 @@ const IconMenu = ({
                         aria-haspopup="true"
                         aria-expanded={open ? 'true' : undefined}
                         onClick={handlers.click}
+                        disabled={disabled}
                         sx={
                             outlinedButton
                                 ? {
@@ -115,6 +119,12 @@ const IconMenu = ({
                                       '&:hover': {
                                           border: (theme) =>
                                               primaryColoredOutline_hovered[
+                                                  theme.palette.mode
+                                              ],
+                                      },
+                                      '&.Mui-disabled': {
+                                          border: (theme) =>
+                                              primaryColoredOutline_disabled[
                                                   theme.palette.mode
                                               ],
                                       },
