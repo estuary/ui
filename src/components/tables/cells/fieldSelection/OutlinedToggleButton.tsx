@@ -1,16 +1,19 @@
 import { SxProps, Theme, ToggleButton, ToggleButtonProps } from '@mui/material';
 import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
 import {
+    defaultOutline_hovered,
     disabledButtonText_error,
     disabledButtonText_success,
     errorColoredOutline,
     errorColoredOutline_disabled,
+    errorColoredOutline_hovered,
     errorOutlinedButtonBackground,
     errorOutlinedButtonBackground_disabled,
     intensifiedOutline,
     successButtonText,
     successColoredOutline,
     successColoredOutline_disabled,
+    successColoredOutline_hovered,
     successOutlinedButtonBackground,
     successOutlinedButtonBackground_disabled,
 } from 'context/Theme';
@@ -58,6 +61,11 @@ function OutlinedToggleButton({
     const outline =
         value === 'include' ? successColoredOutline : errorColoredOutline;
 
+    const hoveredOutline =
+        value === 'include'
+            ? successColoredOutline_hovered
+            : errorColoredOutline_hovered;
+
     const disabledOutline =
         value === 'include'
             ? successColoredOutline_disabled
@@ -65,11 +73,18 @@ function OutlinedToggleButton({
 
     const defaultStateSx: SxProps<Theme> = coloredDefaultState
         ? {
-              backgroundColor: (theme) => backgroundColor[theme.palette.mode],
-              border: (theme) => outline[theme.palette.mode],
-              color: (theme) => getTextColor(theme, value),
+              'backgroundColor': (theme) => backgroundColor[theme.palette.mode],
+              'border': (theme) => outline[theme.palette.mode],
+              'color': (theme) => getTextColor(theme, value),
+              '&:hover': {
+                  border: (theme) => hoveredOutline[theme.palette.mode],
+              },
           }
-        : {};
+        : {
+              '&:hover': {
+                  border: (theme) => defaultOutline_hovered[theme.palette.mode],
+              },
+          };
 
     const disabledStateSx: SxProps<Theme> = coloredDefaultState
         ? {
@@ -90,9 +105,12 @@ function OutlinedToggleButton({
               color: (theme) => getDisabledTextColor(theme, value),
           }
         : {
-              backgroundColor: (theme) => backgroundColor[theme.palette.mode],
-              border: (theme) => outline[theme.palette.mode],
-              color: (theme) => getTextColor(theme, value),
+              'backgroundColor': (theme) => backgroundColor[theme.palette.mode],
+              'border': (theme) => outline[theme.palette.mode],
+              'color': (theme) => getTextColor(theme, value),
+              '&:hover': {
+                  border: (theme) => hoveredOutline[theme.palette.mode],
+              },
           };
 
     return (

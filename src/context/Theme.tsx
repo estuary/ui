@@ -182,6 +182,11 @@ export const defaultOutline = {
     dark: `1px solid rgba(247, 249, 252, 0.12)`,
 };
 
+export const defaultOutline_hovered = {
+    light: `1px solid #0B131E`,
+    dark: `1px solid #F7F9FC`,
+};
+
 export const defaultOutlineColor = {
     light: `rgba(11, 19, 30, 0.12)`,
     dark: `rgba(247, 249, 252, 0.12)`,
@@ -225,6 +230,11 @@ export const successColoredOutline_disabled = {
     dark: `1px solid rgba(102, 187, 106, 0.12)`,
 };
 
+export const successColoredOutline_hovered = {
+    light: `1px solid #2A7942`,
+    dark: `1px solid #66BB6A`,
+};
+
 // RGB translation of #CA3B55.
 export const errorColoredOutline = {
     light: `1px solid rgba(202, 59, 85, 0.5)`,
@@ -234,6 +244,11 @@ export const errorColoredOutline = {
 export const errorColoredOutline_disabled = {
     light: `1px solid rgba(202, 59, 85, 0.12)`,
     dark: `1px solid rgba(202, 59, 85, 0.12)`,
+};
+
+export const errorColoredOutline_hovered = {
+    light: `1px solid #CA3B55`,
+    dark: `1px solid #CA3B55`,
 };
 
 export const jsonViewTheme: {
