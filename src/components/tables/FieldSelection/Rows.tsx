@@ -7,21 +7,24 @@ import {
     getStickyTableCell,
 } from 'context/Theme';
 import { orderBy } from 'lodash';
-import { SortDirection } from 'types';
+import { SortDirection, TableColumns } from 'types';
 import {
     basicSort_string,
     compareInitialCharacterType,
 } from 'utils/misc-utils';
 import ConstraintDetails from '../cells/fieldSelection/ConstraintDetails';
+import { optionalColumnIntlKeys } from '.';
 
 interface RowProps {
+    columns: TableColumns[];
     row: CompositeProjection;
 }
 
 interface RowsProps {
+    columnToSort: string;
+    columns: TableColumns[];
     data: CompositeProjection[];
     sortDirection: SortDirection;
-    columnToSort: string;
 }
 
 const compareConstraintTypes = (
@@ -74,7 +77,20 @@ const constraintTypeSort = (
     return compareConstraintTypes(a, b, ascendingSort);
 };
 
-function Row({ row }: RowProps) {
+const displayOptionalColumn = (columns: TableColumns[], intlKey: string) =>
+    columns.some((column) => column.headerIntlKey === intlKey);
+
+function Row({ columns, row }: RowProps) {
+    const pointerColumnDisplayed = displayOptionalColumn(
+        columns,
+        optionalColumnIntlKeys.pointer
+    );
+
+    const detailsColumnDisplayed = displayOptionalColumn(
+        columns,
+        optionalColumnIntlKeys.details
+    );
+
     return (
         <TableRow
             sx={{
@@ -88,9 +104,11 @@ function Row({ row }: RowProps) {
                 <Typography>{row.field}</Typography>
             </TableCell>
 
-            <TableCell>
-                <Typography>{row.ptr}</Typography>
-            </TableCell>
+            {pointerColumnDisplayed ? (
+                <TableCell>
+                    <Typography>{row.ptr}</Typography>
+                </TableCell>
+            ) : null}
 
             {row.inference?.types ? (
                 <ChipListCell values={row.inference.types} stripPath={false} />
@@ -98,22 +116,22 @@ function Row({ row }: RowProps) {
                 <TableCell />
             )}
 
-            {row.constraint ? (
-                <>
+            {detailsColumnDisplayed ? (
+                row.constraint ? (
                     <ConstraintDetails constraint={row.constraint} />
+                ) : (
+                    <TableCell />
+                )
+            ) : null}
 
-                    <FieldActions
-                        field={row.field}
-                        constraint={row.constraint}
-                        selectionType={row.selectionType}
-                    />
-                </>
+            {row.constraint ? (
+                <FieldActions
+                    field={row.field}
+                    constraint={row.constraint}
+                    selectionType={row.selectionType}
+                />
             ) : (
-                <>
-                    <TableCell />
-
-                    <TableCell />
-                </>
+                <TableCell />
             )}
         </TableRow>
     );
@@ -121,7 +139,7 @@ function Row({ row }: RowProps) {
 
 // TODO (field selection): Share the custom sorting logic taken from src/components/tables/Schema/Rows.tsx.
 //   At this point, the majority of the logic for these two components is shared. Consider unifying them.
-function Rows({ data, sortDirection, columnToSort }: RowsProps) {
+function Rows({ columnToSort, columns, data, sortDirection }: RowsProps) {
     // We only do special sorting for field - otherwise we can use lodash
     //  We're probably safe always using the method below but made them
     //  different so we can have special control when sorting the fields
@@ -143,6 +161,7 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
                     )
                     .map((record: CompositeProjection, index: number) => (
                         <Row
+                            columns={columns}
                             row={record}
                             key={`field-selection-table-rows-${index}`}
                         />
@@ -163,6 +182,7 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
                     )
                     .map((record: CompositeProjection, index: number) => (
                         <Row
+                            columns={columns}
                             row={record}
                             key={`field-selection-table-rows-${index}`}
                         />
@@ -177,6 +197,7 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
             {orderBy(data, [columnToSort], [sortDirection]).map(
                 (projection, index) => (
                     <Row
+                        columns={columns}
                         key={`field-selection-table-rows-${index}`}
                         row={projection}
                     />

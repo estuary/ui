@@ -3,7 +3,8 @@ import { CompositeProjection } from 'components/editor/Bindings/FieldSelection/t
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import Rows from 'components/tables/FieldSelection/Rows';
-import { useEffect, useState } from 'react';
+import { useDisplayTableColumns } from 'context/TableSettings';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
@@ -13,6 +14,11 @@ interface Props {
     projections: CompositeProjection[] | null | undefined;
 }
 
+export const optionalColumnIntlKeys = {
+    pointer: 'data.pointer',
+    details: 'fieldSelection.table.label.details',
+};
+
 export const columns: TableColumns[] = [
     {
         field: 'field',
@@ -21,7 +27,7 @@ export const columns: TableColumns[] = [
     },
     {
         field: 'ptr',
-        headerIntlKey: 'data.pointer',
+        headerIntlKey: optionalColumnIntlKeys.pointer,
     },
     {
         field: null,
@@ -29,7 +35,7 @@ export const columns: TableColumns[] = [
     },
     {
         field: 'constraint.type',
-        headerIntlKey: 'fieldSelection.table.label.details',
+        headerIntlKey: optionalColumnIntlKeys.details,
     },
     {
         field: null,
@@ -88,6 +94,22 @@ function FieldSelectionTable({ projections }: Props) {
     const failed = formStatus === FormStatus.FAILED;
     const loading = tableState.status === TableStatuses.LOADING;
 
+    const { tableSettings } = useDisplayTableColumns();
+
+    const columnsToShow = useMemo(
+        () =>
+            tableSettings && Object.hasOwn(tableSettings, 'fieldSelection')
+                ? columns.filter((column) =>
+                      column.headerIntlKey
+                          ? !tableSettings.fieldSelection.hiddenColumns.includes(
+                                intl.formatMessage({ id: column.headerIntlKey })
+                            )
+                          : true
+                  )
+                : columns,
+        [tableSettings]
+    );
+
     return (
         <Box>
             <TableContainer component={Box}>
@@ -99,7 +121,7 @@ function FieldSelectionTable({ projections }: Props) {
                     })}
                 >
                     <EntityTableHeader
-                        columns={columns}
+                        columns={columnsToShow}
                         columnToSort={columnToSort}
                         sortDirection={sortDirection}
                         headerClick={handlers.sort}
@@ -107,7 +129,7 @@ function FieldSelectionTable({ projections }: Props) {
                     />
 
                     <EntityTableBody
-                        columns={columns}
+                        columns={columnsToShow}
                         noExistingDataContentIds={{
                             header: 'fieldSelection.table.empty.header',
                             message: failed
@@ -124,6 +146,7 @@ function FieldSelectionTable({ projections }: Props) {
                             projections.length > 0 &&
                             formStatus !== FormStatus.TESTING ? (
                                 <Rows
+                                    columns={columnsToShow}
                                     data={projections}
                                     sortDirection={sortDirection}
                                     columnToSort={columnToSort}

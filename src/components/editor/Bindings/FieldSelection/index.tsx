@@ -33,7 +33,10 @@ import {
     useEditorStore_id,
     useEditorStore_queryResponse_draftSpecs,
 } from 'components/editor/Store/hooks';
-import FieldSelectionTable, { columns } from 'components/tables/FieldSelection';
+import FieldSelectionTable, {
+    columns,
+    optionalColumnIntlKeys,
+} from 'components/tables/FieldSelection';
 import SelectColumnMenu from 'components/tables/SelectColumnMenu';
 import { useDisplayTableColumns } from 'context/TableSettings';
 import { primaryColoredOutline } from 'context/Theme';
@@ -120,13 +123,11 @@ const mapConstraintsToProjections = (
         };
     });
 
-const optionalColumns = columns.filter((column) => {
-    const intlKeys = ['data.pointer', 'fieldSelection.table.label.details'];
-
-    return typeof column.headerIntlKey === 'string'
-        ? intlKeys.includes(column.headerIntlKey)
-        : false;
-});
+const optionalColumns = columns.filter((column) =>
+    typeof column.headerIntlKey === 'string'
+        ? Object.values(optionalColumnIntlKeys).includes(column.headerIntlKey)
+        : false
+);
 
 function FieldSelectionViewer({ collectionName }: Props) {
     const intl = useIntl();
