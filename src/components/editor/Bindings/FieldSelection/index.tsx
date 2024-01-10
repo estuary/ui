@@ -35,6 +35,7 @@ import {
 } from 'components/editor/Store/hooks';
 import FieldSelectionTable, { columns } from 'components/tables/FieldSelection';
 import SelectColumnMenu from 'components/tables/SelectColumnMenu';
+import { useDisplayTableColumns } from 'context/TableSettings';
 import { primaryColoredOutline } from 'context/Theme';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { ViewColumns3 } from 'iconoir-react';
@@ -47,7 +48,7 @@ import {
     useRef,
     useState,
 } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useEndpointConfig_serverUpdateRequired } from 'stores/EndpointConfig/hooks';
@@ -119,8 +120,19 @@ const mapConstraintsToProjections = (
         };
     });
 
+const optionalColumns = columns.filter((column) => {
+    const intlKeys = ['data.pointer', 'fieldSelection.table.label.details'];
+
+    return typeof column.headerIntlKey === 'string'
+        ? intlKeys.includes(column.headerIntlKey)
+        : false;
+});
+
 function FieldSelectionViewer({ collectionName }: Props) {
+    const intl = useIntl();
     const theme = useTheme();
+
+    const { tableSettings, setTableSettings } = useDisplayTableColumns();
 
     const isEdit = useEntityWorkflow_Editing();
     const fireBackgroundTest = useRef(isEdit);
@@ -350,6 +362,70 @@ function FieldSelectionViewer({ collectionName }: Props) {
         setSelectionSaving,
     ]);
 
+    useEffect(() => {
+        const existingSettings = tableSettings ?? {};
+
+        if (!tableSettings || !Object.hasOwn(tableSettings, 'fieldSelection')) {
+            setTableSettings({
+                ...existingSettings,
+                fieldSelection: {
+                    hiddenColumns: optionalColumns.map((column) =>
+                        column.headerIntlKey
+                            ? intl.formatMessage({ id: column.headerIntlKey })
+                            : ''
+                    ),
+                },
+            });
+        }
+    }, []);
+
+    const updateTableSettings = (
+        event: SyntheticEvent,
+        checked: boolean,
+        column: string
+    ) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (tableSettings && Object.hasOwn(tableSettings, 'fieldSelection')) {
+            const { hiddenColumns } = tableSettings.fieldSelection;
+
+            const evaluatedSettings =
+                checked && hiddenColumns.includes(column)
+                    ? {
+                          ...tableSettings,
+                          fieldSelection: {
+                              hiddenColumns: hiddenColumns.filter(
+                                  (value) => value !== column
+                              ),
+                          },
+                      }
+                    : !checked && !hiddenColumns.includes(column)
+                    ? {
+                          ...tableSettings,
+                          fieldSelection: {
+                              hiddenColumns: [...hiddenColumns, column],
+                          },
+                      }
+                    : tableSettings;
+
+            setTableSettings(evaluatedSettings);
+
+            return;
+        }
+
+        const existingSettings = tableSettings ?? {};
+
+        setTableSettings(
+            !checked
+                ? {
+                      ...existingSettings,
+                      fieldSelection: { hiddenColumns: [column] },
+                  }
+                : existingSettings
+        );
+    };
+
     const loading = formActive || formStatus === FormStatus.TESTING_BACKGROUND;
 
     return (
@@ -407,13 +483,8 @@ function FieldSelectionViewer({ collectionName }: Props) {
                 </IconButton>
 
                 <SelectColumnMenu
-                    columns={columns.filter(
-                        (column) =>
-                            column.headerIntlKey === 'data.pointer' ||
-                            column.headerIntlKey ===
-                                'fieldSelection.table.label.details'
-                    )}
-                    onChange={() => {}}
+                    columns={optionalColumns}
+                    onChange={updateTableSettings}
                 />
             </Stack>
 

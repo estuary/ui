@@ -27,8 +27,9 @@ interface Props {
     identifier: string;
     tooltip: string;
     children: ReactNode;
-    hideArrow?: boolean;
     customMenuPosition?: CustomPopoverPosition;
+    disableCloseOnClick?: boolean;
+    hideArrow?: boolean;
 }
 
 const IconMenu = ({
@@ -37,8 +38,9 @@ const IconMenu = ({
     ariaLabel,
     icon,
     children,
-    hideArrow,
     customMenuPosition,
+    disableCloseOnClick,
+    hideArrow,
 }: Props) => {
     const [anchorEl, setAnchorEl] =
         React.useState<PopoverProps['anchorEl']>(null);
@@ -109,7 +111,7 @@ const IconMenu = ({
                 anchorEl={anchorEl}
                 open={open}
                 onClose={handlers.close}
-                onClick={handlers.close}
+                onClick={disableCloseOnClick ? undefined : handlers.close}
                 transformOrigin={
                     customMenuPosition?.transformOrigin ?? {
                         horizontal: 'right',

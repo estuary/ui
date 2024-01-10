@@ -12,13 +12,19 @@ import { ViewColumns3 } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { TableColumns } from 'types';
 
+// TODO: Move custom utility types to a shared location.
 // type WithRequiredProperty<T, K extends keyof T> = T & { [P in K]-?: T[P] };
+
+// type WithRequiredNonNullProperty<T, K extends keyof T> = T & {
+//     [P in K]-?: Exclude<T[P], null>;
+// };
 
 interface Props {
     columns: TableColumns[];
     onChange: (
         event: React.SyntheticEvent<Element, Event>,
-        checked: boolean
+        checked: boolean,
+        column: string
     ) => void;
 }
 
@@ -32,6 +38,7 @@ function SelectColumnMenu({ columns, onChange }: Props) {
             ariaLabel={intl.formatMessage({
                 id: 'entityTable.selectColumn.button.ariaLabel',
             })}
+            disableCloseOnClick
             icon={<ViewColumns3 />}
             identifier="select-table-columns-menu"
             tooltip={intl.formatMessage({
@@ -66,7 +73,7 @@ function SelectColumnMenu({ columns, onChange }: Props) {
                                                 tableSettings,
                                                 'fieldSelection'
                                             )
-                                                ? tableSettings.fieldSelection.hiddenColumns.includes(
+                                                ? !tableSettings.fieldSelection.hiddenColumns.includes(
                                                       label
                                                   )
                                                 : false
@@ -74,7 +81,9 @@ function SelectColumnMenu({ columns, onChange }: Props) {
                                         // disabled={loading || !data}
                                     />
                                 }
-                                onChange={onChange}
+                                onChange={(event, checked) =>
+                                    onChange(event, checked, label)
+                                }
                                 label={label}
                             />
                         </FormControl>
