@@ -14,16 +14,10 @@ import { ViewColumns3 } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { TablePrefixes } from 'stores/Tables/hooks';
 import { TableColumns } from 'types';
-
-// TODO: Move custom utility types to a shared location.
-// type WithRequiredProperty<T, K extends keyof T> = T & { [P in K]-?: T[P] };
-
-// type WithRequiredNonNullProperty<T, K extends keyof T> = T & {
-//     [P in K]-?: Exclude<T[P], null>;
-// };
+import { WithRequiredNonNullProperty } from 'types/utils';
 
 interface Props {
-    columns: TableColumns[];
+    columns: WithRequiredNonNullProperty<TableColumns, 'headerIntlKey'>[];
     onChange: (
         event: React.SyntheticEvent<Element, Event>,
         checked: boolean,
@@ -69,9 +63,9 @@ function SelectColumnMenu({ columns, onChange, disabled }: Props) {
 
             <Stack sx={{ px: 2 }}>
                 {columns.map((column, index) => {
-                    const label = column.headerIntlKey
-                        ? intl.formatMessage({ id: column.headerIntlKey })
-                        : '';
+                    const label = intl.formatMessage({
+                        id: column.headerIntlKey,
+                    });
 
                     return (
                         <FormControl

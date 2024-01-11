@@ -44,7 +44,9 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/hooks';
 import { TablePrefixes } from 'stores/Tables/hooks';
-import { Schema } from 'types';
+import { Schema, TableColumns } from 'types';
+import { WithRequiredNonNullProperty } from 'types/utils';
+import { hasLength } from 'utils/misc-utils';
 import {
     evaluateRequiredIncludedFields,
     getBindingIndex,
@@ -105,10 +107,16 @@ const mapConstraintsToProjections = (
         };
     });
 
-const optionalColumns = columns.filter((column) =>
-    typeof column.headerIntlKey === 'string'
-        ? Object.values(optionalColumnIntlKeys).includes(column.headerIntlKey)
-        : false
+const optionalColumns = columns.filter(
+    (
+        column
+    ): column is WithRequiredNonNullProperty<TableColumns, 'headerIntlKey'> =>
+        typeof column.headerIntlKey === 'string' &&
+        hasLength(column.headerIntlKey)
+            ? Object.values(optionalColumnIntlKeys).includes(
+                  column.headerIntlKey
+              )
+            : false
 );
 
 function FieldSelectionViewer({ collectionName }: Props) {
