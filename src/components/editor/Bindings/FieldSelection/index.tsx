@@ -1,11 +1,4 @@
-import {
-    Box,
-    Checkbox,
-    FormControl,
-    FormControlLabel,
-    Stack,
-    Typography,
-} from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import RefreshButton from 'components/editor/Bindings/FieldSelection/RefreshButton';
 import {
@@ -21,11 +14,9 @@ import {
 import useFieldSelection from 'components/editor/Bindings/FieldSelection/useFieldSelection';
 import {
     useBindingsEditorStore_initializeSelections,
-    useBindingsEditorStore_recommendFields,
     useBindingsEditorStore_selectionSaving,
     useBindingsEditorStore_setRecommendFields,
     useBindingsEditorStore_setSelectionSaving,
-    useBindingsEditorStore_setSingleSelection,
 } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
@@ -39,14 +30,7 @@ import SelectColumnMenu from 'components/tables/SelectColumnMenu';
 import { useDisplayTableColumns } from 'context/TableSettings';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { isEqual } from 'lodash';
-import {
-    SyntheticEvent,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+import { SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { logRocketEvent } from 'services/shared';
@@ -144,11 +128,9 @@ function FieldSelectionViewer({ collectionName }: Props) {
     const { refresh } = useFieldSelectionRefresh();
 
     // Bindings Editor Store
-    const recommendFields = useBindingsEditorStore_recommendFields();
     const setRecommendFields = useBindingsEditorStore_setRecommendFields();
 
     const initializeSelections = useBindingsEditorStore_initializeSelections();
-    const setSingleSelection = useBindingsEditorStore_setSingleSelection();
 
     const selectionSaving = useBindingsEditorStore_selectionSaving();
     const setSelectionSaving = useBindingsEditorStore_setSelectionSaving();
@@ -292,31 +274,6 @@ function FieldSelectionViewer({ collectionName }: Props) {
         setRecommendFields,
     ]);
 
-    const toggleRecommendFields = useCallback(
-        (event: SyntheticEvent, checked) => {
-            event.preventDefault();
-            event.stopPropagation();
-
-            setRecommendFields(!recommendFields);
-
-            data?.forEach(({ field, constraint }) => {
-                if (!checked && constraint) {
-                    const includeRequired =
-                        constraint.type === ConstraintTypes.FIELD_REQUIRED ||
-                        constraint.type === ConstraintTypes.LOCATION_REQUIRED;
-
-                    setSingleSelection(
-                        field,
-                        includeRequired ? 'include' : null
-                    );
-                } else {
-                    setSingleSelection(field, 'default');
-                }
-            });
-        },
-        [setRecommendFields, setSingleSelection, data, recommendFields]
-    );
-
     const draftSpec = useMemo(
         () =>
             draftSpecs.length > 0 && draftSpecs[0].spec ? draftSpecs[0] : null,
@@ -448,26 +405,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
                 </Stack>
             </Stack>
 
-            <Stack
-                direction="row"
-                sx={{ mb: 1, justifyContent: 'space-between' }}
-            >
-                <FormControl sx={{ mx: 0 }}>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                value={recommendFields}
-                                checked={recommendFields}
-                                disabled={loading || !data}
-                            />
-                        }
-                        onChange={toggleRecommendFields}
-                        label={
-                            <FormattedMessage id="fieldSelection.cta.defaultAllFields" />
-                        }
-                    />
-                </FormControl>
-
+            <Stack direction="row" sx={{ mb: 1, justifyContent: 'flex-end' }}>
                 <SelectColumnMenu
                     columns={optionalColumns}
                     onChange={updateTableSettings}
