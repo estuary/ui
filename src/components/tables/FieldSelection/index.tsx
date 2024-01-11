@@ -17,7 +17,7 @@ interface Props {
 
 export const optionalColumnIntlKeys = {
     pointer: 'data.pointer',
-    details: 'fieldSelection.table.label.details',
+    details: 'data.details',
 };
 
 export const columns: TableColumns[] = [
@@ -40,7 +40,7 @@ export const columns: TableColumns[] = [
     },
     {
         field: null,
-        headerIntlKey: 'fieldSelection.table.label.actions',
+        headerIntlKey: 'data.actions',
     },
 ];
 
