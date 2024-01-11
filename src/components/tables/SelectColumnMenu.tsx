@@ -61,7 +61,7 @@ function SelectColumnMenu({ columns, onChange, disabled }: Props) {
         >
             <Typography
                 component={Box}
-                sx={{ width: 200, px: 2, pb: 1, fontWeight: 500 }}
+                sx={{ minWidth: 'max-content', px: 2, pb: 1, fontWeight: 500 }}
             >
                 <FormattedMessage id="entityTable.selectColumn.menu.header" />
             </Typography>
