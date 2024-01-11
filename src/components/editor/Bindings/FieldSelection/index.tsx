@@ -353,49 +353,35 @@ function FieldSelectionViewer({ collectionName }: Props) {
         event.preventDefault();
         event.stopPropagation();
 
-        if (
-            tableSettings &&
-            Object.hasOwn(tableSettings, TablePrefixes.fieldSelection)
-        ) {
-            const { hiddenColumns } =
-                tableSettings[TablePrefixes.fieldSelection];
-
-            const evaluatedSettings =
-                checked && hiddenColumns.includes(column)
-                    ? {
-                          ...tableSettings,
-                          [TablePrefixes.fieldSelection]: {
-                              hiddenColumns: hiddenColumns.filter(
-                                  (value) => value !== column
-                              ),
-                          },
-                      }
-                    : !checked && !hiddenColumns.includes(column)
-                    ? {
-                          ...tableSettings,
-                          [TablePrefixes.fieldSelection]: {
-                              hiddenColumns: [...hiddenColumns, column],
-                          },
-                      }
-                    : tableSettings;
-
-            setTableSettings(evaluatedSettings);
-
-            return;
-        }
-
         const existingSettings = tableSettings ?? {};
 
-        setTableSettings(
-            !checked
+        const hiddenColumns = Object.hasOwn(
+            existingSettings,
+            TablePrefixes.fieldSelection
+        )
+            ? existingSettings[TablePrefixes.fieldSelection].hiddenColumns
+            : [];
+
+        const evaluatedSettings =
+            checked && hiddenColumns.includes(column)
                 ? {
                       ...existingSettings,
                       [TablePrefixes.fieldSelection]: {
-                          hiddenColumns: [column],
+                          hiddenColumns: hiddenColumns.filter(
+                              (value) => value !== column
+                          ),
                       },
                   }
-                : existingSettings
-        );
+                : !checked && !hiddenColumns.includes(column)
+                ? {
+                      ...existingSettings,
+                      [TablePrefixes.fieldSelection]: {
+                          hiddenColumns: [...hiddenColumns, column],
+                      },
+                  }
+                : existingSettings;
+
+        setTableSettings(evaluatedSettings);
     };
 
     const loading = formActive || formStatus === FormStatus.TESTING_BACKGROUND;
