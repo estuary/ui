@@ -90,7 +90,6 @@ function SelectColumnMenu({ columns, onChange, disabled }: Props) {
                                                   )
                                                 : false
                                         }
-                                        // disabled={loading || !data}
                                     />
                                 }
                                 onChange={(event, checked) =>

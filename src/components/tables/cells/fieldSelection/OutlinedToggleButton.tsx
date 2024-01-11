@@ -1,4 +1,10 @@
-import { SxProps, Theme, ToggleButton, ToggleButtonProps } from '@mui/material';
+import {
+    SxProps,
+    Theme,
+    ToggleButton,
+    ToggleButtonProps,
+    useTheme,
+} from '@mui/material';
 import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
 import {
     defaultOutline_hovered,
@@ -29,15 +35,58 @@ interface Props {
     onClick?: ToggleButtonProps['onClick'];
 }
 
-const getTextColor = (theme: Theme, value: FieldSelectionType) =>
-    value === 'include'
+const getBackgroundColor = (value: FieldSelectionType, disabled?: boolean) => {
+    if (disabled) {
+        return value === 'include'
+            ? successOutlinedButtonBackground_disabled
+            : errorOutlinedButtonBackground_disabled;
+    }
+
+    return value === 'include'
+        ? successOutlinedButtonBackground
+        : errorOutlinedButtonBackground;
+};
+
+const getOutline = (value: FieldSelectionType, disabled?: boolean) => {
+    if (disabled) {
+        return value === 'include'
+            ? successColoredOutline_disabled
+            : errorColoredOutline_disabled;
+    }
+
+    return value === 'include' ? successColoredOutline : errorColoredOutline;
+};
+
+const getTextColor = (
+    theme: Theme,
+    value: FieldSelectionType,
+    disabled?: boolean
+) => {
+    if (disabled) {
+        return value === 'include'
+            ? disabledButtonText_success[theme.palette.mode]
+            : disabledButtonText_error;
+    }
+
+    return value === 'include'
         ? successButtonText[theme.palette.mode]
         : theme.palette.error.main;
+};
 
-const getDisabledTextColor = (theme: Theme, value: FieldSelectionType) =>
-    value === 'include'
-        ? disabledButtonText_success[theme.palette.mode]
-        : disabledButtonText_error;
+const getBaseSx = (
+    theme: Theme,
+    value: FieldSelectionType,
+    disabled?: boolean
+) => {
+    const backgroundColor = getBackgroundColor(value, disabled);
+    const outline = getOutline(value, disabled);
+
+    return {
+        backgroundColor: backgroundColor[theme.palette.mode],
+        border: outline[theme.palette.mode],
+        color: getTextColor(theme, value, disabled),
+    };
+};
 
 function OutlinedToggleButton({
     messageId,
@@ -48,68 +97,40 @@ function OutlinedToggleButton({
     onChange,
     onClick,
 }: Props) {
-    const backgroundColor =
-        value === 'include'
-            ? successOutlinedButtonBackground
-            : errorOutlinedButtonBackground;
-
-    const disabledBackgroundColor =
-        value === 'include'
-            ? successOutlinedButtonBackground_disabled
-            : errorOutlinedButtonBackground_disabled;
-
-    const outline =
-        value === 'include' ? successColoredOutline : errorColoredOutline;
+    const theme = useTheme();
 
     const hoveredOutline =
         value === 'include'
             ? successColoredOutline_hovered
             : errorColoredOutline_hovered;
 
-    const disabledOutline =
-        value === 'include'
-            ? successColoredOutline_disabled
-            : errorColoredOutline_disabled;
+    const baseSx = getBaseSx(theme, value, disabled);
 
     const defaultStateSx: SxProps<Theme> = coloredDefaultState
         ? {
-              'backgroundColor': (theme) => backgroundColor[theme.palette.mode],
-              'border': (theme) => outline[theme.palette.mode],
-              'color': (theme) => getTextColor(theme, value),
+              ...baseSx,
               '&:hover': {
-                  border: (theme) => hoveredOutline[theme.palette.mode],
+                  border: hoveredOutline[theme.palette.mode],
               },
           }
         : {
               '&:hover': {
-                  border: (theme) => defaultOutline_hovered[theme.palette.mode],
+                  border: defaultOutline_hovered[theme.palette.mode],
               },
           };
 
     const disabledStateSx: SxProps<Theme> = coloredDefaultState
-        ? {
-              backgroundColor: (theme) =>
-                  disabledBackgroundColor[theme.palette.mode],
-              border: (theme) => disabledOutline[theme.palette.mode],
-              color: (theme) => getDisabledTextColor(theme, value),
-          }
+        ? baseSx
         : {
-              border: (theme) => `1px solid ${theme.palette.divider}`,
+              border: `1px solid ${theme.palette.divider}`,
           };
 
     const selectedStateSx: SxProps<Theme> = disabled
-        ? {
-              backgroundColor: (theme) =>
-                  disabledBackgroundColor[theme.palette.mode],
-              border: (theme) => disabledOutline[theme.palette.mode],
-              color: (theme) => getDisabledTextColor(theme, value),
-          }
+        ? baseSx
         : {
-              'backgroundColor': (theme) => backgroundColor[theme.palette.mode],
-              'border': (theme) => outline[theme.palette.mode],
-              'color': (theme) => getTextColor(theme, value),
+              ...baseSx,
               '&:hover': {
-                  border: (theme) => hoveredOutline[theme.palette.mode],
+                  border: hoveredOutline[theme.palette.mode],
               },
           };
 
@@ -124,7 +145,7 @@ function OutlinedToggleButton({
             sx={{
                 'px': '9px',
                 'py': '3px',
-                'border': (theme) => intensifiedOutline[theme.palette.mode],
+                'border': intensifiedOutline[theme.palette.mode],
                 'borderRadius': 2,
                 '&.Mui-disabled': disabledStateSx,
                 '&.Mui-selected': selectedStateSx,
