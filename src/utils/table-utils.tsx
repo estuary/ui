@@ -12,6 +12,8 @@ export const getEmptyTableHeader = (
             return 'entityTable.technicalDifficulties.header';
         case TableStatuses.UNMATCHED_FILTER:
             return 'entityTable.unmatchedFilter.header';
+        case TableStatuses.NETWORK_FAILED:
+            return 'entityTable.networkFailed.header';
         default:
             return intlConfig.header;
     }
@@ -30,6 +32,8 @@ export function getEmptyTableMessage(
             return (
                 <FormattedMessage id="entityTable.unmatchedFilter.message" />
             );
+        case TableStatuses.NETWORK_FAILED:
+            return <FormattedMessage id="entityTable.networkFailed.message" />;
         default: {
             const { disableDoclink, message } = intlConfig;
 

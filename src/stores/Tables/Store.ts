@@ -7,6 +7,7 @@ import { EVERYTHING } from 'components/collection/Selector/Table/shared';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { flatMap } from 'lodash';
+import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
 import { supabaseRetry } from 'services/supabase';
 import {
     AsyncOperationProps,
@@ -375,9 +376,21 @@ export const getInitialState = (
                         state.query.response = null;
                         state.query.loading = false;
                         state.query.error = response.error;
+                        state.query.networkFailed = checkErrorMessage(
+                            FAILED_TO_FETCH,
+                            response.error.message
+                        );
                     }),
                     false,
                     'Table Store Hydration Failure'
+                );
+            } else {
+                set(
+                    produce((state) => {
+                        state.query.networkFailed = false;
+                    }),
+                    false,
+                    'Table Store Hydration Network Failed Reset'
                 );
             }
 
@@ -397,6 +410,7 @@ export const getInitialState = (
         setQuery: async (query) => {
             set(
                 produce((state) => {
+                    state.query.networkFailed = false;
                     state.query.loading = true;
                     state.query.fetcher = query;
                 }),
@@ -430,6 +444,8 @@ export const selectableTableStoreSelectors = {
         set: (state: SelectableTableStore) => state.setQuery,
         response: (state: SelectableTableStore) => state.query.response,
         loading: (state: SelectableTableStore) => state.query.loading,
+        networkFailed: (state: SelectableTableStore) =>
+            state.query.networkFailed,
         error: (state: SelectableTableStore) => state.query.error,
         count: (state: SelectableTableStore) => state.query.count,
     },

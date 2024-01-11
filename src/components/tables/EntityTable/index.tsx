@@ -116,6 +116,14 @@ function EntityTable({
         SelectableTableStore['query']['loading']
     >(selectableTableStoreName, selectableTableStoreSelectors.query.loading);
 
+    const networkFailed = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['query']['networkFailed']
+    >(
+        selectableTableStoreName,
+        selectableTableStoreSelectors.query.networkFailed
+    );
+
     const selectData = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['query']['response']
@@ -160,10 +168,12 @@ function EntityTable({
             toolbar ? setRows(selectData) : null;
         } else if (isFiltering.current) {
             setTableState({ status: TableStatuses.UNMATCHED_FILTER });
+        } else if (networkFailed) {
+            setTableState({ status: TableStatuses.NETWORK_FAILED });
         } else {
             setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
-    }, [selectData, setRows, toolbar]);
+    }, [networkFailed, selectData, setRows, toolbar]);
 
     useEffect(() => {
         if (successfulTransformations > 0) {

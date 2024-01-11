@@ -76,6 +76,7 @@ export interface AsyncOperationProps {
     response: any;
     error: any;
     count: number | null;
+    networkFailed: boolean;
 }
 export const getAsyncDefault = (): AsyncOperationProps => {
     return {
@@ -84,5 +85,6 @@ export const getAsyncDefault = (): AsyncOperationProps => {
         loading: false,
         response: null,
         error: null,
+        networkFailed: false,
     };
 };
