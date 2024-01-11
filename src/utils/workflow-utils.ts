@@ -298,7 +298,6 @@ export const evaluateRecommendedIncludedFields = (
 
     return (
         includeRequired ||
-        constraintType === ConstraintTypes.LOCATION_RECOMMENDED ||
-        constraintType === ConstraintTypes.FIELD_OPTIONAL
+        constraintType === ConstraintTypes.LOCATION_RECOMMENDED
     );
 };
