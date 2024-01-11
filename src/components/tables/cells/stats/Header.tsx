@@ -23,6 +23,14 @@ const StatsHeader = ({ header, selectableTableStoreName }: Props) => {
         SelectableTableStore['query']['loading']
     >(selectableTableStoreName, selectableTableStoreSelectors.query.loading);
 
+    const networkFailed = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['query']['networkFailed']
+    >(
+        selectableTableStoreName,
+        selectableTableStoreSelectors.query.networkFailed
+    );
+
     const queryCount = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['query']['count']
@@ -32,7 +40,12 @@ const StatsHeader = ({ header, selectableTableStoreName }: Props) => {
         <TableCell colSpan={2}>
             <DateFilter
                 header={header}
-                disabled={!hasStats || isValidating || queryCount === 0}
+                disabled={
+                    !hasStats ||
+                    isValidating ||
+                    networkFailed ||
+                    queryCount === 0
+                }
                 selectableTableStoreName={selectableTableStoreName}
             />
         </TableCell>
