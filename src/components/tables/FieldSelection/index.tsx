@@ -107,7 +107,7 @@ function FieldSelectionTable({ projections }: Props) {
                           : true
                   )
                 : columns,
-        [tableSettings]
+        [intl, tableSettings]
     );
 
     return (

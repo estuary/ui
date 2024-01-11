@@ -48,6 +48,7 @@ import {
     useState,
 } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useMount } from 'react-use';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useEndpointConfig_serverUpdateRequired } from 'stores/EndpointConfig/hooks';
@@ -358,7 +359,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
         setSelectionSaving,
     ]);
 
-    useEffect(() => {
+    useMount(() => {
         const existingSettings = tableSettings ?? {};
 
         if (!tableSettings || !Object.hasOwn(tableSettings, 'fieldSelection')) {
@@ -373,7 +374,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
                 },
             });
         }
-    }, []);
+    });
 
     const updateTableSettings = (
         event: SyntheticEvent,
