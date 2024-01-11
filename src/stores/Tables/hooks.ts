@@ -25,6 +25,7 @@ export enum TablePrefixes {
     collections = 'col',
     collectionsSelector = 'csl',
     connectors = 'con',
+    fieldSelection = 'fs',
     materializations = 'mat',
     prefixes = 'pr',
     prefixAlerts = 'pal',

@@ -43,6 +43,7 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/hooks';
+import { TablePrefixes } from 'stores/Tables/hooks';
 import { Schema } from 'types';
 import {
     evaluateRequiredIncludedFields,
@@ -168,7 +169,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
             setRefreshRequired(true);
         } else if (formStatus === FormStatus.TESTED) {
             // If we are here then the flag might be true and we only can stop showing it
-            //  if there is a test ran. This is kinda janky as a test does not 100% garuntee
+            //  if there is a test ran. This is kinda janky as a test does not 100% guarantee
             //  a built spec but it is pretty darn close.
             setRefreshRequired(false);
         }
@@ -319,10 +320,13 @@ function FieldSelectionViewer({ collectionName }: Props) {
     useMount(() => {
         const existingSettings = tableSettings ?? {};
 
-        if (!tableSettings || !Object.hasOwn(tableSettings, 'fieldSelection')) {
+        if (
+            !tableSettings ||
+            !Object.hasOwn(tableSettings, TablePrefixes.fieldSelection)
+        ) {
             setTableSettings({
                 ...existingSettings,
-                fieldSelection: {
+                [TablePrefixes.fieldSelection]: {
                     hiddenColumns: optionalColumns.map((column) =>
                         column.headerIntlKey
                             ? intl.formatMessage({ id: column.headerIntlKey })
@@ -341,14 +345,18 @@ function FieldSelectionViewer({ collectionName }: Props) {
         event.preventDefault();
         event.stopPropagation();
 
-        if (tableSettings && Object.hasOwn(tableSettings, 'fieldSelection')) {
-            const { hiddenColumns } = tableSettings.fieldSelection;
+        if (
+            tableSettings &&
+            Object.hasOwn(tableSettings, TablePrefixes.fieldSelection)
+        ) {
+            const { hiddenColumns } =
+                tableSettings[TablePrefixes.fieldSelection];
 
             const evaluatedSettings =
                 checked && hiddenColumns.includes(column)
                     ? {
                           ...tableSettings,
-                          fieldSelection: {
+                          [TablePrefixes.fieldSelection]: {
                               hiddenColumns: hiddenColumns.filter(
                                   (value) => value !== column
                               ),
@@ -357,7 +365,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
                     : !checked && !hiddenColumns.includes(column)
                     ? {
                           ...tableSettings,
-                          fieldSelection: {
+                          [TablePrefixes.fieldSelection]: {
                               hiddenColumns: [...hiddenColumns, column],
                           },
                       }
@@ -374,7 +382,9 @@ function FieldSelectionViewer({ collectionName }: Props) {
             !checked
                 ? {
                       ...existingSettings,
-                      fieldSelection: { hiddenColumns: [column] },
+                      [TablePrefixes.fieldSelection]: {
+                          hiddenColumns: [column],
+                      },
                   }
                 : existingSettings
         );

@@ -12,6 +12,7 @@ import { useDisplayTableColumns } from 'context/TableSettings';
 import { disabledButtonText_primary } from 'context/Theme';
 import { ViewColumns3 } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { TablePrefixes } from 'stores/Tables/hooks';
 import { TableColumns } from 'types';
 
 // TODO: Move custom utility types to a shared location.
@@ -85,9 +86,12 @@ function SelectColumnMenu({ columns, onChange, disabled }: Props) {
                                             tableSettings &&
                                             Object.hasOwn(
                                                 tableSettings,
-                                                'fieldSelection'
+                                                TablePrefixes.fieldSelection
                                             )
-                                                ? !tableSettings.fieldSelection.hiddenColumns.includes(
+                                                ? !tableSettings[
+                                                      TablePrefixes
+                                                          .fieldSelection
+                                                  ].hiddenColumns.includes(
                                                       label
                                                   )
                                                 : false

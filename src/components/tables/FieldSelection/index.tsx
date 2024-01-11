@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import { TablePrefixes } from 'stores/Tables/hooks';
 import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
 
 interface Props {
@@ -98,10 +99,13 @@ function FieldSelectionTable({ projections }: Props) {
 
     const columnsToShow = useMemo(
         () =>
-            tableSettings && Object.hasOwn(tableSettings, 'fieldSelection')
+            tableSettings &&
+            Object.hasOwn(tableSettings, TablePrefixes.fieldSelection)
                 ? columns.filter((column) =>
                       column.headerIntlKey
-                          ? !tableSettings.fieldSelection.hiddenColumns.includes(
+                          ? !tableSettings[
+                                TablePrefixes.fieldSelection
+                            ].hiddenColumns.includes(
                                 intl.formatMessage({ id: column.headerIntlKey })
                             )
                           : true
