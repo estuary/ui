@@ -41,6 +41,7 @@ export const columns: TableColumns[] = [
     {
         field: null,
         headerIntlKey: 'data.actions',
+        width: 148,
     },
 ];
 
