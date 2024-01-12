@@ -4,7 +4,7 @@ import { BaseComponentProps } from 'types';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 
 interface TableSettings {
-    hiddenColumns: string[];
+    shownOptionalColumns: string[];
 }
 
 interface TableSettingsDictionary {

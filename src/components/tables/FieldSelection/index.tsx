@@ -44,6 +44,13 @@ export const columns: TableColumns[] = [
     },
 ];
 
+const evaluateColumnsToShow = (columnsToHide: string[]) =>
+    columns.filter((column) =>
+        column.headerIntlKey
+            ? !columnsToHide.includes(column.headerIntlKey)
+            : true
+    );
+
 function FieldSelectionTable({ projections }: Props) {
     const intl = useIntl();
 
@@ -97,20 +104,25 @@ function FieldSelectionTable({ projections }: Props) {
 
     const { tableSettings } = useDisplayTableColumns();
 
-    const columnsToShow = useMemo(
-        () =>
+    const columnsToShow = useMemo(() => {
+        const optionalColumns = Object.values(optionalColumnIntlKeys);
+
+        if (
             tableSettings &&
             Object.hasOwn(tableSettings, TablePrefixes.fieldSelection)
-                ? columns.filter((column) =>
-                      column.headerIntlKey
-                          ? !tableSettings[
-                                TablePrefixes.fieldSelection
-                            ].hiddenColumns.includes(column.headerIntlKey)
-                          : true
-                  )
-                : columns,
-        [intl, tableSettings]
-    );
+        ) {
+            const hiddenColumns = optionalColumns.filter(
+                (column) =>
+                    !tableSettings[
+                        TablePrefixes.fieldSelection
+                    ].shownOptionalColumns.includes(column)
+            );
+
+            return evaluateColumnsToShow(hiddenColumns);
+        }
+
+        return evaluateColumnsToShow(optionalColumns);
+    }, [intl, tableSettings]);
 
     return (
         <Box>

@@ -74,9 +74,9 @@ function SelectColumnMenu({ columns, onChange, disabled }: Props) {
                                             tableSettings,
                                             TablePrefixes.fieldSelection
                                         )
-                                            ? !tableSettings[
+                                            ? tableSettings[
                                                   TablePrefixes.fieldSelection
-                                              ].hiddenColumns.includes(
+                                              ].shownOptionalColumns.includes(
                                                   headerIntlKey
                                               )
                                             : false

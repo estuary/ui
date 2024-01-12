@@ -32,7 +32,6 @@ import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { isEqual } from 'lodash';
 import { SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useMount } from 'react-use';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useEndpointConfig_serverUpdateRequired } from 'stores/EndpointConfig/hooks';
@@ -323,24 +322,6 @@ function FieldSelectionViewer({ collectionName }: Props) {
         setSelectionSaving,
     ]);
 
-    useMount(() => {
-        const existingSettings = tableSettings ?? {};
-
-        if (
-            !tableSettings ||
-            !Object.hasOwn(tableSettings, TablePrefixes.fieldSelection)
-        ) {
-            setTableSettings({
-                ...existingSettings,
-                [TablePrefixes.fieldSelection]: {
-                    hiddenColumns: optionalColumns.map(
-                        (column) => column.headerIntlKey
-                    ),
-                },
-            });
-        }
-    });
-
     const updateTableSettings = (
         event: SyntheticEvent,
         checked: boolean,
@@ -351,28 +332,32 @@ function FieldSelectionViewer({ collectionName }: Props) {
 
         const existingSettings = tableSettings ?? {};
 
-        const hiddenColumns = Object.hasOwn(
+        const shownOptionalColumns = Object.hasOwn(
             existingSettings,
             TablePrefixes.fieldSelection
         )
-            ? existingSettings[TablePrefixes.fieldSelection].hiddenColumns
+            ? existingSettings[TablePrefixes.fieldSelection]
+                  .shownOptionalColumns
             : [];
 
         const evaluatedSettings =
-            checked && hiddenColumns.includes(column)
+            !checked && shownOptionalColumns.includes(column)
                 ? {
                       ...existingSettings,
                       [TablePrefixes.fieldSelection]: {
-                          hiddenColumns: hiddenColumns.filter(
+                          shownOptionalColumns: shownOptionalColumns.filter(
                               (value) => value !== column
                           ),
                       },
                   }
-                : !checked && !hiddenColumns.includes(column)
+                : checked && !shownOptionalColumns.includes(column)
                 ? {
                       ...existingSettings,
                       [TablePrefixes.fieldSelection]: {
-                          hiddenColumns: [...hiddenColumns, column],
+                          shownOptionalColumns: [
+                              ...shownOptionalColumns,
+                              column,
+                          ],
                       },
                   }
                 : existingSettings;
