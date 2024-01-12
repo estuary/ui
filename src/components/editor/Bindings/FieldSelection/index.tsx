@@ -340,8 +340,10 @@ function FieldSelectionViewer({ collectionName }: Props) {
                   .shownOptionalColumns
             : [];
 
+        const columnShown = shownOptionalColumns.includes(column);
+
         const evaluatedSettings =
-            !checked && shownOptionalColumns.includes(column)
+            !checked && columnShown
                 ? {
                       ...existingSettings,
                       [TablePrefixes.fieldSelection]: {
@@ -350,7 +352,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
                           ),
                       },
                   }
-                : checked && !shownOptionalColumns.includes(column)
+                : checked && !columnShown
                 ? {
                       ...existingSettings,
                       [TablePrefixes.fieldSelection]: {
