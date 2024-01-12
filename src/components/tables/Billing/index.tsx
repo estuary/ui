@@ -8,6 +8,7 @@ import { useIntl } from 'react-intl';
 import {
     useBilling_hydrated,
     useBilling_invoices,
+    useBilling_networkFailed,
     useBilling_selectedInvoice,
 } from 'stores/Billing/hooks';
 import { TableColumns, TableStatuses } from 'types';
@@ -45,6 +46,7 @@ function BillingHistoryTable() {
     const selectedInvoice = useBilling_selectedInvoice();
 
     const hydrated = useBilling_hydrated();
+    const networkFailed = useBilling_networkFailed();
     const billingHistory = useBilling_invoices();
 
     const dataRows = useMemo(
@@ -85,6 +87,8 @@ function BillingHistoryTable() {
                     tableState={
                         billingHistory.length > 0
                             ? { status: TableStatuses.DATA_FETCHED }
+                            : networkFailed
+                            ? { status: TableStatuses.NETWORK_FAILED }
                             : { status: TableStatuses.NO_EXISTING_DATA }
                     }
                     loading={!hydrated}

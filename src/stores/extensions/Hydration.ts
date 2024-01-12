@@ -1,6 +1,7 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import produce from 'immer';
 import { NamedSet } from 'zustand/middleware';
+import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
 
 export interface StoreWithHydration {
     hydrateState: unknown;
@@ -15,15 +16,19 @@ export interface StoreWithHydration {
     // Used to keep track if the store should be getting hydrated
     active: boolean;
     setActive: (val: boolean) => void;
+
+    networkFailed: boolean;
+    setNetworkFailed: (errorMessage: string | null | undefined) => void;
 }
 
 export const getInitialHydrationData = (): Pick<
     StoreWithHydration,
-    'hydrated' | 'hydrationErrorsExist' | 'active'
+    'hydrated' | 'hydrationErrorsExist' | 'active' | 'networkFailed'
 > => ({
     active: false,
     hydrated: false,
     hydrationErrorsExist: false,
+    networkFailed: false,
 });
 
 export const getStoreWithHydrationSettings = (
@@ -65,6 +70,19 @@ export const getStoreWithHydrationSettings = (
                 }),
                 false,
                 `${key} Active Set`
+            );
+        },
+
+        setNetworkFailed: (errorMessage) => {
+            set(
+                produce((state: StoreWithHydration) => {
+                    state.networkFailed = checkErrorMessage(
+                        FAILED_TO_FETCH,
+                        errorMessage
+                    );
+                }),
+                false,
+                `${key} Network Failed Set`
             );
         },
     };
