@@ -21,7 +21,9 @@ function GraphStateWrapper({ children }: BaseComponentProps) {
     if (networkFailed) {
         return (
             <EmptyGraphState
-                headerKey="entityTable.networkFailed.header"
+                header={
+                    <FormattedMessage id="entityTable.networkFailed.header" />
+                }
                 message={
                     <FormattedMessage id="entityTable.networkFailed.message" />
                 }
