@@ -62,44 +62,34 @@ function SelectColumnMenu({ columns, onChange, disabled }: Props) {
             </Typography>
 
             <Stack sx={{ px: 2 }}>
-                {columns.map((column, index) => {
-                    const label = intl.formatMessage({
-                        id: column.headerIntlKey,
-                    });
-
-                    return (
-                        <FormControl
-                            key={`column-option-${index}`}
-                            sx={{ mx: 0 }}
-                        >
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        value={label}
-                                        checked={
-                                            tableSettings &&
-                                            Object.hasOwn(
-                                                tableSettings,
-                                                TablePrefixes.fieldSelection
-                                            )
-                                                ? !tableSettings[
-                                                      TablePrefixes
-                                                          .fieldSelection
-                                                  ].hiddenColumns.includes(
-                                                      label
-                                                  )
-                                                : false
-                                        }
-                                    />
-                                }
-                                onChange={(event, checked) =>
-                                    onChange(event, checked, label)
-                                }
-                                label={label}
-                            />
-                        </FormControl>
-                    );
-                })}
+                {columns.map(({ headerIntlKey }, index) => (
+                    <FormControl key={`column-option-${index}`} sx={{ mx: 0 }}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    value={headerIntlKey}
+                                    checked={
+                                        tableSettings &&
+                                        Object.hasOwn(
+                                            tableSettings,
+                                            TablePrefixes.fieldSelection
+                                        )
+                                            ? !tableSettings[
+                                                  TablePrefixes.fieldSelection
+                                              ].hiddenColumns.includes(
+                                                  headerIntlKey
+                                              )
+                                            : false
+                                    }
+                                />
+                            }
+                            onChange={(event, checked) =>
+                                onChange(event, checked, headerIntlKey)
+                            }
+                            label={intl.formatMessage({ id: headerIntlKey })}
+                        />
+                    </FormControl>
+                ))}
             </Stack>
         </IconMenu>
     );

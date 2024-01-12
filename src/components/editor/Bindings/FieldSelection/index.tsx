@@ -31,7 +31,7 @@ import { useDisplayTableColumns } from 'context/TableSettings';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { isEqual } from 'lodash';
 import { SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
@@ -120,8 +120,6 @@ const optionalColumns = columns.filter(
 );
 
 function FieldSelectionViewer({ collectionName }: Props) {
-    const intl = useIntl();
-
     const { tableSettings, setTableSettings } = useDisplayTableColumns();
 
     const isEdit = useEntityWorkflow_Editing();
@@ -335,10 +333,8 @@ function FieldSelectionViewer({ collectionName }: Props) {
             setTableSettings({
                 ...existingSettings,
                 [TablePrefixes.fieldSelection]: {
-                    hiddenColumns: optionalColumns.map((column) =>
-                        column.headerIntlKey
-                            ? intl.formatMessage({ id: column.headerIntlKey })
-                            : ''
+                    hiddenColumns: optionalColumns.map(
+                        (column) => column.headerIntlKey
                     ),
                 },
             });

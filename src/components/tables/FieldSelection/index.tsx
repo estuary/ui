@@ -105,9 +105,7 @@ function FieldSelectionTable({ projections }: Props) {
                       column.headerIntlKey
                           ? !tableSettings[
                                 TablePrefixes.fieldSelection
-                            ].hiddenColumns.includes(
-                                intl.formatMessage({ id: column.headerIntlKey })
-                            )
+                            ].hiddenColumns.includes(column.headerIntlKey)
                           : true
                   )
                 : columns,
