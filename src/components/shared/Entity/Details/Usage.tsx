@@ -8,6 +8,7 @@ import Error from 'components/shared/Error';
 import useDetailsStats from 'hooks/useDetailsStats';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -31,7 +32,18 @@ function Usage({ catalogName }: Props) {
             {isValidating && !stats ? (
                 <GraphLoadingState />
             ) : error ? (
-                <Error error={error} />
+                checkErrorMessage(FAILED_TO_FETCH, error.message) ? (
+                    <EmptyGraphState
+                        header={
+                            <FormattedMessage id="entityTable.networkFailed.header" />
+                        }
+                        message={
+                            <FormattedMessage id="entityTable.networkFailed.message" />
+                        }
+                    />
+                ) : (
+                    <Error error={error} />
+                )
             ) : hasLength(stats) ? (
                 <DataByHourGraph
                     id="data-by-hour_entity-details"
