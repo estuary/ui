@@ -591,6 +591,18 @@ export const disabledButtonText = {
     dark: 'rgba(255, 255, 255, 0.3)',
 };
 
+export const outlinedIconButtonStyling: SxProps<Theme> = {
+    'borderRadius': 2,
+    'border': (theme) => primaryColoredOutline[theme.palette.mode],
+    'color': (theme) => theme.palette.primary.main,
+    '&:hover': {
+        border: (theme) => primaryColoredOutline_hovered[theme.palette.mode],
+    },
+    '&.Mui-disabled': {
+        border: (theme) => primaryColoredOutline_disabled[theme.palette.mode],
+    },
+};
+
 // TODO (echarts) need to make a color service or something to
 //  generate a proper ECharts theme. These two colors are taken
 //  from ECharts default colors they apply in order

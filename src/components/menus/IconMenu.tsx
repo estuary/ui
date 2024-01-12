@@ -11,11 +11,9 @@ import {
 } from '@mui/material';
 import {
     defaultOutline,
+    outlinedIconButtonStyling,
     paperBackground,
     paperBackgroundImage,
-    primaryColoredOutline,
-    primaryColoredOutline_disabled,
-    primaryColoredOutline_hovered,
 } from 'context/Theme';
 import React, { ReactNode } from 'react';
 
@@ -108,27 +106,7 @@ const IconMenu = ({
                         disabled={disabled}
                         sx={
                             outlinedButton
-                                ? {
-                                      'borderRadius': 2,
-                                      'border': (theme) =>
-                                          primaryColoredOutline[
-                                              theme.palette.mode
-                                          ],
-                                      'color': (theme) =>
-                                          theme.palette.primary.main,
-                                      '&:hover': {
-                                          border: (theme) =>
-                                              primaryColoredOutline_hovered[
-                                                  theme.palette.mode
-                                              ],
-                                      },
-                                      '&.Mui-disabled': {
-                                          border: (theme) =>
-                                              primaryColoredOutline_disabled[
-                                                  theme.palette.mode
-                                              ],
-                                      },
-                                  }
+                                ? outlinedIconButtonStyling
                                 : {
                                       color: (theme) =>
                                           theme.palette.text.primary,
