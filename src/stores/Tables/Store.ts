@@ -376,26 +376,19 @@ export const getInitialState = (
                         state.query.response = null;
                         state.query.loading = false;
                         state.query.error = response.error;
-                        state.query.networkFailed = checkErrorMessage(
-                            FAILED_TO_FETCH,
-                            response.error.message
-                        );
                     }),
                     false,
                     'Table Store Hydration Failure'
-                );
-            } else {
-                set(
-                    produce((state) => {
-                        state.query.networkFailed = false;
-                    }),
-                    false,
-                    'Table Store Hydration Network Failed Reset'
                 );
             }
 
             set(
                 produce((state) => {
+                    state.query.networkFailed = checkErrorMessage(
+                        FAILED_TO_FETCH,
+                        response.error?.message
+                    );
+
                     state.hydrated = true;
 
                     state.query.count = response.count;
