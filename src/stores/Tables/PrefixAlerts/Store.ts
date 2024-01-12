@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
 import { SelectTableStoreNames } from 'stores/names';
 import { PrefixAlertTableState } from 'stores/Tables/PrefixAlerts/types';
 import { getInitialState as getInitialSelectTableState } from 'stores/Tables/Store';
@@ -45,6 +46,11 @@ export const getInitialState = (
 
             set(
                 produce((state) => {
+                    state.query.networkFailed = checkErrorMessage(
+                        FAILED_TO_FETCH,
+                        error?.message
+                    );
+
                     state.hydrated = true;
 
                     state.query.count = Object.keys(data).length;
