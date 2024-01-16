@@ -1,3 +1,4 @@
+import { ThemeKeys } from '@microlink/react-json-view';
 import {
     ThemeProvider as MUIThemeProvider,
     PaletteOptions,
@@ -12,7 +13,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { DeleteCircle, Square } from 'iconoir-react';
 import CheckSquare from 'icons/CheckSquare';
 import React from 'react';
-import { ThemeKeys } from '@microlink/react-json-view';
 import { useLocalStorage } from 'react-use';
 import { BaseComponentProps } from 'types';
 import { DEFAULT_TOOLBAR_HEIGHT } from 'utils/editor-utils';
@@ -182,6 +182,11 @@ export const defaultOutline = {
     dark: `1px solid rgba(247, 249, 252, 0.12)`,
 };
 
+export const defaultOutline_hovered = {
+    light: `1px solid rgba(11, 19, 30, 0.6)`,
+    dark: `1px solid rgba(247, 249, 252, 0.6)`,
+};
+
 export const defaultOutlineColor = {
     light: `rgba(11, 19, 30, 0.12)`,
     dark: `rgba(247, 249, 252, 0.12)`,
@@ -207,6 +212,43 @@ export const primaryColoredOutline = {
 export const primaryColoredOutline_disabled = {
     light: `1px solid rgba(58, 86, 202, 0.12)`,
     dark: `1px solid rgba(186, 205, 253, 0.12)`,
+};
+
+export const primaryColoredOutline_hovered = {
+    light: `1px solid #3A56CA`,
+    dark: `1px solid #BACDFD`,
+};
+
+// Light is an RGB translation of #2A7942; Dark is an RGB translation of #66BB6A.
+export const successColoredOutline = {
+    light: `1px solid rgba(42, 121, 66, 0.5)`,
+    dark: `1px solid rgba(102, 187, 106, 0.5)`,
+};
+
+export const successColoredOutline_disabled = {
+    light: `1px solid rgba(42, 121, 66, 0.12)`,
+    dark: `1px solid rgba(102, 187, 106, 0.12)`,
+};
+
+export const successColoredOutline_hovered = {
+    light: `1px solid #2A7942`,
+    dark: `1px solid #66BB6A`,
+};
+
+// RGB translation of #CA3B55.
+export const errorColoredOutline = {
+    light: `1px solid rgba(202, 59, 85, 0.5)`,
+    dark: `1px solid rgba(202, 59, 85, 0.5)`,
+};
+
+export const errorColoredOutline_disabled = {
+    light: `1px solid rgba(202, 59, 85, 0.12)`,
+    dark: `1px solid rgba(202, 59, 85, 0.12)`,
+};
+
+export const errorColoredOutline_hovered = {
+    light: `1px solid #CA3B55`,
+    dark: `1px solid #CA3B55`,
 };
 
 export const jsonViewTheme: {
@@ -503,6 +545,42 @@ export const outlinedButtonBackground_disabled = {
     dark: `rgba(186, 205, 253, 0.05)`,
 };
 
+// Light is an RGB translation of #2A7942; Dark is an RGB translation of #66BB6A.
+export const successOutlinedButtonBackground = {
+    light: `rgba(42, 121, 66, 0.12)`,
+    dark: `rgba(102, 187, 106, 0.12)`,
+};
+
+export const successOutlinedButtonBackground_disabled = {
+    light: `rgba(42, 121, 66, 0.05)`,
+    dark: `rgba(102, 187, 106, 0.05)`,
+};
+
+// RGB translation of #CA3B55.
+export const errorOutlinedButtonBackground = {
+    light: `rgba(202, 59, 85, 0.12)`,
+    dark: `rgba(202, 59, 85, 0.12)`,
+};
+
+export const errorOutlinedButtonBackground_disabled = {
+    light: `rgba(202, 59, 85, 0.05)`,
+    dark: `rgba(202, 59, 85, 0.05)`,
+};
+
+export const successButtonText = {
+    light: '#2A7942',
+    dark: '#66BB6A',
+};
+
+// Light is an RGB translation of #2A7942; Dark is an RGB translation of #66BB6A.
+export const disabledButtonText_success = {
+    light: `rgba(42, 121, 66, 0.26)`,
+    dark: `rgba(102, 187, 106, 0.26)`,
+};
+
+// RGB translation of #CA3B55.
+export const disabledButtonText_error = `rgba(202, 59, 85, 0.26)`;
+
 export const disabledButtonText_primary = {
     light: `rgba(58, 86, 202, 0.26)`,
     dark: `rgba(186, 205, 253, 0.26)`,
@@ -511,6 +589,18 @@ export const disabledButtonText_primary = {
 export const disabledButtonText = {
     light: 'rgba(0, 0, 0, 0.26)',
     dark: 'rgba(255, 255, 255, 0.3)',
+};
+
+export const outlinedIconButtonStyling: SxProps<Theme> = {
+    'borderRadius': 2,
+    'border': (theme) => primaryColoredOutline[theme.palette.mode],
+    'color': (theme) => theme.palette.primary.main,
+    '&:hover': {
+        border: (theme) => primaryColoredOutline_hovered[theme.palette.mode],
+    },
+    '&.Mui-disabled': {
+        border: (theme) => primaryColoredOutline_disabled[theme.palette.mode],
+    },
 };
 
 // TODO (echarts) need to make a color service or something to

@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import {
     defaultOutline,
+    outlinedIconButtonStyling,
     paperBackground,
     paperBackgroundImage,
 } from 'context/Theme';
@@ -27,8 +28,11 @@ interface Props {
     identifier: string;
     tooltip: string;
     children: ReactNode;
-    hideArrow?: boolean;
     customMenuPosition?: CustomPopoverPosition;
+    disableCloseOnClick?: boolean;
+    disabled?: boolean;
+    hideArrow?: boolean;
+    outlinedButton?: boolean;
 }
 
 const IconMenu = ({
@@ -37,8 +41,11 @@ const IconMenu = ({
     ariaLabel,
     icon,
     children,
-    hideArrow,
     customMenuPosition,
+    disableCloseOnClick,
+    disabled,
+    hideArrow,
+    outlinedButton,
 }: Props) => {
     const [anchorEl, setAnchorEl] =
         React.useState<PopoverProps['anchorEl']>(null);
@@ -96,7 +103,15 @@ const IconMenu = ({
                         aria-haspopup="true"
                         aria-expanded={open ? 'true' : undefined}
                         onClick={handlers.click}
-                        sx={{ color: (theme) => theme.palette.text.primary }}
+                        disabled={disabled}
+                        sx={
+                            outlinedButton
+                                ? outlinedIconButtonStyling
+                                : {
+                                      color: (theme) =>
+                                          theme.palette.text.primary,
+                                  }
+                        }
                     >
                         {icon}
                     </IconButton>
@@ -109,7 +124,7 @@ const IconMenu = ({
                 anchorEl={anchorEl}
                 open={open}
                 onClose={handlers.close}
-                onClick={handlers.close}
+                onClick={disableCloseOnClick ? undefined : handlers.close}
                 transformOrigin={
                     customMenuPosition?.transformOrigin ?? {
                         horizontal: 'right',

@@ -43,6 +43,13 @@ function EntityTableHeader({
                         };
                     }
 
+                    if (column.width) {
+                        tableCellSX = {
+                            ...tableCellSX,
+                            width: column.width,
+                        };
+                    }
+
                     // If we have no message let the width be 0 so the cell can collapse
                     //   to the min-content of the column. Helpful for the button at the end of the table
                     if (column.collapseHeader) {

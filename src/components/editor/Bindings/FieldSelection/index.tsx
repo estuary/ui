@@ -1,11 +1,4 @@
-import {
-    Box,
-    Checkbox,
-    FormControl,
-    FormControlLabel,
-    Stack,
-    Typography,
-} from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import RefreshButton from 'components/editor/Bindings/FieldSelection/RefreshButton';
 import {
@@ -21,27 +14,23 @@ import {
 import useFieldSelection from 'components/editor/Bindings/FieldSelection/useFieldSelection';
 import {
     useBindingsEditorStore_initializeSelections,
-    useBindingsEditorStore_recommendFields,
     useBindingsEditorStore_selectionSaving,
     useBindingsEditorStore_setRecommendFields,
     useBindingsEditorStore_setSelectionSaving,
-    useBindingsEditorStore_setSingleSelection,
 } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
     useEditorStore_queryResponse_draftSpecs,
 } from 'components/editor/Store/hooks';
-import FieldSelectionTable from 'components/tables/FieldSelection';
+import FieldSelectionTable, {
+    columns,
+    optionalColumnIntlKeys,
+} from 'components/tables/FieldSelection';
+import SelectColumnMenu from 'components/tables/SelectColumnMenu';
+import { useDisplayTableColumns } from 'context/TableSettings';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { isEqual } from 'lodash';
-import {
-    SyntheticEvent,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+import { SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
@@ -53,7 +42,10 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/hooks';
-import { Schema } from 'types';
+import { TablePrefixes } from 'stores/Tables/hooks';
+import { Schema, TableColumns } from 'types';
+import { WithRequiredNonNullProperty } from 'types/utils';
+import { hasLength } from 'utils/misc-utils';
 import {
     evaluateRequiredIncludedFields,
     getBindingIndex,
@@ -114,7 +106,21 @@ const mapConstraintsToProjections = (
         };
     });
 
+const optionalColumns = columns.filter(
+    (
+        column
+    ): column is WithRequiredNonNullProperty<TableColumns, 'headerIntlKey'> =>
+        typeof column.headerIntlKey === 'string' &&
+        hasLength(column.headerIntlKey)
+            ? Object.values(optionalColumnIntlKeys).includes(
+                  column.headerIntlKey
+              )
+            : false
+);
+
 function FieldSelectionViewer({ collectionName }: Props) {
+    const { tableSettings, setTableSettings } = useDisplayTableColumns();
+
     const isEdit = useEntityWorkflow_Editing();
     const fireBackgroundTest = useRef(isEdit);
 
@@ -128,11 +134,9 @@ function FieldSelectionViewer({ collectionName }: Props) {
     const { refresh } = useFieldSelectionRefresh();
 
     // Bindings Editor Store
-    const recommendFields = useBindingsEditorStore_recommendFields();
     const setRecommendFields = useBindingsEditorStore_setRecommendFields();
 
     const initializeSelections = useBindingsEditorStore_initializeSelections();
-    const setSingleSelection = useBindingsEditorStore_setSingleSelection();
 
     const selectionSaving = useBindingsEditorStore_selectionSaving();
     const setSelectionSaving = useBindingsEditorStore_setSelectionSaving();
@@ -170,7 +174,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
             setRefreshRequired(true);
         } else if (formStatus === FormStatus.TESTED) {
             // If we are here then the flag might be true and we only can stop showing it
-            //  if there is a test ran. This is kinda janky as a test does not 100% garuntee
+            //  if there is a test ran. This is kinda janky as a test does not 100% guarantee
             //  a built spec but it is pretty darn close.
             setRefreshRequired(false);
         }
@@ -276,31 +280,6 @@ function FieldSelectionViewer({ collectionName }: Props) {
         setRecommendFields,
     ]);
 
-    const toggleRecommendFields = useCallback(
-        (event: SyntheticEvent, checked) => {
-            event.preventDefault();
-            event.stopPropagation();
-
-            setRecommendFields(!recommendFields);
-
-            data?.forEach(({ field, constraint }) => {
-                if (!checked && constraint) {
-                    const includeRequired =
-                        constraint.type === ConstraintTypes.FIELD_REQUIRED ||
-                        constraint.type === ConstraintTypes.LOCATION_REQUIRED;
-
-                    setSingleSelection(
-                        field,
-                        includeRequired ? 'include' : null
-                    );
-                } else {
-                    setSingleSelection(field, 'default');
-                }
-            });
-        },
-        [setRecommendFields, setSingleSelection, data, recommendFields]
-    );
-
     const draftSpec = useMemo(
         () =>
             draftSpecs.length > 0 && draftSpecs[0].spec ? draftSpecs[0] : null,
@@ -343,15 +322,56 @@ function FieldSelectionViewer({ collectionName }: Props) {
         setSelectionSaving,
     ]);
 
+    const updateTableSettings = (
+        event: SyntheticEvent,
+        checked: boolean,
+        column: string
+    ) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const existingSettings = tableSettings ?? {};
+
+        const shownOptionalColumns = Object.hasOwn(
+            existingSettings,
+            TablePrefixes.fieldSelection
+        )
+            ? existingSettings[TablePrefixes.fieldSelection]
+                  .shownOptionalColumns
+            : [];
+
+        const columnShown = shownOptionalColumns.includes(column);
+
+        const evaluatedSettings =
+            !checked && columnShown
+                ? {
+                      ...existingSettings,
+                      [TablePrefixes.fieldSelection]: {
+                          shownOptionalColumns: shownOptionalColumns.filter(
+                              (value) => value !== column
+                          ),
+                      },
+                  }
+                : checked && !columnShown
+                ? {
+                      ...existingSettings,
+                      [TablePrefixes.fieldSelection]: {
+                          shownOptionalColumns: [
+                              ...shownOptionalColumns,
+                              column,
+                          ],
+                      },
+                  }
+                : existingSettings;
+
+        setTableSettings(evaluatedSettings);
+    };
+
     const loading = formActive || formStatus === FormStatus.TESTING_BACKGROUND;
 
     return (
         <Box sx={{ mt: 3 }}>
-            <Stack
-                direction="row"
-                spacing={1}
-                sx={{ mb: 2, justifyContent: 'space-between' }}
-            >
+            <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
                 <Stack spacing={1}>
                     <Stack direction="row">
                         <Typography variant="h6" sx={{ mr: 0.5 }}>
@@ -372,21 +392,13 @@ function FieldSelectionViewer({ collectionName }: Props) {
                 </Stack>
             </Stack>
 
-            <FormControl sx={{ mb: 1, mx: 0 }}>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            value={recommendFields}
-                            checked={recommendFields}
-                            disabled={loading || !data}
-                        />
-                    }
-                    onChange={toggleRecommendFields}
-                    label={
-                        <FormattedMessage id="fieldSelection.cta.defaultAllFields" />
-                    }
+            <Stack direction="row" sx={{ mb: 1, justifyContent: 'flex-end' }}>
+                <SelectColumnMenu
+                    columns={optionalColumns}
+                    onChange={updateTableSettings}
+                    disabled={loading}
                 />
-            </FormControl>
+            </Stack>
 
             <FieldSelectionTable projections={data} />
         </Box>
