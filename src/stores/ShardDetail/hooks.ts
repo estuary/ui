@@ -10,6 +10,7 @@ import {
     ShardDetailStore,
     ShardEntityTypes,
     ShardReadDictionaryResponse,
+    ShardStatusMessageIds,
 } from './types';
 
 const storeName = (entityType: Entity): ShardDetailStoreNames => {
@@ -120,20 +121,24 @@ export const useShardDetail_readDictionary = (
                     !shardsHaveWarnings && !isEmpty(filteredValue.warnings);
             });
 
+            const isCollection = Boolean(
+                taskTypes?.includes('collection') && !hasLength(filteredValues)
+            );
+
             return {
                 allShards: filteredValues,
-                compositeColor:
-                    taskTypes?.includes('collection') &&
-                    !hasLength(filteredValues)
-                        ? successMain
-                        : state.error
-                        ? state.defaultStatusColor
-                        : getCompositeColor(
-                              filteredValues,
-                              state.defaultStatusColor
-                          ),
+                compositeColor: isCollection
+                    ? successMain
+                    : state.error
+                    ? state.defaultStatusColor
+                    : getCompositeColor(
+                          filteredValues,
+                          state.defaultStatusColor
+                      ),
                 disabled,
-                defaultMessageId: state.defaultMessageId,
+                defaultMessageId: isCollection
+                    ? ShardStatusMessageIds.COLLECTION
+                    : state.defaultMessageId,
                 shardsHaveErrors,
                 shardsHaveWarnings,
             };
