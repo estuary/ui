@@ -70,7 +70,7 @@ function CapturesTable() {
                         setColumnToSort={setColumnToSort}
                         header="captureTable.header"
                         filterLabel="capturesTable.filterLabel"
-                        showEntityStatus={true}
+                        showEntityStatus
                         selectableTableStoreName={selectableTableStoreName}
                         showToolbar
                         toolbar={
