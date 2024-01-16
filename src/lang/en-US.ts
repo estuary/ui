@@ -672,6 +672,7 @@ const Journals: ResolvedIntlConfig['messages'] = {
 const Ops: ResolvedIntlConfig['messages'] = {
     'ops.journals.notFound.message': `We were unable to find any logs for this {entityType}.`,
     'ops.logsTable.label.level': `Level`,
+    'ops.logsTable.fetchingOlderLogs': `Fetching older logs...`,
     'ops.logsTable.label.ts': `Timestamp`,
     'ops.logsTable.label.message': `Message`,
     'ops.logsTable.label.fields': `Fields`,

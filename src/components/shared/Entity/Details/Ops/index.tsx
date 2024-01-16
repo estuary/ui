@@ -6,11 +6,14 @@ import useJournalNameForLogs from 'hooks/journals/useJournalNameForLogs';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
+import { useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 
-const docsRequested = 25;
+const docsRequested = 5;
 
 function Ops() {
+    const [loading, setLoading] = useState(false);
+
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const [name, collectionName] = useJournalNameForLogs(catalogName);
 
@@ -27,7 +30,7 @@ function Ops() {
                 <Button onClick={journalData.refresh}>Refresh</Button>
 
                 <Stack>
-                    <Box>Documents {journalData.data?.documents.length}</Box>
+                    <Box>Documents {documents.length}</Box>
 
                     {/*                    <JournalAlerts
                         journalData={journalData}
@@ -43,7 +46,22 @@ function Ops() {
 
                     {journalData.loading ? <LinearProgress /> : null}
 
-                    <LogsTable documents={documents} />
+                    <LogsTable
+                        documents={documents}
+                        loading={loading}
+                        fetchNewer={() => {
+                            console.log('fetcher latest logs');
+                            setLoading(true);
+
+                            setTimeout(() => setLoading(false), 2500);
+                        }}
+                        fetchOlder={() => {
+                            console.log('fetch older logs');
+                            setLoading(true);
+
+                            setTimeout(() => setLoading(false), 2500);
+                        }}
+                    />
                 </Stack>
             </Box>
         </Box>

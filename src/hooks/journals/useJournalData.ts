@@ -147,6 +147,7 @@ async function loadDocuments({
     documentCount: number;
     maxBytes: number;
 }) {
+    console.log('sup', { client, journalName });
     if (!client || !journalName) {
         console.warn('Cannot load documents without client and journal');
         return {
@@ -235,6 +236,7 @@ const useJournalData = (
     );
 
     const journalClient = useMemo(() => {
+        console.log('journalClient memo', { journalName, gatewayConfig });
         if (journalName && gatewayConfig?.gateway_url && gatewayConfig.token) {
             const authToken = gatewayConfig.token;
             const baseUrl = new URL(gatewayConfig.gateway_url);

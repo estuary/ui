@@ -1,6 +1,7 @@
-import { TableRow } from '@mui/material';
+import { TableCell, TableRow } from '@mui/material';
 import { useToggle } from 'react-use';
 import { OpsLogFlowDocument } from 'types';
+import { FormattedMessage } from 'react-intl';
 import LevelCell from '../cells/logs/LevelCell';
 import TimestampCell from '../cells/logs/TimestampCell';
 import MessageCell from '../cells/logs/MessageCell';
@@ -12,6 +13,7 @@ interface RowProps {
 
 interface RowsProps {
     data: OpsLogFlowDocument[];
+    loading?: boolean;
 }
 
 function Row({ row }: RowProps) {
@@ -51,9 +53,16 @@ function Row({ row }: RowProps) {
     );
 }
 
-function Rows({ data }: RowsProps) {
+function Rows({ data, loading }: RowsProps) {
     return (
         <>
+            {loading ? (
+                <TableRow>
+                    <TableCell colSpan={3}>
+                        <FormattedMessage id="ops.logsTable.fetchingOlderLogs" />
+                    </TableCell>
+                </TableRow>
+            ) : null}
             {data.map((record) => (
                 <Row row={record} key={record._meta.uuid} />
             ))}
