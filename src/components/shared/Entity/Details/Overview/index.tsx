@@ -9,6 +9,7 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useLiveSpecs_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
+import { ShardEntityTypes } from 'stores/ShardDetail/types';
 import { hasLength, specContainsDerivation } from 'utils/misc-utils';
 import ShardInformation from '../../Shard/Information';
 import Usage from '../Usage';
@@ -40,6 +41,14 @@ function Overview({ name }: Props) {
         [liveSpecs, validatingLiveSpecs]
     );
 
+    const taskTypes: ShardEntityTypes[] = useMemo(() => {
+        if (!isCollection || isDerivation) {
+            return isDerivation ? ['derivation'] : [entityType];
+        }
+
+        return [];
+    }, [entityType, isCollection, isDerivation]);
+
     return (
         <Grid container spacing={2}>
             <Grid item xs={12} md={8} lg={9}>
@@ -67,10 +76,10 @@ function Overview({ name }: Props) {
                 </Grid>
             ) : null}
 
-            {!isCollection || isDerivation ? (
+            {hasLength(taskTypes) ? (
                 <Grid item xs={12}>
                     <ShardInformation
-                        taskTypes={[entityType]}
+                        taskTypes={taskTypes}
                         taskName={entityName}
                     />
                 </Grid>
