@@ -70,8 +70,8 @@ function CollectionsTable() {
                         setColumnToSort={setColumnToSort}
                         header="collectionsTable.title"
                         filterLabel="collectionsTable.filterLabel"
-                        selectableTableStoreName={selectableTableStoreName}
                         showEntityStatus
+                        selectableTableStoreName={selectableTableStoreName}
                         showToolbar
                         toolbar={
                             <RowSelector
