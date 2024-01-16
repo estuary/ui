@@ -29,6 +29,7 @@ import {
     useBilling_setPaymentMethodExists,
 } from 'stores/Billing/hooks';
 import { TableColumns } from 'types';
+import { getColumnKeyList } from 'utils/table-utils';
 import AddPaymentMethod from './AddPaymentMethod';
 import { INTENT_SECRET_ERROR, INTENT_SECRET_LOADING } from './shared';
 import { AdminBillingProps } from './types';
@@ -228,7 +229,9 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
 
                         <TableBody>
                             {!selectedTenant || methodsLoading ? (
-                                <TableLoadingRows columns={columns} />
+                                <TableLoadingRows
+                                    columnKeys={getColumnKeyList(columns)}
+                                />
                             ) : methods && methods.length > 0 ? (
                                 methods.map((method) => (
                                     <PaymentMethod

@@ -1,7 +1,12 @@
 import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import { TableIntlConfig, TableState } from 'types';
-import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
+import {
+    getColumnKeyList,
+    getEmptyTableHeader,
+    getEmptyTableMessage,
+} from 'utils/table-utils';
+import { useMemo } from 'react';
 import TableLoadingRows from '../Loading';
 import { ColumnProps } from './types';
 
@@ -20,15 +25,19 @@ function EntityTableBody({
     rows,
     tableState,
 }: Props) {
+    const columnKeys = useMemo(() => {
+        return getColumnKeyList(columns);
+    }, [columns]);
+
     return (
         <TableBody>
             {rows ? (
                 rows
             ) : loading ? (
-                <TableLoadingRows columns={columns} />
+                <TableLoadingRows columnKeys={columnKeys} />
             ) : (
                 <TableRow>
-                    <TableCell colSpan={columns.length}>
+                    <TableCell colSpan={columnKeys.length}>
                         <Box
                             sx={{
                                 p: 2,

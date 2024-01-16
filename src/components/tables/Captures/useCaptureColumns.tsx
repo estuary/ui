@@ -35,6 +35,7 @@ const defaultColumns: ColumnProps[] = [
 
 const statsHeader: ColumnProps = {
     field: null,
+    cols: 2,
     renderHeader: (index, selectableTableStoreName) => {
         return (
             <StatsHeader

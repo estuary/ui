@@ -14,6 +14,7 @@ import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
 
 import {
     EntityWithCreateWorkflow,
@@ -64,8 +65,11 @@ function ConnectorTiles({
         return getConnectors(searchQuery, sortDirection, protocol);
     }, [searchQuery, sortDirection, protocol]);
 
-    const { data: useSelectResponse, isValidating } =
-        useSelectNew<ConnectorWithTagDetailQuery>(query);
+    const {
+        data: useSelectResponse,
+        isValidating,
+        error,
+    } = useSelectNew<ConnectorWithTagDetailQuery>(query);
 
     const selectData = useMemo(
         () => (useSelectResponse ? useSelectResponse.data : []),
@@ -86,10 +90,12 @@ function ConnectorTiles({
             setTableState({ status: TableStatuses.DATA_FETCHED });
         } else if (isFiltering.current) {
             setTableState({ status: TableStatuses.UNMATCHED_FILTER });
+        } else if (checkErrorMessage(FAILED_TO_FETCH, error?.message)) {
+            setTableState({ status: TableStatuses.NETWORK_FAILED });
         } else {
             setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
-    }, [selectData, isValidating]);
+    }, [selectData, isValidating, error?.message]);
 
     return (
         <Grid

@@ -75,6 +75,20 @@ export const useBilling_setActive = () => {
     );
 };
 
+export const useBilling_networkFailed = () => {
+    return useZustandStore<BillingState, BillingState['networkFailed']>(
+        BillingStoreNames.GENERAL,
+        (state) => state.networkFailed
+    );
+};
+
+export const useBilling_setNetworkFailed = () => {
+    return useZustandStore<BillingState, BillingState['setNetworkFailed']>(
+        BillingStoreNames.GENERAL,
+        (state) => state.setNetworkFailed
+    );
+};
+
 export const useBilling_setHydrationErrorsExist = () => {
     return useZustandStore<
         BillingState,

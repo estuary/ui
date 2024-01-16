@@ -418,6 +418,10 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 
     'entityTable.technicalDifficulties.header': `There was an issue getting your data.`,
     'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. You'll find a message describing the issue at the top of the page.`,
+
+    'entityTable.networkFailed.header': `There was a network issue.`,
+    'entityTable.networkFailed.message': `Please check your internet connection and reload the application.`,
+
     'entityTable.moreEntities': `{count} more`,
 
     'entityTable.detailsLink': `View details`,

@@ -301,6 +301,7 @@ export type SortDirection = 'asc' | 'desc';
 export enum TableStatuses {
     LOADING = 'LOADING',
     DATA_FETCHED = 'DATA_FETCHED',
+    NETWORK_FAILED = 'NETWORK_FAILED',
     NO_EXISTING_DATA = 'NO_EXISTING_DATA',
     TECHNICAL_DIFFICULTIES = 'TECHNICAL_DIFFICULTIES',
     UNMATCHED_FILTER = 'UNMATCHED_FILTER',
@@ -313,6 +314,7 @@ export interface TableColumns {
     width?: number;
     sticky?: boolean;
     align?: TableCellProps['align'];
+    cols?: number;
 }
 
 export interface TableState {
