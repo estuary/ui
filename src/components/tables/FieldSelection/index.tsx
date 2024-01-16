@@ -123,7 +123,7 @@ function FieldSelectionTable({ projections }: Props) {
         }
 
         return evaluateColumnsToShow(optionalColumns);
-    }, [intl, tableSettings]);
+    }, [tableSettings]);
 
     return (
         <Box>
