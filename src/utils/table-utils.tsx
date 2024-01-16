@@ -1,7 +1,7 @@
 import MessageWithLink from 'components/content/MessageWithLink';
 import { FormattedMessage } from 'react-intl';
 import { Pagination } from 'services/supabase';
-import { TableIntlConfig, TableStatuses } from 'types';
+import { TableColumns, TableIntlConfig, TableStatuses } from 'types';
 
 export const getEmptyTableHeader = (
     tableStatus: TableStatuses,
@@ -57,3 +57,10 @@ export const getPagination = (currPage: number, size: number) => {
 export const getStartingPage = (val: Pagination, size: number) => {
     return val.from / size;
 };
+
+export const getColumnKeyList = (columns: TableColumns[]) =>
+    columns.flatMap((column, index) =>
+        [...Array(column.cols ?? 1)].map(
+            (_, indexCount) => `${column.field}__${indexCount}-${index}`
+        )
+    );

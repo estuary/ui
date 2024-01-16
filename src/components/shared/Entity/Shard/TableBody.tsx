@@ -8,6 +8,7 @@ import {
 } from 'stores/ShardDetail/hooks';
 import { ShardEntityTypes } from 'stores/ShardDetail/types';
 import { TableColumns } from 'types';
+import { getColumnKeyList } from 'utils/table-utils';
 import StatusIndicatorAndLabel from './StatusIndicatorAndLabel';
 
 interface Props {
@@ -31,7 +32,10 @@ function InformationTableBody({
     if (!dictionaryHydrated) {
         return (
             <TableBody>
-                <TableLoadingRows columns={columns} singleRow />
+                <TableLoadingRows
+                    columnKeys={getColumnKeyList(columns)}
+                    singleRow
+                />
             </TableBody>
         );
     }
