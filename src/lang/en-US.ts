@@ -167,6 +167,8 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.data': `Data`,
     'data.docs': `Docs`,
     'data.connectorImage': `Connector Image`,
+    'data.details': `Details`,
+    'data.actions': `Actions`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
@@ -429,6 +431,10 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 
     'entityTable.edit.aria': `Edit specification of {name}`,
     'entityTable.materialize.aria': `Materialize {name}`,
+
+    'entityTable.selectColumn.menu.header': `Select Columns`,
+    'entityTable.selectColumn.button.ariaLabel': `Open Table Column Customization Menu`,
+    'entityTable.selectColumn.button.tooltip': `Select Columns`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
@@ -1333,8 +1339,6 @@ const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.table.empty.header': `No information found`,
     'fieldSelection.table.empty.message': `Click "Refresh" to evaluate the fields of the source collection.`,
     'fieldSelection.table.error.message': `There was an error attempting to fetch the list of fields.`,
-    'fieldSelection.table.label.details': `Details`,
-    'fieldSelection.table.label.actions': `Actions`,
     'fieldSelection.table.label.fieldRequired': `Field Required`,
     'fieldSelection.table.label.locationRequired': `Location Required`,
     'fieldSelection.table.label.locationRecommended': `Location Recommended`,
