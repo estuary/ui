@@ -314,6 +314,7 @@ export interface TableColumns {
     width?: number;
     sticky?: boolean;
     align?: TableCellProps['align'];
+    cols?: number;
 }
 
 export interface TableState {

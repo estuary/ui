@@ -11,13 +11,15 @@ const styling = { height: 45 };
 
 function TableLoadingRows({ columns, singleRow }: Props) {
     const loadingRows = useMemo(() => {
-        const loadingRow = columns.map((column, index) => {
-            return (
-                <TableCell key={`loading-${column.field}-${index}`}>
+        const loadingRow = columns.map((column, index) =>
+            [...Array(column.cols ?? 1)].map((_, indexCount) => (
+                <TableCell
+                    key={`loading-${column.field}__${indexCount}-${index}`}
+                >
                     <Skeleton variant="rectangular" />
                 </TableCell>
-            );
-        });
+            ))
+        );
 
         if (singleRow) {
             return <TableRow sx={styling}>{loadingRow}</TableRow>;
