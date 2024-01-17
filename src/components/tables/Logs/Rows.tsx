@@ -1,7 +1,7 @@
 import { TableCell, TableRow } from '@mui/material';
 import { useToggle } from 'react-use';
 import { OpsLogFlowDocument } from 'types';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import LevelCell from '../cells/logs/LevelCell';
 import TimestampCell from '../cells/logs/TimestampCell';
 import MessageCell from '../cells/logs/MessageCell';
@@ -56,8 +56,6 @@ function Row({ row }: RowProps) {
 }
 
 function Rows({ data, loading, hitFileStart }: RowsProps) {
-    const intl = useIntl();
-
     return (
         <>
             {loading ? (
@@ -72,14 +70,9 @@ function Rows({ data, loading, hitFileStart }: RowsProps) {
                     <TableCell align="right">
                         <LevelIcon level="done" />
                     </TableCell>
-
-                    <TimestampCell ts="-" />
-
-                    <MessageCell
-                        message={intl.formatMessage({
-                            id: 'ops.logsTable.allOldLogsLoaded',
-                        })}
-                    />
+                    <TableCell colSpan={2}>
+                        <FormattedMessage id="ops.logsTable.allOldLogsLoaded" />
+                    </TableCell>
                 </TableRow>
             ) : null}
             {data.map((record) => (
