@@ -29,8 +29,6 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
         [documents, loading]
     );
 
-    console.log('loading', loading);
-
     const tableScroller = useRef<HTMLDivElement>(null);
     const { stayScrolled } = useStayScrolled(tableScroller);
     const scrollIntoView = useScrollIntoView(tableScroller);
@@ -38,7 +36,7 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     const { y } = useScroll(tableScroller);
 
     useEffect(() => {
-        console.log('documents', documents);
+        console.log('1', documents);
         scrollIntoView();
     }, [documents, scrollIntoView]);
 
@@ -55,7 +53,7 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     }, [fetchNewer, fetchOlder, y]);
 
     useLayoutEffect(() => {
-        console.log('they see me scrolling');
+        console.log('2');
         stayScrolled();
     }, [documents, stayScrolled]);
 

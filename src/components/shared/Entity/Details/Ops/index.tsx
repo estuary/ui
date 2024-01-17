@@ -1,4 +1,5 @@
 import { Box, Button, LinearProgress, Stack } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
 import UnderDev from 'components/shared/UnderDev';
 import LogsTable from 'components/tables/Logs';
 import { useJournalData } from 'hooks/journals/useJournalData';
@@ -7,9 +8,10 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { OpsLogFlowDocument } from 'types';
 
-const docsRequested = 2;
+const docsRequested = 25;
 
 function Ops() {
     const [loading] = useState(false);
@@ -23,12 +25,26 @@ function Ops() {
     const documents = (journalData.data?.documents ??
         []) as OpsLogFlowDocument[];
 
+    const meta = journalData.data?.meta;
+    console.log('meta', meta);
+
+    const parsedEnd = parseInt(meta?.fragment?.end ?? '0', 10);
+    const allLogsLoaded = parsedEnd >= (meta?.writeHead ?? 0);
+
     return (
         <Box>
             <UnderDev />
             <Box>
-                <Button onClick={() => journalData.refresh(0)}>
-                    Load Older Logs
+                <Button
+                    disabled={allLogsLoaded}
+                    onClick={() =>
+                        journalData.refresh({
+                            offset: parsedEnd,
+                            endOffset: 0,
+                        })
+                    }
+                >
+                    Load Older Logs (wip)
                 </Button>
 
                 <Stack>
@@ -45,6 +61,12 @@ function Ops() {
                             />
                         }
                     />*/}
+
+                    {allLogsLoaded ? (
+                        <AlertBox short severity="success">
+                            <FormattedMessage id="ops.logsTable.allOldLogsLoaded" />
+                        </AlertBox>
+                    ) : null}
 
                     {journalData.loading ? <LinearProgress /> : null}
 

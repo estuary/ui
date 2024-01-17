@@ -136,20 +136,24 @@ async function readAllDocuments<T>(stream: ReadableStream<T>) {
     return accum;
 }
 
+export interface LoadDocumentsOffsets {
+    offset: number;
+    endOffset: number;
+}
+
 async function loadDocuments({
     journalName,
     client,
     documentCount,
     maxBytes,
-    startingOffset,
+    offsets,
 }: {
-    startingOffset?: number;
+    offsets?: LoadDocumentsOffsets;
     journalName?: string;
     client?: JournalClient;
     documentCount: number;
     maxBytes: number;
 }) {
-    console.log('sup', { client, journalName });
     if (!client || !journalName) {
         console.warn('Cannot load documents without client and journal');
         return {
@@ -175,12 +179,12 @@ async function loadDocuments({
     }
 
     const head = parseInt(metadataResponse.writeHead, 10);
+    const startOffsetAvailable = offsets?.offset && offsets.offset > 0;
+    const endOffsetAvailable = offsets?.endOffset && offsets.endOffset > 0;
+
     let start = head;
-
-    console.log('offset', { startingOffset, head });
-
+    let end = 0;
     let documents: JournalRecord[] = [];
-
     let attempt = 0;
 
     while (
@@ -189,14 +193,29 @@ async function loadDocuments({
         head - start < maxBytes
     ) {
         attempt += 1;
-        start = Math.max(0, start - INCREMENT * attempt);
+        start = startOffsetAvailable
+            ? offsets.offset
+            : Math.max(0, start - INCREMENT * attempt);
+
+        // Use the provided endOffset
+        end = endOffsetAvailable ? offsets.endOffset : head;
+
         const stream = (
             await client.read({
                 journal: journalName,
                 offset: `${start}`,
-                endOffset: `${head}`,
+                endOffset: `${end}`,
             })
         ).unwrap();
+
+        // console.log('loadDocuments : ', {
+        //     metaInfo,
+        //     metadataResponse,
+        //     stream,
+        //     startingOffset,
+        //     head,
+        // });
+
         const journalDocumentStream = parseJournalDocuments(stream);
         const allDocs = await readAllDocuments(journalDocumentStream);
 
@@ -209,8 +228,13 @@ async function loadDocuments({
             )
             .slice(documentCount * -1);
     }
+
     return {
         documents,
+        meta: {
+            writeHead: head,
+            fragment: metadataResponse.fragment,
+        },
         tooFewDocuments: start <= 0,
         tooManyBytes: head - start >= maxBytes,
     };
@@ -240,7 +264,6 @@ const useJournalData = (
     );
 
     const journalClient = useMemo(() => {
-        console.log('journalClient memo', { journalName, gatewayConfig });
         if (journalName && gatewayConfig?.gateway_url && gatewayConfig.token) {
             const authToken = gatewayConfig.token;
             const baseUrl = new URL(gatewayConfig.gateway_url);
@@ -252,7 +275,10 @@ const useJournalData = (
     }, [gatewayConfig, journalName]);
 
     const [refreshing, setRefreshing] = useState(false);
-    const [startingOffset, setStartingOffset] = useState(0);
+    const [offsets, setOffsets] = useState<LoadDocumentsOffsets>({
+        offset: 0,
+        endOffset: 0,
+    });
 
     const [data, setData] =
         useState<Awaited<ReturnType<typeof loadDocuments>>>();
@@ -276,7 +302,7 @@ const useJournalData = (
                         client: journalClient,
                         documentCount: desiredCount,
                         maxBytes,
-                        startingOffset,
+                        offsets,
                     });
                     setData(docs);
                 } catch (e: unknown) {
@@ -296,16 +322,16 @@ const useJournalData = (
         loading,
         maxBytes,
         refreshing,
-        startingOffset,
+        offsets,
     ]);
 
     return {
         data,
         error,
         loading,
-        refresh: (newOffset?: number) => {
+        refresh: (newOffset?: LoadDocumentsOffsets) => {
             if (newOffset) {
-                setStartingOffset(newOffset);
+                setOffsets(newOffset);
             }
 
             failures.current = 0;
