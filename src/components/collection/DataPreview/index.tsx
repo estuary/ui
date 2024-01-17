@@ -78,7 +78,7 @@ export function DataPreview({ collectionName }: Props) {
                     <Button
                         variant="text"
                         startIcon={<Refresh style={{ fontSize: 12 }} />}
-                        onClick={journalData.refresh}
+                        onClick={() => journalData.refresh()}
                         disabled={
                             isLoading || !hasLength(journalData.data?.documents)
                         }

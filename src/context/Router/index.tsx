@@ -204,6 +204,7 @@ const router = createBrowserRouter(
                                 }
                             />
 
+                            {/*TODO (ops logs) need to handle collections (really derivations)
                             <Route
                                 path={
                                     authenticatedRoutes.collections.details.ops
@@ -214,7 +215,7 @@ const router = createBrowserRouter(
                                         <CollectionDetailsRoute tab="ops" />
                                     </Suspense>
                                 }
-                            />
+                            />*/}
                         </Route>
 
                         <Route
