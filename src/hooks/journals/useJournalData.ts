@@ -141,7 +141,9 @@ async function loadDocuments({
     client,
     documentCount,
     maxBytes,
+    startingOffset,
 }: {
+    startingOffset?: number;
     journalName?: string;
     client?: JournalClient;
     documentCount: number;
@@ -174,6 +176,8 @@ async function loadDocuments({
 
     const head = parseInt(metadataResponse.writeHead, 10);
     let start = head;
+
+    console.log('offset', { startingOffset, head });
 
     let documents: JournalRecord[] = [];
 
@@ -248,6 +252,7 @@ const useJournalData = (
     }, [gatewayConfig, journalName]);
 
     const [refreshing, setRefreshing] = useState(false);
+    const [startingOffset, setStartingOffset] = useState(0);
 
     const [data, setData] =
         useState<Awaited<ReturnType<typeof loadDocuments>>>();
@@ -271,6 +276,7 @@ const useJournalData = (
                         client: journalClient,
                         documentCount: desiredCount,
                         maxBytes,
+                        startingOffset,
                     });
                     setData(docs);
                 } catch (e: unknown) {
@@ -283,20 +289,25 @@ const useJournalData = (
             }
         })();
     }, [
+        data,
         desiredCount,
         journalClient,
         journalName,
+        loading,
         maxBytes,
         refreshing,
-        loading,
-        data,
+        startingOffset,
     ]);
 
     return {
         data,
         error,
         loading,
-        refresh: () => {
+        refresh: (newOffset?: number) => {
+            if (newOffset) {
+                setStartingOffset(newOffset);
+            }
+
             failures.current = 0;
             setRefreshing(true);
         },

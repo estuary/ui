@@ -43,8 +43,6 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     }, [documents, scrollIntoView]);
 
     useEffect(() => {
-        // console.log('y', y);
-
         if (y === 0) {
             fetchOlder();
         } else {
@@ -64,7 +62,7 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     stayScrolled();
 
     return (
-        <TableContainer component={Box} maxHeight={150} ref={tableScroller}>
+        <TableContainer component={Box} maxHeight={500} ref={tableScroller}>
             <Table
                 aria-label={intl.formatMessage({
                     id: 'entityTable.title',

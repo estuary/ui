@@ -9,10 +9,10 @@ import useGlobalSearchParams, {
 import { useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 
-const docsRequested = 5;
+const docsRequested = 2;
 
 function Ops() {
-    const [loading, setLoading] = useState(false);
+    const [loading] = useState(false);
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const [name, collectionName] = useJournalNameForLogs(catalogName);
@@ -27,7 +27,9 @@ function Ops() {
         <Box>
             <UnderDev />
             <Box>
-                <Button onClick={journalData.refresh}>Refresh</Button>
+                <Button onClick={() => journalData.refresh(0)}>
+                    Load Older Logs
+                </Button>
 
                 <Stack>
                     <Box>Documents {documents.length}</Box>
@@ -51,15 +53,15 @@ function Ops() {
                         loading={loading}
                         fetchNewer={() => {
                             console.log('fetcher latest logs');
-                            setLoading(true);
 
-                            setTimeout(() => setLoading(false), 2500);
+                            // setLoading(true);
+                            // setTimeout(() => setLoading(false), 2500);
                         }}
                         fetchOlder={() => {
                             console.log('fetch older logs');
-                            setLoading(true);
 
-                            setTimeout(() => setLoading(false), 2500);
+                            // setLoading(true);
+                            // setTimeout(() => setLoading(false), 2500);
                         }}
                     />
                 </Stack>
