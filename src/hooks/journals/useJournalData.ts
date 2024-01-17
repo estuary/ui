@@ -227,7 +227,6 @@ async function loadDocuments({
     return {
         documents,
         meta: {
-            writeHead: head,
             metadataResponse,
         },
         tooFewDocuments: start <= 0,
