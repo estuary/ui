@@ -1,5 +1,6 @@
 import { Tooltip, Typography, useTheme } from '@mui/material';
 import {
+    CheckCircle,
     DeleteCircle,
     InfoEmpty,
     MinusCircle,
@@ -7,8 +8,10 @@ import {
 } from 'iconoir-react';
 import { BaseTypographySx } from './shared';
 
+type Levels = 'error' | 'warn' | 'debug' | 'trace' | 'success' | any;
+
 interface Props {
-    level: string;
+    level: Levels;
 }
 
 // TODO (icons)
@@ -21,6 +24,8 @@ function LevelIcon({ level }: Props) {
             ? DeleteCircle
             : level === 'warn'
             ? WarningCircle
+            : level === 'success'
+            ? CheckCircle
             : level === 'debug' || level === 'trace'
             ? MinusCircle
             : InfoEmpty;
@@ -30,6 +35,8 @@ function LevelIcon({ level }: Props) {
             ? theme.palette.error.main
             : level === 'warn'
             ? theme.palette.warning.main
+            : level === 'success'
+            ? theme.palette.success.main
             : theme.palette.info.main;
 
     return (

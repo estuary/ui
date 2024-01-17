@@ -6,6 +6,7 @@ import LevelCell from '../cells/logs/LevelCell';
 import TimestampCell from '../cells/logs/TimestampCell';
 import MessageCell from '../cells/logs/MessageCell';
 import FieldsExpandedCell from '../cells/logs/FieldsExpandedCell';
+import LevelIcon from '../cells/logs/LevelIcon';
 
 interface RowProps {
     row: OpsLogFlowDocument;
@@ -14,6 +15,7 @@ interface RowProps {
 interface RowsProps {
     data: OpsLogFlowDocument[];
     loading?: boolean;
+    hitFileStart?: boolean;
 }
 
 function Row({ row }: RowProps) {
@@ -53,13 +55,23 @@ function Row({ row }: RowProps) {
     );
 }
 
-function Rows({ data, loading }: RowsProps) {
+function Rows({ data, loading, hitFileStart }: RowsProps) {
     return (
         <>
             {loading ? (
                 <TableRow>
                     <TableCell colSpan={3}>
                         <FormattedMessage id="ops.logsTable.fetchingOlderLogs" />
+                    </TableCell>
+                </TableRow>
+            ) : null}
+            {hitFileStart ? (
+                <TableRow>
+                    <TableCell align="right">
+                        <LevelIcon level="success" />
+                    </TableCell>
+                    <TableCell colSpan={2}>
+                        <FormattedMessage id="ops.logsTable.allOldLogsLoaded" />
                     </TableCell>
                 </TableRow>
             ) : null}

@@ -1,19 +1,19 @@
 import { Box, Table, TableContainer } from '@mui/material';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
-import useScrollIntoView from 'hooks/useScrollIntoView';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import useStayScrolled from 'react-stay-scrolled';
-import { useScroll } from 'react-use';
+import { useScroll, useToggle } from 'react-use';
 import { OpsLogFlowDocument, TableStatuses } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import Rows from './Rows';
 import useLogColumns from './useLogColumns';
 
 interface Props {
     documents: OpsLogFlowDocument[];
     fetchNewer: () => void;
-    fetchOlder: () => void;
+    fetchOlder?: () => void;
     loading?: boolean;
 }
 
@@ -24,43 +24,44 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     const dataRows = useMemo(
         () =>
             documents.length > 0 ? (
-                <Rows data={documents} loading={loading} />
+                <Rows
+                    data={documents}
+                    loading={loading}
+                    hitFileStart={Boolean(!fetchOlder)}
+                />
             ) : null,
-        [documents, loading]
+        [fetchOlder, documents, loading]
     );
 
     const tableScroller = useRef<HTMLDivElement>(null);
     const { stayScrolled } = useStayScrolled(tableScroller);
-    const scrollIntoView = useScrollIntoView(tableScroller);
+    const [shouldScroll, toggleSchouldScroll] = useToggle(true);
 
     const { y } = useScroll(tableScroller);
 
     useEffect(() => {
-        console.log('1', documents);
-        scrollIntoView();
-    }, [documents, scrollIntoView]);
-
-    useEffect(() => {
-        if (y === 0) {
+        if (fetchOlder && y === 0) {
             fetchOlder();
         } else {
             // Math.abs(tableScroller.scrollHeight - (tableScroller.scrollTop + tableScroller.clientHeight)) <= 1
             // eslint-disable-next-line no-lonely-if
-            if (y > 500) {
+            if (y > 10000) {
                 fetchNewer();
             }
         }
     }, [fetchNewer, fetchOlder, y]);
 
     useLayoutEffect(() => {
-        console.log('2');
-        stayScrolled();
-    }, [documents, stayScrolled]);
+        if (hasLength(documents) && shouldScroll) {
+            stayScrolled();
+            toggleSchouldScroll();
+        }
+    }, [documents, shouldScroll, stayScrolled, toggleSchouldScroll]);
 
     stayScrolled();
 
     return (
-        <TableContainer component={Box} maxHeight={500} ref={tableScroller}>
+        <TableContainer component={Box} maxHeight={250} ref={tableScroller}>
             <Table
                 aria-label={intl.formatMessage({
                     id: 'entityTable.title',
