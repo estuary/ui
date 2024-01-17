@@ -7,10 +7,14 @@ interface Props {
 }
 
 function TimestampCell({ ts }: Props) {
+    const formattedDateTime = DateTime.fromISO(ts).toFormat(
+        'yyyy-LL-dd HH:mm:ss.SSS ZZZZ'
+    );
+
     return (
         <TableCell sx={BaseCellSx}>
             <Typography noWrap sx={BaseTypographySx}>
-                {DateTime.fromISO(ts).toFormat('yyyy-LL-dd HH:mm:ss.SSS ZZZZ')}
+                {formattedDateTime.includes('Invalid') ? '' : formattedDateTime}
             </Typography>
         </TableCell>
     );
