@@ -28,29 +28,34 @@ function Ops() {
     const meta = journalData.data?.meta;
     console.log('meta', meta);
 
-    const parsedEnd = parseInt(meta?.fragment.end ?? '0', 10);
-    const allLogsLoaded =
-        documents.length > 0 && parsedEnd >= (meta?.writeHead ?? 0);
-
-    console.log('parsedEnd', parsedEnd);
+    const parsedEnd = meta?.metadataResponse.offset
+        ? parseInt(meta.metadataResponse.offset, 10)
+        : null;
+    const allLogsLoaded = documents.length > 0 && parsedEnd === 0;
 
     return (
         <Box>
             <UnderDev />
             <Box>
-                <Button
-                    disabled={allLogsLoaded}
-                    onClick={() =>
-                        journalData.refresh({
-                            offset: parsedEnd,
-                            endOffset: 0,
-                        })
-                    }
-                >
-                    Load More (wip)
-                </Button>
+                <Stack spacing={2} direction="row">
+                    <Button
+                        disabled={allLogsLoaded}
+                        onClick={() =>
+                            journalData.refresh({
+                                offset: 0,
+                                endOffset: parsedEnd ?? 0,
+                            })
+                        }
+                    >
+                        Load Older (wip)
+                    </Button>
 
-                <Stack>
+                    <Button onClick={() => journalData.refresh()}>
+                        Load Newer (wip)
+                    </Button>
+                </Stack>
+
+                <Stack spacing={2}>
                     {/*                    <JournalAlerts
                         journalData={journalData}
                         notFoundTitleMessage={
