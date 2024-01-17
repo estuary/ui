@@ -179,11 +179,10 @@ async function loadDocuments({
     }
 
     const head = parseInt(metadataResponse.writeHead, 10);
-    const startOffsetAvailable = offsets?.offset && offsets.offset > 0;
-    const endOffsetAvailable = offsets?.endOffset && offsets.endOffset > 0;
 
-    let start = head;
-    let end = 0;
+    const end =
+        offsets?.endOffset && offsets.endOffset > 0 ? offsets.endOffset : head;
+    let start = offsets?.offset && offsets.offset > 0 ? offsets.offset : head;
     let documents: JournalRecord[] = [];
     let attempt = 0;
 
@@ -193,12 +192,7 @@ async function loadDocuments({
         head - start < maxBytes
     ) {
         attempt += 1;
-        start = startOffsetAvailable
-            ? offsets.offset
-            : Math.max(0, start - INCREMENT * attempt);
-
-        // Use the provided endOffset
-        end = endOffsetAvailable ? offsets.endOffset : head;
+        start = Math.max(0, start - INCREMENT * attempt);
 
         const stream = (
             await client.read({
@@ -233,7 +227,10 @@ async function loadDocuments({
         documents,
         meta: {
             writeHead: head,
-            fragment: metadataResponse.fragment,
+            fragment: {
+                end: metadataResponse.fragment?.end,
+                begin: metadataResponse.fragment?.begin,
+            },
         },
         tooFewDocuments: start <= 0,
         tooManyBytes: head - start >= maxBytes,

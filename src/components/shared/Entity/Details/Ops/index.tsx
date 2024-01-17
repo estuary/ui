@@ -28,9 +28,11 @@ function Ops() {
     const meta = journalData.data?.meta;
     console.log('meta', meta);
 
-    const parsedEnd = parseInt(meta?.fragment?.end ?? '0', 10);
+    const parsedEnd = parseInt(meta?.fragment.end ?? '0', 10);
     const allLogsLoaded =
         documents.length > 0 && parsedEnd >= (meta?.writeHead ?? 0);
+
+    console.log('parsedEnd', parsedEnd);
 
     return (
         <Box>
@@ -45,7 +47,7 @@ function Ops() {
                         })
                     }
                 >
-                    Load Older Logs (wip)
+                    Load More (wip)
                 </Button>
 
                 <Stack>
