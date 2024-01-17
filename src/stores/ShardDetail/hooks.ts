@@ -4,11 +4,13 @@ import { useZustandStore } from 'context/Zustand/provider';
 import { isEmpty } from 'lodash';
 import { ShardDetailStoreNames } from 'stores/names';
 import { Entity } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import { getCompositeColor } from './Store';
 import {
     ShardDetailStore,
     ShardEntityTypes,
     ShardReadDictionaryResponse,
+    ShardStatusMessageIds,
 } from './types';
 
 const storeName = (entityType: Entity): ShardDetailStoreNames => {
@@ -119,9 +121,13 @@ export const useShardDetail_readDictionary = (
                     !shardsHaveWarnings && !isEmpty(filteredValue.warnings);
             });
 
+            const isCollection = Boolean(
+                taskTypes?.includes('collection') && !hasLength(filteredValues)
+            );
+
             return {
                 allShards: filteredValues,
-                compositeColor: taskTypes?.includes('collection')
+                compositeColor: isCollection
                     ? successMain
                     : state.error
                     ? state.defaultStatusColor
@@ -130,7 +136,9 @@ export const useShardDetail_readDictionary = (
                           state.defaultStatusColor
                       ),
                 disabled,
-                defaultMessageId: state.defaultMessageId,
+                defaultMessageId: isCollection
+                    ? ShardStatusMessageIds.COLLECTION
+                    : state.defaultMessageId,
                 shardsHaveErrors,
                 shardsHaveWarnings,
             };
