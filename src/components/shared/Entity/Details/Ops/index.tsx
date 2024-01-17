@@ -47,11 +47,11 @@ function Ops() {
                             })
                         }
                     >
-                        Load Older (wip)
+                        Load Older (wip - might blow up)
                     </Button>
 
                     <Button onClick={() => journalData.refresh()}>
-                        Load Newer (wip)
+                        Load Newer (wip - just full refresh right now)
                     </Button>
                 </Stack>
 
