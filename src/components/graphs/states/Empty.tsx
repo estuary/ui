@@ -5,9 +5,10 @@ import { CARD_AREA_HEIGHT } from 'utils/billing-utils';
 
 interface Props {
     message: string | ReactNode;
+    header?: string | ReactNode;
 }
 
-function EmptyGraphState({ message }: Props) {
+function EmptyGraphState({ header, message }: Props) {
     return (
         <Stack
             spacing={1}
@@ -21,7 +22,11 @@ function EmptyGraphState({ message }: Props) {
             }}
         >
             <Typography variant="subtitle2" align="center">
-                <FormattedMessage id="graphs.empty.header" />
+                {header ? (
+                    header
+                ) : (
+                    <FormattedMessage id="graphs.empty.header" />
+                )}
             </Typography>
 
             <Typography component="div">{message}</Typography>

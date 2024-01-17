@@ -36,6 +36,7 @@ import {
     useBilling_setHydrationErrorsExist,
     useBilling_setInvoices,
     useBilling_setInvoicesInitialized,
+    useBilling_setNetworkFailed,
     useBilling_updateInvoices,
 } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
@@ -59,6 +60,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     const setInvoices = useBilling_setInvoices();
     const updateBillingHistory = useBilling_updateInvoices();
     const setActive = useBilling_setActive();
+    const setNetworkFailed = useBilling_setNetworkFailed();
 
     const selectedTenant = useBilling_selectedTenant();
     const selectedInvoice = useBilling_selectedInvoice();
@@ -106,8 +108,10 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                         data.push(invoice);
                     });
 
+                    setNetworkFailed(null);
                     setInvoices(data);
-                } catch {
+                } catch (errorMessage: unknown) {
+                    setNetworkFailed(`${errorMessage}`);
                     setHydrationErrorsExist(true);
                     setHydrated(true);
                 } finally {
@@ -125,6 +129,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         hydrated,
         selectedTenant,
         setActive,
+        setNetworkFailed,
     ]);
 
     useEffect(() => {

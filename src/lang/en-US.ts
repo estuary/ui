@@ -418,6 +418,10 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 
     'entityTable.technicalDifficulties.header': `There was an issue getting your data.`,
     'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. You'll find a message describing the issue at the top of the page.`,
+
+    'entityTable.networkFailed.header': `There was a network issue.`,
+    'entityTable.networkFailed.message': `Please check your internet connection and reload the application.`,
+
     'entityTable.moreEntities': `{count} more`,
 
     'entityTable.detailsLink': `View details`,
@@ -666,6 +670,8 @@ const Journals: ResolvedIntlConfig['messages'] = {
 const Ops: ResolvedIntlConfig['messages'] = {
     'ops.journals.notFound.message': `We were unable to find any logs for this {entityType}.`,
     'ops.logsTable.label.level': `Level`,
+    'ops.logsTable.fetchingOlderLogs': `Fetching older logs...`,
+    'ops.logsTable.allOldLogsLoaded': ` --- `,
     'ops.logsTable.label.ts': `Timestamp`,
     'ops.logsTable.label.message': `Message`,
     'ops.logsTable.label.fields': `Fields`,

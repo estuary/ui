@@ -32,5 +32,10 @@ export const logRocketConsole = (message: string, ...props: any[]) => {
 export const FAILED_TO_FETCH = 'failed to fetch';
 export const RETRY_REASONS = [FAILED_TO_FETCH];
 
+export const checkErrorMessage = (
+    checkingFor: string,
+    message?: string | null | undefined
+) => (message ? message.toLowerCase().includes(checkingFor) : false);
+
 export const retryAfterFailure = (message?: string | null | undefined) =>
-    RETRY_REASONS.some((el) => message?.toLowerCase().includes(el));
+    RETRY_REASONS.some((el) => checkErrorMessage(el, message));

@@ -6,11 +6,14 @@ import useJournalNameForLogs from 'hooks/journals/useJournalNameForLogs';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
+import { useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 
 const docsRequested = 25;
 
 function Ops() {
+    const [loading] = useState(false);
+
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const [name, collectionName] = useJournalNameForLogs(catalogName);
 
@@ -20,15 +23,37 @@ function Ops() {
     const documents = (journalData.data?.documents ??
         []) as OpsLogFlowDocument[];
 
+    const meta = journalData.data?.meta;
+    console.log('Ops:journalData:data:meta', meta);
+
+    const parsedEnd = meta?.metadataResponse.offset
+        ? parseInt(meta.metadataResponse.offset, 10)
+        : null;
+    const allOlderLogsLoaded = documents.length > 0 && parsedEnd === 0;
+
     return (
         <Box>
             <UnderDev />
             <Box>
-                <Button onClick={journalData.refresh}>Refresh</Button>
+                <Stack spacing={2} direction="row">
+                    <Button
+                        disabled={allOlderLogsLoaded}
+                        onClick={() =>
+                            journalData.refresh({
+                                offset: 0,
+                                endOffset: parsedEnd ?? 0,
+                            })
+                        }
+                    >
+                        Load Older (wip - might blow up)
+                    </Button>
 
-                <Stack>
-                    <Box>Documents {journalData.data?.documents.length}</Box>
+                    <Button onClick={() => journalData.refresh()}>
+                        Load Newer (wip - just full refresh right now)
+                    </Button>
+                </Stack>
 
+                <Stack spacing={2}>
                     {/*                    <JournalAlerts
                         journalData={journalData}
                         notFoundTitleMessage={
@@ -43,7 +68,26 @@ function Ops() {
 
                     {journalData.loading ? <LinearProgress /> : null}
 
-                    <LogsTable documents={documents} />
+                    <LogsTable
+                        documents={documents}
+                        loading={loading}
+                        fetchNewer={() => {
+                            console.log('fetcher latest logs');
+
+                            // setLoading(true);
+                            // setTimeout(() => setLoading(false), 2500);
+                        }}
+                        fetchOlder={
+                            allOlderLogsLoaded
+                                ? undefined
+                                : () => {
+                                      console.log('fetch older logs');
+
+                                      // setLoading(true);
+                                      // setTimeout(() => setLoading(false), 2500);
+                                  }
+                        }
+                    />
                 </Stack>
             </Box>
         </Box>
