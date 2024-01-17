@@ -29,7 +29,8 @@ function Ops() {
     console.log('meta', meta);
 
     const parsedEnd = parseInt(meta?.fragment?.end ?? '0', 10);
-    const allLogsLoaded = parsedEnd >= (meta?.writeHead ?? 0);
+    const allLogsLoaded =
+        documents.length > 0 && parsedEnd >= (meta?.writeHead ?? 0);
 
     return (
         <Box>
@@ -48,8 +49,6 @@ function Ops() {
                 </Button>
 
                 <Stack>
-                    <Box>Documents {documents.length}</Box>
-
                     {/*                    <JournalAlerts
                         journalData={journalData}
                         notFoundTitleMessage={
