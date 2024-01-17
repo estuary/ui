@@ -1,16 +1,16 @@
 import {
-    ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
+    ConnectorWithTagDetailQuery,
 } from 'hooks/useConnectorWithTagDetail';
 import {
     CONNECTOR_NAME,
     CONNECTOR_RECOMMENDED,
+    TABLES,
     defaultTableFilter,
     handleFailure,
     handleSuccess,
     supabaseClient,
     supabaseRetry,
-    TABLES,
 } from 'services/supabase';
 import { SortDirection } from 'types';
 
@@ -46,15 +46,17 @@ const getConnectors = (
 };
 
 // Hydration-specific queries
+export interface ConnectorTag_Base {
+    id: string;
+    connector_id: string;
+    image_tag: string;
+}
+
 export interface ConnectorsQuery_DetailsForm {
     id: string;
     image_name: string;
     logo_url: string;
-    connector_tags: {
-        id: string;
-        connector_id: string;
-        image_tag: string;
-    }[];
+    connector_tags: ConnectorTag_Base[];
 }
 
 const DETAILS_FORM_QUERY = `
