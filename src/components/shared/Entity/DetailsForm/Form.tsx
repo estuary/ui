@@ -17,10 +17,9 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import {
-    useDetailsForm_connectorImage_connectorId,
+    useDetailsForm_changed_connectorId,
     useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details,
-    useDetailsForm_previousConnectorImage_connectorId,
     useDetailsForm_setDetails,
     useDetailsForm_setDetails_connector,
     useDetailsForm_setDraftedEntityName,
@@ -64,10 +63,8 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const formData = useDetailsForm_details();
     const { connectorImage: originalConnectorImage } = formData;
 
-    const currentConnectorId = useDetailsForm_connectorImage_connectorId();
-    const currentConnectorImagePath = useDetailsForm_connectorImage_imagePath();
-    const previousConnectorId =
-        useDetailsForm_previousConnectorImage_connectorId();
+    const connectorImagePath = useDetailsForm_connectorImage_imagePath();
+    const connectorIdChanged = useDetailsForm_changed_connectorId();
 
     const setDetails = useDetailsForm_setDetails();
     const setDetails_connector = useDetailsForm_setDetails_connector();
@@ -85,11 +82,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const isEdit = useEntityWorkflow_Editing();
 
     useEffect(() => {
-        if (
-            connectorId &&
-            hasLength(connectorTags) &&
-            currentConnectorId !== previousConnectorId
-        ) {
+        if (connectorId && hasLength(connectorTags) && connectorIdChanged) {
             connectorTags.find((connector) => {
                 const connectorTag = evaluateConnectorVersions(connector);
 
@@ -103,29 +96,23 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
                 return connectorLocated;
             });
         }
-    }, [
-        setDetails_connector,
-        connectorId,
-        connectorTags,
-        currentConnectorId,
-        previousConnectorId,
-    ]);
+    }, [setDetails_connector, connectorId, connectorIdChanged, connectorTags]);
 
     const versionEvaluationOptions:
         | ConnectorVersionEvaluationOptions
         | undefined = useMemo(() => {
-        const imageTagStartIndex = currentConnectorImagePath.indexOf(':');
+        const imageTagStartIndex = connectorImagePath.indexOf(':');
 
-        return isEdit && hasLength(currentConnectorId) && imageTagStartIndex > 0
+        return isEdit && hasLength(connectorId) && imageTagStartIndex > 0
             ? {
-                  connectorId: currentConnectorId,
-                  existingImageTag: currentConnectorImagePath.substring(
+                  connectorId,
+                  existingImageTag: connectorImagePath.substring(
                       imageTagStartIndex,
-                      currentConnectorImagePath.length
+                      connectorImagePath.length
                   ),
               }
             : undefined;
-    }, [currentConnectorId, currentConnectorImagePath, isEdit]);
+    }, [connectorId, connectorImagePath, isEdit]);
 
     const connectorsOneOf = useMemo(() => {
         const response = [] as { title: string; const: Object }[];
