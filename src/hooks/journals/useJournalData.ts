@@ -124,7 +124,7 @@ async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {
 
 // We increment the read window by this many bytes every time we get back
 // fewer than the desired number of rows.
-const INCREMENT = 1024 * 1024;
+const INCREMENT = 1024; //* 1024;
 
 async function readAllDocuments<T>(stream: ReadableStream<T>) {
     const accum: T[] = [];
@@ -182,7 +182,8 @@ async function loadDocuments({
 
     const end =
         offsets?.endOffset && offsets.endOffset > 0 ? offsets.endOffset : head;
-    let start = offsets?.offset && offsets.offset > 0 ? offsets.offset : head;
+    let start = offsets?.offset && offsets.offset > 0 ? offsets.offset : end;
+
     let documents: JournalRecord[] = [];
     let attempt = 0;
 
@@ -227,10 +228,7 @@ async function loadDocuments({
         documents,
         meta: {
             writeHead: head,
-            fragment: {
-                end: metadataResponse.fragment?.end,
-                begin: metadataResponse.fragment?.begin,
-            },
+            metadataResponse,
         },
         tooFewDocuments: start <= 0,
         tooManyBytes: head - start >= maxBytes,
