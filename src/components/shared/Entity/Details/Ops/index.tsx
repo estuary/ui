@@ -24,7 +24,7 @@ function Ops() {
         []) as OpsLogFlowDocument[];
 
     const meta = journalData.data?.meta;
-    console.log('meta', meta);
+    console.log('Ops:journalData:data:meta', meta);
 
     const parsedEnd = meta?.metadataResponse.offset
         ? parseInt(meta.metadataResponse.offset, 10)
