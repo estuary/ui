@@ -8,7 +8,7 @@ import {
 } from 'iconoir-react';
 import { BaseTypographySx } from './shared';
 
-type Levels = 'error' | 'warn' | 'debug' | 'trace' | 'success' | any;
+type Levels = 'error' | 'warn' | 'debug' | 'trace' | 'done' | any;
 
 interface Props {
     level: Levels;
@@ -24,7 +24,7 @@ function LevelIcon({ level }: Props) {
             ? DeleteCircle
             : level === 'warn'
             ? WarningCircle
-            : level === 'success'
+            : level === 'done'
             ? CheckCircle
             : level === 'debug' || level === 'trace'
             ? MinusCircle
@@ -35,7 +35,7 @@ function LevelIcon({ level }: Props) {
             ? theme.palette.error.main
             : level === 'warn'
             ? theme.palette.warning.main
-            : level === 'success'
+            : level === 'done'
             ? theme.palette.success.main
             : theme.palette.info.main;
 

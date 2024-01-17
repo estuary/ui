@@ -70,7 +70,7 @@ function Rows({ data, loading, hitFileStart }: RowsProps) {
             {hitFileStart ? (
                 <TableRow>
                     <TableCell align="right">
-                        <LevelIcon level="success" />
+                        <LevelIcon level="done" />
                     </TableCell>
 
                     <TimestampCell ts="-" />
