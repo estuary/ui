@@ -124,7 +124,7 @@ async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {
 
 // We increment the read window by this many bytes every time we get back
 // fewer than the desired number of rows.
-const INCREMENT = 1024 * 1024;
+const INCREMENT = 1024; //* 1024;
 
 async function readAllDocuments<T>(stream: ReadableStream<T>) {
     const accum: T[] = [];
@@ -136,12 +136,19 @@ async function readAllDocuments<T>(stream: ReadableStream<T>) {
     return accum;
 }
 
+export interface LoadDocumentsOffsets {
+    offset: number;
+    endOffset: number;
+}
+
 async function loadDocuments({
     journalName,
     client,
     documentCount,
     maxBytes,
+    offsets,
 }: {
+    offsets?: LoadDocumentsOffsets;
     journalName?: string;
     client?: JournalClient;
     documentCount: number;
@@ -172,10 +179,12 @@ async function loadDocuments({
     }
 
     const head = parseInt(metadataResponse.writeHead, 10);
-    let start = head;
+
+    const end =
+        offsets?.endOffset && offsets.endOffset > 0 ? offsets.endOffset : head;
+    let start = offsets?.offset && offsets.offset > 0 ? offsets.offset : end;
 
     let documents: JournalRecord[] = [];
-
     let attempt = 0;
 
     while (
@@ -185,13 +194,23 @@ async function loadDocuments({
     ) {
         attempt += 1;
         start = Math.max(0, start - INCREMENT * attempt);
+
         const stream = (
             await client.read({
                 journal: journalName,
                 offset: `${start}`,
-                endOffset: `${head}`,
+                endOffset: `${end}`,
             })
         ).unwrap();
+
+        // console.log('loadDocuments : ', {
+        //     metaInfo,
+        //     metadataResponse,
+        //     stream,
+        //     startingOffset,
+        //     head,
+        // });
+
         const journalDocumentStream = parseJournalDocuments(stream);
         const allDocs = await readAllDocuments(journalDocumentStream);
 
@@ -204,8 +223,12 @@ async function loadDocuments({
             )
             .slice(documentCount * -1);
     }
+
     return {
         documents,
+        meta: {
+            metadataResponse,
+        },
         tooFewDocuments: start <= 0,
         tooManyBytes: head - start >= maxBytes,
     };
@@ -246,6 +269,10 @@ const useJournalData = (
     }, [gatewayConfig, journalName]);
 
     const [refreshing, setRefreshing] = useState(false);
+    const [offsets, setOffsets] = useState<LoadDocumentsOffsets>({
+        offset: 0,
+        endOffset: 0,
+    });
 
     const [data, setData] =
         useState<Awaited<ReturnType<typeof loadDocuments>>>();
@@ -269,6 +296,7 @@ const useJournalData = (
                         client: journalClient,
                         documentCount: desiredCount,
                         maxBytes,
+                        offsets,
                     });
                     setData(docs);
                 } catch (e: unknown) {
@@ -281,20 +309,25 @@ const useJournalData = (
             }
         })();
     }, [
+        data,
         desiredCount,
         journalClient,
         journalName,
+        loading,
         maxBytes,
         refreshing,
-        loading,
-        data,
+        offsets,
     ]);
 
     return {
         data,
         error,
         loading,
-        refresh: () => {
+        refresh: (newOffset?: LoadDocumentsOffsets) => {
+            if (newOffset) {
+                setOffsets(newOffset);
+            }
+
             failures.current = 0;
             setRefreshing(true);
         },
