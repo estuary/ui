@@ -1,4 +1,5 @@
 import { Box, Button, LinearProgress, Stack } from '@mui/material';
+import KeyValueList from 'components/shared/KeyValueList';
 import UnderDev from 'components/shared/UnderDev';
 import LogsTable from 'components/tables/Logs';
 import { useJournalData } from 'hooks/journals/useJournalData';
@@ -77,9 +78,14 @@ function Ops() {
         <Box>
             <UnderDev />
             <Box>
-                <Box>Docs: {docs.length}</Box>
-                <Box>Unique: {uniqueDocs.length}</Box>
-                <Box>Last Byte Parsed: {lastParsed}</Box>
+                <KeyValueList
+                    sectionTitle="Debugging Values"
+                    data={[
+                        { title: 'Documents', val: docs.length },
+                        { title: 'Unique Docs', val: uniqueDocs.length },
+                        { title: 'Last Byte Parsed', val: lastParsed },
+                    ]}
+                />
 
                 <Stack spacing={2} direction="row">
                     <Button
