@@ -6,85 +6,103 @@ import useJournalNameForLogs from 'hooks/journals/useJournalNameForLogs';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { useEffect, useState } from 'react';
+import { uniqWith } from 'lodash';
+import { useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 
 const docsRequested = 25;
 
 function Ops() {
-    const [loading] = useState(false);
+    const [fetchingMore, setFetchingMore] = useState(false);
     const [olderFinished, setOlderFinished] = useState(false);
     const [lastParsed, setLastParsed] = useState<number>(0);
+    const [docs, setDocs] = useState<OpsLogFlowDocument[]>([]);
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const [name, collectionName] = useJournalNameForLogs(catalogName);
 
     // TODO (typing)
     //  need to handle typing
-    const journalData = useJournalData(name, docsRequested, collectionName);
-    const documents = (journalData.data?.documents ??
-        []) as OpsLogFlowDocument[];
+    const { data, loading, refresh } = useJournalData(
+        name,
+        docsRequested,
+        collectionName
+    );
+    const documents = useMemo(
+        () => (data?.documents ?? []) as OpsLogFlowDocument[],
+        [data?.documents]
+    );
 
     useEffect(() => {
-        console.log('Ops:journalData:effect', journalData);
-
-        // Wait until loading is complete
-        if (journalData.loading) {
-            return;
-        }
-
-        // If we have documents add them to the list
-        if (journalData.data?.documents) {
-            // This is where we need to populate a list of docs we maintain
-            // journalData.data.documents.forEach((doc) => {});
-        }
-
         // Get the mete data out of the response
-        const meta = journalData.data?.meta;
+        const meta = data?.meta;
 
         // Figure out what the last document offset is
         const parsedEnd = meta?.docsMetaResponse.offset
             ? parseInt(meta.docsMetaResponse.offset, 10)
             : null;
 
+        // Keep track of where we last read data from so we can keep stepping backwards through the file
         setLastParsed(parsedEnd ?? 0);
 
-        if (
-            journalData.data?.documents &&
-            journalData.data.documents.length > 0 &&
-            parsedEnd === 0
-        ) {
+        // If we have hit 0 then we now we hit the start of the data are nothing older is available
+        if (parsedEnd === 0) {
             setOlderFinished(true);
         }
+    }, [data?.meta]);
 
-        // We only care about the data changing here
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [journalData]);
+    useEffect(() => {
+        // Wait until loading is complete
+        if (loading || (docs.length > 0 && !fetchingMore)) {
+            return;
+        }
 
-    console.log('Ops:journalData:data:meta', {
-        documents,
-        olderFinished,
-    });
+        // If we have documents add them to the list
+        if (documents.length > 0) {
+            const newDocs = [...documents, ...docs];
+            setDocs(newDocs);
+            setFetchingMore(false);
+        }
+    }, [docs, documents, fetchingMore, loading]);
+
+    const uniqueDocs = useMemo(
+        () =>
+            uniqWith(docs, (a, b) => {
+                return a._meta.uuid === b._meta.uuid;
+            }),
+        [docs]
+    );
 
     return (
         <Box>
             <UnderDev />
             <Box>
+                <Box>Docs: {docs.length}</Box>
+                <Box>Unique: {uniqueDocs.length}</Box>
+                <Box>Last Byte Parsed: {lastParsed}</Box>
+
                 <Stack spacing={2} direction="row">
                     <Button
-                        disabled={olderFinished}
-                        onClick={() =>
-                            journalData.refresh({
+                        disabled={loading || fetchingMore || olderFinished}
+                        onClick={() => {
+                            setFetchingMore(true);
+                            refresh({
                                 offset: 0,
                                 endOffset: lastParsed,
-                            })
-                        }
+                            });
+                        }}
                     >
-                        Load Older (wip - might blow up)
+                        Load Older
                     </Button>
 
-                    <Button onClick={() => journalData.refresh()}>
-                        Load Newer (wip - just full refresh right now)
+                    <Button
+                        disabled={loading || fetchingMore}
+                        onClick={() => {
+                            setFetchingMore(true);
+                            refresh();
+                        }}
+                    >
+                        Load Newer
                     </Button>
                 </Stack>
 
@@ -101,11 +119,11 @@ function Ops() {
                         }
                     />*/}
 
-                    {journalData.loading ? <LinearProgress /> : null}
+                    {fetchingMore || loading ? <LinearProgress /> : null}
 
                     <LogsTable
-                        documents={documents}
-                        loading={loading}
+                        documents={uniqueDocs}
+                        loading={fetchingMore || loading}
                         fetchNewer={() => {
                             console.log('fetcher latest logs');
 

@@ -164,6 +164,7 @@ async function loadDocuments({
             tooManyBytes: false,
         };
     }
+
     const metaInfo = (
         await client.read({
             metadataOnly: true,
@@ -225,8 +226,6 @@ async function loadDocuments({
         // Get the metadata from the document reading
         const docsMetaGenerator = streamAsyncIterator(teedDocumentsStream[1]);
         docsMetaResponse = (await docsMetaGenerator.next()).value;
-
-        console.log('docsMetaResponse = ', docsMetaResponse);
 
         // TODO: Instead of inefficiently re-reading until we get the desired row count,
         // we should accumulate documents and shift `head` backwards using `ProtocolReadResponse.offset`
@@ -297,15 +296,16 @@ const useJournalData = (
     useEffect(() => {
         void (async () => {
             if (
+                (refreshing && !loading) ||
                 (failures.current < 2 &&
                     journalName &&
                     journalClient &&
                     !loading &&
-                    !data) ||
-                refreshing
+                    !data)
             ) {
                 try {
                     setLoading(true);
+
                     const docs = await loadDocuments({
                         journalName,
                         client: journalClient,
@@ -318,8 +318,10 @@ const useJournalData = (
                     failures.current += 1;
                     setError(e);
                 } finally {
-                    setLoading(false);
+                    // Make sure to set refreshing back first
+                    //  Otherwise the effect fires again with loading=false|refreshing=true and loads more data
                     setRefreshing(false);
+                    setLoading(false);
                 }
             }
         })();
@@ -340,11 +342,12 @@ const useJournalData = (
             error,
             loading,
             refresh: (newOffset?: LoadDocumentsOffsets) => {
+                failures.current = 0;
+
                 if (newOffset) {
                     setOffsets(newOffset);
                 }
 
-                failures.current = 0;
                 setRefreshing(true);
             },
         }),
