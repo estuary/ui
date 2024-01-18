@@ -1,11 +1,9 @@
-import { IconButton, Tooltip, useTheme } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 import AddDialog from 'components/shared/Entity/AddDialog';
 import { useEntityType } from 'context/EntityContext';
-import { disabledButtonText } from 'context/Theme';
 import invariableStores from 'context/Zustand/invariableStores';
-import { Plus } from 'iconoir-react';
 import { ReactNode, useState } from 'react';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useStore } from 'zustand';
 
 interface Props {
@@ -22,7 +20,6 @@ function BindingsEditorAdd({
     selectedCollections,
 }: Props) {
     const intl = useIntl();
-    const theme = useTheme();
     const entityType = useEntityType();
 
     const [open, setOpen] = useState<boolean>(false);
@@ -67,22 +64,17 @@ function BindingsEditorAdd({
     return (
         <>
             <Tooltip placement="top" title={tooltip}>
-                <IconButton
+                <Button
+                    aria-controls={open ? DIALOG_ID : undefined}
+                    aria-expanded={open ? 'true' : undefined}
+                    aria-haspopup="true"
                     disabled={disabled}
                     onClick={toggleDialog}
                     sx={{ borderRadius: 0 }}
-                    aria-controls={open ? DIALOG_ID : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? 'true' : undefined}
+                    variant="text"
                 >
-                    <Plus
-                        style={{
-                            color: disabled
-                                ? disabledButtonText[theme.palette.mode]
-                                : theme.palette.primary.main,
-                        }}
-                    />
-                </IconButton>
+                    <FormattedMessage id="cta.add" />
+                </Button>
             </Tooltip>
             <AddDialog
                 entity="collection"

@@ -145,6 +145,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.reload': `Reload`,
     'cta.evolve': `Apply`,
     'cta.support': `contact support`,
+    'cta.add': `Add`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
