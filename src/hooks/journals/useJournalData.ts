@@ -334,19 +334,22 @@ const useJournalData = (
         offsets,
     ]);
 
-    return {
-        data,
-        error,
-        loading,
-        refresh: (newOffset?: LoadDocumentsOffsets) => {
-            if (newOffset) {
-                setOffsets(newOffset);
-            }
+    return useMemo(
+        () => ({
+            data,
+            error,
+            loading,
+            refresh: (newOffset?: LoadDocumentsOffsets) => {
+                if (newOffset) {
+                    setOffsets(newOffset);
+                }
 
-            failures.current = 0;
-            setRefreshing(true);
-        },
-    };
+                failures.current = 0;
+                setRefreshing(true);
+            },
+        }),
+        [data, error, loading]
+    );
 };
 
 export { useJournalData, useJournalsForCollection };

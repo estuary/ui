@@ -7,7 +7,6 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useEffect, useState } from 'react';
-import { useList } from 'react-use';
 import { OpsLogFlowDocument } from 'types';
 
 const docsRequested = 25;
@@ -20,7 +19,7 @@ function Ops() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const [name, collectionName] = useJournalNameForLogs(catalogName);
 
-    const [list, listFn] = useList<OpsLogFlowDocument[]>([]);
+    const [docsMap] = useState(new Map<string, OpsLogFlowDocument>());
 
     // TODO (typing)
     //  need to handle typing
@@ -38,7 +37,9 @@ function Ops() {
 
         // If we have documents add them to the list
         if (journalData.data?.documents) {
-            listFn.push();
+            journalData.data.documents.forEach((doc) => {
+                docsMap.set(doc._meta.uuid, doc as OpsLogFlowDocument);
+            });
         }
 
         // Get the mete data out of the response
@@ -58,13 +59,18 @@ function Ops() {
         ) {
             setOlderFinished(true);
         }
-    }, [journalData, listFn]);
+
+        // We only care about the data changing here
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [journalData]);
 
     console.log('Ops:journalData:data:meta', {
         documents,
-        list,
+        docsMap,
         olderFinished,
     });
+
+    console.log('docsMap', docsMap.entries());
 
     return (
         <Box>
