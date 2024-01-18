@@ -6,16 +6,21 @@ import useJournalNameForLogs from 'hooks/journals/useJournalNameForLogs';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useList } from 'react-use';
 import { OpsLogFlowDocument } from 'types';
 
 const docsRequested = 25;
 
 function Ops() {
     const [loading] = useState(false);
+    const [olderFinished, setOlderFinished] = useState(false);
+    const [lastParsed, setLastParsed] = useState<number>(0);
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const [name, collectionName] = useJournalNameForLogs(catalogName);
+
+    const [list, listFn] = useList<OpsLogFlowDocument[]>([]);
 
     // TODO (typing)
     //  need to handle typing
@@ -23,13 +28,43 @@ function Ops() {
     const documents = (journalData.data?.documents ??
         []) as OpsLogFlowDocument[];
 
-    const meta = journalData.data?.meta;
-    console.log('Ops:journalData:data:meta', meta);
+    useEffect(() => {
+        console.log('sup', journalData);
 
-    const parsedEnd = meta?.metadataResponse.offset
-        ? parseInt(meta.metadataResponse.offset, 10)
-        : null;
-    const allOlderLogsLoaded = documents.length > 0 && parsedEnd === 0;
+        // Wait until loading is complete
+        if (journalData.loading) {
+            return;
+        }
+
+        // If we have documents add them to the list
+        if (journalData.data?.documents) {
+            listFn.push();
+        }
+
+        // Get the mete data out of the response
+        const meta = journalData.data?.meta;
+
+        // Figure out what the last document offset is
+        const parsedEnd = meta?.docsMetaResponse.offset
+            ? parseInt(meta.docsMetaResponse.offset, 10)
+            : null;
+
+        setLastParsed(parsedEnd ?? 0);
+
+        if (
+            journalData.data?.documents &&
+            journalData.data.documents.length > 0 &&
+            parsedEnd === 0
+        ) {
+            setOlderFinished(true);
+        }
+    }, [journalData, listFn]);
+
+    console.log('Ops:journalData:data:meta', {
+        documents,
+        list,
+        olderFinished,
+    });
 
     return (
         <Box>
@@ -37,11 +72,11 @@ function Ops() {
             <Box>
                 <Stack spacing={2} direction="row">
                     <Button
-                        disabled={allOlderLogsLoaded}
+                        disabled={olderFinished}
                         onClick={() =>
                             journalData.refresh({
                                 offset: 0,
-                                endOffset: parsedEnd ?? 0,
+                                endOffset: lastParsed,
                             })
                         }
                     >
@@ -78,7 +113,7 @@ function Ops() {
                             // setTimeout(() => setLoading(false), 2500);
                         }}
                         fetchOlder={
-                            allOlderLogsLoaded
+                            olderFinished
                                 ? undefined
                                 : () => {
                                       console.log('fetch older logs');

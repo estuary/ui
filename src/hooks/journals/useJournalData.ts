@@ -112,8 +112,10 @@ async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {
         while (true) {
             // Read from the stream
             const { done, value } = await reader.read();
+
             // Exit if we're done
             if (done) return;
+
             // Else yield the chunk
             yield value;
         }
@@ -124,7 +126,7 @@ async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {
 
 // We increment the read window by this many bytes every time we get back
 // fewer than the desired number of rows.
-const INCREMENT = 1024; //* 1024;
+const INCREMENT = 1024 * 1024;
 
 async function readAllDocuments<T>(stream: ReadableStream<T>) {
     const accum: T[] = [];
@@ -184,6 +186,7 @@ async function loadDocuments({
         offsets?.endOffset && offsets.endOffset > 0 ? offsets.endOffset : head;
     let start = offsets?.offset && offsets.offset > 0 ? offsets.offset : end;
 
+    let docsMetaResponse: any; //ProtocolReadResponse
     let documents: JournalRecord[] = [];
     let attempt = 0;
 
@@ -211,8 +214,19 @@ async function loadDocuments({
         //     head,
         // });
 
-        const journalDocumentStream = parseJournalDocuments(stream);
-        const allDocs = await readAllDocuments(journalDocumentStream);
+        // Splt the stream so we can read it twice
+        const teedDocumentsStream = stream.tee();
+
+        // Read our the documents
+        const allDocs = await readAllDocuments(
+            parseJournalDocuments(teedDocumentsStream[0])
+        );
+
+        // Get the metadata from the document reading
+        const docsMetaGenerator = streamAsyncIterator(teedDocumentsStream[1]);
+        docsMetaResponse = (await docsMetaGenerator.next()).value;
+
+        console.log('docsMetaResponse = ', docsMetaResponse);
 
         // TODO: Instead of inefficiently re-reading until we get the desired row count,
         // we should accumulate documents and shift `head` backwards using `ProtocolReadResponse.offset`
@@ -228,6 +242,7 @@ async function loadDocuments({
         documents,
         meta: {
             metadataResponse,
+            docsMetaResponse,
         },
         tooFewDocuments: start <= 0,
         tooManyBytes: head - start >= maxBytes,
