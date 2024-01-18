@@ -46,10 +46,7 @@ function Row({ row }: RowProps) {
 
                 <TimestampCell ts={row.ts} />
 
-                <MessageCell
-                    message={`${row._meta.uuid} | ${row.message}`}
-                    fields={row.fields}
-                />
+                <MessageCell message={row.message} fields={row.fields} />
             </TableRow>
             {hasFields ? (
                 <FieldsExpandedCell expanded={expanded} fields={row.fields} />

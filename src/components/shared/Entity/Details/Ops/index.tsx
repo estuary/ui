@@ -1,4 +1,4 @@
-import { Box, Button, LinearProgress, Stack } from '@mui/material';
+import { Box, Button, Stack } from '@mui/material';
 import KeyValueList from 'components/shared/KeyValueList';
 import UnderDev from 'components/shared/UnderDev';
 import LogsTable from 'components/tables/Logs';
@@ -7,11 +7,11 @@ import useJournalNameForLogs from 'hooks/journals/useJournalNameForLogs';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { uniqWith } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
+import { MEGABYTE } from 'utils/dataPlane-utils';
 
-const docsRequested = 25;
+const maxBytes = Math.round(MEGABYTE / 25);
 
 function Ops() {
     const [fetchingMore, setFetchingMore] = useState(false);
@@ -24,15 +24,34 @@ function Ops() {
 
     // TODO (typing)
     //  need to handle typing
-    const { data, loading, refresh } = useJournalData(
-        name,
-        docsRequested,
-        collectionName
-    );
+    const { data, loading, refresh } = useJournalData(name, collectionName, {
+        maxBytes,
+    });
+
     const documents = useMemo(
         () => (data?.documents ?? []) as OpsLogFlowDocument[],
         [data?.documents]
     );
+
+    useEffect(() => {
+        // Get the mete data out of the response
+        const meta = data?.meta;
+
+        // Figure out what the last document offset is
+        const parsedEnd = meta?.docsMetaResponse.offset
+            ? parseInt(meta.docsMetaResponse.offset, 10)
+            : null;
+
+        // Since journalData is read kinda async we need to wait to
+        //  update documents until we know the meta data changed
+        if (parsedEnd !== lastParsed) {
+            if (documents.length > 0) {
+                const newDocs = [...documents, ...docs];
+                setDocs(newDocs);
+                setFetchingMore(false);
+            }
+        }
+    }, [data?.meta, docs, documents, lastParsed]);
 
     useEffect(() => {
         // Get the mete data out of the response
@@ -52,28 +71,6 @@ function Ops() {
         }
     }, [data?.meta]);
 
-    useEffect(() => {
-        // Wait until loading is complete
-        if (loading || (docs.length > 0 && !fetchingMore)) {
-            return;
-        }
-
-        // If we have documents add them to the list
-        if (documents.length > 0) {
-            const newDocs = [...documents, ...docs];
-            setDocs(newDocs);
-            setFetchingMore(false);
-        }
-    }, [docs, documents, fetchingMore, loading]);
-
-    const uniqueDocs = useMemo(
-        () =>
-            uniqWith(docs, (a, b) => {
-                return a._meta.uuid === b._meta.uuid;
-            }),
-        [docs]
-    );
-
     return (
         <Box>
             <UnderDev />
@@ -82,7 +79,6 @@ function Ops() {
                     sectionTitle="Debugging Values"
                     data={[
                         { title: 'Documents', val: docs.length },
-                        { title: 'Unique Docs', val: uniqueDocs.length },
                         { title: 'Last Byte Parsed', val: lastParsed },
                     ]}
                 />
@@ -125,10 +121,8 @@ function Ops() {
                         }
                     />*/}
 
-                    {fetchingMore || loading ? <LinearProgress /> : null}
-
                     <LogsTable
-                        documents={uniqueDocs}
+                        documents={docs}
                         loading={fetchingMore || loading}
                         fetchNewer={() => {
                             console.log('fetcher latest logs');
