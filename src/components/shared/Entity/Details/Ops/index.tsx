@@ -19,8 +19,6 @@ function Ops() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const [name, collectionName] = useJournalNameForLogs(catalogName);
 
-    const [docsMap] = useState(new Map<string, OpsLogFlowDocument>());
-
     // TODO (typing)
     //  need to handle typing
     const journalData = useJournalData(name, docsRequested, collectionName);
@@ -37,9 +35,8 @@ function Ops() {
 
         // If we have documents add them to the list
         if (journalData.data?.documents) {
-            journalData.data.documents.forEach((doc) => {
-                docsMap.set(doc._meta.uuid, doc as OpsLogFlowDocument);
-            });
+            // This is where we need to populate a list of docs we maintain
+            // journalData.data.documents.forEach((doc) => {});
         }
 
         // Get the mete data out of the response
@@ -66,7 +63,6 @@ function Ops() {
 
     console.log('Ops:journalData:data:meta', {
         documents,
-        docsMap: docsMap.entries(),
         olderFinished,
     });
 
