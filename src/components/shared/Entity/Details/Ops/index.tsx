@@ -28,7 +28,7 @@ function Ops() {
         []) as OpsLogFlowDocument[];
 
     useEffect(() => {
-        console.log('sup', journalData);
+        console.log('Ops:journalData:effect', journalData);
 
         // Wait until loading is complete
         if (journalData.loading) {
@@ -66,11 +66,9 @@ function Ops() {
 
     console.log('Ops:journalData:data:meta', {
         documents,
-        docsMap,
+        docsMap: docsMap.entries(),
         olderFinished,
     });
-
-    console.log('docsMap', docsMap.entries());
 
     return (
         <Box>
