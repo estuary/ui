@@ -17,6 +17,8 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import {
+    useDetailsForm_changed_connectorId,
+    useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details,
     useDetailsForm_setDetails,
     useDetailsForm_setDetails_connector,
@@ -30,17 +32,24 @@ import {
     useFormStateStore_messagePrefix,
 } from 'stores/FormState/hooks';
 import { hasLength } from 'utils/misc-utils';
+import {
+    ConnectorVersionEvaluationOptions,
+    evaluateConnectorVersions,
+} from 'utils/workflow-utils';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 export const getConnectorImageDetails = (
-    connector: ConnectorWithTagDetailQuery
+    connector: ConnectorWithTagDetailQuery,
+    options?: { connectorId: string; existingImageTag: string }
 ): Details['data']['connectorImage'] => {
+    const connectorTag = evaluateConnectorVersions(connector, options);
+
     return {
         connectorId: connector.id,
-        id: connector.connector_tags[0].id,
+        id: connectorTag.id,
         imageName: connector.image_name,
-        imagePath: `${connector.image_name}${connector.connector_tags[0].image_tag}`,
+        imagePath: `${connector.image_name}${connectorTag.image_tag}`,
         iconPath: connector.image,
     };
 };
@@ -53,6 +62,9 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     // Details Form Store
     const formData = useDetailsForm_details();
     const { connectorImage: originalConnectorImage } = formData;
+
+    const connectorImagePath = useDetailsForm_connectorImage_imagePath();
+    const connectorIdChanged = useDetailsForm_changed_connectorId();
 
     const setDetails = useDetailsForm_setDetails();
     const setDetails_connector = useDetailsForm_setDetails_connector();
@@ -70,18 +82,37 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const isEdit = useEntityWorkflow_Editing();
 
     useEffect(() => {
-        if (connectorId && hasLength(connectorTags)) {
+        if (connectorId && hasLength(connectorTags) && connectorIdChanged) {
             connectorTags.find((connector) => {
-                const response =
-                    connector.connector_tags[0].connector_id === connectorId;
+                const connectorTag = evaluateConnectorVersions(connector);
 
-                if (response) {
+                const connectorLocated =
+                    connectorTag.connector_id === connectorId;
+
+                if (connectorLocated) {
                     setDetails_connector(getConnectorImageDetails(connector));
                 }
-                return response;
+
+                return connectorLocated;
             });
         }
-    }, [setDetails_connector, connectorId, connectorTags]);
+    }, [setDetails_connector, connectorId, connectorIdChanged, connectorTags]);
+
+    const versionEvaluationOptions:
+        | ConnectorVersionEvaluationOptions
+        | undefined = useMemo(() => {
+        const imageTagStartIndex = connectorImagePath.indexOf(':');
+
+        return isEdit && hasLength(connectorId) && imageTagStartIndex > 0
+            ? {
+                  connectorId,
+                  existingImageTag: connectorImagePath.substring(
+                      imageTagStartIndex,
+                      connectorImagePath.length
+                  ),
+              }
+            : undefined;
+    }, [connectorId, connectorImagePath, isEdit]);
 
     const connectorsOneOf = useMemo(() => {
         const response = [] as { title: string; const: Object }[];
@@ -89,14 +120,17 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
         if (connectorTags.length > 0) {
             connectorTags.forEach((connector) => {
                 response.push({
-                    const: getConnectorImageDetails(connector),
+                    const: getConnectorImageDetails(
+                        connector,
+                        versionEvaluationOptions
+                    ),
                     title: connector.title,
                 });
             });
         }
 
         return response;
-    }, [connectorTags]);
+    }, [connectorTags, versionEvaluationOptions]);
 
     const schema = useMemo(() => {
         return {

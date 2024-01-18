@@ -18,8 +18,9 @@ import {
 } from 'stores/extensions/Hydration';
 import { DetailsFormStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
-import { createStore, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import { evaluateConnectorVersions } from 'utils/workflow-utils';
+import { StoreApi, createStore } from 'zustand';
+import { NamedSet, devtools } from 'zustand/middleware';
 
 const STORE_KEY = 'Details Form';
 
@@ -193,13 +194,16 @@ export const getInitialState = (
                 if (!error && data && data.length > 0) {
                     const { setDetails_connector, setPreviousDetails } = get();
 
-                    const { image_name, logo_url, connector_tags } = data[0];
+                    const connector = data[0];
+
+                    const { image_name, logo_url } = connector;
+                    const connectorTag = evaluateConnectorVersions(connector);
 
                     const connectorImage: Details['data']['connectorImage'] = {
                         connectorId,
-                        id: connector_tags[0].id,
+                        id: connectorTag.id,
                         imageName: image_name,
-                        imagePath: `${image_name}${connector_tags[0].image_tag}`,
+                        imagePath: `${image_name}${connectorTag.image_tag}`,
                         iconPath: logo_url,
                     };
 
