@@ -38,6 +38,10 @@ export function toEvolutionRequest(
     const req: EvolutionRequest = { current_name: ic.collection };
     if (hasLength(ic.requires_recreation)) {
         req.new_name = suggestedName(ic.collection);
+    } else if (ic.affected_materializations) {
+        // since we're _not_ re-creating the collection, restrict the evolution to only apply to
+        // the materializations that were affected.
+        req.materializations = ic.affected_materializations.map((m) => m.name);
     }
     return req;
 }
@@ -59,6 +63,10 @@ export interface EvolutionRequest {
     // If the desired action is to re-create the collection, then this field should be set to the new name.
     // Otherwise, the evolution will only update materialization bindings to materialize into new resources.
     new_name?: string;
+    // If specified, restrict the evolution to only the given materializations.
+    // At most one of `new_name` or `materializations` may be specified, since
+    // re-creating the collection must apply to all materializations.
+    materializations?: string[];
 }
 
 export const createEvolution = (
