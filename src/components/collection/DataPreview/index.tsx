@@ -53,7 +53,9 @@ export function DataPreview({ collectionName }: Props) {
     // TODO (typing) we need to fix typing
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const journal = useMemo(() => journalsData?.journals?.[0], [journalsData]);
-    const journalData = useJournalData(journal?.name, 20, collectionName);
+    const journalData = useJournalData(journal?.name, collectionName, {
+        desiredCount: 20,
+    });
 
     // There is a brief delay between when the data preview card is rendered and the two journal-related
     // hooks are called, which resulted in `isLoading` being a false negative. If the journal client is
