@@ -1251,15 +1251,12 @@ const EntityEvolution: ResolvedIntlConfig['messages'] = {
     'entityEvolution.error.note': `Note: This may result in additional cost as new versions are backfilled.`,
 
     // Single quotes are special and must be doubled: https://formatjs.io/docs/core-concepts/icu-syntax#quoting--escaping
-    'entityEvolution.action.recreateOneBinding.description': `the materialization ''{materializationName}'' will be updated to materialize the collection into a new resource`,
+    'entityEvolution.action.recreateOneBinding.description': `the materialization ''{materializationName}'' will be updated to increment the backfill counter and re-materialize the collection`,
     'entityEvolution.action.recreateBindings.description': `{materializationCount} {materializationCount, plural,
         one {Materialization}
         other {Materializations}
-    } will be updated to materialize the collection into new resources`,
-    'entityEvolution.action.recreateBindings.help': `Any materializations of this collection will be updated to materialize it
-    into a new resource (database table, for example) with an incremented version suffix (like "_v2"). The collection itself will
-    have the schema updated in place, and will retain all current data. The materialization will backfill from the beginning of
-    this collection, but other bindings in the materialization will not be affected.`,
+    } will be updated to increment the backfill counters and re-materialize the collection`,
+    'entityEvolution.action.recreateBindings.help': `The materialization will be updated to increment the ''backfill'' property of the affected binding, which causes it to re-create destination resources (such as tables) and re-materialize the source collection from the beginning. Other bindings in the materialization will not be affected. The source collection will retain all current data.`,
 
     'entityEvolution.action.recreateCollection.description': `Collection will be re-created as ''{newName}'' because {reason}`,
     'entityEvolution.action.recreateCollection.help': `This will create a new collection with the name shown.
