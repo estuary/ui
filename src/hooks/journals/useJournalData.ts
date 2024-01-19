@@ -12,6 +12,7 @@ import { useCounter } from 'react-use';
 import useSWR from 'swr';
 import {
     dataPlaneFetcher_list,
+    MAX_DOCUMENT_SIZE,
     shouldRefreshToken,
 } from 'utils/dataPlane-utils';
 
@@ -112,8 +113,10 @@ async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {
         while (true) {
             // Read from the stream
             const { done, value } = await reader.read();
+
             // Exit if we're done
             if (done) return;
+
             // Else yield the chunk
             yield value;
         }
@@ -136,15 +139,22 @@ async function readAllDocuments<T>(stream: ReadableStream<T>) {
     return accum;
 }
 
+export interface LoadDocumentsOffsets {
+    offset: number;
+    endOffset: number;
+}
+
 async function loadDocuments({
     journalName,
     client,
     documentCount,
     maxBytes,
+    offsets,
 }: {
+    offsets?: LoadDocumentsOffsets;
     journalName?: string;
     client?: JournalClient;
-    documentCount: number;
+    documentCount?: number;
     maxBytes: number;
 }) {
     if (!client || !journalName) {
@@ -155,6 +165,7 @@ async function loadDocuments({
             tooManyBytes: false,
         };
     }
+
     const metaInfo = (
         await client.read({
             metadataOnly: true,
@@ -172,41 +183,73 @@ async function loadDocuments({
     }
 
     const head = parseInt(metadataResponse.writeHead, 10);
-    let start = head;
 
+    const end =
+        offsets?.endOffset && offsets.endOffset > 0 ? offsets.endOffset : head;
+    let start = offsets?.offset && offsets.offset > 0 ? offsets.offset : end;
+
+    let docsMetaResponse: any; //ProtocolReadResponse
     let documents: JournalRecord[] = [];
-
     let attempt = 0;
 
-    while (
-        documents.length < documentCount &&
-        start > 0 &&
-        head - start < maxBytes
-    ) {
-        attempt += 1;
-        start = Math.max(0, start - INCREMENT * attempt);
+    // TODO (gross)
+    // This is bad and I feel bad. The function uses references to vars up above.
+    //   It was done so we could quickly add the ability to read based only on data size.
+    // Future work is needed to full break this hook up into the stand alone pieces that are needed.
+    //  More than likely we can have a hook for "readingByDoc" and one for "readingByByte" and have those
+    //  share common functions
+    const attemptToRead = async () => {
         const stream = (
             await client.read({
                 journal: journalName,
                 offset: `${start}`,
-                endOffset: `${head}`,
+                endOffset: `${end}`,
             })
         ).unwrap();
-        const journalDocumentStream = parseJournalDocuments(stream);
-        const allDocs = await readAllDocuments(journalDocumentStream);
+
+        // Splt the stream so we can read it twice
+        const teedDocumentsStream = stream.tee();
+
+        // Read our the documents
+        const allDocs = await readAllDocuments(
+            parseJournalDocuments(teedDocumentsStream[0])
+        );
+
+        // Get the metadata from the document reading
+        const docsMetaGenerator = streamAsyncIterator(teedDocumentsStream[1]);
+        docsMetaResponse = (await docsMetaGenerator.next()).value;
 
         // TODO: Instead of inefficiently re-reading until we get the desired row count,
         // we should accumulate documents and shift `head` backwards using `ProtocolReadResponse.offset`
-        documents = allDocs
+        return allDocs
             .filter(isJournalRecord)
             .filter(
                 (record) => !(record._meta as unknown as { ack: boolean }).ack
-            )
-            .slice(documentCount * -1);
+            );
+    };
+
+    if (!documentCount) {
+        start = Math.max(0, start - maxBytes);
+        documents = await attemptToRead();
+    } else {
+        while (
+            documents.length < documentCount &&
+            start > 0 &&
+            head - start < maxBytes
+        ) {
+            attempt += 1;
+            start = Math.max(0, start - INCREMENT * attempt);
+            documents = (await attemptToRead()).slice(documentCount * -1);
+        }
     }
+
     return {
         documents,
-        tooFewDocuments: start <= 0,
+        meta: {
+            metadataResponse,
+            docsMetaResponse,
+        },
+        tooFewDocuments: documentCount ? start <= 0 : false,
         tooManyBytes: head - start >= maxBytes,
     };
 }
@@ -221,12 +264,16 @@ function isJournalRecord(val: any): val is JournalRecord {
     return val?._meta?.uuid;
 }
 
+interface UseJournalDataSettings {
+    // If you want a specific amount we'll keep making calls to get that many docs.
+    //  Otherwise we just return whatever we got in the call you made.
+    desiredCount?: number;
+    maxBytes?: number;
+}
 const useJournalData = (
     journalName?: string,
-    desiredCount: number = 50,
     collectionName?: string,
-    // 16mb, which is the max document size, ensuring we'll always get at least 1 doc if it exists
-    maxBytes: number = 16 * 10 ** 6
+    settings?: UseJournalDataSettings
 ) => {
     const failures = useRef(0);
 
@@ -246,6 +293,10 @@ const useJournalData = (
     }, [gatewayConfig, journalName]);
 
     const [refreshing, setRefreshing] = useState(false);
+    const [offsets, setOffsets] = useState<LoadDocumentsOffsets>({
+        offset: 0,
+        endOffset: 0,
+    });
 
     const [data, setData] =
         useState<Awaited<ReturnType<typeof loadDocuments>>>();
@@ -255,50 +306,62 @@ const useJournalData = (
     useEffect(() => {
         void (async () => {
             if (
+                (refreshing && !loading) ||
                 (failures.current < 2 &&
                     journalName &&
                     journalClient &&
                     !loading &&
-                    !data) ||
-                refreshing
+                    !data)
             ) {
                 try {
                     setLoading(true);
                     const docs = await loadDocuments({
                         journalName,
                         client: journalClient,
-                        documentCount: desiredCount,
-                        maxBytes,
+                        documentCount: settings?.desiredCount,
+                        maxBytes: settings?.maxBytes ?? MAX_DOCUMENT_SIZE,
+                        offsets,
                     });
                     setData(docs);
                 } catch (e: unknown) {
                     failures.current += 1;
                     setError(e);
                 } finally {
-                    setLoading(false);
+                    // Make sure to set refreshing back first
+                    //  Otherwise the effect fires again with loading=false|refreshing=true and loads more data
                     setRefreshing(false);
+                    setLoading(false);
                 }
             }
         })();
     }, [
-        desiredCount,
+        data,
         journalClient,
         journalName,
-        maxBytes,
-        refreshing,
         loading,
-        data,
+        offsets,
+        refreshing,
+        settings?.desiredCount,
+        settings?.maxBytes,
     ]);
 
-    return {
-        data,
-        error,
-        loading,
-        refresh: () => {
-            failures.current = 0;
-            setRefreshing(true);
-        },
-    };
+    return useMemo(
+        () => ({
+            data,
+            error,
+            loading,
+            refresh: (newOffset?: LoadDocumentsOffsets) => {
+                failures.current = 0;
+
+                if (newOffset) {
+                    setOffsets(newOffset);
+                }
+
+                setRefreshing(true);
+            },
+        }),
+        [data, error, loading]
+    );
 };
 
 export { useJournalData, useJournalsForCollection };
