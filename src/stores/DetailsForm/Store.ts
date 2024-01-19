@@ -18,11 +18,41 @@ import {
 } from 'stores/extensions/Hydration';
 import { DetailsFormStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
-import { evaluateConnectorVersions } from 'utils/workflow-utils';
+import {
+    ConnectorVersionEvaluationOptions,
+    evaluateConnectorVersions,
+} from 'utils/workflow-utils';
 import { StoreApi, createStore } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 
 const STORE_KEY = 'Details Form';
+
+const getConnectorImage = async (
+    connectorId: string,
+    existingImageTag?: ConnectorVersionEvaluationOptions['existingImageTag']
+): Promise<Details['data']['connectorImage'] | null> => {
+    const { data, error } = await getConnectors_detailsForm(connectorId);
+
+    if (!error && data && data.length > 0) {
+        const connector = data[0];
+        const { image_name, logo_url } = connector;
+
+        const options: ConnectorVersionEvaluationOptions | undefined =
+            existingImageTag ? { connectorId, existingImageTag } : undefined;
+
+        const connectorTag = evaluateConnectorVersions(connector, options);
+
+        return {
+            connectorId,
+            id: connectorTag.id,
+            imageName: image_name,
+            imagePath: `${image_name}${connectorTag.image_tag}`,
+            iconPath: logo_url,
+        };
+    }
+
+    return null;
+};
 
 const initialDetails: Details = {
     data: {
@@ -187,25 +217,10 @@ export const getInitialState = (
             const { setHydrationErrorsExist } = get();
 
             if (createWorkflow) {
-                const { data, error } = await getConnectors_detailsForm(
-                    connectorId
-                );
+                const connectorImage = await getConnectorImage(connectorId);
 
-                if (!error && data && data.length > 0) {
+                if (connectorImage) {
                     const { setDetails_connector, setPreviousDetails } = get();
-
-                    const connector = data[0];
-
-                    const { image_name, logo_url } = connector;
-                    const connectorTag = evaluateConnectorVersions(connector);
-
-                    const connectorImage: Details['data']['connectorImage'] = {
-                        connectorId,
-                        id: connectorTag.id,
-                        imageName: image_name,
-                        imagePath: `${image_name}${connectorTag.image_tag}`,
-                        iconPath: logo_url,
-                    };
 
                     setDetails_connector(connectorImage);
 
@@ -227,33 +242,30 @@ export const getInitialState = (
                 );
 
                 if (!error && data && data.length > 0) {
-                    const { setDetails, setPreviousDetails } = get();
+                    const { catalog_name, detail, connector_image_tag } =
+                        data[0];
 
-                    const {
-                        catalog_name,
-                        detail,
-                        connector_tag_id,
-                        connector_image_name,
-                        connector_image_tag,
-                        connector_logo_url,
-                    } = data[0];
+                    const connectorImage = await getConnectorImage(
+                        connectorId,
+                        connector_image_tag
+                    );
 
-                    const hydratedDetails: Details = {
-                        data: {
-                            entityName: catalog_name,
-                            connectorImage: {
-                                connectorId,
-                                id: connector_tag_id,
-                                imageName: connector_image_name,
-                                imagePath: `${connector_image_name}${connector_image_tag}`,
-                                iconPath: connector_logo_url,
+                    if (connectorImage) {
+                        const { setDetails, setPreviousDetails } = get();
+
+                        const hydratedDetails: Details = {
+                            data: {
+                                entityName: catalog_name,
+                                connectorImage,
+                                description: detail ?? '',
                             },
-                            description: detail ?? '',
-                        },
-                    };
+                        };
 
-                    setDetails(hydratedDetails);
-                    setPreviousDetails(hydratedDetails);
+                        setDetails(hydratedDetails);
+                        setPreviousDetails(hydratedDetails);
+                    } else {
+                        setHydrationErrorsExist(true);
+                    }
                 } else {
                     setHydrationErrorsExist(true);
                 }
