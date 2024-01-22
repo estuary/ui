@@ -1284,8 +1284,10 @@ const UpdateEntity: ResolvedIntlConfig['messages'] = {
 };
 
 const PrefixedName: ResolvedIntlConfig['messages'] = {
-    'prefixedName.description': `Select a prefix from the drop-down and add a unique name. (ex: acmeCo/marketing_data)`,
-    'prefixedName.description.singlePrefix': `Prefix already selected. Please add a unique name. (ex: marketing_data)`,
+    'prefixedName.description': `Select a prefix from the drop-down and add a unique name. (ex: marketing_data)`,
+    'prefixedName.description.noPrefix': `Please select a prefix from the drop-down.`,
+    'prefixedName.description.singlePrefix': `Give your {entityType} a unique name. (ex: marketing_data)`,
+    'prefixedName.description.singlePrefix.noEntityType': `Please add a unique name. (ex: marketing_data)`,
 };
 
 const CustomErrors: ResolvedIntlConfig['messages'] = {
