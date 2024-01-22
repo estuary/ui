@@ -42,6 +42,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.readOnly': `Read-Only`,
     'common.failedFetch': `Unable to reach server`,
     'common.missingError': `Something went wrong`,
+    'common.exampleName': `marketing_data`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -1284,10 +1285,10 @@ const UpdateEntity: ResolvedIntlConfig['messages'] = {
 };
 
 const PrefixedName: ResolvedIntlConfig['messages'] = {
-    'prefixedName.description': `Select a prefix from the drop-down and add a unique name. (ex: marketing_data)`,
+    'prefixedName.description': `Select a prefix from the drop-down and add a unique name. (ex: ${CommonMessages['common.exampleName']})`,
     'prefixedName.description.noPrefix': `Please select a prefix from the drop-down.`,
-    'prefixedName.description.singlePrefix': `Give your {entityType} a unique name. (ex: marketing_data)`,
-    'prefixedName.description.singlePrefix.noEntityType': `Please add a unique name. (ex: marketing_data)`,
+    'prefixedName.description.singlePrefix': `Give your {entityType} a unique name. (ex: ${CommonMessages['common.exampleName']})`,
+    'prefixedName.description.singlePrefix.noEntityType': `Please add a unique name. (ex: ${CommonMessages['common.exampleName']})`,
 };
 
 const CustomErrors: ResolvedIntlConfig['messages'] = {

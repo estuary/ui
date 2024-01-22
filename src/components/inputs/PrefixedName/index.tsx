@@ -91,23 +91,6 @@ function PrefixedName({
     const variantString = standardVariant ? 'standard' : 'outlined';
 
     // For rendering help and errors - based on JSONForms approach
-    // const description = useMemo(
-    //     () =>
-    //         showDescription
-    //             ? `${
-    //                   name.length > 0
-    //                       ? ''
-    //                       : intl.formatMessage({
-    //                             id: 'prefixedName.description.singlePrefix.noName',
-    //                         })
-    //               } ${intl.formatMessage({
-    //                   id: singleOption
-    //                       ? 'prefixedName.description.singlePrefix'
-    //                       : 'prefixedName.description',
-    //               })}`
-    //             : null,
-    //     [intl, name.length, showDescription, singleOption]
-    // );
     const description = useMemo(() => {
         if (!showDescription) {
             return null;
