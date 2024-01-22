@@ -42,6 +42,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.readOnly': `Read-Only`,
     'common.failedFetch': `Unable to reach server`,
     'common.missingError': `Something went wrong`,
+    'common.exampleName': `marketing_data`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -1004,9 +1005,9 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.autoDiscovery.update.failed': `Schema evolution update failed`,
 
     'workflows.sourceCapture.header': `Link Capture`,
-    'workflows.sourceCapture.cta': `link capture`,
+    'workflows.sourceCapture.cta': `Source From Capture`,
+    'workflows.sourceCapture.cta.edit': `Edit Source Capture`,
     'workflows.sourceCapture.cta.loading': `${CommonMessages['common.loading']}`,
-    'workflows.sourceCapture.cta.edit': `edit capture`,
     'workflows.sourceCapture.selected.none': `no linked capture`,
     'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization.  Collections added to your capture will automatically be added to your materialization.`,
     'workflows.sourceCapture.optin.message2': `Removing this will not remove associated collections.`,
@@ -1282,8 +1283,10 @@ const UpdateEntity: ResolvedIntlConfig['messages'] = {
 };
 
 const PrefixedName: ResolvedIntlConfig['messages'] = {
-    'prefixedName.description': `Select a prefix from the drop-down and add a unique name. (ex: acmeCo/marketing_data)`,
-    'prefixedName.description.singlePrefix': `Prefix already selected. Please add a unique name. (ex: marketing_data)`,
+    'prefixedName.description': `Select a prefix from the drop-down and add a unique name. (ex: ${CommonMessages['common.exampleName']})`,
+    'prefixedName.description.noPrefix': `Please select a prefix from the drop-down.`,
+    'prefixedName.description.singlePrefix': `Give your {entityType} a unique name. (ex: ${CommonMessages['common.exampleName']})`,
+    'prefixedName.description.singlePrefix.noEntityType': `Please add a unique name. (ex: ${CommonMessages['common.exampleName']})`,
 };
 
 const CustomErrors: ResolvedIntlConfig['messages'] = {
