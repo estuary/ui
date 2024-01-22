@@ -1006,7 +1006,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.autoDiscovery.update.failed': `Schema evolution update failed`,
 
     'workflows.sourceCapture.header': `Link Capture`,
-    'workflows.sourceCapture.cta': `Source Capture`,
+    'workflows.sourceCapture.cta': `Source From Capture`,
     'workflows.sourceCapture.cta.edit': `Edit Source Capture`,
     'workflows.sourceCapture.cta.loading': `${CommonMessages['common.loading']}`,
     'workflows.sourceCapture.selected.none': `no linked capture`,
