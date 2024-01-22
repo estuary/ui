@@ -11,6 +11,8 @@ import {
 } from '@mui/material';
 import useValidatePrefix from 'components/inputs/PrefixedName/useValidatePrefix';
 import AlertBox from 'components/shared/AlertBox';
+import { capitalize } from 'lodash';
+import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { hasLength } from 'utils/misc-utils';
@@ -18,6 +20,7 @@ import { PrefixedName_Change } from './types';
 
 export interface Props {
     label: string | null;
+    entityType?: string;
     allowBlankName?: boolean;
     allowEndSlash?: boolean;
     defaultPrefix?: boolean;
@@ -39,11 +42,13 @@ export interface Props {
 const DESCRIPTION_ID = 'prefixed-name-description';
 const INPUT_ID = 'prefixed-name-input';
 
+// eslint-disable-next-line complexity
 function PrefixedName({
     allowBlankName,
     allowEndSlash,
     defaultPrefix,
     disabled,
+    entityType,
     hideErrorMessage,
     label,
     onChange,
@@ -86,13 +91,33 @@ function PrefixedName({
     const variantString = standardVariant ? 'standard' : 'outlined';
 
     // For rendering help and errors - based on JSONForms approach
-    const description = showDescription
-        ? intl.formatMessage({
-              id: singleOption
-                  ? 'prefixedName.description.singlePrefix'
-                  : 'prefixedName.description',
-          })
-        : null;
+    const description = useMemo(() => {
+        if (!showDescription) {
+            return null;
+        }
+
+        const messageKey =
+            singleOption || prefix.length > 0
+                ? entityType
+                    ? 'prefixedName.description.singlePrefix'
+                    : 'prefixedName.description.singlePrefix.noEntityType'
+                : name.length > 0
+                ? 'prefixedName.description.noPrefix'
+                : 'prefixedName.description';
+
+        return intl.formatMessage(
+            { id: messageKey },
+            { entityType: entityType ? capitalize(entityType) : null }
+        );
+    }, [
+        entityType,
+        intl,
+        name.length,
+        prefix.length,
+        showDescription,
+        singleOption,
+    ]);
+
     const firstFormHelperText = description
         ? description
         : showErrors
