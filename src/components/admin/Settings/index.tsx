@@ -3,8 +3,6 @@ import { authenticatedRoutes } from 'app/routes';
 import PrefixAlerts from 'components/admin/Settings/PrefixAlerts';
 import AdminTabs from 'components/admin/Tabs';
 import usePageTitle from 'hooks/usePageTitle';
-import { osanoActive } from 'services/osano';
-import AdminCookies from './Cookies';
 import StorageMappings from './StorageMappings';
 
 function Settings() {
@@ -23,13 +21,6 @@ function Settings() {
 
                 <StorageMappings />
             </Stack>
-
-            {osanoActive() ? (
-                <Stack>
-                    <Divider />
-                    <AdminCookies />
-                </Stack>
-            ) : null}
         </>
     );
 }

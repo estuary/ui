@@ -5,12 +5,6 @@ declare global {
             auth_url: string | null;
         } | null;
         monaco: any;
-        Osano?: {
-            cm?: {
-                mode?: 'permissive' | 'debug' | 'production';
-                showDrawer?: (arg: string) => void;
-            };
-        };
         // TODO (integrity | logrocket)
         // When we load in LogRocket with a script tag we'll want this
         // LogRocket?: {
@@ -155,14 +149,6 @@ export const getGoogleTageManagerSettings = () => {
     const settings = {
         enabled: import.meta.env.VITE_GOOGLE_TAG_MANAGER_ENABLED === ENABLED,
         id: import.meta.env.VITE_GOOGLE_TAG_MANAGER_ID,
-    };
-
-    return settings;
-};
-
-export const getOsanoSettings = () => {
-    const settings = {
-        bodyClass: import.meta.env.VITE_OSANO_HIDE_WIDGET_CLASS ?? '',
     };
 
     return settings;

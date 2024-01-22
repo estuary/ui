@@ -543,8 +543,6 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.alerts.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Configure Alerts" above to create a subscription.`,
     'admin.alerts.table.label.alertMethod': `Alert Method`,
 
-    'admin.cookies': `Cookie Preferences`,
-    'admin.cookies.message': `Click below to configure your cookie preferences.`,
     'admin.tabs.users': `Account Access`,
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,

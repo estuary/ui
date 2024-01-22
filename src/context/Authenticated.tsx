@@ -3,7 +3,6 @@ import ConfirmationModalContextProvider from 'context/Confirmation';
 import { ZustandProvider } from 'context/Zustand/provider';
 import { BaseComponentProps } from 'types';
 import { OnLoadSpinnerProvider } from './OnLoadSpinner/OnLoadSpinnerContext';
-import Osano from './Osano';
 import QueryParamProvider from './QueryParam';
 import RequireAuth from './Router/RequireAuth';
 import PreFetchDataProvider from './fetcher';
@@ -17,21 +16,19 @@ interface Props extends BaseComponentProps {
 export function AuthenticatedOnlyContext({ children, hideSpinner }: Props) {
     return (
         <RequireAuth>
-            <Osano>
-                <OnLoadSpinnerProvider defaultState={!hideSpinner}>
-                    <QueryParamProvider>
-                        <ZustandProvider>
-                            <AppGuards>
-                                <PreFetchDataProvider>
-                                    <ConfirmationModalContextProvider>
-                                        {children}
-                                    </ConfirmationModalContextProvider>
-                                </PreFetchDataProvider>
-                            </AppGuards>
-                        </ZustandProvider>
-                    </QueryParamProvider>
-                </OnLoadSpinnerProvider>
-            </Osano>
+            <OnLoadSpinnerProvider defaultState={!hideSpinner}>
+                <QueryParamProvider>
+                    <ZustandProvider>
+                        <AppGuards>
+                            <PreFetchDataProvider>
+                                <ConfirmationModalContextProvider>
+                                    {children}
+                                </ConfirmationModalContextProvider>
+                            </PreFetchDataProvider>
+                        </AppGuards>
+                    </ZustandProvider>
+                </QueryParamProvider>
+            </OnLoadSpinnerProvider>
         </RequireAuth>
     );
 }
