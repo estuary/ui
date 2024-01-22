@@ -61,7 +61,7 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     stayScrolled();
 
     return (
-        <TableContainer component={Box} maxHeight={250} ref={tableScroller}>
+        <TableContainer component={Box} maxHeight={500} ref={tableScroller}>
             <Table
                 aria-label={intl.formatMessage({
                     id: 'entityTable.title',

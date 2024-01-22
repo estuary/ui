@@ -1,3 +1,4 @@
+import { ConnectorTag_Base, ConnectorsQuery_DetailsForm } from 'api/connectors';
 import {
     DraftSpecsExtQuery_ByCatalogName,
     modifyDraftSpec,
@@ -7,6 +8,10 @@ import {
     FullSource,
     FullSourceDictionary,
 } from 'components/editor/Bindings/Store/types';
+import {
+    ConnectorTag,
+    ConnectorWithTagDetailQuery,
+} from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
@@ -301,3 +306,37 @@ export const evaluateRecommendedIncludedFields = (
         constraintType === ConstraintTypes.LOCATION_RECOMMENDED
     );
 };
+
+export interface ConnectorVersionEvaluationOptions {
+    connectorId: string;
+    existingImageTag: string;
+}
+
+export function evaluateConnectorVersions(
+    connector: ConnectorWithTagDetailQuery,
+    options?: ConnectorVersionEvaluationOptions
+): ConnectorTag;
+export function evaluateConnectorVersions(
+    connector: ConnectorsQuery_DetailsForm,
+    options?: ConnectorVersionEvaluationOptions
+): ConnectorTag_Base;
+export function evaluateConnectorVersions(
+    connector: ConnectorWithTagDetailQuery | ConnectorsQuery_DetailsForm,
+    options?: ConnectorVersionEvaluationOptions
+): ConnectorTag | ConnectorTag_Base {
+    // Return the version of the connector that is used by the existing task in an edit workflow.
+    if (options && options.connectorId === connector.id) {
+        const connectorsInUse = connector.connector_tags.filter(
+            (version) => version.image_tag === options.existingImageTag
+        );
+
+        if (hasLength(connectorsInUse)) {
+            return connectorsInUse[0];
+        }
+    }
+
+    // Return the latest version of a given connector in a create workflow.
+    return connector.connector_tags.sort((a, b) =>
+        b.image_tag.localeCompare(a.image_tag)
+    )[0];
+}

@@ -1,3 +1,4 @@
+import { ConnectorTag_Base } from 'api/connectors';
 import {
     CONNECTOR_NAME,
     CONNECTOR_RECOMMENDED,
@@ -6,16 +7,15 @@ import {
 import { EntityWithCreateWorkflow } from 'types';
 import { useQuery, useSelect } from './supabase-swr';
 
+export interface ConnectorTag extends ConnectorTag_Base {
+    documentation_url: string;
+    protocol: EntityWithCreateWorkflow;
+    image_name: string;
+    title: string;
+}
+
 export interface ConnectorWithTagDetailQuery {
-    connector_tags: {
-        documentation_url: string;
-        protocol: EntityWithCreateWorkflow;
-        image_tag: string;
-        image_name: string;
-        id: string;
-        connector_id: string;
-        title: string;
-    }[];
+    connector_tags: ConnectorTag[];
     id: string;
     detail: string;
     image_name: string;

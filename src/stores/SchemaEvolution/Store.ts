@@ -58,11 +58,7 @@ const getInitialState = (
     setAddNewBindings: (value, options) => {
         set(
             produce((state: SchemaEvolutionState) => {
-                const {
-                    autoDiscover,
-                    evolveIncompatibleCollections,
-                    settingsActive,
-                } = get();
+                const { autoDiscover, settingsActive } = get();
 
                 if (!settingsActive && !options?.initOnly) {
                     state.settingsActive = true;
@@ -71,11 +67,6 @@ const getInitialState = (
                 // Enable auto-discovery when the add new bindings option is enabled.
                 if (value && !autoDiscover) {
                     state.autoDiscover = true;
-                }
-
-                // Disable the incompatible collection evolution option when the add new bindings option is disabled.
-                if (!value && evolveIncompatibleCollections) {
-                    state.evolveIncompatibleCollections = false;
                 }
 
                 state.addNewBindings = value;
@@ -88,16 +79,15 @@ const getInitialState = (
     setEvolveIncompatibleCollections: (value, options) => {
         set(
             produce((state: SchemaEvolutionState) => {
-                const { addNewBindings, autoDiscover, settingsActive } = get();
+                const { autoDiscover, settingsActive } = get();
 
                 if (!settingsActive && !options?.initOnly) {
                     state.settingsActive = true;
                 }
 
-                // Enable auto-discovery and the add new bindings option when the incompatible collection evolution option is enabled.
-                if (value && (!autoDiscover || !addNewBindings)) {
+                // Enable auto-discovery when the incompatible collection evolution option is enabled.
+                if (value && !autoDiscover) {
                     state.autoDiscover = true;
-                    state.addNewBindings = true;
                 }
 
                 state.evolveIncompatibleCollections = value;

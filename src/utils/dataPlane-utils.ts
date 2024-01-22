@@ -65,3 +65,8 @@ export async function dataPlaneFetcher_list(
         return Promise.reject(error);
     }
 }
+
+export const MEGABYTE = 1 * 10 ** 6;
+
+// 16mb, which is the max document size, ensuring we'll always get at least 1 doc if it exists
+export const MAX_DOCUMENT_SIZE = 16 * MEGABYTE;
