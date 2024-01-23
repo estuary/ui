@@ -4,6 +4,8 @@ import { validateCatalogName } from 'components/inputs/PrefixedName/shared';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { Details, DetailsFormState } from 'stores/DetailsForm/types';
 import {
     fetchErrors,
@@ -18,11 +20,41 @@ import {
 } from 'stores/extensions/Hydration';
 import { DetailsFormStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
-import { evaluateConnectorVersions } from 'utils/workflow-utils';
+import {
+    ConnectorVersionEvaluationOptions,
+    evaluateConnectorVersions,
+} from 'utils/workflow-utils';
 import { StoreApi, createStore } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 
 const STORE_KEY = 'Details Form';
+
+const getConnectorImage = async (
+    connectorId: string,
+    existingImageTag?: ConnectorVersionEvaluationOptions['existingImageTag']
+): Promise<Details['data']['connectorImage'] | null> => {
+    const { data, error } = await getConnectors_detailsForm(connectorId);
+
+    if (!error && data && data.length > 0) {
+        const connector = data[0];
+        const { image_name, logo_url } = connector;
+
+        const options: ConnectorVersionEvaluationOptions | undefined =
+            existingImageTag ? { connectorId, existingImageTag } : undefined;
+
+        const connectorTag = evaluateConnectorVersions(connector, options);
+
+        return {
+            connectorId,
+            id: connectorTag.id,
+            imageName: image_name,
+            imagePath: `${image_name}${connectorTag.image_tag}`,
+            iconPath: logo_url,
+        };
+    }
+
+    return null;
+};
 
 const initialDetails: Details = {
     data: {
@@ -46,11 +78,13 @@ const getInitialStateData = (): Pick<
     | 'draftedEntityName'
     | 'entityNameChanged'
     | 'previousDetails'
+    | 'unsupportedConnectorVersion'
 > => ({
     connectors: [],
 
     details: initialDetails,
     errorsExist: true,
+    unsupportedConnectorVersion: false,
 
     draftedEntityName: '',
     entityNameChanged: false,
@@ -141,6 +175,25 @@ export const getInitialState = (
         );
     },
 
+    setUnsupportedConnectorVersion: (evaluatedId, existingId) => {
+        set(
+            produce((state: DetailsFormState) => {
+                const unsupported = evaluatedId !== existingId;
+
+                if (unsupported) {
+                    logRocketEvent(CustomEvents.CONNECTOR_VERSION_UNSUPPORTED, {
+                        evaluatedId,
+                        existingId,
+                    });
+                }
+
+                state.unsupportedConnectorVersion = unsupported;
+            }),
+            false,
+            'Unsupported Connector Version Flag Changed'
+        );
+    },
+
     setDraftedEntityName: (value) => {
         set(
             produce((state: DetailsFormState) => {
@@ -187,25 +240,10 @@ export const getInitialState = (
             const { setHydrationErrorsExist } = get();
 
             if (createWorkflow) {
-                const { data, error } = await getConnectors_detailsForm(
-                    connectorId
-                );
+                const connectorImage = await getConnectorImage(connectorId);
 
-                if (!error && data && data.length > 0) {
+                if (connectorImage) {
                     const { setDetails_connector, setPreviousDetails } = get();
-
-                    const connector = data[0];
-
-                    const { image_name, logo_url } = connector;
-                    const connectorTag = evaluateConnectorVersions(connector);
-
-                    const connectorImage: Details['data']['connectorImage'] = {
-                        connectorId,
-                        id: connectorTag.id,
-                        imageName: image_name,
-                        imagePath: `${image_name}${connectorTag.image_tag}`,
-                        iconPath: logo_url,
-                    };
 
                     setDetails_connector(connectorImage);
 
@@ -227,33 +265,43 @@ export const getInitialState = (
                 );
 
                 if (!error && data && data.length > 0) {
-                    const { setDetails, setPreviousDetails } = get();
-
                     const {
                         catalog_name,
-                        detail,
-                        connector_tag_id,
-                        connector_image_name,
                         connector_image_tag,
-                        connector_logo_url,
+                        connector_tag_id,
+                        detail,
                     } = data[0];
 
-                    const hydratedDetails: Details = {
-                        data: {
-                            entityName: catalog_name,
-                            connectorImage: {
-                                connectorId,
-                                id: connector_tag_id,
-                                imageName: connector_image_name,
-                                imagePath: `${connector_image_name}${connector_image_tag}`,
-                                iconPath: connector_logo_url,
-                            },
-                            description: detail ?? '',
-                        },
-                    };
+                    const connectorImage = await getConnectorImage(
+                        connectorId,
+                        connector_image_tag
+                    );
 
-                    setDetails(hydratedDetails);
-                    setPreviousDetails(hydratedDetails);
+                    if (connectorImage) {
+                        const {
+                            setDetails,
+                            setPreviousDetails,
+                            setUnsupportedConnectorVersion,
+                        } = get();
+
+                        const hydratedDetails: Details = {
+                            data: {
+                                entityName: catalog_name,
+                                connectorImage,
+                                description: detail ?? '',
+                            },
+                        };
+
+                        setUnsupportedConnectorVersion(
+                            connectorImage.id,
+                            connector_tag_id
+                        );
+
+                        setDetails(hydratedDetails);
+                        setPreviousDetails(hydratedDetails);
+                    } else {
+                        setHydrationErrorsExist(true);
+                    }
                 } else {
                     setHydrationErrorsExist(true);
                 }
