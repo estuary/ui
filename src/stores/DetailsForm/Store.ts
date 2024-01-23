@@ -76,11 +76,13 @@ const getInitialStateData = (): Pick<
     | 'draftedEntityName'
     | 'entityNameChanged'
     | 'previousDetails'
+    | 'unsupportedConnectorVersion'
 > => ({
     connectors: [],
 
     details: initialDetails,
     errorsExist: true,
+    unsupportedConnectorVersion: false,
 
     draftedEntityName: '',
     entityNameChanged: false,
@@ -171,6 +173,16 @@ export const getInitialState = (
         );
     },
 
+    setUnsupportedConnectorVersion: (value) => {
+        set(
+            produce((state: DetailsFormState) => {
+                state.unsupportedConnectorVersion = value;
+            }),
+            false,
+            'Unsupported Connector Version Flag Changed'
+        );
+    },
+
     setDraftedEntityName: (value) => {
         set(
             produce((state: DetailsFormState) => {
@@ -242,8 +254,12 @@ export const getInitialState = (
                 );
 
                 if (!error && data && data.length > 0) {
-                    const { catalog_name, detail, connector_image_tag } =
-                        data[0];
+                    const {
+                        catalog_name,
+                        connector_image_tag,
+                        connector_tag_id,
+                        detail,
+                    } = data[0];
 
                     const connectorImage = await getConnectorImage(
                         connectorId,
@@ -251,7 +267,11 @@ export const getInitialState = (
                     );
 
                     if (connectorImage) {
-                        const { setDetails, setPreviousDetails } = get();
+                        const {
+                            setDetails,
+                            setPreviousDetails,
+                            setUnsupportedConnectorVersion,
+                        } = get();
 
                         const hydratedDetails: Details = {
                             data: {
@@ -260,6 +280,10 @@ export const getInitialState = (
                                 description: detail ?? '',
                             },
                         };
+
+                        setUnsupportedConnectorVersion(
+                            connector_tag_id !== connectorImage.id
+                        );
 
                         setDetails(hydratedDetails);
                         setPreviousDetails(hydratedDetails);

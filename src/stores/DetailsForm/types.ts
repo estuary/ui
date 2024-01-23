@@ -33,6 +33,11 @@ export interface DetailsFormState
     connectors: { [key: string]: any }[];
     setConnectors: (val: DetailsFormState['connectors']) => void;
 
+    unsupportedConnectorVersion: boolean;
+    setUnsupportedConnectorVersion: (
+        value: DetailsFormState['unsupportedConnectorVersion']
+    ) => void;
+
     // Misc.
     draftedEntityName: string;
     setDraftedEntityName: (
