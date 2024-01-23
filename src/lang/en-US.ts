@@ -42,6 +42,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.readOnly': `Read-Only`,
     'common.failedFetch': `Unable to reach server`,
     'common.missingError': `Something went wrong`,
+    'common.exampleName': `marketing_data`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -542,8 +543,6 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.alerts.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Configure Alerts" above to create a subscription.`,
     'admin.alerts.table.label.alertMethod': `Alert Method`,
 
-    'admin.cookies': `Cookie Preferences`,
-    'admin.cookies.message': `Click below to configure your cookie preferences.`,
     'admin.tabs.users': `Account Access`,
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
@@ -1006,9 +1005,9 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.autoDiscovery.update.failed': `Schema evolution update failed`,
 
     'workflows.sourceCapture.header': `Link Capture`,
-    'workflows.sourceCapture.cta': `link capture`,
+    'workflows.sourceCapture.cta': `Source From Capture`,
+    'workflows.sourceCapture.cta.edit': `Edit Source Capture`,
     'workflows.sourceCapture.cta.loading': `${CommonMessages['common.loading']}`,
-    'workflows.sourceCapture.cta.edit': `edit capture`,
     'workflows.sourceCapture.selected.none': `no linked capture`,
     'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization.  Collections added to your capture will automatically be added to your materialization.`,
     'workflows.sourceCapture.optin.message2': `Removing this will not remove associated collections.`,
@@ -1251,15 +1250,12 @@ const EntityEvolution: ResolvedIntlConfig['messages'] = {
     'entityEvolution.error.note': `Note: This may result in additional cost as new versions are backfilled.`,
 
     // Single quotes are special and must be doubled: https://formatjs.io/docs/core-concepts/icu-syntax#quoting--escaping
-    'entityEvolution.action.recreateOneBinding.description': `the materialization ''{materializationName}'' will be updated to materialize the collection into a new resource`,
+    'entityEvolution.action.recreateOneBinding.description': `the materialization ''{materializationName}'' will be updated to increment the backfill counter and re-materialize the collection`,
     'entityEvolution.action.recreateBindings.description': `{materializationCount} {materializationCount, plural,
         one {Materialization}
         other {Materializations}
-    } will be updated to materialize the collection into new resources`,
-    'entityEvolution.action.recreateBindings.help': `Any materializations of this collection will be updated to materialize it
-    into a new resource (database table, for example) with an incremented version suffix (like "_v2"). The collection itself will
-    have the schema updated in place, and will retain all current data. The materialization will backfill from the beginning of
-    this collection, but other bindings in the materialization will not be affected.`,
+    } will be updated to increment the backfill counters and re-materialize the collection`,
+    'entityEvolution.action.recreateBindings.help': `The materialization will be updated to increment the ''backfill'' property of the affected binding, which causes it to re-create destination resources (such as tables) and re-materialize the source collection from the beginning. Other bindings in the materialization will not be affected. The source collection will retain all current data.`,
 
     'entityEvolution.action.recreateCollection.description': `Collection will be re-created as ''{newName}'' because {reason}`,
     'entityEvolution.action.recreateCollection.help': `This will create a new collection with the name shown.
@@ -1287,8 +1283,10 @@ const UpdateEntity: ResolvedIntlConfig['messages'] = {
 };
 
 const PrefixedName: ResolvedIntlConfig['messages'] = {
-    'prefixedName.description': `Select a prefix from the drop-down and add a unique name. (ex: acmeCo/marketing_data)`,
-    'prefixedName.description.singlePrefix': `Prefix already selected. Please add a unique name. (ex: marketing_data)`,
+    'prefixedName.description': `Select a prefix from the drop-down and add a unique name. (ex: ${CommonMessages['common.exampleName']})`,
+    'prefixedName.description.noPrefix': `Please select a prefix from the drop-down.`,
+    'prefixedName.description.singlePrefix': `Give your {entityType} a unique name. (ex: ${CommonMessages['common.exampleName']})`,
+    'prefixedName.description.singlePrefix.noEntityType': `Please add a unique name. (ex: ${CommonMessages['common.exampleName']})`,
 };
 
 const CustomErrors: ResolvedIntlConfig['messages'] = {

@@ -34,6 +34,26 @@ import { ResourceConfigDictionary, ResourceConfigState } from './types';
 
 const STORE_KEY = 'Resource Config';
 
+// Returns the collection name for either a capture or materialization binding,
+// or throws an exception if no collection name is found.
+const getBoundCollectionName = (binding: any) => {
+    if (typeof binding.target === 'string') {
+        return binding.target;
+    }
+    if (typeof binding.source === 'string') {
+        return binding.source;
+    }
+    // This form is used for materializations and derivations that read from
+    // specific collection partitions
+    if (
+        typeof binding.source === 'object' &&
+        typeof binding.source.name === 'string'
+    ) {
+        return binding.source.name;
+    }
+    throw new Error(`no collection name found in binding: ${binding}`);
+};
+
 const populateCollections = (
     state: ResourceConfigState,
     collections: string[]
@@ -372,7 +392,7 @@ const getInitialState = (
                 const discoveredCollections: string[] = [];
 
                 value.spec.bindings.forEach((binding: any) => {
-                    discoveredCollections.push(binding.target);
+                    discoveredCollections.push(getBoundCollectionName(binding));
                 });
 
                 state.discoveredCollections = discoveredCollections;
@@ -729,13 +749,14 @@ const getInitialState = (
                 const modifiedResourceConfig: ResourceConfigDictionary = {};
 
                 sortBindings(updatedBindings).forEach((binding: any) => {
+                    const collectionName = getBoundCollectionName(binding);
                     if (
-                        !existingCollections.includes(binding.target) &&
+                        !existingCollections.includes(collectionName) &&
                         !restrictedDiscoveredCollections.includes(
-                            binding.target
+                            collectionName
                         )
                     ) {
-                        collectionsToAdd.push(binding.target);
+                        collectionsToAdd.push(collectionName);
 
                         // Keep in sync with prefillResourceConfig
                         const [name, configVal] = getResourceConfig(binding);

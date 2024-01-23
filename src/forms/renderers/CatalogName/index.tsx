@@ -34,6 +34,7 @@ import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 import PrefixedName from 'components/inputs/PrefixedName';
 import { PrefixedName_Change } from 'components/inputs/PrefixedName/types';
+import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { useCallback } from 'react';
 
@@ -53,6 +54,7 @@ const CatalogNameTypeRenderer = ({
     uischema,
 }: ControlProps & OwnPropsOfEnum & WithOptionLabel) => {
     const isEdit = useEntityWorkflow_Editing();
+    const entityType = useEntityType();
 
     const updateFunction = useCallback<PrefixedName_Change>(
         (prefixedName) => {
@@ -65,6 +67,7 @@ const CatalogNameTypeRenderer = ({
         <PrefixedName
             disabled={!enabled}
             label={`${uischema.label}`}
+            entityType={entityType}
             onChange={updateFunction}
             required={required}
             showDescription
