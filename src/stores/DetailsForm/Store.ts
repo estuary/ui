@@ -4,6 +4,8 @@ import { validateCatalogName } from 'components/inputs/PrefixedName/shared';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { Details, DetailsFormState } from 'stores/DetailsForm/types';
 import {
     fetchErrors,
@@ -173,10 +175,19 @@ export const getInitialState = (
         );
     },
 
-    setUnsupportedConnectorVersion: (value) => {
+    setUnsupportedConnectorVersion: (evaluatedId, existingId) => {
         set(
             produce((state: DetailsFormState) => {
-                state.unsupportedConnectorVersion = value;
+                const unsupported = evaluatedId !== existingId;
+
+                if (unsupported) {
+                    logRocketEvent(CustomEvents.CONNECTOR_VERSION_UNSUPPORTED, {
+                        evaluatedId,
+                        existingId,
+                    });
+                }
+
+                state.unsupportedConnectorVersion = unsupported;
             }),
             false,
             'Unsupported Connector Version Flag Changed'
@@ -261,6 +272,8 @@ export const getInitialState = (
                         detail,
                     } = data[0];
 
+                    console.log(data);
+
                     const connectorImage = await getConnectorImage(
                         connectorId,
                         connector_image_tag
@@ -282,7 +295,8 @@ export const getInitialState = (
                         };
 
                         setUnsupportedConnectorVersion(
-                            connector_tag_id !== connectorImage.id
+                            connectorImage.id,
+                            connector_tag_id
                         );
 
                         setDetails(hydratedDetails);

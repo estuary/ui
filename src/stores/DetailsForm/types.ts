@@ -35,7 +35,8 @@ export interface DetailsFormState
 
     unsupportedConnectorVersion: boolean;
     setUnsupportedConnectorVersion: (
-        value: DetailsFormState['unsupportedConnectorVersion']
+        evaluatedId: string,
+        existingId: string
     ) => void;
 
     // Misc.
