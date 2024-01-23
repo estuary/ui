@@ -14,7 +14,7 @@ import {
     monacoEditorHeaderBackground,
 } from 'context/Theme';
 import { stringifyJSON } from 'services/stringify';
-import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+import { useResourceConfig_nameOfCurrentCollection } from 'stores/ResourceConfig/hooks';
 import { getEditorTotalHeight, ICON_SIZE } from 'utils/editor-utils';
 
 const EDITOR_HEIGHT = 396;
@@ -34,7 +34,7 @@ function ControlledEditor() {
     const schemaUpdateErrored = useBindingsEditorStore_schemaUpdateErrored();
 
     // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
+    const currentCollection = useResourceConfig_nameOfCurrentCollection();
 
     if (currentCollection && collectionData) {
         return (
@@ -76,7 +76,7 @@ function ControlledEditor() {
                     defaultLanguage="json"
                     theme={monacoEditorComponentBackground[theme.palette.mode]}
                     saveViewState={false}
-                    path={currentCollection}
+                    path={`controlledEditor/${currentCollection}`}
                     options={{ readOnly: true }}
                 />
             </Box>

@@ -1,4 +1,5 @@
 export const COLLECTION_SELECTOR_NAME_COL = 'id';
+export const COLLECTION_SELECTOR_INDEX = 'index';
 export const COLLECTION_SELECTOR_STRIPPED_PATH_NAME = 'strippedPathName';
 
 export const getCollectionSelector = (isCapture: boolean) =>

@@ -2,7 +2,10 @@ import { Box } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import CollectionSelectorList from 'components/collection/Selector/List';
-import { COLLECTION_SELECTOR_NAME_COL } from 'components/collection/Selector/List/shared';
+import {
+    COLLECTION_SELECTOR_INDEX,
+    COLLECTION_SELECTOR_NAME_COL,
+} from 'components/collection/Selector/List/shared';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
@@ -87,18 +90,24 @@ function BindingSelector({
 
     const cellRenderers = {
         name: (params: GridRenderCellParams) => {
-            return <BindingsSelectorName collection={params.value} />;
+            return (
+                <BindingsSelectorName
+                    collection={params.row[COLLECTION_SELECTOR_NAME_COL]}
+                />
+            );
         },
         remove: (params: GridRenderCellParams) => {
             if (isCapture) {
                 return null;
             }
 
+            const index = params.row[COLLECTION_SELECTOR_INDEX];
             const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
 
             return (
                 <BindingsSelectorRemove
                     collection={collection}
+                    index={index}
                     task={task}
                     disabled={formActive}
                     draftId={draftId}

@@ -4,6 +4,7 @@ import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
 import { useEntityType } from 'context/EntityContext';
 import { FormattedMessage } from 'react-intl';
 import {
+    useResourceConfig_currentCollection,
     useResourceConfig_hydrated,
     useResourceConfig_resourceConfigOfCollectionProperty,
 } from 'stores/ResourceConfig/hooks';
@@ -20,12 +21,14 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
 
     const hydrated = useResourceConfig_hydrated();
 
+    const currentCollection = useResourceConfig_currentCollection();
+
     // If the collection is disabled then it will not come back in the built spec
     //  binding list. This means the user could end up clicking "See Fields" button
     //  forever and never get fields listed.
     const collectionDisabled =
         useResourceConfig_resourceConfigOfCollectionProperty(
-            collectionName,
+            currentCollection,
             'disable'
         );
 
@@ -36,9 +39,9 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
             </Typography>
 
             <Box sx={{ width: '100%' }}>
-                {hydrated ? (
+                {hydrated && currentCollection ? (
                     <ResourceConfigForm
-                        collectionName={collectionName}
+                        currentCollection={currentCollection}
                         readOnly={readOnly}
                     />
                 ) : (

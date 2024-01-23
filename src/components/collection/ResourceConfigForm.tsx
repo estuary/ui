@@ -15,16 +15,16 @@ import {
 } from 'stores/ResourceConfig/hooks';
 
 type Props = {
-    collectionName: string;
+    currentCollection: number;
     readOnly?: boolean;
 };
 
-function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
-    const name = useRef(collectionName);
+function ResourceConfigForm({ currentCollection, readOnly = false }: Props) {
+    const name = useRef(currentCollection);
 
     // Resource Config Store
     const formData = useResourceConfig_resourceConfigOfCollectionProperty(
-        collectionName,
+        currentCollection,
         'data'
     );
 
@@ -36,12 +36,12 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
     const isActive = useFormStateStore_isActive();
 
     useEffect(() => {
-        name.current = collectionName;
-    }, [collectionName]);
+        name.current = currentCollection;
+    }, [currentCollection]);
 
     const handlers = {
-        onChange: (configName: string, form: any) => {
-            updateResourceConfig(configName, form);
+        onChange: (configIndex: number, form: any) => {
+            updateResourceConfig(configIndex, form);
         },
     };
 

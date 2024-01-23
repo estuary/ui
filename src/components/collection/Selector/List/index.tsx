@@ -20,6 +20,7 @@ import { FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_collections,
     useResourceConfig_currentCollection,
+    useResourceConfig_nameOfCurrentCollection,
 } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
 import { hasLength, stripPathing } from 'utils/misc-utils';
@@ -27,6 +28,7 @@ import CollectionSelectorHeaderName from './Header/Name';
 import CollectionSelectorHeaderRemove from './Header/Remove';
 import CollectionSelectorHeaderToggle from './Header/Toggle';
 import {
+    COLLECTION_SELECTOR_INDEX,
     COLLECTION_SELECTOR_NAME_COL,
     COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
     getCollectionSelector,
@@ -97,9 +99,10 @@ function CollectionSelectorList({
     // Resource Config Store
     const collections = useResourceConfig_collections();
     const currentCollection = useResourceConfig_currentCollection();
+    const currentCollectionName = useResourceConfig_nameOfCurrentCollection();
 
     const selectionEnabled =
-        currentCollection &&
+        currentCollection !== null &&
         setCurrentCollection &&
         formStatus !== FormStatus.UPDATING;
 
@@ -111,8 +114,8 @@ function CollectionSelectorList({
         []
     );
     useEffect(() => {
-        if (currentCollection) setSelectionModel([currentCollection]);
-    }, [currentCollection]);
+        if (currentCollectionName) setSelectionModel([currentCollectionName]);
+    }, [currentCollectionName]);
 
     const rows = useMemo(() => {
         // If we have no collections we can just return an empty array
@@ -123,8 +126,9 @@ function CollectionSelectorList({
         // We have collections so need to format them in a format that mui
         //  datagrid will handle. At a minimum each object must have an
         //  `id` property. This is why the name is stored as `id`
-        return collections.map((collectionName) => {
+        return collections.map((collectionName, index) => {
             return {
+                [COLLECTION_SELECTOR_INDEX]: index,
                 [COLLECTION_SELECTOR_NAME_COL]: collectionName,
                 [COLLECTION_SELECTOR_STRIPPED_PATH_NAME]:
                     stripPathing(collectionName),
@@ -168,6 +172,8 @@ function CollectionSelectorList({
                         inputValue={filterValue}
                         itemType={collectionsLabel}
                         onChange={(value) => {
+                            console.log('value', value);
+
                             setFilterValue(value);
                             setFilterModel({
                                 items: [
@@ -328,12 +334,14 @@ function CollectionSelectorList({
                     border: 0,
                     [`& .${cellClass_noPadding}`]: { padding: 0 },
                 }}
-                onCellClick={({ field, id }) => {
+                onCellClick={({ field, row }) => {
+                    const indexClicked = row[COLLECTION_SELECTOR_INDEX];
+
                     if (
                         selectionEnabled &&
                         (field === COLLECTION_SELECTOR_STRIPPED_PATH_NAME ||
                             field === COLLECTION_SELECTOR_NAME_COL) &&
-                        id !== currentCollection
+                        indexClicked !== currentCollection
                     ) {
                         // TODO (JSONForms) This is hacky but it works.
                         // It clears out the current collection before switching.
@@ -342,7 +350,7 @@ function CollectionSelectorList({
                         //  to go into the wrong form.
                         setCurrentCollection(null);
                         hackyTimeout.current = window.setTimeout(() => {
-                            setCurrentCollection(id);
+                            setCurrentCollection(indexClicked);
                         });
                     }
                 }}

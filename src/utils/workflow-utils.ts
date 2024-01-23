@@ -16,7 +16,10 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { REMOVE_DURING_GENERATION } from 'stores/ResourceConfig/shared';
-import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
+import {
+    ResourceConfig,
+    ResourceConfigDictionary,
+} from 'stores/ResourceConfig/types';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
@@ -47,6 +50,16 @@ export const getCollectionName = (binding: any) => {
     const scopedBinding = getSourceOrTarget(binding);
 
     return getCollectionNameDirectly(scopedBinding);
+};
+
+export const findCollectionInConfigs = (
+    name: string,
+    configs: ResourceConfigDictionary
+): ResourceConfig | undefined => {
+    return (
+        configs.find(([collectionName]) => collectionName === name)?.[1] ??
+        undefined
+    );
 };
 
 export const getBindingIndex = (
@@ -145,13 +158,15 @@ export const generateTaskSpec = (
     if (resourceConfigs) {
         const collectionNameProp = getCollectionNameProp(entityType);
 
-        const boundCollectionNames = Object.keys(resourceConfigs);
+        const boundCollectionNames: string[] = [];
+        resourceConfigs.forEach(([collectionName, configDictionary]) => {
+            // Keep a list of all collections we went through
+            boundCollectionNames.push(collectionName);
 
-        boundCollectionNames.forEach((collectionName) => {
-            const resourceConfig = resourceConfigs[collectionName].data;
+            const resourceConfig = configDictionary.data;
 
             // Check if disable is a boolean otherwise default to false
-            const { disable } = resourceConfigs[collectionName];
+            const { disable } = configDictionary;
             const resourceDisable = isBoolean(disable) ? disable : false;
 
             // See which binding we need to update

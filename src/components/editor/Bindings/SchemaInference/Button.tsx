@@ -50,7 +50,11 @@ function SchemaInferenceButton() {
 
         setLoadingInferredSchema(true);
 
-        if (currentCollection && gatewayConfig?.gateway_url && collectionData) {
+        if (
+            currentCollection !== null &&
+            gatewayConfig?.gateway_url &&
+            collectionData
+        ) {
             resolveWhileMounted(
                 getInferredSchema(gatewayConfig, currentCollection)
             )

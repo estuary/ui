@@ -10,9 +10,7 @@ export interface ResourceConfig extends JsonFormsData {
     previouslyDisabled?: boolean; // Used to store if the binding was disabled last time we loaded in bindings
 }
 
-export interface ResourceConfigDictionary {
-    [key: string]: ResourceConfig;
-}
+export type ResourceConfigDictionary = [string, ResourceConfig][];
 
 // TODO (naming): Determine whether the resourceConfig state property should be made plural.
 //   It is a dictionary of individual resource configs, so I am leaning "yes."
@@ -23,7 +21,7 @@ export interface ResourceConfigState extends StoreWithHydration {
         collections: LiveSpecsExt_MaterializeCapture | null[],
         rehydrating?: boolean
     ) => void;
-    removeCollection: (value: string) => void;
+    removeCollection: (index: number) => void;
     removeCollections: (
         value: string[],
         workflow: EntityWorkflow | null,
@@ -33,8 +31,8 @@ export interface ResourceConfigState extends StoreWithHydration {
 
     collectionErrorsExist: boolean;
 
-    currentCollection: string | null;
-    setCurrentCollection: (collections: string | null) => void;
+    currentCollection: number | null;
+    setCurrentCollection: (collections: number | null) => void;
 
     discoveredCollections: string[] | null;
     setDiscoveredCollections: (value: DraftSpecQuery) => void;
@@ -49,12 +47,12 @@ export interface ResourceConfigState extends StoreWithHydration {
     resourceConfig: ResourceConfigDictionary;
     prefillResourceConfig: (bindings: any) => void;
     setResourceConfig: (
-        key: string | string[],
+        key: number | string[],
         resourceConfig?: ResourceConfig,
         disableCheckingErrors?: boolean,
         disableOmit?: boolean
     ) => void;
-    updateResourceConfig: (key: string, formData: JsonFormsData) => void;
+    updateResourceConfig: (index: number, formData: JsonFormsData) => void;
     toggleDisable: (key: string | string[] | null, value?: boolean) => Number;
     resetResourceConfigAndCollections: () => void;
 

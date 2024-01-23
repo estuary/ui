@@ -126,17 +126,31 @@ export const useResourceConfig_resourceConfigOfCollection = (
 };
 
 export const useResourceConfig_resourceConfigOfCollectionProperty = (
-    collection: any,
+    collection: number | null,
     property: keyof ResourceConfig
 ) => {
     return useZustandStore<ResourceConfigState, any>(
         ResourceConfigStoreNames.GENERAL,
         (state) => {
-            if (!collection) {
+            if (collection === null) {
                 return null;
             }
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            return state.resourceConfig[collection]?.[property];
+            return state.resourceConfig[collection]?.[1]?.[property];
+        },
+        shallow
+    );
+};
+
+export const useResourceConfig_nameOfCurrentCollection = () => {
+    return useZustandStore<ResourceConfigState, any>(
+        ResourceConfigStoreNames.GENERAL,
+        (state) => {
+            if (!state.currentCollection) {
+                return null;
+            }
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            return state.resourceConfig[state.currentCollection]?.[0];
         },
         shallow
     );

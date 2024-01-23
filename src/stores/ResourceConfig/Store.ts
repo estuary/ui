@@ -9,7 +9,6 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import {
     difference,
-    has,
     isBoolean,
     isEmpty,
     isEqual,
@@ -59,7 +58,7 @@ const populateCollections = (
     collections: string[]
 ) => {
     state.collections = collections;
-    state.currentCollection = collections[0] ?? null;
+    state.currentCollection = collections.length > 0 ? 0 : null;
 
     state.collectionErrorsExist = isEmpty(collections);
 };
@@ -103,7 +102,9 @@ const whatChanged = (
     newResourceKeys: ResourceConfigState['collections'],
     resourceConfig: ResourceConfigDictionary
 ) => {
-    const currentCollections = Object.keys(resourceConfig);
+    const currentCollections = resourceConfig.map(
+        ([collectionName]) => collectionName
+    );
 
     const removedCollections = difference(
         currentCollections,
@@ -149,7 +150,7 @@ const getInitialMiscStoreData = (): Pick<
     discoveredCollections: null,
     hydrated: false,
     hydrationErrorsExist: false,
-    resourceConfig: {},
+    resourceConfig: [],
     resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
     resourceSchema: {},
@@ -237,15 +238,18 @@ const getInitialState = (
             produce((state: ResourceConfigState) => {
                 // As we go through and fetch all the names for collections go ahead and also
                 // populate the resource config
-                const collections = bindings.map((binding: any) => {
-                    // Keep in sync with evaluateDiscoveredCollections
-                    const [name, configVal] = getResourceConfig(binding);
-                    state.resourceConfig[name] = configVal;
-                    if (configVal.disable === true) {
-                        state.resourceConfig[name].previouslyDisabled = true;
+                const collections = bindings.map(
+                    (binding: any, index: number) => {
+                        // Keep in sync with evaluateDiscoveredCollections
+                        const [name, configVal] = getResourceConfig(binding);
+                        state.resourceConfig[index] = configVal;
+                        if (configVal.disable === true) {
+                            state.resourceConfig[index][1].previouslyDisabled =
+                                true;
+                        }
+                        return name;
                     }
-                    return name;
-                });
+                );
 
                 populateResourceConfigErrors(state.resourceConfig, state);
                 populateCollections(state, collections);
@@ -274,10 +278,13 @@ const getInitialState = (
                     //  Then give up
                     state.currentCollection =
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                        updatedCollections[removedIndex] ??
-                        updatedCollections[removedIndex - 1] ??
-                        updatedCollections[removedIndex + 1] ??
-                        null;
+                        updatedCollections[removedIndex]
+                            ? removedIndex
+                            : updatedCollections[removedIndex - 1]
+                            ? removedIndex - 1
+                            : updatedCollections[removedIndex + 1]
+                            ? removedIndex + 1
+                            : null;
 
                     const updatedResourceConfig = pick(
                         resourceConfig,
@@ -315,7 +322,13 @@ const getInitialState = (
                     additionalRestrictedCollections =
                         discoveredCollections.filter(
                             (collection) =>
-                                Object.hasOwn(resourceConfig, collection) &&
+                                // TODO (prevents PR Merge)
+                                // Need to figure out how we'll handle discovered collections
+                                // Object.hasOwn(resourceConfig, collection) &&
+                                resourceConfig.find(
+                                    ([collectionName]) =>
+                                        collectionName === collection
+                                ) &&
                                 !restrictedDiscoveredCollections.includes(
                                     collection
                                 )
@@ -327,7 +340,13 @@ const getInitialState = (
 
                     additionalRestrictedCollections = nativeCollections.filter(
                         (collection) =>
-                            Object.hasOwn(resourceConfig, collection) &&
+                            // TODO (prevents PR Merge)
+                            // Need to figure out how we'll handle discovered collections
+                            // Object.hasOwn(resourceConfig, collection) &&
+                            resourceConfig.find(
+                                ([collectionName]) =>
+                                    collectionName === collection
+                            ) &&
                             !restrictedDiscoveredCollections.includes(
                                 collection
                             )
@@ -357,7 +376,7 @@ const getInitialState = (
                 populateCollections(state, []);
 
                 state.restrictedDiscoveredCollections = [];
-                state.resourceConfig = {};
+                state.resourceConfig = [];
                 state.resetRediscoverySettings();
             }),
             false,
@@ -435,12 +454,12 @@ const getInitialState = (
         );
     },
 
-    updateResourceConfig: (key, value) => {
+    updateResourceConfig: (index, value) => {
         const { resourceConfig, setResourceConfig } = get();
 
         // This was never empty in my testing but wanted to be safe
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        const existingConfig = resourceConfig[key] ?? {};
+        const existingConfig = resourceConfig[index]?.[1] ?? {};
         const updatedConfig = {
             ...existingConfig,
             ...value,
@@ -457,7 +476,7 @@ const getInitialState = (
         // This might be related to how immer handles what is updated vs what
         //  is not during changes. Need to really dig into this later.
         if (!isEqual(existingConfig, updatedConfig)) {
-            setResourceConfig(key, updatedConfig);
+            setResourceConfig(index, updatedConfig);
         }
     },
 
@@ -466,8 +485,8 @@ const getInitialState = (
             produce((state: ResourceConfigState) => {
                 const { resourceSchema, collections } = get();
 
-                if (typeof key === 'string') {
-                    state.resourceConfig[key] =
+                if (typeof key === 'number') {
+                    state.resourceConfig[key][1] =
                         value ?? createJSONFormDefaults(resourceSchema);
 
                     if (!disableCheckingErrors) {
@@ -484,24 +503,29 @@ const getInitialState = (
                     );
 
                     // Set defaults on new configs
-                    newCollections.forEach((element) => {
-                        state.resourceConfig[element] = createJSONFormDefaults(
-                            resourceSchema,
-                            element
-                        );
-                    });
+                    const updated: ResourceConfigDictionary =
+                        newCollections.map((collectionName) => [
+                            collectionName,
+                            createJSONFormDefaults(
+                                resourceSchema,
+                                collectionName
+                            ),
+                        ]);
 
                     // Remove any configs that are no longer needed unless disabled.
                     //   We disable for the new collection selection pop up where the user
                     //   is always adding collections and can only remove them manually in
                     //   the list
-                    const newResourceConfig = disableOmit
-                        ? state.resourceConfig
-                        : omit(state.resourceConfig, removedCollections);
-                    const newConfigKeyList = Object.keys(newResourceConfig);
+                    // TODO (prevents PR merge)
+                    // need to figure out how to omit removed collections
+                    // const newResourceConfig = disableOmit
+                    //     ? state.resourceConfig
+                    //     : omit(state.resourceConfig, removedCollections);
+                    // const newConfigKeyList = Object.keys(newResourceConfig);
+                    console.log('todo', { disableOmit, removedCollections });
 
                     // Update the config
-                    state.resourceConfig = newResourceConfig;
+                    state.resourceConfig = updated;
 
                     // If previous state had no collections set to first
                     // If selected item is removed set to first.
@@ -509,20 +533,21 @@ const getInitialState = (
                     if (
                         (state.collections && state.collections.length === 0) ||
                         (state.currentCollection &&
-                            !has(state.resourceConfig, state.currentCollection))
+                            state.resourceConfig.length !== updated.length)
                     ) {
-                        state.currentCollection = newConfigKeyList[0];
+                        state.currentCollection = 0;
                     } else {
-                        state.currentCollection =
-                            newConfigKeyList[newConfigKeyList.length - 1];
+                        state.currentCollection = updated.length - 1;
                     }
 
                     // Update the collections with the new array
-                    state.collections = newConfigKeyList;
-                    state.collectionErrorsExist = isEmpty(newConfigKeyList);
+                    state.collections = updated.map(
+                        ([collectionName]) => collectionName
+                    );
+                    state.collectionErrorsExist = isEmpty(updated);
 
                     // See if the recently updated configs have errors
-                    populateResourceConfigErrors(newResourceConfig, state);
+                    populateResourceConfigErrors(updated, state);
                 }
             }),
             false,
@@ -607,10 +632,11 @@ const getInitialState = (
                     );
                     populateCollections(state, updatedCollections);
 
-                    const reducedResourceConfig = {};
-                    Object.entries(resourceConfig).forEach(([key, value]) => {
+                    const reducedResourceConfig: ResourceConfigDictionary = [];
+
+                    resourceConfig.forEach(([key, value]) => {
                         if (state.collections?.includes(key)) {
-                            reducedResourceConfig[key] = value;
+                            reducedResourceConfig.push([key, value]);
                         }
                     });
 
@@ -746,7 +772,7 @@ const getInitialState = (
                 const updatedBindings = draftSpecResponse.data[0].spec.bindings;
 
                 const collectionsToAdd: string[] = [];
-                const modifiedResourceConfig: ResourceConfigDictionary = {};
+                const modifiedResourceConfig: ResourceConfigDictionary = [];
 
                 sortBindings(updatedBindings).forEach((binding: any) => {
                     const collectionName = getBoundCollectionName(binding);
@@ -760,10 +786,15 @@ const getInitialState = (
 
                         // Keep in sync with prefillResourceConfig
                         const [name, configVal] = getResourceConfig(binding);
-                        modifiedResourceConfig[name] = configVal;
+                        const updatedIndex = modifiedResourceConfig.push([
+                            name,
+                            configVal,
+                        ]);
+
                         if (configVal.disable === true) {
-                            modifiedResourceConfig[name].previouslyDisabled =
-                                true;
+                            modifiedResourceConfig[
+                                updatedIndex
+                            ][1].previouslyDisabled = true;
                         }
                     }
                 });

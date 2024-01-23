@@ -15,6 +15,7 @@ interface Props {
     collection: string;
     disabled: boolean;
     draftId: string | null;
+    index: number;
     task: string;
 }
 
@@ -22,6 +23,7 @@ function BindingsSelectorRemove({
     collection,
     disabled,
     draftId,
+    index,
     task,
 }: Props) {
     const workflow = useEntityWorkflow();
@@ -36,7 +38,7 @@ function BindingsSelectorRemove({
         removeCollection: (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            removeCollection(collection);
+            removeCollection(index);
             removeFullSourceConfig(collection);
 
             if (

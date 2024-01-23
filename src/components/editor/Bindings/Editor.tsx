@@ -22,7 +22,7 @@ import { useEntityType } from 'context/EntityContext';
 import useInitializeCollectionDraft from 'hooks/useInitializeCollectionDraft';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+import { useResourceConfig_nameOfCurrentCollection } from 'stores/ResourceConfig/hooks';
 import SchemaEditCLIButton from '../Bindings/SchemaEdit/CLIButton';
 import SchemaEditToggle from '../Bindings/SchemaEdit/Toggle';
 
@@ -56,7 +56,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
     });
 
     // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
+    const currentCollection = useResourceConfig_nameOfCurrentCollection();
 
     const [activeTab, setActiveTab] = useState<number>(0);
     useEffect(() => {
