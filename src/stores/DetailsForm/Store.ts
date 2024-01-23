@@ -272,8 +272,6 @@ export const getInitialState = (
                         detail,
                     } = data[0];
 
-                    console.log(data);
-
                     const connectorImage = await getConnectorImage(
                         connectorId,
                         connector_image_tag
