@@ -10,6 +10,7 @@ import useGlobalSearchParams, {
 import { useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 import { MEGABYTE } from 'utils/dataPlane-utils';
+import AlertBox from 'components/shared/AlertBox';
 
 const maxBytes = Math.round(MEGABYTE / 25);
 
@@ -24,9 +25,13 @@ function Ops() {
 
     // TODO (typing)
     //  need to handle typing
-    const { data, loading, refresh } = useJournalData(name, collectionName, {
-        maxBytes,
-    });
+    const { data, error, loading, refresh } = useJournalData(
+        name,
+        collectionName,
+        {
+            maxBytes,
+        }
+    );
 
     const documents = useMemo(
         () => (data?.documents ?? []) as OpsLogFlowDocument[],
@@ -120,6 +125,12 @@ function Ops() {
                             />
                         }
                     />*/}
+
+                    {error ? (
+                        <AlertBox title={error.message} severity="error" short>
+                            {error.stack}
+                        </AlertBox>
+                    ) : null}
 
                     <LogsTable
                         documents={docs}
