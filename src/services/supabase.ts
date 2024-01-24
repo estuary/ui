@@ -51,6 +51,13 @@ export const tokenHasIssues = (errorMessage?: string) => {
 
 export const DEFAULT_FILTER = '__unknown__';
 
+export const BASE_ERROR = {
+    code: '',
+    details: '',
+    hint: '',
+    message: '',
+};
+
 export enum TABLES {
     ALERT_DATA_PROCESSING = 'alert_data_processing',
     ALERT_SUBSCRIPTIONS = 'alert_subscriptions',

@@ -15,6 +15,7 @@ import {
     MAX_DOCUMENT_SIZE,
     shouldRefreshToken,
 } from 'utils/dataPlane-utils';
+import { journalStatusIsError } from 'utils/misc-utils';
 
 const errorRetryCount = 2;
 
@@ -180,6 +181,11 @@ async function loadDocuments({
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!metadataResponse?.writeHead) {
         throw new Error('Unable to load metadata');
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (journalStatusIsError(metadataResponse?.status)) {
+        throw new Error(metadataResponse.status);
     }
 
     const head = parseInt(metadataResponse.writeHead, 10);

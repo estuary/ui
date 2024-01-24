@@ -10,6 +10,8 @@ import useGlobalSearchParams, {
 import { useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 import { MEGABYTE } from 'utils/dataPlane-utils';
+import Error from 'components/shared/Error';
+import { BASE_ERROR } from 'services/supabase';
 
 const maxBytes = Math.round(MEGABYTE / 25);
 
@@ -24,9 +26,13 @@ function Ops() {
 
     // TODO (typing)
     //  need to handle typing
-    const { data, loading, refresh } = useJournalData(name, collectionName, {
-        maxBytes,
-    });
+    const { data, error, loading, refresh } = useJournalData(
+        name,
+        collectionName,
+        {
+            maxBytes,
+        }
+    );
 
     const documents = useMemo(
         () => (data?.documents ?? []) as OpsLogFlowDocument[],
@@ -120,6 +126,16 @@ function Ops() {
                             />
                         }
                     />*/}
+
+                    {error ? (
+                        <Error
+                            error={{
+                                ...BASE_ERROR,
+                                message: error.message,
+                            }}
+                            condensed
+                        />
+                    ) : null}
 
                     <LogsTable
                         documents={docs}
