@@ -10,7 +10,8 @@ import useGlobalSearchParams, {
 import { useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 import { MEGABYTE } from 'utils/dataPlane-utils';
-import AlertBox from 'components/shared/AlertBox';
+import Error from 'components/shared/Error';
+import { BASE_ERROR } from 'services/supabase';
 
 const maxBytes = Math.round(MEGABYTE / 25);
 
@@ -127,9 +128,13 @@ function Ops() {
                     />*/}
 
                     {error ? (
-                        <AlertBox title={error.message} severity="error" short>
-                            {error.stack}
-                        </AlertBox>
+                        <Error
+                            error={{
+                                ...BASE_ERROR,
+                                message: error.message,
+                            }}
+                            condensed
+                        />
                     ) : null}
 
                     <LogsTable
