@@ -12,6 +12,7 @@ import { LiveSpecsQuery_spec, useLiveSpecs_spec } from 'hooks/useLiveSpecs';
 import { Refresh } from 'iconoir-react';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { BASE_ERROR } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
 import ListViewSkeleton from './ListViewSkeleton';
 
@@ -58,9 +59,7 @@ export function DataPreview({ collectionName }: Props) {
     });
     const readError = journalData.error
         ? {
-              code: '',
-              details: '',
-              hint: '',
+              ...BASE_ERROR,
               message: journalData.error.message,
           }
         : journalsError;
