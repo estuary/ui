@@ -5,6 +5,7 @@ import {
     getLiveSpecsByLiveSpecId,
     getSchema_Resource,
 } from 'api/hydration';
+import { getCollectionNameWithIndex } from 'components/collection/Selector/List/shared';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import {
@@ -484,11 +485,10 @@ const getInitialState = (
                     );
 
                     // Set defaults on new configs
-                    newCollections.forEach((element) => {
-                        state.resourceConfig[element] = createJSONFormDefaults(
-                            resourceSchema,
-                            element
-                        );
+                    newCollections.forEach((element, index) => {
+                        state.resourceConfig[
+                            getCollectionNameWithIndex(element, index)
+                        ] = createJSONFormDefaults(resourceSchema, element);
                     });
 
                     // Remove any configs that are no longer needed unless disabled.

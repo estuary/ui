@@ -27,8 +27,11 @@ import CollectionSelectorHeaderName from './Header/Name';
 import CollectionSelectorHeaderRemove from './Header/Remove';
 import CollectionSelectorHeaderToggle from './Header/Toggle';
 import {
+    COLLECTION_SELECTOR_ID_COL,
     COLLECTION_SELECTOR_NAME_COL,
     COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
+    getCollectionNameWithIndex,
+    getCollectionNameWithoutIndex,
     getCollectionSelector,
 } from './shared';
 
@@ -123,9 +126,14 @@ function CollectionSelectorList({
         // We have collections so need to format them in a format that mui
         //  datagrid will handle. At a minimum each object must have an
         //  `id` property. This is why the name is stored as `id`
-        return collections.map((collectionName) => {
+        return collections.map((collectionName, index) => {
             return {
-                [COLLECTION_SELECTOR_NAME_COL]: collectionName,
+                [COLLECTION_SELECTOR_ID_COL]: getCollectionNameWithIndex(
+                    collectionName,
+                    index
+                ),
+                [COLLECTION_SELECTOR_NAME_COL]:
+                    getCollectionNameWithoutIndex(collectionName),
                 [COLLECTION_SELECTOR_STRIPPED_PATH_NAME]:
                     stripPathing(collectionName),
             };
@@ -328,12 +336,15 @@ function CollectionSelectorList({
                     border: 0,
                     [`& .${cellClass_noPadding}`]: { padding: 0 },
                 }}
-                onCellClick={({ field, id }) => {
+                onCellClick={({ field, row }) => {
+                    const newCurrentCollection =
+                        row[COLLECTION_SELECTOR_ID_COL];
+
                     if (
                         selectionEnabled &&
                         (field === COLLECTION_SELECTOR_STRIPPED_PATH_NAME ||
                             field === COLLECTION_SELECTOR_NAME_COL) &&
-                        id !== currentCollection
+                        newCurrentCollection !== currentCollection
                     ) {
                         // TODO (JSONForms) This is hacky but it works.
                         // It clears out the current collection before switching.
@@ -342,7 +353,7 @@ function CollectionSelectorList({
                         //  to go into the wrong form.
                         setCurrentCollection(null);
                         hackyTimeout.current = window.setTimeout(() => {
-                            setCurrentCollection(id);
+                            setCurrentCollection(newCurrentCollection);
                         });
                     }
                 }}

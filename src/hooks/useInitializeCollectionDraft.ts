@@ -4,6 +4,7 @@ import {
     getLiveSpecsByCatalogName,
     LiveSpecsExtQuery_ByCatalogName,
 } from 'api/liveSpecsExt';
+import { getCollectionNameWithoutIndex } from 'components/collection/Selector/List/shared';
 import {
     useBindingsEditorStore_resetState,
     useBindingsEditorStore_setCollectionData,
@@ -86,11 +87,12 @@ function useInitializeCollectionDraft() {
 
     const createCollectionDraftSpec = useCallback(
         async (
-            collectionName: string,
+            name: string,
             evaluatedDraftId: string,
             lastPubId?: string,
             liveSpec?: any
         ) => {
+            const collectionName = getCollectionNameWithoutIndex(name);
             const newDraftSpecResponse = await createDraftSpec(
                 evaluatedDraftId,
                 collectionName,
