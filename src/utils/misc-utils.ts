@@ -12,6 +12,25 @@ export const DATE_TIME_PATTERN = `[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[
 // Default size used when splitting up larged promises
 export const CHUNK_SIZE = 10;
 
+const JOURNAL_READ_ERRORS = [
+    'JOURNAL_NOT_FOUND',
+    'NO_JOURNAL_PRIMARY_BROKER',
+    'NOT_JOURNAL_PRIMARY_BROKER',
+    'NOT_JOURNAL_BROKER',
+    'INSUFFICIENT_JOURNAL_BROKERS',
+    'OFFSET_NOT_YET_AVAILABLE',
+    'WRONG_ROUTE',
+    'PROPOSAL_MISMATCH',
+    'ETCD_TRANSACTION_FAILED',
+    'NOT_ALLOWED',
+    'WRONG_APPEND_OFFSET',
+    'INDEX_HAS_GREATER_OFFSET',
+    'REGISTER_MISMATCH',
+];
+export const journalStatusIsError = (status: string | undefined) => {
+    return status ? JOURNAL_READ_ERRORS.includes(status) : false;
+};
+
 // Max time stored in
 //  go/flowctl-go/cmd-api-discover.go
 //  go/flowctl-go/cmd-discover.go

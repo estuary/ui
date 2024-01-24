@@ -15,7 +15,7 @@ function useJournalNameForLogs(entityName: string, region: number = 0) {
             `${collectionName}/kind=${entityType}/name=${encodeURIComponent(
                 entityName
             )}/pivot=00`,
-            collectionName,
+            entityName,
         ];
     }, [entityName, entityType, region]);
 }
