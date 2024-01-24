@@ -56,6 +56,14 @@ export function DataPreview({ collectionName }: Props) {
     const journalData = useJournalData(journal?.name, collectionName, {
         desiredCount: 20,
     });
+    const readError = journalData.error
+        ? {
+              code: '',
+              details: '',
+              hint: '',
+              message: journalData.error.message,
+          }
+        : journalsError;
 
     // There is a brief delay between when the data preview card is rendered and the two journal-related
     // hooks are called, which resulted in `isLoading` being a false negative. If the journal client is
@@ -118,8 +126,8 @@ export function DataPreview({ collectionName }: Props) {
                     notFoundTitleMessage="collectionsPreview.notFound.message"
                 />
 
-                {journalsError ? (
-                    <Error error={journalsError} condensed />
+                {readError ? (
+                    <Error error={readError} condensed />
                 ) : isLoading ? (
                     <ListViewSkeleton />
                 ) : (journalData.data?.documents.length ?? 0) > 0 && spec ? (
