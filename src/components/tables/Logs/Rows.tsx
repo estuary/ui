@@ -5,11 +5,11 @@ import { FormattedMessage } from 'react-intl';
 import LevelCell from '../cells/logs/LevelCell';
 import TimestampCell from '../cells/logs/TimestampCell';
 import MessageCell from '../cells/logs/MessageCell';
-import FieldsExpandedCell from '../cells/logs/FieldsExpandedCell';
 import LevelIcon from '../cells/logs/LevelIcon';
 
 interface RowProps {
     row: OpsLogFlowDocument;
+    style?: any;
 }
 
 interface RowsProps {
@@ -18,40 +18,36 @@ interface RowsProps {
     hitFileStart?: boolean;
 }
 
-function Row({ row }: RowProps) {
+export function Row({ row, style }: RowProps) {
     const hasFields = Boolean(row.fields);
     const [expanded, toggleExpanded] = useToggle(false);
 
     return (
-        <>
-            <TableRow
-                hover={hasFields}
-                aria-expanded={hasFields ? expanded : undefined}
-                sx={{
-                    cursor: hasFields ? 'pointer' : undefined,
-                }}
-                onClick={
-                    hasFields
-                        ? () => {
-                              toggleExpanded();
-                          }
-                        : undefined
-                }
-            >
-                <LevelCell
-                    disableExpand={!hasFields}
-                    expanded={expanded}
-                    row={row}
-                />
+        <TableRow
+            hover={hasFields}
+            aria-expanded={hasFields ? expanded : undefined}
+            style={style}
+            sx={{
+                cursor: hasFields ? 'pointer' : undefined,
+            }}
+            onClick={
+                hasFields
+                    ? () => {
+                          toggleExpanded();
+                      }
+                    : undefined
+            }
+        >
+            <LevelCell
+                disableExpand={!hasFields}
+                expanded={expanded}
+                row={row}
+            />
 
-                <TimestampCell ts={row.ts} />
+            <TimestampCell ts={row.ts} />
 
-                <MessageCell message={row.message} fields={row.fields} />
-            </TableRow>
-            {hasFields ? (
-                <FieldsExpandedCell expanded={expanded} fields={row.fields} />
-            ) : null}
-        </>
+            <MessageCell message={row.message} fields={row.fields} />
+        </TableRow>
     );
 }
 

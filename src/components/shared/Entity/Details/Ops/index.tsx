@@ -1,7 +1,6 @@
 import { Box, Button, Stack } from '@mui/material';
 import KeyValueList from 'components/shared/KeyValueList';
 import UnderDev from 'components/shared/UnderDev';
-import LogsTable from 'components/tables/Logs';
 import { useJournalData } from 'hooks/journals/useJournalData';
 import useJournalNameForLogs from 'hooks/journals/useJournalNameForLogs';
 import useGlobalSearchParams, {
@@ -12,6 +11,7 @@ import { OpsLogFlowDocument } from 'types';
 import { MEGABYTE } from 'utils/dataPlane-utils';
 import Error from 'components/shared/Error';
 import { BASE_ERROR } from 'services/supabase';
+import VirtualizedLogsTable from 'components/tables/Logs/VirtualizedTable';
 
 const maxBytes = Math.round(MEGABYTE / 25);
 
@@ -137,7 +137,7 @@ function Ops() {
                         />
                     ) : null}
 
-                    <LogsTable
+                    <VirtualizedLogsTable
                         documents={docs}
                         loading={fetchingMore || loading}
                         fetchNewer={() => {

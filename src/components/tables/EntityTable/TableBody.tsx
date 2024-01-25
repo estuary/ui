@@ -16,6 +16,7 @@ interface Props {
     tableState: TableState;
     loading: boolean;
     rows: any;
+    CustomBody?: any;
 }
 
 function EntityTableBody({
@@ -24,10 +25,15 @@ function EntityTableBody({
     noExistingDataContentIds,
     rows,
     tableState,
+    CustomBody,
 }: Props) {
     const columnKeys = useMemo(() => {
         return getColumnKeyList(columns);
     }, [columns]);
+
+    if (rows && CustomBody) {
+        return <CustomBody />;
+    }
 
     return (
         <TableBody>
