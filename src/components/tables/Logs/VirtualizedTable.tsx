@@ -104,6 +104,10 @@ function VirtualizedLogsTable({
                                             itemSize={55}
                                             itemCount={documents.length}
                                             overscanCount={10}
+                                            style={{
+                                                paddingBottom: 20,
+                                                paddingTop: 20,
+                                            }}
                                         >
                                             {renderRow}
                                         </FixedSizeList>

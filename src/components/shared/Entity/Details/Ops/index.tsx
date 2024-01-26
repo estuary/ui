@@ -89,31 +89,6 @@ function Ops() {
                     ]}
                 />
 
-                <Stack spacing={2} direction="row">
-                    <Button
-                        disabled={loading || fetchingMore || olderFinished}
-                        onClick={() => {
-                            setFetchingMore(true);
-                            refresh({
-                                offset: 0,
-                                endOffset: lastParsed,
-                            });
-                        }}
-                    >
-                        Load Older
-                    </Button>
-
-                    <Button
-                        disabled={loading || fetchingMore}
-                        onClick={() => {
-                            setFetchingMore(true);
-                            refresh();
-                        }}
-                    >
-                        Load Newer
-                    </Button>
-                </Stack>
-
                 <Stack spacing={2}>
                     {error ? (
                         <Error
@@ -125,26 +100,55 @@ function Ops() {
                         />
                     ) : null}
 
-                    <VirtualizedLogsTable
-                        documents={docs}
-                        loading={fetchingMore || loading}
-                        fetchNewer={() => {
-                            console.log('fetcher latest logs');
+                    <Box>
+                        <Button
+                            disabled={loading || fetchingMore || olderFinished}
+                            onClick={() => {
+                                setFetchingMore(true);
+                                refresh({
+                                    offset: 0,
+                                    endOffset: lastParsed,
+                                });
+                            }}
+                        >
+                            Load Older
+                        </Button>
+                    </Box>
 
-                            // setLoading(true);
-                            // setTimeout(() => setLoading(false), 2500);
-                        }}
-                        fetchOlder={
-                            olderFinished
-                                ? undefined
-                                : () => {
-                                      console.log('fetch older logs');
+                    <Box>
+                        <VirtualizedLogsTable
+                            documents={docs}
+                            loading={fetchingMore || loading}
+                            fetchNewer={() => {
+                                console.log('fetcher latest logs');
 
-                                      // setLoading(true);
-                                      // setTimeout(() => setLoading(false), 2500);
-                                  }
-                        }
-                    />
+                                // setLoading(true);
+                                // setTimeout(() => setLoading(false), 2500);
+                            }}
+                            fetchOlder={
+                                olderFinished
+                                    ? undefined
+                                    : () => {
+                                          console.log('fetch older logs');
+
+                                          // setLoading(true);
+                                          // setTimeout(() => setLoading(false), 2500);
+                                      }
+                            }
+                        />
+                    </Box>
+
+                    <Box>
+                        <Button
+                            disabled={loading || fetchingMore}
+                            onClick={() => {
+                                setFetchingMore(true);
+                                refresh();
+                            }}
+                        >
+                            Load Newer
+                        </Button>
+                    </Box>
                 </Stack>
             </Box>
         </Box>
