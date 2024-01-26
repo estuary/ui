@@ -1,7 +1,14 @@
 import { Box, Table, TableContainer } from '@mui/material';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { findIndex } from 'lodash';
+import {
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    useState,
+} from 'react';
 import { useIntl } from 'react-intl';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
@@ -26,34 +33,41 @@ function VirtualizedLogsTable({
     const columns = useLogColumns();
 
     const tableScroller = useRef<any>(null);
+    const lastTopLog = useRef<string | null>(null);
+    const lastCount = useRef<number>(-1);
     const [fetchingOlder, setFetchingOlder] = useState(false);
-
     // const [shouldScroll, toggleSchouldScroll] = useToggle(true);
 
-    const onScroll = ({ scrollOffset, scrollDirection, ...args }: any) => {
-        console.log('scroll', args);
+    const onScroll = ({ scrollOffset, scrollDirection }: any) => {
         if (
             !fetchingOlder &&
             scrollOffset === 0 &&
             fetchOlder &&
             scrollDirection === 'backward'
         ) {
-            console.log('   fetching');
             setFetchingOlder(true);
             fetchOlder();
         }
     };
 
+    // Keep track of the top item so we can keep it in view when more logs are loaded
+    useEffect(() => {
+        lastCount.current = documents.length;
+        lastTopLog.current = documents[0]?._meta.uuid;
+    }, [documents]);
+
     useLayoutEffect(() => {
-        console.log('docs effect');
-        if (fetchingOlder) {
-            console.log('   scroll to item', {
-                scroller: tableScroller.current,
-            });
+        if (lastCount.current < documents.length && fetchingOlder) {
             setFetchingOlder(false);
-            tableScroller.current.scrollToItem(20);
+            tableScroller.current.scrollToItem(
+                findIndex(
+                    documents,
+                    (document) => document._meta.uuid === lastTopLog.current
+                ),
+                'top'
+            );
         }
-    }, [fetchingOlder]);
+    }, [documents, fetchingOlder]);
 
     const renderRow = useCallback(
         (props: ListChildComponentProps) => {
@@ -64,12 +78,14 @@ function VirtualizedLogsTable({
         [documents]
     );
 
-    // Scroll to the bottom on load
+    // Scroll to the bottom on load NOT WORKING
     useLayoutEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (tableScroller?.current) {
             tableScroller.current.scrollToItem(documents.length);
         }
+        // We only care about then the scroll ref is set so we can scroll to the bottom
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tableScroller]);
 
     return (
