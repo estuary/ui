@@ -57,7 +57,11 @@ function VirtualizedLogsTable({
     }, [documents]);
 
     useLayoutEffect(() => {
-        if (lastCount.current < documents.length && fetchingOlder) {
+        if (!fetchingOlder) {
+            return;
+        }
+
+        if (lastCount.current < documents.length) {
             setFetchingOlder(false);
             tableScroller.current.scrollToItem(
                 findIndex(
@@ -66,6 +70,10 @@ function VirtualizedLogsTable({
                 ),
                 'top'
             );
+        }
+
+        if (lastCount.current === documents.length) {
+            console.log('fetching olver and list length did not change');
         }
     }, [documents, fetchingOlder]);
 

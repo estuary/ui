@@ -12,7 +12,7 @@ function TimestampCell({ ts }: Props) {
     );
 
     return (
-        <TableCell sx={BaseCellSx}>
+        <TableCell sx={BaseCellSx} component="div">
             <Typography noWrap sx={BaseTypographySx}>
                 {formattedDateTime.includes('Invalid') ? '' : formattedDateTime}
             </Typography>

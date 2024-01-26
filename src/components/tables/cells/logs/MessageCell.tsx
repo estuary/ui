@@ -9,7 +9,7 @@ interface Props {
 
 function MessageCell({ fields, message }: Props) {
     return (
-        <TableCell style={{ width: '100%' }}>
+        <TableCell style={{ width: '100%' }} component="div">
             <Typography
                 component="div"
                 sx={{
