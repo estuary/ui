@@ -7,13 +7,13 @@ const defaultColumns: TableColumns[] = [
         field: null,
         align: 'right',
         headerIntlKey: 'ops.logsTable.label.level',
-        width: 100,
+        width: 65,
         display: 'inline-block',
     },
     {
         field: null,
         headerIntlKey: 'ops.logsTable.label.ts',
-        width: 200,
+        width: 245,
         display: 'inline-block',
     },
     {
