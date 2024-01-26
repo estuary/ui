@@ -21,6 +21,9 @@ const getStorageMappings = (
             catalog_prefix,
             updated_at
         `
+            // TODO (storage mappins) including count will make pagination work but
+            //  it makes this table take around 3.3 SECONDS in production.
+            // { count: 'exact' }
         );
 
     queryBuilder = defaultTableFilter(

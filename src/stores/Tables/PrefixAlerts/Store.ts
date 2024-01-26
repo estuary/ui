@@ -1,5 +1,4 @@
 import produce from 'immer';
-import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
 import { SelectTableStoreNames } from 'stores/names';
 import { PrefixAlertTableState } from 'stores/Tables/PrefixAlerts/types';
 import { getInitialState as getInitialSelectTableState } from 'stores/Tables/Store';
@@ -14,53 +13,6 @@ export const getInitialState = (
 ): PrefixAlertTableState => {
     return {
         ...getInitialSelectTableState(set, get),
-
-        hydrateContinuously: (data, error) => {
-            const { fetcher } = get().query;
-
-            if (!fetcher) {
-                throw new Error(
-                    'You must populate the query before hydrating.'
-                );
-            }
-
-            set(
-                produce((state) => {
-                    state.query.loading = true;
-                }),
-                false,
-                'Table Store Hydration Start'
-            );
-
-            if (error) {
-                set(
-                    produce((state) => {
-                        state.query.response = null;
-                        state.query.loading = false;
-                        state.query.error = error;
-                    }),
-                    false,
-                    'Table Store Hydration Failure'
-                );
-            }
-
-            set(
-                produce((state) => {
-                    state.query.networkFailed = checkErrorMessage(
-                        FAILED_TO_FETCH,
-                        error?.message
-                    );
-
-                    state.hydrated = true;
-
-                    state.query.count = Object.keys(data).length;
-                    state.query.response = Object.entries(data);
-                    state.query.loading = false;
-                }),
-                false,
-                'Table Store Hydration Success'
-            );
-        },
 
         hydrate: async () => {
             const { fetcher } = get().query;
@@ -93,16 +45,16 @@ export const getInitialState = (
                 );
             }
 
-            const formattedData = formatNotificationSubscriptionsByPrefix(
-                response.data ?? []
-            );
-
             set(
                 produce((state) => {
                     state.hydrated = true;
 
-                    state.query.count = Object.keys(formattedData).length;
-                    state.query.response = Object.entries(formattedData);
+                    state.query.count = response.count ?? 0;
+                    state.query.response = Object.entries(
+                        formatNotificationSubscriptionsByPrefix(
+                            response.data ?? []
+                        )
+                    );
                     state.query.loading = false;
                 }),
                 false,
