@@ -47,11 +47,7 @@ export function Row({ row, style }: RowProps) {
 
             <TimestampCell ts={row.ts} />
 
-            <MessageCell
-                message={row.message}
-                fields={row.fields}
-                width={100}
-            />
+            <MessageCell message={row.message} fields={row.fields} />
         </TableRow>
     );
 }

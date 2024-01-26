@@ -4,14 +4,12 @@ import { BaseTypographySx } from './shared';
 
 interface Props {
     message: string;
-    width: number;
     fields?: any;
 }
 
-function MessageCell({ fields, message, width }: Props) {
-    const roomLeft = width - 245 - 65;
+function MessageCell({ fields, message }: Props) {
     return (
-        <TableCell style={{ width: roomLeft }}>
+        <TableCell style={{ width: '100%' }}>
             <Typography
                 component="div"
                 sx={{
@@ -19,8 +17,8 @@ function MessageCell({ fields, message, width }: Props) {
                     width: '100%',
                 }}
             >
-                {roomLeft} | {message} {message} {message} {message} {message}{' '}
-                {message} {message} {message} {message} {message} {message}
+                {message} {message} {message} {message} {message} {message}{' '}
+                {message} {message} {message} {message} {message}
             </Typography>
 
             {fields ? (

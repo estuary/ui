@@ -11,7 +11,7 @@ import { OpsLogFlowDocument } from 'types';
 import { MEGABYTE } from 'utils/dataPlane-utils';
 import Error from 'components/shared/Error';
 import { BASE_ERROR } from 'services/supabase';
-import VirtualizedGridLogsTable from 'components/tables/Logs/VirtualizedGridTable';
+import VirtualizedLogsTable from 'components/tables/Logs/VirtualizedTable';
 
 const maxBytes = Math.round(MEGABYTE / 25);
 
@@ -115,18 +115,6 @@ function Ops() {
                 </Stack>
 
                 <Stack spacing={2}>
-                    {/*                    <JournalAlerts
-                        journalData={journalData}
-                        notFoundTitleMessage={
-                            <FormattedMessage
-                                id="ops.journals.notFound.message"
-                                values={{
-                                    entityType,
-                                }}
-                            />
-                        }
-                    />*/}
-
                     {error ? (
                         <Error
                             error={{
@@ -137,7 +125,7 @@ function Ops() {
                         />
                     ) : null}
 
-                    <VirtualizedGridLogsTable
+                    <VirtualizedLogsTable
                         documents={docs}
                         loading={fetchingMore || loading}
                         fetchNewer={() => {

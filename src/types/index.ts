@@ -311,7 +311,7 @@ export interface TableColumns {
     field: string | null;
     collapseHeader?: boolean;
     headerIntlKey?: string | null;
-    width?: number;
+    width?: number | string;
     sticky?: boolean;
     align?: TableCellProps['align'];
     cols?: number;

@@ -65,7 +65,6 @@ function VirtualizedLogsTable({
     return (
         <AutoSizer style={{ height: '500px', width: '100%' }}>
             {({ width, height }: AutoSizer['state']) => {
-                console.log('sizer', { width, height });
                 return (
                     <TableContainer
                         component={Box}
