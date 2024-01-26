@@ -45,6 +45,10 @@ function VirtualizedLogsTable({
     //     }
     // }, [fetchNewer, fetchOlder, y]);
 
+    const onScroll = (args: any) => {
+        console.log('they see me scrolling', args);
+    };
+
     useLayoutEffect(() => {
         if (hasLength(documents) && shouldScroll) {
             toggleSchouldScroll();
@@ -54,7 +58,6 @@ function VirtualizedLogsTable({
 
     const renderRow = useCallback(
         (props: ListChildComponentProps) => {
-            console.log('rendering row', { props });
             const { index, style } = props;
 
             return <Row row={documents[index]} style={style} />;
@@ -104,6 +107,7 @@ function VirtualizedLogsTable({
                                             itemSize={55}
                                             itemCount={documents.length}
                                             overscanCount={10}
+                                            onScroll={onScroll}
                                             style={{
                                                 paddingBottom: 20,
                                                 paddingTop: 20,
