@@ -205,6 +205,7 @@ const ErrorBoundry: ResolvedIntlConfig['messages'] = {
 const ConfirmationDialog: ResolvedIntlConfig['messages'] = {
     'confirm.title': `Are you sure?`,
     'confirm.loseData': `You have unsaved work. If you continue, you will lose your changes.`,
+    'confirm.oauth': `You are in the process of OAuth. If you continue, you will lose your changes.`,
 };
 
 const FullPage: ResolvedIntlConfig['messages'] = {
@@ -1039,6 +1040,10 @@ const OAuth: ResolvedIntlConfig['messages'] = {
     'oauth.authenticate': `Authenticate your {provider} account`,
     'oauth.remove': `Remove`,
     'oauth.edit.message': `If you edit your endpoint config and want to continue using OAuth you must reauthenticate.`,
+    'oauth.windowOpener.error.dialog.title': `OAuth Failed`,
+    'oauth.windowOpener.error.title': `Cannot reach parent window`,
+    'oauth.windowOpener.error.message1': `We are unable to communicate with the window that opened the OAuth pop up. The window may have been closed.`,
+    'oauth.windowOpener.error.message2': `Please close this dialog and try again.`,
 };
 
 const Supabase: ResolvedIntlConfig['messages'] = {
