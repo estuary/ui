@@ -101,21 +101,6 @@ function Ops() {
                     ) : null}
 
                     <Box>
-                        <Button
-                            disabled={loading || fetchingMore || olderFinished}
-                            onClick={() => {
-                                setFetchingMore(true);
-                                refresh({
-                                    offset: 0,
-                                    endOffset: lastParsed,
-                                });
-                            }}
-                        >
-                            Load Older
-                        </Button>
-                    </Box>
-
-                    <Box>
                         <VirtualizedLogsTable
                             documents={docs}
                             loading={fetchingMore || loading}
@@ -131,8 +116,11 @@ function Ops() {
                                     : () => {
                                           console.log('fetch older logs');
 
-                                          // setLoading(true);
-                                          // setTimeout(() => setLoading(false), 2500);
+                                          setFetchingMore(true);
+                                          refresh({
+                                              offset: 0,
+                                              endOffset: lastParsed,
+                                          });
                                       }
                             }
                         />

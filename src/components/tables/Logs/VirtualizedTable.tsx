@@ -1,13 +1,11 @@
 import { Box, Table, TableContainer } from '@mui/material';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
-import { useCallback, useLayoutEffect, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useToggle } from 'react-use';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { OpsLogFlowDocument, TableStatuses } from 'types';
-import { hasLength } from 'utils/misc-utils';
 import { Row } from './Rows';
 import useLogColumns from './useLogColumns';
 
@@ -21,40 +19,41 @@ interface Props {
 function VirtualizedLogsTable({
     documents,
     // fetchNewer,
-    // fetchOlder,
+    fetchOlder,
     loading,
 }: Props) {
     const intl = useIntl();
     const columns = useLogColumns();
 
     const tableScroller = useRef<any>(null);
-    const [shouldScroll, toggleSchouldScroll] = useToggle(true);
-    // const { stayScrolled } = useStayScrolled(tableScroller);
+    const [fetchingOlder, setFetchingOlder] = useState(false);
 
-    // const { y } = useScroll(tableScroller);
+    // const [shouldScroll, toggleSchouldScroll] = useToggle(true);
 
-    // useEffect(() => {
-    //     if (fetchOlder && y === 0) {
-    //         fetchOlder();
-    //     } else {
-    //         // Math.abs(tableScroller.scrollHeight - (tableScroller.scrollTop + tableScroller.clientHeight)) <= 1
-    //         // eslint-disable-next-line no-lonely-if
-    //         if (y > 10000) {
-    //             fetchNewer();
-    //         }
-    //     }
-    // }, [fetchNewer, fetchOlder, y]);
-
-    const onScroll = (args: any) => {
-        console.log('they see me scrolling', args);
+    const onScroll = ({ scrollOffset, scrollDirection, ...args }: any) => {
+        console.log('scroll', args);
+        if (
+            !fetchingOlder &&
+            scrollOffset === 0 &&
+            fetchOlder &&
+            scrollDirection === 'backward'
+        ) {
+            console.log('   fetching');
+            setFetchingOlder(true);
+            fetchOlder();
+        }
     };
 
     useLayoutEffect(() => {
-        if (hasLength(documents) && shouldScroll) {
-            toggleSchouldScroll();
+        console.log('docs effect');
+        if (fetchingOlder) {
+            console.log('   scroll to item', {
+                scroller: tableScroller.current,
+            });
+            setFetchingOlder(false);
             tableScroller.current.scrollToItem(20);
         }
-    }, [documents, shouldScroll, toggleSchouldScroll]);
+    }, [fetchingOlder]);
 
     const renderRow = useCallback(
         (props: ListChildComponentProps) => {
@@ -64,6 +63,14 @@ function VirtualizedLogsTable({
         },
         [documents]
     );
+
+    // Scroll to the bottom on load
+    useLayoutEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (tableScroller?.current) {
+            tableScroller.current.scrollToItem(documents.length);
+        }
+    }, [tableScroller]);
 
     return (
         <AutoSizer style={{ height: '500px', width: '100%' }}>
@@ -90,43 +97,44 @@ function VirtualizedLogsTable({
                                 enableDivRendering
                             />
 
-                            <EntityTableBody
-                                columns={columns}
-                                noExistingDataContentIds={{
-                                    header: 'ops.logsTable.emptyTableDefault.header',
-                                    message:
-                                        'ops.logsTable.emptyTableDefault.message',
-                                    disableDoclink: true,
-                                }}
-                                CustomBody={() => {
-                                    return (
-                                        <FixedSizeList
-                                            ref={tableScroller}
-                                            height={height}
-                                            width={width}
-                                            itemSize={55}
-                                            itemCount={documents.length}
-                                            overscanCount={10}
-                                            onScroll={onScroll}
-                                            style={{
-                                                paddingBottom: 20,
-                                                paddingTop: 20,
-                                            }}
-                                        >
-                                            {renderRow}
-                                        </FixedSizeList>
-                                    );
-                                }}
-                                tableState={
-                                    documents.length > 0
-                                        ? { status: TableStatuses.DATA_FETCHED }
-                                        : {
-                                              status: TableStatuses.NO_EXISTING_DATA,
-                                          }
-                                }
-                                loading={Boolean(loading)}
-                                rows={documents}
-                            />
+                            {documents.length > 0 ? (
+                                <FixedSizeList
+                                    ref={tableScroller}
+                                    height={height}
+                                    width={width}
+                                    itemSize={55}
+                                    itemCount={documents.length}
+                                    overscanCount={10}
+                                    onScroll={onScroll}
+                                    style={{
+                                        paddingBottom: 20,
+                                        paddingTop: 20,
+                                    }}
+                                >
+                                    {renderRow}
+                                </FixedSizeList>
+                            ) : (
+                                <EntityTableBody
+                                    columns={columns}
+                                    noExistingDataContentIds={{
+                                        header: 'ops.logsTable.emptyTableDefault.header',
+                                        message:
+                                            'ops.logsTable.emptyTableDefault.message',
+                                        disableDoclink: true,
+                                    }}
+                                    tableState={
+                                        documents.length > 0
+                                            ? {
+                                                  status: TableStatuses.DATA_FETCHED,
+                                              }
+                                            : {
+                                                  status: TableStatuses.NO_EXISTING_DATA,
+                                              }
+                                    }
+                                    loading={Boolean(loading)}
+                                    rows={documents}
+                                />
+                            )}
                         </Table>
                     </TableContainer>
                 );
