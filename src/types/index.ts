@@ -315,6 +315,7 @@ export interface TableColumns {
     sticky?: boolean;
     align?: TableCellProps['align'];
     cols?: number;
+    display?: string;
 }
 
 export interface TableState {

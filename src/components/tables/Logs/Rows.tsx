@@ -1,4 +1,4 @@
-import { TableCell, TableRow } from '@mui/material';
+import { Box, TableCell, TableRow } from '@mui/material';
 import { useToggle } from 'react-use';
 import { OpsLogFlowDocument } from 'types';
 import { FormattedMessage } from 'react-intl';
@@ -24,6 +24,7 @@ export function Row({ row, style }: RowProps) {
 
     return (
         <TableRow
+            component={Box}
             hover={hasFields}
             aria-expanded={hasFields ? expanded : undefined}
             style={style}
@@ -46,7 +47,11 @@ export function Row({ row, style }: RowProps) {
 
             <TimestampCell ts={row.ts} />
 
-            <MessageCell message={row.message} fields={row.fields} />
+            <MessageCell
+                message={row.message}
+                fields={row.fields}
+                width={100}
+            />
         </TableRow>
     );
 }

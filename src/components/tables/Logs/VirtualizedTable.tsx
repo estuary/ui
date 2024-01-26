@@ -1,4 +1,4 @@
-import { Box, Table, TableBody, TableContainer } from '@mui/material';
+import { Box, Table, TableContainer } from '@mui/material';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import { useCallback, useLayoutEffect, useRef } from 'react';
@@ -52,8 +52,6 @@ function VirtualizedLogsTable({
         }
     }, [documents, shouldScroll, toggleSchouldScroll]);
 
-    // stayScrolled();
-
     const renderRow = useCallback(
         (props: ListChildComponentProps) => {
             console.log('rendering row', { props });
@@ -68,8 +66,6 @@ function VirtualizedLogsTable({
         <AutoSizer style={{ height: '500px', width: '100%' }}>
             {({ width, height }: AutoSizer['state']) => {
                 console.log('sizer', { width, height });
-                // TODO (typing) pretty sure this is the right type but need
-                //  to figure that out before launching this
                 return (
                     <TableContainer
                         component={Box}
@@ -82,11 +78,15 @@ function VirtualizedLogsTable({
                             aria-label={intl.formatMessage({
                                 id: 'entityTable.title',
                             })}
+                            component={Box}
                             size="small"
                             stickyHeader
                             sx={{ minWidth: 250 }}
                         >
-                            <EntityTableHeader columns={columns} />
+                            <EntityTableHeader
+                                columns={columns}
+                                enableDivRendering
+                            />
 
                             <EntityTableBody
                                 columns={columns}
@@ -97,7 +97,6 @@ function VirtualizedLogsTable({
                                     disableDoclink: true,
                                 }}
                                 CustomBody={() => {
-                                    console.log('custom boddy ');
                                     return (
                                         <FixedSizeList
                                             ref={tableScroller}
@@ -106,7 +105,6 @@ function VirtualizedLogsTable({
                                             itemSize={55}
                                             itemCount={documents.length}
                                             overscanCount={10}
-                                            innerElementType={TableBody}
                                         >
                                             {renderRow}
                                         </FixedSizeList>

@@ -6,17 +6,20 @@ const defaultColumns: TableColumns[] = [
     {
         field: null,
         align: 'right',
-        collapseHeader: true,
         headerIntlKey: 'ops.logsTable.label.level',
+        width: 100,
+        display: 'inline-block',
     },
     {
         field: null,
-        collapseHeader: true,
         headerIntlKey: 'ops.logsTable.label.ts',
+        width: 200,
+        display: 'inline-block',
     },
     {
         field: null,
         headerIntlKey: 'ops.logsTable.label.message',
+        display: 'inline-block',
     },
 ];
 
