@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { useIntl } from 'react-intl';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { FixedSizeList, ListChildComponentProps } from 'react-window';
+import { ListChildComponentProps, VariableSizeList } from 'react-window';
 import { OpsLogFlowDocument, TableStatuses } from 'types';
 import { Row } from './Rows';
 import useLogColumns from './useLogColumns';
@@ -93,8 +93,8 @@ function VirtualizedLogsTable({
             tableScroller.current.scrollToItem(documents.length);
         }
         // We only care about then the scroll ref is set so we can scroll to the bottom
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [tableScroller]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-unnecessary-condition
+    }, [tableScroller?.current]);
 
     return (
         <AutoSizer style={{ height: '500px', width: '100%' }}>
@@ -122,21 +122,22 @@ function VirtualizedLogsTable({
                             />
 
                             {documents.length > 0 ? (
-                                <FixedSizeList
+                                <VariableSizeList
                                     ref={tableScroller}
                                     height={height}
                                     width={width}
-                                    itemSize={55}
+                                    itemSize={(_rowIndex) => 55}
+                                    estimatedItemSize={55}
                                     itemCount={documents.length}
                                     overscanCount={10}
                                     onScroll={onScroll}
                                     style={{
-                                        paddingBottom: 20,
-                                        paddingTop: 20,
+                                        paddingBottom: 10,
+                                        paddingTop: 10,
                                     }}
                                 >
                                     {renderRow}
-                                </FixedSizeList>
+                                </VariableSizeList>
                             ) : (
                                 <EntityTableBody
                                     columns={columns}
