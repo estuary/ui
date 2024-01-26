@@ -22,11 +22,13 @@ const getWithExpiry = (key: string) => {
         return null;
     }
 
+    // We have waited long enough to allow trying again so clearing out the key
     if (new Date().getTime() > item.expiry) {
         localStorage.removeItem(key);
         return null;
     }
 
+    // Return value so we do not try reloading again
     return item.value;
 };
 
