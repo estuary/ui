@@ -7,17 +7,20 @@ const LAZY_LOAD_FAILED_KEY = 'chunk_failed';
 
 // https://mitchgavan.com/code-splitting-react-safely/
 const setWithExpiry = (key: string, value: string, ttl: number) => {
-    const item = {
-        value,
-        expiry: new Date().getTime() + ttl,
-    };
-    localStorage.setItem(key, JSON.stringify(item));
+    localStorage.setItem(
+        key,
+        JSON.stringify({
+            value,
+            expiry: new Date().getTime() + ttl,
+        })
+    );
 };
 
 const getWithExpiry = (key: string) => {
     const itemString = window.localStorage.getItem(key);
     const item = itemString ? JSON.parse(itemString) : null;
 
+    // Either there is no setting or we couldn't parse it. Either way we should try reloading again
     if (item === null) {
         return null;
     }
@@ -36,7 +39,7 @@ const handledLazy = (factory: () => Promise<{ default: any }>) => {
     return lazy(() =>
         factory().catch((error) => {
             logRocketEvent(CustomEvents.LAZY_LOADING, 'failed');
-            logRocketConsole('Component Failed Loading 1:', error);
+            logRocketConsole('Component Failed Loading:', error);
 
             // Check if we're in an infinite loading loop before trying again
             if (!getWithExpiry(LAZY_LOAD_FAILED_KEY)) {
