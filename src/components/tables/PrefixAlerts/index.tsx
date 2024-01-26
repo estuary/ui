@@ -5,7 +5,7 @@ import Rows from 'components/tables/PrefixAlerts/Rows';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
-import PrefixAlertTableHydrator from 'stores/Tables/PrefixAlerts/Hydrator';
+import TableHydrator from 'stores/Tables/Hydrator';
 import { TableColumns } from 'types';
 
 // TODO (optimization): The prefix alert table should have a last updated column
@@ -54,7 +54,10 @@ function PrefixAlertTable() {
     }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     return (
-        <PrefixAlertTableHydrator query={query}>
+        <TableHydrator
+            query={query}
+            selectableTableStoreName={SelectTableStoreNames.PREFIX_ALERTS}
+        >
             <EntityTable
                 noExistingDataContentIds={{
                     header: 'admin.alerts.table.noContent.header',
@@ -79,7 +82,7 @@ function PrefixAlertTable() {
                 showToolbar
                 toolbar={<AlertGenerateButton />}
             />
-        </PrefixAlertTableHydrator>
+        </TableHydrator>
     );
 }
 
