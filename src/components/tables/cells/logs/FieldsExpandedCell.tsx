@@ -23,7 +23,7 @@ function FieldsExpandedCell({ fields }: Props) {
             }}
         >
             <ReactJson
-                collapsed={1}
+                collapsed={5}
                 displayDataTypes={false}
                 displayObjectSize={false}
                 enableClipboard={false}

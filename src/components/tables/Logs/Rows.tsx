@@ -1,6 +1,14 @@
-import { Box, Collapse, Stack, TableRow, Typography } from '@mui/material';
+import {
+    Box,
+    Collapse,
+    Stack,
+    TableRow,
+    Typography,
+    useTheme,
+} from '@mui/material';
 import { OpsLogFlowDocument } from 'types';
 import { useState } from 'react';
+import { doubleElevationHoverBackground } from 'context/Theme';
 import LevelCell from '../cells/logs/LevelCell';
 import TimestampCell from '../cells/logs/TimestampCell';
 import MessageCell from '../cells/logs/MessageCell';
@@ -14,6 +22,7 @@ interface RowProps {
 }
 
 export function Row({ renderExpanded, row, rowExpanded, style }: RowProps) {
+    const theme = useTheme();
     const hasFields = Boolean(row.fields);
 
     const [open, setOpen] = useState(renderExpanded ?? false);
@@ -34,12 +43,16 @@ export function Row({ renderExpanded, row, rowExpanded, style }: RowProps) {
     return (
         <TableRow
             component={Box}
-            hover={hasFields}
             aria-expanded={hasFields ? open : undefined}
             aria-describedby={id}
+            hover={Boolean(hasFields && !open)}
+            selected={open}
             style={style}
             sx={{
                 cursor: hasFields ? 'pointer' : undefined,
+                borderLeft: open ? '5px solid' : undefined,
+                borderLeftColor:
+                    doubleElevationHoverBackground[theme.palette.mode],
             }}
             onClick={hasFields ? handleClick : undefined}
         >
@@ -70,16 +83,23 @@ export function Row({ renderExpanded, row, rowExpanded, style }: RowProps) {
                     >
                         <Box
                             sx={{
-                                height: 200,
-                                maxHeight: 200,
-                                overflow: 'auto',
-                                mx: 3,
-                                borderBottom: 1,
+                                px: 3,
                                 opacity: opening ? 0 : undefined,
                             }}
                         >
-                            <Typography>{row.message}</Typography>
-                            <FieldsExpandedCell fields={row.fields} />
+                            <Typography sx={{ my: 2 }}>
+                                {row.message}
+                            </Typography>
+
+                            <Box
+                            // sx={{
+                            //     height: 200,
+                            //     maxHeight: 200,
+                            //     overflow: 'auto',
+                            // }}
+                            >
+                                <FieldsExpandedCell fields={row.fields} />
+                            </Box>
                         </Box>
                     </Collapse>
                 ) : null}
