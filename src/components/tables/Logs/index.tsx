@@ -75,20 +75,17 @@ function LogsTable({
         }
 
         if (lastCount.current === documents.length) {
-            console.log('fetching olver and list length did not change');
+            console.log('fetching older and list length did not change');
         }
     }, [documents, fetchingOlder]);
 
     const expandRow = useCallback(
         (index: number, height: number) => {
-            console.log('index expanded', [index, height]);
-
             if (height > 0) {
                 expandedHeights.current.set(
                     documents[index]._meta.uuid,
                     height
                 );
-                tableScroller.current.scrollToItem(index, 'top');
             } else {
                 expandedHeights.current.delete(documents[index]._meta.uuid);
             }
@@ -101,11 +98,15 @@ function LogsTable({
     const renderRow = useCallback(
         (props: ListChildComponentProps) => {
             const { index, style } = props;
+            const row = documents[index];
 
             return (
                 <Row
-                    row={documents[index]}
+                    row={row}
                     style={style}
+                    renderExpanded={Boolean(
+                        expandedHeights.current.get(row._meta.uuid)
+                    )}
                     rowExpanded={(height) => expandRow(index, height)}
                 />
             );

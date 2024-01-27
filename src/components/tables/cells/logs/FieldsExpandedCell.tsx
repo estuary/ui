@@ -15,39 +15,25 @@ function FieldsExpandedCell({ fields }: Props) {
     const theme = useTheme();
 
     return (
-        <>
-            <Box
-                sx={{
-                    '& .react-json-view': {
-                        backgroundColor: 'transparent !important',
-                    },
-                }}
-            >
-                <ReactJson
-                    collapsed={1}
-                    displayDataTypes={false}
-                    displayObjectSize={false}
-                    enableClipboard={false}
-                    name="fields"
-                    quotesOnKeys={false}
-                    src={fields ?? {}}
-                    style={{ wordBreak: 'break-all' }}
-                    theme={jsonViewTheme[theme.palette.mode]}
-                />
-            </Box>
-
-            {/*                        <ObjectInspector
-                            data={row.fields ?? {}}
-                            name="fields"
-                            expandLevel={1}
-                            theme={
-                                {
-                                    ...reactInspectorTheme[theme.palette.mode],
-                                    TREENODE_FONT_SIZE: 14,
-                                } as any // hacky but the typing was complaining
-                            }
-                        />*/}
-        </>
+        <Box
+            sx={{
+                '& .react-json-view': {
+                    backgroundColor: 'transparent !important',
+                },
+            }}
+        >
+            <ReactJson
+                collapsed={1}
+                displayDataTypes={false}
+                displayObjectSize={false}
+                enableClipboard={false}
+                name="fields"
+                quotesOnKeys={false}
+                src={fields ?? {}}
+                style={{ wordBreak: 'break-all' }}
+                theme={jsonViewTheme[theme.palette.mode]}
+            />
+        </Box>
     );
 }
 

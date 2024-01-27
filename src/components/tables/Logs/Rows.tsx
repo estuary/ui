@@ -9,13 +9,14 @@ import FieldsExpandedCell from '../cells/logs/FieldsExpandedCell';
 interface RowProps {
     row: OpsLogFlowDocument;
     rowExpanded: (height: number) => void;
+    renderExpanded?: boolean;
     style?: any;
 }
 
-export function Row({ row, rowExpanded, style }: RowProps) {
+export function Row({ renderExpanded, row, rowExpanded, style }: RowProps) {
     const hasFields = Boolean(row.fields);
 
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(renderExpanded ?? false);
     const [opening, setOpening] = useState(false);
 
     const handleClick = () => {
