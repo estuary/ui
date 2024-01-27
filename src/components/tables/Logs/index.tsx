@@ -25,24 +25,39 @@ interface Props {
 
 const DEFAULT_ROW_HEIGHT = 55;
 
-function LogsTable({
-    documents,
-    // fetchNewer,
-    fetchOlder,
-    loading,
-}: Props) {
+function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     const intl = useIntl();
     const columns = useLogColumns();
 
     const tableScroller = useRef<any>(null);
+    const virtualRows = useRef<any>(null);
     const lastTopLog = useRef<string | null>(null);
     const lastCount = useRef<number>(-1);
     const expandedHeights = useRef<Map<string, number>>(new Map());
     const [fetchingOlder, setFetchingOlder] = useState(false);
+    const [fetchingNewer, setFetchingNewer] = useState(false);
 
     const onScroll = ({ scrollOffset, scrollDirection }: any) => {
-        if (
-            !fetchingOlder &&
+        console.log('onScroll', {
+            scrollOffset,
+            scrollDirection,
+            sc: tableScroller.current,
+            virtualRows: virtualRows.current.clientHeight,
+            sup:
+                virtualRows.current.scrollHeight -
+                virtualRows.current.scrollTop,
+            supsup: virtualRows.current.clientHeight,
+        });
+        // If we're already loading do not need to kick another call off
+        if (fetchingNewer || fetchingOlder) {
+            return;
+        }
+
+        // Need to figure out if scrolling is at bottom
+        if (scrollOffset === -1 && scrollDirection === 'forward') {
+            setFetchingNewer(true);
+            fetchNewer();
+        } else if (
             scrollOffset === 0 &&
             fetchOlder &&
             scrollDirection === 'backward'
@@ -59,25 +74,32 @@ function LogsTable({
     }, [documents]);
 
     useLayoutEffect(() => {
-        if (!fetchingOlder) {
+        if (!fetchingOlder && !fetchingNewer) {
             return;
         }
 
         if (lastCount.current < documents.length) {
+            if (fetchingOlder) {
+                tableScroller.current.scrollToItem(
+                    findIndex(
+                        documents,
+                        (document) => document._meta.uuid === lastTopLog.current
+                    ),
+                    'top'
+                );
+            }
+
+            if (fetchingNewer) {
+                tableScroller.current.scrollToItem(documents.length, 'bottom');
+            }
             setFetchingOlder(false);
-            tableScroller.current.scrollToItem(
-                findIndex(
-                    documents,
-                    (document) => document._meta.uuid === lastTopLog.current
-                ),
-                'top'
-            );
+            setFetchingNewer(false);
         }
 
         if (lastCount.current === documents.length) {
             console.log('fetching older and list length did not change');
         }
-    }, [documents, fetchingOlder]);
+    }, [documents, fetchingOlder, fetchingNewer]);
 
     const expandRow = useCallback(
         (index: number, height: number) => {
@@ -124,6 +146,8 @@ function LogsTable({
         // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-unnecessary-condition
     }, [tableScroller?.current]);
 
+    console.log('state+', { fetchingNewer, fetchingOlder, loading });
+
     return (
         <AutoSizer style={{ height: '500px', width: '100%' }}>
             {({ width, height }: AutoSizer['state']) => {
@@ -148,11 +172,12 @@ function LogsTable({
                                 enableDivRendering
                             />
 
-                            {loading ? <LinearProgress /> : null}
+                            {fetchingOlder ? <LinearProgress /> : null}
 
                             {documents.length > 0 ? (
                                 <VariableSizeList
                                     ref={tableScroller}
+                                    innerRef={virtualRows}
                                     height={height}
                                     width={width}
                                     itemSize={(rowIndex) => {
@@ -195,6 +220,8 @@ function LogsTable({
                                     rows={documents}
                                 />
                             )}
+
+                            {fetchingNewer ? <LinearProgress /> : null}
                         </Table>
                     </TableContainer>
                 );
