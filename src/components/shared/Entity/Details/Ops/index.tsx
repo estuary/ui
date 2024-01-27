@@ -11,7 +11,7 @@ import { OpsLogFlowDocument } from 'types';
 import { MEGABYTE } from 'utils/dataPlane-utils';
 import Error from 'components/shared/Error';
 import { BASE_ERROR } from 'services/supabase';
-import VirtualizedLogsTable from 'components/tables/Logs/VirtualizedTable';
+import LogsTable from 'components/tables/Logs';
 
 const maxBytes = Math.round(MEGABYTE / 25);
 
@@ -101,7 +101,7 @@ function Ops() {
                     ) : null}
 
                     <Box>
-                        <VirtualizedLogsTable
+                        <LogsTable
                             documents={docs}
                             loading={fetchingMore || loading}
                             fetchNewer={() => {

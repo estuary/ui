@@ -1,13 +1,19 @@
-import { Box, Table, TableContainer } from '@mui/material';
+import { Box, LinearProgress, Table, TableContainer } from '@mui/material';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { findIndex } from 'lodash';
+import {
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    useState,
+} from 'react';
 import { useIntl } from 'react-intl';
-import useStayScrolled from 'react-stay-scrolled';
-import { useScroll, useToggle } from 'react-use';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import { ListChildComponentProps, VariableSizeList } from 'react-window';
 import { OpsLogFlowDocument, TableStatuses } from 'types';
-import { hasLength } from 'utils/misc-utils';
-import Rows from './Rows';
+import { Row } from './Rows';
 import useLogColumns from './useLogColumns';
 
 interface Props {
@@ -17,78 +23,182 @@ interface Props {
     loading?: boolean;
 }
 
-function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
+const DEFAULT_ROW_HEIGHT = 55;
+
+function LogsTable({
+    documents,
+    // fetchNewer,
+    fetchOlder,
+    loading,
+}: Props) {
     const intl = useIntl();
     const columns = useLogColumns();
 
-    const dataRows = useMemo(
-        () =>
-            documents.length > 0 ? (
-                <Rows
-                    data={documents}
-                    loading={loading}
-                    hitFileStart={Boolean(!fetchOlder)}
-                />
-            ) : null,
-        [fetchOlder, documents, loading]
-    );
+    const tableScroller = useRef<any>(null);
+    const lastTopLog = useRef<string | null>(null);
+    const lastCount = useRef<number>(-1);
+    const expandedHeights = useRef<Map<string, number>>(new Map());
+    const [fetchingOlder, setFetchingOlder] = useState(false);
 
-    const tableScroller = useRef<HTMLDivElement>(null);
-    const { stayScrolled } = useStayScrolled(tableScroller);
-    const [shouldScroll, toggleSchouldScroll] = useToggle(true);
-
-    const { y } = useScroll(tableScroller);
-
-    useEffect(() => {
-        if (fetchOlder && y === 0) {
+    const onScroll = ({ scrollOffset, scrollDirection }: any) => {
+        if (
+            !fetchingOlder &&
+            scrollOffset === 0 &&
+            fetchOlder &&
+            scrollDirection === 'backward'
+        ) {
+            setFetchingOlder(true);
             fetchOlder();
-        } else {
-            // Math.abs(tableScroller.scrollHeight - (tableScroller.scrollTop + tableScroller.clientHeight)) <= 1
-            // eslint-disable-next-line no-lonely-if
-            if (y > 10000) {
-                fetchNewer();
-            }
         }
-    }, [fetchNewer, fetchOlder, y]);
+    };
+
+    // Keep track of the top item so we can keep it in view when more logs are loaded
+    useEffect(() => {
+        lastCount.current = documents.length;
+        lastTopLog.current = documents[0]?._meta.uuid;
+    }, [documents]);
 
     useLayoutEffect(() => {
-        if (hasLength(documents) && shouldScroll) {
-            stayScrolled();
-            toggleSchouldScroll();
+        if (!fetchingOlder) {
+            return;
         }
-    }, [documents, shouldScroll, stayScrolled, toggleSchouldScroll]);
 
-    stayScrolled();
+        if (lastCount.current < documents.length) {
+            setFetchingOlder(false);
+            tableScroller.current.scrollToItem(
+                findIndex(
+                    documents,
+                    (document) => document._meta.uuid === lastTopLog.current
+                ),
+                'top'
+            );
+        }
+
+        if (lastCount.current === documents.length) {
+            console.log('fetching olver and list length did not change');
+        }
+    }, [documents, fetchingOlder]);
+
+    const expandRow = useCallback(
+        (index: number, height: number) => {
+            console.log('index expanded', [index, height]);
+
+            if (height > 0) {
+                expandedHeights.current.set(
+                    documents[index]._meta.uuid,
+                    height
+                );
+                tableScroller.current.scrollToItem(index, 'top');
+            } else {
+                expandedHeights.current.delete(documents[index]._meta.uuid);
+            }
+
+            tableScroller.current.resetAfterIndex(index);
+        },
+        [documents]
+    );
+
+    const renderRow = useCallback(
+        (props: ListChildComponentProps) => {
+            const { index, style } = props;
+
+            return (
+                <Row
+                    row={documents[index]}
+                    style={style}
+                    rowExpanded={(height) => expandRow(index, height)}
+                />
+            );
+        },
+        [documents, expandRow]
+    );
+
+    // Scroll to the bottom on load NOT WORKING
+    useLayoutEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (tableScroller?.current) {
+            tableScroller.current.scrollToItem(documents.length);
+        }
+        // We only care about then the scroll ref is set so we can scroll to the bottom
+        // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-unnecessary-condition
+    }, [tableScroller?.current]);
 
     return (
-        <TableContainer component={Box} maxHeight={500} ref={tableScroller}>
-            <Table
-                aria-label={intl.formatMessage({
-                    id: 'entityTable.title',
-                })}
-                size="small"
-                stickyHeader
-                sx={{ minWidth: 250 }}
-            >
-                <EntityTableHeader columns={columns} />
+        <AutoSizer style={{ height: '500px', width: '100%' }}>
+            {({ width, height }: AutoSizer['state']) => {
+                return (
+                    <TableContainer
+                        component={Box}
+                        height={height}
+                        width={width}
+                        sx={{ overflow: 'hidden' }}
+                    >
+                        <Table
+                            aria-label={intl.formatMessage({
+                                id: 'entityTable.title',
+                            })}
+                            component={Box}
+                            size="small"
+                            stickyHeader
+                            sx={{ minWidth: 250 }}
+                        >
+                            <EntityTableHeader
+                                columns={columns}
+                                enableDivRendering
+                            />
 
-                <EntityTableBody
-                    columns={columns}
-                    noExistingDataContentIds={{
-                        header: 'ops.logsTable.emptyTableDefault.header',
-                        message: 'ops.logsTable.emptyTableDefault.message',
-                        disableDoclink: true,
-                    }}
-                    tableState={
-                        documents.length > 0
-                            ? { status: TableStatuses.DATA_FETCHED }
-                            : { status: TableStatuses.NO_EXISTING_DATA }
-                    }
-                    loading={Boolean(loading)}
-                    rows={dataRows}
-                />
-            </Table>
-        </TableContainer>
+                            {loading ? <LinearProgress /> : null}
+
+                            {documents.length > 0 ? (
+                                <VariableSizeList
+                                    ref={tableScroller}
+                                    height={height}
+                                    width={width}
+                                    itemSize={(rowIndex) => {
+                                        return (
+                                            (expandedHeights.current.get(
+                                                documents[rowIndex]._meta.uuid
+                                            ) ?? 0) + DEFAULT_ROW_HEIGHT
+                                        );
+                                    }}
+                                    estimatedItemSize={DEFAULT_ROW_HEIGHT}
+                                    itemCount={documents.length}
+                                    overscanCount={10}
+                                    onScroll={onScroll}
+                                    style={{
+                                        paddingBottom: 10,
+                                        paddingTop: 10,
+                                    }}
+                                >
+                                    {renderRow}
+                                </VariableSizeList>
+                            ) : (
+                                <EntityTableBody
+                                    columns={columns}
+                                    noExistingDataContentIds={{
+                                        header: 'ops.logsTable.emptyTableDefault.header',
+                                        message:
+                                            'ops.logsTable.emptyTableDefault.message',
+                                        disableDoclink: true,
+                                    }}
+                                    tableState={
+                                        documents.length > 0
+                                            ? {
+                                                  status: TableStatuses.DATA_FETCHED,
+                                              }
+                                            : {
+                                                  status: TableStatuses.NO_EXISTING_DATA,
+                                              }
+                                    }
+                                    loading={Boolean(loading)}
+                                    rows={documents}
+                                />
+                            )}
+                        </Table>
+                    </TableContainer>
+                );
+            }}
+        </AutoSizer>
     );
 }
 
