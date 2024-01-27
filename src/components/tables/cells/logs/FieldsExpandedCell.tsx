@@ -6,11 +6,6 @@ interface Props {
     fields: any;
 }
 
-// const reactInspectorTheme = {
-//     light: chromeLight,
-//     dark: chromeDark,
-// };
-
 function FieldsExpandedCell({ fields }: Props) {
     const theme = useTheme();
 
