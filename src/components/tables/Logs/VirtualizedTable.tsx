@@ -23,6 +23,8 @@ interface Props {
     loading?: boolean;
 }
 
+const DEFAULT_ROW_HEIGHT = 55;
+
 function VirtualizedLogsTable({
     documents,
     // fetchNewer,
@@ -35,8 +37,8 @@ function VirtualizedLogsTable({
     const tableScroller = useRef<any>(null);
     const lastTopLog = useRef<string | null>(null);
     const lastCount = useRef<number>(-1);
+    const expandedHeights = useRef<Map<string, number>>(new Map());
     const [fetchingOlder, setFetchingOlder] = useState(false);
-    // const [shouldScroll, toggleSchouldScroll] = useToggle(true);
 
     const onScroll = ({ scrollOffset, scrollDirection }: any) => {
         if (
@@ -77,13 +79,38 @@ function VirtualizedLogsTable({
         }
     }, [documents, fetchingOlder]);
 
+    const expandRow = useCallback(
+        (index: number, height: number) => {
+            console.log('index expanded', [index, height]);
+
+            if (height > 0) {
+                expandedHeights.current.set(
+                    documents[index]._meta.uuid,
+                    height
+                );
+                tableScroller.current.scrollToItem(index, 'top');
+            } else {
+                expandedHeights.current.delete(documents[index]._meta.uuid);
+            }
+
+            tableScroller.current.resetAfterIndex(index);
+        },
+        [documents]
+    );
+
     const renderRow = useCallback(
         (props: ListChildComponentProps) => {
             const { index, style } = props;
 
-            return <Row row={documents[index]} style={style} />;
+            return (
+                <Row
+                    row={documents[index]}
+                    style={style}
+                    rowExpanded={(height) => expandRow(index, height)}
+                />
+            );
         },
-        [documents]
+        [documents, expandRow]
     );
 
     // Scroll to the bottom on load NOT WORKING
@@ -105,7 +132,6 @@ function VirtualizedLogsTable({
                         height={height}
                         width={width}
                         sx={{ overflow: 'hidden' }}
-                        // ref={tableScroller}
                     >
                         <Table
                             aria-label={intl.formatMessage({
@@ -126,8 +152,14 @@ function VirtualizedLogsTable({
                                     ref={tableScroller}
                                     height={height}
                                     width={width}
-                                    itemSize={(_rowIndex) => 55}
-                                    estimatedItemSize={55}
+                                    itemSize={(rowIndex) => {
+                                        return (
+                                            (expandedHeights.current.get(
+                                                documents[rowIndex]._meta.uuid
+                                            ) ?? 0) + DEFAULT_ROW_HEIGHT
+                                        );
+                                    }}
+                                    estimatedItemSize={DEFAULT_ROW_HEIGHT}
                                     itemCount={documents.length}
                                     overscanCount={10}
                                     onScroll={onScroll}

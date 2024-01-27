@@ -17,8 +17,7 @@ function MessageCell({ fields, message }: Props) {
                     width: '100%',
                 }}
             >
-                {message} {message} {message} {message} {message} {message}{' '}
-                {message} {message} {message} {message} {message}
+                {message}
             </Typography>
 
             {fields ? (
