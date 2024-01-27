@@ -1,4 +1,4 @@
-import { Box, Table, TableContainer } from '@mui/material';
+import { Box, LinearProgress, Table, TableContainer } from '@mui/material';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import { findIndex } from 'lodash';
@@ -146,6 +146,8 @@ function VirtualizedLogsTable({
                                 columns={columns}
                                 enableDivRendering
                             />
+
+                            {loading ? <LinearProgress /> : null}
 
                             {documents.length > 0 ? (
                                 <VariableSizeList

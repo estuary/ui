@@ -1,18 +1,9 @@
-import {
-    Box,
-    Collapse,
-    Stack,
-    TableCell,
-    TableRow,
-    Typography,
-} from '@mui/material';
+import { Box, Collapse, Stack, TableRow, Typography } from '@mui/material';
 import { OpsLogFlowDocument } from 'types';
-import { FormattedMessage } from 'react-intl';
 import { useState } from 'react';
 import LevelCell from '../cells/logs/LevelCell';
 import TimestampCell from '../cells/logs/TimestampCell';
 import MessageCell from '../cells/logs/MessageCell';
-import LevelIcon from '../cells/logs/LevelIcon';
 import FieldsExpandedCell from '../cells/logs/FieldsExpandedCell';
 
 interface RowProps {
@@ -21,19 +12,20 @@ interface RowProps {
     style?: any;
 }
 
-interface RowsProps {
-    data: OpsLogFlowDocument[];
-    loading?: boolean;
-    hitFileStart?: boolean;
-}
-
 export function Row({ row, rowExpanded, style }: RowProps) {
     const hasFields = Boolean(row.fields);
 
     const [open, setOpen] = useState(false);
+    const [opening, setOpening] = useState(false);
 
     const handleClick = () => {
+        setOpening(true);
         setOpen((previousOpen) => !previousOpen);
+    };
+
+    const toggleRowHeight = (target: HTMLElement) => {
+        rowExpanded(target.offsetHeight);
+        setOpening(false);
     };
 
     const id = open ? `jsonPopper_${row._meta.uuid}` : undefined;
@@ -45,7 +37,6 @@ export function Row({ row, rowExpanded, style }: RowProps) {
             aria-expanded={hasFields ? open : undefined}
             aria-describedby={id}
             style={style}
-            selected={open}
             sx={{
                 cursor: hasFields ? 'pointer' : undefined,
             }}
@@ -72,11 +63,8 @@ export function Row({ row, rowExpanded, style }: RowProps) {
                             event.preventDefault();
                             event.stopPropagation();
                         }}
-                        onEntered={(target) => rowExpanded(target.offsetHeight)}
-                        onExited={(target) => rowExpanded(target.offsetHeight)}
-                        sx={{
-                            bgcolor: 'white',
-                        }}
+                        onEntered={toggleRowHeight}
+                        onExited={toggleRowHeight}
                         unmountOnExit
                     >
                         <Box
@@ -86,7 +74,7 @@ export function Row({ row, rowExpanded, style }: RowProps) {
                                 overflow: 'auto',
                                 mx: 3,
                                 borderBottom: 1,
-                                bgcolor: 'background.paper',
+                                opacity: opening ? 0 : undefined,
                             }}
                         >
                             <Typography>{row.message}</Typography>
@@ -98,29 +86,3 @@ export function Row({ row, rowExpanded, style }: RowProps) {
         </TableRow>
     );
 }
-
-function Rows({ loading, hitFileStart }: RowsProps) {
-    return (
-        <>
-            {loading ? (
-                <TableRow>
-                    <TableCell colSpan={3}>
-                        <FormattedMessage id="ops.logsTable.fetchingOlderLogs" />
-                    </TableCell>
-                </TableRow>
-            ) : null}
-            {hitFileStart ? (
-                <TableRow>
-                    <TableCell align="right">
-                        <LevelIcon level="done" />
-                    </TableCell>
-                    <TableCell colSpan={2}>
-                        <FormattedMessage id="ops.logsTable.allOldLogsLoaded" />
-                    </TableCell>
-                </TableRow>
-            ) : null}
-        </>
-    );
-}
-
-export default Rows;
