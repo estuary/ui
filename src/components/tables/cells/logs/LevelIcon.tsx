@@ -1,6 +1,7 @@
 import { Tooltip, Typography, useTheme } from '@mui/material';
 import {
     CheckCircle,
+    Circle,
     DeleteCircle,
     InfoEmpty,
     MinusCircle,
@@ -26,8 +27,10 @@ function LevelIcon({ level }: Props) {
             ? WarningCircle
             : level === 'done'
             ? CheckCircle
-            : level === 'debug' || level === 'trace'
+            : level === 'debug'
             ? MinusCircle
+            : level === 'trace'
+            ? Circle
             : InfoEmpty;
 
     const iconColor =

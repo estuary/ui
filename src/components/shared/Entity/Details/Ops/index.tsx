@@ -1,7 +1,4 @@
-import { Box, Button, Stack } from '@mui/material';
-import KeyValueList from 'components/shared/KeyValueList';
-import UnderDev from 'components/shared/UnderDev';
-import LogsTable from 'components/tables/Logs';
+import { Box, Stack } from '@mui/material';
 import { useJournalData } from 'hooks/journals/useJournalData';
 import useJournalNameForLogs from 'hooks/journals/useJournalNameForLogs';
 import useGlobalSearchParams, {
@@ -9,13 +6,15 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
-import { MEGABYTE } from 'utils/dataPlane-utils';
 import Error from 'components/shared/Error';
 import { BASE_ERROR } from 'services/supabase';
-
-const maxBytes = Math.round(MEGABYTE / 25);
+import LogsTable from 'components/tables/Logs';
+import { maxBytes, START_OF_LOGS_UUID } from 'components/tables/Logs/shared';
+import { useIntl } from 'react-intl';
 
 function Ops() {
+    const intl = useIntl();
+
     const [fetchingMore, setFetchingMore] = useState(false);
     const [olderFinished, setOlderFinished] = useState(false);
     const [lastParsed, setLastParsed] = useState<number>(0);
@@ -53,11 +52,25 @@ function Ops() {
         if (parsedEnd !== lastParsed) {
             if (documents.length > 0) {
                 const newDocs = [...documents, ...docs];
+
+                if (parsedEnd === 0) {
+                    newDocs.unshift({
+                        _meta: {
+                            uuid: START_OF_LOGS_UUID,
+                        },
+                        level: 'info',
+                        message: intl.formatMessage({
+                            id: 'ops.logsTable.allOldLogsLoaded',
+                        }),
+                        ts: '',
+                    });
+                }
+
                 setDocs(newDocs);
                 setFetchingMore(false);
             }
         }
-    }, [data?.meta, docs, documents, lastParsed]);
+    }, [data?.meta, docs, documents, intl, lastParsed]);
 
     useEffect(() => {
         // Get the mete data out of the response
@@ -71,7 +84,7 @@ function Ops() {
         // Keep track of where we last read data from so we can keep stepping backwards through the file
         setLastParsed(parsedEnd ?? 0);
 
-        // If we have hit 0 then we now we hit the start of the data are nothing older is available
+        // If we have hit 0 then we now we hit the start of the data any nothing older is available
         if (parsedEnd === 0) {
             setOlderFinished(true);
         }
@@ -79,54 +92,8 @@ function Ops() {
 
     return (
         <Box>
-            <UnderDev />
             <Box>
-                <KeyValueList
-                    sectionTitle="Debugging Values"
-                    data={[
-                        { title: 'Documents', val: docs.length },
-                        { title: 'Last Byte Parsed', val: lastParsed },
-                    ]}
-                />
-
-                <Stack spacing={2} direction="row">
-                    <Button
-                        disabled={loading || fetchingMore || olderFinished}
-                        onClick={() => {
-                            setFetchingMore(true);
-                            refresh({
-                                offset: 0,
-                                endOffset: lastParsed,
-                            });
-                        }}
-                    >
-                        Load Older
-                    </Button>
-
-                    <Button
-                        disabled={loading || fetchingMore}
-                        onClick={() => {
-                            setFetchingMore(true);
-                            refresh();
-                        }}
-                    >
-                        Load Newer
-                    </Button>
-                </Stack>
-
                 <Stack spacing={2}>
-                    {/*                    <JournalAlerts
-                        journalData={journalData}
-                        notFoundTitleMessage={
-                            <FormattedMessage
-                                id="ops.journals.notFound.message"
-                                values={{
-                                    entityType,
-                                }}
-                            />
-                        }
-                    />*/}
-
                     {error ? (
                         <Error
                             error={{
@@ -137,26 +104,29 @@ function Ops() {
                         />
                     ) : null}
 
-                    <LogsTable
-                        documents={docs}
-                        loading={fetchingMore || loading}
-                        fetchNewer={() => {
-                            console.log('fetcher latest logs');
+                    <Box>
+                        <LogsTable
+                            documents={docs}
+                            loading={fetchingMore || loading}
+                            fetchNewer={() => {
+                                setFetchingMore(true);
+                                refresh();
+                            }}
+                            fetchOlder={
+                                olderFinished
+                                    ? undefined
+                                    : () => {
+                                          console.log('fetch older logs');
 
-                            // setLoading(true);
-                            // setTimeout(() => setLoading(false), 2500);
-                        }}
-                        fetchOlder={
-                            olderFinished
-                                ? undefined
-                                : () => {
-                                      console.log('fetch older logs');
-
-                                      // setLoading(true);
-                                      // setTimeout(() => setLoading(false), 2500);
-                                  }
-                        }
-                    />
+                                          setFetchingMore(true);
+                                          refresh({
+                                              offset: 0,
+                                              endOffset: lastParsed,
+                                          });
+                                      }
+                            }
+                        />
+                    </Box>
                 </Stack>
             </Box>
         </Box>

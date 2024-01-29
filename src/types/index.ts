@@ -311,10 +311,11 @@ export interface TableColumns {
     field: string | null;
     collapseHeader?: boolean;
     headerIntlKey?: string | null;
-    width?: number;
+    width?: number | string;
     sticky?: boolean;
     align?: TableCellProps['align'];
     cols?: number;
+    display?: string;
 }
 
 export interface TableState {
@@ -389,10 +390,10 @@ export interface DataProcessingAlert {
 
 export interface OpsLogFlowDocument {
     _meta: Meta;
-    shard: Shard;
     ts: string; //time stamp string
     level: string;
     message: string;
+    shard?: Shard;
     fields?: Schema;
 }
 

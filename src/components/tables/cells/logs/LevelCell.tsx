@@ -12,7 +12,7 @@ interface Props {
 
 function LevelCell({ disableExpand, expanded, row }: Props) {
     return (
-        <TableCell sx={BaseCellSx}>
+        <TableCell sx={BaseCellSx} component="div">
             <Stack direction="row" sx={{ alignItems: 'center' }}>
                 <ExpandRowButton disable={disableExpand} expanded={expanded} />
                 <LevelIcon level={row.level} />

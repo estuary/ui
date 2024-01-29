@@ -669,13 +669,17 @@ const Ops: ResolvedIntlConfig['messages'] = {
     'ops.journals.notFound.message': `We were unable to find any logs for this {entityType}.`,
     'ops.logsTable.label.level': `Level`,
     'ops.logsTable.fetchingOlderLogs': `Fetching older logs...`,
-    'ops.logsTable.allOldLogsLoaded': ` --- `,
+    'ops.logsTable.allOldLogsLoaded': ` Start of logs `,
     'ops.logsTable.label.ts': `Timestamp`,
     'ops.logsTable.label.message': `Message`,
     'ops.logsTable.label.fields': `Fields`,
     'ops.logsTable.expand.disabled': `no fields to display`,
     'ops.logsTable.emptyTableDefault.header': `No logs found.`,
     'ops.logsTable.emptyTableDefault.message': `We were unable to find any logs. Please press refresh to try loading again.`,
+    'ops.logsTable.footer.lines': `{count} {count, plural,
+        one {log}
+        other {logs}
+    }`,
 };
 
 const endpointConfigHeader = `Endpoint Config`;

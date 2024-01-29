@@ -1,4 +1,10 @@
-import { TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
+import {
+    Box,
+    TableCell,
+    TableHead,
+    TableRow,
+    TableSortLabel,
+} from '@mui/material';
 import { getStickyTableCell } from 'context/Theme';
 import { ArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
@@ -14,11 +20,13 @@ interface Props {
     selectData?: any;
     selectableTableStoreName?: SelectTableStoreNames;
     sortDirection?: SortDirection;
+    enableDivRendering?: boolean;
 }
 
 function EntityTableHeader({
     columns,
     columnToSort,
+    enableDivRendering,
     headerClick,
     hide,
     selectData,
@@ -28,8 +36,9 @@ function EntityTableHeader({
     const enableSort = Boolean(columnToSort && headerClick && sortDirection);
 
     return (
-        <TableHead>
+        <TableHead component={enableDivRendering ? 'div' : 'thead'}>
             <TableRow
+                component={enableDivRendering ? Box : TableRow}
                 sx={{
                     background: (theme) => theme.palette.background.default,
                 }}
@@ -59,6 +68,13 @@ function EntityTableHeader({
                         };
                     }
 
+                    if (column.display) {
+                        tableCellSX = {
+                            ...tableCellSX,
+                            display: column.display,
+                        };
+                    }
+
                     if (column.renderHeader && selectableTableStoreName) {
                         return column.renderHeader(
                             index,
@@ -68,6 +84,7 @@ function EntityTableHeader({
 
                     return (
                         <TableCell
+                            component={enableDivRendering ? 'div' : 'td'}
                             key={`${column.field}-${index}`}
                             align={column.align}
                             sortDirection={
