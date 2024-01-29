@@ -17,6 +17,7 @@ interface Props {
     loading: boolean;
     rows: any;
     CustomBody?: any;
+    enableDivRendering?: boolean;
 }
 
 function EntityTableBody({
@@ -26,6 +27,7 @@ function EntityTableBody({
     rows,
     tableState,
     CustomBody,
+    enableDivRendering,
 }: Props) {
     const columnKeys = useMemo(() => {
         return getColumnKeyList(columns);
@@ -36,14 +38,17 @@ function EntityTableBody({
     }
 
     return (
-        <TableBody>
+        <TableBody component={enableDivRendering ? 'div' : 'thead'}>
             {rows ? (
                 rows
             ) : loading ? (
                 <TableLoadingRows columnKeys={columnKeys} />
             ) : (
-                <TableRow>
-                    <TableCell colSpan={columnKeys.length}>
+                <TableRow component={enableDivRendering ? 'div' : 'tr'}>
+                    <TableCell
+                        colSpan={columnKeys.length}
+                        component={enableDivRendering ? 'div' : 'td'}
+                    >
                         <Box
                             sx={{
                                 p: 2,

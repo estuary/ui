@@ -1,4 +1,12 @@
-import { Box, LinearProgress, Table, TableContainer } from '@mui/material';
+import {
+    Box,
+    LinearProgress,
+    Table,
+    TableContainer,
+    TableFooter,
+    TableRow,
+    Typography,
+} from '@mui/material';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import { findIndex } from 'lodash';
@@ -15,6 +23,7 @@ import { ListChildComponentProps, VariableSizeList } from 'react-window';
 import { OpsLogFlowDocument, TableStatuses } from 'types';
 import { Row } from './Rows';
 import useLogColumns from './useLogColumns';
+import { DEFAULT_ROW_HEIGHT } from './shared';
 
 interface Props {
     documents: OpsLogFlowDocument[];
@@ -23,38 +32,34 @@ interface Props {
     loading?: boolean;
 }
 
-const DEFAULT_ROW_HEIGHT = 55;
-
 function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     const intl = useIntl();
     const columns = useLogColumns();
 
     const tableScroller = useRef<any>(null);
+    const outerRef = useRef<any>(null);
     const virtualRows = useRef<any>(null);
     const lastTopLog = useRef<string | null>(null);
     const lastCount = useRef<number>(-1);
     const expandedHeights = useRef<Map<string, number>>(new Map());
+    const scrollOnLoad = useRef(true);
     const [fetchingOlder, setFetchingOlder] = useState(false);
     const [fetchingNewer, setFetchingNewer] = useState(false);
+    const [hadNothingNew, setHadNothingNew] = useState(false);
 
     const onScroll = ({ scrollOffset, scrollDirection }: any) => {
-        console.log('onScroll', {
-            scrollOffset,
-            scrollDirection,
-            sc: tableScroller.current,
-            virtualRows: virtualRows.current.clientHeight,
-            sup:
-                virtualRows.current.scrollHeight -
-                virtualRows.current.scrollTop,
-            supsup: virtualRows.current.clientHeight,
-        });
         // If we're already loading do not need to kick another call off
         if (fetchingNewer || fetchingOlder) {
             return;
         }
 
         // Need to figure out if scrolling is at bottom
-        if (scrollOffset === -1 && scrollDirection === 'forward') {
+        if (
+            scrollDirection === 'forward' &&
+            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+            scrollOffset + outerRef.current.offsetHeight + DEFAULT_ROW_HEIGHT >=
+                outerRef.current.scrollHeight
+        ) {
             setFetchingNewer(true);
             fetchNewer();
         } else if (
@@ -97,7 +102,8 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
         }
 
         if (lastCount.current === documents.length) {
-            console.log('fetching older and list length did not change');
+            console.log('nothing new came in');
+            setHadNothingNew(true);
         }
     }, [documents, fetchingOlder, fetchingNewer]);
 
@@ -118,17 +124,12 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     );
 
     const renderRow = useCallback(
-        (props: ListChildComponentProps) => {
-            const { index, style } = props;
-            const row = documents[index];
-
+        ({ index, style }: ListChildComponentProps) => {
             return (
                 <Row
-                    row={row}
+                    row={documents[index]}
                     style={style}
-                    renderExpanded={Boolean(
-                        expandedHeights.current.get(row._meta.uuid)
-                    )}
+                    lastRow={index === documents.length - 1}
                     rowExpanded={(height) => expandRow(index, height)}
                 />
             );
@@ -136,11 +137,25 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
         [documents, expandRow]
     );
 
-    // Scroll to the bottom on load NOT WORKING
+    const getItemSize = useCallback(
+        (rowIndex: number) => {
+            return (
+                (expandedHeights.current.get(documents[rowIndex]._meta.uuid) ??
+                    0) + DEFAULT_ROW_HEIGHT
+            );
+        },
+        [documents]
+    );
+
+    // On load scroll to near the bottom
     useLayoutEffect(() => {
+        console.log('useLayoutEffect');
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (tableScroller?.current) {
-            tableScroller.current.scrollToItem(documents.length);
+        if (scrollOnLoad?.current && tableScroller?.current) {
+            scrollOnLoad.current = false;
+            tableScroller.current.scrollToItem(
+                documents.length > 1 ? Math.round(documents.length * 0.9) : 1
+            );
         }
         // We only care about then the scroll ref is set so we can scroll to the bottom
         // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-unnecessary-condition
@@ -149,7 +164,7 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     console.log('state+', { fetchingNewer, fetchingOlder, loading });
 
     return (
-        <AutoSizer style={{ height: '500px', width: '100%' }}>
+        <AutoSizer style={{ height: '550px', width: '100%' }}>
             {({ width, height }: AutoSizer['state']) => {
                 return (
                     <TableContainer
@@ -177,16 +192,11 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
                             {documents.length > 0 ? (
                                 <VariableSizeList
                                     ref={tableScroller}
+                                    outerRef={outerRef}
                                     innerRef={virtualRows}
-                                    height={height}
+                                    height={height - DEFAULT_ROW_HEIGHT}
                                     width={width}
-                                    itemSize={(rowIndex) => {
-                                        return (
-                                            (expandedHeights.current.get(
-                                                documents[rowIndex]._meta.uuid
-                                            ) ?? 0) + DEFAULT_ROW_HEIGHT
-                                        );
-                                    }}
+                                    itemSize={getItemSize}
                                     estimatedItemSize={DEFAULT_ROW_HEIGHT}
                                     itemCount={documents.length}
                                     overscanCount={10}
@@ -222,6 +232,19 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
                             )}
 
                             {fetchingNewer ? <LinearProgress /> : null}
+
+                            <TableFooter component="div">
+                                <TableRow
+                                    component="div"
+                                    // sx={{ ...tableHeaderFooterSx }}
+                                >
+                                    {hadNothingNew ? (
+                                        <Typography>
+                                            No new logs to display
+                                        </Typography>
+                                    ) : null}
+                                </TableRow>
+                            </TableFooter>
                         </Table>
                     </TableContainer>
                 );
