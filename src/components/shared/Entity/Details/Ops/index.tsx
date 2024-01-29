@@ -1,4 +1,4 @@
-import { Box, Button, Stack } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import { useJournalData } from 'hooks/journals/useJournalData';
 import useJournalNameForLogs from 'hooks/journals/useJournalNameForLogs';
 import useGlobalSearchParams, {
@@ -109,10 +109,8 @@ function Ops() {
                             documents={docs}
                             loading={fetchingMore || loading}
                             fetchNewer={() => {
-                                console.log('fetcher latest logs');
-
-                                // setLoading(true);
-                                // setTimeout(() => setLoading(false), 2500);
+                                setFetchingMore(true);
+                                refresh();
                             }}
                             fetchOlder={
                                 olderFinished
@@ -128,18 +126,6 @@ function Ops() {
                                       }
                             }
                         />
-                    </Box>
-
-                    <Box>
-                        <Button
-                            disabled={loading || fetchingMore}
-                            onClick={() => {
-                                setFetchingMore(true);
-                                refresh();
-                            }}
-                        >
-                            Load Newer
-                        </Button>
                     </Box>
                 </Stack>
             </Box>

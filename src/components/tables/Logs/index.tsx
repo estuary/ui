@@ -28,15 +28,15 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     const scrollOnLoad = useRef(true);
     const [fetchingOlder, setFetchingOlder] = useState(false);
     const [fetchingNewer, setFetchingNewer] = useState(false);
-    const [hadNothingNew, setHadNothingNew] = useState(false);
+    const [lastCheckedForNew, setLastCheckedForNew] = useState<string | null>(
+        null
+    );
 
     const onScroll = ({ scrollOffset, scrollDirection }: any) => {
         // If we're already loading do not need to kick another call off
         if (fetchingNewer || fetchingOlder) {
             return;
         }
-
-        console.log('onScroll', { scrollOffset });
 
         // Need to figure out if scrolling is at bottom
         if (
@@ -45,7 +45,7 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
             scrollOffset + outerRef.current.offsetHeight + DEFAULT_ROW_HEIGHT >=
                 outerRef.current.scrollHeight
         ) {
-            setHadNothingNew(false);
+            setLastCheckedForNew(null);
             setFetchingNewer(true);
             fetchNewer();
         } else if (
@@ -86,14 +86,13 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
             setFetchingOlder(false);
             setFetchingNewer(false);
         } else if (fetchingNewer && lastCount.current === documents.length) {
-            setHadNothingNew(true);
+            setLastCheckedForNew(new Date().toISOString());
             setFetchingNewer(false);
         }
     }, [documents, fetchingOlder, fetchingNewer]);
 
     // On load scroll to near the bottom
     useLayoutEffect(() => {
-        console.log('useLayoutEffect');
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (scrollOnLoad?.current && tableScroller?.current) {
             scrollOnLoad.current = false;
@@ -135,7 +134,7 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
 
                     <LogsTableFooter
                         logsCount={documents.length}
-                        hadNothingNew={hadNothingNew}
+                        lastCheckedForNew={lastCheckedForNew}
                     />
                 </Table>
             </TableContainer>

@@ -1,27 +1,45 @@
-import { TableFooter, TableRow, Typography } from '@mui/material';
+import {
+    Divider,
+    Stack,
+    TableFooter,
+    TableRow,
+    Typography,
+} from '@mui/material';
+import { DateTime } from 'luxon';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
     logsCount: number;
-    hadNothingNew: boolean;
+    lastCheckedForNew: string | null;
 }
 
-function LogsTableFooter({ logsCount, hadNothingNew }: Props) {
+function LogsTableFooter({ logsCount, lastCheckedForNew }: Props) {
+    const lastChecked = lastCheckedForNew
+        ? DateTime.fromISO(lastCheckedForNew).toFormat(
+              'yyyy-LL-dd HH:mm:ss.SSS ZZZZ'
+          )
+        : null;
     return (
         <TableFooter component="div">
             <TableRow component="div" sx={{ height: 35 }}>
-                {hadNothingNew ? (
-                    <Typography>No new logs to display</Typography>
-                ) : null}
+                <Stack
+                    direction="row"
+                    divider={<Divider orientation="vertical" flexItem />}
+                    spacing={2}
+                >
+                    <Typography>
+                        <FormattedMessage
+                            id="ops.logsTable.footer.lines"
+                            values={{
+                                count: logsCount,
+                            }}
+                        />
+                    </Typography>
 
-                <Typography>
-                    <FormattedMessage
-                        id="ops.logsTable.footer.lines"
-                        values={{
-                            count: logsCount,
-                        }}
-                    />
-                </Typography>
+                    {lastChecked ? (
+                        <Typography>No new logs as of {lastChecked}</Typography>
+                    ) : null}
+                </Stack>
             </TableRow>
         </TableFooter>
     );
