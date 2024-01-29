@@ -1,7 +1,39 @@
-import MustReloadDialog from 'components/shared/MustReloadDialog';
+import FullPageSpinner from 'components/fullPage/Spinner';
 import { lazy } from 'react';
 import { logRocketConsole, logRocketEvent } from './shared';
 import { CustomEvents } from './types';
+
+const LAZY_LOAD_FAILED_KEY = 'chunk_failed';
+
+// https://mitchgavan.com/code-splitting-react-safely/
+const setWithExpiry = (key: string, value: string, ttl: number) => {
+    localStorage.setItem(
+        key,
+        JSON.stringify({
+            value,
+            expiry: new Date().getTime() + ttl,
+        })
+    );
+};
+
+const getWithExpiry = (key: string) => {
+    const itemString = window.localStorage.getItem(key);
+    const item = itemString ? JSON.parse(itemString) : null;
+
+    // Either there is no setting or we couldn't parse it. Either way we should try reloading again
+    if (item === null) {
+        return null;
+    }
+
+    // We have waited long enough to allow trying again so clearing out the key
+    if (new Date().getTime() > item.expiry) {
+        localStorage.removeItem(key);
+        return null;
+    }
+
+    // Return value so we do not try reloading again
+    return item.value;
+};
 
 const handledLazy = (factory: () => Promise<{ default: any }>) => {
     return lazy(() =>
@@ -9,7 +41,14 @@ const handledLazy = (factory: () => Promise<{ default: any }>) => {
             logRocketEvent(CustomEvents.LAZY_LOADING, 'failed');
             logRocketConsole('Component Failed Loading:', error);
 
-            return { default: MustReloadDialog };
+            // Check if we're in an infinite loading loop before trying again
+            if (!getWithExpiry(LAZY_LOAD_FAILED_KEY)) {
+                setWithExpiry(LAZY_LOAD_FAILED_KEY, 'true', 10000);
+                window.location.reload();
+            }
+
+            // Still make sure to return something so the app does not blow up
+            return { default: FullPageSpinner };
         })
     );
 };

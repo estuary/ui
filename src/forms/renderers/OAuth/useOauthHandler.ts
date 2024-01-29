@@ -1,8 +1,9 @@
 import { accessToken, authURL } from 'api/oauth';
 import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
 import { isEmpty } from 'lodash';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useBeforeUnload } from 'react-use';
 import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm/hooks';
 import { useEndpointConfigStore_endpointConfig_data } from 'stores/EndpointConfig/hooks';
 import { CREDENTIALS, INJECTED_VALUES } from './shared';
@@ -93,6 +94,13 @@ export const useOauthHandler = (
             );
         }
     };
+
+    // Loading usually means there is an OAuth in progress so make sure
+    //  they want to close the window.
+    const when = useCallback(() => {
+        return loading;
+    }, [loading]);
+    useBeforeUnload(when, intl.formatMessage({ id: 'confirm.oauth' }));
 
     return {
         errorMessage,

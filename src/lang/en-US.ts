@@ -195,16 +195,12 @@ const ErrorBoundry: ResolvedIntlConfig['messages'] = {
     'errorBoundry.title': `${Error['error.title']}`,
     'errorBoundry.message1': `There was an unexpected application error. `,
     'errorBoundry.message2': `Expand to see details.`,
-    'errorBoundry.chunkNotFetched.dialog.title': `Reload Required`,
-    'errorBoundry.chunkNotFetched.error.title': `Failure to load`,
-    'errorBoundry.chunkNotFetched.error.message1': `There was an issue fetching this portion of the application.`,
-    'errorBoundry.chunkNotFetched.error.message2': `This is usually caused by a network issue or an old dashboard version being cached.`,
-    'errorBoundry.chunkNotFetched.error.instructions': `To continue please reload.`,
 };
 
 const ConfirmationDialog: ResolvedIntlConfig['messages'] = {
     'confirm.title': `Are you sure?`,
     'confirm.loseData': `You have unsaved work. If you continue, you will lose your changes.`,
+    'confirm.oauth': `You are in the process of OAuth. If you continue, you will lose your changes.`,
 };
 
 const FullPage: ResolvedIntlConfig['messages'] = {
@@ -1039,6 +1035,10 @@ const OAuth: ResolvedIntlConfig['messages'] = {
     'oauth.authenticate': `Authenticate your {provider} account`,
     'oauth.remove': `Remove`,
     'oauth.edit.message': `If you edit your endpoint config and want to continue using OAuth you must reauthenticate.`,
+    'oauth.windowOpener.error.dialog.title': `OAuth Failed`,
+    'oauth.windowOpener.error.title': `Cannot reach parent window`,
+    'oauth.windowOpener.error.message1': `We are unable to communicate with the window that opened the OAuth pop up. The window may have been closed.`,
+    'oauth.windowOpener.error.message2': `Please close this dialog and try again.`,
 };
 
 const Supabase: ResolvedIntlConfig['messages'] = {
