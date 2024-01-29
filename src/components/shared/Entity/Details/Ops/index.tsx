@@ -9,9 +9,12 @@ import { OpsLogFlowDocument } from 'types';
 import Error from 'components/shared/Error';
 import { BASE_ERROR } from 'services/supabase';
 import LogsTable from 'components/tables/Logs';
-import { maxBytes } from 'components/tables/Logs/shared';
+import { maxBytes, START_OF_LOGS_UUID } from 'components/tables/Logs/shared';
+import { useIntl } from 'react-intl';
 
 function Ops() {
+    const intl = useIntl();
+
     const [fetchingMore, setFetchingMore] = useState(false);
     const [olderFinished, setOlderFinished] = useState(false);
     const [lastParsed, setLastParsed] = useState<number>(0);
@@ -53,10 +56,12 @@ function Ops() {
                 if (parsedEnd === 0) {
                     newDocs.unshift({
                         _meta: {
-                            uuid: 'start-of-logs',
+                            uuid: START_OF_LOGS_UUID,
                         },
                         level: 'info',
-                        message: 'Start of Logs',
+                        message: intl.formatMessage({
+                            id: 'ops.logsTable.allOldLogsLoaded',
+                        }),
                         ts: '',
                     });
                 }
@@ -65,7 +70,7 @@ function Ops() {
                 setFetchingMore(false);
             }
         }
-    }, [data?.meta, docs, documents, lastParsed]);
+    }, [data?.meta, docs, documents, intl, lastParsed]);
 
     useEffect(() => {
         // Get the mete data out of the response

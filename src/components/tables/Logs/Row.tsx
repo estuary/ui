@@ -1,21 +1,19 @@
-import { Box, Stack, TableRow, useTheme } from '@mui/material';
+import { Box, TableRow, useTheme } from '@mui/material';
 import { OpsLogFlowDocument } from 'types';
 import { useState } from 'react';
 import { doubleElevationHoverBackground } from 'context/Theme';
-import LevelCell from '../cells/logs/LevelCell';
-import TimestampCell from '../cells/logs/TimestampCell';
-import MessageCell from '../cells/logs/MessageCell';
-import FieldsExpandedCell from '../cells/logs/FieldsExpandedCell';
 import { DEFAULT_ROW_HEIGHT } from './shared';
+import { LogsTableColumns } from './Columns';
 
 interface RowProps {
     row: OpsLogFlowDocument;
     rowExpanded: (height: number) => void;
-    lastRow?: boolean;
     style?: any;
 }
 
-export function Row({ lastRow, row, rowExpanded, style }: RowProps) {
+export function LogsTableRow({ row, rowExpanded, style }: RowProps) {
+    // const startOfLogs = row._meta.uuid === START_OF_LOGS_UUID;
+
     const theme = useTheme();
     const hasFields = Boolean(row.fields);
     const renderedHeight = style?.height ?? DEFAULT_ROW_HEIGHT;
@@ -48,34 +46,15 @@ export function Row({ lastRow, row, rowExpanded, style }: RowProps) {
                 borderLeft: open ? '5px solid' : undefined,
                 borderLeftColor:
                     doubleElevationHoverBackground[theme.palette.mode],
-                paddingBottom: lastRow ? 1 : undefined,
-                bgcolor: lastRow ? 'red' : undefined,
             }}
             onClick={hasFields ? handleClick : undefined}
         >
-            <Stack>
-                <Box>
-                    <LevelCell
-                        disableExpand={!hasFields}
-                        expanded={open}
-                        row={row}
-                    />
-
-                    <TimestampCell ts={row.ts} />
-
-                    <MessageCell message={row.message} fields={row.fields} />
-                </Box>
-                {hasFields ? (
-                    <FieldsExpandedCell
-                        fields={row.fields}
-                        uuid={row._meta.uuid}
-                        message={row.message}
-                        open={open}
-                        opening={opening}
-                        toggleRowHeight={toggleRowHeight}
-                    />
-                ) : null}
-            </Stack>
+            <LogsTableColumns
+                row={row}
+                open={open}
+                opening={opening}
+                toggleRowHeight={toggleRowHeight}
+            />
         </TableRow>
     );
 }

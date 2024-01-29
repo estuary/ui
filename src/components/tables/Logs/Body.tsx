@@ -4,9 +4,12 @@ import { OpsLogFlowDocument, TableStatuses } from 'types';
 import { TableBody } from '@mui/material';
 import { MutableRefObject, useCallback, useRef } from 'react';
 import EntityTableBody from '../EntityTable/TableBody';
-import { DEFAULT_ROW_HEIGHT } from './shared';
-import { Row } from './Rows';
+import {
+    DEFAULT_ROW_HEIGHT,
+    DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS,
+} from './shared';
 import useLogColumns from './useLogColumns';
+import { LogsTableRow } from './Row';
 
 interface Props {
     documents: OpsLogFlowDocument[];
@@ -31,6 +34,10 @@ function LogsTableBody({
 
     const getItemSize = useCallback(
         (rowIndex: number) => {
+            if (!Boolean(documents[rowIndex].fields)) {
+                return DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS;
+            }
+
             return (
                 (expandedHeights.current.get(documents[rowIndex]._meta.uuid) ??
                     0) + DEFAULT_ROW_HEIGHT
@@ -58,10 +65,9 @@ function LogsTableBody({
     const renderRow = useCallback(
         ({ index, style }: ListChildComponentProps) => {
             return (
-                <Row
+                <LogsTableRow
                     row={documents[index]}
                     style={style}
-                    lastRow={index === documents.length - 1}
                     rowExpanded={(height) => expandRow(index, height)}
                 />
             );
@@ -84,7 +90,7 @@ function LogsTableBody({
                                 itemSize={getItemSize}
                                 estimatedItemSize={DEFAULT_ROW_HEIGHT}
                                 itemCount={documents.length}
-                                overscanCount={10}
+                                overscanCount={15}
                                 onScroll={onScroll}
                                 style={{
                                     paddingBottom: 10,
