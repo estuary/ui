@@ -1,30 +1,13 @@
 import { findIndex } from 'lodash';
-import {
-    useCallback,
-    useEffect,
-    useLayoutEffect,
-    useRef,
-    useState,
-} from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import AutoSizer from 'react-virtualized-auto-sizer';
-import { ListChildComponentProps, VariableSizeList } from 'react-window';
-import { OpsLogFlowDocument, TableStatuses } from 'types';
-import {
-    Box,
-    LinearProgress,
-    Table,
-    TableBody,
-    TableContainer,
-    TableFooter,
-    TableRow,
-    Typography,
-} from '@mui/material';
+import { OpsLogFlowDocument } from 'types';
+import { Box, LinearProgress, Table, TableContainer } from '@mui/material';
 import EntityTableHeader from '../EntityTable/TableHeader';
-import EntityTableBody from '../EntityTable/TableBody';
-import { Row } from './Rows';
 import useLogColumns from './useLogColumns';
 import { DEFAULT_ROW_HEIGHT } from './shared';
+import LogsTableFooter from './Footer';
+import LogsTableBody from './Body';
 
 interface Props {
     documents: OpsLogFlowDocument[];
@@ -42,7 +25,6 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     const virtualRows = useRef<any>(null);
     const lastTopLog = useRef<string | null>(null);
     const lastCount = useRef<number>(-1);
-    const expandedHeights = useRef<Map<string, number>>(new Map());
     const scrollOnLoad = useRef(true);
     const [fetchingOlder, setFetchingOlder] = useState(false);
     const [fetchingNewer, setFetchingNewer] = useState(false);
@@ -109,46 +91,6 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
         }
     }, [documents, fetchingOlder, fetchingNewer]);
 
-    const expandRow = useCallback(
-        (index: number, height: number) => {
-            if (height > 0) {
-                expandedHeights.current.set(
-                    documents[index]._meta.uuid,
-                    height
-                );
-            } else {
-                expandedHeights.current.delete(documents[index]._meta.uuid);
-            }
-
-            tableScroller.current.resetAfterIndex(index);
-        },
-        [documents]
-    );
-
-    const renderRow = useCallback(
-        ({ index, style }: ListChildComponentProps) => {
-            return (
-                <Row
-                    row={documents[index]}
-                    style={style}
-                    lastRow={index === documents.length - 1}
-                    rowExpanded={(height) => expandRow(index, height)}
-                />
-            );
-        },
-        [documents, expandRow]
-    );
-
-    const getItemSize = useCallback(
-        (rowIndex: number) => {
-            return (
-                (expandedHeights.current.get(documents[rowIndex]._meta.uuid) ??
-                    0) + DEFAULT_ROW_HEIGHT
-            );
-        },
-        [documents]
-    );
-
     // On load scroll to near the bottom
     useLayoutEffect(() => {
         console.log('useLayoutEffect');
@@ -162,8 +104,6 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
         // We only care about then the scroll ref is set so we can scroll to the bottom
         // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-unnecessary-condition
     }, [tableScroller?.current]);
-
-    console.log('state+', { fetchingNewer, fetchingOlder, loading });
 
     return (
         <>
@@ -184,69 +124,19 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
                 >
                     <EntityTableHeader columns={columns} enableDivRendering />
 
-                    {documents.length > 0 ? (
-                        <TableBody component="div">
-                            <AutoSizer>
-                                {({ width, height }: AutoSizer['state']) => {
-                                    return (
-                                        <VariableSizeList
-                                            ref={tableScroller}
-                                            outerRef={outerRef}
-                                            innerRef={virtualRows}
-                                            height={height}
-                                            width={width}
-                                            itemSize={getItemSize}
-                                            estimatedItemSize={
-                                                DEFAULT_ROW_HEIGHT
-                                            }
-                                            itemCount={documents.length}
-                                            overscanCount={10}
-                                            onScroll={onScroll}
-                                            style={{
-                                                paddingBottom: 10,
-                                                paddingTop: 10,
-                                            }}
-                                        >
-                                            {renderRow}
-                                        </VariableSizeList>
-                                    );
-                                }}
-                            </AutoSizer>
-                        </TableBody>
-                    ) : (
-                        <EntityTableBody
-                            columns={columns}
-                            noExistingDataContentIds={{
-                                header: 'ops.logsTable.emptyTableDefault.header',
-                                message:
-                                    'ops.logsTable.emptyTableDefault.message',
-                                disableDoclink: true,
-                            }}
-                            tableState={
-                                documents.length > 0
-                                    ? {
-                                          status: TableStatuses.DATA_FETCHED,
-                                      }
-                                    : {
-                                          status: TableStatuses.NO_EXISTING_DATA,
-                                      }
-                            }
-                            loading={Boolean(loading)}
-                            rows={documents}
-                        />
-                    )}
+                    <LogsTableBody
+                        documents={documents}
+                        onScroll={onScroll}
+                        outerRef={outerRef}
+                        tableScroller={tableScroller}
+                        virtualRows={virtualRows}
+                        loading={loading}
+                    />
 
-                    <TableFooter component="div">
-                        <TableRow component="div" sx={{ height: 35 }}>
-                            {hadNothingNew ? (
-                                <Typography>No new logs to display</Typography>
-                            ) : null}
-
-                            <Typography>
-                                {documents.length} log lines
-                            </Typography>
-                        </TableRow>
-                    </TableFooter>
+                    <LogsTableFooter
+                        logsCount={documents.length}
+                        hadNothingNew={hadNothingNew}
+                    />
                 </Table>
             </TableContainer>
             {fetchingNewer ? <LinearProgress /> : null}

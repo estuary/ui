@@ -676,6 +676,10 @@ const Ops: ResolvedIntlConfig['messages'] = {
     'ops.logsTable.expand.disabled': `no fields to display`,
     'ops.logsTable.emptyTableDefault.header': `No logs found.`,
     'ops.logsTable.emptyTableDefault.message': `We were unable to find any logs. Please press refresh to try loading again.`,
+    'ops.logsTable.footer.lines': `{count} {count, plural,
+        one {log}
+        other {logs}
+    }`,
 };
 
 const endpointConfigHeader = `Endpoint Config`;
