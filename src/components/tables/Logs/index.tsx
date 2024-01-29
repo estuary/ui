@@ -1,14 +1,3 @@
-import {
-    Box,
-    LinearProgress,
-    Table,
-    TableContainer,
-    TableFooter,
-    TableRow,
-    Typography,
-} from '@mui/material';
-import EntityTableBody from 'components/tables/EntityTable/TableBody';
-import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import { findIndex } from 'lodash';
 import {
     useCallback,
@@ -21,6 +10,18 @@ import { useIntl } from 'react-intl';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { ListChildComponentProps, VariableSizeList } from 'react-window';
 import { OpsLogFlowDocument, TableStatuses } from 'types';
+import {
+    Box,
+    LinearProgress,
+    Table,
+    TableBody,
+    TableContainer,
+    TableFooter,
+    TableRow,
+    Typography,
+} from '@mui/material';
+import EntityTableHeader from '../EntityTable/TableHeader';
+import EntityTableBody from '../EntityTable/TableBody';
 import { Row } from './Rows';
 import useLogColumns from './useLogColumns';
 import { DEFAULT_ROW_HEIGHT } from './shared';
@@ -53,6 +54,8 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
             return;
         }
 
+        console.log('onScroll', { scrollOffset });
+
         // Need to figure out if scrolling is at bottom
         if (
             scrollDirection === 'forward' &&
@@ -60,6 +63,7 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
             scrollOffset + outerRef.current.offsetHeight + DEFAULT_ROW_HEIGHT >=
                 outerRef.current.scrollHeight
         ) {
+            setHadNothingNew(false);
             setFetchingNewer(true);
             fetchNewer();
         } else if (
@@ -99,11 +103,9 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
             }
             setFetchingOlder(false);
             setFetchingNewer(false);
-        }
-
-        if (lastCount.current === documents.length) {
-            console.log('nothing new came in');
+        } else if (fetchingNewer && lastCount.current === documents.length) {
             setHadNothingNew(true);
+            setFetchingNewer(false);
         }
     }, [documents, fetchingOlder, fetchingNewer]);
 
@@ -164,92 +166,91 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     console.log('state+', { fetchingNewer, fetchingOlder, loading });
 
     return (
-        <AutoSizer style={{ height: '550px', width: '100%' }}>
-            {({ width, height }: AutoSizer['state']) => {
-                return (
-                    <TableContainer
-                        component={Box}
-                        height={height}
-                        width={width}
-                        sx={{ overflow: 'hidden' }}
-                    >
-                        <Table
-                            aria-label={intl.formatMessage({
-                                id: 'entityTable.title',
-                            })}
-                            component={Box}
-                            size="small"
-                            stickyHeader
-                            sx={{ minWidth: 250 }}
-                        >
-                            <EntityTableHeader
-                                columns={columns}
-                                enableDivRendering
-                            />
+        <>
+            {fetchingOlder ? <LinearProgress /> : null}
+            <TableContainer
+                component={Box}
+                width="100%"
+                sx={{ overflow: 'unset', height: 500 }}
+            >
+                <Table
+                    aria-label={intl.formatMessage({
+                        id: 'entityTable.title',
+                    })}
+                    component={Box}
+                    size="small"
+                    stickyHeader
+                    sx={{ minWidth: 250, width: '100%', height: '100%' }}
+                >
+                    <EntityTableHeader columns={columns} enableDivRendering />
 
-                            {fetchingOlder ? <LinearProgress /> : null}
+                    {documents.length > 0 ? (
+                        <TableBody component="div">
+                            <AutoSizer>
+                                {({ width, height }: AutoSizer['state']) => {
+                                    return (
+                                        <VariableSizeList
+                                            ref={tableScroller}
+                                            outerRef={outerRef}
+                                            innerRef={virtualRows}
+                                            height={height}
+                                            width={width}
+                                            itemSize={getItemSize}
+                                            estimatedItemSize={
+                                                DEFAULT_ROW_HEIGHT
+                                            }
+                                            itemCount={documents.length}
+                                            overscanCount={10}
+                                            onScroll={onScroll}
+                                            style={{
+                                                paddingBottom: 10,
+                                                paddingTop: 10,
+                                            }}
+                                        >
+                                            {renderRow}
+                                        </VariableSizeList>
+                                    );
+                                }}
+                            </AutoSizer>
+                        </TableBody>
+                    ) : (
+                        <EntityTableBody
+                            columns={columns}
+                            noExistingDataContentIds={{
+                                header: 'ops.logsTable.emptyTableDefault.header',
+                                message:
+                                    'ops.logsTable.emptyTableDefault.message',
+                                disableDoclink: true,
+                            }}
+                            tableState={
+                                documents.length > 0
+                                    ? {
+                                          status: TableStatuses.DATA_FETCHED,
+                                      }
+                                    : {
+                                          status: TableStatuses.NO_EXISTING_DATA,
+                                      }
+                            }
+                            loading={Boolean(loading)}
+                            rows={documents}
+                        />
+                    )}
 
-                            {documents.length > 0 ? (
-                                <VariableSizeList
-                                    ref={tableScroller}
-                                    outerRef={outerRef}
-                                    innerRef={virtualRows}
-                                    height={height - DEFAULT_ROW_HEIGHT}
-                                    width={width}
-                                    itemSize={getItemSize}
-                                    estimatedItemSize={DEFAULT_ROW_HEIGHT}
-                                    itemCount={documents.length}
-                                    overscanCount={10}
-                                    onScroll={onScroll}
-                                    style={{
-                                        paddingBottom: 10,
-                                        paddingTop: 10,
-                                    }}
-                                >
-                                    {renderRow}
-                                </VariableSizeList>
-                            ) : (
-                                <EntityTableBody
-                                    columns={columns}
-                                    noExistingDataContentIds={{
-                                        header: 'ops.logsTable.emptyTableDefault.header',
-                                        message:
-                                            'ops.logsTable.emptyTableDefault.message',
-                                        disableDoclink: true,
-                                    }}
-                                    tableState={
-                                        documents.length > 0
-                                            ? {
-                                                  status: TableStatuses.DATA_FETCHED,
-                                              }
-                                            : {
-                                                  status: TableStatuses.NO_EXISTING_DATA,
-                                              }
-                                    }
-                                    loading={Boolean(loading)}
-                                    rows={documents}
-                                />
-                            )}
+                    <TableFooter component="div">
+                        <TableRow component="div" sx={{ height: 35 }}>
+                            {hadNothingNew ? (
+                                <Typography>No new logs to display</Typography>
+                            ) : null}
 
-                            {fetchingNewer ? <LinearProgress /> : null}
-
-                            <TableFooter component="div">
-                                <TableRow
-                                    component="div"
-                                    // sx={{ ...tableHeaderFooterSx }}
-                                >
-                                    {hadNothingNew ? (
-                                        <Typography>
-                                            No new logs to display
-                                        </Typography>
-                                    ) : null}
-                                </TableRow>
-                            </TableFooter>
-                        </Table>
-                    </TableContainer>
-                );
-            }}
-        </AutoSizer>
+                            <Typography>
+                                {documents.length} log lines
+                            </Typography>
+                        </TableRow>
+                    </TableFooter>
+                </Table>
+            </TableContainer>
+            {fetchingNewer ? <LinearProgress /> : null}
+        </>
     );
 }
 

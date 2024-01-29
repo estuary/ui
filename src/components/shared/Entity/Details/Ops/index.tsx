@@ -49,6 +49,18 @@ function Ops() {
         if (parsedEnd !== lastParsed) {
             if (documents.length > 0) {
                 const newDocs = [...documents, ...docs];
+
+                if (parsedEnd === 0) {
+                    newDocs.unshift({
+                        _meta: {
+                            uuid: 'start-of-logs',
+                        },
+                        level: 'info',
+                        message: 'Start of Logs',
+                        ts: '',
+                    });
+                }
+
                 setDocs(newDocs);
                 setFetchingMore(false);
             }
@@ -67,7 +79,7 @@ function Ops() {
         // Keep track of where we last read data from so we can keep stepping backwards through the file
         setLastParsed(parsedEnd ?? 0);
 
-        // If we have hit 0 then we now we hit the start of the data are nothing older is available
+        // If we have hit 0 then we now we hit the start of the data any nothing older is available
         if (parsedEnd === 0) {
             setOlderFinished(true);
         }

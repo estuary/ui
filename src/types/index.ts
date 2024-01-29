@@ -390,10 +390,10 @@ export interface DataProcessingAlert {
 
 export interface OpsLogFlowDocument {
     _meta: Meta;
-    shard: Shard;
     ts: string; //time stamp string
     level: string;
     message: string;
+    shard?: Shard;
     fields?: Schema;
 }
 
