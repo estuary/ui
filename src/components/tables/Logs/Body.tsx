@@ -3,6 +3,7 @@ import { ListChildComponentProps, VariableSizeList } from 'react-window';
 import { OpsLogFlowDocument, TableStatuses } from 'types';
 import { TableBody } from '@mui/material';
 import { CSSProperties, MutableRefObject, useCallback, useRef } from 'react';
+import { useJournalDataLogsStore_networkFailed } from 'stores/JournalData/Logs/hooks';
 import EntityTableBody from '../EntityTable/TableBody';
 import {
     DEFAULT_ROW_HEIGHT,
@@ -38,6 +39,7 @@ function LogsTableBody({
     const columns = useLogColumns();
 
     const expandedHeights = useRef<Map<string, number>>(new Map());
+    const networkFailed = useJournalDataLogsStore_networkFailed();
 
     const getItemSize = useCallback(
         (rowIndex: number) => {
@@ -125,9 +127,11 @@ function LogsTableBody({
                 message: 'ops.logsTable.emptyTableDefault.message',
                 disableDoclink: true,
             }}
-            tableState={{
-                status: TableStatuses.DATA_FETCHED,
-            }}
+            tableState={
+                networkFailed
+                    ? { status: TableStatuses.NETWORK_FAILED }
+                    : { status: TableStatuses.NO_EXISTING_DATA }
+            }
             loading={Boolean(loading)}
             rows={null}
         />

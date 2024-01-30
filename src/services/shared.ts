@@ -30,7 +30,9 @@ export const logRocketConsole = (message: string, ...props: any[]) => {
 };
 
 export const FAILED_TO_FETCH = 'failed to fetch';
+export const RESPONSE_JSON_NOT_FN = 'response.json is not a function';
 export const RETRY_REASONS = [FAILED_TO_FETCH];
+export const NETWORK_ERRORS = [FAILED_TO_FETCH, RESPONSE_JSON_NOT_FN];
 
 export const checkErrorMessage = (
     checkingFor: string,
@@ -39,3 +41,7 @@ export const checkErrorMessage = (
 
 export const retryAfterFailure = (message?: string | null | undefined) =>
     RETRY_REASONS.some((el) => checkErrorMessage(el, message));
+
+export const showAsTechnicalDifficulties = (
+    message?: string | null | undefined
+) => NETWORK_ERRORS.some((el) => checkErrorMessage(el, message));

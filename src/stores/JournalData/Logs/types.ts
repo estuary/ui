@@ -1,9 +1,13 @@
-import { useJournalData } from 'hooks/journals/useJournalData';
+import {
+    useJournalData,
+    UseJournalDataResponse,
+} from 'hooks/journals/useJournalData';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { OpsLogFlowDocument } from 'types';
 
 export interface JournalDataLogsState extends StoreWithHydration {
     documents: OpsLogFlowDocument[] | null;
+    documentCount: number | null;
     setDocuments: (val: JournalDataLogsState['documents']) => void;
 
     lastCount: number;
@@ -21,6 +25,11 @@ export interface JournalDataLogsState extends StoreWithHydration {
     fetchingOlder: boolean;
     setFetchingOlder: (val: JournalDataLogsState['fetchingOlder']) => void;
 
+    lastTimeCheckedForNew: string | null;
+    setLastTimeCheckedForNew: (
+        val: JournalDataLogsState['lastTimeCheckedForNew']
+    ) => void;
+
     olderFinished: boolean;
     setOlderFinished: (val: JournalDataLogsState['olderFinished']) => void;
 
@@ -28,4 +37,6 @@ export interface JournalDataLogsState extends StoreWithHydration {
     setScrollOnLoad: (val: JournalDataLogsState['scrollOnLoad']) => void;
 
     hydrate: (documents: ReturnType<typeof useJournalData>) => void;
+    refresh: UseJournalDataResponse['refresh'];
+    resetState: () => void;
 }

@@ -13,22 +13,28 @@ import { JournalDataLogsState } from './types';
 const getInitialStateData = (): Pick<
     JournalDataLogsState,
     | 'documents'
+    | 'documentCount'
     | 'lastCount'
     | 'lastParsed'
     | 'loading'
     | 'fetchingNewer'
     | 'fetchingOlder'
     | 'olderFinished'
+    | 'refresh'
     | 'scrollOnLoad'
+    | 'lastTimeCheckedForNew'
 > => ({
     documents: null,
+    documentCount: null,
     lastCount: -1,
     lastParsed: -1,
+    lastTimeCheckedForNew: null,
     loading: false,
     fetchingNewer: false,
     fetchingOlder: false,
     olderFinished: false,
     scrollOnLoad: true,
+    refresh: () => {},
 });
 
 const getInitialState = (
@@ -44,13 +50,23 @@ const getInitialState = (
             return;
         }
 
-        const { setHydrated, setHydrationErrorsExist } = get();
+        const {
+            setHydrated,
+            setHydrationErrorsExist,
+            setLoading,
+            setNetworkFailed,
+        } = get();
+
         setHydrationErrorsExist(Boolean(response.error));
+        setLoading(response.loading);
 
         if (response.error) {
+            setNetworkFailed(response.error.message);
+
             return set(
                 produce((state: JournalDataLogsState) => {
                     state.documents = null;
+                    state.documentCount = null;
                     state.loading = false;
                 }),
                 false,
@@ -90,8 +106,10 @@ const getInitialState = (
                     produce((state: JournalDataLogsState) => {
                         state.loading = false;
                         state.documents = newDocs;
+                        state.documentCount = newDocs.length;
                         state.olderFinished = hitStartOfLogs;
                         state.lastParsed = parsedEnd;
+                        state.refresh = response.refresh;
                     }),
                     false,
                     'JournalsData:Logs:Hydrate: Populating'
@@ -105,6 +123,7 @@ const getInitialState = (
         set(
             produce((state: JournalDataLogsState) => {
                 state.documents = newState;
+                state.documentCount = newState?.length ?? null;
             }),
             false,
             'JournalsData:Logs: Documents Set'
@@ -178,6 +197,24 @@ const getInitialState = (
             }),
             false,
             'JournalsData:Logs: Scroll On Load Set'
+        );
+    },
+
+    setLastTimeCheckedForNew: (newState) => {
+        set(
+            produce((state: JournalDataLogsState) => {
+                state.lastTimeCheckedForNew = newState;
+            }),
+            false,
+            'JournalsData:Logs: Last Time Checked For New Set'
+        );
+    },
+
+    resetState: () => {
+        set(
+            { ...getInitialStateData(), ...getInitialHydrationData() },
+            false,
+            'JournalsData:Logs: Reset'
         );
     },
 });

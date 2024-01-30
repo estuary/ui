@@ -5,7 +5,8 @@ import { useEffect } from 'react';
 import { BaseComponentProps } from 'types';
 import {
     useJournalDataLogsStore_hydrate,
-    useJournalDataLogsStore_setHydrationErrorsExist,
+    useJournalDataLogsStore_resetState,
+    useJournalDataLogsStore_setActive,
     useJournalDataLogsStore_setLoading,
 } from './hooks';
 
@@ -19,10 +20,10 @@ export const JournalDataLogsHydrator = ({
     collectionName,
     children,
 }: Props) => {
+    const resetState = useJournalDataLogsStore_resetState();
+    const setActive = useJournalDataLogsStore_setActive();
     const hydrate = useJournalDataLogsStore_hydrate();
     const setLoading = useJournalDataLogsStore_setLoading();
-    const setHydrationErrorsExist =
-        useJournalDataLogsStore_setHydrationErrorsExist();
 
     // TODO (typing)
     //  need to handle typing
@@ -31,15 +32,16 @@ export const JournalDataLogsHydrator = ({
     });
 
     useEffect(() => {
-        setLoading(journalDataResponse.loading);
+        setActive(true);
 
-        if (journalDataResponse.error) {
-            setHydrationErrorsExist(true);
-            return;
+        if (!journalDataResponse.loading) {
+            hydrate(journalDataResponse);
         }
 
-        hydrate(journalDataResponse);
-    }, [hydrate, journalDataResponse, setHydrationErrorsExist, setLoading]);
+        return () => {
+            resetState();
+        };
+    }, [hydrate, journalDataResponse, resetState, setActive, setLoading]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;

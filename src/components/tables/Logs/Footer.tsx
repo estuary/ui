@@ -7,18 +7,22 @@ import {
 } from '@mui/material';
 import { DateTime } from 'luxon';
 import { FormattedMessage } from 'react-intl';
+import {
+    useJournalDataLogsStore_documentCount,
+    useJournalDataLogsStore_lastTimeCheckedForNew,
+} from 'stores/JournalData/Logs/hooks';
 
-interface Props {
-    logsCount: number;
-    lastCheckedForNew: string | null;
-}
+function LogsTableFooter() {
+    const documentsCount = useJournalDataLogsStore_documentCount();
+    const lastTimeCheckedForNew =
+        useJournalDataLogsStore_lastTimeCheckedForNew();
 
-function LogsTableFooter({ logsCount, lastCheckedForNew }: Props) {
-    const lastChecked = lastCheckedForNew
-        ? DateTime.fromISO(lastCheckedForNew).toFormat(
+    const lastChecked = lastTimeCheckedForNew
+        ? DateTime.fromISO(lastTimeCheckedForNew).toFormat(
               'yyyy-LL-dd HH:mm:ss.SSS ZZZZ'
           )
         : null;
+
     return (
         <TableFooter component="div">
             <TableRow component="div" sx={{ height: 35 }}>
@@ -31,7 +35,7 @@ function LogsTableFooter({ logsCount, lastCheckedForNew }: Props) {
                         <FormattedMessage
                             id="ops.logsTable.footer.lines"
                             values={{
-                                count: logsCount,
+                                count: documentsCount ?? 0,
                             }}
                         />
                     </Typography>
