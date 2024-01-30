@@ -3,10 +3,12 @@ import { FormattedMessage } from 'react-intl';
 import { TableIntlConfig, TableState } from 'types';
 import {
     getColumnKeyList,
+    getTableComponents,
     getEmptyTableHeader,
     getEmptyTableMessage,
 } from 'utils/table-utils';
 import { useMemo } from 'react';
+import { hasLength } from 'utils/misc-utils';
 import TableLoadingRows from '../Loading';
 import { ColumnProps } from './types';
 
@@ -33,21 +35,32 @@ function EntityTableBody({
         return getColumnKeyList(columns);
     }, [columns]);
 
-    if (rows && CustomBody) {
+    const hasRows = hasLength(rows);
+
+    if (hasRows && CustomBody) {
         return <CustomBody />;
     }
 
+    const {
+        body: bodyComponent,
+        cell: cellComponent,
+        row: rowComponent,
+    } = getTableComponents(enableDivRendering);
+
     return (
-        <TableBody component={enableDivRendering ? 'div' : 'thead'}>
-            {rows ? (
+        <TableBody component={bodyComponent}>
+            {hasRows ? (
                 rows
             ) : loading ? (
-                <TableLoadingRows columnKeys={columnKeys} />
+                <TableLoadingRows
+                    columnKeys={columnKeys}
+                    enableDivRendering={enableDivRendering}
+                />
             ) : (
-                <TableRow component={enableDivRendering ? 'div' : 'tr'}>
+                <TableRow component={rowComponent}>
                     <TableCell
                         colSpan={columnKeys.length}
-                        component={enableDivRendering ? 'div' : 'td'}
+                        component={cellComponent}
                     >
                         <Box
                             sx={{

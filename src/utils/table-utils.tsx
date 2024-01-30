@@ -2,6 +2,8 @@ import MessageWithLink from 'components/content/MessageWithLink';
 import { FormattedMessage } from 'react-intl';
 import { Pagination } from 'services/supabase';
 import { TableColumns, TableIntlConfig, TableStatuses } from 'types';
+import { TableCellBaseProps } from '@mui/material';
+import { ElementType } from 'react';
 
 export const getEmptyTableHeader = (
     tableStatus: TableStatuses,
@@ -64,3 +66,32 @@ export const getColumnKeyList = (columns: TableColumns[]) =>
             (_, indexCount) => `${column.field}__${indexCount}-${index}`
         )
     );
+
+// TODO (typing) - how MUI does typing for tables
+// seems a bit wonky to me. I think you can override the component
+//  in the parent and this alters what type the component prop
+//  takes in children.
+export const getTableComponents = (
+    enableDivRendering?: boolean
+): {
+    header: any;
+    body: any;
+    cell: ElementType<TableCellBaseProps>;
+    row: any;
+} => {
+    if (enableDivRendering) {
+        return {
+            header: 'theader',
+            body: 'tbody',
+            cell: 'td',
+            row: 'tr',
+        };
+    }
+
+    return {
+        header: 'div',
+        body: 'div',
+        cell: 'div',
+        row: 'div',
+    };
+};

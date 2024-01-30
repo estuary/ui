@@ -2,7 +2,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { ListChildComponentProps, VariableSizeList } from 'react-window';
 import { OpsLogFlowDocument, TableStatuses } from 'types';
 import { TableBody } from '@mui/material';
-import { MutableRefObject, useCallback, useRef } from 'react';
+import { CSSProperties, MutableRefObject, useCallback, useRef } from 'react';
 import EntityTableBody from '../EntityTable/TableBody';
 import {
     DEFAULT_ROW_HEIGHT,
@@ -19,6 +19,13 @@ interface Props {
     virtualRows: MutableRefObject<any>;
     loading?: boolean;
 }
+
+const virtualScrollStyling: CSSProperties = {
+    paddingBottom: 10,
+    paddingTop: 10,
+};
+
+const overscanCount: number = 15;
 
 function LogsTableBody({
     documents,
@@ -87,21 +94,18 @@ function LogsTableBody({
                     {({ width, height }: AutoSizer['state']) => {
                         return (
                             <VariableSizeList
-                                ref={tableScroller}
-                                outerRef={outerRef}
-                                innerRef={virtualRows}
-                                height={height}
-                                width={width}
-                                itemSize={getItemSize}
-                                itemData={documents}
                                 estimatedItemSize={DEFAULT_ROW_HEIGHT}
+                                height={height}
+                                innerRef={virtualRows}
                                 itemCount={documents.length}
-                                overscanCount={15}
+                                itemData={documents}
+                                itemSize={getItemSize}
                                 onScroll={onScroll}
-                                style={{
-                                    paddingBottom: 10,
-                                    paddingTop: 10,
-                                }}
+                                outerRef={outerRef}
+                                overscanCount={overscanCount}
+                                ref={tableScroller}
+                                width={width}
+                                style={virtualScrollStyling}
                             >
                                 {renderRow}
                             </VariableSizeList>
@@ -115,22 +119,17 @@ function LogsTableBody({
     return (
         <EntityTableBody
             columns={columns}
+            enableDivRendering
             noExistingDataContentIds={{
                 header: 'ops.logsTable.emptyTableDefault.header',
                 message: 'ops.logsTable.emptyTableDefault.message',
                 disableDoclink: true,
             }}
-            tableState={
-                documents.length > 0
-                    ? {
-                          status: TableStatuses.DATA_FETCHED,
-                      }
-                    : {
-                          status: TableStatuses.NO_EXISTING_DATA,
-                      }
-            }
+            tableState={{
+                status: TableStatuses.DATA_FETCHED,
+            }}
             loading={Boolean(loading)}
-            rows={documents}
+            rows={null}
         />
     );
 }
