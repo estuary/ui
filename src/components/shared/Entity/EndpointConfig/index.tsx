@@ -13,6 +13,7 @@ import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
+import { useDetailsForm_unsupportedConnectorVersion } from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
@@ -69,6 +70,9 @@ function EndpointConfig({
         useEndpointConfigStore_setEncryptedEndpointConfig();
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
 
+    const unsupportedConnectorVersion =
+        useDetailsForm_unsupportedConnectorVersion();
+
     // Workflow related props
     const workflow = useEntityWorkflow();
     const editWorkflow =
@@ -103,7 +107,11 @@ function EndpointConfig({
     );
 
     useEffect(() => {
-        if (connectorTag?.endpoint_spec_schema && endpointSchemaChanged) {
+        if (
+            unsupportedConnectorVersion &&
+            connectorTag?.endpoint_spec_schema &&
+            endpointSchemaChanged
+        ) {
             // force some new data in
             setServerUpdateRequired(true);
             setEncryptedEndpointConfig({
@@ -121,14 +129,14 @@ function EndpointConfig({
             setPreviousEndpointConfig(defaultConfig);
         }
     }, [
-        setServerUpdateRequired,
+        connectorTag,
+        endpointSchemaChanged,
+        setEncryptedEndpointConfig,
         setEndpointConfig,
         setEndpointSchema,
         setPreviousEndpointConfig,
-        connectorTag,
-        connectorTag?.endpoint_spec_schema,
-        endpointSchemaChanged,
-        setEncryptedEndpointConfig,
+        setServerUpdateRequired,
+        unsupportedConnectorVersion,
     ]);
 
     // Controlling if we need to show the generate button again
