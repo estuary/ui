@@ -87,6 +87,10 @@ export enum TransformCreateStoreNames {
     TRANSFORM_CREATE = 'Transform-Create',
 }
 
+export enum JournalDataStoreNames {
+    LOGS = 'JournalData-Logs',
+}
+
 export type StoreName =
     | AdminStoreNames
     | BillingStoreNames
@@ -103,4 +107,5 @@ export type StoreName =
     | SchemaEvolutionStoreNames
     | SelectTableStoreNames
     | ShardDetailStoreNames
-    | TransformCreateStoreNames;
+    | TransformCreateStoreNames
+    | JournalDataStoreNames;

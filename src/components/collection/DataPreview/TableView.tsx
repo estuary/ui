@@ -66,8 +66,8 @@ function TableView({
                     ...tableAlternateRowsSx,
                 }}
             >
-                {hasLength(specEntries) ? (
-                    data?.documents.map((row) => (
+                {hasLength(specEntries) && data?.documents ? (
+                    data.documents.map((row) => (
                         <TableRow key={row._meta.uuid}>
                             {specEntries.map(([k]) => {
                                 return (

@@ -129,7 +129,7 @@ export function DataPreview({ collectionName }: Props) {
                     <Error error={readError} condensed />
                 ) : isLoading ? (
                     <ListViewSkeleton />
-                ) : (journalData.data?.documents.length ?? 0) > 0 && spec ? (
+                ) : (journalData.data?.documents?.length ?? 0) > 0 && spec ? (
                     <ListView journalData={journalData} spec={spec} />
                 ) : null}
 

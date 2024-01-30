@@ -6,6 +6,7 @@ import {
     JournalSelector,
     parseJournalDocuments,
 } from 'data-plane-gateway';
+import { ProtocolReadResponse } from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCounter } from 'react-use';
@@ -145,19 +146,30 @@ export interface LoadDocumentsOffsets {
     endOffset: number;
 }
 
-async function loadDocuments({
+interface LoadDocumentsResponse {
+    documents?: any[];
+    meta?: {
+        metadataResponse: ProtocolReadResponse;
+        docsMetaResponse: ProtocolReadResponse;
+    };
+    tooFewDocuments: boolean;
+    tooManyBytes: boolean;
+}
+export interface LoadDocumentsSettings {
+    maxBytes: number;
+    offsets?: LoadDocumentsOffsets;
+    client?: JournalClient;
+    documentCount?: number;
+    journalName?: string;
+}
+
+const loadDocuments = async ({
     journalName,
     client,
     documentCount,
     maxBytes,
     offsets,
-}: {
-    offsets?: LoadDocumentsOffsets;
-    journalName?: string;
-    client?: JournalClient;
-    documentCount?: number;
-    maxBytes: number;
-}) {
+}: LoadDocumentsSettings): Promise<LoadDocumentsResponse> => {
     if (!client || !journalName) {
         console.warn('Cannot load documents without client and journal');
         return {
@@ -258,7 +270,7 @@ async function loadDocuments({
         tooFewDocuments: documentCount ? start <= 0 : false,
         tooManyBytes: head - start >= maxBytes,
     };
-}
+};
 
 export type JournalRecord<B extends {} = Record<string, any>> = B & {
     _meta: {
@@ -276,11 +288,21 @@ interface UseJournalDataSettings {
     desiredCount?: number;
     maxBytes?: number;
 }
+
+export interface UseJournalDataResponse {
+    data?: LoadDocumentsResponse;
+    error: {
+        message: string;
+    } | null;
+    loading: boolean;
+    refresh: (newOffset?: LoadDocumentsOffsets) => void;
+}
+
 const useJournalData = (
     journalName?: string,
     collectionName?: string,
     settings?: UseJournalDataSettings
-) => {
+): UseJournalDataResponse => {
     const failures = useRef(0);
 
     const { data: gatewayConfig } = useGatewayAuthToken(

@@ -79,7 +79,7 @@ export const getTableComponents = (
     cell: ElementType<TableCellBaseProps>;
     row: any;
 } => {
-    if (enableDivRendering) {
+    if (!enableDivRendering) {
         return {
             header: 'theader',
             body: 'tbody',
