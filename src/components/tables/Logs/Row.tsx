@@ -1,7 +1,9 @@
 import { Box, TableRow, useTheme } from '@mui/material';
 import { OpsLogFlowDocument } from 'types';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { doubleElevationHoverBackground } from 'context/Theme';
+import useResizeObserver from 'use-resize-observer';
+import { useDebounce } from 'react-use';
 import { DEFAULT_ROW_HEIGHT } from './shared';
 import { LogsTableColumns } from './Columns';
 
@@ -20,15 +22,34 @@ export function LogsTableRow({ row, rowExpanded, style }: RowProps) {
 
     const [open, setOpen] = useState(renderedHeight > DEFAULT_ROW_HEIGHT);
     const [opening, setOpening] = useState(false);
+    const previousHeight = useRef<Number>(renderedHeight);
+
+    const { ref: sizeRef, height: rowSizeHeight } =
+        useResizeObserver<HTMLElement>();
+
+    const [, cancel] = useDebounce(
+        () => {
+            if (!rowSizeHeight || rowSizeHeight === previousHeight.current) {
+                return;
+            }
+
+            console.log('debounce calling expanded', rowSizeHeight);
+            previousHeight.current = rowSizeHeight;
+            rowExpanded(rowSizeHeight);
+            setOpening(false);
+        },
+        25,
+        [rowSizeHeight, rowExpanded, setOpening]
+    );
 
     const handleClick = () => {
-        setOpening(true);
-        setOpen((previousOpen) => !previousOpen);
-    };
+        const newVal = !open;
+        setOpening(!opening);
+        setOpen(newVal);
 
-    const toggleRowHeight = (target: HTMLElement) => {
-        rowExpanded(target.offsetHeight);
-        setOpening(false);
+        if (!newVal) {
+            cancel();
+        }
     };
 
     const id = open ? `jsonPopper_${row._meta.uuid}` : undefined;
@@ -53,7 +74,7 @@ export function LogsTableRow({ row, rowExpanded, style }: RowProps) {
                 row={row}
                 open={open}
                 opening={opening}
-                toggleRowHeight={toggleRowHeight}
+                sizeRef={sizeRef}
             />
         </TableRow>
     );

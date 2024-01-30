@@ -47,32 +47,37 @@ function LogsTableBody({
     );
 
     const expandRow = useCallback(
-        (index: number, height: number) => {
-            if (height > 0) {
-                expandedHeights.current.set(
-                    documents[index]._meta.uuid,
-                    height
-                );
+        (index: number, uuid: string, height: number) => {
+            console.log('expandRow', { uuid, height });
+
+            if (
+                height <= 0 ||
+                height === DEFAULT_ROW_HEIGHT ||
+                height === DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS
+            ) {
+                expandedHeights.current.delete(uuid);
             } else {
-                expandedHeights.current.delete(documents[index]._meta.uuid);
+                expandedHeights.current.set(uuid, height);
             }
 
             tableScroller.current.resetAfterIndex(index);
         },
-        [documents, tableScroller]
+        [tableScroller]
     );
 
     const renderRow = useCallback(
-        ({ index, style }: ListChildComponentProps) => {
+        ({ index, style, data }: ListChildComponentProps) => {
             return (
                 <LogsTableRow
-                    row={documents[index]}
+                    row={data[index]}
                     style={style}
-                    rowExpanded={(height) => expandRow(index, height)}
+                    rowExpanded={(height) =>
+                        expandRow(index, data[index]._meta.uuid, height)
+                    }
                 />
             );
         },
-        [documents, expandRow]
+        [expandRow]
     );
 
     if (documents.length > 0) {
@@ -88,6 +93,7 @@ function LogsTableBody({
                                 height={height}
                                 width={width}
                                 itemSize={getItemSize}
+                                itemData={documents}
                                 estimatedItemSize={DEFAULT_ROW_HEIGHT}
                                 itemCount={documents.length}
                                 overscanCount={15}
