@@ -129,7 +129,7 @@ function EndpointConfig({
             setPreviousEndpointConfig(defaultConfig);
         }
     }, [
-        connectorTag,
+        connectorTag?.endpoint_spec_schema,
         endpointSchemaChanged,
         setEncryptedEndpointConfig,
         setEndpointConfig,
