@@ -1,5 +1,6 @@
 import { Button } from '@mui/material';
 import { buttonSx } from 'components/shared/Entity/Header';
+import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -7,6 +8,7 @@ import {
     useDetailsForm_entityNameChanged,
     useDetailsForm_previousConnectorImage_connectorId,
 } from 'stores/DetailsForm/hooks';
+import { useEndpointConfigStore_changed } from 'stores/EndpointConfig/hooks';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { useResourceConfig_rediscoveryRequired } from 'stores/ResourceConfig/hooks';
@@ -27,10 +29,18 @@ function CaptureGenerateButton({
     disabled,
     createWorkflowMetadata,
 }: Props) {
+    const isEdit = useEntityWorkflow_Editing();
+    const endpointConfigChanged = useEndpointConfigStore_changed();
     const rediscoveryRequired = useResourceConfig_rediscoveryRequired();
+
     const { generateCatalog, isSaving, formActive } = useDiscoverCapture(
         entityType,
         {
+            // We only want to set updateOnly if the user is editing and not updating the config
+            //  This should cover when a user has enable previously disabled collection(s)
+            updateOnly: Boolean(
+                rediscoveryRequired && isEdit && !endpointConfigChanged
+            ),
             initiateDiscovery: createWorkflowMetadata?.initiateDiscovery,
             initiateRediscovery: rediscoveryRequired,
         }

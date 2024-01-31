@@ -28,7 +28,11 @@ import useDiscoverStartDiscovery from './useDiscoverStartDiscovery';
 
 function useDiscoverCapture(
     entityType: Entity,
-    options?: { initiateRediscovery?: boolean; initiateDiscovery?: boolean }
+    options?: {
+        initiateRediscovery?: boolean;
+        initiateDiscovery?: boolean;
+        updateOnly?: boolean;
+    }
 ) {
     const draftUpdate = useDiscoverDraftUpdate(options);
     const configEncrypt = useDiscoverConfigEncrypt();
