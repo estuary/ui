@@ -77,7 +77,7 @@ function useUpdateBackfillCounter() {
 
             return mutateDraftSpecs();
         },
-        [draftId, entityType, mutateDraftSpecs]
+        [draftId, entityType, intl, mutateDraftSpecs]
     );
 
     return { updateBackfillCounter };
