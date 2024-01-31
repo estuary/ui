@@ -101,6 +101,7 @@ function ManualBackfill({ bindingIndex }: Props) {
         }
     }, [
         addBackfilledCollection,
+        bindingIndex,
         currentCollection,
         draftSpec,
         increment,
