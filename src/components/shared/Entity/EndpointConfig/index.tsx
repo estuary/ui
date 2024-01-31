@@ -99,19 +99,22 @@ function EndpointConfig({
 
     // Storing flag to handle knowing if a config changed
     //  during both create or edit.
-    const endpointSchemaChanged = useMemo(
+    const resetEndpointConfig = useMemo(
         () =>
-            connectorTag?.endpoint_spec_schema &&
-            !isEqual(connectorTag.endpoint_spec_schema, endpointSchema),
-        [connectorTag?.endpoint_spec_schema, endpointSchema]
+            editWorkflow && unsupportedConnectorVersion
+                ? true
+                : connectorTag?.endpoint_spec_schema &&
+                  !isEqual(connectorTag.endpoint_spec_schema, endpointSchema),
+        [
+            connectorTag?.endpoint_spec_schema,
+            editWorkflow,
+            endpointSchema,
+            unsupportedConnectorVersion,
+        ]
     );
 
     useEffect(() => {
-        if (
-            unsupportedConnectorVersion &&
-            connectorTag?.endpoint_spec_schema &&
-            endpointSchemaChanged
-        ) {
+        if (connectorTag?.endpoint_spec_schema && resetEndpointConfig) {
             // force some new data in
             setServerUpdateRequired(true);
             setEncryptedEndpointConfig({
@@ -130,15 +133,13 @@ function EndpointConfig({
         }
     }, [
         connectorTag?.endpoint_spec_schema,
-        endpointSchemaChanged,
+        resetEndpointConfig,
         setEncryptedEndpointConfig,
         setEndpointConfig,
         setEndpointSchema,
         setPreviousEndpointConfig,
         setServerUpdateRequired,
-        unsupportedConnectorVersion,
     ]);
-
     // Controlling if we need to show the generate button again
     const endpointConfigUpdated = useMemo(() => {
         return canBeEmpty
