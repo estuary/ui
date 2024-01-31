@@ -1,6 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material';
 import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
 import { useEntityType } from 'context/EntityContext';
+import { Check } from 'iconoir-react';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -141,6 +142,10 @@ function ManualBackfill({ bindingIndex }: Props) {
                 }}
             >
                 <FormattedMessage id="workflows.collectionSelector.manualBackfill.cta.backfill" />
+
+                {selected ? (
+                    <Check style={{ marginLeft: 8, fontSize: 13 }} />
+                ) : null}
             </OutlinedToggleButton>
         </Box>
     );

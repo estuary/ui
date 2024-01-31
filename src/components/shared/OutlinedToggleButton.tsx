@@ -29,6 +29,7 @@ function OutlinedToggleButton({
     value,
     onChange,
     onClick,
+    ...props
 }: Props) {
     const theme = useTheme();
 
@@ -57,6 +58,7 @@ function OutlinedToggleButton({
 
     return (
         <ToggleButton
+            {...props}
             size="small"
             value={value}
             selected={selected}
