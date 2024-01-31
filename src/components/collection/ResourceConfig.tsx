@@ -53,7 +53,7 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
                 )}
             </Box>
 
-            {isEdit && draftedBindingIndex > -1 ? (
+            {isEdit && draftedBindingIndex > -1 && !collectionDisabled ? (
                 <ManualBackfill bindingIndex={draftedBindingIndex} />
             ) : null}
 
