@@ -28,8 +28,8 @@ import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import { StoreApi, create } from 'zustand';
+import { NamedSet, devtools } from 'zustand/middleware';
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
 
 const STORE_KEY = 'Resource Config';
@@ -134,6 +134,7 @@ const getInitialCollectionStateData = (): Pick<
 
 const getInitialMiscStoreData = (): Pick<
     ResourceConfigState,
+    | 'backfilledCollections'
     | 'discoveredCollections'
     | 'hydrated'
     | 'hydrationErrorsExist'
@@ -146,6 +147,7 @@ const getInitialMiscStoreData = (): Pick<
     | 'collectionsRequiringRediscovery'
     | 'rediscoveryRequired'
 > => ({
+    backfilledCollections: [],
     discoveredCollections: null,
     hydrated: false,
     hydrationErrorsExist: false,
@@ -432,6 +434,31 @@ const getInitialState = (
             }),
             false,
             'Restricted Discovered Collections Set'
+        );
+    },
+
+    addBackfilledCollection: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                if (!state.backfilledCollections.includes(value)) {
+                    state.backfilledCollections.push(value);
+                }
+            }),
+            false,
+            'Backfilled Collection Added'
+        );
+    },
+
+    removeBackfilledCollection: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                state.backfilledCollections =
+                    state.backfilledCollections.filter(
+                        (collection) => collection !== value
+                    );
+            }),
+            false,
+            'Backfilled Collection Removed'
         );
     },
 

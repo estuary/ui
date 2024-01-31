@@ -993,6 +993,11 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.schemaInference.alert.patchService.message.docPath': `${CommonMessages['support.email']}`,
     'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
 
+    'workflows.collectionSelector.manualBackfill.header': `Backfill`,
+    'workflows.collectionSelector.manualBackfill.message': `This is a placeholder for a description.`,
+    'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
+    'workflows.collectionSelector.manualBackfill.failed': `Failed to set backfill trigger for one or more bindings`,
+
     'workflows.entityWarnings.title': `No collections`,
     'workflows.entityWarnings.message': `You have not added any collections yet. This means there will be
                 no data output from this materialization. To add collections,
