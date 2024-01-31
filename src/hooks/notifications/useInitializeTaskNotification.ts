@@ -8,6 +8,7 @@ import {
     getTaskNotification,
 } from 'api/alerts';
 import { useCallback, useMemo } from 'react';
+import { BASE_ERROR } from 'services/supabase';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { hasLength } from 'utils/misc-utils';
 
@@ -37,7 +38,7 @@ function useInitializeTaskNotification(catalogName: string) {
             // Error if the system cannot determine the user email or object roles cannot be found for the user.
             return {
                 data: null,
-                error: { message: '', details: '', hint: '', code: '' },
+                error: { ...BASE_ERROR },
             };
         }
 
@@ -59,7 +60,7 @@ function useInitializeTaskNotification(catalogName: string) {
             // Error if the system cannot determine the user email or object roles cannot be found for the user.
             return {
                 data: null,
-                error: { message: '', details: '', hint: '', code: '' },
+                error: { ...BASE_ERROR },
             };
         }
 

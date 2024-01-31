@@ -335,7 +335,7 @@ export function evaluateConnectorVersions(
         }
     }
 
-    // Return the latest version of a given connector in a create workflow.
+    // Return the latest version of a given connector.
     return connector.connector_tags.sort((a, b) =>
         b.image_tag.localeCompare(a.image_tag)
     )[0];

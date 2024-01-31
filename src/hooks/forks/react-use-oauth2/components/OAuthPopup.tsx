@@ -1,6 +1,10 @@
 // Heavily edited version of https://github.com/tasoskakour/react-use-oauth2
+
 import FullPageSpinner from 'components/fullPage/Spinner';
-import { useEffect } from 'react';
+import OauthWindowOpenerMissing from 'components/shared/ErrorDialog/OauthWindowOpenerMissing';
+import { useEffect, useState } from 'react';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { base64RemovePadding } from 'utils/misc-utils';
 import { OAUTH_RESPONSE, OAUTH_STATE_KEY } from './constants';
 
@@ -26,6 +30,7 @@ const sendMessage = (body: any) => {
 };
 
 const OAuthPopup = (props: Props) => {
+    const [showError, setShowError] = useState(false);
     const { Component = <FullPageSpinner delay={0} /> } = props;
 
     // On mount
@@ -37,7 +42,12 @@ const OAuthPopup = (props: Props) => {
         const { error, state } = payload;
 
         if (!window.opener) {
-            throw new Error('No window opener');
+            logRocketEvent(CustomEvents.OAUTH_WINDOW_OPENER, {
+                missing: true,
+            });
+
+            setShowError(true);
+            return;
         }
 
         if (error) {
@@ -54,6 +64,10 @@ const OAuthPopup = (props: Props) => {
             });
         }
     }, []);
+
+    if (showError) {
+        return <OauthWindowOpenerMissing />;
+    }
 
     return Component;
 };

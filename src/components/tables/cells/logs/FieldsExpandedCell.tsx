@@ -1,34 +1,53 @@
-import { TableCell, Box, Collapse, TableRow, useTheme } from '@mui/material';
+import { Box, Collapse, Divider, Typography, useTheme } from '@mui/material';
 import ReactJson from '@microlink/react-json-view';
 import { jsonViewTheme } from 'context/Theme';
-import useLogColumns from 'components/tables/Logs/useLogColumns';
-import { BaseCellSx } from './shared';
 
 interface Props {
-    expanded: boolean;
     fields: any;
+    message: string;
+    open: boolean;
+    opening: boolean;
+    toggleRowHeight: (event: HTMLElement) => void;
+    uuid: string;
 }
 
-// const reactInspectorTheme = {
-//     light: chromeLight,
-//     dark: chromeDark,
-// };
-
-function FieldsExpandedCell({ expanded, fields }: Props) {
+function FieldsExpandedCell({
+    fields,
+    open,
+    opening,
+    message,
+    toggleRowHeight,
+    uuid,
+}: Props) {
     const theme = useTheme();
-    const columns = useLogColumns();
 
     return (
-        <TableRow>
-            <TableCell sx={{ ...BaseCellSx, pl: 5 }} colSpan={columns.length}>
-                <Collapse
-                    in={expanded}
-                    timeout={100}
-                    sx={{
-                        mb: 1,
-                    }}
-                    unmountOnExit
-                >
+        <Collapse
+            key={`jsonPopper_${uuid}`}
+            in={open}
+            onClick={(event) => {
+                // When clicking inside here we don't want to close the row
+                event.preventDefault();
+                event.stopPropagation();
+            }}
+            onEntered={toggleRowHeight}
+            onExited={toggleRowHeight}
+            unmountOnExit
+        >
+            <Box
+                sx={{
+                    px: 3,
+                    py: 2,
+                    opacity: opening ? 0 : undefined,
+                }}
+            >
+                <Typography sx={{ fontFamily: 'Monospace' }}>
+                    {message}
+                </Typography>
+
+                <Divider sx={{ my: 2 }} />
+
+                <Box>
                     <Box
                         sx={{
                             '& .react-json-view': {
@@ -37,7 +56,6 @@ function FieldsExpandedCell({ expanded, fields }: Props) {
                         }}
                     >
                         <ReactJson
-                            collapsed={1}
                             displayDataTypes={false}
                             displayObjectSize={false}
                             enableClipboard={false}
@@ -48,21 +66,9 @@ function FieldsExpandedCell({ expanded, fields }: Props) {
                             theme={jsonViewTheme[theme.palette.mode]}
                         />
                     </Box>
-
-                    {/*                        <ObjectInspector
-                            data={row.fields ?? {}}
-                            name="fields"
-                            expandLevel={1}
-                            theme={
-                                {
-                                    ...reactInspectorTheme[theme.palette.mode],
-                                    TREENODE_FONT_SIZE: 14,
-                                } as any // hacky but the typing was complaining
-                            }
-                        />*/}
-                </Collapse>
-            </TableCell>
-        </TableRow>
+                </Box>
+            </Box>
+        </Collapse>
     );
 }
 
