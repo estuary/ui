@@ -462,7 +462,7 @@ const getInitialState = (
 
             if (
                 liveBackfillCounter !== draftedBackfillCounter ||
-                draftedBackfillCounter > 0
+                (liveBindingIndex === -1 && draftedBackfillCounter > 0)
             ) {
                 addBackfilledCollection(collection);
             }
