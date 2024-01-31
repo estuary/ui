@@ -5,6 +5,7 @@ import { TableBody } from '@mui/material';
 import { CSSProperties, MutableRefObject, useCallback, useRef } from 'react';
 import {
     useJournalDataLogsStore_documents,
+    useJournalDataLogsStore_loading,
     useJournalDataLogsStore_networkFailed,
 } from 'stores/JournalData/Logs/hooks';
 import EntityTableBody from '../EntityTable/TableBody';
@@ -20,7 +21,6 @@ interface Props {
     outerRef: MutableRefObject<any>;
     tableScroller: MutableRefObject<any>;
     virtualRows: MutableRefObject<any>;
-    loading?: boolean;
 }
 
 const virtualScrollStyling: CSSProperties = {
@@ -35,17 +35,25 @@ function LogsTableBody({
     onScroll,
     tableScroller,
     virtualRows,
-    loading,
 }: Props) {
     const columns = useLogColumns();
 
     const documents = useJournalDataLogsStore_documents();
+    const loading = useJournalDataLogsStore_loading();
 
     const expandedHeights = useRef<Map<string, number>>(new Map());
     const networkFailed = useJournalDataLogsStore_networkFailed();
 
+    console.log('body', [documents, loading]);
+
     const getItemSize = useCallback(
         (rowIndex: number) => {
+            // Just being safe - should never happen as the list would now
+            //  start rendering without data
+            if (!documents) {
+                return 0;
+            }
+
             if (!Boolean(documents[rowIndex].fields)) {
                 return DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS;
             }
@@ -92,7 +100,7 @@ function LogsTableBody({
         [expandRow]
     );
 
-    if (documents.length > 0) {
+    if (documents && documents.length > 0) {
         return (
             <TableBody component="div">
                 <AutoSizer>

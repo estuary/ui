@@ -66,7 +66,7 @@ const getInitialState = (
             return set(
                 produce((state: JournalDataLogsState) => {
                     state.documents = null;
-                    state.documentCount = null;
+                    state.documentCount = -1;
                     state.loading = false;
                 }),
                 false,
@@ -80,11 +80,11 @@ const getInitialState = (
         // Figure out what the last document offset is
         const parsedEnd = meta?.docsMetaResponse.offset
             ? parseInt(meta.docsMetaResponse.offset, 10)
-            : -1;
+            : null;
 
         // Since journalData is read kinda async we need to wait to
         //  update documents until we know the meta data changed
-        if (parsedEnd !== get().lastParsed) {
+        if (parsedEnd && parsedEnd !== get().lastParsed) {
             const documents = response.data?.documents;
 
             if (documents && documents.length > 0) {
@@ -123,7 +123,7 @@ const getInitialState = (
         set(
             produce((state: JournalDataLogsState) => {
                 state.documents = newState;
-                state.documentCount = newState?.length ?? null;
+                state.documentCount = newState?.length ?? -1;
             }),
             false,
             'JournalsData:Logs: Documents Set'

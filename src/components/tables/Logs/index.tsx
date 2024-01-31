@@ -22,21 +22,20 @@ import LogsTableBody from './Body';
 interface Props {
     fetchNewer: () => void;
     fetchOlder: () => void;
-    loading?: boolean;
 }
 
-function LogsTable({ fetchNewer, fetchOlder, loading }: Props) {
+function LogsTable({ fetchNewer, fetchOlder }: Props) {
     const intl = useIntl();
     const columns = useLogColumns();
 
-    const documents = useJournalDataLogsStore_documents();
     const documentCount = useJournalDataLogsStore_documentCount();
-    const lastCount = useJournalDataLogsStore_lastCount();
+    const documents = useJournalDataLogsStore_documents();
     const fetchingNewer = useJournalDataLogsStore_fetchingNewer();
     const fetchingOlder = useJournalDataLogsStore_fetchingOlder();
+    const lastCount = useJournalDataLogsStore_lastCount();
     const olderFinished = useJournalDataLogsStore_olderFinished();
-    const setFetchingOlder = useJournalDataLogsStore_setFetchingOlder();
     const setFetchingNewer = useJournalDataLogsStore_setFetchingNewer();
+    const setFetchingOlder = useJournalDataLogsStore_setFetchingOlder();
     const setLastTimeCheckedForNew =
         useJournalDataLogsStore_setLastTimeCheckedForNew();
 
@@ -156,7 +155,6 @@ function LogsTable({ fetchNewer, fetchOlder, loading }: Props) {
                         outerRef={outerRef}
                         tableScroller={tableScroller}
                         virtualRows={virtualRows}
-                        loading={loading}
                     />
 
                     <LogsTableFooter />
