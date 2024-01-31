@@ -101,8 +101,8 @@ function EndpointConfig({
     //  during both create or edit.
     const resetEndpointConfig = useMemo(
         () =>
-            editWorkflow && unsupportedConnectorVersion
-                ? true
+            editWorkflow && !unsupportedConnectorVersion
+                ? false
                 : connectorTag?.endpoint_spec_schema &&
                   !isEqual(connectorTag.endpoint_spec_schema, endpointSchema),
         [
