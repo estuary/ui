@@ -143,6 +143,7 @@ function useDiscoverCapture(
             endpointConfigErrorsExist,
             options?.initiateDiscovery,
             options?.initiateRediscovery,
+            options?.updateOnly,
             persistedDraftId,
             processedEntityName,
             resetEditorState,
