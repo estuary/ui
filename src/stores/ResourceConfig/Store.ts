@@ -1,15 +1,11 @@
 /* eslint-disable complexity */
-import {
-    DraftSpecsExtQuery_ByDraftId,
-    getDraftSpecsByDraftId,
-} from 'api/draftSpecs';
+import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import {
     getLiveSpecsById_writesTo,
     getLiveSpecsByLiveSpecId,
     getSchema_Resource,
 } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import {
     difference,
@@ -753,10 +749,6 @@ const getInitialState = (
                 const { prefillBackfilledCollections, prefillResourceConfig } =
                     get();
 
-                let selectedSpec:
-                    | LiveSpecsExtQuery
-                    | DraftSpecsExtQuery_ByDraftId = liveSpecs[0];
-
                 if (draftId) {
                     const { data: draftSpecs, error: draftSpecError } =
                         await getDraftSpecsByDraftId(draftId, entityType);
@@ -764,16 +756,20 @@ const getInitialState = (
                     if (draftSpecError) {
                         setHydrationErrorsExist(true);
                     } else if (draftSpecs && draftSpecs.length > 0) {
-                        selectedSpec = draftSpecs[0];
+                        prefillResourceConfig(
+                            sortBindings(draftSpecs[0].spec.bindings)
+                        );
 
                         prefillBackfilledCollections(
                             liveSpecs[0].spec.bindings,
                             draftSpecs[0].spec.bindings
                         );
                     }
+                } else {
+                    prefillResourceConfig(
+                        sortBindings(liveSpecs[0].spec.bindings)
+                    );
                 }
-
-                prefillResourceConfig(sortBindings(selectedSpec.spec.bindings));
             }
         }
 
