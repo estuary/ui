@@ -9,7 +9,7 @@ import {
     useBindingsEditorStore_selections,
     useBindingsEditorStore_setSingleSelection,
 } from 'components/editor/Bindings/Store/hooks';
-import OutlinedToggleButton from 'components/tables/cells/fieldSelection/OutlinedToggleButton';
+import FieldActionButton from 'components/tables/cells/fieldSelection/FieldActionButton';
 import { useMemo } from 'react';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
@@ -83,7 +83,7 @@ function FieldActions({ field, constraint }: Props) {
                     },
                 }}
             >
-                <OutlinedToggleButton
+                <FieldActionButton
                     messageId="fieldSelection.table.cta.includeField"
                     selectedValue={selectedValue}
                     value="include"
@@ -108,7 +108,7 @@ function FieldActions({ field, constraint }: Props) {
                     }}
                 />
 
-                <OutlinedToggleButton
+                <FieldActionButton
                     messageId="fieldSelection.table.cta.excludeField"
                     selectedValue={selectedValue}
                     value="exclude"

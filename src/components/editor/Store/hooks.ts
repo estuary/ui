@@ -9,6 +9,8 @@ import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { useEffect } from 'react';
 import { EditorStoreNames } from 'stores/names';
 import { Entity } from 'types';
+import { hasLength } from 'utils/misc-utils';
+import { getBindingIndex } from 'utils/workflow-utils';
 import { EditorStoreState } from './types';
 
 interface SelectorParams {
@@ -527,6 +529,30 @@ export const useEditorStore_queryResponse_mutate = (
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['queryResponse']['mutate']
     >(storeName(entityType, localScope), (state) => state.queryResponse.mutate);
+};
+
+export const useEditorStore_queryResponse_draftedBindingIndex = (
+    collection: string | null,
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<EditorStoreState<DraftSpecQuery>, number>(
+        storeName(entityType, localScope),
+        (state) =>
+            collection && hasLength(state.queryResponse.draftSpecs)
+                ? getBindingIndex(
+                      state.queryResponse.draftSpecs[0].spec.bindings,
+                      collection
+                  )
+                : -1
+    );
 };
 
 export const useEditorStore_resetState = (
