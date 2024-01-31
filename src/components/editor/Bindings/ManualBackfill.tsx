@@ -69,9 +69,6 @@ function ManualBackfill({ bindingIndex }: Props) {
         [draftSpecs]
     );
 
-    // TODO (backfill): The page-level error message should identify the binding which could not be updated
-    //   or an error alert should be scoped to the right pane of the binding selector and appear in the Backfill
-    //   section of the erring binding.
     useEffect(() => {
         if (
             draftSpec &&
@@ -81,7 +78,12 @@ function ManualBackfill({ bindingIndex }: Props) {
         ) {
             setFormState({ status: FormStatus.UPDATING });
 
-            updateBackfillCounter(draftSpec, bindingIndex, increment).then(
+            updateBackfillCounter(
+                draftSpec,
+                bindingIndex,
+                increment,
+                currentCollection
+            ).then(
                 () => {
                     increment === 'true'
                         ? addBackfilledCollection(currentCollection)
@@ -93,7 +95,7 @@ function ManualBackfill({ bindingIndex }: Props) {
                     setFormState({
                         status: FormStatus.FAILED,
                         error: {
-                            title: 'workflows.collectionSelector.manualBackfill.failed',
+                            title: 'workflows.collectionSelector.manualBackfill.error.title',
                             error,
                         },
                     })
