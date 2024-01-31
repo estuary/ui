@@ -7,7 +7,7 @@ import { useIntl } from 'react-intl';
 import { Schema } from 'types';
 import { getBackfillCounter } from 'utils/workflow-utils';
 import {
-    useEditorStore_id,
+    useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
 } from '../Store/hooks';
 import { BooleanString } from './ManualBackfill';
@@ -17,7 +17,7 @@ function useUpdateBackfillCounter() {
     const entityType = useEntityType();
 
     // Draft Editor Store
-    const draftId = useEditorStore_id();
+    const draftId = useEditorStore_persistedDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
     const updateBackfillCounter = useCallback(
