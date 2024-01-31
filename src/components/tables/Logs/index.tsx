@@ -1,11 +1,13 @@
 import { findIndex } from 'lodash';
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
-import { OpsLogFlowDocument } from 'types';
 import { Box, LinearProgress, Table, TableContainer } from '@mui/material';
 import {
+    useJournalDataLogsStore_documentCount,
+    useJournalDataLogsStore_documents,
     useJournalDataLogsStore_fetchingNewer,
     useJournalDataLogsStore_fetchingOlder,
+    useJournalDataLogsStore_lastCount,
     useJournalDataLogsStore_olderFinished,
     useJournalDataLogsStore_setFetchingNewer,
     useJournalDataLogsStore_setFetchingOlder,
@@ -18,16 +20,18 @@ import LogsTableFooter from './Footer';
 import LogsTableBody from './Body';
 
 interface Props {
-    documents: OpsLogFlowDocument[];
     fetchNewer: () => void;
     fetchOlder: () => void;
     loading?: boolean;
 }
 
-function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
+function LogsTable({ fetchNewer, fetchOlder, loading }: Props) {
     const intl = useIntl();
     const columns = useLogColumns();
 
+    const documents = useJournalDataLogsStore_documents();
+    const documentCount = useJournalDataLogsStore_documentCount();
+    const lastCount = useJournalDataLogsStore_lastCount();
     const fetchingNewer = useJournalDataLogsStore_fetchingNewer();
     const fetchingOlder = useJournalDataLogsStore_fetchingOlder();
     const olderFinished = useJournalDataLogsStore_olderFinished();
@@ -41,7 +45,6 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     const outerRef = useRef<any>(null);
     const virtualRows = useRef<any>(null);
     const lastTopLog = useRef<string | null>(null);
-    const lastCount = useRef<number>(-1);
     const scrollOnLoad = useRef(true);
 
     const onScroll = ({ scrollOffset, scrollDirection }: any) => {
@@ -72,8 +75,12 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
 
     // Keep track of the top item so we can keep it in view when more logs are loaded
     useEffect(() => {
-        lastCount.current = documents.length;
-        lastTopLog.current = documents[0]?._meta.uuid;
+        if (!documents) {
+            return;
+        }
+
+        // Move to store
+        lastTopLog.current = documents[0]._meta.uuid;
     }, [documents]);
 
     useLayoutEffect(() => {
@@ -81,7 +88,7 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
             return;
         }
 
-        if (lastCount.current < documents.length) {
+        if (lastCount < documentCount) {
             if (fetchingOlder) {
                 tableScroller.current.scrollToItem(
                     findIndex(
@@ -93,18 +100,20 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
             }
 
             if (fetchingNewer) {
-                tableScroller.current.scrollToItem(documents.length, 'bottom');
+                tableScroller.current.scrollToItem(documentCount, 'bottom');
             }
             setFetchingOlder(false);
             setFetchingNewer(false);
-        } else if (fetchingNewer && lastCount.current === documents.length) {
+        } else if (fetchingNewer && lastCount === documentCount) {
             setLastTimeCheckedForNew(new Date().toISOString());
             setFetchingNewer(false);
         }
     }, [
+        documentCount,
         documents,
         fetchingNewer,
         fetchingOlder,
+        lastCount,
         setFetchingNewer,
         setFetchingOlder,
         setLastTimeCheckedForNew,
@@ -116,7 +125,7 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
         if (scrollOnLoad?.current && tableScroller?.current) {
             scrollOnLoad.current = false;
             tableScroller.current.scrollToItem(
-                documents.length > 1 ? Math.round(documents.length * 0.9) : 1
+                documentCount > 1 ? Math.round(documentCount * 0.95) : 1
             );
         }
         // We only care about then the scroll ref is set so we can scroll to the bottom
@@ -143,7 +152,6 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
                     <EntityTableHeader columns={columns} enableDivRendering />
 
                     <LogsTableBody
-                        documents={documents}
                         onScroll={onScroll}
                         outerRef={outerRef}
                         tableScroller={tableScroller}

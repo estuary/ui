@@ -7,7 +7,7 @@ import { OpsLogFlowDocument } from 'types';
 
 export interface JournalDataLogsState extends StoreWithHydration {
     documents: OpsLogFlowDocument[] | null;
-    documentCount: number | null;
+    documentCount: number;
     setDocuments: (val: JournalDataLogsState['documents']) => void;
 
     lastCount: number;

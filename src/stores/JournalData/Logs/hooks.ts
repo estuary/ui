@@ -37,6 +37,13 @@ export const useJournalDataLogsStore_lastParsed = () => {
     >(JournalDataStoreNames.LOGS, (state) => state.lastParsed);
 };
 
+export const useJournalDataLogsStore_lastCount = () => {
+    return useZustandStore<
+        JournalDataLogsState,
+        JournalDataLogsState['lastCount']
+    >(JournalDataStoreNames.LOGS, (state) => state.lastCount);
+};
+
 export const useJournalDataLogsStore_loading = () => {
     return useZustandStore<
         JournalDataLogsState,

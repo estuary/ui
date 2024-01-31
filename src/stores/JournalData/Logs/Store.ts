@@ -25,7 +25,7 @@ const getInitialStateData = (): Pick<
     | 'lastTimeCheckedForNew'
 > => ({
     documents: null,
-    documentCount: null,
+    documentCount: -1,
     lastCount: -1,
     lastParsed: -1,
     lastTimeCheckedForNew: null,

@@ -1,9 +1,12 @@
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { ListChildComponentProps, VariableSizeList } from 'react-window';
-import { OpsLogFlowDocument, TableStatuses } from 'types';
+import { TableStatuses } from 'types';
 import { TableBody } from '@mui/material';
 import { CSSProperties, MutableRefObject, useCallback, useRef } from 'react';
-import { useJournalDataLogsStore_networkFailed } from 'stores/JournalData/Logs/hooks';
+import {
+    useJournalDataLogsStore_documents,
+    useJournalDataLogsStore_networkFailed,
+} from 'stores/JournalData/Logs/hooks';
 import EntityTableBody from '../EntityTable/TableBody';
 import {
     DEFAULT_ROW_HEIGHT,
@@ -13,7 +16,6 @@ import useLogColumns from './useLogColumns';
 import { LogsTableRow } from './Row';
 
 interface Props {
-    documents: OpsLogFlowDocument[];
     onScroll: any;
     outerRef: MutableRefObject<any>;
     tableScroller: MutableRefObject<any>;
@@ -29,7 +31,6 @@ const virtualScrollStyling: CSSProperties = {
 const overscanCount: number = 15;
 
 function LogsTableBody({
-    documents,
     outerRef,
     onScroll,
     tableScroller,
@@ -37,6 +38,8 @@ function LogsTableBody({
     loading,
 }: Props) {
     const columns = useLogColumns();
+
+    const documents = useJournalDataLogsStore_documents();
 
     const expandedHeights = useRef<Map<string, number>>(new Map());
     const networkFailed = useJournalDataLogsStore_networkFailed();
