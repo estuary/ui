@@ -1,5 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
 import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
+import { useEntityType } from 'context/EntityContext';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -23,6 +24,7 @@ interface Props {
 }
 
 function ManualBackfill({ bindingIndex }: Props) {
+    const entityType = useEntityType();
     const { updateBackfillCounter } = useUpdateBackfillCounter();
 
     // Draft Editor Store
@@ -117,7 +119,9 @@ function ManualBackfill({ bindingIndex }: Props) {
                     </Typography>
 
                     <Typography component="div">
-                        <FormattedMessage id="workflows.collectionSelector.manualBackfill.message" />
+                        <FormattedMessage
+                            id={`workflows.collectionSelector.manualBackfill.message.${entityType}`}
+                        />
                     </Typography>
                 </Stack>
             </Stack>

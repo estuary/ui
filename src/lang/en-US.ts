@@ -994,7 +994,8 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
 
     'workflows.collectionSelector.manualBackfill.header': `Backfill`,
-    'workflows.collectionSelector.manualBackfill.message': `This is a placeholder for a description.`,
+    'workflows.collectionSelector.manualBackfill.message.capture': `Trigger a backfill of this binding from the captured endpoint.`,
+    'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger a backfill of this binding from its source collection to its materialized resource.`,
     'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
     'workflows.collectionSelector.manualBackfill.failed': `Failed to set backfill trigger for one or more bindings`,
 
