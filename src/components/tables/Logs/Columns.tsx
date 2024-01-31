@@ -10,10 +10,15 @@ interface RowProps {
     row: OpsLogFlowDocument;
     sizeRef: RefCallback<HTMLElement>;
     open: boolean;
-    opening: boolean;
+    heightChanging: boolean;
 }
 
-export function LogsTableColumns({ row, sizeRef, open, opening }: RowProps) {
+export function LogsTableColumns({
+    row,
+    sizeRef,
+    open,
+    heightChanging,
+}: RowProps) {
     const hasFields = Boolean(row.fields);
 
     return (
@@ -35,7 +40,7 @@ export function LogsTableColumns({ row, sizeRef, open, opening }: RowProps) {
                     uuid={row._meta.uuid}
                     message={row.message}
                     open={open}
-                    opening={opening}
+                    heightChanging={heightChanging}
                 />
             ) : null}
         </Stack>

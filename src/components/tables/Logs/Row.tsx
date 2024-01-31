@@ -33,7 +33,6 @@ export function LogsTableRow({ row, rowExpanded, style }: RowProps) {
                 return;
             }
 
-            console.log('debounce calling expanded', rowSizeHeight);
             previousHeight.current = rowSizeHeight;
             rowExpanded(rowSizeHeight);
             setHeightChanging(false);
@@ -74,7 +73,7 @@ export function LogsTableRow({ row, rowExpanded, style }: RowProps) {
             <LogsTableColumns
                 row={row}
                 open={open}
-                opening={heightChanging}
+                heightChanging={heightChanging}
                 sizeRef={sizeRef}
             />
         </TableRow>

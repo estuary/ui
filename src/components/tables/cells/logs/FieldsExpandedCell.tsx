@@ -6,11 +6,17 @@ interface Props {
     fields: any;
     message: string;
     open: boolean;
-    opening: boolean;
+    heightChanging: boolean;
     uuid: string;
 }
 
-function FieldsExpandedCell({ fields, open, opening, message, uuid }: Props) {
+function FieldsExpandedCell({
+    fields,
+    open,
+    heightChanging,
+    message,
+    uuid,
+}: Props) {
     const theme = useTheme();
 
     return (
@@ -28,7 +34,7 @@ function FieldsExpandedCell({ fields, open, opening, message, uuid }: Props) {
                 sx={{
                     px: 3,
                     py: 2,
-                    opacity: opening ? 0 : undefined,
+                    opacity: heightChanging ? 0 : undefined,
                 }}
             >
                 <Typography sx={{ fontFamily: 'Monospace' }}>
