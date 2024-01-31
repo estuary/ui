@@ -39,7 +39,7 @@ function CaptureGenerateButton({
             // We only want to set updateOnly if the user is editing and not updating the config
             //  This should cover when a user has enable previously disabled collection(s)
             updateOnly: Boolean(
-                rediscoveryRequired && isEdit && !endpointConfigChanged
+                rediscoveryRequired && isEdit && !endpointConfigChanged()
             ),
             initiateDiscovery: createWorkflowMetadata?.initiateDiscovery,
             initiateRediscovery: rediscoveryRequired,

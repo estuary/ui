@@ -115,7 +115,8 @@ function useDiscoverCapture(
                 const discoveryStartSuccess = await startDiscovery(
                     processedEntityName,
                     encryptedEndpointConfig.data,
-                    options.initiateRediscovery
+                    options.initiateRediscovery,
+                    options.updateOnly
                 );
 
                 return discoveryStartSuccess;
