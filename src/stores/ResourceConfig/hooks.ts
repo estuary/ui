@@ -103,6 +103,33 @@ export const useResourceConfig_setRestrictedDiscoveredCollections = () => {
     );
 };
 
+export const useResourceConfig_backfilledCollections = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['backfilledCollections']
+    >(ResourceConfigStoreNames.GENERAL, (state) => state.backfilledCollections);
+};
+
+export const useResourceConfig_addBackfilledCollection = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['addBackfilledCollection']
+    >(
+        ResourceConfigStoreNames.GENERAL,
+        (state) => state.addBackfilledCollection
+    );
+};
+
+export const useResourceConfig_removeBackfilledCollection = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['removeBackfilledCollection']
+    >(
+        ResourceConfigStoreNames.GENERAL,
+        (state) => state.removeBackfilledCollection
+    );
+};
+
 export const useResourceConfig_resourceConfig = () => {
     return useZustandStore<
         ResourceConfigState,

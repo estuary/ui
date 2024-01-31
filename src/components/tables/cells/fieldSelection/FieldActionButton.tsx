@@ -1,11 +1,6 @@
-import {
-    SxProps,
-    Theme,
-    ToggleButton,
-    ToggleButtonProps,
-    useTheme,
-} from '@mui/material';
+import { SxProps, Theme, ToggleButtonProps, useTheme } from '@mui/material';
 import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
+import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
 import {
     defaultOutline_hovered,
     disabledButtonText_error,
@@ -15,7 +10,6 @@ import {
     errorColoredOutline_hovered,
     errorOutlinedButtonBackground,
     errorOutlinedButtonBackground_disabled,
-    intensifiedOutline,
     successButtonText,
     successColoredOutline,
     successColoredOutline_disabled,
@@ -88,7 +82,7 @@ const getBaseSx = (
     };
 };
 
-function OutlinedToggleButton({
+function FieldActionButton({
     messageId,
     selectedValue,
     value,
@@ -135,26 +129,20 @@ function OutlinedToggleButton({
           };
 
     return (
-        <ToggleButton
+        <OutlinedToggleButton
             size="small"
             value={value}
             selected={selectedValue === value}
+            defaultStateSx={defaultStateSx}
             disabled={disabled}
+            disabledStateSx={disabledStateSx}
             onChange={onChange}
             onClick={onClick}
-            sx={{
-                'px': '9px',
-                'py': '3px',
-                'border': intensifiedOutline[theme.palette.mode],
-                'borderRadius': 2,
-                '&.Mui-disabled': disabledStateSx,
-                '&.Mui-selected': selectedStateSx,
-                ...defaultStateSx,
-            }}
+            selectedStateSx={selectedStateSx}
         >
             <FormattedMessage id={messageId} />
-        </ToggleButton>
+        </OutlinedToggleButton>
     );
 }
 
-export default OutlinedToggleButton;
+export default FieldActionButton;
