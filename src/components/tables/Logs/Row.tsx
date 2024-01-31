@@ -17,7 +17,6 @@ export function LogsTableRow({ row, rowExpanded, style }: RowProps) {
     // const startOfLogs = row._meta.uuid === START_OF_LOGS_UUID;
 
     const theme = useTheme();
-    const hasFields = Boolean(row.fields);
     const renderedHeight = style?.height ?? DEFAULT_ROW_HEIGHT;
 
     const [open, setOpen] = useState(renderedHeight > DEFAULT_ROW_HEIGHT);
@@ -51,17 +50,17 @@ export function LogsTableRow({ row, rowExpanded, style }: RowProps) {
     return (
         <TableRow
             component={Box}
-            aria-expanded={hasFields ? open : undefined}
-            hover={Boolean(hasFields && !open)}
+            aria-expanded={open}
+            hover={!open}
             selected={open}
             style={style}
             sx={{
-                cursor: hasFields ? 'pointer' : undefined,
+                cursor: 'pointer',
                 borderLeft: open ? '5px solid' : undefined,
                 borderLeftColor:
                     doubleElevationHoverBackground[theme.palette.mode],
             }}
-            onClick={hasFields ? handleClick : undefined}
+            onClick={handleClick}
         >
             <LogsTableColumns
                 row={row}
