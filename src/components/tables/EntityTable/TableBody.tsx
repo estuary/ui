@@ -5,6 +5,7 @@ import {
     getColumnKeyList,
     getEmptyTableHeader,
     getEmptyTableMessage,
+    getTableComponents,
 } from 'utils/table-utils';
 import { useMemo } from 'react';
 import TableLoadingRows from '../Loading';
@@ -33,21 +34,27 @@ function EntityTableBody({
         return getColumnKeyList(columns);
     }, [columns]);
 
+    const { tbodyComponent, tdComponent, trComponent } =
+        getTableComponents(enableDivRendering);
+
     if (rows && CustomBody) {
         return <CustomBody />;
     }
 
     return (
-        <TableBody component={enableDivRendering ? 'div' : 'thead'}>
+        <TableBody component={tbodyComponent}>
             {rows ? (
                 rows
             ) : loading ? (
-                <TableLoadingRows columnKeys={columnKeys} />
+                <TableLoadingRows
+                    columnKeys={columnKeys}
+                    enableDivRendering={enableDivRendering}
+                />
             ) : (
-                <TableRow component={enableDivRendering ? 'div' : 'tr'}>
+                <TableRow component={trComponent}>
                     <TableCell
                         colSpan={columnKeys.length}
-                        component={enableDivRendering ? 'div' : 'td'}
+                        component={tdComponent}
                     >
                         <Box
                             sx={{
