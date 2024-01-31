@@ -10,3 +10,7 @@ export const DEFAULT_ROW_HEIGHT = 55;
 export const DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS = 35;
 
 export const START_OF_LOGS_UUID = 'UI-start-of-logs';
+
+// Try to keep this close so that the icon rotates just as the height is being adjusted
+export const EXPAND_ROW_WAIT = 15;
+export const EXPAND_ROW_TRANSITION = 200;

@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { doubleElevationHoverBackground } from 'context/Theme';
 import useResizeObserver from 'use-resize-observer';
 import { useDebounce } from 'react-use';
-import { DEFAULT_ROW_HEIGHT } from './shared';
+import { DEFAULT_ROW_HEIGHT, EXPAND_ROW_WAIT } from './shared';
 import { LogsTableColumns } from './Columns';
 
 interface RowProps {
@@ -27,7 +27,7 @@ export function LogsTableRow({ row, rowExpanded, style }: RowProps) {
     const { ref: sizeRef, height: rowSizeHeight } =
         useResizeObserver<HTMLElement>();
 
-    const [, cancel] = useDebounce(
+    useDebounce(
         () => {
             if (!rowSizeHeight || rowSizeHeight === previousHeight.current) {
                 return;
@@ -37,7 +37,7 @@ export function LogsTableRow({ row, rowExpanded, style }: RowProps) {
             rowExpanded(rowSizeHeight);
             setHeightChanging(false);
         },
-        10,
+        EXPAND_ROW_WAIT,
         [rowSizeHeight, rowExpanded, setHeightChanging]
     );
 
@@ -46,19 +46,12 @@ export function LogsTableRow({ row, rowExpanded, style }: RowProps) {
 
         setHeightChanging(true);
         setOpen(newVal);
-
-        if (!newVal) {
-            cancel();
-        }
     };
-
-    const id = open ? `jsonPopper_${row._meta.uuid}` : undefined;
 
     return (
         <TableRow
             component={Box}
             aria-expanded={hasFields ? open : undefined}
-            aria-describedby={id}
             hover={Boolean(hasFields && !open)}
             selected={open}
             style={style}
