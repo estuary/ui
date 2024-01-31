@@ -41,16 +41,16 @@ function ManualBackfill({ bindingIndex }: Props) {
     const removeBackfilledCollection =
         useResourceConfig_removeBackfilledCollection();
 
-    const [increment, setIncrement] = useState<BooleanString | 'undefined'>(
-        'undefined'
-    );
-
     const selected = useMemo(
         () =>
             currentCollection
                 ? backfilledCollections.includes(currentCollection)
                 : false,
         [backfilledCollections, currentCollection]
+    );
+
+    const [increment, setIncrement] = useState<BooleanString | 'undefined'>(
+        selected ? 'true' : 'undefined'
     );
 
     const serverUpdateRequired = useMemo(() => {
