@@ -7,18 +7,10 @@ interface Props {
     message: string;
     open: boolean;
     opening: boolean;
-    toggleRowHeight: (event: HTMLElement) => void;
     uuid: string;
 }
 
-function FieldsExpandedCell({
-    fields,
-    open,
-    opening,
-    message,
-    toggleRowHeight,
-    uuid,
-}: Props) {
+function FieldsExpandedCell({ fields, open, opening, message, uuid }: Props) {
     const theme = useTheme();
 
     return (
@@ -30,8 +22,6 @@ function FieldsExpandedCell({
                 event.preventDefault();
                 event.stopPropagation();
             }}
-            onEntered={toggleRowHeight}
-            onExited={toggleRowHeight}
             unmountOnExit
         >
             <Box

@@ -39,8 +39,8 @@ function LogsTableBody({
             }
 
             return (
-                (expandedHeights.current.get(documents[rowIndex]._meta.uuid) ??
-                    0) + DEFAULT_ROW_HEIGHT
+                expandedHeights.current.get(documents[rowIndex]._meta.uuid) ??
+                DEFAULT_ROW_HEIGHT
             );
         },
         [documents]
@@ -48,7 +48,11 @@ function LogsTableBody({
 
     const expandRow = useCallback(
         (index: number, height: number) => {
-            if (height > 0) {
+            if (
+                height > 0 ||
+                height === DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS ||
+                height === DEFAULT_ROW_HEIGHT
+            ) {
                 expandedHeights.current.set(
                     documents[index]._meta.uuid,
                     height
@@ -63,16 +67,16 @@ function LogsTableBody({
     );
 
     const renderRow = useCallback(
-        ({ index, style }: ListChildComponentProps) => {
+        ({ data, index, style }: ListChildComponentProps) => {
             return (
                 <LogsTableRow
-                    row={documents[index]}
+                    row={data[index]}
                     style={style}
                     rowExpanded={(height) => expandRow(index, height)}
                 />
             );
         },
-        [documents, expandRow]
+        [expandRow]
     );
 
     if (documents.length > 0) {
@@ -87,6 +91,7 @@ function LogsTableBody({
                                 innerRef={virtualRows}
                                 height={height}
                                 width={width}
+                                itemData={documents}
                                 itemSize={getItemSize}
                                 estimatedItemSize={DEFAULT_ROW_HEIGHT}
                                 itemCount={documents.length}

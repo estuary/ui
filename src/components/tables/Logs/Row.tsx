@@ -1,7 +1,9 @@
 import { Box, TableRow, useTheme } from '@mui/material';
 import { OpsLogFlowDocument } from 'types';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { doubleElevationHoverBackground } from 'context/Theme';
+import useResizeObserver from 'use-resize-observer';
+import { useDebounce } from 'react-use';
 import { DEFAULT_ROW_HEIGHT } from './shared';
 import { LogsTableColumns } from './Columns';
 
@@ -19,16 +21,36 @@ export function LogsTableRow({ row, rowExpanded, style }: RowProps) {
     const renderedHeight = style?.height ?? DEFAULT_ROW_HEIGHT;
 
     const [open, setOpen] = useState(renderedHeight > DEFAULT_ROW_HEIGHT);
-    const [opening, setOpening] = useState(false);
+    const [heightChanging, setHeightChanging] = useState(false);
+    const previousHeight = useRef<Number>(renderedHeight);
+
+    const { ref: sizeRef, height: rowSizeHeight } =
+        useResizeObserver<HTMLElement>();
+
+    const [, cancel] = useDebounce(
+        () => {
+            if (!rowSizeHeight || rowSizeHeight === previousHeight.current) {
+                return;
+            }
+
+            console.log('debounce calling expanded', rowSizeHeight);
+            previousHeight.current = rowSizeHeight;
+            rowExpanded(rowSizeHeight);
+            setHeightChanging(false);
+        },
+        10,
+        [rowSizeHeight, rowExpanded, setHeightChanging]
+    );
 
     const handleClick = () => {
-        setOpening(true);
-        setOpen((previousOpen) => !previousOpen);
-    };
+        const newVal = !open;
 
-    const toggleRowHeight = (target: HTMLElement) => {
-        rowExpanded(target.offsetHeight);
-        setOpening(false);
+        setHeightChanging(true);
+        setOpen(newVal);
+
+        if (!newVal) {
+            cancel();
+        }
     };
 
     const id = open ? `jsonPopper_${row._meta.uuid}` : undefined;
@@ -52,8 +74,8 @@ export function LogsTableRow({ row, rowExpanded, style }: RowProps) {
             <LogsTableColumns
                 row={row}
                 open={open}
-                opening={opening}
-                toggleRowHeight={toggleRowHeight}
+                opening={heightChanging}
+                sizeRef={sizeRef}
             />
         </TableRow>
     );
