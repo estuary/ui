@@ -5,6 +5,7 @@ import { omit } from 'lodash';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { Schema } from 'types';
+import { getBackfillCounter } from 'utils/workflow-utils';
 import {
     useEditorStore_id,
     useEditorStore_queryResponse_mutate,
@@ -43,10 +44,7 @@ function useUpdateBackfillCounter() {
             }
 
             const spec: Schema = draftSpec.spec;
-            const binding: Schema = spec.bindings[bindingIndex];
-            let counter: number = Object.hasOwn(binding, 'backfill')
-                ? binding.backfill
-                : 0;
+            let counter = getBackfillCounter(spec.bindings[bindingIndex]);
 
             if (increment === 'true') {
                 counter = counter + 1;
