@@ -2,11 +2,7 @@ import { useJournalData } from 'hooks/journals/useJournalData';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
-import {
-    UUID_NEWEST_LOG,
-    maxBytes,
-    UUID_START_OF_LOGS,
-} from 'components/tables/Logs/shared';
+import { maxBytes, UUID_START_OF_LOGS } from 'components/tables/Logs/shared';
 import { useIntl } from 'react-intl';
 import { LoadDocumentsOffsets } from './shared';
 
@@ -44,34 +40,26 @@ function useOpsLogs(name: string, collectionName: string) {
 
         // Since journalData is read kinda async we need to wait to
         //  update documents until we know the meta data changed
-        if (parsedEnd !== lastParsed) {
+        if (parsedEnd && parsedEnd !== lastParsed) {
             if (documents.length > 0) {
-                const newDocs = [...documents, ...docs];
+                // If the parsed is lower than the other
+                const newDocs =
+                    lastParsed > parsedEnd
+                        ? [...docs, ...documents]
+                        : [...documents, ...docs];
 
                 if (parsedEnd === 0) {
                     newDocs.unshift({
                         _meta: {
                             uuid: UUID_START_OF_LOGS,
                         },
-                        level: 'done',
+                        level: 'waiting',
                         message: intl.formatMessage({
                             id: 'ops.logsTable.allOldLogsLoaded',
                         }),
                         ts: '',
                     });
                 }
-
-                // Add the end of logs to the end
-                newDocs.push({
-                    _meta: {
-                        uuid: UUID_NEWEST_LOG,
-                    },
-                    level: 'waiting',
-                    message: intl.formatMessage({
-                        id: 'ops.logsTable.waitingForNewLogs',
-                    }),
-                    ts: '',
-                });
 
                 setDocs(newDocs);
                 setFetchingMore(false);

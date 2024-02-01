@@ -61,7 +61,7 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     // Keep track of the top item so we can keep it in view when more logs are loaded
     useEffect(() => {
         lastCount.current = documents.length;
-        lastTopLog.current = documents[0]?._meta.uuid;
+        lastTopLog.current = documents[1]?._meta.uuid;
     }, [documents]);
 
     useLayoutEffect(() => {

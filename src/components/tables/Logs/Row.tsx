@@ -3,7 +3,7 @@ import { OpsLogFlowDocument } from 'types';
 import { CSSProperties, useLayoutEffect, useRef, useState } from 'react';
 import useResizeObserver from 'use-resize-observer';
 import { defaultOutline_hovered } from 'context/Theme';
-import { UUID_NEWEST_LOG, UUID_START_OF_LOGS } from './shared';
+import { UUID_NEWEST_LOG, UUID_OLDEST_LOG } from './shared';
 import { LogsTableColumns } from './Columns';
 import WaitingForOldLogsRow from './WaitingForRow/OldLogs';
 import WaitingForNewLogsRow from './WaitingForRow/NewLogs';
@@ -55,7 +55,7 @@ export function LogsTableRow({
     const WaitingComponent =
         uuid === UUID_NEWEST_LOG
             ? WaitingForNewLogsRow
-            : uuid === UUID_START_OF_LOGS
+            : uuid === UUID_OLDEST_LOG
             ? WaitingForOldLogsRow
             : null;
 
