@@ -1,13 +1,8 @@
-import { WaitingForRowProps } from './types';
+import { WaitingForRowProps } from '../types';
 import WaitingForRowBase from './Base';
 
 function WaitingForOldLogsRow(props: WaitingForRowProps) {
-    return (
-        <WaitingForRowBase
-            {...props}
-            messageKey="ops.logsTable.waitingForOldLogs"
-        />
-    );
+    return <WaitingForRowBase {...props} fetchOption="old" />;
 }
 
 export default WaitingForOldLogsRow;

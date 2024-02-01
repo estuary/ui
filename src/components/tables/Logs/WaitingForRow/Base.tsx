@@ -2,23 +2,45 @@ import { Box, TableCell, TableRow, Typography, useTheme } from '@mui/material';
 import SpinnerIcon from 'components/logs/SpinnerIcon';
 import { BaseTypographySx } from 'components/tables/cells/logs/shared';
 import { tableRowActiveBackground } from 'context/Theme';
-import { useEffect } from 'react';
+import { useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
 import useOnScreen from '@custom-react-hooks/use-on-screen';
-import { WaitingForRowProps } from './types';
+import { useDebounce } from 'react-use';
+import {
+    FetchMoreLogsFunction,
+    FetchMoreLogsOptions,
+    WaitingForRowProps,
+} from '../types';
 
 interface Props extends WaitingForRowProps {
-    messageKey: string;
+    fetchOption: FetchMoreLogsOptions;
+    fetchMoreLogs: FetchMoreLogsFunction;
 }
 
-function WaitingForRowBase({ messageKey, sizeRef, style }: Props) {
+function WaitingForRowBase({
+    fetchMoreLogs,
+    fetchOption,
+    sizeRef,
+    style,
+}: Props) {
     const theme = useTheme();
 
+    const runFetch = useRef(true);
     const { ref, isIntersecting } = useOnScreen({ threshold: 1 }, false);
 
-    useEffect(() => {
-        console.log(`${messageKey}`, isIntersecting);
-    }, [messageKey, isIntersecting]);
+    useDebounce(
+        () => {
+            console.log('isIntersecting', isIntersecting);
+            if (isIntersecting) {
+                runFetch.current = false;
+                fetchMoreLogs(fetchOption);
+            } else {
+                runFetch.current = true;
+            }
+        },
+        25,
+        [isIntersecting]
+    );
 
     return (
         <TableRow
@@ -27,6 +49,8 @@ function WaitingForRowBase({ messageKey, sizeRef, style }: Props) {
             style={style}
             sx={{
                 bgcolor: tableRowActiveBackground[theme.palette.mode],
+                opacity: isIntersecting ? 1 : 0,
+                transition: 'all 100ms ease-in-out',
             }}
         >
             <Box ref={ref}>
@@ -41,7 +65,9 @@ function WaitingForRowBase({ messageKey, sizeRef, style }: Props) {
                 </TableCell>
                 <TableCell sx={{ width: '100%' }} component="div">
                     <Typography sx={BaseTypographySx}>
-                        <FormattedMessage id={messageKey} />
+                        <FormattedMessage
+                            id={`ops.logsTable.waitingForLogs.${fetchOption}`}
+                        />
                     </Typography>
                 </TableCell>
             </Box>

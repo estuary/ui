@@ -7,6 +7,7 @@ import { UUID_NEWEST_LOG, UUID_OLDEST_LOG } from './shared';
 import { LogsTableColumns } from './Columns';
 import WaitingForOldLogsRow from './WaitingForRow/OldLogs';
 import WaitingForNewLogsRow from './WaitingForRow/NewLogs';
+import { FetchMoreLogsFunction } from './types';
 
 interface RowProps {
     row: OpsLogFlowDocument;
@@ -60,7 +61,14 @@ export function LogsTableRow({
             : null;
 
     if (WaitingComponent) {
-        return <WaitingComponent style={style} sizeRef={sizeRef} />;
+        // The fields thing is pretty janky and hacky but it worked and made this much easier
+        return (
+            <WaitingComponent
+                style={style}
+                sizeRef={sizeRef}
+                fetchMoreLogs={row.fields as FetchMoreLogsFunction}
+            />
+        );
     }
 
     return (
