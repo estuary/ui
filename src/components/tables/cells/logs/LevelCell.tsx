@@ -7,14 +7,13 @@ import { BaseCellSx } from './shared';
 interface Props {
     row: OpsLogFlowDocument;
     expanded: boolean;
-    disableExpand?: boolean;
 }
 
-function LevelCell({ disableExpand, expanded, row }: Props) {
+function LevelCell({ expanded, row }: Props) {
     return (
         <TableCell sx={BaseCellSx} component="div">
             <Stack direction="row" sx={{ alignItems: 'center' }}>
-                <ExpandRowButton disable={disableExpand} expanded={expanded} />
+                <ExpandRowButton expanded={expanded} />
                 <LevelIcon level={row.level} />
             </Stack>
         </TableCell>

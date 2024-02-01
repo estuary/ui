@@ -3,6 +3,7 @@ import { ListChildComponentProps, VariableSizeList } from 'react-window';
 import { OpsLogFlowDocument, TableStatuses } from 'types';
 import { TableBody } from '@mui/material';
 import { MutableRefObject, useCallback, useRef } from 'react';
+import { isEmpty } from 'lodash';
 import EntityTableBody from '../EntityTable/TableBody';
 import {
     DEFAULT_ROW_HEIGHT,
@@ -35,14 +36,11 @@ function LogsTableBody({
 
     const getItemSize = useCallback(
         (rowIndex: number) => {
-            if (!Boolean(documents[rowIndex].fields)) {
-                return DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS;
-            }
-
-            return (
-                expandedHeights.current.get(documents[rowIndex]._meta.uuid) ??
-                DEFAULT_ROW_HEIGHT
-            );
+            return expandedHeights.current.get(
+                documents[rowIndex]._meta.uuid
+            ) ?? isEmpty(documents[rowIndex].fields)
+                ? DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS
+                : DEFAULT_ROW_HEIGHT;
         },
         [documents]
     );

@@ -3,9 +3,9 @@ import { useJournalData } from 'hooks/journals/useJournalData';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 import {
-    END_OF_LOGS_UUID,
+    UUID_NEWEST_LOG,
     maxBytes,
-    START_OF_LOGS_UUID,
+    UUID_START_OF_LOGS,
 } from 'components/tables/Logs/shared';
 import { useIntl } from 'react-intl';
 import { LoadDocumentsOffsets } from './shared';
@@ -51,7 +51,7 @@ function useOpsLogs(name: string, collectionName: string) {
                 if (parsedEnd === 0) {
                     newDocs.unshift({
                         _meta: {
-                            uuid: START_OF_LOGS_UUID,
+                            uuid: UUID_START_OF_LOGS,
                         },
                         level: 'done',
                         message: intl.formatMessage({
@@ -64,7 +64,7 @@ function useOpsLogs(name: string, collectionName: string) {
                 // Add the end of logs to the end
                 newDocs.push({
                     _meta: {
-                        uuid: END_OF_LOGS_UUID,
+                        uuid: UUID_NEWEST_LOG,
                     },
                     level: 'waiting',
                     message: intl.formatMessage({

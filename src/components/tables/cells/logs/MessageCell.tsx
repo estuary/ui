@@ -1,4 +1,5 @@
 import { TableCell, Typography } from '@mui/material';
+import { isEmpty } from 'lodash';
 import { ObjectPreview } from 'react-inspector';
 import { BaseTypographySx } from './shared';
 
@@ -20,7 +21,7 @@ function MessageCell({ fields, message }: Props) {
                 {message}
             </Typography>
 
-            {fields ? (
+            {!isEmpty(fields) ? (
                 <Typography component="div" sx={{ ...BaseTypographySx }}>
                     <ObjectPreview data={fields} />
                 </Typography>

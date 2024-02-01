@@ -395,6 +395,11 @@ export const shardStatusDefaultColor = {
     dark: '#E1E9F4',
 };
 
+export const tableRowActiveBackground = {
+    light: 'rgb(195, 233, 195)', // '#C4D3E9' used hue 120 at https://www.w3schools.com/colors/colors_picker.asp?color=c4d3e9
+    dark: 'rgb(225, 244, 225)', //'#E1E9F4' used hue 120 at https://www.w3schools.com/colors/colors_picker.asp?color=e1e9f4
+};
+
 export const truncateTextSx: SxProps<Theme> = {
     whiteSpace: 'nowrap',
     overflow: 'hidden',

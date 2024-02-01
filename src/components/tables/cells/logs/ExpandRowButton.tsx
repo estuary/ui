@@ -5,27 +5,21 @@ import { useIntl } from 'react-intl';
 
 interface Props {
     expanded: boolean;
-    disable?: boolean;
 }
 
-function ExpandRowButton({ disable, expanded }: Props) {
+function ExpandRowButton({ expanded }: Props) {
     const intl = useIntl();
     return (
         <Tooltip
             title={intl.formatMessage({
-                id: disable
-                    ? 'ops.logsTable.expand.disabled'
-                    : expanded
-                    ? 'aria.closeExpand'
-                    : 'aria.openExpand',
+                id: expanded ? 'aria.closeExpand' : 'aria.openExpand',
             })}
             placement="top"
             enterDelay={500}
         >
             <Box>
                 <IconButton
-                    aria-expanded={disable ? undefined : expanded}
-                    disabled={disable}
+                    aria-expanded={expanded}
                     sx={{
                         padding: 0.5,
                         marginRight: 0,
