@@ -27,9 +27,14 @@ import { populateErrors } from 'stores/utils';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import {
+    getBackfillCounter,
+    getBindingIndex,
+    getCollectionName,
+    getDisableProps,
+} from 'utils/workflow-utils';
+import { StoreApi, create } from 'zustand';
+import { NamedSet, devtools } from 'zustand/middleware';
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
 
 const STORE_KEY = 'Resource Config';
@@ -134,6 +139,7 @@ const getInitialCollectionStateData = (): Pick<
 
 const getInitialMiscStoreData = (): Pick<
     ResourceConfigState,
+    | 'backfilledCollections'
     | 'discoveredCollections'
     | 'hydrated'
     | 'hydrationErrorsExist'
@@ -146,6 +152,7 @@ const getInitialMiscStoreData = (): Pick<
     | 'collectionsRequiringRediscovery'
     | 'rediscoveryRequired'
 > => ({
+    backfilledCollections: [],
     discoveredCollections: null,
     hydrated: false,
     hydrationErrorsExist: false,
@@ -435,6 +442,54 @@ const getInitialState = (
         );
     },
 
+    prefillBackfilledCollections: (liveBindings, draftedBindings) => {
+        const { addBackfilledCollection } = get();
+
+        draftedBindings.forEach((draftedBinding) => {
+            const collection = getCollectionName(draftedBinding);
+
+            const draftedBackfillCounter = getBackfillCounter(draftedBinding);
+
+            const liveBindingIndex = getBindingIndex(liveBindings, collection);
+            const liveBackfillCounter =
+                liveBindingIndex > -1
+                    ? getBackfillCounter(liveBindings[liveBindingIndex])
+                    : 0;
+
+            if (
+                liveBackfillCounter !== draftedBackfillCounter ||
+                (liveBindingIndex === -1 && draftedBackfillCounter > 0)
+            ) {
+                addBackfilledCollection(collection);
+            }
+        });
+    },
+
+    addBackfilledCollection: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                if (!state.backfilledCollections.includes(value)) {
+                    state.backfilledCollections.push(value);
+                }
+            }),
+            false,
+            'Backfilled Collection Added'
+        );
+    },
+
+    removeBackfilledCollection: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                state.backfilledCollections =
+                    state.backfilledCollections.filter(
+                        (collection) => collection !== value
+                    );
+            }),
+            false,
+            'Backfilled Collection Removed'
+        );
+    },
+
     updateResourceConfig: (key, value) => {
         const { resourceConfig, setResourceConfig } = get();
 
@@ -685,15 +740,36 @@ const getInitialState = (
         }
 
         if (editWorkflow && liveSpecIds.length > 0) {
-            const { data, error } = draftId
-                ? await getDraftSpecsByDraftId(draftId, entityType)
-                : await getLiveSpecsByLiveSpecId(liveSpecIds[0], entityType);
+            const { data: liveSpecs, error: liveSpecError } =
+                await getLiveSpecsByLiveSpecId(liveSpecIds[0], entityType);
 
-            if (error) {
+            if (liveSpecError) {
                 setHydrationErrorsExist(true);
-            } else if (data && data.length > 0) {
-                const { prefillResourceConfig } = get();
-                prefillResourceConfig(sortBindings(data[0].spec.bindings));
+            } else if (liveSpecs && liveSpecs.length > 0) {
+                const { prefillBackfilledCollections, prefillResourceConfig } =
+                    get();
+
+                if (draftId) {
+                    const { data: draftSpecs, error: draftSpecError } =
+                        await getDraftSpecsByDraftId(draftId, entityType);
+
+                    if (draftSpecError) {
+                        setHydrationErrorsExist(true);
+                    } else if (draftSpecs && draftSpecs.length > 0) {
+                        prefillResourceConfig(
+                            sortBindings(draftSpecs[0].spec.bindings)
+                        );
+
+                        prefillBackfilledCollections(
+                            liveSpecs[0].spec.bindings,
+                            draftSpecs[0].spec.bindings
+                        );
+                    }
+                } else {
+                    prefillResourceConfig(
+                        sortBindings(liveSpecs[0].spec.bindings)
+                    );
+                }
             }
         }
 
