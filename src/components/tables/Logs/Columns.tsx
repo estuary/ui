@@ -1,5 +1,6 @@
 import { Box, Stack } from '@mui/material';
 import { OpsLogFlowDocument } from 'types';
+import { RefCallback } from 'react';
 import LevelCell from '../cells/logs/LevelCell';
 import TimestampCell from '../cells/logs/TimestampCell';
 import MessageCell from '../cells/logs/MessageCell';
@@ -7,21 +8,21 @@ import FieldsExpandedCell from '../cells/logs/FieldsExpandedCell';
 
 interface RowProps {
     row: OpsLogFlowDocument;
+    sizeRef: RefCallback<HTMLElement>;
     open: boolean;
-    opening: boolean;
-    toggleRowHeight: any;
+    heightChanging: boolean;
 }
 
 export function LogsTableColumns({
     row,
+    sizeRef,
     open,
-    opening,
-    toggleRowHeight,
+    heightChanging,
 }: RowProps) {
     const hasFields = Boolean(row.fields);
 
     return (
-        <Stack>
+        <Stack ref={sizeRef}>
             <Box>
                 <LevelCell
                     disableExpand={!hasFields}
@@ -39,8 +40,7 @@ export function LogsTableColumns({
                     uuid={row._meta.uuid}
                     message={row.message}
                     open={open}
-                    opening={opening}
-                    toggleRowHeight={toggleRowHeight}
+                    heightChanging={heightChanging}
                 />
             ) : null}
         </Stack>

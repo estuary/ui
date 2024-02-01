@@ -1,20 +1,16 @@
-import {
-    Box,
-    TableCell,
-    TableHead,
-    TableRow,
-    TableSortLabel,
-} from '@mui/material';
+import { TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
 import { getStickyTableCell } from 'context/Theme';
 import { ArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import { SortDirection } from 'types';
+import { getTableComponents } from 'utils/table-utils';
 import { ColumnProps } from './types';
 
 interface Props {
     columns: ColumnProps[];
     headerClick?: (column: any) => (event: React.MouseEvent<unknown>) => void;
+    height?: number;
     hide?: boolean;
     columnToSort?: string;
     selectData?: any;
@@ -28,6 +24,7 @@ function EntityTableHeader({
     columnToSort,
     enableDivRendering,
     headerClick,
+    height,
     hide,
     selectData,
     selectableTableStoreName,
@@ -35,12 +32,16 @@ function EntityTableHeader({
 }: Props) {
     const enableSort = Boolean(columnToSort && headerClick && sortDirection);
 
+    const { theaderComponent, tdComponent, trComponent } =
+        getTableComponents(enableDivRendering);
+
     return (
-        <TableHead component={enableDivRendering ? 'div' : 'thead'}>
+        <TableHead component={theaderComponent}>
             <TableRow
-                component={enableDivRendering ? Box : TableRow}
+                component={trComponent}
                 sx={{
                     background: (theme) => theme.palette.background.default,
+                    height,
                 }}
             >
                 {columns.map((column, index) => {
@@ -84,7 +85,7 @@ function EntityTableHeader({
 
                     return (
                         <TableCell
-                            component={enableDivRendering ? 'div' : 'td'}
+                            component={tdComponent}
                             key={`${column.field}-${index}`}
                             align={column.align}
                             sortDirection={

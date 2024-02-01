@@ -4,6 +4,7 @@ import { createEntityDraft } from 'api/drafts';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_setCatalogName,
+    useEditorStore_setId,
 } from 'components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useCallback } from 'react';
@@ -19,6 +20,7 @@ function useDiscoverStartDiscovery(entityType: Entity) {
         useDiscoverStartSubscription(entityType);
     const { callFailed } = useEntityWorkflowHelpers();
 
+    const setDraftId = useEditorStore_setId();
     const persistedDraftId = useEditorStore_persistedDraftId();
     const setCatalogName = useEditorStore_setCatalogName();
 
@@ -32,7 +34,8 @@ function useDiscoverStartDiscovery(entityType: Entity) {
         async (
             processedEntityName: string,
             encryptedEndpointConfigResponse: any,
-            rediscover?: boolean
+            rediscover?: boolean,
+            updateOnly?: boolean
         ) => {
             // If we are doing a rediscovery and we have a draft then go ahead and use that draft
             //  that way the most recent changes to bindings and endpoints will get added to the draft before rediscovery
@@ -64,9 +67,16 @@ function useDiscoverStartDiscovery(entityType: Entity) {
                 processedEntityName,
                 encryptedEndpointConfigResponse,
                 imageConnectorTagId,
-                newDraftId
+                newDraftId,
+                updateOnly
             );
+
             if (discoverResponse.error) {
+                // If we failed at discovery we need to clear draft ID like we do
+                //  when we createDiscoversSubscription. Otherwise, the Test|Save
+                //  buttons will appear.
+                setDraftId(null);
+
                 callFailed({
                     error: {
                         title: 'captureCreate.generate.failedErrorTitle',

@@ -28,7 +28,11 @@ import useDiscoverStartDiscovery from './useDiscoverStartDiscovery';
 
 function useDiscoverCapture(
     entityType: Entity,
-    options?: { initiateRediscovery?: boolean; initiateDiscovery?: boolean }
+    options?: {
+        initiateRediscovery?: boolean;
+        initiateDiscovery?: boolean;
+        updateOnly?: boolean;
+    }
 ) {
     const draftUpdate = useDiscoverDraftUpdate(options);
     const configEncrypt = useDiscoverConfigEncrypt();
@@ -111,7 +115,8 @@ function useDiscoverCapture(
                 const discoveryStartSuccess = await startDiscovery(
                     processedEntityName,
                     encryptedEndpointConfig.data,
-                    options.initiateRediscovery
+                    options.initiateRediscovery,
+                    options.updateOnly
                 );
 
                 return discoveryStartSuccess;
@@ -138,6 +143,7 @@ function useDiscoverCapture(
             endpointConfigErrorsExist,
             options?.initiateDiscovery,
             options?.initiateRediscovery,
+            options?.updateOnly,
             persistedDraftId,
             processedEntityName,
             resetEditorState,

@@ -30,6 +30,7 @@ function LogsTableBody({
 }: Props) {
     const columns = useLogColumns();
 
+    const openRows = useRef<Map<string, boolean>>(new Map());
     const expandedHeights = useRef<Map<string, number>>(new Map());
 
     const getItemSize = useCallback(
@@ -39,40 +40,57 @@ function LogsTableBody({
             }
 
             return (
-                (expandedHeights.current.get(documents[rowIndex]._meta.uuid) ??
-                    0) + DEFAULT_ROW_HEIGHT
+                expandedHeights.current.get(documents[rowIndex]._meta.uuid) ??
+                DEFAULT_ROW_HEIGHT
             );
         },
         [documents]
     );
 
-    const expandRow = useCallback(
-        (index: number, height: number) => {
-            if (height > 0) {
-                expandedHeights.current.set(
-                    documents[index]._meta.uuid,
-                    height
-                );
+    const openRow = useCallback((uuid: string, isOpen: boolean) => {
+        if (isOpen) {
+            openRows.current.set(uuid, isOpen);
+        } else {
+            openRows.current.delete(uuid);
+        }
+    }, []);
+
+    const updateRowHeight = useCallback(
+        (index: number, uuid: string, height: number) => {
+            if (
+                height > 0 ||
+                height === DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS ||
+                height === DEFAULT_ROW_HEIGHT
+            ) {
+                expandedHeights.current.set(uuid, height);
             } else {
-                expandedHeights.current.delete(documents[index]._meta.uuid);
+                expandedHeights.current.delete(uuid);
             }
 
             tableScroller.current.resetAfterIndex(index);
         },
-        [documents, tableScroller]
+        [tableScroller]
     );
 
     const renderRow = useCallback(
-        ({ index, style }: ListChildComponentProps) => {
+        ({ data, index, style }: ListChildComponentProps) => {
             return (
                 <LogsTableRow
-                    row={documents[index]}
+                    row={data[index]}
                     style={style}
-                    rowExpanded={(height) => expandRow(index, height)}
+                    rowExpanded={(height) =>
+                        updateRowHeight(index, data[index]._meta.uuid, height)
+                    }
+                    rowOpened={(isOpen) =>
+                        openRow(data[index]._meta.uuid, isOpen)
+                    }
+                    renderOpen={Boolean(
+                        openRows.current.get(data[index]._meta.uuid)
+                    )}
                 />
             );
         },
-        [documents, expandRow]
+        [openRow, updateRowHeight]
     );
 
     if (documents.length > 0) {
@@ -87,6 +105,7 @@ function LogsTableBody({
                                 innerRef={virtualRows}
                                 height={height}
                                 width={width}
+                                itemData={documents}
                                 itemSize={getItemSize}
                                 estimatedItemSize={DEFAULT_ROW_HEIGHT}
                                 itemCount={documents.length}
@@ -109,6 +128,7 @@ function LogsTableBody({
     return (
         <EntityTableBody
             columns={columns}
+            enableDivRendering
             noExistingDataContentIds={{
                 header: 'ops.logsTable.emptyTableDefault.header',
                 message: 'ops.logsTable.emptyTableDefault.message',

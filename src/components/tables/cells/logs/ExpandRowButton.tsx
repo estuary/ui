@@ -1,4 +1,5 @@
 import { Box, IconButton, Tooltip } from '@mui/material';
+import { EXPAND_ROW_TRANSITION } from 'components/tables/Logs/shared';
 import { NavArrowRight } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
@@ -29,7 +30,7 @@ function ExpandRowButton({ disable, expanded }: Props) {
                         padding: 0.5,
                         marginRight: 0,
                         transform: `rotate(${expanded ? '90' : '0'}deg)`,
-                        transition: 'all 50ms ease-in-out',
+                        transition: `all ${EXPAND_ROW_TRANSITION}ms ease-in-out`,
                     }}
                 >
                     <NavArrowRight />
