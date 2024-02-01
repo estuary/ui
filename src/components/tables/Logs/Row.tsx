@@ -1,16 +1,15 @@
 import { Box, TableRow, useTheme } from '@mui/material';
 import { OpsLogFlowDocument } from 'types';
-import { useRef, useState } from 'react';
+import { CSSProperties, useLayoutEffect, useRef, useState } from 'react';
 import { doubleElevationHoverBackground } from 'context/Theme';
 import useResizeObserver from 'use-resize-observer';
-import { useDebounce } from 'react-use';
-import { DEFAULT_ROW_HEIGHT, EXPAND_ROW_WAIT } from './shared';
+import { DEFAULT_ROW_HEIGHT } from './shared';
 import { LogsTableColumns } from './Columns';
 
 interface RowProps {
     row: OpsLogFlowDocument;
     rowExpanded: (height: number) => void;
-    style?: any;
+    style?: CSSProperties;
 }
 
 export function LogsTableRow({ row, rowExpanded, style }: RowProps) {
@@ -21,24 +20,20 @@ export function LogsTableRow({ row, rowExpanded, style }: RowProps) {
 
     const [open, setOpen] = useState(renderedHeight > DEFAULT_ROW_HEIGHT);
     const [heightChanging, setHeightChanging] = useState(false);
-    const previousHeight = useRef<Number>(renderedHeight);
+    const previousHeight = useRef(renderedHeight);
 
     const { ref: sizeRef, height: rowSizeHeight } =
         useResizeObserver<HTMLElement>();
 
-    useDebounce(
-        () => {
-            if (!rowSizeHeight || rowSizeHeight === previousHeight.current) {
-                return;
-            }
+    useLayoutEffect(() => {
+        if (!rowSizeHeight || rowSizeHeight === previousHeight.current) {
+            return;
+        }
 
-            previousHeight.current = rowSizeHeight;
-            rowExpanded(rowSizeHeight);
-            setHeightChanging(false);
-        },
-        EXPAND_ROW_WAIT,
-        [rowSizeHeight, rowExpanded, setHeightChanging]
-    );
+        previousHeight.current = rowSizeHeight;
+        rowExpanded(rowSizeHeight);
+        setHeightChanging(false);
+    }, [rowExpanded, rowSizeHeight]);
 
     const handleClick = () => {
         const newVal = !open;
