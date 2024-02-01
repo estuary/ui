@@ -98,9 +98,9 @@ function EndpointConfig({
 
     // Storing flag to handle knowing if a config changed
     //  during both create or edit.
-    const [resetEndpointConfig, updateSchema] = useMemo(() => {
-        let resetConfigResponse = false;
-        let updateSchemaResponse = false;
+    const [resetEndpointConfig, updateEndpointSchema] = useMemo(() => {
+        let resetConfig = false;
+        let updateSchema = false;
 
         const schemaChanged = Boolean(
             connectorTag?.endpoint_spec_schema &&
@@ -109,22 +109,22 @@ function EndpointConfig({
 
         if (editWorkflow) {
             // In edit we never want to clear the config since any changes to
-            //  the schema should come from an upgrade and connectors should
+            //  the schema should come from an connector tag upgrade and those
             //  be backwards compatible anyway (as of Q1 2024)
-            resetConfigResponse = false;
+            resetConfig = false;
 
             // We do want to reset the schema if it is known to be unsupported and
             //   the schema has changed
-            updateSchemaResponse = unsupportedConnectorVersion && schemaChanged;
+            updateSchema = unsupportedConnectorVersion && schemaChanged;
         } else {
             // In create if the schema changed it probably means the user selected
             //  a different connector in the dropdown. So we need to clear out data
             //  and update the schema
-            resetConfigResponse = schemaChanged;
-            updateSchemaResponse = schemaChanged;
+            resetConfig = schemaChanged;
+            updateSchema = schemaChanged;
         }
 
-        return [resetConfigResponse, updateSchemaResponse];
+        return [resetConfig, updateSchema];
     }, [
         connectorTag?.endpoint_spec_schema,
         editWorkflow,
@@ -140,22 +140,20 @@ function EndpointConfig({
             return;
         }
 
+        // Update the schema if needed
+        if (updateEndpointSchema) {
+            setEndpointSchema(schema);
+        }
+
         // Clear out the encrypted data and reset state so the user needs to click next again
         if (resetEndpointConfig) {
             setServerUpdateRequired(true);
             setEncryptedEndpointConfig({
                 data: {},
             });
-        }
 
-        // Update the schema if needed
-        if (updateSchema) {
-            setEndpointSchema(schema);
-        }
-
-        // After the schema change we can prefill the data by generating
-        //  the defaults and populate the data/errors
-        if (resetEndpointConfig) {
+            // After the schema change we can prefill the data by generating
+            //  the defaults and populate the data/errors
             const defaultConfig = createJSONFormDefaults(schema);
             setEndpointConfig(defaultConfig);
             setPreviousEndpointConfig(defaultConfig);
@@ -168,7 +166,7 @@ function EndpointConfig({
         setEndpointSchema,
         setPreviousEndpointConfig,
         setServerUpdateRequired,
-        updateSchema,
+        updateEndpointSchema,
     ]);
 
     // Controlling if we need to show the generate button again
