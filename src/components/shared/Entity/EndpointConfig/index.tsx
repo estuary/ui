@@ -152,13 +152,11 @@ function EndpointConfig({
         }
 
         if (resetEndpointConfig) {
-            // If we have changed the schema then the user should click next again
-            //  so that the config is encrypted again fresh.
-            //    In create - both these flags are always true
-            //    In edit - we don't clear the config and update the schema if it is unsupported
+            //    In create - if we clear out the configurations we also update the schema
+            //    In edit - we never clear the config and update the schema only if it is unsupported
             //      if we are moving up an unsupported version then we let the user continue
             //      with their existing config. If they have to enter new fields then the form will
-            //      detect the change and force them to click next anyway.
+            //      detect the change and force them to click next anyway for now (Q1 2024)
             setServerUpdateRequired(true);
 
             // Clear out the encrypted config because we are requiring a server update and
