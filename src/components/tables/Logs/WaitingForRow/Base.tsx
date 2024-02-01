@@ -6,15 +6,10 @@ import { useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
 import useOnScreen from '@custom-react-hooks/use-on-screen';
 import { useDebounce } from 'react-use';
-import {
-    FetchMoreLogsFunction,
-    FetchMoreLogsOptions,
-    WaitingForRowProps,
-} from '../types';
+import { FetchMoreLogsOptions, WaitingForRowProps } from '../types';
 
 interface Props extends WaitingForRowProps {
     fetchOption: FetchMoreLogsOptions;
-    fetchMoreLogs: FetchMoreLogsFunction;
 }
 
 function WaitingForRowBase({

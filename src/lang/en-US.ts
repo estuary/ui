@@ -672,14 +672,16 @@ const Ops: ResolvedIntlConfig['messages'] = {
     'ops.logsTable.label.message': `Message`,
     'ops.logsTable.label.fields': `Fields`,
     'ops.logsTable.allOldLogsLoaded': ` Start of logs `,
-    'ops.logsTable.waitingForOldLogs': `Fetching older logs`,
-    'ops.logsTable.waitingForNewLogs': `Waiting for new logs`,
     'ops.logsTable.emptyTableDefault.header': `No logs found.`,
     'ops.logsTable.emptyTableDefault.message': `We were unable to find any logs. Please press refresh to try loading again.`,
     'ops.logsTable.footer.lines': `{count} {count, plural,
         one {log}
         other {logs}
     }`,
+
+    // These keys get generated inside the WaitingForRowBase
+    'ops.logsTable.waitingForLogs.old': `Fetching older logs`,
+    'ops.logsTable.waitingForLogs.new': `Waiting for new logs`,
 };
 
 const endpointConfigHeader = `Endpoint Config`;

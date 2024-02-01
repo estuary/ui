@@ -1,13 +1,18 @@
 import { findIndex } from 'lodash';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    useState,
+} from 'react';
 import { useIntl } from 'react-intl';
 import { OpsLogFlowDocument } from 'types';
-import { Box, LinearProgress, Table, TableContainer } from '@mui/material';
+import { Box, Table, TableContainer } from '@mui/material';
 import EntityTableHeader from '../EntityTable/TableHeader';
 import useLogColumns from './useLogColumns';
-import { DEFAULT_ROW_HEIGHT } from './shared';
-import LogsTableFooter from './Footer';
 import LogsTableBody from './Body';
+import { FetchMoreLogsFunction } from './types';
 
 interface Props {
     documents: OpsLogFlowDocument[];
@@ -28,35 +33,27 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     const scrollOnLoad = useRef(true);
     const [fetchingOlder, setFetchingOlder] = useState(false);
     const [fetchingNewer, setFetchingNewer] = useState(false);
-    const [lastCheckedForNew, setLastCheckedForNew] = useState<string | null>(
-        null
+
+    const fetchMoreLogs = useCallback<FetchMoreLogsFunction>(
+        (option) => {
+            if (fetchingNewer || fetchingOlder) {
+                return;
+            }
+
+            if (option === 'old') {
+                if (!fetchOlder) {
+                    return;
+                }
+
+                setFetchingOlder(true);
+                fetchOlder();
+            } else {
+                setFetchingNewer(true);
+                fetchNewer();
+            }
+        },
+        [fetchNewer, fetchOlder, fetchingNewer, fetchingOlder]
     );
-
-    const onScroll = ({ scrollOffset, scrollDirection }: any) => {
-        // If we're already loading do not need to kick another call off
-        if (fetchingNewer || fetchingOlder) {
-            return;
-        }
-
-        // Need to figure out if scrolling is at bottom
-        if (
-            scrollDirection === 'forward' &&
-            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-            scrollOffset + outerRef.current.offsetHeight + DEFAULT_ROW_HEIGHT >=
-                outerRef.current.scrollHeight
-        ) {
-            setLastCheckedForNew(null);
-            setFetchingNewer(true);
-            fetchNewer();
-        } else if (
-            scrollOffset === 0 &&
-            fetchOlder &&
-            scrollDirection === 'backward'
-        ) {
-            setFetchingOlder(true);
-            fetchOlder();
-        }
-    };
 
     // Keep track of the top item so we can keep it in view when more logs are loaded
     useEffect(() => {
@@ -85,9 +82,7 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
             }
             setFetchingOlder(false);
             setFetchingNewer(false);
-            setLastCheckedForNew(null);
         } else if (fetchingNewer && lastCount.current === documents.length) {
-            setLastCheckedForNew(new Date().toISOString());
             setFetchingNewer(false);
         }
     }, [documents, fetchingOlder, fetchingNewer]);
@@ -106,45 +101,36 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
     }, [tableScroller?.current]);
 
     return (
-        <>
-            {fetchingOlder ? <LinearProgress /> : null}
-            <TableContainer
+        <TableContainer
+            component={Box}
+            width="100%"
+            sx={{ overflow: 'unset', height: 500 }}
+        >
+            <Table
+                aria-label={intl.formatMessage({
+                    id: 'entityTable.title',
+                })}
                 component={Box}
-                width="100%"
-                sx={{ overflow: 'unset', height: 500 }}
+                size="small"
+                stickyHeader
+                sx={{ minWidth: 250, width: '100%', height: '100%' }}
             >
-                <Table
-                    aria-label={intl.formatMessage({
-                        id: 'entityTable.title',
-                    })}
-                    component={Box}
-                    size="small"
-                    stickyHeader
-                    sx={{ minWidth: 250, width: '100%', height: '100%' }}
-                >
-                    <EntityTableHeader
-                        columns={columns}
-                        enableDivRendering
-                        height={35} // This is required for FF to render the body for some reason (Q1 2024)
-                    />
+                <EntityTableHeader
+                    columns={columns}
+                    enableDivRendering
+                    height={35} // This is required for FF to render the body for some reason
+                />
 
-                    <LogsTableBody
-                        documents={documents}
-                        onScroll={onScroll}
-                        outerRef={outerRef}
-                        tableScroller={tableScroller}
-                        virtualRows={virtualRows}
-                        loading={loading}
-                    />
-
-                    <LogsTableFooter
-                        logsCount={documents.length}
-                        lastCheckedForNew={lastCheckedForNew}
-                    />
-                </Table>
-            </TableContainer>
-            {fetchingNewer ? <LinearProgress /> : null}
-        </>
+                <LogsTableBody
+                    documents={documents}
+                    fetchMoreLogs={fetchMoreLogs}
+                    outerRef={outerRef}
+                    tableScroller={tableScroller}
+                    virtualRows={virtualRows}
+                    loading={loading}
+                />
+            </Table>
+        </TableContainer>
     );
 }
 

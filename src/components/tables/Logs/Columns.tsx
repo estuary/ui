@@ -7,6 +7,7 @@ import MessageCell from '../cells/logs/MessageCell';
 import FieldsExpandedCell from '../cells/logs/FieldsExpandedCell';
 
 interface RowProps {
+    index: number;
     row: OpsLogFlowDocument;
     sizeRef: RefCallback<HTMLElement>;
     open: boolean;
@@ -14,6 +15,7 @@ interface RowProps {
 }
 
 export function LogsTableColumns({
+    index,
     row,
     sizeRef,
     open,
@@ -26,7 +28,10 @@ export function LogsTableColumns({
 
                 <TimestampCell ts={row.ts} />
 
-                <MessageCell message={row.message} fields={row.fields} />
+                <MessageCell
+                    message={`${index}:${row.message}`}
+                    fields={row.fields}
+                />
             </Box>
             {Boolean(row.fields) ? (
                 <FieldsExpandedCell

@@ -15,10 +15,11 @@ import {
 } from './shared';
 import useLogColumns from './useLogColumns';
 import { LogsTableRow } from './Row';
+import { FetchMoreLogsFunction } from './types';
 
 interface Props {
     documents: OpsLogFlowDocument[];
-    onScroll: any;
+    fetchMoreLogs: FetchMoreLogsFunction;
     outerRef: MutableRefObject<any>;
     tableScroller: MutableRefObject<any>;
     virtualRows: MutableRefObject<any>;
@@ -28,7 +29,7 @@ interface Props {
 function LogsTableBody({
     documents,
     outerRef,
-    onScroll,
+    fetchMoreLogs,
     tableScroller,
     virtualRows,
     loading,
@@ -39,7 +40,7 @@ function LogsTableBody({
     const openRows = useRef<Map<string, boolean>>(new Map());
     const expandedHeights = useRef<Map<string, number>>(new Map());
 
-    const itemData = useMemo(() => {
+    const itemData = useMemo<OpsLogFlowDocument[]>(() => {
         if (documents.length > 0) {
             const response = [
                 ...documents,
@@ -47,6 +48,7 @@ function LogsTableBody({
                     _meta: {
                         uuid: UUID_NEWEST_LOG,
                     },
+                    fields: fetchMoreLogs,
                     level: 'waiting',
                     message: intl.formatMessage({
                         id: 'ops.logsTable.waitingForNewLogs',
@@ -59,6 +61,7 @@ function LogsTableBody({
                 _meta: {
                     uuid: UUID_OLDEST_LOG,
                 },
+                fields: fetchMoreLogs,
                 level: 'waiting',
                 message: intl.formatMessage({
                     id: 'ops.logsTable.waitingForOldLogs',
@@ -80,13 +83,17 @@ function LogsTableBody({
     const getItemSize = useCallback(
         (rowIndex: number) => {
             const row = itemData[rowIndex];
+
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (!row) {
                 return 0;
             }
 
-            return expandedHeights.current.get(row._meta.uuid) ??
-                isEmpty(row.fields)
+            const customHeight = expandedHeights.current.get(row._meta.uuid);
+
+            return customHeight && customHeight > 0
+                ? customHeight
+                : isEmpty(row.fields)
                 ? DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS
                 : DEFAULT_ROW_HEIGHT;
         },
@@ -120,19 +127,19 @@ function LogsTableBody({
 
     const renderRow = useCallback(
         ({ data, index, style }: ListChildComponentProps) => {
+            const row = data[index];
+            const uuid = row._meta.uuid;
             return (
                 <LogsTableRow
-                    row={data[index]}
+                    index={index}
+                    row={row}
                     style={style}
-                    rowExpanded={(height) =>
-                        updateRowHeight(index, data[index]._meta.uuid, height)
-                    }
-                    rowOpened={(isOpen) =>
-                        openRow(data[index]._meta.uuid, isOpen)
-                    }
-                    renderOpen={Boolean(
-                        openRows.current.get(data[index]._meta.uuid)
-                    )}
+                    rowExpanded={(height) => {
+                        console.log(`rowExpanded ${index} | ${uuid}`, height);
+                        updateRowHeight(index, uuid, height);
+                    }}
+                    rowOpened={(isOpen) => openRow(uuid, isOpen)}
+                    renderOpen={Boolean(openRows.current.get(uuid))}
                 />
             );
         },
@@ -156,7 +163,6 @@ function LogsTableBody({
                                 estimatedItemSize={DEFAULT_ROW_HEIGHT}
                                 itemCount={itemData.length}
                                 overscanCount={15}
-                                onScroll={onScroll}
                                 style={{
                                     paddingBottom: 10,
                                     paddingTop: 10,
