@@ -101,6 +101,9 @@ function EndpointConfig({
     //  during both create or edit.
     const resetEndpointConfig = useMemo(
         () =>
+            // TODO (connectors) We need to break this single flag into at least two
+            //  1 - if we want to reset data (only should happen on create when connector changes)
+            //  2 - if we need to update the schema (can happen on create and in edit)
             editWorkflow && !unsupportedConnectorVersion
                 ? false
                 : connectorTag?.endpoint_spec_schema &&
