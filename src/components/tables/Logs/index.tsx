@@ -85,6 +85,7 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
             }
             setFetchingOlder(false);
             setFetchingNewer(false);
+            setLastCheckedForNew(null);
         } else if (fetchingNewer && lastCount.current === documents.length) {
             setLastCheckedForNew(new Date().toISOString());
             setFetchingNewer(false);
