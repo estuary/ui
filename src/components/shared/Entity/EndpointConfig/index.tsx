@@ -110,7 +110,7 @@ function EndpointConfig({
         if (editWorkflow) {
             // We do want to reset the schema if it is known to be unsupported and
             //   the schema has changed. Sometimes connectors updatea  version
-            //   but the schema they provide for endpoitn config has not changed
+            //   but the schema they provide for endpoint config has not changed
             updateSchema = unsupportedConnectorVersion && schemaChanged;
 
             // In edit we never want to clear the config a user has provided. This way
@@ -170,7 +170,7 @@ function EndpointConfig({
             // After the schema change we can prefill the data by generating
             //  the defaults and populate the data/errors. The two set functions
             //  will automatically generate a default but we can just call it once
-            //  and pass it alonge (to save a tiny bit of processing)
+            //  and pass it along (to save a tiny bit of processing)
             const defaultConfig = createJSONFormDefaults(schema);
             setEndpointConfig(defaultConfig);
             setPreviousEndpointConfig(defaultConfig);
