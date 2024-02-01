@@ -24,6 +24,10 @@ import { ConnectorConfig } from '../../flow_deps/flow';
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
 
+export const getBackfillCounter = (binding: any): number => {
+    return Object.hasOwn(binding, 'backfill') ? binding.backfill : 0;
+};
+
 export const getSourceOrTarget = (binding: any) => {
     return Object.hasOwn(binding ?? {}, 'source')
         ? binding.source
