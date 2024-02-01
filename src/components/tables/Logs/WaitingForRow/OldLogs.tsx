@@ -1,21 +1,40 @@
-import { TableCell, TableRow } from '@mui/material';
+import { Box, TableCell, TableRow, Typography, useTheme } from '@mui/material';
 import SpinnerIcon from 'components/logs/SpinnerIcon';
-import { BaseCellSx } from 'components/tables/cells/logs/shared';
-import { CSSProperties } from 'react';
+import { BaseTypographySx } from 'components/tables/cells/logs/shared';
+import { tableRowActiveBackground } from 'context/Theme';
+import { CSSProperties, RefCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
+    sizeRef: RefCallback<HTMLElement>;
     style?: CSSProperties;
 }
 
-function WaitingForOldLogsRow({ style }: Props) {
+function WaitingForOldLogsRow({ sizeRef, style }: Props) {
+    const theme = useTheme();
+
     return (
-        <TableRow component="div" style={style}>
-            <TableCell sx={BaseCellSx} component="div">
+        <TableRow
+            component={Box}
+            ref={sizeRef}
+            style={style}
+            sx={{
+                bgcolor: tableRowActiveBackground[theme.palette.mode],
+            }}
+        >
+            <TableCell component="div" />
+            <TableCell
+                sx={{
+                    pl: 2.5,
+                }}
+                component="div"
+            >
                 <SpinnerIcon stopped={false} />
             </TableCell>
-            <TableCell colSpan={2} sx={BaseCellSx} component="div">
-                <FormattedMessage id="ops.logsTable.waitingForOldLogs" />
+            <TableCell sx={{ width: '100%' }} component="div">
+                <Typography sx={BaseTypographySx}>
+                    <FormattedMessage id="ops.logsTable.waitingForOldLogs" />
+                </Typography>
             </TableCell>
         </TableRow>
     );

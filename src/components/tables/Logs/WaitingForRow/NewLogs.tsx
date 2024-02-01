@@ -1,9 +1,6 @@
 import { Box, TableCell, TableRow, Typography, useTheme } from '@mui/material';
 import SpinnerIcon from 'components/logs/SpinnerIcon';
-import {
-    BaseCellSx,
-    BaseTypographySx,
-} from 'components/tables/cells/logs/shared';
+import { BaseTypographySx } from 'components/tables/cells/logs/shared';
 import { tableRowActiveBackground } from 'context/Theme';
 import { CSSProperties, RefCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -28,16 +25,15 @@ function WaitingForNewLogsRow({ sizeRef, style }: Props) {
             <TableCell component="div" />
             <TableCell
                 sx={{
-                    ...BaseCellSx,
                     pl: 2.5,
                 }}
                 component="div"
             >
                 <SpinnerIcon stopped={false} />
             </TableCell>
-            <TableCell sx={{ ...BaseCellSx, width: '100%' }} component="div">
+            <TableCell sx={{ width: '100%' }} component="div">
                 <Typography sx={BaseTypographySx}>
-                    <FormattedMessage id="ops.logsTable.waitingForOldLogs" />
+                    <FormattedMessage id="ops.logsTable.waitingForNewLogs" />
                 </Typography>
             </TableCell>
         </TableRow>

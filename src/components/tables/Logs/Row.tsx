@@ -51,12 +51,16 @@ export function LogsTableRow({
         rowOpened(newVal);
     };
 
-    if (row._meta.uuid === UUID_NEWEST_LOG) {
-        return <WaitingForNewLogsRow style={style} sizeRef={sizeRef} />;
-    }
+    const uuid = row._meta.uuid;
+    const WaitingComponent =
+        uuid === UUID_NEWEST_LOG
+            ? WaitingForNewLogsRow
+            : uuid === UUID_START_OF_LOGS
+            ? WaitingForOldLogsRow
+            : null;
 
-    if (row._meta.uuid === UUID_START_OF_LOGS) {
-        return <WaitingForOldLogsRow style={style} />;
+    if (WaitingComponent) {
+        return <WaitingComponent style={style} sizeRef={sizeRef} />;
     }
 
     return (
