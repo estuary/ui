@@ -152,6 +152,8 @@ function EndpointConfig({
         }
 
         if (resetEndpointConfig) {
+            // TODO (possible - endpoint config) we might want to move the serverUpdateRequired
+            //   call out of this block and set it if either of the flags are true. We can decide that later.
             //    In create - if we clear out the configurations we also update the schema
             //    In edit - we never clear the config and update the schema only if it is unsupported
             //      if we are moving up an unsupported version then we let the user continue
