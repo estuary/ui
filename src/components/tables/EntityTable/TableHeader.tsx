@@ -10,6 +10,7 @@ import { ColumnProps } from './types';
 interface Props {
     columns: ColumnProps[];
     headerClick?: (column: any) => (event: React.MouseEvent<unknown>) => void;
+    height?: number;
     hide?: boolean;
     columnToSort?: string;
     selectData?: any;
@@ -23,6 +24,7 @@ function EntityTableHeader({
     columnToSort,
     enableDivRendering,
     headerClick,
+    height,
     hide,
     selectData,
     selectableTableStoreName,
@@ -39,6 +41,7 @@ function EntityTableHeader({
                 component={trComponent}
                 sx={{
                     background: (theme) => theme.palette.background.default,
+                    height,
                 }}
             >
                 {columns.map((column, index) => {
