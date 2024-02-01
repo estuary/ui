@@ -98,7 +98,7 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
         if (scrollOnLoad?.current && tableScroller?.current) {
             scrollOnLoad.current = false;
             tableScroller.current.scrollToItem(
-                documents.length > 1 ? Math.round(documents.length * 0.9) : 1
+                documents.length > 1 ? Math.round(documents.length * 0.95) : 1
             );
         }
         // We only care about then the scroll ref is set so we can scroll to the bottom

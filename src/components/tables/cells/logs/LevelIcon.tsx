@@ -1,4 +1,4 @@
-import { Tooltip, Typography, useTheme } from '@mui/material';
+import { CircularProgress, Tooltip, Typography, useTheme } from '@mui/material';
 import {
     CheckCircle,
     Circle,
@@ -9,7 +9,9 @@ import {
 } from 'iconoir-react';
 import { BaseTypographySx } from './shared';
 
-type Levels = 'error' | 'warn' | 'debug' | 'trace' | 'done' | any;
+// Done - we are finished fetching logs
+// Waiting - custom level used for us to know to show a loading indicator
+type Levels = 'error' | 'warn' | 'debug' | 'trace' | 'done' | 'waiting' | any;
 
 interface Props {
     level: Levels;
@@ -31,6 +33,8 @@ function LevelIcon({ level }: Props) {
             ? MinusCircle
             : level === 'trace'
             ? Circle
+            : level === 'waiting'
+            ? CircularProgress
             : InfoEmpty;
 
     const iconColor =

@@ -670,6 +670,7 @@ const Ops: ResolvedIntlConfig['messages'] = {
     'ops.logsTable.label.level': `Level`,
     'ops.logsTable.fetchingOlderLogs': `Fetching older logs...`,
     'ops.logsTable.allOldLogsLoaded': ` Start of logs `,
+    'ops.logsTable.waitingForNewLogs': `Waiting for new logs`,
     'ops.logsTable.label.ts': `Timestamp`,
     'ops.logsTable.label.message': `Message`,
     'ops.logsTable.label.fields': `Fields`,

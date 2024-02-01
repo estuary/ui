@@ -10,5 +10,6 @@ export const DEFAULT_ROW_HEIGHT = 55;
 export const DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS = 35;
 
 export const START_OF_LOGS_UUID = 'UI-start-of-logs';
+export const END_OF_LOGS_UUID = 'UI-end-of-logs';
 
 export const EXPAND_ROW_TRANSITION = 200;

@@ -16,6 +16,7 @@ import {
     shouldRefreshToken,
 } from 'utils/dataPlane-utils';
 import { journalStatusIsError } from 'utils/misc-utils';
+import { LoadDocumentsOffsets } from './shared';
 
 const errorRetryCount = 2;
 
@@ -138,11 +139,6 @@ async function readAllDocuments<T>(stream: ReadableStream<T>) {
     }
 
     return accum;
-}
-
-export interface LoadDocumentsOffsets {
-    offset: number;
-    endOffset: number;
 }
 
 async function loadDocuments({
