@@ -30,6 +30,7 @@
         "beta_logRocketIntegrity": "node --env-file .env ./scripts/logRocketIntegirty"
     },
     "dependencies": {
+        "@custom-react-hooks/use-on-screen": "^1.4.19",
         "@date-fns/utc": "^1.0.0",
         "@dnd-kit/core": "^6.0.8",
         "@dnd-kit/modifiers": "^6.0.1",
