@@ -68,6 +68,7 @@ function LogsTableBody({
 
     const renderRow = useCallback(
         ({ data, index, style }: ListChildComponentProps) => {
+            console.log('renderRow');
             return (
                 <LogsTableRow
                     row={data[index]}
@@ -82,8 +83,10 @@ function LogsTableBody({
     if (documents.length > 0) {
         return (
             <TableBody component="div">
+                1
                 <AutoSizer>
                     {({ width, height }: AutoSizer['state']) => {
+                        console.log('{ width, height }', { width, height });
                         return (
                             <VariableSizeList
                                 ref={tableScroller}
@@ -114,6 +117,7 @@ function LogsTableBody({
     return (
         <EntityTableBody
             columns={columns}
+            enableDivRendering
             noExistingDataContentIds={{
                 header: 'ops.logsTable.emptyTableDefault.header',
                 message: 'ops.logsTable.emptyTableDefault.message',

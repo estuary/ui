@@ -1,6 +1,6 @@
 import { Box, Collapse, Divider, Typography, useTheme } from '@mui/material';
 import ReactJson from '@microlink/react-json-view';
-import { jsonViewTheme } from 'context/Theme';
+import { jsonViewTheme, paperBackground } from 'context/Theme';
 
 interface Props {
     fields: any;
@@ -32,6 +32,8 @@ function FieldsExpandedCell({
         >
             <Box
                 sx={{
+                    background: paperBackground[theme.palette.mode],
+                    borderBottomWidth: 1,
                     px: 3,
                     py: 2,
                     opacity: heightChanging ? 0 : undefined,
