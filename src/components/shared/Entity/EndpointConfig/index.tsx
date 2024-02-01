@@ -30,7 +30,6 @@ import {
     useSidePanelDocsStore_resetState,
     useSidePanelDocsStore_setUrl,
 } from 'stores/SidePanelDocs/hooks';
-import { Schema } from 'types';
 
 interface Props {
     connectorImage: string;
@@ -99,37 +98,64 @@ function EndpointConfig({
 
     // Storing flag to handle knowing if a config changed
     //  during both create or edit.
-    const resetEndpointConfig = useMemo(
-        () =>
-            // TODO (connectors) We need to break this single flag into at least two
-            //  1 - if we want to reset data (only should happen on create when connector changes)
-            //  2 - if we need to update the schema (can happen on create and in edit)
-            editWorkflow && !unsupportedConnectorVersion
-                ? false
-                : connectorTag?.endpoint_spec_schema &&
-                  !isEqual(connectorTag.endpoint_spec_schema, endpointSchema),
-        [
-            connectorTag?.endpoint_spec_schema,
-            editWorkflow,
-            endpointSchema,
-            unsupportedConnectorVersion,
-        ]
-    );
+    const [resetEndpointConfig, updateSchema] = useMemo(() => {
+        let resetConfigResponse = false;
+        let updateSchemaResponse = false;
+
+        const schemaChanged = Boolean(
+            connectorTag?.endpoint_spec_schema &&
+                !isEqual(connectorTag.endpoint_spec_schema, endpointSchema)
+        );
+
+        if (editWorkflow) {
+            // In edit we never want to clear the config since any changes to
+            //  the schema should come from an upgrade and connectors should
+            //  be backwards compatible anyway (as of Q1 2024)
+            resetConfigResponse = false;
+
+            // We do want to reset the schema if it is known to be unsupported and
+            //   the schema has changed
+            updateSchemaResponse = unsupportedConnectorVersion && schemaChanged;
+        } else {
+            // In create if the schema changed it probably means the user selected
+            //  a different connector in the dropdown. So we need to clear out data
+            //  and update the schema
+            resetConfigResponse = schemaChanged;
+            updateSchemaResponse = schemaChanged;
+        }
+
+        return [resetConfigResponse, updateSchemaResponse];
+    }, [
+        connectorTag?.endpoint_spec_schema,
+        editWorkflow,
+        endpointSchema,
+        unsupportedConnectorVersion,
+    ]);
 
     useEffect(() => {
-        if (connectorTag?.endpoint_spec_schema && resetEndpointConfig) {
-            // force some new data in
+        const schema = connectorTag?.endpoint_spec_schema;
+
+        // Make sure we have a schema to use
+        if (!schema) {
+            return;
+        }
+
+        // Clear out the encrypted data and reset state so the user needs to click next again
+        if (resetEndpointConfig) {
             setServerUpdateRequired(true);
             setEncryptedEndpointConfig({
                 data: {},
             });
+        }
 
-            // Update the schema
-            const schema =
-                connectorTag.endpoint_spec_schema as unknown as Schema;
+        // Update the schema if needed
+        if (updateSchema) {
             setEndpointSchema(schema);
+        }
 
-            // Generate the defaults and populate the data/errors
+        // After the schema change we can prefill the data by generating
+        //  the defaults and populate the data/errors
+        if (resetEndpointConfig) {
             const defaultConfig = createJSONFormDefaults(schema);
             setEndpointConfig(defaultConfig);
             setPreviousEndpointConfig(defaultConfig);
@@ -142,7 +168,9 @@ function EndpointConfig({
         setEndpointSchema,
         setPreviousEndpointConfig,
         setServerUpdateRequired,
+        updateSchema,
     ]);
+
     // Controlling if we need to show the generate button again
     const endpointConfigUpdated = useMemo(() => {
         return canBeEmpty
