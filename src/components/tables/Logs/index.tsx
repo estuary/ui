@@ -85,6 +85,7 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
             }
             setFetchingOlder(false);
             setFetchingNewer(false);
+            setLastCheckedForNew(null);
         } else if (fetchingNewer && lastCount.current === documents.length) {
             setLastCheckedForNew(new Date().toISOString());
             setFetchingNewer(false);
@@ -121,7 +122,11 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
                     stickyHeader
                     sx={{ minWidth: 250, width: '100%', height: '100%' }}
                 >
-                    <EntityTableHeader columns={columns} enableDivRendering />
+                    <EntityTableHeader
+                        columns={columns}
+                        enableDivRendering
+                        height={35} // This is required for FF to render the body for some reason (Q1 2024)
+                    />
 
                     <LogsTableBody
                         documents={documents}

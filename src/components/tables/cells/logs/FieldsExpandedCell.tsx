@@ -1,22 +1,20 @@
 import { Box, Collapse, Divider, Typography, useTheme } from '@mui/material';
 import ReactJson from '@microlink/react-json-view';
-import { jsonViewTheme } from 'context/Theme';
+import { jsonViewTheme, paperBackground } from 'context/Theme';
 
 interface Props {
     fields: any;
     message: string;
     open: boolean;
-    opening: boolean;
-    toggleRowHeight: (event: HTMLElement) => void;
+    heightChanging: boolean;
     uuid: string;
 }
 
 function FieldsExpandedCell({
     fields,
     open,
-    opening,
+    heightChanging,
     message,
-    toggleRowHeight,
     uuid,
 }: Props) {
     const theme = useTheme();
@@ -30,15 +28,15 @@ function FieldsExpandedCell({
                 event.preventDefault();
                 event.stopPropagation();
             }}
-            onEntered={toggleRowHeight}
-            onExited={toggleRowHeight}
             unmountOnExit
         >
             <Box
                 sx={{
+                    background: paperBackground[theme.palette.mode],
+                    borderBottomWidth: 1,
                     px: 3,
                     py: 2,
-                    opacity: opening ? 0 : undefined,
+                    opacity: heightChanging ? 0 : undefined,
                 }}
             >
                 <Typography sx={{ fontFamily: 'Monospace' }}>

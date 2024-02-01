@@ -1,2 +1,2 @@
-export const BaseTypographySx = { fontFamily: 'Monospace', textWrap: 'nowrap' };
+export const BaseTypographySx = { fontFamily: 'Monospace' };
 export const BaseCellSx = { maxWidth: 'min-content', py: 0 };
