@@ -109,8 +109,8 @@ function EndpointConfig({
 
         if (editWorkflow) {
             // In edit we never want to clear the config since any changes to
-            //  the schema should come from an connector tag upgrade and those
-            //  be backwards compatible anyway (as of Q1 2024)
+            //  the schema should come from an connector tag upgrade and
+            //  they should be backwards compatible (as of Q1 2024)
             resetConfig = false;
 
             // We do want to reset the schema if it is known to be unsupported and
@@ -135,7 +135,9 @@ function EndpointConfig({
     useEffect(() => {
         const schema = connectorTag?.endpoint_spec_schema;
 
-        // Make sure we have a schema to use
+        // Make sure we have a schema to use otherwise we cannot
+        //  populate data or set the schema. This should never really
+        //  happen here but being safe.
         if (!schema) {
             return;
         }
@@ -145,7 +147,8 @@ function EndpointConfig({
             setEndpointSchema(schema);
         }
 
-        // Clear out the encrypted data and reset state so the user needs to click next again
+        // Clear out all the versions of the config and
+        //  reset state so the user needs to click next again
         if (resetEndpointConfig) {
             setServerUpdateRequired(true);
             setEncryptedEndpointConfig({
@@ -153,7 +156,9 @@ function EndpointConfig({
             });
 
             // After the schema change we can prefill the data by generating
-            //  the defaults and populate the data/errors
+            //  the defaults and populate the data/errors. The two set functions
+            //  will automatically generate a default but we can just call it once
+            //  and pass it alonge (to save a tiny bit of processing)
             const defaultConfig = createJSONFormDefaults(schema);
             setEndpointConfig(defaultConfig);
             setPreviousEndpointConfig(defaultConfig);
