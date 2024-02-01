@@ -108,20 +108,24 @@ function EndpointConfig({
         );
 
         if (editWorkflow) {
-            // In edit we never want to clear the config since any changes to
-            //  the schema should come from an connector tag upgrade and
-            //  they should be backwards compatible (as of Q1 2024)
-            resetConfig = false;
-
             // We do want to reset the schema if it is known to be unsupported and
-            //   the schema has changed
+            //   the schema has changed. Sometimes connectors updatea  version
+            //   but the schema they provide for endpoitn config has not changed
             updateSchema = unsupportedConnectorVersion && schemaChanged;
+
+            // In edit we never want to clear the config a user has provided. This way
+            //  they do not lose anything they have provided. This can cause some
+            //  possible side effects where during edit the connector tag is upgraded to
+            //  the latest (because they were using an unsupported one) and now the
+            //  data has fields that are no longer used. This should be okay because
+            //  connector schema changes should be backwards compatible (as of Q1 2024)
+            resetConfig = false;
         } else {
             // In create if the schema changed it probably means the user selected
             //  a different connector in the dropdown. So we need to clear out data
             //  and update the schema
-            resetConfig = schemaChanged;
             updateSchema = schemaChanged;
+            resetConfig = schemaChanged;
         }
 
         return [resetConfig, updateSchema];
@@ -147,10 +151,18 @@ function EndpointConfig({
             setEndpointSchema(schema);
         }
 
-        // Clear out all the versions of the config and
-        //  reset state so the user needs to click next again
         if (resetEndpointConfig) {
+            // If we have changed the schema then the user should click next again
+            //  so that the config is encrypted again fresh.
+            //    In create - both these flags are always true
+            //    In edit - we don't clear the config and update the schema if it is unsupported
+            //      if we are moving up an unsupported version then we let the user continue
+            //      with their existing config. If they have to enter new fields then the form will
+            //      detect the change and force them to click next anyway.
             setServerUpdateRequired(true);
+
+            // Clear out the encrypted config because we are requiring a server update and
+            //  thus we do not need this to check if that clicked is required again.
             setEncryptedEndpointConfig({
                 data: {},
             });
