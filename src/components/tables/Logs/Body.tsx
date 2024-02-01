@@ -30,6 +30,7 @@ function LogsTableBody({
 }: Props) {
     const columns = useLogColumns();
 
+    const openRows = useRef<Map<string, boolean>>(new Map());
     const expandedHeights = useRef<Map<string, number>>(new Map());
 
     const getItemSize = useCallback(
@@ -46,24 +47,29 @@ function LogsTableBody({
         [documents]
     );
 
-    const expandRow = useCallback(
-        (index: number, height: number) => {
+    const openRow = useCallback((uuid: string, isOpen: boolean) => {
+        if (isOpen) {
+            openRows.current.set(uuid, isOpen);
+        } else {
+            openRows.current.delete(uuid);
+        }
+    }, []);
+
+    const updateRowHeight = useCallback(
+        (index: number, uuid: string, height: number) => {
             if (
                 height > 0 ||
                 height === DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS ||
                 height === DEFAULT_ROW_HEIGHT
             ) {
-                expandedHeights.current.set(
-                    documents[index]._meta.uuid,
-                    height
-                );
+                expandedHeights.current.set(uuid, height);
             } else {
-                expandedHeights.current.delete(documents[index]._meta.uuid);
+                expandedHeights.current.delete(uuid);
             }
 
             tableScroller.current.resetAfterIndex(index);
         },
-        [documents, tableScroller]
+        [tableScroller]
     );
 
     const renderRow = useCallback(
@@ -72,11 +78,19 @@ function LogsTableBody({
                 <LogsTableRow
                     row={data[index]}
                     style={style}
-                    rowExpanded={(height) => expandRow(index, height)}
+                    rowExpanded={(height) =>
+                        updateRowHeight(index, data[index]._meta.uuid, height)
+                    }
+                    rowOpened={(isOpen) =>
+                        openRow(data[index]._meta.uuid, isOpen)
+                    }
+                    renderOpen={Boolean(
+                        openRows.current.get(data[index]._meta.uuid)
+                    )}
                 />
             );
         },
-        [expandRow]
+        [openRow, updateRowHeight]
     );
 
     if (documents.length > 0) {

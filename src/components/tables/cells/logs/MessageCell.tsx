@@ -21,7 +21,7 @@ function MessageCell({ fields, message }: Props) {
             </Typography>
 
             {fields ? (
-                <Typography component="div" sx={BaseTypographySx}>
+                <Typography component="div" sx={{ ...BaseTypographySx }}>
                     <ObjectPreview data={fields} />
                 </Typography>
             ) : null}
