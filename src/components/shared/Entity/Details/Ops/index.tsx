@@ -39,7 +39,8 @@ function Ops() {
                     documents={docs}
                     loading={fetchingMore || loading}
                     fetchNewer={() => {
-                        refresh();
+                        // refresh();
+                        console.log('fetch newer logs');
                     }}
                     fetchOlder={
                         olderFinished
