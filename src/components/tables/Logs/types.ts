@@ -1,3 +1,4 @@
+import { LoadDocumentsOffsets } from 'hooks/journals/shared';
 import { CSSProperties, RefCallback } from 'react';
 
 export type FetchMoreLogsOptions = 'old' | 'new';
@@ -8,3 +9,5 @@ export interface WaitingForRowProps {
     sizeRef: RefCallback<HTMLElement>;
     style?: CSSProperties;
 }
+
+export type RefreshLogsFunction = (newOffset?: LoadDocumentsOffsets) => void;

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 import { maxBytes, UUID_START_OF_LOGS } from 'components/tables/Logs/shared';
 import { useIntl } from 'react-intl';
-import { LoadDocumentsOffsets } from './shared';
+import { RefreshLogsFunction } from 'components/tables/Logs/types';
 
 function useOpsLogs(name: string, collectionName: string) {
     const intl = useIntl();
@@ -85,8 +85,8 @@ function useOpsLogs(name: string, collectionName: string) {
         }
     }, [data?.meta]);
 
-    const startFetchingMore = useCallback(
-        (newOffset?: LoadDocumentsOffsets) => {
+    const startFetchingMore = useCallback<RefreshLogsFunction>(
+        (newOffset) => {
             setFetchingMore(true);
             refresh(newOffset);
         },
