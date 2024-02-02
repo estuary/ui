@@ -4,9 +4,11 @@ import { BaseTypographySx } from 'components/tables/cells/logs/shared';
 import { tableRowActiveBackground } from 'context/Theme';
 import { useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
-import useOnScreen from '@custom-react-hooks/use-on-screen';
-import { useDebounce } from 'react-use';
-import { useJournalDataLogsStore_fetchMoreLogs } from 'stores/JournalData/Logs/hooks';
+import { useIntersection, useInterval } from 'react-use';
+import {
+    useJournalDataLogsStore_fetchingMore,
+    useJournalDataLogsStore_fetchMoreLogs,
+} from 'stores/JournalData/Logs/hooks';
 import { FetchMoreLogsOptions, WaitingForRowProps } from '../types';
 
 interface Props extends WaitingForRowProps {
@@ -17,23 +19,29 @@ function WaitingForRowBase({ fetchOption, sizeRef, style }: Props) {
     const theme = useTheme();
 
     const fetchMoreLogs = useJournalDataLogsStore_fetchMoreLogs();
+    const fetchingMore = useJournalDataLogsStore_fetchingMore();
 
     const runFetch = useRef(true);
-    const { ref, isIntersecting } = useOnScreen({ threshold: 1 }, false);
+    const intersectionRef = useRef<HTMLElement>(null);
 
-    useDebounce(
+    const intersection = useIntersection(intersectionRef, {
+        root: null,
+        rootMargin: '0px',
+        threshold: 1,
+    });
+
+    useInterval(
         () => {
-            console.log('isIntersecting', isIntersecting);
-
-            if (isIntersecting) {
+            console.log('interval fetching');
+            if (!fetchingMore && intersection?.isIntersecting) {
+                console.log('   fetching run');
                 runFetch.current = false;
                 fetchMoreLogs(fetchOption);
             } else {
                 runFetch.current = true;
             }
         },
-        25,
-        [isIntersecting]
+        intersection?.isIntersecting ? 500 : null
     );
 
     return (
@@ -43,11 +51,9 @@ function WaitingForRowBase({ fetchOption, sizeRef, style }: Props) {
             style={style}
             sx={{
                 bgcolor: tableRowActiveBackground[theme.palette.mode],
-                opacity: isIntersecting ? 1 : 0,
-                transition: 'all 100ms ease-in-out',
             }}
         >
-            <Box ref={ref}>
+            <Box ref={intersectionRef}>
                 <TableCell component="div" />
                 <TableCell
                     sx={{
