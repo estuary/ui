@@ -83,6 +83,10 @@ export enum GlobalStoreNames {
     TOP_BAR = 'Top-Bar',
 }
 
+export enum JournalDataStoreNames {
+    LOGS = 'JournalData-Logs',
+}
+
 export enum TransformCreateStoreNames {
     TRANSFORM_CREATE = 'Transform-Create',
 }
@@ -97,6 +101,7 @@ export type StoreName =
     | ExistingEntityStoreNames
     | FormStateStoreNames
     | GlobalStoreNames
+    | JournalDataStoreNames
     | MiscStoreNames
     | OnboardingStoreNames
     | ResourceConfigStoreNames

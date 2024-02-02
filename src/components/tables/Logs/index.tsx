@@ -1,104 +1,37 @@
-import { findIndex } from 'lodash';
-import {
-    useCallback,
-    useEffect,
-    useLayoutEffect,
-    useRef,
-    useState,
-} from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
-import { OpsLogFlowDocument } from 'types';
 import { Box, Table, TableContainer } from '@mui/material';
+import {
+    useJournalDataLogsStore_fetchingMore,
+    useJournalDataLogsStore_scrollToWhenDone,
+} from 'stores/JournalData/Logs/hooks';
 import EntityTableHeader from '../EntityTable/TableHeader';
 import useLogColumns from './useLogColumns';
 import LogsTableBody from './Body';
-import { FetchMoreLogsFunction } from './types';
 
-interface Props {
-    documents: OpsLogFlowDocument[];
-    fetchNewer: () => void;
-    fetchOlder?: () => void;
-    loading?: boolean;
-}
-
-function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
+function LogsTable() {
     const intl = useIntl();
     const columns = useLogColumns();
+
+    const fetchingMore = useJournalDataLogsStore_fetchingMore();
+    const [scrollToIndex, scrollToPosition] =
+        useJournalDataLogsStore_scrollToWhenDone();
 
     const tableScroller = useRef<any>(null);
     const outerRef = useRef<any>(null);
     const virtualRows = useRef<any>(null);
-    const lastTopLog = useRef<string | null>(null);
-    const lastCount = useRef<number>(-1);
-    const scrollOnLoad = useRef(true);
-    const [fetchingOlder, setFetchingOlder] = useState(false);
-    const [fetchingNewer, setFetchingNewer] = useState(false);
-
-    const fetchMoreLogs = useCallback<FetchMoreLogsFunction>(
-        (option) => {
-            if (fetchingNewer || fetchingOlder) {
-                return;
-            }
-
-            if (option === 'old') {
-                if (!fetchOlder) {
-                    return;
-                }
-
-                setFetchingOlder(true);
-                fetchOlder();
-            } else {
-                setFetchingNewer(true);
-                fetchNewer();
-            }
-        },
-        [fetchNewer, fetchOlder, fetchingNewer, fetchingOlder]
-    );
-
-    // Keep track of the top item so we can keep it in view when more logs are loaded
-    useEffect(() => {
-        lastCount.current = documents.length;
-        lastTopLog.current = documents[1]?._meta.uuid;
-    }, [documents]);
 
     useLayoutEffect(() => {
-        if (!fetchingOlder && !fetchingNewer) {
-            return;
+        console.log('scrolling effect', [
+            scrollToIndex,
+            scrollToPosition,
+            tableScroller.current,
+        ]);
+        if (scrollToIndex > 0 && tableScroller.current) {
+            console.log('scrolling effect scrolling');
+            tableScroller.current.scrollToItem(scrollToIndex, scrollToPosition);
         }
-
-        if (lastCount.current < documents.length) {
-            if (fetchingOlder) {
-                tableScroller.current.scrollToItem(
-                    findIndex(
-                        documents,
-                        (document) => document._meta.uuid === lastTopLog.current
-                    ),
-                    'top'
-                );
-            }
-
-            if (fetchingNewer) {
-                tableScroller.current.scrollToItem(documents.length, 'bottom');
-            }
-            setFetchingOlder(false);
-            setFetchingNewer(false);
-        } else if (fetchingNewer && lastCount.current === documents.length) {
-            setFetchingNewer(false);
-        }
-    }, [documents, fetchingOlder, fetchingNewer]);
-
-    // On load scroll to near the bottom
-    useLayoutEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (scrollOnLoad?.current && tableScroller?.current) {
-            scrollOnLoad.current = false;
-            tableScroller.current.scrollToItem(
-                documents.length > 1 ? Math.round(documents.length * 0.95) : 1
-            );
-        }
-        // We only care about then the scroll ref is set so we can scroll to the bottom
-        // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-unnecessary-condition
-    }, [tableScroller?.current]);
+    }, [fetchingMore, scrollToIndex, scrollToPosition]);
 
     return (
         <TableContainer
@@ -122,12 +55,9 @@ function LogsTable({ documents, fetchNewer, fetchOlder, loading }: Props) {
                 />
 
                 <LogsTableBody
-                    documents={documents}
-                    fetchMoreLogs={fetchMoreLogs}
                     outerRef={outerRef}
                     tableScroller={tableScroller}
                     virtualRows={virtualRows}
-                    loading={loading}
                 />
             </Table>
         </TableContainer>

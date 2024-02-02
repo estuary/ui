@@ -4,7 +4,11 @@ import { OpsLogFlowDocument, TableStatuses } from 'types';
 import { TableBody } from '@mui/material';
 import { MutableRefObject, useCallback, useMemo, useRef } from 'react';
 import { isEmpty } from 'lodash';
-import { useIntl } from 'react-intl';
+import {
+    useJournalDataLogsStore_documents,
+    useJournalDataLogsStore_hydrated,
+    useJournalDataLogsStore_networkFailed,
+} from 'stores/JournalData/Logs/hooks';
 import EntityTableBody from '../EntityTable/TableBody';
 import {
     DEFAULT_ROW_HEIGHT,
@@ -15,31 +19,25 @@ import {
 } from './shared';
 import useLogColumns from './useLogColumns';
 import { LogsTableRow } from './Row';
-import { FetchMoreLogsFunction } from './types';
 
 interface Props {
-    documents: OpsLogFlowDocument[];
-    fetchMoreLogs: FetchMoreLogsFunction;
     outerRef: MutableRefObject<any>;
     tableScroller: MutableRefObject<any>;
     virtualRows: MutableRefObject<any>;
-    loading?: boolean;
 }
 
-function LogsTableBody({
-    documents,
-    outerRef,
-    fetchMoreLogs,
-    tableScroller,
-    virtualRows,
-    loading,
-}: Props) {
-    const intl = useIntl();
+function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
     const columns = useLogColumns();
 
     const openRows = useRef<Map<string, boolean>>(new Map());
     const expandedHeights = useRef<Map<string, number>>(new Map());
 
+    const hydrated = useJournalDataLogsStore_hydrated();
+    const documents = useJournalDataLogsStore_documents();
+    const networkFailed = useJournalDataLogsStore_networkFailed();
+
+    // Keeping this outside the store so we don't have to filter them out everytime
+    //  we need to add new docs to the list
     const itemData = useMemo<OpsLogFlowDocument[]>(() => {
         if (documents.length > 0) {
             const response = [
@@ -48,11 +46,8 @@ function LogsTableBody({
                     _meta: {
                         uuid: UUID_NEWEST_LOG,
                     },
-                    fields: fetchMoreLogs,
                     level: 'waiting',
-                    message: intl.formatMessage({
-                        id: 'ops.logsTable.waitingForNewLogs',
-                    }),
+                    message: '',
                     ts: '',
                 },
             ];
@@ -61,11 +56,8 @@ function LogsTableBody({
                 _meta: {
                     uuid: UUID_OLDEST_LOG,
                 },
-                fields: fetchMoreLogs,
                 level: 'waiting',
-                message: intl.formatMessage({
-                    id: 'ops.logsTable.waitingForOldLogs',
-                }),
+                message: '',
                 ts: '',
             };
 
@@ -78,7 +70,7 @@ function LogsTableBody({
         }
 
         return [];
-    }, [documents, intl]);
+    }, [documents]);
 
     const getItemSize = useCallback(
         (rowIndex: number) => {
@@ -134,10 +126,9 @@ function LogsTableBody({
                     index={index}
                     row={row}
                     style={style}
-                    rowExpanded={(height) => {
-                        console.log(`rowExpanded ${index} | ${uuid}`, height);
-                        updateRowHeight(index, uuid, height);
-                    }}
+                    rowExpanded={(height) =>
+                        updateRowHeight(index, uuid, height)
+                    }
                     rowOpened={(isOpen) => openRow(uuid, isOpen)}
                     renderOpen={Boolean(openRows.current.get(uuid))}
                 />
@@ -186,16 +177,12 @@ function LogsTableBody({
                 message: 'ops.logsTable.emptyTableDefault.message',
                 disableDoclink: true,
             }}
-            tableState={
-                itemData.length > 0
-                    ? {
-                          status: TableStatuses.DATA_FETCHED,
-                      }
-                    : {
-                          status: TableStatuses.NO_EXISTING_DATA,
-                      }
-            }
-            loading={Boolean(loading)}
+            tableState={{
+                status: networkFailed
+                    ? TableStatuses.NETWORK_FAILED
+                    : TableStatuses.NO_EXISTING_DATA,
+            }}
+            loading={!hydrated}
             rows={itemData}
         />
     );

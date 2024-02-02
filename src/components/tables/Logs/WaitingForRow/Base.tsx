@@ -6,19 +6,17 @@ import { useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
 import useOnScreen from '@custom-react-hooks/use-on-screen';
 import { useDebounce } from 'react-use';
+import { useJournalDataLogsStore_fetchMoreLogs } from 'stores/JournalData/Logs/hooks';
 import { FetchMoreLogsOptions, WaitingForRowProps } from '../types';
 
 interface Props extends WaitingForRowProps {
     fetchOption: FetchMoreLogsOptions;
 }
 
-function WaitingForRowBase({
-    fetchMoreLogs,
-    fetchOption,
-    sizeRef,
-    style,
-}: Props) {
+function WaitingForRowBase({ fetchOption, sizeRef, style }: Props) {
     const theme = useTheme();
+
+    const fetchMoreLogs = useJournalDataLogsStore_fetchMoreLogs();
 
     const runFetch = useRef(true);
     const { ref, isIntersecting } = useOnScreen({ threshold: 1 }, false);
@@ -26,6 +24,7 @@ function WaitingForRowBase({
     useDebounce(
         () => {
             console.log('isIntersecting', isIntersecting);
+
             if (isIntersecting) {
                 runFetch.current = false;
                 fetchMoreLogs(fetchOption);

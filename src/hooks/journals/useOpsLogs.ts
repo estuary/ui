@@ -1,15 +1,13 @@
 import { useJournalData } from 'hooks/journals/useJournalData';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 import { maxBytes, UUID_START_OF_LOGS } from 'components/tables/Logs/shared';
 import { useIntl } from 'react-intl';
-import { RefreshLogsFunction } from 'components/tables/Logs/types';
 
 function useOpsLogs(name: string, collectionName: string) {
     const intl = useIntl();
 
-    const [fetchingMore, setFetchingMore] = useState(false);
     const [olderFinished, setOlderFinished] = useState(false);
     const [lastParsed, setLastParsed] = useState<number>(0);
     const [docs, setDocs] = useState<OpsLogFlowDocument[]>([]);
@@ -62,7 +60,6 @@ function useOpsLogs(name: string, collectionName: string) {
                 }
 
                 setDocs(newDocs);
-                setFetchingMore(false);
             }
         }
     }, [data?.meta, docs, documents, intl, lastParsed]);
@@ -85,33 +82,16 @@ function useOpsLogs(name: string, collectionName: string) {
         }
     }, [data?.meta]);
 
-    const startFetchingMore = useCallback<RefreshLogsFunction>(
-        (newOffset) => {
-            setFetchingMore(true);
-            refresh(newOffset);
-        },
-        [refresh]
-    );
-
     return useMemo(
         () => ({
             docs,
             error,
-            fetchingMore,
             olderFinished,
             lastParsed,
             loading,
-            refresh: startFetchingMore,
+            refresh,
         }),
-        [
-            docs,
-            error,
-            fetchingMore,
-            lastParsed,
-            loading,
-            olderFinished,
-            startFetchingMore,
-        ]
+        [docs, error, lastParsed, loading, olderFinished, refresh]
     );
 }
 
