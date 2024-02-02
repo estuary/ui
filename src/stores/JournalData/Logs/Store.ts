@@ -27,7 +27,7 @@ const getInitialStateData = (): Pick<
     documents: [],
     lastCount: -1,
     lastParsed: -1,
-    scrollToWhenDone: [-1, 'bottom'],
+    scrollToWhenDone: [-1, 'end'],
     lastTopUuid: null,
     fetchingNewer: false,
     fetchingOlder: false,
@@ -121,23 +121,27 @@ const getInitialState = (
     addNewDocuments: (docs, olderFinished, lastParsed) => {
         set(
             produce((state: JournalDataLogsState) => {
-                if (state.fetchingNewer) {
+                if (state.fetchingOlder) {
+                    console.log('fetching older', {
+                        new: docs.length,
+                        old: state.documents.length,
+                    });
                     // When fetching newer keep the previous first item in view
                     //  and then add the new to the start of the list
-                    state.scrollToWhenDone = [docs.length, 'top'];
+                    state.scrollToWhenDone = [docs.length + 1, 'start'];
                     state.documents = [...docs, ...state.documents];
-                    state.fetchingNewer = false;
-                } else if (state.fetchingOlder) {
+                    state.fetchingOlder = false;
+                } else if (state.fetchingNewer) {
                     // When fetching older keep the previous last item in view
                     //  and then add the new docs to the end of the list
-                    state.scrollToWhenDone = [state.documents.length, 'bottom'];
+                    state.scrollToWhenDone = [state.documents.length, 'end'];
                     state.documents = [...state.documents, ...docs];
-                    state.fetchingOlder = false;
+                    state.fetchingNewer = false;
                 } else {
                     // Initial hydration we want to set the array and scroll to near the bottom
                     state.scrollToWhenDone = [
                         Math.round(docs.length * 0.95),
-                        'bottom',
+                        'end',
                     ];
                     state.documents = docs;
                 }

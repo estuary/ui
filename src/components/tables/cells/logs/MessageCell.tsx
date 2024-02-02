@@ -19,7 +19,7 @@ function MessageCell({ fields, message, uuid }: Props) {
                     width: '100%',
                 }}
             >
-                {uuid} = {message}
+                {uuid.split('-')[0]} = {message}
             </Typography>
 
             {!isEmpty(fields) ? (

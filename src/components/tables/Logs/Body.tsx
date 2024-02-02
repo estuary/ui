@@ -123,7 +123,7 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
             const uuid = row._meta.uuid;
             return (
                 <LogsTableRow
-                    row={row}
+                    row={{ ...row, message: `${index}` }}
                     style={style}
                     rowExpanded={(height) =>
                         updateRowHeight(index, uuid, height)

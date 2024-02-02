@@ -1,5 +1,6 @@
 import { FetchMoreLogsFunction } from 'components/tables/Logs/types';
 import { LoadDocumentsOffsets } from 'hooks/journals/shared';
+import { Align } from 'react-window';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { OpsLogFlowDocument } from 'types';
 
@@ -34,7 +35,7 @@ export interface JournalDataLogsState extends StoreWithHydration {
 
     lastParsed: number;
     lastTopUuid: string | null;
-    scrollToWhenDone: [number, 'top' | 'bottom' | 'middle'];
+    scrollToWhenDone: [number, Align];
 
     hydrate: (
         documents: OpsLogFlowDocument[],
