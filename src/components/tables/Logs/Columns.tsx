@@ -27,19 +27,18 @@ export function LogsTableColumns({
                 <TimestampCell ts={row.ts} />
 
                 <MessageCell
-                    message={`${row._meta.uuid}:${row.message}`}
-                    fields={row.fields}
-                />
-            </Box>
-            {Boolean(row.fields) ? (
-                <FieldsExpandedCell
+                    message={row.message}
                     fields={row.fields}
                     uuid={row._meta.uuid}
-                    message={row.message}
-                    open={open}
-                    heightChanging={heightChanging}
                 />
-            ) : null}
+            </Box>
+            <FieldsExpandedCell
+                fields={row.fields}
+                uuid={row._meta.uuid}
+                message={row.message}
+                open={open}
+                heightChanging={heightChanging}
+            />
         </Stack>
     );
 }

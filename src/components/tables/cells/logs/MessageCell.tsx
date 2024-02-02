@@ -5,10 +5,11 @@ import { BaseTypographySx } from './shared';
 
 interface Props {
     message: string;
+    uuid: string;
     fields?: any;
 }
 
-function MessageCell({ fields, message }: Props) {
+function MessageCell({ fields, message, uuid }: Props) {
     return (
         <TableCell style={{ width: '100%' }} component="div">
             <Typography
@@ -18,7 +19,7 @@ function MessageCell({ fields, message }: Props) {
                     width: '100%',
                 }}
             >
-                {message}
+                {uuid} = {message}
             </Typography>
 
             {!isEmpty(fields) ? (

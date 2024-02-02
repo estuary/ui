@@ -151,14 +151,10 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                                 itemCount={itemData.length}
                                 itemData={itemData}
                                 itemKey={(index, data) => {
-                                    // console.log(
-                                    //     `key: ${index}`,
-                                    //     data[index]._meta.uuid
-                                    // );
                                     return data[index]._meta.uuid;
                                 }}
                                 itemSize={getItemSize}
-                                overscanCount={30}
+                                overscanCount={10}
                                 style={{ paddingBottom: 10, paddingTop: 10 }}
                                 width={width}
                             >

@@ -75,6 +75,7 @@ export function LogsTableRow({
                 cursor: 'pointer',
                 borderLeft: open ? '3px solid' : undefined,
                 borderLeftColor: defaultOutline_hovered[theme.palette.mode],
+                overflow: 'hidden',
             }}
             onClick={handleClick}
         >
