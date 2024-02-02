@@ -1,9 +1,9 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Box, Table, TableContainer } from '@mui/material';
 import {
-    useJournalDataLogsStore_fetchingMore,
     useJournalDataLogsStore_scrollToWhenDone,
+    useJournalDataLogsStore_setAllowFetchingMore,
 } from 'stores/JournalData/Logs/hooks';
 import EntityTableHeader from '../EntityTable/TableHeader';
 import useLogColumns from './useLogColumns';
@@ -13,13 +13,24 @@ function LogsTable() {
     const intl = useIntl();
     const columns = useLogColumns();
 
-    const fetchingMore = useJournalDataLogsStore_fetchingMore();
+    const allowFetchingMore = useJournalDataLogsStore_setAllowFetchingMore();
     const [scrollToIndex, scrollToPosition] =
         useJournalDataLogsStore_scrollToWhenDone();
 
     const tableScroller = useRef<any>(null);
     const outerRef = useRef<any>(null);
     const virtualRows = useRef<any>(null);
+    const enableFetchingMore = useRef<boolean>(true);
+    const [readyToScroll, setReadyToScroll] = useState(false);
+
+    const tableScrollerCallback = useCallback((node) => {
+        if (node) {
+            tableScroller.current = node;
+            setReadyToScroll(true);
+        } else {
+            return tableScroller.current;
+        }
+    }, []);
 
     useLayoutEffect(() => {
         console.log('scrolling effect', [
@@ -27,11 +38,16 @@ function LogsTable() {
             scrollToPosition,
             tableScroller.current,
         ]);
-        if (scrollToIndex > 0 && tableScroller.current) {
+        if (readyToScroll && scrollToIndex > 0 && tableScroller.current) {
             console.log('scrolling effect scrolling');
             tableScroller.current.scrollToItem(scrollToIndex, scrollToPosition);
+
+            // Since we have scrolled once we can enable this now
+            if (enableFetchingMore.current) {
+                allowFetchingMore(true);
+            }
         }
-    }, [fetchingMore, scrollToIndex, scrollToPosition]);
+    }, [allowFetchingMore, scrollToIndex, scrollToPosition, readyToScroll]);
 
     return (
         <TableContainer
@@ -56,7 +72,7 @@ function LogsTable() {
 
                 <LogsTableBody
                     outerRef={outerRef}
-                    tableScroller={tableScroller}
+                    tableScroller={tableScrollerCallback}
                     virtualRows={virtualRows}
                 />
             </Table>

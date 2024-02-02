@@ -11,6 +11,7 @@ import { JournalDataLogsState } from './types';
 
 const getInitialStateData = (): Pick<
     JournalDataLogsState,
+    | 'allowFetchingMore'
     | 'documents'
     | 'lastCount'
     | 'lastParsed'
@@ -22,6 +23,7 @@ const getInitialStateData = (): Pick<
     | 'scrollOnLoad'
     | 'scrollToWhenDone'
 > => ({
+    allowFetchingMore: false,
     documents: [],
     lastCount: -1,
     lastParsed: -1,
@@ -31,7 +33,7 @@ const getInitialStateData = (): Pick<
     fetchingOlder: false,
     olderFinished: false,
     scrollOnLoad: true,
-    refresh: () => {},
+    refresh: null,
 });
 
 const getInitialState = (
@@ -42,7 +44,7 @@ const getInitialState = (
     ...getInitialHydrationData(),
     ...getStoreWithHydrationSettings('JournalsData:Logs', set),
 
-    hydrate: async (docs, error, refresh, olderFinished, lastParsed) => {
+    hydrate: async (docs, refresh, olderFinished, lastParsed, error) => {
         const {
             active,
             hydrated,
@@ -86,6 +88,7 @@ const getInitialState = (
 
     fetchMoreLogs: (option) => {
         const {
+            allowFetchingMore,
             fetchingNewer,
             fetchingOlder,
             lastParsed,
@@ -95,7 +98,7 @@ const getInitialState = (
             setFetchingNewer,
         } = get();
 
-        if (!refresh || fetchingNewer || fetchingOlder) {
+        if (!allowFetchingMore || !refresh || fetchingNewer || fetchingOlder) {
             return;
         }
 
@@ -118,6 +121,11 @@ const getInitialState = (
     addNewDocuments: (docs, olderFinished, lastParsed) => {
         set(
             produce((state: JournalDataLogsState) => {
+                console.log('add new documents', {
+                    fn: state.fetchingNewer,
+                    fo: state.fetchingOlder,
+                });
+
                 if (state.fetchingNewer) {
                     // When fetching newer keep the previous first item in view
                     //  and then add the new to the start of the list
@@ -139,13 +147,23 @@ const getInitialState = (
 
                 // Helper props for future calls and scrolling
                 state.olderFinished = Boolean(olderFinished);
-                state.lastParsed = lastParsed ?? -1;
+                state.lastParsed = lastParsed;
                 if (state.documents.length > 0) {
                     state.lastTopUuid = state.documents[0]._meta.uuid;
                 }
             }),
             false,
-            'JournalsData:Logs: Documents Set'
+            'JournalsData:Logs: Documents Added'
+        );
+    },
+
+    setAllowFetchingMore: (newState) => {
+        set(
+            produce((state: JournalDataLogsState) => {
+                state.allowFetchingMore = newState;
+            }),
+            false,
+            'JournalsData:Logs: Fetching more can start'
         );
     },
 

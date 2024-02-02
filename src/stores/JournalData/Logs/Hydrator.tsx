@@ -44,14 +44,34 @@ export const JournalDataLogsHydrator = ({
         if (loading || hydrated) {
             return;
         }
-        hydrate(docs, error, refresh, olderFinished);
-    }, [docs, error, hydrate, hydrated, loading, olderFinished, refresh]);
+        console.log('calling hydrate', {
+            docs,
+            olderFinished,
+            lastParsed,
+        });
+
+        hydrate(docs, refresh, olderFinished, lastParsed, error);
+    }, [
+        docs,
+        error,
+        hydrate,
+        hydrated,
+        lastParsed,
+        loading,
+        olderFinished,
+        refresh,
+    ]);
 
     // Maintain documents after the inital hydration
     useEffect(() => {
         if (!hydrated) {
             return;
         }
+        console.log('calling add new docs', {
+            docs,
+            olderFinished,
+            lastParsed,
+        });
         addNewDocuments(docs, olderFinished, lastParsed);
     }, [docs, hydrated, lastParsed, olderFinished, addNewDocuments]);
 

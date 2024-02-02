@@ -65,16 +65,23 @@ export const useJournalDataLogsStore_scrollToWhenDone = () => {
     >(JournalDataStoreNames.LOGS, (state) => state.scrollToWhenDone);
 };
 
-export const useJournalDataLogsStore_fetchingMore = () => {
-    return useZustandStore<JournalDataLogsState, boolean>(
-        JournalDataStoreNames.LOGS,
-        (state) => state.fetchingNewer || state.fetchingOlder
-    );
-};
-
 export const useJournalDataLogsStore_resetState = () => {
     return useZustandStore<
         JournalDataLogsState,
         JournalDataLogsState['resetState']
     >(JournalDataStoreNames.LOGS, (state) => state.resetState);
+};
+
+export const useJournalDataLogsStore_setAllowFetchingMore = () => {
+    return useZustandStore<
+        JournalDataLogsState,
+        JournalDataLogsState['setAllowFetchingMore']
+    >(JournalDataStoreNames.LOGS, (state) => state.setAllowFetchingMore);
+};
+
+export const useJournalDataLogsStore_fetchingMore = () => {
+    return useZustandStore<JournalDataLogsState, boolean>(
+        JournalDataStoreNames.LOGS,
+        (state) => state.fetchingNewer || state.fetchingOlder
+    );
 };

@@ -22,7 +22,7 @@ import { LogsTableRow } from './Row';
 
 interface Props {
     outerRef: MutableRefObject<any>;
-    tableScroller: MutableRefObject<any>;
+    tableScroller: any;
     virtualRows: MutableRefObject<any>;
 }
 
@@ -112,7 +112,7 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                 expandedHeights.current.delete(uuid);
             }
 
-            tableScroller.current.resetAfterIndex(index);
+            tableScroller().resetAfterIndex(index);
         },
         [tableScroller]
     );
@@ -144,20 +144,20 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                     {({ width, height }: AutoSizer['state']) => {
                         return (
                             <VariableSizeList
-                                ref={tableScroller}
-                                outerRef={outerRef}
                                 innerRef={virtualRows}
-                                height={height}
-                                width={width}
-                                itemData={itemData}
-                                itemSize={getItemSize}
+                                outerRef={outerRef}
+                                ref={tableScroller}
                                 estimatedItemSize={DEFAULT_ROW_HEIGHT}
+                                height={height}
                                 itemCount={itemData.length}
+                                itemData={itemData}
+                                itemKey={(index, data) =>
+                                    data[index]._meta.uuid
+                                }
+                                itemSize={getItemSize}
                                 overscanCount={15}
-                                style={{
-                                    paddingBottom: 10,
-                                    paddingTop: 10,
-                                }}
+                                style={{ paddingBottom: 10, paddingTop: 10 }}
+                                width={width}
                             >
                                 {renderRow}
                             </VariableSizeList>
