@@ -79,6 +79,13 @@ export const useJournalDataLogsStore_setAllowFetchingMore = () => {
     >(JournalDataStoreNames.LOGS, (state) => state.setAllowFetchingMore);
 };
 
+export const useJournalDataLogsStore_setFetchingOlder = () => {
+    return useZustandStore<
+        JournalDataLogsState,
+        JournalDataLogsState['setFetchingOlder']
+    >(JournalDataStoreNames.LOGS, (state) => state.setFetchingOlder);
+};
+
 export const useJournalDataLogsStore_fetchingMore = () => {
     return useZustandStore<JournalDataLogsState, boolean>(
         JournalDataStoreNames.LOGS,

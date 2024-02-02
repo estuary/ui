@@ -45,9 +45,9 @@ export const JournalDataLogsHydrator = ({
             return;
         }
         console.log('calling hydrate', {
-            docs,
-            olderFinished,
-            lastParsed,
+            docs: docs.map((doc) => {
+                return doc._meta.uuid;
+            }),
         });
 
         hydrate(docs, refresh, olderFinished, lastParsed, error);
@@ -68,9 +68,9 @@ export const JournalDataLogsHydrator = ({
             return;
         }
         console.log('calling add new docs', {
-            docs,
-            olderFinished,
-            lastParsed,
+            docs: docs.map((doc) => {
+                return doc._meta.uuid;
+            }),
         });
         addNewDocuments(docs, olderFinished, lastParsed);
     }, [docs, hydrated, lastParsed, olderFinished, addNewDocuments]);

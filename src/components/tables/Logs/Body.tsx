@@ -22,7 +22,7 @@ import { LogsTableRow } from './Row';
 
 interface Props {
     outerRef: MutableRefObject<any>;
-    tableScroller: any;
+    tableScroller: (node?: any) => VariableSizeList | null;
     virtualRows: MutableRefObject<any>;
 }
 
@@ -112,7 +112,7 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                 expandedHeights.current.delete(uuid);
             }
 
-            tableScroller().resetAfterIndex(index);
+            tableScroller()?.resetAfterIndex(index);
         },
         [tableScroller]
     );
@@ -123,7 +123,6 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
             const uuid = row._meta.uuid;
             return (
                 <LogsTableRow
-                    index={index}
                     row={row}
                     style={style}
                     rowExpanded={(height) =>
@@ -151,11 +150,15 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                                 height={height}
                                 itemCount={itemData.length}
                                 itemData={itemData}
-                                itemKey={(index, data) =>
-                                    data[index]._meta.uuid
-                                }
+                                itemKey={(index, data) => {
+                                    // console.log(
+                                    //     `key: ${index}`,
+                                    //     data[index]._meta.uuid
+                                    // );
+                                    return data[index]._meta.uuid;
+                                }}
                                 itemSize={getItemSize}
-                                overscanCount={15}
+                                overscanCount={30}
                                 style={{ paddingBottom: 10, paddingTop: 10 }}
                                 width={width}
                             >

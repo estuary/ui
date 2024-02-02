@@ -9,7 +9,6 @@ import WaitingForOldLogsRow from './WaitingForRow/OldLogs';
 import WaitingForNewLogsRow from './WaitingForRow/NewLogs';
 
 interface RowProps {
-    index: number;
     row: OpsLogFlowDocument;
     rowExpanded: (height: number) => void;
     rowOpened: (isOpen: boolean) => void;
@@ -18,7 +17,6 @@ interface RowProps {
 }
 
 export function LogsTableRow({
-    index,
     row,
     rowExpanded,
     renderOpen = false,
@@ -81,7 +79,6 @@ export function LogsTableRow({
             onClick={handleClick}
         >
             <LogsTableColumns
-                index={index}
                 row={row}
                 open={open}
                 heightChanging={heightChanging}

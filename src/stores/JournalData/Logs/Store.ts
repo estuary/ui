@@ -121,21 +121,18 @@ const getInitialState = (
     addNewDocuments: (docs, olderFinished, lastParsed) => {
         set(
             produce((state: JournalDataLogsState) => {
-                console.log('add new documents', {
-                    fn: state.fetchingNewer,
-                    fo: state.fetchingOlder,
-                });
-
                 if (state.fetchingNewer) {
                     // When fetching newer keep the previous first item in view
                     //  and then add the new to the start of the list
                     state.scrollToWhenDone = [docs.length, 'top'];
                     state.documents = [...docs, ...state.documents];
+                    state.fetchingNewer = false;
                 } else if (state.fetchingOlder) {
                     // When fetching older keep the previous last item in view
                     //  and then add the new docs to the end of the list
                     state.scrollToWhenDone = [state.documents.length, 'bottom'];
                     state.documents = [...state.documents, ...docs];
+                    state.fetchingOlder = false;
                 } else {
                     // Initial hydration we want to set the array and scroll to near the bottom
                     state.scrollToWhenDone = [

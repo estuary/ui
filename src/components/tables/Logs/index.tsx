@@ -5,6 +5,7 @@ import {
     useJournalDataLogsStore_scrollToWhenDone,
     useJournalDataLogsStore_setAllowFetchingMore,
 } from 'stores/JournalData/Logs/hooks';
+import { VariableSizeList } from 'react-window';
 import EntityTableHeader from '../EntityTable/TableHeader';
 import useLogColumns from './useLogColumns';
 import LogsTableBody from './Body';
@@ -23,13 +24,15 @@ function LogsTable() {
     const enableFetchingMore = useRef<boolean>(true);
     const [readyToScroll, setReadyToScroll] = useState(false);
 
-    const tableScrollerCallback = useCallback((node) => {
+    const tableScrollerCallback = useCallback((node?: VariableSizeList) => {
+        // If we get a node store that off and trigger a flag so we can do the initial scrolling
+        //  This is gross but it works with the virtualization library we have and it let me get the job done
         if (node) {
             tableScroller.current = node;
             setReadyToScroll(true);
-        } else {
-            return tableScroller.current;
         }
+
+        return tableScroller.current;
     }, []);
 
     useLayoutEffect(() => {

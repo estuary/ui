@@ -41,10 +41,7 @@ function useOpsLogs(name: string, collectionName: string) {
         if (parsedEnd && parsedEnd !== lastParsed) {
             if (documents.length > 0) {
                 // If the parsed is lower than the other
-                const newDocs =
-                    lastParsed > parsedEnd
-                        ? [...docs, ...documents]
-                        : [...documents, ...docs];
+                const newDocs = documents;
 
                 if (parsedEnd === 0) {
                     newDocs.unshift({
