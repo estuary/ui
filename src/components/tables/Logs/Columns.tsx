@@ -26,11 +26,7 @@ export function LogsTableColumns({
 
                 <TimestampCell ts={row.ts} />
 
-                <MessageCell
-                    message={row.message}
-                    fields={row.fields}
-                    uuid={row._meta.uuid}
-                />
+                <MessageCell message={row.message} fields={row.fields} />
             </Box>
             <FieldsExpandedCell
                 fields={row.fields}
