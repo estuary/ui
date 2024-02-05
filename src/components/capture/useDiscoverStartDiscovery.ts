@@ -105,6 +105,7 @@ function useDiscoverStartDiscovery(entityType: Entity) {
             imageConnectorTagId,
             persistedDraftId,
             setCatalogName,
+            setDraftId,
             setFormState,
         ]
     );
