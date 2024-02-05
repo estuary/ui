@@ -2,7 +2,10 @@ import { Box, TableCell, TableRow, Typography, useTheme } from '@mui/material';
 import SpinnerIcon from 'components/logs/SpinnerIcon';
 import { BaseTypographySx } from 'components/tables/cells/logs/shared';
 import { DEFAULT_POLLING } from 'context/SWR';
-import { tableRowActiveBackground } from 'context/Theme';
+import {
+    tableRowActive_Finished__Background,
+    tableRowActive__Background,
+} from 'context/Theme';
 import { useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useIntersection, useInterval } from 'react-use';
@@ -55,6 +58,11 @@ function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
 
     const messageKey = `ops.logsTable.waitingForLogs.${fetchOption}`;
 
+    console.log('base rendering', {
+        disabled,
+        intersection,
+    });
+
     return (
         <TableRow
             component={Box}
@@ -62,9 +70,9 @@ function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
             style={style}
             sx={{
                 bgcolor: disabled
-                    ? 'info'
-                    : tableRowActiveBackground[theme.palette.mode],
-                opacity: disabled && intersection?.isIntersecting ? 1 : 0,
+                    ? tableRowActive_Finished__Background[theme.palette.mode]
+                    : tableRowActive__Background[theme.palette.mode],
+                opacity: disabled || intersection?.isIntersecting ? 1 : 0,
                 transition: 'all 50ms ease-in-out',
             }}
         >
