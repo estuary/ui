@@ -22,6 +22,7 @@ const getInitialStateData = (): Pick<
     | 'refresh'
     | 'scrollOnLoad'
     | 'scrollToWhenDone'
+    | 'tailNewLogs'
 > => ({
     allowFetchingMore: false,
     documents: null,
@@ -34,6 +35,7 @@ const getInitialStateData = (): Pick<
     olderFinished: false,
     scrollOnLoad: true,
     refresh: null,
+    tailNewLogs: false,
 });
 
 const getInitialState = (
@@ -131,7 +133,7 @@ const getInitialState = (
                     // When fetching older keep the previous last item in view
                     //  and then add the new docs to the end of the list
                     state.scrollToWhenDone = [
-                        state.documents ? state.documents.length : 0,
+                        state.documents ? state.documents.length + 1 : 0,
                         'end',
                     ];
                     state.documents = [...(state.documents ?? []), ...docs];
@@ -164,6 +166,16 @@ const getInitialState = (
             }),
             false,
             'JournalsData:Logs: Fetching more can start'
+        );
+    },
+
+    setTailNewLogs: (newState) => {
+        set(
+            produce((state: JournalDataLogsState) => {
+                state.tailNewLogs = newState;
+            }),
+            false,
+            'JournalsData:Logs: Tail new logs set'
         );
     },
 

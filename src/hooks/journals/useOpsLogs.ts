@@ -2,7 +2,7 @@ import { useJournalData } from 'hooks/journals/useJournalData';
 
 import { useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
-import { maxBytes, UUID_START_OF_LOGS } from 'components/tables/Logs/shared';
+import { maxBytes } from 'components/tables/Logs/shared';
 import { useIntl } from 'react-intl';
 import { LoadDocumentsOffsets } from './shared';
 
@@ -55,18 +55,19 @@ function useOpsLogs(name: string, collectionName: string) {
             // If the parsed is lower than the other
             const newDocs = documents;
 
-            if (parsedEnd === 0) {
-                newDocs.unshift({
-                    _meta: {
-                        uuid: UUID_START_OF_LOGS,
-                    },
-                    level: 'waiting',
-                    message: intl.formatMessage({
-                        id: 'ops.logsTable.allOldLogsLoaded',
-                    }),
-                    ts: '',
-                });
-            }
+            // if (parsedEnd === 0) {
+            //     console.log('hit the end of logs');
+            //     newDocs.unshift({
+            //         _meta: {
+            //             uuid: UUID_START_OF_LOGS,
+            //         },
+            //         level: 'waiting',
+            //         message: intl.formatMessage({
+            //             id: 'ops.logsTable.allOldLogsLoaded',
+            //         }),
+            //         ts: '',
+            //     });
+            // }
 
             setNothingInLastFetch(false);
             setDocs(newDocs);

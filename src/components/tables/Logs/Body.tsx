@@ -15,7 +15,6 @@ import {
     DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS,
     UUID_NEWEST_LOG,
     UUID_OLDEST_LOG,
-    UUID_START_OF_LOGS,
 } from './shared';
 import useLogColumns from './useLogColumns';
 import { LogsTableRow } from './Row';
@@ -40,7 +39,15 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
     //  we need to add new docs to the list
     const itemData = useMemo<OpsLogFlowDocument[] | null>(() => {
         if (documents && documents.length > 0) {
-            const response = [
+            return [
+                {
+                    _meta: {
+                        uuid: UUID_OLDEST_LOG,
+                    },
+                    level: 'waiting',
+                    message: '',
+                    ts: '',
+                },
                 ...documents,
                 {
                     _meta: {
@@ -51,22 +58,6 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                     ts: '',
                 },
             ];
-
-            const oldestLogLine = {
-                _meta: {
-                    uuid: UUID_OLDEST_LOG,
-                },
-                level: 'waiting',
-                message: '',
-                ts: '',
-            };
-
-            // If we're not at the start add a line to show waiting for older logs
-            if (response[0]._meta.uuid !== UUID_START_OF_LOGS) {
-                response.unshift(oldestLogLine);
-            }
-
-            return response;
         }
 
         return null;

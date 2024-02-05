@@ -14,9 +14,10 @@ import { FetchMoreLogsOptions, WaitingForRowProps } from '../types';
 
 interface Props extends WaitingForRowProps {
     fetchOption: FetchMoreLogsOptions;
+    disabled?: boolean;
 }
 
-function WaitingForRowBase({ fetchOption, sizeRef, style }: Props) {
+function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
     const theme = useTheme();
 
     const runFetch = useRef(true);
@@ -47,8 +48,12 @@ function WaitingForRowBase({ fetchOption, sizeRef, style }: Props) {
                 runFetch.current = true;
             }
         },
-        intersection?.isIntersecting ? intervalLength.current : null
+        !disabled && intersection?.isIntersecting
+            ? intervalLength.current
+            : null
     );
+
+    const messageKey = `ops.logsTable.waitingForLogs.${fetchOption}`;
 
     return (
         <TableRow
@@ -56,8 +61,10 @@ function WaitingForRowBase({ fetchOption, sizeRef, style }: Props) {
             ref={sizeRef}
             style={style}
             sx={{
-                bgcolor: tableRowActiveBackground[theme.palette.mode],
-                opacity: intersection?.isIntersecting ? 1 : 0,
+                bgcolor: disabled
+                    ? 'info'
+                    : tableRowActiveBackground[theme.palette.mode],
+                opacity: disabled && intersection?.isIntersecting ? 1 : 0,
                 transition: 'all 50ms ease-in-out',
             }}
         >
@@ -69,12 +76,14 @@ function WaitingForRowBase({ fetchOption, sizeRef, style }: Props) {
                     }}
                     component="div"
                 >
-                    <SpinnerIcon stopped={false} />
+                    <SpinnerIcon stopped={Boolean(disabled)} />
                 </TableCell>
                 <TableCell sx={{ width: '100%' }} component="div">
                     <Typography sx={BaseTypographySx}>
                         <FormattedMessage
-                            id={`ops.logsTable.waitingForLogs.${fetchOption}`}
+                            id={
+                                disabled ? `${messageKey}.complete` : messageKey
+                            }
                         />
                     </Typography>
                 </TableCell>

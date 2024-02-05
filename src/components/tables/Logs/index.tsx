@@ -4,8 +4,10 @@ import { Box, Table, TableContainer } from '@mui/material';
 import {
     useJournalDataLogsStore_scrollToWhenDone,
     useJournalDataLogsStore_setAllowFetchingMore,
+    useJournalDataLogsStore_tailNewLogs,
 } from 'stores/JournalData/Logs/hooks';
 import { VariableSizeList } from 'react-window';
+import TailNewLogs from 'components/shared/Entity/Details/Ops/TailNewLogs';
 import EntityTableHeader from '../EntityTable/TableHeader';
 import useLogColumns from './useLogColumns';
 import LogsTableBody from './Body';
@@ -16,6 +18,7 @@ function LogsTable() {
     const intl = useIntl();
     const columns = useLogColumns();
 
+    const tailNewLogs = useJournalDataLogsStore_tailNewLogs();
     const setAllowFetchingMore = useJournalDataLogsStore_setAllowFetchingMore();
     const [scrollToIndex, scrollToPosition] =
         useJournalDataLogsStore_scrollToWhenDone();
@@ -48,36 +51,45 @@ function LogsTable() {
                 setAllowFetchingMore(true);
             }
         }
-    }, [setAllowFetchingMore, scrollToIndex, scrollToPosition, readyToScroll]);
+    }, [
+        setAllowFetchingMore,
+        scrollToIndex,
+        scrollToPosition,
+        readyToScroll,
+        tailNewLogs,
+    ]);
 
     return (
-        <TableContainer
-            component={Box}
-            width="100%"
-            sx={{ overflow: 'unset', height: TABLE_HEIGHT }}
-        >
-            <Table
-                aria-label={intl.formatMessage({
-                    id: 'entityTable.title',
-                })}
+        <Box>
+            <TableContainer
                 component={Box}
-                size="small"
-                stickyHeader
-                sx={{ minWidth: 250, width: '100%', height: '100%' }}
+                width="100%"
+                sx={{ overflow: 'unset', height: TABLE_HEIGHT }}
             >
-                <EntityTableHeader
-                    columns={columns}
-                    enableDivRendering
-                    height={35} // This is required for FF to render the body for some reason
-                />
+                <Table
+                    aria-label={intl.formatMessage({
+                        id: 'entityTable.title',
+                    })}
+                    component={Box}
+                    size="small"
+                    stickyHeader
+                    sx={{ minWidth: 250, width: '100%', height: '100%' }}
+                >
+                    <EntityTableHeader
+                        columns={columns}
+                        enableDivRendering
+                        height={35} // This is required for FF to render the body for some reason
+                    />
 
-                <LogsTableBody
-                    outerRef={outerRef}
-                    tableScroller={tableScrollerCallback}
-                    virtualRows={virtualRows}
-                />
-            </Table>
-        </TableContainer>
+                    <LogsTableBody
+                        outerRef={outerRef}
+                        tableScroller={tableScrollerCallback}
+                        virtualRows={virtualRows}
+                    />
+                </Table>
+            </TableContainer>
+            <TailNewLogs />
+        </Box>
     );
 }
 

@@ -100,6 +100,27 @@ export const useJournalDataLogsStore_setFetchingNewer = () => {
     >(JournalDataStoreNames.LOGS, (state) => state.setFetchingNewer);
 };
 
+export const useJournalDataLogsStore_tailNewLogs = () => {
+    return useZustandStore<
+        JournalDataLogsState,
+        JournalDataLogsState['tailNewLogs']
+    >(JournalDataStoreNames.LOGS, (state) => state.tailNewLogs);
+};
+
+export const useJournalDataLogsStore_setTailNewLogs = () => {
+    return useZustandStore<
+        JournalDataLogsState,
+        JournalDataLogsState['setTailNewLogs']
+    >(JournalDataStoreNames.LOGS, (state) => state.setTailNewLogs);
+};
+
+export const useJournalDataLogsStore_olderFinished = () => {
+    return useZustandStore<
+        JournalDataLogsState,
+        JournalDataLogsState['olderFinished']
+    >(JournalDataStoreNames.LOGS, (state) => state.olderFinished);
+};
+
 export const useJournalDataLogsStore_fetchingMore = () => {
     return useZustandStore<JournalDataLogsState, boolean>(
         JournalDataStoreNames.LOGS,
