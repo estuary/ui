@@ -1,4 +1,4 @@
-import { Typography, useTheme } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import AutoDiscoverySettings from 'components/capture/AutoDiscoverySettings';
 import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
@@ -22,13 +22,14 @@ import {
     useDetailsForm_details_entityName,
 } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
-import { EditorStoreNames } from 'stores/names';
 import {
     useResourceConfig_discoveredCollections,
     useResourceConfig_resetResourceConfigAndCollections,
     useResourceConfig_setResourceSchema,
 } from 'stores/ResourceConfig/hooks';
+import { EditorStoreNames } from 'stores/names';
 import { Schema } from 'types';
+import Backfill from './Backfill';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];
@@ -131,9 +132,13 @@ function BindingsMultiEditor({
                 />
             </Typography>
 
-            {entityType === 'capture' ? <AutoDiscoverySettings /> : null}
+            <Stack spacing={3} sx={{ mb: 5 }}>
+                {entityType === 'capture' ? <AutoDiscoverySettings /> : null}
 
-            {entityType === 'materialization' ? <SourceCapture /> : null}
+                {entityType === 'materialization' ? <SourceCapture /> : null}
+
+                <Backfill updateAll />
+            </Stack>
 
             <ListAndDetails
                 list={

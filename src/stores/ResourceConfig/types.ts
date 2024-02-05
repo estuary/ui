@@ -53,6 +53,9 @@ export interface ResourceConfigState extends StoreWithHydration {
     addBackfilledCollection: (value: string) => void;
     removeBackfilledCollection: (value: string) => void;
 
+    backfillAllBindings: boolean;
+    setBackfillAllBindings: (value: boolean) => void;
+
     // Resource Config
     resourceConfig: ResourceConfigDictionary;
     prefillResourceConfig: (bindings: any) => void;

@@ -139,6 +139,7 @@ const getInitialCollectionStateData = (): Pick<
 
 const getInitialMiscStoreData = (): Pick<
     ResourceConfigState,
+    | 'backfillAllBindings'
     | 'backfilledCollections'
     | 'discoveredCollections'
     | 'hydrated'
@@ -152,6 +153,7 @@ const getInitialMiscStoreData = (): Pick<
     | 'collectionsRequiringRediscovery'
     | 'rediscoveryRequired'
 > => ({
+    backfillAllBindings: false,
     backfilledCollections: [],
     discoveredCollections: null,
     hydrated: false,
@@ -487,6 +489,16 @@ const getInitialState = (
             }),
             false,
             'Backfilled Collection Removed'
+        );
+    },
+
+    setBackfillAllBindings: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                state.backfillAllBindings = value;
+            }),
+            false,
+            'Backfill All Bindings Flag Set'
         );
     },
 

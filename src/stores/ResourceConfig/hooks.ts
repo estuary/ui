@@ -130,6 +130,23 @@ export const useResourceConfig_removeBackfilledCollection = () => {
     );
 };
 
+export const useResourceConfig_backfillAllBindings = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['backfillAllBindings']
+    >(ResourceConfigStoreNames.GENERAL, (state) => state.backfillAllBindings);
+};
+
+export const useResourceConfig_setBackfillAllBindings = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setBackfillAllBindings']
+    >(
+        ResourceConfigStoreNames.GENERAL,
+        (state) => state.setBackfillAllBindings
+    );
+};
+
 export const useResourceConfig_resourceConfig = () => {
     return useZustandStore<
         ResourceConfigState,

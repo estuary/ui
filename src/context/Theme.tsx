@@ -39,6 +39,24 @@ import { LocalStorageKeys } from 'utils/localStorage-utils';
 //     }
 // }
 
+declare module '@mui/material/styles' {
+    interface TypographyVariants {
+        formSectionHeader: React.CSSProperties;
+    }
+
+    // allow configuration using `createTheme`
+    interface TypographyVariantsOptions {
+        formSectionHeader?: React.CSSProperties;
+    }
+}
+
+// Update the Typography's variant prop options
+declare module '@mui/material/Typography' {
+    interface TypographyPropsVariantOverrides {
+        formSectionHeader: true;
+    }
+}
+
 // Navigation Width
 export enum NavWidths {
     MOBILE = 0,
@@ -720,6 +738,9 @@ const themeSettings = createTheme({
         },
         button: {
             fontSize: 14,
+        },
+        formSectionHeader: {
+            fontWeight: 500,
         },
     },
 } as ThemeOptions);
