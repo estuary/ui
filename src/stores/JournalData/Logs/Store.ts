@@ -24,7 +24,7 @@ const getInitialStateData = (): Pick<
     | 'scrollToWhenDone'
 > => ({
     allowFetchingMore: false,
-    documents: [],
+    documents: null,
     lastCount: -1,
     lastParsed: -1,
     scrollToWhenDone: [-1, 'end'],
@@ -125,13 +125,16 @@ const getInitialState = (
                     // When fetching newer keep the previous first item in view
                     //  and then add the new to the start of the list
                     state.scrollToWhenDone = [docs.length + 1, 'start'];
-                    state.documents = [...docs, ...state.documents];
+                    state.documents = [...docs, ...(state.documents ?? [])];
                     state.fetchingOlder = false;
                 } else if (state.fetchingNewer) {
                     // When fetching older keep the previous last item in view
                     //  and then add the new docs to the end of the list
-                    state.scrollToWhenDone = [state.documents.length, 'end'];
-                    state.documents = [...state.documents, ...docs];
+                    state.scrollToWhenDone = [
+                        state.documents ? state.documents.length : 0,
+                        'end',
+                    ];
+                    state.documents = [...(state.documents ?? []), ...docs];
                     state.fetchingNewer = false;
                 } else {
                     // Initial hydration we want to set the array and scroll to near the bottom

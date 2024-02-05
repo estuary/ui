@@ -38,8 +38,8 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
 
     // Keeping this outside the store so we don't have to filter them out everytime
     //  we need to add new docs to the list
-    const itemData = useMemo<OpsLogFlowDocument[]>(() => {
-        if (documents.length > 0) {
+    const itemData = useMemo<OpsLogFlowDocument[] | null>(() => {
+        if (documents && documents.length > 0) {
             const response = [
                 ...documents,
                 {
@@ -69,12 +69,12 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
             return response;
         }
 
-        return [];
+        return null;
     }, [documents]);
 
     const getItemSize = useCallback(
         (rowIndex: number) => {
-            const row = itemData[rowIndex];
+            const row = itemData?.[rowIndex];
 
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (!row) {
@@ -136,7 +136,7 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
         [openRow, updateRowHeight]
     );
 
-    if (itemData.length > 0) {
+    if (itemData && itemData.length > 0) {
         return (
             <TableBody component="div">
                 <AutoSizer>
@@ -169,7 +169,7 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
 
     return (
         <EntityTableBody
-            columns={columns}
+            columns={[columns[0]]}
             enableDivRendering
             noExistingDataContentIds={{
                 header: 'ops.logsTable.emptyTableDefault.header',
@@ -181,8 +181,8 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                     ? TableStatuses.NETWORK_FAILED
                     : TableStatuses.NO_EXISTING_DATA,
             }}
-            loading={!hydrated}
-            rows={null}
+            loading={Boolean(!hydrated || documents === null)}
+            rows={documents}
         />
     );
 }

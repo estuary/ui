@@ -5,9 +5,9 @@ import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { OpsLogFlowDocument } from 'types';
 
 export interface JournalDataLogsState extends StoreWithHydration {
-    documents: OpsLogFlowDocument[];
+    documents: OpsLogFlowDocument[] | null;
     addNewDocuments: (
-        val: JournalDataLogsState['documents'],
+        val: OpsLogFlowDocument[],
         olderFinished: boolean,
         lastParsed: number
     ) => void;
