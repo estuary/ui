@@ -36,7 +36,12 @@ function WaitingForRowBase({ fetchOption, sizeRef, style }: Props) {
         () => {
             if (!fetchingMore && intersection?.isIntersecting) {
                 runFetch.current = false;
-                intervalLength.current = DEFAULT_POLLING;
+
+                // When checking for new ones fall back to give some time
+                //  for the entity to actually write logs
+                if (fetchOption === 'new') {
+                    intervalLength.current = DEFAULT_POLLING;
+                }
                 fetchMoreLogs(fetchOption);
             } else {
                 runFetch.current = true;
