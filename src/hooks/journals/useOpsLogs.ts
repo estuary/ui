@@ -4,10 +4,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 import { maxBytes, UUID_START_OF_LOGS } from 'components/tables/Logs/shared';
 import { useIntl } from 'react-intl';
+import { LoadDocumentsOffsets } from './shared';
 
 function useOpsLogs(name: string, collectionName: string) {
     const intl = useIntl();
 
+    const [nothingInLastFetch, setNothingInLastFetch] = useState(false);
     const [olderFinished, setOlderFinished] = useState(false);
     const [lastParsed, setLastParsed] = useState<number>(0);
     const [docs, setDocs] = useState<OpsLogFlowDocument[]>([]);
@@ -36,28 +38,33 @@ function useOpsLogs(name: string, collectionName: string) {
             ? parseInt(meta.docsMetaResponse.offset, 10)
             : null;
 
+        if (!parsedEnd || documents.length <= 0) {
+            return;
+        }
+
         // Since journalData is read kinda async we need to wait to
         //  update documents until we know the meta data changed
-        if (parsedEnd && parsedEnd !== lastParsed) {
-            if (documents.length > 0) {
-                // If the parsed is lower than the other
-                const newDocs = documents;
+        if (parsedEnd !== lastParsed) {
+            // If the parsed is lower than the other
+            const newDocs = documents;
 
-                if (parsedEnd === 0) {
-                    newDocs.unshift({
-                        _meta: {
-                            uuid: UUID_START_OF_LOGS,
-                        },
-                        level: 'waiting',
-                        message: intl.formatMessage({
-                            id: 'ops.logsTable.allOldLogsLoaded',
-                        }),
-                        ts: '',
-                    });
-                }
-
-                setDocs(newDocs);
+            if (parsedEnd === 0) {
+                newDocs.unshift({
+                    _meta: {
+                        uuid: UUID_START_OF_LOGS,
+                    },
+                    level: 'waiting',
+                    message: intl.formatMessage({
+                        id: 'ops.logsTable.allOldLogsLoaded',
+                    }),
+                    ts: '',
+                });
             }
+
+            setNothingInLastFetch(false);
+            setDocs(newDocs);
+        } else if (lastParsed > 0) {
+            setNothingInLastFetch(true);
         }
     }, [data?.meta, docs, documents, intl, lastParsed]);
 
@@ -83,12 +90,24 @@ function useOpsLogs(name: string, collectionName: string) {
         () => ({
             docs,
             error,
-            olderFinished,
             lastParsed,
             loading,
-            refresh,
+            nothingInLastFetch,
+            olderFinished,
+            refresh: (newOffset?: LoadDocumentsOffsets) => {
+                setNothingInLastFetch(false);
+                refresh(newOffset);
+            },
         }),
-        [docs, error, lastParsed, loading, olderFinished, refresh]
+        [
+            docs,
+            error,
+            lastParsed,
+            loading,
+            nothingInLastFetch,
+            olderFinished,
+            refresh,
+        ]
     );
 }
 

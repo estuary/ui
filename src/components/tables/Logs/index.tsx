@@ -37,7 +37,6 @@ function LogsTable() {
 
     useLayoutEffect(() => {
         if (readyToScroll && scrollToIndex > 0 && tableScroller.current) {
-            console.log('scrolling', [scrollToIndex, scrollToPosition]);
             tableScroller.current.scrollToItem(scrollToIndex, scrollToPosition);
 
             // Since we have scrolled once we can enable this now

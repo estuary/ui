@@ -1,6 +1,7 @@
 import { Box, TableCell, TableRow, Typography, useTheme } from '@mui/material';
 import SpinnerIcon from 'components/logs/SpinnerIcon';
 import { BaseTypographySx } from 'components/tables/cells/logs/shared';
+import { DEFAULT_POLLING } from 'context/SWR';
 import { tableRowActiveBackground } from 'context/Theme';
 import { useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -18,30 +19,30 @@ interface Props extends WaitingForRowProps {
 function WaitingForRowBase({ fetchOption, sizeRef, style }: Props) {
     const theme = useTheme();
 
-    const fetchMoreLogs = useJournalDataLogsStore_fetchMoreLogs();
-    const fetchingMore = useJournalDataLogsStore_fetchingMore();
-
     const runFetch = useRef(true);
-    const intersectionRef = useRef<HTMLElement>(null);
+    const intervalLength = useRef(250);
 
+    const intersectionRef = useRef<HTMLElement>(null);
     const intersection = useIntersection(intersectionRef, {
         root: null,
         rootMargin: '0px',
         threshold: 1,
     });
 
+    const fetchMoreLogs = useJournalDataLogsStore_fetchMoreLogs();
+    const fetchingMore = useJournalDataLogsStore_fetchingMore();
+
     useInterval(
         () => {
-            console.log('interval fetching');
             if (!fetchingMore && intersection?.isIntersecting) {
-                console.log('   fetching run');
                 runFetch.current = false;
+                intervalLength.current = DEFAULT_POLLING;
                 fetchMoreLogs(fetchOption);
             } else {
                 runFetch.current = true;
             }
         },
-        intersection?.isIntersecting ? 500 : null
+        intersection?.isIntersecting ? intervalLength.current : null
     );
 
     return (

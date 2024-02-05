@@ -8,6 +8,8 @@ import {
     useJournalDataLogsStore_resetState,
     useJournalDataLogsStore_setActive,
     useJournalDataLogsStore_addNewDocuments,
+    useJournalDataLogsStore_setFetchingOlder,
+    useJournalDataLogsStore_setFetchingNewer,
 } from './hooks';
 
 interface Props extends BaseComponentProps {
@@ -26,9 +28,18 @@ export const JournalDataLogsHydrator = ({
     const hydrated = useJournalDataLogsStore_hydrated();
 
     const addNewDocuments = useJournalDataLogsStore_addNewDocuments();
+    const setFetchingOlder = useJournalDataLogsStore_setFetchingOlder();
+    const setFetchingNewer = useJournalDataLogsStore_setFetchingNewer();
 
-    const { docs, error, loading, lastParsed, olderFinished, refresh } =
-        useOpsLogs(name, collectionName);
+    const {
+        docs,
+        error,
+        loading,
+        lastParsed,
+        nothingInLastFetch,
+        olderFinished,
+        refresh,
+    } = useOpsLogs(name, collectionName);
 
     // More mount/unmount for store
     useEffect(() => {
@@ -44,12 +55,6 @@ export const JournalDataLogsHydrator = ({
         if (loading || hydrated) {
             return;
         }
-        console.log('calling hydrate', {
-            docs: docs.map((doc) => {
-                return doc._meta.uuid;
-            }),
-        });
-
         hydrate(docs, refresh, olderFinished, lastParsed, error);
     }, [
         docs,
@@ -67,13 +72,16 @@ export const JournalDataLogsHydrator = ({
         if (!hydrated) {
             return;
         }
-        console.log('calling add new docs', {
-            docs: docs.map((doc) => {
-                return doc._meta.uuid;
-            }),
-        });
         addNewDocuments(docs, olderFinished, lastParsed);
     }, [docs, hydrated, lastParsed, olderFinished, addNewDocuments]);
+
+    // If there was nothing in the last fetch go ahead and reset the fetching flags
+    useEffect(() => {
+        if (nothingInLastFetch) {
+            setFetchingNewer(false);
+            setFetchingOlder(false);
+        }
+    }, [nothingInLastFetch, setFetchingNewer, setFetchingOlder]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;

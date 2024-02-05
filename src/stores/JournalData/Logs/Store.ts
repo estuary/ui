@@ -122,10 +122,6 @@ const getInitialState = (
         set(
             produce((state: JournalDataLogsState) => {
                 if (state.fetchingOlder) {
-                    console.log('fetching older', {
-                        new: docs.length,
-                        old: state.documents.length,
-                    });
                     // When fetching newer keep the previous first item in view
                     //  and then add the new to the start of the list
                     state.scrollToWhenDone = [docs.length + 1, 'start'];
