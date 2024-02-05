@@ -16,6 +16,7 @@ import {
     omit,
     orderBy,
     pick,
+    union,
 } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
@@ -445,7 +446,7 @@ const getInitialState = (
     },
 
     prefillBackfilledCollections: (liveBindings, draftedBindings) => {
-        const { addBackfilledCollection } = get();
+        const { addBackfilledCollections } = get();
 
         draftedBindings.forEach((draftedBinding) => {
             const collection = getCollectionName(draftedBinding);
@@ -462,33 +463,34 @@ const getInitialState = (
                 liveBackfillCounter !== draftedBackfillCounter ||
                 (liveBindingIndex === -1 && draftedBackfillCounter > 0)
             ) {
-                addBackfilledCollection(collection);
+                addBackfilledCollections([collection]);
             }
         });
     },
 
-    addBackfilledCollection: (value) => {
+    addBackfilledCollections: (values) => {
         set(
             produce((state: ResourceConfigState) => {
-                if (!state.backfilledCollections.includes(value)) {
-                    state.backfilledCollections.push(value);
-                }
+                state.backfilledCollections = union([
+                    ...values,
+                    ...state.backfilledCollections,
+                ]);
             }),
             false,
-            'Backfilled Collection Added'
+            'Backfilled Collections Added'
         );
     },
 
-    removeBackfilledCollection: (value) => {
+    removeBackfilledCollections: (values) => {
         set(
             produce((state: ResourceConfigState) => {
                 state.backfilledCollections =
                     state.backfilledCollections.filter(
-                        (collection) => collection !== value
+                        (collection) => !values.includes(collection)
                     );
             }),
             false,
-            'Backfilled Collection Removed'
+            'Backfilled Collections Removed'
         );
     },
 

@@ -50,8 +50,8 @@ export interface ResourceConfigState extends StoreWithHydration {
         liveBindings: any[],
         draftedBindings: any[]
     ) => void;
-    addBackfilledCollection: (value: string) => void;
-    removeBackfilledCollection: (value: string) => void;
+    addBackfilledCollections: (values: string[]) => void;
+    removeBackfilledCollections: (values: string[]) => void;
 
     backfillAllBindings: boolean;
     setBackfillAllBindings: (value: boolean) => void;

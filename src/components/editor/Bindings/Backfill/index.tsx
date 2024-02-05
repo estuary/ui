@@ -10,12 +10,12 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import {
-    useResourceConfig_addBackfilledCollection,
+    useResourceConfig_addBackfilledCollections,
     useResourceConfig_backfillAllBindings,
     useResourceConfig_backfilledCollections,
     useResourceConfig_collections,
     useResourceConfig_currentCollection,
-    useResourceConfig_removeBackfilledCollection,
+    useResourceConfig_removeBackfilledCollections,
     useResourceConfig_setBackfillAllBindings,
 } from 'stores/ResourceConfig/hooks';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
@@ -46,9 +46,10 @@ function Backfill({ bindingIndex, updateAll }: Props) {
     const collections = useResourceConfig_collections();
 
     const backfilledCollections = useResourceConfig_backfilledCollections();
-    const addBackfilledCollection = useResourceConfig_addBackfilledCollection();
-    const removeBackfilledCollection =
-        useResourceConfig_removeBackfilledCollection();
+    const addBackfilledCollections =
+        useResourceConfig_addBackfilledCollections();
+    const removeBackfilledCollections =
+        useResourceConfig_removeBackfilledCollections();
 
     const backfillAllBindings = useResourceConfig_backfillAllBindings();
     const setBackfillAllBindings = useResourceConfig_setBackfillAllBindings();
@@ -102,6 +103,12 @@ function Backfill({ bindingIndex, updateAll }: Props) {
     );
 
     useEffect(() => {
+        if (!updateAll) {
+            setIncrement(backfillAllBindings ? 'true' : 'false');
+        }
+    }, [backfillAllBindings, setIncrement, updateAll]);
+
+    useEffect(() => {
         if (draftSpec && serverUpdateRequired && increment !== 'undefined') {
             setFormState({ status: FormStatus.UPDATING });
 
@@ -126,18 +133,16 @@ function Backfill({ bindingIndex, updateAll }: Props) {
                         console.log('A');
 
                         increment === 'true'
-                            ? addBackfilledCollection(currentCollection)
-                            : removeBackfilledCollection(currentCollection);
+                            ? addBackfilledCollections([currentCollection])
+                            : removeBackfilledCollections([currentCollection]);
                     } else if (updateAll && collections) {
                         console.log('B');
 
                         setBackfillAllBindings(increment === 'true');
 
-                        collections.forEach((collection) =>
-                            increment === 'true'
-                                ? addBackfilledCollection(collection)
-                                : removeBackfilledCollection(collection)
-                        );
+                        increment === 'true'
+                            ? addBackfilledCollections(collections)
+                            : removeBackfilledCollections(collections);
                     }
 
                     setFormState({ status: FormStatus.UPDATED });
@@ -153,13 +158,13 @@ function Backfill({ bindingIndex, updateAll }: Props) {
             );
         }
     }, [
-        addBackfilledCollection,
+        addBackfilledCollections,
         bindingIndex,
         collections,
         currentCollection,
         draftSpec,
         increment,
-        removeBackfilledCollection,
+        removeBackfilledCollections,
         serverUpdateRequired,
         setBackfillAllBindings,
         setFormState,

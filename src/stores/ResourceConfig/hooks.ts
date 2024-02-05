@@ -110,23 +110,23 @@ export const useResourceConfig_backfilledCollections = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.backfilledCollections);
 };
 
-export const useResourceConfig_addBackfilledCollection = () => {
+export const useResourceConfig_addBackfilledCollections = () => {
     return useZustandStore<
         ResourceConfigState,
-        ResourceConfigState['addBackfilledCollection']
+        ResourceConfigState['addBackfilledCollections']
     >(
         ResourceConfigStoreNames.GENERAL,
-        (state) => state.addBackfilledCollection
+        (state) => state.addBackfilledCollections
     );
 };
 
-export const useResourceConfig_removeBackfilledCollection = () => {
+export const useResourceConfig_removeBackfilledCollections = () => {
     return useZustandStore<
         ResourceConfigState,
-        ResourceConfigState['removeBackfilledCollection']
+        ResourceConfigState['removeBackfilledCollections']
     >(
         ResourceConfigStoreNames.GENERAL,
-        (state) => state.removeBackfilledCollection
+        (state) => state.removeBackfilledCollections
     );
 };
 
