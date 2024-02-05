@@ -182,7 +182,7 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                     : TableStatuses.NO_EXISTING_DATA,
             }}
             loading={!hydrated}
-            rows={itemData}
+            rows={null}
         />
     );
 }
