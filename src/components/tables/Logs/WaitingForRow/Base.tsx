@@ -57,6 +57,8 @@ function WaitingForRowBase({ fetchOption, sizeRef, style }: Props) {
             style={style}
             sx={{
                 bgcolor: tableRowActiveBackground[theme.palette.mode],
+                opacity: intersection?.isIntersecting ? 1 : 0,
+                transition: 'all 50ms ease-in-out',
             }}
         >
             <Box ref={intersectionRef}>
