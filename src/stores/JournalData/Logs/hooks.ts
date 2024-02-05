@@ -72,6 +72,13 @@ export const useJournalDataLogsStore_resetState = () => {
     >(JournalDataStoreNames.LOGS, (state) => state.resetState);
 };
 
+export const useJournalDataLogsStore_allowFetchingMore = () => {
+    return useZustandStore<
+        JournalDataLogsState,
+        JournalDataLogsState['allowFetchingMore']
+    >(JournalDataStoreNames.LOGS, (state) => state.allowFetchingMore);
+};
+
 export const useJournalDataLogsStore_setAllowFetchingMore = () => {
     return useZustandStore<
         JournalDataLogsState,

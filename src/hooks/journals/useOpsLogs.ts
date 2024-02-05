@@ -13,6 +13,7 @@ function useOpsLogs(name: string, collectionName: string) {
     const [olderFinished, setOlderFinished] = useState(false);
     const [lastParsed, setLastParsed] = useState<number>(0);
     const [docs, setDocs] = useState<OpsLogFlowDocument[]>([]);
+    const [bytes, setBytes] = useState(maxBytes);
 
     // TODO (typing)
     //  need to handle typing
@@ -20,7 +21,7 @@ function useOpsLogs(name: string, collectionName: string) {
         name,
         collectionName,
         {
-            maxBytes,
+            maxBytes: bytes,
         }
     );
 
@@ -28,6 +29,12 @@ function useOpsLogs(name: string, collectionName: string) {
         () => (data?.documents ?? []) as OpsLogFlowDocument[],
         [data?.documents]
     );
+
+    useEffect(() => {
+        if (data?.adjustedBytes && data.adjustedBytes > 0) {
+            setBytes(data.adjustedBytes);
+        }
+    }, [bytes, data?.adjustedBytes]);
 
     useEffect(() => {
         // Get the mete data out of the response

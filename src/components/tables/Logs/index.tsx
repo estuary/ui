@@ -10,11 +10,13 @@ import EntityTableHeader from '../EntityTable/TableHeader';
 import useLogColumns from './useLogColumns';
 import LogsTableBody from './Body';
 
+const TABLE_HEIGHT = 500;
+
 function LogsTable() {
     const intl = useIntl();
     const columns = useLogColumns();
 
-    const allowFetchingMore = useJournalDataLogsStore_setAllowFetchingMore();
+    const setAllowFetchingMore = useJournalDataLogsStore_setAllowFetchingMore();
     const [scrollToIndex, scrollToPosition] =
         useJournalDataLogsStore_scrollToWhenDone();
 
@@ -39,18 +41,20 @@ function LogsTable() {
         if (readyToScroll && scrollToIndex > 0 && tableScroller.current) {
             tableScroller.current.scrollToItem(scrollToIndex, scrollToPosition);
 
+            // tableScroller.current.props.innerRef.current.offsetHeight
+
             // Since we have scrolled once we can enable this now
             if (enableFetchingMore.current) {
-                allowFetchingMore(true);
+                setAllowFetchingMore(true);
             }
         }
-    }, [allowFetchingMore, scrollToIndex, scrollToPosition, readyToScroll]);
+    }, [setAllowFetchingMore, scrollToIndex, scrollToPosition, readyToScroll]);
 
     return (
         <TableContainer
             component={Box}
             width="100%"
-            sx={{ overflow: 'unset', height: 500 }}
+            sx={{ overflow: 'unset', height: TABLE_HEIGHT }}
         >
             <Table
                 aria-label={intl.formatMessage({
