@@ -106,10 +106,9 @@ function Backfill({ bindingIndex = -1 }: Props) {
                 const singleBindingUpdate =
                     bindingIndex > -1 && currentCollection;
 
-                const bindingMetadata: BindingMetadata | undefined =
-                    singleBindingUpdate
-                        ? { collection: currentCollection, bindingIndex }
-                        : undefined;
+                const bindingMetadata: BindingMetadata[] = singleBindingUpdate
+                    ? [{ collection: currentCollection, bindingIndex }]
+                    : [];
 
                 updateBackfillCounter(
                     draftSpec,

@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl';
 import { BASE_ERROR } from 'services/supabase';
 import { useResourceConfig_backfilledCollections } from 'stores/ResourceConfig/hooks';
 import { Schema } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import { getBackfillCounter, getCollectionName } from 'utils/workflow-utils';
 import {
     useEditorStore_persistedDraftId,
@@ -46,23 +47,30 @@ function useUpdateBackfillCounter() {
     // Resource Config Store
     const backfilledCollections = useResourceConfig_backfilledCollections();
 
-    // TODO: Make the binding metadata argument an array.
     const updateBackfillCounter = useCallback(
         async (
             draftSpec: DraftSpecQuery,
             increment: BooleanString,
-            bindingMetadata?: BindingMetadata
+            bindingMetadata: BindingMetadata[]
         ) => {
-            if (
-                !mutateDraftSpecs ||
-                (bindingMetadata && bindingMetadata.bindingIndex === -1)
-            ) {
-                const errorMessageId = bindingMetadata
+            const bindingMetadataExists = hasLength(bindingMetadata);
+
+            const invalidBindingIndex = bindingMetadataExists
+                ? bindingMetadata.findIndex(
+                      ({ bindingIndex }) => bindingIndex === -1
+                  )
+                : -1;
+
+            if (!mutateDraftSpecs || invalidBindingIndex > -1) {
+                const errorMessageId = bindingMetadataExists
                     ? 'workflows.collectionSelector.manualBackfill.error.message'
                     : '';
 
-                const errorMessageValues = bindingMetadata
-                    ? { collection: bindingMetadata.collection }
+                const errorMessageValues = bindingMetadataExists
+                    ? {
+                          collection:
+                              bindingMetadata[invalidBindingIndex].collection,
+                      }
                     : undefined;
 
                 return Promise.reject({
@@ -76,15 +84,17 @@ function useUpdateBackfillCounter() {
 
             const spec: Schema = draftSpec.spec;
 
-            if (bindingMetadata && bindingMetadata.bindingIndex > -1) {
-                const { bindingIndex } = bindingMetadata;
+            if (bindingMetadataExists) {
+                bindingMetadata.forEach(({ bindingIndex }) => {
+                    console.log('A', bindingIndex);
 
-                console.log('A', bindingIndex);
-
-                spec.bindings[bindingIndex] = evaluateBackfillCounter(
-                    spec.bindings[bindingIndex],
-                    increment
-                );
+                    if (bindingIndex > -1) {
+                        spec.bindings[bindingIndex] = evaluateBackfillCounter(
+                            spec.bindings[bindingIndex],
+                            increment
+                        );
+                    }
+                });
             } else {
                 console.log('B');
 
