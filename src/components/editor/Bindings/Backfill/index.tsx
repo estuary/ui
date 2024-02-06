@@ -9,6 +9,7 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import {
+    useResourceConfig_allBindingsDisabled,
     useResourceConfig_backfillAllBindings,
     useResourceConfig_backfilledCollections,
     useResourceConfig_collections,
@@ -47,6 +48,7 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
         useResourceConfig_setBackfilledCollections();
 
     const backfillAllBindings = useResourceConfig_backfillAllBindings();
+    const allBindingsDisabled = useResourceConfig_allBindingsDisabled();
 
     const selected = useMemo(() => {
         if (bindingIndex === -1) {
@@ -169,7 +171,9 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
             <OutlinedToggleButton
                 value={value}
                 selected={selected}
-                disabled={formActive || !hasLength(collections)}
+                disabled={
+                    formActive || !hasLength(collections) || allBindingsDisabled
+                }
                 onClick={(event, checked: string) => {
                     event.preventDefault();
                     event.stopPropagation();

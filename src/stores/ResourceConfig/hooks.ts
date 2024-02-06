@@ -148,6 +148,17 @@ export const useResourceConfig_resourceConfig = () => {
     );
 };
 
+export const useResourceConfig_allBindingsDisabled = () => {
+    return useZustandStore<ResourceConfigState, boolean>(
+        ResourceConfigStoreNames.GENERAL,
+        (state) =>
+            Object.values(state.resourceConfig).every(
+                (config) => config.disable
+            ),
+        shallow
+    );
+};
+
 export const useResourceConfig_resourceConfigOfCollection = (
     collection: keyof ResourceConfigState['resourceConfig']
 ) => {
