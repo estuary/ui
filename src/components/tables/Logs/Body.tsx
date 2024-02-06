@@ -8,6 +8,7 @@ import {
     useJournalDataLogsStore_documents,
     useJournalDataLogsStore_hydrated,
     useJournalDataLogsStore_networkFailed,
+    useJournalDataLogsStore_noData,
 } from 'stores/JournalData/Logs/hooks';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
@@ -36,6 +37,7 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
     const hydrated = useJournalDataLogsStore_hydrated();
     const documents = useJournalDataLogsStore_documents();
     const networkFailed = useJournalDataLogsStore_networkFailed();
+    const noData = useJournalDataLogsStore_noData();
 
     // Keeping this outside the store so we don't have to filter them out everytime
     //  we need to add new docs to the list
@@ -174,12 +176,14 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                 disableDoclink: true,
             }}
             tableState={{
-                status: networkFailed
+                status: noData
+                    ? TableStatuses.NO_EXISTING_DATA
+                    : networkFailed
                     ? TableStatuses.NETWORK_FAILED
-                    : TableStatuses.NO_EXISTING_DATA,
+                    : TableStatuses.LOADING,
             }}
-            loading={Boolean(!hydrated || documents === null)}
-            rows={documents}
+            loading={!hydrated}
+            rows={itemData}
         />
     );
 }

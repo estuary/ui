@@ -76,6 +76,7 @@ export const JournalDataLogsHydrator = ({
     }, [docs, hydrated, lastParsed, olderFinished, addNewDocuments]);
 
     // If there was nothing in the last fetch go ahead and reset the fetching flags
+    //  so that the waiting rows can kick off another poll
     useEffect(() => {
         if (nothingInLastFetch) {
             setFetchingNewer(false);

@@ -12,7 +12,7 @@ function useOpsLogs(name: string, collectionName: string) {
     const [nothingInLastFetch, setNothingInLastFetch] = useState(false);
     const [olderFinished, setOlderFinished] = useState(false);
     const [lastParsed, setLastParsed] = useState<number>(0);
-    const [docs, setDocs] = useState<OpsLogFlowDocument[]>([]);
+    const [docs, setDocs] = useState<OpsLogFlowDocument[] | null>(null);
     const [bytes, setBytes] = useState(maxBytes);
 
     // TODO (typing)
@@ -25,10 +25,13 @@ function useOpsLogs(name: string, collectionName: string) {
         }
     );
 
-    const documents = useMemo(
-        () => (data?.documents ?? []) as OpsLogFlowDocument[],
-        [data?.documents]
-    );
+    const documents = useMemo<OpsLogFlowDocument[] | null>(() => {
+        if (data?.documents) {
+            return data.documents as OpsLogFlowDocument[];
+        }
+
+        return null;
+    }, [data?.documents]);
 
     useEffect(() => {
         if (data?.adjustedBytes && data.adjustedBytes > 0) {
@@ -45,7 +48,7 @@ function useOpsLogs(name: string, collectionName: string) {
             ? parseInt(meta.docsMetaResponse.offset, 10)
             : null;
 
-        if (!parsedEnd || documents.length <= 0) {
+        if (!parsedEnd || !documents || documents.length <= 0) {
             return;
         }
 
@@ -54,20 +57,6 @@ function useOpsLogs(name: string, collectionName: string) {
         if (parsedEnd !== lastParsed) {
             // If the parsed is lower than the other
             const newDocs = documents;
-
-            // if (parsedEnd === 0) {
-            //     console.log('hit the end of logs');
-            //     newDocs.unshift({
-            //         _meta: {
-            //             uuid: UUID_START_OF_LOGS,
-            //         },
-            //         level: 'waiting',
-            //         message: intl.formatMessage({
-            //             id: 'ops.logsTable.allOldLogsLoaded',
-            //         }),
-            //         ts: '',
-            //     });
-            // }
 
             setNothingInLastFetch(false);
             setDocs(newDocs);

@@ -7,10 +7,15 @@ import { OpsLogFlowDocument } from 'types';
 export interface JournalDataLogsState extends StoreWithHydration {
     documents: OpsLogFlowDocument[] | null;
     addNewDocuments: (
-        val: OpsLogFlowDocument[],
+        val: OpsLogFlowDocument[] | null,
         olderFinished: boolean,
         lastParsed: number
     ) => void;
+    markAsReadyToRender: (
+        docs: OpsLogFlowDocument[] | null,
+        olderFinished: boolean
+    ) => void;
+    noData: boolean;
 
     lastCount: number;
     setLastCount: (val: JournalDataLogsState['lastCount']) => void;
@@ -41,7 +46,7 @@ export interface JournalDataLogsState extends StoreWithHydration {
     scrollToWhenDone: [number, Align];
 
     hydrate: (
-        documents: OpsLogFlowDocument[],
+        documents: OpsLogFlowDocument[] | null,
         refresh: (newOffset?: LoadDocumentsOffsets) => void,
         olderFinished: boolean,
         lastParsed: number,

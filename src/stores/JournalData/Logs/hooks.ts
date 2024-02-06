@@ -121,6 +121,13 @@ export const useJournalDataLogsStore_olderFinished = () => {
     >(JournalDataStoreNames.LOGS, (state) => state.olderFinished);
 };
 
+export const useJournalDataLogsStore_noData = () => {
+    return useZustandStore<
+        JournalDataLogsState,
+        JournalDataLogsState['noData']
+    >(JournalDataStoreNames.LOGS, (state) => state.noData);
+};
+
 export const useJournalDataLogsStore_fetchingMore = () => {
     return useZustandStore<JournalDataLogsState, boolean>(
         JournalDataStoreNames.LOGS,

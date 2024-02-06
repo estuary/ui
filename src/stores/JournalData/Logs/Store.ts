@@ -18,6 +18,7 @@ const getInitialStateData = (): Pick<
     | 'lastTopUuid'
     | 'fetchingNewer'
     | 'fetchingOlder'
+    | 'noData'
     | 'olderFinished'
     | 'refresh'
     | 'scrollOnLoad'
@@ -32,6 +33,7 @@ const getInitialStateData = (): Pick<
     lastTopUuid: null,
     fetchingNewer: false,
     fetchingOlder: false,
+    noData: false,
     olderFinished: false,
     scrollOnLoad: true,
     refresh: null,
@@ -45,6 +47,36 @@ const getInitialState = (
     ...getInitialStateData(),
     ...getInitialHydrationData(),
     ...getStoreWithHydrationSettings('JournalsData:Logs', set),
+
+    // Since journal data reads data and always returns an array it gets a little weird
+    //  to hydrate the store synchronously. This means we have to wait for one of two
+    //  things to happen:
+    //      1. We parsed all bytes and have no document
+    //      2. We have at least one document
+    // This is why we have a hydrate function but do not mark the hydrated/noData fields
+    //  instead of within the normal hydrate function.
+    markAsReadyToRender: (docs, olderFinished) => {
+        set(
+            produce((state: JournalDataLogsState) => {
+                if (!docs) {
+                    // We only know there is no data when we're done reading all bytes
+                    state.noData = olderFinished;
+
+                    // We have read all data and have still have no docs so we are hydrated
+                    if (olderFinished) {
+                        state.hydrated = true;
+                    }
+                } else {
+                    state.noData = olderFinished ? docs.length === 0 : false;
+
+                    // We are hydrated if we read all bytes or we have gotten _some_ docs back to render
+                    state.hydrated = olderFinished || docs.length > 0;
+                }
+            }),
+            false,
+            'JournalsData:Logs: Fetching more can start'
+        );
+    },
 
     hydrate: async (docs, refresh, olderFinished, lastParsed, error) => {
         const {
@@ -77,9 +109,7 @@ const getInitialState = (
 
         set(
             produce((state: JournalDataLogsState) => {
-                // Flag so we know the store is ready
-                state.hydrated = true;
-
+                // We mark hydrated in the addNewDocuments
                 // Helper functions set
                 state.refresh = refresh;
             }),
@@ -121,6 +151,17 @@ const getInitialState = (
     },
 
     addNewDocuments: (docs, olderFinished, lastParsed) => {
+        if (!docs) {
+            set(
+                produce((state: JournalDataLogsState) => {
+                    state.markAsReadyToRender(docs, olderFinished);
+                }),
+                false,
+                'JournalsData:Logs:No Documents'
+            );
+            return;
+        }
+
         set(
             produce((state: JournalDataLogsState) => {
                 if (state.fetchingOlder) {
@@ -159,6 +200,9 @@ const getInitialState = (
                 if (state.documents.length > 0) {
                     state.lastTopUuid = state.documents[0]._meta.uuid;
                 }
+
+                // Now the we have processed some documents we need to mark fields related to hydration
+                state.markAsReadyToRender(state.documents, state.olderFinished);
             }),
             false,
             'JournalsData:Logs: Documents Added'
