@@ -6,7 +6,6 @@ import {
     useJournalDataLogsStore_setAllowFetchingMore,
 } from 'stores/JournalData/Logs/hooks';
 import { VariableSizeList } from 'react-window';
-import TailNewLogs from 'components/shared/Entity/Details/Ops/TailNewLogs';
 import EntityTableHeader from '../EntityTable/TableHeader';
 import useLogColumns from './useLogColumns';
 import LogsTableBody from './Body';
@@ -88,7 +87,7 @@ function LogsTable() {
                     />
                 </Table>
             </TableContainer>
-            <TailNewLogs />
+            {/*<TailNewLogs />*/}
         </Box>
     );
 }

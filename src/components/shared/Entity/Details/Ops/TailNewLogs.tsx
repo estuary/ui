@@ -7,6 +7,8 @@ import {
 
 const intlKey = 'ops.logsTable.tailNewLogs';
 
+// TODO (log tailing)
+// No currently enabled
 function TailNewLogs() {
     const intl = useIntl();
 
