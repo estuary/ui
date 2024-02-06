@@ -12,9 +12,11 @@ import { FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_backfillAllBindings,
     useResourceConfig_backfilledCollections,
+    useResourceConfig_collections,
     useResourceConfig_currentCollection,
     useResourceConfig_setBackfilledCollections,
 } from 'stores/ResourceConfig/hooks';
+import { hasLength } from 'utils/misc-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import useUpdateBackfillCounter, {
     BindingMetadata,
@@ -39,6 +41,8 @@ function Backfill({ bindingIndex = -1 }: Props) {
 
     // Resource Config Store
     const currentCollection = useResourceConfig_currentCollection();
+    const collections = useResourceConfig_collections();
+
     const backfilledCollections = useResourceConfig_backfilledCollections();
     const setBackfilledCollections =
         useResourceConfig_setBackfilledCollections();
@@ -170,7 +174,7 @@ function Backfill({ bindingIndex = -1 }: Props) {
             <OutlinedToggleButton
                 value={value}
                 selected={selected}
-                disabled={formActive}
+                disabled={formActive || !hasLength(collections)}
                 onClick={(event, checked: string) => {
                     event.preventDefault();
                     event.stopPropagation();
