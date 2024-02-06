@@ -49,7 +49,6 @@ const getInitialStateData = (): Pick<
     | 'noData'
     | 'olderFinished'
     | 'refresh'
-    | 'scrollOnLoad'
     | 'scrollToWhenDone'
     | 'tailNewLogs'
 > => ({
@@ -63,7 +62,6 @@ const getInitialStateData = (): Pick<
     fetchingOlder: false,
     noData: false,
     olderFinished: false,
-    scrollOnLoad: true,
     refresh: null,
     tailNewLogs: false,
 });
@@ -135,6 +133,7 @@ const getInitialState = (
     },
 
     addNewDocuments: (docs, olderFinished, lastParsed) => {
+        console.log('addNewDocuments');
         set(
             produce((state: JournalDataLogsState) => {
                 if (!docs) {
@@ -264,16 +263,6 @@ const getInitialState = (
             }),
             false,
             'JournalsData:Logs: Older Finished Set'
-        );
-    },
-
-    setScrollOnLoad: (newState) => {
-        set(
-            produce((state: JournalDataLogsState) => {
-                state.scrollOnLoad = newState;
-            }),
-            false,
-            'JournalsData:Logs: Scroll On Load Set'
         );
     },
 

@@ -25,9 +25,6 @@ export interface JournalDataLogsState extends StoreWithHydration {
     olderFinished: boolean;
     setOlderFinished: (val: JournalDataLogsState['olderFinished']) => void;
 
-    scrollOnLoad: boolean;
-    setScrollOnLoad: (val: JournalDataLogsState['scrollOnLoad']) => void;
-
     tailNewLogs: boolean;
     setTailNewLogs: (val: JournalDataLogsState['tailNewLogs']) => void;
 

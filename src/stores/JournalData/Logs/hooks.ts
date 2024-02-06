@@ -16,13 +16,6 @@ export const useJournalDataLogsStore_hydrated = () => {
     >(JournalDataStoreNames.LOGS, (state) => state.hydrated);
 };
 
-export const useJournalDataLogsStore_refresh = () => {
-    return useZustandStore<
-        JournalDataLogsState,
-        JournalDataLogsState['refresh']
-    >(JournalDataStoreNames.LOGS, (state) => state.refresh);
-};
-
 export const useJournalDataLogsStore_documents = () => {
     return useZustandStore<
         JournalDataLogsState,
@@ -70,13 +63,6 @@ export const useJournalDataLogsStore_resetState = () => {
         JournalDataLogsState,
         JournalDataLogsState['resetState']
     >(JournalDataStoreNames.LOGS, (state) => state.resetState);
-};
-
-export const useJournalDataLogsStore_allowFetchingMore = () => {
-    return useZustandStore<
-        JournalDataLogsState,
-        JournalDataLogsState['allowFetchingMore']
-    >(JournalDataStoreNames.LOGS, (state) => state.allowFetchingMore);
 };
 
 export const useJournalDataLogsStore_setAllowFetchingMore = () => {
