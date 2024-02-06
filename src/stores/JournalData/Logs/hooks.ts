@@ -16,6 +16,13 @@ export const useJournalDataLogsStore_hydrated = () => {
     >(JournalDataStoreNames.LOGS, (state) => state.hydrated);
 };
 
+export const useJournalDataLogsStore_hydrationErrorsExist = () => {
+    return useZustandStore<
+        JournalDataLogsState,
+        JournalDataLogsState['hydrationErrorsExist']
+    >(JournalDataStoreNames.LOGS, (state) => state.hydrationErrorsExist);
+};
+
 export const useJournalDataLogsStore_documents = () => {
     return useZustandStore<
         JournalDataLogsState,
@@ -112,6 +119,13 @@ export const useJournalDataLogsStore_noData = () => {
         JournalDataLogsState,
         JournalDataLogsState['noData']
     >(JournalDataStoreNames.LOGS, (state) => state.noData);
+};
+
+export const useJournalDataLogsStore_lastFetchFailed = () => {
+    return useZustandStore<
+        JournalDataLogsState,
+        JournalDataLogsState['lastFetchFailed']
+    >(JournalDataStoreNames.LOGS, (state) => state.lastFetchFailed);
 };
 
 export const useJournalDataLogsStore_fetchingMore = () => {

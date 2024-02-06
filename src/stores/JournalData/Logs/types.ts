@@ -9,7 +9,8 @@ export interface JournalDataLogsState extends StoreWithHydration {
     addNewDocuments: (
         val: OpsLogFlowDocument[] | null,
         olderFinished: boolean,
-        lastParsed: number
+        lastParsed: number,
+        error?: any
     ) => void;
     noData: boolean;
 
@@ -30,6 +31,7 @@ export interface JournalDataLogsState extends StoreWithHydration {
 
     fetchMoreLogs: FetchMoreLogsFunction;
     allowFetchingMore: boolean;
+    lastFetchFailed: boolean;
     setAllowFetchingMore: (
         val: JournalDataLogsState['allowFetchingMore']
     ) => void;

@@ -678,9 +678,13 @@ const Ops: ResolvedIntlConfig['messages'] = {
         one {log}
         other {logs}
     }`,
+    'ops.logsTable.hydrationError': `We encountered a problem retrieving logs.`,
+    'ops.logsTable.hydrationError.message': `Please check your network connection and try again.`,
     'ops.logsTable.tailNewLogs': `stay at bottom as new logs load`,
 
     // These keys get generated inside the WaitingForRowBase
+    'ops.logsTable.waitingForLogs.old.failed': `A network error occured. Please reload.`,
+    'ops.logsTable.waitingForLogs.new.failed': `A network error occured. Please reload.`,
     'ops.logsTable.waitingForLogs.old.complete': `All older logs read`,
     'ops.logsTable.waitingForLogs.old': `Fetching older logs`,
     'ops.logsTable.waitingForLogs.new': `Waiting for new logs`,
