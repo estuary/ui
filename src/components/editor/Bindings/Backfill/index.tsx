@@ -25,9 +25,9 @@ import useUpdateBackfillCounter, {
 
 export type BooleanString = 'true' | 'false';
 
+// binding index = -1 in all binding use case
 interface Props {
-    bindingIndex?: number;
-    updateAll?: boolean;
+    bindingIndex: number;
 }
 
 const evaluateServerDifferences = (
@@ -35,9 +35,9 @@ const evaluateServerDifferences = (
     backfilledCollections: string[],
     currentCollection: string | null,
     increment: BooleanString,
-    updateAll?: boolean
+    bindingIndex: number
 ) => {
-    if (updateAll) {
+    if (bindingIndex === -1) {
         console.log('backfillAllBindings -----', backfillAllBindings);
         console.log('increment -----', increment);
 
@@ -56,7 +56,7 @@ const evaluateServerDifferences = (
     return false;
 };
 
-function Backfill({ bindingIndex, updateAll }: Props) {
+function Backfill({ bindingIndex }: Props) {
     const entityType = useEntityType();
     const { updateBackfillCounter } = useUpdateBackfillCounter();
 
@@ -81,7 +81,7 @@ function Backfill({ bindingIndex, updateAll }: Props) {
     const setBackfillAllBindings = useResourceConfig_setBackfillAllBindings();
 
     const selected = useMemo(() => {
-        if (updateAll) {
+        if (bindingIndex === -1) {
             return backfillAllBindings;
         }
 
@@ -91,8 +91,8 @@ function Backfill({ bindingIndex, updateAll }: Props) {
     }, [
         backfillAllBindings,
         backfilledCollections,
+        bindingIndex,
         currentCollection,
-        updateAll,
     ]);
 
     const value: BooleanString = useMemo(
@@ -113,7 +113,7 @@ function Backfill({ bindingIndex, updateAll }: Props) {
                 backfilledCollections,
                 currentCollection,
                 increment,
-                updateAll
+                bindingIndex
             );
 
             if (draftSpec && serverUpdateRequired) {
@@ -122,8 +122,7 @@ function Backfill({ bindingIndex, updateAll }: Props) {
                 const singleBindingUpdate =
                     typeof bindingIndex === 'number' &&
                     bindingIndex > -1 &&
-                    currentCollection &&
-                    !updateAll;
+                    currentCollection;
 
                 const bindingMetadata: BindingMetadata | undefined =
                     singleBindingUpdate
@@ -157,7 +156,7 @@ function Backfill({ bindingIndex, updateAll }: Props) {
                                 : removeBackfilledCollections([
                                       currentCollection,
                                   ]);
-                        } else if (updateAll && collections) {
+                        } else if (bindingIndex === -1 && collections) {
                             console.log('B');
 
                             increment === 'true'
@@ -188,7 +187,6 @@ function Backfill({ bindingIndex, updateAll }: Props) {
             removeBackfilledCollections,
             setBackfillAllBindings,
             setFormState,
-            updateAll,
             updateBackfillCounter,
         ]
     );
@@ -198,7 +196,9 @@ function Backfill({ bindingIndex, updateAll }: Props) {
             <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
                 <Stack spacing={1}>
                     <Typography
-                        variant={updateAll ? 'formSectionHeader' : 'h6'}
+                        variant={
+                            bindingIndex === -1 ? 'formSectionHeader' : 'h6'
+                        }
                         sx={{ mr: 0.5 }}
                     >
                         <FormattedMessage id="workflows.collectionSelector.manualBackfill.header" />
