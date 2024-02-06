@@ -65,7 +65,15 @@ function LogsTable() {
                     component={Box}
                     size="small"
                     stickyHeader
-                    sx={{ minWidth: 250, width: '100%', height: '100%' }}
+                    sx={{
+                        'minWidth': 250,
+                        'width': '100%',
+                        'height': '100%',
+                        // This makes the header bottom border fill the width
+                        '& .MuiTableHead-root .MuiTableRow-root': {
+                            display: 'flex',
+                        },
+                    }}
                 >
                     <EntityTableHeader
                         columns={columns}
