@@ -9,6 +9,8 @@ import {
     useJournalDataLogsStore_hydrated,
     useJournalDataLogsStore_networkFailed,
 } from 'stores/JournalData/Logs/hooks';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import EntityTableBody from '../EntityTable/TableBody';
 import {
     DEFAULT_ROW_HEIGHT,
@@ -39,6 +41,10 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
     //  we need to add new docs to the list
     const itemData = useMemo<OpsLogFlowDocument[] | null>(() => {
         if (documents && documents.length > 0) {
+            logRocketEvent(CustomEvents.LOGS_DOCUMENT_COUNT, {
+                count: documents.length,
+            });
+
             return [
                 {
                     _meta: {

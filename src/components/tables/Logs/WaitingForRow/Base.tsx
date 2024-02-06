@@ -6,9 +6,10 @@ import {
     tableRowActive_Finished__Background,
     tableRowActive__Background,
 } from 'context/Theme';
-import { useRef } from 'react';
+import { debounce } from 'lodash';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useIntersection, useInterval } from 'react-use';
+import { useIntersection } from 'react-use';
 import {
     useJournalDataLogsStore_fetchingMore,
     useJournalDataLogsStore_fetchMoreLogs,
@@ -24,44 +25,53 @@ function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
     const theme = useTheme();
 
     const runFetch = useRef(true);
-    const intervalLength = useRef(250);
+
+    const [intervalLength, setIntervalLength] = useState(500);
 
     const intersectionRef = useRef<HTMLElement>(null);
     const intersection = useIntersection(intersectionRef, {
         root: null,
         rootMargin: '0px',
-        threshold: 1,
+        threshold: 0.75,
     });
+
+    const messageKey = `ops.logsTable.waitingForLogs.${fetchOption}`;
 
     const fetchMoreLogs = useJournalDataLogsStore_fetchMoreLogs();
     const fetchingMore = useJournalDataLogsStore_fetchingMore();
 
-    useInterval(
-        () => {
-            if (!fetchingMore && intersection?.isIntersecting) {
-                runFetch.current = false;
+    const fetchMore = useCallback(() => {
+        console.log('fetchingMore');
+        if (!fetchingMore && intersection?.isIntersecting) {
+            runFetch.current = false;
 
-                // When checking for new ones fall back to give some time
-                //  for the entity to actually write logs
-                if (fetchOption === 'new') {
-                    intervalLength.current = DEFAULT_POLLING;
-                }
-                fetchMoreLogs(fetchOption);
-            } else {
-                runFetch.current = true;
+            // When checking for new ones fall back to give some time
+            //  for the entity to actually write logs
+            if (fetchOption === 'new') {
+                setIntervalLength(DEFAULT_POLLING);
             }
-        },
-        !disabled && intersection?.isIntersecting
-            ? intervalLength.current
-            : null
-    );
+            fetchMoreLogs(fetchOption);
+        } else {
+            runFetch.current = true;
+        }
+    }, [
+        fetchMoreLogs,
+        fetchOption,
+        fetchingMore,
+        intersection?.isIntersecting,
+    ]);
 
-    const messageKey = `ops.logsTable.waitingForLogs.${fetchOption}`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const debouncedFetch = useCallback(debounce(fetchMore, intervalLength), [
+        fetchMore,
+        intervalLength,
+    ]);
 
-    console.log('base rendering', {
-        disabled,
-        intersection,
-    });
+    useEffect(() => {
+        if (!disabled && intersection?.isIntersecting) {
+            debouncedFetch();
+        }
+    }, [debouncedFetch, disabled, intersection?.isIntersecting]);
 
     return (
         <TableRow

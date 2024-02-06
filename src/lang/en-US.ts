@@ -678,7 +678,7 @@ const Ops: ResolvedIntlConfig['messages'] = {
         one {log}
         other {logs}
     }`,
-    'ops.logsTable.tailNewLogs': `tail new logs`,
+    'ops.logsTable.tailNewLogs': `stay at bottom as new logs load`,
 
     // These keys get generated inside the WaitingForRowBase
     'ops.logsTable.waitingForLogs.old.complete': `All older logs read`,

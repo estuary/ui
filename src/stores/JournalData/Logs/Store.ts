@@ -130,13 +130,19 @@ const getInitialState = (
                     state.documents = [...docs, ...(state.documents ?? [])];
                     state.fetchingOlder = false;
                 } else if (state.fetchingNewer) {
-                    // When fetching older keep the previous last item in view
-                    //  and then add the new docs to the end of the list
-                    state.scrollToWhenDone = [
-                        state.documents ? state.documents.length + 1 : 0,
-                        'end',
-                    ];
                     state.documents = [...(state.documents ?? []), ...docs];
+
+                    // Since fetching newer adds items to the end the browser
+                    //  will keep the scroll in the same position. So we only set this
+                    //  if we're forcing failing of new logs
+                    if (state.tailNewLogs) {
+                        // We have 2 fake rows so add 2 here
+                        state.scrollToWhenDone = [
+                            state.documents.length + 2,
+                            'start',
+                        ];
+                    }
+
                     state.fetchingNewer = false;
                 } else {
                     // Initial hydration we want to set the array and scroll to near the bottom
