@@ -63,8 +63,8 @@ function useUpdateBackfillCounter() {
 
             if (!mutateDraftSpecs || invalidBindingIndex > -1) {
                 const errorMessageId = bindingMetadataExists
-                    ? 'workflows.collectionSelector.manualBackfill.error.message'
-                    : '';
+                    ? 'workflows.collectionSelector.manualBackfill.error.message.singleCollection'
+                    : 'workflows.collectionSelector.manualBackfill.error.message.allBindings';
 
                 const errorMessageValues = bindingMetadataExists
                     ? {
