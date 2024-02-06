@@ -45,7 +45,7 @@ function FieldsExpandedCell({
 
                 <Divider sx={{ my: 2 }} />
 
-                <Box>
+                {fields ? (
                     <Box
                         sx={{
                             '& .react-json-view': {
@@ -64,7 +64,7 @@ function FieldsExpandedCell({
                             theme={jsonViewTheme[theme.palette.mode]}
                         />
                     </Box>
-                </Box>
+                ) : null}
             </Box>
         </Collapse>
     );

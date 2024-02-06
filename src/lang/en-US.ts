@@ -668,18 +668,22 @@ const Journals: ResolvedIntlConfig['messages'] = {
 const Ops: ResolvedIntlConfig['messages'] = {
     'ops.journals.notFound.message': `We were unable to find any logs for this {entityType}.`,
     'ops.logsTable.label.level': `Level`,
-    'ops.logsTable.fetchingOlderLogs': `Fetching older logs...`,
-    'ops.logsTable.allOldLogsLoaded': ` Start of logs `,
     'ops.logsTable.label.ts': `Timestamp`,
     'ops.logsTable.label.message': `Message`,
     'ops.logsTable.label.fields': `Fields`,
-    'ops.logsTable.expand.disabled': `no fields to display`,
+    'ops.logsTable.allOldLogsLoaded': ` Start of logs `,
     'ops.logsTable.emptyTableDefault.header': `No logs found.`,
     'ops.logsTable.emptyTableDefault.message': `We were unable to find any logs. Please press refresh to try loading again.`,
     'ops.logsTable.footer.lines': `{count} {count, plural,
         one {log}
         other {logs}
     }`,
+    'ops.logsTable.tailNewLogs': `stay at bottom as new logs load`,
+
+    // These keys get generated inside the WaitingForRowBase
+    'ops.logsTable.waitingForLogs.old.complete': `All older logs read`,
+    'ops.logsTable.waitingForLogs.old': `Fetching older logs`,
+    'ops.logsTable.waitingForLogs.new': `Waiting for new logs`,
 };
 
 const endpointConfigHeader = `Endpoint Config`;
@@ -713,7 +717,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
 
     'entityCreate.bindingsConfig.addCTA': `Add {itemType}`,
-    'entityCreate.bindingsConfig.noRows': `Start by clicking the '+' icon above and selecting what you want to`,
+    'entityCreate.bindingsConfig.noRows': `Start by clicking the 'add' button above and selecting what you want to`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
     'entityCreate.bindingsConfig.list.search': `Filter {itemType}`,
     'entityCreate.bindingsConfig.list.removeAll': `Remove {itemType} in the list below`,

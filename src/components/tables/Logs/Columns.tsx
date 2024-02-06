@@ -19,30 +19,22 @@ export function LogsTableColumns({
     open,
     heightChanging,
 }: RowProps) {
-    const hasFields = Boolean(row.fields);
-
     return (
         <Stack ref={sizeRef}>
             <Box>
-                <LevelCell
-                    disableExpand={!hasFields}
-                    expanded={open}
-                    row={row}
-                />
+                <LevelCell expanded={open} row={row} />
 
                 <TimestampCell ts={row.ts} />
 
                 <MessageCell message={row.message} fields={row.fields} />
             </Box>
-            {hasFields ? (
-                <FieldsExpandedCell
-                    fields={row.fields}
-                    uuid={row._meta.uuid}
-                    message={row.message}
-                    open={open}
-                    heightChanging={heightChanging}
-                />
-            ) : null}
+            <FieldsExpandedCell
+                fields={row.fields}
+                uuid={row._meta.uuid}
+                message={row.message}
+                open={open}
+                heightChanging={heightChanging}
+            />
         </Stack>
     );
 }

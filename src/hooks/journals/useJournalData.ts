@@ -9,13 +9,17 @@ import {
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCounter } from 'react-use';
+import { logRocketConsole } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import useSWR from 'swr';
 import {
     dataPlaneFetcher_list,
+    INCREMENT,
     MAX_DOCUMENT_SIZE,
     shouldRefreshToken,
 } from 'utils/dataPlane-utils';
 import { journalStatusIsError } from 'utils/misc-utils';
+import { LoadDocumentsOffsets } from './shared';
 
 const errorRetryCount = 2;
 
@@ -126,10 +130,6 @@ async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {
     }
 }
 
-// We increment the read window by this many bytes every time we get back
-// fewer than the desired number of rows.
-const INCREMENT = 1024 * 1024;
-
 async function readAllDocuments<T>(stream: ReadableStream<T>) {
     const accum: T[] = [];
 
@@ -138,11 +138,6 @@ async function readAllDocuments<T>(stream: ReadableStream<T>) {
     }
 
     return accum;
-}
-
-export interface LoadDocumentsOffsets {
-    offset: number;
-    endOffset: number;
 }
 
 async function loadDocuments({
@@ -216,7 +211,7 @@ async function loadDocuments({
         // Splt the stream so we can read it twice
         const teedDocumentsStream = stream.tee();
 
-        // Read our the documents
+        // Read all the documents
         const allDocs = await readAllDocuments(
             parseJournalDocuments(teedDocumentsStream[0])
         );
@@ -234,19 +229,35 @@ async function loadDocuments({
             );
     };
 
-    if (!documentCount) {
-        start = Math.max(0, start - maxBytes);
-        documents = await attemptToRead();
-    } else {
+    const getDocumentMinCount = async (
+        minDocCount: number,
+        returnAllDocs?: boolean
+    ) => {
         while (
-            documents.length < documentCount &&
+            documents.length < minDocCount &&
             start > 0 &&
-            head - start < maxBytes
+            head - start <= maxBytes
         ) {
             attempt += 1;
             start = Math.max(0, start - INCREMENT * attempt);
-            documents = (await attemptToRead()).slice(documentCount * -1);
+            const readDocuments = await attemptToRead();
+            documents = returnAllDocs
+                ? readDocuments
+                : readDocuments.slice(minDocCount * -1);
         }
+    };
+
+    if (!documentCount) {
+        start = Math.max(0, start - maxBytes);
+        documents = await attemptToRead();
+
+        if (documents.length === 0) {
+            logRocketConsole(CustomEvents.JOURNAL_DATA_MAX_BYTES_NOT_ENOUGH);
+            // If we didn't get anything go ahead and try to keep reading more data until we get something back
+            await getDocumentMinCount(1, true);
+        }
+    } else {
+        await getDocumentMinCount(documentCount, false);
     }
 
     return {
@@ -255,6 +266,7 @@ async function loadDocuments({
             metadataResponse,
             docsMetaResponse,
         },
+        adjustedBytes: head - start,
         tooFewDocuments: documentCount ? start <= 0 : false,
         tooManyBytes: head - start >= maxBytes,
     };

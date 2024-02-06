@@ -316,6 +316,7 @@ export interface TableColumns {
     align?: TableCellProps['align'];
     cols?: number;
     display?: string;
+    flexGrow?: boolean;
 }
 
 export interface TableState {

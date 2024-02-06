@@ -66,6 +66,10 @@ export async function dataPlaneFetcher_list(
     }
 }
 
+// We increment the read window by this many bytes every time we get back
+// fewer than the desired number of rows.
+export const INCREMENT = 1024 * 1024;
+
 export const MEGABYTE = 1 * 10 ** 6;
 
 // 16mb, which is the max document size, ensuring we'll always get at least 1 doc if it exists
