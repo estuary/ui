@@ -7,6 +7,7 @@ import {
     useJournalDataLogsStore_setAllowFetchingMore,
 } from 'stores/JournalData/Logs/hooks';
 import { VariableSizeList } from 'react-window';
+import { defaultOutlineColor } from 'context/Theme';
 import EntityTableHeader from '../EntityTable/TableHeader';
 import useLogColumns from './useLogColumns';
 import LogsTableBody from './Body';
@@ -73,10 +74,19 @@ function LogsTable() {
                         'minWidth': 250,
                         'width': '100%',
                         'height': '100%',
-                        // This makes the header bottom border fill the width
+                        // Keeps the header showing the border row on the header and not the cells
+                        //  becaues they do not take the entire width
+                        'borderCollapse': 'collapse',
                         '& > .MuiTableHead-root .MuiTableRow-root': {
-                            display: 'flex',
+                            borderBottomColor: (theme) =>
+                                defaultOutlineColor[theme.palette.mode],
+                            borderBottomWidth: 1,
+                            borderBottomStyle: 'solid',
                         },
+                        '& > .MuiTableHead-root .MuiTableRow-root .MuiTableCell-root':
+                            {
+                                borderBottom: 'none',
+                            },
                     }}
                 >
                     <EntityTableHeader
