@@ -4,10 +4,38 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { JournalDataStoreNames } from 'stores/names';
+import { OpsLogFlowDocument } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { JournalDataLogsState } from './types';
+
+// Since journal data reads data and always returns an array it gets a little weird
+//  to hydrate the store synchronously. This means we have to wait for one of two
+//  things to happen:
+//      1. We parsed all bytes and have no document
+//      2. We have at least one document
+// This is why we have a hydrate function but do not mark the hydrated/noData fields
+//  instead of within the normal hydrate function.
+const getReadyToRenderFlags = (
+    docs: OpsLogFlowDocument[] | null,
+    olderFinished: boolean
+) => {
+    if (!docs) {
+        return {
+            // We only know there is no data when we're done reading all bytes
+            noData: olderFinished,
+            // We have read all data and have still have no docs so we are hydrated
+            hydrated: olderFinished,
+        };
+    } else {
+        return {
+            noData: olderFinished ? docs.length === 0 : false,
+            // We are hydrated if we read all bytes or we have gotten _some_ docs back to render
+            hydrated: olderFinished || docs.length > 0,
+        };
+    }
+};
 
 const getInitialStateData = (): Pick<
     JournalDataLogsState,
@@ -48,74 +76,30 @@ const getInitialState = (
     ...getInitialHydrationData(),
     ...getStoreWithHydrationSettings('JournalsData:Logs', set),
 
-    // Since journal data reads data and always returns an array it gets a little weird
-    //  to hydrate the store synchronously. This means we have to wait for one of two
-    //  things to happen:
-    //      1. We parsed all bytes and have no document
-    //      2. We have at least one document
-    // This is why we have a hydrate function but do not mark the hydrated/noData fields
-    //  instead of within the normal hydrate function.
-    markAsReadyToRender: (docs, olderFinished) => {
-        set(
-            produce((state: JournalDataLogsState) => {
-                if (!docs) {
-                    // We only know there is no data when we're done reading all bytes
-                    state.noData = olderFinished;
-
-                    // We have read all data and have still have no docs so we are hydrated
-                    if (olderFinished) {
-                        state.hydrated = true;
-                    }
-                } else {
-                    state.noData = olderFinished ? docs.length === 0 : false;
-
-                    // We are hydrated if we read all bytes or we have gotten _some_ docs back to render
-                    state.hydrated = olderFinished || docs.length > 0;
-                }
-            }),
-            false,
-            'JournalsData:Logs: Fetching more can start'
-        );
-    },
-
     hydrate: async (docs, refresh, olderFinished, lastParsed, error) => {
         const {
             active,
+            addNewDocuments,
             hydrated,
             setHydrationErrorsExist,
             setNetworkFailed,
-            addNewDocuments,
+            setRefresh,
         } = get();
 
         if (!active || hydrated) {
             return;
         }
 
+        setRefresh(refresh);
         setHydrationErrorsExist(Boolean(error));
 
         if (error) {
             setNetworkFailed(error.message);
-
-            return set(
-                produce((state: JournalDataLogsState) => {
-                    state.documents = [];
-                }),
-                false,
-                'JournalsData:Logs:Hydrate: Error'
-            );
+            addNewDocuments([], true, 0);
+            return;
         }
 
         addNewDocuments(docs, olderFinished, lastParsed);
-
-        set(
-            produce((state: JournalDataLogsState) => {
-                // We mark hydrated in the addNewDocuments
-                // Helper functions set
-                state.refresh = refresh;
-            }),
-            false,
-            'JournalsData:Logs:Hydrate: Setting'
-        );
     },
 
     fetchMoreLogs: (option) => {
@@ -151,19 +135,18 @@ const getInitialState = (
     },
 
     addNewDocuments: (docs, olderFinished, lastParsed) => {
-        if (!docs) {
-            set(
-                produce((state: JournalDataLogsState) => {
-                    state.markAsReadyToRender(docs, olderFinished);
-                }),
-                false,
-                'JournalsData:Logs:No Documents'
-            );
-            return;
-        }
-
         set(
             produce((state: JournalDataLogsState) => {
+                if (!docs) {
+                    const { hydrated, noData } = getReadyToRenderFlags(
+                        docs,
+                        olderFinished
+                    );
+                    state.hydrated = hydrated;
+                    state.noData = noData;
+                    return;
+                }
+
                 if (state.fetchingOlder) {
                     // When fetching newer keep the previous first item in view
                     //  and then add the new to the start of the list
@@ -202,7 +185,12 @@ const getInitialState = (
                 }
 
                 // Now the we have processed some documents we need to mark fields related to hydration
-                state.markAsReadyToRender(state.documents, state.olderFinished);
+                const { hydrated, noData } = getReadyToRenderFlags(
+                    state.documents,
+                    state.olderFinished
+                );
+                state.hydrated = hydrated;
+                state.noData = noData;
             }),
             false,
             'JournalsData:Logs: Documents Added'
@@ -216,6 +204,16 @@ const getInitialState = (
             }),
             false,
             'JournalsData:Logs: Fetching more can start'
+        );
+    },
+
+    setRefresh: (newState) => {
+        set(
+            produce((state: JournalDataLogsState) => {
+                state.refresh = newState;
+            }),
+            false,
+            'JournalsData:Logs: Refresh set'
         );
     },
 

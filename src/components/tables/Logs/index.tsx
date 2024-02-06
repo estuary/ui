@@ -2,6 +2,7 @@ import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Box, Table, TableContainer } from '@mui/material';
 import {
+    useJournalDataLogsStore_hydrated,
     useJournalDataLogsStore_scrollToWhenDone,
     useJournalDataLogsStore_setAllowFetchingMore,
 } from 'stores/JournalData/Logs/hooks';
@@ -16,6 +17,7 @@ function LogsTable() {
     const intl = useIntl();
     const columns = useLogColumns();
 
+    const hydrated = useJournalDataLogsStore_hydrated();
     const setAllowFetchingMore = useJournalDataLogsStore_setAllowFetchingMore();
     const [scrollToIndex, scrollToPosition] =
         useJournalDataLogsStore_scrollToWhenDone();
@@ -55,7 +57,10 @@ function LogsTable() {
             <TableContainer
                 component={Box}
                 width="100%"
-                sx={{ overflow: 'unset', height: TABLE_HEIGHT }}
+                sx={{
+                    overflow: 'unset',
+                    height: hydrated ? TABLE_HEIGHT : 200,
+                }}
             >
                 <Table
                     aria-label={intl.formatMessage({
@@ -69,7 +74,7 @@ function LogsTable() {
                         'width': '100%',
                         'height': '100%',
                         // This makes the header bottom border fill the width
-                        '& .MuiTableHead-root .MuiTableRow-root': {
+                        '& > .MuiTableHead-root .MuiTableRow-root': {
                             display: 'flex',
                         },
                     }}

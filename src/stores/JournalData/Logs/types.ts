@@ -11,10 +11,6 @@ export interface JournalDataLogsState extends StoreWithHydration {
         olderFinished: boolean,
         lastParsed: number
     ) => void;
-    markAsReadyToRender: (
-        docs: OpsLogFlowDocument[] | null,
-        olderFinished: boolean
-    ) => void;
     noData: boolean;
 
     lastCount: number;
@@ -53,5 +49,6 @@ export interface JournalDataLogsState extends StoreWithHydration {
         error?: any
     ) => void;
     refresh: ((newOffset?: LoadDocumentsOffsets) => void) | null;
+    setRefresh: (val: JournalDataLogsState['refresh']) => void;
     resetState: () => void;
 }
