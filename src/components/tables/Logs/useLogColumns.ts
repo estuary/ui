@@ -20,6 +20,7 @@ const defaultColumns: TableColumns[] = [
         field: null,
         headerIntlKey: 'ops.logsTable.label.message',
         display: 'inline-block',
+        flexGrow: true,
     },
 ];
 

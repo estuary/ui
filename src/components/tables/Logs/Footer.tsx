@@ -5,20 +5,13 @@ import {
     TableRow,
     Typography,
 } from '@mui/material';
-import { DateTime } from 'luxon';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
     logsCount: number;
-    lastCheckedForNew: string | null;
 }
 
-function LogsTableFooter({ logsCount, lastCheckedForNew }: Props) {
-    const lastChecked = lastCheckedForNew
-        ? DateTime.fromISO(lastCheckedForNew).toFormat(
-              'yyyy-LL-dd HH:mm:ss.SSS ZZZZ'
-          )
-        : null;
+function LogsTableFooter({ logsCount }: Props) {
     return (
         <TableFooter component="div">
             <TableRow component="div" sx={{ height: 35 }}>
@@ -35,10 +28,6 @@ function LogsTableFooter({ logsCount, lastCheckedForNew }: Props) {
                             }}
                         />
                     </Typography>
-
-                    {lastChecked ? (
-                        <Typography>No new logs as of {lastChecked}</Typography>
-                    ) : null}
                 </Stack>
             </TableRow>
         </TableFooter>
