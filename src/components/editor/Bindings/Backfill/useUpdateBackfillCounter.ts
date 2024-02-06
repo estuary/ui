@@ -86,8 +86,6 @@ function useUpdateBackfillCounter() {
 
             if (bindingMetadataExists) {
                 bindingMetadata.forEach(({ bindingIndex }) => {
-                    console.log('A', bindingIndex);
-
                     if (bindingIndex > -1) {
                         spec.bindings[bindingIndex] = evaluateBackfillCounter(
                             spec.bindings[bindingIndex],
@@ -96,8 +94,6 @@ function useUpdateBackfillCounter() {
                     }
                 });
             } else {
-                console.log('B');
-
                 spec.bindings.forEach((binding: Schema, index: number) => {
                     const collection = getCollectionName(binding);
 
