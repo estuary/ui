@@ -96,7 +96,10 @@ function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
                     : disabled
                     ? tableRowActive_Finished__Background[theme.palette.mode]
                     : tableRowActive__Background[theme.palette.mode],
-                opacity: disabled || intersection?.isIntersecting ? 1 : 0,
+                opacity:
+                    lastFetchFailed || disabled || intersection?.isIntersecting
+                        ? 1
+                        : 0,
                 transition: 'all 50ms ease-in-out',
             }}
         >
