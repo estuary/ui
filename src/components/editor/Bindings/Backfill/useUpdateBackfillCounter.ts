@@ -76,7 +76,7 @@ function useUpdateBackfillCounter() {
 
             const spec: Schema = draftSpec.spec;
 
-            if (bindingMetadata?.bindingIndex) {
+            if (bindingMetadata && bindingMetadata.bindingIndex > -1) {
                 const { bindingIndex } = bindingMetadata;
 
                 spec.bindings[bindingIndex] = evaluateBackfillCounter(

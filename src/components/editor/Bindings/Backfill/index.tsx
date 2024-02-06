@@ -25,38 +25,11 @@ import useUpdateBackfillCounter, {
 
 export type BooleanString = 'true' | 'false';
 
-// binding index = -1 in all binding use case
 interface Props {
-    bindingIndex: number;
+    bindingIndex?: number;
 }
 
-const evaluateServerDifferences = (
-    backfillAllBindings: boolean,
-    backfilledCollections: string[],
-    currentCollection: string | null,
-    increment: BooleanString,
-    bindingIndex: number
-) => {
-    if (bindingIndex === -1) {
-        console.log('backfillAllBindings -----', backfillAllBindings);
-        console.log('increment -----', increment);
-
-        return (
-            (backfillAllBindings && increment === 'false') ||
-            (!backfillAllBindings && increment === 'true')
-        );
-    }
-
-    if (currentCollection) {
-        return increment === 'true'
-            ? !backfilledCollections.includes(currentCollection)
-            : backfilledCollections.includes(currentCollection);
-    }
-
-    return false;
-};
-
-function Backfill({ bindingIndex }: Props) {
+function Backfill({ bindingIndex = -1 }: Props) {
     const entityType = useEntityType();
     const { updateBackfillCounter } = useUpdateBackfillCounter();
 
@@ -106,23 +79,40 @@ function Backfill({ bindingIndex }: Props) {
         [draftSpecs]
     );
 
+    const evaluateServerDifferences = useCallback(
+        (increment: BooleanString) => {
+            if (bindingIndex === -1) {
+                return (
+                    (backfillAllBindings && increment === 'false') ||
+                    (!backfillAllBindings && increment === 'true')
+                );
+            }
+
+            if (currentCollection) {
+                return increment === 'true'
+                    ? !backfilledCollections.includes(currentCollection)
+                    : backfilledCollections.includes(currentCollection);
+            }
+
+            return false;
+        },
+        [
+            backfillAllBindings,
+            backfilledCollections,
+            bindingIndex,
+            currentCollection,
+        ]
+    );
+
     const handleClick = useCallback(
         (increment: BooleanString) => {
-            const serverUpdateRequired = evaluateServerDifferences(
-                backfillAllBindings,
-                backfilledCollections,
-                currentCollection,
-                increment,
-                bindingIndex
-            );
+            const serverUpdateRequired = evaluateServerDifferences(increment);
 
             if (draftSpec && serverUpdateRequired) {
                 setFormState({ status: FormStatus.UPDATING });
 
                 const singleBindingUpdate =
-                    typeof bindingIndex === 'number' &&
-                    bindingIndex > -1 &&
-                    currentCollection;
+                    bindingIndex > -1 && currentCollection;
 
                 const bindingMetadata: BindingMetadata | undefined =
                     singleBindingUpdate
@@ -135,21 +125,8 @@ function Backfill({ bindingIndex }: Props) {
                     bindingMetadata
                 ).then(
                     () => {
-                        console.log('HERE');
-                        console.log(
-                            'single binding update',
-                            singleBindingUpdate
-                        );
-                        console.log('backfillAllBindings', backfillAllBindings);
-                        console.log('increment', increment);
-
                         if (singleBindingUpdate) {
                             console.log('A');
-
-                            console.log(
-                                'backfilledCollections',
-                                backfilledCollections
-                            );
 
                             increment === 'true'
                                 ? addBackfilledCollections([currentCollection])
@@ -184,6 +161,7 @@ function Backfill({ bindingIndex }: Props) {
             collections,
             currentCollection,
             draftSpec,
+            evaluateServerDifferences,
             removeBackfilledCollections,
             setBackfillAllBindings,
             setFormState,

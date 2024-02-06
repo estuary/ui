@@ -137,7 +137,7 @@ function BindingsMultiEditor({
 
                 {entityType === 'materialization' ? <SourceCapture /> : null}
 
-                <Backfill updateAll />
+                <Backfill />
             </Stack>
 
             <ListAndDetails
