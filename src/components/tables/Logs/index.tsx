@@ -4,7 +4,6 @@ import { Box, Table, TableContainer } from '@mui/material';
 import {
     useJournalDataLogsStore_scrollToWhenDone,
     useJournalDataLogsStore_setAllowFetchingMore,
-    useJournalDataLogsStore_tailNewLogs,
 } from 'stores/JournalData/Logs/hooks';
 import { VariableSizeList } from 'react-window';
 import TailNewLogs from 'components/shared/Entity/Details/Ops/TailNewLogs';
@@ -18,7 +17,6 @@ function LogsTable() {
     const intl = useIntl();
     const columns = useLogColumns();
 
-    const tailNewLogs = useJournalDataLogsStore_tailNewLogs();
     const setAllowFetchingMore = useJournalDataLogsStore_setAllowFetchingMore();
     const [scrollToIndex, scrollToPosition] =
         useJournalDataLogsStore_scrollToWhenDone();
@@ -51,13 +49,7 @@ function LogsTable() {
                 setAllowFetchingMore(true);
             }
         }
-    }, [
-        setAllowFetchingMore,
-        scrollToIndex,
-        scrollToPosition,
-        readyToScroll,
-        tailNewLogs,
-    ]);
+    }, [setAllowFetchingMore, scrollToIndex, scrollToPosition, readyToScroll]);
 
     return (
         <Box>
