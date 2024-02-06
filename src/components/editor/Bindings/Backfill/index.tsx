@@ -2,7 +2,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
 import { useEntityType } from 'context/EntityContext';
 import { Check } from 'iconoir-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useFormStateStore_isActive,
@@ -11,10 +11,10 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_addBackfilledCollections,
-    useResourceConfig_backfillAllBindings,
     useResourceConfig_backfilledCollections,
     useResourceConfig_collections,
     useResourceConfig_currentCollection,
+    useResourceConfig_getBackfillAllBindings,
     useResourceConfig_removeBackfilledCollections,
     useResourceConfig_setBackfillAllBindings,
 } from 'stores/ResourceConfig/hooks';
@@ -29,6 +29,32 @@ interface Props {
     bindingIndex?: number;
     updateAll?: boolean;
 }
+
+const evaluateServerDifferences = (
+    backfillAllBindings: boolean,
+    backfilledCollections: string[],
+    currentCollection: string | null,
+    increment: BooleanString,
+    updateAll?: boolean
+) => {
+    if (updateAll) {
+        console.log('backfillAllBindings -----', backfillAllBindings);
+        console.log('increment -----', increment);
+
+        return (
+            (backfillAllBindings && increment === 'false') ||
+            (!backfillAllBindings && increment === 'true')
+        );
+    }
+
+    if (currentCollection) {
+        return increment === 'true'
+            ? !backfilledCollections.includes(currentCollection)
+            : backfilledCollections.includes(currentCollection);
+    }
+
+    return false;
+};
 
 function Backfill({ bindingIndex, updateAll }: Props) {
     const entityType = useEntityType();
@@ -51,7 +77,7 @@ function Backfill({ bindingIndex, updateAll }: Props) {
     const removeBackfilledCollections =
         useResourceConfig_removeBackfilledCollections();
 
-    const backfillAllBindings = useResourceConfig_backfillAllBindings();
+    const backfillAllBindings = useResourceConfig_getBackfillAllBindings();
     const setBackfillAllBindings = useResourceConfig_setBackfillAllBindings();
 
     const selected = useMemo(() => {
@@ -69,32 +95,10 @@ function Backfill({ bindingIndex, updateAll }: Props) {
         updateAll,
     ]);
 
-    const [increment, setIncrement] = useState<BooleanString | 'undefined'>(
-        selected ? 'true' : 'undefined'
+    const value: BooleanString = useMemo(
+        () => (selected ? 'true' : 'false'),
+        [selected]
     );
-
-    const serverUpdateRequired = useMemo(() => {
-        if (updateAll && increment !== 'undefined') {
-            return (
-                (backfillAllBindings && increment === 'false') ||
-                (!backfillAllBindings && increment === 'true')
-            );
-        }
-
-        if (currentCollection && increment !== 'undefined') {
-            return increment === 'true'
-                ? !backfilledCollections.includes(currentCollection)
-                : backfilledCollections.includes(currentCollection);
-        }
-
-        return false;
-    }, [
-        backfillAllBindings,
-        backfilledCollections,
-        currentCollection,
-        increment,
-        updateAll,
-    ]);
 
     const draftSpec = useMemo(
         () =>
@@ -102,75 +106,92 @@ function Backfill({ bindingIndex, updateAll }: Props) {
         [draftSpecs]
     );
 
-    useEffect(() => {
-        if (!updateAll) {
-            setIncrement(backfillAllBindings ? 'true' : 'false');
-        }
-    }, [backfillAllBindings, setIncrement, updateAll]);
-
-    useEffect(() => {
-        if (draftSpec && serverUpdateRequired && increment !== 'undefined') {
-            setFormState({ status: FormStatus.UPDATING });
-
-            const singleBindingUpdate =
-                typeof bindingIndex === 'number' &&
-                bindingIndex > -1 &&
-                currentCollection &&
-                !updateAll;
-
-            const bindingMetadata: BindingMetadata | undefined =
-                singleBindingUpdate
-                    ? { collection: currentCollection, bindingIndex }
-                    : undefined;
-
-            updateBackfillCounter(draftSpec, increment, bindingMetadata).then(
-                () => {
-                    console.log('HERE');
-                    console.log('single binding update', singleBindingUpdate);
-                    console.log('update all', updateAll && collections);
-
-                    if (singleBindingUpdate) {
-                        console.log('A');
-
-                        increment === 'true'
-                            ? addBackfilledCollections([currentCollection])
-                            : removeBackfilledCollections([currentCollection]);
-                    } else if (updateAll && collections) {
-                        console.log('B');
-
-                        setBackfillAllBindings(increment === 'true');
-
-                        increment === 'true'
-                            ? addBackfilledCollections(collections)
-                            : removeBackfilledCollections(collections);
-                    }
-
-                    setFormState({ status: FormStatus.UPDATED });
-                },
-                (error) =>
-                    setFormState({
-                        status: FormStatus.FAILED,
-                        error: {
-                            title: 'workflows.collectionSelector.manualBackfill.error.title',
-                            error,
-                        },
-                    })
+    const handleClick = useCallback(
+        (increment: BooleanString) => {
+            const serverUpdateRequired = evaluateServerDifferences(
+                backfillAllBindings,
+                backfilledCollections,
+                currentCollection,
+                increment,
+                updateAll
             );
-        }
-    }, [
-        addBackfilledCollections,
-        bindingIndex,
-        collections,
-        currentCollection,
-        draftSpec,
-        increment,
-        removeBackfilledCollections,
-        serverUpdateRequired,
-        setBackfillAllBindings,
-        setFormState,
-        updateAll,
-        updateBackfillCounter,
-    ]);
+
+            if (draftSpec && serverUpdateRequired) {
+                setFormState({ status: FormStatus.UPDATING });
+
+                const singleBindingUpdate =
+                    typeof bindingIndex === 'number' &&
+                    bindingIndex > -1 &&
+                    currentCollection &&
+                    !updateAll;
+
+                const bindingMetadata: BindingMetadata | undefined =
+                    singleBindingUpdate
+                        ? { collection: currentCollection, bindingIndex }
+                        : undefined;
+
+                updateBackfillCounter(
+                    draftSpec,
+                    increment,
+                    bindingMetadata
+                ).then(
+                    () => {
+                        console.log('HERE');
+                        console.log(
+                            'single binding update',
+                            singleBindingUpdate
+                        );
+                        console.log('backfillAllBindings', backfillAllBindings);
+                        console.log('increment', increment);
+
+                        if (singleBindingUpdate) {
+                            console.log('A');
+
+                            console.log(
+                                'backfilledCollections',
+                                backfilledCollections
+                            );
+
+                            increment === 'true'
+                                ? addBackfilledCollections([currentCollection])
+                                : removeBackfilledCollections([
+                                      currentCollection,
+                                  ]);
+                        } else if (updateAll && collections) {
+                            console.log('B');
+
+                            increment === 'true'
+                                ? addBackfilledCollections(collections)
+                                : removeBackfilledCollections(collections);
+                        }
+
+                        setFormState({ status: FormStatus.UPDATED });
+                    },
+                    (error) => {
+                        setFormState({
+                            status: FormStatus.FAILED,
+                            error: {
+                                title: 'workflows.collectionSelector.manualBackfill.error.title',
+                                error,
+                            },
+                        });
+                    }
+                );
+            }
+        },
+        [
+            addBackfilledCollections,
+            bindingIndex,
+            collections,
+            currentCollection,
+            draftSpec,
+            removeBackfilledCollections,
+            setBackfillAllBindings,
+            setFormState,
+            updateAll,
+            updateBackfillCounter,
+        ]
+    );
 
     return (
         <Box sx={{ mt: 3 }}>
@@ -192,14 +213,14 @@ function Backfill({ bindingIndex, updateAll }: Props) {
             </Stack>
 
             <OutlinedToggleButton
-                value={increment}
+                value={value}
                 selected={selected}
                 disabled={formActive}
                 onClick={(event, checked: string) => {
                     event.preventDefault();
                     event.stopPropagation();
 
-                    setIncrement(checked === 'true' ? 'false' : 'true');
+                    handleClick(checked === 'true' ? 'false' : 'true');
                 }}
             >
                 <FormattedMessage id="workflows.collectionSelector.manualBackfill.cta.backfill" />

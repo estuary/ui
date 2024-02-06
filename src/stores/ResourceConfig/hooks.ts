@@ -1,4 +1,5 @@
 import { useZustandStore } from 'context/Zustand/provider';
+import { difference } from 'lodash';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { shallow } from 'zustand/shallow';
 import { ResourceConfig, ResourceConfigState } from './types';
@@ -145,6 +146,20 @@ export const useResourceConfig_setBackfillAllBindings = () => {
         ResourceConfigStoreNames.GENERAL,
         (state) => state.setBackfillAllBindings
     );
+};
+
+export const useResourceConfig_getBackfillAllBindings = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['backfillAllBindings']
+    >(ResourceConfigStoreNames.GENERAL, (state) => {
+        const collectionsNotBackfilled = difference(
+            state.collections,
+            state.backfilledCollections
+        );
+
+        return collectionsNotBackfilled.length === 0;
+    });
 };
 
 export const useResourceConfig_resourceConfig = () => {
