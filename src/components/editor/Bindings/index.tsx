@@ -137,7 +137,10 @@ function BindingsMultiEditor({
 
                 {entityType === 'materialization' ? <SourceCapture /> : null}
 
-                <Backfill />
+                {workflow === 'capture_edit' ||
+                workflow === 'materialization_edit' ? (
+                    <Backfill />
+                ) : null}
             </Stack>
 
             <ListAndDetails
