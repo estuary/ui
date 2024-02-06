@@ -1,8 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material';
 import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
-import { useEntityType } from 'context/EntityContext';
 import { Check } from 'iconoir-react';
-import { useCallback, useMemo } from 'react';
+import { ReactNode, useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useFormStateStore_isActive,
@@ -25,11 +24,11 @@ import useUpdateBackfillCounter, {
 export type BooleanString = 'true' | 'false';
 
 interface Props {
+    description: ReactNode;
     bindingIndex?: number;
 }
 
-function Backfill({ bindingIndex = -1 }: Props) {
-    const entityType = useEntityType();
+function Backfill({ description, bindingIndex = -1 }: Props) {
     const { updateBackfillCounter } = useUpdateBackfillCounter();
 
     // Draft Editor Store
@@ -163,11 +162,7 @@ function Backfill({ bindingIndex = -1 }: Props) {
                         <FormattedMessage id="workflows.collectionSelector.manualBackfill.header" />
                     </Typography>
 
-                    <Typography component="div">
-                        <FormattedMessage
-                            id={`workflows.collectionSelector.manualBackfill.message.${entityType}`}
-                        />
-                    </Typography>
+                    <Typography component="div">{description}</Typography>
                 </Stack>
             </Stack>
 

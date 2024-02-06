@@ -139,7 +139,13 @@ function BindingsMultiEditor({
 
                 {workflow === 'capture_edit' ||
                 workflow === 'materialization_edit' ? (
-                    <Backfill />
+                    <Backfill
+                        description={
+                            <FormattedMessage
+                                id={`workflows.collectionSelector.manualBackfill.message.${entityType}.allBindings`}
+                            />
+                        }
+                    />
                 ) : null}
             </Stack>
 

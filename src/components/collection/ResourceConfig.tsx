@@ -54,7 +54,14 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
             </Box>
 
             {isEdit && draftedBindingIndex > -1 && !collectionDisabled ? (
-                <Backfill bindingIndex={draftedBindingIndex} />
+                <Backfill
+                    bindingIndex={draftedBindingIndex}
+                    description={
+                        <FormattedMessage
+                            id={`workflows.collectionSelector.manualBackfill.message.${entityType}`}
+                        />
+                    }
+                />
             ) : null}
 
             {entityType === 'materialization' && !collectionDisabled ? (
