@@ -1,3 +1,4 @@
+import { BooleanString } from 'components/editor/Bindings/Backfill';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsExt_MaterializeCapture } from 'hooks/useLiveSpecsExt';
 import { CallSupabaseResponse } from 'services/supabase';
@@ -52,9 +53,12 @@ export interface ResourceConfigState extends StoreWithHydration {
     ) => void;
     addBackfilledCollections: (values: string[]) => void;
     removeBackfilledCollections: (values: string[]) => void;
+    setBackfilledCollections: (
+        increment: BooleanString,
+        targetCollection?: string
+    ) => void;
 
     backfillAllBindings: boolean;
-    setBackfillAllBindings: (value: boolean) => void;
 
     // Resource Config
     resourceConfig: ResourceConfigDictionary;

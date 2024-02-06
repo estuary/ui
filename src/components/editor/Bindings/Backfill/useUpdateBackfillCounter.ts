@@ -1,4 +1,5 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
+import { BooleanString } from 'components/editor/Bindings/Backfill';
 import { useEntityType } from 'context/EntityContext';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useCallback } from 'react';
@@ -11,7 +12,6 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
 } from '../../Store/hooks';
-import { BooleanString } from '.';
 
 export interface BindingMetadata {
     bindingIndex: number;
@@ -79,11 +79,15 @@ function useUpdateBackfillCounter() {
             if (bindingMetadata && bindingMetadata.bindingIndex > -1) {
                 const { bindingIndex } = bindingMetadata;
 
+                console.log('A', bindingIndex);
+
                 spec.bindings[bindingIndex] = evaluateBackfillCounter(
                     spec.bindings[bindingIndex],
                     increment
                 );
             } else {
+                console.log('B');
+
                 spec.bindings.forEach((binding: Schema, index: number) => {
                     const collection = getCollectionName(binding);
 

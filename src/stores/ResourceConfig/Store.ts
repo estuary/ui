@@ -471,10 +471,10 @@ const getInitialState = (
     addBackfilledCollections: (values) => {
         set(
             produce((state: ResourceConfigState) => {
-                state.backfilledCollections = union([
-                    ...values,
-                    ...state.backfilledCollections,
-                ]);
+                state.backfilledCollections = union(
+                    state.backfilledCollections,
+                    values
+                );
             }),
             false,
             'Backfilled Collections Added'
@@ -494,13 +494,28 @@ const getInitialState = (
         );
     },
 
-    setBackfillAllBindings: (value) => {
+    setBackfilledCollections: (increment, targetCollection) => {
         set(
             produce((state: ResourceConfigState) => {
-                state.backfillAllBindings = value;
+                const collections: string[] = targetCollection
+                    ? [targetCollection]
+                    : state.collections
+                    ? state.collections
+                    : [];
+
+                state.backfilledCollections =
+                    increment === 'true'
+                        ? union(state.backfilledCollections, collections)
+                        : state.backfilledCollections.filter(
+                              (collection) => !collections.includes(collection)
+                          );
+
+                state.backfillAllBindings =
+                    state.collections?.length ===
+                    state.backfilledCollections.length;
             }),
             false,
-            'Backfill All Bindings Flag Set'
+            'Backfilled Collections Set'
         );
     },
 

@@ -1,5 +1,4 @@
 import { useZustandStore } from 'context/Zustand/provider';
-import { difference } from 'lodash';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { shallow } from 'zustand/shallow';
 import { ResourceConfig, ResourceConfigState } from './types';
@@ -121,13 +120,13 @@ export const useResourceConfig_addBackfilledCollections = () => {
     );
 };
 
-export const useResourceConfig_removeBackfilledCollections = () => {
+export const useResourceConfig_setBackfilledCollections = () => {
     return useZustandStore<
         ResourceConfigState,
-        ResourceConfigState['removeBackfilledCollections']
+        ResourceConfigState['setBackfilledCollections']
     >(
         ResourceConfigStoreNames.GENERAL,
-        (state) => state.removeBackfilledCollections
+        (state) => state.setBackfilledCollections
     );
 };
 
@@ -136,30 +135,6 @@ export const useResourceConfig_backfillAllBindings = () => {
         ResourceConfigState,
         ResourceConfigState['backfillAllBindings']
     >(ResourceConfigStoreNames.GENERAL, (state) => state.backfillAllBindings);
-};
-
-export const useResourceConfig_setBackfillAllBindings = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setBackfillAllBindings']
-    >(
-        ResourceConfigStoreNames.GENERAL,
-        (state) => state.setBackfillAllBindings
-    );
-};
-
-export const useResourceConfig_getBackfillAllBindings = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['backfillAllBindings']
-    >(ResourceConfigStoreNames.GENERAL, (state) => {
-        const collectionsNotBackfilled = difference(
-            state.collections,
-            state.backfilledCollections
-        );
-
-        return collectionsNotBackfilled.length === 0;
-    });
 };
 
 export const useResourceConfig_resourceConfig = () => {

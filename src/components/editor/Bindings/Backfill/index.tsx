@@ -10,13 +10,10 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import {
-    useResourceConfig_addBackfilledCollections,
+    useResourceConfig_backfillAllBindings,
     useResourceConfig_backfilledCollections,
-    useResourceConfig_collections,
     useResourceConfig_currentCollection,
-    useResourceConfig_getBackfillAllBindings,
-    useResourceConfig_removeBackfilledCollections,
-    useResourceConfig_setBackfillAllBindings,
+    useResourceConfig_setBackfilledCollections,
 } from 'stores/ResourceConfig/hooks';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import useUpdateBackfillCounter, {
@@ -42,16 +39,11 @@ function Backfill({ bindingIndex = -1 }: Props) {
 
     // Resource Config Store
     const currentCollection = useResourceConfig_currentCollection();
-    const collections = useResourceConfig_collections();
-
     const backfilledCollections = useResourceConfig_backfilledCollections();
-    const addBackfilledCollections =
-        useResourceConfig_addBackfilledCollections();
-    const removeBackfilledCollections =
-        useResourceConfig_removeBackfilledCollections();
+    const setBackfilledCollections =
+        useResourceConfig_setBackfilledCollections();
 
-    const backfillAllBindings = useResourceConfig_getBackfillAllBindings();
-    const setBackfillAllBindings = useResourceConfig_setBackfillAllBindings();
+    const backfillAllBindings = useResourceConfig_backfillAllBindings();
 
     const selected = useMemo(() => {
         if (bindingIndex === -1) {
@@ -125,22 +117,11 @@ function Backfill({ bindingIndex = -1 }: Props) {
                     bindingMetadata
                 ).then(
                     () => {
-                        if (singleBindingUpdate) {
-                            console.log('A');
+                        const targetCollection = singleBindingUpdate
+                            ? currentCollection
+                            : undefined;
 
-                            increment === 'true'
-                                ? addBackfilledCollections([currentCollection])
-                                : removeBackfilledCollections([
-                                      currentCollection,
-                                  ]);
-                        } else if (bindingIndex === -1 && collections) {
-                            console.log('B');
-
-                            increment === 'true'
-                                ? addBackfilledCollections(collections)
-                                : removeBackfilledCollections(collections);
-                        }
-
+                        setBackfilledCollections(increment, targetCollection);
                         setFormState({ status: FormStatus.UPDATED });
                     },
                     (error) => {
@@ -156,14 +137,11 @@ function Backfill({ bindingIndex = -1 }: Props) {
             }
         },
         [
-            addBackfilledCollections,
             bindingIndex,
-            collections,
             currentCollection,
             draftSpec,
             evaluateServerDifferences,
-            removeBackfilledCollections,
-            setBackfillAllBindings,
+            setBackfilledCollections,
             setFormState,
             updateBackfillCounter,
         ]
