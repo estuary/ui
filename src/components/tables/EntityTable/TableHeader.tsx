@@ -76,6 +76,13 @@ function EntityTableHeader({
                         };
                     }
 
+                    if (column.flexGrow) {
+                        tableCellSX = {
+                            ...tableCellSX,
+                            flexGrow: 1,
+                        };
+                    }
+
                     if (column.renderHeader && selectableTableStoreName) {
                         return column.renderHeader(
                             index,
