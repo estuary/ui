@@ -41,11 +41,12 @@ const getInitialStateData = (): Pick<
     JournalDataLogsState,
     | 'allowFetchingMore'
     | 'documents'
-    | 'lastCount'
-    | 'lastParsed'
-    | 'lastTopUuid'
     | 'fetchingNewer'
     | 'fetchingOlder'
+    | 'lastCount'
+    | 'lastFetchFailed'
+    | 'lastParsed'
+    | 'lastTopUuid'
     | 'noData'
     | 'olderFinished'
     | 'refresh'
@@ -54,15 +55,16 @@ const getInitialStateData = (): Pick<
 > => ({
     allowFetchingMore: false,
     documents: null,
-    lastCount: -1,
-    lastParsed: -1,
-    scrollToWhenDone: [-1, 'end'],
-    lastTopUuid: null,
     fetchingNewer: false,
     fetchingOlder: false,
+    lastCount: -1,
+    lastFetchFailed: false,
+    lastParsed: -1,
+    lastTopUuid: null,
     noData: false,
     olderFinished: false,
     refresh: null,
+    scrollToWhenDone: [-1, 'end'],
     tailNewLogs: false,
 });
 
@@ -84,20 +86,22 @@ const getInitialState = (
             setRefresh,
         } = get();
 
-        if (!active || hydrated) {
+        if (!active) {
             return;
+        }
+
+        if (!hydrated) {
+            setHydrationErrorsExist(Boolean(error));
+
+            if (error) {
+                setNetworkFailed(error.message);
+                addNewDocuments([], true, 0);
+                return;
+            }
         }
 
         setRefresh(refresh);
-        setHydrationErrorsExist(Boolean(error));
-
-        if (error) {
-            setNetworkFailed(error.message);
-            addNewDocuments([], true, 0);
-            return;
-        }
-
-        addNewDocuments(docs, olderFinished, lastParsed);
+        addNewDocuments(docs, olderFinished, lastParsed, error);
     },
 
     fetchMoreLogs: (option) => {
@@ -132,8 +136,7 @@ const getInitialState = (
         }
     },
 
-    addNewDocuments: (docs, olderFinished, lastParsed) => {
-        console.log('addNewDocuments');
+    addNewDocuments: (docs, olderFinished, lastParsed, error) => {
         set(
             produce((state: JournalDataLogsState) => {
                 if (!docs) {
@@ -147,26 +150,35 @@ const getInitialState = (
                 }
 
                 if (state.fetchingOlder) {
-                    // When fetching newer keep the previous first item in view
-                    //  and then add the new to the start of the list
-                    state.scrollToWhenDone = [docs.length + 1, 'start'];
-                    state.documents = [...docs, ...(state.documents ?? [])];
-                    state.fetchingOlder = false;
-                } else if (state.fetchingNewer) {
-                    state.documents = [...(state.documents ?? []), ...docs];
-
-                    // Since fetching newer adds items to the end the browser
-                    //  will keep the scroll in the same position. So we only set this
-                    //  if we're forcing failing of new logs
-                    if (state.tailNewLogs) {
-                        // We have 2 fake rows so add 2 here
-                        state.scrollToWhenDone = [
-                            state.documents.length + 2,
-                            'start',
-                        ];
+                    if (error) {
+                        state.lastFetchFailed = true;
+                    } else {
+                        // When fetching newer keep the previous first item in view
+                        //  and then add the new to the start of the list
+                        state.scrollToWhenDone = [docs.length + 1, 'start'];
+                        state.documents = [...docs, ...(state.documents ?? [])];
+                        state.fetchingOlder = false;
+                        state.lastFetchFailed = false;
                     }
+                } else if (state.fetchingNewer) {
+                    if (error) {
+                        state.lastFetchFailed = true;
+                    } else {
+                        state.documents = [...(state.documents ?? []), ...docs];
 
-                    state.fetchingNewer = false;
+                        // Since fetching newer adds items to the end the browser
+                        //  will keep the scroll in the same position. So we only set this
+                        //  if we're forcing failing of new logs
+                        if (state.tailNewLogs) {
+                            // We have 2 fake rows so add 2 here
+                            state.scrollToWhenDone = [
+                                state.documents.length + 2,
+                                'start',
+                            ];
+                        }
+                        state.fetchingNewer = false;
+                        state.lastFetchFailed = false;
+                    }
                 } else {
                     // Initial hydration we want to set the array and scroll to near the bottom
                     state.scrollToWhenDone = [
@@ -174,12 +186,15 @@ const getInitialState = (
                         'end',
                     ];
                     state.documents = docs;
+                    state.lastFetchFailed = false;
                 }
 
                 // Helper props for future calls and scrolling
                 state.olderFinished = Boolean(olderFinished);
                 state.lastParsed = lastParsed;
-                if (state.documents.length > 0) {
+
+                // TODO - might remove this
+                if (state.documents && state.documents.length > 0) {
                     state.lastTopUuid = state.documents[0]._meta.uuid;
                 }
 
