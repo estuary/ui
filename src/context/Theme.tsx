@@ -259,6 +259,16 @@ export const jsonViewTheme: {
     dark: `bright`,
 };
 
+// Based on the colors in the theme above
+export const jsonObjectPreview_key = {
+    light: `rgb(26, 25, 26)`,
+    dark: `rgb(255, 255, 255)`,
+};
+export const jsonObjectPreview_value = {
+    light: `rgb(246, 103, 30)`,
+    dark: `rgb(252, 109, 36)`,
+};
+
 // Styles
 
 export const tableAlternateRowsSx: SxProps<Theme> = {
