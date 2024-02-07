@@ -1,14 +1,11 @@
 import { useJournalData } from 'hooks/journals/useJournalData';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 import { maxBytes } from 'components/tables/Logs/shared';
-import { useIntl } from 'react-intl';
 import { LoadDocumentsOffsets } from './shared';
 
 function useOpsLogs(name: string, collectionName: string) {
-    const intl = useIntl();
-
     const [nothingInLastFetch, setNothingInLastFetch] = useState(false);
     const [olderFinished, setOlderFinished] = useState(false);
     const [lastParsed, setLastParsed] = useState<number>(0);
@@ -26,12 +23,12 @@ function useOpsLogs(name: string, collectionName: string) {
     );
 
     const documents = useMemo<OpsLogFlowDocument[] | null>(() => {
-        if (data?.documents) {
+        if (!error && data?.documents) {
             return data.documents as OpsLogFlowDocument[];
         }
 
         return null;
-    }, [data?.documents]);
+    }, [data?.documents, error]);
 
     useEffect(() => {
         if (data?.adjustedBytes && data.adjustedBytes > 0) {
@@ -63,7 +60,7 @@ function useOpsLogs(name: string, collectionName: string) {
         } else if (lastParsed > 0) {
             setNothingInLastFetch(true);
         }
-    }, [data?.meta, docs, documents, intl, lastParsed]);
+    }, [data?.meta, documents, lastParsed]);
 
     useEffect(() => {
         // Get the mete data out of the response
@@ -83,6 +80,14 @@ function useOpsLogs(name: string, collectionName: string) {
         }
     }, [data?.meta]);
 
+    const runRefresh = useCallback(
+        (newOffset?: LoadDocumentsOffsets) => {
+            setNothingInLastFetch(false);
+            refresh(newOffset);
+        },
+        [refresh]
+    );
+
     return useMemo(
         () => ({
             docs,
@@ -91,10 +96,7 @@ function useOpsLogs(name: string, collectionName: string) {
             loading,
             nothingInLastFetch,
             olderFinished,
-            refresh: (newOffset?: LoadDocumentsOffsets) => {
-                setNothingInLastFetch(false);
-                refresh(newOffset);
-            },
+            refresh: runRefresh,
         }),
         [
             docs,
@@ -103,7 +105,7 @@ function useOpsLogs(name: string, collectionName: string) {
             loading,
             nothingInLastFetch,
             olderFinished,
-            refresh,
+            runRefresh,
         ]
     );
 }
