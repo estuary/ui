@@ -30,17 +30,19 @@ function MessageCell({ fields, message }: Props) {
                         // The object preview does not accept themeing so manually setting these on the wrapper
                         //  obviously these are fairly brittle. They prevent some styling to come through (like color for types of data)
                         //  but I think that is okay given
-                        '& > span span:first-child': {
+                        '& > span span:first-of-type': {
                             color: (theme) =>
                                 `${
                                     jsonObjectPreview_key[theme.palette.mode]
                                 } !important`,
-                        },
-                        '& > span span:first-child + span': {
-                            color: (theme) =>
-                                `${
-                                    jsonObjectPreview_value[theme.palette.mode]
-                                } !important`,
+                            [`& + span`]: {
+                                color: (theme) =>
+                                    `${
+                                        jsonObjectPreview_value[
+                                            theme.palette.mode
+                                        ]
+                                    } !important`,
+                            },
                         },
                     }}
                 >
