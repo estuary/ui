@@ -153,18 +153,14 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
 
     return (
         <Box sx={{ mt: 3 }}>
-            <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-                <Stack spacing={1}>
-                    <Typography
-                        variant={
-                            bindingIndex === -1 ? 'formSectionHeader' : 'h6'
-                        }
-                    >
-                        <FormattedMessage id="workflows.collectionSelector.manualBackfill.header" />
-                    </Typography>
+            <Stack spacing={1} sx={{ mb: 2 }}>
+                <Typography
+                    variant={bindingIndex === -1 ? 'formSectionHeader' : 'h6'}
+                >
+                    <FormattedMessage id="workflows.collectionSelector.manualBackfill.header" />
+                </Typography>
 
-                    <Typography component="div">{description}</Typography>
-                </Stack>
+                <Typography component="div">{description}</Typography>
             </Stack>
 
             <OutlinedToggleButton
