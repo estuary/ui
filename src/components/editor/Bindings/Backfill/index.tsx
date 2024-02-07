@@ -159,7 +159,6 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                         variant={
                             bindingIndex === -1 ? 'formSectionHeader' : 'h6'
                         }
-                        sx={{ mr: 0.5 }}
                     >
                         <FormattedMessage id="workflows.collectionSelector.manualBackfill.header" />
                     </Typography>
