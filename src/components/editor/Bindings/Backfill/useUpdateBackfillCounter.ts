@@ -95,14 +95,14 @@ function useUpdateBackfillCounter() {
             } else {
                 spec.bindings.forEach((binding: Schema, index: number) => {
                     const collection = getCollectionName(binding);
+                    const collectionBackfilled =
+                        backfilledCollections.includes(collection);
 
                     const shouldIncrement =
-                        !backfilledCollections.includes(collection) &&
-                        increment === 'true';
+                        !collectionBackfilled && increment === 'true';
 
                     const shouldDecrement =
-                        backfilledCollections.includes(collection) &&
-                        increment === 'false';
+                        collectionBackfilled && increment === 'false';
 
                     if (shouldIncrement || shouldDecrement) {
                         spec.bindings[index].backfill = evaluateBackfillCounter(
