@@ -106,7 +106,7 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
             const serverUpdateRequired = evaluateServerDifferences(increment);
 
             if (draftSpec && serverUpdateRequired) {
-                setFormState({ status: FormStatus.UPDATING });
+                setFormState({ status: FormStatus.UPDATING, error: null });
 
                 const singleBindingUpdate =
                     bindingIndex > -1 && currentCollection;
