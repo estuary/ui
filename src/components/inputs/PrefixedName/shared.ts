@@ -8,7 +8,7 @@ export const validateCatalogName = (
 ): PrefixedName_Errors => {
     const isBlank = !hasLength(value);
 
-    // See iff this field is allowed to be blank
+    // See if this field is allowed to be blank
     if (!allowBlank && isBlank) {
         return ['missing'];
     }

@@ -4,6 +4,7 @@ import { createSearchParams } from 'react-router-dom';
 // Based on pattern taken from
 //  https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
 export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
+export const CATALOG_NAME_PATTERN = `^(${PREFIX_NAME_PATTERN}/)+${PREFIX_NAME_PATTERN}$`;
 
 // Based on the patterns connectors use for date time
 // eslint-disable-next-line no-useless-escape
