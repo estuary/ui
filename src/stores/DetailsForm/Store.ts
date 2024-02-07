@@ -18,7 +18,7 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { DetailsFormStoreNames } from 'stores/names';
-import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+import { CATALOG_NAME_PATTERN } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import {
     ConnectorVersionEvaluationOptions,
@@ -115,9 +115,7 @@ export const getInitialState = (
                 // Run validation on the name. This is done inside the input but
                 //  having the input set custom errors causes issues as we basically
                 //  make two near identical calls to the store and that causes problems.
-                const NAME_RE = new RegExp(
-                    `^(${PREFIX_NAME_PATTERN}/)+${PREFIX_NAME_PATTERN}$`
-                );
+                const NAME_RE = new RegExp(CATALOG_NAME_PATTERN);
 
                 const nameValidation = NAME_RE.test(
                     state.details.data.entityName
