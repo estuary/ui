@@ -1,6 +1,5 @@
 import { getConnectors_detailsForm } from 'api/connectors';
 import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
-import { validateCatalogName } from 'components/inputs/PrefixedName/shared';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
@@ -19,6 +18,7 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { DetailsFormStoreNames } from 'stores/names';
+import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import {
     ConnectorVersionEvaluationOptions,
@@ -115,12 +115,18 @@ export const getInitialState = (
                 // Run validation on the name. This is done inside the input but
                 //  having the input set custom errors causes issues as we basically
                 //  make two near identical calls to the store and that causes problems.
-                const nameValidation = validateCatalogName(
-                    state.details.data.entityName
+                const NAME_RE = new RegExp(
+                    `^(${PREFIX_NAME_PATTERN}/)+${PREFIX_NAME_PATTERN}$`
                 );
 
+                const nameValidation = NAME_RE.test(
+                    state.details.data.entityName
+                )
+                    ? null
+                    : ['invalid'];
+
                 // We only have custom errors to handle name validation so it is okay
-                //  to totally clear out customErrors and not inteligently update it
+                //  to totally clear out customErrors and not intelligently update it
                 // As of Q3 2023
                 // TODO (intl) need to get a way for this kind of error to be translated
                 //  and passed into the store
