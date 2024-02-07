@@ -74,6 +74,8 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
         currentCollection,
     ]);
 
+    console.log('currentCollection', currentCollection);
+
     if (currentCollection) {
         return (
             <Box sx={{ p: 1 }}>

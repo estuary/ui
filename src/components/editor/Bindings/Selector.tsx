@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import CollectionSelectorList from 'components/collection/Selector/List';
-import { COLLECTION_SELECTOR_NAME_COL } from 'components/collection/Selector/List/shared';
+import { COLLECTION_SELECTOR_ID_COL } from 'components/collection/Selector/List/shared';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
@@ -94,7 +94,7 @@ function BindingSelector({
                 return null;
             }
 
-            const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
+            const collection = params.row[COLLECTION_SELECTOR_ID_COL];
 
             return (
                 <BindingsSelectorRemove
@@ -106,7 +106,7 @@ function BindingSelector({
             );
         },
         toggle: (params: GridRenderCellParams) => {
-            const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
+            const collection = params.row[COLLECTION_SELECTOR_ID_COL];
 
             return (
                 <BindingsSelectorToggle

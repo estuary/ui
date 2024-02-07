@@ -5,7 +5,10 @@ import {
     getLiveSpecsByLiveSpecId,
     getSchema_Resource,
 } from 'api/hydration';
-import { getCollectionNameWithIndex } from 'components/collection/Selector/List/shared';
+import {
+    generateCollectionNameWithIndex,
+    getCollectionNameWithIndex,
+} from 'components/collection/Selector/List/shared';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import {
@@ -59,8 +62,11 @@ const populateCollections = (
     state: ResourceConfigState,
     collections: string[]
 ) => {
+    console.log('populateCollections', collections);
     state.collections = collections;
-    state.currentCollection = collections[0] ?? null;
+    state.currentCollection = collections[0]
+        ? generateCollectionNameWithIndex(collections[0], 0)
+        : null;
 
     state.collectionErrorsExist = isEmpty(collections);
 };
@@ -238,15 +244,24 @@ const getInitialState = (
             produce((state: ResourceConfigState) => {
                 // As we go through and fetch all the names for collections go ahead and also
                 // populate the resource config
-                const collections = bindings.map((binding: any) => {
-                    // Keep in sync with evaluateDiscoveredCollections
-                    const [name, configVal] = getResourceConfig(binding);
-                    state.resourceConfig[name] = configVal;
-                    if (configVal.disable === true) {
-                        state.resourceConfig[name].previouslyDisabled = true;
+                const collections = bindings.map(
+                    (binding: any, index: number) => {
+                        // Keep in sync with evaluateDiscoveredCollections
+                        const [name, configVal] = getResourceConfig(binding);
+
+                        const configKey = generateCollectionNameWithIndex(
+                            name,
+                            index
+                        );
+
+                        state.resourceConfig[configKey] = configVal;
+                        if (configVal.disable === true) {
+                            state.resourceConfig[configKey].previouslyDisabled =
+                                true;
+                        }
+                        return configKey;
                     }
-                    return name;
-                });
+                );
 
                 populateResourceConfigErrors(state.resourceConfig, state);
                 populateCollections(state, collections);
@@ -273,12 +288,21 @@ const getInitialState = (
                     //  Then try one above
                     //  Then try one below
                     //  Then give up
-                    state.currentCollection =
-                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                        updatedCollections[removedIndex] ??
-                        updatedCollections[removedIndex - 1] ??
-                        updatedCollections[removedIndex + 1] ??
-                        null;
+                    let newCurrentCollectionIndex: number | null = null;
+                    if (updatedCollections[removedIndex]) {
+                        newCurrentCollectionIndex = removedIndex;
+                    } else if (updatedCollections[removedIndex - 1]) {
+                        newCurrentCollectionIndex = removedIndex - 1;
+                    } else if (updatedCollections[removedIndex + 1]) {
+                        newCurrentCollectionIndex = removedIndex + 1;
+                    }
+
+                    state.currentCollection = newCurrentCollectionIndex
+                        ? generateCollectionNameWithIndex(
+                              updatedCollections[newCurrentCollectionIndex],
+                              newCurrentCollectionIndex
+                          )
+                        : null;
 
                     const updatedResourceConfig = pick(
                         resourceConfig,
@@ -511,10 +535,17 @@ const getInitialState = (
                         (state.currentCollection &&
                             !has(state.resourceConfig, state.currentCollection))
                     ) {
-                        state.currentCollection = newConfigKeyList[0];
+                        state.currentCollection =
+                            generateCollectionNameWithIndex(
+                                newConfigKeyList[0],
+                                0
+                            );
                     } else {
                         state.currentCollection =
-                            newConfigKeyList[newConfigKeyList.length - 1];
+                            generateCollectionNameWithIndex(
+                                newConfigKeyList[newConfigKeyList.length - 1],
+                                newConfigKeyList.length - 1
+                            );
                     }
 
                     // Update the collections with the new array

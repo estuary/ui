@@ -337,6 +337,7 @@ function CollectionSelectorList({
                     [`& .${cellClass_noPadding}`]: { padding: 0 },
                 }}
                 onCellClick={({ field, row }) => {
+                    console.log('onCellClick', { field, row });
                     const newCurrentCollection =
                         row[COLLECTION_SELECTOR_ID_COL];
 

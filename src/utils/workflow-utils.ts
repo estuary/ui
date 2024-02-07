@@ -3,6 +3,10 @@ import {
     DraftSpecsExtQuery_ByCatalogName,
     modifyDraftSpec,
 } from 'api/draftSpecs';
+import {
+    getCollectionNameAndIndex,
+    getCollectionNameWithoutIndex,
+} from 'components/collection/Selector/List/shared';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
 import {
     FullSource,
@@ -13,7 +17,7 @@ import {
     ConnectorWithTagDetailQuery,
 } from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isBoolean, isEmpty } from 'lodash';
+import { isBoolean, isEmpty, some } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { REMOVE_DURING_GENERATION } from 'stores/ResourceConfig/shared';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
@@ -147,20 +151,23 @@ export const generateTaskSpec = (
 
         const boundCollectionNames = Object.keys(resourceConfigs);
 
-        boundCollectionNames.forEach((collectionName) => {
-            const resourceConfig = resourceConfigs[collectionName].data;
+        boundCollectionNames.forEach((boundCollectionName) => {
+            console.log('boundCollectionName', boundCollectionName);
+
+            // const collectionName = getCollectionNameWithoutIndex(boundCollectionName)
+            const [existingBindingIndex, cleanCollectionName] =
+                getCollectionNameAndIndex(boundCollectionName);
+            const resourceConfig = resourceConfigs[boundCollectionName].data;
 
             // Check if disable is a boolean otherwise default to false
-            const { disable } = resourceConfigs[collectionName];
+            const { disable } = resourceConfigs[boundCollectionName];
             const resourceDisable = isBoolean(disable) ? disable : false;
 
             // See which binding we need to update
-            const existingBindingIndex = getBindingIndex(
-                draftSpec.bindings,
-                collectionName
-            );
-
-            if (existingBindingIndex > -1) {
+            if (
+                existingBindingIndex > -1 &&
+                draftSpec.bindings[existingBindingIndex]
+            ) {
                 // Include disable otherwise totally remove it
                 if (resourceDisable) {
                     draftSpec.bindings[existingBindingIndex].disable =
@@ -176,14 +183,14 @@ export const generateTaskSpec = (
                 // Only update if there is a fullSource to populate. Otherwise just set the name.
                 //  This handles both captures that do not have these settings AND when
                 draftSpec.bindings[existingBindingIndex][collectionNameProp] =
-                    getFullSourceSetting(fullSource, collectionName);
+                    getFullSourceSetting(fullSource, cleanCollectionName);
             } else if (Object.keys(resourceConfig).length > 0) {
                 const disabledProps = getDisableProps(resourceDisable);
 
                 draftSpec.bindings.push({
                     [collectionNameProp]: getFullSourceSetting(
                         fullSource,
-                        collectionName
+                        cleanCollectionName
                     ),
                     ...disabledProps,
                     resource: {
@@ -195,8 +202,11 @@ export const generateTaskSpec = (
 
         if (hasLength(draftSpec.bindings)) {
             draftSpec.bindings = draftSpec.bindings.filter((binding: any) =>
-                boundCollectionNames.includes(
-                    getCollectionName(binding[collectionNameProp])
+                some(
+                    boundCollectionNames,
+                    (boundCollectionName) =>
+                        getCollectionNameWithoutIndex(boundCollectionName) ===
+                        getCollectionName(binding[collectionNameProp])
                 )
             );
         }

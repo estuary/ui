@@ -20,6 +20,8 @@ type Props = {
 };
 
 function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
+    console.log('collectionName', collectionName);
+
     const name = useRef(collectionName);
 
     // Resource Config Store
