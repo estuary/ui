@@ -22,7 +22,7 @@ export interface BindingMetadata {
 const evaluateBackfillCounter = (
     binding: Schema,
     increment: BooleanString
-): Schema => {
+): number => {
     let counter = getBackfillCounter(binding);
 
     if (increment === 'true') {
@@ -31,9 +31,7 @@ const evaluateBackfillCounter = (
         counter = counter - 1;
     }
 
-    binding.backfill = counter;
-
-    return binding;
+    return counter;
 };
 
 function useUpdateBackfillCounter() {
@@ -87,10 +85,11 @@ function useUpdateBackfillCounter() {
             if (bindingMetadataExists) {
                 bindingMetadata.forEach(({ bindingIndex }) => {
                     if (bindingIndex > -1) {
-                        spec.bindings[bindingIndex] = evaluateBackfillCounter(
-                            spec.bindings[bindingIndex],
-                            increment
-                        );
+                        spec.bindings[bindingIndex].backfill =
+                            evaluateBackfillCounter(
+                                spec.bindings[bindingIndex],
+                                increment
+                            );
                     }
                 });
             } else {
@@ -106,7 +105,7 @@ function useUpdateBackfillCounter() {
                         increment === 'false';
 
                     if (shouldIncrement || shouldDecrement) {
-                        spec.bindings[index] = evaluateBackfillCounter(
+                        spec.bindings[index].backfill = evaluateBackfillCounter(
                             binding,
                             increment
                         );
