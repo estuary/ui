@@ -4,10 +4,8 @@ import { useEffect } from 'react';
 import { BaseComponentProps } from 'types';
 import {
     useJournalDataLogsStore_hydrate,
-    useJournalDataLogsStore_hydrated,
     useJournalDataLogsStore_resetState,
     useJournalDataLogsStore_setActive,
-    useJournalDataLogsStore_addNewDocuments,
     useJournalDataLogsStore_setFetchingOlder,
     useJournalDataLogsStore_setFetchingNewer,
 } from './hooks';
@@ -25,9 +23,7 @@ export const JournalDataLogsHydrator = ({
     const resetState = useJournalDataLogsStore_resetState();
     const setActive = useJournalDataLogsStore_setActive();
     const hydrate = useJournalDataLogsStore_hydrate();
-    const hydrated = useJournalDataLogsStore_hydrated();
 
-    const addNewDocuments = useJournalDataLogsStore_addNewDocuments();
     const setFetchingOlder = useJournalDataLogsStore_setFetchingOlder();
     const setFetchingNewer = useJournalDataLogsStore_setFetchingNewer();
 
@@ -52,28 +48,11 @@ export const JournalDataLogsHydrator = ({
 
     // Initial hydrate call that handles errors, populates refresh, and defaults documents
     useEffect(() => {
-        if (loading || hydrated) {
+        if (loading) {
             return;
         }
         hydrate(docs, refresh, olderFinished, lastParsed, error);
-    }, [
-        docs,
-        error,
-        hydrate,
-        hydrated,
-        lastParsed,
-        loading,
-        olderFinished,
-        refresh,
-    ]);
-
-    // Maintain documents after the inital hydration
-    useEffect(() => {
-        if (!hydrated) {
-            return;
-        }
-        addNewDocuments(docs, olderFinished, lastParsed);
-    }, [docs, hydrated, lastParsed, olderFinished, addNewDocuments]);
+    }, [docs, error, hydrate, lastParsed, loading, olderFinished, refresh]);
 
     // If there was nothing in the last fetch go ahead and reset the fetching flags
     //  so that the waiting rows can kick off another poll
