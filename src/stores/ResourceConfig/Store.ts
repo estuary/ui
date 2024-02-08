@@ -369,6 +369,8 @@ const getInitialState = (
                 state.restrictedDiscoveredCollections = [];
                 state.resourceConfig = {};
                 state.resetRediscoverySettings();
+                state.backfilledCollections = [];
+                state.backfillAllBindings = false;
             }),
             false,
             'Resource Config and Collections Reset'
@@ -511,8 +513,9 @@ const getInitialState = (
                           );
 
                 state.backfillAllBindings =
+                    hasLength(state.collections) &&
                     state.collections?.length ===
-                    state.backfilledCollections.length;
+                        state.backfilledCollections.length;
             }),
             false,
             'Backfilled Collections Set'
