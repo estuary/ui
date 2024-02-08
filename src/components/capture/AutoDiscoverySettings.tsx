@@ -142,8 +142,8 @@ function AutoDiscoverySettings({ readOnly }: Props) {
     ]);
 
     return (
-        <Stack spacing={1} sx={{ mt: 2, mb: 3 }}>
-            <Typography sx={{ fontWeight: 500 }}>
+        <Stack spacing={1}>
+            <Typography variant="formSectionHeader">
                 <FormattedMessage id="workflows.autoDiscovery.header" />
             </Typography>
 
