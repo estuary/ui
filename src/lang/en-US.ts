@@ -1003,10 +1003,13 @@ const Workflows: ResolvedIntlConfig['messages'] = {
 
     'workflows.collectionSelector.manualBackfill.header': `Backfill`,
     'workflows.collectionSelector.manualBackfill.message.capture': `Trigger a backfill of this collection from the source when published.`,
+    'workflows.collectionSelector.manualBackfill.message.capture.allBindings': `Trigger a backfill of all collections from the source when published.`,
     'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger a backfill from the source collection to its materialized resource when published.`,
+    'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger a backfill from all source collections to their materialized resource when published.`,
     'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
     'workflows.collectionSelector.manualBackfill.error.title': `Backfill update failed`,
-    'workflows.collectionSelector.manualBackfill.error.message': `There was an issue updating the backfill counter for one or more bindings associated with collection, {collection}.`,
+    'workflows.collectionSelector.manualBackfill.error.message.singleCollection': `There was an issue updating the backfill counter for one or more bindings associated with collection, {collection}.`,
+    'workflows.collectionSelector.manualBackfill.error.message.allBindings': `There was an issue updating the backfill counter for one or more bindings.`,
 
     'workflows.entityWarnings.title': `No collections`,
     'workflows.entityWarnings.message': `You have not added any collections yet. This means there will be

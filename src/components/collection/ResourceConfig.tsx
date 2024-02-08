@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/collection/ResourceConfigForm';
+import Backfill from 'components/editor/Bindings/Backfill';
 import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
-import ManualBackfill from 'components/editor/Bindings/ManualBackfill';
 import TimeTravel from 'components/editor/Bindings/TimeTravel';
 import { useEditorStore_queryResponse_draftedBindingIndex } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
@@ -54,7 +54,14 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
             </Box>
 
             {isEdit && draftedBindingIndex > -1 && !collectionDisabled ? (
-                <ManualBackfill bindingIndex={draftedBindingIndex} />
+                <Backfill
+                    bindingIndex={draftedBindingIndex}
+                    description={
+                        <FormattedMessage
+                            id={`workflows.collectionSelector.manualBackfill.message.${entityType}`}
+                        />
+                    }
+                />
             ) : null}
 
             {entityType === 'materialization' && !collectionDisabled ? (

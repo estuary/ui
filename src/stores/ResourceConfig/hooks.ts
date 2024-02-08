@@ -110,24 +110,31 @@ export const useResourceConfig_backfilledCollections = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.backfilledCollections);
 };
 
-export const useResourceConfig_addBackfilledCollection = () => {
+export const useResourceConfig_addBackfilledCollections = () => {
     return useZustandStore<
         ResourceConfigState,
-        ResourceConfigState['addBackfilledCollection']
+        ResourceConfigState['addBackfilledCollections']
     >(
         ResourceConfigStoreNames.GENERAL,
-        (state) => state.addBackfilledCollection
+        (state) => state.addBackfilledCollections
     );
 };
 
-export const useResourceConfig_removeBackfilledCollection = () => {
+export const useResourceConfig_setBackfilledCollections = () => {
     return useZustandStore<
         ResourceConfigState,
-        ResourceConfigState['removeBackfilledCollection']
+        ResourceConfigState['setBackfilledCollections']
     >(
         ResourceConfigStoreNames.GENERAL,
-        (state) => state.removeBackfilledCollection
+        (state) => state.setBackfilledCollections
     );
+};
+
+export const useResourceConfig_backfillAllBindings = () => {
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['backfillAllBindings']
+    >(ResourceConfigStoreNames.GENERAL, (state) => state.backfillAllBindings);
 };
 
 export const useResourceConfig_resourceConfig = () => {
@@ -137,6 +144,17 @@ export const useResourceConfig_resourceConfig = () => {
     >(
         ResourceConfigStoreNames.GENERAL,
         (state) => state.resourceConfig,
+        shallow
+    );
+};
+
+export const useResourceConfig_allBindingsDisabled = () => {
+    return useZustandStore<ResourceConfigState, boolean>(
+        ResourceConfigStoreNames.GENERAL,
+        (state) =>
+            Object.values(state.resourceConfig).every(
+                (config) => config.disable
+            ),
         shallow
     );
 };
