@@ -1,7 +1,7 @@
 import { List, ListItem, Typography } from '@mui/material';
 import { ReactNode } from 'react';
 
-interface RowActionConfirmationprops {
+interface RowActionConfirmationProps {
     message: ReactNode;
     selected: any; //SelectableTableStore['selected'];
 }
@@ -9,7 +9,7 @@ interface RowActionConfirmationprops {
 function RowActionConfirmation({
     message,
     selected,
-}: RowActionConfirmationprops) {
+}: RowActionConfirmationProps) {
     return (
         <>
             {message}
