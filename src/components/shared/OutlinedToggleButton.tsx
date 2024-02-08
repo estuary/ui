@@ -7,9 +7,12 @@ import {
     useTheme,
 } from '@mui/material';
 import {
+    disabledButtonText_primary,
     intensifiedOutline,
     outlinedButtonBackground,
+    outlinedButtonBackground_disabled,
     primaryColoredOutline,
+    primaryColoredOutline_disabled,
     primaryColoredOutline_hovered,
 } from 'context/Theme';
 
@@ -46,14 +49,16 @@ function OutlinedToggleButton({
                 border: primaryColoredOutline_hovered[theme.palette.mode],
             },
         },
+        [`&.${toggleButtonClasses.disabled}`]: disabledStateSx ?? {
+            backgroundColor:
+                outlinedButtonBackground_disabled[theme.palette.mode],
+            border: primaryColoredOutline_disabled[theme.palette.mode],
+            color: disabledButtonText_primary[theme.palette.mode],
+        },
     };
 
     if (defaultStateSx) {
         sx = { ...sx, ...defaultStateSx };
-    }
-
-    if (disabledStateSx) {
-        sx = { ...sx, [`&.${toggleButtonClasses.disabled}`]: disabledStateSx };
     }
 
     return (
