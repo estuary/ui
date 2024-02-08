@@ -7,6 +7,8 @@ import {
     useTheme,
 } from '@mui/material';
 import {
+    defaultOutline,
+    disabledButtonText,
     disabledButtonText_primary,
     intensifiedOutline,
     outlinedButtonBackground,
@@ -36,6 +38,19 @@ function OutlinedToggleButton({
 }: Props) {
     const theme = useTheme();
 
+    const defaultDisabledStateSx: SxProps<Theme> = selected
+        ? {
+              backgroundColor:
+                  outlinedButtonBackground_disabled[theme.palette.mode],
+              border: primaryColoredOutline_disabled[theme.palette.mode],
+              color: disabledButtonText_primary[theme.palette.mode],
+          }
+        : {
+              backgroundColor: 'none',
+              border: defaultOutline[theme.palette.mode],
+              color: disabledButtonText[theme.palette.mode],
+          };
+
     let sx: SxProps<Theme> = {
         px: '9px',
         py: '3px',
@@ -49,12 +64,8 @@ function OutlinedToggleButton({
                 border: primaryColoredOutline_hovered[theme.palette.mode],
             },
         },
-        [`&.${toggleButtonClasses.disabled}`]: disabledStateSx ?? {
-            backgroundColor:
-                outlinedButtonBackground_disabled[theme.palette.mode],
-            border: primaryColoredOutline_disabled[theme.palette.mode],
-            color: disabledButtonText_primary[theme.palette.mode],
-        },
+        [`&.${toggleButtonClasses.disabled}`]:
+            disabledStateSx ?? defaultDisabledStateSx,
     };
 
     if (defaultStateSx) {
