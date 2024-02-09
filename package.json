@@ -54,6 +54,7 @@
         "@supabase/postgrest-js": "^0.37.4",
         "@supabase/supabase-js": "^1.35.7",
         "@supabase/ui": "^0.36.5",
+        "@testing-library/jest-dom": "^6.4.2",
         "ansicolor": "^1.1.100",
         "data-plane-gateway": "https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main",
         "date-fns": "^2.30.0",
@@ -122,6 +123,7 @@
         "eslint-plugin-react": "^7.32.2",
         "eslint-plugin-unused-imports": "^2.0.0",
         "husky": "^8.0.3",
+        "jsdom": "^24.0.0",
         "licensee": "^10.0.0",
         "lint-staged": "^13.1.0",
         "msw": "^2.0.11",
@@ -169,5 +171,6 @@
     "repository": {
         "type": "git",
         "url": "git+https://github.com/estuary/ui.git"
-    }
+    },
+    "type": "module"
 }

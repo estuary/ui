@@ -2,7 +2,7 @@
     "compilerOptions": {
         "incremental": true,
         "outDir": "build/lib",
-        "target": "es5",
+        "target": "es2017",
         "lib": ["es6", "dom", "dom.iterable", "esnext", "ES2022.Object"],
         "sourceMap": true,
         "importHelpers": true,
@@ -32,7 +32,7 @@
         "skipLibCheck": true,
         "resolveJsonModule": true,
         "typeRoots": ["src/types", "node_modules/@types"],
-        "types": ["vite/client", "vitest"]
+        "types": ["vite/client", "vitest", "vitest/globals"]
     },
     "include": ["src", "flow_deps/flow.d.ts"],
     "exclude": ["node_modules", "build", "scripts", "flow_deps/flow-bin"]
