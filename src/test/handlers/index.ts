@@ -33,6 +33,7 @@ const connectors = [
 
 handlers.push(
     http.all(API_URL_CONNECTORS, async () => {
+        console.log('hit the connector');
         return HttpResponse.json(connectors);
     })
 );

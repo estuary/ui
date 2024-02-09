@@ -4,6 +4,7 @@ import { server } from 'test/server/test-server';
 vi.mock('zustand');
 vi.mock('context/Client');
 vi.mock('context/User');
+vi.mock('context/SWR');
 
 beforeAll(() => {
     server.listen({ onUnhandledRequest: 'error' });
