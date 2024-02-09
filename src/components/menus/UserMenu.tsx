@@ -25,6 +25,12 @@ const UserMenu = ({ iconColor }: Props) => {
     const supabaseClient = useClient();
     const { userName, email, emailVerified, avatar } = useUserDetails();
 
+    console.log('process.env.VITEST', process.env.VITEST);
+    console.log('process.env.mode', import.meta.env.PROD);
+    console.log('process.env', import.meta.env);
+    console.log('supabaseClient', supabaseClient);
+    console.log('UserMenu', { userName, email, emailVerified, avatar });
+
     const handlers = {
         logout: async () => {
             await supabaseClient.auth.signOut();
