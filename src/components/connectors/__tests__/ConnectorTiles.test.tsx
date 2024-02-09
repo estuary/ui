@@ -1,9 +1,10 @@
-import { render } from 'test/test-utils';
+import { render } from '@testing-library/react';
+import { renderOps } from 'test/test-utils';
 import ConnectorTiles from '../ConnectorTiles';
 
 describe('Connector Tiles', () => {
     it('should display the connector details', async () => {
-        const rendered = render(<ConnectorTiles />);
+        const rendered = render(<ConnectorTiles />, renderOps);
 
         // TODO (testing|expect)
         //      need to get the vitest `expect` wired up to handle matchers from other

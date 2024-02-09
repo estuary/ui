@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
-import { render, RenderOptions } from 'test/test-utils';
 import ContentProvider from 'context/Content';
 import IconoirProvider from 'context/Iconoir';
 import ThemeProvider from 'context/Theme';
 import { BrowserRouter } from 'react-router-dom';
+import { RenderOptions } from '@testing-library/react';
 
-const AllTheProviders = ({ children }: { children: ReactElement }) => {
+export const AllTheProviders = ({ children }: { children: ReactElement }) => {
     return (
         <ContentProvider>
             <ThemeProvider>
@@ -17,8 +17,6 @@ const AllTheProviders = ({ children }: { children: ReactElement }) => {
     );
 };
 
-const customRender = (ui: ReactElement, options?: RenderOptions): any =>
-    render(ui, { wrapper: AllTheProviders, ...options });
-
-export * from '@testing-library/react';
-export { customRender as render };
+export const renderOps: RenderOptions = {
+    wrapper: AllTheProviders,
+};

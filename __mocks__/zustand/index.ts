@@ -1,8 +1,6 @@
 import { act } from '@testing-library/react';
 import * as zustand from 'zustand';
 
-console.log('setting up zustand mocking');
-
 const { create: actualCreate, createStore: actualCreateStore } =
     await vi.importActual<typeof zustand>('zustand');
 
@@ -10,8 +8,6 @@ const { create: actualCreate, createStore: actualCreateStore } =
 const storeResetFns = new Set<() => void>();
 
 const createUncurried = <T>(stateCreator: zustand.StateCreator<T>) => {
-    console.log('createUncurried', stateCreator);
-
     const store = actualCreate(stateCreator);
     const initialState = store.getInitialState();
     storeResetFns.add(() => {
@@ -22,8 +18,6 @@ const createUncurried = <T>(stateCreator: zustand.StateCreator<T>) => {
 
 // when creating a store, we get its initial state, create a reset function and add it in the set
 const create = (<T>(stateCreator: zustand.StateCreator<T>) => {
-    console.log('zustand create mock', stateCreator);
-
     // to support curried version of create
     return typeof stateCreator === 'function'
         ? createUncurried(stateCreator)
@@ -31,8 +25,6 @@ const create = (<T>(stateCreator: zustand.StateCreator<T>) => {
 }) as typeof zustand.create;
 
 const createStoreUncurried = <T>(stateCreator: zustand.StateCreator<T>) => {
-    console.log('createStoreUncurried', stateCreator);
-
     const store = actualCreateStore(stateCreator);
     const initialState = store.getInitialState();
     storeResetFns.add(() => {
@@ -43,8 +35,6 @@ const createStoreUncurried = <T>(stateCreator: zustand.StateCreator<T>) => {
 
 // when creating a store, we get its initial state, create a reset function and add it in the set
 const createStore = (<T>(stateCreator: zustand.StateCreator<T>) => {
-    console.log('zustand createStore mock');
-
     // to support curried version of createStore
     return typeof stateCreator === 'function'
         ? createStoreUncurried(stateCreator)

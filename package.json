@@ -24,6 +24,7 @@
         "preview": "vite preview",
         "start": "npm run licenses && vite",
         "test": "vitest",
+        "test:debug": "vitest --inspect-brk --no-file-parallelism",
         "test:ui": "vitest --ui",
         "typecheck": "tsc",
         "installDataPlane": "npm install 'https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main'",

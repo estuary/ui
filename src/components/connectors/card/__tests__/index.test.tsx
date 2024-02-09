@@ -1,4 +1,5 @@
-import { render } from 'test/test-utils';
+import { render } from '@testing-library/react';
+import { renderOps } from 'test/test-utils';
 import ConnectorCard from '..';
 
 describe('Connector Card', () => {
@@ -8,7 +9,8 @@ describe('Connector Card', () => {
 
     it('should display the connector details', () => {
         const rendered = render(
-            <ConnectorCard logo={logo} details={details} title={title} />
+            <ConnectorCard logo={logo} details={details} title={title} />,
+            renderOps
         );
         expect(rendered.baseElement).toMatchSnapshot();
     });
