@@ -1,5 +1,5 @@
+import { act } from '@testing-library/react';
 import * as zustand from 'zustand';
-import { act } from 'test/test-utils';
 
 console.log('setting up zustand mocking');
 
