@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { render, RenderOptions } from '@testing-library/react';
+import { render, RenderOptions } from 'test/test-utils';
 import ContentProvider from 'context/Content';
 import IconoirProvider from 'context/Iconoir';
 import ThemeProvider from 'context/Theme';

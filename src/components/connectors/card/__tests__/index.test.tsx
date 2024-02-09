@@ -1,5 +1,4 @@
 import { render } from 'test/test-utils';
-import { describe, it, expect } from 'vitest';
 import ConnectorCard from '..';
 
 describe('Connector Card', () => {

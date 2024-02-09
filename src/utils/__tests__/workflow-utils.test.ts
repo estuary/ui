@@ -1,5 +1,4 @@
 import { getBindingIndex } from 'utils/workflow-utils';
-import { describe, expect, test } from 'vitest';
 
 const defaultResponse = -1;
 const foundName = 'acme/found';

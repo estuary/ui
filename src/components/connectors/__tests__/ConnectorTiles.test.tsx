@@ -1,5 +1,4 @@
 import { render } from 'test/test-utils';
-import { describe, expect, it } from 'vitest';
 import ConnectorTiles from '../ConnectorTiles';
 
 describe('Connector Tiles', () => {
