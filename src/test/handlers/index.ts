@@ -8,6 +8,7 @@ const handlers: RequestHandler[] = [];
 // We don't want to mock all this by hand. Eventually we want to automate that
 // Also we don't want one massive file so we'll want to break this stuff up somehow.
 const API_URL_CONNECTORS = `${SUPABASE_URL}/rest/v1/connectors`;
+
 const connectors = [
     {
         id: '00:00:00:00:00:00:00:00',
