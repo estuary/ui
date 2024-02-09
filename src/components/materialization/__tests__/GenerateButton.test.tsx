@@ -3,7 +3,7 @@ import { AuthenticatedOnlyContext } from 'context/Authenticated';
 import { EntityContextProvider } from 'context/EntityContext';
 import { renderOps } from 'test/test-utils';
 import { Entity } from 'types';
-import MaterializeGenerateButton from '../GenerateButton';
+import MaterializeGenerateButton from 'components/materialization/GenerateButton';
 
 const renderComponent = (entityType: Entity) => {
     return render(

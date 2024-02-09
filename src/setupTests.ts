@@ -2,9 +2,7 @@ import { cleanup } from '@testing-library/react';
 import { server } from 'test/server/test-server';
 
 vi.mock('zustand');
-vi.mock('context/Client');
-vi.mock('context/User');
-vi.mock('context/SWR');
+vi.mock('context/Router/RequireAuth');
 
 beforeAll(() => {
     server.listen({ onUnhandledRequest: 'error' });

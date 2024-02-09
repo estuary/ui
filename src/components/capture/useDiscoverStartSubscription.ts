@@ -4,7 +4,7 @@ import {
 } from 'components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
-import { useClient } from 'hooks/supabase-swr';
+import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback } from 'react';
 import { logRocketEvent } from 'services/shared';

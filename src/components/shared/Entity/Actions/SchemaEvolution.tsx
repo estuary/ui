@@ -12,7 +12,7 @@ import {
 import { buttonSx } from 'components/shared/Entity/Header';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { useClient } from 'hooks/supabase-swr';
+import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback } from 'react';
 import { FormattedMessage } from 'react-intl';

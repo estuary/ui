@@ -2,7 +2,7 @@ import { Box, Stack } from '@mui/material';
 import { Provider } from '@supabase/supabase-js';
 import { unauthenticatedRoutes } from 'app/routes';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { useClient } from 'hooks/supabase-swr';
+import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useLoginRedirectPath from 'hooks/searchParams/useLoginRedirectPath';
 import { useSnackbar } from 'notistack';
 import GoogleButton from 'react-google-button';
