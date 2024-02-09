@@ -1,406 +1,215 @@
-import {
-    BindingsEditorState,
-    FullSource,
-    FullSourceDictionary,
-} from 'components/editor/Bindings/Store/types';
-import { useZustandStore } from 'context/Zustand/provider';
-import { BindingsEditorStoreNames } from 'stores/names';
+import { FullSourceDictionary } from 'components/editor/Bindings/Store/types';
+import { useBindingsEditorStore } from './create';
 
-// Selector Hooks
 export const useBindingsEditorStore_collectionData = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['collectionData']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.collectionData);
+    return useBindingsEditorStore((state) => state.collectionData);
 };
 
 export const useBindingsEditorStore_setCollectionData = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['setCollectionData']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.setCollectionData);
+    return useBindingsEditorStore((state) => state.setCollectionData);
 };
 
 export const useBindingsEditorStore_collectionInitializationAlert = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['collectionInitializationAlert']
-    >(
-        BindingsEditorStoreNames.GENERAL,
+    return useBindingsEditorStore(
         (state) => state.collectionInitializationAlert
     );
 };
 
 export const useBindingsEditorStore_setCollectionInitializationAlert = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['setCollectionInitializationAlert']
-    >(
-        BindingsEditorStoreNames.GENERAL,
+    return useBindingsEditorStore(
         (state) => state.setCollectionInitializationAlert
     );
 };
 
 export const useBindingsEditorStore_schemaInferenceDisabled = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['schemaInferenceDisabled']
-    >(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => state.schemaInferenceDisabled
-    );
+    return useBindingsEditorStore((state) => state.schemaInferenceDisabled);
 };
 
 export const useBindingsEditorStore_setSchemaInferenceDisabled = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['setSchemaInferenceDisabled']
-    >(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => state.setSchemaInferenceDisabled
-    );
+    return useBindingsEditorStore((state) => state.setSchemaInferenceDisabled);
 };
 
 export const useBindingsEditorStore_inferredSpec = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['inferredSpec']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.inferredSpec);
+    return useBindingsEditorStore((state) => state.inferredSpec);
 };
 
 export const useBindingsEditorStore_setInferredSpec = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['setInferredSpec']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.setInferredSpec);
+    return useBindingsEditorStore((state) => state.setInferredSpec);
 };
 
 export const useBindingsEditorStore_documentsRead = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['documentsRead']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.documentsRead);
+    return useBindingsEditorStore((state) => state.documentsRead);
 };
 
 export const useBindingsEditorStore_setDocumentsRead = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['setDocumentsRead']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.setDocumentsRead);
+    return useBindingsEditorStore((state) => state.setDocumentsRead);
 };
 
 export const useBindingsEditorStore_loadingInferredSchema = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['loadingInferredSchema']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.loadingInferredSchema);
+    return useBindingsEditorStore((state) => state.loadingInferredSchema);
 };
 
 export const useBindingsEditorStore_setLoadingInferredSchema = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['setLoadingInferredSchema']
-    >(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => state.setLoadingInferredSchema
-    );
+    return useBindingsEditorStore((state) => state.setLoadingInferredSchema);
 };
 
 export const useBindingsEditorStore_inferredSchemaApplicationErrored = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['inferredSchemaApplicationErrored']
-    >(
-        BindingsEditorStoreNames.GENERAL,
+    return useBindingsEditorStore(
         (state) => state.inferredSchemaApplicationErrored
     );
 };
 
 export const useBindingsEditorStore_setInferredSchemaApplicationErrored =
     () => {
-        return useZustandStore<
-            BindingsEditorState,
-            BindingsEditorState['setInferredSchemaApplicationErrored']
-        >(
-            BindingsEditorStoreNames.GENERAL,
+        return useBindingsEditorStore(
             (state) => state.setInferredSchemaApplicationErrored
         );
     };
 
 export const useBindingsEditorStore_applyInferredSchema = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['applyInferredSchema']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.applyInferredSchema);
+    return useBindingsEditorStore((state) => state.applyInferredSchema);
 };
 
 export const useBindingsEditorStore_updateSchema = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['updateSchema']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.updateSchema);
+    return useBindingsEditorStore((state) => state.updateSchema);
 };
 
 export const useBindingsEditorStore_schemaUpdated = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['schemaUpdated']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.schemaUpdated);
+    return useBindingsEditorStore((state) => state.schemaUpdated);
 };
 
 export const useBindingsEditorStore_setSchemaUpdated = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['setSchemaUpdated']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.setSchemaUpdated);
+    return useBindingsEditorStore((state) => state.setSchemaUpdated);
 };
 
 export const useBindingsEditorStore_schemaUpdateErrored = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['schemaUpdateErrored']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.schemaUpdateErrored);
+    return useBindingsEditorStore((state) => state.schemaUpdateErrored);
 };
 
 export const useBindingsEditorStore_setSchemaUpdateErrored = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['setSchemaUpdateErrored']
-    >(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => state.setSchemaUpdateErrored
-    );
+    return useBindingsEditorStore((state) => state.setSchemaUpdateErrored);
 };
 
 export const useBindingsEditorStore_incompatibleCollections = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['incompatibleCollections']
-    >(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => state.incompatibleCollections
-    );
+    return useBindingsEditorStore((state) => state.incompatibleCollections);
 };
 
 export const useBindingsEditorStore_hasIncompatibleCollections = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['hasIncompatibleCollections']
-    >(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => state.hasIncompatibleCollections
-    );
+    return useBindingsEditorStore((state) => state.hasIncompatibleCollections);
 };
 
 export const useBindingsEditorStore_setIncompatibleCollections = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['setIncompatibleCollections']
-    >(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => state.setIncompatibleCollections
-    );
+    return useBindingsEditorStore((state) => state.setIncompatibleCollections);
 };
 
 export const useBindingsEditorStore_editModeEnabled = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['editModeEnabled']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.editModeEnabled);
+    return useBindingsEditorStore((state) => state.editModeEnabled);
 };
 
 export const useBindingsEditorStore_setEditModeEnabled = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['setEditModeEnabled']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.setEditModeEnabled);
+    return useBindingsEditorStore((state) => state.setEditModeEnabled);
 };
 
 export const useBindingsEditorStore_inferSchemaResponse = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['inferSchemaResponse']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.inferSchemaResponse);
+    return useBindingsEditorStore((state) => state.inferSchemaResponse);
 };
 
 export const useBindingsEditorStore_inferSchemaResponse_Keys = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['inferSchemaResponse_Keys']
-    >(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => state.inferSchemaResponse_Keys
-    );
+    return useBindingsEditorStore((state) => state.inferSchemaResponse_Keys);
 };
 
 export const useBindingsEditorStore_inferSchemaResponseDoneProcessing = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['inferSchemaResponseDoneProcessing']
-    >(
-        BindingsEditorStoreNames.GENERAL,
+    return useBindingsEditorStore(
         (state) => state.inferSchemaResponseDoneProcessing
     );
 };
 
 export const useBindingsEditorStore_inferSchemaResponseEmpty = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['inferSchemaResponseEmpty']
-    >(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => state.inferSchemaResponseEmpty
-    );
+    return useBindingsEditorStore((state) => state.inferSchemaResponseEmpty);
 };
 
 export const useBindingsEditorStore_inferSchemaResponseError = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['inferSchemaResponseError']
-    >(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => state.inferSchemaResponseError
-    );
+    return useBindingsEditorStore((state) => state.inferSchemaResponseError);
 };
 
 export const useBindingsEditorStore_populateInferSchemaResponse = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['populateInferSchemaResponse']
-    >(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => state.populateInferSchemaResponse
-    );
+    return useBindingsEditorStore((state) => state.populateInferSchemaResponse);
 };
 
 export const useBindingsEditorStore_recommendFields = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['recommendFields']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.recommendFields);
+    return useBindingsEditorStore((state) => state.recommendFields);
 };
 
 export const useBindingsEditorStore_setRecommendFields = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['setRecommendFields']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.setRecommendFields);
+    return useBindingsEditorStore((state) => state.setRecommendFields);
 };
 
 export const useBindingsEditorStore_selections = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['selections']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.selections);
+    return useBindingsEditorStore((state) => state.selections);
 };
 
 export const useBindingsEditorStore_initializeSelections = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['initializeSelections']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.initializeSelections);
+    return useBindingsEditorStore((state) => state.initializeSelections);
 };
 
 export const useBindingsEditorStore_setSingleSelection = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['setSingleSelection']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.setSingleSelection);
+    return useBindingsEditorStore((state) => state.setSingleSelection);
 };
 
 export const useBindingsEditorStore_selectionSaving = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['selectionSaving']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.selectionSaving);
+    return useBindingsEditorStore((state) => state.selectionSaving);
 };
 
 export const useBindingsEditorStore_setSelectionSaving = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['setSelectionSaving']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.setSelectionSaving);
+    return useBindingsEditorStore((state) => state.setSelectionSaving);
 };
 
 export const useBindingsEditorStore_fullSourceConfigs = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['fullSourceConfigs']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.fullSourceConfigs);
+    return useBindingsEditorStore((state) => state.fullSourceConfigs);
 };
 
 export const useBindingsEditorStore_fullSourceErrorsExist = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['fullSourceErrorsExist']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.fullSourceErrorsExist);
+    return useBindingsEditorStore((state) => state.fullSourceErrorsExist);
 };
 
 export const useBindingsEditorStore_prefillFullSourceConfigs = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['prefillFullSourceConfigs']
-    >(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => state.prefillFullSourceConfigs
-    );
+    return useBindingsEditorStore((state) => state.prefillFullSourceConfigs);
 };
 
 export const useBindingsEditorStore_fullSourceOfCollection = (
     collection: any
 ) => {
-    return useZustandStore<BindingsEditorState, FullSource | null | undefined>(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => {
-            if (!collection) {
-                return null;
-            }
-
-            return state.fullSourceConfigs[collection]?.data;
+    return useBindingsEditorStore((state) => {
+        if (!collection) {
+            return null;
         }
-    );
+
+        return state.fullSourceConfigs[collection]?.data;
+    });
 };
 
 export const useBindingsEditorStore_fullSourceOfCollectionProperty = (
     collection: any,
     property: keyof FullSourceDictionary
 ) => {
-    return useZustandStore<BindingsEditorState, any>(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => {
-            if (!collection) {
-                return null;
-            }
-
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            return state.fullSourceConfigs[collection]?.[property];
+    return useBindingsEditorStore((state) => {
+        if (!collection) {
+            return null;
         }
-    );
+
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        return state.fullSourceConfigs[collection]?.[property];
+    });
 };
 
 export const useBindingsEditorStore_updateFullSourceConfig = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['updateFullSourceConfig']
-    >(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => state.updateFullSourceConfig
-    );
+    return useBindingsEditorStore((state) => state.updateFullSourceConfig);
 };
 
 export const useBindingsEditorStore_removeFullSourceConfig = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['removeFullSourceConfig']
-    >(
-        BindingsEditorStoreNames.GENERAL,
-        (state) => state.removeFullSourceConfig
-    );
+    return useBindingsEditorStore((state) => state.removeFullSourceConfig);
 };
 
 export const useBindingsEditorStore_resetState = () => {
-    return useZustandStore<
-        BindingsEditorState,
-        BindingsEditorState['resetState']
-    >(BindingsEditorStoreNames.GENERAL, (state) => state.resetState);
+    return useBindingsEditorStore((state) => state.resetState);
 };
