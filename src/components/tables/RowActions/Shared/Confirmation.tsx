@@ -20,41 +20,29 @@ function RowActionConfirmation({
     selectableTableStoreName,
     settings,
 }: RowActionConfirmationProps) {
-    if (settings && settings.length > 0 && selectableTableStoreName) {
-        return (
-            <>
-                {message}
-                <List>
-                    {selected.map((value: string) => (
-                        <NestedListItem
-                            key={`list-item-${value}`}
-                            catalogName={value}
-                            selectableTableStoreName={selectableTableStoreName}
-                            settings={settings}
-                        />
-                    ))}
-                </List>
-            </>
-        );
-    }
+    const renderListItems =
+        settings && settings.length > 0 && selectableTableStoreName
+            ? (value: string) => (
+                  <NestedListItem
+                      key={`list-item-${value}`}
+                      catalogName={value}
+                      selectableTableStoreName={selectableTableStoreName}
+                      settings={settings}
+                  />
+              )
+            : (value: string) => (
+                  <ListItem key={`confirmation-selected-items-${value}`}>
+                      <Typography component="span" sx={{ fontWeight: 500 }}>
+                          {value}
+                      </Typography>
+                  </ListItem>
+              );
 
     return (
         <>
             {message}
-            <List>
-                {selected.map((value: string) => {
-                    return (
-                        <ListItem key={`confirmation-selected-items-${value}`}>
-                            <Typography
-                                component="span"
-                                sx={{ fontWeight: 500 }}
-                            >
-                                {value}
-                            </Typography>
-                        </ListItem>
-                    );
-                })}
-            </List>
+
+            <List>{selected.map(renderListItems)}</List>
         </>
     );
 }
