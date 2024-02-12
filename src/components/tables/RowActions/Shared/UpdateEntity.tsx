@@ -1,5 +1,8 @@
 import { createEntityDraft } from 'api/drafts';
-import { createDraftSpec } from 'api/draftSpecs';
+import {
+    createDraftSpec,
+    draftCollectionsEligibleForDeletion,
+} from 'api/draftSpecs';
 import { CaptureQuery } from 'api/liveSpecsExt';
 import { createPublication } from 'api/publications';
 import AlertBox from 'components/shared/AlertBox';
@@ -23,7 +26,6 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { Entity } from 'types';
-import { hasLength } from 'utils/misc-utils';
 
 export interface UpdateEntityProps {
     entity: CaptureQuery;
@@ -149,13 +151,17 @@ function UpdateEntity({
 
             if (
                 deleteCollections &&
-                hasLength(actionSettings.deleteAssociatedCollections)
+                actionSettings.deleteAssociatedCollections?.includes(entityName)
             ) {
-                console.log(
-                    'DELETING COLLECTIONS',
-                    actionSettings.deleteAssociatedCollections
-                );
-                // TODO (delete-capture-collections): Integrate SQL function here.
+                const collectionsDraftSpecResponse =
+                    await draftCollectionsEligibleForDeletion(
+                        targetEntity.id,
+                        newDraftId
+                    );
+
+                if (collectionsDraftSpecResponse.error) {
+                    return failed(collectionsDraftSpecResponse);
+                }
             }
 
             // Try to publish the changes

@@ -1,14 +1,18 @@
-import { PostgrestResponse } from '@supabase/postgrest-js';
+import {
+    PostgrestResponse,
+    PostgrestSingleResponse,
+} from '@supabase/postgrest-js';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import pLimit from 'p-limit';
 import {
+    RPCS,
+    TABLES,
     deleteSupabase,
     handleFailure,
     handleSuccess,
     insertSupabase,
     supabaseClient,
     supabaseRetry,
-    TABLES,
     updateSupabase,
 } from 'services/supabase';
 import { Entity } from 'types';
@@ -230,4 +234,20 @@ export const getDraftSpecsByDraftId = async (
     ).then(handleSuccess<DraftSpecsExtQuery_ByDraftId[]>, handleFailure);
 
     return data;
+};
+
+export const draftCollectionsEligibleForDeletion = async (
+    live_spec_id: string,
+    draft_id: string
+) => {
+    return supabaseRetry<PostgrestSingleResponse<void>>(
+        () =>
+            supabaseClient
+                .rpc(RPCS.DRAFT_COLLECTIONS_ELIGIBLE_FOR_DELETION, {
+                    live_spec_id,
+                    draft_id,
+                })
+                .single(),
+        'draftEligibleCollections'
+    );
 };
