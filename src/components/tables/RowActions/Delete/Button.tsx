@@ -15,25 +15,24 @@ interface Props {
 function DeleteButton({ selectableTableStoreName }: Props) {
     const generator = () => null;
 
-    const settings: SettingMetadata[] | undefined =
-        selectableTableStoreName === SelectTableStoreNames.CAPTURE
-            ? [
-                  {
-                      messageId: 'capturesTable.delete.removeCollectionsOption',
-                      setting: 'deleteAssociatedCollections',
-                  },
-              ]
-            : undefined;
+    const isCapture =
+        selectableTableStoreName === SelectTableStoreNames.CAPTURE;
+
+    const settings: SettingMetadata[] | undefined = isCapture
+        ? [
+              {
+                  messageId: 'capturesTable.delete.removeCollectionsOption',
+                  setting: 'deleteAssociatedCollections',
+              },
+          ]
+        : undefined;
 
     return (
         <RowActionButton
             confirmationMessage={
                 <DeleteConfirmation
                     messageId={
-                        selectableTableStoreName ===
-                        SelectTableStoreNames.CAPTURE
-                            ? 'capturesTable.delete.confirm'
-                            : null
+                        isCapture ? 'capturesTable.delete.confirm' : null
                     }
                 />
             }
@@ -41,6 +40,7 @@ function DeleteButton({ selectableTableStoreName }: Props) {
             renderProgress={(item, index, onFinish) => (
                 <UpdateEntity
                     key={`Item-delete-${index}`}
+                    deleteCollections={isCapture}
                     entity={item}
                     onFinish={onFinish}
                     successMessageID="common.deleted"

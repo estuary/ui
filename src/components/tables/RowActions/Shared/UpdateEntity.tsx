@@ -23,6 +23,7 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { Entity } from 'types';
+import { hasLength } from 'utils/misc-utils';
 
 export interface UpdateEntityProps {
     entity: CaptureQuery;
@@ -39,12 +40,14 @@ export interface UpdateEntityProps {
         | SelectTableStoreNames.COLLECTION
         | SelectTableStoreNames.COLLECTION_SELECTOR
         | SelectTableStoreNames.MATERIALIZATION;
+    deleteCollections?: boolean;
     validateNewSpec?: boolean;
 }
 
 function UpdateEntity({
     generateNewSpec,
     generateNewSpecType,
+    deleteCollections,
     entity,
     onFinish,
     runningMessageID,
@@ -66,6 +69,11 @@ function UpdateEntity({
         selectableStoreName,
         selectableTableStoreSelectors.successfulTransformations.increment
     );
+
+    const actionSettings = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['actionSettings']
+    >(selectableStoreName, selectableTableStoreSelectors.actionSettings.get);
 
     const liveSpecsResponse = useLiveSpecsExtWithSpec(
         entity.id,
@@ -137,6 +145,17 @@ function UpdateEntity({
             );
             if (draftSpecsResponse.error) {
                 return failed(draftSpecsResponse);
+            }
+
+            if (
+                deleteCollections &&
+                hasLength(actionSettings.deleteAssociatedCollections)
+            ) {
+                console.log(
+                    'DELETING COLLECTIONS',
+                    actionSettings.deleteAssociatedCollections
+                );
+                // TODO (delete-capture-collections): Integrate SQL function here.
             }
 
             // Try to publish the changes
