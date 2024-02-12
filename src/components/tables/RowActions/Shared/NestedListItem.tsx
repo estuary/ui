@@ -15,13 +15,14 @@ import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
     SelectableTableStore,
+    TableActionSettings,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
 
 export interface SettingMetadata {
     messageId: string;
-    setting: keyof SelectableTableStore['actionSettings'];
+    setting: keyof TableActionSettings;
 }
 
 interface Props {

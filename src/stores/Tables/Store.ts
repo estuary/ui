@@ -37,6 +37,10 @@ export interface StatsSchema {
 
 export type StatsResponse = StatsSchema | null;
 
+export interface TableActionSettings {
+    deleteAssociatedCollections?: string[];
+}
+
 // TODO (typing) Need to let us pass in a type for the selected value type
 export interface SelectableTableStore extends StoreWithHydration {
     rows: Map<string, any>;
@@ -74,7 +78,7 @@ export interface SelectableTableStore extends StoreWithHydration {
     statsFilter: StatsFilter;
     setStatsFilter: (val: SelectableTableStore['statsFilter']) => void;
 
-    actionSettings: { deleteAssociatedCollections?: string[] };
+    actionSettings: TableActionSettings;
     setActionSettings: (
         setting: keyof SelectableTableStore['actionSettings'],
         values: string[],
