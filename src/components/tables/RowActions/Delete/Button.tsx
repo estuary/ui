@@ -1,7 +1,9 @@
 import DeleteConfirmation from 'components/tables/RowActions/Delete/Confirmation';
 import RowActionButton from 'components/tables/RowActions/Shared/Button';
 import UpdateEntity from 'components/tables/RowActions/Shared/UpdateEntity';
+import { ReactNode } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
+import Settings from './Settings';
 
 interface Props {
     selectableTableStoreName:
@@ -12,11 +14,18 @@ interface Props {
 }
 
 function DeleteButton({ selectableTableStoreName }: Props) {
+    const nestedItem: ReactNode | undefined =
+        selectableTableStoreName === SelectTableStoreNames.CAPTURE ? (
+            <Settings />
+        ) : undefined;
+
     const generator = () => null;
 
     return (
         <RowActionButton
             confirmationMessage={<DeleteConfirmation />}
+            messageID="cta.delete"
+            nestedItem={nestedItem}
             renderProgress={(item, index, onFinish) => (
                 <UpdateEntity
                     key={`Item-delete-${index}`}
@@ -29,7 +38,6 @@ function DeleteButton({ selectableTableStoreName }: Props) {
                     selectableStoreName={selectableTableStoreName}
                 />
             )}
-            messageID="cta.delete"
             selectableTableStoreName={selectableTableStoreName}
         />
     );

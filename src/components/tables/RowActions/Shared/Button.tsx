@@ -12,25 +12,27 @@ import {
 } from 'stores/Tables/Store';
 
 interface Props {
-    confirmationMessage?: ReactNode;
+    messageID: string;
     renderProgress: (
         item: any,
         index: number,
         onFinish: (response: any) => void
     ) => ReactNode;
-    messageID: string;
     selectableTableStoreName:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
         | SelectTableStoreNames.COLLECTION_SELECTOR
         | SelectTableStoreNames.MATERIALIZATION;
+    confirmationMessage?: ReactNode;
+    nestedItem?: ReactNode;
 }
 
 function RowActionButton({
-    confirmationMessage,
     messageID,
     renderProgress,
     selectableTableStoreName,
+    confirmationMessage,
+    nestedItem,
 }: Props) {
     const confirmationModalContext = useConfirmationModalContext();
 
@@ -71,6 +73,7 @@ function RowActionButton({
                             <RowActionConfirmation
                                 selected={selectedNames}
                                 message={confirmationMessage}
+                                nestedItem={nestedItem}
                             />
                         ),
                     })

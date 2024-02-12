@@ -1,15 +1,35 @@
 import { List, ListItem, Typography } from '@mui/material';
 import { ReactNode } from 'react';
+import NestedListItem from './NestedListItem';
 
 interface RowActionConfirmationProps {
     message: ReactNode;
     selected: any; //SelectableTableStore['selected'];
+    nestedItem?: ReactNode;
 }
 
 function RowActionConfirmation({
     message,
     selected,
+    nestedItem,
 }: RowActionConfirmationProps) {
+    if (nestedItem) {
+        return (
+            <>
+                {message}
+                <List>
+                    {selected.map((value: string) => (
+                        <NestedListItem
+                            key={`list-item-${value}`}
+                            catalogName={value}
+                            nestedItem={nestedItem}
+                        />
+                    ))}
+                </List>
+            </>
+        );
+    }
+
     return (
         <>
             {message}

@@ -624,6 +624,7 @@ const Captures: ResolvedIntlConfig['messages'] = {
     'capturesTable.filterLabel': `Filter captures`,
     'capturesTable.disableEnable.confirm': `All items listed below will be {setting}.`,
     'capturesTable.delete.confirm': `All items listed below will be deleted forever. Please review before continuing.`,
+    'capturesTable.delete.removeCollectionsOption': `Delete all collections associated with this capture.`,
     'capturesTable.ctaGroup.aria': `capture table available actions`,
     'capturesTable.cta.materialize': `${CTAs['cta.materialize']} ${CommonMessages['terms.collections']}`,
     'captures.message1': `Click "New Capture" to get started.`,
