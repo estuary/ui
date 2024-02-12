@@ -1,19 +1,26 @@
 import { List, ListItem, Typography } from '@mui/material';
 import { ReactNode } from 'react';
-import NestedListItem from './NestedListItem';
+import { SelectTableStoreNames } from 'stores/names';
+import NestedListItem, { SettingMetadata } from './NestedListItem';
 
 interface RowActionConfirmationProps {
     message: ReactNode;
     selected: any; //SelectableTableStore['selected'];
-    nestedItem?: ReactNode;
+    selectableTableStoreName?:
+        | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.COLLECTION
+        | SelectTableStoreNames.COLLECTION_SELECTOR
+        | SelectTableStoreNames.MATERIALIZATION;
+    settings?: SettingMetadata[];
 }
 
 function RowActionConfirmation({
     message,
     selected,
-    nestedItem,
+    selectableTableStoreName,
+    settings,
 }: RowActionConfirmationProps) {
-    if (nestedItem) {
+    if (settings && settings.length > 0 && selectableTableStoreName) {
         return (
             <>
                 {message}
@@ -22,7 +29,8 @@ function RowActionConfirmation({
                         <NestedListItem
                             key={`list-item-${value}`}
                             catalogName={value}
-                            nestedItem={nestedItem}
+                            selectableTableStoreName={selectableTableStoreName}
+                            settings={settings}
                         />
                     ))}
                 </List>

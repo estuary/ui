@@ -2,23 +2,23 @@ import {
     PostgrestFilterBuilder,
     PostgrestResponse,
 } from '@supabase/postgrest-js';
-import { getStatsByName, StatsFilter } from 'api/stats';
+import { StatsFilter, getStatsByName } from 'api/stats';
 import { EVERYTHING } from 'components/collection/Selector/Table/shared';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { flatMap } from 'lodash';
-import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
+import { FAILED_TO_FETCH, checkErrorMessage } from 'services/shared';
 import { supabaseRetry } from 'services/supabase';
 import {
     AsyncOperationProps,
+    StoreWithHydration,
     getAsyncDefault,
     getInitialHydrationData,
     getStoreWithHydrationSettings,
-    StoreWithHydration,
 } from 'stores/extensions/Hydration';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import { StoreApi, create } from 'zustand';
+import { NamedSet, devtools } from 'zustand/middleware';
 
 export interface StatsSchema {
     [k: string]:
@@ -73,6 +73,14 @@ export interface SelectableTableStore extends StoreWithHydration {
 
     statsFilter: StatsFilter;
     setStatsFilter: (val: SelectableTableStore['statsFilter']) => void;
+
+    actionSettings: { deleteAssociatedCollections?: string[] };
+    setActionSettings: (
+        setting: keyof SelectableTableStore['actionSettings'],
+        values: string[],
+        addOperation: boolean
+    ) => void;
+    resetActionSettings: () => void;
 }
 
 export const initialCreateStates = {
@@ -87,6 +95,7 @@ export const initialCreateStates = {
 
 export const getInitialStateData = (): Pick<
     SelectableTableStore,
+    | 'actionSettings'
     | 'disabledRows'
     | 'query'
     | 'rows'
@@ -97,6 +106,7 @@ export const getInitialStateData = (): Pick<
     | 'successfulTransformations'
 > => {
     return {
+        actionSettings: {},
         disabledRows: [],
         query: getAsyncDefault(),
         rows: initialCreateStates.rows(),
@@ -340,6 +350,35 @@ export const getInitialState = (
             );
         },
 
+        setActionSettings: (setting, values, addOperation) => {
+            set(
+                produce((state: SelectableTableStore) => {
+                    const existingEl = state.actionSettings[setting] ?? [];
+
+                    if (addOperation) {
+                        state.actionSettings[setting] =
+                            existingEl.concat(values);
+                    } else if (existingEl.length > 0) {
+                        state.actionSettings[setting] = existingEl.filter(
+                            (el) => !values.includes(el)
+                        );
+                    }
+                }),
+                false,
+                'Action Settings Set'
+            );
+        },
+
+        resetActionSettings: () => {
+            set(
+                produce((state: SelectableTableStore) => {
+                    state.actionSettings = {};
+                }),
+                false,
+                'Action Settings Reset'
+            );
+        },
+
         resetState: () => {
             set(
                 { ...getInitialStateData(), ...getInitialHydrationData() },
@@ -460,5 +499,10 @@ export const selectableTableStoreSelectors = {
         get: (state: SelectableTableStore) => state.successfulTransformations,
         increment: (state: SelectableTableStore) =>
             state.incrementSuccessfulTransformations,
+    },
+    actionSettings: {
+        get: (state: SelectableTableStore) => state.actionSettings,
+        set: (state: SelectableTableStore) => state.setActionSettings,
+        reset: (state: SelectableTableStore) => state.resetActionSettings,
     },
 };

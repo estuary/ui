@@ -1,20 +1,62 @@
 import {
+    Checkbox,
     Collapse,
+    FormControl,
+    FormControlLabel,
     List,
+    ListItem,
     ListItemButton,
     ListItemText,
     useTheme,
 } from '@mui/material';
+import { useZustandStore } from 'context/Zustand/provider';
 import { Settings } from 'iconoir-react';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
+import { useIntl } from 'react-intl';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'stores/Tables/Store';
+import { SelectTableStoreNames } from 'stores/names';
+
+export interface SettingMetadata {
+    messageId: string;
+    setting: keyof SelectableTableStore['actionSettings'];
+}
 
 interface Props {
     catalogName: string;
-    nestedItem: ReactNode;
+    selectableTableStoreName:
+        | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.COLLECTION
+        | SelectTableStoreNames.COLLECTION_SELECTOR
+        | SelectTableStoreNames.MATERIALIZATION;
+    settings: SettingMetadata[];
 }
 
-function NestedListItem({ catalogName, nestedItem }: Props) {
+function NestedListItem({
+    catalogName,
+    selectableTableStoreName,
+    settings,
+}: Props) {
+    const intl = useIntl();
     const theme = useTheme();
+
+    const actionSettings = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['actionSettings']
+    >(
+        selectableTableStoreName,
+        selectableTableStoreSelectors.actionSettings.get
+    );
+
+    const setActionSettings = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setActionSettings']
+    >(
+        selectableTableStoreName,
+        selectableTableStoreSelectors.actionSettings.set
+    );
 
     const [open, setOpen] = useState<boolean>(false);
 
@@ -73,7 +115,34 @@ function NestedListItem({ catalogName, nestedItem }: Props) {
                 sx={{ width: '100%' }}
             >
                 <List component="div" disablePadding>
-                    {nestedItem}
+                    {settings.map(({ messageId, setting }) => (
+                        <ListItem key={setting} dense sx={{ py: 0, pl: 5 }}>
+                            <FormControl>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={
+                                                actionSettings[
+                                                    setting
+                                                ]?.includes(catalogName) ??
+                                                false
+                                            }
+                                            onChange={(event) => {
+                                                setActionSettings(
+                                                    setting,
+                                                    [catalogName],
+                                                    event.target.checked
+                                                );
+                                            }}
+                                        />
+                                    }
+                                    label={intl.formatMessage({
+                                        id: messageId,
+                                    })}
+                                />
+                            </FormControl>
+                        </ListItem>
+                    ))}
                 </List>
             </Collapse>
         </>

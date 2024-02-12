@@ -1,9 +1,8 @@
 import DeleteConfirmation from 'components/tables/RowActions/Delete/Confirmation';
 import RowActionButton from 'components/tables/RowActions/Shared/Button';
 import UpdateEntity from 'components/tables/RowActions/Shared/UpdateEntity';
-import { ReactNode } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
-import Settings from './Settings';
+import { SettingMetadata } from '../Shared/NestedListItem';
 
 interface Props {
     selectableTableStoreName:
@@ -14,18 +13,31 @@ interface Props {
 }
 
 function DeleteButton({ selectableTableStoreName }: Props) {
-    const nestedItem: ReactNode | undefined =
-        selectableTableStoreName === SelectTableStoreNames.CAPTURE ? (
-            <Settings />
-        ) : undefined;
-
     const generator = () => null;
+
+    const settings: SettingMetadata[] | undefined =
+        selectableTableStoreName === SelectTableStoreNames.CAPTURE
+            ? [
+                  {
+                      messageId: 'capturesTable.delete.removeCollectionsOption',
+                      setting: 'deleteAssociatedCollections',
+                  },
+              ]
+            : undefined;
 
     return (
         <RowActionButton
-            confirmationMessage={<DeleteConfirmation />}
+            confirmationMessage={
+                <DeleteConfirmation
+                    messageId={
+                        selectableTableStoreName ===
+                        SelectTableStoreNames.CAPTURE
+                            ? 'capturesTable.delete.confirm'
+                            : null
+                    }
+                />
+            }
             messageID="cta.delete"
-            nestedItem={nestedItem}
             renderProgress={(item, index, onFinish) => (
                 <UpdateEntity
                     key={`Item-delete-${index}`}
@@ -39,6 +51,7 @@ function DeleteButton({ selectableTableStoreName }: Props) {
                 />
             )}
             selectableTableStoreName={selectableTableStoreName}
+            settings={settings}
         />
     );
 }
