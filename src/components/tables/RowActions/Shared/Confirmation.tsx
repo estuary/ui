@@ -37,7 +37,10 @@ function RowActionConfirmation({
                 {selected.map((value: string) => {
                     return (
                         <ListItem key={`confirmation-selected-items-${value}`}>
-                            <Typography variant="h6" component="span">
+                            <Typography
+                                component="span"
+                                sx={{ fontWeight: 500 }}
+                            >
                                 {value}
                             </Typography>
                         </ListItem>
