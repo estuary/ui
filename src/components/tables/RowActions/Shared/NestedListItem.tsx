@@ -1,4 +1,5 @@
 import {
+    Badge,
     Checkbox,
     Collapse,
     FormControl,
@@ -11,7 +12,7 @@ import {
 } from '@mui/material';
 import { useZustandStore } from 'context/Zustand/provider';
 import { Settings } from 'iconoir-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
     SelectableTableStore,
@@ -65,6 +66,14 @@ function NestedListItem({
         setOpen(!open);
     };
 
+    const settingsApplied = useMemo(
+        () =>
+            settings.some(
+                ({ setting }) => actionSettings[setting]?.includes(catalogName)
+            ),
+        [actionSettings, catalogName, settings]
+    );
+
     return (
         <>
             <ListItemButton
@@ -100,13 +109,28 @@ function NestedListItem({
                     }}
                 />
 
-                <Settings
-                    style={{
-                        color: open
-                            ? theme.palette.primary.main
-                            : theme.palette.text.primary,
+                <Badge
+                    color="primary"
+                    variant="dot"
+                    overlap="circular"
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                    invisible={!settingsApplied}
+                    sx={{
+                        '& .MuiBadge-badge': {
+                            width: 10,
+                            height: 10,
+                            borderRadius: 5,
+                        },
                     }}
-                />
+                >
+                    <Settings
+                        style={{
+                            color: open
+                                ? theme.palette.primary.main
+                                : theme.palette.text.primary,
+                        }}
+                    />
+                </Badge>
             </ListItemButton>
 
             <Collapse
