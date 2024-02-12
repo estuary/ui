@@ -12,11 +12,7 @@ function ConfirmationMessage() {
                     <FormattedMessage id="common.noUnDo" />
                 </Typography>
             }
-        >
-            <Typography component="div">
-                <FormattedMessage id="capturesTable.delete.confirm" />
-            </Typography>
-        </AlertBox>
+        />
     );
 }
 
