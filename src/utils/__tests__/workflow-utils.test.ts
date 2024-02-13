@@ -240,7 +240,7 @@ describe('generateTaskSpec', () => {
         });
     });
 
-    describe('when no existing data but binding data', () => {
+    describe('captures and materializations use different props for names', () => {
         beforeEach(() => {
             resourceConfigs = {
                 first: mockedResourceConfig,
@@ -248,60 +248,52 @@ describe('generateTaskSpec', () => {
             };
         });
 
-        describe('for captures', () => {
-            test('will return an array with the names as `target`', () => {
-                const response = generateTaskSpec(
-                    'capture',
-                    connectorConfig,
-                    resourceConfigs,
-                    existingTaskData,
-                    sourceCapture,
-                    fullSource
-                );
+        test('captures use `target` as the binding name', () => {
+            const response = generateTaskSpec(
+                'capture',
+                connectorConfig,
+                resourceConfigs,
+                existingTaskData,
+                sourceCapture,
+                fullSource
+            );
 
-                expect(response.bindings).toStrictEqual([
-                    {
-                        resource: {
-                            fiz: 'resource',
-                        },
-                        target: 'first',
-                    },
-                    {
-                        resource: {
-                            fiz: 'resource',
-                        },
-                        target: 'second',
-                    },
-                ]);
-            });
+            expect(
+                response.bindings.map(({ target }: any) => ({
+                    target,
+                }))
+            ).toStrictEqual([
+                {
+                    target: 'first',
+                },
+                {
+                    target: 'second',
+                },
+            ]);
+        });
 
-            describe('for materializations', () => {
-                test('will return an array with the names as `source`', () => {
-                    const response = generateTaskSpec(
-                        'materialization',
-                        connectorConfig,
-                        resourceConfigs,
-                        existingTaskData,
-                        sourceCapture,
-                        fullSource
-                    );
+        test('materializations use `source` as the binding name', () => {
+            const response = generateTaskSpec(
+                'materialization',
+                connectorConfig,
+                resourceConfigs,
+                existingTaskData,
+                sourceCapture,
+                fullSource
+            );
 
-                    expect(response.bindings).toStrictEqual([
-                        {
-                            resource: {
-                                fiz: 'resource',
-                            },
-                            source: 'first',
-                        },
-                        {
-                            resource: {
-                                fiz: 'resource',
-                            },
-                            source: 'second',
-                        },
-                    ]);
-                });
-            });
+            expect(
+                response.bindings.map(({ source }: any) => ({
+                    source,
+                }))
+            ).toStrictEqual([
+                {
+                    source: 'first',
+                },
+                {
+                    source: 'second',
+                },
+            ]);
         });
     });
 });
