@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react';
-import { AuthenticatedOnlyContext } from 'context/Authenticated';
 import { EntityContextProvider } from 'context/EntityContext';
 import { renderOps } from 'test/test-utils';
 import { Entity } from 'types';
@@ -7,15 +6,14 @@ import MaterializeGenerateButton from 'components/materialization/GenerateButton
 
 const renderComponent = (entityType: Entity) => {
     return render(
-        <AuthenticatedOnlyContext>
-            <EntityContextProvider value={entityType}>
-                <MaterializeGenerateButton disabled={false} />
-            </EntityContextProvider>
-        </AuthenticatedOnlyContext>,
+        <EntityContextProvider value={entityType}>
+            <MaterializeGenerateButton disabled={false} />
+        </EntityContextProvider>,
         renderOps
     );
 };
 
+// TODO (testing) this does not actually work yet
 describe('MaterializeGenerateButton', () => {
     test('should render', async () => {
         const rendered = renderComponent('materialization');

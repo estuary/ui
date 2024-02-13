@@ -1,4 +1,12 @@
-import { getBindingIndex } from 'utils/workflow-utils';
+import { DraftSpecsExtQuery_ByCatalogName } from 'api/draftSpecs';
+import { FullSourceDictionary } from 'components/editor/Bindings/Store/types';
+import {
+    ResourceConfig,
+    ResourceConfigDictionary,
+} from 'stores/ResourceConfig/types';
+import { generateMockConnectorConfig } from 'test/test-utils';
+import { EntityWithCreateWorkflow } from 'types';
+import { generateTaskSpec, getBindingIndex } from 'utils/workflow-utils';
 
 const defaultResponse = -1;
 const foundName = 'acme/found';
@@ -75,6 +83,74 @@ describe('getBindingIndex', () => {
                     foundName
                 )
             ).toBe(1);
+        });
+    });
+});
+
+// entityType: EntityWithCreateWorkflow,
+// connectorConfig: ConnectorConfig,
+// resourceConfigs: ResourceConfigDictionary | null,
+// existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
+// sourceCapture: string | null,
+// fullSource: FullSourceDictionary | null
+
+describe('generateTaskSpec', () => {
+    let entityType: EntityWithCreateWorkflow,
+        resourceConfigs: ResourceConfigDictionary | null,
+        existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
+        sourceCapture: string | null,
+        fullSource: FullSourceDictionary | null;
+
+    const connectorConfig = generateMockConnectorConfig();
+
+    describe('for captures', () => {
+        entityType = 'capture';
+        describe('when no resource configs are provided', () => {
+            resourceConfigs = {};
+            test('will return an empty array', () => {
+                const response = generateTaskSpec(
+                    entityType,
+                    connectorConfig,
+                    resourceConfigs,
+                    existingTaskData,
+                    sourceCapture,
+                    fullSource
+                );
+                expect(response.bindings).toBe([]);
+            });
+        });
+
+        describe('when resource configs are provided', () => {
+            const mockedResource = {
+                foo: 1,
+                bar: 2,
+            };
+            const mockedResourceConfig: ResourceConfig = {
+                errors: [],
+                data: mockedResource,
+                disable: false,
+                previouslyDisabled: false,
+            };
+            resourceConfigs = {
+                [foundName]: mockedResourceConfig,
+            };
+
+            test('will return an array with the names as targets', () => {
+                const response = generateTaskSpec(
+                    entityType,
+                    connectorConfig,
+                    resourceConfigs,
+                    existingTaskData,
+                    sourceCapture,
+                    fullSource
+                );
+                expect(response.bindings).toBe([
+                    {
+                        resource: mockedResource,
+                        target: foundName,
+                    },
+                ]);
+            });
         });
     });
 });

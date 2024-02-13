@@ -3,8 +3,9 @@ import { BrowserRouter } from 'react-router-dom';
 import { RenderOptions } from '@testing-library/react';
 import AppProviders from 'context';
 import produce from 'immer';
-import { User } from '@supabase/supabase-js';
+import { Session, User } from '@supabase/supabase-js';
 import { mock } from 'vitest-mock-extended';
+import { ConnectorConfig } from '../../flow_deps/flow';
 
 export const generateMockUserMetadata = (username: string) => {
     return produce(mock<User['user_metadata']>(), (draft) => {
@@ -19,7 +20,28 @@ export const generateMockUserMetadata = (username: string) => {
         draft.provider_id = '00000000000000000000_provider';
         draft.sub = '00000000000000000000_sub';
         draft.user_name = username;
+        return draft;
+    });
+};
 
+export const generateMockUser = (username: string) => {
+    return produce(mock<User>(), (draft) => {
+        draft.email = `${username}@example.org`;
+        draft.user_metadata = generateMockUserMetadata(username);
+        return draft;
+    });
+};
+
+export const generateMockSession = (username: string) => {
+    return produce(mock<Session>(), (draft) => {
+        draft.access_token = `${username}___mock_access_token`;
+        draft.user = generateMockUser(username);
+        return draft;
+    });
+};
+
+export const generateMockConnectorConfig = () => {
+    return produce(mock<ConnectorConfig>(), (draft) => {
         return draft;
     });
 };
