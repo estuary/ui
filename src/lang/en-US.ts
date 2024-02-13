@@ -29,7 +29,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.loggedOut': `You have been logged out. Please log back in.`,
     'common.missing': `N/A`,
     'common.none': `none`,
-    'common.noUnDo': `All items will be permanently deleted and this action cannot be undone. Please review the list to continue.`,
+    'common.noUnDo': `This action cannot be undone.`,
     'common.version': `version`,
     'common.tenant': `Prefix`,
     'common.tenant.creationForm': `Name`,
@@ -427,6 +427,8 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.rowSelector.all': `All`,
     'entityTable.rowSelector.none': `None`,
 
+    'entityTable.delete.confirm': `All items will be permanently deleted and this action cannot be undone. Please review the list to continue.`,
+
     'entityTable.edit.aria': `Edit specification of {name}`,
     'entityTable.materialize.aria': `Materialize {name}`,
 
@@ -571,6 +573,7 @@ const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrants.table.accessLinks.label.url': `URL`,
     'accessGrants.table.accessLinks.label.lastUpdated': `Last Updated`,
     'accessGrants.table.accessLinks.label.actions': `Actions`,
+    'accessGrants.table.accessLinks.delete.confirm': `All items will be disabled and this action cannot be undone. Please review the list to continue.`,
 };
 
 const StorageMappings: ResolvedIntlConfig['messages'] = {

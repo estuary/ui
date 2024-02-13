@@ -8,15 +8,11 @@ interface Props {
 
 function DeleteConfirmation({ messageId }: Props) {
     return (
-        <AlertBox
-            severity="warning"
-            short
-            title={
-                <Typography component="div">
-                    <FormattedMessage id="common.noUnDo" />
-                </Typography>
-            }
-        >
+        <AlertBox severity="warning" short>
+            <Typography component="div" sx={{ mb: messageId ? 1 : undefined }}>
+                <FormattedMessage id="entityTable.delete.confirm" />
+            </Typography>
+
             {messageId ? (
                 <Typography component="div">
                     <FormattedMessage id={messageId} />
