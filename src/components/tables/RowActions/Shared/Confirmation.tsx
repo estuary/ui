@@ -24,7 +24,7 @@ function RowActionConfirmation({
         settings && settings.length > 0 && selectableTableStoreName
             ? (value: string) => (
                   <NestedListItem
-                      key={`list-item-${value}`}
+                      key={`confirmation-selected-items-${value}`}
                       catalogName={value}
                       selectableTableStoreName={selectableTableStoreName}
                       settings={settings}
