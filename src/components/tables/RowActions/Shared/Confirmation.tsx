@@ -31,7 +31,10 @@ function RowActionConfirmation({
                   />
               )
             : (value: string) => (
-                  <ListItem key={`confirmation-selected-items-${value}`}>
+                  <ListItem
+                      component="div"
+                      key={`confirmation-selected-items-${value}`}
+                  >
                       <Typography component="span" sx={{ fontWeight: 500 }}>
                           {value}
                       </Typography>
@@ -42,7 +45,7 @@ function RowActionConfirmation({
         <>
             {message}
 
-            <List>{selected.map(renderListItems)}</List>
+            <List component="div">{selected.map(renderListItems)}</List>
         </>
     );
 }
