@@ -5,8 +5,8 @@ import {
     ResourceConfigDictionary,
 } from 'stores/ResourceConfig/types';
 import { generateMockConnectorConfig } from 'test/test-utils';
-import { EntityWithCreateWorkflow } from 'types';
 import { generateTaskSpec, getBindingIndex } from 'utils/workflow-utils';
+import { ConnectorConfig } from '../../../flow_deps/flow';
 
 const defaultResponse = -1;
 const foundName = 'acme/found';
@@ -87,69 +87,105 @@ describe('getBindingIndex', () => {
     });
 });
 
-// entityType: EntityWithCreateWorkflow,
-// connectorConfig: ConnectorConfig,
-// resourceConfigs: ResourceConfigDictionary | null,
-// existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
-// sourceCapture: string | null,
-// fullSource: FullSourceDictionary | null
-
 describe('generateTaskSpec', () => {
-    let entityType: EntityWithCreateWorkflow,
+    let connectorConfig: ConnectorConfig,
         resourceConfigs: ResourceConfigDictionary | null,
         existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
         sourceCapture: string | null,
         fullSource: FullSourceDictionary | null;
 
-    const connectorConfig = generateMockConnectorConfig();
+    beforeEach(() => {
+        connectorConfig = generateMockConnectorConfig();
+        resourceConfigs = null;
+        existingTaskData = null;
+        sourceCapture = null;
+        fullSource = null;
+    });
 
-    describe('for captures', () => {
-        entityType = 'capture';
-        describe('when no resource configs are provided', () => {
-            resourceConfigs = {};
-            test('will return an empty array', () => {
-                const response = generateTaskSpec(
-                    entityType,
-                    connectorConfig,
-                    resourceConfigs,
-                    existingTaskData,
-                    sourceCapture,
-                    fullSource
-                );
-                expect(response.bindings).toBe([]);
-            });
+    describe('when no resource configs are provided', () => {
+        test('will return an empty array', () => {
+            const response = generateTaskSpec(
+                'capture',
+                connectorConfig,
+                {},
+                existingTaskData,
+                sourceCapture,
+                fullSource
+            );
+            expect(response.bindings).toStrictEqual([]);
         });
+    });
 
-        describe('when resource configs are provided', () => {
-            const mockedResource = {
-                foo: 1,
-                bar: 2,
-            };
+    describe('when resource configs are provided', () => {
+        beforeEach(() => {
             const mockedResourceConfig: ResourceConfig = {
                 errors: [],
-                data: mockedResource,
+                data: {
+                    fiz: 'resource',
+                },
                 disable: false,
                 previouslyDisabled: false,
             };
-            resourceConfigs = {
-                [foundName]: mockedResourceConfig,
-            };
 
-            test('will return an array with the names as targets', () => {
+            resourceConfigs = {
+                first: mockedResourceConfig,
+                second: mockedResourceConfig,
+            };
+        });
+
+        describe('for captures', () => {
+            test('will return an array with the names as `target`', () => {
                 const response = generateTaskSpec(
-                    entityType,
+                    'capture',
                     connectorConfig,
                     resourceConfigs,
                     existingTaskData,
                     sourceCapture,
                     fullSource
                 );
-                expect(response.bindings).toBe([
+
+                expect(response.bindings).toStrictEqual([
                     {
-                        resource: mockedResource,
-                        target: foundName,
+                        resource: {
+                            fiz: 'resource',
+                        },
+                        target: 'first',
+                    },
+                    {
+                        resource: {
+                            fiz: 'resource',
+                        },
+                        target: 'second',
                     },
                 ]);
+            });
+
+            describe('for materializations', () => {
+                test('will return an array with the names as `source`', () => {
+                    const response = generateTaskSpec(
+                        'materialization',
+                        connectorConfig,
+                        resourceConfigs,
+                        existingTaskData,
+                        sourceCapture,
+                        fullSource
+                    );
+
+                    expect(response.bindings).toStrictEqual([
+                        {
+                            resource: {
+                                fiz: 'resource',
+                            },
+                            source: 'first',
+                        },
+                        {
+                            resource: {
+                                fiz: 'resource',
+                            },
+                            source: 'second',
+                        },
+                    ]);
+                });
             });
         });
     });
