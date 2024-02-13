@@ -210,13 +210,14 @@ describe('generateTaskSpec', () => {
             };
         });
 
-        test('existing bindings will have their config overwritten', () => {
+        test('existing bindings will have their config overwritten and new ones added', () => {
             const response = generateTaskSpec(
                 'capture',
                 connectorConfig,
                 {
                     'mock/binding/one': mockedResourceConfig,
                     'mock/binding/two': mockedResourceConfig,
+                    'mock/binding/three': mockedResourceConfig,
                 },
                 existingTaskData,
                 sourceCapture,
@@ -236,11 +237,17 @@ describe('generateTaskSpec', () => {
                     },
                     target: 'mock/binding/two',
                 },
+                {
+                    resource: {
+                        fiz: 'resource',
+                    },
+                    target: 'mock/binding/three',
+                },
             ]);
         });
     });
 
-    describe('captures and materializations use different props for names', () => {
+    describe('the resource config key goes to different properties for each entity', () => {
         beforeEach(() => {
             resourceConfigs = {
                 first: mockedResourceConfig,
