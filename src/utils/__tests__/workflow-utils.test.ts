@@ -8,10 +8,14 @@ import { generateMockConnectorConfig } from 'test/test-utils';
 import { generateTaskSpec, getBindingIndex } from 'utils/workflow-utils';
 import { ConnectorConfig } from '../../../flow_deps/flow';
 
-const defaultResponse = -1;
-const foundName = 'acme/found';
-
 describe('getBindingIndex', () => {
+    let defaultResponse: number, foundName: string;
+
+    beforeEach(() => {
+        defaultResponse = -1;
+        foundName = 'acme/found';
+    });
+
     describe('returns -1 when', () => {
         test('bindings are missing', () => {
             expect(getBindingIndex(undefined, '')).toBe(defaultResponse);
