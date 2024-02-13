@@ -2,47 +2,53 @@ import { ReactElement } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { RenderOptions } from '@testing-library/react';
 import AppProviders from 'context';
-import produce from 'immer';
 import { Session, User } from '@supabase/supabase-js';
-import { mock } from 'vitest-mock-extended';
+import { mockDeep } from 'vitest-mock-extended';
 import { ConnectorConfig } from '../../flow_deps/flow';
 
-export const generateMockUserMetadata = (username: string) => {
-    return produce(mock<User['user_metadata']>(), (draft) => {
-        draft.avatar_url = `https://example.org/avatar/${username}`;
-        draft.email = `${username}@example.org`;
-        draft.email_verified = true;
-        draft.full_name = `Full ${username}`;
-        draft.iss = 'https://api.example.org';
-        draft.name = username;
-        draft.picture = `https://example.org/picture/${username}`;
-        draft.preferred_username = username;
-        draft.provider_id = '00000000000000000000_provider';
-        draft.sub = '00000000000000000000_sub';
-        draft.user_name = username;
-        return draft;
+export const generateMockUserMetadata = (
+    username: string
+): User['user_metadata'] => {
+    return mockDeep<User['user_metadata']>({
+        avatar_url: `https://example.org/avatar/${username}`,
+        email: `${username}@example.org`,
+        email_verified: true,
+        full_name: `Full ${username}`,
+        iss: 'https://api.example.org',
+        name: username,
+        picture: `https://example.org/picture/${username}`,
+        preferred_username: username,
+        provider_id: '00000000000000000000_provider',
+        sub: '00000000000000000000_sub',
+        user_name: username,
     });
 };
 
-export const generateMockUser = (username: string) => {
-    return produce(mock<User>(), (draft) => {
-        draft.email = `${username}@example.org`;
-        draft.user_metadata = generateMockUserMetadata(username);
-        return draft;
+export const generateMockUser = (username: string): User => {
+    return mockDeep<User>({
+        email: `${username}@example.org`,
+        user_metadata: generateMockUserMetadata(username),
     });
 };
 
-export const generateMockSession = (username: string) => {
-    return produce(mock<Session>(), (draft) => {
-        draft.access_token = `${username}___mock_access_token`;
-        draft.user = generateMockUser(username);
-        return draft;
+export const generateMockSession = (username: string): Session => {
+    return mockDeep<Session>({
+        access_token: `${username}___mock_access_token`,
+        user: generateMockUser(username),
     });
 };
 
-export const generateMockConnectorConfig = () => {
-    return produce(mock<ConnectorConfig>(), (draft) => {
-        return draft;
+export const generateMockConnectorConfig = (): ConnectorConfig => {
+    return mockDeep<ConnectorConfig>({
+        image: 'example.com/materialize-postgres:mock',
+        config: {
+            address: '0.0.0.0:9999',
+            database: 'data/base/path',
+            password_sops: 'ENC[AES256_GCM,data:foo,tag:bar,type:str]',
+            schema: 'public',
+            user: 'testing',
+            sops: {},
+        },
     });
 };
 

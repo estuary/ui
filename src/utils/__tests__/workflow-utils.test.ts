@@ -88,13 +88,23 @@ describe('getBindingIndex', () => {
 });
 
 describe('generateTaskSpec', () => {
-    let connectorConfig: ConnectorConfig,
+    let mockedResourceConfig: ResourceConfig,
+        connectorConfig: ConnectorConfig,
         resourceConfigs: ResourceConfigDictionary | null,
         existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
         sourceCapture: string | null,
         fullSource: FullSourceDictionary | null;
 
     beforeEach(() => {
+        mockedResourceConfig = {
+            errors: [],
+            data: {
+                fiz: 'resource',
+            },
+            disable: false,
+            previouslyDisabled: false,
+        };
+
         connectorConfig = generateMockConnectorConfig();
         resourceConfigs = null;
         existingTaskData = null;
@@ -102,8 +112,13 @@ describe('generateTaskSpec', () => {
         fullSource = null;
     });
 
-    describe('when no resource configs are provided', () => {
-        test('will return an empty array', () => {
+    describe('when no existing data or binding data', () => {
+        beforeEach(() => {
+            existingTaskData = null;
+            resourceConfigs = {};
+        });
+
+        test('bindings will be empty', () => {
             const response = generateTaskSpec(
                 'capture',
                 connectorConfig,
@@ -116,17 +131,117 @@ describe('generateTaskSpec', () => {
         });
     });
 
-    describe('when resource configs are provided', () => {
+    describe('when existing data but no binding data', () => {
         beforeEach(() => {
-            const mockedResourceConfig: ResourceConfig = {
-                errors: [],
-                data: {
-                    fiz: 'resource',
+            connectorConfig = generateMockConnectorConfig();
+            existingTaskData = {
+                catalog_name: 'mock/test/capture-postgres',
+                draft_id: '00:00:00:00:00:00:00:00',
+                expect_pub_id: '00:00:00:00:00:00:00:00',
+                spec_type: 'capture',
+                spec: {
+                    bindings: [
+                        {
+                            target: 'mock/binding/one',
+                            resource: {
+                                table: 'table_name',
+                                delta_updates: false,
+                            },
+                        },
+                        {
+                            target: 'mock/binding/two',
+                            resource: {
+                                table: 'table_name_two',
+                                delta_updates: false,
+                            },
+                            backfill: 2,
+                        },
+                    ],
+                    endpoint: {
+                        connector: connectorConfig,
+                    },
                 },
-                disable: false,
-                previouslyDisabled: false,
             };
+        });
 
+        test('existing bindings will be cleaned out as they assume they were deleted', () => {
+            const response = generateTaskSpec(
+                'capture',
+                connectorConfig,
+                {},
+                existingTaskData,
+                sourceCapture,
+                fullSource
+            );
+            expect(response.bindings).toStrictEqual([]);
+        });
+    });
+
+    describe('when existing data and binding data', () => {
+        beforeEach(() => {
+            connectorConfig = generateMockConnectorConfig();
+            existingTaskData = {
+                catalog_name: 'mock/test/capture-postgres',
+                draft_id: '00:00:00:00:00:00:00:00',
+                expect_pub_id: '00:00:00:00:00:00:00:00',
+                spec_type: 'capture',
+                spec: {
+                    bindings: [
+                        {
+                            target: 'mock/binding/one',
+                            resource: {
+                                table: 'table_name',
+                                delta_updates: false,
+                            },
+                        },
+                        {
+                            target: 'mock/binding/two',
+                            resource: {
+                                table: 'table_name_two',
+                                delta_updates: false,
+                            },
+                            backfill: 2,
+                        },
+                    ],
+                    endpoint: {
+                        connector: connectorConfig,
+                    },
+                },
+            };
+        });
+
+        test('existing bindings will have their config overwritten', () => {
+            const response = generateTaskSpec(
+                'capture',
+                connectorConfig,
+                {
+                    'mock/binding/one': mockedResourceConfig,
+                    'mock/binding/two': mockedResourceConfig,
+                },
+                existingTaskData,
+                sourceCapture,
+                fullSource
+            );
+            expect(response.bindings).toStrictEqual([
+                {
+                    resource: {
+                        fiz: 'resource',
+                    },
+                    target: 'mock/binding/one',
+                },
+                {
+                    backfill: 2,
+                    resource: {
+                        fiz: 'resource',
+                    },
+                    target: 'mock/binding/two',
+                },
+            ]);
+        });
+    });
+
+    describe('when no existing data but binding data', () => {
+        beforeEach(() => {
             resourceConfigs = {
                 first: mockedResourceConfig,
                 second: mockedResourceConfig,
