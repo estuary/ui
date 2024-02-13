@@ -42,14 +42,12 @@ export interface UpdateEntityProps {
         | SelectTableStoreNames.COLLECTION
         | SelectTableStoreNames.COLLECTION_SELECTOR
         | SelectTableStoreNames.MATERIALIZATION;
-    deleteCollections?: boolean;
     validateNewSpec?: boolean;
 }
 
 function UpdateEntity({
     generateNewSpec,
     generateNewSpecType,
-    deleteCollections,
     entity,
     onFinish,
     runningMessageID,
@@ -84,6 +82,9 @@ function UpdateEntity({
     const liveSpecs = liveSpecsResponse.liveSpecs;
     const liveSpecsError = liveSpecsResponse.error;
     const liveSpecsValidating = liveSpecsResponse.isValidating;
+
+    const deleteCollections =
+        selectableStoreName === SelectTableStoreNames.CAPTURE;
 
     useEffect(() => {
         const done = (progressState: ProgressStates, response: any) => {

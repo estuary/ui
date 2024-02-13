@@ -40,7 +40,6 @@ function DeleteButton({ selectableTableStoreName }: Props) {
             renderProgress={(item, index, onFinish) => (
                 <UpdateEntity
                     key={`Item-delete-${index}`}
-                    deleteCollections={isCapture}
                     entity={item}
                     onFinish={onFinish}
                     successMessageID="common.deleted"
