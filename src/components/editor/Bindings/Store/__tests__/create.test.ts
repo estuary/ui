@@ -1,7 +1,7 @@
 import { useBindingsEditorStore } from '../create';
 
 describe('useBindingsEditorStore', () => {
-    test('store need includes array with one element', () => {
+    test('store will default itself properly', () => {
         const testStore = useBindingsEditorStore.getState();
         expect(testStore).toMatchSnapshot();
     });

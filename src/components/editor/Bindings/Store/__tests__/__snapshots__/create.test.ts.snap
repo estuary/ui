@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`useBindingsEditorStore > store need includes array with one element 1`] = `
+exports[`useBindingsEditorStore > store will default itself properly 1`] = `
 {
   "applyInferredSchema": [Function],
   "collectionData": null,
