@@ -1,6 +1,7 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
 import { InvoiceLineItem } from 'api/billing';
 import MonetaryValue from 'components/tables/cells/MonetaryValue';
+import DataVolume from '../cells/billing/DataVolume';
 
 interface RowProps {
     row: InvoiceLineItem;
@@ -16,9 +17,8 @@ function Row({ row }: RowProps) {
             <TableCell>
                 <Typography>{row.description}</Typography>
             </TableCell>
-            <TableCell>
-                <Typography>{row.count}</Typography>
-            </TableCell>
+
+            <DataVolume volumeInGB={row.count} />
 
             <MonetaryValue amount={row.rate} />
             <MonetaryValue amount={row.subtotal} />
