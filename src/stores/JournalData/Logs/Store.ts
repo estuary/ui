@@ -95,13 +95,13 @@ const getInitialState = (
 
             if (error) {
                 setNetworkFailed(error.message);
-                addNewDocuments([], true, 0);
+                addNewDocuments('init', [], true, 0);
                 return;
             }
         }
 
         setRefresh(refresh);
-        addNewDocuments(docs, olderFinished, lastParsed, error);
+        addNewDocuments(docs[0], docs[1], olderFinished, lastParsed, error);
     },
 
     fetchMoreLogs: (option) => {
@@ -136,7 +136,7 @@ const getInitialState = (
         }
     },
 
-    addNewDocuments: (docs, olderFinished, lastParsed, error) => {
+    addNewDocuments: (typeOfAdd, docs, olderFinished, lastParsed, error) => {
         set(
             produce((state: JournalDataLogsState) => {
                 if (!docs) {
@@ -149,7 +149,12 @@ const getInitialState = (
                     return;
                 }
 
-                if (state.fetchingOlder) {
+                if (lastParsed === state.lastParsed) {
+                    console.log('we already parsed this');
+                    return;
+                }
+
+                if (typeOfAdd === 'old') {
                     if (error) {
                         state.lastFetchFailed = true;
                     } else {
@@ -160,7 +165,7 @@ const getInitialState = (
                         state.fetchingOlder = false;
                         state.lastFetchFailed = false;
                     }
-                } else if (state.fetchingNewer) {
+                } else if (typeOfAdd === 'new') {
                     if (error) {
                         state.lastFetchFailed = true;
                     } else {
@@ -179,7 +184,7 @@ const getInitialState = (
                         state.fetchingNewer = false;
                         state.lastFetchFailed = false;
                     }
-                } else {
+                } else if (docs.length > 0) {
                     // Initial hydration we want to set the array and scroll to near the bottom
                     state.scrollToWhenDone = [
                         Math.round(docs.length * 0.95),

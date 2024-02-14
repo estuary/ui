@@ -265,6 +265,10 @@ async function loadDocuments({
         meta: {
             metadataResponse,
             docsMetaResponse,
+            ranges: {
+                end,
+                start,
+            },
         },
         adjustedBytes: head - start,
         tooFewDocuments: documentCount ? start <= 0 : false,

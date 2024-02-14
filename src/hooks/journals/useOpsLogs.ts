@@ -3,13 +3,16 @@ import { useJournalData } from 'hooks/journals/useJournalData';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 import { maxBytes } from 'components/tables/Logs/shared';
-import { LoadDocumentsOffsets } from './shared';
+import { AddingLogTypes, LoadDocumentsOffsets } from './shared';
 
 function useOpsLogs(name: string, collectionName: string) {
     const [nothingInLastFetch, setNothingInLastFetch] = useState(false);
     const [olderFinished, setOlderFinished] = useState(false);
-    const [lastParsed, setLastParsed] = useState<number>(0);
-    const [docs, setDocs] = useState<OpsLogFlowDocument[] | null>(null);
+    const [lastParsed, setLastParsed] = useState<number>(-1);
+    const [docs, setDocs] = useState<
+        [AddingLogTypes, OpsLogFlowDocument[] | null]
+    >(['init', null]);
+
     const [bytes, setBytes] = useState(maxBytes);
 
     // TODO (typing)
@@ -53,32 +56,34 @@ function useOpsLogs(name: string, collectionName: string) {
         //  update documents until we know the meta data changed
         if (parsedEnd !== lastParsed) {
             // If the parsed is lower than the other
-            const newDocs = documents;
+            const initialLoading = lastParsed === -1;
+            const olderLogs = !initialLoading && parsedEnd < lastParsed;
+            const addType: AddingLogTypes = initialLoading
+                ? 'init'
+                : olderLogs
+                ? 'old'
+                : 'new';
+
+            console.log('~olderLogs', { addType, olderLogs });
 
             setNothingInLastFetch(false);
-            setDocs(newDocs);
+            setDocs([
+                // TODO (typing) - hacky work around
+                addType,
+                documents,
+            ]);
+
+            // Keep track of where we last read data from so we can keep stepping backwards through the file
+            setLastParsed(parsedEnd);
+
+            // If we have hit 0 then we now we hit the start of the data any nothing older is available
+            if (parsedEnd === 0) {
+                setOlderFinished(true);
+            }
         } else if (lastParsed > 0) {
             setNothingInLastFetch(true);
         }
     }, [data?.meta, documents, lastParsed]);
-
-    useEffect(() => {
-        // Get the mete data out of the response
-        const meta = data?.meta;
-
-        // Figure out what the last document offset is
-        const parsedEnd = meta?.docsMetaResponse.offset
-            ? parseInt(meta.docsMetaResponse.offset, 10)
-            : null;
-
-        // Keep track of where we last read data from so we can keep stepping backwards through the file
-        setLastParsed(parsedEnd ?? 0);
-
-        // If we have hit 0 then we now we hit the start of the data any nothing older is available
-        if (parsedEnd === 0) {
-            setOlderFinished(true);
-        }
-    }, [data?.meta]);
 
     const runRefresh = useCallback(
         (newOffset?: LoadDocumentsOffsets) => {
