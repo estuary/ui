@@ -6,8 +6,7 @@ import {
     useJournalDataLogsStore_hydrate,
     useJournalDataLogsStore_resetState,
     useJournalDataLogsStore_setActive,
-    useJournalDataLogsStore_setFetchingOlder,
-    useJournalDataLogsStore_setFetchingNewer,
+    useJournalDataLogsStore_setFetchingMore,
 } from './hooks';
 
 interface Props extends BaseComponentProps {
@@ -24,8 +23,7 @@ export const JournalDataLogsHydrator = ({
     const setActive = useJournalDataLogsStore_setActive();
     const hydrate = useJournalDataLogsStore_hydrate();
 
-    const setFetchingOlder = useJournalDataLogsStore_setFetchingOlder();
-    const setFetchingNewer = useJournalDataLogsStore_setFetchingNewer();
+    const setFetchingMore = useJournalDataLogsStore_setFetchingMore();
 
     const {
         docs,
@@ -58,10 +56,9 @@ export const JournalDataLogsHydrator = ({
     //  so that the waiting rows can kick off another poll
     useEffect(() => {
         if (nothingInLastFetch) {
-            setFetchingNewer(false);
-            setFetchingOlder(false);
+            setFetchingMore(false);
         }
-    }, [nothingInLastFetch, setFetchingNewer, setFetchingOlder]);
+    }, [nothingInLastFetch, setFetchingMore]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;

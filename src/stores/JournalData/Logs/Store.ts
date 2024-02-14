@@ -41,8 +41,7 @@ const getInitialStateData = (): Pick<
     JournalDataLogsState,
     | 'allowFetchingMore'
     | 'documents'
-    | 'fetchingNewer'
-    | 'fetchingOlder'
+    | 'fetchingMore'
     | 'lastCount'
     | 'lastFetchFailed'
     | 'lastParsed'
@@ -55,8 +54,7 @@ const getInitialStateData = (): Pick<
 > => ({
     allowFetchingMore: false,
     documents: null,
-    fetchingNewer: false,
-    fetchingOlder: false,
+    fetchingMore: false,
     lastCount: -1,
     lastFetchFailed: false,
     lastParsed: -1,
@@ -107,31 +105,25 @@ const getInitialState = (
     fetchMoreLogs: (option) => {
         const {
             allowFetchingMore,
-            fetchingNewer,
-            fetchingOlder,
+            fetchingMore,
             lastParsed,
             olderFinished,
             refresh,
-            setFetchingOlder,
-            setFetchingNewer,
+            setFetchingMore,
         } = get();
 
-        if (!allowFetchingMore || !refresh || fetchingNewer || fetchingOlder) {
+        if (!allowFetchingMore || !refresh || fetchingMore) {
             return;
         }
 
-        if (option === 'old') {
-            if (olderFinished) {
-                return;
-            }
-
-            setFetchingOlder(true);
+        if (option === 'old' && !olderFinished) {
+            setFetchingMore(true);
             refresh({
                 offset: 0,
                 endOffset: lastParsed,
             });
         } else {
-            setFetchingNewer(true);
+            setFetchingMore(true);
             refresh();
         }
     },
@@ -162,7 +154,6 @@ const getInitialState = (
                         //  and then add the new to the start of the list
                         state.scrollToWhenDone = [docs.length + 1, 'start'];
                         state.documents = [...docs, ...(state.documents ?? [])];
-                        state.fetchingOlder = false;
                         state.lastFetchFailed = false;
                     }
                 } else if (typeOfAdd === 'new') {
@@ -181,7 +172,6 @@ const getInitialState = (
                                 'start',
                             ];
                         }
-                        state.fetchingNewer = false;
                         state.lastFetchFailed = false;
                     }
                 } else if (docs.length > 0) {
@@ -256,23 +246,13 @@ const getInitialState = (
         );
     },
 
-    setFetchingNewer: (newState) => {
+    setFetchingMore: (newState) => {
         set(
             produce((state: JournalDataLogsState) => {
-                state.fetchingNewer = newState;
+                state.fetchingMore = newState;
             }),
             false,
-            'JournalsData:Logs: Fetching Newer Set'
-        );
-    },
-
-    setFetchingOlder: (newState) => {
-        set(
-            produce((state: JournalDataLogsState) => {
-                state.fetchingOlder = newState;
-            }),
-            false,
-            'JournalsData:Logs: Fetching Older Set'
+            'JournalsData:Logs: Fetching More Set'
         );
     },
 

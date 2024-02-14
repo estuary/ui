@@ -22,11 +22,8 @@ export interface JournalDataLogsState extends StoreWithHydration {
     lastCount: number;
     setLastCount: (val: JournalDataLogsState['lastCount']) => void;
 
-    fetchingNewer: boolean;
-    setFetchingNewer: (val: JournalDataLogsState['fetchingNewer']) => void;
-
-    fetchingOlder: boolean;
-    setFetchingOlder: (val: JournalDataLogsState['fetchingOlder']) => void;
+    fetchingMore: boolean;
+    setFetchingMore: (val: JournalDataLogsState['fetchingMore']) => void;
 
     olderFinished: boolean;
     setOlderFinished: (val: JournalDataLogsState['olderFinished']) => void;

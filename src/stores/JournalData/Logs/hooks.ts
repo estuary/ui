@@ -79,18 +79,18 @@ export const useJournalDataLogsStore_setAllowFetchingMore = () => {
     >(JournalDataStoreNames.LOGS, (state) => state.setAllowFetchingMore);
 };
 
-export const useJournalDataLogsStore_setFetchingOlder = () => {
+export const useJournalDataLogsStore_fetchingMore = () => {
     return useZustandStore<
         JournalDataLogsState,
-        JournalDataLogsState['setFetchingOlder']
-    >(JournalDataStoreNames.LOGS, (state) => state.setFetchingOlder);
+        JournalDataLogsState['fetchingMore']
+    >(JournalDataStoreNames.LOGS, (state) => state.fetchingMore);
 };
 
-export const useJournalDataLogsStore_setFetchingNewer = () => {
+export const useJournalDataLogsStore_setFetchingMore = () => {
     return useZustandStore<
         JournalDataLogsState,
-        JournalDataLogsState['setFetchingNewer']
-    >(JournalDataStoreNames.LOGS, (state) => state.setFetchingNewer);
+        JournalDataLogsState['setFetchingMore']
+    >(JournalDataStoreNames.LOGS, (state) => state.setFetchingMore);
 };
 
 export const useJournalDataLogsStore_tailNewLogs = () => {
@@ -126,11 +126,4 @@ export const useJournalDataLogsStore_lastFetchFailed = () => {
         JournalDataLogsState,
         JournalDataLogsState['lastFetchFailed']
     >(JournalDataStoreNames.LOGS, (state) => state.lastFetchFailed);
-};
-
-export const useJournalDataLogsStore_fetchingMore = () => {
-    return useZustandStore<JournalDataLogsState, boolean>(
-        JournalDataStoreNames.LOGS,
-        (state) => state.fetchingNewer || state.fetchingOlder
-    );
 };
