@@ -1,10 +1,11 @@
-import { customRender, renderOps } from 'test/test-utils';
+import { render } from '@testing-library/react';
+import { renderOps } from 'test/test-utils';
 import ConnectorTiles from '../ConnectorTiles';
 
 describe('Connector Tiles', () => {
     it('should display the connector details', async () => {
-        const { view } = await customRender(<ConnectorTiles />, renderOps);
+        const rendered = render(<ConnectorTiles />, renderOps);
 
-        expect(view).toMatchSnapshot();
+        expect(rendered.baseElement).toMatchSnapshot();
     });
 });
