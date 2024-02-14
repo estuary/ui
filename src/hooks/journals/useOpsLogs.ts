@@ -55,26 +55,32 @@ function useOpsLogs(name: string, collectionName: string) {
         // Since journalData is read kinda async we need to wait to
         //  update documents until we know the meta data changed
         if (parsedEnd !== lastParsed) {
-            // If the parsed is lower than the other
+            // Check if we are still going through the init
             const initialLoading = lastParsed === -1;
+
+            // If we're already loaded once see if these logs are from farther back
             const olderLogs = !initialLoading && parsedEnd < lastParsed;
+
+            // Now set a flag so we know where to put the logs in the store
             const addType: AddingLogTypes = initialLoading
                 ? 'init'
                 : olderLogs
                 ? 'old'
                 : 'new';
 
-            console.log('~olderLogs', { addType, olderLogs });
+            console.log('~ addType =', addType);
+            console.log('~ parsedEnd =', parsedEnd);
+            console.log('~ lastParsed =', lastParsed);
 
             setNothingInLastFetch(false);
-            setDocs([
-                // TODO (typing) - hacky work around
-                addType,
-                documents,
-            ]);
+            setDocs([addType, documents]);
 
             // Keep track of where we last read data from so we can keep stepping backwards through the file
-            setLastParsed(parsedEnd);
+            setLastParsed((previousLastParsed) =>
+                initialLoading || parsedEnd < previousLastParsed
+                    ? parsedEnd
+                    : previousLastParsed
+            );
 
             // If we have hit 0 then we now we hit the start of the data any nothing older is available
             if (parsedEnd === 0) {
