@@ -106,6 +106,7 @@
     "devDependencies": {
         "@emotion/babel-plugin": "^11.11.0",
         "@testing-library/react": "^12.1.5",
+        "@testing-library/user-event": "^14.5.2",
         "@types/auth0-js": "^9.14.7",
         "@types/lodash": "^4.14.191",
         "@types/logrocket-react": "^3.0.0",

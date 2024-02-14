@@ -1,5 +1,4 @@
-import { render } from '@testing-library/react';
-import { renderOps } from 'test/test-utils';
+import { customRender, renderOps } from 'test/test-utils';
 import ConnectorCard from '..';
 
 describe('Connector Card', () => {
@@ -7,11 +6,11 @@ describe('Connector Card', () => {
     const details = 'this is a fake connector';
     const title = 'FakeDB';
 
-    it('should display the connector details', () => {
-        const rendered = render(
+    it('should display the connector details', async () => {
+        const { view } = await customRender(
             <ConnectorCard logo={logo} details={details} title={title} />,
             renderOps
         );
-        expect(rendered.baseElement).toMatchSnapshot();
+        expect(view).toMatchSnapshot();
     });
 });

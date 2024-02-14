@@ -1,9 +1,14 @@
 import { ReactElement } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { RenderOptions } from '@testing-library/react';
+import { render, RenderOptions } from '@testing-library/react';
 import AppProviders from 'context';
-import { Session, User } from '@supabase/supabase-js';
+import { AuthSession, Session, User } from '@supabase/supabase-js';
 import { mockDeep } from 'vitest-mock-extended';
+import { Auth } from '@supabase/ui';
+import { SwrSupabaseContext } from 'hooks/supabase-swr';
+import ThemeProvider from 'context/Theme';
+import userEvent from '@testing-library/user-event';
+import { supabaseClient } from 'services/supabase';
 import { ConnectorConfig } from '../../flow_deps/flow';
 
 export const generateMockUserMetadata = (
@@ -65,4 +70,61 @@ export const AllTheProviders = ({ children }: AllTheProvidersProps) => {
 
 export const renderOps: RenderOptions = {
     wrapper: AllTheProviders,
+};
+
+// TODO (testing) still working out how we'll render views
+const goTo = (route?: string, name?: string) => {
+    window.history.pushState(
+        {},
+        name ? name : 'Test page',
+        route ? route : '/'
+    );
+};
+
+const MockProviders = ({ children, username }: any) => {
+    const mockAuthSession = mockDeep<AuthSession>();
+
+    if (username) {
+        mockAuthSession.user = mockDeep<User>();
+        mockAuthSession.user.user_metadata = generateMockUserMetadata(username);
+        Auth.useUser = () => mockAuthSession as any;
+    }
+
+    return (
+        <SwrSupabaseContext.Provider value={supabaseClient}>
+            <Auth.UserContextProvider supabaseClient={supabaseClient}>
+                {children}
+            </Auth.UserContextProvider>
+        </SwrSupabaseContext.Provider>
+    );
+};
+
+export const customRender = async (
+    ui: ReactElement,
+    options: Omit<RenderOptions, 'wrapper'> & {
+        route?: string;
+        username?: string;
+    }
+) => {
+    const { route, username } = options;
+
+    const view = render(
+        <AppProviders>
+            <MockProviders username={username}>
+                <ThemeProvider>
+                    <BrowserRouter>{ui}</BrowserRouter>
+                </ThemeProvider>
+            </MockProviders>
+        </AppProviders>,
+        {
+            ...options,
+        }
+    );
+
+    goTo(route, 'Test Page');
+
+    return {
+        user: userEvent.setup(),
+        view,
+    };
 };

@@ -1,18 +1,10 @@
-import { render } from '@testing-library/react';
-import { renderOps } from 'test/test-utils';
+import { customRender, renderOps } from 'test/test-utils';
 import ConnectorTiles from '../ConnectorTiles';
 
 describe('Connector Tiles', () => {
     it('should display the connector details', async () => {
-        const rendered = render(<ConnectorTiles />, renderOps);
+        const { view } = await customRender(<ConnectorTiles />, renderOps);
 
-        // TODO (testing|expect)
-        //      need to get the vitest `expect` wired up to handle matchers from other
-        //      libraries and can allow us to wait for stuff to load in
-        // await waitFor(() => {
-        //     expect(getByText('FooDB')).toBeInTheDocument();
-        // });
-
-        expect(rendered.baseElement).toMatchSnapshot();
+        expect(view).toMatchSnapshot();
     });
 });

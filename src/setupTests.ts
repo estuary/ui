@@ -1,9 +1,15 @@
-import { cleanup } from '@testing-library/react';
+import { cleanup, configure } from '@testing-library/react';
+import invariableStores from 'context/Zustand/invariableStores';
 import { server } from 'test/server/test-server';
 
 vi.mock('zustand');
 
+// https://github.com/testing-library/dom-testing-library/issues/552
+configure({ defaultHidden: true });
+
 beforeAll(async () => {
+    // This is just marked so the stores will be created
+    invariableStores;
     server.listen({ onUnhandledRequest: 'error' });
 });
 
