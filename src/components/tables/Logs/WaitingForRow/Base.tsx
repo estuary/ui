@@ -13,7 +13,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useIntersection } from 'react-use';
 import {
-    useJournalDataLogsStore_fetchingMore,
     useJournalDataLogsStore_fetchMoreLogs,
     useJournalDataLogsStore_lastFetchFailed,
 } from 'stores/JournalData/Logs/hooks';
@@ -42,13 +41,9 @@ function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
 
     const lastFetchFailed = useJournalDataLogsStore_lastFetchFailed();
     const fetchMoreLogs = useJournalDataLogsStore_fetchMoreLogs();
-    const fetchingMore = useJournalDataLogsStore_fetchingMore();
 
     const fetchMore = useCallback(() => {
-        if (lastFetchFailed) {
-            return;
-        }
-        if (!fetchingMore && intersection?.isIntersecting) {
+        if (intersection?.isIntersecting) {
             runFetch.current = false;
 
             // When checking for new ones fall back to give some time
@@ -60,13 +55,7 @@ function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
         } else {
             runFetch.current = true;
         }
-    }, [
-        fetchMoreLogs,
-        fetchOption,
-        fetchingMore,
-        intersection?.isIntersecting,
-        lastFetchFailed,
-    ]);
+    }, [fetchMoreLogs, fetchOption, intersection?.isIntersecting]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedFetch = useCallback(debounce(fetchMore, intervalLength), [
