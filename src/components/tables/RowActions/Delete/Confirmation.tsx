@@ -2,22 +2,12 @@ import { Typography } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
 
-interface Props {
-    messageId: string | null;
-}
-
-function DeleteConfirmation({ messageId }: Props) {
+function DeleteConfirmation() {
     return (
         <AlertBox severity="warning" short>
-            <Typography component="div" sx={{ mb: messageId ? 1 : undefined }}>
+            <Typography component="div">
                 <FormattedMessage id="entityTable.delete.confirm" />
             </Typography>
-
-            {messageId ? (
-                <Typography component="div">
-                    <FormattedMessage id={messageId} />
-                </Typography>
-            ) : null}
         </AlertBox>
     );
 }

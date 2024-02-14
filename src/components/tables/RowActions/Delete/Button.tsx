@@ -29,13 +29,7 @@ function DeleteButton({ selectableTableStoreName }: Props) {
 
     return (
         <RowActionButton
-            confirmationMessage={
-                <DeleteConfirmation
-                    messageId={
-                        isCapture ? 'capturesTable.delete.confirm' : null
-                    }
-                />
-            }
+            confirmationMessage={<DeleteConfirmation />}
             messageID="cta.delete"
             renderProgress={(item, index, onFinish) => (
                 <UpdateEntity
