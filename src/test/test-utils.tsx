@@ -72,6 +72,7 @@ export const renderOps: RenderOptions = {
     wrapper: AllTheProviders,
 };
 
+// Below are all in progress and not working
 // TODO (testing) still working out how we'll render views
 const goTo = (route?: string, name?: string) => {
     window.history.pushState(

@@ -252,14 +252,10 @@ describe('generateTaskSpec', () => {
 
         describe('duplicates in existing bindings', () => {
             beforeEach(() => {
-                if (!existingTaskData) {
-                    return console.log('missing data');
-                }
-
-                existingTaskData.spec.bindings.push(
+                existingTaskData?.spec.bindings.push(
                     existingTaskData.spec.bindings[0]
                 );
-                existingTaskData.spec.bindings.push(
+                existingTaskData?.spec.bindings.push(
                     existingTaskData.spec.bindings[0]
                 );
             });
