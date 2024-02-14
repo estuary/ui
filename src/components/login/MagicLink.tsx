@@ -2,7 +2,7 @@ import { Button, Stack } from '@mui/material';
 import MagicLinkInputs from 'components/login/MagicLinkInputs';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useLoginRedirectPath from 'hooks/searchParams/useLoginRedirectPath';
-import { useClient } from 'hooks/supabase-swr';
+import useClient from 'hooks/supabase-swr/hooks/useClient';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';

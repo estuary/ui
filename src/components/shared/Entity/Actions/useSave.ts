@@ -13,7 +13,7 @@ import {
     useEditorStore_setPubId,
 } from 'components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import { useClient } from 'hooks/supabase-swr';
+import useClient from 'hooks/supabase-swr/hooks/useClient';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';

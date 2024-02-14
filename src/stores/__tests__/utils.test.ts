@@ -1,4 +1,3 @@
-import { expect, test } from 'vitest';
 import { checkForErrors } from '../utils';
 
 test('checkForErrors will handle different states for errors', () => {

@@ -60,7 +60,8 @@ export default defineConfig({
     },
 
     optimizeDeps: {
-        exclude: ['@estuary/flow-web'],
+        include: ['@estuary/flow-web'],
+        // exclude: ['@estuary/flow-web'],
     },
 
     define: {
@@ -70,12 +71,12 @@ export default defineConfig({
     preview: { port: 3000, strictPort: true },
     server: { port: 3000, strictPort: true },
     test: {
+        clearMocks: true,
         environment: 'jsdom',
+        globals: true,
         setupFiles: ['./src/setupTests.ts'],
         testTimeout: 10000, // more time for auto retries
-        // alias: {
-        //     '@estuary/flow-web': 'vue/dist/vue.esm-bundler.js',
-        // },
+        restoreMocks: true,
     },
 
     // https://github.com/vitejs/awesome-vite#plugins

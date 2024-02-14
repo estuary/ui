@@ -4,7 +4,7 @@ import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
 import UserAvatar from 'components/shared/UserAvatar';
-import { useClient } from 'hooks/supabase-swr';
+import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useUserDetails from 'hooks/useUserDetails';
 import { LogOut, Mail, ProfileCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';

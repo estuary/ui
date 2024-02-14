@@ -657,7 +657,7 @@ const getInitialState = (
     },
 });
 
-export const bindingsEditorStore = create<BindingsEditorState>()(
+export const useBindingsEditorStore = create<BindingsEditorState>()(
     devtools(
         (set, get) => getInitialState(set, get),
         devtoolsOptions(BindingsEditorStoreNames.GENERAL)

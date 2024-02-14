@@ -3,12 +3,12 @@ import IconoirProvider from 'context/Iconoir';
 import NotificationProvider from 'context/Notifications';
 import SwrConfigProvider from 'context/SWR';
 import { BaseComponentProps } from 'types';
-import ClientProvider from './Client';
-import ContentProvider from './Content';
-import { SidePanelDocsProvider } from './SidePanelDocs';
-import { TableSettingsProvider } from './TableSettings';
-import ThemeProvider from './Theme';
-import { UserProvider } from './User';
+import ClientProvider from 'context/Client';
+import ThemeProvider from 'context/Theme';
+import { UserProvider } from 'context/User';
+import ContentProvider from 'context/Content';
+import { SidePanelDocsProvider } from 'context/SidePanelDocs';
+import { TableSettingsProvider } from 'context/TableSettings';
 
 const AppProviders = ({ children }: BaseComponentProps) => {
     return (

@@ -1,5 +1,5 @@
-import { render } from 'test/test-utils';
-import { describe, it, expect } from 'vitest';
+import { render } from '@testing-library/react';
+import { renderOps } from 'test/test-utils';
 import ConnectorCard from '..';
 
 describe('Connector Card', () => {
@@ -7,9 +7,10 @@ describe('Connector Card', () => {
     const details = 'this is a fake connector';
     const title = 'FakeDB';
 
-    it('should display the connector details', () => {
+    it('should display the connector details', async () => {
         const rendered = render(
-            <ConnectorCard logo={logo} details={details} title={title} />
+            <ConnectorCard logo={logo} details={details} title={title} />,
+            renderOps
         );
         expect(rendered.baseElement).toMatchSnapshot();
     });

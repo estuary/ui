@@ -2,7 +2,10 @@ import { isProduction } from './env-utils';
 
 export const devtoolsOptions = (name: string) => {
     return {
-        enabled: !isProduction,
+        enabled:
+            !isProduction &&
+            window.__REDUX_DEVTOOLS_EXTENSION__ &&
+            window.__REDUX_DEVTOOLS_EXTENSION__(),
         name,
     };
 };

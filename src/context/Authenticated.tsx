@@ -2,9 +2,9 @@ import AppGuards from 'app/guards';
 import ConfirmationModalContextProvider from 'context/Confirmation';
 import { ZustandProvider } from 'context/Zustand/provider';
 import { BaseComponentProps } from 'types';
+import RequireAuth from 'context/Router/RequireAuth';
 import { OnLoadSpinnerProvider } from './OnLoadSpinner/OnLoadSpinnerContext';
 import QueryParamProvider from './QueryParam';
-import RequireAuth from './Router/RequireAuth';
 import PreFetchDataProvider from './fetcher';
 
 interface Props extends BaseComponentProps {
