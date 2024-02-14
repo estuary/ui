@@ -1,6 +1,7 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
 import { InvoiceLineItem } from 'api/billing';
 import MonetaryValue from 'components/tables/cells/MonetaryValue';
+import { FormattedMessage } from 'react-intl';
 import DataVolume from '../cells/billing/DataVolume';
 
 interface RowProps {
@@ -18,7 +19,20 @@ function Row({ row }: RowProps) {
                 <Typography>{row.description}</Typography>
             </TableCell>
 
-            <DataVolume volumeInGB={row.count} />
+            {row.description.includes('Data processing') ? (
+                <DataVolume volumeInGB={row.count} />
+            ) : row.description.includes('Task usage') ? (
+                <TableCell>
+                    <Typography>
+                        <FormattedMessage
+                            id="admin.billing.table.line_items.count.taskUsage.formatValue"
+                            values={{ taskUsage: row.count }}
+                        />
+                    </Typography>
+                </TableCell>
+            ) : (
+                <TableCell>{row.count}</TableCell>
+            )}
 
             <MonetaryValue amount={row.rate} />
             <MonetaryValue amount={row.subtotal} />

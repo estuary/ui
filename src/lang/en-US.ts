@@ -490,6 +490,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.table.line_items.label.rate': `Unit Price`,
     'admin.billing.table.line_items.label.subtotal': `Subtotal`,
     'admin.billing.table.line_items.label.total': `Total Due`,
+    'admin.billing.table.line_items.count.taskUsage.formatValue': `{taskUsage} {taskUsage, plural, one {Hour} other {Hours}}`,
     'admin.billing.table.line_items.emptyTableDefault.header': `No information found.`,
     'admin.billing.table.line_items.emptyTableDefault.message': `We couldn't find any billing information on file. Only administrators of a tenant are able to review billing information.`,
     'admin.billing.table.line_items.tooltip.download_pdf': `Download invoice PDF`,
