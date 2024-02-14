@@ -1,4 +1,4 @@
-import { useClient } from 'hooks/supabase-swr';
+import useClient from 'hooks/supabase-swr/hooks/useClient';
 import {
     createContext,
     useCallback,

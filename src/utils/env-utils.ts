@@ -5,6 +5,7 @@ declare global {
             auth_url: string | null;
         } | null;
         monaco: any;
+        __REDUX_DEVTOOLS_EXTENSION__: any;
         // TODO (integrity | logrocket)
         // When we load in LogRocket with a script tag we'll want this
         // LogRocket?: {

@@ -1,7 +1,7 @@
 import { Auth as SupabaseAuth } from '@supabase/ui';
 import { authenticatedRoutes, REDIRECT_TO_PARAM_NAME } from 'app/routes';
 import FullPageSpinner from 'components/fullPage/Spinner';
-import { useClient } from 'hooks/supabase-swr';
+import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';

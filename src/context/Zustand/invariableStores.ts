@@ -1,4 +1,4 @@
-import { bindingsEditorStore } from 'components/editor/Bindings/Store/create';
+import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import { createEditorStore } from 'components/editor/Store/create';
 import { createExistingEntityStore } from 'components/shared/Entity/ExistingEntityCards/Store/create';
 import { billingStore } from 'stores/Billing/Store';
@@ -47,7 +47,7 @@ const invariableStores = {
     [BillingStoreNames.GENERAL]: billingStore,
 
     // Bindings Editor Store
-    [BindingsEditorStoreNames.GENERAL]: bindingsEditorStore,
+    [BindingsEditorStoreNames.GENERAL]: useBindingsEditorStore,
 
     // Details Form Store
     [DetailsFormStoreNames.CAPTURE]: captureDetailsForm,

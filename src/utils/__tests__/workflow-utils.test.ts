@@ -1,10 +1,21 @@
-import { getBindingIndex } from 'utils/workflow-utils';
-import { describe, expect, test } from 'vitest';
-
-const defaultResponse = -1;
-const foundName = 'acme/found';
+import { DraftSpecsExtQuery_ByCatalogName } from 'api/draftSpecs';
+import { FullSourceDictionary } from 'components/editor/Bindings/Store/types';
+import {
+    ResourceConfig,
+    ResourceConfigDictionary,
+} from 'stores/ResourceConfig/types';
+import { generateMockConnectorConfig } from 'test/test-utils';
+import { generateTaskSpec, getBindingIndex } from 'utils/workflow-utils';
+import { ConnectorConfig } from '../../../flow_deps/flow';
 
 describe('getBindingIndex', () => {
+    let defaultResponse: number, foundName: string;
+
+    beforeEach(() => {
+        defaultResponse = -1;
+        foundName = 'acme/found';
+    });
+
     describe('returns -1 when', () => {
         test('bindings are missing', () => {
             expect(getBindingIndex(undefined, '')).toBe(defaultResponse);
@@ -76,6 +87,258 @@ describe('getBindingIndex', () => {
                     foundName
                 )
             ).toBe(1);
+        });
+    });
+});
+
+describe('generateTaskSpec', () => {
+    let mockedResourceConfig: ResourceConfig,
+        connectorConfig: ConnectorConfig,
+        resourceConfigs: ResourceConfigDictionary | null,
+        existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
+        sourceCapture: string | null,
+        fullSource: FullSourceDictionary | null;
+
+    beforeEach(() => {
+        mockedResourceConfig = {
+            errors: [],
+            data: {
+                fiz: 'resource',
+            },
+            disable: false,
+            previouslyDisabled: false,
+        };
+
+        connectorConfig = generateMockConnectorConfig();
+        resourceConfigs = null;
+        existingTaskData = null;
+        sourceCapture = null;
+        fullSource = null;
+    });
+
+    describe('when no existing data or binding data', () => {
+        beforeEach(() => {
+            existingTaskData = null;
+            resourceConfigs = {};
+        });
+
+        test('bindings will be empty', () => {
+            const response = generateTaskSpec(
+                'capture',
+                connectorConfig,
+                {},
+                existingTaskData,
+                sourceCapture,
+                fullSource
+            );
+            expect(response.bindings).toStrictEqual([]);
+        });
+    });
+
+    describe('when existing data but no binding data', () => {
+        beforeEach(() => {
+            connectorConfig = generateMockConnectorConfig();
+            existingTaskData = {
+                catalog_name: 'mock/test/capture-postgres',
+                draft_id: '00:00:00:00:00:00:00:00',
+                expect_pub_id: '00:00:00:00:00:00:00:00',
+                spec_type: 'capture',
+                spec: {
+                    bindings: [
+                        {
+                            target: 'mock/binding/one',
+                            resource: {
+                                table: 'table_name',
+                                delta_updates: false,
+                            },
+                        },
+                        {
+                            target: 'mock/binding/two',
+                            resource: {
+                                table: 'table_name_two',
+                                delta_updates: false,
+                            },
+                            backfill: 2,
+                        },
+                    ],
+                    endpoint: {
+                        connector: connectorConfig,
+                    },
+                },
+            };
+        });
+
+        test('existing bindings will be cleaned out as they assume they were deleted', () => {
+            const response = generateTaskSpec(
+                'capture',
+                connectorConfig,
+                {},
+                existingTaskData,
+                sourceCapture,
+                fullSource
+            );
+            expect(response.bindings).toStrictEqual([]);
+        });
+    });
+
+    describe('when existing data and new data', () => {
+        beforeEach(() => {
+            connectorConfig = generateMockConnectorConfig();
+            existingTaskData = {
+                catalog_name: 'mock/test/capture-postgres',
+                draft_id: '00:00:00:00:00:00:00:00',
+                expect_pub_id: '00:00:00:00:00:00:00:00',
+                spec_type: 'capture',
+                spec: {
+                    bindings: [
+                        {
+                            target: 'mock/binding/one',
+                            resource: {
+                                table: 'table_name',
+                                delta_updates: false,
+                            },
+                        },
+                        {
+                            target: 'mock/binding/two',
+                            resource: {
+                                table: 'table_name_two',
+                                delta_updates: false,
+                            },
+                            backfill: 2,
+                        },
+                    ],
+                    endpoint: {
+                        connector: connectorConfig,
+                    },
+                },
+            };
+        });
+
+        test('existing bindings will have their config overwritten and new ones added', () => {
+            const response = generateTaskSpec(
+                'capture',
+                connectorConfig,
+                {
+                    'mock/binding/one': mockedResourceConfig,
+                    'mock/binding/two': mockedResourceConfig,
+                    'mock/binding/three': mockedResourceConfig,
+                },
+                existingTaskData,
+                sourceCapture,
+                fullSource
+            );
+            expect(response.bindings).toStrictEqual([
+                {
+                    resource: {
+                        fiz: 'resource',
+                    },
+                    target: 'mock/binding/one',
+                },
+                {
+                    backfill: 2,
+                    resource: {
+                        fiz: 'resource',
+                    },
+                    target: 'mock/binding/two',
+                },
+                {
+                    resource: {
+                        fiz: 'resource',
+                    },
+                    target: 'mock/binding/three',
+                },
+            ]);
+        });
+
+        describe('duplicates in existing bindings', () => {
+            beforeEach(() => {
+                existingTaskData?.spec.bindings.push(
+                    existingTaskData.spec.bindings[0]
+                );
+                existingTaskData?.spec.bindings.push(
+                    existingTaskData.spec.bindings[0]
+                );
+            });
+
+            test('will update all copies in the bindings', () => {
+                const response = generateTaskSpec(
+                    'capture',
+                    connectorConfig,
+                    {
+                        'mock/binding/one': {
+                            ...mockedResourceConfig,
+                            data: {
+                                bar: 'updated',
+                            },
+                        },
+                        'mock/binding/two': mockedResourceConfig,
+                    },
+                    existingTaskData,
+                    sourceCapture,
+                    fullSource
+                );
+
+                expect(response.bindings).toMatchSnapshot();
+            });
+        });
+    });
+
+    describe('entity type can alter what is returned', () => {
+        beforeEach(() => {
+            resourceConfigs = {
+                first: mockedResourceConfig,
+                second: mockedResourceConfig,
+            };
+        });
+
+        test('captures use `target` and materializations use `source` as the binding name', () => {
+            expect(
+                generateTaskSpec(
+                    'capture',
+                    connectorConfig,
+                    resourceConfigs,
+                    existingTaskData,
+                    sourceCapture,
+                    fullSource
+                ).bindings.map(({ target }: any) => target)
+            ).toStrictEqual(['first', 'second']);
+
+            expect(
+                generateTaskSpec(
+                    'materialization',
+                    connectorConfig,
+                    resourceConfigs,
+                    existingTaskData,
+                    sourceCapture,
+                    fullSource
+                ).bindings.map(({ source }: any) => source)
+            ).toStrictEqual(['first', 'second']);
+        });
+
+        test('only materializations can return the `sourceCapture` property', () => {
+            sourceCapture = 'mock/source/capture';
+
+            expect(
+                generateTaskSpec(
+                    'capture',
+                    connectorConfig,
+                    resourceConfigs,
+                    existingTaskData,
+                    sourceCapture,
+                    fullSource
+                ).sourceCapture
+            ).toBeUndefined();
+
+            expect(
+                generateTaskSpec(
+                    'materialization',
+                    connectorConfig,
+                    resourceConfigs,
+                    existingTaskData,
+                    sourceCapture,
+                    fullSource
+                ).sourceCapture
+            ).toStrictEqual(sourceCapture);
         });
     });
 });

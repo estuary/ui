@@ -10,7 +10,7 @@ import {
 import { useEntityType } from 'context/EntityContext';
 import invariableStores from 'context/Zustand/invariableStores';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { useClient } from 'hooks/supabase-swr';
+import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { useSnackbar } from 'notistack';
 import { useCallback, useMemo } from 'react';

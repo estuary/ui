@@ -1,26 +1,131 @@
 import { ReactElement } from 'react';
-import { render, RenderOptions } from '@testing-library/react';
-import ContentProvider from 'context/Content';
-import IconoirProvider from 'context/Iconoir';
-import ThemeProvider from 'context/Theme';
 import { BrowserRouter } from 'react-router-dom';
+import { render, RenderOptions } from '@testing-library/react';
+import AppProviders from 'context';
+import { AuthSession, Session, User } from '@supabase/supabase-js';
+import { mockDeep } from 'vitest-mock-extended';
+import { Auth } from '@supabase/ui';
+import { SwrSupabaseContext } from 'hooks/supabase-swr';
+import ThemeProvider from 'context/Theme';
+import userEvent from '@testing-library/user-event';
+import { supabaseClient } from 'services/supabase';
+import { ConnectorConfig } from '../../flow_deps/flow';
 
-const AllTheProviders = ({ children }: { children: ReactElement }) => {
+export const generateMockUserMetadata = (
+    username: string
+): User['user_metadata'] => {
+    return mockDeep<User['user_metadata']>({
+        avatar_url: `https://example.org/avatar/${username}`,
+        email: `${username}@example.org`,
+        email_verified: true,
+        full_name: `Full ${username}`,
+        iss: 'https://api.example.org',
+        name: username,
+        picture: `https://example.org/picture/${username}`,
+        preferred_username: username,
+        provider_id: '00000000000000000000_provider',
+        sub: '00000000000000000000_sub',
+        user_name: username,
+    });
+};
+
+export const generateMockUser = (username: string): User => {
+    return mockDeep<User>({
+        email: `${username}@example.org`,
+        user_metadata: generateMockUserMetadata(username),
+    });
+};
+
+export const generateMockSession = (username: string): Session => {
+    return mockDeep<Session>({
+        access_token: `${username}___mock_access_token`,
+        user: generateMockUser(username),
+    });
+};
+
+export const generateMockConnectorConfig = (): ConnectorConfig => {
+    return mockDeep<ConnectorConfig>({
+        image: 'example.com/materialize-postgres:mock',
+        config: {
+            address: '0.0.0.0:9999',
+            database: 'data/base/path',
+            password_sops: 'ENC[AES256_GCM,data:foo,tag:bar,type:str]',
+            schema: 'public',
+            user: 'testing',
+            sops: {},
+        },
+    });
+};
+
+export interface AllTheProvidersProps {
+    children: ReactElement;
+}
+export const AllTheProviders = ({ children }: AllTheProvidersProps) => {
     return (
-        <ContentProvider>
-            <ThemeProvider>
-                <IconoirProvider>
-                    <BrowserRouter>{children}</BrowserRouter>
-                </IconoirProvider>
-            </ThemeProvider>
-        </ContentProvider>
+        <AppProviders>
+            <BrowserRouter>{children}</BrowserRouter>
+        </AppProviders>
     );
 };
 
-const customRender = (
-    ui: ReactElement,
-    options?: Omit<RenderOptions, 'wrapper'>
-) => render(ui, { wrapper: AllTheProviders, ...options });
+export const renderOps: RenderOptions = {
+    wrapper: AllTheProviders,
+};
 
-export * from '@testing-library/react';
-export { customRender as render };
+// Below are all in progress and not working
+// TODO (testing) still working out how we'll render views
+const goTo = (route?: string, name?: string) => {
+    window.history.pushState(
+        {},
+        name ? name : 'Test page',
+        route ? route : '/'
+    );
+};
+
+const MockProviders = ({ children, username }: any) => {
+    const mockAuthSession = mockDeep<AuthSession>();
+
+    if (username) {
+        mockAuthSession.user = mockDeep<User>();
+        mockAuthSession.user.user_metadata = generateMockUserMetadata(username);
+        Auth.useUser = () => mockAuthSession as any;
+    }
+
+    return (
+        <SwrSupabaseContext.Provider value={supabaseClient}>
+            <Auth.UserContextProvider supabaseClient={supabaseClient}>
+                {children}
+            </Auth.UserContextProvider>
+        </SwrSupabaseContext.Provider>
+    );
+};
+
+export const customRender = async (
+    ui: ReactElement,
+    options: Omit<RenderOptions, 'wrapper'> & {
+        route?: string;
+        username?: string;
+    }
+) => {
+    const { route, username } = options;
+
+    const view = render(
+        <AppProviders>
+            <MockProviders username={username}>
+                <ThemeProvider>
+                    <BrowserRouter>{ui}</BrowserRouter>
+                </ThemeProvider>
+            </MockProviders>
+        </AppProviders>,
+        {
+            ...options,
+        }
+    );
+
+    goTo(route, 'Test Page');
+
+    return {
+        user: userEvent.setup(),
+        view,
+    };
+};
