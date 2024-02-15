@@ -185,9 +185,11 @@ async function loadDocuments({
 
     const head = parseInt(metadataResponse.writeHead, 10);
 
+    const providedStart = offsets?.offset && offsets.offset > 0;
+
     const end =
         offsets?.endOffset && offsets.endOffset > 0 ? offsets.endOffset : head;
-    let start = offsets?.offset && offsets.offset > 0 ? offsets.offset : end;
+    let start = providedStart ? offsets.offset : end;
 
     let docsMetaResponse: any; //ProtocolReadResponse
     let documents: JournalRecord[] = [];
@@ -248,7 +250,10 @@ async function loadDocuments({
     };
 
     if (!documentCount) {
-        start = Math.max(0, start - maxBytes);
+        // If we have provided a start we do not want to mess with it. Otherwise, we might
+        //  end up fetching data that was already previously fetched.
+
+        start = providedStart ? start : Math.max(0, start - maxBytes);
         documents = await attemptToRead();
 
         if (documents.length === 0) {
@@ -260,12 +265,6 @@ async function loadDocuments({
         await getDocumentMinCount(documentCount, false);
     }
 
-    console.log('docsMetaResponse', docsMetaResponse);
-    console.log('ranges', {
-        end,
-        start,
-    });
-
     return {
         documents,
         meta: {
@@ -276,7 +275,6 @@ async function loadDocuments({
                 start,
             },
         },
-        adjustedBytes: head - start,
         tooFewDocuments: documentCount ? start <= 0 : false,
         tooManyBytes: head - start >= maxBytes,
     };

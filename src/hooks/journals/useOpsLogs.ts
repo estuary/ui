@@ -11,15 +11,13 @@ function useOpsLogs(name: string, collectionName: string) {
     const [newestParsed, setNewestParsed] = useState<number>(-1);
     const [docs, setDocs] = useState<OpsLogFlowDocument[] | null>(null);
 
-    const [bytes, setBytes] = useState(maxBytes);
-
     // TODO (typing)
     //  need to handle typing
     const { data, error, loading, refresh } = useJournalData(
         name,
         collectionName,
         {
-            maxBytes: bytes,
+            maxBytes,
         }
     );
 
@@ -30,12 +28,6 @@ function useOpsLogs(name: string, collectionName: string) {
 
         return null;
     }, [data?.documents, error]);
-
-    useEffect(() => {
-        if (data?.adjustedBytes && data.adjustedBytes > 0) {
-            setBytes(data.adjustedBytes);
-        }
-    }, [bytes, data?.adjustedBytes]);
 
     useEffect(() => {
         // Get the mete data out of the response
