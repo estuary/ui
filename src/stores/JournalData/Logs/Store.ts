@@ -95,19 +95,21 @@ const getInitialState = (
 
             if (error) {
                 setNetworkFailed(error.message);
-                addNewDocuments('init', [], 0, 0);
+                addNewDocuments([], 0, 0);
                 return;
             }
         }
 
         setRefresh(refresh);
-        addNewDocuments(docs[0], docs[1], oldestParsed, newestParsed, error);
+        addNewDocuments(docs, oldestParsed, newestParsed, error);
     },
 
     fetchMoreLogs: (option) => {
+        console.log('fetchMoreLogs');
         const {
             allowFetchingMore,
             fetchingMore,
+            newestParsed,
             oldestParsed,
             olderFinished,
             refresh,
@@ -115,6 +117,7 @@ const getInitialState = (
         } = get();
 
         if (!allowFetchingMore || !refresh || fetchingMore) {
+            console.log('fetchMoreLogs skipped');
             return;
         }
 
@@ -126,13 +129,21 @@ const getInitialState = (
             });
         } else {
             setFetchingMore(true);
-            refresh();
+            refresh({
+                offset: newestParsed,
+                endOffset: -1,
+            });
         }
     },
 
-    addNewDocuments: (typeOfAdd, docs, oldestParsed, newestParsed, error) => {
+    addNewDocuments: (docs, oldestParsed, newestParsed, error) => {
         set(
             produce((state: JournalDataLogsState) => {
+                console.log('addNewDocuments', {
+                    docs,
+                    oldestParsed,
+                    newestParsed,
+                });
                 // Check if we hit the oldest byte
                 const olderFinished = oldestParsed === 0;
 
@@ -147,15 +158,31 @@ const getInitialState = (
                     return;
                 }
 
-                if (
-                    state.oldestParsed === oldestParsed &&
-                    state.newestParsed === newestParsed
-                ) {
+                // Figure out what we're loading in
+                const initialLoading =
+                    state.oldestParsed === -1 && state.newestParsed === -1;
+                const loadingOlder =
+                    !initialLoading && state.oldestParsed > oldestParsed;
+                const loadingNewer =
+                    !initialLoading && state.newestParsed < newestParsed;
+
+                console.log('loading...', {
+                    loadingOlder,
+                    loadingNewer,
+                    initialLoading,
+                    oldestParsed,
+                    newestParsed,
+                });
+
+                if (!initialLoading && !loadingOlder && !loadingNewer) {
+                    // If we are not initing if we are here then it means the same range of
+                    //  data is being passed in. Usually means are are polling for newer
+                    //  logs and nothing is being written to them.
                     state.fetchingMore = false;
                     return;
                 }
 
-                if (typeOfAdd === 'old') {
+                if (loadingOlder) {
                     if (error) {
                         state.lastFetchFailed = true;
                     } else {
@@ -165,7 +192,7 @@ const getInitialState = (
                         state.documents = [...docs, ...(state.documents ?? [])];
                         state.lastFetchFailed = false;
                     }
-                } else if (typeOfAdd === 'new') {
+                } else if (loadingNewer) {
                     if (error) {
                         state.lastFetchFailed = true;
                     } else {
@@ -195,7 +222,6 @@ const getInitialState = (
 
                 // Helper props for future calls and scrolling
                 state.olderFinished = Boolean(olderFinished);
-                state.oldestParsed = oldestParsed;
                 state.fetchingMore = false;
 
                 // If we have docs lets make sure we keep local state updated

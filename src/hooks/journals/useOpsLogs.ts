@@ -3,15 +3,13 @@ import { useJournalData } from 'hooks/journals/useJournalData';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 import { maxBytes } from 'components/tables/Logs/shared';
-import { AddingLogTypes, LoadDocumentsOffsets } from './shared';
+import { LoadDocumentsOffsets } from './shared';
 
 function useOpsLogs(name: string, collectionName: string) {
     const [nothingInLastFetch, setNothingInLastFetch] = useState(false);
     const [oldestParsed, setOldestParsed] = useState<number>(-1);
     const [newestParsed, setNewestParsed] = useState<number>(-1);
-    const [docs, setDocs] = useState<
-        [AddingLogTypes, OpsLogFlowDocument[] | null]
-    >(['init', null]);
+    const [docs, setDocs] = useState<OpsLogFlowDocument[] | null>(null);
 
     const [bytes, setBytes] = useState(maxBytes);
 
@@ -47,6 +45,8 @@ function useOpsLogs(name: string, collectionName: string) {
         const end = meta?.ranges.end ?? null;
         const start = meta?.ranges.start ?? null;
 
+        console.log('meta stuff', { start, end, meta });
+
         if (
             end === null ||
             start === null ||
@@ -77,14 +77,7 @@ function useOpsLogs(name: string, collectionName: string) {
                     ? end
                     : previousNewestParsed
             );
-
-            // Now set a flag so we know where to put the logs in the store
-            const addType: AddingLogTypes = initialLoading
-                ? 'init'
-                : loadingOlder
-                ? 'old'
-                : 'new';
-            setDocs([addType, documents]);
+            setDocs(documents);
             setNothingInLastFetch(false);
         } else {
             setNothingInLastFetch(true);
