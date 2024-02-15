@@ -121,7 +121,7 @@ const getInitialState = (
         if (option === 'old' && !olderFinished) {
             setFetchingMore(true);
             refresh({
-                offset: 0,
+                offset: -1,
                 endOffset: oldestParsed,
             });
         } else {

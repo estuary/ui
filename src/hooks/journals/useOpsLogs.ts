@@ -73,7 +73,7 @@ function useOpsLogs(name: string, collectionName: string) {
             );
 
             setNewestParsed((previousNewestParsed) =>
-                initialLoading || end < previousNewestParsed
+                initialLoading || end > previousNewestParsed
                     ? end
                     : previousNewestParsed
             );
