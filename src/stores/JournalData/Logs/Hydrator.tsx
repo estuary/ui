@@ -49,6 +49,13 @@ export const JournalDataLogsHydrator = ({
         if (loading) {
             return;
         }
+        console.log('keeping updated', {
+            docs,
+            refresh,
+            olderFinished,
+            lastParsed,
+            error,
+        });
         hydrate(docs, refresh, olderFinished, lastParsed, error);
     }, [docs, error, hydrate, lastParsed, loading, olderFinished, refresh]);
 

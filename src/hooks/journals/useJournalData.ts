@@ -298,6 +298,7 @@ const useJournalData = (
     settings?: UseJournalDataSettings
 ) => {
     const failures = useRef(0);
+    const initialLoadComplete = useRef(false);
 
     const { data: gatewayConfig } = useGatewayAuthToken(
         collectionName ? [collectionName] : null
@@ -314,27 +315,22 @@ const useJournalData = (
         }
     }, [gatewayConfig, journalName]);
 
-    const [refreshing, setRefreshing] = useState(false);
-    const [offsets, setOffsets] = useState<LoadDocumentsOffsets>({
-        offset: 0,
-        endOffset: 0,
-    });
-
     const [data, setData] =
         useState<Awaited<ReturnType<typeof loadDocuments>>>();
     const [error, setError] = useState<any>(null);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        void (async () => {
+    const refreshData = useCallback(
+        async (offsets?: LoadDocumentsOffsets) => {
+            console.log('refreshData');
             if (
-                (refreshing && !loading) ||
-                (failures.current < 2 &&
-                    journalName &&
-                    journalClient &&
-                    !loading &&
-                    !data)
+                !loading &&
+                failures.current < 2 &&
+                journalName &&
+                journalClient
             ) {
+                console.log('refreshData running');
+
                 try {
                     setLoading(true);
                     const docs = await loadDocuments({
@@ -349,23 +345,28 @@ const useJournalData = (
                     failures.current += 1;
                     setError(e);
                 } finally {
-                    // Make sure to set refreshing back first
-                    //  Otherwise the effect fires again with loading=false|refreshing=true and loads more data
-                    setRefreshing(false);
                     setLoading(false);
                 }
             }
+        },
+        [
+            journalClient,
+            journalName,
+            loading,
+            settings?.desiredCount,
+            settings?.maxBytes,
+        ]
+    );
+
+    // Fire off a call to load data on load
+    useEffect(() => {
+        void (async () => {
+            if (!initialLoadComplete.current && journalName && journalClient) {
+                initialLoadComplete.current = true;
+                void refreshData();
+            }
         })();
-    }, [
-        data,
-        journalClient,
-        journalName,
-        loading,
-        offsets,
-        refreshing,
-        settings?.desiredCount,
-        settings?.maxBytes,
-    ]);
+    }, [journalClient, journalName, refreshData]);
 
     return useMemo(
         () => ({
@@ -374,15 +375,10 @@ const useJournalData = (
             loading,
             refresh: (newOffset?: LoadDocumentsOffsets) => {
                 failures.current = 0;
-
-                if (newOffset) {
-                    setOffsets(newOffset);
-                }
-
-                setRefreshing(true);
+                void refreshData(newOffset);
             },
         }),
-        [data, error, loading]
+        [data, error, loading, refreshData]
     );
 };
 
