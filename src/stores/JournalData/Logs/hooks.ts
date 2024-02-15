@@ -86,13 +86,6 @@ export const useJournalDataLogsStore_fetchingMore = () => {
     >(JournalDataStoreNames.LOGS, (state) => state.fetchingMore);
 };
 
-export const useJournalDataLogsStore_setFetchingMore = () => {
-    return useZustandStore<
-        JournalDataLogsState,
-        JournalDataLogsState['setFetchingMore']
-    >(JournalDataStoreNames.LOGS, (state) => state.setFetchingMore);
-};
-
 export const useJournalDataLogsStore_tailNewLogs = () => {
     return useZustandStore<
         JournalDataLogsState,

@@ -44,7 +44,8 @@ const getInitialStateData = (): Pick<
     | 'fetchingMore'
     | 'lastCount'
     | 'lastFetchFailed'
-    | 'lastParsed'
+    | 'newestParsed'
+    | 'oldestParsed'
     | 'lastTopUuid'
     | 'noData'
     | 'olderFinished'
@@ -57,7 +58,8 @@ const getInitialStateData = (): Pick<
     fetchingMore: false,
     lastCount: -1,
     lastFetchFailed: false,
-    lastParsed: -1,
+    newestParsed: -1,
+    oldestParsed: -1,
     lastTopUuid: null,
     noData: false,
     olderFinished: false,
@@ -74,7 +76,7 @@ const getInitialState = (
     ...getInitialHydrationData(),
     ...getStoreWithHydrationSettings('JournalsData:Logs', set),
 
-    hydrate: async (docs, refresh, olderFinished, lastParsed, error) => {
+    hydrate: async (docs, refresh, oldestParsed, newestParsed, error) => {
         const {
             active,
             addNewDocuments,
@@ -93,20 +95,20 @@ const getInitialState = (
 
             if (error) {
                 setNetworkFailed(error.message);
-                addNewDocuments('init', [], true, 0);
+                addNewDocuments('init', [], 0, 0);
                 return;
             }
         }
 
         setRefresh(refresh);
-        addNewDocuments(docs[0], docs[1], olderFinished, lastParsed, error);
+        addNewDocuments(docs[0], docs[1], oldestParsed, newestParsed, error);
     },
 
     fetchMoreLogs: (option) => {
         const {
             allowFetchingMore,
             fetchingMore,
-            lastParsed,
+            oldestParsed,
             olderFinished,
             refresh,
             setFetchingMore,
@@ -120,7 +122,7 @@ const getInitialState = (
             setFetchingMore(true);
             refresh({
                 offset: 0,
-                endOffset: lastParsed,
+                endOffset: oldestParsed,
             });
         } else {
             setFetchingMore(true);
@@ -128,10 +130,14 @@ const getInitialState = (
         }
     },
 
-    addNewDocuments: (typeOfAdd, docs, olderFinished, lastParsed, error) => {
+    addNewDocuments: (typeOfAdd, docs, oldestParsed, newestParsed, error) => {
         set(
             produce((state: JournalDataLogsState) => {
+                // Check if we hit the oldest byte
+                const olderFinished = oldestParsed === 0;
+
                 if (!docs) {
+                    console.log('no docs');
                     const { hydrated, noData } = getReadyToRenderFlags(
                         docs,
                         olderFinished
@@ -141,8 +147,11 @@ const getInitialState = (
                     return;
                 }
 
-                if (lastParsed === state.lastParsed) {
-                    console.log('we already parsed this');
+                if (
+                    state.oldestParsed === oldestParsed &&
+                    state.newestParsed === newestParsed
+                ) {
+                    state.fetchingMore = false;
                     return;
                 }
 
@@ -186,11 +195,14 @@ const getInitialState = (
 
                 // Helper props for future calls and scrolling
                 state.olderFinished = Boolean(olderFinished);
-                state.lastParsed = lastParsed;
+                state.oldestParsed = oldestParsed;
+                state.fetchingMore = false;
 
-                // TODO - might remove this
+                // If we have docs lets make sure we keep local state updated
                 if (state.documents && state.documents.length > 0) {
                     state.lastTopUuid = state.documents[0]._meta.uuid;
+                    state.oldestParsed = oldestParsed;
+                    state.newestParsed = newestParsed;
                 }
 
                 // Now the we have processed some documents we need to mark fields related to hydration

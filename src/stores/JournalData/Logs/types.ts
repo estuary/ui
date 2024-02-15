@@ -13,8 +13,8 @@ export interface JournalDataLogsState extends StoreWithHydration {
     addNewDocuments: (
         typeOfAdd: AddingLogTypes,
         val: OpsLogFlowDocument[] | null,
-        olderFinished: boolean,
-        lastParsed: number,
+        oldestParsed: number,
+        newestParsed: number,
         error?: any
     ) => void;
     noData: boolean;
@@ -38,15 +38,16 @@ export interface JournalDataLogsState extends StoreWithHydration {
         val: JournalDataLogsState['allowFetchingMore']
     ) => void;
 
-    lastParsed: number;
+    newestParsed: number;
+    oldestParsed: number;
     lastTopUuid: string | null;
     scrollToWhenDone: [number, Align];
 
     hydrate: (
         documents: UseOpsLogsDocs,
         refresh: (newOffset?: LoadDocumentsOffsets) => void,
-        olderFinished: boolean,
-        lastParsed: number,
+        oldestParsed: number,
+        newestParsed: number,
         error?: any
     ) => void;
     refresh: ((newOffset?: LoadDocumentsOffsets) => void) | null;

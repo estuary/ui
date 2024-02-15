@@ -67,6 +67,7 @@ function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
     ]);
 
     useEffect(() => {
+        console.log('effect', { fetchingMore, lastFetchFailed, disabled });
         if (
             !fetchingMore &&
             !lastFetchFailed &&

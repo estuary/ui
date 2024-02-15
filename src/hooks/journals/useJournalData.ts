@@ -260,6 +260,12 @@ async function loadDocuments({
         await getDocumentMinCount(documentCount, false);
     }
 
+    console.log('docsMetaResponse', docsMetaResponse);
+    console.log('ranges', {
+        end,
+        start,
+    });
+
     return {
         documents,
         meta: {
