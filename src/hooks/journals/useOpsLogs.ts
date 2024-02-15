@@ -9,7 +9,7 @@ function useOpsLogs(name: string, collectionName: string) {
     const [nothingInLastFetch, setNothingInLastFetch] = useState(false);
     const [oldestParsed, setOldestParsed] = useState<number>(-1);
     const [newestParsed, setNewestParsed] = useState<number>(-1);
-    const [docs, setDocs] = useState<UseOpsLogsDocs>([-1, -1, null]);
+    const [docs, setDocs] = useState<UseOpsLogsDocs>([[-1, -1], null]);
 
     const { data, error, loading, refresh } = useJournalData(
         name,
@@ -32,8 +32,8 @@ function useOpsLogs(name: string, collectionName: string) {
         const meta = data?.meta;
 
         // We parsed something so now let's check the ranges
-        const end = meta?.ranges.end ?? null;
-        const start = meta?.ranges.start ?? null;
+        const end = meta?.ranges[1] ?? null;
+        const start = meta?.ranges[0] ?? null;
 
         if (
             end === null ||
@@ -65,7 +65,7 @@ function useOpsLogs(name: string, collectionName: string) {
                     ? end
                     : previousNewestParsed
             );
-            setDocs([start, end, documents]);
+            setDocs([[start, end], documents]);
             setNothingInLastFetch(false);
         } else {
             setNothingInLastFetch(true);

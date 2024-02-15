@@ -22,8 +22,7 @@ export const JournalDataLogsHydrator = ({
     const setActive = useJournalDataLogsStore_setActive();
     const hydrate = useJournalDataLogsStore_hydrate();
 
-    const { docs, error, loading, oldestParsed, newestParsed, refresh } =
-        useOpsLogs(name, collectionName);
+    const { docs, error, loading, refresh } = useOpsLogs(name, collectionName);
 
     // More mount/unmount for store
     useEffect(() => {
@@ -39,8 +38,8 @@ export const JournalDataLogsHydrator = ({
         if (loading) {
             return;
         }
-        hydrate(docs, refresh, oldestParsed, newestParsed, error);
-    }, [docs, error, hydrate, loading, newestParsed, oldestParsed, refresh]);
+        hydrate(docs, refresh, error);
+    }, [docs, error, hydrate, loading, refresh]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;

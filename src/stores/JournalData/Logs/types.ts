@@ -36,8 +36,6 @@ export interface JournalDataLogsState extends StoreWithHydration {
     hydrate: (
         documents: UseOpsLogsDocs,
         refresh: (newOffset?: LoadDocumentsOffsets) => void,
-        oldestParsed: number,
-        newestParsed: number,
         error?: any
     ) => void;
     refresh: ((newOffset?: LoadDocumentsOffsets) => void) | null;

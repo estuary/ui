@@ -76,7 +76,7 @@ const getInitialState = (
     ...getInitialHydrationData(),
     ...getStoreWithHydrationSettings('JournalsData:Logs', set),
 
-    hydrate: async (docs, refresh, oldestParsed, newestParsed, error) => {
+    hydrate: async (docs, refresh, error) => {
         const {
             active,
             addNewDocuments,
@@ -95,7 +95,7 @@ const getInitialState = (
 
             if (error) {
                 setNetworkFailed(error.message);
-                addNewDocuments([0, 0, []]);
+                addNewDocuments([[0, 0], []]);
                 return;
             }
         }
@@ -139,9 +139,8 @@ const getInitialState = (
     addNewDocuments: (data, error) => {
         set(
             produce((state: JournalDataLogsState) => {
-                const start = data[0];
-                const end = data[1];
-                const docs = data[2];
+                const { 0: start, 1: end } = data[0];
+                const docs = data[1];
 
                 console.log('addNewDocuments', {
                     docs,
