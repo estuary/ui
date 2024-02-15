@@ -29,6 +29,8 @@ function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
 
     const theme = useTheme();
 
+    const runFetch = useRef(true);
+
     const [intervalLength, setIntervalLength] = useState(500);
 
     const intersectionRef = useRef<HTMLElement>(null);
@@ -48,17 +50,28 @@ function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
     const fetchingMore = useJournalDataLogsStore_fetchingMore();
 
     const fetchMore = useCallback(() => {
-        if (!intersection?.isIntersecting) {
+        if (!runFetch.current || !intersection?.isIntersecting) {
             return;
         }
 
-        // When checking for new ones fall back to give some time
-        //  for the entity to actually write logs
-        if (fetchOption === 'new') {
-            setIntervalLength(DEFAULT_POLLING);
+        if (!fetchingMore) {
+            runFetch.current = false;
+
+            // When checking for new ones fall back to give some time
+            //  for the entity to actually write logs
+            if (fetchOption === 'new') {
+                setIntervalLength(DEFAULT_POLLING);
+            }
+            fetchMoreLogs(fetchOption);
+        } else {
+            runFetch.current = true;
         }
-        fetchMoreLogs(fetchOption);
-    }, [fetchMoreLogs, fetchOption, intersection?.isIntersecting]);
+    }, [
+        fetchMoreLogs,
+        fetchOption,
+        fetchingMore,
+        intersection?.isIntersecting,
+    ]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedFetch = useCallback(debounce(fetchMore, intervalLength), [
