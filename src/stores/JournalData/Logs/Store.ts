@@ -141,17 +141,10 @@ const getInitialState = (
             produce((state: JournalDataLogsState) => {
                 const { 0: start, 1: end } = data[0];
                 const docs = data[1];
-
-                console.log('addNewDocuments', {
-                    docs,
-                    start,
-                    end,
-                });
                 // Check if we hit the oldest byte
                 const olderFinished = start === 0;
 
                 if (!docs) {
-                    console.log('no docs');
                     const { hydrated, noData } = getReadyToRenderFlags(
                         docs,
                         olderFinished
@@ -169,17 +162,9 @@ const getInitialState = (
                 const loadingNewer =
                     !initialLoading && state.newestParsed < end;
 
-                console.log('loading...', {
-                    loadingOlder,
-                    loadingNewer,
-                    initialLoading,
-                    start,
-                    end,
-                });
-
                 if (!initialLoading && !loadingOlder && !loadingNewer) {
-                    // If we are not initing if we are here then it means the same range of
-                    //  data is being passed in. Usually means are are polling for newer
+                    // If we are not init-ing and we are here then it means the same range of
+                    //  data is being passed in. Usually this is when we are polling for newer
                     //  logs and nothing is being written to them.
                     state.fetchingMore = false;
                     return;
