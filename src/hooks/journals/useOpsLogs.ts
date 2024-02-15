@@ -11,8 +11,6 @@ function useOpsLogs(name: string, collectionName: string) {
     const [newestParsed, setNewestParsed] = useState<number>(-1);
     const [docs, setDocs] = useState<OpsLogFlowDocument[] | null>(null);
 
-    // TODO (typing)
-    //  need to handle typing
     const { data, error, loading, refresh } = useJournalData(
         name,
         collectionName,
