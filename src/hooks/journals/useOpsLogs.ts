@@ -3,13 +3,13 @@ import { useJournalData } from 'hooks/journals/useJournalData';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 import { maxBytes } from 'components/tables/Logs/shared';
-import { LoadDocumentsOffsets } from './shared';
+import { LoadDocumentsOffsets, UseOpsLogsDocs } from './shared';
 
 function useOpsLogs(name: string, collectionName: string) {
     const [nothingInLastFetch, setNothingInLastFetch] = useState(false);
     const [oldestParsed, setOldestParsed] = useState<number>(-1);
     const [newestParsed, setNewestParsed] = useState<number>(-1);
-    const [docs, setDocs] = useState<OpsLogFlowDocument[] | null>(null);
+    const [docs, setDocs] = useState<UseOpsLogsDocs>([-1, -1, null]);
 
     const { data, error, loading, refresh } = useJournalData(
         name,
@@ -34,8 +34,6 @@ function useOpsLogs(name: string, collectionName: string) {
         // We parsed something so now let's check the ranges
         const end = meta?.ranges.end ?? null;
         const start = meta?.ranges.start ?? null;
-
-        console.log('meta stuff', { start, end, meta });
 
         if (
             end === null ||
@@ -67,7 +65,7 @@ function useOpsLogs(name: string, collectionName: string) {
                     ? end
                     : previousNewestParsed
             );
-            setDocs(documents);
+            setDocs([start, end, documents]);
             setNothingInLastFetch(false);
         } else {
             setNothingInLastFetch(true);

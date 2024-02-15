@@ -95,13 +95,13 @@ const getInitialState = (
 
             if (error) {
                 setNetworkFailed(error.message);
-                addNewDocuments([], 0, 0);
+                addNewDocuments([0, 0, []]);
                 return;
             }
         }
 
         setRefresh(refresh);
-        addNewDocuments(docs, oldestParsed, newestParsed, error);
+        addNewDocuments(docs, error);
     },
 
     fetchMoreLogs: (option) => {
@@ -136,16 +136,20 @@ const getInitialState = (
         }
     },
 
-    addNewDocuments: (docs, oldestParsed, newestParsed, error) => {
+    addNewDocuments: (data, error) => {
         set(
             produce((state: JournalDataLogsState) => {
+                const start = data[0];
+                const end = data[1];
+                const docs = data[2];
+
                 console.log('addNewDocuments', {
                     docs,
-                    oldestParsed,
-                    newestParsed,
+                    start,
+                    end,
                 });
                 // Check if we hit the oldest byte
-                const olderFinished = oldestParsed === 0;
+                const olderFinished = start === 0;
 
                 if (!docs) {
                     console.log('no docs');
@@ -162,16 +166,16 @@ const getInitialState = (
                 const initialLoading =
                     state.oldestParsed === -1 && state.newestParsed === -1;
                 const loadingOlder =
-                    !initialLoading && state.oldestParsed > oldestParsed;
+                    !initialLoading && state.oldestParsed > start;
                 const loadingNewer =
-                    !initialLoading && state.newestParsed < newestParsed;
+                    !initialLoading && state.newestParsed < end;
 
                 console.log('loading...', {
                     loadingOlder,
                     loadingNewer,
                     initialLoading,
-                    oldestParsed,
-                    newestParsed,
+                    start,
+                    end,
                 });
 
                 if (!initialLoading && !loadingOlder && !loadingNewer) {
@@ -191,6 +195,7 @@ const getInitialState = (
                         state.scrollToWhenDone = [docs.length + 1, 'start'];
                         state.documents = [...docs, ...(state.documents ?? [])];
                         state.lastFetchFailed = false;
+                        state.oldestParsed = start;
                     }
                 } else if (loadingNewer) {
                     if (error) {
@@ -209,6 +214,7 @@ const getInitialState = (
                             ];
                         }
                         state.lastFetchFailed = false;
+                        state.newestParsed = end;
                     }
                 } else if (docs.length > 0) {
                     // Initial hydration we want to set the array and scroll to near the bottom
@@ -218,6 +224,10 @@ const getInitialState = (
                     ];
                     state.documents = docs;
                     state.lastFetchFailed = false;
+
+                    // When init we need to set both
+                    state.oldestParsed = start;
+                    state.newestParsed = end;
                 }
 
                 // Helper props for future calls and scrolling
@@ -227,8 +237,6 @@ const getInitialState = (
                 // If we have docs lets make sure we keep local state updated
                 if (state.documents && state.documents.length > 0) {
                     state.lastTopUuid = state.documents[0]._meta.uuid;
-                    state.oldestParsed = oldestParsed;
-                    state.newestParsed = newestParsed;
                 }
 
                 // Now the we have processed some documents we need to mark fields related to hydration

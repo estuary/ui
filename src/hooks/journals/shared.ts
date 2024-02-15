@@ -5,4 +5,10 @@ export interface LoadDocumentsOffsets {
     endOffset: number;
 }
 
-export type UseOpsLogsDocs = OpsLogFlowDocument[] | null;
+export type startingByte = number;
+export type endingByte = number;
+export type UseOpsLogsDocs = [
+    startingByte,
+    endingByte,
+    OpsLogFlowDocument[] | null,
+];

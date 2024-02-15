@@ -6,12 +6,7 @@ import { OpsLogFlowDocument } from 'types';
 
 export interface JournalDataLogsState extends StoreWithHydration {
     documents: OpsLogFlowDocument[] | null;
-    addNewDocuments: (
-        val: OpsLogFlowDocument[] | null,
-        oldestParsed: number,
-        newestParsed: number,
-        error?: any
-    ) => void;
+    addNewDocuments: (documents: UseOpsLogsDocs, error?: any) => void;
     noData: boolean;
 
     lastCount: number;
