@@ -25,8 +25,6 @@ interface Props extends WaitingForRowProps {
 }
 
 function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
-    console.log('WaitingForRowBase disabled = ', disabled);
-
     const theme = useTheme();
 
     const runFetch = useRef(true);
@@ -37,7 +35,7 @@ function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
     const intersection = useIntersection(intersectionRef, {
         root: null,
         rootMargin: '0px',
-        threshold: 0.8,
+        threshold: 0.5,
     });
 
     const messageKey = `ops.logsTable.waitingForLogs.${fetchOption}`;
@@ -80,7 +78,6 @@ function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
     ]);
 
     useEffect(() => {
-        console.log('effect', { fetchingMore, lastFetchFailed, disabled });
         if (
             !fetchingMore &&
             !lastFetchFailed &&
