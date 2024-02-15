@@ -1,4 +1,3 @@
-import { FetchMoreLogsOptions } from 'components/tables/Logs/types';
 import { OpsLogFlowDocument } from 'types';
 
 export interface LoadDocumentsOffsets {
@@ -6,6 +5,4 @@ export interface LoadDocumentsOffsets {
     endOffset: number;
 }
 
-export type AddingLogTypes = FetchMoreLogsOptions | 'init';
-
-export type UseOpsLogsDocs = [AddingLogTypes, OpsLogFlowDocument[] | null];
+export type UseOpsLogsDocs = OpsLogFlowDocument[] | null;
