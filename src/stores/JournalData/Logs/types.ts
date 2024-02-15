@@ -1,9 +1,5 @@
 import { FetchMoreLogsFunction } from 'components/tables/Logs/types';
-import {
-    AddingLogTypes,
-    LoadDocumentsOffsets,
-    UseOpsLogsDocs,
-} from 'hooks/journals/shared';
+import { LoadDocumentsOffsets, UseOpsLogsDocs } from 'hooks/journals/shared';
 import { Align } from 'react-window';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { OpsLogFlowDocument } from 'types';
@@ -11,7 +7,6 @@ import { OpsLogFlowDocument } from 'types';
 export interface JournalDataLogsState extends StoreWithHydration {
     documents: OpsLogFlowDocument[] | null;
     addNewDocuments: (
-        typeOfAdd: AddingLogTypes,
         val: OpsLogFlowDocument[] | null,
         oldestParsed: number,
         newestParsed: number,
