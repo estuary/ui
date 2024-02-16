@@ -119,6 +119,7 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                                         return 0;
                                     }
 
+                                    // Due to the intersection observer we need to force a specific height
                                     if (row.level === 'ui_waiting') {
                                         return WAITING_ROW_HEIGHT;
                                     }
