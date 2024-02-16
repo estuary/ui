@@ -18,6 +18,7 @@ import {
     DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS,
     UUID_NEWEST_LOG,
     UUID_OLDEST_LOG,
+    VIRTUAL_TABLE_BODY_PADDING,
 } from './shared';
 import useLogColumns from './useLogColumns';
 import { LogsTableRow } from './Row';
@@ -129,7 +130,10 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                                         : DEFAULT_ROW_HEIGHT;
                                 }}
                                 overscanCount={10}
-                                style={{ paddingBottom: 11, paddingTop: 11 }}
+                                style={{
+                                    paddingBottom: VIRTUAL_TABLE_BODY_PADDING,
+                                    paddingTop: VIRTUAL_TABLE_BODY_PADDING,
+                                }}
                                 width={width}
                             >
                                 {renderRow}

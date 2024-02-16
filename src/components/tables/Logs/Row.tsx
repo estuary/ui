@@ -24,10 +24,10 @@ export function LogsTableRow({
     style,
 }: RowProps) {
     const theme = useTheme();
-    const renderedHeight = style.height;
 
     const uuid = useRef(row._meta.uuid);
-    const previousHeight = useRef(renderedHeight);
+    const previousHeight = useRef(style.height);
+
     const [open, setOpen] = useState(renderOpen);
     const [heightChanging, setHeightChanging] = useState(false);
 

@@ -14,3 +14,5 @@ export const UUID_OLDEST_LOG = 'UI-oldest-log-line';
 export const UUID_NEWEST_LOG = 'UI-newest-log-line';
 
 export const EXPAND_ROW_TRANSITION = 200;
+
+export const VIRTUAL_TABLE_BODY_PADDING = 10;

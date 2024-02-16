@@ -16,6 +16,7 @@ import {
     useJournalDataLogsStore_fetchMoreLogs,
     useJournalDataLogsStore_lastFetchFailed,
 } from 'stores/JournalData/Logs/hooks';
+import { VIRTUAL_TABLE_BODY_PADDING } from '../shared';
 import { FetchMoreLogsOptions, WaitingForRowProps } from '../types';
 
 interface Props extends WaitingForRowProps {
@@ -38,7 +39,7 @@ function WaitingForRowBase({
     const intersectionRef = useRef<HTMLElement>(null);
     const intersection = useIntersection(intersectionRef, {
         root: null,
-        rootMargin: '0px',
+        rootMargin: `${VIRTUAL_TABLE_BODY_PADDING}px`,
         threshold: 0.7,
     });
 
@@ -109,7 +110,7 @@ function WaitingForRowBase({
                     lastFetchFailed || disabled || intersection?.isIntersecting
                         ? 1
                         : 0,
-                transition: 'all 50ms ease-in-out',
+                transition: 'all 100ms ease-in-out',
             }}
         >
             <Box ref={intersectionRef}>
