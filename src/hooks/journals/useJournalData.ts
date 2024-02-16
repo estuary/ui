@@ -321,15 +321,12 @@ const useJournalData = (
 
     const refreshData = useCallback(
         async (offsets?: LoadDocumentsOffsets) => {
-            console.log('refreshData');
             if (
                 !loading &&
                 failures.current < 2 &&
                 journalName &&
                 journalClient
             ) {
-                console.log('refreshData running');
-
                 try {
                     setLoading(true);
                     const docs = await loadDocuments({
