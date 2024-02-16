@@ -8,7 +8,7 @@ import {
 } from 'context/Theme';
 import { WarningCircle } from 'iconoir-react';
 import { debounce } from 'lodash';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useIntersection } from 'react-use';
 import {
@@ -33,11 +33,13 @@ function WaitingForRowBase({
 }: Props) {
     const theme = useTheme();
 
+    const [allowFetch, setAllowFetch] = useState(false);
+
     const intersectionRef = useRef<HTMLElement>(null);
     const intersection = useIntersection(intersectionRef, {
         root: null,
         rootMargin: '0px',
-        threshold: 0.5,
+        threshold: 0.8,
     });
 
     const messageKey = `ops.logsTable.waitingForLogs.${fetchOption}`;
@@ -50,39 +52,32 @@ function WaitingForRowBase({
     const fetchingMore = useJournalDataLogsStore_fetchingMore();
 
     const fetchMore = useCallback(() => {
-        if (!intersection?.isIntersecting) {
-            return;
-        }
+        setAllowFetch(false);
+        fetchMoreLogs(fetchOption);
+    }, [fetchMoreLogs, fetchOption]);
 
-        if (!fetchingMore) {
-            fetchMoreLogs(fetchOption);
-        }
-    }, [
-        fetchMoreLogs,
-        fetchOption,
-        fetchingMore,
-        intersection?.isIntersecting,
-    ]);
-
+    // Cannot figure out the deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedFetch = useCallback(debounce(fetchMore, interval), [
         fetchMore,
     ]);
 
+    // If at anytime the row is not visible cancel any ongoing loading
     useEffect(() => {
-        console.log('useEffect', {
-            fetchingMore,
-            lastFetchFailed,
-            disabled,
-        });
-        if (
-            !fetchingMore &&
-            !lastFetchFailed &&
-            !disabled &&
-            intersection?.isIntersecting
-        ) {
-            debouncedFetch();
+        if (!intersection?.isIntersecting) {
+            debouncedFetch.cancel();
         }
+    }, [debouncedFetch, intersection?.isIntersecting]);
+
+    useEffect(() => {
+        setAllowFetch(
+            Boolean(
+                !fetchingMore &&
+                    !lastFetchFailed &&
+                    !disabled &&
+                    intersection?.isIntersecting
+            )
+        );
     }, [
         debouncedFetch,
         disabled,
@@ -90,6 +85,12 @@ function WaitingForRowBase({
         intersection?.isIntersecting,
         lastFetchFailed,
     ]);
+
+    useEffect(() => {
+        if (allowFetch) {
+            debouncedFetch();
+        }
+    }, [allowFetch, debouncedFetch]);
 
     return (
         <TableRow
