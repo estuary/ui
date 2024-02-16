@@ -184,14 +184,13 @@ async function loadDocuments({
     }
 
     const head = parseInt(metadataResponse.writeHead, 10);
-
     const providedStart = offsets?.offset && offsets.offset > 0;
 
     const end =
         offsets?.endOffset && offsets.endOffset > 0 ? offsets.endOffset : head;
     let start = providedStart ? offsets.offset : end;
 
-    let docsMetaResponse: any; //ProtocolReadResponse
+    // let docsMetaResponse: any; //ProtocolReadResponse
     let documents: JournalRecord[] = [];
     let attempt = 0;
 
@@ -210,17 +209,8 @@ async function loadDocuments({
             })
         ).unwrap();
 
-        // Splt the stream so we can read it twice
-        const teedDocumentsStream = stream.tee();
-
         // Read all the documents
-        const allDocs = await readAllDocuments(
-            parseJournalDocuments(teedDocumentsStream[0])
-        );
-
-        // Get the metadata from the document reading
-        const docsMetaGenerator = streamAsyncIterator(teedDocumentsStream[1]);
-        docsMetaResponse = (await docsMetaGenerator.next()).value;
+        const allDocs = await readAllDocuments(parseJournalDocuments(stream));
 
         // TODO: Instead of inefficiently re-reading until we get the desired row count,
         // we should accumulate documents and shift `head` backwards using `ProtocolReadResponse.offset`
@@ -252,14 +242,20 @@ async function loadDocuments({
     if (!documentCount) {
         // If we have provided a start we do not want to mess with it. Otherwise, we might
         //  end up fetching data that was already previously fetched.
-
         start = providedStart ? start : Math.max(0, start - maxBytes);
-        documents = await attemptToRead();
 
-        if (documents.length === 0) {
-            logRocketConsole(CustomEvents.JOURNAL_DATA_MAX_BYTES_NOT_ENOUGH);
-            // If we didn't get anything go ahead and try to keep reading more data until we get something back
-            await getDocumentMinCount(1, true);
+        // Make sure we are actually trying to load data. If the start and end are the same
+        //  that usually means we are loading newer documents but there is nothing newer to load
+        if (start !== end) {
+            documents = await attemptToRead();
+
+            if (documents.length === 0) {
+                logRocketConsole(
+                    CustomEvents.JOURNAL_DATA_MAX_BYTES_NOT_ENOUGH
+                );
+                // If we didn't get anything go ahead and try to keep reading more data until we get something back
+                await getDocumentMinCount(1, true);
+            }
         }
     } else {
         await getDocumentMinCount(documentCount, false);
@@ -268,8 +264,10 @@ async function loadDocuments({
     return {
         documents,
         meta: {
-            metadataResponse,
-            docsMetaResponse,
+            // We passed the entire meta back but replaced with the simpler
+            //  ranges. Might need to add this back later for smarter parsing.
+            // metadataResponse,
+            // docsMetaResponse,
             ranges: [start, end], // Range
         },
         tooFewDocuments: documentCount ? start <= 0 : false,

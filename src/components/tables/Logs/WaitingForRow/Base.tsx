@@ -1,7 +1,6 @@
 import { Box, TableCell, TableRow, Typography, useTheme } from '@mui/material';
 import SpinnerIcon from 'components/logs/SpinnerIcon';
 import { BaseTypographySx } from 'components/tables/cells/logs/shared';
-import { DEFAULT_POLLING } from 'context/SWR';
 import {
     errorOutlinedButtonBackground,
     tableRowActive_Finished__Background,
@@ -9,7 +8,7 @@ import {
 } from 'context/Theme';
 import { WarningCircle } from 'iconoir-react';
 import { debounce } from 'lodash';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useIntersection } from 'react-use';
 import {
@@ -22,14 +21,17 @@ import { FetchMoreLogsOptions, WaitingForRowProps } from '../types';
 interface Props extends WaitingForRowProps {
     fetchOption: FetchMoreLogsOptions;
     disabled?: boolean;
+    interval?: number;
 }
 
-function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
+function WaitingForRowBase({
+    disabled,
+    interval = 500,
+    fetchOption,
+    sizeRef,
+    style,
+}: Props) {
     const theme = useTheme();
-
-    const runFetch = useRef(true);
-
-    const [intervalLength, setIntervalLength] = useState(500);
 
     const intersectionRef = useRef<HTMLElement>(null);
     const intersection = useIntersection(intersectionRef, {
@@ -48,21 +50,12 @@ function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
     const fetchingMore = useJournalDataLogsStore_fetchingMore();
 
     const fetchMore = useCallback(() => {
-        if (!runFetch.current || !intersection?.isIntersecting) {
+        if (!intersection?.isIntersecting) {
             return;
         }
 
         if (!fetchingMore) {
-            runFetch.current = false;
-
-            // When checking for new ones fall back to give some time
-            //  for the entity to actually write logs
-            if (fetchOption === 'new') {
-                setIntervalLength(DEFAULT_POLLING);
-            }
             fetchMoreLogs(fetchOption);
-        } else {
-            runFetch.current = true;
         }
     }, [
         fetchMoreLogs,
@@ -72,12 +65,16 @@ function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
     ]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedFetch = useCallback(debounce(fetchMore, intervalLength), [
+    const debouncedFetch = useCallback(debounce(fetchMore, interval), [
         fetchMore,
-        intervalLength,
     ]);
 
     useEffect(() => {
+        console.log('useEffect', {
+            fetchingMore,
+            lastFetchFailed,
+            disabled,
+        });
         if (
             !fetchingMore &&
             !lastFetchFailed &&

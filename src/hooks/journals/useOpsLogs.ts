@@ -35,12 +35,15 @@ function useOpsLogs(name: string, collectionName: string) {
         const end = meta?.ranges[1] ?? null;
         const start = meta?.ranges[0] ?? null;
 
-        if (
-            end === null ||
-            start === null ||
-            !documents ||
-            documents.length <= 0
-        ) {
+        // Handles while we are doing the initial loading
+        if (end === null || start === null) {
+            return;
+        }
+
+        // This means there was nothing new to fetch and the fetching was skipped
+        //  Usually because we are fetching newer logs and there is nothing new written
+        if (end === start) {
+            setNothingInLastFetch(true);
             return;
         }
 
