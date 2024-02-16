@@ -32,8 +32,8 @@ function useOpsLogs(name: string, collectionName: string) {
         const meta = data?.meta;
 
         // We parsed something so now let's check the ranges
-        const end = meta?.ranges[1] ?? null;
-        const start = meta?.ranges[0] ?? null;
+        const end = meta?.range[1] ?? null;
+        const start = meta?.range[0] ?? null;
 
         // Handles while we are doing the initial loading
         if (end === null || start === null) {

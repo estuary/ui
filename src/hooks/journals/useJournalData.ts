@@ -19,7 +19,7 @@ import {
     shouldRefreshToken,
 } from 'utils/dataPlane-utils';
 import { journalStatusIsError } from 'utils/misc-utils';
-import { LoadDocumentsOffsets } from './shared';
+import { JournalByteRange, LoadDocumentsOffsets } from './shared';
 
 const errorRetryCount = 2;
 
@@ -140,19 +140,30 @@ async function readAllDocuments<T>(stream: ReadableStream<T>) {
     return accum;
 }
 
+interface LoadDocumentsProps {
+    offsets?: LoadDocumentsOffsets;
+    journalName?: string;
+    client?: JournalClient;
+    documentCount?: number;
+    maxBytes: number;
+}
+
+interface LoadDocumentsResponse {
+    documents: any[];
+    tooFewDocuments: boolean;
+    tooManyBytes: boolean;
+    meta?: {
+        range: JournalByteRange;
+    };
+}
+
 async function loadDocuments({
     journalName,
     client,
     documentCount,
     maxBytes,
     offsets,
-}: {
-    offsets?: LoadDocumentsOffsets;
-    journalName?: string;
-    client?: JournalClient;
-    documentCount?: number;
-    maxBytes: number;
-}) {
+}: LoadDocumentsProps): Promise<LoadDocumentsResponse> {
     if (!client || !journalName) {
         console.warn('Cannot load documents without client and journal');
         return {
@@ -268,7 +279,7 @@ async function loadDocuments({
             //  ranges. Might need to add this back later for smarter parsing.
             // metadataResponse,
             // docsMetaResponse,
-            ranges: [start, end], // Range
+            range: [start, end],
         },
         tooFewDocuments: documentCount ? start <= 0 : false,
         tooManyBytes: head - start >= maxBytes,
