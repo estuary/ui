@@ -19,6 +19,7 @@ import {
     UUID_NEWEST_LOG,
     UUID_OLDEST_LOG,
     VIRTUAL_TABLE_BODY_PADDING,
+    WAITING_ROW_HEIGHT,
 } from './shared';
 import useLogColumns from './useLogColumns';
 import { LogsTableRow } from './Row';
@@ -116,6 +117,10 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                                     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                                     if (!row) {
                                         return 0;
+                                    }
+
+                                    if (row.level === 'waiting') {
+                                        return WAITING_ROW_HEIGHT;
                                     }
 
                                     const customHeight =
