@@ -1,4 +1,4 @@
-import { LoadDocumentsOffsets } from 'hooks/journals/shared';
+import { LoadDocumentsOffsets } from 'hooks/journals/types';
 import { CSSProperties, RefCallback } from 'react';
 
 export type FetchMoreLogsOptions = 'old' | 'new';

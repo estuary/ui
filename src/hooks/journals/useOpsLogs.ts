@@ -3,7 +3,7 @@ import { useJournalData } from 'hooks/journals/useJournalData';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { OpsLogFlowDocument } from 'types';
 import { maxBytes } from 'components/tables/Logs/shared';
-import { LoadDocumentsOffsets, UseOpsLogsDocs } from './shared';
+import { LoadDocumentsOffsets, UseOpsLogsDocs } from './types';
 
 function useOpsLogs(name: string, collectionName: string) {
     const [nothingInLastFetch, setNothingInLastFetch] = useState(false);

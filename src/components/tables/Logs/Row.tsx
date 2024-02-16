@@ -10,8 +10,8 @@ import WaitingForNewLogsRow from './WaitingForRow/NewLogs';
 
 interface RowProps {
     row: OpsLogFlowDocument;
-    rowExpanded: (height: number) => void;
-    rowOpened: (isOpen: boolean) => void;
+    rowExpanded: (uuid: string, height: number) => void;
+    rowOpened: (uuid: string, isOpen: boolean) => void;
     style: CSSProperties;
     renderOpen?: boolean;
 }
@@ -26,6 +26,7 @@ export function LogsTableRow({
     const theme = useTheme();
     const renderedHeight = style.height;
 
+    const uuid = useRef(row._meta.uuid);
     const previousHeight = useRef(renderedHeight);
     const [open, setOpen] = useState(renderOpen);
     const [heightChanging, setHeightChanging] = useState(false);
@@ -39,7 +40,7 @@ export function LogsTableRow({
         }
 
         previousHeight.current = rowSizeHeight;
-        rowExpanded(rowSizeHeight);
+        rowExpanded(uuid.current, rowSizeHeight);
         setHeightChanging(false);
     }, [rowExpanded, rowSizeHeight]);
 
@@ -48,19 +49,17 @@ export function LogsTableRow({
 
         setHeightChanging(true);
         setOpen(newVal);
-        rowOpened(newVal);
+        rowOpened(uuid.current, newVal);
     };
 
-    const uuid = row._meta.uuid;
     const WaitingComponent =
-        uuid === UUID_NEWEST_LOG
+        uuid.current === UUID_NEWEST_LOG
             ? WaitingForNewLogsRow
-            : uuid === UUID_OLDEST_LOG
+            : uuid.current === UUID_OLDEST_LOG
             ? WaitingForOldLogsRow
             : null;
 
     if (WaitingComponent) {
-        // The fields thing is pretty janky and hacky but it worked and made this much easier
         return <WaitingComponent style={style} sizeRef={sizeRef} />;
     }
 

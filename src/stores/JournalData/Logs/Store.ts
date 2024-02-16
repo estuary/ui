@@ -163,6 +163,10 @@ const getInitialState = (
                     !initialLoading && state.newestParsed < end;
 
                 if (!initialLoading && !loadingOlder && !loadingNewer) {
+                    if (error) {
+                        state.lastFetchFailed = true;
+                    }
+
                     // If we are not init-ing and we are here then it means the same range of
                     //  data is being passed in. Usually this is when we are polling for newer
                     //  logs and nothing is being written to them.

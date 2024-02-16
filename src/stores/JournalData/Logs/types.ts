@@ -1,5 +1,5 @@
 import { FetchMoreLogsFunction } from 'components/tables/Logs/types';
-import { LoadDocumentsOffsets, UseOpsLogsDocs } from 'hooks/journals/shared';
+import { LoadDocumentsOffsets, UseOpsLogsDocs } from 'hooks/journals/types';
 import { Align } from 'react-window';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { OpsLogFlowDocument } from 'types';

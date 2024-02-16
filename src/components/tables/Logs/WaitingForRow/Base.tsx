@@ -39,7 +39,7 @@ function WaitingForRowBase({
     const intersection = useIntersection(intersectionRef, {
         root: null,
         rootMargin: '0px',
-        threshold: 0.8,
+        threshold: 0.7,
     });
 
     const messageKey = `ops.logsTable.waitingForLogs.${fetchOption}`;

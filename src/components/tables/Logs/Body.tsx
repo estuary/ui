@@ -71,68 +71,25 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
         return null;
     }, [documents]);
 
-    const getItemSize = useCallback(
-        (rowIndex: number) => {
-            const row = itemData?.[rowIndex];
-
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (!row) {
-                return 0;
-            }
-
-            const customHeight = expandedHeights.current.get(row._meta.uuid);
-
-            return customHeight && customHeight > 0
-                ? customHeight
-                : isEmpty(row.fields)
-                ? DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS
-                : DEFAULT_ROW_HEIGHT;
-        },
-        [itemData]
-    );
-
-    const openRow = useCallback((uuid: string, isOpen: boolean) => {
-        if (isOpen) {
-            openRows.current.set(uuid, isOpen);
-        } else {
-            openRows.current.delete(uuid);
-        }
-    }, []);
-
-    const updateRowHeight = useCallback(
-        (index: number, uuid: string, height: number) => {
-            if (
-                height > 0 ||
-                height === DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS ||
-                height === DEFAULT_ROW_HEIGHT
-            ) {
-                expandedHeights.current.set(uuid, height);
-            } else {
-                expandedHeights.current.delete(uuid);
-            }
-
-            tableScroller()?.resetAfterIndex(index);
-        },
-        [tableScroller]
-    );
-
     const renderRow = useCallback(
         ({ data, index, style }: ListChildComponentProps) => {
             const row = data[index];
-            const uuid = row._meta.uuid;
             return (
                 <LogsTableRow
                     row={row}
                     style={style}
-                    rowExpanded={(height) =>
-                        updateRowHeight(index, uuid, height)
+                    rowExpanded={(uuid, height) => {
+                        expandedHeights.current.set(uuid, height);
+                        tableScroller()?.resetAfterIndex(index);
+                    }}
+                    rowOpened={(uuid, isOpen) =>
+                        openRows.current.set(uuid, isOpen)
                     }
-                    rowOpened={(isOpen) => openRow(uuid, isOpen)}
-                    renderOpen={Boolean(openRows.current.get(uuid))}
+                    renderOpen={Boolean(openRows.current.get(row._meta.uuid))}
                 />
             );
         },
-        [openRow, updateRowHeight]
+        [tableScroller]
     );
 
     if (itemData && itemData.length > 0) {
@@ -152,7 +109,25 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                                 itemKey={(index, data) => {
                                     return data[index]._meta.uuid;
                                 }}
-                                itemSize={getItemSize}
+                                itemSize={(index) => {
+                                    const row = itemData[index];
+
+                                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                                    if (!row) {
+                                        return 0;
+                                    }
+
+                                    const customHeight =
+                                        expandedHeights.current.get(
+                                            row._meta.uuid
+                                        );
+
+                                    return customHeight && customHeight > 0
+                                        ? customHeight
+                                        : isEmpty(row.fields)
+                                        ? DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS
+                                        : DEFAULT_ROW_HEIGHT;
+                                }}
                                 overscanCount={10}
                                 style={{ paddingBottom: 10, paddingTop: 10 }}
                                 width={width}
