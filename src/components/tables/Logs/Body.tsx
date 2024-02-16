@@ -54,7 +54,7 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                     _meta: {
                         uuid: UUID_OLDEST_LOG,
                     },
-                    level: 'waiting',
+                    level: 'ui_waiting',
                     message: '',
                     ts: '',
                 },
@@ -63,7 +63,7 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                     _meta: {
                         uuid: UUID_NEWEST_LOG,
                     },
-                    level: 'waiting',
+                    level: 'ui_waiting',
                     message: '',
                     ts: '',
                 },
@@ -119,7 +119,7 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                                         return 0;
                                     }
 
-                                    if (row.level === 'waiting') {
+                                    if (row.level === 'ui_waiting') {
                                         return WAITING_ROW_HEIGHT;
                                     }
 

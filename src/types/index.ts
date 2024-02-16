@@ -1,6 +1,7 @@
 import { JsonFormsCore } from '@jsonforms/core';
 import { TableCellProps } from '@mui/material';
 import { PostgrestError } from '@supabase/supabase-js';
+import { LogLevels } from 'components/tables/Logs/types';
 import { ReactNode } from 'react';
 
 export type fake = 'fake';
@@ -392,7 +393,7 @@ export interface DataProcessingAlert {
 export interface OpsLogFlowDocument {
     _meta: Meta;
     ts: string; //time stamp string
-    level: string;
+    level: LogLevels;
     message: string;
     shard?: Shard;
     fields?: Schema;

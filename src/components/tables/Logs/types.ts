@@ -10,3 +10,11 @@ export interface WaitingForRowProps {
 }
 
 export type RefreshLogsFunction = (newOffset?: LoadDocumentsOffsets) => void;
+
+export type LogLevels =
+    | 'error'
+    | 'warn'
+    | 'debug'
+    | 'trace'
+    | 'done'
+    | 'ui_waiting';
