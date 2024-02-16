@@ -129,7 +129,7 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                                         : DEFAULT_ROW_HEIGHT;
                                 }}
                                 overscanCount={10}
-                                style={{ paddingBottom: 10, paddingTop: 10 }}
+                                style={{ paddingBottom: 11, paddingTop: 11 }}
                                 width={width}
                             >
                                 {renderRow}
