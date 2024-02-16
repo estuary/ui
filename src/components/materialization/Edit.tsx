@@ -19,6 +19,7 @@ import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useMemo } from 'react';
 import { CustomEvents } from 'services/types';
+import BindingHydrator from 'stores/Binding/Hydrator';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
@@ -66,40 +67,42 @@ function MaterializationEdit() {
             <DetailsFormHydrator>
                 <EndpointConfigHydrator>
                     <ResourceConfigHydrator>
-                        <MutateDraftSpecProvider value={updateDraftSpecs}>
-                            <EntityEdit
-                                title="routeTitle.materializationEdit"
-                                entityType={entityType}
-                                readOnly={{ detailsForm: true }}
-                                draftSpecMetadata={draftSpecsMetadata}
-                                toolbar={
-                                    <EntityToolbar
-                                        GenerateButton={
-                                            <MaterializeGenerateButton
-                                                disabled={!hasConnectors}
-                                            />
-                                        }
-                                        TestButton={
-                                            <EntityTestButton
-                                                disabled={!hasConnectors}
-                                                logEvent={
-                                                    CustomEvents.MATERIALIZATION_TEST
-                                                }
-                                            />
-                                        }
-                                        SaveButton={
-                                            <EntitySaveButton
-                                                disabled={!draftId}
-                                                taskNames={taskNames}
-                                                logEvent={
-                                                    CustomEvents.MATERIALIZATION_EDIT
-                                                }
-                                            />
-                                        }
-                                    />
-                                }
-                            />
-                        </MutateDraftSpecProvider>
+                        <BindingHydrator>
+                            <MutateDraftSpecProvider value={updateDraftSpecs}>
+                                <EntityEdit
+                                    title="routeTitle.materializationEdit"
+                                    entityType={entityType}
+                                    readOnly={{ detailsForm: true }}
+                                    draftSpecMetadata={draftSpecsMetadata}
+                                    toolbar={
+                                        <EntityToolbar
+                                            GenerateButton={
+                                                <MaterializeGenerateButton
+                                                    disabled={!hasConnectors}
+                                                />
+                                            }
+                                            TestButton={
+                                                <EntityTestButton
+                                                    disabled={!hasConnectors}
+                                                    logEvent={
+                                                        CustomEvents.MATERIALIZATION_TEST
+                                                    }
+                                                />
+                                            }
+                                            SaveButton={
+                                                <EntitySaveButton
+                                                    disabled={!draftId}
+                                                    taskNames={taskNames}
+                                                    logEvent={
+                                                        CustomEvents.MATERIALIZATION_EDIT
+                                                    }
+                                                />
+                                            }
+                                        />
+                                    }
+                                />
+                            </MutateDraftSpecProvider>
+                        </BindingHydrator>
                     </ResourceConfigHydrator>
                 </EndpointConfigHydrator>
             </DetailsFormHydrator>

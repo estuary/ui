@@ -13,11 +13,11 @@ export interface LiveSpecsExtQuery {
     last_pub_id: string;
 }
 
-export type LiveSpecsExt_MaterializeCapture = {
+export interface LiveSpecsExt_MaterializeCapture {
     catalog_name: string;
     spec_type: LiveSpecsExtQuery['spec_type'];
     writes_to: LiveSpecsExtQuery['writes_to'];
-}[];
+}
 
 // TODO (typing) don't just copy the settings from SWR/Supabase and just pick/extend 'em
 interface Response<T> {

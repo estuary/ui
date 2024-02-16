@@ -191,13 +191,13 @@ const getInitialState = (
                     rehydrating && collections ? collections : [];
 
                 // Get a list of all the new collections that will be added
-                value.forEach((datum) => {
-                    if (datum?.spec_type === 'collection') {
+                value?.forEach((datum) => {
+                    if (datum.spec_type === 'collection') {
                         if (!emptyCollections.includes(datum.catalog_name)) {
                             emptyCollections.push(datum.catalog_name);
                         }
                     } else {
-                        datum?.writes_to.forEach((collection) => {
+                        datum.writes_to.forEach((collection) => {
                             if (!emptyCollections.includes(collection)) {
                                 emptyCollections.push(collection);
                             }

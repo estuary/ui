@@ -4,11 +4,11 @@ import {
     LiveSpecsExt_MaterializeCapture,
 } from 'hooks/useLiveSpecsExt';
 import {
+    TABLES,
     handleFailure,
     handleSuccess,
     supabaseClient,
     supabaseRetry,
-    TABLES,
 } from 'services/supabase';
 import { Entity } from 'types';
 
@@ -86,7 +86,7 @@ export const getLiveSpecsById_writesTo = async (
                     typeof liveSpecId === 'string' ? [liveSpecId] : liveSpecId
                 ),
         'getLiveSpecsById_writesTo'
-    ).then(handleSuccess<LiveSpecsExt_MaterializeCapture>, handleFailure);
+    ).then(handleSuccess<LiveSpecsExt_MaterializeCapture[]>, handleFailure);
 
     return data;
 };

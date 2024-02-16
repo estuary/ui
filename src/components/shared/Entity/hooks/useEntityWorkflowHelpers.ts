@@ -18,6 +18,7 @@ import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { useBinding_resetState } from 'stores/Binding/hooks';
 import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig/hooks';
 import {
@@ -39,6 +40,9 @@ function useEntityWorkflowHelpers() {
     const navigate = useNavigate();
     const entityType = useEntityType();
     const intl = useIntl();
+
+    // Binding Store
+    const resetBindingState = useBinding_resetState();
 
     // Bindings Editor Store
     const resetBindingsEditorStore = useBindingsEditorStore_resetState();
@@ -79,12 +83,14 @@ function useEntityWorkflowHelpers() {
         resetEndpointConfigState();
         resetDetailsFormState();
         resetResourceConfigState();
+        resetBindingState();
         resetEditorStore();
         resetBindingsEditorStore();
         resetSchemaEvolutionState();
         resetSourceCapture();
         resetTransformationCreateState();
     }, [
+        resetBindingState,
         resetBindingsEditorStore,
         resetDetailsFormState,
         resetEditorStore,

@@ -21,7 +21,7 @@ export interface ResourceConfigState extends StoreWithHydration {
     // Collection Selector
     collections: string[] | null;
     preFillEmptyCollections: (
-        collections: LiveSpecsExt_MaterializeCapture | null[],
+        collections: LiveSpecsExt_MaterializeCapture[] | null,
         rehydrating?: boolean
     ) => void;
     removeCollection: (value: string) => void;
@@ -84,7 +84,7 @@ export interface ResourceConfigState extends StoreWithHydration {
         editWorkflow: boolean,
         entityType: Entity,
         rehydrating?: boolean
-    ) => Promise<LiveSpecsExt_MaterializeCapture | null>;
+    ) => Promise<LiveSpecsExt_MaterializeCapture[] | null>;
 
     // Server-Form Alignment
     serverUpdateRequired: boolean;
