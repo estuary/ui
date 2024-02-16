@@ -69,6 +69,8 @@ function WaitingForRowBase({
         }
     }, [debouncedFetch, intersection?.isIntersecting]);
 
+    // Keeping all this logic in a stand alone effect/state because we might
+    //  need to expand this beyond just checking some simple booleans
     useEffect(() => {
         setAllowFetch(
             Boolean(
