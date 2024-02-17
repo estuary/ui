@@ -49,9 +49,9 @@ const getInitialState = (
     prefillBindingDependentState: (bindings, _referenceBindings) => {
         set(
             produce((state: BindingState) => {
-                bindings.forEach((binding, index) => {
+                bindings.forEach((binding) => {
                     const collection = getCollectionName(binding);
-                    const UUID = `generate-uuid-${index}`;
+                    const UUID = crypto.randomUUID();
 
                     const existingBindingIds: string[] = Object.hasOwn(
                         state.bindings,
@@ -102,9 +102,9 @@ const getInitialState = (
                     collections
                 );
 
-                newCollections.forEach((collection, index) => {
+                newCollections.forEach((collection) => {
                     if (!Object.hasOwn(state.bindings, collection)) {
-                        const UUID = `generate-uuid-empty-${index}`;
+                        const UUID = crypto.randomUUID();
 
                         state.bindings[collection] = [UUID];
                     }
