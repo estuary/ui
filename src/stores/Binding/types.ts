@@ -18,6 +18,11 @@ export interface BindingState extends StoreWithHydration {
         rehydrating?: boolean
     ) => void;
 
+    // Resource Schema
+    resourceSchema: Schema;
+    setResourceSchema: (val: BindingState['resourceSchema']) => void;
+
+    // Misc.
     hydrateState: (
         editWorkflow: boolean,
         entityType: Entity,

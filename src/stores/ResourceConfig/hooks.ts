@@ -11,16 +11,6 @@ export const useResourceConfig_collections = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.collections);
 };
 
-export const useResourceConfig_preFillEmptyCollections = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['preFillEmptyCollections']
-    >(
-        ResourceConfigStoreNames.GENERAL,
-        (state) => state.preFillEmptyCollections
-    );
-};
-
 export const useResourceConfig_removeCollection = () => {
     return useZustandStore<
         ResourceConfigState,
@@ -233,20 +223,6 @@ export const useResourceConfig_resourceConfigErrors = () => {
         ResourceConfigState,
         ResourceConfigState['resourceConfigErrors']
     >(ResourceConfigStoreNames.GENERAL, (state) => state.resourceConfigErrors);
-};
-
-export const useResourceConfig_resourceSchema = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceSchema']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.resourceSchema);
-};
-
-export const useResourceConfig_setResourceSchema = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setResourceSchema']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.setResourceSchema);
 };
 
 export const useResourceConfig_stateChanged = () => {

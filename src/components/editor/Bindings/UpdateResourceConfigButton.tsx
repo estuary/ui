@@ -3,6 +3,7 @@ import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
 
 import { FormattedMessage } from 'react-intl';
+import { useBinding_resourceSchema } from 'stores/Binding/hooks';
 import {
     useResourceConfig_discoveredCollections,
     useResourceConfig_setResourceConfig,
@@ -19,6 +20,8 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         }
     );
 
+    const resourceSchema = useBinding_resourceSchema();
+
     const discoveredCollections = useResourceConfig_discoveredCollections();
     const setResourceConfig = useResourceConfig_setResourceConfig();
     const setRestrictedDiscoveredCollections =
@@ -33,6 +36,7 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
 
         setResourceConfig(
             value.map(({ name }) => name),
+            resourceSchema,
             undefined,
             false,
             true

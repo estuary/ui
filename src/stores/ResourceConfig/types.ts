@@ -22,6 +22,7 @@ export interface ResourceConfigState extends StoreWithHydration {
     collections: string[] | null;
     preFillEmptyCollections: (
         collections: LiveSpecsExt_MaterializeCapture[] | null,
+        resourceSchema: Schema,
         rehydrating?: boolean
     ) => void;
     removeCollection: (value: string) => void;
@@ -65,6 +66,7 @@ export interface ResourceConfigState extends StoreWithHydration {
     prefillResourceConfig: (bindings: any) => void;
     setResourceConfig: (
         key: string | string[],
+        resourceSchema: Schema,
         resourceConfig?: ResourceConfig,
         disableCheckingErrors?: boolean,
         disableOmit?: boolean
@@ -76,13 +78,10 @@ export interface ResourceConfigState extends StoreWithHydration {
     resourceConfigErrorsExist: boolean;
     resourceConfigErrors: (string | undefined)[];
 
-    // Resource Schema
-    resourceSchema: Schema;
-    setResourceSchema: (val: ResourceConfigState['resourceSchema']) => void;
-
     hydrateState: (
         editWorkflow: boolean,
         entityType: Entity,
+        resourceSchema: Schema,
         rehydrating?: boolean
     ) => Promise<LiveSpecsExt_MaterializeCapture[] | null>;
 

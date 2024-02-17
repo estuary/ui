@@ -50,6 +50,15 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     }
 
                     // Since we checked disabled up above we can not just check if the data changed
+                    console.log(
+                        collectionName,
+                        !isEqual(
+                            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                            resourceConfig[collectionName]?.data,
+                            resource
+                        )
+                    );
+
                     return !isEqual(
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                         resourceConfig[collectionName]?.data,

@@ -69,8 +69,8 @@ function CaptureEdit() {
         <DraftInitializer>
             <DetailsFormHydrator>
                 <EndpointConfigHydrator>
-                    <ResourceConfigHydrator>
-                        <BindingHydrator>
+                    <BindingHydrator>
+                        <ResourceConfigHydrator>
                             <MutateDraftSpecProvider value={updateDraftSpecs}>
                                 <EntityEdit
                                     title="routeTitle.captureEdit"
@@ -115,8 +115,8 @@ function CaptureEdit() {
                                     }
                                 />
                             </MutateDraftSpecProvider>
-                        </BindingHydrator>
-                    </ResourceConfigHydrator>
+                        </ResourceConfigHydrator>
+                    </BindingHydrator>
                 </EndpointConfigHydrator>
             </DetailsFormHydrator>
         </DraftInitializer>

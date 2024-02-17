@@ -70,8 +70,8 @@ function MaterializationCreate() {
     return (
         <DetailsFormHydrator>
             <EndpointConfigHydrator>
-                <ResourceConfigHydrator>
-                    <BindingHydrator>
+                <BindingHydrator>
+                    <ResourceConfigHydrator>
                         <MutateDraftSpecProvider value={updateDraftSpecs}>
                             <EntityCreate
                                 entityType={entityType}
@@ -104,8 +104,8 @@ function MaterializationCreate() {
                                 }
                             />
                         </MutateDraftSpecProvider>
-                    </BindingHydrator>
-                </ResourceConfigHydrator>
+                    </ResourceConfigHydrator>
+                </BindingHydrator>
             </EndpointConfigHydrator>
         </DetailsFormHydrator>
     );

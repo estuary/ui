@@ -5,6 +5,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
+import { useBinding_resourceSchema } from 'stores/Binding/hooks';
 import { BaseComponentProps } from 'types';
 import { useStore } from 'zustand';
 import {
@@ -23,6 +24,8 @@ export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
     const workflow = useEntityWorkflow();
     const editWorkflow = useEntityWorkflow_Editing();
 
+    const resourceSchema = useBinding_resourceSchema();
+
     const hydrated = useResourceConfig_hydrated();
     const setHydrated = useResourceConfig_setHydrated();
     const setActive = useResourceConfig_setActive();
@@ -38,7 +41,12 @@ export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
 
     const hydrateTheState = (rehydrating: boolean) => {
         setActive(true);
-        hydrateState(editWorkflow, entityType, rehydrating).then(
+        hydrateState(
+            editWorkflow,
+            entityType,
+            resourceSchema,
+            rehydrating
+        ).then(
             (response) => {
                 if (
                     response &&

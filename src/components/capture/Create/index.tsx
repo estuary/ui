@@ -87,8 +87,8 @@ function CaptureCreate() {
     return (
         <DetailsFormHydrator>
             <EndpointConfigHydrator>
-                <ResourceConfigHydrator>
-                    <BindingHydrator>
+                <BindingHydrator>
+                    <ResourceConfigHydrator>
                         <MutateDraftSpecProvider value={updateDraftSpecs}>
                             <EntityCreate
                                 entityType={entityType}
@@ -135,8 +135,8 @@ function CaptureCreate() {
                                 }
                             />
                         </MutateDraftSpecProvider>
-                    </BindingHydrator>
-                </ResourceConfigHydrator>
+                    </ResourceConfigHydrator>
+                </BindingHydrator>
             </EndpointConfigHydrator>
         </DetailsFormHydrator>
     );

@@ -50,3 +50,17 @@ export const useBinding_resetState = () => {
         (state) => state.resetState
     );
 };
+
+export const useBinding_resourceSchema = () => {
+    return useZustandStore<BindingState, BindingState['resourceSchema']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.resourceSchema
+    );
+};
+
+export const useBinding_setResourceSchema = () => {
+    return useZustandStore<BindingState, BindingState['setResourceSchema']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.setResourceSchema
+    );
+};

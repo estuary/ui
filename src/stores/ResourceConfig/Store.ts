@@ -3,7 +3,6 @@ import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import {
     getLiveSpecsById_writesTo,
     getLiveSpecsByLiveSpecId,
-    getSchema_Resource,
 } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
@@ -25,7 +24,6 @@ import {
 } from 'stores/extensions/Hydration';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { populateErrors } from 'stores/utils';
-import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import {
@@ -148,7 +146,6 @@ const getInitialMiscStoreData = (): Pick<
     | 'resourceConfig'
     | 'resourceConfigErrorsExist'
     | 'resourceConfigErrors'
-    | 'resourceSchema'
     | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
     | 'collectionsRequiringRediscovery'
@@ -162,7 +159,6 @@ const getInitialMiscStoreData = (): Pick<
     resourceConfig: {},
     resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
-    resourceSchema: {},
     restrictedDiscoveredCollections: [],
     serverUpdateRequired: false,
     collectionsRequiringRediscovery: [],
@@ -182,10 +178,10 @@ const getInitialState = (
     ...getInitialStateData(),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
 
-    preFillEmptyCollections: (value, rehydrating) => {
+    preFillEmptyCollections: (value, resourceSchema, rehydrating) => {
         set(
             produce((state: ResourceConfigState) => {
-                const { resourceConfig, resourceSchema, collections } = get();
+                const { resourceConfig, collections } = get();
 
                 const emptyCollections: string[] =
                     rehydrating && collections ? collections : [];
@@ -548,10 +544,16 @@ const getInitialState = (
         }
     },
 
-    setResourceConfig: (key, value, disableCheckingErrors, disableOmit) => {
+    setResourceConfig: (
+        key,
+        resourceSchema,
+        value,
+        disableCheckingErrors,
+        disableOmit
+    ) => {
         set(
             produce((state: ResourceConfigState) => {
-                const { resourceSchema, collections } = get();
+                const { collections } = get();
 
                 if (typeof key === 'string') {
                     state.resourceConfig[key] =
@@ -710,16 +712,6 @@ const getInitialState = (
         );
     },
 
-    setResourceSchema: (val) => {
-        set(
-            produce((state: ResourceConfigState) => {
-                state.resourceSchema = val;
-            }),
-            false,
-            'Resource Schema Set'
-        );
-    },
-
     setHydrated: (value) => {
         set(
             produce((state: ResourceConfigState) => {
@@ -740,9 +732,13 @@ const getInitialState = (
         );
     },
 
-    hydrateState: async (editWorkflow, entityType, rehydrating) => {
+    hydrateState: async (
+        editWorkflow,
+        entityType,
+        resourceSchema,
+        rehydrating
+    ) => {
         const searchParams = new URLSearchParams(window.location.search);
-        const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
         const prefillLiveSpecIds = searchParams.getAll(
             GlobalSearchParams.PREFILL_LIVE_SPEC_ID
@@ -756,20 +752,6 @@ const getInitialState = (
 
         const { resetState, setHydrationErrorsExist } = get();
         resetState(materializationReydrating);
-
-        if (connectorId) {
-            const { data, error } = await getSchema_Resource(connectorId);
-
-            if (error) {
-                setHydrationErrorsExist(true);
-            } else if (data && data.length > 0) {
-                const { setResourceSchema } = get();
-
-                setResourceSchema(
-                    data[0].resource_spec_schema as unknown as Schema
-                );
-            }
-        }
 
         if (editWorkflow && liveSpecIds.length > 0) {
             const { data: liveSpecs, error: liveSpecError } =
@@ -815,7 +797,11 @@ const getInitialState = (
             if (error) {
                 setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
-                get().preFillEmptyCollections(data, rehydrating);
+                get().preFillEmptyCollections(
+                    data,
+                    resourceSchema,
+                    rehydrating
+                );
 
                 return Promise.resolve(data);
             }
@@ -824,7 +810,7 @@ const getInitialState = (
             //  we prefill any collections the user already selected but only for materializations
             //  because for a Capture the collections are discovered and if the hydration is kicked
             //  off then they will need to rediscover everything again
-            get().preFillEmptyCollections([], rehydrating);
+            get().preFillEmptyCollections([], resourceSchema, rehydrating);
             return Promise.resolve([]);
         }
 

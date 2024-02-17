@@ -2,6 +2,7 @@ import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import {
     getLiveSpecsById_writesTo,
     getLiveSpecsByLiveSpecId,
+    getSchema_Resource,
 } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
@@ -11,6 +12,7 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { BindingStoreNames } from 'stores/names';
+import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { getCollectionName } from 'utils/workflow-utils';
@@ -34,8 +36,13 @@ const getInitialBindingData = (): Pick<BindingState, 'bindings'> => ({
     bindings: {},
 });
 
-const getInitialStateData = () => ({
+const getInitialStateData = (): Pick<BindingState, 'resourceSchema'> => ({
+    resourceSchema: {},
+});
+
+const getInitialStoreData = () => ({
     ...getInitialBindingData(),
+    ...getInitialStateData(),
     ...getInitialHydrationData(),
 });
 
@@ -43,31 +50,8 @@ const getInitialState = (
     set: NamedSet<BindingState>,
     get: StoreApi<BindingState>['getState']
 ): BindingState => ({
-    ...getInitialStateData(),
+    ...getInitialStoreData(),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
-
-    prefillBindingDependentState: (bindings, _referenceBindings) => {
-        set(
-            produce((state: BindingState) => {
-                bindings.forEach((binding) => {
-                    const collection = getCollectionName(binding);
-                    const UUID = crypto.randomUUID();
-
-                    const existingBindingIds: string[] = Object.hasOwn(
-                        state.bindings,
-                        collection
-                    )
-                        ? state.bindings[collection]
-                        : [];
-
-                    state.bindings[collection] =
-                        existingBindingIds.concat(UUID);
-                });
-            }),
-            false,
-            'Binding dependent state prefilled'
-        );
-    },
 
     addEmptyBindings: (data, rehydrating) => {
         set(
@@ -117,7 +101,7 @@ const getInitialState = (
 
     hydrateState: async (editWorkflow, entityType, rehydrating) => {
         const searchParams = new URLSearchParams(window.location.search);
-        // const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
+        const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
         const liveSpecIds = searchParams.getAll(
             GlobalSearchParams.LIVE_SPEC_ID
@@ -134,19 +118,19 @@ const getInitialState = (
 
         // resetState(materializationRehydrating);
 
-        // if (connectorId) {
-        //     const { data, error } = await getSchema_Resource(connectorId);
+        if (connectorId) {
+            const { data, error } = await getSchema_Resource(connectorId);
 
-        //     if (error) {
-        //         setHydrationErrorsExist(true);
-        //     } else if (data && data.length > 0) {
-        //         const { setResourceSchema } = get();
+            if (error) {
+                setHydrationErrorsExist(true);
+            } else if (data && data.length > 0) {
+                const { setResourceSchema } = get();
 
-        //         setResourceSchema(
-        //             data[0].resource_spec_schema as unknown as Schema
-        //         );
-        //     }
-        // }
+                setResourceSchema(
+                    data[0].resource_spec_schema as unknown as Schema
+                );
+            }
+        }
 
         if (editWorkflow && liveSpecIds.length > 0) {
             const { data: liveSpecs, error: liveSpecError } =
@@ -203,12 +187,35 @@ const getInitialState = (
         return Promise.resolve(null);
     },
 
+    prefillBindingDependentState: (bindings, _referenceBindings) => {
+        set(
+            produce((state: BindingState) => {
+                bindings.forEach((binding) => {
+                    const collection = getCollectionName(binding);
+                    const UUID = crypto.randomUUID();
+
+                    const existingBindingIds: string[] = Object.hasOwn(
+                        state.bindings,
+                        collection
+                    )
+                        ? state.bindings[collection]
+                        : [];
+
+                    state.bindings[collection] =
+                        existingBindingIds.concat(UUID);
+                });
+            }),
+            false,
+            'Binding dependent state prefilled'
+        );
+    },
+
     resetState: (keepCollections) => {
         const currentState = get();
 
         const initState = keepCollections
             ? getInitialBindingData()
-            : getInitialStateData();
+            : getInitialStoreData();
 
         const newState = {
             ...currentState,
@@ -216,6 +223,16 @@ const getInitialState = (
         };
 
         set(newState, false, 'Binding State Reset');
+    },
+
+    setResourceSchema: (value) => {
+        set(
+            produce((state: BindingState) => {
+                state.resourceSchema = value;
+            }),
+            false,
+            'Resource Schema Set'
+        );
     },
 });
 

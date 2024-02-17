@@ -66,8 +66,8 @@ function MaterializationEdit() {
         <DraftInitializer>
             <DetailsFormHydrator>
                 <EndpointConfigHydrator>
-                    <ResourceConfigHydrator>
-                        <BindingHydrator>
+                    <BindingHydrator>
+                        <ResourceConfigHydrator>
                             <MutateDraftSpecProvider value={updateDraftSpecs}>
                                 <EntityEdit
                                     title="routeTitle.materializationEdit"
@@ -102,8 +102,8 @@ function MaterializationEdit() {
                                     }
                                 />
                             </MutateDraftSpecProvider>
-                        </BindingHydrator>
-                    </ResourceConfigHydrator>
+                        </ResourceConfigHydrator>
+                    </BindingHydrator>
                 </EndpointConfigHydrator>
             </DetailsFormHydrator>
         </DraftInitializer>

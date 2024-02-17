@@ -17,6 +17,7 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useServerUpdateRequiredMonitor } from 'hooks/useServerUpdateRequiredMonitor';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useBinding_setResourceSchema } from 'stores/Binding/hooks';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_details_entityName,
@@ -25,7 +26,6 @@ import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 import {
     useResourceConfig_discoveredCollections,
     useResourceConfig_resetResourceConfigAndCollections,
-    useResourceConfig_setResourceSchema,
 } from 'stores/ResourceConfig/hooks';
 import { EditorStoreNames } from 'stores/names';
 import { Schema } from 'types';
@@ -70,7 +70,7 @@ function BindingsMultiEditor({
     // Resource Config Store
     const discoveredCollections = useResourceConfig_discoveredCollections();
 
-    const setResourceSchema = useResourceConfig_setResourceSchema();
+    const setResourceSchema = useBinding_setResourceSchema();
 
     const resetResourceConfigAndCollections =
         useResourceConfig_resetResourceConfigAndCollections();
