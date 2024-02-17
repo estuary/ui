@@ -178,8 +178,8 @@ const getInitialState = (
         }
 
         if (prefillLiveSpecIds.length > 0) {
-            // Prefills bindings in the materialization create workflow when the Materialize CTA
-            // on the Captures page or Details page is clicked.
+            // Prefills bindings in materialization workflows when the Materialize CTA
+            // on the Captures page, Collections page, or captures/collections Details page is clicked.
             const { data, error } = await getLiveSpecsById_writesTo(
                 prefillLiveSpecIds
             );
