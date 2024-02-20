@@ -41,11 +41,11 @@ const getInitialStateData = (): Pick<
     JournalDataLogsState,
     | 'allowFetchingMore'
     | 'documents'
-    | 'fetchingNewer'
-    | 'fetchingOlder'
+    | 'fetchingMore'
     | 'lastCount'
     | 'lastFetchFailed'
-    | 'lastParsed'
+    | 'newestParsed'
+    | 'oldestParsed'
     | 'lastTopUuid'
     | 'noData'
     | 'olderFinished'
@@ -55,11 +55,11 @@ const getInitialStateData = (): Pick<
 > => ({
     allowFetchingMore: false,
     documents: null,
-    fetchingNewer: false,
-    fetchingOlder: false,
+    fetchingMore: false,
     lastCount: -1,
     lastFetchFailed: false,
-    lastParsed: -1,
+    newestParsed: -1,
+    oldestParsed: -1,
     lastTopUuid: null,
     noData: false,
     olderFinished: false,
@@ -76,7 +76,7 @@ const getInitialState = (
     ...getInitialHydrationData(),
     ...getStoreWithHydrationSettings('JournalsData:Logs', set),
 
-    hydrate: async (docs, refresh, olderFinished, lastParsed, error) => {
+    hydrate: async (docs, refresh, error) => {
         const {
             active,
             addNewDocuments,
@@ -95,50 +95,55 @@ const getInitialState = (
 
             if (error) {
                 setNetworkFailed(error.message);
-                addNewDocuments([], true, 0);
+                addNewDocuments([[0, 0], []]);
                 return;
             }
         }
 
         setRefresh(refresh);
-        addNewDocuments(docs, olderFinished, lastParsed, error);
+        addNewDocuments(docs, error);
     },
 
     fetchMoreLogs: (option) => {
+        console.log('fetchMoreLogs');
         const {
             allowFetchingMore,
-            fetchingNewer,
-            fetchingOlder,
-            lastParsed,
+            fetchingMore,
+            newestParsed,
+            oldestParsed,
             olderFinished,
             refresh,
-            setFetchingOlder,
-            setFetchingNewer,
+            setFetchingMore,
         } = get();
 
-        if (!allowFetchingMore || !refresh || fetchingNewer || fetchingOlder) {
+        if (!allowFetchingMore || !refresh || fetchingMore) {
+            console.log('fetchMoreLogs skipped');
             return;
         }
 
-        if (option === 'old') {
-            if (olderFinished) {
-                return;
-            }
-
-            setFetchingOlder(true);
+        if (option === 'old' && !olderFinished) {
+            setFetchingMore(true);
             refresh({
-                offset: 0,
-                endOffset: lastParsed,
+                offset: -1,
+                endOffset: oldestParsed,
             });
         } else {
-            setFetchingNewer(true);
-            refresh();
+            setFetchingMore(true);
+            refresh({
+                offset: newestParsed,
+                endOffset: -1,
+            });
         }
     },
 
-    addNewDocuments: (docs, olderFinished, lastParsed, error) => {
+    addNewDocuments: (data, error) => {
         set(
             produce((state: JournalDataLogsState) => {
+                const { 0: start, 1: end } = data[0];
+                const docs = data[1];
+                // Check if we hit the oldest byte
+                const olderFinished = start === 0;
+
                 if (!docs) {
                     const { hydrated, noData } = getReadyToRenderFlags(
                         docs,
@@ -149,7 +154,27 @@ const getInitialState = (
                     return;
                 }
 
-                if (state.fetchingOlder) {
+                // Figure out what we're loading in
+                const initialLoading =
+                    state.oldestParsed === -1 && state.newestParsed === -1;
+                const loadingOlder =
+                    !initialLoading && state.oldestParsed > start;
+                const loadingNewer =
+                    !initialLoading && state.newestParsed < end;
+
+                if (!initialLoading && !loadingOlder && !loadingNewer) {
+                    if (error) {
+                        state.lastFetchFailed = true;
+                    }
+
+                    // If we are not init-ing and we are here then it means the same range of
+                    //  data is being passed in. Usually this is when we are polling for newer
+                    //  logs and nothing is being written to them.
+                    state.fetchingMore = false;
+                    return;
+                }
+
+                if (loadingOlder) {
                     if (error) {
                         state.lastFetchFailed = true;
                     } else {
@@ -157,10 +182,10 @@ const getInitialState = (
                         //  and then add the new to the start of the list
                         state.scrollToWhenDone = [docs.length + 1, 'start'];
                         state.documents = [...docs, ...(state.documents ?? [])];
-                        state.fetchingOlder = false;
                         state.lastFetchFailed = false;
+                        state.oldestParsed = start;
                     }
-                } else if (state.fetchingNewer) {
+                } else if (loadingNewer) {
                     if (error) {
                         state.lastFetchFailed = true;
                     } else {
@@ -176,10 +201,10 @@ const getInitialState = (
                                 'start',
                             ];
                         }
-                        state.fetchingNewer = false;
                         state.lastFetchFailed = false;
+                        state.newestParsed = end;
                     }
-                } else {
+                } else if (docs.length > 0) {
                     // Initial hydration we want to set the array and scroll to near the bottom
                     state.scrollToWhenDone = [
                         Math.round(docs.length * 0.95),
@@ -187,13 +212,17 @@ const getInitialState = (
                     ];
                     state.documents = docs;
                     state.lastFetchFailed = false;
+
+                    // When init we need to set both
+                    state.oldestParsed = start;
+                    state.newestParsed = end;
                 }
 
                 // Helper props for future calls and scrolling
                 state.olderFinished = Boolean(olderFinished);
-                state.lastParsed = lastParsed;
+                state.fetchingMore = false;
 
-                // TODO - might remove this
+                // If we have docs lets make sure we keep local state updated
                 if (state.documents && state.documents.length > 0) {
                     state.lastTopUuid = state.documents[0]._meta.uuid;
                 }
@@ -251,23 +280,13 @@ const getInitialState = (
         );
     },
 
-    setFetchingNewer: (newState) => {
+    setFetchingMore: (newState) => {
         set(
             produce((state: JournalDataLogsState) => {
-                state.fetchingNewer = newState;
+                state.fetchingMore = newState;
             }),
             false,
-            'JournalsData:Logs: Fetching Newer Set'
-        );
-    },
-
-    setFetchingOlder: (newState) => {
-        set(
-            produce((state: JournalDataLogsState) => {
-                state.fetchingOlder = newState;
-            }),
-            false,
-            'JournalsData:Logs: Fetching Older Set'
+            'JournalsData:Logs: Fetching More Set'
         );
     },
 

@@ -1,7 +1,6 @@
 import { Box, TableCell, TableRow, Typography, useTheme } from '@mui/material';
 import SpinnerIcon from 'components/logs/SpinnerIcon';
 import { BaseTypographySx } from 'components/tables/cells/logs/shared';
-import { DEFAULT_POLLING } from 'context/SWR';
 import {
     errorOutlinedButtonBackground,
     tableRowActive_Finished__Background,
@@ -17,24 +16,30 @@ import {
     useJournalDataLogsStore_fetchMoreLogs,
     useJournalDataLogsStore_lastFetchFailed,
 } from 'stores/JournalData/Logs/hooks';
+import { VIRTUAL_TABLE_BODY_PADDING } from '../shared';
 import { FetchMoreLogsOptions, WaitingForRowProps } from '../types';
 
 interface Props extends WaitingForRowProps {
     fetchOption: FetchMoreLogsOptions;
     disabled?: boolean;
+    interval?: number;
 }
 
-function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
+function WaitingForRowBase({
+    disabled,
+    interval = 500,
+    fetchOption,
+    sizeRef,
+    style,
+}: Props) {
     const theme = useTheme();
 
-    const runFetch = useRef(true);
-
-    const [intervalLength, setIntervalLength] = useState(500);
+    const [allowFetch, setAllowFetch] = useState(false);
 
     const intersectionRef = useRef<HTMLElement>(null);
     const intersection = useIntersection(intersectionRef, {
         root: null,
-        rootMargin: '0px',
+        rootMargin: `${VIRTUAL_TABLE_BODY_PADDING}px`,
         threshold: 0.7,
     });
 
@@ -42,48 +47,53 @@ function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
 
     const lastFetchFailed = useJournalDataLogsStore_lastFetchFailed();
     const fetchMoreLogs = useJournalDataLogsStore_fetchMoreLogs();
+
+    // Kinda hacky - but checking this flag here keeps the effect trigger
+    //  as it is flipped back and forth
     const fetchingMore = useJournalDataLogsStore_fetchingMore();
 
     const fetchMore = useCallback(() => {
-        if (lastFetchFailed) {
-            return;
-        }
-        if (!fetchingMore && intersection?.isIntersecting) {
-            runFetch.current = false;
+        setAllowFetch(false);
+        fetchMoreLogs(fetchOption);
+    }, [fetchMoreLogs, fetchOption]);
 
-            // When checking for new ones fall back to give some time
-            //  for the entity to actually write logs
-            if (fetchOption === 'new') {
-                setIntervalLength(DEFAULT_POLLING);
-            }
-            fetchMoreLogs(fetchOption);
-        } else {
-            runFetch.current = true;
+    // Cannot figure out the deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const debouncedFetch = useCallback(debounce(fetchMore, interval), [
+        fetchMore,
+    ]);
+
+    // If at anytime the row is not visible cancel any ongoing loading
+    useEffect(() => {
+        if (!intersection?.isIntersecting) {
+            debouncedFetch.cancel();
         }
+    }, [debouncedFetch, intersection?.isIntersecting]);
+
+    // Keeping all this logic in a stand alone effect/state because we might
+    //  need to expand this beyond just checking some simple booleans
+    useEffect(() => {
+        setAllowFetch(
+            Boolean(
+                !fetchingMore &&
+                    !lastFetchFailed &&
+                    !disabled &&
+                    intersection?.isIntersecting
+            )
+        );
     }, [
-        fetchMoreLogs,
-        fetchOption,
+        debouncedFetch,
+        disabled,
         fetchingMore,
         intersection?.isIntersecting,
         lastFetchFailed,
     ]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedFetch = useCallback(debounce(fetchMore, intervalLength), [
-        fetchMore,
-        intervalLength,
-    ]);
-
     useEffect(() => {
-        if (!lastFetchFailed && !disabled && intersection?.isIntersecting) {
+        if (allowFetch) {
             debouncedFetch();
         }
-    }, [
-        debouncedFetch,
-        disabled,
-        intersection?.isIntersecting,
-        lastFetchFailed,
-    ]);
+    }, [allowFetch, debouncedFetch]);
 
     return (
         <TableRow
@@ -100,7 +110,7 @@ function WaitingForRowBase({ disabled, fetchOption, sizeRef, style }: Props) {
                     lastFetchFailed || disabled || intersection?.isIntersecting
                         ? 1
                         : 0,
-                transition: 'all 50ms ease-in-out',
+                transition: 'all 100ms ease-in-out',
             }}
         >
             <Box ref={intersectionRef}>

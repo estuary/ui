@@ -1,6 +1,6 @@
 import { DataGrid } from '@mui/x-data-grid';
 import { dataGridListStyling } from 'context/Theme';
-import { JournalRecord } from 'hooks/journals/useJournalData';
+import { JournalRecord } from 'hooks/journals/types';
 import { JsonPointer } from 'json-ptr';
 
 const sampleSpec = {
