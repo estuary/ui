@@ -2,15 +2,15 @@ import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 import { useBindingsEditorStore_loadingInferredSchema } from 'components/editor/Bindings/Store/hooks';
 import CustomWidthTooltip from 'components/shared/CustomWidthTooltip';
 import { defaultOutline, monacoEditorHeaderBackground } from 'context/Theme';
-import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+import { useBinding_currentCollection } from 'stores/Binding/hooks';
 
 function InferenceDiffEditorHeader() {
+    // Binding Store
+    const currentCollection = useBinding_currentCollection();
+
     // Bindings Editor Store
     const loadingInferredSchema =
         useBindingsEditorStore_loadingInferredSchema();
-
-    // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
 
     return currentCollection ? (
         <Stack

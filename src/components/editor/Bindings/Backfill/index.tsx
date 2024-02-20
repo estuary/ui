@@ -3,6 +3,7 @@ import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
 import { Check } from 'iconoir-react';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useBinding_currentBinding } from 'stores/Binding/hooks';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
@@ -13,7 +14,6 @@ import {
     useResourceConfig_backfillAllBindings,
     useResourceConfig_backfilledCollections,
     useResourceConfig_collections,
-    useResourceConfig_currentCollection,
     useResourceConfig_setBackfilledCollections,
 } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
@@ -32,6 +32,9 @@ interface Props {
 function Backfill({ description, bindingIndex = -1 }: Props) {
     const { updateBackfillCounter } = useUpdateBackfillCounter();
 
+    // Binding Store
+    const currentBinding = useBinding_currentBinding();
+
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
@@ -40,7 +43,6 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
     const setFormState = useFormStateStore_setFormState();
 
     // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
     const collections = useResourceConfig_collections();
 
     const backfilledCollections = useResourceConfig_backfilledCollections();
@@ -55,14 +57,14 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
             return backfillAllBindings;
         }
 
-        return currentCollection
-            ? backfilledCollections.includes(currentCollection)
+        return currentBinding?.id
+            ? backfilledCollections.includes(currentBinding.id)
             : false;
     }, [
         backfillAllBindings,
         backfilledCollections,
         bindingIndex,
-        currentCollection,
+        currentBinding?.id,
     ]);
 
     const value: BooleanString = useMemo(
@@ -85,10 +87,10 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                 );
             }
 
-            if (currentCollection) {
+            if (currentBinding?.id) {
                 return increment === 'true'
-                    ? !backfilledCollections.includes(currentCollection)
-                    : backfilledCollections.includes(currentCollection);
+                    ? !backfilledCollections.includes(currentBinding.id)
+                    : backfilledCollections.includes(currentBinding.id);
             }
 
             return false;
@@ -97,7 +99,7 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
             backfillAllBindings,
             backfilledCollections,
             bindingIndex,
-            currentCollection,
+            currentBinding?.id,
         ]
     );
 
@@ -108,11 +110,10 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
             if (draftSpec && serverUpdateRequired) {
                 setFormState({ status: FormStatus.UPDATING, error: null });
 
-                const singleBindingUpdate =
-                    bindingIndex > -1 && currentCollection;
+                const singleBindingUpdate = bindingIndex > -1 && currentBinding;
 
                 const bindingMetadata: BindingMetadata[] = singleBindingUpdate
-                    ? [{ collection: currentCollection, bindingIndex }]
+                    ? [{ collection: currentBinding.collection, bindingIndex }]
                     : [];
 
                 updateBackfillCounter(
@@ -122,7 +123,7 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                 ).then(
                     () => {
                         const targetCollection = singleBindingUpdate
-                            ? currentCollection
+                            ? currentBinding.id
                             : undefined;
 
                         setBackfilledCollections(increment, targetCollection);
@@ -142,7 +143,7 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
         },
         [
             bindingIndex,
-            currentCollection,
+            currentBinding,
             draftSpec,
             evaluateServerDifferences,
             setBackfilledCollections,

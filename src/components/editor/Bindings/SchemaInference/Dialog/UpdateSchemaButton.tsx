@@ -10,13 +10,16 @@ import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { isEqual } from 'lodash';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+import { useBinding_currentCollection } from 'stores/Binding/hooks';
 
 interface Props {
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 function UpdateSchemaButton({ setOpen }: Props) {
+    // Binding Store
+    const currentCollection = useBinding_currentCollection();
+
     // Bindings Editor Store
     const inferredSpec = useBindingsEditorStore_inferredSpec();
     const loadingInferredSchema =
@@ -28,9 +31,6 @@ function UpdateSchemaButton({ setOpen }: Props) {
 
     // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
-
-    // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
 
     const originalSchema = useMemo(() => {
         if (!collectionData?.spec) {

@@ -35,9 +35,6 @@ export interface ResourceConfigState extends StoreWithHydration {
 
     collectionErrorsExist: boolean;
 
-    currentCollection: string | null;
-    setCurrentCollection: (collections: string | null) => void;
-
     discoveredCollections: string[] | null;
     setDiscoveredCollections: (value: DraftSpecQuery) => void;
 
@@ -67,6 +64,7 @@ export interface ResourceConfigState extends StoreWithHydration {
     setResourceConfig: (
         key: string | string[],
         resourceSchema: Schema,
+        currentCollection: string | null,
         resourceConfig?: ResourceConfig,
         disableCheckingErrors?: boolean,
         disableOmit?: boolean
@@ -74,6 +72,7 @@ export interface ResourceConfigState extends StoreWithHydration {
     updateResourceConfig: (
         key: string,
         resourceSchema: Schema,
+        currentCollection: string | null,
         formData: JsonFormsData
     ) => void;
     toggleDisable: (key: string | string[] | null, value?: boolean) => Number;

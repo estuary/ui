@@ -15,12 +15,10 @@ import { dataGridListStyling } from 'context/Theme';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
+import { useBinding_currentBindingId } from 'stores/Binding/hooks';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import {
-    useResourceConfig_collections,
-    useResourceConfig_currentCollection,
-} from 'stores/ResourceConfig/hooks';
+import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
 import { hasLength, stripPathing } from 'utils/misc-utils';
 import CollectionSelectorHeaderName from './Header/Name';
@@ -45,7 +43,7 @@ interface Props {
     height?: number | string;
     removeCollections?: (rows: GridRowId[]) => void;
     toggleCollections?: (rows: GridRowId[] | null, value: boolean) => Number;
-    setCurrentCollection?: (collection: any) => void;
+    setCurrentBinding?: (collection: any) => void;
 }
 
 const cellClass_noPadding = 'estuary-datagrid--cell--no-padding';
@@ -69,7 +67,7 @@ function CollectionSelectorList({
     removeCollections,
     toggleCollections,
     renderers,
-    setCurrentCollection,
+    setCurrentBinding,
 }: Props) {
     const apiRef = useGridApiRef();
 
@@ -91,16 +89,18 @@ function CollectionSelectorList({
     const [notificationMessage, setNotificationMessage] = useState('');
     const [showNotification, setShowNotification] = useState(false);
 
+    // Binding Store
+    const currentBindingId = useBinding_currentBindingId();
+
     // Form State Store
     const formStatus = useFormStateStore_status();
 
     // Resource Config Store
     const collections = useResourceConfig_collections();
-    const currentCollection = useResourceConfig_currentCollection();
 
     const selectionEnabled =
-        currentCollection &&
-        setCurrentCollection &&
+        currentBindingId &&
+        setCurrentBinding &&
         formStatus !== FormStatus.UPDATING;
 
     const [filterModel, setFilterModel] =
@@ -111,8 +111,8 @@ function CollectionSelectorList({
         []
     );
     useEffect(() => {
-        if (currentCollection) setSelectionModel([currentCollection]);
-    }, [currentCollection]);
+        if (currentBindingId) setSelectionModel([currentBindingId]);
+    }, [currentBindingId]);
 
     const rows = useMemo(() => {
         // If we have no collections we can just return an empty array
@@ -333,16 +333,17 @@ function CollectionSelectorList({
                         selectionEnabled &&
                         (field === COLLECTION_SELECTOR_STRIPPED_PATH_NAME ||
                             field === COLLECTION_SELECTOR_NAME_COL) &&
-                        id !== currentCollection
+                        id !== currentBindingId
                     ) {
                         // TODO (JSONForms) This is hacky but it works.
-                        // It clears out the current collection before switching.
+                        // It clears out the current binding before switching.
                         //  If a user is typing quickly in a form and then selects a
                         //  different binding VERY quickly it could cause the updates
                         //  to go into the wrong form.
-                        setCurrentCollection(null);
+                        setCurrentBinding(null);
+
                         hackyTimeout.current = window.setTimeout(() => {
-                            setCurrentCollection(id);
+                            setCurrentBinding(id);
                         });
                     }
                 }}

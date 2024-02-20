@@ -42,20 +42,6 @@ export const useResourceConfig_collectionErrorsExist = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.collectionErrorsExist);
 };
 
-export const useResourceConfig_currentCollection = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['currentCollection']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.currentCollection);
-};
-
-export const useResourceConfig_setCurrentCollection = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setCurrentCollection']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.setCurrentCollection);
-};
-
 export const useResourceConfig_discoveredCollections = () => {
     return useZustandStore<
         ResourceConfigState,

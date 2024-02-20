@@ -6,7 +6,7 @@ import {
 } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
-import { difference, orderBy } from 'lodash';
+import { difference, has, intersection, omit, orderBy } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     getInitialHydrationData,
@@ -31,9 +31,25 @@ const STORE_KEY = 'Bindings';
 
 const getCollections = (bindings: Bindings): string[] => Object.keys(bindings);
 
+const initializeBinding = (
+    state: BindingState,
+    collection: string,
+    bindingId: string
+) => {
+    const existingBindingIds: string[] = Object.hasOwn(
+        state.bindings,
+        collection
+    )
+        ? state.bindings[collection]
+        : [];
+
+    state.bindings[collection] = existingBindingIds.concat(bindingId);
+};
+
 const getResourceConfig = (binding: any): ResourceConfig => {
     const { resource, disable } = binding;
 
+    const collectionName = getCollectionName(binding);
     const disableProp = getDisableProps(disable);
 
     // Take the binding resource and place into config OR
@@ -41,7 +57,7 @@ const getResourceConfig = (binding: any): ResourceConfig => {
     return {
         data: resource,
         errors: [],
-        meta: { ...disableProp },
+        meta: { ...disableProp, collectionName },
     };
 };
 
@@ -78,8 +94,36 @@ const sortBindings = (bindings: any) => {
     );
 };
 
-const getInitialBindingData = (): Pick<BindingState, 'bindings'> => ({
+const whatChanged = (
+    bindings: Bindings,
+    resourceConfig: ResourceConfigDictionary,
+    targetCollections: string[]
+) => {
+    const currentBindings = Object.keys(resourceConfig);
+
+    const currentCollections = Object.entries(bindings)
+        .filter(
+            ([_collection, bindingIds]) =>
+                intersection(bindingIds, currentBindings).length > 0
+        )
+        .map(([collection]) => collection);
+
+    const removedCollections = difference(
+        currentCollections,
+        targetCollections
+    );
+
+    const addedCollections = difference(targetCollections, currentCollections);
+
+    return [removedCollections, addedCollections];
+};
+
+const getInitialBindingData = (): Pick<
+    BindingState,
+    'bindings' | 'currentBinding'
+> => ({
     bindings: {},
+    currentBinding: null,
 });
 
 const getInitialStateData = (): Pick<
@@ -148,7 +192,7 @@ const getInitialState = (
                 const modifiedResourceConfigs = state.resourceConfigs;
 
                 Object.entries(state.bindings).forEach(
-                    ([collection, bindingIds]) => {
+                    ([collectionName, bindingIds]) => {
                         bindingIds.forEach((bindingId) => {
                             // Rehydrating wipe out all configs and start again
                             // Not rehydrating then we should allow the current config to stand
@@ -161,9 +205,9 @@ const getInitialState = (
                                     : {
                                           ...createJSONFormDefaults(
                                               state.resourceSchema,
-                                              collection
+                                              collectionName
                                           ),
-                                          meta: {},
+                                          meta: { collectionName },
                                       };
                         });
                     }
@@ -272,16 +316,7 @@ const getInitialState = (
                     const collection = getCollectionName(binding);
                     const UUID = crypto.randomUUID();
 
-                    const existingBindingIds: string[] = Object.hasOwn(
-                        state.bindings,
-                        collection
-                    )
-                        ? state.bindings[collection]
-                        : [];
-
-                    state.bindings[collection] =
-                        existingBindingIds.concat(UUID);
-
+                    initializeBinding(state, collection, UUID);
                     initializeResourceConfig(state, binding, UUID);
                 });
 
@@ -305,6 +340,123 @@ const getInitialState = (
         };
 
         set(newState, false, 'Binding State Reset');
+    },
+
+    setCurrentBinding: (bindingId) => {
+        set(
+            produce((state: BindingState) => {
+                const binding = bindingId
+                    ? Object.entries(state.bindings)
+                          .find(([_collection, bindingIds]) =>
+                              bindingIds.includes(bindingId)
+                          )
+                          ?.map(([collection]) => ({
+                              id: bindingId,
+                              collection,
+                          }))[0]
+                    : null;
+
+                state.currentBinding = binding ?? null;
+            }),
+            false,
+            'Current binding changed'
+        );
+    },
+
+    setResourceConfig: (
+        targetCollections,
+        value,
+        disableCheckingErrors,
+        disableOmit
+    ) => {
+        set(
+            produce((state: BindingState) => {
+                const collections = getCollections(state.bindings);
+
+                if (typeof targetCollections === 'string') {
+                    const bindingId = crypto.randomUUID();
+
+                    initializeBinding(state, targetCollections, bindingId);
+
+                    state.resourceConfigs[bindingId] = value ?? {
+                        ...createJSONFormDefaults(state.resourceSchema),
+                        meta: { collectionName: targetCollections },
+                    };
+
+                    if (!disableCheckingErrors) {
+                        populateResourceConfigErrors(
+                            state,
+                            state.resourceConfigs
+                        );
+
+                        // state.collectionErrorsExist = isEmpty(targetCollections);
+                    }
+                } else {
+                    const [removedCollections, newCollections] = whatChanged(
+                        state.bindings,
+                        state.resourceConfigs,
+                        targetCollections
+                    );
+
+                    // Set defaults on new configs
+                    newCollections.forEach((collectionName) => {
+                        const bindingId = crypto.randomUUID();
+
+                        initializeBinding(state, collectionName, bindingId);
+
+                        state.resourceConfigs[bindingId] = {
+                            ...createJSONFormDefaults(
+                                state.resourceSchema,
+                                collectionName
+                            ),
+                            meta: { collectionName },
+                        };
+                    });
+
+                    // Remove any configs that are no longer needed unless disabled.
+                    //   We disable for the new collection selection pop up where the user
+                    //   is always adding collections and can only remove them manually in
+                    //   the list
+                    const newResourceConfig = disableOmit
+                        ? state.resourceConfigs
+                        : omit(state.resourceConfigs, removedCollections);
+
+                    const newConfigKeyList = Object.keys(newResourceConfig);
+
+                    // Update the config
+                    state.resourceConfigs = newResourceConfig;
+
+                    // If previous state had no collections set to first
+                    // If selected item is removed set to first.
+                    // If adding new ones set to last
+                    const selectedBindingId =
+                        collections.length === 0 ||
+                        (state.currentBinding &&
+                            !has(
+                                state.resourceConfigs,
+                                state.currentBinding.id
+                            ))
+                            ? newConfigKeyList[0]
+                            : newConfigKeyList[newConfigKeyList.length - 1];
+
+                    state.currentBinding = {
+                        id: selectedBindingId,
+                        collection:
+                            state.resourceConfigs[selectedBindingId].meta
+                                .collectionName,
+                    };
+
+                    // Update the collections with the new array
+                    // state.collections = newConfigKeyList;
+                    // state.collectionErrorsExist = isEmpty(newConfigKeyList);
+
+                    // See if the recently updated configs have errors
+                    populateResourceConfigErrors(state, newResourceConfig);
+                }
+            }),
+            false,
+            'Resource Config Changed'
+        );
     },
 
     setResourceSchema: (value) => {

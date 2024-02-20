@@ -4,7 +4,10 @@ import { useEffect, useMemo, useRef } from 'react';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import { jsonFormsDefaults } from 'services/jsonforms/defaults';
 import { showValidation } from 'services/jsonforms/shared';
-import { useBinding_resourceSchema } from 'stores/Binding/hooks';
+import {
+    useBinding_currentCollection,
+    useBinding_resourceSchema,
+} from 'stores/Binding/hooks';
 import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
@@ -29,7 +32,9 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
     );
 
     const updateResourceConfig = useResourceConfig_updateResourceConfig();
+
     const resourceSchema = useBinding_resourceSchema();
+    const currentCollection = useBinding_currentCollection();
 
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
@@ -41,7 +46,12 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
 
     const handlers = {
         onChange: (configName: string, form: any) => {
-            updateResourceConfig(configName, resourceSchema, form);
+            updateResourceConfig(
+                configName,
+                resourceSchema,
+                currentCollection,
+                form
+            );
         },
     };
 

@@ -4,17 +4,17 @@ import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
-import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+import { useBinding_currentCollection } from 'stores/Binding/hooks';
 
 function UpdateSchemaButton() {
+    // Binding Store
+    const currentCollection = useBinding_currentCollection();
+
     // Bindings Editor Store
     const updateSchema = useBindingsEditorStore_updateSchema();
 
     // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
-
-    // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
 
     // TODO (optimization): Equip stores with the proper tools to clean up after themselves; this includes managing the promises they create.
     //   Below is a very hacky workaround that is intended to be temporary.

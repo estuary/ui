@@ -10,6 +10,7 @@ export interface Bindings {
 export interface ResourceConfig extends JsonFormsData {
     errors: any[];
     meta: {
+        collectionName: string;
         disable?: boolean;
         previouslyDisabled?: boolean; // Used to store if the binding was disabled last time we loaded in bindings
     };
@@ -30,12 +31,21 @@ export interface BindingState extends StoreWithHydration {
         rehydrating?: boolean
     ) => void;
 
+    currentBinding: { id: string; collection: string } | null;
+    setCurrentBinding: (bindingId: string | null) => void;
+
     // Resource Schema
     resourceSchema: Schema;
     setResourceSchema: (val: BindingState['resourceSchema']) => void;
 
     // Resource Config
     resourceConfigs: ResourceConfigDictionary;
+    setResourceConfig: (
+        targetCollections: string | string[],
+        resourceConfig?: ResourceConfig,
+        disableCheckingErrors?: boolean,
+        disableOmit?: boolean
+    ) => void;
 
     resourceConfigErrorsExist: boolean;
     resourceConfigErrors: (string | undefined)[];

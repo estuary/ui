@@ -22,7 +22,7 @@ import { useEntityType } from 'context/EntityContext';
 import useInitializeCollectionDraft from 'hooks/useInitializeCollectionDraft';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+import { useBinding_currentCollection } from 'stores/Binding/hooks';
 import SchemaEditCLIButton from '../Bindings/SchemaEdit/CLIButton';
 import SchemaEditToggle from '../Bindings/SchemaEdit/Toggle';
 
@@ -35,6 +35,9 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
     const entityType = useEntityType();
 
     const initializeCollectionDraft = useInitializeCollectionDraft();
+
+    // Binding Store
+    const currentCollection = useBinding_currentCollection();
 
     // Bindings Editor Store
     const collectionData = useBindingsEditorStore_collectionData();
@@ -54,9 +57,6 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
     const setCollectionSpecs = useEditorStore_setSpecs({
         localScope: true,
     });
-
-    // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
 
     const [activeTab, setActiveTab] = useState<number>(0);
     useEffect(() => {

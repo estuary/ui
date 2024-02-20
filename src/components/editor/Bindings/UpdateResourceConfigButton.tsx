@@ -3,7 +3,10 @@ import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
 
 import { FormattedMessage } from 'react-intl';
-import { useBinding_resourceSchema } from 'stores/Binding/hooks';
+import {
+    useBinding_currentCollection,
+    useBinding_resourceSchema,
+} from 'stores/Binding/hooks';
 import {
     useResourceConfig_discoveredCollections,
     useResourceConfig_setResourceConfig,
@@ -21,6 +24,7 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
     );
 
     const resourceSchema = useBinding_resourceSchema();
+    const currentCollection = useBinding_currentCollection();
 
     const discoveredCollections = useResourceConfig_discoveredCollections();
     const setResourceConfig = useResourceConfig_setResourceConfig();
@@ -37,6 +41,7 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         setResourceConfig(
             value.map(({ name }) => name),
             resourceSchema,
+            currentCollection,
             undefined,
             false,
             true

@@ -2,8 +2,8 @@ import Editor from '@monaco-editor/react';
 import { Box, Stack, useTheme } from '@mui/material';
 import {
     useBindingsEditorStore_collectionData,
-    useBindingsEditorStore_schemaUpdated,
     useBindingsEditorStore_schemaUpdateErrored,
+    useBindingsEditorStore_schemaUpdated,
 } from 'components/editor/Bindings/Store/hooks';
 import OutOfSync from 'components/editor/Status/OutOfSync';
 import ReadOnly from 'components/editor/Status/ReadOnly';
@@ -14,8 +14,8 @@ import {
     monacoEditorHeaderBackground,
 } from 'context/Theme';
 import { stringifyJSON } from 'services/stringify';
-import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
-import { getEditorTotalHeight, ICON_SIZE } from 'utils/editor-utils';
+import { useBinding_currentBindingId } from 'stores/Binding/hooks';
+import { ICON_SIZE, getEditorTotalHeight } from 'utils/editor-utils';
 
 const EDITOR_HEIGHT = 396;
 const EDITOR_TOOLBAR_HEIGHT = 29;
@@ -27,16 +27,16 @@ const EDITOR_TOTAL_HEIGHT = getEditorTotalHeight(
 function ControlledEditor() {
     const theme = useTheme();
 
+    // Binding Store
+    const currentBindingId = useBinding_currentBindingId();
+
     // Bindings Editor Store
     const collectionData = useBindingsEditorStore_collectionData();
 
     const schemaUpdated = useBindingsEditorStore_schemaUpdated();
     const schemaUpdateErrored = useBindingsEditorStore_schemaUpdateErrored();
 
-    // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
-
-    if (currentCollection && collectionData) {
+    if (currentBindingId && collectionData) {
         return (
             <Box
                 sx={{
@@ -76,7 +76,7 @@ function ControlledEditor() {
                     defaultLanguage="json"
                     theme={monacoEditorComponentBackground[theme.palette.mode]}
                     saveViewState={false}
-                    path={currentCollection}
+                    path={currentBindingId}
                     options={{ readOnly: true }}
                 />
             </Box>

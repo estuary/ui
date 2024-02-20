@@ -7,13 +7,13 @@ import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import { ReactNode } from 'react';
+import { useBinding_setCurrentBinding } from 'stores/Binding/hooks';
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
     useResourceConfig_collections,
     useResourceConfig_discoveredCollections,
     useResourceConfig_removeCollections,
-    useResourceConfig_setCurrentCollection,
     useResourceConfig_toggleDisable,
 } from 'stores/ResourceConfig/hooks';
 import BindingsSelectorName from './Row/Name';
@@ -50,8 +50,8 @@ function BindingSelector({
     // Form State Store
     const formActive = useFormStateStore_isActive();
 
-    // Resource Config Store
-    const setCurrentCollection = useResourceConfig_setCurrentCollection();
+    // Binding Store
+    const setCurrentBinding = useBinding_setCurrentBinding();
 
     const collections = useResourceConfig_collections();
     const discoveredCollections = useResourceConfig_discoveredCollections();
@@ -133,8 +133,8 @@ function BindingSelector({
                 height="100%"
                 header={itemType}
                 disableActions={disableActions}
-                setCurrentCollection={
-                    !disableSelect ? setCurrentCollection : undefined
+                setCurrentBinding={
+                    !disableSelect ? setCurrentBinding : undefined
                 }
                 renderers={{
                     cell: cellRenderers,

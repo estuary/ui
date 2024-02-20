@@ -63,7 +63,7 @@ const populateCollections = (
     collections: string[]
 ) => {
     state.collections = collections;
-    state.currentCollection = collections[0] ?? null;
+    // state.currentCollection = collections[0] ?? null;
 
     state.collectionErrorsExist = isEmpty(collections);
 };
@@ -129,11 +129,10 @@ const sortBindings = (bindings: any) => {
 
 const getInitialCollectionStateData = (): Pick<
     ResourceConfigState,
-    'collections' | 'collectionErrorsExist' | 'currentCollection'
+    'collections' | 'collectionErrorsExist'
 > => ({
     collections: [],
     collectionErrorsExist: false,
-    currentCollection: null,
 });
 
 const getInitialMiscStoreData = (): Pick<
@@ -262,7 +261,7 @@ const getInitialState = (
     },
 
     removeCollection: (value) => {
-        set({ currentCollection: null });
+        // set({ currentCollection: null });
         set(
             produce((state: ResourceConfigState) => {
                 const { collections, resourceConfig } = get();
@@ -278,12 +277,12 @@ const getInitialState = (
                     //  Then try one above
                     //  Then try one below
                     //  Then give up
-                    state.currentCollection =
-                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                        updatedCollections[removedIndex] ??
-                        updatedCollections[removedIndex - 1] ??
-                        updatedCollections[removedIndex + 1] ??
-                        null;
+                    // state.currentCollection =
+                    //     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                    //     updatedCollections[removedIndex] ??
+                    //     updatedCollections[removedIndex - 1] ??
+                    //     updatedCollections[removedIndex + 1] ??
+                    //     null;
 
                     const updatedResourceConfig = pick(
                         resourceConfig,
@@ -381,16 +380,6 @@ const getInitialState = (
             }),
             false,
             'Rediscovery Related Settings Reset'
-        );
-    },
-
-    setCurrentCollection: (value) => {
-        set(
-            produce((state: ResourceConfigState) => {
-                state.currentCollection = value;
-            }),
-            false,
-            'Current Collection Changed'
         );
     },
 
@@ -518,7 +507,7 @@ const getInitialState = (
         );
     },
 
-    updateResourceConfig: (key, resourceSchema, value) => {
+    updateResourceConfig: (key, resourceSchema, currentCollection, value) => {
         const { resourceConfig, setResourceConfig } = get();
 
         // This was never empty in my testing but wanted to be safe
@@ -540,13 +529,19 @@ const getInitialState = (
         // This might be related to how immer handles what is updated vs what
         //  is not during changes. Need to really dig into this later.
         if (!isEqual(existingConfig, updatedConfig)) {
-            setResourceConfig(key, resourceSchema, updatedConfig);
+            setResourceConfig(
+                key,
+                resourceSchema,
+                currentCollection,
+                updatedConfig
+            );
         }
     },
 
     setResourceConfig: (
         key,
         resourceSchema,
+        currentCollection,
         value,
         disableCheckingErrors,
         disableOmit
@@ -597,13 +592,13 @@ const getInitialState = (
                     // If adding new ones set to last
                     if (
                         (state.collections && state.collections.length === 0) ||
-                        (state.currentCollection &&
-                            !has(state.resourceConfig, state.currentCollection))
+                        (currentCollection &&
+                            !has(state.resourceConfig, currentCollection))
                     ) {
-                        state.currentCollection = newConfigKeyList[0];
+                        // state.currentCollection = newConfigKeyList[0];
                     } else {
-                        state.currentCollection =
-                            newConfigKeyList[newConfigKeyList.length - 1];
+                        // state.currentCollection =
+                        //     newConfigKeyList[newConfigKeyList.length - 1];
                     }
 
                     // Update the collections with the new array

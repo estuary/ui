@@ -64,3 +64,31 @@ export const useBinding_setResourceSchema = () => {
         (state) => state.setResourceSchema
     );
 };
+
+export const useBinding_currentBinding = () => {
+    return useZustandStore<BindingState, BindingState['currentBinding']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.currentBinding
+    );
+};
+
+export const useBinding_setCurrentBinding = () => {
+    return useZustandStore<BindingState, BindingState['setCurrentBinding']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.setCurrentBinding
+    );
+};
+
+export const useBinding_currentCollection = () => {
+    return useZustandStore<BindingState, string | null>(
+        BindingStoreNames.GENERAL,
+        (state) => state.currentBinding?.collection ?? null
+    );
+};
+
+export const useBinding_currentBindingId = () => {
+    return useZustandStore<BindingState, string | null>(
+        BindingStoreNames.GENERAL,
+        (state) => state.currentBinding?.id ?? null
+    );
+};
