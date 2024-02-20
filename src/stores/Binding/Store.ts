@@ -15,14 +15,43 @@ import { BindingStoreNames } from 'stores/names';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { getCollectionName } from 'utils/workflow-utils';
+import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
 import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
-import { BindingState, Bindings } from './types';
+import { BindingState, Bindings, ResourceConfig } from './types';
 
 const STORE_KEY = 'Bindings';
 
 const getCollections = (bindings: Bindings): string[] => Object.keys(bindings);
+
+const getResourceConfig = (binding: any): ResourceConfig => {
+    const { resource, disable } = binding;
+
+    const disableProp = getDisableProps(disable);
+
+    // Take the binding resource and place into config OR
+    // generate a default in case there are any issues with it
+    return {
+        data: resource,
+        errors: [],
+        meta: { ...disableProp },
+    };
+};
+
+// TODO (optimization): Use this function in the ported over resource config store action, evaluateDiscoveredCollections.
+const initializeResourceConfig = (
+    state: BindingState,
+    binding: any,
+    bindingId: string
+) => {
+    const config = getResourceConfig(binding);
+
+    state.resourceConfigs[bindingId] = config;
+
+    if (config.meta.disable) {
+        state.resourceConfigs[bindingId].meta.previouslyDisabled = true;
+    }
+};
 
 const sortBindings = (bindings: any) => {
     return orderBy(
@@ -36,7 +65,11 @@ const getInitialBindingData = (): Pick<BindingState, 'bindings'> => ({
     bindings: {},
 });
 
-const getInitialStateData = (): Pick<BindingState, 'resourceSchema'> => ({
+const getInitialStateData = (): Pick<
+    BindingState,
+    'resourceConfigs' | 'resourceSchema'
+> => ({
+    resourceConfigs: {},
     resourceSchema: {},
 });
 
@@ -203,6 +236,8 @@ const getInitialState = (
 
                     state.bindings[collection] =
                         existingBindingIds.concat(UUID);
+
+                    initializeResourceConfig(state, binding, UUID);
                 });
             }),
             false,
