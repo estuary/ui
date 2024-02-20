@@ -41,7 +41,7 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
 
     const handlers = {
         onChange: (configName: string, form: any) => {
-            updateResourceConfig(configName, form);
+            updateResourceConfig(configName, resourceSchema, form);
         },
     };
 

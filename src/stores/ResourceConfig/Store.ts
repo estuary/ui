@@ -518,7 +518,7 @@ const getInitialState = (
         );
     },
 
-    updateResourceConfig: (key, value) => {
+    updateResourceConfig: (key, resourceSchema, value) => {
         const { resourceConfig, setResourceConfig } = get();
 
         // This was never empty in my testing but wanted to be safe
@@ -540,7 +540,7 @@ const getInitialState = (
         // This might be related to how immer handles what is updated vs what
         //  is not during changes. Need to really dig into this later.
         if (!isEqual(existingConfig, updatedConfig)) {
-            setResourceConfig(key, updatedConfig);
+            setResourceConfig(key, resourceSchema, updatedConfig);
         }
     },
 

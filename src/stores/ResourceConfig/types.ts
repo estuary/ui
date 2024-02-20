@@ -71,7 +71,11 @@ export interface ResourceConfigState extends StoreWithHydration {
         disableCheckingErrors?: boolean,
         disableOmit?: boolean
     ) => void;
-    updateResourceConfig: (key: string, formData: JsonFormsData) => void;
+    updateResourceConfig: (
+        key: string,
+        resourceSchema: Schema,
+        formData: JsonFormsData
+    ) => void;
     toggleDisable: (key: string | string[] | null, value?: boolean) => Number;
     resetResourceConfigAndCollections: () => void;
 
