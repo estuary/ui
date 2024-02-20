@@ -37,6 +37,9 @@ export interface BindingState extends StoreWithHydration {
     // Resource Config
     resourceConfigs: ResourceConfigDictionary;
 
+    resourceConfigErrorsExist: boolean;
+    resourceConfigErrors: (string | undefined)[];
+
     // Misc.
     hydrateState: (
         editWorkflow: boolean,

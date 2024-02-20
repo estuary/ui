@@ -7,18 +7,25 @@ import {
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { difference, orderBy } from 'lodash';
+import { createJSONFormDefaults } from 'services/ajv';
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { BindingStoreNames } from 'stores/names';
+import { populateErrors } from 'stores/utils';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
 import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
-import { BindingState, Bindings, ResourceConfig } from './types';
+import {
+    BindingState,
+    Bindings,
+    ResourceConfig,
+    ResourceConfigDictionary,
+} from './types';
 
 const STORE_KEY = 'Bindings';
 
@@ -53,6 +60,16 @@ const initializeResourceConfig = (
     }
 };
 
+const populateResourceConfigErrors = (
+    state: BindingState,
+    resourceConfigs: ResourceConfigDictionary
+): void => {
+    const { configErrors, hasErrors } = populateErrors(resourceConfigs);
+
+    state.resourceConfigErrors = configErrors;
+    state.resourceConfigErrorsExist = hasErrors;
+};
+
 const sortBindings = (bindings: any) => {
     return orderBy(
         bindings,
@@ -67,8 +84,13 @@ const getInitialBindingData = (): Pick<BindingState, 'bindings'> => ({
 
 const getInitialStateData = (): Pick<
     BindingState,
-    'resourceConfigs' | 'resourceSchema'
+    | 'resourceConfigErrorsExist'
+    | 'resourceConfigErrors'
+    | 'resourceConfigs'
+    | 'resourceSchema'
 > => ({
+    resourceConfigErrorsExist: false,
+    resourceConfigErrors: [],
     resourceConfigs: {},
     resourceSchema: {},
 });
@@ -109,11 +131,6 @@ const getInitialState = (
                     }
                 });
 
-                // Filter out any collections that are not in the emptyCollections list
-                // const modifiedCollections = hasLength(collections)
-                //     ? union(collections, emptyCollections)
-                //     : emptyCollections;
-
                 const newCollections = difference(
                     emptyCollections,
                     collections
@@ -126,6 +143,34 @@ const getInitialState = (
                         state.bindings[collection] = [UUID];
                     }
                 });
+
+                // Run through and make sure all collections have a corresponding resource config
+                const modifiedResourceConfigs = state.resourceConfigs;
+
+                Object.entries(state.bindings).forEach(
+                    ([collection, bindingIds]) => {
+                        bindingIds.forEach((bindingId) => {
+                            // Rehydrating wipe out all configs and start again
+                            // Not rehydrating then we should allow the current config to stand
+                            //  and only populate the ones that are missing
+                            modifiedResourceConfigs[bindingId] =
+                                // Should not happen often but being safe with the resourceConfigs check here
+                                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                                !rehydrating && state.resourceConfigs[bindingId]
+                                    ? state.resourceConfigs[bindingId]
+                                    : {
+                                          ...createJSONFormDefaults(
+                                              state.resourceSchema,
+                                              collection
+                                          ),
+                                          meta: {},
+                                      };
+                        });
+                    }
+                );
+
+                state.resourceConfigs = modifiedResourceConfigs;
+                populateResourceConfigErrors(state, modifiedResourceConfigs);
             }),
             false,
             'Empty bindings added'
@@ -239,6 +284,8 @@ const getInitialState = (
 
                     initializeResourceConfig(state, binding, UUID);
                 });
+
+                populateResourceConfigErrors(state, state.resourceConfigs);
             }),
             false,
             'Binding dependent state prefilled'
