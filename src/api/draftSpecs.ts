@@ -237,14 +237,14 @@ export const getDraftSpecsByDraftId = async (
 };
 
 export const draftCollectionsEligibleForDeletion = async (
-    live_spec_id: string,
+    capture_id: string,
     draft_id: string
 ) => {
     return supabaseRetry<PostgrestSingleResponse<void>>(
         () =>
             supabaseClient
                 .rpc(RPCS.DRAFT_COLLECTIONS_ELIGIBLE_FOR_DELETION, {
-                    live_spec_id,
+                    capture_id,
                     draft_id,
                 })
                 .single(),
