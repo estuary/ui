@@ -2,10 +2,8 @@ import { useEntityType } from 'context/EntityContext';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
-import {
-    useResourceConfig_resourceConfig,
-    useResourceConfig_setServerUpdateRequired,
-} from 'stores/ResourceConfig/hooks';
+import { useBinding_resourceConfigs } from 'stores/Binding/hooks';
+import { useResourceConfig_setServerUpdateRequired } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
 import {
     getCollectionName,
@@ -16,7 +14,8 @@ import {
 const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     const entityType = useEntityType();
 
-    const resourceConfig = useResourceConfig_resourceConfig();
+    const resourceConfigs = useBinding_resourceConfigs();
+
     const setServerUpdateRequired = useResourceConfig_setServerUpdateRequired();
 
     const collectionNameProp = useMemo(
@@ -28,7 +27,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
         if (hasLength(draftSpecs)) {
             if (
                 draftSpecs[0]?.spec.bindings.length ===
-                Object.keys(resourceConfig).length
+                Object.keys(resourceConfigs).length
             ) {
                 // The lengths have not changed so we need to check each binding
                 return draftSpecs[0]?.spec.bindings.some((binding: any) => {
@@ -43,25 +42,16 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     // Do a quick simple disabled check before comparing the entire object
                     if (
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                        resourceConfig[collectionName]?.disable !==
+                        resourceConfigs[collectionName]?.meta?.disable !==
                         getDisableProps(disable).disable
                     ) {
                         return true;
                     }
 
                     // Since we checked disabled up above we can not just check if the data changed
-                    console.log(
-                        collectionName,
-                        !isEqual(
-                            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                            resourceConfig[collectionName]?.data,
-                            resource
-                        )
-                    );
-
                     return !isEqual(
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                        resourceConfig[collectionName]?.data,
+                        resourceConfigs[collectionName]?.data,
                         resource
                     );
                 });
@@ -72,7 +62,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
         }
 
         return false;
-    }, [collectionNameProp, draftSpecs, resourceConfig]);
+    }, [collectionNameProp, draftSpecs, resourceConfigs]);
 
     useEffect(() => {
         setServerUpdateRequired(resourceConfigUpdated);

@@ -20,7 +20,7 @@ import LegacySingleStep from 'components/transformation/create/legacy/SingleStep
 import { LegacyStepWrapper } from 'components/transformation/create/legacy/Wrapper';
 import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
+import { useBinding_collections } from 'stores/Binding/hooks';
 import {
     useTransformationCreate_setCatalogName,
     useTransformationCreate_setName,
@@ -58,7 +58,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
     // TODO (bindings) needs to refactor stores so transforms is not
     //  pulling from 'resourceConfig' for collections. Need a good
     //  solution of setting the list of selected collections anywhere
-    const collections = useResourceConfig_collections();
+    const collections = useBinding_collections();
     const selectedCollectionSet = useMemo(
         () => new Set<string>(collections),
         [collections]

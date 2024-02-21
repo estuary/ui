@@ -15,8 +15,8 @@ import {
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
+import { ResourceConfigDictionary } from 'stores/Binding/types';
 import { REMOVE_DURING_GENERATION } from 'stores/ResourceConfig/shared';
-import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
@@ -155,7 +155,7 @@ export const generateTaskSpec = (
             const resourceConfig = resourceConfigs[collectionName].data;
 
             // Check if disable is a boolean otherwise default to false
-            const { disable } = resourceConfigs[collectionName];
+            const { disable } = resourceConfigs[collectionName].meta;
             const resourceDisable = isBoolean(disable) ? disable : false;
 
             // See which binding we need to update

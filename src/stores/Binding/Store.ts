@@ -6,7 +6,7 @@ import {
 } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
-import { difference, has, intersection, omit, orderBy } from 'lodash';
+import { difference, has, intersection, isEqual, omit, orderBy } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     getInitialHydrationData,
@@ -29,8 +29,6 @@ import {
 
 const STORE_KEY = 'Bindings';
 
-const getCollections = (bindings: Bindings): string[] => Object.keys(bindings);
-
 const initializeBinding = (
     state: BindingState,
     collection: string,
@@ -44,6 +42,22 @@ const initializeBinding = (
         : [];
 
     state.bindings[collection] = existingBindingIds.concat(bindingId);
+};
+
+const initializeCurrentBinding = (
+    state: BindingState,
+    resourceConfigs: ResourceConfigDictionary
+) => {
+    const initialConfig = Object.entries(resourceConfigs).at(0);
+
+    if (initialConfig) {
+        const [bindingId, resourceConfig] = initialConfig;
+
+        state.currentBinding = {
+            id: bindingId,
+            collection: resourceConfig.meta.collectionName,
+        };
+    }
 };
 
 const getResourceConfig = (binding: any): ResourceConfig => {
@@ -155,7 +169,7 @@ const getInitialState = (
     addEmptyBindings: (data, rehydrating) => {
         set(
             produce((state: BindingState) => {
-                const collections = getCollections(state.bindings);
+                const collections = state.getCollections();
 
                 const emptyCollections: string[] =
                     rehydrating && hasLength(collections) ? collections : [];
@@ -215,11 +229,17 @@ const getInitialState = (
 
                 state.resourceConfigs = modifiedResourceConfigs;
                 populateResourceConfigErrors(state, modifiedResourceConfigs);
+                initializeCurrentBinding(state, modifiedResourceConfigs);
             }),
             false,
             'Empty bindings added'
         );
     },
+
+    getCollections: () =>
+        Object.values(get().resourceConfigs).map(
+            ({ meta }) => meta.collectionName
+        ),
 
     hydrateState: async (editWorkflow, entityType, rehydrating) => {
         const searchParams = new URLSearchParams(window.location.search);
@@ -321,6 +341,7 @@ const getInitialState = (
                 });
 
                 populateResourceConfigErrors(state, state.resourceConfigs);
+                initializeCurrentBinding(state, state.resourceConfigs);
             }),
             false,
             'Binding dependent state prefilled'
@@ -365,23 +386,26 @@ const getInitialState = (
 
     setResourceConfig: (
         targetCollections,
+        targetBindingId,
         value,
         disableCheckingErrors,
         disableOmit
     ) => {
         set(
             produce((state: BindingState) => {
-                const collections = getCollections(state.bindings);
+                const collections = state.getCollections();
 
                 if (typeof targetCollections === 'string') {
-                    const bindingId = crypto.randomUUID();
-
-                    initializeBinding(state, targetCollections, bindingId);
+                    const bindingId = targetBindingId ?? crypto.randomUUID();
 
                     state.resourceConfigs[bindingId] = value ?? {
                         ...createJSONFormDefaults(state.resourceSchema),
                         meta: { collectionName: targetCollections },
                     };
+
+                    if (!targetBindingId) {
+                        initializeBinding(state, targetCollections, bindingId);
+                    }
 
                     if (!disableCheckingErrors) {
                         populateResourceConfigErrors(
@@ -467,6 +491,38 @@ const getInitialState = (
             false,
             'Resource Schema Set'
         );
+    },
+
+    updateResourceConfig: (targetCollection, targetBindingId, value) => {
+        const { resourceConfigs, setResourceConfig } = get();
+
+        // This was never empty in my testing but wanted to be safe
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        const existingConfig = resourceConfigs[targetBindingId] ?? {};
+
+        const formattedValue: ResourceConfig = {
+            ...value,
+            meta: { collectionName: targetCollection },
+        };
+
+        const updatedConfig = {
+            ...existingConfig,
+            ...formattedValue,
+        };
+
+        // Only actually update if there was a change. This is mainly here because
+        //  as a user clicks through the bindings the resource config form will fire
+        //  update function calls. This was causing a lot of extra checks in the
+        //  useServerUpdateRequiredMonitor hook
+        // TODO (zustand)
+        // Not 100% sure why Zustand was still updating resourceConfig even when
+        //  there were no real changes. Wondering if it is because we populate with a
+        //  new object and that triggers it?
+        // This might be related to how immer handles what is updated vs what
+        //  is not during changes. Need to really dig into this later.
+        if (!isEqual(existingConfig, updatedConfig)) {
+            setResourceConfig(targetCollection, targetBindingId, updatedConfig);
+        }
     },
 });
 

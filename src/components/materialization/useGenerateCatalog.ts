@@ -21,6 +21,7 @@ import { useEntityWorkflow_Editing } from 'context/Workflow';
 import invariableStores from 'context/Zustand/invariableStores';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback } from 'react';
+import { useBinding_resourceConfigs } from 'stores/Binding/hooks';
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
@@ -45,7 +46,6 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_resetRediscoverySettings,
-    useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
@@ -90,7 +90,7 @@ function useGenerateCatalog() {
     const updateFormStatus = useFormStateStore_updateStatus();
 
     // Resource Config Store
-    const resourceConfig = useResourceConfig_resourceConfig();
+    const resourceConfigs = useBinding_resourceConfigs();
     const resourceConfigErrorsExist =
         useResourceConfig_resourceConfigErrorsExist();
     const resetRediscoverySettings =
@@ -208,7 +208,7 @@ function useGenerateCatalog() {
                 const draftSpec = generateTaskSpec(
                     ENTITY_TYPE,
                     { image: imagePath, config: encryptedEndpointConfig.data },
-                    resourceConfig,
+                    resourceConfigs,
                     existingTaskData,
                     sourceCapture,
                     fullSourceConfigs
@@ -293,7 +293,7 @@ function useGenerateCatalog() {
             processedEntityName,
             resetEditorState,
             resetRediscoverySettings,
-            resourceConfig,
+            resourceConfigs,
             resourceConfigErrorsExist,
             serverEndpointConfigData,
             serverUpdateRequired,

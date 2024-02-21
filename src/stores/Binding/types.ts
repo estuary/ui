@@ -3,12 +3,13 @@ import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { Entity, JsonFormsData, Schema } from 'types';
 
 // Each collection is mapped to an array of UUIDs that allow us to identify the corresponding resource config.
+// TODO (typing): Define UUID type.
 export interface Bindings {
     [collection: string]: string[];
 }
 
 export interface ResourceConfig extends JsonFormsData {
-    errors: any[];
+    // errors: any[];
     meta: {
         collectionName: string;
         disable?: boolean;
@@ -34,6 +35,9 @@ export interface BindingState extends StoreWithHydration {
     currentBinding: { id: string; collection: string } | null;
     setCurrentBinding: (bindingId: string | null) => void;
 
+    // Collections
+    getCollections: () => string[];
+
     // Resource Schema
     resourceSchema: Schema;
     setResourceSchema: (val: BindingState['resourceSchema']) => void;
@@ -42,9 +46,15 @@ export interface BindingState extends StoreWithHydration {
     resourceConfigs: ResourceConfigDictionary;
     setResourceConfig: (
         targetCollections: string | string[],
-        resourceConfig?: ResourceConfig,
+        targetBindingId?: string,
+        value?: ResourceConfig,
         disableCheckingErrors?: boolean,
         disableOmit?: boolean
+    ) => void;
+    updateResourceConfig: (
+        key: string,
+        targetBindingId: string,
+        formData: JsonFormsData
     ) => void;
 
     resourceConfigErrorsExist: boolean;

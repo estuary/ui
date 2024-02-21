@@ -7,18 +7,21 @@ import { useEditorStore_queryResponse_draftedBindingIndex } from 'components/edi
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { FormattedMessage } from 'react-intl';
-import {
-    useResourceConfig_hydrated,
-    useResourceConfig_resourceConfigOfCollectionProperty,
-} from 'stores/ResourceConfig/hooks';
+import { useBinding_resourceConfigOfMetaCollectionProperty } from 'stores/Binding/hooks';
+import { useResourceConfig_hydrated } from 'stores/ResourceConfig/hooks';
 import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
 
 interface Props {
+    bindingId: string;
     collectionName: string;
     readOnly?: boolean;
 }
 
-function ResourceConfig({ collectionName, readOnly = false }: Props) {
+function ResourceConfig({
+    bindingId,
+    collectionName,
+    readOnly = false,
+}: Props) {
     const entityType = useEntityType();
     const isEdit = useEntityWorkflow_Editing();
 
@@ -31,10 +34,7 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
     //  binding list. This means the user could end up clicking "See Fields" button
     //  forever and never get fields listed.
     const collectionDisabled =
-        useResourceConfig_resourceConfigOfCollectionProperty(
-            collectionName,
-            'disable'
-        );
+        useBinding_resourceConfigOfMetaCollectionProperty(bindingId, 'disable');
 
     return (
         <>
@@ -45,6 +45,7 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
             <Box sx={{ width: '100%' }}>
                 {hydrated ? (
                     <ResourceConfigForm
+                        bindingId={bindingId}
                         collectionName={collectionName}
                         readOnly={readOnly}
                     />

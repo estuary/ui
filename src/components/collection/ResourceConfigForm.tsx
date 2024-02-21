@@ -5,53 +5,57 @@ import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import { jsonFormsDefaults } from 'services/jsonforms/defaults';
 import { showValidation } from 'services/jsonforms/shared';
 import {
-    useBinding_currentCollection,
+    useBinding_resourceConfigOfCollectionProperty,
     useBinding_resourceSchema,
+    useBinding_updateResourceConfig,
 } from 'stores/Binding/hooks';
 import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
 } from 'stores/FormState/hooks';
-import {
-    useResourceConfig_resourceConfigOfCollectionProperty,
-    useResourceConfig_updateResourceConfig,
-} from 'stores/ResourceConfig/hooks';
 
 type Props = {
+    bindingId: string;
     collectionName: string;
     readOnly?: boolean;
 };
 
-function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
+function ResourceConfigForm({
+    bindingId,
+    collectionName,
+    readOnly = false,
+}: Props) {
+    const uuid = useRef(bindingId);
     const name = useRef(collectionName);
 
-    // Resource Config Store
-    const formData = useResourceConfig_resourceConfigOfCollectionProperty(
-        collectionName,
+    // Binding Store
+    const formData = useBinding_resourceConfigOfCollectionProperty(
+        bindingId,
         'data'
     );
 
-    const updateResourceConfig = useResourceConfig_updateResourceConfig();
-
     const resourceSchema = useBinding_resourceSchema();
-    const currentCollection = useBinding_currentCollection();
+    const updateResourceConfig = useBinding_updateResourceConfig();
 
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
     const isActive = useFormStateStore_isActive();
 
     useEffect(() => {
+        uuid.current = bindingId;
+    }, [bindingId]);
+
+    useEffect(() => {
         name.current = collectionName;
     }, [collectionName]);
 
     const handlers = {
-        onChange: (configName: string, form: any) => {
-            updateResourceConfig(
-                configName,
-                resourceSchema,
-                currentCollection,
-                form
-            );
+        onChange: (
+            configName: string,
+            targetBindingUUID: string,
+            form: any
+        ) => {
+            updateResourceConfig(configName, targetBindingUUID, form);
         },
     };
 
@@ -79,7 +83,7 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
                 readonly={readOnly || isActive}
                 validationMode={showValidationVal}
                 onChange={(state) => {
-                    handlers.onChange(name.current, state);
+                    handlers.onChange(name.current, uuid.current, state);
                 }}
             />
         </StyledEngineProvider>

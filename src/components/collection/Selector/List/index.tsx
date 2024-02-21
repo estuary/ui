@@ -12,13 +12,16 @@ import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import AlertBox from 'components/shared/AlertBox';
 import { useEntityType } from 'context/EntityContext';
 import { dataGridListStyling } from 'context/Theme';
+import { isEmpty } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
-import { useBinding_currentBindingId } from 'stores/Binding/hooks';
+import {
+    useBinding_bindings,
+    useBinding_currentBindingId,
+} from 'stores/Binding/hooks';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
 import { hasLength, stripPathing } from 'utils/misc-utils';
 import CollectionSelectorHeaderName from './Header/Name';
@@ -27,6 +30,7 @@ import CollectionSelectorHeaderToggle from './Header/Toggle';
 import {
     COLLECTION_SELECTOR_NAME_COL,
     COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
+    COLLECTION_SELECTOR_UUID_COL,
     getCollectionSelector,
 } from './shared';
 
@@ -43,7 +47,7 @@ interface Props {
     height?: number | string;
     removeCollections?: (rows: GridRowId[]) => void;
     toggleCollections?: (rows: GridRowId[] | null, value: boolean) => Number;
-    setCurrentBinding?: (collection: any) => void;
+    setCurrentBinding?: (bindingId: string | null) => void;
 }
 
 const cellClass_noPadding = 'estuary-datagrid--cell--no-padding';
@@ -91,12 +95,10 @@ function CollectionSelectorList({
 
     // Binding Store
     const currentBindingId = useBinding_currentBindingId();
+    const bindings = useBinding_bindings();
 
     // Form State Store
     const formStatus = useFormStateStore_status();
-
-    // Resource Config Store
-    const collections = useResourceConfig_collections();
 
     const selectionEnabled =
         currentBindingId &&
@@ -115,22 +117,23 @@ function CollectionSelectorList({
     }, [currentBindingId]);
 
     const rows = useMemo(() => {
-        // If we have no collections we can just return an empty array
-        if (!collections) {
+        // If we have no bindings we can just return an empty array
+        if (isEmpty(bindings)) {
             return [];
         }
 
-        // We have collections so need to format them in a format that mui
+        // We have bindings so need to format them in a format that mui
         //  datagrid will handle. At a minimum each object must have an
-        //  `id` property. This is why the name is stored as `id`
-        return collections.map((collectionName) => {
-            return {
-                [COLLECTION_SELECTOR_NAME_COL]: collectionName,
+        //  `id` property.
+        return Object.entries(bindings).flatMap(([collection, bindingUUIDs]) =>
+            bindingUUIDs.map((bindingUUID) => ({
+                [COLLECTION_SELECTOR_UUID_COL]: bindingUUID,
+                [COLLECTION_SELECTOR_NAME_COL]: collection,
                 [COLLECTION_SELECTOR_STRIPPED_PATH_NAME]:
-                    stripPathing(collectionName),
-            };
-        });
-    }, [collections]);
+                    stripPathing(collection),
+            }))
+        );
+    }, [bindings]);
 
     const rowsEmpty = useMemo(() => !hasLength(rows), [rows]);
 
@@ -342,9 +345,11 @@ function CollectionSelectorList({
                         //  to go into the wrong form.
                         setCurrentBinding(null);
 
-                        hackyTimeout.current = window.setTimeout(() => {
-                            setCurrentBinding(id);
-                        });
+                        if (typeof id === 'string') {
+                            hackyTimeout.current = window.setTimeout(() => {
+                                setCurrentBinding(id);
+                            });
+                        }
                     }
                 }}
             />

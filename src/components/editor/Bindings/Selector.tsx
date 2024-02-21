@@ -2,20 +2,26 @@ import { Box } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import CollectionSelectorList from 'components/collection/Selector/List';
-import { COLLECTION_SELECTOR_NAME_COL } from 'components/collection/Selector/List/shared';
+import {
+    COLLECTION_SELECTOR_NAME_COL,
+    COLLECTION_SELECTOR_UUID_COL,
+} from 'components/collection/Selector/List/shared';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import { ReactNode } from 'react';
-import { useBinding_setCurrentBinding } from 'stores/Binding/hooks';
+import {
+    useBinding_collections,
+    useBinding_setCurrentBinding,
+} from 'stores/Binding/hooks';
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
-    useResourceConfig_collections,
     useResourceConfig_discoveredCollections,
     useResourceConfig_removeCollections,
     useResourceConfig_toggleDisable,
 } from 'stores/ResourceConfig/hooks';
+import { hasLength } from 'utils/misc-utils';
 import BindingsSelectorName from './Row/Name';
 import BindingsSelectorRemove from './Row/Remove';
 import BindingsSelectorToggle from './Row/Toggle';
@@ -52,8 +58,8 @@ function BindingSelector({
 
     // Binding Store
     const setCurrentBinding = useBinding_setCurrentBinding();
+    const collections = useBinding_collections();
 
-    const collections = useResourceConfig_collections();
     const discoveredCollections = useResourceConfig_discoveredCollections();
 
     const removeCollections = useResourceConfig_removeCollections();
@@ -64,7 +70,7 @@ function BindingSelector({
             removeCollections(rows, workflow, task);
 
             const publishedCollections =
-                discoveredCollections && collections
+                discoveredCollections && hasLength(collections)
                     ? collections.filter(
                           (collection) =>
                               !discoveredCollections.includes(collection)
@@ -87,7 +93,14 @@ function BindingSelector({
 
     const cellRenderers = {
         name: (params: GridRenderCellParams) => {
-            return <BindingsSelectorName collection={params.value} />;
+            const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
+
+            return (
+                <BindingsSelectorName
+                    bindingUUID={bindingUUID}
+                    collection={params.value}
+                />
+            );
         },
         remove: (params: GridRenderCellParams) => {
             if (isCapture) {
@@ -106,10 +119,12 @@ function BindingSelector({
             );
         },
         toggle: (params: GridRenderCellParams) => {
+            const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
             const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
 
             return (
                 <BindingsSelectorToggle
+                    bindingUUID={bindingUUID}
                     collection={collection}
                     disableButton={formActive}
                 />

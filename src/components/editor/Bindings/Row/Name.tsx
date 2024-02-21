@@ -4,17 +4,25 @@ import { stripPathing } from 'utils/misc-utils';
 import BindingsSelectorErrorIndicator from './ErrorIndicator';
 
 interface RowProps {
+    bindingUUID: string;
     collection: string;
     shortenName?: boolean;
 }
 
-function BindingsSelectorName({ collection, shortenName }: RowProps) {
+function BindingsSelectorName({
+    bindingUUID,
+    collection,
+    shortenName,
+}: RowProps) {
     return (
         <Button
             variant="text"
             disableFocusRipple
             startIcon={
-                <BindingsSelectorErrorIndicator collection={collection} />
+                <BindingsSelectorErrorIndicator
+                    bindingUUID={bindingUUID}
+                    collection={collection}
+                />
             }
             sx={{
                 'color': (theme) => theme.palette.text.primary,

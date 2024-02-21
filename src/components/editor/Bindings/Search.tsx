@@ -1,11 +1,10 @@
 import CollectionSelector from 'components/collection/Selector';
-import { ReactNode, useEffect, useState } from 'react';
+import { difference } from 'lodash';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useBinding_collections } from 'stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import {
-    useResourceConfig_collections,
-    useResourceConfig_discoveredCollections,
-} from 'stores/ResourceConfig/hooks';
+import { useResourceConfig_discoveredCollections } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
 import UpdateResourceConfigButton from './UpdateResourceConfigButton';
 
@@ -35,15 +34,22 @@ function BindingSearch({
 
     const [collectionValues, setCollectionValues] = useState<string[]>([]);
 
+    // Binding Store
+    const collections = useBinding_collections();
+
     // Form State Store
     const formActive = useFormStateStore_isActive();
 
     // Resource Config Store
-    const collections = useResourceConfig_collections();
     const discoveredCollections = useResourceConfig_discoveredCollections();
 
+    const updatedValues = useMemo(
+        () => difference(collectionValues, collections).length > 0,
+        [collectionValues, collections]
+    );
+
     useEffect(() => {
-        if (collections) {
+        if (updatedValues) {
             setCollectionValues(collections);
         }
     }, [
@@ -51,6 +57,7 @@ function BindingSearch({
         discoveredCollections,
         discoveredCollectionsLabel,
         existingCollectionsLabel,
+        updatedValues,
     ]);
 
     return (

@@ -22,7 +22,7 @@ import { useEntityType } from 'context/EntityContext';
 import useInitializeCollectionDraft from 'hooks/useInitializeCollectionDraft';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useBinding_currentCollection } from 'stores/Binding/hooks';
+import { useBinding_currentBinding } from 'stores/Binding/hooks';
 import SchemaEditCLIButton from '../Bindings/SchemaEdit/CLIButton';
 import SchemaEditToggle from '../Bindings/SchemaEdit/Toggle';
 
@@ -37,7 +37,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
     const initializeCollectionDraft = useInitializeCollectionDraft();
 
     // Binding Store
-    const currentCollection = useBinding_currentCollection();
+    const currentBinding = useBinding_currentBinding();
 
     // Bindings Editor Store
     const collectionData = useBindingsEditorStore_collectionData();
@@ -60,21 +60,24 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
 
     const [activeTab, setActiveTab] = useState<number>(0);
     useEffect(() => {
-        if (tabProps[activeTab].value === 'schema' && currentCollection) {
+        if (
+            tabProps[activeTab].value === 'schema' &&
+            currentBinding?.collection
+        ) {
             setCurrentCatalog(null);
             setCollectionSpecs(null);
 
-            void initializeCollectionDraft(currentCollection);
+            void initializeCollectionDraft(currentBinding.collection);
         }
     }, [
         initializeCollectionDraft,
         setCollectionSpecs,
         setCurrentCatalog,
         activeTab,
-        currentCollection,
+        currentBinding?.collection,
     ]);
 
-    if (currentCollection) {
+    if (currentBinding) {
         return (
             <Box sx={{ p: 1 }}>
                 <BindingsTabs
@@ -85,7 +88,8 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                 <Box sx={{ p: 1 }}>
                     {tabProps[activeTab].value === 'config' ? (
                         <ResourceConfig
-                            collectionName={currentCollection}
+                            bindingId={currentBinding.id}
+                            collectionName={currentBinding.collection}
                             readOnly={readOnly}
                         />
                     ) : collectionData || collectionData === null ? (
@@ -147,11 +151,13 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                 collectionData.belongsToDraft ? (
                                     <DraftSpecEditorHydrator
                                         entityType="collection"
-                                        entityName={currentCollection}
+                                        entityName={currentBinding.collection}
                                         localScope
                                     >
                                         <CollectionSchemaEditor
-                                            entityName={currentCollection}
+                                            entityName={
+                                                currentBinding.collection
+                                            }
                                             localZustandScope
                                         />
                                     </DraftSpecEditorHydrator>

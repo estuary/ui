@@ -3,7 +3,10 @@ import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
 import { Check } from 'iconoir-react';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useBinding_currentBinding } from 'stores/Binding/hooks';
+import {
+    useBinding_collections,
+    useBinding_currentBinding,
+} from 'stores/Binding/hooks';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
@@ -13,7 +16,6 @@ import {
     useResourceConfig_allBindingsDisabled,
     useResourceConfig_backfillAllBindings,
     useResourceConfig_backfilledCollections,
-    useResourceConfig_collections,
     useResourceConfig_setBackfilledCollections,
 } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
@@ -34,6 +36,7 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
 
     // Binding Store
     const currentBinding = useBinding_currentBinding();
+    const collections = useBinding_collections();
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -41,9 +44,6 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
     // Form State Store
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
-
-    // Resource Config Store
-    const collections = useResourceConfig_collections();
 
     const backfilledCollections = useResourceConfig_backfilledCollections();
     const setBackfilledCollections =
