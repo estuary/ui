@@ -1,6 +1,5 @@
 import CollectionSelector from 'components/collection/Selector';
-import { difference } from 'lodash';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useBinding_collections } from 'stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
@@ -43,21 +42,13 @@ function BindingSearch({
     // Resource Config Store
     const discoveredCollections = useResourceConfig_discoveredCollections();
 
-    const updatedValues = useMemo(
-        () => difference(collectionValues, collections).length > 0,
-        [collectionValues, collections]
-    );
-
     useEffect(() => {
-        if (updatedValues) {
-            setCollectionValues(collections);
-        }
+        setCollectionValues(collections);
     }, [
         collections,
         discoveredCollections,
         discoveredCollectionsLabel,
         existingCollectionsLabel,
-        updatedValues,
     ]);
 
     return (

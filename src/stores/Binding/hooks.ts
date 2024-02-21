@@ -74,6 +74,13 @@ export const useBinding_resourceConfigs = () => {
     );
 };
 
+export const useBinding_setResourceConfig = () => {
+    return useZustandStore<BindingState, BindingState['setResourceConfig']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.setResourceConfig
+    );
+};
+
 export const useBinding_updateResourceConfig = () => {
     return useZustandStore<BindingState, BindingState['updateResourceConfig']>(
         BindingStoreNames.GENERAL,

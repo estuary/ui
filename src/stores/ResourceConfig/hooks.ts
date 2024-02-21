@@ -132,13 +132,6 @@ export const useResourceConfig_resourceConfigOfCollection = (
     );
 };
 
-export const useResourceConfig_setResourceConfig = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setResourceConfig']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.setResourceConfig);
-};
-
 export const useResourceConfig_toggleDisable = () => {
     return useZustandStore<
         ResourceConfigState,
