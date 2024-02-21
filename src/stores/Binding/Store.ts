@@ -21,6 +21,7 @@ import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
 import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 import {
+    BindingMetadata,
     BindingState,
     Bindings,
     ResourceConfig,
@@ -437,16 +438,16 @@ const getInitialState = (
     setCurrentBinding: (bindingUUID) => {
         set(
             produce((state: BindingState) => {
-                const binding = bindingUUID
-                    ? Object.entries(state.bindings)
-                          .find(([_collection, bindingUUIDs]) =>
-                              bindingUUIDs.includes(bindingUUID)
-                          )
-                          ?.map(([collection]) => ({
+                const binding: BindingMetadata | null =
+                    bindingUUID &&
+                    Object.hasOwn(state.resourceConfigs, bindingUUID)
+                        ? {
                               uuid: bindingUUID,
-                              collection,
-                          }))[0]
-                    : null;
+                              collection:
+                                  state.resourceConfigs[bindingUUID].meta
+                                      .collectionName,
+                          }
+                        : null;
 
                 state.currentBinding = binding ?? null;
             }),
