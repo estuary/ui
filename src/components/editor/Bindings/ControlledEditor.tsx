@@ -14,7 +14,7 @@ import {
     monacoEditorHeaderBackground,
 } from 'context/Theme';
 import { stringifyJSON } from 'services/stringify';
-import { useBinding_currentBindingId } from 'stores/Binding/hooks';
+import { useBinding_currentBindingUUID } from 'stores/Binding/hooks';
 import { ICON_SIZE, getEditorTotalHeight } from 'utils/editor-utils';
 
 const EDITOR_HEIGHT = 396;
@@ -28,7 +28,7 @@ function ControlledEditor() {
     const theme = useTheme();
 
     // Binding Store
-    const currentBindingId = useBinding_currentBindingId();
+    const currentBindingUUID = useBinding_currentBindingUUID();
 
     // Bindings Editor Store
     const collectionData = useBindingsEditorStore_collectionData();
@@ -36,7 +36,7 @@ function ControlledEditor() {
     const schemaUpdated = useBindingsEditorStore_schemaUpdated();
     const schemaUpdateErrored = useBindingsEditorStore_schemaUpdateErrored();
 
-    if (currentBindingId && collectionData) {
+    if (currentBindingUUID && collectionData) {
         return (
             <Box
                 sx={{
@@ -76,7 +76,7 @@ function ControlledEditor() {
                     defaultLanguage="json"
                     theme={monacoEditorComponentBackground[theme.palette.mode]}
                     saveViewState={false}
-                    path={currentBindingId}
+                    path={currentBindingUUID}
                     options={{ readOnly: true }}
                 />
             </Box>

@@ -88,7 +88,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                 <Box sx={{ p: 1 }}>
                     {tabProps[activeTab].value === 'config' ? (
                         <ResourceConfig
-                            bindingId={currentBinding.id}
+                            bindingUUID={currentBinding.uuid}
                             collectionName={currentBinding.collection}
                             readOnly={readOnly}
                         />

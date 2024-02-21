@@ -32,16 +32,16 @@ const STORE_KEY = 'Bindings';
 const initializeBinding = (
     state: BindingState,
     collection: string,
-    bindingId: string
+    bindingUUID: string
 ) => {
-    const existingBindingIds: string[] = Object.hasOwn(
+    const existingBindingUUIDs: string[] = Object.hasOwn(
         state.bindings,
         collection
     )
         ? state.bindings[collection]
         : [];
 
-    state.bindings[collection] = existingBindingIds.concat(bindingId);
+    state.bindings[collection] = existingBindingUUIDs.concat(bindingUUID);
 };
 
 const initializeCurrentBinding = (
@@ -51,10 +51,10 @@ const initializeCurrentBinding = (
     const initialConfig = Object.entries(resourceConfigs).at(0);
 
     if (initialConfig) {
-        const [bindingId, resourceConfig] = initialConfig;
+        const [bindingUUID, resourceConfig] = initialConfig;
 
         state.currentBinding = {
-            id: bindingId,
+            uuid: bindingUUID,
             collection: resourceConfig.meta.collectionName,
         };
     }
@@ -79,14 +79,14 @@ const getResourceConfig = (binding: any): ResourceConfig => {
 const initializeResourceConfig = (
     state: BindingState,
     binding: any,
-    bindingId: string
+    bindingUUID: string
 ) => {
     const config = getResourceConfig(binding);
 
-    state.resourceConfigs[bindingId] = config;
+    state.resourceConfigs[bindingUUID] = config;
 
     if (config.meta.disable) {
-        state.resourceConfigs[bindingId].meta.previouslyDisabled = true;
+        state.resourceConfigs[bindingUUID].meta.previouslyDisabled = true;
     }
 };
 
@@ -117,8 +117,8 @@ const whatChanged = (
 
     const currentCollections = Object.entries(bindings)
         .filter(
-            ([_collection, bindingIds]) =>
-                intersection(bindingIds, currentBindings).length > 0
+            ([_collection, bindingUUIDs]) =>
+                intersection(bindingUUIDs, currentBindings).length > 0
         )
         .map(([collection]) => collection);
 
@@ -206,16 +206,19 @@ const getInitialState = (
                 const modifiedResourceConfigs = state.resourceConfigs;
 
                 Object.entries(state.bindings).forEach(
-                    ([collectionName, bindingIds]) => {
-                        bindingIds.forEach((bindingId) => {
+                    ([collectionName, bindingUUIDs]) => {
+                        bindingUUIDs.forEach((bindingUUID) => {
                             // Rehydrating wipe out all configs and start again
                             // Not rehydrating then we should allow the current config to stand
                             //  and only populate the ones that are missing
-                            modifiedResourceConfigs[bindingId] =
+                            modifiedResourceConfigs[bindingUUID] =
                                 // Should not happen often but being safe with the resourceConfigs check here
                                 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                                !rehydrating && state.resourceConfigs[bindingId]
-                                    ? state.resourceConfigs[bindingId]
+                                Boolean(
+                                    !rehydrating &&
+                                        state.resourceConfigs[bindingUUID]
+                                )
+                                    ? state.resourceConfigs[bindingUUID]
                                     : {
                                           ...createJSONFormDefaults(
                                               state.resourceSchema,
@@ -363,16 +366,16 @@ const getInitialState = (
         set(newState, false, 'Binding State Reset');
     },
 
-    setCurrentBinding: (bindingId) => {
+    setCurrentBinding: (bindingUUID) => {
         set(
             produce((state: BindingState) => {
-                const binding = bindingId
+                const binding = bindingUUID
                     ? Object.entries(state.bindings)
-                          .find(([_collection, bindingIds]) =>
-                              bindingIds.includes(bindingId)
+                          .find(([_collection, bindingUUIDs]) =>
+                              bindingUUIDs.includes(bindingUUID)
                           )
                           ?.map(([collection]) => ({
-                              id: bindingId,
+                              uuid: bindingUUID,
                               collection,
                           }))[0]
                     : null;
@@ -386,7 +389,7 @@ const getInitialState = (
 
     setResourceConfig: (
         targetCollections,
-        targetBindingId,
+        targetBindingUUID,
         value,
         disableCheckingErrors,
         disableOmit
@@ -396,15 +399,20 @@ const getInitialState = (
                 const collections = state.getCollections();
 
                 if (typeof targetCollections === 'string') {
-                    const bindingId = targetBindingId ?? crypto.randomUUID();
+                    const bindingUUID =
+                        targetBindingUUID ?? crypto.randomUUID();
 
-                    state.resourceConfigs[bindingId] = value ?? {
+                    state.resourceConfigs[bindingUUID] = value ?? {
                         ...createJSONFormDefaults(state.resourceSchema),
                         meta: { collectionName: targetCollections },
                     };
 
-                    if (!targetBindingId) {
-                        initializeBinding(state, targetCollections, bindingId);
+                    if (!targetBindingUUID) {
+                        initializeBinding(
+                            state,
+                            targetCollections,
+                            bindingUUID
+                        );
                     }
 
                     if (!disableCheckingErrors) {
@@ -424,11 +432,11 @@ const getInitialState = (
 
                     // Set defaults on new configs
                     newCollections.forEach((collectionName) => {
-                        const bindingId = crypto.randomUUID();
+                        const bindingUUID = crypto.randomUUID();
 
-                        initializeBinding(state, collectionName, bindingId);
+                        initializeBinding(state, collectionName, bindingUUID);
 
-                        state.resourceConfigs[bindingId] = {
+                        state.resourceConfigs[bindingUUID] = {
                             ...createJSONFormDefaults(
                                 state.resourceSchema,
                                 collectionName
@@ -453,20 +461,20 @@ const getInitialState = (
                     // If previous state had no collections set to first
                     // If selected item is removed set to first.
                     // If adding new ones set to last
-                    const selectedBindingId =
+                    const selectedBindingUUID =
                         collections.length === 0 ||
                         (state.currentBinding &&
                             !has(
                                 state.resourceConfigs,
-                                state.currentBinding.id
+                                state.currentBinding.uuid
                             ))
                             ? newConfigKeyList[0]
                             : newConfigKeyList[newConfigKeyList.length - 1];
 
                     state.currentBinding = {
-                        id: selectedBindingId,
+                        uuid: selectedBindingUUID,
                         collection:
-                            state.resourceConfigs[selectedBindingId].meta
+                            state.resourceConfigs[selectedBindingUUID].meta
                                 .collectionName,
                     };
 
@@ -493,12 +501,12 @@ const getInitialState = (
         );
     },
 
-    updateResourceConfig: (targetCollection, targetBindingId, value) => {
+    updateResourceConfig: (targetCollection, targetBindingUUID, value) => {
         const { resourceConfigs, setResourceConfig } = get();
 
         // This was never empty in my testing but wanted to be safe
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        const existingConfig = resourceConfigs[targetBindingId] ?? {};
+        const existingConfig = resourceConfigs[targetBindingUUID] ?? {};
 
         const formattedValue: ResourceConfig = {
             ...value,
@@ -521,7 +529,11 @@ const getInitialState = (
         // This might be related to how immer handles what is updated vs what
         //  is not during changes. Need to really dig into this later.
         if (!isEqual(existingConfig, updatedConfig)) {
-            setResourceConfig(targetCollection, targetBindingId, updatedConfig);
+            setResourceConfig(
+                targetCollection,
+                targetBindingUUID,
+                updatedConfig
+            );
         }
     },
 });

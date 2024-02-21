@@ -32,11 +32,8 @@ export interface BindingState extends StoreWithHydration {
         rehydrating?: boolean
     ) => void;
 
-    currentBinding: { id: string; collection: string } | null;
-    setCurrentBinding: (bindingId: string | null) => void;
-
-    // Collections
-    getCollections: () => string[];
+    currentBinding: { uuid: string; collection: string } | null;
+    setCurrentBinding: (bindingUUID: string | null) => void;
 
     // Resource Schema
     resourceSchema: Schema;
@@ -46,19 +43,22 @@ export interface BindingState extends StoreWithHydration {
     resourceConfigs: ResourceConfigDictionary;
     setResourceConfig: (
         targetCollections: string | string[],
-        targetBindingId?: string,
+        targetBindingUUID?: string,
         value?: ResourceConfig,
         disableCheckingErrors?: boolean,
         disableOmit?: boolean
     ) => void;
     updateResourceConfig: (
         key: string,
-        targetBindingId: string,
+        targetBindingUUID: string,
         formData: JsonFormsData
     ) => void;
 
     resourceConfigErrorsExist: boolean;
     resourceConfigErrors: (string | undefined)[];
+
+    // Computed Values
+    getCollections: () => string[];
 
     // Misc.
     hydrateState: (

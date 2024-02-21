@@ -151,9 +151,9 @@ export const useBinding_currentCollection = () => {
     );
 };
 
-export const useBinding_currentBindingId = () => {
+export const useBinding_currentBindingUUID = () => {
     return useZustandStore<BindingState, string | null>(
         BindingStoreNames.GENERAL,
-        (state) => state.currentBinding?.id ?? null
+        (state) => state.currentBinding?.uuid ?? null
     );
 };

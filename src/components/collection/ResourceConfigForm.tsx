@@ -15,22 +15,22 @@ import {
 } from 'stores/FormState/hooks';
 
 type Props = {
-    bindingId: string;
+    bindingUUID: string;
     collectionName: string;
     readOnly?: boolean;
 };
 
 function ResourceConfigForm({
-    bindingId,
+    bindingUUID,
     collectionName,
     readOnly = false,
 }: Props) {
-    const uuid = useRef(bindingId);
+    const uuid = useRef(bindingUUID);
     const name = useRef(collectionName);
 
     // Binding Store
     const formData = useBinding_resourceConfigOfCollectionProperty(
-        bindingId,
+        bindingUUID,
         'data'
     );
 
@@ -42,8 +42,8 @@ function ResourceConfigForm({
     const isActive = useFormStateStore_isActive();
 
     useEffect(() => {
-        uuid.current = bindingId;
-    }, [bindingId]);
+        uuid.current = bindingUUID;
+    }, [bindingUUID]);
 
     useEffect(() => {
         name.current = collectionName;

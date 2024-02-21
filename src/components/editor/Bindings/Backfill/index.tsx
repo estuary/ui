@@ -57,14 +57,14 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
             return backfillAllBindings;
         }
 
-        return currentBinding?.id
-            ? backfilledCollections.includes(currentBinding.id)
+        return currentBinding?.uuid
+            ? backfilledCollections.includes(currentBinding.uuid)
             : false;
     }, [
         backfillAllBindings,
         backfilledCollections,
         bindingIndex,
-        currentBinding?.id,
+        currentBinding?.uuid,
     ]);
 
     const value: BooleanString = useMemo(
@@ -87,10 +87,10 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                 );
             }
 
-            if (currentBinding?.id) {
+            if (currentBinding?.uuid) {
                 return increment === 'true'
-                    ? !backfilledCollections.includes(currentBinding.id)
-                    : backfilledCollections.includes(currentBinding.id);
+                    ? !backfilledCollections.includes(currentBinding.uuid)
+                    : backfilledCollections.includes(currentBinding.uuid);
             }
 
             return false;
@@ -99,7 +99,7 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
             backfillAllBindings,
             backfilledCollections,
             bindingIndex,
-            currentBinding?.id,
+            currentBinding?.uuid,
         ]
     );
 
@@ -123,7 +123,7 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                 ).then(
                     () => {
                         const targetCollection = singleBindingUpdate
-                            ? currentBinding.id
+                            ? currentBinding.uuid
                             : undefined;
 
                         setBackfilledCollections(increment, targetCollection);

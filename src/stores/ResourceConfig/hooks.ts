@@ -1,16 +1,9 @@
 import { useZustandStore } from 'context/Zustand/provider';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { shallow } from 'zustand/shallow';
-import { ResourceConfig, ResourceConfigState } from './types';
+import { ResourceConfigState } from './types';
 
 // Selector Hooks
-export const useResourceConfig_collections = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['collections']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.collections);
-};
-
 export const useResourceConfig_removeCollection = () => {
     return useZustandStore<
         ResourceConfigState,
@@ -146,35 +139,11 @@ export const useResourceConfig_resourceConfigOfCollection = (
     );
 };
 
-export const useResourceConfig_resourceConfigOfCollectionProperty = (
-    collection: any,
-    property: keyof ResourceConfig
-) => {
-    return useZustandStore<ResourceConfigState, any>(
-        ResourceConfigStoreNames.GENERAL,
-        (state) => {
-            if (!collection) {
-                return null;
-            }
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            return state.resourceConfig[collection]?.[property];
-        },
-        shallow
-    );
-};
-
 export const useResourceConfig_setResourceConfig = () => {
     return useZustandStore<
         ResourceConfigState,
         ResourceConfigState['setResourceConfig']
     >(ResourceConfigStoreNames.GENERAL, (state) => state.setResourceConfig);
-};
-
-export const useResourceConfig_updateResourceConfig = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['updateResourceConfig']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.updateResourceConfig);
 };
 
 export const useResourceConfig_toggleDisable = () => {

@@ -18,8 +18,9 @@ import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 import {
     useBinding_bindings,
-    useBinding_currentBindingId,
+    useBinding_currentBindingUUID,
 } from 'stores/Binding/hooks';
+import { BindingState } from 'stores/Binding/types';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import useConstant from 'use-constant';
@@ -47,7 +48,7 @@ interface Props {
     height?: number | string;
     removeCollections?: (rows: GridRowId[]) => void;
     toggleCollections?: (rows: GridRowId[] | null, value: boolean) => Number;
-    setCurrentBinding?: (bindingId: string | null) => void;
+    setCurrentBinding?: BindingState['setCurrentBinding'];
 }
 
 const cellClass_noPadding = 'estuary-datagrid--cell--no-padding';
@@ -94,14 +95,14 @@ function CollectionSelectorList({
     const [showNotification, setShowNotification] = useState(false);
 
     // Binding Store
-    const currentBindingId = useBinding_currentBindingId();
+    const currentBindingUUID = useBinding_currentBindingUUID();
     const bindings = useBinding_bindings();
 
     // Form State Store
     const formStatus = useFormStateStore_status();
 
     const selectionEnabled =
-        currentBindingId &&
+        currentBindingUUID &&
         setCurrentBinding &&
         formStatus !== FormStatus.UPDATING;
 
@@ -113,8 +114,8 @@ function CollectionSelectorList({
         []
     );
     useEffect(() => {
-        if (currentBindingId) setSelectionModel([currentBindingId]);
-    }, [currentBindingId]);
+        if (currentBindingUUID) setSelectionModel([currentBindingUUID]);
+    }, [currentBindingUUID]);
 
     const rows = useMemo(() => {
         // If we have no bindings we can just return an empty array
@@ -336,7 +337,7 @@ function CollectionSelectorList({
                         selectionEnabled &&
                         (field === COLLECTION_SELECTOR_STRIPPED_PATH_NAME ||
                             field === COLLECTION_SELECTOR_NAME_COL) &&
-                        id !== currentBindingId
+                        id !== currentBindingUUID
                     ) {
                         // TODO (JSONForms) This is hacky but it works.
                         // It clears out the current binding before switching.

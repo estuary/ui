@@ -12,13 +12,13 @@ import { useResourceConfig_hydrated } from 'stores/ResourceConfig/hooks';
 import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
 
 interface Props {
-    bindingId: string;
+    bindingUUID: string;
     collectionName: string;
     readOnly?: boolean;
 }
 
 function ResourceConfig({
-    bindingId,
+    bindingUUID,
     collectionName,
     readOnly = false,
 }: Props) {
@@ -34,7 +34,10 @@ function ResourceConfig({
     //  binding list. This means the user could end up clicking "See Fields" button
     //  forever and never get fields listed.
     const collectionDisabled =
-        useBinding_resourceConfigOfMetaCollectionProperty(bindingId, 'disable');
+        useBinding_resourceConfigOfMetaCollectionProperty(
+            bindingUUID,
+            'disable'
+        );
 
     return (
         <>
@@ -45,7 +48,7 @@ function ResourceConfig({
             <Box sx={{ width: '100%' }}>
                 {hydrated ? (
                     <ResourceConfigForm
-                        bindingId={bindingId}
+                        bindingUUID={bindingUUID}
                         collectionName={collectionName}
                         readOnly={readOnly}
                     />
