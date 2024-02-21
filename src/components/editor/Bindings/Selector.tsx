@@ -107,11 +107,12 @@ function BindingSelector({
                 return null;
             }
 
+            const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
             const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
 
             return (
                 <BindingsSelectorRemove
-                    collection={collection}
+                    binding={{ uuid: bindingUUID, collection }}
                     task={task}
                     disabled={formActive}
                     draftId={draftId}

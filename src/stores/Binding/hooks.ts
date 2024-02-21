@@ -122,6 +122,13 @@ export const useBinding_bindings = () => {
     );
 };
 
+export const useBinding_removeBinding = () => {
+    return useZustandStore<BindingState, BindingState['removeBinding']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.removeBinding
+    );
+};
+
 export const useBinding_collections = () => {
     return useZustandStore<BindingState, string[]>(
         BindingStoreNames.GENERAL,

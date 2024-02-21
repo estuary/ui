@@ -351,6 +351,74 @@ const getInitialState = (
         );
     },
 
+    removeBinding: ({ uuid, collection }) => {
+        set(
+            produce((state: BindingState) => {
+                const removedIndex = Object.keys(state.resourceConfigs).indexOf(
+                    uuid
+                );
+
+                if (removedIndex > -1) {
+                    // Remove the binding from the resource config dictionary.
+                    const evaluatedResourceConfigs = omit(
+                        state.resourceConfigs,
+                        [uuid]
+                    );
+
+                    state.resourceConfigs = evaluatedResourceConfigs;
+                    populateResourceConfigErrors(
+                        state,
+                        evaluatedResourceConfigs
+                    );
+
+                    // Update the value of the current binding.
+                    const mappedUUIDsAndResourceConfigs = Object.entries(
+                        evaluatedResourceConfigs
+                    );
+
+                    // Try to keep the same index selected
+                    //  Then try one above
+                    //  Then try one below
+                    //  Then give up
+                    const [evaluatedBindingUUID, evaluatedResourceConfig]:
+                        | [string, ResourceConfig]
+                        | [undefined, undefined] =
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                        mappedUUIDsAndResourceConfigs[removedIndex] ??
+                            mappedUUIDsAndResourceConfigs[removedIndex - 1] ??
+                            mappedUUIDsAndResourceConfigs[removedIndex + 1] ?? [
+                                undefined,
+                                undefined,
+                            ];
+
+                    state.currentBinding = Boolean(
+                        evaluatedBindingUUID && evaluatedResourceConfig
+                    )
+                        ? {
+                              uuid: evaluatedBindingUUID,
+                              collection:
+                                  evaluatedResourceConfig.meta.collectionName,
+                          }
+                        : null;
+
+                    // Remove the binding from the bindings dictionary.
+                    const evaluatedBindings = state.bindings;
+
+                    evaluatedBindings[collection] = state.bindings[
+                        collection
+                    ].filter((bindingUUID) => bindingUUID !== uuid);
+
+                    state.bindings =
+                        evaluatedBindings[collection].length === 0
+                            ? omit(evaluatedBindings, collection)
+                            : evaluatedBindings;
+                }
+            }),
+            false,
+            'Binding Removed'
+        );
+    },
+
     resetState: (keepCollections) => {
         const currentState = get();
 

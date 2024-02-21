@@ -2,8 +2,12 @@ import { LiveSpecsExt_MaterializeCapture } from 'hooks/useLiveSpecsExt';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { Entity, JsonFormsData, Schema } from 'types';
 
+export interface BindingMetadata {
+    uuid: string;
+    collection: string;
+}
+
 // Each collection is mapped to an array of UUIDs that allow us to identify the corresponding resource config.
-// TODO (typing): Define UUID type.
 export interface Bindings {
     [collection: string]: string[];
 }
@@ -32,7 +36,9 @@ export interface BindingState extends StoreWithHydration {
         rehydrating?: boolean
     ) => void;
 
-    currentBinding: { uuid: string; collection: string } | null;
+    removeBinding: (binding: BindingMetadata) => void;
+
+    currentBinding: BindingMetadata | null;
     setCurrentBinding: (bindingUUID: string | null) => void;
 
     // Resource Schema

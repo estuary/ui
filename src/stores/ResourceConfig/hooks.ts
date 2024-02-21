@@ -4,13 +4,6 @@ import { shallow } from 'zustand/shallow';
 import { ResourceConfigState } from './types';
 
 // Selector Hooks
-export const useResourceConfig_removeCollection = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['removeCollection']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.removeCollection);
-};
-
 export const useResourceConfig_removeCollections = () => {
     return useZustandStore<
         ResourceConfigState,
