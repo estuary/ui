@@ -20,7 +20,6 @@ import BindingHydrator from 'stores/Binding/Hydrator';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm/hooks';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
-import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 
 function MaterializationCreate() {
     usePageTitle({
@@ -71,40 +70,38 @@ function MaterializationCreate() {
         <DetailsFormHydrator>
             <EndpointConfigHydrator>
                 <BindingHydrator>
-                    <ResourceConfigHydrator>
-                        <MutateDraftSpecProvider value={updateDraftSpecs}>
-                            <EntityCreate
-                                entityType={entityType}
-                                draftSpecMetadata={draftSpecsMetadata}
-                                toolbar={
-                                    <EntityToolbar
-                                        GenerateButton={
-                                            <MaterializeGenerateButton
-                                                disabled={!hasConnectors}
-                                            />
-                                        }
-                                        TestButton={
-                                            <EntityTestButton
-                                                disabled={!hasConnectors}
-                                                logEvent={
-                                                    CustomEvents.MATERIALIZATION_TEST
-                                                }
-                                            />
-                                        }
-                                        SaveButton={
-                                            <EntitySaveButton
-                                                disabled={!draftId}
-                                                taskNames={taskNames}
-                                                logEvent={
-                                                    CustomEvents.MATERIALIZATION_CREATE
-                                                }
-                                            />
-                                        }
-                                    />
-                                }
-                            />
-                        </MutateDraftSpecProvider>
-                    </ResourceConfigHydrator>
+                    <MutateDraftSpecProvider value={updateDraftSpecs}>
+                        <EntityCreate
+                            entityType={entityType}
+                            draftSpecMetadata={draftSpecsMetadata}
+                            toolbar={
+                                <EntityToolbar
+                                    GenerateButton={
+                                        <MaterializeGenerateButton
+                                            disabled={!hasConnectors}
+                                        />
+                                    }
+                                    TestButton={
+                                        <EntityTestButton
+                                            disabled={!hasConnectors}
+                                            logEvent={
+                                                CustomEvents.MATERIALIZATION_TEST
+                                            }
+                                        />
+                                    }
+                                    SaveButton={
+                                        <EntitySaveButton
+                                            disabled={!draftId}
+                                            taskNames={taskNames}
+                                            logEvent={
+                                                CustomEvents.MATERIALIZATION_CREATE
+                                            }
+                                        />
+                                    }
+                                />
+                            }
+                        />
+                    </MutateDraftSpecProvider>
                 </BindingHydrator>
             </EndpointConfigHydrator>
         </DetailsFormHydrator>

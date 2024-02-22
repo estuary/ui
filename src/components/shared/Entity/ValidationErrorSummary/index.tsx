@@ -11,16 +11,14 @@ import useGlobalSearchParams, {
 import useScrollIntoView from 'hooks/useScrollIntoView';
 import { useEffect, useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useBinding_hydrationErrorsExist } from 'stores/Binding/hooks';
 import { useDetailsForm_errorsExist } from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_errorsExist,
     useEndpointConfig_hydrationErrorsExist,
 } from 'stores/EndpointConfig/hooks';
 import { useFormStateStore_displayValidation } from 'stores/FormState/hooks';
-import {
-    useResourceConfig_hydrationErrorsExist,
-    useResourceConfig_resourceConfigErrorsExist,
-} from 'stores/ResourceConfig/hooks';
+import { useResourceConfig_resourceConfigErrorsExist } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -39,6 +37,9 @@ function ValidationErrorSummary({
 
     const connectorID = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
+    // Binding Store
+    const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
+
     // Details form
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
 
@@ -52,8 +53,6 @@ function ValidationErrorSummary({
     const displayValidation = useFormStateStore_displayValidation();
 
     // Resource Config Store
-    const resourceConfigHydrationErrorsExist =
-        useResourceConfig_hydrationErrorsExist();
     const resourceConfigErrorsExist =
         useResourceConfig_resourceConfigErrorsExist();
 
@@ -61,8 +60,7 @@ function ValidationErrorSummary({
         useBindingsEditorStore_fullSourceErrorsExist();
 
     const hydrationErrorsExist =
-        endpointConfigHydrationErrorsExist ||
-        resourceConfigHydrationErrorsExist;
+        endpointConfigHydrationErrorsExist || bindingHydrationErrorsExist;
 
     const formErrorsExist =
         detailsFormErrorsExist ||

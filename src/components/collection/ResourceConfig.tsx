@@ -7,8 +7,10 @@ import { useEditorStore_queryResponse_draftedBindingIndex } from 'components/edi
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { FormattedMessage } from 'react-intl';
-import { useBinding_resourceConfigOfMetaCollectionProperty } from 'stores/Binding/hooks';
-import { useResourceConfig_hydrated } from 'stores/ResourceConfig/hooks';
+import {
+    useBinding_hydrated,
+    useBinding_resourceConfigOfMetaCollectionProperty,
+} from 'stores/Binding/hooks';
 import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
 
 interface Props {
@@ -25,7 +27,7 @@ function ResourceConfig({
     const entityType = useEntityType();
     const isEdit = useEntityWorkflow_Editing();
 
-    const hydrated = useResourceConfig_hydrated();
+    const hydrated = useBinding_hydrated();
 
     const draftedBindingIndex =
         useEditorStore_queryResponse_draftedBindingIndex(collectionName);

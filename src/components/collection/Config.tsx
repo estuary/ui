@@ -9,10 +9,10 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { WarningCircle } from 'iconoir-react';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useBinding_hydrationErrorsExist } from 'stores/Binding/hooks';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 import {
     useResourceConfig_collectionErrorsExist,
-    useResourceConfig_hydrationErrorsExist,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
 
@@ -31,13 +31,13 @@ function CollectionConfig({
 }: Props) {
     const theme = useTheme();
 
+    // Binding Store
+    const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
+
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
 
     // Resource Config Store
-    const resourceConfigHydrationErrorsExist =
-        useResourceConfig_hydrationErrorsExist();
-
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
     const fullSourceErrorsExist =
@@ -46,7 +46,7 @@ function CollectionConfig({
     const collectionsHasErrors = useResourceConfig_collectionErrorsExist();
 
     const hasErrors =
-        resourceConfigHydrationErrorsExist ||
+        bindingHydrationErrorsExist ||
         resourceConfigHasErrors ||
         fullSourceErrorsExist;
 
@@ -78,7 +78,7 @@ function CollectionConfig({
             }
         >
             <ErrorBoundryWrapper>
-                {resourceConfigHydrationErrorsExist ? (
+                {bindingHydrationErrorsExist ? (
                     <AlertBox
                         severity="error"
                         title={

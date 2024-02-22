@@ -122,51 +122,6 @@ export const useResourceConfig_resetState = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.resetState);
 };
 
-export const useResourceConfig_hydrated = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['hydrated']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.hydrated);
-};
-
-export const useResourceConfig_setHydrated = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setHydrated']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.setHydrated);
-};
-
-export const useResourceConfig_setActive = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setActive']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.setActive);
-};
-
-export const useResourceConfig_hydrationErrorsExist = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['hydrationErrorsExist']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.hydrationErrorsExist);
-};
-
-export const useResourceConfig_setHydrationErrorsExist = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setHydrationErrorsExist']
-    >(
-        ResourceConfigStoreNames.GENERAL,
-        (state) => state.setHydrationErrorsExist
-    );
-};
-
-export const useResourceConfig_hydrateState = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['hydrateState']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.hydrateState);
-};
-
 export const useResourceConfig_rediscoveryRequired = () => {
     return useZustandStore<
         ResourceConfigState,
