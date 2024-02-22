@@ -1,6 +1,7 @@
 import { createContext as createReactContext, useContext } from 'react';
 import { StoreName } from 'stores/names';
-import { StoreApi, useStore } from 'zustand';
+import { StoreApi } from 'zustand';
+import { useStoreWithEqualityFn } from 'zustand/traditional';
 import invariableStores from './invariableStores';
 import { ZustandProviderProps } from './types';
 
@@ -26,7 +27,7 @@ export const useZustandStore = <S extends Object, U>(
     const storeOptions = useContext(ZustandContext);
     const store = storeOptions[storeName];
 
-    return useStore<StoreApi<S>, ReturnType<typeof selector>>(
+    return useStoreWithEqualityFn<StoreApi<S>, ReturnType<typeof selector>>(
         store,
         selector,
         equalityFn

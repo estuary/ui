@@ -10,10 +10,10 @@ import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
+import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
-import { jobStatusPoller } from 'services/supabase';
 import { getUrls } from 'utils/env-utils';
 import {
     CLICK_TO_ACCEPT_LATEST_VERSION,
@@ -34,6 +34,8 @@ const submit_clickToAccept = async (directive: any) => {
 };
 
 const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
+    const { jobStatusPoller } = useJobStatusPoller();
+
     const [acknowledgedDocuments, setAcknowledgedDocuments] =
         useState<boolean>(false);
     const [saving, setSaving] = useState(false);

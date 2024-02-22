@@ -7,9 +7,8 @@ import { User, createClient } from '@supabase/supabase-js';
 import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { forEach, isEmpty } from 'lodash';
 import { JobStatus, SortDirection, SupabaseInvokeResponse } from 'types';
-import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 import retry from 'retry';
-import { logRocketConsole, logRocketEvent, retryAfterFailure } from './shared';
+import { logRocketEvent, retryAfterFailure } from './shared';
 import { CustomEvents } from './types';
 
 if (
@@ -416,7 +415,7 @@ export const pagedFetchAll = async <T>(
 };
 
 // START: Poller
-type PollerTimeout = number | undefined;
+export type PollerTimeout = number | undefined;
 export const JOB_STATUS_POLLER_ERROR = 'supabase.poller.failed';
 export const DEFAULT_POLLER_ERROR_TITLE_KEY = 'supabase.poller.failed.title';
 export const DEFAULT_POLLER_ERROR_MESSAGE_KEY =
@@ -429,91 +428,6 @@ export const DEFAULT_POLLER_ERROR = {
 };
 
 // These columns are not always what you want... but okay for a "default" constant
-const JOB_STATUS_SUCCESS = ['emptyDraft', 'success'];
+export const JOB_STATUS_SUCCESS = ['emptyDraft', 'success'];
 export const JOB_STATUS_COLUMNS = `job_status, logs_token, id`;
-export const jobStatusPoller = (
-    query: any,
-    success: Function,
-    failure: Function,
-    initWait?: number
-) => {
-    let pollerTimeout: PollerTimeout;
-    let interval = DEFAULT_POLLING_INTERVAL;
-    let attempts = 0;
-    const makeApiCall = () => {
-        logRocketConsole('Poller : start ');
-
-        return query.throwOnError().then(
-            (payload: any) => {
-                logRocketConsole('Poller : response');
-                timeoutCleanUp(pollerTimeout);
-
-                if (payload.error) {
-                    failure(handleFailure(payload.error));
-                } else {
-                    const response =
-                        (payload &&
-                            hasLength(payload.data) &&
-                            payload.data[0]) ??
-                        null;
-                    if (
-                        response?.job_status?.type &&
-                        response.job_status.type !== 'queued'
-                    ) {
-                        logRocketConsole(
-                            `Poller : response : ${response.job_status.type}`,
-                            response
-                        );
-
-                        if (
-                            JOB_STATUS_SUCCESS.includes(
-                                response.job_status.type
-                            )
-                        ) {
-                            success(response);
-                        } else {
-                            failure(response);
-                        }
-                    } else {
-                        logRocketConsole('Poller : response : trying again');
-
-                        interval = incrementInterval(interval);
-                        pollerTimeout = window.setTimeout(
-                            makeApiCall,
-                            interval
-                        );
-                    }
-                }
-            },
-            (error: any) => {
-                logRocketConsole('Poller : error : ', error);
-
-                if (
-                    attempts === 0 &&
-                    typeof error?.message === 'string' &&
-                    retryAfterFailure(error.message)
-                ) {
-                    logRocketConsole('Poller : error : trying again');
-                    attempts += 1;
-
-                    // We do not update the interval here like we do up above
-                    //  because we just want this one time to wait a bit longer
-                    pollerTimeout = window.setTimeout(
-                        makeApiCall,
-                        incrementInterval(interval)
-                    );
-                } else {
-                    logRocketConsole('Poller : error : returning failure');
-                    timeoutCleanUp(pollerTimeout);
-                    failure(handleFailure(JOB_STATUS_POLLER_ERROR));
-                }
-            }
-        );
-    };
-
-    pollerTimeout = window.setTimeout(
-        makeApiCall,
-        initWait ?? DEFAULT_POLLING_INTERVAL * 2
-    );
-};
 // END: Poller
