@@ -1,27 +1,19 @@
 import { FetchMoreLogsFunction } from 'components/tables/Logs/types';
-import { LoadDocumentsOffsets } from 'hooks/journals/shared';
+import { LoadDocumentsOffsets, UseOpsLogsDocs } from 'hooks/journals/types';
 import { Align } from 'react-window';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { OpsLogFlowDocument } from 'types';
 
 export interface JournalDataLogsState extends StoreWithHydration {
     documents: OpsLogFlowDocument[] | null;
-    addNewDocuments: (
-        val: OpsLogFlowDocument[] | null,
-        olderFinished: boolean,
-        lastParsed: number,
-        error?: any
-    ) => void;
+    addNewDocuments: (documents: UseOpsLogsDocs, error?: any) => void;
     noData: boolean;
 
     lastCount: number;
     setLastCount: (val: JournalDataLogsState['lastCount']) => void;
 
-    fetchingNewer: boolean;
-    setFetchingNewer: (val: JournalDataLogsState['fetchingNewer']) => void;
-
-    fetchingOlder: boolean;
-    setFetchingOlder: (val: JournalDataLogsState['fetchingOlder']) => void;
+    fetchingMore: boolean;
+    setFetchingMore: (val: JournalDataLogsState['fetchingMore']) => void;
 
     olderFinished: boolean;
     setOlderFinished: (val: JournalDataLogsState['olderFinished']) => void;
@@ -36,15 +28,14 @@ export interface JournalDataLogsState extends StoreWithHydration {
         val: JournalDataLogsState['allowFetchingMore']
     ) => void;
 
-    lastParsed: number;
+    newestParsed: number;
+    oldestParsed: number;
     lastTopUuid: string | null;
     scrollToWhenDone: [number, Align];
 
     hydrate: (
-        documents: OpsLogFlowDocument[] | null,
+        documents: UseOpsLogsDocs,
         refresh: (newOffset?: LoadDocumentsOffsets) => void,
-        olderFinished: boolean,
-        lastParsed: number,
         error?: any
     ) => void;
     refresh: ((newOffset?: LoadDocumentsOffsets) => void) | null;

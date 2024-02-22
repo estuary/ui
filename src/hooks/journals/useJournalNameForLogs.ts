@@ -9,6 +9,7 @@ function useJournalNameForLogs(entityName: string, region: number = 0) {
     const entityType = useEntityType();
 
     return useMemo(() => {
+        console.log('useJournalNameForLogs');
         const collectionName = `ops.${REGIONS[region]}.v1/logs`;
 
         return [
