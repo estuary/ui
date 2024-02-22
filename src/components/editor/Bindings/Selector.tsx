@@ -12,12 +12,12 @@ import { useEntityWorkflow } from 'context/Workflow';
 import { ReactNode } from 'react';
 import {
     useBinding_collections,
+    useBinding_discoveredCollections,
     useBinding_setCurrentBinding,
 } from 'stores/Binding/hooks';
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
-    useResourceConfig_discoveredCollections,
     useResourceConfig_removeCollections,
     useResourceConfig_toggleDisable,
 } from 'stores/ResourceConfig/hooks';
@@ -59,8 +59,7 @@ function BindingSelector({
     // Binding Store
     const setCurrentBinding = useBinding_setCurrentBinding();
     const collections = useBinding_collections();
-
-    const discoveredCollections = useResourceConfig_discoveredCollections();
+    const discoveredCollections = useBinding_discoveredCollections();
 
     const removeCollections = useResourceConfig_removeCollections();
     const toggleCollections = useResourceConfig_toggleDisable();
@@ -70,7 +69,7 @@ function BindingSelector({
             removeCollections(rows, workflow, task);
 
             const publishedCollections =
-                discoveredCollections && hasLength(collections)
+                hasLength(discoveredCollections) && hasLength(collections)
                     ? collections.filter(
                           (collection) =>
                               !discoveredCollections.includes(collection)

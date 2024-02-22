@@ -172,6 +172,13 @@ export const useBinding_currentBindingUUID = () => {
     );
 };
 
+export const useBinding_discoveredCollections = () => {
+    return useZustandStore<BindingState, BindingState['discoveredCollections']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.discoveredCollections
+    );
+};
+
 export const useBinding_evaluateDiscoveredBindings = () => {
     return useZustandStore<
         BindingState,

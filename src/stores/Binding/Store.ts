@@ -143,11 +143,13 @@ const getInitialBindingData = (): Pick<
 
 const getInitialStateData = (): Pick<
     BindingState,
+    | 'discoveredCollections'
     | 'resourceConfigErrorsExist'
     | 'resourceConfigErrors'
     | 'resourceConfigs'
     | 'resourceSchema'
 > => ({
+    discoveredCollections: [],
     resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
     resourceConfigs: {},
@@ -256,6 +258,10 @@ const getInitialState = (
                     initializeBinding(state, collection, UUID);
                     initializeResourceConfig(state, binding, UUID);
                 });
+
+                state.discoveredCollections = Object.values(
+                    state.resourceConfigs
+                ).map(({ meta }) => meta.collectionName);
 
                 populateResourceConfigErrors(state, state.resourceConfigs);
                 initializeCurrentBinding(state, state.resourceConfigs);

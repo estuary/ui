@@ -17,16 +17,16 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useServerUpdateRequiredMonitor } from 'hooks/useServerUpdateRequiredMonitor';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useBinding_setResourceSchema } from 'stores/Binding/hooks';
+import {
+    useBinding_discoveredCollections,
+    useBinding_setResourceSchema,
+} from 'stores/Binding/hooks';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_details_entityName,
 } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
-import {
-    useResourceConfig_discoveredCollections,
-    useResourceConfig_resetResourceConfigAndCollections,
-} from 'stores/ResourceConfig/hooks';
+import { useResourceConfig_resetResourceConfigAndCollections } from 'stores/ResourceConfig/hooks';
 import { EditorStoreNames } from 'stores/names';
 import { Schema } from 'types';
 import Backfill from './Backfill';
@@ -60,6 +60,10 @@ function BindingsMultiEditor({
     const entityType = useEntityType();
     const workflow = useEntityWorkflow();
 
+    // Binding Store
+    const discoveredCollections = useBinding_discoveredCollections();
+    const setResourceSchema = useBinding_setResourceSchema();
+
     // Details Form Store
     const catalogName = useDetailsForm_details_entityName();
     const imageTag = useDetailsForm_connectorImage();
@@ -68,10 +72,6 @@ function BindingsMultiEditor({
     const messagePrefix = useFormStateStore_messagePrefix();
 
     // Resource Config Store
-    const discoveredCollections = useResourceConfig_discoveredCollections();
-
-    const setResourceSchema = useBinding_setResourceSchema();
-
     const resetResourceConfigAndCollections =
         useResourceConfig_resetResourceConfigAndCollections();
 
@@ -96,7 +96,6 @@ function BindingsMultiEditor({
     const removeDiscoveredCollectionOptions = useMemo(() => {
         if (
             workflow === 'capture_create' &&
-            discoveredCollections &&
             discoveredCollections.length > 0 &&
             draftSpecs.length > 0
         ) {
@@ -108,7 +107,7 @@ function BindingsMultiEditor({
         } else {
             return false;
         }
-    }, [catalogName, discoveredCollections, draftSpecs, workflow]);
+    }, [catalogName, discoveredCollections.length, draftSpecs, workflow]);
 
     useEffect(() => {
         if (removeDiscoveredCollectionOptions) {

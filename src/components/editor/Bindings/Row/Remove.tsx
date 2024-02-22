@@ -3,12 +3,12 @@ import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import { useEntityWorkflow } from 'context/Workflow';
 import { Cancel } from 'iconoir-react';
 import React from 'react';
-import { useBinding_removeBinding } from 'stores/Binding/hooks';
-import { BindingMetadata } from 'stores/Binding/types';
 import {
-    useResourceConfig_discoveredCollections,
-    useResourceConfig_setRestrictedDiscoveredCollections,
-} from 'stores/ResourceConfig/hooks';
+    useBinding_discoveredCollections,
+    useBinding_removeBinding,
+} from 'stores/Binding/hooks';
+import { BindingMetadata } from 'stores/Binding/types';
+import { useResourceConfig_setRestrictedDiscoveredCollections } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
 import { useBindingsEditorStore_removeFullSourceConfig } from '../Store/hooks';
 
@@ -23,8 +23,8 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
     const workflow = useEntityWorkflow();
 
     const removeBinding = useBinding_removeBinding();
+    const discoveredCollections = useBinding_discoveredCollections();
 
-    const discoveredCollections = useResourceConfig_discoveredCollections();
     const setRestrictedDiscoveredCollections =
         useResourceConfig_setRestrictedDiscoveredCollections();
     const removeFullSourceConfig =
@@ -55,7 +55,7 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
                 setRestrictedDiscoveredCollections(collection);
             }
 
-            if (draftId && !discoveredCollections?.includes(collection)) {
+            if (draftId && !discoveredCollections.includes(collection)) {
                 void deleteDraftSpecsByCatalogName(draftId, 'collection', [
                     collection,
                 ]);

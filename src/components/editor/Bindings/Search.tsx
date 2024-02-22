@@ -1,9 +1,11 @@
 import CollectionSelector from 'components/collection/Selector';
 import { ReactNode, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useBinding_collections } from 'stores/Binding/hooks';
+import {
+    useBinding_collections,
+    useBinding_discoveredCollections,
+} from 'stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { useResourceConfig_discoveredCollections } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
 import UpdateResourceConfigButton from './UpdateResourceConfigButton';
 
@@ -20,7 +22,7 @@ function BindingSearch({
     RediscoverButton,
 }: Props) {
     const intl = useIntl();
-    const discoveredCollectionsLabel = useConstant(() =>
+    const discoveredBindingsLabel = useConstant(() =>
         intl.formatMessage({
             id: 'workflows.collectionSelector.label.discoveredCollections',
         })
@@ -35,19 +37,17 @@ function BindingSearch({
 
     // Binding Store
     const collections = useBinding_collections();
+    const discoveredCollections = useBinding_discoveredCollections();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
-
-    // Resource Config Store
-    const discoveredCollections = useResourceConfig_discoveredCollections();
 
     useEffect(() => {
         setCollectionValues(collections);
     }, [
         collections,
         discoveredCollections,
-        discoveredCollectionsLabel,
+        discoveredBindingsLabel,
         existingCollectionsLabel,
     ]);
 

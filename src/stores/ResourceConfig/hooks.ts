@@ -18,13 +18,6 @@ export const useResourceConfig_collectionErrorsExist = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.collectionErrorsExist);
 };
 
-export const useResourceConfig_discoveredCollections = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['discoveredCollections']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.discoveredCollections);
-};
-
 export const useResourceConfig_restrictedDiscoveredCollections = () => {
     return useZustandStore<
         ResourceConfigState,

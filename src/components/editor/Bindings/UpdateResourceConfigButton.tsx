@@ -3,11 +3,12 @@ import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
 
 import { FormattedMessage } from 'react-intl';
-import { useBinding_setResourceConfig } from 'stores/Binding/hooks';
 import {
-    useResourceConfig_discoveredCollections,
-    useResourceConfig_setRestrictedDiscoveredCollections,
-} from 'stores/ResourceConfig/hooks';
+    useBinding_discoveredCollections,
+    useBinding_setResourceConfig,
+} from 'stores/Binding/hooks';
+import { useResourceConfig_setRestrictedDiscoveredCollections } from 'stores/ResourceConfig/hooks';
+import { hasLength } from 'utils/misc-utils';
 
 import { useStore } from 'zustand';
 
@@ -20,8 +21,8 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
     );
 
     const setResourceConfig = useBinding_setResourceConfig();
+    const discoveredCollections = useBinding_discoveredCollections();
 
-    const discoveredCollections = useResourceConfig_discoveredCollections();
     const setRestrictedDiscoveredCollections =
         useResourceConfig_setRestrictedDiscoveredCollections();
 
@@ -40,7 +41,7 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
             true
         );
 
-        if (value.length > 0 && discoveredCollections) {
+        if (value.length > 0 && hasLength(discoveredCollections)) {
             const latestCollection = value[value.length - 1].name;
 
             if (discoveredCollections.includes(latestCollection)) {
