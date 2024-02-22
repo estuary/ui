@@ -52,17 +52,6 @@ export const useResourceConfig_backfillAllBindings = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.backfillAllBindings);
 };
 
-export const useResourceConfig_resourceConfig = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceConfig']
-    >(
-        ResourceConfigStoreNames.GENERAL,
-        (state) => state.resourceConfig,
-        shallow
-    );
-};
-
 export const useResourceConfig_allBindingsDisabled = () => {
     return useZustandStore<ResourceConfigState, boolean>(
         ResourceConfigStoreNames.GENERAL,
@@ -176,23 +165,6 @@ export const useResourceConfig_hydrateState = () => {
         ResourceConfigState,
         ResourceConfigState['hydrateState']
     >(ResourceConfigStoreNames.GENERAL, (state) => state.hydrateState);
-};
-
-export const useResourceConfig_serverUpdateRequired = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['serverUpdateRequired']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.serverUpdateRequired);
-};
-
-export const useResourceConfig_setServerUpdateRequired = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setServerUpdateRequired']
-    >(
-        ResourceConfigStoreNames.GENERAL,
-        (state) => state.setServerUpdateRequired
-    );
 };
 
 export const useResourceConfig_rediscoveryRequired = () => {

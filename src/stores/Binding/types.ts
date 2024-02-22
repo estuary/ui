@@ -42,8 +42,6 @@ export interface BindingState extends StoreWithHydration {
     currentBinding: BindingMetadata | null;
     setCurrentBinding: (bindingUUID: string | null) => void;
 
-    evaluateDiscoveredBindings: (response: CallSupabaseResponse<any>) => void;
-
     discoveredCollections: string[];
     restrictedDiscoveredCollections: string[];
     setRestrictedDiscoveredCollections: (
@@ -72,6 +70,12 @@ export interface BindingState extends StoreWithHydration {
 
     resourceConfigErrorsExist: boolean;
     resourceConfigErrors: (string | undefined)[];
+
+    // Server-Form Alignment
+    serverUpdateRequired: boolean;
+    setServerUpdateRequired: (value: boolean) => void;
+
+    evaluateDiscoveredBindings: (response: CallSupabaseResponse<any>) => void;
 
     // Computed Values
     getCollections: () => string[];

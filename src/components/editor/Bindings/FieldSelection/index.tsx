@@ -34,6 +34,7 @@ import { SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
 import { useEndpointConfig_serverUpdateRequired } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
@@ -41,7 +42,6 @@ import {
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/hooks';
 import { TablePrefixes } from 'stores/Tables/hooks';
 import { Schema, TableColumns } from 'types';
 import { WithRequiredNonNullProperty } from 'types/utils';
@@ -151,7 +151,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
     const setFormState = useFormStateStore_setFormState();
 
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
-    const resourceRequiresUpdate = useResourceConfig_serverUpdateRequired();
+    const resourceRequiresUpdate = useBinding_serverUpdateRequired();
 
     useEffect(() => {
         return () => {

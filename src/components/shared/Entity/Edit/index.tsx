@@ -20,6 +20,7 @@ import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_draftedEntityName,
@@ -34,13 +35,12 @@ import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState/hooks';
-import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/hooks';
 import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
-import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
 import IncompatibleCollections from '../IncompatibleCollections';
 import ValidationErrorSummary from '../ValidationErrorSummary';
+import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
 
 interface Props {
     title: string;
@@ -77,6 +77,10 @@ function EntityEdit({
         isValidating,
     } = useConnectorWithTagDetail(entityType);
 
+    // Resource Config Store
+    const resourceConfigServerUpdateRequired =
+        useBinding_serverUpdateRequired();
+
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
     const entityName = useDetailsForm_draftedEntityName();
@@ -102,10 +106,6 @@ function EntityEdit({
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     const formSubmitError = useFormStateStore_error();
-
-    // Resource Config Store
-    const resourceConfigServerUpdateRequired =
-        useResourceConfig_serverUpdateRequired();
 
     const { draftSpecs } = draftSpecMetadata;
 

@@ -149,6 +149,7 @@ const getInitialStateData = (): Pick<
     | 'resourceConfigs'
     | 'resourceSchema'
     | 'restrictedDiscoveredCollections'
+    | 'serverUpdateRequired'
 > => ({
     discoveredCollections: [],
     resourceConfigErrorsExist: false,
@@ -156,6 +157,7 @@ const getInitialStateData = (): Pick<
     resourceConfigs: {},
     resourceSchema: {},
     restrictedDiscoveredCollections: [],
+    serverUpdateRequired: false,
 });
 
 const getInitialStoreData = () => ({
@@ -629,6 +631,16 @@ const getInitialState = (
             }),
             false,
             'Restricted Discovered Collections Set'
+        );
+    },
+
+    setServerUpdateRequired: (value) => {
+        set(
+            produce((state: BindingState) => {
+                state.serverUpdateRequired = value;
+            }),
+            false,
+            'Server Update Required Flag Changed'
         );
     },
 

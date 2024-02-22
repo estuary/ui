@@ -52,6 +52,20 @@ export const useBinding_resetState = () => {
     );
 };
 
+export const useBinding_serverUpdateRequired = () => {
+    return useZustandStore<BindingState, BindingState['serverUpdateRequired']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.serverUpdateRequired
+    );
+};
+
+export const useBinding_setServerUpdateRequired = () => {
+    return useZustandStore<
+        BindingState,
+        BindingState['setServerUpdateRequired']
+    >(BindingStoreNames.GENERAL, (state) => state.setServerUpdateRequired);
+};
+
 export const useBinding_resourceSchema = () => {
     return useZustandStore<BindingState, BindingState['resourceSchema']>(
         BindingStoreNames.GENERAL,
