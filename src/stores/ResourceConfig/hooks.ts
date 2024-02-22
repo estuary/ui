@@ -11,16 +11,6 @@ export const useResourceConfig_removeCollections = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.removeCollections);
 };
 
-export const useResourceConfig_resetConfigAndCollections = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resetConfigAndCollections']
-    >(
-        ResourceConfigStoreNames.GENERAL,
-        (state) => state.resetConfigAndCollections
-    );
-};
-
 export const useResourceConfig_collectionErrorsExist = () => {
     return useZustandStore<
         ResourceConfigState,
@@ -33,16 +23,6 @@ export const useResourceConfig_discoveredCollections = () => {
         ResourceConfigState,
         ResourceConfigState['discoveredCollections']
     >(ResourceConfigStoreNames.GENERAL, (state) => state.discoveredCollections);
-};
-
-export const useResourceConfig_setDiscoveredCollections = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setDiscoveredCollections']
-    >(
-        ResourceConfigStoreNames.GENERAL,
-        (state) => state.setDiscoveredCollections
-    );
 };
 
 export const useResourceConfig_restrictedDiscoveredCollections = () => {
@@ -256,15 +236,5 @@ export const useResourceConfig_resetRediscoverySettings = () => {
     >(
         ResourceConfigStoreNames.GENERAL,
         (state) => state.resetRediscoverySettings
-    );
-};
-
-export const useResourceConfig_evaluateDiscoveredCollections = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['evaluateDiscoveredCollections']
-    >(
-        ResourceConfigStoreNames.GENERAL,
-        (state) => state.evaluateDiscoveredCollections
     );
 };

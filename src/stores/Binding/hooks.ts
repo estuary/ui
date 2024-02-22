@@ -171,3 +171,10 @@ export const useBinding_currentBindingUUID = () => {
         (state) => state.currentBinding?.uuid ?? null
     );
 };
+
+export const useBinding_evaluateDiscoveredBindings = () => {
+    return useZustandStore<
+        BindingState,
+        BindingState['evaluateDiscoveredBindings']
+    >(BindingStoreNames.GENERAL, (state) => state.evaluateDiscoveredBindings);
+};

@@ -8,17 +8,13 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useCallback } from 'react';
+import { useBinding_evaluateDiscoveredBindings } from 'stores/Binding/hooks';
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useEndpointConfigStore_setEncryptedEndpointConfig } from 'stores/EndpointConfig/hooks';
-import {
-    useResourceConfig_evaluateDiscoveredCollections,
-    useResourceConfig_resetConfigAndCollections,
-    useResourceConfig_setDiscoveredCollections,
-} from 'stores/ResourceConfig/hooks';
 import { Entity } from 'types';
 import {
-    modifyDiscoveredDraftSpec,
     SupabaseConfig,
+    modifyDiscoveredDraftSpec,
 } from 'utils/workflow-utils';
 
 function useStoreDiscoveredCaptures() {
@@ -26,6 +22,10 @@ function useStoreDiscoveredCaptures() {
 
     const workflow = useEntityWorkflow();
     const editWorkflow = workflow === 'capture_edit';
+
+    // Binding Store
+    const evaluateDiscoveredCollections =
+        useBinding_evaluateDiscoveredBindings();
 
     // Draft Editor Store
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
@@ -37,13 +37,6 @@ function useStoreDiscoveredCaptures() {
     // Endpoint Config Store
     const setEncryptedEndpointConfig =
         useEndpointConfigStore_setEncryptedEndpointConfig();
-
-    // Resource Config Store
-    const setDiscoveredCollections =
-        useResourceConfig_setDiscoveredCollections();
-    const evaluateDiscoveredCollections =
-        useResourceConfig_evaluateDiscoveredCollections();
-    const resetCollections = useResourceConfig_resetConfigAndCollections();
 
     const storeDiscoveredCollections = useCallback(
         async (
@@ -69,10 +62,6 @@ function useStoreDiscoveredCaptures() {
             }
 
             if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
-                resetCollections();
-
-                setDiscoveredCollections(draftSpecsResponse.data[0]);
-
                 const supabaseConfig: SupabaseConfig | null =
                     editWorkflow && lastPubId
                         ? { catalogName: entityName, lastPubId }
@@ -129,8 +118,6 @@ function useStoreDiscoveredCaptures() {
             entityName,
             evaluateDiscoveredCollections,
             lastPubId,
-            resetCollections,
-            setDiscoveredCollections,
             setDraftId,
             setEncryptedEndpointConfig,
             setPersistedDraftId,

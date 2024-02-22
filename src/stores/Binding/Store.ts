@@ -240,6 +240,31 @@ const getInitialState = (
         );
     },
 
+    evaluateDiscoveredBindings: (draftSpecResponse) => {
+        set(
+            produce((state: BindingState) => {
+                state.bindings = {};
+                state.resourceConfigs = {};
+
+                const discoveredBindings =
+                    draftSpecResponse.data[0].spec.bindings;
+
+                sortBindings(discoveredBindings).forEach((binding: any) => {
+                    const collection = getCollectionName(binding);
+                    const UUID = crypto.randomUUID();
+
+                    initializeBinding(state, collection, UUID);
+                    initializeResourceConfig(state, binding, UUID);
+                });
+
+                populateResourceConfigErrors(state, state.resourceConfigs);
+                initializeCurrentBinding(state, state.resourceConfigs);
+            }),
+            false,
+            'Discovered bindings evaluated'
+        );
+    },
+
     getCollections: () =>
         Object.values(get().resourceConfigs).map(
             ({ meta }) => meta.collectionName
@@ -424,7 +449,7 @@ const getInitialState = (
         const currentState = get();
 
         const initState = keepCollections
-            ? getInitialBindingData()
+            ? getInitialStateData()
             : getInitialStoreData();
 
         const newState = {

@@ -1,4 +1,5 @@
 import { LiveSpecsExt_MaterializeCapture } from 'hooks/useLiveSpecsExt';
+import { CallSupabaseResponse } from 'services/supabase';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { Entity, JsonFormsData, Schema } from 'types';
 
@@ -40,6 +41,8 @@ export interface BindingState extends StoreWithHydration {
 
     currentBinding: BindingMetadata | null;
     setCurrentBinding: (bindingUUID: string | null) => void;
+
+    evaluateDiscoveredBindings: (response: CallSupabaseResponse<any>) => void;
 
     // Resource Schema
     resourceSchema: Schema;
