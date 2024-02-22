@@ -12,7 +12,6 @@ import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 
 function useJobStatusPoller() {
     const interval = useRef(DEFAULT_POLLING_INTERVAL);
-    const [attempts, setAttempts] = useState<number>(0);
     const [pollerTimeout, setPollerTimeout] =
         useState<PollerTimeout>(undefined);
 
@@ -23,6 +22,7 @@ function useJobStatusPoller() {
             failure: Function,
             initWait?: number
         ) => {
+            let attempts = 0;
             const makeApiCall = () => {
                 logRocketConsole('Poller : start ', { pollerTimeout });
 
@@ -83,9 +83,7 @@ function useJobStatusPoller() {
                             retryAfterFailure(error.message)
                         ) {
                             logRocketConsole('Poller : error : trying again');
-                            setAttempts((previous) => {
-                                return (previous += 1);
-                            });
+                            attempts += 1;
 
                             // We do not update the interval here like we do up above
                             //  because we just want this one time to wait a bit longer
@@ -115,7 +113,7 @@ function useJobStatusPoller() {
                 )
             );
         },
-        [attempts, pollerTimeout]
+        [pollerTimeout]
     );
 
     useUnmount(() => {
@@ -123,10 +121,7 @@ function useJobStatusPoller() {
         timeoutCleanUp(pollerTimeout);
     });
 
-    return useMemo(
-        () => ({ attempts, jobStatusPoller }),
-        [attempts, jobStatusPoller]
-    );
+    return useMemo(() => ({ jobStatusPoller }), [jobStatusPoller]);
 }
 
 export default useJobStatusPoller;
