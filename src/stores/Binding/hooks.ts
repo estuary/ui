@@ -172,6 +172,13 @@ export const useBinding_currentBindingUUID = () => {
     );
 };
 
+export const useBinding_evaluateDiscoveredBindings = () => {
+    return useZustandStore<
+        BindingState,
+        BindingState['evaluateDiscoveredBindings']
+    >(BindingStoreNames.GENERAL, (state) => state.evaluateDiscoveredBindings);
+};
+
 export const useBinding_discoveredCollections = () => {
     return useZustandStore<BindingState, BindingState['discoveredCollections']>(
         BindingStoreNames.GENERAL,
@@ -179,9 +186,12 @@ export const useBinding_discoveredCollections = () => {
     );
 };
 
-export const useBinding_evaluateDiscoveredBindings = () => {
+export const useBinding_setRestrictedDiscoveredCollections = () => {
     return useZustandStore<
         BindingState,
-        BindingState['evaluateDiscoveredBindings']
-    >(BindingStoreNames.GENERAL, (state) => state.evaluateDiscoveredBindings);
+        BindingState['setRestrictedDiscoveredCollections']
+    >(
+        BindingStoreNames.GENERAL,
+        (state) => state.setRestrictedDiscoveredCollections
+    );
 };

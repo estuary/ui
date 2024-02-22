@@ -18,26 +18,6 @@ export const useResourceConfig_collectionErrorsExist = () => {
     >(ResourceConfigStoreNames.GENERAL, (state) => state.collectionErrorsExist);
 };
 
-export const useResourceConfig_restrictedDiscoveredCollections = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['restrictedDiscoveredCollections']
-    >(
-        ResourceConfigStoreNames.GENERAL,
-        (state) => state.restrictedDiscoveredCollections
-    );
-};
-
-export const useResourceConfig_setRestrictedDiscoveredCollections = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setRestrictedDiscoveredCollections']
-    >(
-        ResourceConfigStoreNames.GENERAL,
-        (state) => state.setRestrictedDiscoveredCollections
-    );
-};
-
 export const useResourceConfig_backfilledCollections = () => {
     return useZustandStore<
         ResourceConfigState,

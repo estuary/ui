@@ -6,9 +6,9 @@ import React from 'react';
 import {
     useBinding_discoveredCollections,
     useBinding_removeBinding,
+    useBinding_setRestrictedDiscoveredCollections,
 } from 'stores/Binding/hooks';
 import { BindingMetadata } from 'stores/Binding/types';
-import { useResourceConfig_setRestrictedDiscoveredCollections } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
 import { useBindingsEditorStore_removeFullSourceConfig } from '../Store/hooks';
 
@@ -26,7 +26,8 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
     const discoveredCollections = useBinding_discoveredCollections();
 
     const setRestrictedDiscoveredCollections =
-        useResourceConfig_setRestrictedDiscoveredCollections();
+        useBinding_setRestrictedDiscoveredCollections();
+
     const removeFullSourceConfig =
         useBindingsEditorStore_removeFullSourceConfig();
 

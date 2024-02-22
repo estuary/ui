@@ -148,12 +148,14 @@ const getInitialStateData = (): Pick<
     | 'resourceConfigErrors'
     | 'resourceConfigs'
     | 'resourceSchema'
+    | 'restrictedDiscoveredCollections'
 > => ({
     discoveredCollections: [],
     resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
     resourceConfigs: {},
     resourceSchema: {},
+    restrictedDiscoveredCollections: [],
 });
 
 const getInitialStoreData = () => ({
@@ -246,6 +248,7 @@ const getInitialState = (
         set(
             produce((state: BindingState) => {
                 state.bindings = {};
+                state.restrictedDiscoveredCollections = [];
                 state.resourceConfigs = {};
 
                 const discoveredBindings =
@@ -598,6 +601,34 @@ const getInitialState = (
             }),
             false,
             'Resource Schema Set'
+        );
+    },
+
+    setRestrictedDiscoveredCollections: (value, nativeCollectionFlag) => {
+        set(
+            produce((state: BindingState) => {
+                let restrictedCollections: string[] =
+                    state.restrictedDiscoveredCollections;
+
+                if (state.restrictedDiscoveredCollections.includes(value)) {
+                    restrictedCollections =
+                        state.restrictedDiscoveredCollections.filter(
+                            (collection) => collection !== value
+                        );
+                } else if (
+                    state.discoveredCollections.includes(value) ||
+                    nativeCollectionFlag
+                ) {
+                    restrictedCollections = [
+                        value,
+                        ...state.restrictedDiscoveredCollections,
+                    ];
+                }
+
+                state.restrictedDiscoveredCollections = restrictedCollections;
+            }),
+            false,
+            'Restricted Discovered Collections Set'
         );
     },
 

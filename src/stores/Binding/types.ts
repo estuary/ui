@@ -42,8 +42,14 @@ export interface BindingState extends StoreWithHydration {
     currentBinding: BindingMetadata | null;
     setCurrentBinding: (bindingUUID: string | null) => void;
 
-    discoveredCollections: string[];
     evaluateDiscoveredBindings: (response: CallSupabaseResponse<any>) => void;
+
+    discoveredCollections: string[];
+    restrictedDiscoveredCollections: string[];
+    setRestrictedDiscoveredCollections: (
+        collection: string,
+        nativeCollectionFlag?: boolean
+    ) => void;
 
     // Resource Schema
     resourceSchema: Schema;

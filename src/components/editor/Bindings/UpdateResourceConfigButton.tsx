@@ -6,8 +6,8 @@ import { FormattedMessage } from 'react-intl';
 import {
     useBinding_discoveredCollections,
     useBinding_setResourceConfig,
+    useBinding_setRestrictedDiscoveredCollections,
 } from 'stores/Binding/hooks';
-import { useResourceConfig_setRestrictedDiscoveredCollections } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 import { useStore } from 'zustand';
@@ -24,7 +24,7 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
     const discoveredCollections = useBinding_discoveredCollections();
 
     const setRestrictedDiscoveredCollections =
-        useResourceConfig_setRestrictedDiscoveredCollections();
+        useBinding_setRestrictedDiscoveredCollections();
 
     const close = () => {
         const value = Array.from(selected).map(([_id, row]) => {
