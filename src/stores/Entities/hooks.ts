@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { GlobalStoreNames } from 'stores/names';
 import useSWR from 'swr';
 import { Schema } from 'types';
+import { ESTUARY_SUPPORT_ROLE } from 'utils/misc-utils';
+import { useShallow } from 'zustand/react/shallow';
 import { EntitiesState } from './types';
 
 export const useEntitiesStore_setCapabilities = () => {
@@ -19,6 +21,15 @@ export const useEntitiesStore_capabilities = (
     return useZustandStore<EntitiesState, Schema>(
         GlobalStoreNames.ENTITIES,
         (state) => state.capabilities[kind]
+    );
+};
+
+export const useEntitiesStore_hasSupportRole = () => {
+    return useZustandStore<EntitiesState, boolean>(
+        GlobalStoreNames.ENTITIES,
+        useShallow((state) =>
+            Boolean(state.capabilities.admin[ESTUARY_SUPPORT_ROLE])
+        )
     );
 };
 
