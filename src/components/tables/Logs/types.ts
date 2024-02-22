@@ -1,4 +1,4 @@
-import { LoadDocumentsOffsets } from 'hooks/journals/shared';
+import { LoadDocumentsOffsets } from 'hooks/journals/types';
 import { CSSProperties, RefCallback } from 'react';
 
 export type FetchMoreLogsOptions = 'old' | 'new';
@@ -10,3 +10,11 @@ export interface WaitingForRowProps {
 }
 
 export type RefreshLogsFunction = (newOffset?: LoadDocumentsOffsets) => void;
+
+export type LogLevels =
+    | 'error'
+    | 'warn'
+    | 'debug'
+    | 'trace'
+    | 'done'
+    | 'ui_waiting';

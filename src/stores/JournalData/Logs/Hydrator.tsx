@@ -6,8 +6,6 @@ import {
     useJournalDataLogsStore_hydrate,
     useJournalDataLogsStore_resetState,
     useJournalDataLogsStore_setActive,
-    useJournalDataLogsStore_setFetchingOlder,
-    useJournalDataLogsStore_setFetchingNewer,
 } from './hooks';
 
 interface Props extends BaseComponentProps {
@@ -24,18 +22,7 @@ export const JournalDataLogsHydrator = ({
     const setActive = useJournalDataLogsStore_setActive();
     const hydrate = useJournalDataLogsStore_hydrate();
 
-    const setFetchingOlder = useJournalDataLogsStore_setFetchingOlder();
-    const setFetchingNewer = useJournalDataLogsStore_setFetchingNewer();
-
-    const {
-        docs,
-        error,
-        loading,
-        lastParsed,
-        nothingInLastFetch,
-        olderFinished,
-        refresh,
-    } = useOpsLogs(name, collectionName);
+    const { docs, error, loading, refresh } = useOpsLogs(name, collectionName);
 
     // More mount/unmount for store
     useEffect(() => {
@@ -51,17 +38,8 @@ export const JournalDataLogsHydrator = ({
         if (loading) {
             return;
         }
-        hydrate(docs, refresh, olderFinished, lastParsed, error);
-    }, [docs, error, hydrate, lastParsed, loading, olderFinished, refresh]);
-
-    // If there was nothing in the last fetch go ahead and reset the fetching flags
-    //  so that the waiting rows can kick off another poll
-    useEffect(() => {
-        if (nothingInLastFetch) {
-            setFetchingNewer(false);
-            setFetchingOlder(false);
-        }
-    }, [nothingInLastFetch, setFetchingNewer, setFetchingOlder]);
+        hydrate(docs, refresh, error);
+    }, [docs, error, hydrate, loading, refresh]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;

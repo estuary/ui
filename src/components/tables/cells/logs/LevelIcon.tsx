@@ -1,4 +1,5 @@
 import { Tooltip, Typography, useTheme } from '@mui/material';
+import { LogLevels } from 'components/tables/Logs/types';
 import {
     CheckCircle,
     Circle,
@@ -9,10 +10,8 @@ import {
 } from 'iconoir-react';
 import { BaseTypographySx } from './shared';
 
-type Levels = 'error' | 'warn' | 'debug' | 'trace' | 'done' | any;
-
 interface Props {
-    level: Levels;
+    level: LogLevels;
 }
 
 // TODO (icons)

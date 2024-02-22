@@ -8,7 +8,8 @@ import {
     jsonViewTheme,
     semiTransparentBackground,
 } from 'context/Theme';
-import { JournalRecord, useJournalData } from 'hooks/journals/useJournalData';
+import { JournalRecord } from 'hooks/journals/types';
+import { useJournalData } from 'hooks/journals/useJournalData';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { JsonPointer } from 'json-ptr';
 import { isEmpty } from 'lodash';
