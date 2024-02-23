@@ -1,6 +1,8 @@
 import { SortDirection } from '@mui/material';
 import { createSearchParams } from 'react-router-dom';
 
+export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
+
 // Based on pattern taken from
 //  https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
 export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
