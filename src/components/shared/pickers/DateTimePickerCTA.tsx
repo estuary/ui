@@ -89,8 +89,6 @@ function DateTimePickerCTA(props: PickerProps) {
                 ampm={false}
                 disabled={!enabled}
                 displayStaticWrapperAs="desktop"
-                // ignoreInvalidInputs
-                // for="YYYY-mm-ddTHH:mm:ssZ"
                 openTo="day"
                 defaultValue={parseISO(cleanedValue)}
                 slots={{
