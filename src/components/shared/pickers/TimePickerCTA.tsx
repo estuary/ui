@@ -1,5 +1,5 @@
 import { StaticTimePicker } from '@mui/x-date-pickers';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { Clock } from 'iconoir-react';
 import { Patterns } from 'types/jsonforms';
 import { PickerProps } from './types';
@@ -17,9 +17,6 @@ function TimePickerCTA(props: PickerProps) {
             return INVALID_TIME;
         }
     };
-
-    console.log('value', value);
-    console.log('parseISO(value)', parseISO(value));
 
     return (
         <DateOrTimePickerWrapper
