@@ -21,11 +21,11 @@ import {
     useOnboardingStore_surveyResponse,
 } from 'directives/Onboard/Store/hooks';
 import OnboardingSurvey from 'directives/Onboard/Survey';
+import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 import { fireGtmEvent } from 'services/gtm';
-import { jobStatusPoller } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
 import { jobStatusQuery, trackEvent } from './shared';
 import { DirectiveProps } from './types';
@@ -48,6 +48,8 @@ const submit_onboard = async (
 const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
+
+    const { jobStatusPoller } = useJobStatusPoller();
 
     // Onboarding Store
     const requestedTenant = useOnboardingStore_requestedTenant();

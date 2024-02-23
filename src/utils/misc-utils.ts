@@ -81,7 +81,7 @@ export const base64RemovePadding = (state: string | null) => {
     return state ? state.replace(/[=]{1,2}$/, '') : state;
 };
 
-export const timeoutCleanUp = (pollerTimeout: number | undefined) => {
+export const timeoutCleanUp = (pollerTimeout: number | null | undefined) => {
     if (pollerTimeout) {
         window.clearInterval(pollerTimeout);
     }
