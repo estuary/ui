@@ -31,6 +31,7 @@ function TimePickerCTA(props: PickerProps) {
                 displayStaticWrapperAs="desktop"
                 ampm={false}
                 disabled={!enabled}
+                // The value does not need parseISO like the dates
                 defaultValue={value}
                 openTo="hours"
                 onChange={(onChangeValue: any) => {
