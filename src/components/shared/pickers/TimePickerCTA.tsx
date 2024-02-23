@@ -1,5 +1,5 @@
 import { StaticTimePicker } from '@mui/x-date-pickers';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { Clock } from 'iconoir-react';
 import { Patterns } from 'types/jsonforms';
 import { PickerProps } from './types';
@@ -28,7 +28,7 @@ function TimePickerCTA(props: PickerProps) {
                 displayStaticWrapperAs="desktop"
                 ampm={false}
                 disabled={!enabled}
-                value={value}
+                defaultValue={parseISO(value)}
                 onChange={(onChangeValue: any) => {
                     if (onChangeValue) {
                         const formattedValue = formatDate(onChangeValue);
@@ -38,10 +38,6 @@ function TimePickerCTA(props: PickerProps) {
                     }
                 }}
                 onAccept={state.close}
-                closeOnSelect={true}
-                // We don't need an input
-                // eslint-disable-next-line react/jsx-no-useless-fragment
-                renderInput={() => <></>}
             />
         </DateOrTimePickerWrapper>
     );

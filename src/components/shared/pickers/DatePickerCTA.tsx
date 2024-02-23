@@ -1,5 +1,5 @@
 import { StaticDatePicker } from '@mui/x-date-pickers';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { Calendar } from 'iconoir-react';
 import { Patterns } from 'types/jsonforms';
 import { INVALID_DATE } from './shared';
@@ -24,12 +24,10 @@ function DatePickerCTA(props: PickerProps) {
             {...props}
         >
             <StaticDatePicker
-                ignoreInvalidInputs
-                disableMaskedInput
                 displayStaticWrapperAs="desktop"
                 openTo="day"
                 disabled={!enabled}
-                value={value}
+                defaultValue={parseISO(value)}
                 onChange={(onChangeValue: any) => {
                     if (onChangeValue) {
                         const formattedValue = formatDate(onChangeValue);
@@ -39,10 +37,6 @@ function DatePickerCTA(props: PickerProps) {
                     }
                 }}
                 onAccept={state.close}
-                closeOnSelect={true}
-                // We don't need an input
-                // eslint-disable-next-line react/jsx-no-useless-fragment
-                renderInput={() => <></>}
             />
         </DateOrTimePickerWrapper>
     );
