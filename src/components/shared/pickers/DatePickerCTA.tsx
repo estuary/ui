@@ -30,21 +30,13 @@ function DatePickerCTA(props: PickerProps) {
                 openTo="day"
                 disabled={!enabled}
                 value={value}
-                onChange={(
-                    onChangeValue: any,
-                    keyboardInput?: string | undefined
-                ) => {
+                onChange={(onChangeValue: any) => {
                     if (onChangeValue) {
                         const formattedValue = formatDate(onChangeValue);
                         if (formattedValue && formattedValue !== INVALID_DATE) {
                             return onChange(formattedValue, onChangeValue);
                         }
                     }
-
-                    // Default to setting to what user typed
-                    //  This is a super backup as with the Date Fn adapter
-                    //  it never fell through to this... but wanted to be safe
-                    return onChange(keyboardInput, keyboardInput);
                 }}
                 onAccept={state.close}
                 closeOnSelect={true}
