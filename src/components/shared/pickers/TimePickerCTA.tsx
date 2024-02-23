@@ -18,6 +18,9 @@ function TimePickerCTA(props: PickerProps) {
         }
     };
 
+    console.log('value', value);
+    console.log('parseISO(value)', parseISO(value));
+
     return (
         <DateOrTimePickerWrapper
             icon={<Clock />}
@@ -28,7 +31,7 @@ function TimePickerCTA(props: PickerProps) {
                 displayStaticWrapperAs="desktop"
                 ampm={false}
                 disabled={!enabled}
-                defaultValue={parseISO(value)}
+                defaultValue={value}
                 openTo="hours"
                 onChange={(onChangeValue: any) => {
                     if (onChangeValue) {
