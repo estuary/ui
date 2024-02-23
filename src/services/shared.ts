@@ -29,16 +29,17 @@ export const logRocketConsole = (message: string, ...props: any[]) => {
     }
 };
 
-export const FAILED_TO_FETCH = 'failed to fetch';
-export const RESPONSE_JSON_NOT_FN = 'response.json is not a function';
+export const FAILED_TO_FETCH = 'FAILED TO FETCH';
+export const RESPONSE_JSON_NOT_FN = 'RESPONSE.JSON IS NOT A FUNCTION';
+export const STATEMENT_TIMEOUT = 'STATEMENT TIMEOUT';
 
-export const RETRY_REASONS = [FAILED_TO_FETCH];
+export const RETRY_REASONS = [FAILED_TO_FETCH, STATEMENT_TIMEOUT];
 export const NETWORK_ERRORS = [FAILED_TO_FETCH, RESPONSE_JSON_NOT_FN];
 
 export const checkErrorMessage = (
     checkingFor: string,
     message?: string | null | undefined
-) => (message ? message.toLowerCase().includes(checkingFor) : false);
+) => (message ? message.toUpperCase().includes(checkingFor) : false);
 
 export const retryAfterFailure = (message?: string | null | undefined) =>
     RETRY_REASONS.some((el) => checkErrorMessage(el, message));
