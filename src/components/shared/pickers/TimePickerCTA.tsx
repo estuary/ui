@@ -29,6 +29,7 @@ function TimePickerCTA(props: PickerProps) {
                 ampm={false}
                 disabled={!enabled}
                 defaultValue={parseISO(value)}
+                openTo="hours"
                 onChange={(onChangeValue: any) => {
                     if (onChangeValue) {
                         const formattedValue = formatDate(onChangeValue);
