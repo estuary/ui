@@ -1,10 +1,10 @@
 ## Issues
 
-https://github.com/estuary/ui/issues/{issue_number}
+https://github.com/estuary/ui/issues/issue_number
 
 ## Changes
 
-### {issue_number}
+### issue_number
 
 -   changes...
 
