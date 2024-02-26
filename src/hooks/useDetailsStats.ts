@@ -3,6 +3,7 @@ import { useEntityType } from 'context/EntityContext';
 import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { hasLength } from 'utils/misc-utils';
 import { CatalogStats_Details } from 'types';
+import { Duration } from 'date-fns';
 
 function useDetailsStats(
     catalogName: string,

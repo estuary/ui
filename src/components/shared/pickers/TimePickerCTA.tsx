@@ -28,28 +28,18 @@ function TimePickerCTA(props: PickerProps) {
                 displayStaticWrapperAs="desktop"
                 ampm={false}
                 disabled={!enabled}
-                value={value}
-                onChange={(
-                    onChangeValue: any,
-                    keyboardInput?: string | undefined
-                ) => {
+                // The value does not need parseISO like the dates
+                defaultValue={value}
+                openTo="hours"
+                onChange={(onChangeValue: any) => {
                     if (onChangeValue) {
                         const formattedValue = formatDate(onChangeValue);
                         if (formattedValue && formattedValue !== INVALID_TIME) {
                             return onChange(formattedValue, onChangeValue);
                         }
                     }
-
-                    // Default to setting to what user typed
-                    //  This is a super backup as with the Date Fn adapter
-                    //  it never fell through to this... but wanted to be safe
-                    return onChange(keyboardInput, keyboardInput);
                 }}
                 onAccept={state.close}
-                closeOnSelect={true}
-                // We don't need an input
-                // eslint-disable-next-line react/jsx-no-useless-fragment
-                renderInput={() => <></>}
             />
         </DateOrTimePickerWrapper>
     );

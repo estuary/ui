@@ -23,7 +23,7 @@ exports[`Connector Tiles > should display the connector details 1`] = `
                 class="MuiFormControl-root MuiTextField-root css-1juxxoa-MuiFormControl-root-MuiTextField-root"
               >
                 <label
-                  class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-colorPrimary Mui-focused MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined css-il7x2h-MuiFormLabel-root-MuiInputLabel-root"
+                  class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-colorPrimary Mui-focused MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined css-1so5422-MuiFormLabel-root-MuiInputLabel-root"
                   data-shrink="true"
                   for="mui-1"
                   id="mui-1-label"
@@ -59,13 +59,13 @@ exports[`Connector Tiles > should display the connector details 1`] = `
               class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-4 MuiGrid-grid-md-2 css-rvd90y-MuiGrid-root"
             >
               <div
-                class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon css-1qqsdnr-MuiAutocomplete-root"
+                class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon css-1h51icj-MuiAutocomplete-root"
               >
                 <div
                   class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
                 >
                   <label
-                    class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined css-il7x2h-MuiFormLabel-root-MuiInputLabel-root"
+                    class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined css-1so5422-MuiFormLabel-root-MuiInputLabel-root"
                     data-shrink="true"
                     for="mui-3"
                     id="mui-3-label"
@@ -131,13 +131,13 @@ exports[`Connector Tiles > should display the connector details 1`] = `
               class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-4 MuiGrid-grid-md-2 css-rvd90y-MuiGrid-root"
             >
               <div
-                class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon css-1qqsdnr-MuiAutocomplete-root"
+                class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon css-1h51icj-MuiAutocomplete-root"
               >
                 <div
                   class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
                 >
                   <label
-                    class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined css-il7x2h-MuiFormLabel-root-MuiInputLabel-root"
+                    class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined css-1so5422-MuiFormLabel-root-MuiInputLabel-root"
                     data-shrink="true"
                     for="mui-5"
                     id="mui-5-label"
@@ -209,24 +209,24 @@ exports[`Connector Tiles > should display the connector details 1`] = `
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 css-113vizs-MuiPaper-root"
         >
           <div
-            class="css-nen11g-MuiStack-root"
+            class="MuiStack-root css-nen11g-MuiStack-root"
             style="height: 100%; justify-content: space-between;"
           >
             <div
               class="MuiBox-root css-0"
             >
               <span
-                class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-e5s2mh-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-1w89i2l-MuiSkeleton-root"
                 style="height: 125px;"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1v30ypl-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-6qg0j4-MuiSkeleton-root"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1v30ypl-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-6qg0j4-MuiSkeleton-root"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1dtiui6-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1likos-MuiSkeleton-root"
               />
             </div>
           </div>
@@ -239,24 +239,24 @@ exports[`Connector Tiles > should display the connector details 1`] = `
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 css-113vizs-MuiPaper-root"
         >
           <div
-            class="css-nen11g-MuiStack-root"
+            class="MuiStack-root css-nen11g-MuiStack-root"
             style="height: 100%; justify-content: space-between;"
           >
             <div
               class="MuiBox-root css-0"
             >
               <span
-                class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-e5s2mh-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-1w89i2l-MuiSkeleton-root"
                 style="height: 125px;"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1v30ypl-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-6qg0j4-MuiSkeleton-root"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1v30ypl-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-6qg0j4-MuiSkeleton-root"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1dtiui6-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1likos-MuiSkeleton-root"
               />
             </div>
           </div>
@@ -269,24 +269,24 @@ exports[`Connector Tiles > should display the connector details 1`] = `
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 css-113vizs-MuiPaper-root"
         >
           <div
-            class="css-nen11g-MuiStack-root"
+            class="MuiStack-root css-nen11g-MuiStack-root"
             style="height: 100%; justify-content: space-between;"
           >
             <div
               class="MuiBox-root css-0"
             >
               <span
-                class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-e5s2mh-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-1w89i2l-MuiSkeleton-root"
                 style="height: 125px;"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1v30ypl-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-6qg0j4-MuiSkeleton-root"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1v30ypl-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-6qg0j4-MuiSkeleton-root"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1dtiui6-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1likos-MuiSkeleton-root"
               />
             </div>
           </div>
@@ -299,24 +299,24 @@ exports[`Connector Tiles > should display the connector details 1`] = `
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 css-113vizs-MuiPaper-root"
         >
           <div
-            class="css-nen11g-MuiStack-root"
+            class="MuiStack-root css-nen11g-MuiStack-root"
             style="height: 100%; justify-content: space-between;"
           >
             <div
               class="MuiBox-root css-0"
             >
               <span
-                class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-e5s2mh-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-1w89i2l-MuiSkeleton-root"
                 style="height: 125px;"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1v30ypl-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-6qg0j4-MuiSkeleton-root"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1v30ypl-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-6qg0j4-MuiSkeleton-root"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1dtiui6-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1likos-MuiSkeleton-root"
               />
             </div>
           </div>
@@ -329,24 +329,24 @@ exports[`Connector Tiles > should display the connector details 1`] = `
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 css-113vizs-MuiPaper-root"
         >
           <div
-            class="css-nen11g-MuiStack-root"
+            class="MuiStack-root css-nen11g-MuiStack-root"
             style="height: 100%; justify-content: space-between;"
           >
             <div
               class="MuiBox-root css-0"
             >
               <span
-                class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-e5s2mh-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-1w89i2l-MuiSkeleton-root"
                 style="height: 125px;"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1v30ypl-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-6qg0j4-MuiSkeleton-root"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1v30ypl-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-6qg0j4-MuiSkeleton-root"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1dtiui6-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1likos-MuiSkeleton-root"
               />
             </div>
           </div>
@@ -359,24 +359,24 @@ exports[`Connector Tiles > should display the connector details 1`] = `
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 css-113vizs-MuiPaper-root"
         >
           <div
-            class="css-nen11g-MuiStack-root"
+            class="MuiStack-root css-nen11g-MuiStack-root"
             style="height: 100%; justify-content: space-between;"
           >
             <div
               class="MuiBox-root css-0"
             >
               <span
-                class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-e5s2mh-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-1w89i2l-MuiSkeleton-root"
                 style="height: 125px;"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1v30ypl-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-6qg0j4-MuiSkeleton-root"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1v30ypl-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-6qg0j4-MuiSkeleton-root"
               />
               <span
-                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1dtiui6-MuiSkeleton-root"
+                class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1likos-MuiSkeleton-root"
               />
             </div>
           </div>

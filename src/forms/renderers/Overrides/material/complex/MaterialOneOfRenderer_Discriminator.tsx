@@ -83,7 +83,7 @@ export const getDefaultValue = (
         defaultVal[key] =
             key === discriminatorProperty
                 ? val.default ?? val.const ?? ''
-                : createDefaultValue(val);
+                : createDefaultValue(val, tabSchemaProps);
     });
 
     return defaultVal;

@@ -450,8 +450,13 @@ const baseBackground = {
 };
 
 export const jsonFormsPadding: SxProps<Theme> = {
-    '& > div > .MuiGrid-container.MuiGrid-root': {
-        padding: 1,
+    // Handles inputs on the first layer
+    '& > .MuiGrid-root > .MuiGrid-root ': {
+        marginBottom: 1,
+    },
+    // Handles inputs that are nested
+    '& .MuiAccordionDetails-root > .MuiGrid-root > .MuiGrid-root': {
+        marginBottom: 1,
     },
 };
 
@@ -728,6 +733,21 @@ const themeSettings = createTheme({
         MuiChip: {
             defaultProps: {
                 deleteIcon: <DeleteCircle style={{ fontSize: 14 }} />,
+            },
+        },
+        MuiFormControl: {
+            defaultProps: {
+                variant: 'standard',
+            },
+        },
+        MuiTextField: {
+            defaultProps: {
+                variant: 'standard',
+            },
+        },
+        MuiSelect: {
+            defaultProps: {
+                variant: 'standard',
             },
         },
         MuiTabs: {
