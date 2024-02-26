@@ -536,7 +536,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.alerts.dialog.update.header': `Update Notification Methods`,
     'admin.alerts.table.filterLabel': `Filter by Prefix or Email`,
     'admin.alerts.table.noContent.header': `No subscriptions found.`,
-    'admin.alerts.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Configure Notification" above to create a subscription.`,
+    'admin.alerts.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Configure Notifications" above to create a subscription.`,
     'admin.alerts.table.label.alertMethod': `Notification Method`,
 
     'admin.tabs.users': `Account Access`,
