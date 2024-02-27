@@ -1,7 +1,8 @@
 import { Box, Divider, Stack, Tab, Tabs, Typography } from '@mui/material';
 import FullPageDialog from 'components/fullPage/Dialog';
 import MagicLink from 'components/login/MagicLink';
-import OIDCs from 'components/login/OIDCs';
+import OIDCs from 'components/login/OIDC';
+import { SupportedProvider } from 'types/authProviders';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -20,13 +21,14 @@ import { LocalStorageKeys } from 'utils/localStorage-utils';
 const loginSettings = getLoginSettings();
 
 interface Props {
+    marketPlace?: SupportedProvider;
     showRegistration?: boolean;
 }
 
 // This is to allow this page to have a smaller min width
 const bodyClass = 'loginPage';
 
-const Login = ({ showRegistration }: Props) => {
+const Login = ({ marketPlace, showRegistration }: Props) => {
     useBrowserTitle('routeTitle.login');
 
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
@@ -84,7 +86,8 @@ const Login = ({ showRegistration }: Props) => {
                 <Stack direction="column" spacing={2}>
                     <Box>
                         <OIDCs
-                            isRegister={isRegister}
+                            providers={marketPlace ? [marketPlace] : undefined}
+                            isRegister={Boolean(!marketPlace && isRegister)}
                             grantToken={grantToken}
                         />
                     </Box>

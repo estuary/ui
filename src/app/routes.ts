@@ -243,6 +243,9 @@ export const unauthenticatedRoutes = {
     login: {
         path: '/login',
     },
+    marketplace: {
+        path: '/marketplace',
+    },
     register: {
         path: '/register',
         callback: {
