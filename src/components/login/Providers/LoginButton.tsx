@@ -1,7 +1,7 @@
 import { SupportedProvider } from 'types/authProviders';
-import AzureButton from '../buttons/Azure';
-import GithubButton from '../buttons/Github';
-import GoogleButton from '../buttons/Google';
+import AzureButton from './buttons/Azure';
+import GithubButton from './buttons/Github';
+import GoogleButton from './buttons/Google';
 
 interface Props {
     login: any;

@@ -90,7 +90,7 @@ const router = createBrowserRouter(
 
             <Route
                 path={unauthenticatedRoutes.marketplace.path}
-                element={<Login marketPlace="google" />}
+                element={<Login />}
             />
 
             {/*We need a callback that registration can come back to that will properly handle the auth token stuff

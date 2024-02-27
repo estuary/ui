@@ -9,23 +9,24 @@ export enum GlobalSearchParams {
     HIDDEN_SHOW_BETA = 'showBetaOnboard',
     LAST_PUB_ID = 'lastPubId',
     LIVE_SPEC_ID = 'liveSpecId',
+    LOGIN_PROVIDER = 'loginProvider',
     PREFILL_LIVE_SPEC_ID = 'prefillLiveSpecId',
     PREFIX = 'prefix',
     HOME_PAGE_ERROR = 'homePageError',
 }
 
-function useGlobalSearchParams(key: GlobalSearchParams): string;
-function useGlobalSearchParams(
+function useGlobalSearchParams<T = string>(key: GlobalSearchParams): T;
+function useGlobalSearchParams<T = string>(
     key: GlobalSearchParams,
     fetchAll: true
-): string[];
-function useGlobalSearchParams(
+): T[];
+function useGlobalSearchParams<T = string>(
     key: GlobalSearchParams | Array<GlobalSearchParams>
-): string[];
-function useGlobalSearchParams(
+): T[];
+function useGlobalSearchParams<T = string>(
     key: GlobalSearchParams | Array<GlobalSearchParams>,
     fetchAll: true
-): string[][];
+): T[][];
 function useGlobalSearchParams(
     key: GlobalSearchParams | Array<GlobalSearchParams>,
     fetchAll?: boolean

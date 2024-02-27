@@ -9,7 +9,7 @@ interface Props {
     providers?: SupportedProvider[];
 }
 
-function OIDCs({
+function LoginProviders({
     grantToken,
     isRegister,
     providers = ['google', 'github', 'azure'],
@@ -34,4 +34,4 @@ function OIDCs({
     );
 }
 
-export default OIDCs;
+export default LoginProviders;
