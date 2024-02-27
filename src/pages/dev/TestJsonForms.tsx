@@ -20,12 +20,14 @@ import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 import { setDefaultsValidator } from 'services/ajv';
-import { custom_generateDefaultUISchema } from 'services/jsonforms';
+import {
+    custom_generateDefaultUISchema,
+    derefSchema,
+} from 'services/jsonforms';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions } from 'services/jsonforms/shared';
 import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
-import JsonRefs from 'json-refs';
 
 const TestJsonForms = () => {
     const intl = useIntl();
@@ -104,7 +106,12 @@ const TestJsonForms = () => {
             setSchema(null);
             const parsedSchema = JSON.parse(schemaInput);
 
-            const { resolved } = await JsonRefs.resolveRefs(parsedSchema);
+            const resolved = await derefSchema(parsedSchema);
+
+            if (!resolved) {
+                throw new Error('failed to deref schema');
+            }
+
             setSchema(resolved);
 
             const generatedSchema = custom_generateDefaultUISchema(resolved);

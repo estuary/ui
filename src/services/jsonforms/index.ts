@@ -43,6 +43,7 @@ import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
 import { Annotations, Formats, Options } from 'types/jsonforms';
+import JsonRefs from 'json-refs';
 import {
     ADVANCED,
     CONTAINS_REQUIRED_FIELDS,
@@ -631,6 +632,19 @@ export const custom_generateDefaultUISchema = (
     }
 
     return response;
+};
+
+export const derefSchema = async (schema: any) => {
+    try {
+        const response = !schema
+            ? null
+            : (await JsonRefs.resolveRefs(schema)).resolved;
+        return response;
+    } catch (e: unknown) {
+        // TODO (jsonschema ref) - need proper error handling
+        console.log('e', e);
+        return {};
+    }
 };
 
 Generate.uiSchema = custom_generateDefaultUISchema;

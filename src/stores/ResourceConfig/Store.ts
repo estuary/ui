@@ -19,6 +19,7 @@ import {
     union,
 } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
+import { derefSchema } from 'services/jsonforms';
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
@@ -710,10 +711,11 @@ const getInitialState = (
         );
     },
 
-    setResourceSchema: (val) => {
+    setResourceSchema: async (val) => {
+        const resolved = await derefSchema(val);
         set(
             produce((state: ResourceConfigState) => {
-                state.resourceSchema = val;
+                state.resourceSchema = resolved ?? {};
             }),
             false,
             'Resource Schema Set'

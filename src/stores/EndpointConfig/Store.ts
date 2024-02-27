@@ -4,6 +4,7 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
+import { derefSchema } from 'services/jsonforms';
 import {
     CustomError,
     fetchErrors,
@@ -94,10 +95,11 @@ const getInitialState = (
         );
     },
 
-    setEndpointSchema: (val) => {
+    setEndpointSchema: async (val) => {
+        const resolved = await derefSchema(val);
         set(
             produce((state: EndpointConfigState) => {
-                state.endpointSchema = val;
+                state.endpointSchema = resolved ?? {};
 
                 const { endpointConfig, customErrors } = get();
 
