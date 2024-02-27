@@ -6,6 +6,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
@@ -14,6 +15,7 @@ import {
     useMount,
     useUnmount,
 } from 'react-use';
+import { supabaseClient } from 'services/supabase';
 import { SupportedProvider } from 'types/authProviders';
 import { getLoginSettings } from 'utils/env-utils';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
@@ -30,9 +32,15 @@ const bodyClass = 'loginPage';
 const Login = ({ showRegistration }: Props) => {
     useBrowserTitle('routeTitle.login');
 
+    const { enqueueSnackbar } = useSnackbar();
+
     const loginProvider = useGlobalSearchParams<SupportedProvider | null>(
-        GlobalSearchParams.LOGIN_PROVIDER
+        GlobalSearchParams.PROVIDER
     );
+
+    // Google marketplace params
+    const account_id = useGlobalSearchParams(GlobalSearchParams.GCM_ACCOUNT_ID);
+    const login_hint = useGlobalSearchParams(GlobalSearchParams.GCP_LOGIN_HINT);
 
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
     const { 2: clearGatewayConfig } = useLocalStorage(LocalStorageKeys.GATEWAY);
@@ -48,6 +56,23 @@ const Login = ({ showRegistration }: Props) => {
 
     useMount(() => {
         document.body.classList.add(bodyClass);
+
+        if (account_id && login_hint) {
+            void supabaseClient.auth.signOut();
+            enqueueSnackbar(
+                intl.formatMessage({
+                    id: 'marketPlace.loggedOut',
+                }),
+                {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'center',
+                    },
+                    persist: true,
+                    variant: 'info',
+                }
+            );
+        }
     });
 
     useUnmount(() => {

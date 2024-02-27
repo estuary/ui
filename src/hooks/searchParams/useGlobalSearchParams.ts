@@ -9,10 +9,13 @@ export enum GlobalSearchParams {
     HIDDEN_SHOW_BETA = 'showBetaOnboard',
     LAST_PUB_ID = 'lastPubId',
     LIVE_SPEC_ID = 'liveSpecId',
-    LOGIN_PROVIDER = 'loginProvider',
     PREFILL_LIVE_SPEC_ID = 'prefillLiveSpecId',
     PREFIX = 'prefix',
+    PROVIDER = 'provider', // Login Provider but having a url like login/?loginProvider looked weird
     HOME_PAGE_ERROR = 'homePageError',
+    // Google Marketplace
+    GCP_LOGIN_HINT = 'gcp_login_hint',
+    GCM_ACCOUNT_ID = 'gcm_account_id',
 }
 
 function useGlobalSearchParams<T = string>(key: GlobalSearchParams): T;

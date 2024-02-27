@@ -8,6 +8,7 @@ interface Props {
 
 const GoogleButton = ({ login, isRegister }: Props) => {
     const intl = useIntl();
+
     return (
         <ReactGoogleButton
             onClick={login}

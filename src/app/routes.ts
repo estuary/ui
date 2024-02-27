@@ -142,6 +142,16 @@ const home = {
     path: '/welcome',
 };
 
+const marketplace = {
+    title: 'routeTitle.marketplace',
+    path: 'marketplace',
+    fullPath: '/marketplace',
+    verify: {
+        path: 'verify',
+        fullPath: '/marketplace/verify',
+    },
+};
+
 const materializations = {
     title: 'routeTitle.materializations',
     path: 'materializations',
@@ -227,6 +237,7 @@ export const authenticatedRoutes = {
     dataPlaneAuth,
     home,
     materializations,
+    marketplace,
     user,
     pageNotFound,
     beta,
@@ -242,9 +253,6 @@ export const unauthenticatedRoutes = {
     },
     login: {
         path: '/login',
-    },
-    marketplace: {
-        path: '/marketplace',
     },
     register: {
         path: '/register',

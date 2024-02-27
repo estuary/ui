@@ -1388,6 +1388,10 @@ const JsonForms: ResolvedIntlConfig['messages'] = {
     'jsonForms.clearInput': `Clear input field`,
 };
 
+const MarketPlace: ResolvedIntlConfig['messages'] = {
+    'marketPlace.loggedOut': `We require reauthenticating for marketplace purchases. Please login back in below.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1452,6 +1456,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...JsonForms,
     ...Journals,
     ...Ops,
+    ...MarketPlace,
 };
 
 export default enUSMessages;

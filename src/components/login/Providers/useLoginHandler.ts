@@ -59,6 +59,9 @@ function useLoginHandler(grantToken?: string, isRegister?: boolean) {
                             : redirectBaseURL,
                         shouldCreateUser: isRegister,
                         scopes,
+                        queryParams: {
+                            login_hint: 'this needs populated',
+                        },
                     }
                 );
                 if (error) loginFailed(provider);
