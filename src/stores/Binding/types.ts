@@ -44,6 +44,11 @@ export interface BindingState extends StoreWithHydration {
         taskName: string
     ) => void;
 
+    toggleDisable: (
+        targetUUIDs: string | string[] | null,
+        value?: boolean
+    ) => Number;
+
     currentBinding: BindingMetadata | null;
     setCurrentBinding: (bindingUUID: string | null) => void;
 
@@ -53,6 +58,10 @@ export interface BindingState extends StoreWithHydration {
         collection: string,
         nativeCollectionFlag?: boolean
     ) => void;
+
+    collectionsRequiringRediscovery: string[];
+    rediscoveryRequired: boolean;
+    resetRediscoverySettings: () => void;
 
     // Resource Schema
     resourceSchema: Schema;

@@ -165,6 +165,13 @@ export const useBinding_collections = () => {
     );
 };
 
+export const useBinding_toggleDisable = () => {
+    return useZustandStore<BindingState, BindingState['toggleDisable']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.toggleDisable
+    );
+};
+
 export const useBinding_currentBinding = () => {
     return useZustandStore<BindingState, BindingState['currentBinding']>(
         BindingStoreNames.GENERAL,
@@ -215,4 +222,18 @@ export const useBinding_setRestrictedDiscoveredCollections = () => {
         BindingStoreNames.GENERAL,
         (state) => state.setRestrictedDiscoveredCollections
     );
+};
+
+export const useBinding_rediscoveryRequired = () => {
+    return useZustandStore<BindingState, BindingState['rediscoveryRequired']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.rediscoveryRequired
+    );
+};
+
+export const useBinding_resetRediscoverySettings = () => {
+    return useZustandStore<
+        BindingState,
+        BindingState['resetRediscoverySettings']
+    >(BindingStoreNames.GENERAL, (state) => state.resetRediscoverySettings);
 };

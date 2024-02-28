@@ -56,24 +56,6 @@ export const useResourceConfig_allBindingsDisabled = () => {
     );
 };
 
-export const useResourceConfig_resourceConfigOfCollection = (
-    collection: keyof ResourceConfigState['resourceConfig']
-) => {
-    return useZustandStore<ResourceConfigState, any>(
-        ResourceConfigStoreNames.GENERAL,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        (state) => state.resourceConfig[collection],
-        shallow
-    );
-};
-
-export const useResourceConfig_toggleDisable = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['toggleDisable']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.toggleDisable);
-};
-
 export const useResourceConfig_resetResourceConfigAndCollections = () => {
     return useZustandStore<
         ResourceConfigState,
@@ -106,21 +88,4 @@ export const useResourceConfig_resetState = () => {
         ResourceConfigState,
         ResourceConfigState['resetState']
     >(ResourceConfigStoreNames.GENERAL, (state) => state.resetState);
-};
-
-export const useResourceConfig_rediscoveryRequired = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['rediscoveryRequired']
-    >(ResourceConfigStoreNames.GENERAL, (state) => state.rediscoveryRequired);
-};
-
-export const useResourceConfig_resetRediscoverySettings = () => {
-    return useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resetRediscoverySettings']
-    >(
-        ResourceConfigStoreNames.GENERAL,
-        (state) => state.resetRediscoverySettings
-    );
 };

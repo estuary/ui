@@ -1,22 +1,20 @@
 import { Button, Switch } from '@mui/material';
 import { dataGridEntireCellButtonStyling } from 'context/Theme';
 import { useIntl } from 'react-intl';
-import { useBinding_resourceConfigOfMetaCollectionProperty } from 'stores/Binding/hooks';
-import { useResourceConfig_toggleDisable } from 'stores/ResourceConfig/hooks';
+import {
+    useBinding_resourceConfigOfMetaCollectionProperty,
+    useBinding_toggleDisable,
+} from 'stores/Binding/hooks';
 
 interface Props {
     bindingUUID: string;
-    collection: string;
     disableButton: boolean;
 }
 
-function BindingsSelectorToggle({
-    bindingUUID,
-    collection,
-    disableButton,
-}: Props) {
+function BindingsSelectorToggle({ bindingUUID, disableButton }: Props) {
     const intl = useIntl();
-    const toggleDisable = useResourceConfig_toggleDisable();
+
+    const toggleDisable = useBinding_toggleDisable();
     const disabled = useBinding_resourceConfigOfMetaCollectionProperty(
         bindingUUID,
         'disable'
@@ -32,7 +30,7 @@ function BindingsSelectorToggle({
             variant="text"
             onClick={(event) => {
                 event.stopPropagation();
-                toggleDisable(collection);
+                toggleDisable(bindingUUID);
             }}
         >
             <Switch

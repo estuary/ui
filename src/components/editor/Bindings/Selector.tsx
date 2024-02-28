@@ -15,10 +15,10 @@ import {
     useBinding_discoveredCollections,
     useBinding_removeBindings,
     useBinding_setCurrentBinding,
+    useBinding_toggleDisable,
 } from 'stores/Binding/hooks';
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { useResourceConfig_toggleDisable } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
 import BindingsSelectorName from './Row/Name';
 import BindingsSelectorRemove from './Row/Remove';
@@ -59,8 +59,7 @@ function BindingSelector({
     const collections = useBinding_collections();
     const discoveredCollections = useBinding_discoveredCollections();
     const removeBindings = useBinding_removeBindings();
-
-    const toggleCollections = useResourceConfig_toggleDisable();
+    const toggleCollections = useBinding_toggleDisable();
 
     const handlers = {
         removeBindings: (rows: any[]) => {
@@ -118,12 +117,10 @@ function BindingSelector({
         },
         toggle: (params: GridRenderCellParams) => {
             const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
-            const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
 
             return (
                 <BindingsSelectorToggle
                     bindingUUID={bindingUUID}
-                    collection={collection}
                     disableButton={formActive}
                 />
             );

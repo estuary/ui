@@ -21,7 +21,10 @@ import { useEntityWorkflow_Editing } from 'context/Workflow';
 import invariableStores from 'context/Zustand/invariableStores';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback } from 'react';
-import { useBinding_resourceConfigs } from 'stores/Binding/hooks';
+import {
+    useBinding_resetRediscoverySettings,
+    useBinding_resourceConfigs,
+} from 'stores/Binding/hooks';
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
@@ -44,10 +47,7 @@ import {
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import {
-    useResourceConfig_resetRediscoverySettings,
-    useResourceConfig_resourceConfigErrorsExist,
-} from 'stores/ResourceConfig/hooks';
+import { useResourceConfig_resourceConfigErrorsExist } from 'stores/ResourceConfig/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { generateTaskSpec } from 'utils/workflow-utils';
 import { useStore } from 'zustand';
@@ -93,10 +93,9 @@ function useGenerateCatalog() {
     const resourceConfigs = useBinding_resourceConfigs();
     const resourceConfigErrorsExist =
         useResourceConfig_resourceConfigErrorsExist();
-    const resetRediscoverySettings =
-        useResourceConfig_resetRediscoverySettings();
+    const resetRediscoverySettings = useBinding_resetRediscoverySettings();
 
-    // Bindings store
+    // Bindings Editor store
     const fullSourceConfigs = useBindingsEditorStore_fullSourceConfigs();
     const fullSourceErrorsExist =
         useBindingsEditorStore_fullSourceErrorsExist();

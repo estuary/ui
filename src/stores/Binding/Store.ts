@@ -6,7 +6,15 @@ import {
 } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
-import { difference, has, intersection, isEqual, omit, orderBy } from 'lodash';
+import {
+    difference,
+    has,
+    intersection,
+    isBoolean,
+    isEqual,
+    omit,
+    orderBy,
+} from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     getInitialHydrationData,
@@ -143,7 +151,9 @@ const getInitialBindingData = (): Pick<
 
 const getInitialStateData = (): Pick<
     BindingState,
+    | 'collectionsRequiringRediscovery'
     | 'discoveredCollections'
+    | 'rediscoveryRequired'
     | 'resourceConfigErrorsExist'
     | 'resourceConfigErrors'
     | 'resourceConfigs'
@@ -151,7 +161,9 @@ const getInitialStateData = (): Pick<
     | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
 > => ({
+    collectionsRequiringRediscovery: [],
     discoveredCollections: [],
+    rediscoveryRequired: false,
     resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
     resourceConfigs: {},
@@ -542,6 +554,17 @@ const getInitialState = (
         );
     },
 
+    resetRediscoverySettings: () => {
+        set(
+            produce((state: BindingState) => {
+                state.rediscoveryRequired = false;
+                state.collectionsRequiringRediscovery = [];
+            }),
+            false,
+            'Rediscovery Related Settings Reset'
+        );
+    },
+
     resetState: (keepCollections) => {
         const currentState = get();
 
@@ -728,6 +751,75 @@ const getInitialState = (
             false,
             'Server Update Required Flag Changed'
         );
+    },
+
+    toggleDisable: (targetUUIDs, value) => {
+        // Updating a single item
+        // A specific list (toggle page)
+        // Nothing specified (toggle all)
+        const evaluatedUUIDs =
+            typeof targetUUIDs === 'string'
+                ? [targetUUIDs]
+                : Array.isArray(targetUUIDs)
+                ? targetUUIDs
+                : Object.keys(get().resourceConfigs);
+
+        let updatedCount = 0;
+
+        if (evaluatedUUIDs.length > 0) {
+            set(
+                produce((state: BindingState) => {
+                    evaluatedUUIDs.forEach((uuid) => {
+                        const { collectionName, disable, previouslyDisabled } =
+                            state.resourceConfigs[uuid].meta;
+
+                        const currValue = isBoolean(disable) ? disable : false;
+                        const evaluatedFlag = value ?? !currValue;
+
+                        if (value !== currValue) {
+                            updatedCount = updatedCount + 1;
+                        }
+
+                        if (evaluatedFlag) {
+                            state.resourceConfigs[uuid].meta.disable =
+                                evaluatedFlag;
+
+                            const existingIndex =
+                                state.collectionsRequiringRediscovery.findIndex(
+                                    (collectionRequiringRediscovery) =>
+                                        collectionRequiringRediscovery ===
+                                        collectionName
+                                );
+                            if (existingIndex > -1) {
+                                state.collectionsRequiringRediscovery.splice(
+                                    existingIndex,
+                                    1
+                                );
+
+                                state.rediscoveryRequired = hasLength(
+                                    state.collectionsRequiringRediscovery
+                                );
+                            }
+                        } else {
+                            delete state.resourceConfigs[uuid].meta.disable;
+
+                            if (previouslyDisabled) {
+                                state.collectionsRequiringRediscovery.push(
+                                    collectionName
+                                );
+
+                                state.rediscoveryRequired = true;
+                            }
+                        }
+                    });
+                }),
+                false,
+                'Binding Disable Flag Toggled'
+            );
+        }
+
+        // Return how many we updated
+        return updatedCount;
     },
 
     updateResourceConfig: (targetCollection, targetBindingUUID, value) => {
