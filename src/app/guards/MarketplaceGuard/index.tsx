@@ -1,14 +1,17 @@
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+import useGoogleMarketplaceParams from 'hooks/searchParams/marketplace/useGoogleMarketplaceParams';
+
 import { BaseComponentProps } from 'types';
 import MarketplaceGuardProcessor from './Processor';
 
 function MarketplaceGuard({ children }: BaseComponentProps) {
-    const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
+    const marketPlaceParams = useGoogleMarketplaceParams();
 
-    if (grantToken) {
-        return <MarketplaceGuardProcessor />;
+    if (marketPlaceParams.account_id) {
+        return (
+            <MarketplaceGuardProcessor
+                accountId={marketPlaceParams.account_id}
+            />
+        );
     } else {
         // eslint-disable-next-line react/jsx-no-useless-fragment
         return <>{children}</>;
