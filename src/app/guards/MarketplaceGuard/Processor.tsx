@@ -1,6 +1,11 @@
 import FullPageSpinner from 'components/fullPage/Spinner';
 
-function MarketplaceGuardProcessor() {
+interface Props {
+    accountId: string;
+}
+
+function MarketplaceGuardProcessor({ accountId }: Props) {
+    console.log('accountId', accountId);
     return <FullPageSpinner />;
 }
 
