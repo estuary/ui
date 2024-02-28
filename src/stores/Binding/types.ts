@@ -49,6 +49,8 @@ export interface BindingState extends StoreWithHydration {
         value?: boolean
     ) => Number;
 
+    bindingErrorsExist: boolean;
+
     currentBinding: BindingMetadata | null;
     setCurrentBinding: (bindingUUID: string | null) => void;
 

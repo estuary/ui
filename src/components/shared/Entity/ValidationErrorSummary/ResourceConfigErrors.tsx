@@ -2,14 +2,13 @@ import { useBindingsEditorStore_fullSourceErrorsExist } from 'components/editor/
 import SectionError from 'components/shared/Entity/ValidationErrorSummary/SectionError';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useResourceConfig_resourceConfigErrors } from 'stores/ResourceConfig/hooks';
+import { useBinding_resourceConfigErrors } from 'stores/Binding/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 function ResourceConfigErrors() {
     const intl = useIntl();
 
-    const filteredResourceConfigErrors =
-        useResourceConfig_resourceConfigErrors();
+    const filteredResourceConfigErrors = useBinding_resourceConfigErrors();
 
     const fullSourceErrorsExist =
         useBindingsEditorStore_fullSourceErrorsExist();

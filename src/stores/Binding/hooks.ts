@@ -102,6 +102,20 @@ export const useBinding_updateResourceConfig = () => {
     );
 };
 
+export const useBinding_resourceConfigErrorsExist = () => {
+    return useZustandStore<
+        BindingState,
+        BindingState['resourceConfigErrorsExist']
+    >(BindingStoreNames.GENERAL, (state) => state.resourceConfigErrorsExist);
+};
+
+export const useBinding_resourceConfigErrors = () => {
+    return useZustandStore<BindingState, BindingState['resourceConfigErrors']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.resourceConfigErrors
+    );
+};
+
 export const useBinding_resourceConfigOfCollectionProperty = (
     bindingUUID: any,
     property: keyof ResourceConfig
@@ -169,6 +183,13 @@ export const useBinding_toggleDisable = () => {
     return useZustandStore<BindingState, BindingState['toggleDisable']>(
         BindingStoreNames.GENERAL,
         (state) => state.toggleDisable
+    );
+};
+
+export const useBinding_bindingErrorsExist = () => {
+    return useZustandStore<BindingState, BindingState['bindingErrorsExist']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.bindingErrorsExist
     );
 };
 

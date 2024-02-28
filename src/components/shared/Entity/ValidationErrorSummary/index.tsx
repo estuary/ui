@@ -11,14 +11,16 @@ import useGlobalSearchParams, {
 import useScrollIntoView from 'hooks/useScrollIntoView';
 import { useEffect, useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useBinding_hydrationErrorsExist } from 'stores/Binding/hooks';
+import {
+    useBinding_hydrationErrorsExist,
+    useBinding_resourceConfigErrorsExist,
+} from 'stores/Binding/hooks';
 import { useDetailsForm_errorsExist } from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_errorsExist,
     useEndpointConfig_hydrationErrorsExist,
 } from 'stores/EndpointConfig/hooks';
 import { useFormStateStore_displayValidation } from 'stores/FormState/hooks';
-import { useResourceConfig_resourceConfigErrorsExist } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -39,6 +41,11 @@ function ValidationErrorSummary({
 
     // Binding Store
     const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
+    const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
+
+    // Binding Editor Store
+    const fullSourceErrorsExist =
+        useBindingsEditorStore_fullSourceErrorsExist();
 
     // Details form
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
@@ -51,13 +58,6 @@ function ValidationErrorSummary({
 
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
-
-    // Resource Config Store
-    const resourceConfigErrorsExist =
-        useResourceConfig_resourceConfigErrorsExist();
-
-    const fullSourceErrorsExist =
-        useBindingsEditorStore_fullSourceErrorsExist();
 
     const hydrationErrorsExist =
         endpointConfigHydrationErrorsExist || bindingHydrationErrorsExist;

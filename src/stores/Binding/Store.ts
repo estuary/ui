@@ -11,6 +11,7 @@ import {
     has,
     intersection,
     isBoolean,
+    isEmpty,
     isEqual,
     omit,
     orderBy,
@@ -143,8 +144,9 @@ const whatChanged = (
 
 const getInitialBindingData = (): Pick<
     BindingState,
-    'bindings' | 'currentBinding'
+    'bindingErrorsExist' | 'bindings' | 'currentBinding'
 > => ({
+    bindingErrorsExist: false,
     bindings: {},
     currentBinding: null,
 });
@@ -251,6 +253,8 @@ const getInitialState = (
 
                 state.resourceConfigs = modifiedResourceConfigs;
                 populateResourceConfigErrors(state, modifiedResourceConfigs);
+
+                state.bindingErrorsExist = isEmpty(state.bindings);
                 initializeCurrentBinding(state, modifiedResourceConfigs);
             }),
             false,
@@ -281,6 +285,8 @@ const getInitialState = (
                 ).map(({ meta }) => meta.collectionName);
 
                 populateResourceConfigErrors(state, state.resourceConfigs);
+
+                state.bindingErrorsExist = isEmpty(state.bindings);
                 initializeCurrentBinding(state, state.resourceConfigs);
             }),
             false,
@@ -393,6 +399,8 @@ const getInitialState = (
                 });
 
                 populateResourceConfigErrors(state, state.resourceConfigs);
+
+                state.bindingErrorsExist = isEmpty(state.bindings);
                 initializeCurrentBinding(state, state.resourceConfigs);
             }),
             false,
@@ -461,6 +469,8 @@ const getInitialState = (
                         evaluatedBindings[collection].length === 0
                             ? omit(evaluatedBindings, collection)
                             : evaluatedBindings;
+
+                    state.bindingErrorsExist = isEmpty(evaluatedBindings);
                 }
             }),
             false,
@@ -509,6 +519,8 @@ const getInitialState = (
                     state.bindings = {};
                     state.currentBinding = null;
                 }
+
+                state.bindingErrorsExist = isEmpty(state.bindings);
 
                 // Update the set of restricted discovered collections.
                 let additionalRestrictedCollections: string[] = [];
@@ -635,7 +647,7 @@ const getInitialState = (
                             state.resourceConfigs
                         );
 
-                        // state.collectionErrorsExist = isEmpty(targetCollections);
+                        state.bindingErrorsExist = isEmpty(targetCollections);
                     }
                 } else {
                     const [removedCollections, newCollections] = whatChanged(
@@ -693,8 +705,7 @@ const getInitialState = (
                     };
 
                     // Update the collections with the new array
-                    // state.collections = newConfigKeyList;
-                    // state.collectionErrorsExist = isEmpty(newConfigKeyList);
+                    state.bindingErrorsExist = isEmpty(newConfigKeyList);
 
                     // See if the recently updated configs have errors
                     populateResourceConfigErrors(state, newResourceConfig);

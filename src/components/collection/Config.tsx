@@ -9,12 +9,12 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { WarningCircle } from 'iconoir-react';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useBinding_hydrationErrorsExist } from 'stores/Binding/hooks';
-import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 import {
-    useResourceConfig_collectionErrorsExist,
-    useResourceConfig_resourceConfigErrorsExist,
-} from 'stores/ResourceConfig/hooks';
+    useBinding_bindingErrorsExist,
+    useBinding_hydrationErrorsExist,
+    useBinding_resourceConfigErrorsExist,
+} from 'stores/Binding/hooks';
+import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];
@@ -33,24 +33,22 @@ function CollectionConfig({
 
     // Binding Store
     const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
+    const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
+    const bindingErrorsExist = useBinding_bindingErrorsExist();
+
+    // Binding Editor Store
+    const fullSourceErrorsExist =
+        useBindingsEditorStore_fullSourceErrorsExist();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
 
-    // Resource Config Store
-    const resourceConfigHasErrors =
-        useResourceConfig_resourceConfigErrorsExist();
-    const fullSourceErrorsExist =
-        useBindingsEditorStore_fullSourceErrorsExist();
-
-    const collectionsHasErrors = useResourceConfig_collectionErrorsExist();
-
     const hasErrors =
         bindingHydrationErrorsExist ||
-        resourceConfigHasErrors ||
+        resourceConfigErrorsExist ||
         fullSourceErrorsExist;
 
-    const hasWarnings = collectionsHasErrors;
+    const hasWarnings = bindingErrorsExist;
 
     return (
         <WrapperWithHeader

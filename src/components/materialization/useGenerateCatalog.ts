@@ -23,6 +23,7 @@ import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback } from 'react';
 import {
     useBinding_resetRediscoverySettings,
+    useBinding_resourceConfigErrorsExist,
     useBinding_resourceConfigs,
 } from 'stores/Binding/hooks';
 import {
@@ -47,7 +48,6 @@ import {
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useResourceConfig_resourceConfigErrorsExist } from 'stores/ResourceConfig/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { generateTaskSpec } from 'utils/workflow-utils';
 import { useStore } from 'zustand';
@@ -89,10 +89,9 @@ function useGenerateCatalog() {
     const setFormState = useFormStateStore_setFormState();
     const updateFormStatus = useFormStateStore_updateStatus();
 
-    // Resource Config Store
+    // Binding Store
     const resourceConfigs = useBinding_resourceConfigs();
-    const resourceConfigErrorsExist =
-        useResourceConfig_resourceConfigErrorsExist();
+    const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
     const resetRediscoverySettings = useBinding_resetRediscoverySettings();
 
     // Bindings Editor store
