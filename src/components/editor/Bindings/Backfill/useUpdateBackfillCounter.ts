@@ -5,7 +5,7 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { BASE_ERROR } from 'services/supabase';
-import { useResourceConfig_backfilledCollections } from 'stores/ResourceConfig/hooks';
+import { useBinding_backfilledCollections } from 'stores/Binding/hooks';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getBackfillCounter, getCollectionName } from 'utils/workflow-utils';
@@ -38,12 +38,12 @@ function useUpdateBackfillCounter() {
     const intl = useIntl();
     const entityType = useEntityType();
 
+    // Binding Store
+    const backfilledCollections = useBinding_backfilledCollections();
+
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
-
-    // Resource Config Store
-    const backfilledCollections = useResourceConfig_backfilledCollections();
 
     const updateBackfillCounter = useCallback(
         async (

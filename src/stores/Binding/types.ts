@@ -1,3 +1,4 @@
+import { BooleanString } from 'components/editor/Bindings/Backfill';
 import { LiveSpecsExt_MaterializeCapture } from 'hooks/useLiveSpecsExt';
 import { CallSupabaseResponse } from 'services/supabase';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
@@ -64,6 +65,16 @@ export interface BindingState extends StoreWithHydration {
     collectionsRequiringRediscovery: string[];
     rediscoveryRequired: boolean;
     resetRediscoverySettings: () => void;
+
+    backfilledCollections: string[];
+    setBackfilledCollections: (
+        increment: BooleanString,
+        targetCollection?: string
+    ) => void;
+    addBackfilledCollections: (values: string[]) => void;
+    removeBackfilledCollections: (values: string[]) => void;
+
+    backfillAllBindings: boolean;
 
     // Resource Schema
     resourceSchema: Schema;

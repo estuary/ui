@@ -15,6 +15,7 @@ import {
     isEqual,
     omit,
     orderBy,
+    union,
 } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
@@ -153,6 +154,8 @@ const getInitialBindingData = (): Pick<
 
 const getInitialStateData = (): Pick<
     BindingState,
+    | 'backfillAllBindings'
+    | 'backfilledCollections'
     | 'collectionsRequiringRediscovery'
     | 'discoveredCollections'
     | 'rediscoveryRequired'
@@ -163,6 +166,8 @@ const getInitialStateData = (): Pick<
     | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
 > => ({
+    backfillAllBindings: false,
+    backfilledCollections: [],
     collectionsRequiringRediscovery: [],
     discoveredCollections: [],
     rediscoveryRequired: false,
@@ -186,6 +191,19 @@ const getInitialState = (
 ): BindingState => ({
     ...getInitialStoreData(),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
+
+    addBackfilledCollections: (values) => {
+        set(
+            produce((state: BindingState) => {
+                state.backfilledCollections = union(
+                    state.backfilledCollections,
+                    values
+                );
+            }),
+            false,
+            'Backfilled Collections Added'
+        );
+    },
 
     addEmptyBindings: (data, rehydrating) => {
         set(
@@ -408,6 +426,19 @@ const getInitialState = (
         );
     },
 
+    removeBackfilledCollections: (values) => {
+        set(
+            produce((state: BindingState) => {
+                state.backfilledCollections =
+                    state.backfilledCollections.filter(
+                        (collection) => !values.includes(collection)
+                    );
+            }),
+            false,
+            'Backfilled Collections Removed'
+        );
+    },
+
     removeBinding: ({ uuid, collection }) => {
         set(
             produce((state: BindingState) => {
@@ -590,6 +621,32 @@ const getInitialState = (
         };
 
         set(newState, false, 'Binding State Reset');
+    },
+
+    setBackfilledCollections: (increment, targetCollection) => {
+        set(
+            produce((state: BindingState) => {
+                const existingCollections = state.getCollections();
+
+                const collections: string[] = targetCollection
+                    ? [targetCollection]
+                    : existingCollections;
+
+                state.backfilledCollections =
+                    increment === 'true'
+                        ? union(state.backfilledCollections, collections)
+                        : state.backfilledCollections.filter(
+                              (collection) => !collections.includes(collection)
+                          );
+
+                state.backfillAllBindings =
+                    hasLength(existingCollections) &&
+                    existingCollections.length ===
+                        state.backfilledCollections.length;
+            }),
+            false,
+            'Backfilled Collections Set'
+        );
     },
 
     setCurrentBinding: (bindingUUID) => {

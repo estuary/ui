@@ -186,6 +186,17 @@ export const useBinding_toggleDisable = () => {
     );
 };
 
+export const useBinding_allBindingsDisabled = () => {
+    return useZustandStore<BindingState, boolean>(
+        BindingStoreNames.GENERAL,
+        (state) =>
+            Object.values(state.resourceConfigs).every(
+                (config) => config.meta.disable
+            ),
+        shallow
+    );
+};
+
 export const useBinding_bindingErrorsExist = () => {
     return useZustandStore<BindingState, BindingState['bindingErrorsExist']>(
         BindingStoreNames.GENERAL,
@@ -257,4 +268,25 @@ export const useBinding_resetRediscoverySettings = () => {
         BindingState,
         BindingState['resetRediscoverySettings']
     >(BindingStoreNames.GENERAL, (state) => state.resetRediscoverySettings);
+};
+
+export const useBinding_backfilledCollections = () => {
+    return useZustandStore<BindingState, BindingState['backfilledCollections']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.backfilledCollections
+    );
+};
+
+export const useBinding_setBackfilledCollections = () => {
+    return useZustandStore<
+        BindingState,
+        BindingState['setBackfilledCollections']
+    >(BindingStoreNames.GENERAL, (state) => state.setBackfilledCollections);
+};
+
+export const useBinding_backfillAllBindings = () => {
+    return useZustandStore<BindingState, BindingState['backfillAllBindings']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.backfillAllBindings
+    );
 };

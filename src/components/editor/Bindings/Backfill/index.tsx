@@ -4,20 +4,18 @@ import { Check } from 'iconoir-react';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
+    useBinding_allBindingsDisabled,
+    useBinding_backfillAllBindings,
+    useBinding_backfilledCollections,
     useBinding_collections,
     useBinding_currentBinding,
+    useBinding_setBackfilledCollections,
 } from 'stores/Binding/hooks';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import {
-    useResourceConfig_allBindingsDisabled,
-    useResourceConfig_backfillAllBindings,
-    useResourceConfig_backfilledCollections,
-    useResourceConfig_setBackfilledCollections,
-} from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import useUpdateBackfillCounter, {
@@ -37,6 +35,11 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
     // Binding Store
     const currentBinding = useBinding_currentBinding();
     const collections = useBinding_collections();
+    const allBindingsDisabled = useBinding_allBindingsDisabled();
+
+    const backfillAllBindings = useBinding_backfillAllBindings();
+    const backfilledCollections = useBinding_backfilledCollections();
+    const setBackfilledCollections = useBinding_setBackfilledCollections();
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -45,26 +48,19 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
 
-    const backfilledCollections = useResourceConfig_backfilledCollections();
-    const setBackfilledCollections =
-        useResourceConfig_setBackfilledCollections();
-
-    const backfillAllBindings = useResourceConfig_backfillAllBindings();
-    const allBindingsDisabled = useResourceConfig_allBindingsDisabled();
-
     const selected = useMemo(() => {
         if (bindingIndex === -1) {
             return backfillAllBindings;
         }
 
-        return currentBinding?.uuid
-            ? backfilledCollections.includes(currentBinding.uuid)
+        return currentBinding?.collection
+            ? backfilledCollections.includes(currentBinding.collection)
             : false;
     }, [
         backfillAllBindings,
         backfilledCollections,
         bindingIndex,
-        currentBinding?.uuid,
+        currentBinding?.collection,
     ]);
 
     const value: BooleanString = useMemo(
@@ -87,10 +83,10 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                 );
             }
 
-            if (currentBinding?.uuid) {
+            if (currentBinding?.collection) {
                 return increment === 'true'
-                    ? !backfilledCollections.includes(currentBinding.uuid)
-                    : backfilledCollections.includes(currentBinding.uuid);
+                    ? !backfilledCollections.includes(currentBinding.collection)
+                    : backfilledCollections.includes(currentBinding.collection);
             }
 
             return false;
@@ -99,7 +95,7 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
             backfillAllBindings,
             backfilledCollections,
             bindingIndex,
-            currentBinding?.uuid,
+            currentBinding?.collection,
         ]
     );
 
@@ -123,7 +119,7 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                 ).then(
                     () => {
                         const targetCollection = singleBindingUpdate
-                            ? currentBinding.uuid
+                            ? currentBinding.collection
                             : undefined;
 
                         setBackfilledCollections(increment, targetCollection);
