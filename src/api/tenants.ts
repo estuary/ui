@@ -4,6 +4,7 @@ import {
     parsePagedFetchAllResponse,
     supabaseClient,
     TABLES,
+    updateSupabase,
 } from 'services/supabase';
 import { Tenants } from 'types';
 
@@ -29,4 +30,12 @@ const getTenantDetails = async (pageSize: number = DEFAULT_PAGING_SIZE) => {
     return parsePagedFetchAllResponse<Tenants>(responses);
 };
 
-export { getTenantDetails };
+const updateTenantForMarketplace = (accountId: string, tenant: string) => {
+    return updateSupabase(
+        TABLES.TENANTS,
+        { gcm_account_id: accountId },
+        { tenant }
+    );
+};
+
+export { getTenantDetails, updateTenantForMarketplace };

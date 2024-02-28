@@ -1115,6 +1115,11 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.grantDirective.error.message.help.docLink': `${CTAs['cta.support']}`,
     'tenant.grantDirective.error.message.help.docPath': `${CommonMessages['support.email']}`,
 
+    'tenant.marketplace.header': `Apply marketplace subscription`,
+    'tenant.marketplace.message': `Select the tenant that you want the marketplace subscription applied to.`,
+    'tenant.marketplace.error.header': `Unable to apply marketplace subscription`,
+    'tenant.marketplace.error.message': `A problem was encountered connecting the Google Marketplace subscription to the requested tenant.`,
+
     'tenant.error.failedToFetch.message': `There was an issue while checking if you have access to a tenant.`,
 };
 
