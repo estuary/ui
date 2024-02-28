@@ -456,6 +456,92 @@ const getInitialState = (
         );
     },
 
+    removeBindings: (targetUUIDs, workflow, taskName) => {
+        set(
+            produce((state: BindingState) => {
+                const collections = state.getCollections();
+
+                // Remove the selected bindings from the resource config dictionary.
+                const evaluatedResourceConfigs = omit(
+                    state.resourceConfigs,
+                    targetUUIDs
+                );
+
+                state.resourceConfigs = evaluatedResourceConfigs;
+                populateResourceConfigErrors(state, evaluatedResourceConfigs);
+
+                // Repopulate the bindings dictionary and update the value of the current binding.
+                const mappedUUIDsAndResourceConfigs = Object.entries(
+                    evaluatedResourceConfigs
+                );
+
+                if (hasLength(mappedUUIDsAndResourceConfigs)) {
+                    mappedUUIDsAndResourceConfigs.forEach(
+                        ([uuid, resourceConfig]) => {
+                            initializeBinding(
+                                state,
+                                resourceConfig.meta.collectionName,
+                                uuid
+                            );
+                        }
+                    );
+
+                    const [uuid, resourceConfig] =
+                        mappedUUIDsAndResourceConfigs[0];
+
+                    state.currentBinding = {
+                        uuid,
+                        collection: resourceConfig.meta.collectionName,
+                    };
+                } else {
+                    state.bindings = {};
+                    state.currentBinding = null;
+                }
+
+                // Update the set of restricted discovered collections.
+                let additionalRestrictedCollections: string[] = [];
+
+                if (hasLength(state.discoveredCollections)) {
+                    additionalRestrictedCollections =
+                        state.discoveredCollections.filter((collection) => {
+                            const bindingUUIDs = state.bindings[collection];
+
+                            return (
+                                bindingUUIDs.some((uuid) =>
+                                    Object.hasOwn(state.resourceConfigs, uuid)
+                                ) &&
+                                !state.restrictedDiscoveredCollections.includes(
+                                    collection
+                                )
+                            );
+                        });
+                } else if (
+                    workflow === 'capture_edit' &&
+                    hasLength(collections)
+                ) {
+                    const nativeCollections = collections.filter((collection) =>
+                        collection.includes(taskName)
+                    );
+
+                    additionalRestrictedCollections = nativeCollections.filter(
+                        (collection) =>
+                            Object.hasOwn(state.resourceConfigs, collection) &&
+                            !state.restrictedDiscoveredCollections.includes(
+                                collection
+                            )
+                    );
+                }
+
+                state.restrictedDiscoveredCollections = [
+                    ...state.restrictedDiscoveredCollections,
+                    ...additionalRestrictedCollections,
+                ];
+            }),
+            false,
+            'Multiple bindings removed'
+        );
+    },
+
     resetState: (keepCollections) => {
         const currentState = get();
 

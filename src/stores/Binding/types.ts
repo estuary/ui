@@ -1,7 +1,7 @@
 import { LiveSpecsExt_MaterializeCapture } from 'hooks/useLiveSpecsExt';
 import { CallSupabaseResponse } from 'services/supabase';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
-import { Entity, JsonFormsData, Schema } from 'types';
+import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
 
 export interface BindingMetadata {
     uuid: string;
@@ -38,6 +38,11 @@ export interface BindingState extends StoreWithHydration {
     ) => void;
 
     removeBinding: (binding: BindingMetadata) => void;
+    removeBindings: (
+        targetUUIDs: string[],
+        workflow: EntityWorkflow | null,
+        taskName: string
+    ) => void;
 
     currentBinding: BindingMetadata | null;
     setCurrentBinding: (bindingUUID: string | null) => void;

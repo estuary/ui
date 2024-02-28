@@ -13,14 +13,12 @@ import { ReactNode } from 'react';
 import {
     useBinding_collections,
     useBinding_discoveredCollections,
+    useBinding_removeBindings,
     useBinding_setCurrentBinding,
 } from 'stores/Binding/hooks';
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import {
-    useResourceConfig_removeCollections,
-    useResourceConfig_toggleDisable,
-} from 'stores/ResourceConfig/hooks';
+import { useResourceConfig_toggleDisable } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
 import BindingsSelectorName from './Row/Name';
 import BindingsSelectorRemove from './Row/Remove';
@@ -60,13 +58,13 @@ function BindingSelector({
     const setCurrentBinding = useBinding_setCurrentBinding();
     const collections = useBinding_collections();
     const discoveredCollections = useBinding_discoveredCollections();
+    const removeBindings = useBinding_removeBindings();
 
-    const removeCollections = useResourceConfig_removeCollections();
     const toggleCollections = useResourceConfig_toggleDisable();
 
     const handlers = {
-        removeCollections: (rows: any[]) => {
-            removeCollections(rows, workflow, task);
+        removeBindings: (rows: any[]) => {
+            removeBindings(rows, workflow, task);
 
             const publishedCollections =
                 hasLength(discoveredCollections) && hasLength(collections)
@@ -155,7 +153,7 @@ function BindingSelector({
                     cell: cellRenderers,
                 }}
                 removeCollections={
-                    !isCapture ? handlers.removeCollections : undefined
+                    !isCapture ? handlers.removeBindings : undefined
                 }
                 toggleCollections={
                     !isCollection ? handlers.toggleCollections : undefined

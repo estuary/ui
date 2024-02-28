@@ -150,6 +150,13 @@ export const useBinding_removeBinding = () => {
     );
 };
 
+export const useBinding_removeBindings = () => {
+    return useZustandStore<BindingState, BindingState['removeBindings']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.removeBindings
+    );
+};
+
 export const useBinding_collections = () => {
     return useZustandStore<BindingState, string[]>(
         BindingStoreNames.GENERAL,
