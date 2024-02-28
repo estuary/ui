@@ -8,13 +8,13 @@ function GoogleMarketplaceCallback() {
 
     return (
         <Navigate
-            to={getPathWithParams(unauthenticatedRoutes.login.path, {
+            to={getPathWithParams(unauthenticatedRoutes.logout.path, {
                 [GlobalSearchParams.PROVIDER]: 'google',
             })}
             state={{
                 from: {
                     ...location,
-                    pathname: authenticatedRoutes.marketplace.verify.fullPath,
+                    pathname: authenticatedRoutes.home.path,
                 },
             }}
             replace
