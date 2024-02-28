@@ -7,8 +7,8 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { Navigate } from 'react-router';
 import { updateTenantForMarketplace } from 'api/tenants';
 import { LoadingButton } from '@mui/lab';
-import AlertBox from 'components/shared/AlertBox';
 import PrefixedName from 'components/inputs/PrefixedName';
+import Error from 'components/shared/Error';
 
 interface Props {
     accountId: string;
@@ -28,31 +28,31 @@ function MarketplaceVerificationProcessor({ accountId }: Props) {
         setPrefixHasErrors(Boolean(errors));
     };
 
-    const updateTenantRow = useCallback((id: string, tenant: string) => {
-        return updateTenantForMarketplace(id, tenant).then(
-            (response) => {
-                console.log('success', response);
-            },
-            (error) => {
-                console.log('failure', error);
-                setLoading(false);
-                setServerError(error);
-            }
-        );
+    const handleFailure = useCallback((error: PostgrestError) => {
+        console.log('failure', error);
+        setLoading(false);
+        setServerError(error);
     }, []);
+
+    const updateTenantRow = useCallback(
+        (id: string, tenant: string) => {
+            setLoading(true);
+            setServerError(null);
+            updateTenantForMarketplace(id, tenant).then((response) => {
+                if (response.data) {
+                    console.log('yay!', response);
+                } else if (response.error) {
+                    handleFailure(response.error);
+                }
+            }, handleFailure);
+        },
+        [handleFailure]
+    );
 
     if (accountId) {
         return (
             <Stack spacing={2}>
-                {serverError ? (
-                    <AlertBox
-                        severity="error"
-                        short
-                        title={<FormattedMessage id="common.fail" />}
-                    >
-                        {serverError}
-                    </AlertBox>
-                ) : null}
+                {serverError ? <Error error={serverError} condensed /> : null}
 
                 <Typography variant="h5" align="center">
                     <FormattedMessage id="tenant.marketplace.header" />
