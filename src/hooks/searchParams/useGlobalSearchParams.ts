@@ -13,9 +13,8 @@ export enum GlobalSearchParams {
     PREFIX = 'prefix',
     PROVIDER = 'provider', // Login Provider but having a url like login/?loginProvider looked weird
     HOME_PAGE_ERROR = 'homePageError',
-    // Google Marketplace
-    GCP_LOGIN_HINT = 'gcp_login_hint',
-    GCM_ACCOUNT_ID = 'gcm_account_id',
+    MARKETPLACE_GCP_LOGIN_HINT = 'gcp_login_hint',
+    MARKETPLACE_GCM_ACCOUNT_ID = 'gcm_account_id',
 }
 
 function useGlobalSearchParams<T = string>(key: GlobalSearchParams): T;

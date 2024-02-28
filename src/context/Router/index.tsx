@@ -26,6 +26,8 @@ import AdminBilling from 'components/admin/Billing';
 import AdminSettings from 'components/admin/Settings';
 import HomePage from 'pages/Home';
 import { handledLazy } from 'services/react';
+import MarketplaceCallback from 'pages/marketplace/Callback';
+import MarketplaceVerify from 'pages/marketplace/Verify';
 import MaterializationsTable from './MaterializationsTable';
 import CapturesTable from './CapturesTable';
 import RequireAuth from './RequireAuth';
@@ -99,6 +101,11 @@ const router = createBrowserRouter(
                 }
             />
 
+            <Route
+                path={unauthenticatedRoutes.marketplace.callback.fullPath}
+                element={<MarketplaceCallback />}
+            />
+
             {/*Logout goes directly to login to make sure it isn't wrapped in RequireAuth and won't try to log the user back in*/}
             <Route
                 path={unauthenticatedRoutes.logout.path}
@@ -140,6 +147,11 @@ const router = createBrowserRouter(
                     <Route
                         path={authenticatedRoutes.dataPlaneAuth.path}
                         element={<DataPlaneAuthReq />}
+                    />
+
+                    <Route
+                        path={authenticatedRoutes.marketplace.verify.fullPath}
+                        element={<MarketplaceVerify />}
                     />
 
                     <Route path={authenticatedRoutes.beta.path}>
