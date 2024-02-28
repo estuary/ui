@@ -1,9 +1,16 @@
-import GoogleMarketplaceCallback from 'components/marketplace/google/Callback';
 import { useClient } from 'hooks/supabase-swr';
 import { useIntl } from 'react-intl';
-import { useMount } from 'react-use';
 import { useSnackbar } from 'notistack';
 import { logRocketConsole } from 'services/shared';
+import { getPathWithParams } from 'utils/misc-utils';
+import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
+import { useNavigate } from 'react-router-dom';
+import { SupportedProvider } from 'types/authProviders';
+import FullPageSpinner from 'components/fullPage/Spinner';
+import { useEffect } from 'react';
 
 // Expanding Marketplace Providers
 // Once we add more providers the idea is to do something like this
@@ -16,10 +23,15 @@ import { logRocketConsole } from 'services/shared';
 
 function MarketplaceCallback() {
     const supabaseClient = useClient();
+    const navigate = useNavigate();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
-    useMount(() => {
+    const provider = useGlobalSearchParams<SupportedProvider>(
+        GlobalSearchParams.PROVIDER
+    );
+
+    useEffect(() => {
         supabaseClient.auth
             .signOut()
             .then(() => {
@@ -33,6 +45,7 @@ function MarketplaceCallback() {
                             horizontal: 'center',
                         },
                         autoHideDuration: 10000,
+                        preventDuplicate: true,
                         variant: 'info',
                     }
                 );
@@ -41,10 +54,26 @@ function MarketplaceCallback() {
                 logRocketConsole('Marketplace:onError:failed to sign out', {
                     signOutError,
                 });
+            })
+            .finally(() => {
+                navigate(
+                    getPathWithParams(unauthenticatedRoutes.logout.path, {
+                        [GlobalSearchParams.PROVIDER]: provider,
+                    }),
+                    {
+                        replace: true,
+                        state: {
+                            from: {
+                                pathname: authenticatedRoutes.home.path,
+                                search: location.search,
+                            },
+                        },
+                    }
+                );
             });
-    });
+    }, [enqueueSnackbar, intl, navigate, provider, supabaseClient.auth]);
 
-    return <GoogleMarketplaceCallback />;
+    return <FullPageSpinner />;
 }
 
 export default MarketplaceCallback;
