@@ -5,10 +5,10 @@ import { authenticatedRoutes } from 'app/routes';
 import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Navigate } from 'react-router';
-import { updateTenantForMarketplace } from 'api/tenants';
 import { LoadingButton } from '@mui/lab';
 import PrefixedName from 'components/inputs/PrefixedName';
 import Error from 'components/shared/Error';
+import { verifyMarketplaceSubscription } from 'services/marketplace';
 
 interface Props {
     accountId: string;
@@ -38,7 +38,9 @@ function MarketplaceVerificationProcessor({ accountId }: Props) {
         (id: string, tenant: string) => {
             setLoading(true);
             setServerError(null);
-            updateTenantForMarketplace(id, tenant).then((response) => {
+            verifyMarketplaceSubscription(id, tenant).then((response: any) => {
+                console.log('verifyMarketplaceSubscription', response);
+
                 if (response.data) {
                     console.log('yay!', response);
                 } else if (response.error) {
