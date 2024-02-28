@@ -3,6 +3,7 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import 'react-reflex/styles.css';
 import { BaseComponentProps } from 'types';
 import LegalGuard from './LegalGuard';
+import MarketplaceGuard from './MarketplaceGuard';
 import TenantGuard from './TenantGuard';
 import UserGuard from './User';
 
@@ -13,7 +14,9 @@ function AppGuards({ children }: BaseComponentProps) {
         <UserGuard>
             <LegalGuard>
                 <GrantGuard>
-                    <TenantGuard>{children}</TenantGuard>
+                    <TenantGuard>
+                        <MarketplaceGuard>{children}</MarketplaceGuard>
+                    </TenantGuard>
                 </GrantGuard>
             </LegalGuard>
         </UserGuard>
