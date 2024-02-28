@@ -26,7 +26,11 @@ function LoginProviders({
             {providers.map((provider) => {
                 return (
                     <Box key={`oidc-login-button__${provider}`}>
-                        <LoginButton login={login} provider={provider} />
+                        <LoginButton
+                            login={login}
+                            provider={provider}
+                            isRegister={isRegister}
+                        />
                     </Box>
                 );
             })}
