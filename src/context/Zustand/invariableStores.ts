@@ -25,13 +25,11 @@ import {
     GlobalStoreNames,
     JournalDataStoreNames,
     MiscStoreNames,
-    ResourceConfigStoreNames,
     SchemaEvolutionStoreNames,
     SelectTableStoreNames,
     ShardDetailStoreNames,
     TransformCreateStoreNames,
 } from 'stores/names';
-import { createResourceConfigStore } from 'stores/ResourceConfig/Store';
 import { createSchemaEvolutionStore } from 'stores/SchemaEvolution/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
 import { createSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
@@ -98,11 +96,6 @@ const invariableStores = {
     [FormStateStoreNames.MATERIALIZATION_EDIT]: createFormStateStore(
         FormStateStoreNames.MATERIALIZATION_EDIT,
         MessagePrefixes.MATERIALIZATION_EDIT
-    ),
-
-    // Resource Config Store
-    [ResourceConfigStoreNames.GENERAL]: createResourceConfigStore(
-        ResourceConfigStoreNames.GENERAL
     ),
 
     // Schema Evolution Store

@@ -44,10 +44,6 @@ export enum OnboardingStoreNames {
     GENERAL = 'Onboarding',
 }
 
-export enum ResourceConfigStoreNames {
-    GENERAL = 'general-resource-config',
-}
-
 export enum SchemaEvolutionStoreNames {
     GENERAL = 'general-schema-evolution',
 }
@@ -109,7 +105,6 @@ export type StoreName =
     | JournalDataStoreNames
     | MiscStoreNames
     | OnboardingStoreNames
-    | ResourceConfigStoreNames
     | SchemaEvolutionStoreNames
     | SelectTableStoreNames
     | ShardDetailStoreNames

@@ -27,7 +27,6 @@ import {
     useFormStateStore_setFormState,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
 import { useSchemaEvolution_resetState } from 'stores/SchemaEvolution/hooks';
 import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
@@ -63,9 +62,6 @@ function useEntityWorkflowHelpers() {
     const resetFormState = useFormStateStore_resetState();
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
-    // Resource Config Store
-    const resetResourceConfigState = useResourceConfig_resetState();
-
     // Schema Evolution Store
     const resetSchemaEvolutionState = useSchemaEvolution_resetState();
 
@@ -82,7 +78,6 @@ function useEntityWorkflowHelpers() {
         resetFormState();
         resetEndpointConfigState();
         resetDetailsFormState();
-        resetResourceConfigState();
         resetBindingState();
         resetEditorStore();
         resetBindingsEditorStore();
@@ -96,7 +91,6 @@ function useEntityWorkflowHelpers() {
         resetEditorStore,
         resetEndpointConfigState,
         resetFormState,
-        resetResourceConfigState,
         resetSchemaEvolutionState,
         resetSourceCapture,
         resetTransformationCreateState,

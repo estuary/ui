@@ -15,8 +15,8 @@ import {
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
+import { REMOVE_DURING_GENERATION } from 'stores/Binding/shared';
 import { ResourceConfigDictionary } from 'stores/Binding/types';
-import { REMOVE_DURING_GENERATION } from 'stores/ResourceConfig/shared';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
