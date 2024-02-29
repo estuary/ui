@@ -27,7 +27,12 @@ import { populateErrors } from 'stores/utils';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
+import {
+    getBackfillCounter,
+    getBindingIndex,
+    getCollectionName,
+    getDisableProps,
+} from 'utils/workflow-utils';
 import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 import {
@@ -405,10 +410,39 @@ const getInitialState = (
         return Promise.resolve(null);
     },
 
-    prefillBindingDependentState: (bindings, _referenceBindings) => {
+    prefillBindingDependentState: (liveBindings, draftedBindings) => {
         set(
             produce((state: BindingState) => {
+                const bindings = draftedBindings ?? liveBindings;
+
                 bindings.forEach((binding) => {
+                    if (draftedBindings) {
+                        // Prefill backfilled collections
+                        const collection = getCollectionName(binding);
+
+                        const draftedBackfillCounter =
+                            getBackfillCounter(binding);
+
+                        const liveBindingIndex = getBindingIndex(
+                            liveBindings,
+                            collection
+                        );
+                        const liveBackfillCounter =
+                            liveBindingIndex > -1
+                                ? getBackfillCounter(
+                                      liveBindings[liveBindingIndex]
+                                  )
+                                : 0;
+
+                        if (
+                            liveBackfillCounter !== draftedBackfillCounter ||
+                            (liveBindingIndex === -1 &&
+                                draftedBackfillCounter > 0)
+                        ) {
+                            state.backfilledCollections.push(collection);
+                        }
+                    }
+
                     const collection = getCollectionName(binding);
                     const UUID = crypto.randomUUID();
 

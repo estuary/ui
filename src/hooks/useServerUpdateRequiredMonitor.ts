@@ -42,7 +42,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                         binding[collectionNameProp]
                     );
 
-                    return bindings[collectionName].some((bindingUUID) => {
+                    return bindings[collectionName].every((bindingUUID) => {
                         // Do a quick simple disabled check before comparing the entire object
                         if (
                             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
