@@ -689,6 +689,8 @@ const Ops: ResolvedIntlConfig['messages'] = {
     'ops.logsTable.waitingForLogs.old.complete': `All older logs read`,
     'ops.logsTable.waitingForLogs.old': `Fetching older logs`,
     'ops.logsTable.waitingForLogs.new': `Waiting for new logs`,
+
+    'ops.shouldNotShowLogs': `This kind of entity does not support logs`,
 };
 
 const endpointConfigHeader = `Endpoint Config`;

@@ -2,17 +2,18 @@ import { Box, Tab, Tabs } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
-import useConstant from 'use-constant';
+import useEntityShouldShowLogs from './useEntityShouldShowLogs';
 
 function DetailTabs() {
     const intl = useIntl();
 
+    const shouldShowLogs = useEntityShouldShowLogs();
     const [searchParams] = useSearchParams();
     const { pathname } = useLocation();
 
     const [selectedTab, setSelectedTab] = useState(0);
 
-    const tabProps = useConstant(() => {
+    const tabProps = useMemo(() => {
         const response = [
             {
                 label: 'details.tabs.overview',
@@ -22,10 +23,6 @@ function DetailTabs() {
                 label: 'details.tabs.spec',
                 path: 'spec',
             },
-            {
-                label: 'details.tabs.ops',
-                path: 'ops',
-            },
             // TODO (details:history) not currently live but is here to make sure it can render
             // {
             //     label: 'details.tabs.history',
@@ -33,8 +30,15 @@ function DetailTabs() {
             // },
         ];
 
+        if (shouldShowLogs) {
+            response.push({
+                label: 'details.tabs.ops',
+                path: 'ops',
+            });
+        }
+
         return response;
-    });
+    }, [shouldShowLogs]);
 
     const tabs = useMemo(
         () =>

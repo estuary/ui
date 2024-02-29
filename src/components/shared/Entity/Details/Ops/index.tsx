@@ -10,6 +10,7 @@ import AlertBox from 'components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
 import Message from 'components/shared/Error/Message';
 import { BASE_ERROR } from 'services/supabase';
+import useEntityShouldShowLogs from '../useEntityShouldShowLogs';
 
 function Ops() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
@@ -17,7 +18,15 @@ function Ops() {
 
     const hydrationError = useJournalDataLogsStore_hydrationError();
 
-    console.log('hydrationError', hydrationError);
+    const shouldShowLogs = useEntityShouldShowLogs();
+
+    if (!shouldShowLogs) {
+        return (
+            <AlertBox short severity="warning">
+                <FormattedMessage id="ops.shouldNotShowLogs" />
+            </AlertBox>
+        );
+    }
 
     return (
         <JournalDataLogsHydrator name={name} collectionName={collectionName}>
