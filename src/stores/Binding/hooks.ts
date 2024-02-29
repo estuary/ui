@@ -239,6 +239,13 @@ export const useBinding_evaluateDiscoveredBindings = () => {
     >(BindingStoreNames.GENERAL, (state) => state.evaluateDiscoveredBindings);
 };
 
+export const useBinding_removeDiscoveredBindings = () => {
+    return useZustandStore<
+        BindingState,
+        BindingState['removeDiscoveredBindings']
+    >(BindingStoreNames.GENERAL, (state) => state.removeDiscoveredBindings);
+};
+
 export const useBinding_discoveredCollections = () => {
     return useZustandStore<BindingState, BindingState['discoveredCollections']>(
         BindingStoreNames.GENERAL,

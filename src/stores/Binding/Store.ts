@@ -15,6 +15,7 @@ import {
     isEqual,
     omit,
     orderBy,
+    pick,
     union,
 } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
@@ -628,6 +629,51 @@ const getInitialState = (
             }),
             false,
             'Multiple bindings removed'
+        );
+    },
+
+    removeDiscoveredBindings: () => {
+        set(
+            produce((state: BindingState) => {
+                if (
+                    !isEmpty(state.bindings) &&
+                    hasLength(state.discoveredCollections)
+                ) {
+                    // Remove discovered bindings from the bindings dictionary.
+                    const reducedBindings = omit(
+                        state.bindings,
+                        state.discoveredCollections
+                    );
+
+                    state.bindings = reducedBindings;
+                    state.bindingErrorsExist = isEmpty(reducedBindings);
+
+                    // Remove the resource configs of discovered bindings from the resource config dictionary.
+                    const mappedBindingUUIDs =
+                        Object.values(reducedBindings).flat();
+
+                    const reducedResourceConfigs = hasLength(mappedBindingUUIDs)
+                        ? pick(state.resourceConfigs, mappedBindingUUIDs)
+                        : {};
+
+                    state.resourceConfigs = reducedResourceConfigs;
+                    populateResourceConfigErrors(state, reducedResourceConfigs);
+
+                    // Update the value of the current binding.
+                    const evaluatedBindingUUID = mappedBindingUUIDs.at(0);
+
+                    state.currentBinding = evaluatedBindingUUID
+                        ? {
+                              uuid: evaluatedBindingUUID,
+                              collection:
+                                  reducedResourceConfigs[evaluatedBindingUUID]
+                                      .meta.collectionName,
+                          }
+                        : null;
+                }
+            }),
+            false,
+            'Discovered bindings removed'
         );
     },
 

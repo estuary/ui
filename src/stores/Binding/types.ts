@@ -30,8 +30,8 @@ export interface ResourceConfigDictionary {
 export interface BindingState extends StoreWithHydration {
     bindings: Bindings;
     prefillBindingDependentState: (
-        bindings: Schema[],
-        referenceBindings?: Schema[]
+        liveBindings: Schema[],
+        draftedBindings?: Schema[]
     ) => void;
     addEmptyBindings: (
         data: LiveSpecsExt_MaterializeCapture[] | null,
@@ -103,6 +103,7 @@ export interface BindingState extends StoreWithHydration {
     setServerUpdateRequired: (value: boolean) => void;
 
     evaluateDiscoveredBindings: (response: CallSupabaseResponse<any>) => void;
+    removeDiscoveredBindings: () => void;
 
     // Computed Values
     getCollections: () => string[];

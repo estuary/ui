@@ -19,6 +19,7 @@ import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useBinding_discoveredCollections,
+    useBinding_removeDiscoveredBindings,
     useBinding_setResourceSchema,
 } from 'stores/Binding/hooks';
 import {
@@ -26,7 +27,6 @@ import {
     useDetailsForm_details_entityName,
 } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
-import { useResourceConfig_resetResourceConfigAndCollections } from 'stores/ResourceConfig/hooks';
 import { EditorStoreNames } from 'stores/names';
 import { Schema } from 'types';
 import Backfill from './Backfill';
@@ -62,6 +62,7 @@ function BindingsMultiEditor({
 
     // Binding Store
     const discoveredCollections = useBinding_discoveredCollections();
+    const removeDiscoveredBindings = useBinding_removeDiscoveredBindings();
     const setResourceSchema = useBinding_setResourceSchema();
 
     // Details Form Store
@@ -70,10 +71,6 @@ function BindingsMultiEditor({
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
-
-    // Resource Config Store
-    const resetResourceConfigAndCollections =
-        useResourceConfig_resetResourceConfigAndCollections();
 
     const { connectorTag } = useConnectorTag(imageTag.id);
 
@@ -111,9 +108,9 @@ function BindingsMultiEditor({
 
     useEffect(() => {
         if (removeDiscoveredCollectionOptions) {
-            resetResourceConfigAndCollections();
+            removeDiscoveredBindings();
         }
-    }, [resetResourceConfigAndCollections, removeDiscoveredCollectionOptions]);
+    }, [removeDiscoveredBindings, removeDiscoveredCollectionOptions]);
 
     // For captures we want to show the bindings config as "Bindings"
     //  Other entities we still call them "collections" so we set to undefined
