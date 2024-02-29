@@ -24,7 +24,7 @@ function CollectionSelectorRow({
         <>
             <ListItemText
                 primary={collection}
-                primaryTypographyProps={typographyTruncation}
+                primaryTypographyProps={{ ...typographyTruncation }}
             />
 
             <IconButton

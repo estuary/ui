@@ -14,15 +14,11 @@ import {
 } from 'components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import useClient from 'hooks/supabase-swr/hooks/useClient';
+import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
-import {
-    DEFAULT_FILTER,
-    JOB_STATUS_COLUMNS,
-    TABLES,
-    jobStatusPoller,
-} from 'services/supabase';
+import { DEFAULT_FILTER, JOB_STATUS_COLUMNS, TABLES } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import { useDetailsForm_details_description } from 'stores/DetailsForm/hooks';
 import {
@@ -56,6 +52,8 @@ function useSave(
     const intl = useIntl();
     const supabaseClient = useClient();
     const { closeLogs } = useEntityWorkflowHelpers();
+
+    const { jobStatusPoller } = useJobStatusPoller();
 
     const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
 
@@ -163,6 +161,7 @@ function useSave(
             dryRun,
             forceLogsClosed,
             intl,
+            jobStatusPoller,
             logEvent,
             messagePrefix,
             mutateDraftSpecs,

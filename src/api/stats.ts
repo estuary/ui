@@ -1,5 +1,6 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import {
+    Duration,
     isSaturday,
     isSunday,
     nextSaturday,

@@ -6,9 +6,9 @@ import AlertBox from 'components/shared/AlertBox';
 import { defaultOutline } from 'context/Theme';
 import { jobStatusQuery, trackEvent } from 'directives/shared';
 import { SuccessResponse } from 'hooks/supabase-swr';
+import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { jobStatusPoller } from 'services/supabase';
 import { KeyedMutator } from 'swr';
 import { AppliedDirective, JoinedAppliedDirective } from 'types';
 
@@ -27,6 +27,8 @@ function AcceptGrant({
     grantedPrefix,
     grantedCapability,
 }: Props) {
+    const { jobStatusPoller } = useJobStatusPoller();
+
     const [saving, setSaving] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 

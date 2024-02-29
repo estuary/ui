@@ -13,6 +13,7 @@ import { buttonSx } from 'components/shared/Entity/Header';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useClient from 'hooks/supabase-swr/hooks/useClient';
+import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -22,7 +23,6 @@ import {
     JOB_STATUS_COLUMNS,
     JOB_STATUS_POLLER_ERROR,
     TABLES,
-    jobStatusPoller,
 } from 'services/supabase';
 import {
     useFormStateStore_isActive,
@@ -38,6 +38,8 @@ interface Props {
 function SchemaEvolution({ onFailure }: Props) {
     const supabaseClient = useClient();
     const storeDiscoveredCollections = useStoreDiscoveredCaptures();
+
+    const { jobStatusPoller } = useJobStatusPoller();
 
     const entityType = useEntityType();
     const editingEntity = useEntityWorkflow_Editing();

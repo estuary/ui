@@ -266,7 +266,13 @@ function PrefixedName({
                     handlers.setName(event.target.value);
                 }}
                 startAdornment={
-                    <InputAdornment position="start">
+                    <InputAdornment
+                        //  This makes it so if a user clicks on the tenant name the input gets focus
+                        style={
+                            singleOption ? { pointerEvents: 'none' } : undefined
+                        }
+                        position="start"
+                    >
                         {singleOption ? (
                             prefix
                         ) : (

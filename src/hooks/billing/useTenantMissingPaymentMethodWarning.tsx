@@ -16,6 +16,7 @@ import { Schema } from 'types';
 import { NavLink, useLocation } from 'react-router-dom';
 import { authenticatedRoutes } from 'app/routes';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { useEntitiesStore_hasSupportRole } from 'stores/Entities/hooks';
 
 const TRIAL_LENGTH = 30;
 
@@ -37,6 +38,7 @@ function useTenantMissingPaymentMethodWarning() {
     );
 
     const tenantDetails = useTenantDetails();
+    const hasSupportRole = useEntitiesStore_hasSupportRole();
 
     const [paymentMethods, setPaymentMethods] =
         useState<MultiplePaymentMethods | null>(null);
@@ -48,7 +50,7 @@ function useTenantMissingPaymentMethodWarning() {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (tenantDetails) {
+            if (!hasSupportRole && tenantDetails) {
                 setPaymentMethods(
                     await getPaymentMethodsForTenants(tenantDetails)
                 );
@@ -56,7 +58,7 @@ function useTenantMissingPaymentMethodWarning() {
         };
 
         void fetchData();
-    }, [tenantDetails]);
+    }, [hasSupportRole, tenantDetails]);
 
     useEffect(() => {
         if (
