@@ -22,6 +22,10 @@ function DetailTabs() {
                 label: 'details.tabs.spec',
                 path: 'spec',
             },
+            {
+                label: 'details.tabs.ops',
+                path: 'ops',
+            },
             // TODO (details:history) not currently live but is here to make sure it can render
             // {
             //     label: 'details.tabs.history',

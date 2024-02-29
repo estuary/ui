@@ -664,7 +664,7 @@ const Journals: ResolvedIntlConfig['messages'] = {
     'journals.tooManyBytes.title': `Large documents`,
     'journals.tooManyBytes.message': `Exceeded the maximum bytes before reaching the desired number of documents. This probably means that your documents are large.`,
     'journals.tooManyBytesAndNoDocuments.title': `Read limit reached`,
-    'journals.tooManyBytesAndNoDocuments.message': `We reached the limit of how much data a web browser can comfortably read, and didn't find even reach the end of one document! This probably means that your documents are huge.`,
+    'journals.tooManyBytesAndNoDocuments.message': `We reached the limit of how much data a web browser can comfortably read, and didn't find even reach the end of one document. This probably means that your documents are huge.`,
 };
 
 const Ops: ResolvedIntlConfig['messages'] = {
@@ -681,7 +681,6 @@ const Ops: ResolvedIntlConfig['messages'] = {
         other {logs}
     }`,
     'ops.logsTable.hydrationError': `We encountered a problem retrieving logs.`,
-    'ops.logsTable.hydrationError.message': `Please check your network connection and try again.`,
     'ops.logsTable.tailNewLogs': `stay at bottom as new logs load`,
 
     // These keys get generated inside the WaitingForRowBase
@@ -1135,6 +1134,7 @@ const Details: ResolvedIntlConfig['messages'] = {
     'details.tabs.spec': `Spec`,
     'details.tabs.shardStatus': `Status`,
     'details.tabs.history': `History`,
+    'details.tabs.ops': `Logs`,
 
     'details.settings.notifications.header': `Notification Settings`,
     'details.settings.notifications.alert.userNotSubscribed.message': `You are not subscribed to notifications for this tenant. If you would like to receive notifications for this task, {button} to subscribe.`,

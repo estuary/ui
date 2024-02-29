@@ -12,6 +12,9 @@ export interface StoreWithHydration {
     hydrationErrorsExist: boolean;
     setHydrationErrorsExist: (value: boolean) => void;
 
+    hydrationError: string | null;
+    setHydrationError: (value: string | null) => void;
+
     // TODO (store hydration) we need to make store hydration better
     // Used to keep track if the store should be getting hydrated
     active: boolean;
@@ -23,10 +26,15 @@ export interface StoreWithHydration {
 
 export const getInitialHydrationData = (): Pick<
     StoreWithHydration,
-    'hydrated' | 'hydrationErrorsExist' | 'active' | 'networkFailed'
+    | 'hydrated'
+    | 'hydrationError'
+    | 'hydrationErrorsExist'
+    | 'active'
+    | 'networkFailed'
 > => ({
     active: false,
     hydrated: false,
+    hydrationError: null,
     hydrationErrorsExist: false,
     networkFailed: false,
 });
@@ -60,6 +68,16 @@ export const getStoreWithHydrationSettings = (
                 }),
                 false,
                 `${key} Hydration Errors Detected`
+            );
+        },
+
+        setHydrationError: (value) => {
+            set(
+                produce((state: StoreWithHydration) => {
+                    state.hydrationError = value && state.active ? value : null;
+                }),
+                false,
+                `${key} Hydration Error Set`
             );
         },
 

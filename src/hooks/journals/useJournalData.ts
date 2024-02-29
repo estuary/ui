@@ -154,6 +154,7 @@ const useJournalData = (
                     });
                     setData(docs);
                 } catch (e: unknown) {
+                    console.log('useJournalData', e);
                     failures.current += 1;
                     setError(e);
                 } finally {

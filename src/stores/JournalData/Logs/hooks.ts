@@ -23,6 +23,13 @@ export const useJournalDataLogsStore_hydrationErrorsExist = () => {
     >(JournalDataStoreNames.LOGS, (state) => state.hydrationErrorsExist);
 };
 
+export const useJournalDataLogsStore_hydrationError = () => {
+    return useZustandStore<
+        JournalDataLogsState,
+        JournalDataLogsState['hydrationError']
+    >(JournalDataStoreNames.LOGS, (state) => state.hydrationError);
+};
+
 export const useJournalDataLogsStore_documents = () => {
     return useZustandStore<
         JournalDataLogsState,
