@@ -84,6 +84,11 @@ export async function loadDocuments({
         throw new Error('Unable to load metadata');
     }
 
+    // Log so we can keep track of statuses we should add custom messages for
+    logRocketConsole(CustomEvents.JOURNAL_DATA_STATUS, {
+        val: metadataResponse.status,
+    });
+
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (journalStatusIsError(metadataResponse?.status)) {
         throw new Error(metadataResponse.status);
