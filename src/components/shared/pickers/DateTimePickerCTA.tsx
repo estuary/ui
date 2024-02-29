@@ -1,8 +1,13 @@
-import { StaticDateTimePicker } from '@mui/x-date-pickers';
-import { formatRFC3339 } from 'date-fns';
+import {
+    PickersLayoutContentWrapper,
+    PickersLayoutProps,
+    PickersLayoutRoot,
+    StaticDateTimePicker,
+    usePickerLayout,
+} from '@mui/x-date-pickers';
+import { formatRFC3339, parseISO } from 'date-fns';
 import { Calendar } from 'iconoir-react';
 import { useMemo } from 'react';
-import { BaseComponentProps } from 'types';
 import { Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import { INVALID_DATE, TIMEZONE_OFFSET_REPLACEMENT } from './shared';
@@ -26,21 +31,31 @@ const formatDate = (formatValue: Date) => {
     }
 };
 
-function PaperContent({ children }: BaseComponentProps) {
+export function CustomLayout(props: PickersLayoutProps<any, any, any>) {
+    const { shortcuts, toolbar, tabs, content } = usePickerLayout(props);
     return (
-        <>
-            {children}
-            <Typography
-                sx={{
-                    textAlign: 'right',
-                    marginRight: 2,
-                    marginBottom: 1,
-                }}
-                variant="caption"
-            >
-                <FormattedMessage id="dateTimePicker.picker.footer" />
-            </Typography>
-        </>
+        <PickersLayoutRoot
+            ownerState={{
+                isLandscape: false,
+            }}
+        >
+            {toolbar}
+            {shortcuts}
+            <PickersLayoutContentWrapper>
+                {tabs}
+                {content}
+                <Typography
+                    sx={{
+                        textAlign: 'right',
+                        marginRight: 2,
+                        marginBottom: 1,
+                    }}
+                    variant="caption"
+                >
+                    <FormattedMessage id="dateTimePicker.picker.footer" />
+                </Typography>
+            </PickersLayoutContentWrapper>
+        </PickersLayoutRoot>
     );
 }
 
@@ -71,37 +86,22 @@ function DateTimePickerCTA(props: PickerProps) {
             {...props}
         >
             <StaticDateTimePicker
-                // We don't need an input
-                // eslint-disable-next-line react/jsx-no-useless-fragment
-                renderInput={() => <></>}
                 ampm={false}
-                closeOnSelect={true}
                 disabled={!enabled}
-                disableMaskedInput
                 displayStaticWrapperAs="desktop"
-                ignoreInvalidInputs
-                inputFormat="YYYY-mm-ddTHH:mm:ssZ"
                 openTo="day"
-                value={cleanedValue}
-                components={{
-                    PaperContent,
+                defaultValue={parseISO(cleanedValue)}
+                slots={{
+                    layout: CustomLayout,
                 }}
                 onAccept={state.close}
-                onChange={(
-                    onChangeValue: any,
-                    keyboardInput?: string | undefined
-                ) => {
+                onChange={(onChangeValue: any) => {
                     if (onChangeValue) {
                         const formattedValue = formatDate(onChangeValue);
                         if (formattedValue && formattedValue !== INVALID_DATE) {
                             return onChange(formattedValue, onChangeValue);
                         }
                     }
-
-                    // Default to setting to what user typed
-                    //  This is a super backup as with the Date Fn adapter
-                    //  it never fell through to this... but wanted to be safe
-                    return onChange(keyboardInput, keyboardInput);
                 }}
             />
         </DateOrTimePickerWrapper>

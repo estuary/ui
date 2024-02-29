@@ -12,7 +12,6 @@ import { CustomEvents } from 'services/types';
 import {
     DEFAULT_POLLER_ERROR,
     JOB_STATUS_POLLER_ERROR,
-    jobStatusPoller,
     TABLES,
     DEFAULT_FILTER,
 } from 'services/supabase';
@@ -24,6 +23,7 @@ import {
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { Entity } from 'types';
+import useJobStatusPoller from 'hooks/useJobStatusPoller';
 
 const trackEvent = (payload: any) => {
     logRocketEvent(CustomEvents.CAPTURE_DISCOVER, {
@@ -39,6 +39,8 @@ function useDiscoverStartSubscription(entityType: Entity) {
     const postGenerateMutate = useMutateDraftSpec();
 
     const supabaseClient = useClient();
+
+    const { jobStatusPoller } = useJobStatusPoller();
 
     const { callFailed } = useEntityWorkflowHelpers();
 
@@ -133,6 +135,7 @@ function useDiscoverStartSubscription(entityType: Entity) {
             callFailed,
             entityType,
             jobFailed,
+            jobStatusPoller,
             postGenerateMutate,
             setDiscoveredDraftId,
             setDraftId,

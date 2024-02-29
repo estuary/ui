@@ -13,19 +13,19 @@ exports[`Connector Card > should display the connector details 1`] = `
         type="button"
       >
         <div
-          class="css-f03u9l-MuiStack-root"
+          class="MuiStack-root css-f03u9l-MuiStack-root"
         >
           <div
             class="MuiBox-root css-0"
           >
             <div
-              class="css-12atq1h-MuiStack-root"
+              class="MuiStack-root css-12atq1h-MuiStack-root"
             >
               <div
                 class="MuiBox-root css-6ml8rd"
               >
                 <div
-                  class="css-w004l2-MuiStack-root"
+                  class="MuiStack-root css-w004l2-MuiStack-root"
                 >
                   <div
                     class="MuiBox-root css-0"

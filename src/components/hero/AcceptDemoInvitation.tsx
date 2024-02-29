@@ -5,8 +5,8 @@ import useDirectiveGuard from 'app/guards/hooks';
 import MessageWithButton from 'components/content/MessageWithButton';
 import Error from 'components/shared/Error';
 import { jobStatusQuery, trackEvent } from 'directives/shared';
+import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { jobStatusPoller } from 'services/supabase';
 import { useEntitiesStore_mutate } from 'stores/Entities/hooks';
 
 interface Props {
@@ -29,6 +29,8 @@ function AcceptDemoInvitation({
     const { directive, mutate } = useDirectiveGuard(directiveName, {
         hideAlert: true,
     });
+
+    const { jobStatusPoller } = useJobStatusPoller();
 
     const mutateAuthRoles = useEntitiesStore_mutate();
 

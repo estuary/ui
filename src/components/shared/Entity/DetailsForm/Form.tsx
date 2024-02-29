@@ -101,8 +101,13 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const versionEvaluationOptions:
         | ConnectorVersionEvaluationOptions
         | undefined = useMemo(() => {
-        const imageTagStartIndex = connectorImagePath.indexOf(':');
+        // This is rare but can happen so being safe.
+        // If you remove the connector id from the create URL
+        if (!connectorImagePath) {
+            return undefined;
+        }
 
+        const imageTagStartIndex = connectorImagePath.indexOf(':');
         return isEdit && hasLength(connectorId) && imageTagStartIndex > 0
             ? {
                   connectorId,

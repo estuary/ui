@@ -304,8 +304,6 @@ function CollectionSelectorList({
                 anchorEl={notificationAnchorEl.current}
                 open={Boolean(showNotification && notificationAnchorEl.current)}
                 placement="top"
-                onResize={undefined}
-                onResizeCapture={undefined}
             >
                 <AlertBox hideIcon short severity="success" title={null}>
                     {notificationMessage}
