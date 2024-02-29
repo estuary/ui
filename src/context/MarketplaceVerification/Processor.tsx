@@ -9,6 +9,7 @@ import { LoadingButton } from '@mui/lab';
 import PrefixedName from 'components/inputs/PrefixedName';
 import Error from 'components/shared/Error';
 import useMarketplaceVerify from 'hooks/useMarketplaceVerify';
+import { BASE_ERROR } from 'services/supabase';
 
 interface Props {
     accountId: string;
@@ -56,7 +57,12 @@ function MarketplaceVerificationProcessor({ accountId }: Props) {
     if (accountId) {
         return (
             <Stack spacing={2}>
-                {serverError ? <Error error={serverError} condensed /> : null}
+                {serverError ? (
+                    <Error
+                        error={{ ...BASE_ERROR, message: serverError.message }}
+                        condensed
+                    />
+                ) : null}
 
                 <Typography variant="h5" align="center">
                     <FormattedMessage id="tenant.marketplace.header" />
