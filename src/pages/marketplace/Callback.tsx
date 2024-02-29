@@ -37,7 +37,7 @@ function MarketplaceCallback() {
             .then(() => {
                 enqueueSnackbar(
                     intl.formatMessage({
-                        id: 'marketPlace.loggedOut',
+                        id: 'login.marketPlace.loggedOut',
                     }),
                     {
                         anchorOrigin: {
@@ -64,7 +64,9 @@ function MarketplaceCallback() {
                         replace: true,
                         state: {
                             from: {
-                                pathname: authenticatedRoutes.home.path,
+                                pathname:
+                                    authenticatedRoutes.marketplace.verify
+                                        .fullPath,
                                 search: location.search,
                             },
                         },

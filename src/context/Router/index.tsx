@@ -27,11 +27,12 @@ import AdminSettings from 'components/admin/Settings';
 import HomePage from 'pages/Home';
 import { handledLazy } from 'services/react';
 import MarketplaceCallback from 'pages/marketplace/Callback';
-import MarketplaceVerify from 'pages/marketplace/Verify';
+import MarketplaceVerification from 'pages/marketplace/Verification';
 import MaterializationsTable from './MaterializationsTable';
 import CapturesTable from './CapturesTable';
 import RequireAuth from './RequireAuth';
 import Authenticated from './Authenticated';
+import AuthenticatedLayout from './AuthenticatedLayout';
 
 // Capture
 const CaptureCreateRoute = handledLazy(() => import('./CaptureCreate'));
@@ -126,11 +127,21 @@ const router = createBrowserRouter(
                 }
             />
 
+            {/*Outside normal so we can use a fullpage wrapper and not the normal applayout*/}
+            <Route
+                path={authenticatedRoutes.marketplace.verify.fullPath}
+                element={
+                    <Authenticated>
+                        <MarketplaceVerification />
+                    </Authenticated>
+                }
+            />
+
             <Route
                 path={authenticatedRoutes.path}
                 element={
                     <Suspense fallback={null}>
-                        <Authenticated />
+                        <AuthenticatedLayout />
                     </Suspense>
                 }
             >
@@ -151,7 +162,7 @@ const router = createBrowserRouter(
 
                     <Route
                         path={authenticatedRoutes.marketplace.verify.fullPath}
-                        element={<MarketplaceVerify />}
+                        element={<MarketplaceVerification />}
                     />
 
                     <Route path={authenticatedRoutes.beta.path}>

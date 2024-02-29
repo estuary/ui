@@ -4,7 +4,7 @@ import { authenticatedRoutes } from 'app/routes';
 
 import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { Navigate, useNavigate } from 'react-router';
+import { Navigate } from 'react-router';
 import { LoadingButton } from '@mui/lab';
 import PrefixedName from 'components/inputs/PrefixedName';
 import Error from 'components/shared/Error';
@@ -12,22 +12,18 @@ import useMarketplaceVerify from 'hooks/useMarketplaceVerify';
 import { BASE_ERROR } from 'services/supabase';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import FullPageWrapper from 'app/FullPageWrapper';
 
-interface Props {
-    accountId: string;
-}
-
-function MarketplaceVerificationProcessor({ accountId }: Props) {
+function MarketplaceVerification() {
     const intl = useIntl();
-    const navigate = useNavigate();
+    const verifyMarketplace = useMarketplaceVerify();
 
+    const [applied, setApplied] = useState(false);
     const [loading, setLoading] = useState(false);
     const [serverError, setServerError] = useState<PostgrestError | null>(null);
 
     const [prefix, setPrefix] = useState('');
     const [prefixHasErrors, setPrefixHasErrors] = useState(false);
-
-    const verifyMarketplace = useMarketplaceVerify();
 
     const updatePrefix = (value: string, errors: string | null) => {
         setPrefix(value);
@@ -36,6 +32,7 @@ function MarketplaceVerificationProcessor({ accountId }: Props) {
 
     const handleFailure = useCallback((error: PostgrestError) => {
         setLoading(false);
+        setApplied(false);
         setServerError(error);
         logRocketEvent(CustomEvents.MARKETPLACE_VERIFY, {
             status: 'failed',
@@ -53,19 +50,21 @@ function MarketplaceVerificationProcessor({ accountId }: Props) {
                         status: 'success',
                         message: null,
                     });
-                    navigate(authenticatedRoutes.home.path, {
-                        replace: true,
-                    });
+                    setApplied(true);
                 } else if (response.error) {
                     handleFailure(response.error);
                 }
             }, handleFailure);
         },
-        [handleFailure, navigate, verifyMarketplace]
+        [handleFailure, verifyMarketplace]
     );
 
-    if (accountId) {
-        return (
+    if (applied) {
+        return <Navigate to={authenticatedRoutes.home.path} replace />;
+    }
+
+    return (
+        <FullPageWrapper>
             <Stack spacing={2}>
                 {serverError ? (
                     <Error
@@ -89,6 +88,7 @@ function MarketplaceVerificationProcessor({ accountId }: Props) {
                         })}
                         onChange={updatePrefix}
                         prefixOnly
+                        hideErrorMessage
                         required
                         size="small"
                         validateOnLoad
@@ -115,10 +115,8 @@ function MarketplaceVerificationProcessor({ accountId }: Props) {
                     </LoadingButton>
                 </Box>
             </Stack>
-        );
-    } else {
-        return <Navigate to={authenticatedRoutes.home.path} replace />;
-    }
+        </FullPageWrapper>
+    );
 }
 
-export default MarketplaceVerificationProcessor;
+export default MarketplaceVerification;

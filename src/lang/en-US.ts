@@ -363,6 +363,8 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.registerFailed.google': 'Failed to register with Google',
     'login.registerFailed.github': 'Failed to register with GitHub',
     'login.userNotFound': 'User not found. Please sign up below.',
+
+    'login.marketPlace.loggedOut': `To apply marketplace subscription, please login below.`,
 };
 
 const EntityStatus: ResolvedIntlConfig['messages'] = {
@@ -1393,10 +1395,6 @@ const JsonForms: ResolvedIntlConfig['messages'] = {
     'jsonForms.clearInput': `Clear input field`,
 };
 
-const MarketPlace: ResolvedIntlConfig['messages'] = {
-    'marketPlace.loggedOut': `We require reauthenticating for marketplace purchases. Please login back in below.`,
-};
-
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -1461,7 +1459,6 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...JsonForms,
     ...Journals,
     ...Ops,
-    ...MarketPlace,
 };
 
 export default enUSMessages;

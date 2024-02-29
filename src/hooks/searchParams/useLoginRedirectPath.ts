@@ -9,6 +9,10 @@ function useLoginRedirectPath(redirectToBase?: string) {
         ? `${location.state.from.pathname}${location.state.from.search}`
         : authenticatedRoutes.home.path;
 
+    // once we have got the `from` out once we want to clear out so we do not
+    //  keep accidently sending the user to a page they were forwarded to
+    window.history.replaceState({ ...history.state, from: '' }, '');
+
     const redirectTo = useMemo(
         () =>
             redirectToBase

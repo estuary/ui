@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from '../useGlobalSearchParams';
+} from './useGlobalSearchParams';
 
 function useLoginHints() {
     const login_hint = useGlobalSearchParams(
