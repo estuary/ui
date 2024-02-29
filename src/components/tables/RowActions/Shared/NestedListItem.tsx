@@ -1,18 +1,12 @@
 import {
-    Badge,
     Checkbox,
-    Collapse,
     FormControl,
     FormControlLabel,
     List,
     ListItem,
-    ListItemButton,
     ListItemText,
-    useTheme,
 } from '@mui/material';
 import { useZustandStore } from 'context/Zustand/provider';
-import { Settings } from 'iconoir-react';
-import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
     SelectableTableStore,
@@ -42,7 +36,6 @@ function NestedListItem({
     settings,
 }: Props) {
     const intl = useIntl();
-    const theme = useTheme();
 
     const actionSettings = useZustandStore<
         SelectableTableStore,
@@ -60,44 +53,9 @@ function NestedListItem({
         selectableTableStoreSelectors.actionSettings.set
     );
 
-    const [open, setOpen] = useState<boolean>(false);
-
-    const toggleList = () => {
-        setOpen(!open);
-    };
-
-    const settingsApplied = useMemo(
-        () =>
-            settings.some(
-                ({ setting }) => actionSettings[setting]?.includes(catalogName)
-            ),
-        [actionSettings, catalogName, settings]
-    );
-
     return (
         <>
-            <ListItemButton
-                selected={open}
-                onClick={toggleList}
-                sx={{
-                    'width': '100%',
-                    'px': 1,
-                    '&.MuiButtonBase-root:hover::after': {
-                        backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                    },
-                    '&.Mui-selected': {
-                        backgroundColor: open
-                            ? 'unset'
-                            : 'rgba(58, 86, 202, 0.08)',
-                        color: open
-                            ? theme.palette.primary.main
-                            : theme.palette.text.primary,
-                        boxShadow: open
-                            ? undefined
-                            : `inset 0px 0px 0px 1px ${theme.palette.primary.main}`,
-                    },
-                }}
-            >
+            <ListItem>
                 <ListItemText
                     primary={catalogName}
                     sx={{
@@ -108,68 +66,37 @@ function NestedListItem({
                         },
                     }}
                 />
+            </ListItem>
 
-                <Badge
-                    color="primary"
-                    variant="dot"
-                    overlap="circular"
-                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                    invisible={!settingsApplied}
-                    sx={{
-                        '& .MuiBadge-badge': {
-                            width: 10,
-                            height: 10,
-                            borderRadius: 5,
-                        },
-                    }}
-                >
-                    <Settings
-                        style={{
-                            color: open
-                                ? theme.palette.primary.main
-                                : theme.palette.text.primary,
-                        }}
-                    />
-                </Badge>
-            </ListItemButton>
-
-            <Collapse
-                in={open}
-                timeout="auto"
-                unmountOnExit
-                sx={{ width: '100%' }}
-            >
-                <List component="div" disablePadding>
-                    {settings.map(({ messageId, setting }) => (
-                        <ListItem key={setting} dense sx={{ py: 0, pl: 5 }}>
-                            <FormControl>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={
-                                                actionSettings[
-                                                    setting
-                                                ]?.includes(catalogName) ??
-                                                false
-                                            }
-                                            onChange={(event) => {
-                                                setActionSettings(
-                                                    setting,
-                                                    [catalogName],
-                                                    event.target.checked
-                                                );
-                                            }}
-                                        />
-                                    }
-                                    label={intl.formatMessage({
-                                        id: messageId,
-                                    })}
-                                />
-                            </FormControl>
-                        </ListItem>
-                    ))}
-                </List>
-            </Collapse>
+            <List component="div" disablePadding>
+                {settings.map(({ messageId, setting }) => (
+                    <ListItem key={setting} dense sx={{ py: 0, pl: 5 }}>
+                        <FormControl>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={
+                                            actionSettings[setting]?.includes(
+                                                catalogName
+                                            ) ?? false
+                                        }
+                                        onChange={(event) => {
+                                            setActionSettings(
+                                                setting,
+                                                [catalogName],
+                                                event.target.checked
+                                            );
+                                        }}
+                                    />
+                                }
+                                label={intl.formatMessage({
+                                    id: messageId,
+                                })}
+                            />
+                        </FormControl>
+                    </ListItem>
+                ))}
+            </List>
         </>
     );
 }
