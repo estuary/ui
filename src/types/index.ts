@@ -272,6 +272,11 @@ export interface GatewayAuthTokenResponse {
     token: string;
 }
 
+export interface MarketPlaceVerifyResponse {
+    data: any;
+    error: any;
+}
+
 export enum CONNECTOR_TYPES {
     CAPTURE = 'capture',
     MATERIALIZATION = 'materialization',

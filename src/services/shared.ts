@@ -32,8 +32,13 @@ export const logRocketConsole = (message: string, ...props: any[]) => {
 export const FAILED_TO_FETCH = 'FAILED TO FETCH';
 export const RESPONSE_JSON_NOT_FN = 'RESPONSE.JSON IS NOT A FUNCTION';
 export const STATEMENT_TIMEOUT = 'STATEMENT TIMEOUT';
+export const FETCH_DEFAULT_ERROR = 'SERVER_ERROR';
 
-export const RETRY_REASONS = [FAILED_TO_FETCH, STATEMENT_TIMEOUT];
+export const RETRY_REASONS = [
+    FAILED_TO_FETCH,
+    STATEMENT_TIMEOUT,
+    FETCH_DEFAULT_ERROR,
+];
 export const NETWORK_ERRORS = [FAILED_TO_FETCH, RESPONSE_JSON_NOT_FN];
 
 export const checkErrorMessage = (

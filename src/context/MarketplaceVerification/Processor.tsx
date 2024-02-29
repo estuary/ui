@@ -8,7 +8,7 @@ import { Navigate } from 'react-router';
 import { LoadingButton } from '@mui/lab';
 import PrefixedName from 'components/inputs/PrefixedName';
 import Error from 'components/shared/Error';
-import { verifyMarketplaceSubscription } from 'services/marketplace';
+import useMarketplaceVerify from 'hooks/useMarketplaceVerify';
 
 interface Props {
     accountId: string;
@@ -23,6 +23,8 @@ function MarketplaceVerificationProcessor({ accountId }: Props) {
     const [prefix, setPrefix] = useState('');
     const [prefixHasErrors, setPrefixHasErrors] = useState(false);
 
+    const verifyMarketplace = useMarketplaceVerify();
+
     const updatePrefix = (value: string, errors: string | null) => {
         setPrefix(value);
         setPrefixHasErrors(Boolean(errors));
@@ -34,11 +36,11 @@ function MarketplaceVerificationProcessor({ accountId }: Props) {
         setServerError(error);
     }, []);
 
-    const updateTenantRow = useCallback(
-        (id: string, tenant: string) => {
+    const startVerification = useCallback(
+        (tenant: string) => {
             setLoading(true);
             setServerError(null);
-            verifyMarketplaceSubscription(id, tenant).then((response: any) => {
+            verifyMarketplace(tenant).then((response: any) => {
                 console.log('verifyMarketplaceSubscription', response);
 
                 if (response.data) {
@@ -48,7 +50,7 @@ function MarketplaceVerificationProcessor({ accountId }: Props) {
                 }
             }, handleFailure);
         },
-        [handleFailure]
+        [handleFailure, verifyMarketplace]
     );
 
     if (accountId) {
@@ -88,7 +90,7 @@ function MarketplaceVerificationProcessor({ accountId }: Props) {
                         variant="contained"
                         loading={loading}
                         disabled={Boolean(prefixHasErrors || loading)}
-                        onClick={() => updateTenantRow(accountId, prefix)}
+                        onClick={() => startVerification(prefix)}
                         sx={{ mt: 2 }}
                     >
                         <span>
