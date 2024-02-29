@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl';
 import { useSnackbar } from 'notistack';
 import { logRocketConsole } from 'services/shared';
 import { getPathWithParams } from 'utils/misc-utils';
-import { unauthenticatedRoutes } from 'app/routes';
+import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -59,7 +59,9 @@ function MarketplaceCallback() {
                 });
             })
             .finally(() => {
-                setMarketplaceVerify({ search: location.search });
+                setMarketplaceVerify({
+                    path: `${authenticatedRoutes.marketplace.verify.fullPath}${location.search}`,
+                });
                 navigate(
                     getPathWithParams(unauthenticatedRoutes.logout.path, {
                         [GlobalSearchParams.PROVIDER]: provider,

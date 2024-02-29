@@ -11,8 +11,8 @@ function useLoginRedirectPath(redirectToBase?: string) {
     const [marketplaceVerify] = useMarketplaceLocalStorage();
 
     const location = useLocation();
-    const from = marketplaceVerify?.search
-        ? `${authenticatedRoutes.marketplace.verify.fullPath}${marketplaceVerify.search}`
+    const from = marketplaceVerify?.path
+        ? `${marketplaceVerify.path}`
         : location.state?.from
         ? `${location.state.from.pathname}${location.state.from.search}`
         : authenticatedRoutes.home.path;
