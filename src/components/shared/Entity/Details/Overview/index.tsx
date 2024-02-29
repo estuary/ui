@@ -1,6 +1,5 @@
 import { Grid } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
-import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
 import NotificationSettings from 'components/shared/Entity/Details/Overview/NotificationSettings';
 import { TaskEndpoints } from 'components/shared/TaskEndpoints';
 import { useEntityType } from 'context/EntityContext';
@@ -10,9 +9,10 @@ import useGlobalSearchParams, {
 import { useLiveSpecs_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import { ShardEntityTypes } from 'stores/ShardDetail/types';
-import { hasLength, specContainsDerivation } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
 import ShardInformation from '../../Shard/Information';
 import Usage from '../Usage';
+import useIsCollectionDerivation from '../useIsCollectionDerivation';
 import DetailsSection from './DetailsSection';
 
 // TODO (details page)
@@ -29,11 +29,7 @@ function Overview({ name }: Props) {
     const { liveSpecs, isValidating: validatingLiveSpecs } =
         useLiveSpecs_details(entityType, entityName);
 
-    const currentCatalog = useEditorStore_currentCatalog({
-        localScope: true,
-    });
-    const catalogSpec = currentCatalog?.spec ?? null;
-    const { isDerivation } = specContainsDerivation(catalogSpec);
+    const isDerivation = useIsCollectionDerivation();
 
     const latestLiveSpec = useMemo(
         () =>

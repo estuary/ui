@@ -123,12 +123,11 @@ const collections = {
             path: 'history',
             fullPath: '/collections/details/history',
         },
-        // TODO (ops logs) need to handle collections (really derivations)
-        // ops: {
-        //     title: 'routeTitle.collectionDetails.ops',
-        //     path: 'ops',
-        //     fullPath: '/collections/details/ops',
-        // },
+        ops: {
+            title: 'routeTitle.collectionDetails.ops',
+            path: 'ops',
+            fullPath: '/collections/details/ops',
+        },
     },
 };
 

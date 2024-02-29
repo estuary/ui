@@ -688,6 +688,8 @@ const Ops: ResolvedIntlConfig['messages'] = {
     'ops.logsTable.waitingForLogs.old.complete': `All older logs read`,
     'ops.logsTable.waitingForLogs.old': `Fetching older logs`,
     'ops.logsTable.waitingForLogs.new': `Waiting for new logs`,
+
+    'ops.shouldNotShowLogs': `This kind of entity does not support logs`,
 };
 
 const endpointConfigHeader = `Endpoint Config`;
@@ -1128,6 +1130,7 @@ const Details: ResolvedIntlConfig['messages'] = {
     'details.tabs.spec': `Spec`,
     'details.tabs.shardStatus': `Status`,
     'details.tabs.history': `History`,
+    'details.tabs.ops': `Logs`,
 
     'details.settings.notifications.header': `Notification Settings`,
     'details.settings.notifications.alert.userNotSubscribed.message': `You are not subscribed to notifications for this tenant. If you would like to receive notifications for this task, {button} to subscribe.`,
