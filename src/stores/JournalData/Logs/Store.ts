@@ -107,7 +107,6 @@ const getInitialState = (
     },
 
     fetchMoreLogs: (option) => {
-        console.log('fetchMoreLogs');
         const {
             allowFetchingMore,
             fetchingMore,
@@ -119,7 +118,6 @@ const getInitialState = (
         } = get();
 
         if (!allowFetchingMore || !refresh || fetchingMore) {
-            console.log('fetchMoreLogs skipped');
             return;
         }
 
