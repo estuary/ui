@@ -13,10 +13,14 @@ import { BASE_ERROR } from 'services/supabase';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import FullPageWrapper from 'app/FullPageWrapper';
+import { useMount } from 'react-use';
+import useMarketplaceLocalStorage from 'hooks/useMarketplaceLocalStorage';
 
 function MarketplaceVerification() {
     const intl = useIntl();
     const verifyMarketplace = useMarketplaceVerify();
+
+    const { 2: removeMarketplaceVerify } = useMarketplaceLocalStorage();
 
     const [applied, setApplied] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -58,6 +62,10 @@ function MarketplaceVerification() {
         },
         [handleFailure, verifyMarketplace]
     );
+
+    useMount(() => {
+        removeMarketplaceVerify();
+    });
 
     if (applied) {
         return <Navigate to={authenticatedRoutes.home.path} replace />;

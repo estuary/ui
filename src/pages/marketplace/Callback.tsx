@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl';
 import { useSnackbar } from 'notistack';
 import { logRocketConsole } from 'services/shared';
 import { getPathWithParams } from 'utils/misc-utils';
-import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
+import { unauthenticatedRoutes } from 'app/routes';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { SupportedProvider } from 'types/authProviders';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { useEffect } from 'react';
+import useMarketplaceLocalStorage from 'hooks/useMarketplaceLocalStorage';
 
 // Expanding Marketplace Providers
 // Once we add more providers the idea is to do something like this
@@ -30,6 +31,8 @@ function MarketplaceCallback() {
     const provider = useGlobalSearchParams<SupportedProvider>(
         GlobalSearchParams.PROVIDER
     );
+
+    const { 1: setMarketplaceVerify } = useMarketplaceLocalStorage();
 
     useEffect(() => {
         supabaseClient.auth
@@ -56,24 +59,24 @@ function MarketplaceCallback() {
                 });
             })
             .finally(() => {
+                setMarketplaceVerify({ search: location.search });
                 navigate(
                     getPathWithParams(unauthenticatedRoutes.logout.path, {
                         [GlobalSearchParams.PROVIDER]: provider,
                     }),
                     {
                         replace: true,
-                        state: {
-                            from: {
-                                pathname:
-                                    authenticatedRoutes.marketplace.verify
-                                        .fullPath,
-                                search: location.search,
-                            },
-                        },
                     }
                 );
             });
-    }, [enqueueSnackbar, intl, navigate, provider, supabaseClient.auth]);
+    }, [
+        enqueueSnackbar,
+        intl,
+        navigate,
+        provider,
+        setMarketplaceVerify,
+        supabaseClient.auth,
+    ]);
 
     return <FullPageSpinner />;
 }
