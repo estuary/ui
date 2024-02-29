@@ -1,10 +1,10 @@
 import { DraftSpecsExtQuery_ByCatalogName } from 'api/draftSpecs';
 import { FullSourceDictionary } from 'components/editor/Bindings/Store/types';
+import { ResourceConfig, ResourceConfigDictionary } from 'stores/Binding/types';
 import {
-    ResourceConfig,
-    ResourceConfigDictionary,
-} from 'stores/ResourceConfig/types';
-import { generateMockConnectorConfig } from 'test/test-utils';
+    generateMockConnectorConfig,
+    generateMockResourceConfig,
+} from 'test/test-utils';
 import { generateTaskSpec, getBindingIndex } from 'utils/workflow-utils';
 import { ConnectorConfig } from '../../../flow_deps/flow';
 
@@ -92,7 +92,12 @@ describe('getBindingIndex', () => {
 });
 
 describe('generateTaskSpec', () => {
-    let mockedResourceConfig: ResourceConfig,
+    let uuidOne: string,
+        uuidTwo: string,
+        uuidThree: string,
+        resourceConfig_one: ResourceConfig,
+        resourceConfig_two: ResourceConfig,
+        resourceConfig_three: ResourceConfig,
         connectorConfig: ConnectorConfig,
         resourceConfigs: ResourceConfigDictionary | null,
         existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
@@ -100,14 +105,13 @@ describe('generateTaskSpec', () => {
         fullSource: FullSourceDictionary | null;
 
     beforeEach(() => {
-        mockedResourceConfig = {
-            errors: [],
-            data: {
-                fiz: 'resource',
-            },
-            disable: false,
-            previouslyDisabled: false,
-        };
+        uuidOne = crypto.randomUUID();
+        uuidTwo = crypto.randomUUID();
+        uuidThree = crypto.randomUUID();
+
+        resourceConfig_one = generateMockResourceConfig('mock/binding/one');
+        resourceConfig_two = generateMockResourceConfig('mock/binding/two');
+        resourceConfig_three = generateMockResourceConfig('mock/binding/three');
 
         connectorConfig = generateMockConnectorConfig();
         resourceConfigs = null;
@@ -219,9 +223,9 @@ describe('generateTaskSpec', () => {
                 'capture',
                 connectorConfig,
                 {
-                    'mock/binding/one': mockedResourceConfig,
-                    'mock/binding/two': mockedResourceConfig,
-                    'mock/binding/three': mockedResourceConfig,
+                    [uuidOne]: resourceConfig_one,
+                    [uuidTwo]: resourceConfig_two,
+                    [uuidThree]: resourceConfig_three,
                 },
                 existingTaskData,
                 sourceCapture,
@@ -265,13 +269,13 @@ describe('generateTaskSpec', () => {
                     'capture',
                     connectorConfig,
                     {
-                        'mock/binding/one': {
-                            ...mockedResourceConfig,
+                        [uuidOne]: {
+                            ...resourceConfig_one,
                             data: {
                                 bar: 'updated',
                             },
                         },
-                        'mock/binding/two': mockedResourceConfig,
+                        [uuidTwo]: resourceConfig_two,
                     },
                     existingTaskData,
                     sourceCapture,
@@ -286,8 +290,8 @@ describe('generateTaskSpec', () => {
     describe('entity type can alter what is returned', () => {
         beforeEach(() => {
             resourceConfigs = {
-                first: mockedResourceConfig,
-                second: mockedResourceConfig,
+                [uuidOne]: resourceConfig_one,
+                [uuidTwo]: resourceConfig_two,
             };
         });
 
@@ -301,7 +305,10 @@ describe('generateTaskSpec', () => {
                     sourceCapture,
                     fullSource
                 ).bindings.map(({ target }: any) => target)
-            ).toStrictEqual(['first', 'second']);
+            ).toStrictEqual([
+                resourceConfig_one.meta.collectionName,
+                resourceConfig_two.meta.collectionName,
+            ]);
 
             expect(
                 generateTaskSpec(
@@ -312,7 +319,10 @@ describe('generateTaskSpec', () => {
                     sourceCapture,
                     fullSource
                 ).bindings.map(({ source }: any) => source)
-            ).toStrictEqual(['first', 'second']);
+            ).toStrictEqual([
+                resourceConfig_one.meta.collectionName,
+                resourceConfig_two.meta.collectionName,
+            ]);
         });
 
         test('only materializations can return the `sourceCapture` property', () => {

@@ -149,13 +149,13 @@ export const generateTaskSpec = (
     if (resourceConfigs) {
         const collectionNameProp = getCollectionNameProp(entityType);
 
-        const boundCollectionNames = Object.keys(resourceConfigs);
+        const extractedResourceConfigs = Object.values(resourceConfigs);
 
-        boundCollectionNames.forEach((collectionName) => {
-            const resourceConfig = resourceConfigs[collectionName].data;
+        extractedResourceConfigs.forEach((config) => {
+            const resourceConfig = config.data;
+            const { collectionName, disable } = config.meta;
 
             // Check if disable is a boolean otherwise default to false
-            const { disable } = resourceConfigs[collectionName].meta;
             const resourceDisable = isBoolean(disable) ? disable : false;
 
             // See which binding we need to update
@@ -199,9 +199,9 @@ export const generateTaskSpec = (
 
         if (hasLength(draftSpec.bindings)) {
             draftSpec.bindings = draftSpec.bindings.filter((binding: any) =>
-                boundCollectionNames.includes(
-                    getCollectionName(binding[collectionNameProp])
-                )
+                extractedResourceConfigs
+                    .map((config) => config.meta.collectionName)
+                    .includes(getCollectionName(binding[collectionNameProp]))
             );
         }
     } else {

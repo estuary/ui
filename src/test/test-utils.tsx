@@ -1,14 +1,15 @@
+import { AuthSession, Session, User } from '@supabase/supabase-js';
+import { Auth } from '@supabase/ui';
+import { render, RenderOptions } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import AppProviders from 'context';
+import ThemeProvider from 'context/Theme';
+import { SwrSupabaseContext } from 'hooks/supabase-swr';
 import { ReactElement } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { render, RenderOptions } from '@testing-library/react';
-import AppProviders from 'context';
-import { AuthSession, Session, User } from '@supabase/supabase-js';
-import { mockDeep } from 'vitest-mock-extended';
-import { Auth } from '@supabase/ui';
-import { SwrSupabaseContext } from 'hooks/supabase-swr';
-import ThemeProvider from 'context/Theme';
-import userEvent from '@testing-library/user-event';
 import { supabaseClient } from 'services/supabase';
+import { ResourceConfig } from 'stores/Binding/types';
+import { mockDeep } from 'vitest-mock-extended';
 import { ConnectorConfig } from '../../flow_deps/flow';
 
 export const generateMockUserMetadata = (
@@ -53,6 +54,22 @@ export const generateMockConnectorConfig = (): ConnectorConfig => {
             schema: 'public',
             user: 'testing',
             sops: {},
+        },
+    });
+};
+
+export const generateMockResourceConfig = (
+    collectionName: string
+): ResourceConfig => {
+    return mockDeep<ResourceConfig>({
+        data: {
+            fiz: 'resource',
+        },
+        errors: [],
+        meta: {
+            collectionName,
+            disable: false,
+            previouslyDisabled: false,
         },
     });
 };
