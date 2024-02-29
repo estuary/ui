@@ -49,6 +49,7 @@ function MarketplaceVerification() {
             setLoading(true);
             setServerError(null);
             verifyMarketplace(tenant).then((response: any) => {
+                console.log('verifyMarketplace response', response);
                 if (response.data) {
                     logRocketEvent(CustomEvents.MARKETPLACE_VERIFY, {
                         status: 'success',
