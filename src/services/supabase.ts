@@ -257,6 +257,7 @@ export const supabaseRetry = <T>(makeCall: Function, action: string) => {
     const operation = retry.operation({
         retries: RETRY_ATTEMPTS,
         randomize: true,
+        maxTimeout: 1500,
     });
 
     return new Promise<T>((resolve) => {

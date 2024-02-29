@@ -1,19 +1,13 @@
 import { Box, Stack } from '@mui/material';
-import { SupportedProvider } from 'types/authProviders';
 import LoginButton from './LoginButton';
+import { LoginProvidersProps } from './types';
 import useLoginHandler from './useLoginHandler';
-
-interface Props {
-    isRegister?: boolean;
-    grantToken?: string;
-    providers?: SupportedProvider[];
-}
 
 function LoginProviders({
     grantToken,
     isRegister,
     providers = ['google', 'github', 'azure'],
-}: Props) {
+}: LoginProvidersProps) {
     const { login } = useLoginHandler(grantToken, isRegister);
 
     return (

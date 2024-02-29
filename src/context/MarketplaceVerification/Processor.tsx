@@ -4,12 +4,14 @@ import { authenticatedRoutes } from 'app/routes';
 
 import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { Navigate } from 'react-router';
+import { Navigate, useNavigate } from 'react-router';
 import { LoadingButton } from '@mui/lab';
 import PrefixedName from 'components/inputs/PrefixedName';
 import Error from 'components/shared/Error';
 import useMarketplaceVerify from 'hooks/useMarketplaceVerify';
 import { BASE_ERROR } from 'services/supabase';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 
 interface Props {
     accountId: string;
@@ -17,6 +19,7 @@ interface Props {
 
 function MarketplaceVerificationProcessor({ accountId }: Props) {
     const intl = useIntl();
+    const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
     const [serverError, setServerError] = useState<PostgrestError | null>(null);
@@ -32,9 +35,12 @@ function MarketplaceVerificationProcessor({ accountId }: Props) {
     };
 
     const handleFailure = useCallback((error: PostgrestError) => {
-        console.log('failure', error);
         setLoading(false);
         setServerError(error);
+        logRocketEvent(CustomEvents.MARKETPLACE_VERIFY, {
+            status: 'failed',
+            message: error.message,
+        });
     }, []);
 
     const startVerification = useCallback(
@@ -42,16 +48,20 @@ function MarketplaceVerificationProcessor({ accountId }: Props) {
             setLoading(true);
             setServerError(null);
             verifyMarketplace(tenant).then((response: any) => {
-                console.log('verifyMarketplaceSubscription', response);
-
                 if (response.data) {
-                    console.log('yay!', response);
+                    logRocketEvent(CustomEvents.MARKETPLACE_VERIFY, {
+                        status: 'success',
+                        message: null,
+                    });
+                    navigate(authenticatedRoutes.home.path, {
+                        replace: true,
+                    });
                 } else if (response.error) {
                     handleFailure(response.error);
                 }
             }, handleFailure);
         },
-        [handleFailure, verifyMarketplace]
+        [handleFailure, navigate, verifyMarketplace]
     );
 
     if (accountId) {

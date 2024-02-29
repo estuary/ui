@@ -21,7 +21,9 @@ export const fetcher = (tenant: string, session: Session | null) => {
 
 interface MarketplaceVerifyResponse {
     data: MarketPlaceVerifyResponse | null;
-    error?: any;
+    error?: {
+        message: string;
+    };
 }
 
 const useMarketplaceVerify = () => {
@@ -32,9 +34,9 @@ const useMarketplaceVerify = () => {
             const operation = retry.operation({
                 retries: 2,
                 randomize: true,
+                maxTimeout: 15000,
             });
 
-            //MarketPlaceVerifyResponse
             return new Promise<MarketplaceVerifyResponse>((resolve) => {
                 operation.attempt(async () => {
                     const response = await fetcher(tenant, session).then(
@@ -48,7 +50,10 @@ const useMarketplaceVerify = () => {
                         retryAfterFailure(error?.message) &&
                         operation.retry(error)
                     ) {
-                        logRocketEvent(CustomEvents.MARKETPLACE_VERIFY_FAILED);
+                        logRocketEvent(CustomEvents.MARKETPLACE_VERIFY, {
+                            status: 'retry',
+                            message: error?.message,
+                        });
                         return;
                     }
 

@@ -41,7 +41,11 @@ function useLoginHandler(grantToken?: string, isRegister?: boolean) {
     );
 
     const login = useCallback(
-        async (provider: SupportedProvider, scopes?: string) => {
+        async (
+            provider: SupportedProvider,
+            scopes?: string,
+            queryParams?: any
+        ) => {
             const redirectBaseURL = isRegister
                 ? `${window.location.origin}${unauthenticatedRoutes.register.callback.fullPath}`
                 : redirectTo;
@@ -59,9 +63,7 @@ function useLoginHandler(grantToken?: string, isRegister?: boolean) {
                             : redirectBaseURL,
                         shouldCreateUser: isRegister,
                         scopes,
-                        queryParams: {
-                            login_hint: 'this needs populated',
-                        },
+                        queryParams,
                     }
                 );
                 if (error) loginFailed(provider);

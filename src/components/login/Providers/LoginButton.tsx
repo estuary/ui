@@ -1,15 +1,9 @@
-import { SupportedProvider } from 'types/authProviders';
 import AzureButton from './buttons/Azure';
 import GithubButton from './buttons/Github';
 import GoogleButton from './buttons/Google';
+import { LoginButtonProps } from './types';
 
-interface Props {
-    login: any;
-    provider: SupportedProvider;
-    isRegister?: boolean;
-}
-
-function LoginButton({ login, provider, isRegister }: Props) {
+function LoginButton({ login, provider, isRegister }: LoginButtonProps) {
     let ButtonComponent, scopes: string;
     switch (provider) {
         case 'github':
@@ -26,7 +20,7 @@ function LoginButton({ login, provider, isRegister }: Props) {
     return (
         <ButtonComponent
             isRegister={isRegister}
-            login={() => login(provider, scopes)}
+            login={(params) => login(provider, scopes, params)}
         />
     );
 }

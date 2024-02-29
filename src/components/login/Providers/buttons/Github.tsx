@@ -1,12 +1,8 @@
 import { useIntl } from 'react-intl';
 import { GithubLoginButton } from 'react-social-login-buttons';
+import { ProviderButtonProps } from '../types';
 
-interface Props {
-    login: () => void;
-    isRegister?: boolean;
-}
-
-const GithubButton = ({ login, isRegister }: Props) => {
+const GithubButton = ({ login, isRegister }: ProviderButtonProps) => {
     const intl = useIntl();
     return (
         <GithubLoginButton
