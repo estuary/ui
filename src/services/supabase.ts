@@ -131,6 +131,7 @@ function encodeRFC3986URIComponent(str: string) {
     );
 }
 
+// TODO (PostgREST)
 // A query of ilike.*,* will still fail. Not 100% sure why but this does make
 //  things a bit safer.
 export const escapeReservedCharacters = (val: string) => {
