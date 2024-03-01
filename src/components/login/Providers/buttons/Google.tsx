@@ -10,7 +10,7 @@ const GoogleButton = ({ login, isRegister }: ProviderButtonProps) => {
 
     return (
         <ReactGoogleButton
-            onClick={() => login(google)}
+            onClick={() => login(google ? { login_hint: google } : undefined)}
             label={intl.formatMessage({
                 id: isRegister ? 'cta.register.google' : 'cta.login.google',
             })}

@@ -35,6 +35,7 @@ function MarketplaceVerification() {
     };
 
     const handleFailure = useCallback((error: PostgrestError) => {
+        console.log('error', error);
         setLoading(false);
         setApplied(false);
         setServerError(error);
