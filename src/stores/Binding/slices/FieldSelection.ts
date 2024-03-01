@@ -23,13 +23,24 @@ export interface StoreWithFieldSelection {
             selectionType: FieldSelectionType | null;
         }[]
     ) => void;
+    setSingleSelection: (
+        bindingUUID: string,
+        field: string,
+        selectionType: FieldSelectionType | null
+    ) => void;
+
+    selectionSaving: boolean;
+    setSelectionSaving: (
+        value: StoreWithFieldSelection['selectionSaving']
+    ) => void;
 }
 
 export const getInitialFieldSelectionData = (): Pick<
     StoreWithFieldSelection,
-    'recommendFields' | 'selections'
+    'recommendFields' | 'selectionSaving' | 'selections'
 > => ({
     recommendFields: {},
+    selectionSaving: false,
     selections: {},
 });
 
@@ -62,6 +73,33 @@ export const getStoreWithFieldSelectionSettings = (
             }),
             false,
             'Recommend Fields Flag Set'
+        );
+    },
+
+    setSingleSelection: (bindingUUID, field, selectionType) => {
+        set(
+            produce((state: BindingState) => {
+                state.selections[bindingUUID] = {
+                    ...state.selections[bindingUUID],
+                    [field]: selectionType,
+                };
+
+                if (!state.selectionSaving) {
+                    state.selectionSaving = true;
+                }
+            }),
+            false,
+            'Single Field Selection Set'
+        );
+    },
+
+    setSelectionSaving: (value) => {
+        set(
+            produce((state: BindingState) => {
+                state.selectionSaving = value;
+            }),
+            false,
+            'Selection Saving Set'
         );
     },
 });

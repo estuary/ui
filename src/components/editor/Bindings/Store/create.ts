@@ -156,14 +156,6 @@ const getInitialFullSourceData = (): Pick<
     fullSourceErrorsExist: false,
 });
 
-const getInitialFieldSelectionData = (): Pick<
-    BindingsEditorState,
-    'selections' | 'selectionSaving'
-> => ({
-    selections: {},
-    selectionSaving: false,
-});
-
 const getInitialMiscData = (): Pick<
     BindingsEditorState,
     | 'collectionData'
@@ -183,8 +175,6 @@ const getInitialMiscData = (): Pick<
     | 'inferSchemaResponse_Keys'
     | 'incompatibleCollections'
     | 'hasIncompatibleCollections'
-    | 'selections'
-    | 'selectionSaving'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -203,7 +193,6 @@ const getInitialMiscData = (): Pick<
     inferSchemaResponseEmpty: false,
     incompatibleCollections: [],
     hasIncompatibleCollections: false,
-    ...getInitialFieldSelectionData(),
 });
 
 const getInitialStateData = () => ({
@@ -485,32 +474,6 @@ const getInitialState = (
         } else {
             return null;
         }
-    },
-
-    setSingleSelection: (field, selectionType) => {
-        set(
-            produce((state: BindingsEditorState) => {
-                const { selectionSaving } = get();
-
-                state.selections[field] = selectionType;
-
-                if (!selectionSaving) {
-                    state.selectionSaving = true;
-                }
-            }),
-            false,
-            'Custom Selections Set'
-        );
-    },
-
-    setSelectionSaving: (value) => {
-        set(
-            produce((state: BindingsEditorState) => {
-                state.selectionSaving = value;
-            }),
-            false,
-            'Selection Saving Set'
-        );
     },
 
     // TODO (collection editor) maybe

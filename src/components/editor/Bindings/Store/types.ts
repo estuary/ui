@@ -1,7 +1,6 @@
 import { JsonFormsCore } from '@jsonforms/core';
 import { AlertColor } from '@mui/material';
 import { IncompatibleCollections } from 'api/evolutions';
-import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
 import { CollectionData } from 'components/editor/Bindings/types';
 import { Dispatch, SetStateAction } from 'react';
 import { InferSchemaPropertyForRender, Schema } from 'types';
@@ -97,16 +96,6 @@ export interface BindingsEditorState {
         value: BindingsEditorState['incompatibleCollections']
     ) => void;
     hasIncompatibleCollections: boolean;
-
-    // Field Selection
-    selections: { [field: string]: FieldSelectionType | null };
-    setSingleSelection: (
-        field: string,
-        selectionType: FieldSelectionType | null
-    ) => void;
-
-    selectionSaving: boolean;
-    setSelectionSaving: (value: BindingsEditorState['selectionSaving']) => void;
 
     // Time Travel
     fullSourceConfigs: FullSourceDictionary;

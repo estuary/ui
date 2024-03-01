@@ -13,10 +13,6 @@ import {
 } from 'components/editor/Bindings/FieldSelection/types';
 import useFieldSelection from 'components/editor/Bindings/FieldSelection/useFieldSelection';
 import {
-    useBindingsEditorStore_selectionSaving,
-    useBindingsEditorStore_setSelectionSaving,
-} from 'components/editor/Bindings/Store/hooks';
-import {
     useEditorStore_id,
     useEditorStore_queryResponse_draftSpecs,
 } from 'components/editor/Store/hooks';
@@ -34,8 +30,10 @@ import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import {
     useBinding_initializeSelections,
+    useBinding_selectionSaving,
     useBinding_serverUpdateRequired,
     useBinding_setRecommendFields,
+    useBinding_setSelectionSaving,
 } from 'stores/Binding/hooks';
 import { useEndpointConfig_serverUpdateRequired } from 'stores/EndpointConfig/hooks';
 import {
@@ -138,11 +136,10 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
 
     // Bindings Editor Store
     const setRecommendFields = useBinding_setRecommendFields();
-
     const initializeSelections = useBinding_initializeSelections();
 
-    const selectionSaving = useBindingsEditorStore_selectionSaving();
-    const setSelectionSaving = useBindingsEditorStore_setSelectionSaving();
+    const selectionSaving = useBinding_selectionSaving();
+    const setSelectionSaving = useBinding_setSelectionSaving();
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();

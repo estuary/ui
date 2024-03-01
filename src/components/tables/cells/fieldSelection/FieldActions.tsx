@@ -4,12 +4,12 @@ import {
     FieldSelectionType,
     TranslatedConstraint,
 } from 'components/editor/Bindings/FieldSelection/types';
-import { useBindingsEditorStore_setSingleSelection } from 'components/editor/Bindings/Store/hooks';
 import FieldActionButton from 'components/tables/cells/fieldSelection/FieldActionButton';
 import { useMemo } from 'react';
 import {
     useBinding_recommendFields,
     useBinding_selections,
+    useBinding_setSingleSelection,
 } from 'stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
@@ -36,7 +36,7 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
     const recommendFields = useBinding_recommendFields();
 
     const selections = useBinding_selections();
-    const setSingleSelection = useBindingsEditorStore_setSingleSelection();
+    const setSingleSelection = useBinding_setSingleSelection();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
@@ -107,7 +107,7 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
                             singleValue
                         );
 
-                        setSingleSelection(field, selectionType);
+                        setSingleSelection(bindingUUID, field, selectionType);
                     }}
                 />
 
@@ -128,7 +128,7 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
                             singleValue
                         );
 
-                        setSingleSelection(field, selectionType);
+                        setSingleSelection(bindingUUID, field, selectionType);
                     }}
                 />
             </ToggleButtonGroup>

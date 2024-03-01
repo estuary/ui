@@ -325,3 +325,24 @@ export const useBinding_initializeSelections = () => {
         (state) => state.initializeSelections
     );
 };
+
+export const useBinding_setSingleSelection = () => {
+    return useZustandStore<BindingState, BindingState['setSingleSelection']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.setSingleSelection
+    );
+};
+
+export const useBinding_selectionSaving = () => {
+    return useZustandStore<BindingState, BindingState['selectionSaving']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.selectionSaving
+    );
+};
+
+export const useBinding_setSelectionSaving = () => {
+    return useZustandStore<BindingState, BindingState['setSelectionSaving']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.setSelectionSaving
+    );
+};
