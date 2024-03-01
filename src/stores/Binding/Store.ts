@@ -37,6 +37,10 @@ import {
 import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 import {
+    getInitialFieldSelectionData,
+    getStoreWithFieldSelectionSettings,
+} from './slices/FieldSelection';
+import {
     BindingMetadata,
     BindingState,
     Bindings,
@@ -164,7 +168,6 @@ const getInitialStateData = (): Pick<
     | 'backfilledCollections'
     | 'collectionsRequiringRediscovery'
     | 'discoveredCollections'
-    | 'recommendFields'
     | 'rediscoveryRequired'
     | 'resourceConfigErrorsExist'
     | 'resourceConfigErrors'
@@ -177,7 +180,6 @@ const getInitialStateData = (): Pick<
     backfilledCollections: [],
     collectionsRequiringRediscovery: [],
     discoveredCollections: [],
-    recommendFields: {},
     rediscoveryRequired: false,
     resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
@@ -189,8 +191,9 @@ const getInitialStateData = (): Pick<
 
 const getInitialStoreData = () => ({
     ...getInitialBindingData(),
-    ...getInitialStateData(),
+    ...getInitialFieldSelectionData(),
     ...getInitialHydrationData(),
+    ...getInitialStateData(),
 });
 
 const getInitialState = (
@@ -198,6 +201,7 @@ const getInitialState = (
     get: StoreApi<BindingState>['getState']
 ): BindingState => ({
     ...getInitialStoreData(),
+    ...getStoreWithFieldSelectionSettings(set),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
 
     addBackfilledCollections: (values) => {
@@ -749,16 +753,6 @@ const getInitialState = (
             }),
             false,
             'Current binding changed'
-        );
-    },
-
-    setRecommendFields: (bindingUUID, value) => {
-        set(
-            produce((state: BindingState) => {
-                state.recommendFields[bindingUUID] = value;
-            }),
-            false,
-            'Recommend Fields Flag Set'
         );
     },
 

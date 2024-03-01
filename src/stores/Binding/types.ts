@@ -3,6 +3,7 @@ import { LiveSpecsExt_MaterializeCapture } from 'hooks/useLiveSpecsExt';
 import { CallSupabaseResponse } from 'services/supabase';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
+import { StoreWithFieldSelection } from './slices/FieldSelection';
 
 export interface BindingMetadata {
     uuid: string;
@@ -27,7 +28,9 @@ export interface ResourceConfigDictionary {
     [uuid: string]: ResourceConfig;
 }
 
-export interface BindingState extends StoreWithHydration {
+export interface BindingState
+    extends StoreWithHydration,
+        StoreWithFieldSelection {
     bindings: Bindings;
     prefillBindingDependentState: (
         liveBindings: Schema[],
@@ -97,10 +100,6 @@ export interface BindingState extends StoreWithHydration {
 
     resourceConfigErrorsExist: boolean;
     resourceConfigErrors: (string | undefined)[];
-
-    // Field Selection
-    recommendFields: { [bindingUUID: string]: boolean };
-    setRecommendFields: (bindingUUID: string, value: boolean) => void;
 
     // Server-Form Alignment
     serverUpdateRequired: boolean;

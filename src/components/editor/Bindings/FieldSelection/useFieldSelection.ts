@@ -1,5 +1,4 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
-import { useBindingsEditorStore_selections } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
@@ -7,7 +6,10 @@ import {
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { omit } from 'lodash';
 import { useCallback } from 'react';
-import { useBinding_recommendFields } from 'stores/Binding/hooks';
+import {
+    useBinding_recommendFields,
+    useBinding_selections,
+} from 'stores/Binding/hooks';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getBindingIndex } from 'utils/workflow-utils';
@@ -15,7 +17,7 @@ import { getBindingIndex } from 'utils/workflow-utils';
 function useFieldSelection(bindingUUID: string, collectionName: string) {
     // Bindings Editor Store
     const recommendFields = useBinding_recommendFields();
-    const selections = useBindingsEditorStore_selections();
+    const selections = useBinding_selections();
 
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
@@ -46,13 +48,17 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
                     include: {},
                 };
 
-                const includedFields: string[] = Object.entries(selections)
+                const includedFields: string[] = Object.entries(
+                    selections[bindingUUID]
+                )
                     .filter(
                         ([_field, selectionType]) => selectionType === 'include'
                     )
                     .map(([field]) => field);
 
-                const excludedFields: string[] = Object.entries(selections)
+                const excludedFields: string[] = Object.entries(
+                    selections[bindingUUID]
+                )
                     .filter(
                         ([_field, selectionType]) => selectionType === 'exclude'
                     )

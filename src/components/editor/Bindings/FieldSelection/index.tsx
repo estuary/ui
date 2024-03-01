@@ -13,7 +13,6 @@ import {
 } from 'components/editor/Bindings/FieldSelection/types';
 import useFieldSelection from 'components/editor/Bindings/FieldSelection/useFieldSelection';
 import {
-    useBindingsEditorStore_initializeSelections,
     useBindingsEditorStore_selectionSaving,
     useBindingsEditorStore_setSelectionSaving,
 } from 'components/editor/Bindings/Store/hooks';
@@ -34,6 +33,7 @@ import { FormattedMessage } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import {
+    useBinding_initializeSelections,
     useBinding_serverUpdateRequired,
     useBinding_setRecommendFields,
 } from 'stores/Binding/hooks';
@@ -139,7 +139,7 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
     // Bindings Editor Store
     const setRecommendFields = useBinding_setRecommendFields();
 
-    const initializeSelections = useBindingsEditorStore_initializeSelections();
+    const initializeSelections = useBinding_initializeSelections();
 
     const selectionSaving = useBindingsEditorStore_selectionSaving();
     const setSelectionSaving = useBindingsEditorStore_setSelectionSaving();
@@ -256,7 +256,7 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
                         ({ field, selectionType }) => ({ field, selectionType })
                     );
 
-                    initializeSelections(selections);
+                    initializeSelections(bindingUUID, selections);
                     setData(compositeProjections);
                 } else {
                     setData(null);

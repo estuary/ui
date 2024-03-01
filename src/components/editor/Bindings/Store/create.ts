@@ -487,20 +487,6 @@ const getInitialState = (
         }
     },
 
-    initializeSelections: (selections) => {
-        set(
-            produce((state: BindingsEditorState) => {
-                state.selections = {};
-
-                selections.forEach(({ field, selectionType }) => {
-                    state.selections[field] = selectionType;
-                });
-            }),
-            false,
-            'Selections Initialized'
-        );
-    },
-
     setSingleSelection: (field, selectionType) => {
         set(
             produce((state: BindingsEditorState) => {

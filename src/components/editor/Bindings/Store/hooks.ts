@@ -136,14 +136,6 @@ export const useBindingsEditorStore_populateInferSchemaResponse = () => {
     return useBindingsEditorStore((state) => state.populateInferSchemaResponse);
 };
 
-export const useBindingsEditorStore_selections = () => {
-    return useBindingsEditorStore((state) => state.selections);
-};
-
-export const useBindingsEditorStore_initializeSelections = () => {
-    return useBindingsEditorStore((state) => state.initializeSelections);
-};
-
 export const useBindingsEditorStore_setSingleSelection = () => {
     return useBindingsEditorStore((state) => state.setSingleSelection);
 };

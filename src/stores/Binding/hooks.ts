@@ -311,3 +311,17 @@ export const useBinding_setRecommendFields = () => {
         (state) => state.setRecommendFields
     );
 };
+
+export const useBinding_selections = () => {
+    return useZustandStore<BindingState, BindingState['selections']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.selections
+    );
+};
+
+export const useBinding_initializeSelections = () => {
+    return useZustandStore<BindingState, BindingState['initializeSelections']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.initializeSelections
+    );
+};

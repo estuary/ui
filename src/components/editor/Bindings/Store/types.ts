@@ -100,12 +100,6 @@ export interface BindingsEditorState {
 
     // Field Selection
     selections: { [field: string]: FieldSelectionType | null };
-    initializeSelections: (
-        selection: {
-            field: string;
-            selectionType: FieldSelectionType | null;
-        }[]
-    ) => void;
     setSingleSelection: (
         field: string,
         selectionType: FieldSelectionType | null

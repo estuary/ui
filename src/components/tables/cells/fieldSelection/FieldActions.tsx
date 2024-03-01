@@ -4,13 +4,13 @@ import {
     FieldSelectionType,
     TranslatedConstraint,
 } from 'components/editor/Bindings/FieldSelection/types';
-import {
-    useBindingsEditorStore_selections,
-    useBindingsEditorStore_setSingleSelection,
-} from 'components/editor/Bindings/Store/hooks';
+import { useBindingsEditorStore_setSingleSelection } from 'components/editor/Bindings/Store/hooks';
 import FieldActionButton from 'components/tables/cells/fieldSelection/FieldActionButton';
 import { useMemo } from 'react';
-import { useBinding_recommendFields } from 'stores/Binding/hooks';
+import {
+    useBinding_recommendFields,
+    useBinding_selections,
+} from 'stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
     evaluateRecommendedIncludedFields,
@@ -35,13 +35,16 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
     // Bindings Editor Store
     const recommendFields = useBinding_recommendFields();
 
-    const selections = useBindingsEditorStore_selections();
+    const selections = useBinding_selections();
     const setSingleSelection = useBindingsEditorStore_setSingleSelection();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
 
-    const selectedValue = useMemo(() => selections[field], [field, selections]);
+    const selectedValue = useMemo(
+        () => selections[bindingUUID][field],
+        [bindingUUID, field, selections]
+    );
 
     const includeRequired = evaluateRequiredIncludedFields(constraint.type);
     const includeRecommended = evaluateRecommendedIncludedFields(
