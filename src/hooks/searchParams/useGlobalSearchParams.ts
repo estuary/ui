@@ -13,7 +13,7 @@ export enum GlobalSearchParams {
     PREFIX = 'prefix',
     PROVIDER = 'provider', // Login Provider but having a url like login/?loginProvider looked weird
     HOME_PAGE_ERROR = 'homePageError',
-    LOGIN_HINTS_GOOGLE = 'gcp_login_hint',
+    LOGIN_HINTS_GOOGLE = 'google_login_hint',
 }
 
 function useGlobalSearchParams<T = string>(key: GlobalSearchParams): T;
