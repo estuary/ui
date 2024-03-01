@@ -13,14 +13,17 @@ import { BASE_ERROR } from 'services/supabase';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import FullPageWrapper from 'app/FullPageWrapper';
-import { useMount } from 'react-use';
 import useMarketplaceLocalStorage from 'hooks/useMarketplaceLocalStorage';
+import useConstant from 'use-constant';
 
 function MarketplaceVerification() {
     const intl = useIntl();
     const verifyMarketplace = useMarketplaceVerify();
 
-    const { 2: removeMarketplaceVerify } = useMarketplaceLocalStorage();
+    const { 0: marketplaceVerify, 2: removeMarketplaceVerify } =
+        useMarketplaceLocalStorage();
+
+    const skip = useConstant(() => Boolean(!marketplaceVerify));
 
     const [applied, setApplied] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -35,7 +38,7 @@ function MarketplaceVerification() {
     };
 
     const handleFailure = useCallback((error: PostgrestError) => {
-        console.log('error', error);
+        console.log('MarketplaceVerification:error', error);
         setLoading(false);
         setApplied(false);
         setServerError(error);
@@ -55,17 +58,14 @@ function MarketplaceVerification() {
                     status: 'success',
                     message: null,
                 });
+                removeMarketplaceVerify();
                 setApplied(true);
             }, handleFailure);
         },
-        [handleFailure, verifyMarketplace]
+        [handleFailure, removeMarketplaceVerify, verifyMarketplace]
     );
 
-    useMount(() => {
-        removeMarketplaceVerify();
-    });
-
-    if (applied) {
+    if (applied || skip) {
         return <Navigate to={authenticatedRoutes.home.path} replace />;
     }
 

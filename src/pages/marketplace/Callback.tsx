@@ -2,13 +2,9 @@ import { useClient } from 'hooks/supabase-swr';
 import { useIntl } from 'react-intl';
 import { useSnackbar } from 'notistack';
 import { logRocketConsole } from 'services/shared';
-import { getPathWithParams } from 'utils/misc-utils';
 import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+
 import { useNavigate } from 'react-router-dom';
-import { SupportedProvider } from 'types/authProviders';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { useEffect } from 'react';
 import useMarketplaceLocalStorage from 'hooks/useMarketplaceLocalStorage';
@@ -27,10 +23,6 @@ function MarketplaceCallback() {
     const navigate = useNavigate();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-
-    const provider = useGlobalSearchParams<SupportedProvider>(
-        GlobalSearchParams.PROVIDER
-    );
 
     const { 1: setMarketplaceVerify } = useMarketplaceLocalStorage();
 
@@ -60,12 +52,10 @@ function MarketplaceCallback() {
             })
             .finally(() => {
                 setMarketplaceVerify({
-                    path: `${authenticatedRoutes.marketplace.verify.fullPath}${location.search}`,
+                    path: authenticatedRoutes.marketplace.verify.fullPath,
                 });
                 navigate(
-                    getPathWithParams(unauthenticatedRoutes.logout.path, {
-                        [GlobalSearchParams.PROVIDER]: provider,
-                    }),
+                    `${unauthenticatedRoutes.logout.path}${location.search}`,
                     {
                         replace: true,
                     }
@@ -75,7 +65,6 @@ function MarketplaceCallback() {
         enqueueSnackbar,
         intl,
         navigate,
-        provider,
         setMarketplaceVerify,
         supabaseClient.auth,
     ]);
