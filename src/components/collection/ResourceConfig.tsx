@@ -71,7 +71,10 @@ function ResourceConfig({
             ) : null}
 
             {entityType === 'materialization' && !collectionDisabled ? (
-                <FieldSelectionViewer collectionName={collectionName} />
+                <FieldSelectionViewer
+                    bindingUUID={bindingUUID}
+                    collectionName={collectionName}
+                />
             ) : null}
 
             {entityType === 'materialization' ? (

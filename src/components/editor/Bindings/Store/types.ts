@@ -99,9 +99,6 @@ export interface BindingsEditorState {
     hasIncompatibleCollections: boolean;
 
     // Field Selection
-    recommendFields: boolean;
-    setRecommendFields: (value: BindingsEditorState['recommendFields']) => void;
-
     selections: { [field: string]: FieldSelectionType | null };
     initializeSelections: (
         selection: {

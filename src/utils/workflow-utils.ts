@@ -156,7 +156,7 @@ export const generateTaskSpec = (
             const { collectionName, disable } = config.meta;
 
             // Check if disable is a boolean otherwise default to false
-            const resourceDisable = isBoolean(disable) ? disable : false;
+            const bindingDisabled = isBoolean(disable) ? disable : false;
 
             // See which binding we need to update
             const existingBindingIndex = getBindingIndex(
@@ -166,9 +166,9 @@ export const generateTaskSpec = (
 
             if (existingBindingIndex > -1) {
                 // Include disable otherwise totally remove it
-                if (resourceDisable) {
+                if (bindingDisabled) {
                     draftSpec.bindings[existingBindingIndex].disable =
-                        resourceDisable;
+                        bindingDisabled;
                 } else {
                     delete draftSpec.bindings[existingBindingIndex].disable;
                 }
@@ -182,7 +182,7 @@ export const generateTaskSpec = (
                 draftSpec.bindings[existingBindingIndex][collectionNameProp] =
                     getFullSourceSetting(fullSource, collectionName);
             } else if (Object.keys(resourceConfig).length > 0) {
-                const disabledProps = getDisableProps(resourceDisable);
+                const disabledProps = getDisableProps(bindingDisabled);
 
                 draftSpec.bindings.push({
                     [collectionNameProp]: getFullSourceSetting(

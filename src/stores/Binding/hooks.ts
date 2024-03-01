@@ -297,3 +297,17 @@ export const useBinding_backfillAllBindings = () => {
         (state) => state.backfillAllBindings
     );
 };
+
+export const useBinding_recommendFields = () => {
+    return useZustandStore<BindingState, BindingState['recommendFields']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.recommendFields
+    );
+};
+
+export const useBinding_setRecommendFields = () => {
+    return useZustandStore<BindingState, BindingState['setRecommendFields']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.setRecommendFields
+    );
+};

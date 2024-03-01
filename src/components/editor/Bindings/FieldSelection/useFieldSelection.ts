@@ -1,8 +1,5 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
-import {
-    useBindingsEditorStore_recommendFields,
-    useBindingsEditorStore_selections,
-} from 'components/editor/Bindings/Store/hooks';
+import { useBindingsEditorStore_selections } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
@@ -10,13 +7,14 @@ import {
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { omit } from 'lodash';
 import { useCallback } from 'react';
+import { useBinding_recommendFields } from 'stores/Binding/hooks';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getBindingIndex } from 'utils/workflow-utils';
 
-function useFieldSelection(collectionName: string) {
+function useFieldSelection(bindingUUID: string, collectionName: string) {
     // Bindings Editor Store
-    const recommendFields = useBindingsEditorStore_recommendFields();
+    const recommendFields = useBinding_recommendFields();
     const selections = useBindingsEditorStore_selections();
 
     // Draft Editor Store
@@ -38,8 +36,12 @@ function useFieldSelection(collectionName: string) {
             } else {
                 const spec: Schema = draftSpec.spec;
 
+                const recommended = Object.hasOwn(recommendFields, bindingUUID)
+                    ? recommendFields[bindingUUID]
+                    : true;
+
                 spec.bindings[bindingIndex].fields = {
-                    recommended: recommendFields,
+                    recommended,
                     exclude: [],
                     include: {},
                 };
@@ -59,7 +61,7 @@ function useFieldSelection(collectionName: string) {
                 if (
                     hasLength(includedFields) ||
                     hasLength(excludedFields) ||
-                    !recommendFields
+                    !recommended
                 ) {
                     // Remove the include property if no fields are marked for explicit inclusion, otherwise set the property.
                     if (hasLength(includedFields)) {
@@ -109,7 +111,14 @@ function useFieldSelection(collectionName: string) {
                 return mutateDraftSpecs();
             }
         },
-        [mutateDraftSpecs, collectionName, draftId, recommendFields, selections]
+        [
+            bindingUUID,
+            collectionName,
+            draftId,
+            mutateDraftSpecs,
+            recommendFields,
+            selections,
+        ]
     );
 }
 

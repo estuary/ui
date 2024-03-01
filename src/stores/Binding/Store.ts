@@ -164,6 +164,7 @@ const getInitialStateData = (): Pick<
     | 'backfilledCollections'
     | 'collectionsRequiringRediscovery'
     | 'discoveredCollections'
+    | 'recommendFields'
     | 'rediscoveryRequired'
     | 'resourceConfigErrorsExist'
     | 'resourceConfigErrors'
@@ -176,6 +177,7 @@ const getInitialStateData = (): Pick<
     backfilledCollections: [],
     collectionsRequiringRediscovery: [],
     discoveredCollections: [],
+    recommendFields: {},
     rediscoveryRequired: false,
     resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
@@ -747,6 +749,16 @@ const getInitialState = (
             }),
             false,
             'Current binding changed'
+        );
+    },
+
+    setRecommendFields: (bindingUUID, value) => {
+        set(
+            produce((state: BindingState) => {
+                state.recommendFields[bindingUUID] = value;
+            }),
+            false,
+            'Recommend Fields Flag Set'
         );
     },
 

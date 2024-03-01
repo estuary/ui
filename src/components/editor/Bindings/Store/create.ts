@@ -158,9 +158,8 @@ const getInitialFullSourceData = (): Pick<
 
 const getInitialFieldSelectionData = (): Pick<
     BindingsEditorState,
-    'recommendFields' | 'selections' | 'selectionSaving'
+    'selections' | 'selectionSaving'
 > => ({
-    recommendFields: true,
     selections: {},
     selectionSaving: false,
 });
@@ -184,7 +183,6 @@ const getInitialMiscData = (): Pick<
     | 'inferSchemaResponse_Keys'
     | 'incompatibleCollections'
     | 'hasIncompatibleCollections'
-    | 'recommendFields'
     | 'selections'
     | 'selectionSaving'
 > => ({
@@ -487,16 +485,6 @@ const getInitialState = (
         } else {
             return null;
         }
-    },
-
-    setRecommendFields: (value) => {
-        set(
-            produce((state: BindingsEditorState) => {
-                state.recommendFields = value;
-            }),
-            false,
-            'Recommend Fields Set'
-        );
     },
 
     initializeSelections: (selections) => {

@@ -98,6 +98,10 @@ export interface BindingState extends StoreWithHydration {
     resourceConfigErrorsExist: boolean;
     resourceConfigErrors: (string | undefined)[];
 
+    // Field Selection
+    recommendFields: { [bindingUUID: string]: boolean };
+    setRecommendFields: (bindingUUID: string, value: boolean) => void;
+
     // Server-Form Alignment
     serverUpdateRequired: boolean;
     setServerUpdateRequired: (value: boolean) => void;

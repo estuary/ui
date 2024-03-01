@@ -15,7 +15,6 @@ import useFieldSelection from 'components/editor/Bindings/FieldSelection/useFiel
 import {
     useBindingsEditorStore_initializeSelections,
     useBindingsEditorStore_selectionSaving,
-    useBindingsEditorStore_setRecommendFields,
     useBindingsEditorStore_setSelectionSaving,
 } from 'components/editor/Bindings/Store/hooks';
 import {
@@ -34,7 +33,10 @@ import { SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
+import {
+    useBinding_serverUpdateRequired,
+    useBinding_setRecommendFields,
+} from 'stores/Binding/hooks';
 import { useEndpointConfig_serverUpdateRequired } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
@@ -54,6 +56,7 @@ import RefreshStatus from './RefreshStatus';
 import useFieldSelectionRefresh from './useFieldSelectionRefresh';
 
 interface Props {
+    bindingUUID: string;
     collectionName: string;
 }
 
@@ -118,7 +121,7 @@ const optionalColumns = columns.filter(
             : false
 );
 
-function FieldSelectionViewer({ collectionName }: Props) {
+function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
     const { tableSettings, setTableSettings } = useDisplayTableColumns();
 
     const isEdit = useEntityWorkflow_Editing();
@@ -130,11 +133,11 @@ function FieldSelectionViewer({ collectionName }: Props) {
         CompositeProjection[] | null | undefined
     >();
 
-    const applyFieldSelections = useFieldSelection(collectionName);
+    const applyFieldSelections = useFieldSelection(bindingUUID, collectionName);
     const { refresh } = useFieldSelectionRefresh();
 
     // Bindings Editor Store
-    const setRecommendFields = useBindingsEditorStore_setRecommendFields();
+    const setRecommendFields = useBinding_setRecommendFields();
 
     const initializeSelections = useBindingsEditorStore_initializeSelections();
 
@@ -234,9 +237,12 @@ function FieldSelectionViewer({ collectionName }: Props) {
                 ) {
                     evaluatedFieldMetadata = selectedBinding.fields;
 
-                    setRecommendFields(selectedBinding.fields.recommended);
+                    setRecommendFields(
+                        bindingUUID,
+                        selectedBinding.fields.recommended
+                    );
                 } else {
-                    setRecommendFields(true);
+                    setRecommendFields(bindingUUID, true);
                 }
 
                 if (evaluatedConstraints) {
@@ -271,6 +277,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
             setData(null);
         }
     }, [
+        bindingUUID,
         collectionName,
         draftId,
         draftSpecs,

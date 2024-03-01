@@ -5,12 +5,12 @@ import {
     TranslatedConstraint,
 } from 'components/editor/Bindings/FieldSelection/types';
 import {
-    useBindingsEditorStore_recommendFields,
     useBindingsEditorStore_selections,
     useBindingsEditorStore_setSingleSelection,
 } from 'components/editor/Bindings/Store/hooks';
 import FieldActionButton from 'components/tables/cells/fieldSelection/FieldActionButton';
 import { useMemo } from 'react';
+import { useBinding_recommendFields } from 'stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
     evaluateRecommendedIncludedFields,
@@ -18,22 +18,22 @@ import {
 } from 'utils/workflow-utils';
 
 interface Props {
+    bindingUUID: string;
     field: string;
     constraint: TranslatedConstraint;
     selectionType: FieldSelectionType | null;
 }
 
 const evaluateSelectionType = (
-    recommendFields: boolean,
+    recommended: boolean,
     toggleValue: FieldSelectionType,
     selectedValue: FieldSelectionType | null,
     singleValue: FieldSelectionType | null
-) =>
-    selectedValue === toggleValue && recommendFields ? 'default' : singleValue;
+) => (selectedValue === toggleValue && recommended ? 'default' : singleValue);
 
-function FieldActions({ field, constraint }: Props) {
+function FieldActions({ bindingUUID, field, constraint }: Props) {
     // Bindings Editor Store
-    const recommendFields = useBindingsEditorStore_recommendFields();
+    const recommendFields = useBinding_recommendFields();
 
     const selections = useBindingsEditorStore_selections();
     const setSingleSelection = useBindingsEditorStore_setSingleSelection();
@@ -98,7 +98,7 @@ function FieldActions({ field, constraint }: Props) {
                                 : null;
 
                         const selectionType = evaluateSelectionType(
-                            recommendFields,
+                            recommendFields[bindingUUID],
                             'include',
                             selectedValue,
                             singleValue
@@ -119,7 +119,7 @@ function FieldActions({ field, constraint }: Props) {
                             selectedValue !== 'exclude' ? 'exclude' : null;
 
                         const selectionType = evaluateSelectionType(
-                            recommendFields,
+                            recommendFields[bindingUUID],
                             'exclude',
                             selectedValue,
                             singleValue
