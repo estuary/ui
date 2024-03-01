@@ -50,7 +50,6 @@ function MarketplaceVerification() {
             setServerError(null);
             verifyMarketplace(tenant).then(() => {
                 // There is no data returned with this call - just an ok
-                //  so if we got a good call we know it worked
                 logRocketEvent(CustomEvents.MARKETPLACE_VERIFY, {
                     status: 'success',
                     message: null,
