@@ -15,7 +15,8 @@ export const fetcher = (tenant: string, session: Session | null) => {
     return client<MarketPlaceVerifyResponse>(
         verifyURL,
         { data: { tenant, token: session?.provider_token } },
-        session?.access_token
+        session?.access_token,
+        true
     );
 };
 
@@ -37,7 +38,7 @@ const useMarketplaceVerify = () => {
                 maxTimeout: 15000,
             });
 
-            return new Promise<MarketplaceVerifyResponse>((resolve) => {
+            return new Promise<MarketplaceVerifyResponse>((resolve, reject) => {
                 operation.attempt(async () => {
                     const response = await fetcher(tenant, session).then(
                         handleSuccess<MarketPlaceVerifyResponse>,
@@ -57,7 +58,11 @@ const useMarketplaceVerify = () => {
                         return;
                     }
 
-                    resolve(response);
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(response);
+                    }
                 });
             });
         },

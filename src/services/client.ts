@@ -9,7 +9,8 @@ export const AUTH_ERROR = 'common.loggedOut';
 export const client = <Response, Request = {}>(
     endpoint: string,
     { data, ...customConfig }: ClientConfig<Request> = {},
-    token?: string
+    token?: string,
+    returnOriginalMessage?: boolean
 ): Promise<Response> => {
     const config: NonNullable<RequestInit> = {
         body: data ? JSON.stringify(data) : undefined,
@@ -45,11 +46,13 @@ export const client = <Response, Request = {}>(
             }
         })
         .catch((error) => {
+            console.log('fetchPromise:error', error);
             return Promise.reject({
-                message:
-                    error?.message === AUTH_ERROR
-                        ? AUTH_ERROR
-                        : FETCH_DEFAULT_ERROR,
+                message: returnOriginalMessage
+                    ? error.message
+                    : error?.message === AUTH_ERROR
+                    ? AUTH_ERROR
+                    : FETCH_DEFAULT_ERROR,
                 ...error,
             });
         });
