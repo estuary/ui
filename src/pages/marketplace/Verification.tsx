@@ -48,17 +48,14 @@ function MarketplaceVerification() {
         (tenant: string) => {
             setLoading(true);
             setServerError(null);
-            verifyMarketplace(tenant).then((response: any) => {
-                console.log('verifyMarketplace response', response);
-                if (response.ok) {
-                    logRocketEvent(CustomEvents.MARKETPLACE_VERIFY, {
-                        status: 'success',
-                        message: null,
-                    });
-                    setApplied(true);
-                } else if (response.error) {
-                    handleFailure(response.error);
-                }
+            verifyMarketplace(tenant).then(() => {
+                // There is no data returned with this call - just an ok
+                //  so if we got a good call we know it worked
+                logRocketEvent(CustomEvents.MARKETPLACE_VERIFY, {
+                    status: 'success',
+                    message: null,
+                });
+                setApplied(true);
             }, handleFailure);
         },
         [handleFailure, verifyMarketplace]
