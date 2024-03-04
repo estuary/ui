@@ -77,7 +77,7 @@ function EntityEdit({
         isValidating,
     } = useConnectorWithTagDetail(entityType);
 
-    // Resource Config Store
+    // Binding Store
     const resourceConfigServerUpdateRequired =
         useBinding_serverUpdateRequired();
 

@@ -42,6 +42,11 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                         binding[collectionNameProp]
                     );
 
+                    // If a binding with a given source collection does not exist, an update is needed.
+                    if (!Object.hasOwn(bindings, collectionName)) {
+                        return true;
+                    }
+
                     return bindings[collectionName].every((bindingUUID) => {
                         // Do a quick simple disabled check before comparing the entire object
                         if (

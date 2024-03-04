@@ -9,6 +9,7 @@ import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { FormattedMessage } from 'react-intl';
 import {
     useBinding_hydrated,
+    useBinding_resourceConfig,
     useBinding_resourceConfigOfMetaCollectionProperty,
 } from 'stores/Binding/hooks';
 import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
@@ -28,9 +29,13 @@ function ResourceConfig({
     const isEdit = useEntityWorkflow_Editing();
 
     const hydrated = useBinding_hydrated();
+    const resourceConfig = useBinding_resourceConfig(bindingUUID);
 
     const draftedBindingIndex =
-        useEditorStore_queryResponse_draftedBindingIndex(collectionName);
+        useEditorStore_queryResponse_draftedBindingIndex(
+            collectionName,
+            resourceConfig
+        );
 
     // If the collection is disabled then it will not come back in the built spec
     //  binding list. This means the user could end up clicking "See Fields" button
@@ -78,7 +83,10 @@ function ResourceConfig({
             ) : null}
 
             {entityType === 'materialization' ? (
-                <TimeTravel collectionName={collectionName} />
+                <TimeTravel
+                    bindingUUID={bindingUUID}
+                    collectionName={collectionName}
+                />
             ) : null}
         </>
     );

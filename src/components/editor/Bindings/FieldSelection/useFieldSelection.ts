@@ -8,6 +8,7 @@ import { omit } from 'lodash';
 import { useCallback } from 'react';
 import {
     useBinding_recommendFields,
+    useBinding_resourceConfig,
     useBinding_selections,
 } from 'stores/Binding/hooks';
 import { Schema } from 'types';
@@ -18,6 +19,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
     // Bindings Editor Store
     const recommendFields = useBinding_recommendFields();
     const selections = useBinding_selections();
+    const resourceConfig = useBinding_resourceConfig(bindingUUID);
 
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
@@ -30,7 +32,8 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
             //  we just pass in the index along with it? Not sure how to do this and make it feel good.
             const bindingIndex: number = getBindingIndex(
                 draftSpec.spec.bindings,
-                collectionName
+                collectionName,
+                resourceConfig
             );
 
             if (!mutateDraftSpecs || bindingIndex === -1) {
@@ -123,6 +126,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
             draftId,
             mutateDraftSpecs,
             recommendFields,
+            resourceConfig,
             selections,
         ]
     );

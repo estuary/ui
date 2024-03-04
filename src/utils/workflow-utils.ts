@@ -13,10 +13,10 @@ import {
     ConnectorWithTagDetailQuery,
 } from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isBoolean, isEmpty } from 'lodash';
+import { isBoolean, isEmpty, isEqual } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { REMOVE_DURING_GENERATION } from 'stores/Binding/shared';
-import { ResourceConfigDictionary } from 'stores/Binding/types';
+import { ResourceConfig, ResourceConfigDictionary } from 'stores/Binding/types';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
@@ -55,13 +55,27 @@ export const getCollectionName = (binding: any) => {
 
 export const getBindingIndex = (
     bindings: any[] | null | undefined,
-    collectionName: string
+    collectionName: string,
+    resourceConfig?: ResourceConfig | undefined
 ) => {
-    return bindings?.findIndex
-        ? bindings.findIndex(
-              (binding: any) => getCollectionName(binding) === collectionName
-          )
-        : -1;
+    const matchedIndices =
+        bindings
+            ?.map((binding: any, index) =>
+                getCollectionName(binding) === collectionName ? index : -1
+            )
+            .filter((bindingIndex) => bindingIndex > -1) ?? [];
+
+    if (matchedIndices.length === 1) {
+        return matchedIndices[0];
+    } else if (bindings && resourceConfig) {
+        return (
+            matchedIndices.find((bindingIndex) =>
+                isEqual(bindings[bindingIndex].resource, resourceConfig.data)
+            ) ?? -1
+        );
+    } else {
+        return -1;
+    }
 };
 
 export const getDisableProps = (disable: boolean | undefined) => {
@@ -135,7 +149,8 @@ export const generateTaskSpec = (
     resourceConfigs: ResourceConfigDictionary | null,
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
     sourceCapture: string | null,
-    fullSource: FullSourceDictionary | null
+    fullSource: FullSourceDictionary | null,
+    resourceConfigServerUpdateRequired: boolean
 ) => {
     const draftSpec = isEmpty(existingTaskData)
         ? {
@@ -153,16 +168,15 @@ export const generateTaskSpec = (
 
         extractedResourceConfigs.forEach((config) => {
             const resourceConfig = config.data;
-            const { collectionName, disable } = config.meta;
+            const { bindingIndex, collectionName, disable } = config.meta;
 
             // Check if disable is a boolean otherwise default to false
             const bindingDisabled = isBoolean(disable) ? disable : false;
 
             // See which binding we need to update
-            const existingBindingIndex = getBindingIndex(
-                draftSpec.bindings,
-                collectionName
-            );
+            const existingBindingIndex = resourceConfigServerUpdateRequired
+                ? getBindingIndex(draftSpec.bindings, collectionName, config)
+                : bindingIndex;
 
             if (existingBindingIndex > -1) {
                 // Include disable otherwise totally remove it
@@ -198,10 +212,17 @@ export const generateTaskSpec = (
         });
 
         if (hasLength(draftSpec.bindings)) {
-            draftSpec.bindings = draftSpec.bindings.filter((binding: any) =>
-                extractedResourceConfigs
-                    .map((config) => config.meta.collectionName)
-                    .includes(getCollectionName(binding[collectionNameProp]))
+            draftSpec.bindings = draftSpec.bindings.filter(
+                (binding: any) =>
+                    extractedResourceConfigs
+                        .filter(
+                            (config) =>
+                                config.meta.collectionName ===
+                                getCollectionName(binding)
+                        )
+                        .findIndex((config) => {
+                            return isEqual(config.data, binding.resource);
+                        }) > -1
             );
         }
     } else {
@@ -273,7 +294,8 @@ export const modifyExistingCaptureDraftSpec = async (
     connectorImage: string,
     encryptedEndpointConfig: Schema,
     resourceConfig: ResourceConfigDictionary,
-    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
+    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
+    resourceConfigServerUpdateRequired: boolean
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpec = generateTaskSpec(
         'capture',
@@ -281,7 +303,8 @@ export const modifyExistingCaptureDraftSpec = async (
         resourceConfig,
         existingTaskData,
         null,
-        null
+        null,
+        resourceConfigServerUpdateRequired
     );
 
     return modifyDraftSpec(draftSpec, {

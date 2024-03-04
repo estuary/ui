@@ -30,6 +30,7 @@ import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import {
     useBinding_initializeSelections,
+    useBinding_resourceConfig,
     useBinding_selectionSaving,
     useBinding_serverUpdateRequired,
     useBinding_setRecommendFields,
@@ -137,6 +138,7 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
     // Bindings Store
     const setRecommendFields = useBinding_setRecommendFields();
     const initializeSelections = useBinding_initializeSelections();
+    const resourceConfig = useBinding_resourceConfig(bindingUUID);
 
     const selectionSaving = useBinding_selectionSaving();
     const setSelectionSaving = useBinding_setSelectionSaving();
@@ -222,7 +224,8 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
 
                     const bindingIndex: number = getBindingIndex(
                         draftSpecs[0].spec.bindings,
-                        collectionName
+                        collectionName,
+                        resourceConfig
                     );
                     const selectedBinding: Schema | undefined =
                         bindingIndex > -1
@@ -289,6 +292,7 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
         formStatus,
         initializeSelections,
         refresh,
+        resourceConfig,
         setRecommendFields,
     ]);
 

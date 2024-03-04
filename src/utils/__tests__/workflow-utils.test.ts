@@ -102,22 +102,27 @@ describe('generateTaskSpec', () => {
         resourceConfigs: ResourceConfigDictionary | null,
         existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
         sourceCapture: string | null,
-        fullSource: FullSourceDictionary | null;
+        fullSource: FullSourceDictionary | null,
+        resourceConfigServerUpdateRequired: boolean;
 
     beforeEach(() => {
         uuidOne = crypto.randomUUID();
         uuidTwo = crypto.randomUUID();
         uuidThree = crypto.randomUUID();
 
-        resourceConfig_one = generateMockResourceConfig('mock/binding/one');
-        resourceConfig_two = generateMockResourceConfig('mock/binding/two');
-        resourceConfig_three = generateMockResourceConfig('mock/binding/three');
+        resourceConfig_one = generateMockResourceConfig('mock/binding/one', 0);
+        resourceConfig_two = generateMockResourceConfig('mock/binding/two', 1);
+        resourceConfig_three = generateMockResourceConfig(
+            'mock/binding/three',
+            2
+        );
 
         connectorConfig = generateMockConnectorConfig();
         resourceConfigs = null;
         existingTaskData = null;
         sourceCapture = null;
         fullSource = null;
+        resourceConfigServerUpdateRequired = false;
     });
 
     describe('when no existing data or binding data', () => {
@@ -133,7 +138,8 @@ describe('generateTaskSpec', () => {
                 {},
                 existingTaskData,
                 sourceCapture,
-                fullSource
+                fullSource,
+                resourceConfigServerUpdateRequired
             );
             expect(response.bindings).toStrictEqual([]);
         });
@@ -179,7 +185,8 @@ describe('generateTaskSpec', () => {
                 {},
                 existingTaskData,
                 sourceCapture,
-                fullSource
+                fullSource,
+                resourceConfigServerUpdateRequired
             );
             expect(response.bindings).toStrictEqual([]);
         });
@@ -188,6 +195,8 @@ describe('generateTaskSpec', () => {
     describe('when existing data and new data', () => {
         beforeEach(() => {
             connectorConfig = generateMockConnectorConfig();
+            resourceConfigServerUpdateRequired = true;
+
             existingTaskData = {
                 catalog_name: 'mock/test/capture-postgres',
                 draft_id: '00:00:00:00:00:00:00:00',
@@ -229,7 +238,8 @@ describe('generateTaskSpec', () => {
                 },
                 existingTaskData,
                 sourceCapture,
-                fullSource
+                fullSource,
+                resourceConfigServerUpdateRequired
             );
             expect(response.bindings).toStrictEqual([
                 {
@@ -279,7 +289,8 @@ describe('generateTaskSpec', () => {
                     },
                     existingTaskData,
                     sourceCapture,
-                    fullSource
+                    fullSource,
+                    resourceConfigServerUpdateRequired
                 );
 
                 expect(response.bindings).toMatchSnapshot();
@@ -295,60 +306,136 @@ describe('generateTaskSpec', () => {
             };
         });
 
-        test('captures use `target` and materializations use `source` as the binding name', () => {
-            expect(
-                generateTaskSpec(
-                    'capture',
-                    connectorConfig,
-                    resourceConfigs,
-                    existingTaskData,
-                    sourceCapture,
-                    fullSource
-                ).bindings.map(({ target }: any) => target)
-            ).toStrictEqual([
-                resourceConfig_one.meta.collectionName,
-                resourceConfig_two.meta.collectionName,
-            ]);
+        describe('when entity type is capture', () => {
+            beforeEach(() => {
+                existingTaskData = {
+                    catalog_name: 'mock/test/source-postgres',
+                    draft_id: '00:00:00:00:00:00:00:00',
+                    expect_pub_id: '00:00:00:00:00:00:00:00',
+                    spec_type: 'capture',
+                    spec: {
+                        bindings: [
+                            {
+                                target: 'mock/binding/one',
+                                resource: {
+                                    table: 'table_name',
+                                    delta_updates: false,
+                                },
+                            },
+                            {
+                                target: 'mock/binding/two',
+                                resource: {
+                                    table: 'table_name_two',
+                                    delta_updates: false,
+                                },
+                                backfill: 2,
+                            },
+                        ],
+                        endpoint: {
+                            connector: connectorConfig,
+                        },
+                    },
+                };
+            });
 
-            expect(
-                generateTaskSpec(
-                    'materialization',
-                    connectorConfig,
-                    resourceConfigs,
-                    existingTaskData,
-                    sourceCapture,
-                    fullSource
-                ).bindings.map(({ source }: any) => source)
-            ).toStrictEqual([
-                resourceConfig_one.meta.collectionName,
-                resourceConfig_two.meta.collectionName,
-            ]);
+            test('`target` property is used to identify the associated collection', () => {
+                expect(
+                    generateTaskSpec(
+                        'capture',
+                        connectorConfig,
+                        resourceConfigs,
+                        existingTaskData,
+                        sourceCapture,
+                        fullSource,
+                        resourceConfigServerUpdateRequired
+                    ).bindings.map(({ target }: any) => target)
+                ).toStrictEqual([
+                    resourceConfig_one.meta.collectionName,
+                    resourceConfig_two.meta.collectionName,
+                ]);
+            });
+
+            test('cannot return the `sourceCapture` property', () => {
+                sourceCapture = 'mock/source/capture';
+
+                expect(
+                    generateTaskSpec(
+                        'capture',
+                        connectorConfig,
+                        resourceConfigs,
+                        existingTaskData,
+                        sourceCapture,
+                        fullSource,
+                        resourceConfigServerUpdateRequired
+                    ).sourceCapture
+                ).toBeUndefined();
+            });
         });
 
-        test('only materializations can return the `sourceCapture` property', () => {
-            sourceCapture = 'mock/source/capture';
+        describe('when entity type is materialization', () => {
+            beforeEach(() => {
+                existingTaskData = {
+                    catalog_name: 'mock/test/materialize-postgres',
+                    draft_id: '00:00:00:00:00:00:00:00',
+                    expect_pub_id: '00:00:00:00:00:00:00:00',
+                    spec_type: 'materialization',
+                    spec: {
+                        bindings: [
+                            {
+                                source: 'mock/binding/one',
+                                resource: {
+                                    table: 'table_name',
+                                    delta_updates: false,
+                                },
+                            },
+                            {
+                                source: 'mock/binding/two',
+                                resource: {
+                                    table: 'table_name_two',
+                                    delta_updates: false,
+                                },
+                                backfill: 2,
+                            },
+                        ],
+                        endpoint: {
+                            connector: connectorConfig,
+                        },
+                    },
+                };
+            });
 
-            expect(
-                generateTaskSpec(
-                    'capture',
-                    connectorConfig,
-                    resourceConfigs,
-                    existingTaskData,
-                    sourceCapture,
-                    fullSource
-                ).sourceCapture
-            ).toBeUndefined();
+            test('`source` property is used to identify the associated collection', () => {
+                expect(
+                    generateTaskSpec(
+                        'materialization',
+                        connectorConfig,
+                        resourceConfigs,
+                        existingTaskData,
+                        sourceCapture,
+                        fullSource,
+                        resourceConfigServerUpdateRequired
+                    ).bindings.map(({ source }: any) => source)
+                ).toStrictEqual([
+                    resourceConfig_one.meta.collectionName,
+                    resourceConfig_two.meta.collectionName,
+                ]);
+            });
 
-            expect(
-                generateTaskSpec(
-                    'materialization',
-                    connectorConfig,
-                    resourceConfigs,
-                    existingTaskData,
-                    sourceCapture,
-                    fullSource
-                ).sourceCapture
-            ).toStrictEqual(sourceCapture);
+            test('can return the `sourceCapture` property', () => {
+                sourceCapture = 'mock/source/capture';
+
+                expect(
+                    generateTaskSpec(
+                        'materialization',
+                        connectorConfig,
+                        resourceConfigs,
+                        existingTaskData,
+                        sourceCapture,
+                        fullSource,
+                        resourceConfigServerUpdateRequired
+                    ).sourceCapture
+                ).toStrictEqual(sourceCapture);
+            });
         });
     });
 });

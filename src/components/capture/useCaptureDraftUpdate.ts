@@ -12,7 +12,10 @@ import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecCont
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback } from 'react';
-import { useBinding_resourceConfigs } from 'stores/Binding/hooks';
+import {
+    useBinding_resourceConfigs,
+    useBinding_serverUpdateRequired,
+} from 'stores/Binding/hooks';
 import { useDetailsForm_connectorImage_imagePath } from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_endpointConfig_data,
@@ -43,6 +46,8 @@ function useDiscoverDraftUpdate(options?: {
         useEndpointConfigStore_setPreviousEndpointConfig();
 
     const resourceConfig = useBinding_resourceConfigs();
+    const resourceConfigServerUpdateRequired =
+        useBinding_serverUpdateRequired();
 
     const processedEntityName = useEntityNameSuffix(
         !isEdit && options?.initiateDiscovery
@@ -92,7 +97,8 @@ function useDiscoverDraftUpdate(options?: {
                     imagePath,
                     encryptedEndpointConfigResponse,
                     resourceConfig,
-                    existingTaskData
+                    existingTaskData,
+                    resourceConfigServerUpdateRequired
                 );
 
                 if (draftSpecsResponse.error) {

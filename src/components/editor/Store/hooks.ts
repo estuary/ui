@@ -7,6 +7,7 @@ import useGlobalSearchParams, {
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { useEffect } from 'react';
+import { ResourceConfig } from 'stores/Binding/types';
 import { EditorStoreNames } from 'stores/names';
 import { Entity } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -533,6 +534,7 @@ export const useEditorStore_queryResponse_mutate = (
 
 export const useEditorStore_queryResponse_draftedBindingIndex = (
     collection: string | null,
+    resourceConfig: ResourceConfig | undefined,
     params?: SelectorParams | undefined
 ) => {
     const localScope = params?.localScope;
@@ -549,7 +551,8 @@ export const useEditorStore_queryResponse_draftedBindingIndex = (
             collection && hasLength(state.queryResponse.draftSpecs)
                 ? getBindingIndex(
                       state.queryResponse.draftSpecs[0].spec.bindings,
-                      collection
+                      collection,
+                      resourceConfig
                   )
                 : -1
     );

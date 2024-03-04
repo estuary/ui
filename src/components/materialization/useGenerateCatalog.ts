@@ -25,6 +25,7 @@ import {
     useBinding_resetRediscoverySettings,
     useBinding_resourceConfigErrorsExist,
     useBinding_resourceConfigs,
+    useBinding_serverUpdateRequired,
 } from 'stores/Binding/hooks';
 import {
     useDetailsForm_connectorImage_connectorId,
@@ -93,6 +94,8 @@ function useGenerateCatalog() {
     const resourceConfigs = useBinding_resourceConfigs();
     const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
     const resetRediscoverySettings = useBinding_resetRediscoverySettings();
+    const resourceConfigServerUpdateRequired =
+        useBinding_serverUpdateRequired();
 
     // Bindings Editor store
     const fullSourceConfigs = useBindingsEditorStore_fullSourceConfigs();
@@ -209,7 +212,8 @@ function useGenerateCatalog() {
                     resourceConfigs,
                     existingTaskData,
                     sourceCapture,
-                    fullSourceConfigs
+                    fullSourceConfigs,
+                    resourceConfigServerUpdateRequired
                 );
 
                 // If there is a draft already with task data then update. We do not match on
@@ -293,6 +297,7 @@ function useGenerateCatalog() {
             resetRediscoverySettings,
             resourceConfigs,
             resourceConfigErrorsExist,
+            resourceConfigServerUpdateRequired,
             serverEndpointConfigData,
             serverUpdateRequired,
             setCatalogName,

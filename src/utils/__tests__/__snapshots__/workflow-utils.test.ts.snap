@@ -15,17 +15,5 @@ exports[`generateTaskSpec > when existing data and new data > duplicates in exis
     },
     "target": "mock/binding/two",
   },
-  {
-    "resource": {
-      "bar": "updated",
-    },
-    "target": "mock/binding/one",
-  },
-  {
-    "resource": {
-      "bar": "updated",
-    },
-    "target": "mock/binding/one",
-  },
 ]
 `;

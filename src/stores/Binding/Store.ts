@@ -14,6 +14,7 @@ import {
     isEmpty,
     isEqual,
     omit,
+    omitBy,
     orderBy,
     pick,
     union,
@@ -81,7 +82,10 @@ const initializeCurrentBinding = (
     }
 };
 
-const getResourceConfig = (binding: any): ResourceConfig => {
+const getResourceConfig = (
+    binding: any,
+    bindingIndex: number
+): ResourceConfig => {
     const { resource, disable } = binding;
 
     const collectionName = getCollectionName(binding);
@@ -92,7 +96,7 @@ const getResourceConfig = (binding: any): ResourceConfig => {
     return {
         data: resource,
         errors: [],
-        meta: { ...disableProp, collectionName },
+        meta: { ...disableProp, collectionName, bindingIndex },
     };
 };
 
@@ -100,9 +104,10 @@ const getResourceConfig = (binding: any): ResourceConfig => {
 const initializeResourceConfig = (
     state: BindingState,
     binding: any,
-    bindingUUID: string
+    bindingUUID: string,
+    bindingIndex: number
 ) => {
-    const config = getResourceConfig(binding);
+    const config = getResourceConfig(binding, bindingIndex);
 
     state.resourceConfigs[bindingUUID] = config;
 
@@ -257,26 +262,37 @@ const getInitialState = (
                 const modifiedResourceConfigs = state.resourceConfigs;
 
                 Object.entries(state.bindings).forEach(
-                    ([collectionName, bindingUUIDs]) => {
-                        bindingUUIDs.forEach((bindingUUID) => {
+                    ([collectionName, bindingUUIDs], outerIndex) => {
+                        bindingUUIDs.forEach((bindingUUID, innerIndex) => {
+                            const bindingIndex = outerIndex + innerIndex;
+
                             // Rehydrating wipe out all configs and start again
                             // Not rehydrating then we should allow the current config to stand
                             //  and only populate the ones that are missing
-                            modifiedResourceConfigs[bindingUUID] =
-                                // Should not happen often but being safe with the resourceConfigs check here
-                                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                                Boolean(
-                                    !rehydrating &&
-                                        state.resourceConfigs[bindingUUID]
+
+                            // Should not happen often but being safe with the resourceConfigs check here
+                            if (
+                                !rehydrating &&
+                                Object.hasOwn(
+                                    state.resourceConfigs,
+                                    bindingUUID
                                 )
-                                    ? state.resourceConfigs[bindingUUID]
-                                    : {
-                                          ...createJSONFormDefaults(
-                                              state.resourceSchema,
-                                              collectionName
-                                          ),
-                                          meta: { collectionName },
-                                      };
+                            ) {
+                                state.resourceConfigs[
+                                    bindingUUID
+                                ].meta.bindingIndex = bindingIndex;
+
+                                modifiedResourceConfigs[bindingUUID] =
+                                    state.resourceConfigs[bindingUUID];
+                            } else {
+                                modifiedResourceConfigs[bindingUUID] = {
+                                    ...createJSONFormDefaults(
+                                        state.resourceSchema,
+                                        collectionName
+                                    ),
+                                    meta: { collectionName, bindingIndex },
+                                };
+                            }
                         });
                     }
                 );
@@ -302,13 +318,15 @@ const getInitialState = (
                 const discoveredBindings =
                     draftSpecResponse.data[0].spec.bindings;
 
-                sortBindings(discoveredBindings).forEach((binding: any) => {
-                    const collection = getCollectionName(binding);
-                    const UUID = crypto.randomUUID();
+                sortBindings(discoveredBindings).forEach(
+                    (binding: any, index) => {
+                        const collection = getCollectionName(binding);
+                        const UUID = crypto.randomUUID();
 
-                    initializeBinding(state, collection, UUID);
-                    initializeResourceConfig(state, binding, UUID);
-                });
+                        initializeBinding(state, collection, UUID);
+                        initializeResourceConfig(state, binding, UUID, index);
+                    }
+                );
 
                 state.discoveredCollections = Object.values(
                     state.resourceConfigs
@@ -422,7 +440,7 @@ const getInitialState = (
             produce((state: BindingState) => {
                 const bindings = draftedBindings ?? liveBindings;
 
-                bindings.forEach((binding) => {
+                bindings.forEach((binding, index) => {
                     if (draftedBindings) {
                         // Prefill backfilled collections
                         const collection = getCollectionName(binding);
@@ -454,7 +472,7 @@ const getInitialState = (
                     const UUID = crypto.randomUUID();
 
                     initializeBinding(state, collection, UUID);
-                    initializeResourceConfig(state, binding, UUID);
+                    initializeResourceConfig(state, binding, UUID, index);
                 });
 
                 populateResourceConfigErrors(state, state.resourceConfigs);
@@ -773,7 +791,11 @@ const getInitialState = (
 
                     state.resourceConfigs[bindingUUID] = value ?? {
                         ...createJSONFormDefaults(state.resourceSchema),
-                        meta: { collectionName: targetCollections },
+                        meta: {
+                            collectionName: targetCollections,
+                            bindingIndex:
+                                Object.keys(state.resourceConfigs).length - 1,
+                        },
                     };
 
                     if (!targetBindingUUID) {
@@ -799,8 +821,27 @@ const getInitialState = (
                         targetCollections
                     );
 
+                    // Remove any configs that are no longer needed unless disabled.
+                    //   We disable for the new collection selection pop up where the user
+                    //   is always adding collections and can only remove them manually in
+                    //   the list
+                    const reducedResourceConfig = disableOmit
+                        ? state.resourceConfigs
+                        : omitBy(state.resourceConfigs, (config) =>
+                              removedCollections.includes(
+                                  config.meta.collectionName
+                              )
+                          );
+
+                    // Update the config
+                    state.resourceConfigs = reducedResourceConfig;
+
                     // Set defaults on new configs
-                    newCollections.forEach((collectionName) => {
+                    const reducedBindingCount = Object.keys(
+                        reducedResourceConfig
+                    ).length;
+
+                    newCollections.forEach((collectionName, index) => {
                         const bindingUUID = crypto.randomUUID();
 
                         initializeBinding(state, collectionName, bindingUUID);
@@ -810,26 +851,18 @@ const getInitialState = (
                                 state.resourceSchema,
                                 collectionName
                             ),
-                            meta: { collectionName },
+                            meta: {
+                                collectionName,
+                                bindingIndex: reducedBindingCount + index,
+                            },
                         };
                     });
-
-                    // Remove any configs that are no longer needed unless disabled.
-                    //   We disable for the new collection selection pop up where the user
-                    //   is always adding collections and can only remove them manually in
-                    //   the list
-                    const newResourceConfig = disableOmit
-                        ? state.resourceConfigs
-                        : omit(state.resourceConfigs, removedCollections);
-
-                    const newConfigKeyList = Object.keys(newResourceConfig);
-
-                    // Update the config
-                    state.resourceConfigs = newResourceConfig;
 
                     // If previous state had no collections set to first
                     // If selected item is removed set to first.
                     // If adding new ones set to last
+                    const bindingUUIDs = Object.keys(state.resourceConfigs);
+
                     const selectedBindingUUID =
                         collections.length === 0 ||
                         (state.currentBinding &&
@@ -837,8 +870,8 @@ const getInitialState = (
                                 state.resourceConfigs,
                                 state.currentBinding.uuid
                             ))
-                            ? newConfigKeyList[0]
-                            : newConfigKeyList[newConfigKeyList.length - 1];
+                            ? bindingUUIDs[0]
+                            : bindingUUIDs[bindingUUIDs.length - 1];
 
                     state.currentBinding = {
                         uuid: selectedBindingUUID,
@@ -848,10 +881,10 @@ const getInitialState = (
                     };
 
                     // Update the collections with the new array
-                    state.bindingErrorsExist = isEmpty(newConfigKeyList);
+                    state.bindingErrorsExist = isEmpty(bindingUUIDs);
 
                     // See if the recently updated configs have errors
-                    populateResourceConfigErrors(state, newResourceConfig);
+                    populateResourceConfigErrors(state, reducedResourceConfig);
                 }
             }),
             false,
@@ -985,7 +1018,11 @@ const getInitialState = (
 
         const formattedValue: ResourceConfig = {
             ...value,
-            meta: { collectionName: targetCollection },
+            meta: {
+                collectionName: targetCollection,
+                bindingIndex:
+                    resourceConfigs[targetBindingUUID].meta.bindingIndex,
+            },
         };
 
         const updatedConfig = {

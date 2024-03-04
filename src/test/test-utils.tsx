@@ -1,6 +1,6 @@
 import { AuthSession, Session, User } from '@supabase/supabase-js';
 import { Auth } from '@supabase/ui';
-import { render, RenderOptions } from '@testing-library/react';
+import { RenderOptions, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AppProviders from 'context';
 import ThemeProvider from 'context/Theme';
@@ -59,7 +59,8 @@ export const generateMockConnectorConfig = (): ConnectorConfig => {
 };
 
 export const generateMockResourceConfig = (
-    collectionName: string
+    collectionName: string,
+    bindingIndex: number
 ): ResourceConfig => {
     return mockDeep<ResourceConfig>({
         data: {
@@ -68,6 +69,7 @@ export const generateMockResourceConfig = (
         errors: [],
         meta: {
             collectionName,
+            bindingIndex,
             disable: false,
             previouslyDisabled: false,
         },

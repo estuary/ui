@@ -80,6 +80,16 @@ export const useBinding_setResourceSchema = () => {
     );
 };
 
+export const useBinding_resourceConfig = (bindingUUID: string) => {
+    return useZustandStore<BindingState, ResourceConfig | undefined>(
+        BindingStoreNames.GENERAL,
+        (state) =>
+            Object.hasOwn(state.resourceConfigs, bindingUUID)
+                ? state.resourceConfigs[bindingUUID]
+                : undefined
+    );
+};
+
 export const useBinding_resourceConfigs = () => {
     return useZustandStore<BindingState, BindingState['resourceConfigs']>(
         BindingStoreNames.GENERAL,
