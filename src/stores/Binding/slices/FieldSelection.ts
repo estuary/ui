@@ -52,8 +52,6 @@ export const getStoreWithFieldSelectionSettings = (
     initializeSelections: (bindingUUID, selections) => {
         set(
             produce((state: BindingState) => {
-                state.selections = {};
-
                 selections.forEach(({ field, selectionType }) => {
                     state.selections[bindingUUID] = {
                         ...state.selections[bindingUUID],

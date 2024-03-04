@@ -42,7 +42,10 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
     const formActive = useFormStateStore_isActive();
 
     const selectedValue = useMemo(
-        () => selections[bindingUUID][field],
+        () =>
+            Object.hasOwn(selections, bindingUUID)
+                ? selections[bindingUUID][field]
+                : null,
         [bindingUUID, field, selections]
     );
 

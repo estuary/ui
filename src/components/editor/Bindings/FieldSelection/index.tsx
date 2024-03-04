@@ -134,7 +134,7 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
     const applyFieldSelections = useFieldSelection(bindingUUID, collectionName);
     const { refresh } = useFieldSelectionRefresh();
 
-    // Bindings Editor Store
+    // Bindings Store
     const setRecommendFields = useBinding_setRecommendFields();
     const initializeSelections = useBinding_initializeSelections();
 
@@ -188,78 +188,85 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
             draftSpecs[0].built_spec &&
             draftSpecs[0].validated
         ) {
-            // Select the binding from the built spec that corresponds to the current collection
-            //  to extract the projection information.
-            // Defaulting to empty array. This is to handle when a user has disabled a collection
-            //  which causes the binding to not be included in the built_spec
-            const builtSpecBindings: BuiltSpec_Binding[] =
-                draftSpecs[0].built_spec.bindings ?? [];
+            if (!formActive) {
+                // Select the binding from the built spec that corresponds to the current collection
+                //  to extract the projection information.
+                // Defaulting to empty array. This is to handle when a user has disabled a collection
+                //  which causes the binding to not be included in the built_spec
+                const builtSpecBindings: BuiltSpec_Binding[] =
+                    draftSpecs[0].built_spec.bindings ?? [];
 
-            const selectedBuiltSpecBinding: BuiltSpec_Binding | undefined =
-                builtSpecBindings.find(
-                    (binding) => binding.collection.name === collectionName
-                );
+                const selectedBuiltSpecBinding: BuiltSpec_Binding | undefined =
+                    builtSpecBindings.find(
+                        (binding) => binding.collection.name === collectionName
+                    );
 
-            if (selectedBuiltSpecBinding) {
-                const evaluatedProjections =
-                    selectedBuiltSpecBinding.collection.projections;
+                if (selectedBuiltSpecBinding) {
+                    const evaluatedProjections =
+                        selectedBuiltSpecBinding.collection.projections;
 
-                // The validation phase of a publication produces a document which correlates each binding projection
-                // to a constraint type (defined in flow/go/protocols/materialize/materialize.proto). Select the binding
-                // from the validation document that corresponds to the current collection to extract the constraint types.
-                const validationBindings: ValidationResponse_Binding[] =
-                    draftSpecs[0].validated.bindings;
+                    // The validation phase of a publication produces a document which correlates each binding projection
+                    // to a constraint type (defined in flow/go/protocols/materialize/materialize.proto). Select the binding
+                    // from the validation document that corresponds to the current collection to extract the constraint types.
+                    const validationBindings: ValidationResponse_Binding[] =
+                        draftSpecs[0].validated.bindings;
 
-                const evaluatedConstraints: ConstraintDictionary | undefined =
-                    validationBindings.find((binding) =>
+                    const evaluatedConstraints:
+                        | ConstraintDictionary
+                        | undefined = validationBindings.find((binding) =>
                         isEqual(
                             binding.resourcePath,
                             selectedBuiltSpecBinding.resourcePath
                         )
                     )?.constraints;
 
-                const bindingIndex: number = getBindingIndex(
-                    draftSpecs[0].spec.bindings,
-                    collectionName
-                );
-                const selectedBinding: Schema | undefined =
-                    bindingIndex > -1
-                        ? draftSpecs[0].spec.bindings[bindingIndex]
-                        : undefined;
-                let evaluatedFieldMetadata: FieldMetadata | undefined;
-
-                if (
-                    selectedBinding &&
-                    Object.hasOwn(selectedBinding, 'fields')
-                ) {
-                    evaluatedFieldMetadata = selectedBinding.fields;
-
-                    setRecommendFields(
-                        bindingUUID,
-                        selectedBinding.fields.recommended
+                    const bindingIndex: number = getBindingIndex(
+                        draftSpecs[0].spec.bindings,
+                        collectionName
                     );
-                } else {
-                    setRecommendFields(bindingUUID, true);
-                }
+                    const selectedBinding: Schema | undefined =
+                        bindingIndex > -1
+                            ? draftSpecs[0].spec.bindings[bindingIndex]
+                            : undefined;
+                    let evaluatedFieldMetadata: FieldMetadata | undefined;
 
-                if (evaluatedConstraints) {
-                    const compositeProjections = mapConstraintsToProjections(
-                        evaluatedProjections,
-                        evaluatedConstraints,
-                        evaluatedFieldMetadata
-                    );
+                    if (
+                        selectedBinding &&
+                        Object.hasOwn(selectedBinding, 'fields')
+                    ) {
+                        evaluatedFieldMetadata = selectedBinding.fields;
 
-                    const selections = compositeProjections.map(
-                        ({ field, selectionType }) => ({ field, selectionType })
-                    );
+                        setRecommendFields(
+                            bindingUUID,
+                            selectedBinding.fields.recommended
+                        );
+                    } else {
+                        setRecommendFields(bindingUUID, true);
+                    }
 
-                    initializeSelections(bindingUUID, selections);
-                    setData(compositeProjections);
+                    if (evaluatedConstraints) {
+                        const compositeProjections =
+                            mapConstraintsToProjections(
+                                evaluatedProjections,
+                                evaluatedConstraints,
+                                evaluatedFieldMetadata
+                            );
+
+                        const selections = compositeProjections.map(
+                            ({ field, selectionType }) => ({
+                                field,
+                                selectionType,
+                            })
+                        );
+
+                        initializeSelections(bindingUUID, selections);
+                        setData(compositeProjections);
+                    } else {
+                        setData(null);
+                    }
                 } else {
                     setData(null);
                 }
-            } else {
-                setData(null);
             }
         } else {
             if (hasDraftSpec && formStatus === FormStatus.GENERATED) {
@@ -278,6 +285,7 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
         collectionName,
         draftId,
         draftSpecs,
+        formActive,
         formStatus,
         initializeSelections,
         refresh,
