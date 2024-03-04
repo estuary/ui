@@ -15,6 +15,7 @@ import {
 import { UTCDate } from '@date-fns/utc';
 import {
     defaultTableFilter,
+    escapeReservedCharacters,
     handleFailure,
     handleSuccess,
     SortingProps,
@@ -197,7 +198,10 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
 
 const getStatsForBilling = (tenants: string[], startDate: AllowedDates) => {
     const subjectRoleFilters = tenants
-        .map((tenant) => `catalog_name.ilike.${tenant}%`)
+        .map(
+            (tenant) =>
+                `catalog_name.ilike.${escapeReservedCharacters(tenant)}%`
+        )
         .join(',');
 
     const today = new Date();
@@ -268,7 +272,10 @@ const getStatsForBillingHistoryTable = (
     sorting: SortingProps<any>[]
 ): PostgrestFilterBuilder<CatalogStats_Billing> => {
     const subjectRoleFilters = tenants
-        .map((tenant) => `catalog_name.ilike.${tenant}%`)
+        .map(
+            (tenant) =>
+                `catalog_name.ilike.${escapeReservedCharacters(tenant)}%`
+        )
         .join(',');
 
     const today = new Date();

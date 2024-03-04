@@ -11,6 +11,7 @@ import {
     handleSuccess,
     supabaseClient,
     supabaseRetry,
+    CONNECTOR_DETAILS,
 } from 'services/supabase';
 import { SortDirection } from 'types';
 
@@ -26,7 +27,7 @@ const getConnectors = (
 
     queryBuilder = defaultTableFilter<ConnectorWithTagDetailQuery>(
         queryBuilder,
-        [CONNECTOR_NAME],
+        [CONNECTOR_NAME, CONNECTOR_DETAILS],
         searchQuery,
         [
             {
