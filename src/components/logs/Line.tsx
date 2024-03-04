@@ -30,13 +30,13 @@ function LogLine({ line, lineNumber, disableSelect }: Props) {
         return parsedLine.spans.map(
             (span: any, index: number, array: any[]) => (
                 <LinePart
-                    key={`${span.text}-linePart-${index}`}
+                    key={`logs-linePart-${lineNumber}__${index}`}
                     parsedLine={span}
                     lastPart={index + 1 === array.length}
                 />
             )
         );
-    }, [parsedLine.spans]);
+    }, [lineNumber, parsedLine.spans]);
 
     return (
         <ListItem
