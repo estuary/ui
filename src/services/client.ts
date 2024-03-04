@@ -1,13 +1,16 @@
+import { FETCH_DEFAULT_ERROR } from './shared';
+
 export interface ClientConfig<T> extends RequestInit {
     data?: T;
 }
 
 export const AUTH_ERROR = 'common.loggedOut';
-const SERVER_ERROR = 'Server Error';
 
 export const client = <Response, Request = {}>(
     endpoint: string,
-    { data, ...customConfig }: ClientConfig<Request> = {}
+    { data, ...customConfig }: ClientConfig<Request> = {},
+    token?: string,
+    returnOriginalMessage?: boolean
 ): Promise<Response> => {
     const config: NonNullable<RequestInit> = {
         body: data ? JSON.stringify(data) : undefined,
@@ -18,18 +21,17 @@ export const client = <Response, Request = {}>(
     // Setup the headers
     const headersInit: HeadersInit = {};
 
-    // TODO (REST) - we'll eventually need this client again. We'll need to pull the auth headers from Supabase-SWR some how.
-    // const authHeader = auth.getAuthHeader();
-    // if (authHeader) {
-    //     headersInit.Authorization = authHeader;
-    // }
+    if (token) {
+        headersInit.Authorization = `Bearer ${token}`;
+    }
 
     if (data) {
         headersInit['Content-Type'] = 'application/json';
     }
 
-    // TODO: Revisit this logic. It was intended to be a placeholder for the initial auth gateway wiring.
-    config.headers = customConfig.headers ? customConfig.headers : headersInit;
+    config.headers = customConfig.headers
+        ? { ...headersInit, ...customConfig.headers }
+        : headersInit;
 
     const fetchPromise = window
         .fetch(endpoint, config)
@@ -44,9 +46,13 @@ export const client = <Response, Request = {}>(
             }
         })
         .catch((error) => {
+            console.log('fetchPromise:error', error);
             return Promise.reject({
-                message:
-                    error?.message === AUTH_ERROR ? AUTH_ERROR : SERVER_ERROR,
+                message: returnOriginalMessage
+                    ? error.message
+                    : error?.message === AUTH_ERROR
+                    ? AUTH_ERROR
+                    : FETCH_DEFAULT_ERROR,
                 ...error,
             });
         });

@@ -32,13 +32,14 @@ export const gatewayFetcher = (
     const { supabaseAnonymousKey } = getSupabaseAnonymousKey();
     headers.apikey = supabaseAnonymousKey;
 
-    headers.Authorization = `Bearer ${sessionKey}`;
-    headers['Content-Type'] = 'application/json';
-
-    return client(endpoint, {
-        data: { prefixes },
-        headers,
-    });
+    return client(
+        endpoint,
+        {
+            data: { prefixes },
+            headers,
+        },
+        sessionKey
+    );
 };
 
 const useGatewayAuthToken = (prefixes: string[] | null) => {
