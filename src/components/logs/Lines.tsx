@@ -42,8 +42,6 @@ function LogLines({ height, spinnerOptions }: Props) {
             <List
                 dense
                 sx={{
-                    display: 'table',
-                    width: '100%',
                     fontFamily: `'Monaco', monospace`,
                     whiteSpace: 'pre',
                 }}
