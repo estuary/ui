@@ -25,6 +25,7 @@ export enum CustomEvents {
     LOGIN = 'Login',
     LOGS_DOCUMENT_COUNT = 'Logs:Document:Count',
     JOURNAL_DATA_MAX_BYTES_NOT_ENOUGH = 'JournalData:MaxBytesNotEnough',
+    MARKETPLACE_VERIFY = 'Marketplace:Verify',
     MATERIALIZATION_CREATE = 'Materialization_Create',
     MATERIALIZATION_CREATE_CONFIG_CREATE = 'Materialization_Create_Config_Create',
     MATERIALIZATION_CREATE_CONFIG_EDIT = 'Materialization_Create_Config_Edit',

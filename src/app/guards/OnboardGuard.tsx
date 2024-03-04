@@ -1,6 +1,6 @@
 import { LocalZustandProvider } from 'context/LocalZustand';
 import BetaOnboard from 'directives/BetaOnboard';
-import FullPageWrapper from 'directives/FullPageWrapper';
+import FullPageWrapper from 'app/FullPageWrapper';
 import { createOnboardingStore } from 'directives/Onboard/Store/create';
 import { useMemo } from 'react';
 import { OnboardingStoreNames } from 'stores/names';

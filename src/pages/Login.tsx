@@ -1,7 +1,7 @@
 import { Box, Divider, Stack, Tab, Tabs, Typography } from '@mui/material';
 import FullPageDialog from 'components/fullPage/Dialog';
 import MagicLink from 'components/login/MagicLink';
-import OIDCs from 'components/login/OIDCs';
+import LoginProviders from 'components/login/Providers';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -14,6 +14,7 @@ import {
     useMount,
     useUnmount,
 } from 'react-use';
+import { SupportedProvider } from 'types/authProviders';
 import { getLoginSettings } from 'utils/env-utils';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 
@@ -28,6 +29,10 @@ const bodyClass = 'loginPage';
 
 const Login = ({ showRegistration }: Props) => {
     useBrowserTitle('routeTitle.login');
+
+    const provider = useGlobalSearchParams<SupportedProvider | null>(
+        GlobalSearchParams.PROVIDER
+    );
 
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
     const { 2: clearGatewayConfig } = useLocalStorage(LocalStorageKeys.GATEWAY);
@@ -83,7 +88,8 @@ const Login = ({ showRegistration }: Props) => {
 
                 <Stack direction="column" spacing={2}>
                     <Box>
-                        <OIDCs
+                        <LoginProviders
+                            providers={provider ? [provider] : undefined}
                             isRegister={isRegister}
                             grantToken={grantToken}
                         />

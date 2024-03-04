@@ -1,6 +1,6 @@
 import FullPageError from 'components/fullPage/Error';
 import ClickToAccept from 'directives/ClickToAccept';
-import FullPageWrapper from 'directives/FullPageWrapper';
+import FullPageWrapper from 'app/FullPageWrapper';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
 import useDirectiveGuard from './hooks';
