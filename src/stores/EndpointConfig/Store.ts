@@ -4,7 +4,6 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
-import { derefSchema } from 'services/jsonforms';
 import {
     CustomError,
     fetchErrors,
@@ -18,7 +17,11 @@ import {
 } from 'stores/extensions/Hydration';
 import { EndpointConfigStoreNames } from 'stores/names';
 import { JsonFormsData, Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
+import {
+    configCanBeEmpty,
+    getDereffedSchema,
+    hasLength,
+} from 'utils/misc-utils';
 import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { StoreApi, create } from 'zustand';
@@ -96,10 +99,15 @@ const getInitialState = (
     },
 
     setEndpointSchema: async (val) => {
-        const resolved = await derefSchema(val);
+        const resolved = await getDereffedSchema(val);
         set(
             produce((state: EndpointConfigState) => {
-                state.endpointSchema = resolved ?? {};
+                if (!resolved) {
+                    state.setHydrationErrorsExist(true);
+                    return;
+                }
+                state.endpointSchema = resolved;
+                state.endpointCanBeEmpty = configCanBeEmpty(resolved);
 
                 const { endpointConfig, customErrors } = get();
 
@@ -181,16 +189,6 @@ const getInitialState = (
             }),
             false,
             'Server Update Required Flag Changed'
-        );
-    },
-
-    setEndpointCanBeEmpty: (endpointCanBeEmpty) => {
-        set(
-            produce((state: EndpointConfigState) => {
-                state.endpointCanBeEmpty = endpointCanBeEmpty;
-            }),
-            false,
-            'Endpoint Can Be Empty Changed'
         );
     },
 

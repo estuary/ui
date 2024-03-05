@@ -42,7 +42,6 @@ export interface EndpointConfigState
 
     // Storing if the endpoint config is allowed to be empty
     endpointCanBeEmpty: boolean;
-    setEndpointCanBeEmpty: (value: boolean) => void;
 
     // Hydration
     hydrateState: (

@@ -218,12 +218,3 @@ export const useEndpointConfig_endpointCanBeEmpty = () => {
         EndpointConfigState['endpointCanBeEmpty']
     >(getStoreName(entityType), (state) => state.endpointCanBeEmpty);
 };
-
-export const useEndpointConfig_setEndpointCanBeEmpty = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['setEndpointCanBeEmpty']
-    >(getStoreName(entityType), (state) => state.setEndpointCanBeEmpty);
-};

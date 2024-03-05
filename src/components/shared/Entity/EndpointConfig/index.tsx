@@ -8,7 +8,7 @@ import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityWorkflow } from 'context/Workflow';
 import useConnectorTag from 'hooks/useConnectorTag';
-import { isEmpty, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
@@ -23,7 +23,6 @@ import {
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
     useEndpointConfigStore_setPreviousEndpointConfig,
-    useEndpointConfig_setEndpointCanBeEmpty,
     useEndpointConfig_setServerUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
 import {
@@ -64,7 +63,6 @@ function EndpointConfig({
     const endpointSchema = useEndpointConfigStore_endpointSchema();
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
-    const setEndpointCanBeEmpty = useEndpointConfig_setEndpointCanBeEmpty();
     const setEncryptedEndpointConfig =
         useEndpointConfigStore_setEncryptedEndpointConfig();
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
@@ -82,19 +80,6 @@ function EndpointConfig({
     //  opens the collection editor this section will _probably_ not close
     const forceClose =
         !editWorkflow && draftId !== null && !endpointConfigErrorsExist;
-
-    // Storing if this endpointConfig can be empty or not
-    //  If so we know there will never be a "change" to the endpoint config
-    const canBeEmpty = useMemo(() => {
-        return (
-            !connectorTag?.endpoint_spec_schema.properties ||
-            isEmpty(connectorTag.endpoint_spec_schema.properties)
-        );
-    }, [connectorTag?.endpoint_spec_schema]);
-
-    useEffect(() => {
-        setEndpointCanBeEmpty(canBeEmpty);
-    }, [canBeEmpty, setEndpointCanBeEmpty]);
 
     // Storing flag to handle knowing if a config changed
     //  during both create or edit.
@@ -188,10 +173,8 @@ function EndpointConfig({
 
     // Controlling if we need to show the generate button again
     const endpointConfigUpdated = useMemo(() => {
-        return canBeEmpty
-            ? false
-            : !isEqual(endpointConfig, previousEndpointConfig);
-    }, [canBeEmpty, endpointConfig, previousEndpointConfig]);
+        return !isEqual(endpointConfig, previousEndpointConfig);
+    }, [endpointConfig, previousEndpointConfig]);
     useEffect(() => {
         setServerUpdateRequired(endpointConfigUpdated);
     }, [setServerUpdateRequired, endpointConfigUpdated]);
