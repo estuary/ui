@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import { ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import { parse } from 'ansicolor';
+import { defaultOutline } from 'context/Theme';
 import { useMemo } from 'react';
 import { ViewLogs_Line } from 'types';
 import LinePart from './LinePart';
@@ -8,6 +9,7 @@ import LinePart from './LinePart';
 interface Props {
     line: ViewLogs_Line | string;
     lineNumber: number | string | any;
+    disableBorder?: boolean;
     disableSelect?: boolean;
 }
 
@@ -17,7 +19,7 @@ export const lineNumberColor = '#666';
 //     return line.stream.slice(0, line.stream.lastIndexOf(':')) as ParsedStream;
 // };
 
-function LogLine({ line, lineNumber, disableSelect }: Props) {
+function LogLine({ line, lineNumber, disableBorder, disableSelect }: Props) {
     let parsedLine: any;
 
     if (line instanceof Object) {
@@ -42,8 +44,11 @@ function LogLine({ line, lineNumber, disableSelect }: Props) {
         <ListItem
             alignItems="flex-start"
             sx={{
+                'borderBottom': disableBorder
+                    ? undefined
+                    : (theme) => defaultOutline[theme.palette.mode],
                 'userSelect': disableSelect ? 'none' : undefined,
-                'py': 0,
+                'py': 0.5,
                 '&:hover': {
                     background: (theme) =>
                         theme.palette.mode === 'dark' ? '#222' : '#eee',
@@ -72,30 +77,6 @@ function LogLine({ line, lineNumber, disableSelect }: Props) {
             >
                 {reneredParsedLine}
             </ListItemText>
-
-            {/*<Stack direction="row" spacing={2}>
-                <Box
-                    sx={{
-                        color: lineNumberColor,
-                        userSelect: 'none',
-                        minWidth: 50,
-                        textAlign: 'right',
-                        pt: 0.5,
-                    }}
-                >
-                    {lineNumber}
-                </Box>
-
-                <Stack direction="row">
-                    {parsedLine.spans.map((span, index, array) => (
-                        <LinePart
-                            key={`${span.text}-linePart-${index}`}
-                            parsedLine={span}
-                            lastPart={index + 1 === array.length}
-                        />
-                    ))}
-                </Stack>
-            </Stack>*/}
         </ListItem>
     );
 }

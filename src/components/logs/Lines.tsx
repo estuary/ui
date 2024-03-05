@@ -32,8 +32,8 @@ function LogLines({ height, spinnerOptions }: Props) {
             variant="outlined"
             ref={scrollElementRef}
             sx={{
-                pt: 1,
-                pb: 2,
+                pt: 0,
+                pb: 1,
                 overflow: 'auto',
                 minHeight: height,
                 maxHeight: height,
