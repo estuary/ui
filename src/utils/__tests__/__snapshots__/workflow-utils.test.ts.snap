@@ -1,19 +1,19 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`generateTaskSpec > when existing data and new data > duplicates in existing bindings > will update all copies in the bindings 1`] = `
+exports[`generateTaskSpec > when existing data and new data > duplicates in existing bindings > when the resource config contains a single instance of a duplicated binding, update one binding instance and remove others 1`] = `
 [
-  {
-    "resource": {
-      "bar": "updated",
-    },
-    "target": "mock/binding/one",
-  },
   {
     "backfill": 2,
     "resource": {
       "fiz": "resource",
     },
     "target": "mock/binding/two",
+  },
+  {
+    "resource": {
+      "bar": "updated",
+    },
+    "target": "mock/binding/one",
   },
 ]
 `;

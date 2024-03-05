@@ -274,7 +274,7 @@ describe('generateTaskSpec', () => {
                 );
             });
 
-            test('will update all copies in the bindings', () => {
+            test('when the resource config contains a single instance of a duplicated binding, update one binding instance and remove others', () => {
                 const response = generateTaskSpec(
                     'capture',
                     connectorConfig,

@@ -18,7 +18,7 @@ import { CallSupabaseResponse } from 'services/supabase';
 import { REMOVE_DURING_GENERATION } from 'stores/Binding/shared';
 import { ResourceConfig, ResourceConfigDictionary } from 'stores/Binding/types';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
+import { basicSort_string, hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
 
 // This is the soft limit we recommend to users
@@ -212,18 +212,37 @@ export const generateTaskSpec = (
         });
 
         if (hasLength(draftSpec.bindings)) {
-            draftSpec.bindings = draftSpec.bindings.filter(
-                (binding: any) =>
+            // TODO (testing): Determine why the `config` object is not recognized as a non-empty object
+            //    by JSON.stringify and lodash functions in a test environment.
+            draftSpec.bindings = draftSpec.bindings.filter((binding: any) => {
+                const sortedResourceEntries = Object.entries(
+                    binding.resource
+                ).sort((first, second) =>
+                    basicSort_string(first[0], second[0], 'asc')
+                );
+
+                return (
                     extractedResourceConfigs
                         .filter(
                             (config) =>
                                 config.meta.collectionName ===
                                 getCollectionName(binding)
                         )
-                        .findIndex((config) => {
-                            return isEqual(config.data, binding.resource);
-                        }) > -1
-            );
+                        .findIndex((config) =>
+                            isEqual(
+                                Object.entries(config.data).sort(
+                                    (first, second) =>
+                                        basicSort_string(
+                                            first[0],
+                                            second[0],
+                                            'asc'
+                                        )
+                                ),
+                                sortedResourceEntries
+                            )
+                        ) > -1
+                );
+            });
         }
     } else {
         draftSpec.bindings = [];
