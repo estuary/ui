@@ -14,7 +14,7 @@ import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpe
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
+import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useMemo } from 'react';

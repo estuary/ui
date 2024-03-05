@@ -12,7 +12,7 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import EntityToolbar from 'components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
-import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
+import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useEffect, useMemo, useState } from 'react';

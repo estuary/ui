@@ -5,9 +5,10 @@ import {
     TABLES,
 } from 'services/supabase';
 import { EntityWithCreateWorkflow } from 'types';
-import { useQuery, useSelect } from './supabase-swr';
+import { useQuery, useSelect } from '../supabase-swr';
+import { connectorHasRequiredColumns } from './shared';
 
-export interface ConnectorTag extends ConnectorTag_Base {
+export interface ConnectorTagWithDetailTags extends ConnectorTag_Base {
     documentation_url: string;
     protocol: EntityWithCreateWorkflow;
     image_name: string;
@@ -15,7 +16,7 @@ export interface ConnectorTag extends ConnectorTag_Base {
 }
 
 export interface ConnectorWithTagDetailQuery {
-    connector_tags: ConnectorTag[];
+    connector_tags: ConnectorTagWithDetailTags[];
     id: string;
     detail: string;
     image_name: string;
@@ -57,8 +58,10 @@ function useConnectorWithTagDetail(
             filter: (query) =>
                 connectorId
                     ? query.eq('id', connectorId)
-                    : query
-                          .eq('connector_tags.protocol', protocol as string)
+                    : connectorHasRequiredColumns<ConnectorWithTagDetailQuery>(
+                          query,
+                          'connector_tags'
+                      )
                           .order(CONNECTOR_RECOMMENDED, { ascending: false })
                           .order(CONNECTOR_NAME),
         },

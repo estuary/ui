@@ -1,5 +1,5 @@
 import { TABLES } from 'services/supabase';
-import { useQuery, useSelect } from './supabase-swr/';
+import { useQuery, useSelect } from '../supabase-swr/';
 
 interface Connector {
     id: string;

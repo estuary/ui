@@ -1,4 +1,4 @@
-import { ConnectorTag } from 'hooks/useConnectorTag';
+import { ConnectorTag } from 'hooks/connectors/shared';
 import {
     LiveSpecsExtQuery,
     LiveSpecsExt_MaterializeCapture,
@@ -30,7 +30,8 @@ export const getSchema_Endpoint = async (connectorId: string | null) => {
             supabaseClient
                 .from(TABLES.CONNECTOR_TAGS)
                 .select(`connector_id,endpoint_spec_schema`)
-                .eq('connector_id', connectorId),
+                .eq('connector_id', connectorId)
+                .not('endpoint_spec_schema', 'is', null),
         'getSchema_Endpoint'
     ).then(handleSuccess<ConnectorTagEndpointData[]>, handleFailure);
 
@@ -43,7 +44,8 @@ export const getSchema_Resource = async (connectorId: string | null) => {
             supabaseClient
                 .from(TABLES.CONNECTOR_TAGS)
                 .select(`connector_id,resource_spec_schema`)
-                .eq('connector_id', connectorId),
+                .eq('connector_id', connectorId)
+                .not('resource_spec_schema', 'is', null),
         'getSchema_Resource'
     ).then(handleSuccess<ConnectorTagResourceData[]>, handleFailure);
 

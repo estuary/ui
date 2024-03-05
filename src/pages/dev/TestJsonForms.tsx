@@ -15,7 +15,7 @@ import { jsonFormsPadding } from 'context/Theme';
 import { WorkflowContextProvider } from 'context/Workflow';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import useConnectors from 'hooks/useConnectors';
+import useConnectors from 'hooks/connectors/useConnectors';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';

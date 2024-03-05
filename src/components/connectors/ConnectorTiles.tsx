@@ -11,7 +11,7 @@ import ConnectorToolbar from 'components/connectors/ConnectorToolbar';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import { semiTransparentBackground } from 'context/Theme';
 import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
-import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
+import { ConnectorWithTagDetailQuery } from 'hooks/connectors/useConnectorWithTagDetail';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';

@@ -7,7 +7,7 @@ import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityWorkflow } from 'context/Workflow';
-import useConnectorTag from 'hooks/useConnectorTag';
+import useConnectorTag from 'hooks/connectors/useConnectorTag';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';

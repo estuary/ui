@@ -12,7 +12,7 @@ import { useEntityWorkflow } from 'context/Workflow';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useConnectorTag from 'hooks/useConnectorTag';
+import useConnectorTag from 'hooks/connectors/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useServerUpdateRequiredMonitor } from 'hooks/useServerUpdateRequiredMonitor';
 import { ReactNode, useEffect, useMemo } from 'react';
