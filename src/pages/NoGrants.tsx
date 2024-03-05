@@ -1,5 +1,5 @@
 import { Stack, Typography } from '@mui/material';
-import FullPageWrapper from 'directives/FullPageWrapper';
+import FullPageWrapper from 'app/FullPageWrapper';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
 

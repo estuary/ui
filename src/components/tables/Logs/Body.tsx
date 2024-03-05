@@ -2,7 +2,13 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { ListChildComponentProps, VariableSizeList } from 'react-window';
 import { OpsLogFlowDocument, TableStatuses } from 'types';
 import { TableBody } from '@mui/material';
-import { MutableRefObject, useCallback, useMemo, useRef } from 'react';
+import {
+    MutableRefObject,
+    useCallback,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+} from 'react';
 import { isEmpty } from 'lodash';
 import {
     useJournalDataLogsStore_documents,
@@ -93,6 +99,14 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
         },
         [tableScroller]
     );
+
+    // TODO (Logs)
+    // https://github.com/bvaughn/react-window/issues/445
+    // If we are getting new logs in we need to clear the cache due to
+    //  react-window bug mentioned up above
+    useLayoutEffect(() => {
+        tableScroller()?.resetAfterIndex(0);
+    }, [itemData, tableScroller]);
 
     if (itemData && itemData.length > 0) {
         return (

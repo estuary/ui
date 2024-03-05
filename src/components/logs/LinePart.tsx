@@ -1,6 +1,5 @@
-import { ListItemText, styled } from '@mui/material';
+import { styled } from '@mui/material';
 import { ParsedSpan } from 'ansicolor';
-import { useMemo } from 'react';
 import { unescapeString } from 'utils/misc-utils';
 
 interface Props {
@@ -13,35 +12,17 @@ function LinePart({ parsedLine, lastPart }: Props) {
 
     const splitTextLines = parsedLine.text.split('\\n');
 
-    const linePartRendered = useMemo(() => {
-        return (
-            <>
-                {splitTextLines.map((lineText, index) => {
-                    const formattedLine = unescapeString(
-                        lastPart ? lineText.trimEnd() : lineText
-                    );
-
-                    return (
-                        <ListItemText
-                            key={`${lineText} - linePart - ${index}`}
-                            primary={formattedLine}
-                            disableTypography
-                        />
-                    );
-                })}
-            </>
-        );
-    }, [lastPart, splitTextLines]);
-
     return (
         <StyledLogLinePart
-            sx={{
-                '& .MuiListItemText-root + .MuiListItemText-root': {
-                    pl: 3,
-                },
-            }}
+            sx={{ wordWrap: 'break-word', wordbreak: 'break-all' }}
         >
-            {linePartRendered}
+            {splitTextLines.map((lineText) => {
+                const formattedLine = unescapeString(
+                    lastPart ? lineText.trimEnd() : lineText
+                );
+
+                return formattedLine;
+            })}
         </StyledLogLinePart>
     );
 }

@@ -363,6 +363,8 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.registerFailed.google': 'Failed to register with Google',
     'login.registerFailed.github': 'Failed to register with GitHub',
     'login.userNotFound': 'User not found. Please sign up below.',
+
+    'login.marketPlace.loggedOut': `To apply marketplace subscription, please login below.`,
 };
 
 const EntityStatus: ResolvedIntlConfig['messages'] = {
@@ -688,6 +690,8 @@ const Ops: ResolvedIntlConfig['messages'] = {
     'ops.logsTable.waitingForLogs.old.complete': `All older logs read`,
     'ops.logsTable.waitingForLogs.old': `Fetching older logs`,
     'ops.logsTable.waitingForLogs.new': `Waiting for new logs`,
+
+    'ops.shouldNotShowLogs': `This kind of entity does not support logs`,
 };
 
 const endpointConfigHeader = `Endpoint Config`;
@@ -1115,6 +1119,11 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.grantDirective.error.message.help.docLink': `${CTAs['cta.support']}`,
     'tenant.grantDirective.error.message.help.docPath': `${CommonMessages['support.email']}`,
 
+    'tenant.marketplace.header': `Apply marketplace subscription`,
+    'tenant.marketplace.message': `Select the tenant that you want the marketplace subscription applied to.`,
+    'tenant.marketplace.error.header': `Unable to apply marketplace subscription`,
+    'tenant.marketplace.error.message': `A problem was encountered connecting the Google Marketplace subscription to the requested tenant.`,
+
     'tenant.error.failedToFetch.message': `There was an issue while checking if you have access to a tenant.`,
 };
 
@@ -1128,6 +1137,7 @@ const Details: ResolvedIntlConfig['messages'] = {
     'details.tabs.spec': `Spec`,
     'details.tabs.shardStatus': `Status`,
     'details.tabs.history': `History`,
+    'details.tabs.ops': `Logs`,
 
     'details.settings.notifications.header': `Notification Settings`,
     'details.settings.notifications.alert.userNotSubscribed.message': `You are not subscribed to notifications for this tenant. If you would like to receive notifications for this task, {button} to subscribe.`,

@@ -26,10 +26,13 @@ import AdminBilling from 'components/admin/Billing';
 import AdminSettings from 'components/admin/Settings';
 import HomePage from 'pages/Home';
 import { handledLazy } from 'services/react';
+import MarketplaceCallback from 'pages/marketplace/Callback';
+import MarketplaceVerification from 'pages/marketplace/Verification';
 import MaterializationsTable from './MaterializationsTable';
 import CapturesTable from './CapturesTable';
 import RequireAuth from './RequireAuth';
 import Authenticated from './Authenticated';
+import AuthenticatedLayout from './AuthenticatedLayout';
 
 // Capture
 const CaptureCreateRoute = handledLazy(() => import('./CaptureCreate'));
@@ -99,6 +102,11 @@ const router = createBrowserRouter(
                 }
             />
 
+            <Route
+                path={unauthenticatedRoutes.marketplace.callback.fullPath}
+                element={<MarketplaceCallback />}
+            />
+
             {/*Logout goes directly to login to make sure it isn't wrapped in RequireAuth and won't try to log the user back in*/}
             <Route
                 path={unauthenticatedRoutes.logout.path}
@@ -119,11 +127,21 @@ const router = createBrowserRouter(
                 }
             />
 
+            {/*Outside normal so we can use a fullpage wrapper and not the normal applayout*/}
+            <Route
+                path={authenticatedRoutes.marketplace.verify.fullPath}
+                element={
+                    <Authenticated>
+                        <MarketplaceVerification />
+                    </Authenticated>
+                }
+            />
+
             <Route
                 path={authenticatedRoutes.path}
                 element={
                     <Suspense fallback={null}>
-                        <Authenticated />
+                        <AuthenticatedLayout />
                     </Suspense>
                 }
             >
@@ -140,6 +158,11 @@ const router = createBrowserRouter(
                     <Route
                         path={authenticatedRoutes.dataPlaneAuth.path}
                         element={<DataPlaneAuthReq />}
+                    />
+
+                    <Route
+                        path={authenticatedRoutes.marketplace.verify.fullPath}
+                        element={<MarketplaceVerification />}
                     />
 
                     <Route path={authenticatedRoutes.beta.path}>
@@ -204,7 +227,6 @@ const router = createBrowserRouter(
                                 }
                             />
 
-                            {/*TODO (ops logs) need to handle collections (really derivations)
                             <Route
                                 path={
                                     authenticatedRoutes.collections.details.ops
@@ -215,7 +237,7 @@ const router = createBrowserRouter(
                                         <CollectionDetailsRoute tab="ops" />
                                     </Suspense>
                                 }
-                            />*/}
+                            />
                         </Route>
 
                         <Route

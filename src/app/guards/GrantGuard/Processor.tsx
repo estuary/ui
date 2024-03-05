@@ -4,8 +4,7 @@ import { getDirectiveByToken } from 'api/directives';
 import { authenticatedRoutes } from 'app/routes';
 import MessageWithLink from 'components/content/MessageWithLink';
 import AcceptGrant from 'directives/AcceptGrant';
-import FullPageWrapper from 'directives/FullPageWrapper';
-
+import FullPageWrapper from 'app/FullPageWrapper';
 import { useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { Navigate } from 'react-router';

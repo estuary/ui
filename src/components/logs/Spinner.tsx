@@ -34,6 +34,7 @@ function Spinner({ severity, runningKey, stoppedKey }: Props) {
 
     return (
         <LogLine
+            disableBorder
             disableSelect
             line={lineContent}
             lineNumber={<SpinnerIcon severity={severity} stopped={stopped} />}
