@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import { ListItem, ListItemAvatar, ListItemText } from '@mui/material';
-import { parse } from 'ansicolor';
+import Ansi from 'ansicolor';
 import { defaultOutline } from 'context/Theme';
 import { useMemo } from 'react';
 import { ViewLogs_Line } from 'types';
@@ -23,9 +23,9 @@ function LogLine({ line, lineNumber, disableBorder, disableSelect }: Props) {
     let parsedLine: any;
 
     if (line instanceof Object) {
-        parsedLine = parse(line.log_line);
+        parsedLine = Ansi.parse(line.log_line);
     } else {
-        parsedLine = parse(line);
+        parsedLine = Ansi.parse(line);
     }
 
     const reneredParsedLine = useMemo(() => {
@@ -47,8 +47,9 @@ function LogLine({ line, lineNumber, disableBorder, disableSelect }: Props) {
                 'borderBottom': disableBorder
                     ? undefined
                     : (theme) => defaultOutline[theme.palette.mode],
-                'userSelect': disableSelect ? 'none' : undefined,
                 'py': 0.5,
+                'whiteSpace': 'normal',
+                'userSelect': disableSelect ? 'none' : undefined,
                 '&:hover': {
                     background: (theme) =>
                         theme.palette.mode === 'dark' ? '#222' : '#eee',
@@ -71,7 +72,8 @@ function LogLine({ line, lineNumber, disableBorder, disableSelect }: Props) {
             <ListItemText
                 disableTypography
                 sx={{
-                    display: 'flex',
+                    display: 'inline-block',
+                    wordWrap: 'break-word',
                     flexWrap: 'wrap',
                 }}
             >

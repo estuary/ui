@@ -14,7 +14,7 @@ function LinePart({ parsedLine, lastPart }: Props) {
 
     return (
         <StyledLogLinePart
-            sx={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}
+            sx={{ wordWrap: 'break-word', wordbreak: 'break-all' }}
         >
             {splitTextLines.map((lineText) => {
                 const formattedLine = unescapeString(
