@@ -81,6 +81,7 @@ const getInitialState = (
             active,
             addNewDocuments,
             hydrated,
+            setHydrationError,
             setHydrationErrorsExist,
             setNetworkFailed,
             setRefresh,
@@ -94,6 +95,7 @@ const getInitialState = (
             setHydrationErrorsExist(Boolean(error));
 
             if (error) {
+                setHydrationError(error.message);
                 setNetworkFailed(error.message);
                 addNewDocuments([[0, 0], []]);
                 return;
@@ -105,7 +107,6 @@ const getInitialState = (
     },
 
     fetchMoreLogs: (option) => {
-        console.log('fetchMoreLogs');
         const {
             allowFetchingMore,
             fetchingMore,
@@ -117,7 +118,6 @@ const getInitialState = (
         } = get();
 
         if (!allowFetchingMore || !refresh || fetchingMore) {
-            console.log('fetchMoreLogs skipped');
             return;
         }
 

@@ -24,6 +24,7 @@ export enum CustomEvents {
     LAZY_LOADING = 'Lazy Loading',
     LOGIN = 'Login',
     LOGS_DOCUMENT_COUNT = 'Logs:Document:Count',
+    JOURNAL_DATA_STATUS = 'JournalData:Status',
     JOURNAL_DATA_MAX_BYTES_NOT_ENOUGH = 'JournalData:MaxBytesNotEnough',
     MARKETPLACE_VERIFY = 'Marketplace:Verify',
     MATERIALIZATION_CREATE = 'Materialization_Create',
