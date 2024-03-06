@@ -58,21 +58,40 @@ export const getBindingIndex = (
     collectionName: string,
     resourceConfig?: ResourceConfig | undefined
 ) => {
-    const matchedIndices =
+    const matchedCollectionIndices =
         bindings
             ?.map((binding: any, index) =>
                 getCollectionName(binding) === collectionName ? index : -1
             )
             .filter((bindingIndex) => bindingIndex > -1) ?? [];
 
-    if (matchedIndices.length === 1) {
-        return matchedIndices[0];
-    } else if (bindings && resourceConfig) {
-        return (
-            matchedIndices.find((bindingIndex) =>
-                isEqual(bindings[bindingIndex].resource, resourceConfig.data)
-            ) ?? -1
+    if (matchedCollectionIndices.length === 1) {
+        return matchedCollectionIndices[0];
+    } else if (
+        bindings &&
+        resourceConfig &&
+        hasLength(matchedCollectionIndices)
+    ) {
+        // TODO (testing): Determine why the `resourceConfig.data` object is not recognized as a non-empty object
+        //    by JSON.stringify and lodash functions in a test environment.
+        const sortedResourceEntries = Object.entries(resourceConfig.data).sort(
+            (first, second) => basicSort_string(first[0], second[0], 'asc')
         );
+
+        const matchedConfigIndices = matchedCollectionIndices.filter(
+            (bindingIndex) =>
+                isEqual(
+                    Object.entries(bindings[bindingIndex].resource).sort(
+                        (first, second) =>
+                            basicSort_string(first[0], second[0], 'asc')
+                    ),
+                    sortedResourceEntries
+                )
+        );
+
+        return matchedConfigIndices.length === 1
+            ? matchedCollectionIndices[0]
+            : -500;
     } else {
         return -1;
     }

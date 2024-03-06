@@ -9,6 +9,7 @@ import { ReactElement } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { supabaseClient } from 'services/supabase';
 import { ResourceConfig } from 'stores/Binding/types';
+import { Entity, Schema } from 'types';
 import { mockDeep } from 'vitest-mock-extended';
 import { ConnectorConfig } from '../../flow_deps/flow';
 
@@ -72,6 +73,25 @@ export const generateMockResourceConfig = (
             bindingIndex,
             disable: false,
             previouslyDisabled: false,
+        },
+    });
+};
+
+export const generateMockBinding = (
+    collectionName: string,
+    entityType: Entity,
+    options?: { resourceConfig?: Schema }
+): Schema => {
+    const collectionNameProp =
+        entityType === 'materialization' ? 'source' : 'target';
+
+    return mockDeep<Schema>({
+        resource: options?.resourceConfig ?? {
+            fiz: 'resource',
+        },
+        [collectionNameProp]: collectionName,
+        fields: {
+            recommended: true,
         },
     });
 };

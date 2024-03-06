@@ -2,6 +2,7 @@ import { DraftSpecsExtQuery_ByCatalogName } from 'api/draftSpecs';
 import { FullSourceDictionary } from 'components/editor/Bindings/Store/types';
 import { ResourceConfig, ResourceConfigDictionary } from 'stores/Binding/types';
 import {
+    generateMockBinding,
     generateMockConnectorConfig,
     generateMockResourceConfig,
 } from 'test/test-utils';
@@ -9,11 +10,14 @@ import { generateTaskSpec, getBindingIndex } from 'utils/workflow-utils';
 import { ConnectorConfig } from '../../../flow_deps/flow';
 
 describe('getBindingIndex', () => {
-    let defaultResponse: number, foundName: string;
+    let defaultResponse: number,
+        matchedCollection: string,
+        matchedConfig: ResourceConfig;
 
     beforeEach(() => {
         defaultResponse = -1;
-        foundName = 'acme/found';
+        matchedCollection = 'acme/found';
+        matchedConfig = generateMockResourceConfig(matchedCollection, 0);
     });
 
     describe('returns -1 when', () => {
@@ -30,30 +34,142 @@ describe('getBindingIndex', () => {
         });
 
         test('bindings do not contain collection', () => {
-            expect(getBindingIndex(['a', 'b', 'c'], foundName)).toBe(-1);
+            expect(
+                getBindingIndex(
+                    [
+                        generateMockBinding('a', 'capture'),
+                        generateMockBinding('b', 'capture'),
+                        generateMockBinding('c', 'capture'),
+                    ],
+                    matchedCollection
+                )
+            ).toBe(-1);
+
+            expect(
+                getBindingIndex(
+                    [
+                        generateMockBinding('a', 'capture'),
+                        generateMockBinding('a', 'capture'),
+                        generateMockBinding('c', 'capture'),
+                    ],
+                    matchedCollection
+                )
+            ).toBe(-1);
+        });
+
+        test('multiple bindings map to the collection and a target resource config is not provided', () => {
+            expect(
+                getBindingIndex(
+                    [
+                        generateMockBinding(matchedCollection, 'capture'),
+                        generateMockBinding(matchedCollection, 'capture'),
+                        generateMockBinding('c', 'capture'),
+                    ],
+                    matchedCollection
+                )
+            ).toBe(-1);
+        });
+    });
+
+    describe('returns -500 when', () => {
+        test('multiple bindings map to the collection and two or more resource configs are identical', () => {
+            expect(
+                getBindingIndex(
+                    [
+                        generateMockBinding(matchedCollection, 'capture'),
+                        generateMockBinding(matchedCollection, 'capture'),
+                        generateMockBinding('c', 'capture'),
+                    ],
+                    matchedCollection,
+                    matchedConfig
+                )
+            ).toBe(-500);
         });
     });
 
     describe('returns index when ', () => {
         test('collection name is found', () => {
             // Bindings that are listed as strings
-            expect(getBindingIndex([foundName, 'b', 'c'], foundName)).toBe(0);
-            expect(getBindingIndex(['a', foundName, 'c'], foundName)).toBe(1);
-            expect(getBindingIndex(['a', 'b', foundName], foundName)).toBe(2);
+            expect(
+                getBindingIndex(
+                    [matchedCollection, 'b', 'c'],
+                    matchedCollection
+                )
+            ).toBe(0);
+            expect(
+                getBindingIndex(
+                    ['a', matchedCollection, 'c'],
+                    matchedCollection
+                )
+            ).toBe(1);
+            expect(
+                getBindingIndex(
+                    ['a', 'b', matchedCollection],
+                    matchedCollection
+                )
+            ).toBe(2);
         });
 
         test('collection name is in a property of `target` or `source`', () => {
             expect(
                 getBindingIndex(
-                    [{ source: 'a' }, { source: foundName }, { source: 'c' }],
-                    foundName
+                    [
+                        generateMockBinding('a', 'capture'),
+                        generateMockBinding(matchedCollection, 'capture'),
+                        generateMockBinding('c', 'capture'),
+                    ],
+                    matchedCollection
                 )
             ).toBe(1);
 
             expect(
                 getBindingIndex(
-                    [{ target: 'a' }, { target: foundName }, { target: 'c' }],
-                    foundName
+                    [
+                        generateMockBinding('a', 'capture'),
+                        generateMockBinding(matchedCollection, 'capture'),
+                        generateMockBinding(matchedCollection, 'capture', {
+                            resourceConfig: { fiz: 'unmatched_resource' },
+                        }),
+                        generateMockBinding('c', 'capture'),
+                    ],
+                    matchedCollection,
+                    matchedConfig
+                )
+            ).toBe(1);
+
+            expect(
+                getBindingIndex(
+                    [
+                        generateMockBinding('a', 'materialization'),
+                        generateMockBinding(
+                            matchedCollection,
+                            'materialization'
+                        ),
+                        generateMockBinding('c', 'materialization'),
+                    ],
+                    matchedCollection
+                )
+            ).toBe(1);
+
+            expect(
+                getBindingIndex(
+                    [
+                        generateMockBinding('a', 'materialization'),
+                        generateMockBinding(
+                            matchedCollection,
+                            'materialization'
+                        ),
+                        generateMockBinding(
+                            matchedCollection,
+                            'materialization',
+                            {
+                                resourceConfig: { fiz: 'unmatched_resource' },
+                            }
+                        ),
+                        generateMockBinding('c', 'materialization'),
+                    ],
+                    matchedCollection,
+                    matchedConfig
                 )
             ).toBe(1);
         });
@@ -61,8 +177,8 @@ describe('getBindingIndex', () => {
         test('collection name is in a nested property of `name`', () => {
             expect(
                 getBindingIndex(
-                    [{ name: 'a' }, { name: foundName }, { name: 'c' }],
-                    foundName
+                    [{ name: 'a' }, { name: matchedCollection }, { name: 'c' }],
+                    matchedCollection
                 )
             ).toBe(1);
 
@@ -70,10 +186,10 @@ describe('getBindingIndex', () => {
                 getBindingIndex(
                     [
                         { source: { name: 'a' } },
-                        { source: { name: foundName } },
+                        { source: { name: matchedCollection } },
                         { source: { name: 'c' } },
                     ],
-                    foundName
+                    matchedCollection
                 )
             ).toBe(1);
 
@@ -81,10 +197,10 @@ describe('getBindingIndex', () => {
                 getBindingIndex(
                     [
                         { target: { name: 'a' } },
-                        { target: { name: foundName } },
+                        { target: { name: matchedCollection } },
                         { target: { name: 'c' } },
                     ],
-                    foundName
+                    matchedCollection
                 )
             ).toBe(1);
         });
