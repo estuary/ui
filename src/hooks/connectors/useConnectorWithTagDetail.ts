@@ -62,6 +62,7 @@ function useConnectorWithTagDetail(
                           query,
                           'connector_tags'
                       )
+                          .eq('connector_tags.protocol', protocol as string)
                           .order(CONNECTOR_RECOMMENDED, { ascending: false })
                           .order(CONNECTOR_NAME),
         },
