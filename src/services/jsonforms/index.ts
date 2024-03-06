@@ -638,34 +638,44 @@ export const custom_generateDefaultUISchema = (
 
 export const derefSchema = async (schema: any) => {
     try {
+        // If there is no root ref then skip as handling nested
+        //  refs are handled in generateUISchema
+        if (!schema.$ref) {
+            return schema;
+        }
+
         const resolveResponse = !schema
             ? null
             : await JsonRefs.resolveRefs(schema, {
-                  includeInvalid: true,
-                  loaderOptions: {},
+                  includeInvalid: true, // Gives us errors in response - does not allow invalid ones through
+                  filter: 'relative', // We do not want to go fetch remote ones just to be safe (2024 Q1)
               });
 
         // Go through the refs and see if any errored out
         if (
             resolveResponse?.refs &&
             Object.values(resolveResponse.refs).some((ref) => {
-                return Boolean(ref.error);
+                if (Boolean(ref.missing || ref.error)) {
+                    logRocketEvent(CustomEvents.JSON_SCHEMA_DEREF, {
+                        status: ref.missing ? 'missing' : 'error',
+                    });
+                    logRocketConsole(CustomEvents.JSON_SCHEMA_DEREF, {
+                        missing: ref.missing,
+                        error: ref.error,
+                    });
+                    return true;
+                }
+                return false;
             })
         ) {
-            logRocketEvent(CustomEvents.JSON_SCHEMA_DEREF, {
-                status: 'invalid',
-            });
-            logRocketConsole(CustomEvents.JSON_SCHEMA_DEREF, {
-                refs: resolveResponse.refs,
-            });
             return null;
         }
 
         // If the response is null we did not get anything
-        //  The `resolved` could still contain a $ref but that
-        //  should get caught in the if right above
+        // The root ref may have failed but other refs worked
+        //  so need to make sure we no longer have the ref in the root
         const response = resolveResponse?.resolved ?? null;
-        if (response === null) {
+        if (response === null || JsonRefs.isRef(response)) {
             logRocketEvent(CustomEvents.JSON_SCHEMA_DEREF, {
                 status: 'empty',
             });

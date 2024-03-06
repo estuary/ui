@@ -183,7 +183,7 @@ export const basicSort_string = (
 };
 
 export const getDereffedSchema = async (val: any) => {
-    const response = val.$ref ? await derefSchema(val) : val;
+    const response = val ? await derefSchema(val) : val;
     return response;
 };
 
