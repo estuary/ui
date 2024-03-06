@@ -144,19 +144,23 @@ export const generateTaskSpec = (
           }
         : existingTaskData.spec;
 
+    draftSpec.endpoint.connector = connectorConfig;
+
+    // TODO (edit) do not override existing image
+    //      we'll need to make sure serverUpdateRequired
+    //      works with this change before releasing it
     // When updating do not override the image for any reason
     //  This is the current (2024 Q1) approach and agreed upon.
     //      It can cause weirdness because we are rendering/encrypting
     //      one connector version but saving off another one in the spec.
     //      it is up to the backend to ensure backwards compatibility.
-    const newConnectorConfig = draftSpec.endpoint?.connector?.image
-        ? {
-              ...connectorConfig,
-              image: draftSpec.endpoint.connector.image,
-          }
-        : connectorConfig;
-
-    draftSpec.endpoint.connector = newConnectorConfig;
+    // const newConnectorConfig = draftSpec.endpoint?.connector?.image
+    //     ? {
+    //           ...connectorConfig,
+    //           image: draftSpec.endpoint.connector.image,
+    //       }
+    //     : connectorConfig;
+    // draftSpec.endpoint.connector = newConnectorConfig;
 
     if (resourceConfigs) {
         const collectionNameProp = getCollectionNameProp(entityType);
