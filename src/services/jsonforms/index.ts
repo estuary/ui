@@ -44,6 +44,8 @@ import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
 import { Annotations, Formats, Options } from 'types/jsonforms';
 import JsonRefs from 'json-refs';
+import { logRocketConsole } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import {
     ADVANCED,
     CONTAINS_REQUIRED_FIELDS,
@@ -640,10 +642,10 @@ export const derefSchema = async (schema: any) => {
             ? null
             : (await JsonRefs.resolveRefs(schema)).resolved;
         return response;
-    } catch (e: unknown) {
-        // TODO (jsonschema ref) - need proper error handling
-        console.log('e', e);
-        return {};
+    } catch (error: unknown) {
+        console.log('error', error);
+        logRocketConsole(CustomEvents.JSON_SCHEMA_DEREF_FAILED);
+        return null;
     }
 };
 
