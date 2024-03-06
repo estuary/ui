@@ -1,3 +1,4 @@
+import { connectorHasRequiredColumns } from 'hooks/connectors/shared';
 import {
     CONNECTOR_WITH_TAG_QUERY,
     ConnectorWithTagDetailQuery,
@@ -41,6 +42,11 @@ const getConnectors = (
         ],
         undefined,
         { column: 'connector_tags.protocol', value: protocol }
+    );
+
+    queryBuilder = connectorHasRequiredColumns<ConnectorWithTagDetailQuery>(
+        queryBuilder,
+        'connector_tags'
     );
 
     return queryBuilder;
