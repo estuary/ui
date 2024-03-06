@@ -44,7 +44,7 @@ import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
 import { Annotations, Formats, Options } from 'types/jsonforms';
 import JsonRefs from 'json-refs';
-import { logRocketConsole } from 'services/shared';
+import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import {
     ADVANCED,
@@ -638,13 +638,48 @@ export const custom_generateDefaultUISchema = (
 
 export const derefSchema = async (schema: any) => {
     try {
-        const response = !schema
+        const resolveResponse = !schema
             ? null
-            : (await JsonRefs.resolveRefs(schema)).resolved;
+            : await JsonRefs.resolveRefs(schema, {
+                  includeInvalid: true,
+                  loaderOptions: {},
+              });
+
+        // Go through the refs and see if any errored out
+        if (
+            resolveResponse?.refs &&
+            Object.values(resolveResponse.refs).some((ref) => {
+                return Boolean(ref.error);
+            })
+        ) {
+            logRocketEvent(CustomEvents.JSON_SCHEMA_DEREF, {
+                status: 'invalid',
+            });
+            logRocketConsole(CustomEvents.JSON_SCHEMA_DEREF, {
+                refs: resolveResponse.refs,
+            });
+            return null;
+        }
+
+        // If the response is null we did not get anything
+        //  The `resolved` could still contain a $ref but that
+        //  should get caught in the if right above
+        const response = resolveResponse?.resolved ?? null;
+        if (response === null) {
+            logRocketEvent(CustomEvents.JSON_SCHEMA_DEREF, {
+                status: 'empty',
+            });
+            return null;
+        }
+
         return response;
     } catch (error: unknown) {
-        console.log('error', error);
-        logRocketConsole(CustomEvents.JSON_SCHEMA_DEREF_FAILED);
+        logRocketEvent(CustomEvents.JSON_SCHEMA_DEREF, {
+            status: 'error',
+        });
+        logRocketConsole(CustomEvents.JSON_SCHEMA_DEREF, {
+            error,
+        });
         return null;
     }
 };
