@@ -1,10 +1,9 @@
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow, useEntityWorkflow_Editing } from 'context/Workflow';
 import invariableStores from 'context/Zustand/invariableStores';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+
 import { useEffectOnce, useUpdateEffect } from 'react-use';
+import { useDetailsForm_connectorImage_id } from 'stores/DetailsForm/hooks';
 import { BaseComponentProps } from 'types';
 import { useStore } from 'zustand';
 import {
@@ -16,12 +15,12 @@ import {
 } from './hooks';
 
 export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
-
     const entityType = useEntityType();
 
     const workflow = useEntityWorkflow();
     const editWorkflow = useEntityWorkflow_Editing();
+
+    const connectorTagId = useDetailsForm_connectorImage_id();
 
     const hydrated = useResourceConfig_hydrated();
     const setHydrated = useResourceConfig_setHydrated();
@@ -38,7 +37,12 @@ export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
 
     const hydrateTheState = (rehydrating: boolean) => {
         setActive(true);
-        hydrateState(editWorkflow, entityType, rehydrating).then(
+        hydrateState(
+            editWorkflow,
+            entityType,
+            connectorTagId,
+            rehydrating
+        ).then(
             (response) => {
                 if (
                     response &&
@@ -66,7 +70,7 @@ export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
 
     useUpdateEffect(() => {
         hydrateTheState(true);
-    }, [connectorId]);
+    }, [connectorTagId]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;
