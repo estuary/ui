@@ -63,6 +63,8 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const formData = useDetailsForm_details();
     const { connectorImage: originalConnectorImage } = formData;
 
+    console.log('DetailsFormForm formData', formData);
+
     const connectorImagePath = useDetailsForm_connectorImage_imagePath();
     const connectorIdChanged = useDetailsForm_changed_connectorId();
 
@@ -203,8 +205,6 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
             if (details.data.connectorImage.connectorId === connectorId) {
                 setDetails_connector(details.data.connectorImage);
             } else {
-                // Set the details before navigating to reduce "flicker"
-                setDetails(details);
                 setEntityNameChanged(details.data.entityName);
 
                 navigateToCreate(
