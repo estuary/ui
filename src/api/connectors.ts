@@ -1,7 +1,6 @@
 import {
     CONNECTOR_WITH_TAG_QUERY,
     ConnectorWithTagDetailQuery,
-    connectorHasRequiredColumns,
 } from 'hooks/connectors/shared';
 import {
     CONNECTOR_NAME,
@@ -15,6 +14,7 @@ import {
     CONNECTOR_DETAILS,
 } from 'services/supabase';
 import { SortDirection } from 'types';
+import { connectorHasRequiredColumns } from 'utils/connector-utils';
 
 // Table-specific queries
 const getConnectors = (

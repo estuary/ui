@@ -3,9 +3,9 @@ import {
     CONNECTOR_RECOMMENDED,
     TABLES,
 } from 'services/supabase';
+import { connectorHasRequiredColumns } from 'utils/connector-utils';
 import { useQuery, useSelect } from '../supabase-swr';
 import {
-    connectorHasRequiredColumns,
     ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
 } from './shared';

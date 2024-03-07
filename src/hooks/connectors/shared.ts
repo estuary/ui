@@ -1,4 +1,3 @@
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { EntityWithCreateWorkflow, Schema } from 'types';
 import { CONNECTOR_NAME, CONNECTOR_RECOMMENDED } from 'services/supabase';
 import { ConnectorTag_Base } from 'api/connectors';
@@ -42,28 +41,6 @@ export interface ConnectorTag {
     resource_spec_schema: string;
     documentation_url: string;
 }
-
-// TODO (Typing)
-// Since the typing looks at columns it was a pain to make this
-//  truly reusable. So marking the query as `any` even thogh
-//  it is PostgrestFilterBuilder<ConnectorTag |ConnectorWithTagDetailQuery>
-export const connectorHasRequiredColumns = <T>(
-    query: PostgrestFilterBuilder<any>,
-    columnPrefix?: string
-): PostgrestFilterBuilder<T> => {
-    return query
-        .not(`${columnPrefix ? `${columnPrefix}.` : ''}image_tag`, 'is', null)
-        .not(
-            `${columnPrefix ? `${columnPrefix}.` : ''}resource_spec_schema`,
-            'is',
-            null
-        )
-        .not(
-            `${columnPrefix ? `${columnPrefix}.` : ''}endpoint_spec_schema`,
-            'is',
-            null
-        );
-};
 
 //////////////////////////////////////////////
 // useConnectorWithTagDetail

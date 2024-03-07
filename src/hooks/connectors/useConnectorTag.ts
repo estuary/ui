@@ -2,12 +2,9 @@ import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { useCallback } from 'react';
 import { TABLES } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
+import { connectorHasRequiredColumns } from 'utils/connector-utils';
 import { useQuery, useSelectSingle } from '../supabase-swr/';
-import {
-    connectorHasRequiredColumns,
-    ConnectorTag,
-    CONNECTOR_TAG_QUERY,
-} from './shared';
+import { ConnectorTag, CONNECTOR_TAG_QUERY } from './shared';
 
 function useConnectorTag(connectorImage: string | null) {
     const filter = useCallback(
