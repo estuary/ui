@@ -39,7 +39,9 @@ function FieldsExpandedCell({
                     opacity: heightChanging ? 0 : undefined,
                 }}
             >
-                <Typography sx={{ fontFamily: 'Monospace' }}>
+                <Typography
+                    sx={{ fontFamily: 'Monospace', whiteSpace: 'break-spaces' }}
+                >
                     {message}
                 </Typography>
 

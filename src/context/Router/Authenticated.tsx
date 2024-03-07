@@ -1,17 +1,15 @@
-import AppLayout from 'app/Layout';
 import { AuthenticatedOnlyContext } from 'context/Authenticated';
 import AuthenticatedHydrators from 'context/AuthenticatedHydrators';
 import OnLoadSpinner from 'context/OnLoadSpinner/OnLoadSpinner';
 import PaymentMethodWarning from 'context/PaymentMethodWarning';
+import { BaseComponentProps } from 'types';
 
-function Authenticated() {
+function Authenticated({ children }: BaseComponentProps) {
     return (
         <AuthenticatedOnlyContext>
             <AuthenticatedHydrators>
                 <OnLoadSpinner display={false}>
-                    <PaymentMethodWarning>
-                        <AppLayout />
-                    </PaymentMethodWarning>
+                    <PaymentMethodWarning>{children}</PaymentMethodWarning>
                 </OnLoadSpinner>
             </AuthenticatedHydrators>
         </AuthenticatedOnlyContext>

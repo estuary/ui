@@ -27,6 +27,7 @@ const supabaseSettings = {
 
 // Little helper string that fetches the name from open graph
 export const CONNECTOR_NAME = `title->>en-US`;
+export const CONNECTOR_DETAILS = `detail`;
 export const CONNECTOR_RECOMMENDED = `recommended`;
 export const CONNECTOR_TITLE = `title:connector_title->>en-US`;
 export const CONNECTOR_IMAGE = `image:connector_logo_url->>en-US`;
@@ -115,6 +116,43 @@ export const supabaseClient = createClient(
     supabaseSettings.anonKey
 );
 
+// https://github.com/orgs/supabase/discussions/19651
+const reservedWrapper = `%22`;
+// eslint-disable-next-line no-useless-escape
+const escapableWithbackSlash = /[\"\\]/g;
+// eslint-disable-next-line no-useless-escape
+const reservedCharacters = /[\,\.\(\)\:\"\\]/g;
+
+// We need to escape some extra stuff
+function encodeRFC3986URIComponent(str: string) {
+    return encodeURIComponent(str).replace(
+        // /[!'()*]/g,
+        reservedCharacters,
+        (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`
+    );
+}
+
+// TODO (PostgREST)
+// A query of ilike.*,* will still fail. Not 100% sure why but this does make
+//  things a bit safer.
+export const escapeReservedCharacters = (val: string) => {
+    // https://postgrest.org/en/v12/references/api/url_grammar.html#reserved-characters
+    let wrapString = false;
+    const cleanedVal = val.replace(reservedCharacters, (subString) => {
+        if (subString.match(escapableWithbackSlash)) {
+            return `\\${subString}`;
+        } else {
+            wrapString = true;
+            return `${encodeRFC3986URIComponent(subString)}`;
+        }
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    return wrapString
+        ? `${reservedWrapper}${cleanedVal}${reservedWrapper}`
+        : cleanedVal;
+};
+
 export interface SortingProps<Data> {
     col: keyof Data;
     direction: SortDirection;
@@ -136,7 +174,9 @@ export const defaultTableFilter = <Data>(
         queryBuilder = queryBuilder.or(
             searchParam
                 .map((param) => {
-                    return `${param}.ilike.*${searchQuery}*`;
+                    return `${param}.ilike.*${escapeReservedCharacters(
+                        searchQuery
+                    )}*`;
                 })
                 .join(',')
         );
@@ -177,7 +217,9 @@ export const distributedTableFilter = <Data>(
         queryBuilder = queryBuilder.or(
             searchParam
                 .map((param) => {
-                    return `${param}.ilike.*${searchQuery}*`;
+                    return `${param}.ilike.*${escapeReservedCharacters(
+                        searchQuery
+                    )}*`;
                 })
                 .join(',')
         );
@@ -258,6 +300,7 @@ export const supabaseRetry = <T>(makeCall: Function, action: string) => {
     const operation = retry.operation({
         retries: RETRY_ATTEMPTS,
         randomize: true,
+        maxTimeout: 1500,
     });
 
     return new Promise<T>((resolve) => {

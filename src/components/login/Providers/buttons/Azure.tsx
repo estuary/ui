@@ -1,12 +1,8 @@
 import { useIntl } from 'react-intl';
 import { MicrosoftLoginButton } from 'react-social-login-buttons';
+import { ProviderButtonProps } from '../types';
 
-interface Props {
-    login: () => void;
-    isRegister?: boolean;
-}
-
-const AzureButton = ({ login, isRegister }: Props) => {
+const AzureButton = ({ login, isRegister }: ProviderButtonProps) => {
     const intl = useIntl();
     return (
         <MicrosoftLoginButton

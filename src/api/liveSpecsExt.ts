@@ -5,6 +5,7 @@ import {
     CONNECTOR_TITLE,
     defaultTableFilter,
     distributedTableFilter,
+    escapeReservedCharacters,
     handleFailure,
     handleSuccess,
     QUERY_PARAM_CONNECTOR_TITLE,
@@ -337,7 +338,7 @@ const getLiveSpecsByConnectorId = async (
             queryBuilder = queryBuilder.not(
                 'catalog_name',
                 'ilike',
-                `${prefix}/%`
+                `${escapeReservedCharacters(prefix)}/%`
             );
         });
     }

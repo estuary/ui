@@ -123,12 +123,11 @@ const collections = {
             path: 'history',
             fullPath: '/collections/details/history',
         },
-        // TODO (ops logs) need to handle collections (really derivations)
-        // ops: {
-        //     title: 'routeTitle.collectionDetails.ops',
-        //     path: 'ops',
-        //     fullPath: '/collections/details/ops',
-        // },
+        ops: {
+            title: 'routeTitle.collectionDetails.ops',
+            path: 'ops',
+            fullPath: '/collections/details/ops',
+        },
     },
 };
 
@@ -140,6 +139,22 @@ const dataPlaneAuth = {
 const home = {
     title: 'routeTitle.home',
     path: '/welcome',
+};
+
+const marketplace = {
+    authenticated: {
+        verify: {
+            title: 'routeTitle.marketplaceVerify',
+            path: 'verify',
+            fullPath: '/marketplace/verify',
+        },
+    },
+    unauthenticated: {
+        callback: {
+            path: 'callback',
+            fullPath: '/marketplace/callback',
+        },
+    },
 };
 
 const materializations = {
@@ -227,6 +242,7 @@ export const authenticatedRoutes = {
     dataPlaneAuth,
     home,
     materializations,
+    marketplace: marketplace.authenticated,
     user,
     pageNotFound,
     beta,
@@ -253,4 +269,5 @@ export const unauthenticatedRoutes = {
     magicLink: {
         path: '/magicLink',
     },
+    marketplace: marketplace.unauthenticated,
 };
