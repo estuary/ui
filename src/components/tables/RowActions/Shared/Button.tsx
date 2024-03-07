@@ -5,32 +5,35 @@ import { useConfirmationModalContext } from 'context/Confirmation';
 import { useZustandStore } from 'context/Zustand/provider';
 import { ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
+import { SelectTableStoreNames } from 'stores/names';
+import { SettingMetadata } from './NestedListItem';
 
 interface Props {
-    confirmationMessage?: ReactNode;
+    messageID: string;
     renderProgress: (
         item: any,
         index: number,
         onFinish: (response: any) => void
     ) => ReactNode;
-    messageID: string;
     selectableTableStoreName:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
         | SelectTableStoreNames.COLLECTION_SELECTOR
         | SelectTableStoreNames.MATERIALIZATION;
+    confirmationMessage?: ReactNode;
+    settings?: SettingMetadata[];
 }
 
 function RowActionButton({
-    confirmationMessage,
     messageID,
     renderProgress,
     selectableTableStoreName,
+    confirmationMessage,
+    settings,
 }: Props) {
     const confirmationModalContext = useConfirmationModalContext();
 
@@ -52,6 +55,14 @@ function RowActionButton({
         SelectableTableStore['rows']
     >(selectableTableStoreName, selectableTableStoreSelectors.rows.get);
 
+    const resetActionSettings = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['resetActionSettings']
+    >(
+        selectableTableStoreName,
+        selectableTableStoreSelectors.actionSettings.reset
+    );
+
     const hasSelections = selectedRows.size > 0;
 
     const handlers = {
@@ -60,7 +71,7 @@ function RowActionButton({
                 const selectedNames: string[] = [];
                 const selectedSpecs: any[] = [];
 
-                selectedRows.forEach((value: any, key: string) => {
+                selectedRows.forEach((_value: any, key: string) => {
                     selectedNames.push(rows.get(key).catalog_name);
                     selectedSpecs.push(rows.get(key));
                 });
@@ -71,6 +82,10 @@ function RowActionButton({
                             <RowActionConfirmation
                                 selected={selectedNames}
                                 message={confirmationMessage}
+                                selectableTableStoreName={
+                                    selectableTableStoreName
+                                }
+                                settings={settings}
                             />
                         ),
                     })
@@ -78,6 +93,8 @@ function RowActionButton({
                         if (confirmed) {
                             setShowProgress(true);
                             setTargets(selectedSpecs);
+                        } else {
+                            resetActionSettings();
                         }
                     })
                     .catch(() => {});
@@ -87,6 +104,7 @@ function RowActionButton({
             setTargets([]);
             setAllSelected(false);
             setShowProgress(false);
+            resetActionSettings();
         },
     };
 
