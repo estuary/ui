@@ -38,13 +38,17 @@ export const getSchema_Endpoint = async (connectorId: string | null) => {
     return endpointSchema;
 };
 
-export const getSchema_Resource = async (connectorId: string | null) => {
+export const getSchema_Resource = async (
+    connectorId: string,
+    connectorTagId: string
+) => {
     const resourceSchema = await supabaseRetry(
         () =>
             supabaseClient
                 .from(TABLES.CONNECTOR_TAGS)
                 .select(`connector_id,resource_spec_schema`)
                 .eq('connector_id', connectorId)
+                .eq('id', connectorTagId)
                 .not('resource_spec_schema', 'is', null),
         'getSchema_Resource'
     ).then(handleSuccess<ConnectorTagResourceData[]>, handleFailure);
