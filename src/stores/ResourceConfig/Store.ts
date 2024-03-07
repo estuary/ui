@@ -740,9 +740,13 @@ const getInitialState = (
         );
     },
 
-    hydrateState: async (editWorkflow, entityType, rehydrating) => {
+    hydrateState: async (
+        editWorkflow,
+        entityType,
+        connectorTagId,
+        rehydrating
+    ) => {
         const searchParams = new URLSearchParams(window.location.search);
-        const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
         const prefillLiveSpecIds = searchParams.getAll(
             GlobalSearchParams.PREFILL_LIVE_SPEC_ID
@@ -757,8 +761,8 @@ const getInitialState = (
         const { resetState, setHydrationErrorsExist } = get();
         resetState(materializationReydrating);
 
-        if (connectorId) {
-            const { data, error } = await getSchema_Resource(connectorId);
+        if (connectorTagId && connectorTagId.length > 0) {
+            const { data, error } = await getSchema_Resource(connectorTagId);
 
             if (error) {
                 setHydrationErrorsExist(true);
