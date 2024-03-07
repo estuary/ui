@@ -766,11 +766,11 @@ const getInitialState = (
 
             if (error) {
                 setHydrationErrorsExist(true);
-            } else if (data && data.length > 0) {
+            } else if (data?.resource_spec_schema) {
                 const { setResourceSchema } = get();
 
                 setResourceSchema(
-                    data[0].resource_spec_schema as unknown as Schema
+                    data.resource_spec_schema as unknown as Schema
                 );
             }
         }
