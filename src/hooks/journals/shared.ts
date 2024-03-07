@@ -64,21 +64,30 @@ export async function loadDocuments({
         };
     }
 
-    const metaInfo = (
-        await client.read({
-            metadataOnly: true,
-            journal: journalName,
-        })
-    ).unwrap();
+    const clientResponse = await client.read({
+        metadataOnly: true,
+        journal: journalName,
+    });
+
+    if (clientResponse.err()) {
+        const clientError = clientResponse.unwrap_err();
+        throw new Error(clientError.body.message);
+    }
+
+    const metaInfo = clientResponse.unwrap();
 
     const generator = streamAsyncIterator<ProtocolReadResponse>(metaInfo);
-
     const metadataResponse = (await generator.next()).value;
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!metadataResponse?.writeHead) {
         throw new Error('Unable to load metadata');
     }
+
+    // Log so we can keep track of statuses we should add custom messages for
+    logRocketConsole(CustomEvents.JOURNAL_DATA_STATUS, {
+        val: metadataResponse.status,
+    });
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (journalStatusIsError(metadataResponse?.status)) {

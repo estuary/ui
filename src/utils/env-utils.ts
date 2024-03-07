@@ -121,6 +121,20 @@ export const getEncryptionSettings = () => {
     }
 };
 
+export const getMarketplaceSettings = () => {
+    const verifyURL = import.meta.env.VITE_MARKETPLACE_VERIFY_URL;
+
+    if (verifyURL) {
+        return {
+            verifyURL,
+        };
+    } else {
+        throw new Error(
+            'Missing endpoint for verifying marketplace subscriptions: VITE_MARKETPLACE_VERIFY_URL'
+        );
+    }
+};
+
 export const getGatewayAuthTokenSettings = () => {
     const gatewayAuthTokenEndpoint = import.meta.env
         .VITE_GATEWAY_AUTH_TOKEN_URL;

@@ -5,22 +5,34 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import LogsTable from 'components/tables/Logs';
 import JournalDataLogsHydrator from 'stores/JournalData/Logs/Hydrator';
-import { useJournalDataLogsStore_hydrationErrorsExist } from 'stores/JournalData/Logs/hooks';
+import { useJournalDataLogsStore_hydrationError } from 'stores/JournalData/Logs/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
-import MessageWithLink from 'components/content/MessageWithLink';
+import Message from 'components/shared/Error/Message';
+import { BASE_ERROR } from 'services/supabase';
+import useEntityShouldShowLogs from '../useEntityShouldShowLogs';
 
 function Ops() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const [name, collectionName] = useJournalNameForLogs(catalogName);
 
-    const hydrationErrorsExist = useJournalDataLogsStore_hydrationErrorsExist();
+    const hydrationError = useJournalDataLogsStore_hydrationError();
+
+    const shouldShowLogs = useEntityShouldShowLogs();
+
+    if (!shouldShowLogs) {
+        return (
+            <AlertBox short severity="warning">
+                <FormattedMessage id="ops.shouldNotShowLogs" />
+            </AlertBox>
+        );
+    }
 
     return (
         <JournalDataLogsHydrator name={name} collectionName={collectionName}>
             <Stack spacing={2}>
                 <Box>
-                    {hydrationErrorsExist ? (
+                    {hydrationError ? (
                         <AlertBox
                             severity="error"
                             title={
@@ -28,7 +40,12 @@ function Ops() {
                             }
                             short
                         >
-                            <MessageWithLink messageID="ops.logsTable.hydrationError.message" />
+                            <Message
+                                error={{
+                                    ...BASE_ERROR,
+                                    message: hydrationError,
+                                }}
+                            />
                         </AlertBox>
                     ) : (
                         <LogsTable />

@@ -11,21 +11,23 @@ export enum GlobalSearchParams {
     LIVE_SPEC_ID = 'liveSpecId',
     PREFILL_LIVE_SPEC_ID = 'prefillLiveSpecId',
     PREFIX = 'prefix',
+    PROVIDER = 'provider', // Login Provider but having a url like login/?loginProvider looked weird
     HOME_PAGE_ERROR = 'homePageError',
+    LOGIN_HINTS_GOOGLE = 'google_login_hint',
 }
 
-function useGlobalSearchParams(key: GlobalSearchParams): string;
-function useGlobalSearchParams(
+function useGlobalSearchParams<T = string>(key: GlobalSearchParams): T;
+function useGlobalSearchParams<T = string>(
     key: GlobalSearchParams,
     fetchAll: true
-): string[];
-function useGlobalSearchParams(
+): T[];
+function useGlobalSearchParams<T = string>(
     key: GlobalSearchParams | Array<GlobalSearchParams>
-): string[];
-function useGlobalSearchParams(
+): T[];
+function useGlobalSearchParams<T = string>(
     key: GlobalSearchParams | Array<GlobalSearchParams>,
     fetchAll: true
-): string[][];
+): T[][];
 function useGlobalSearchParams(
     key: GlobalSearchParams | Array<GlobalSearchParams>,
     fetchAll?: boolean
