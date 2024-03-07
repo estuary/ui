@@ -15,6 +15,29 @@ export const CONNECTOR_QUERY = `
     id, title, image_name
 `;
 
+/////////////////////////////////
+// useConnectorsExist
+/////////////////////////////////
+export interface ConnectorsExist {
+    id: string;
+    // FILTERING TYPES HACK
+    ['connector_tags.protocol']: undefined;
+    [CONNECTOR_RECOMMENDED]: undefined;
+    [CONNECTOR_NAME]: undefined;
+}
+
+// TODO (connectors store)
+// We used to check if connectors exist with a query that returned a bunch
+//      of data and sorting. However, we then go and fetch that again a second
+//      later. So this query is super small to reduce the amount of data and just
+//      making sure there are connectors.
+export const CONNECTORS_EXIST_QUERY = `
+    image_name,
+    connector_tags !inner(
+        protocol
+    )
+`;
+
 //////////////////////////////
 // useConnectorTag
 //////////////////////////////

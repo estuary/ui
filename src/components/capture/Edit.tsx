@@ -15,7 +15,6 @@ import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpe
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useMemo } from 'react';
@@ -24,6 +23,7 @@ import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 import { MAX_DISCOVER_TIME } from 'utils/misc-utils';
+import useHasConnectors from 'hooks/connectors/useHasConnectors';
 
 function CaptureEdit() {
     usePageTitle({
@@ -35,8 +35,7 @@ function CaptureEdit() {
     const entityType = 'capture';
 
     // Supabase
-    const { connectorTags } = useConnectorWithTagDetail(entityType);
-    const hasConnectors = connectorTags.length > 0;
+    const hasConnectors = useHasConnectors(entityType);
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
