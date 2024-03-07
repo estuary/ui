@@ -24,15 +24,16 @@ type ConnectorTagEndpointData = Pick<
     'connector_id' | 'endpoint_spec_schema'
 >;
 
-export const getSchema_Endpoint = async (connectorId: string | null) => {
+export const getSchema_Endpoint = async (connectorTagId: string | null) => {
     const endpointSchema = await supabaseRetry(
         () =>
             supabaseClient
                 .from(TABLES.CONNECTOR_TAGS)
-                .select(`connector_id,endpoint_spec_schema`)
-                .eq('connector_id', connectorId),
+                .select(`endpoint_spec_schema`)
+                .eq('id', connectorTagId)
+                .single(),
         'getSchema_Endpoint'
-    ).then(handleSuccess<ConnectorTagEndpointData[]>, handleFailure);
+    ).then(handleSuccess<ConnectorTagEndpointData>, handleFailure);
 
     return endpointSchema;
 };

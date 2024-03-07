@@ -192,9 +192,12 @@ const getInitialState = (
         );
     },
 
-    hydrateState: async (entityType, workflow): Promise<void> => {
+    hydrateState: async (
+        entityType,
+        workflow,
+        connectorTagId
+    ): Promise<void> => {
         const searchParams = new URLSearchParams(window.location.search);
-        const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
         const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
 
@@ -207,16 +210,16 @@ const getInitialState = (
             get().setServerUpdateRequired(true);
         }
 
-        if (get().active && connectorId) {
-            const { data, error } = await getSchema_Endpoint(connectorId);
+        if (get().active && connectorTagId && connectorTagId.length > 0) {
+            const { data, error } = await getSchema_Endpoint(connectorTagId);
 
             if (error) {
                 get().setHydrationErrorsExist(true);
             }
 
-            if (get().active && data && data.length > 0) {
+            if (get().active && data) {
                 get().setEndpointSchema(
-                    data[0].endpoint_spec_schema as unknown as Schema
+                    data.endpoint_spec_schema as unknown as Schema
                 );
             }
         }
