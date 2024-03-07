@@ -711,6 +711,7 @@ const getInitialState = (
     },
 
     setResourceSchema: async (val) => {
+        console.log('setResourceSchema', val);
         const resolved = await getDereffedSchema(val);
         set(
             produce((state: ResourceConfigState) => {
@@ -746,9 +747,14 @@ const getInitialState = (
         );
     },
 
-    hydrateState: async (editWorkflow, entityType, rehydrating) => {
+    hydrateState: async (
+        editWorkflow,
+        entityType,
+        connectorId,
+        connectorTagId,
+        rehydrating
+    ) => {
         const searchParams = new URLSearchParams(window.location.search);
-        const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
         const prefillLiveSpecIds = searchParams.getAll(
             GlobalSearchParams.PREFILL_LIVE_SPEC_ID
@@ -763,11 +769,14 @@ const getInitialState = (
         const { resetState, setHydrationErrorsExist } = get();
         resetState(materializationReydrating);
 
-        if (connectorId) {
-            const { data, error } = await getSchema_Resource(connectorId);
+        if (connectorId.length > 0 && connectorTagId.length > 0) {
+            const { data, error } = await getSchema_Resource(
+                connectorId,
+                connectorTagId
+            );
 
             if (error) {
-                setHydrationErrorsExist(true);
+                get().setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
                 const { setResourceSchema } = get();
 
@@ -776,6 +785,8 @@ const getInitialState = (
                 );
             }
         }
+        // We used to set the resourceSchema but that is now a stand alone call
+        //  this means if you want to truly rehydrate you need to call that on your own
 
         if (editWorkflow && liveSpecIds.length > 0) {
             const { data: liveSpecs, error: liveSpecError } =
@@ -826,7 +837,7 @@ const getInitialState = (
                 return Promise.resolve(data);
             }
         } else if (materializationReydrating) {
-            // If there is nothign to prefill but we are rehydrating we want to make sure
+            // If there is nothing to prefill but we are rehydrating we want to make sure
             //  we prefill any collections the user already selected but only for materializations
             //  because for a Capture the collections are discovered and if the hydration is kicked
             //  off then they will need to rediscover everything again

@@ -83,6 +83,8 @@ export interface ResourceConfigState extends StoreWithHydration {
     hydrateState: (
         editWorkflow: boolean,
         entityType: Entity,
+        connectorId: string,
+        connectorTagId: string,
         rehydrating?: boolean
     ) => Promise<LiveSpecsExt_MaterializeCapture | null>;
 
