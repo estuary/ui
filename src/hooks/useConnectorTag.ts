@@ -18,14 +18,7 @@ export interface ConnectorTag {
 }
 
 export const CONNECTOR_TAG_QUERY = `
-    connectors(
-        image_name
-    ),
-    id,
-    connector_id,
-    image_tag,
     endpoint_spec_schema, 
-    resource_spec_schema, 
     documentation_url
 `;
 
