@@ -16,7 +16,7 @@ import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedCh
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import useBrowserTitle from 'hooks/useBrowserTitle';
-import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
+import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetail';
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';

@@ -1,7 +1,7 @@
 import {
     CONNECTOR_WITH_TAG_QUERY,
     ConnectorWithTagDetailQuery,
-} from 'hooks/useConnectorWithTagDetail';
+} from 'hooks/connectors/useConnectorWithTagDetail';
 import {
     CONNECTOR_NAME,
     CONNECTOR_RECOMMENDED,

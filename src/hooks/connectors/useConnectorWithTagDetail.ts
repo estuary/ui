@@ -5,7 +5,7 @@ import {
     TABLES,
 } from 'services/supabase';
 import { EntityWithCreateWorkflow } from 'types';
-import { useQuery, useSelect } from './supabase-swr';
+import { useQuery, useSelect } from '../supabase-swr';
 
 export interface ConnectorTag extends ConnectorTag_Base {
     documentation_url: string;

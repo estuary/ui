@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { TABLES } from 'services/supabase';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
-import { useQuery, useSelectSingle } from './supabase-swr/';
+import { useQuery, useSelectSingle } from '../supabase-swr/';
 
 export interface ConnectorTag {
     connectors: {

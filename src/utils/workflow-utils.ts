@@ -11,7 +11,7 @@ import {
 import {
     ConnectorTag,
     ConnectorWithTagDetailQuery,
-} from 'hooks/useConnectorWithTagDetail';
+} from 'hooks/connectors/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';

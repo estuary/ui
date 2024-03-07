@@ -1,4 +1,4 @@
-import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
+import { ConnectorWithTagDetailQuery } from 'hooks/connectors/useConnectorWithTagDetail';
 import { EntityWithCreateWorkflow } from 'types';
 
 export interface Props {

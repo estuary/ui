@@ -1,4 +1,4 @@
-import { ConnectorTag } from 'hooks/useConnectorTag';
+import { ConnectorTag } from 'hooks/connectors/useConnectorTag';
 import {
     LiveSpecsExtQuery,
     LiveSpecsExt_MaterializeCapture,
