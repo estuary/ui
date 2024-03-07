@@ -213,6 +213,10 @@ const EntitiesHydrator: ResolvedIntlConfig['messages'] = {
     'entitiesHydrator.error.failedToFetch': `There was an issue while checking if you have any roles.`,
 };
 
+const ConnectorsHydrator: ResolvedIntlConfig['messages'] = {
+    'connectorsHydrator.error.failedToFetch': `There was an issue while trying to fetch the list of installed connectors.`,
+};
+
 const Navigation: ResolvedIntlConfig['messages'] = {
     'navigation.toggle.ariaLabel': `Toggle Navigation`,
     'navigation.expand': `Expand Navigation`,
@@ -1462,6 +1466,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...JsonForms,
     ...Journals,
     ...Ops,
+    ...ConnectorsHydrator,
 };
 
 export default enUSMessages;
