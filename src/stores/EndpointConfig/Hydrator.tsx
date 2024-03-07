@@ -33,7 +33,6 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
             connectorTagId.length > 0 &&
             (entityType === 'capture' || entityType === 'materialization')
         ) {
-            console.log('hydrating');
             setRunHydration(false);
             setActive(true);
             hydrateState(entityType, workflow, connectorTagId).then(
