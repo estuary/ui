@@ -11,7 +11,7 @@ import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/useConnectorWithTagDetail';
+import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';

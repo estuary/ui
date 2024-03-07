@@ -9,9 +9,9 @@ import {
     FullSourceDictionary,
 } from 'components/editor/Bindings/Store/types';
 import {
-    ConnectorTag,
+    ConnectorTagWithDetailTags,
     ConnectorWithTagDetailQuery,
-} from 'hooks/connectors/useConnectorWithTagDetail';
+} from 'hooks/connectors/shared';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
@@ -319,7 +319,7 @@ export interface ConnectorVersionEvaluationOptions {
 export function evaluateConnectorVersions(
     connector: ConnectorWithTagDetailQuery,
     options?: ConnectorVersionEvaluationOptions
-): ConnectorTag;
+): ConnectorTagWithDetailTags;
 export function evaluateConnectorVersions(
     connector: ConnectorsQuery_DetailsForm,
     options?: ConnectorVersionEvaluationOptions
@@ -327,7 +327,7 @@ export function evaluateConnectorVersions(
 export function evaluateConnectorVersions(
     connector: ConnectorWithTagDetailQuery | ConnectorsQuery_DetailsForm,
     options?: ConnectorVersionEvaluationOptions
-): ConnectorTag | ConnectorTag_Base {
+): ConnectorTagWithDetailTags | ConnectorTag_Base {
     // Return the version of the connector that is used by the existing task in an edit workflow.
     if (options && options.connectorId === connector.id) {
         const connectorsInUse = connector.connector_tags.filter(

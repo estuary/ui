@@ -1,33 +1,21 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { useCallback } from 'react';
 import { TABLES } from 'services/supabase';
-import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { useQuery, useSelectSingle } from '../supabase-swr/';
-
-export interface ConnectorTag {
-    connectors: {
-        image_name: string;
-    };
-    id: string;
-    connector_id: string;
-    image_tag: string;
-    endpoint_spec_schema: Schema;
-    resource_spec_schema: string;
-    documentation_url: string;
-}
-
-export const CONNECTOR_TAG_QUERY = `
-    endpoint_spec_schema, 
-    documentation_url
-`;
+import {
+    connectorHasRequiredColumns,
+    ConnectorTag,
+    CONNECTOR_TAG_QUERY,
+} from './shared';
 
 function useConnectorTag(connectorImage: string | null) {
     const filter = useCallback(
-        (query: PostgrestFilterBuilder<ConnectorTag>) =>
-            query.or(
+        (query: PostgrestFilterBuilder<ConnectorTag>) => {
+            return connectorHasRequiredColumns<ConnectorTag>(query).or(
                 `id.eq.${connectorImage},connector_id.eq.${connectorImage}`
-            ),
+            );
+        },
         [connectorImage]
     );
 

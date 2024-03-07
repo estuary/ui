@@ -1,49 +1,15 @@
-import { ConnectorTag_Base } from 'api/connectors';
 import {
     CONNECTOR_NAME,
     CONNECTOR_RECOMMENDED,
     TABLES,
 } from 'services/supabase';
-import { EntityWithCreateWorkflow } from 'types';
 import { useQuery, useSelect } from '../supabase-swr';
+import {
+    connectorHasRequiredColumns,
+    ConnectorWithTagDetailQuery,
+    CONNECTOR_WITH_TAG_QUERY,
+} from './shared';
 
-export interface ConnectorTag extends ConnectorTag_Base {
-    documentation_url: string;
-    protocol: EntityWithCreateWorkflow;
-    image_name: string;
-    title: string;
-}
-
-export interface ConnectorWithTagDetailQuery {
-    connector_tags: ConnectorTag[];
-    id: string;
-    detail: string;
-    image_name: string;
-    image: string;
-    recommended: boolean;
-    title: string;
-    // FILTERING TYPES HACK
-    ['connector_tags.protocol']: undefined;
-    ['connector_tags.image_tag']: undefined;
-    [CONNECTOR_NAME]: undefined;
-}
-
-export const CONNECTOR_WITH_TAG_QUERY = `
-    id,
-    detail,
-    image_name,
-    image:logo_url->>en-US::text,
-    ${CONNECTOR_RECOMMENDED},
-    title:${CONNECTOR_NAME}::text,
-    connector_tags !inner(
-        documentation_url,
-        protocol,
-        image_tag,
-        id,
-        connector_id,
-        endpoint_spec_schema->>title
-    )
-`;
 const defaultResponse: ConnectorWithTagDetailQuery[] = [];
 
 function useConnectorWithTagDetail(
@@ -57,7 +23,10 @@ function useConnectorWithTagDetail(
             filter: (query) =>
                 connectorId
                     ? query.eq('id', connectorId)
-                    : query
+                    : connectorHasRequiredColumns<ConnectorWithTagDetailQuery>(
+                          query,
+                          'connector_tags'
+                      )
                           .eq('connector_tags.protocol', protocol as string)
                           .order(CONNECTOR_RECOMMENDED, { ascending: false })
                           .order(CONNECTOR_NAME),
