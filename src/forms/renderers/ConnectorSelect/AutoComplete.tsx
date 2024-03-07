@@ -80,8 +80,6 @@ export const ConnectorAutoComplete = (
         [data, options]
     );
 
-    console.log('ConnectorAutoComplete', { currentOption, inputValue });
-
     return (
         <Autocomplete
             options={options ?? []}
