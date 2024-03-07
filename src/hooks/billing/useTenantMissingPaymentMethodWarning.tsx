@@ -20,7 +20,7 @@ import { useEntitiesStore_hasSupportRole } from 'stores/Entities/hooks';
 
 const TRIAL_LENGTH = 30;
 
-// TODO (payment method notification) we should eventually more the "component type stuff" out of here
+// TODO (payment method notification) we should eventually move the "component type stuff" out of here
 //      and into a component that this hook can interact with. This should go into the PaymentMethodWarning.tsx file
 
 // TODO (store payment method info) we load the same thing twice for this and billing. Billing should try to pull these first
