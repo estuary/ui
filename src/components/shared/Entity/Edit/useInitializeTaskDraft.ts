@@ -22,7 +22,6 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { Dispatch, SetStateAction, useCallback } from 'react';
-import { useBinding_initializeFullSourceConfigs } from 'stores/Binding/hooks';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 
@@ -63,9 +62,6 @@ function useInitializeTaskDraft() {
 
     // Form State Store
     const setFormState = useFormStateStore_setFormState();
-
-    const initializeFullSourceConfigs =
-        useBinding_initializeFullSourceConfigs();
 
     // Get catalog name and task spec from live specs
     const getTask =
@@ -211,11 +207,8 @@ function useInitializeTaskDraft() {
             const task = await getTask();
 
             if (task) {
-                const {
-                    existingDraftSpecsResponse,
-                    evaluatedDraftId,
-                    draftSpecsRequestConfig,
-                } = await getTaskDraft(task);
+                const { evaluatedDraftId, draftSpecsRequestConfig } =
+                    await getTaskDraft(task);
 
                 if (evaluatedDraftId) {
                     const draftSpecsError = await getTaskDraftSpecs(
@@ -225,13 +218,6 @@ function useInitializeTaskDraft() {
                     );
 
                     if (!draftSpecsError) {
-                        if (task.spec_type === 'materialization') {
-                            initializeFullSourceConfigs(
-                                existingDraftSpecsResponse
-                                    ? existingDraftSpecsResponse.spec.bindings
-                                    : task.spec.bindings
-                            );
-                        }
                         setDraftId(evaluatedDraftId);
                         setPersistedDraftId(evaluatedDraftId);
 
@@ -276,7 +262,6 @@ function useInitializeTaskDraft() {
             getTaskDraft,
             getTaskDraftSpecs,
             liveSpecId,
-            initializeFullSourceConfigs,
             navigateToEdit,
             prefillLiveSpecIds,
             setDraftId,

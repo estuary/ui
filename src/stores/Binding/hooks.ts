@@ -1,6 +1,6 @@
 import { useZustandStore } from 'context/Zustand/provider';
 import { BindingStoreNames } from 'stores/names';
-import { shallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 import { FullSource, FullSourceDictionary } from './slices/TimeTravel';
 import { BindingState, ResourceConfig } from './types';
 
@@ -94,8 +94,7 @@ export const useBinding_resourceConfig = (bindingUUID: string) => {
 export const useBinding_resourceConfigs = () => {
     return useZustandStore<BindingState, BindingState['resourceConfigs']>(
         BindingStoreNames.GENERAL,
-        (state) => state.resourceConfigs,
-        shallow
+        useShallow((state) => state.resourceConfigs)
     );
 };
 
@@ -133,14 +132,13 @@ export const useBinding_resourceConfigOfCollectionProperty = (
 ) => {
     return useZustandStore<BindingState, any>(
         BindingStoreNames.GENERAL,
-        (state) => {
+        useShallow((state) => {
             if (!bindingUUID) {
                 return null;
             }
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             return state.resourceConfigs[bindingUUID]?.[property];
-        },
-        shallow
+        })
     );
 };
 
@@ -150,14 +148,13 @@ export const useBinding_resourceConfigOfMetaCollectionProperty = (
 ) => {
     return useZustandStore<BindingState, any>(
         BindingStoreNames.GENERAL,
-        (state) => {
+        useShallow((state) => {
             if (!bindingUUID) {
                 return null;
             }
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             return state.resourceConfigs[bindingUUID]?.meta?.[property];
-        },
-        shallow
+        })
     );
 };
 
@@ -185,8 +182,7 @@ export const useBinding_removeBindings = () => {
 export const useBinding_collections = () => {
     return useZustandStore<BindingState, string[]>(
         BindingStoreNames.GENERAL,
-        (state) => state.getCollections(),
-        shallow
+        useShallow((state) => state.getCollections())
     );
 };
 
@@ -200,11 +196,11 @@ export const useBinding_toggleDisable = () => {
 export const useBinding_allBindingsDisabled = () => {
     return useZustandStore<BindingState, boolean>(
         BindingStoreNames.GENERAL,
-        (state) =>
+        useShallow((state) =>
             Object.values(state.resourceConfigs).every(
                 (config) => config.meta.disable
-            ),
-        shallow
+            )
+        )
     );
 };
 
@@ -422,13 +418,6 @@ export const useBinding_updateFullSourceConfig = () => {
         BindingState,
         BindingState['updateFullSourceConfig']
     >(BindingStoreNames.GENERAL, (state) => state.updateFullSourceConfig);
-};
-
-export const useBinding_initializeFullSourceConfigs = () => {
-    return useZustandStore<
-        BindingState,
-        BindingState['initializeFullSourceConfigs']
-    >(BindingStoreNames.GENERAL, (state) => state.initializeFullSourceConfigs);
 };
 
 export const useBinding_fullSourceErrorsExist = () => {

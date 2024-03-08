@@ -1,6 +1,7 @@
 import { JsonFormsCore } from '@jsonforms/core';
 import produce from 'immer';
 import { checkForErrors } from 'stores/utils';
+import { Schema } from 'types';
 import { getSourceOrTarget } from 'utils/workflow-utils';
 import { NamedSet } from 'zustand/middleware';
 
@@ -28,9 +29,27 @@ export interface StoreWithTimeTravel {
         formData: FullSourceJsonForms
     ) => void;
 
-    initializeFullSourceConfigs: (val: any[] | null) => void;
     fullSourceErrorsExist: boolean;
 }
+
+export const initializeFullSourceConfig = (
+    state: StoreWithTimeTravel,
+    binding: Schema
+) => {
+    const scopedBinding = getSourceOrTarget(binding);
+    const nameOnly = typeof scopedBinding === 'string';
+
+    if (nameOnly) {
+        state.fullSourceConfigs[scopedBinding] = { data: {}, errors: [] };
+    } else {
+        const { name, ...restOfFullSource } = scopedBinding;
+
+        state.fullSourceConfigs[name] = {
+            data: restOfFullSource,
+            errors: [],
+        };
+    }
+};
 
 export const getInitialTimeTravelData = (): Pick<
     StoreWithTimeTravel,
@@ -44,35 +63,6 @@ export const getStoreWithTimeTravelSettings = (
     set: NamedSet<StoreWithTimeTravel>
 ): StoreWithTimeTravel => ({
     ...getInitialTimeTravelData(),
-
-    initializeFullSourceConfigs: (bindings) => {
-        set(
-            produce((state: StoreWithTimeTravel) => {
-                const newConfig = {};
-
-                if (bindings && bindings.length > 0) {
-                    bindings.forEach((binding) => {
-                        const bindingSource = getSourceOrTarget(binding);
-                        const nameOnly = typeof bindingSource === 'string';
-
-                        if (nameOnly) {
-                            newConfig[bindingSource] = {};
-                        } else {
-                            const { name, ...restOfFullSource } = bindingSource;
-                            newConfig[name] = {
-                                data: restOfFullSource,
-                                errors: [],
-                            };
-                        }
-                    });
-                }
-
-                state.fullSourceConfigs = newConfig;
-            }),
-            false,
-            'Prefilling full source configs'
-        );
-    },
 
     removeFullSourceConfig: (collection) => {
         set(

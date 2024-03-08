@@ -44,6 +44,7 @@ import {
 import {
     getInitialTimeTravelData,
     getStoreWithTimeTravelSettings,
+    initializeFullSourceConfig,
 } from './slices/TimeTravel';
 import {
     BindingMetadata,
@@ -454,6 +455,7 @@ const getInitialState = (
 
                     initializeBinding(state, collection, UUID);
                     initializeResourceConfig(state, binding, UUID, index);
+                    initializeFullSourceConfig(state, binding);
 
                     if (draftedBindings) {
                         // Prefill backfilled collections
@@ -1033,7 +1035,7 @@ const getInitialState = (
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         const existingConfig = resourceConfigs[targetBindingUUID] ?? {};
 
-        const formattedValue: ResourceConfig = {
+        const evaluatedConfig: ResourceConfig = {
             ...value,
             meta: {
                 collectionName: targetCollection,
@@ -1042,10 +1044,12 @@ const getInitialState = (
             },
         };
 
-        const updatedConfig = {
-            ...existingConfig,
-            ...formattedValue,
-        };
+        if (!isEmpty(existingConfig)) {
+            const { disable, previouslyDisabled } = existingConfig.meta;
+
+            evaluatedConfig.meta.disable = disable;
+            evaluatedConfig.meta.previouslyDisabled = previouslyDisabled;
+        }
 
         // Only actually update if there was a change. This is mainly here because
         //  as a user clicks through the bindings the resource config form will fire
@@ -1057,11 +1061,11 @@ const getInitialState = (
         //  new object and that triggers it?
         // This might be related to how immer handles what is updated vs what
         //  is not during changes. Need to really dig into this later.
-        if (!isEqual(existingConfig, updatedConfig)) {
+        if (!isEqual(existingConfig, evaluatedConfig)) {
             setResourceConfig(
                 targetCollection,
                 targetBindingUUID,
-                updatedConfig
+                evaluatedConfig
             );
         }
     },
