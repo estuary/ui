@@ -3,10 +3,7 @@ import {
     getDraftSpecsBySpecTypeReduced,
 } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
-import {
-    useBindingsEditorStore_fullSourceErrorsExist,
-    useBindingsEditorStore_setIncompatibleCollections,
-} from 'components/editor/Bindings/Store/hooks';
+import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_queryResponse_mutate,
     useEditorStore_setDiscoveredDraftId,
@@ -20,7 +17,10 @@ import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { DEFAULT_FILTER, JOB_STATUS_COLUMNS, TABLES } from 'services/supabase';
 import { CustomEvents } from 'services/types';
-import { useBinding_collections } from 'stores/Binding/hooks';
+import {
+    useBinding_collections,
+    useBinding_fullSourceErrorsExist,
+} from 'stores/Binding/hooks';
 import { useDetailsForm_details_description } from 'stores/DetailsForm/hooks';
 import {
     useFormStateStore_messagePrefix,
@@ -77,8 +77,7 @@ function useSave(
     );
 
     const collections = useBinding_collections();
-    const fullSourceErrorsExist =
-        useBindingsEditorStore_fullSourceErrorsExist();
+    const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     const waitForPublishToFinish = useCallback(
         (publicationId: string, hideNotification?: boolean) => {

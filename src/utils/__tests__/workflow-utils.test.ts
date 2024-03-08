@@ -1,5 +1,5 @@
 import { DraftSpecsExtQuery_ByCatalogName } from 'api/draftSpecs';
-import { FullSourceDictionary } from 'components/editor/Bindings/Store/types';
+import { FullSourceDictionary } from 'stores/Binding/slices/TimeTravel';
 import { ResourceConfig, ResourceConfigDictionary } from 'stores/Binding/types';
 import {
     generateMockBinding,

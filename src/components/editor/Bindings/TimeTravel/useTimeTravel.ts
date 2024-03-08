@@ -6,18 +6,18 @@ import {
 } from 'components/editor/Store/hooks';
 import { useCallback, useMemo } from 'react';
 
-import { useBinding_currentBindingIndex } from 'stores/Binding/hooks';
+import {
+    useBinding_currentBindingIndex,
+    useBinding_fullSourceOfCollection,
+    useBinding_updateFullSourceConfig,
+} from 'stores/Binding/hooks';
+import { FullSourceJsonForms } from 'stores/Binding/slices/TimeTravel';
 import { Schema } from 'types';
 import {
     getBindingIndex,
     getCollectionNameProp,
     getFullSourceSetting,
 } from 'utils/workflow-utils';
-import {
-    useBindingsEditorStore_fullSourceOfCollection,
-    useBindingsEditorStore_updateFullSourceConfig,
-} from '../Store/hooks';
-import { FullSourceJsonForms } from '../Store/types';
 
 function useTimeTravel(collectionName: string) {
     const draftId = useEditorStore_persistedDraftId();
@@ -25,9 +25,7 @@ function useTimeTravel(collectionName: string) {
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
     const stagedBindingIndex = useBinding_currentBindingIndex();
-
-    const updateFullSourceConfig =
-        useBindingsEditorStore_updateFullSourceConfig();
+    const updateFullSourceConfig = useBinding_updateFullSourceConfig();
 
     const updateTimeTravel = useCallback(
         async (formData: FullSourceJsonForms, skipServerUpdate?: boolean) => {
@@ -105,8 +103,7 @@ function useTimeTravel(collectionName: string) {
         ]
     );
 
-    const fullSource =
-        useBindingsEditorStore_fullSourceOfCollection(collectionName);
+    const fullSource = useBinding_fullSourceOfCollection(collectionName);
 
     return useMemo(
         () => ({ updateTimeTravel, fullSource }),

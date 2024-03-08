@@ -1,25 +1,8 @@
-import { JsonFormsCore } from '@jsonforms/core';
 import { AlertColor } from '@mui/material';
 import { IncompatibleCollections } from 'api/evolutions';
 import { CollectionData } from 'components/editor/Bindings/types';
 import { Dispatch, SetStateAction } from 'react';
 import { InferSchemaPropertyForRender, Schema } from 'types';
-
-export interface FullSource {
-    name?: string;
-    notAfter?: string | null; // controlled by the NotDateTime
-    notBefore?: string | null; // controlled by the NotDateTime
-    partitions?: any; // not set in the UI today
-}
-
-export interface FullSourceJsonForms
-    extends Pick<JsonFormsCore, 'data' | 'errors'> {
-    data: FullSource;
-}
-
-export interface FullSourceDictionary {
-    [k: string]: FullSourceJsonForms | undefined | null;
-}
 
 export interface BindingsEditorState {
     collectionData: CollectionData | null | undefined;
@@ -96,16 +79,6 @@ export interface BindingsEditorState {
         value: BindingsEditorState['incompatibleCollections']
     ) => void;
     hasIncompatibleCollections: boolean;
-
-    // Time Travel
-    fullSourceConfigs: FullSourceDictionary;
-    removeFullSourceConfig: (collection: string) => void;
-    updateFullSourceConfig: (
-        collection: string,
-        formData: FullSourceJsonForms
-    ) => void;
-    prefillFullSourceConfigs: (val: any[] | null) => void;
-    fullSourceErrorsExist: boolean;
 
     // Misc.
     resetState: (skipFullSource?: boolean) => void;

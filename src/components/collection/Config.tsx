@@ -1,7 +1,6 @@
 import { Typography, useTheme } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import BindingsMultiEditor from 'components/editor/Bindings';
-import { useBindingsEditorStore_fullSourceErrorsExist } from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
@@ -11,6 +10,7 @@ import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useBinding_bindingErrorsExist,
+    useBinding_fullSourceErrorsExist,
     useBinding_hydrationErrorsExist,
     useBinding_resourceConfigErrorsExist,
 } from 'stores/Binding/hooks';
@@ -35,10 +35,7 @@ function CollectionConfig({
     const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
     const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
     const bindingErrorsExist = useBinding_bindingErrorsExist();
-
-    // Binding Editor Store
-    const fullSourceErrorsExist =
-        useBindingsEditorStore_fullSourceErrorsExist();
+    const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();

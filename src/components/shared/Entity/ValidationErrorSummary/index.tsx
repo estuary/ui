@@ -1,5 +1,4 @@
 import { AlertTitle, Collapse } from '@mui/material';
-import { useBindingsEditorStore_fullSourceErrorsExist } from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/DetailsErrors';
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
@@ -12,6 +11,7 @@ import useScrollIntoView from 'hooks/useScrollIntoView';
 import { useEffect, useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
+    useBinding_fullSourceErrorsExist,
     useBinding_hydrationErrorsExist,
     useBinding_resourceConfigErrorsExist,
 } from 'stores/Binding/hooks';
@@ -42,10 +42,7 @@ function ValidationErrorSummary({
     // Binding Store
     const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
     const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
-
-    // Binding Editor Store
-    const fullSourceErrorsExist =
-        useBindingsEditorStore_fullSourceErrorsExist();
+    const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     // Details form
     const detailsFormErrorsExist = useDetailsForm_errorsExist();

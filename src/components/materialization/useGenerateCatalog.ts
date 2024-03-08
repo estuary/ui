@@ -6,10 +6,6 @@ import {
     modifyDraftSpec,
 } from 'api/draftSpecs';
 import {
-    useBindingsEditorStore_fullSourceConfigs,
-    useBindingsEditorStore_fullSourceErrorsExist,
-} from 'components/editor/Bindings/Store/hooks';
-import {
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
     useEditorStore_setCatalogName,
@@ -23,6 +19,8 @@ import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback } from 'react';
 import {
     useBinding_bindings,
+    useBinding_fullSourceConfigs,
+    useBinding_fullSourceErrorsExist,
     useBinding_resetRediscoverySettings,
     useBinding_resourceConfigErrorsExist,
     useBinding_resourceConfigs,
@@ -99,10 +97,8 @@ function useGenerateCatalog() {
     const resourceConfigServerUpdateRequired =
         useBinding_serverUpdateRequired();
 
-    // Bindings Editor store
-    const fullSourceConfigs = useBindingsEditorStore_fullSourceConfigs();
-    const fullSourceErrorsExist =
-        useBindingsEditorStore_fullSourceErrorsExist();
+    const fullSourceConfigs = useBinding_fullSourceConfigs();
+    const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     // Source Capture Store
     const sourceCapture = useStore(

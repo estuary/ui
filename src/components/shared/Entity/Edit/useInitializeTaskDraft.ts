@@ -10,7 +10,6 @@ import {
     getLiveSpecsByLiveSpecId,
     LiveSpecsExtQuery_ByLiveSpecId,
 } from 'api/liveSpecsExt';
-import { useBindingsEditorStore_prefillFullSourceConfigs } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_setCatalogName,
     useEditorStore_setDraftInitializationError,
@@ -23,6 +22,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { Dispatch, SetStateAction, useCallback } from 'react';
+import { useBinding_initializeFullSourceConfigs } from 'stores/Binding/hooks';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 
@@ -64,8 +64,8 @@ function useInitializeTaskDraft() {
     // Form State Store
     const setFormState = useFormStateStore_setFormState();
 
-    const prefillFullSourceConfigs =
-        useBindingsEditorStore_prefillFullSourceConfigs();
+    const initializeFullSourceConfigs =
+        useBinding_initializeFullSourceConfigs();
 
     // Get catalog name and task spec from live specs
     const getTask =
@@ -226,7 +226,7 @@ function useInitializeTaskDraft() {
 
                     if (!draftSpecsError) {
                         if (task.spec_type === 'materialization') {
-                            prefillFullSourceConfigs(
+                            initializeFullSourceConfigs(
                                 existingDraftSpecsResponse
                                     ? existingDraftSpecsResponse.spec.bindings
                                     : task.spec.bindings
@@ -276,8 +276,8 @@ function useInitializeTaskDraft() {
             getTaskDraft,
             getTaskDraftSpecs,
             liveSpecId,
+            initializeFullSourceConfigs,
             navigateToEdit,
-            prefillFullSourceConfigs,
             prefillLiveSpecIds,
             setDraftId,
             setDraftInitializationError,

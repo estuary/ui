@@ -1,6 +1,7 @@
 import { useZustandStore } from 'context/Zustand/provider';
 import { BindingStoreNames } from 'stores/names';
 import { shallow } from 'zustand/shallow';
+import { FullSource, FullSourceDictionary } from './slices/TimeTravel';
 import { BindingState, ResourceConfig } from './types';
 
 export const useBinding_hydrated = () => {
@@ -369,5 +370,70 @@ export const useBinding_setSelectionSaving = () => {
     return useZustandStore<BindingState, BindingState['setSelectionSaving']>(
         BindingStoreNames.GENERAL,
         (state) => state.setSelectionSaving
+    );
+};
+
+export const useBinding_fullSourceOfCollection = (collection: any) => {
+    return useZustandStore<BindingState, FullSource | undefined | null>(
+        BindingStoreNames.GENERAL,
+        (state) => {
+            if (!collection) {
+                return null;
+            }
+
+            return state.fullSourceConfigs[collection]?.data;
+        }
+    );
+};
+
+export const useBinding_fullSourceOfCollectionProperty = (
+    collection: any,
+    property: keyof FullSourceDictionary
+) => {
+    return useZustandStore<BindingState, any>(
+        BindingStoreNames.GENERAL,
+        (state) => {
+            if (!collection) {
+                return null;
+            }
+
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            return state.fullSourceConfigs[collection]?.[property];
+        }
+    );
+};
+
+export const useBinding_fullSourceConfigs = () => {
+    return useZustandStore<BindingState, BindingState['fullSourceConfigs']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.fullSourceConfigs
+    );
+};
+
+export const useBinding_removeFullSourceConfig = () => {
+    return useZustandStore<
+        BindingState,
+        BindingState['removeFullSourceConfig']
+    >(BindingStoreNames.GENERAL, (state) => state.removeFullSourceConfig);
+};
+
+export const useBinding_updateFullSourceConfig = () => {
+    return useZustandStore<
+        BindingState,
+        BindingState['updateFullSourceConfig']
+    >(BindingStoreNames.GENERAL, (state) => state.updateFullSourceConfig);
+};
+
+export const useBinding_initializeFullSourceConfigs = () => {
+    return useZustandStore<
+        BindingState,
+        BindingState['initializeFullSourceConfigs']
+    >(BindingStoreNames.GENERAL, (state) => state.initializeFullSourceConfigs);
+};
+
+export const useBinding_fullSourceErrorsExist = () => {
+    return useZustandStore<BindingState, BindingState['fullSourceErrorsExist']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.fullSourceErrorsExist
     );
 };

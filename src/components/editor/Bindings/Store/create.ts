@@ -14,7 +14,6 @@ import { Dispatch, SetStateAction } from 'react';
 import { logRocketEvent } from 'services/shared';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
-import { checkForErrors } from 'stores/utils';
 import {
     InferSchemaPropertyForRender,
     InferSchemaResponse,
@@ -23,7 +22,6 @@ import {
 import { hasLength } from 'utils/misc-utils';
 import { filterInferSchemaResponse, hasReadSchema } from 'utils/schema-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { getSourceOrTarget } from 'utils/workflow-utils';
 import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 
@@ -148,14 +146,6 @@ const updateReadSchema = async (
     return response;
 };
 
-const getInitialFullSourceData = (): Pick<
-    BindingsEditorState,
-    'fullSourceConfigs' | 'fullSourceErrorsExist'
-> => ({
-    fullSourceConfigs: {},
-    fullSourceErrorsExist: false,
-});
-
 const getInitialMiscData = (): Pick<
     BindingsEditorState,
     | 'collectionData'
@@ -197,7 +187,6 @@ const getInitialMiscData = (): Pick<
 
 const getInitialStateData = () => ({
     ...getInitialMiscData(),
-    ...getInitialFullSourceData(),
 });
 
 const getInitialState = (
@@ -294,72 +283,6 @@ const getInitialState = (
             }),
             false,
             'Inferred Schema Application Errored Set'
-        );
-    },
-
-    removeFullSourceConfig: (collection) => {
-        set(
-            produce((state: BindingsEditorState) => {
-                // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-                delete state.fullSourceConfigs[collection];
-            }),
-            false,
-            'Removing full source config of a collection'
-        );
-    },
-
-    updateFullSourceConfig: (collection, formData) => {
-        set(
-            produce((state: BindingsEditorState) => {
-                const existingData =
-                    state.fullSourceConfigs[collection]?.data ?? {};
-                const fullSource = formData.data;
-
-                state.fullSourceConfigs[collection] = {
-                    data: {
-                        ...existingData,
-                        ...fullSource,
-                    },
-                    errors: formData.errors,
-                };
-
-                state.fullSourceErrorsExist = checkForErrors(formData)
-                    ? true
-                    : Object.values(state.fullSourceConfigs).some(
-                          (fullSourceConfig) => checkForErrors(fullSourceConfig)
-                      );
-            }),
-            false,
-            'Updating full source config of a collection'
-        );
-    },
-
-    prefillFullSourceConfigs: (bindings) => {
-        set(
-            produce((state: BindingsEditorState) => {
-                const newConfig = {};
-
-                if (bindings && bindings.length > 0) {
-                    bindings.forEach((binding) => {
-                        const bindingSource = getSourceOrTarget(binding);
-                        const nameOnly = typeof bindingSource === 'string';
-
-                        if (nameOnly) {
-                            newConfig[bindingSource] = {};
-                        } else {
-                            const { name, ...restOfFullSource } = bindingSource;
-                            newConfig[name] = {
-                                data: restOfFullSource,
-                                errors: [],
-                            };
-                        }
-                    });
-                }
-
-                state.fullSourceConfigs = newConfig;
-            }),
-            false,
-            'Prefilling full source configs'
         );
     },
 

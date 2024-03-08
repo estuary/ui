@@ -42,6 +42,10 @@ import {
     getStoreWithFieldSelectionSettings,
 } from './slices/FieldSelection';
 import {
+    getInitialTimeTravelData,
+    getStoreWithTimeTravelSettings,
+} from './slices/TimeTravel';
+import {
     BindingMetadata,
     BindingState,
     Bindings,
@@ -199,6 +203,7 @@ const getInitialStoreData = () => ({
     ...getInitialFieldSelectionData(),
     ...getInitialHydrationData(),
     ...getInitialStateData(),
+    ...getInitialTimeTravelData(),
 });
 
 const getInitialState = (
@@ -208,6 +213,7 @@ const getInitialState = (
     ...getInitialStoreData(),
     ...getStoreWithFieldSelectionSettings(set),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
+    ...getStoreWithTimeTravelSettings(set),
 
     addBackfilledCollections: (values) => {
         set(

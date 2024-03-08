@@ -6,11 +6,11 @@ import React from 'react';
 import {
     useBinding_discoveredCollections,
     useBinding_removeBinding,
+    useBinding_removeFullSourceConfig,
     useBinding_setRestrictedDiscoveredCollections,
 } from 'stores/Binding/hooks';
 import { BindingMetadata } from 'stores/Binding/types';
 import { hasLength } from 'utils/misc-utils';
-import { useBindingsEditorStore_removeFullSourceConfig } from '../Store/hooks';
 
 interface Props {
     binding: BindingMetadata;
@@ -28,8 +28,7 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
     const setRestrictedDiscoveredCollections =
         useBinding_setRestrictedDiscoveredCollections();
 
-    const removeFullSourceConfig =
-        useBindingsEditorStore_removeFullSourceConfig();
+    const removeFullSourceConfig = useBinding_removeFullSourceConfig();
 
     const handlers = {
         removeBinding: (event: React.MouseEvent<HTMLElement>) => {

@@ -5,10 +5,6 @@ import {
 } from 'api/draftSpecs';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
 import {
-    FullSource,
-    FullSourceDictionary,
-} from 'components/editor/Bindings/Store/types';
-import {
     ConnectorTagWithDetailTags,
     ConnectorWithTagDetailQuery,
 } from 'hooks/connectors/shared';
@@ -16,6 +12,10 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { REMOVE_DURING_GENERATION } from 'stores/Binding/shared';
+import {
+    FullSource,
+    FullSourceDictionary,
+} from 'stores/Binding/slices/TimeTravel';
 import { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
