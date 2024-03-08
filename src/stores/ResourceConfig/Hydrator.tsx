@@ -66,14 +66,14 @@ export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
 
     useUpdateEffect(() => {
         if (
-            workflow &&
-            connectorTagId.length > 0 &&
+            !runUpdates.current &&
             !hydrated &&
-            !runUpdates.current
+            workflow &&
+            connectorTagId.length > 0
         ) {
             hydrateTheState(false);
         }
-    }, [connectorTagId.length, hydrated, workflow]);
+    }, [connectorTagId, hydrated, workflow]);
 
     useUpdateEffect(() => {
         if (runUpdates.current) {
