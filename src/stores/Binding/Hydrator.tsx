@@ -62,6 +62,8 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                 .finally(() => {
                     rehydrating.current = true;
                     setHydrated(true);
+
+                    setActive(false);
                 });
         }
     }, [

@@ -371,8 +371,8 @@ const getInitialState = (
         const materializationRehydrating =
             materializationHydrating && rehydrating;
 
-        const { resetState, setHydrationErrorsExist } = get();
-        resetState(materializationRehydrating);
+        const { setHydrationErrorsExist } = get();
+        // resetState(materializationRehydrating);
 
         if (connectorTagId && connectorTagId.length > 0) {
             const { data, error } = await getSchema_Resource(connectorTagId);
