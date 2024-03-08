@@ -7,6 +7,7 @@ import {
     useBinding_resourceConfigs,
     useBinding_setServerUpdateRequired,
 } from 'stores/Binding/hooks';
+import { Bindings } from 'stores/Binding/types';
 import { hasLength } from 'utils/misc-utils';
 import {
     getCollectionName,
@@ -32,6 +33,8 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                 draftSpecs[0]?.spec.bindings.length ===
                 Object.keys(resourceConfigs).length
             ) {
+                const matchedBindings: Bindings = {};
+
                 // The lengths have not changed so we need to check each binding
                 return draftSpecs[0]?.spec.bindings.some((binding: any) => {
                     // Pull out resource as that is moved into `data`
@@ -47,23 +50,42 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                         return true;
                     }
 
-                    return bindings[collectionName].every((bindingUUID) => {
-                        // Do a quick simple disabled check before comparing the entire object
-                        if (
-                            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                            resourceConfigs[bindingUUID]?.meta?.disable !==
-                            getDisableProps(disable).disable
-                        ) {
-                            return true;
-                        }
+                    const matchedBindingUUIDs: string[] = Object.hasOwn(
+                        matchedBindings,
+                        collectionName
+                    )
+                        ? matchedBindings[collectionName]
+                        : [];
 
-                        // Since we checked disabled up above we can not just check if the data changed
-                        return !isEqual(
-                            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                            resourceConfigs[bindingUUID]?.data,
-                            resource
-                        );
-                    });
+                    return bindings[collectionName]
+                        .filter(
+                            (bindingUUID) =>
+                                !matchedBindingUUIDs.includes(bindingUUID)
+                        )
+                        .every((bindingUUID) => {
+                            // Do a quick simple disabled check before comparing the entire object
+                            if (
+                                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                                resourceConfigs[bindingUUID]?.meta?.disable !==
+                                getDisableProps(disable).disable
+                            ) {
+                                return true;
+                            }
+
+                            // Since we checked disabled up above we can not just check if the data changed
+                            const resourceMatched = isEqual(
+                                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                                resourceConfigs[bindingUUID]?.data,
+                                resource
+                            );
+
+                            if (resourceMatched) {
+                                matchedBindings[collectionName] =
+                                    matchedBindingUUIDs.concat(bindingUUID);
+                            }
+
+                            return !resourceMatched;
+                        });
                 });
             } else {
                 // Lengths do not match so we know the update is needed

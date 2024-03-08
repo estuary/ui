@@ -29,8 +29,8 @@ import { FormattedMessage } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import {
+    useBinding_currentBindingIndex,
     useBinding_initializeSelections,
-    useBinding_resourceConfig,
     useBinding_selectionSaving,
     useBinding_serverUpdateRequired,
     useBinding_setRecommendFields,
@@ -138,7 +138,7 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
     // Bindings Store
     const setRecommendFields = useBinding_setRecommendFields();
     const initializeSelections = useBinding_initializeSelections();
-    const resourceConfig = useBinding_resourceConfig(bindingUUID);
+    const stagedBindingIndex = useBinding_currentBindingIndex();
 
     const selectionSaving = useBinding_selectionSaving();
     const setSelectionSaving = useBinding_setSelectionSaving();
@@ -225,7 +225,7 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
                     const bindingIndex: number = getBindingIndex(
                         draftSpecs[0].spec.bindings,
                         collectionName,
-                        resourceConfig
+                        stagedBindingIndex
                     );
                     const selectedBinding: Schema | undefined =
                         bindingIndex > -1
@@ -292,8 +292,8 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
         formStatus,
         initializeSelections,
         refresh,
-        resourceConfig,
         setRecommendFields,
+        stagedBindingIndex,
     ]);
 
     const draftSpec = useMemo(

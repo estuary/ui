@@ -13,6 +13,7 @@ import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback } from 'react';
 import {
+    useBinding_bindings,
     useBinding_resourceConfigs,
     useBinding_serverUpdateRequired,
 } from 'stores/Binding/hooks';
@@ -45,6 +46,7 @@ function useDiscoverDraftUpdate(options?: {
     const setPreviousEndpointConfig =
         useEndpointConfigStore_setPreviousEndpointConfig();
 
+    const bindings = useBinding_bindings();
     const resourceConfig = useBinding_resourceConfigs();
     const resourceConfigServerUpdateRequired =
         useBinding_serverUpdateRequired();
@@ -98,7 +100,8 @@ function useDiscoverDraftUpdate(options?: {
                     encryptedEndpointConfigResponse,
                     resourceConfig,
                     existingTaskData,
-                    resourceConfigServerUpdateRequired
+                    resourceConfigServerUpdateRequired,
+                    bindings
                 );
 
                 if (draftSpecsResponse.error) {
@@ -129,6 +132,7 @@ function useDiscoverDraftUpdate(options?: {
             return true;
         },
         [
+            bindings,
             callFailed,
             draftId,
             endpointConfigData,
@@ -139,6 +143,7 @@ function useDiscoverDraftUpdate(options?: {
             postGenerateMutate,
             processedEntityName,
             resourceConfig,
+            resourceConfigServerUpdateRequired,
             setDraftId,
             setEncryptedEndpointConfig,
             setPreviousEndpointConfig,

@@ -8,8 +8,8 @@ import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { FormattedMessage } from 'react-intl';
 import {
+    useBinding_currentBindingIndex,
     useBinding_hydrated,
-    useBinding_resourceConfig,
     useBinding_resourceConfigOfMetaCollectionProperty,
 } from 'stores/Binding/hooks';
 import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
@@ -29,12 +29,12 @@ function ResourceConfig({
     const isEdit = useEntityWorkflow_Editing();
 
     const hydrated = useBinding_hydrated();
-    const resourceConfig = useBinding_resourceConfig(bindingUUID);
+    const stagedBindingIndex = useBinding_currentBindingIndex();
 
     const draftedBindingIndex =
         useEditorStore_queryResponse_draftedBindingIndex(
             collectionName,
-            resourceConfig
+            stagedBindingIndex
         );
 
     // If the collection is disabled then it will not come back in the built spec
@@ -83,10 +83,7 @@ function ResourceConfig({
             ) : null}
 
             {entityType === 'materialization' ? (
-                <TimeTravel
-                    bindingUUID={bindingUUID}
-                    collectionName={collectionName}
-                />
+                <TimeTravel collectionName={collectionName} />
             ) : null}
         </>
     );

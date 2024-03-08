@@ -22,6 +22,7 @@ import invariableStores from 'context/Zustand/invariableStores';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback } from 'react';
 import {
+    useBinding_bindings,
     useBinding_resetRediscoverySettings,
     useBinding_resourceConfigErrorsExist,
     useBinding_resourceConfigs,
@@ -91,6 +92,7 @@ function useGenerateCatalog() {
     const updateFormStatus = useFormStateStore_updateStatus();
 
     // Binding Store
+    const bindings = useBinding_bindings();
     const resourceConfigs = useBinding_resourceConfigs();
     const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
     const resetRediscoverySettings = useBinding_resetRediscoverySettings();
@@ -210,10 +212,10 @@ function useGenerateCatalog() {
                     ENTITY_TYPE,
                     { image: imagePath, config: encryptedEndpointConfig.data },
                     resourceConfigs,
+                    resourceConfigServerUpdateRequired,
+                    bindings,
                     existingTaskData,
-                    sourceCapture,
-                    fullSourceConfigs,
-                    resourceConfigServerUpdateRequired
+                    { fullSource: fullSourceConfigs, sourceCapture }
                 );
 
                 // If there is a draft already with task data then update. We do not match on
@@ -281,6 +283,7 @@ function useGenerateCatalog() {
             }
         },
         [
+            bindings,
             callFailed,
             detailsFormsErrorsExist,
             endpointConfigData,

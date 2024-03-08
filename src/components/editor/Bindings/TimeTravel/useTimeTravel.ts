@@ -6,7 +6,7 @@ import {
 } from 'components/editor/Store/hooks';
 import { useCallback, useMemo } from 'react';
 
-import { useBinding_resourceConfig } from 'stores/Binding/hooks';
+import { useBinding_currentBindingIndex } from 'stores/Binding/hooks';
 import { Schema } from 'types';
 import {
     getBindingIndex,
@@ -19,12 +19,12 @@ import {
 } from '../Store/hooks';
 import { FullSourceJsonForms } from '../Store/types';
 
-function useTimeTravel(bindingUUID: string, collectionName: string) {
+function useTimeTravel(collectionName: string) {
     const draftId = useEditorStore_persistedDraftId();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
-    const resourceConfig = useBinding_resourceConfig(bindingUUID);
+    const stagedBindingIndex = useBinding_currentBindingIndex();
 
     const updateFullSourceConfig =
         useBindingsEditorStore_updateFullSourceConfig();
@@ -52,7 +52,7 @@ function useTimeTravel(bindingUUID: string, collectionName: string) {
                 const existingBindingIndex = getBindingIndex(
                     spec.bindings,
                     collectionName,
-                    resourceConfig
+                    stagedBindingIndex
                 );
 
                 // We only want to update existing bindings here. If they do not exist then we can just
@@ -100,7 +100,7 @@ function useTimeTravel(bindingUUID: string, collectionName: string) {
             draftId,
             draftSpecs,
             mutateDraftSpecs,
-            resourceConfig,
+            stagedBindingIndex,
             updateFullSourceConfig,
         ]
     );

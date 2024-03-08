@@ -10,27 +10,24 @@ import { generateTaskSpec, getBindingIndex } from 'utils/workflow-utils';
 import { ConnectorConfig } from '../../../flow_deps/flow';
 
 describe('getBindingIndex', () => {
-    let defaultResponse: number,
-        matchedCollection: string,
-        matchedConfig: ResourceConfig;
+    let defaultResponse: number, matchedCollection: string;
 
     beforeEach(() => {
         defaultResponse = -1;
         matchedCollection = 'acme/found';
-        matchedConfig = generateMockResourceConfig(matchedCollection, 0);
     });
 
     describe('returns -1 when', () => {
         test('bindings are missing', () => {
-            expect(getBindingIndex(undefined, '')).toBe(defaultResponse);
-            expect(getBindingIndex(null, '')).toBe(defaultResponse);
+            expect(getBindingIndex(undefined, '', -1)).toBe(defaultResponse);
+            expect(getBindingIndex(null, '', -1)).toBe(defaultResponse);
         });
 
         test('bindings are empty', () => {
-            expect(getBindingIndex([], '')).toBe(defaultResponse);
-            expect(getBindingIndex([null], '')).toBe(defaultResponse);
-            expect(getBindingIndex([undefined], '')).toBe(defaultResponse);
-            expect(getBindingIndex([{}], '')).toBe(defaultResponse);
+            expect(getBindingIndex([], '', -1)).toBe(defaultResponse);
+            expect(getBindingIndex([null], '', -1)).toBe(defaultResponse);
+            expect(getBindingIndex([undefined], '', -1)).toBe(defaultResponse);
+            expect(getBindingIndex([{}], '', -1)).toBe(defaultResponse);
         });
 
         test('bindings do not contain collection', () => {
@@ -41,7 +38,8 @@ describe('getBindingIndex', () => {
                         generateMockBinding('b', 'capture'),
                         generateMockBinding('c', 'capture'),
                     ],
-                    matchedCollection
+                    matchedCollection,
+                    0
                 )
             ).toBe(-1);
 
@@ -52,27 +50,13 @@ describe('getBindingIndex', () => {
                         generateMockBinding('a', 'capture'),
                         generateMockBinding('c', 'capture'),
                     ],
-                    matchedCollection
+                    matchedCollection,
+                    0
                 )
             ).toBe(-1);
         });
 
-        test('multiple bindings map to the collection and a target resource config is not provided', () => {
-            expect(
-                getBindingIndex(
-                    [
-                        generateMockBinding(matchedCollection, 'capture'),
-                        generateMockBinding(matchedCollection, 'capture'),
-                        generateMockBinding('c', 'capture'),
-                    ],
-                    matchedCollection
-                )
-            ).toBe(-1);
-        });
-    });
-
-    describe('returns -500 when', () => {
-        test('multiple bindings map to the collection and two or more resource configs are identical', () => {
+        test('multiple bindings map to the collection and the number of matched bindings is less than the target binding index', () => {
             expect(
                 getBindingIndex(
                     [
@@ -81,9 +65,23 @@ describe('getBindingIndex', () => {
                         generateMockBinding('c', 'capture'),
                     ],
                     matchedCollection,
-                    matchedConfig
+                    3
                 )
-            ).toBe(-500);
+            ).toBe(-1);
+        });
+
+        test('multiple bindings map to the collection and the number of matched bindings is equal to the target binding index', () => {
+            expect(
+                getBindingIndex(
+                    [
+                        generateMockBinding(matchedCollection, 'capture'),
+                        generateMockBinding(matchedCollection, 'capture'),
+                        generateMockBinding('c', 'capture'),
+                    ],
+                    matchedCollection,
+                    2
+                )
+            ).toBe(-1);
         });
     });
 
@@ -93,19 +91,22 @@ describe('getBindingIndex', () => {
             expect(
                 getBindingIndex(
                     [matchedCollection, 'b', 'c'],
-                    matchedCollection
+                    matchedCollection,
+                    0
                 )
             ).toBe(0);
             expect(
                 getBindingIndex(
                     ['a', matchedCollection, 'c'],
-                    matchedCollection
+                    matchedCollection,
+                    0
                 )
             ).toBe(1);
             expect(
                 getBindingIndex(
                     ['a', 'b', matchedCollection],
-                    matchedCollection
+                    matchedCollection,
+                    0
                 )
             ).toBe(2);
         });
@@ -118,22 +119,8 @@ describe('getBindingIndex', () => {
                         generateMockBinding(matchedCollection, 'capture'),
                         generateMockBinding('c', 'capture'),
                     ],
-                    matchedCollection
-                )
-            ).toBe(1);
-
-            expect(
-                getBindingIndex(
-                    [
-                        generateMockBinding('a', 'capture'),
-                        generateMockBinding(matchedCollection, 'capture'),
-                        generateMockBinding(matchedCollection, 'capture', {
-                            resourceConfig: { fiz: 'unmatched_resource' },
-                        }),
-                        generateMockBinding('c', 'capture'),
-                    ],
                     matchedCollection,
-                    matchedConfig
+                    0
                 )
             ).toBe(1);
 
@@ -147,29 +134,8 @@ describe('getBindingIndex', () => {
                         ),
                         generateMockBinding('c', 'materialization'),
                     ],
-                    matchedCollection
-                )
-            ).toBe(1);
-
-            expect(
-                getBindingIndex(
-                    [
-                        generateMockBinding('a', 'materialization'),
-                        generateMockBinding(
-                            matchedCollection,
-                            'materialization'
-                        ),
-                        generateMockBinding(
-                            matchedCollection,
-                            'materialization',
-                            {
-                                resourceConfig: { fiz: 'unmatched_resource' },
-                            }
-                        ),
-                        generateMockBinding('c', 'materialization'),
-                    ],
                     matchedCollection,
-                    matchedConfig
+                    0
                 )
             ).toBe(1);
         });
@@ -178,7 +144,8 @@ describe('getBindingIndex', () => {
             expect(
                 getBindingIndex(
                     [{ name: 'a' }, { name: matchedCollection }, { name: 'c' }],
-                    matchedCollection
+                    matchedCollection,
+                    0
                 )
             ).toBe(1);
 
@@ -189,7 +156,8 @@ describe('getBindingIndex', () => {
                         { source: { name: matchedCollection } },
                         { source: { name: 'c' } },
                     ],
-                    matchedCollection
+                    matchedCollection,
+                    0
                 )
             ).toBe(1);
 
@@ -200,7 +168,8 @@ describe('getBindingIndex', () => {
                         { target: { name: matchedCollection } },
                         { target: { name: 'c' } },
                     ],
-                    matchedCollection
+                    matchedCollection,
+                    0
                 )
             ).toBe(1);
         });
@@ -215,7 +184,7 @@ describe('generateTaskSpec', () => {
         resourceConfig_two: ResourceConfig,
         resourceConfig_three: ResourceConfig,
         connectorConfig: ConnectorConfig,
-        resourceConfigs: ResourceConfigDictionary | null,
+        resourceConfigs: ResourceConfigDictionary,
         existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
         sourceCapture: string | null,
         fullSource: FullSourceDictionary | null,
@@ -234,7 +203,7 @@ describe('generateTaskSpec', () => {
         );
 
         connectorConfig = generateMockConnectorConfig();
-        resourceConfigs = null;
+        resourceConfigs = {};
         existingTaskData = null;
         sourceCapture = null;
         fullSource = null;
@@ -252,10 +221,10 @@ describe('generateTaskSpec', () => {
                 'capture',
                 connectorConfig,
                 {},
+                resourceConfigServerUpdateRequired,
+                {},
                 existingTaskData,
-                sourceCapture,
-                fullSource,
-                resourceConfigServerUpdateRequired
+                { fullSource, sourceCapture }
             );
             expect(response.bindings).toStrictEqual([]);
         });
@@ -299,10 +268,10 @@ describe('generateTaskSpec', () => {
                 'capture',
                 connectorConfig,
                 {},
+                resourceConfigServerUpdateRequired,
+                {},
                 existingTaskData,
-                sourceCapture,
-                fullSource,
-                resourceConfigServerUpdateRequired
+                { fullSource, sourceCapture }
             );
             expect(response.bindings).toStrictEqual([]);
         });
@@ -352,10 +321,14 @@ describe('generateTaskSpec', () => {
                     [uuidTwo]: resourceConfig_two,
                     [uuidThree]: resourceConfig_three,
                 },
+                resourceConfigServerUpdateRequired,
+                {
+                    [resourceConfig_one.meta.collectionName]: [uuidOne],
+                    [resourceConfig_two.meta.collectionName]: [uuidTwo],
+                    [resourceConfig_three.meta.collectionName]: [uuidThree],
+                },
                 existingTaskData,
-                sourceCapture,
-                fullSource,
-                resourceConfigServerUpdateRequired
+                { fullSource, sourceCapture }
             );
             expect(response.bindings).toStrictEqual([
                 {
@@ -390,7 +363,7 @@ describe('generateTaskSpec', () => {
                 );
             });
 
-            test('when the resource config contains a single instance of a duplicated binding, update one binding instance and remove others', () => {
+            test('when the resource config contains a single instance of a duplicated binding, update one binding instance', () => {
                 const response = generateTaskSpec(
                     'capture',
                     connectorConfig,
@@ -403,10 +376,13 @@ describe('generateTaskSpec', () => {
                         },
                         [uuidTwo]: resourceConfig_two,
                     },
+                    resourceConfigServerUpdateRequired,
+                    {
+                        [resourceConfig_one.meta.collectionName]: [uuidOne],
+                        [resourceConfig_two.meta.collectionName]: [uuidTwo],
+                    },
                     existingTaskData,
-                    sourceCapture,
-                    fullSource,
-                    resourceConfigServerUpdateRequired
+                    { fullSource, sourceCapture }
                 );
 
                 expect(response.bindings).toMatchSnapshot();
@@ -460,10 +436,13 @@ describe('generateTaskSpec', () => {
                         'capture',
                         connectorConfig,
                         resourceConfigs,
+                        resourceConfigServerUpdateRequired,
+                        {
+                            [resourceConfig_one.meta.collectionName]: [uuidOne],
+                            [resourceConfig_two.meta.collectionName]: [uuidTwo],
+                        },
                         existingTaskData,
-                        sourceCapture,
-                        fullSource,
-                        resourceConfigServerUpdateRequired
+                        { fullSource, sourceCapture }
                     ).bindings.map(({ target }: any) => target)
                 ).toStrictEqual([
                     resourceConfig_one.meta.collectionName,
@@ -479,10 +458,13 @@ describe('generateTaskSpec', () => {
                         'capture',
                         connectorConfig,
                         resourceConfigs,
+                        resourceConfigServerUpdateRequired,
+                        {
+                            [resourceConfig_one.meta.collectionName]: [uuidOne],
+                            [resourceConfig_two.meta.collectionName]: [uuidTwo],
+                        },
                         existingTaskData,
-                        sourceCapture,
-                        fullSource,
-                        resourceConfigServerUpdateRequired
+                        { fullSource, sourceCapture }
                     ).sourceCapture
                 ).toBeUndefined();
             });
@@ -526,10 +508,13 @@ describe('generateTaskSpec', () => {
                         'materialization',
                         connectorConfig,
                         resourceConfigs,
+                        resourceConfigServerUpdateRequired,
+                        {
+                            [resourceConfig_one.meta.collectionName]: [uuidOne],
+                            [resourceConfig_two.meta.collectionName]: [uuidTwo],
+                        },
                         existingTaskData,
-                        sourceCapture,
-                        fullSource,
-                        resourceConfigServerUpdateRequired
+                        { fullSource, sourceCapture }
                     ).bindings.map(({ source }: any) => source)
                 ).toStrictEqual([
                     resourceConfig_one.meta.collectionName,
@@ -545,10 +530,13 @@ describe('generateTaskSpec', () => {
                         'materialization',
                         connectorConfig,
                         resourceConfigs,
+                        resourceConfigServerUpdateRequired,
+                        {
+                            [resourceConfig_one.meta.collectionName]: [uuidOne],
+                            [resourceConfig_two.meta.collectionName]: [uuidTwo],
+                        },
                         existingTaskData,
-                        sourceCapture,
-                        fullSource,
-                        resourceConfigServerUpdateRequired
+                        { fullSource, sourceCapture }
                     ).sourceCapture
                 ).toStrictEqual(sourceCapture);
             });

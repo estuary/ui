@@ -441,17 +441,32 @@ const getInitialState = (
                 const bindings = draftedBindings ?? liveBindings;
 
                 bindings.forEach((binding, index) => {
+                    const collection = getCollectionName(binding);
+                    const UUID = crypto.randomUUID();
+
+                    initializeBinding(state, collection, UUID);
+                    initializeResourceConfig(state, binding, UUID, index);
+
                     if (draftedBindings) {
                         // Prefill backfilled collections
-                        const collection = getCollectionName(binding);
-
                         const draftedBackfillCounter =
                             getBackfillCounter(binding);
 
+                        const targetBindingIndex = Object.hasOwn(
+                            state.bindings,
+                            collection
+                        )
+                            ? state.bindings[collection].findIndex(
+                                  (uuid) => uuid === UUID
+                              )
+                            : -1;
+
                         const liveBindingIndex = getBindingIndex(
                             liveBindings,
-                            collection
+                            collection,
+                            targetBindingIndex
                         );
+
                         const liveBackfillCounter =
                             liveBindingIndex > -1
                                 ? getBackfillCounter(
@@ -467,12 +482,6 @@ const getInitialState = (
                             state.backfilledCollections.push(collection);
                         }
                     }
-
-                    const collection = getCollectionName(binding);
-                    const UUID = crypto.randomUUID();
-
-                    initializeBinding(state, collection, UUID);
-                    initializeResourceConfig(state, binding, UUID, index);
                 });
 
                 populateResourceConfigErrors(state, state.resourceConfigs);

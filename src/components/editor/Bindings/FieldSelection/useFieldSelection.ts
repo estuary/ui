@@ -7,8 +7,8 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { omit } from 'lodash';
 import { useCallback } from 'react';
 import {
+    useBinding_currentBindingIndex,
     useBinding_recommendFields,
-    useBinding_resourceConfig,
     useBinding_selections,
 } from 'stores/Binding/hooks';
 import { Schema } from 'types';
@@ -19,7 +19,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
     // Bindings Editor Store
     const recommendFields = useBinding_recommendFields();
     const selections = useBinding_selections();
-    const resourceConfig = useBinding_resourceConfig(bindingUUID);
+    const stagedBindingIndex = useBinding_currentBindingIndex();
 
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
@@ -33,7 +33,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
             const bindingIndex: number = getBindingIndex(
                 draftSpec.spec.bindings,
                 collectionName,
-                resourceConfig
+                stagedBindingIndex
             );
 
             if (!mutateDraftSpecs || bindingIndex === -1) {
@@ -126,8 +126,8 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
             draftId,
             mutateDraftSpecs,
             recommendFields,
-            resourceConfig,
             selections,
+            stagedBindingIndex,
         ]
     );
 }

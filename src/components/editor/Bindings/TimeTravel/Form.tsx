@@ -11,17 +11,13 @@ import { snackbarSettings } from 'utils/notification-utils';
 import useTimeTravel from './useTimeTravel';
 
 interface Props {
-    bindingUUID: string;
     collectionName: string;
 }
 
-function TimeTravelForm({ bindingUUID, collectionName }: Props) {
+function TimeTravelForm({ collectionName }: Props) {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const { updateTimeTravel, fullSource } = useTimeTravel(
-        bindingUUID,
-        collectionName
-    );
+    const { updateTimeTravel, fullSource } = useTimeTravel(collectionName);
 
     const [localCopy, setLocalCopy] = useState(fullSource ?? {});
 

@@ -242,6 +242,21 @@ export const useBinding_currentBindingUUID = () => {
     );
 };
 
+export const useBinding_currentBindingIndex = () => {
+    return useZustandStore<BindingState, number>(
+        BindingStoreNames.GENERAL,
+        (state) => {
+            const currentBinding = state.currentBinding;
+
+            return currentBinding
+                ? state.bindings[currentBinding.collection].findIndex(
+                      (uuid) => uuid === currentBinding.uuid
+                  )
+                : -1;
+        }
+    );
+};
+
 export const useBinding_evaluateDiscoveredBindings = () => {
     return useZustandStore<
         BindingState,
