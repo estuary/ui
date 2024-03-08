@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { TABLES } from 'services/supabase';
-import { connectorHasRequiredColumns } from 'utils/connector-utils';
+import { requiredConnectorColumnsExist } from 'utils/connector-utils';
 import { useQuery, useSelect } from '../supabase-swr';
 import { ConnectorsExist, CONNECTORS_EXIST_QUERY } from './shared';
 
@@ -12,13 +12,13 @@ import { ConnectorsExist, CONNECTORS_EXIST_QUERY } from './shared';
 // We should just make a store that fetches all the needed connectors once
 //      then always pull from that. The store could also cache the schemas, etc.
 //      when the user selects a connector.
-function useHasConnectors(protocol: string | null) {
+function useValidConnectorsExist(protocol: string | null) {
     const connectorTagsQuery = useQuery<ConnectorsExist>(
         TABLES.CONNECTORS,
         {
             columns: CONNECTORS_EXIST_QUERY,
             filter: (query) =>
-                connectorHasRequiredColumns<ConnectorsExist>(
+                requiredConnectorColumnsExist<ConnectorsExist>(
                     query,
                     'connector_tags'
                 ).eq('connector_tags.protocol', protocol as string),
@@ -31,4 +31,4 @@ function useHasConnectors(protocol: string | null) {
     return useMemo(() => (data?.data ? data.data.length > 0 : false), []);
 }
 
-export default useHasConnectors;
+export default useValidConnectorsExist;

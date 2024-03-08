@@ -23,7 +23,7 @@ import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 import { MAX_DISCOVER_TIME } from 'utils/misc-utils';
-import useHasConnectors from 'hooks/connectors/useHasConnectors';
+import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
 
 function CaptureEdit() {
     usePageTitle({
@@ -35,7 +35,7 @@ function CaptureEdit() {
     const entityType = 'capture';
 
     // Supabase
-    const hasConnectors = useHasConnectors(entityType);
+    const hasConnectors = useValidConnectorsExist(entityType);
 
     // Draft Editor Store
     const draftId = useEditorStore_id();

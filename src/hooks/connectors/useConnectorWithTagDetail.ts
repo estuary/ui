@@ -3,7 +3,7 @@ import {
     CONNECTOR_RECOMMENDED,
     TABLES,
 } from 'services/supabase';
-import { connectorHasRequiredColumns } from 'utils/connector-utils';
+import { requiredConnectorColumnsExist } from 'utils/connector-utils';
 import { useQuery, useSelect } from '../supabase-swr';
 import {
     ConnectorWithTagDetailQuery,
@@ -23,7 +23,7 @@ function useConnectorWithTagDetail(
             filter: (query) =>
                 connectorId
                     ? query.eq('id', connectorId)
-                    : connectorHasRequiredColumns<ConnectorWithTagDetailQuery>(
+                    : requiredConnectorColumnsExist<ConnectorWithTagDetailQuery>(
                           query,
                           'connector_tags'
                       )

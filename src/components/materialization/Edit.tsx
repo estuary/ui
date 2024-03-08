@@ -21,7 +21,7 @@ import { CustomEvents } from 'services/types';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
-import useHasConnectors from 'hooks/connectors/useHasConnectors';
+import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
 
 function MaterializationEdit() {
     usePageTitle({
@@ -32,7 +32,7 @@ function MaterializationEdit() {
     const entityType = 'materialization';
 
     // Supabase
-    const hasConnectors = useHasConnectors(entityType);
+    const hasConnectors = useValidConnectorsExist(entityType);
 
     // Draft Editor Store
     const draftId = useEditorStore_id();

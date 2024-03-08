@@ -11,7 +11,7 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import EntityToolbar from 'components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
-import useHasConnectors from 'hooks/connectors/useHasConnectors';
+import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -31,7 +31,7 @@ function MaterializationCreate() {
     const entityType = 'materialization';
 
     // Supabase
-    const hasConnectors = useHasConnectors(entityType);
+    const hasConnectors = useValidConnectorsExist(entityType);
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
