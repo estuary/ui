@@ -406,12 +406,14 @@ const getInitialState = (
                         setHydrationErrorsExist(true);
                     } else if (draftSpecs && draftSpecs.length > 0) {
                         prefillBindingDependentState(
+                            entityType,
                             liveSpecs[0].spec.bindings,
                             draftSpecs[0].spec.bindings
                         );
                     }
                 } else {
                     prefillBindingDependentState(
+                        entityType,
                         sortBindings(liveSpecs[0].spec.bindings)
                     );
                 }
@@ -444,7 +446,11 @@ const getInitialState = (
         return Promise.resolve(null);
     },
 
-    prefillBindingDependentState: (liveBindings, draftedBindings) => {
+    prefillBindingDependentState: (
+        entityType,
+        liveBindings,
+        draftedBindings
+    ) => {
         set(
             produce((state: BindingState) => {
                 const bindings = draftedBindings ?? liveBindings;
@@ -455,7 +461,10 @@ const getInitialState = (
 
                     initializeBinding(state, collection, UUID);
                     initializeResourceConfig(state, binding, UUID, index);
-                    initializeFullSourceConfig(state, binding);
+
+                    if (entityType === 'materialization') {
+                        initializeFullSourceConfig(state, binding);
+                    }
 
                     if (draftedBindings) {
                         // Prefill backfilled collections

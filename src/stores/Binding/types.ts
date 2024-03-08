@@ -36,6 +36,7 @@ export interface BindingState
         StoreWithTimeTravel {
     bindings: Bindings;
     prefillBindingDependentState: (
+        entityType: Entity,
         liveBindings: Schema[],
         draftedBindings?: Schema[]
     ) => void;
