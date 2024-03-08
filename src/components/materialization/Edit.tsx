@@ -14,7 +14,6 @@ import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpe
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useMemo } from 'react';
@@ -22,6 +21,7 @@ import { CustomEvents } from 'services/types';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
+import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
 
 function MaterializationEdit() {
     usePageTitle({
@@ -32,8 +32,7 @@ function MaterializationEdit() {
     const entityType = 'materialization';
 
     // Supabase
-    const { connectorTags } = useConnectorWithTagDetail(entityType);
-    const hasConnectors = connectorTags.length > 0;
+    const hasConnectors = useValidConnectorsExist(entityType);
 
     // Draft Editor Store
     const draftId = useEditorStore_id();

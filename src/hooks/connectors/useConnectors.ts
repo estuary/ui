@@ -1,15 +1,6 @@
 import { TABLES } from 'services/supabase';
-import { useQuery, useSelect } from './supabase-swr/';
-
-interface Connector {
-    id: string;
-    title: { 'en-US': string };
-    image_name: string;
-}
-
-export const CONNECTOR_QUERY = `
-    id, title, image_name
-`;
+import { useQuery, useSelect } from '../supabase-swr/';
+import { Connector, CONNECTOR_QUERY } from './shared';
 
 // A hook for fetching connectors directory from
 //  their own table, without any association with
