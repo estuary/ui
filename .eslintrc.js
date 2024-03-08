@@ -45,5 +45,8 @@ module.exports = {
         'react/iframe-missing-sandbox': 'error',
         'react/jsx-no-leaked-render': 'error',
         'no-constant-binary-expression': 'error',
+
+        // We should never have these unless commented and explained
+        'react-hooks/exhaustive-deps': 'error',
     },
 };
