@@ -28,7 +28,10 @@ function useValidConnectorsExist(protocol: string | null) {
 
     const { data } = useSelect(protocol ? connectorTagsQuery : null);
 
-    return useMemo(() => (data?.data ? data.data.length > 0 : false), []);
+    return useMemo(
+        () => (data?.data ? data.data.length > 0 : false),
+        [data?.data]
+    );
 }
 
 export default useValidConnectorsExist;
