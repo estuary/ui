@@ -1,7 +1,7 @@
 import {
     CONNECTOR_WITH_TAG_QUERY,
     ConnectorWithTagDetailQuery,
-} from 'hooks/useConnectorWithTagDetail';
+} from 'hooks/connectors/shared';
 import {
     CONNECTOR_NAME,
     CONNECTOR_RECOMMENDED,
@@ -14,6 +14,7 @@ import {
     CONNECTOR_DETAILS,
 } from 'services/supabase';
 import { SortDirection } from 'types';
+import { requiredConnectorColumnsExist } from 'utils/connector-utils';
 
 // Table-specific queries
 const getConnectors = (
@@ -41,6 +42,11 @@ const getConnectors = (
         ],
         undefined,
         { column: 'connector_tags.protocol', value: protocol }
+    );
+
+    queryBuilder = requiredConnectorColumnsExist<ConnectorWithTagDetailQuery>(
+        queryBuilder,
+        'connector_tags'
     );
 
     return queryBuilder;

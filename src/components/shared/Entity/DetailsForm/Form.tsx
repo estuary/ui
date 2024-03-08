@@ -11,7 +11,7 @@ import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
+import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
@@ -203,8 +203,6 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
             if (details.data.connectorImage.connectorId === connectorId) {
                 setDetails_connector(details.data.connectorImage);
             } else {
-                // Set the details before navigating to reduce "flicker"
-                setDetails(details);
                 setEntityNameChanged(details.data.entityName);
 
                 navigateToCreate(
