@@ -429,6 +429,8 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.rowSelector.all': `All`,
     'entityTable.rowSelector.none': `None`,
 
+    'entityTable.delete.confirm': `All items will be permanently deleted and this action cannot be undone. Please review the list to continue.`,
+
     'entityTable.edit.aria': `Edit specification of {name}`,
     'entityTable.materialize.aria': `Materialize {name}`,
 
@@ -573,6 +575,7 @@ const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrants.table.accessLinks.label.url': `URL`,
     'accessGrants.table.accessLinks.label.lastUpdated': `Last Updated`,
     'accessGrants.table.accessLinks.label.actions': `Actions`,
+    'accessGrants.table.accessLinks.delete.confirm': `All items will be disabled and this action cannot be undone. Please review the list to continue.`,
 };
 
 const StorageMappings: ResolvedIntlConfig['messages'] = {
@@ -625,7 +628,7 @@ const Captures: ResolvedIntlConfig['messages'] = {
     'capturesTable.cta.new': `New Capture`,
     'capturesTable.filterLabel': `Filter captures`,
     'capturesTable.disableEnable.confirm': `All items listed below will be {setting}.`,
-    'capturesTable.delete.confirm': `All items listed below will be deleted forever. Please review before continuing.`,
+    'capturesTable.delete.removeCollectionsOption': `Delete all collections associated with this capture. Collections used by active tasks will be skipped.`,
     'capturesTable.ctaGroup.aria': `capture table available actions`,
     'capturesTable.cta.materialize': `${CTAs['cta.materialize']} ${CommonMessages['terms.collections']}`,
     'captures.message1': `Click "New Capture" to get started.`,

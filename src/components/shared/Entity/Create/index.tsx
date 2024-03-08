@@ -17,7 +17,7 @@ import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
+import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetail';
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';

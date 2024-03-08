@@ -6,8 +6,8 @@ import {
 import { User, createClient } from '@supabase/supabase-js';
 import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { forEach, isEmpty } from 'lodash';
-import { JobStatus, SortDirection, SupabaseInvokeResponse } from 'types';
 import retry from 'retry';
+import { JobStatus, SortDirection, SupabaseInvokeResponse } from 'types';
 import { logRocketEvent, retryAfterFailure } from './shared';
 import { CustomEvents } from './types';
 
@@ -92,6 +92,7 @@ export enum TABLES {
 }
 
 export enum RPCS {
+    DRAFT_COLLECTIONS_ELIGIBLE_FOR_DELETION = 'draft_collections_eligible_for_deletion',
     EXCHANGE_DIRECTIVES = 'exchange_directive_token',
     VIEW_LOGS = 'view_logs',
     CREATE_REFRESH_TOKEN = 'create_refresh_token',

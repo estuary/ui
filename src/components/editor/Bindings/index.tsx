@@ -9,10 +9,7 @@ import { useEntityType } from 'context/EntityContext';
 import { LocalZustandProvider } from 'context/LocalZustand';
 import { alternativeReflexContainerBackground } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import useConnectorTag from 'hooks/useConnectorTag';
+
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useServerUpdateRequiredMonitor } from 'hooks/useServerUpdateRequiredMonitor';
 import { ReactNode, useEffect, useMemo } from 'react';
@@ -20,15 +17,10 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useBinding_discoveredCollections,
     useBinding_removeDiscoveredBindings,
-    useBinding_setResourceSchema,
 } from 'stores/Binding/hooks';
-import {
-    useDetailsForm_connectorImage,
-    useDetailsForm_details_entityName,
-} from 'stores/DetailsForm/hooks';
+import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 import { EditorStoreNames } from 'stores/names';
-import { Schema } from 'types';
 import Backfill from './Backfill';
 
 interface Props {
@@ -55,40 +47,18 @@ function BindingsMultiEditor({
         []
     );
 
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
-
     const entityType = useEntityType();
     const workflow = useEntityWorkflow();
 
     // Binding Store
     const discoveredCollections = useBinding_discoveredCollections();
     const removeDiscoveredBindings = useBinding_removeDiscoveredBindings();
-    const setResourceSchema = useBinding_setResourceSchema();
 
     // Details Form Store
     const catalogName = useDetailsForm_details_entityName();
-    const imageTag = useDetailsForm_connectorImage();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
-
-    const { connectorTag } = useConnectorTag(imageTag.id);
-
-    useEffect(() => {
-        if (
-            connectorId !== connectorTag?.connector_id &&
-            connectorTag?.resource_spec_schema
-        ) {
-            setResourceSchema(
-                connectorTag.resource_spec_schema as unknown as Schema
-            );
-        }
-    }, [
-        setResourceSchema,
-        connectorId,
-        connectorTag?.connector_id,
-        connectorTag?.resource_spec_schema,
-    ]);
 
     const removeDiscoveredCollectionOptions = useMemo(() => {
         if (

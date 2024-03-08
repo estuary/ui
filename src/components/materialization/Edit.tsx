@@ -11,10 +11,10 @@ import EntityEdit from 'components/shared/Entity/Edit';
 import DraftInitializer from 'components/shared/Entity/Edit/DraftInitializer';
 import EntityToolbar from 'components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
+import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useMemo } from 'react';
@@ -32,8 +32,7 @@ function MaterializationEdit() {
     const entityType = 'materialization';
 
     // Supabase
-    const { connectorTags } = useConnectorWithTagDetail(entityType);
-    const hasConnectors = connectorTags.length > 0;
+    const hasConnectors = useValidConnectorsExist(entityType);
 
     // Draft Editor Store
     const draftId = useEditorStore_id();

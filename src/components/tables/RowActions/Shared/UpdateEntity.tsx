@@ -1,5 +1,8 @@
 import { createEntityDraft } from 'api/drafts';
-import { createDraftSpec } from 'api/draftSpecs';
+import {
+    createDraftSpec,
+    draftCollectionsEligibleForDeletion,
+} from 'api/draftSpecs';
 import { CaptureQuery } from 'api/liveSpecsExt';
 import { createPublication } from 'api/publications';
 import AlertBox from 'components/shared/AlertBox';
@@ -67,6 +70,11 @@ function UpdateEntity({
         selectableTableStoreSelectors.successfulTransformations.increment
     );
 
+    const actionSettings = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['actionSettings']
+    >(selectableStoreName, selectableTableStoreSelectors.actionSettings.get);
+
     const liveSpecsResponse = useLiveSpecsExtWithSpec(
         entity.id,
         entity.spec_type
@@ -74,6 +82,9 @@ function UpdateEntity({
     const liveSpecs = liveSpecsResponse.liveSpecs;
     const liveSpecsError = liveSpecsResponse.error;
     const liveSpecsValidating = liveSpecsResponse.isValidating;
+
+    const deleteCollections =
+        selectableStoreName === SelectTableStoreNames.CAPTURE;
 
     useEffect(() => {
         const done = (progressState: ProgressStates, response: any) => {
@@ -137,6 +148,21 @@ function UpdateEntity({
             );
             if (draftSpecsResponse.error) {
                 return failed(draftSpecsResponse);
+            }
+
+            if (
+                deleteCollections &&
+                actionSettings.deleteAssociatedCollections?.includes(entityName)
+            ) {
+                const collectionsDraftSpecResponse =
+                    await draftCollectionsEligibleForDeletion(
+                        targetEntity.id,
+                        newDraftId
+                    );
+
+                if (collectionsDraftSpecResponse.error) {
+                    return failed(collectionsDraftSpecResponse);
+                }
             }
 
             // Try to publish the changes

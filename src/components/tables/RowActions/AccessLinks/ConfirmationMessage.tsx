@@ -4,17 +4,9 @@ import { FormattedMessage } from 'react-intl';
 
 function ConfirmationMessage() {
     return (
-        <AlertBox
-            severity="warning"
-            short
-            title={
-                <Typography component="div">
-                    <FormattedMessage id="common.noUnDo" />
-                </Typography>
-            }
-        >
+        <AlertBox severity="warning" short>
             <Typography component="div">
-                <FormattedMessage id="capturesTable.delete.confirm" />
+                <FormattedMessage id="accessGrants.table.accessLinks.delete.confirm" />
             </Typography>
         </AlertBox>
     );

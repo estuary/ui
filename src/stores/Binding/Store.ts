@@ -347,35 +347,37 @@ const getInitialState = (
             ({ meta }) => meta.collectionName
         ),
 
-    hydrateState: async (editWorkflow, entityType, rehydrating) => {
+    hydrateState: async (
+        editWorkflow,
+        entityType,
+        connectorTagId,
+        rehydrating
+    ) => {
         const searchParams = new URLSearchParams(window.location.search);
-        const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
-        const liveSpecIds = searchParams.getAll(
-            GlobalSearchParams.LIVE_SPEC_ID
-        );
         const prefillLiveSpecIds = searchParams.getAll(
             GlobalSearchParams.PREFILL_LIVE_SPEC_ID
         );
-
+        const liveSpecIds = searchParams.getAll(
+            GlobalSearchParams.LIVE_SPEC_ID
+        );
         const materializationHydrating = entityType === 'materialization';
         const materializationRehydrating =
             materializationHydrating && rehydrating;
 
-        const { setHydrationErrorsExist } = get();
+        const { resetState, setHydrationErrorsExist } = get();
+        resetState(materializationRehydrating);
 
-        // resetState(materializationRehydrating);
-
-        if (connectorId) {
-            const { data, error } = await getSchema_Resource(connectorId);
+        if (connectorTagId && connectorTagId.length > 0) {
+            const { data, error } = await getSchema_Resource(connectorTagId);
 
             if (error) {
                 setHydrationErrorsExist(true);
-            } else if (data && data.length > 0) {
+            } else if (data?.resource_spec_schema) {
                 const { setResourceSchema } = get();
 
                 setResourceSchema(
-                    data[0].resource_spec_schema as unknown as Schema
+                    data.resource_spec_schema as unknown as Schema
                 );
             }
         }
