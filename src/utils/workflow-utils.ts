@@ -228,53 +228,6 @@ export const generateTaskSpec = (
             });
         });
 
-        // const extractedResourceConfigs = Object.values(resourceConfigs);
-
-        // extractedResourceConfigs.forEach((config) => {
-        //     const resourceConfig = config.data;
-        //     const { bindingIndex, collectionName, disable } = config.meta;
-
-        //     // Check if disable is a boolean otherwise default to false
-        //     const bindingDisabled = isBoolean(disable) ? disable : false;
-
-        //     // See which binding we need to update
-        //     const existingBindingIndex = resourceConfigServerUpdateRequired
-        //         ? getBindingIndex(draftSpec.bindings, collectionName, config)
-        //         : bindingIndex;
-
-        //     if (existingBindingIndex > -1) {
-        //         // Include disable otherwise totally remove it
-        //         if (bindingDisabled) {
-        //             draftSpec.bindings[existingBindingIndex].disable =
-        //                 bindingDisabled;
-        //         } else {
-        //             delete draftSpec.bindings[existingBindingIndex].disable;
-        //         }
-
-        //         draftSpec.bindings[existingBindingIndex].resource = {
-        //             ...resourceConfig,
-        //         };
-
-        //         // Only update if there is a fullSource to populate. Otherwise just set the name.
-        //         //  This handles both captures that do not have these settings AND when
-        //         draftSpec.bindings[existingBindingIndex][collectionNameProp] =
-        //             getFullSourceSetting(fullSource, collectionName);
-        //     } else if (Object.keys(resourceConfig).length > 0) {
-        //         const disabledProps = getDisableProps(bindingDisabled);
-
-        //         draftSpec.bindings.push({
-        //             [collectionNameProp]: getFullSourceSetting(
-        //                 fullSource,
-        //                 collectionName
-        //             ),
-        //             ...disabledProps,
-        //             resource: {
-        //                 ...resourceConfig,
-        //             },
-        //         });
-        //     }
-        // });
-
         if (hasLength(draftSpec.bindings)) {
             const boundCollections = Object.keys(bindings);
 
