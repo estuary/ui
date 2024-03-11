@@ -120,15 +120,22 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     }, [connectorId, connectorImagePath, isEdit]);
 
     const connectorsOneOf = useMemo(() => {
-        const response = [] as { title: string; const: Object }[];
-
+        const response = [] as {
+            title: string;
+            const: Object;
+        }[];
         if (connectorTags.length > 0) {
             connectorTags.forEach((connector) => {
                 response.push({
-                    const: getConnectorImageDetails(
-                        connector,
-                        versionEvaluationOptions
-                    ),
+                    const: {
+                        ...getConnectorImageDetails(
+                            connector,
+                            versionEvaluationOptions
+                        ),
+                        multipleTags: Boolean(
+                            connector.connector_tags.length > 1
+                        ),
+                    },
                     title: connector.title,
                 });
             });

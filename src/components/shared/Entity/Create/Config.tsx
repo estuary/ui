@@ -12,6 +12,7 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { ConnectorsHydrator } from 'stores/Connectors/Hydrator';
 import { EntityWithCreateWorkflow } from 'types';
 
 interface Props {
@@ -45,7 +46,7 @@ function EntityCreateConfig({ entityType }: Props) {
     ]);
 
     return (
-        <>
+        <ConnectorsHydrator>
             <Collapse in={!connectorId} unmountOnExit>
                 <Typography sx={{ mb: 2 }}>
                     <FormattedMessage id="entityCreate.instructions" />
@@ -92,7 +93,7 @@ function EntityCreateConfig({ entityType }: Props) {
                     </Box>
                 )}
             </Collapse>
-        </>
+        </ConnectorsHydrator>
     );
 }
 
