@@ -8,7 +8,7 @@ import { useCallback, useMemo } from 'react';
 
 import {
     useBinding_currentBindingIndex,
-    useBinding_fullSourceOfCollection,
+    useBinding_fullSourceOfBinding,
     useBinding_updateFullSourceConfig,
 } from 'stores/Binding/hooks';
 import { FullSourceJsonForms } from 'stores/Binding/slices/TimeTravel';
@@ -19,7 +19,7 @@ import {
     getFullSourceSetting,
 } from 'utils/workflow-utils';
 
-function useTimeTravel(collectionName: string) {
+function useTimeTravel(bindingUUID: string, collectionName: string) {
     const draftId = useEditorStore_persistedDraftId();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
@@ -30,7 +30,7 @@ function useTimeTravel(collectionName: string) {
     const updateTimeTravel = useCallback(
         async (formData: FullSourceJsonForms, skipServerUpdate?: boolean) => {
             // Make sure we update the store so it stays in sync also in case we need to run this through generate button
-            updateFullSourceConfig(collectionName, formData);
+            updateFullSourceConfig(bindingUUID, formData);
 
             if (
                 skipServerUpdate === true ||
@@ -64,16 +64,17 @@ function useTimeTravel(collectionName: string) {
                     spec.bindings[existingBindingIndex][collectionNameProp] =
                         getFullSourceSetting(
                             noMergingNeeded
-                                ? { [collectionName]: { data: formData.data } }
+                                ? { [bindingUUID]: { data: formData.data } }
                                 : {
-                                      [collectionName]: {
+                                      [bindingUUID]: {
                                           ...spec.bindings[
                                               existingBindingIndex
                                           ][collectionNameProp],
                                           ...{ data: formData.data },
                                       },
                                   },
-                            collectionName
+                            collectionName,
+                            bindingUUID
                         );
 
                     const updateResponse = await modifyDraftSpec(spec, {
@@ -94,6 +95,7 @@ function useTimeTravel(collectionName: string) {
             }
         },
         [
+            bindingUUID,
             collectionName,
             draftId,
             draftSpecs,
@@ -103,7 +105,7 @@ function useTimeTravel(collectionName: string) {
         ]
     );
 
-    const fullSource = useBinding_fullSourceOfCollection(collectionName);
+    const fullSource = useBinding_fullSourceOfBinding(bindingUUID);
 
     return useMemo(
         () => ({ updateTimeTravel, fullSource }),

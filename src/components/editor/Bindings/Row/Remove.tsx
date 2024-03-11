@@ -34,10 +34,10 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
         removeBinding: (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            const { collection } = binding;
+            const { collection, uuid } = binding;
 
             removeBinding(binding);
-            removeFullSourceConfig(collection);
+            removeFullSourceConfig(uuid);
 
             if (
                 workflow === 'capture_edit' &&

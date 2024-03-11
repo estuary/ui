@@ -3,10 +3,11 @@ import { FormattedMessage } from 'react-intl';
 import TimeTravelForm from './Form';
 
 interface Props {
+    bindingUUID: string;
     collectionName: string;
 }
 
-function TimeTravel({ collectionName }: Props) {
+function TimeTravel({ bindingUUID, collectionName }: Props) {
     return (
         <Box sx={{ mt: 3, mb: 5 }}>
             <Stack>
@@ -22,7 +23,10 @@ function TimeTravel({ collectionName }: Props) {
                     </Typography>
                 </Stack>
 
-                <TimeTravelForm collectionName={collectionName} />
+                <TimeTravelForm
+                    bindingUUID={bindingUUID}
+                    collectionName={collectionName}
+                />
             </Stack>
         </Box>
     );

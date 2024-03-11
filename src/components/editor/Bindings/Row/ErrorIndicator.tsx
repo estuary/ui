@@ -1,16 +1,15 @@
 import { Typography, useTheme } from '@mui/material';
 import { WarningCircle } from 'iconoir-react';
 import {
-    useBinding_fullSourceOfCollectionProperty,
+    useBinding_fullSourceOfBindingProperty,
     useBinding_resourceConfigOfCollectionProperty,
 } from 'stores/Binding/hooks';
 
 interface Props {
     bindingUUID: string;
-    collection: string;
 }
 
-function BindingsSelectorErrorIndicator({ bindingUUID, collection }: Props) {
+function BindingsSelectorErrorIndicator({ bindingUUID }: Props) {
     const theme = useTheme();
 
     const configErrors = useBinding_resourceConfigOfCollectionProperty(
@@ -18,8 +17,8 @@ function BindingsSelectorErrorIndicator({ bindingUUID, collection }: Props) {
         'errors'
     );
 
-    const bindingErrors = useBinding_fullSourceOfCollectionProperty(
-        collection,
+    const bindingErrors = useBinding_fullSourceOfBindingProperty(
+        bindingUUID,
         'errors'
     );
 

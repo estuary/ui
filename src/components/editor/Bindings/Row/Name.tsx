@@ -19,10 +19,7 @@ function BindingsSelectorName({
             variant="text"
             disableFocusRipple
             startIcon={
-                <BindingsSelectorErrorIndicator
-                    bindingUUID={bindingUUID}
-                    collection={collection}
-                />
+                <BindingsSelectorErrorIndicator bindingUUID={bindingUUID} />
             }
             sx={{
                 'color': (theme) => theme.palette.text.primary,

@@ -463,7 +463,7 @@ const getInitialState = (
                     initializeResourceConfig(state, binding, UUID, index);
 
                     if (entityType === 'materialization') {
-                        initializeFullSourceConfig(state, binding);
+                        initializeFullSourceConfig(state, binding, UUID);
                     }
 
                     if (draftedBindings) {

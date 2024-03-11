@@ -369,32 +369,32 @@ export const useBinding_setSelectionSaving = () => {
     );
 };
 
-export const useBinding_fullSourceOfCollection = (collection: any) => {
+export const useBinding_fullSourceOfBinding = (bindingUUID: any) => {
     return useZustandStore<BindingState, FullSource | undefined | null>(
         BindingStoreNames.GENERAL,
         (state) => {
-            if (!collection) {
+            if (!bindingUUID) {
                 return null;
             }
 
-            return state.fullSourceConfigs[collection]?.data;
+            return state.fullSourceConfigs[bindingUUID]?.data;
         }
     );
 };
 
-export const useBinding_fullSourceOfCollectionProperty = (
-    collection: any,
+export const useBinding_fullSourceOfBindingProperty = (
+    bindingUUID: any,
     property: keyof FullSourceDictionary
 ) => {
     return useZustandStore<BindingState, any>(
         BindingStoreNames.GENERAL,
         (state) => {
-            if (!collection) {
+            if (!bindingUUID) {
                 return null;
             }
 
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            return state.fullSourceConfigs[collection]?.[property];
+            return state.fullSourceConfigs[bindingUUID]?.[property];
         }
     );
 };

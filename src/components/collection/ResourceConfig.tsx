@@ -83,7 +83,10 @@ function ResourceConfig({
             ) : null}
 
             {entityType === 'materialization' ? (
-                <TimeTravel collectionName={collectionName} />
+                <TimeTravel
+                    bindingUUID={bindingUUID}
+                    collectionName={collectionName}
+                />
             ) : null}
         </>
     );

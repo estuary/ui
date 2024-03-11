@@ -23,9 +23,9 @@ export interface FullSourceDictionary {
 
 export interface StoreWithTimeTravel {
     fullSourceConfigs: FullSourceDictionary;
-    removeFullSourceConfig: (collection: string) => void;
+    removeFullSourceConfig: (bindingUUID: string) => void;
     updateFullSourceConfig: (
-        collection: string,
+        bindingUUID: string,
         formData: FullSourceJsonForms
     ) => void;
 
@@ -34,17 +34,18 @@ export interface StoreWithTimeTravel {
 
 export const initializeFullSourceConfig = (
     state: StoreWithTimeTravel,
-    binding: Schema
+    binding: Schema,
+    bindingUUID: string
 ) => {
     const scopedBinding = getSourceOrTarget(binding);
     const nameOnly = typeof scopedBinding === 'string';
 
     if (nameOnly) {
-        state.fullSourceConfigs[scopedBinding] = { data: {}, errors: [] };
+        state.fullSourceConfigs[bindingUUID] = { data: {}, errors: [] };
     } else {
         const { name, ...restOfFullSource } = scopedBinding;
 
-        state.fullSourceConfigs[name] = {
+        state.fullSourceConfigs[bindingUUID] = {
             data: restOfFullSource,
             errors: [],
         };
@@ -64,25 +65,26 @@ export const getStoreWithTimeTravelSettings = (
 ): StoreWithTimeTravel => ({
     ...getInitialTimeTravelData(),
 
-    removeFullSourceConfig: (collection) => {
+    removeFullSourceConfig: (bindingUUID) => {
         set(
             produce((state: StoreWithTimeTravel) => {
                 // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-                delete state.fullSourceConfigs[collection];
+                delete state.fullSourceConfigs[bindingUUID];
             }),
             false,
             'Removing full source config of a collection'
         );
     },
 
-    updateFullSourceConfig: (collection, formData) => {
+    updateFullSourceConfig: (bindingUUID, formData) => {
         set(
             produce((state: StoreWithTimeTravel) => {
                 const existingData =
-                    state.fullSourceConfigs[collection]?.data ?? {};
+                    state.fullSourceConfigs[bindingUUID]?.data ?? {};
+
                 const fullSource = formData.data;
 
-                state.fullSourceConfigs[collection] = {
+                state.fullSourceConfigs[bindingUUID] = {
                     data: {
                         ...existingData,
                         ...fullSource,

@@ -131,9 +131,11 @@ export const addOrRemoveSourceCapture = (
 
 export const getFullSourceSetting = (
     fullSource: FullSourceDictionary | null,
-    collectionName: string
+    collectionName: string,
+    bindingUUID: string
 ) => {
-    const fullSourceConfig = fullSource?.[collectionName]?.data;
+    const fullSourceConfig = fullSource?.[bindingUUID]?.data;
+
     return !isEmpty(fullSourceConfig)
         ? { ...fullSourceConfig, name: collectionName }
         : collectionName;
@@ -149,8 +151,6 @@ export const generateTaskSpec = (
     resourceConfigServerUpdateRequired: boolean,
     bindings: Bindings,
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
-    // sourceCapture: string | null,
-    // fullSource: FullSourceDictionary | null,
     options: {
         fullSource: FullSourceDictionary | null;
         sourceCapture: string | null;
@@ -206,7 +206,8 @@ export const generateTaskSpec = (
                         },
                         [collectionNameProp]: getFullSourceSetting(
                             fullSource,
-                            collectionName
+                            collectionName,
+                            bindingUUID
                         ),
                     };
                 } else if (Object.keys(resourceConfig).length > 0) {
@@ -215,7 +216,8 @@ export const generateTaskSpec = (
                     draftSpec.bindings.push({
                         [collectionNameProp]: getFullSourceSetting(
                             fullSource,
-                            collectionName
+                            collectionName,
+                            bindingUUID
                         ),
                         ...disabledProps,
                         resource: {
