@@ -7,8 +7,6 @@ exports[`useBindingsEditorStore > store will default itself properly 1`] = `
   "collectionInitializationAlert": null,
   "documentsRead": null,
   "editModeEnabled": false,
-  "fullSourceConfigs": {},
-  "fullSourceErrorsExist": false,
   "hasIncompatibleCollections": false,
   "incompatibleCollections": [],
   "inferSchemaResponse": null,
@@ -20,8 +18,6 @@ exports[`useBindingsEditorStore > store will default itself properly 1`] = `
   "inferredSpec": null,
   "loadingInferredSchema": false,
   "populateInferSchemaResponse": [Function],
-  "prefillFullSourceConfigs": [Function],
-  "removeFullSourceConfig": [Function],
   "resetState": [Function],
   "schemaInferenceDisabled": false,
   "schemaUpdateErrored": false,
@@ -37,7 +33,6 @@ exports[`useBindingsEditorStore > store will default itself properly 1`] = `
   "setSchemaInferenceDisabled": [Function],
   "setSchemaUpdateErrored": [Function],
   "setSchemaUpdated": [Function],
-  "updateFullSourceConfig": [Function],
   "updateSchema": [Function],
 }
 `;
