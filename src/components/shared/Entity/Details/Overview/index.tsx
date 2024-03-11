@@ -8,11 +8,10 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useLiveSpecs_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
-import { ShardEntityTypes } from 'stores/ShardDetail/types';
 import { hasLength } from 'utils/misc-utils';
 import ShardInformation from '../../Shard/Information';
 import Usage from '../Usage';
-import useIsCollectionDerivation from '../useIsCollectionDerivation';
+import useDetailsEntityTaskTypes from '../useDetailsEntityTaskTypes';
 import DetailsSection from './DetailsSection';
 
 // TODO (details page)
@@ -29,21 +28,13 @@ function Overview({ name }: Props) {
     const { liveSpecs, isValidating: validatingLiveSpecs } =
         useLiveSpecs_details(entityType, entityName);
 
-    const isDerivation = useIsCollectionDerivation();
-
     const latestLiveSpec = useMemo(
         () =>
             !validatingLiveSpecs && hasLength(liveSpecs) ? liveSpecs[0] : null,
         [liveSpecs, validatingLiveSpecs]
     );
 
-    const taskTypes: ShardEntityTypes[] = useMemo(() => {
-        if (!isCollection || isDerivation) {
-            return isDerivation ? ['derivation'] : [entityType];
-        }
-
-        return [];
-    }, [entityType, isCollection, isDerivation]);
+    const taskTypes = useDetailsEntityTaskTypes();
 
     return (
         <Grid container spacing={2}>
