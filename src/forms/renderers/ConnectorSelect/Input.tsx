@@ -25,7 +25,7 @@ function ConnectorInput({
     enabled,
     updateTag,
 }: Props) {
-    const [connectorTag, setConnectorTag] = useState('');
+    const [connectorTag, setConnectorTag] = useState(currentOption.value.id);
 
     const handleChange = (event: SelectChangeEvent) => {
         setConnectorTag(event.target.value);

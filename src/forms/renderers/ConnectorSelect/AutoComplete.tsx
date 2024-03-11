@@ -50,7 +50,11 @@ export interface WithOptionLabel {
 }
 
 const areOptionsEqual = (option?: any, value?: any) => {
-    return value?.id && value.id.length > 0 && option.id === value.id;
+    return (
+        value?.connectorId &&
+        value.connectorId.length > 0 &&
+        option.connectorId === value.connectorId
+    );
 };
 
 export const ConnectorAutoComplete = (
