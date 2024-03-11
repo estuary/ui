@@ -1,4 +1,3 @@
-import { JsonSchema } from '@jsonforms/core';
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import Editor from '@monaco-editor/react';
@@ -26,13 +25,14 @@ import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions } from 'services/jsonforms/shared';
 import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
+import { getDereffedSchema } from 'utils/misc-utils';
 
 const TestJsonForms = () => {
     const intl = useIntl();
     const { connectors } = useConnectors();
     const [error, setError] = useState<string | null>(null);
     const [schemaInput, setSchemaInput] = useState<string | undefined>('');
-    const [schema, setSchema] = useState<JsonSchema | null>(null);
+    const [schema, setSchema] = useState<any | null>(null);
     const [uiSchema, setUiSchema] = useState<any | null>(null);
     const [formData, setFormData] = useState({});
 
@@ -93,7 +93,7 @@ const TestJsonForms = () => {
             'Failed to parse input. Make sure it is valid JSON and then click button again'
         );
 
-    const parseSchema = () => {
+    const parseSchema = async () => {
         if (!schemaInput) {
             failed();
             return;
@@ -103,15 +103,21 @@ const TestJsonForms = () => {
             setFormData({});
             setSchema(null);
             const parsedSchema = JSON.parse(schemaInput);
-            setSchema(parsedSchema);
 
-            const generatedSchema =
-                custom_generateDefaultUISchema(parsedSchema);
+            const resolved = await getDereffedSchema(parsedSchema);
 
+            if (!resolved) {
+                throw new Error('failed to deref schema');
+            }
+
+            setSchema(resolved);
+
+            const generatedSchema = custom_generateDefaultUISchema(resolved);
             setUiSchema(generatedSchema);
 
             console.log('Generated this UI Schema:', {
-                in: parsedSchema,
+                parsed: parsedSchema,
+                in: resolved,
                 out: generatedSchema,
             });
         } catch {
