@@ -6,10 +6,10 @@ import { FormattedMessage } from 'react-intl';
 import {
     useBinding_allBindingsDisabled,
     useBinding_backfillAllBindings,
-    useBinding_backfilledCollections,
+    useBinding_backfilledBindings,
     useBinding_collections,
     useBinding_currentBinding,
-    useBinding_setBackfilledCollections,
+    useBinding_setBackfilledBindings,
 } from 'stores/Binding/hooks';
 import {
     useFormStateStore_isActive,
@@ -38,8 +38,8 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
     const allBindingsDisabled = useBinding_allBindingsDisabled();
 
     const backfillAllBindings = useBinding_backfillAllBindings();
-    const backfilledCollections = useBinding_backfilledCollections();
-    const setBackfilledCollections = useBinding_setBackfilledCollections();
+    const backfilledBindings = useBinding_backfilledBindings();
+    const setBackfilledBindings = useBinding_setBackfilledBindings();
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -53,14 +53,14 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
             return backfillAllBindings;
         }
 
-        return currentBinding?.collection
-            ? backfilledCollections.includes(currentBinding.collection)
+        return currentBinding?.uuid
+            ? backfilledBindings.includes(currentBinding.uuid)
             : false;
     }, [
         backfillAllBindings,
-        backfilledCollections,
+        backfilledBindings,
         bindingIndex,
-        currentBinding?.collection,
+        currentBinding?.uuid,
     ]);
 
     const value: BooleanString = useMemo(
@@ -83,19 +83,19 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                 );
             }
 
-            if (currentBinding?.collection) {
+            if (currentBinding?.uuid) {
                 return increment === 'true'
-                    ? !backfilledCollections.includes(currentBinding.collection)
-                    : backfilledCollections.includes(currentBinding.collection);
+                    ? !backfilledBindings.includes(currentBinding.uuid)
+                    : backfilledBindings.includes(currentBinding.uuid);
             }
 
             return false;
         },
         [
             backfillAllBindings,
-            backfilledCollections,
+            backfilledBindings,
             bindingIndex,
-            currentBinding?.collection,
+            currentBinding?.uuid,
         ]
     );
 
@@ -118,11 +118,11 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                     bindingMetadata
                 ).then(
                     () => {
-                        const targetCollection = singleBindingUpdate
-                            ? currentBinding.collection
+                        const targetBindingUUID = singleBindingUpdate
+                            ? currentBinding.uuid
                             : undefined;
 
-                        setBackfilledCollections(increment, targetCollection);
+                        setBackfilledBindings(increment, targetBindingUUID);
                         setFormState({ status: FormStatus.UPDATED });
                     },
                     (error) => {
@@ -142,7 +142,7 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
             currentBinding,
             draftSpec,
             evaluateServerDifferences,
-            setBackfilledCollections,
+            setBackfilledBindings,
             setFormState,
             updateBackfillCounter,
         ]

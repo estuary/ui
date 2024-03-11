@@ -175,7 +175,7 @@ const getInitialBindingData = (): Pick<
 const getInitialStateData = (): Pick<
     BindingState,
     | 'backfillAllBindings'
-    | 'backfilledCollections'
+    | 'backfilledBindings'
     | 'collectionsRequiringRediscovery'
     | 'discoveredCollections'
     | 'rediscoveryRequired'
@@ -187,7 +187,7 @@ const getInitialStateData = (): Pick<
     | 'serverUpdateRequired'
 > => ({
     backfillAllBindings: false,
-    backfilledCollections: [],
+    backfilledBindings: [],
     collectionsRequiringRediscovery: [],
     discoveredCollections: [],
     rediscoveryRequired: false,
@@ -215,19 +215,6 @@ const getInitialState = (
     ...getStoreWithFieldSelectionSettings(set),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
     ...getStoreWithTimeTravelSettings(set),
-
-    addBackfilledCollections: (values) => {
-        set(
-            produce((state: BindingState) => {
-                state.backfilledCollections = union(
-                    state.backfilledCollections,
-                    values
-                );
-            }),
-            false,
-            'Backfilled Collections Added'
-        );
-    },
 
     addEmptyBindings: (data, rehydrating) => {
         set(
@@ -498,7 +485,7 @@ const getInitialState = (
                             (liveBindingIndex === -1 &&
                                 draftedBackfillCounter > 0)
                         ) {
-                            state.backfilledCollections.push(collection);
+                            state.backfilledBindings.push(UUID);
                         }
                     }
                 });
@@ -510,19 +497,6 @@ const getInitialState = (
             }),
             false,
             'Binding dependent state prefilled'
-        );
-    },
-
-    removeBackfilledCollections: (values) => {
-        set(
-            produce((state: BindingState) => {
-                state.backfilledCollections =
-                    state.backfilledCollections.filter(
-                        (collection) => !values.includes(collection)
-                    );
-            }),
-            false,
-            'Backfilled Collections Removed'
         );
     },
 
@@ -755,26 +729,26 @@ const getInitialState = (
         set(newState, false, 'Binding State Reset');
     },
 
-    setBackfilledCollections: (increment, targetCollection) => {
+    setBackfilledBindings: (increment, targetBindingUUID) => {
         set(
             produce((state: BindingState) => {
-                const existingCollections = state.getCollections();
+                const existingBindingUUIDs = Object.keys(state.resourceConfigs);
 
-                const collections: string[] = targetCollection
-                    ? [targetCollection]
-                    : existingCollections;
+                const bindingUUIDs = targetBindingUUID
+                    ? [targetBindingUUID]
+                    : existingBindingUUIDs;
 
-                state.backfilledCollections =
+                state.backfilledBindings =
                     increment === 'true'
-                        ? union(state.backfilledCollections, collections)
-                        : state.backfilledCollections.filter(
-                              (collection) => !collections.includes(collection)
+                        ? union(state.backfilledBindings, bindingUUIDs)
+                        : state.backfilledBindings.filter(
+                              (uuid) => !bindingUUIDs.includes(uuid)
                           );
 
                 state.backfillAllBindings =
-                    hasLength(existingCollections) &&
-                    existingCollections.length ===
-                        state.backfilledCollections.length;
+                    hasLength(existingBindingUUIDs) &&
+                    existingBindingUUIDs.length ===
+                        state.backfilledBindings.length;
             }),
             false,
             'Backfilled Collections Set'

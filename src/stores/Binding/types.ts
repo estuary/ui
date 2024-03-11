@@ -73,13 +73,11 @@ export interface BindingState
     rediscoveryRequired: boolean;
     resetRediscoverySettings: () => void;
 
-    backfilledCollections: string[];
-    setBackfilledCollections: (
+    backfilledBindings: string[];
+    setBackfilledBindings: (
         increment: BooleanString,
-        targetCollection?: string
+        targetBindingUUID?: string
     ) => void;
-    addBackfilledCollections: (values: string[]) => void;
-    removeBackfilledCollections: (values: string[]) => void;
 
     backfillAllBindings: boolean;
 

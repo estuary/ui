@@ -299,18 +299,18 @@ export const useBinding_resetRediscoverySettings = () => {
     >(BindingStoreNames.GENERAL, (state) => state.resetRediscoverySettings);
 };
 
-export const useBinding_backfilledCollections = () => {
-    return useZustandStore<BindingState, BindingState['backfilledCollections']>(
+export const useBinding_backfilledBindings = () => {
+    return useZustandStore<BindingState, BindingState['backfilledBindings']>(
         BindingStoreNames.GENERAL,
-        (state) => state.backfilledCollections
+        (state) => state.backfilledBindings
     );
 };
 
-export const useBinding_setBackfilledCollections = () => {
-    return useZustandStore<
-        BindingState,
-        BindingState['setBackfilledCollections']
-    >(BindingStoreNames.GENERAL, (state) => state.setBackfilledCollections);
+export const useBinding_setBackfilledBindings = () => {
+    return useZustandStore<BindingState, BindingState['setBackfilledBindings']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.setBackfilledBindings
+    );
 };
 
 export const useBinding_backfillAllBindings = () => {
