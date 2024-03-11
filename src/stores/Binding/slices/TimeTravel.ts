@@ -1,5 +1,6 @@
 import { JsonFormsCore } from '@jsonforms/core';
 import produce from 'immer';
+import { isEmpty } from 'lodash';
 import { checkForErrors } from 'stores/utils';
 import { Schema } from 'types';
 import { getSourceOrTarget } from 'utils/workflow-utils';
@@ -72,7 +73,7 @@ export const getStoreWithTimeTravelSettings = (
                 delete state.fullSourceConfigs[bindingUUID];
             }),
             false,
-            'Removing full source config of a collection'
+            'Removing full source config of a binding'
         );
     },
 
@@ -84,13 +85,15 @@ export const getStoreWithTimeTravelSettings = (
 
                 const fullSource = formData.data;
 
-                state.fullSourceConfigs[bindingUUID] = {
-                    data: {
-                        ...existingData,
-                        ...fullSource,
-                    },
-                    errors: formData.errors,
-                };
+                state.fullSourceConfigs[bindingUUID] = isEmpty(fullSource)
+                    ? formData
+                    : {
+                          data: {
+                              ...existingData,
+                              ...fullSource,
+                          },
+                          errors: formData.errors,
+                      };
 
                 state.fullSourceErrorsExist = checkForErrors(formData)
                     ? true
@@ -99,7 +102,7 @@ export const getStoreWithTimeTravelSettings = (
                       );
             }),
             false,
-            'Updating full source config of a collection'
+            'Updating full source config of a binding'
         );
     },
 });
