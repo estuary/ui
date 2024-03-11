@@ -39,6 +39,10 @@ import {
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
+export const generateImagePath = (imageName: string, tag: string) => {
+    return `${imageName}${tag}`;
+};
+
 export const getConnectorImageDetails = (
     connector: ConnectorWithTagDetailQuery,
     options?: { connectorId: string; existingImageTag: string }
@@ -49,7 +53,10 @@ export const getConnectorImageDetails = (
         connectorId: connector.id,
         id: connectorTag.id,
         imageName: connector.image_name,
-        imagePath: `${connector.image_name}${connectorTag.image_tag}`,
+        imagePath: generateImagePath(
+            connector.image_name,
+            connectorTag.image_tag
+        ),
         iconPath: connector.image,
     };
 };
@@ -125,10 +132,13 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
         if (connectorTags.length > 0) {
             connectorTags.forEach((connector) => {
                 response.push({
-                    const: getConnectorImageDetails(
-                        connector,
-                        versionEvaluationOptions
-                    ),
+                    const: {
+                        tags: connector.connector_tags,
+                        ...getConnectorImageDetails(
+                            connector,
+                            versionEvaluationOptions
+                        ),
+                    },
                     title: connector.title,
                 });
             });

@@ -70,6 +70,7 @@ export const ConnectorAutoComplete = (
         filterOptions,
     } = props;
 
+    // const hasMultipleTags = options.tags.length > 1;
     const appliedUiSchemaOptions = merge({}, config, uischema.options);
     const [inputValue, setInputValue] = React.useState('');
     const currentOption = useMemo(
@@ -79,6 +80,14 @@ export const ConnectorAutoComplete = (
             }) ?? null,
         [data, options]
     );
+
+    const currentOptionsTags = useMemo(
+        () => (currentOption ? currentOption.value.tags : null),
+        [currentOption]
+    );
+
+    console.log('options', options);
+    console.log('currentOptionsTags', currentOptionsTags);
 
     return (
         <Autocomplete
@@ -111,6 +120,11 @@ export const ConnectorAutoComplete = (
                         appliedUiSchemaOptions={appliedUiSchemaOptions}
                         enabled={enabled}
                         currentOption={currentOption}
+                        currentOptionsTags={currentOptionsTags}
+                        updateTag={(updatedOption) => {
+                            console.log('newTag', updatedOption);
+                            handleChange(path, updatedOption);
+                        }}
                     />
                 );
             }}
