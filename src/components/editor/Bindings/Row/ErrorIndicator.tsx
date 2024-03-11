@@ -2,7 +2,7 @@ import { Typography, useTheme } from '@mui/material';
 import { WarningCircle } from 'iconoir-react';
 import {
     useBinding_fullSourceOfBindingProperty,
-    useBinding_resourceConfigOfCollectionProperty,
+    useBinding_resourceConfigOfBindingProperty,
 } from 'stores/Binding/hooks';
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 function BindingsSelectorErrorIndicator({ bindingUUID }: Props) {
     const theme = useTheme();
 
-    const configErrors = useBinding_resourceConfigOfCollectionProperty(
+    const configErrors = useBinding_resourceConfigOfBindingProperty(
         bindingUUID,
         'errors'
     );

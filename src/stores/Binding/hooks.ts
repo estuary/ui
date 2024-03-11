@@ -126,7 +126,7 @@ export const useBinding_resourceConfigErrors = () => {
     );
 };
 
-export const useBinding_resourceConfigOfCollectionProperty = (
+export const useBinding_resourceConfigOfBindingProperty = (
     bindingUUID: any,
     property: keyof ResourceConfig
 ) => {
@@ -142,7 +142,7 @@ export const useBinding_resourceConfigOfCollectionProperty = (
     );
 };
 
-export const useBinding_resourceConfigOfMetaCollectionProperty = (
+export const useBinding_resourceConfigOfMetaBindingProperty = (
     bindingUUID: any,
     property: keyof ResourceConfig['meta']
 ) => {

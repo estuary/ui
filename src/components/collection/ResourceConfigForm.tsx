@@ -5,7 +5,7 @@ import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import { jsonFormsDefaults } from 'services/jsonforms/defaults';
 import { showValidation } from 'services/jsonforms/shared';
 import {
-    useBinding_resourceConfigOfCollectionProperty,
+    useBinding_resourceConfigOfBindingProperty,
     useBinding_resourceSchema,
     useBinding_updateResourceConfig,
 } from 'stores/Binding/hooks';
@@ -29,7 +29,7 @@ function ResourceConfigForm({
     const name = useRef(collectionName);
 
     // Binding Store
-    const formData = useBinding_resourceConfigOfCollectionProperty(
+    const formData = useBinding_resourceConfigOfBindingProperty(
         bindingUUID,
         'data'
     );

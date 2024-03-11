@@ -10,7 +10,7 @@ import { FormattedMessage } from 'react-intl';
 import {
     useBinding_currentBindingIndex,
     useBinding_hydrated,
-    useBinding_resourceConfigOfMetaCollectionProperty,
+    useBinding_resourceConfigOfMetaBindingProperty,
 } from 'stores/Binding/hooks';
 import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
 
@@ -40,11 +40,10 @@ function ResourceConfig({
     // If the collection is disabled then it will not come back in the built spec
     //  binding list. This means the user could end up clicking "See Fields" button
     //  forever and never get fields listed.
-    const collectionDisabled =
-        useBinding_resourceConfigOfMetaCollectionProperty(
-            bindingUUID,
-            'disable'
-        );
+    const collectionDisabled = useBinding_resourceConfigOfMetaBindingProperty(
+        bindingUUID,
+        'disable'
+    );
 
     return (
         <>
