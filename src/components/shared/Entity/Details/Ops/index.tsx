@@ -11,10 +11,15 @@ import { FormattedMessage } from 'react-intl';
 import Message from 'components/shared/Error/Message';
 import { BASE_ERROR } from 'services/supabase';
 import useEntityShouldShowLogs from '../useEntityShouldShowLogs';
+import useDetailsEntityTaskTypes from '../useDetailsEntityTaskTypes';
 
 function Ops() {
+    const taskTypes = useDetailsEntityTaskTypes();
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
-    const [name, collectionName] = useJournalNameForLogs(catalogName);
+    const [name, collectionName] = useJournalNameForLogs(
+        catalogName,
+        taskTypes[0]
+    );
 
     const hydrationError = useJournalDataLogsStore_hydrationError();
 
