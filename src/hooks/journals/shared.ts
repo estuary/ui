@@ -55,7 +55,7 @@ export async function loadDocuments({
     maxBytes,
     offsets,
 }: LoadDocumentsProps): Promise<LoadDocumentsResponse> {
-    if (!client || !journalName) {
+    if (!client || !journalName || journalName.length === 0) {
         console.warn('Cannot load documents without client and journal');
         return {
             documents: [],

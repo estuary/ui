@@ -18,7 +18,7 @@ function Ops() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const [name, collectionName] = useJournalNameForLogs(
         catalogName,
-        taskTypes[0]
+        taskTypes
     );
 
     const hydrationError = useJournalDataLogsStore_hydrationError();
