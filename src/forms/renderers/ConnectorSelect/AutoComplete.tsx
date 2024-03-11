@@ -90,9 +90,6 @@ export const ConnectorAutoComplete = (
         [currentOption]
     );
 
-    console.log('options', options);
-    console.log('currentOptionsTags', currentOptionsTags);
-
     return (
         <Autocomplete
             options={options ?? []}

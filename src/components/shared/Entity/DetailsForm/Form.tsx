@@ -131,16 +131,31 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
 
         if (connectorTags.length > 0) {
             connectorTags.forEach((connector) => {
-                response.push({
-                    const: {
-                        tags: connector.connector_tags,
-                        ...getConnectorImageDetails(
-                            connector,
-                            versionEvaluationOptions
-                        ),
-                    },
-                    title: connector.title,
-                });
+                if (connector.connector_tags.length > 1) {
+                    connector.connector_tags.forEach((connector_tag) => {
+                        response.push({
+                            const: {
+                                tags: connector.connector_tags,
+                                ...getConnectorImageDetails(connector, {
+                                    connectorId: connector.id,
+                                    existingImageTag: connector_tag.image_tag,
+                                }),
+                            },
+                            title: connector.title,
+                        });
+                    });
+                } else {
+                    response.push({
+                        const: {
+                            tags: connector.connector_tags,
+                            ...getConnectorImageDetails(
+                                connector,
+                                versionEvaluationOptions
+                            ),
+                        },
+                        title: connector.title,
+                    });
+                }
             });
         }
 
@@ -201,6 +216,8 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
         ],
         type: 'VerticalLayout',
     };
+
+    console.log('schemas', { schema, uiSchema });
 
     const updateDetails = (details: Details) => {
         if (
