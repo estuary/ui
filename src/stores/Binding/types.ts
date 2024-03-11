@@ -87,17 +87,15 @@ export interface BindingState
 
     // Resource Config
     resourceConfigs: ResourceConfigDictionary;
-    setResourceConfig: (
-        targetCollections: string | string[],
-        targetBindingUUID?: string,
-        value?: ResourceConfig,
-        disableCheckingErrors?: boolean,
+    prefillResourceConfigs: (
+        targetCollections: string[],
         disableOmit?: boolean
     ) => void;
     updateResourceConfig: (
         key: string,
         targetBindingUUID: string,
-        formData: JsonFormsData
+        formData: JsonFormsData,
+        disableCheckingErrors?: boolean
     ) => void;
 
     resourceConfigErrorsExist: boolean;

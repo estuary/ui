@@ -5,7 +5,7 @@ import invariableStores from 'context/Zustand/invariableStores';
 import { FormattedMessage } from 'react-intl';
 import {
     useBinding_discoveredCollections,
-    useBinding_setResourceConfig,
+    useBinding_prefillResourceConfigs,
     useBinding_setRestrictedDiscoveredCollections,
 } from 'stores/Binding/hooks';
 import { hasLength } from 'utils/misc-utils';
@@ -20,7 +20,7 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         }
     );
 
-    const setResourceConfig = useBinding_setResourceConfig();
+    const prefillResourceConfigs = useBinding_prefillResourceConfigs();
     const discoveredCollections = useBinding_discoveredCollections();
 
     const setRestrictedDiscoveredCollections =
@@ -33,11 +33,8 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
             };
         });
 
-        setResourceConfig(
+        prefillResourceConfigs(
             value.map(({ name }) => name),
-            undefined,
-            undefined,
-            false,
             true
         );
 
