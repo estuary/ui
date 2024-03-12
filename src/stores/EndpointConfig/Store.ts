@@ -43,7 +43,7 @@ const populateErrors = (
 };
 
 const populateTagIds = (newTagId: string, state: EndpointConfigState) => {
-    state.previousTagId = state.tagId;
+    state.previousTagId = state.tagId.length > 0 ? state.tagId : newTagId;
     state.tagId = newTagId;
 };
 

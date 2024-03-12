@@ -68,14 +68,13 @@ function ConnectorInput({
                     disabled={!enabled}
                 />
             </Box>
-            {currentOptionsTags && currentOptionsTags.length > 1 ? (
+            {enabled && currentOptionsTags && currentOptionsTags.length > 1 ? (
                 <Box>
                     <FormControl>
                         <Select
                             id="connector-tag-select"
                             value={connectorTag}
                             onChange={handleChange}
-                            disabled={!enabled}
                         >
                             {currentOptionsTags.map(
                                 (currentOptionsTag: any) => {
