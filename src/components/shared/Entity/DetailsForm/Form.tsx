@@ -220,8 +220,6 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
         type: 'VerticalLayout',
     };
 
-    console.log('schemas', { schema, uiSchema });
-
     const updateDetails = (details: Details) => {
         if (
             // TODO (Validators) we need to build out validators for specific types of data

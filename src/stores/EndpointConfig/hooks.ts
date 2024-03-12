@@ -111,15 +111,6 @@ export const useEndpointConfigStore_previousEndpointConfig_data = () => {
     >(getStoreName(entityType), (state) => state.previousEndpointConfig.data);
 };
 
-export const useEndpointConfigStore_previousTagId = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['previousTagId']
-    >(getStoreName(entityType), (state) => state.previousTagId);
-};
-
 export const useEndpointConfigStore_setPreviousEndpointConfig = () => {
     const entityType = useEntityType();
 
@@ -136,15 +127,6 @@ export const useEndpointConfigStore_endpointConfig_data = () => {
         EndpointConfigState,
         EndpointConfigState['endpointConfig']['data']
     >(getStoreName(entityType), (state) => state.endpointConfig.data);
-};
-
-export const useEndpointConfigStore_tagId = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<EndpointConfigState, EndpointConfigState['tagId']>(
-        getStoreName(entityType),
-        (state) => state.tagId
-    );
 };
 
 export const useEndpointConfigStore_setEndpointConfig = () => {

@@ -177,6 +177,17 @@ export const useDetailsForm_previousConnectorImage_connectorId = () => {
     );
 };
 
+export const useDetailsForm_previousConnectorImage_tagId = () => {
+    const entityType = useEntityType();
+    return useZustandStore<
+        DetailsFormState,
+        DetailsFormState['previousDetails']['data']['connectorImage']['id']
+    >(
+        getStoreName(entityType),
+        (state) => state.previousDetails.data.connectorImage.id
+    );
+};
+
 export const useDetailsForm_setPreviousDetails = () => {
     const entityType = useEntityType();
     return useZustandStore<

@@ -13,14 +13,16 @@ import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
-import { useDetailsForm_unsupportedConnectorVersion } from 'stores/DetailsForm/hooks';
+import {
+    useDetailsForm_connectorImage_id,
+    useDetailsForm_previousConnectorImage_tagId,
+    useDetailsForm_unsupportedConnectorVersion,
+} from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_endpointConfig_data,
-    useEndpointConfigStore_tagId,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_previousEndpointConfig_data,
-    useEndpointConfigStore_previousTagId,
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
@@ -57,8 +59,8 @@ function EndpointConfig({
     const draftId = useEditorStore_id();
 
     // Endpoint Config Store
-    const endpointTagId = useEndpointConfigStore_tagId();
-    const previousEndpointTagId = useEndpointConfigStore_previousTagId();
+    const tagId = useDetailsForm_connectorImage_id();
+    const previousTagId = useDetailsForm_previousConnectorImage_tagId();
 
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
@@ -153,7 +155,7 @@ function EndpointConfig({
 
         // Update the schema if needed
         if (updateEndpointSchema) {
-            setEndpointSchema(schema, connectorTag.id);
+            setEndpointSchema(schema);
         }
 
         if (resetEndpointConfig) {
@@ -182,7 +184,6 @@ function EndpointConfig({
         }
     }, [
         connectorTag?.endpoint_spec_schema,
-        connectorTag?.id,
         resetEndpointConfig,
         setEncryptedEndpointConfig,
         setEndpointConfig,
@@ -205,14 +206,14 @@ function EndpointConfig({
         // In edit you cannot change the tag so ignore those
         // In create users can change the tag and that might end up
         //  loading a new schema BUT not change the endpoint config.
-        return !editWorkflow && endpointTagId !== previousEndpointTagId;
+        return !editWorkflow && tagId !== previousTagId;
     }, [
         canBeEmpty,
         editWorkflow,
         endpointConfig,
-        endpointTagId,
+        tagId,
         previousEndpointConfig,
-        previousEndpointTagId,
+        previousTagId,
     ]);
     useEffect(() => {
         setServerUpdateRequired(endpointConfigUpdated);

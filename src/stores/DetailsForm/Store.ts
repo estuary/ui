@@ -161,6 +161,8 @@ export const getInitialState = (
                     state.details.data.connectorImage =
                         getInitialStateData().details.data.connectorImage;
                 } else {
+                    state.previousDetails.data.connectorImage =
+                        state.details.data.connectorImage;
                     state.details.data.connectorImage = connectorImage;
                 }
             }),

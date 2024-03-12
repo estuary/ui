@@ -101,7 +101,7 @@ export const ConnectorAutoComplete = (
                 (uniqueResponse: any) =>
                     areOptionsEqual(uniqueResponse.value, option.value)
             );
-            console.log('existingResponse', existingResponse);
+
             if (existingResponse) {
                 duplicatesResponses[option.value.connectorId] = {
                     ...(duplicatesResponses[option.value.connectorId] ?? {
@@ -130,8 +130,6 @@ export const ConnectorAutoComplete = (
 
         return [];
     }, [currentOption, duplicateOptions]);
-
-    console.log('currentOptionsTags', currentOptionsTags);
 
     return (
         <Autocomplete

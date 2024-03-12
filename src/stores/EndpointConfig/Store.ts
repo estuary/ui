@@ -42,11 +42,6 @@ const populateErrors = (
         : !isEmpty(endpointConfigErrors) || !isEmpty(customErrors);
 };
 
-const populateTagIds = (newTagId: string, state: EndpointConfigState) => {
-    state.previousTagId = state.tagId.length > 0 ? state.tagId : newTagId;
-    state.tagId = newTagId;
-};
-
 const getInitialStateData = (): Pick<
     EndpointConfigState,
     | 'encryptedEndpointConfig'
@@ -58,10 +53,8 @@ const getInitialStateData = (): Pick<
     | 'hydrated'
     | 'hydrationErrorsExist'
     | 'previousEndpointConfig'
-    | 'previousTagId'
     | 'publishedEndpointConfig'
     | 'serverUpdateRequired'
-    | 'tagId'
 > => ({
     encryptedEndpointConfig: { data: {}, errors: [] },
     endpointCanBeEmpty: false,
@@ -72,10 +65,8 @@ const getInitialStateData = (): Pick<
     hydrated: false,
     hydrationErrorsExist: false,
     previousEndpointConfig: { data: {}, errors: [] },
-    previousTagId: '',
     publishedEndpointConfig: { data: {}, errors: [] },
     serverUpdateRequired: false,
-    tagId: '',
 });
 
 const getInitialState = (
@@ -103,16 +94,14 @@ const getInitialState = (
         );
     },
 
-    setEndpointSchema: (val, tagId) => {
+    setEndpointSchema: (val) => {
         set(
             produce((state: EndpointConfigState) => {
-                console.log('setEndpointSchema', { tagId, val });
                 state.endpointSchema = val;
 
                 const { endpointConfig, customErrors } = get();
 
                 populateErrors(endpointConfig, customErrors, state);
-                populateTagIds(tagId, state);
             }),
             false,
             'Endpoint Schema Set'
@@ -230,8 +219,7 @@ const getInitialState = (
 
             if (get().active && data) {
                 get().setEndpointSchema(
-                    data.endpoint_spec_schema as unknown as Schema,
-                    connectorTagId
+                    data.endpoint_spec_schema as unknown as Schema
                 );
             }
         }
