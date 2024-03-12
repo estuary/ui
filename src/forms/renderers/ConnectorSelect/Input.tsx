@@ -75,6 +75,7 @@ function ConnectorInput({
                             id="connector-tag-select"
                             value={connectorTag}
                             onChange={handleChange}
+                            disabled={!enabled}
                         >
                             {currentOptionsTags.map(
                                 (currentOptionsTag: any) => {

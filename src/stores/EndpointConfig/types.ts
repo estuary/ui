@@ -11,7 +11,10 @@ export interface EndpointConfigState
     extends StoreWithHydration,
         StoreWithCustomErrors {
     endpointSchema: Schema;
-    setEndpointSchema: (val: EndpointConfigState['endpointSchema']) => void;
+    setEndpointSchema: (
+        val: EndpointConfigState['endpointSchema'],
+        tagId: EndpointConfigState['tagId']
+    ) => void;
 
     // Encrypted Endpoint Configs
     publishedEndpointConfig: JsonFormsData;
@@ -32,6 +35,9 @@ export interface EndpointConfigState
 
     endpointConfig: JsonFormsData;
     setEndpointConfig: (endpointConfig: JsonFormsData) => void;
+
+    previousTagId: string;
+    tagId: string;
 
     errorsExist: boolean;
     endpointConfigErrors: { message: string | undefined }[];

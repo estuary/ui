@@ -16,9 +16,11 @@ import { createJSONFormDefaults } from 'services/ajv';
 import { useDetailsForm_unsupportedConnectorVersion } from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_tagId,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_previousEndpointConfig_data,
+    useEndpointConfigStore_previousTagId,
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
@@ -55,6 +57,9 @@ function EndpointConfig({
     const draftId = useEditorStore_id();
 
     // Endpoint Config Store
+    const endpointTagId = useEndpointConfigStore_tagId();
+    const previousEndpointTagId = useEndpointConfigStore_previousTagId();
+
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
     const previousEndpointConfig =
@@ -130,7 +135,7 @@ function EndpointConfig({
 
         return [resetConfig, updateSchema];
     }, [
-        connectorTag?.endpoint_spec_schema,
+        connectorTag,
         editWorkflow,
         endpointSchema,
         unsupportedConnectorVersion,
@@ -148,7 +153,7 @@ function EndpointConfig({
 
         // Update the schema if needed
         if (updateEndpointSchema) {
-            setEndpointSchema(schema);
+            setEndpointSchema(schema, connectorTag.id);
         }
 
         if (resetEndpointConfig) {
@@ -177,6 +182,7 @@ function EndpointConfig({
         }
     }, [
         connectorTag?.endpoint_spec_schema,
+        connectorTag?.id,
         resetEndpointConfig,
         setEncryptedEndpointConfig,
         setEndpointConfig,
@@ -188,10 +194,22 @@ function EndpointConfig({
 
     // Controlling if we need to show the generate button again
     const endpointConfigUpdated = useMemo(() => {
-        return canBeEmpty
-            ? false
-            : !isEqual(endpointConfig, previousEndpointConfig);
-    }, [canBeEmpty, endpointConfig, previousEndpointConfig]);
+        if (canBeEmpty) {
+            return false;
+        }
+
+        if (isEqual(endpointConfig, previousEndpointConfig)) {
+            return endpointTagId === previousEndpointTagId;
+        }
+
+        return true;
+    }, [
+        canBeEmpty,
+        endpointConfig,
+        endpointTagId,
+        previousEndpointConfig,
+        previousEndpointTagId,
+    ]);
     useEffect(() => {
         setServerUpdateRequired(endpointConfigUpdated);
     }, [setServerUpdateRequired, endpointConfigUpdated]);
