@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Input from '@mui/material/Input';
 import MenuItem from '@mui/material/MenuItem';
 import ConnectorIcon from 'components/connectors/ConnectorIcon';
-import { useState } from 'react';
 
 interface Props {
     inputProps: any;
@@ -24,10 +23,7 @@ function ConnectorInput({
     enabled,
     updateTag,
 }: Props) {
-    const [connectorTag, setConnectorTag] = useState(currentOption.value.id);
-
     const handleChange = (event: SelectChangeEvent) => {
-        setConnectorTag(event.target.value);
         updateTag(
             currentOptionsTags?.find((currentOptionsTag) => {
                 return currentOptionsTag.id === event.target.value;
@@ -73,7 +69,7 @@ function ConnectorInput({
                     <FormControl>
                         <Select
                             id="connector-tag-select"
-                            value={connectorTag}
+                            value={currentOption.value.id}
                             onChange={handleChange}
                         >
                             {currentOptionsTags.map(

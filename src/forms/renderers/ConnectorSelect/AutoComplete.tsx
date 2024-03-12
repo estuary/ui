@@ -116,12 +116,13 @@ export const ConnectorAutoComplete = (
             );
 
             if (existingResponse) {
-                duplicatesResponses[option.value.connectorId] = {
-                    ...(duplicatesResponses[option.value.connectorId] ?? {
-                        [existingResponse.value.id]: existingResponse.value,
-                    }),
-                    [option.value.id]: option.value,
-                };
+                if (!duplicatesResponses[option.value.connectorId]) {
+                    duplicatesResponses[option.value.connectorId] = [];
+                }
+
+                duplicatesResponses[option.value.connectorId].push(
+                    option.value
+                );
             } else {
                 // If we have a current option then use that in the list
                 //  so that it can be shown as selected.
@@ -147,9 +148,7 @@ export const ConnectorAutoComplete = (
         }
 
         if (duplicateOptions[currentOption.value.connectorId]) {
-            return Object.values(
-                duplicateOptions[currentOption.value.connectorId]
-            );
+            return duplicateOptions[currentOption.value.connectorId];
         }
 
         return [];
