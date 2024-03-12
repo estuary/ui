@@ -57,7 +57,6 @@ export const getConnectorImageDetails = (
             connector.image_name,
             connectorTag.image_tag
         ),
-        imageTag: connectorTag.image_tag,
         iconPath: connector.image,
     };
 };

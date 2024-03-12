@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Input from '@mui/material/Input';
 import MenuItem from '@mui/material/MenuItem';
 import ConnectorIcon from 'components/connectors/ConnectorIcon';
-import { generateImagePath } from 'components/shared/Entity/DetailsForm/Form';
 import { useState } from 'react';
 
 interface Props {
@@ -29,21 +28,11 @@ function ConnectorInput({
 
     const handleChange = (event: SelectChangeEvent) => {
         setConnectorTag(event.target.value);
-
-        const selectedTag = currentOptionsTags?.find((currentOptionsTag) => {
-            return currentOptionsTag.id === event.target.value;
-        });
-
-        const newValue = {
-            ...currentOption.value,
-            id: event.target.value,
-            imagePath: generateImagePath(
-                currentOption.value.imageName,
-                selectedTag.image_tag
-            ),
-        };
-
-        updateTag(newValue);
+        updateTag(
+            currentOptionsTags?.find((currentOptionsTag) => {
+                return currentOptionsTag.id === event.target.value;
+            })
+        );
     };
 
     return (
@@ -94,7 +83,11 @@ function ConnectorInput({
                                             key={`connector-tag-option__${currentOptionsTag.id}`}
                                             value={currentOptionsTag.id}
                                         >
-                                            {currentOptionsTag.imageTag}
+                                            {
+                                                currentOptionsTag.imagePath.split(
+                                                    ':'
+                                                )[1]
+                                            }
                                         </MenuItem>
                                     );
                                 }
