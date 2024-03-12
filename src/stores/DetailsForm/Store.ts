@@ -49,6 +49,7 @@ const getConnectorImage = async (
             id: connectorTag.id,
             imageName: image_name,
             imagePath: `${image_name}${connectorTag.image_tag}`,
+            imageTag: connectorTag.image_tag,
             iconPath: logo_url,
         };
     }
@@ -64,6 +65,7 @@ const initialDetails: Details = {
             iconPath: '',
             imageName: '',
             imagePath: '',
+            imageTag: '',
         },
         entityName: '',
     },
@@ -316,6 +318,7 @@ export const getInitialState = (
                     iconPath: '',
                     imageName: '',
                     imagePath: '',
+                    imageTag: '',
                     connectorId,
                 });
                 setHydrationErrorsExist(true);

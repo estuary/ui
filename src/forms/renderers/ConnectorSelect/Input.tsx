@@ -94,7 +94,7 @@ function ConnectorInput({
                                             key={`connector-tag-option__${currentOptionsTag.id}`}
                                             value={currentOptionsTag.id}
                                         >
-                                            {currentOptionsTag.image_tag}
+                                            {currentOptionsTag.imageTag}
                                         </MenuItem>
                                     );
                                 }

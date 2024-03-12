@@ -35,6 +35,7 @@ import ConnectorInput from 'forms/renderers/ConnectorSelect/Input';
 import ConnectorOption from 'forms/renderers/ConnectorSelect/Option';
 import merge from 'lodash/merge';
 import React, { ReactNode, useMemo } from 'react';
+import { hasLength } from 'utils/misc-utils';
 
 export interface WithOptionLabel {
     getOptionLabel?(option: EnumOption): string;
@@ -85,14 +86,56 @@ export const ConnectorAutoComplete = (
         [data, options]
     );
 
-    const currentOptionsTags = useMemo(
-        () => (currentOption ? currentOption.value.tags : null),
-        [currentOption]
-    );
+    // Go through all the options and see where we have "duplicate" connectors
+    //  this allows us to make these sub selections
+    const [uniqueOptions, duplicateOptions] = useMemo(() => {
+        const uniqueResponses: any[] = [];
+        const duplicatesResponses: any = {};
+
+        if (!options || !hasLength(options)) {
+            return [uniqueResponses, duplicatesResponses];
+        }
+
+        options.forEach((option) => {
+            const existingResponse = uniqueResponses.find(
+                (uniqueResponse: any) =>
+                    areOptionsEqual(uniqueResponse.value, option.value)
+            );
+            console.log('existingResponse', existingResponse);
+            if (existingResponse) {
+                duplicatesResponses[option.value.connectorId] = {
+                    ...(duplicatesResponses[option.value.connectorId] ?? {
+                        [existingResponse.value.id]: existingResponse.value,
+                    }),
+                    [option.value.id]: option.value,
+                };
+            } else {
+                uniqueResponses.push(option);
+            }
+        });
+
+        return [uniqueResponses, duplicatesResponses];
+    }, [options]);
+
+    const currentOptionsTags = useMemo(() => {
+        if (!currentOption) {
+            return null;
+        }
+
+        if (duplicateOptions[currentOption.value.connectorId]) {
+            return Object.values(
+                duplicateOptions[currentOption.value.connectorId]
+            );
+        }
+
+        return [];
+    }, [currentOption, duplicateOptions]);
+
+    console.log('currentOptionsTags', currentOptionsTags);
 
     return (
         <Autocomplete
-            options={options ?? []}
+            options={uniqueOptions}
             getOptionLabel={getOptionLabel ?? ((option) => option.label)}
             className={className}
             id={id}

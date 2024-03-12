@@ -57,6 +57,7 @@ export const getConnectorImageDetails = (
             connector.image_name,
             connectorTag.image_tag
         ),
+        imageTag: connectorTag.image_tag,
         iconPath: connector.image,
     };
 };
@@ -132,10 +133,13 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
         if (connectorTags.length > 0) {
             connectorTags.forEach((connector) => {
                 if (connector.connector_tags.length > 1) {
+                    // If we have multiple tags we need to build up multiple oneOfs
+                    //  so that the validation works. This is also caught in the renderer
+                    //  for the connector autocomplete to not display these multiple times
+                    //  but rather make a sub selection
                     connector.connector_tags.forEach((connector_tag) => {
                         response.push({
                             const: {
-                                tags: connector.connector_tags,
                                 ...getConnectorImageDetails(connector, {
                                     connectorId: connector.id,
                                     existingImageTag: connector_tag.image_tag,
