@@ -198,13 +198,17 @@ function EndpointConfig({
             return false;
         }
 
-        if (isEqual(endpointConfig, previousEndpointConfig)) {
-            return endpointTagId === previousEndpointTagId;
+        if (!isEqual(endpointConfig, previousEndpointConfig)) {
+            return true;
         }
 
-        return true;
+        // In edit you cannot change the tag so ignore those
+        // In create users can change the tag and that might end up
+        //  loading a new schema BUT not change the endpoint config.
+        return !editWorkflow && endpointTagId === previousEndpointTagId;
     }, [
         canBeEmpty,
+        editWorkflow,
         endpointConfig,
         endpointTagId,
         previousEndpointConfig,
