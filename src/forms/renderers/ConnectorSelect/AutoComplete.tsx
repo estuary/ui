@@ -55,7 +55,7 @@ export interface WithOptionLabel {
     ): EnumOption[];
 }
 
-const areConnectorIdsEqual = (option?: any, value?: any) => {
+const areOptionsEqual = (option?: any, value?: any) => {
     return (
         value?.connectorId &&
         value.connectorId.length > 0 &&
@@ -112,7 +112,7 @@ export const ConnectorAutoComplete = (
         options.forEach((option) => {
             const existingResponse = uniqueResponses.find(
                 (uniqueResponse: any) =>
-                    areConnectorIdsEqual(uniqueResponse.value, option.value)
+                    areOptionsEqual(uniqueResponse.value, option.value)
             );
 
             if (existingResponse) {
