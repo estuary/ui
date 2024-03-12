@@ -12,6 +12,7 @@ export enum CustomEvents {
     CONNECTOR_VERSION_UNSUPPORTED = 'Connector_Version:Unsupported',
     DIRECTIVE = 'Directive',
     DIRECTIVE_EXCHANGE_TOKEN = 'Directive:ExchangeToken',
+    ENTITY_CREATE_TAG_CHANGED = 'Entity:Create:Tag:Changed',
     ERROR_BOUNDARY_DISPLAYED = 'Error_Boundary_Displayed',
     ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
     ERROR_DISPLAYED = 'Error_Displayed',

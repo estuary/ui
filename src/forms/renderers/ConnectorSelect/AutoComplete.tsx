@@ -33,8 +33,13 @@ import {
 } from '@mui/material';
 import ConnectorInput from 'forms/renderers/ConnectorSelect/Input';
 import ConnectorOption from 'forms/renderers/ConnectorSelect/Option';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import merge from 'lodash/merge';
 import React, { ReactNode, useMemo } from 'react';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { hasLength } from 'utils/misc-utils';
 
 export interface WithOptionLabel {
@@ -61,6 +66,10 @@ const areOptionsEqual = (option?: any, value?: any) => {
 export const ConnectorAutoComplete = (
     props: EnumCellProps & WithClassname & WithOptionLabel
 ) => {
+    const tagEditEnabled = useGlobalSearchParams(
+        GlobalSearchParams.TAG_EDIT_ENABLED
+    );
+
     const {
         data,
         className,
@@ -118,6 +127,10 @@ export const ConnectorAutoComplete = (
     }, [options]);
 
     const currentOptionsTags = useMemo(() => {
+        if (tagEditEnabled !== 'true') {
+            return null;
+        }
+
         if (!currentOption) {
             return null;
         }
@@ -129,7 +142,7 @@ export const ConnectorAutoComplete = (
         }
 
         return [];
-    }, [currentOption, duplicateOptions]);
+    }, [currentOption, duplicateOptions, tagEditEnabled]);
 
     return (
         <Autocomplete
@@ -164,7 +177,9 @@ export const ConnectorAutoComplete = (
                         currentOption={currentOption}
                         currentOptionsTags={currentOptionsTags}
                         updateTag={(updatedOption) => {
-                            console.log('newTag', updatedOption);
+                            logRocketEvent(
+                                CustomEvents.ENTITY_CREATE_TAG_CHANGED
+                            );
                             handleChange(path, updatedOption);
                         }}
                     />

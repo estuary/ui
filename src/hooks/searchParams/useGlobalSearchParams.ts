@@ -14,6 +14,8 @@ export enum GlobalSearchParams {
     PROVIDER = 'provider', // Login Provider but having a url like login/?loginProvider looked weird
     HOME_PAGE_ERROR = 'homePageError',
     LOGIN_HINTS_GOOGLE = 'google_login_hint',
+    // Used to control if the connector allows editing of the connector tag in entity create
+    TAG_EDIT_ENABLED = 'tagEditEnabled',
 }
 
 function useGlobalSearchParams<T = string>(key: GlobalSearchParams): T;
