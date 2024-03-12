@@ -55,12 +55,16 @@ export interface WithOptionLabel {
     ): EnumOption[];
 }
 
-const areOptionsEqual = (option?: any, value?: any) => {
+const areConnectorIdsEqual = (option?: any, value?: any) => {
     return (
         value?.connectorId &&
         value.connectorId.length > 0 &&
         option.connectorId === value.connectorId
     );
+};
+
+const areTagsEqual = (option?: any, value?: any) => {
+    return value?.id && value.id.length > 0 && option.id === value.id;
 };
 
 export const ConnectorAutoComplete = (
@@ -90,7 +94,7 @@ export const ConnectorAutoComplete = (
     const currentOption = useMemo(
         () =>
             options?.find((option) => {
-                return areOptionsEqual(option.value, data);
+                return areTagsEqual(option.value, data);
             }) ?? null,
         [data, options]
     );
@@ -108,7 +112,7 @@ export const ConnectorAutoComplete = (
         options.forEach((option) => {
             const existingResponse = uniqueResponses.find(
                 (uniqueResponse: any) =>
-                    areOptionsEqual(uniqueResponse.value, option.value)
+                    areConnectorIdsEqual(uniqueResponse.value, option.value)
             );
 
             if (existingResponse) {
@@ -119,12 +123,19 @@ export const ConnectorAutoComplete = (
                     [option.value.id]: option.value,
                 };
             } else {
-                uniqueResponses.push(option);
+                // If we have a current option then use that in the list
+                //  so that it can be shown as selected.
+                uniqueResponses.push(
+                    currentOption?.value.connectorId ===
+                        option.value.connectorId
+                        ? currentOption
+                        : option
+                );
             }
         });
 
         return [uniqueResponses, duplicatesResponses];
-    }, [options]);
+    }, [currentOption, options]);
 
     const currentOptionsTags = useMemo(() => {
         if (tagEditEnabled !== 'true') {
