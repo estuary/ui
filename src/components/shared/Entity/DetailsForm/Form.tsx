@@ -150,7 +150,6 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
                 } else {
                     response.push({
                         const: {
-                            tags: connector.connector_tags,
                             ...getConnectorImageDetails(
                                 connector,
                                 versionEvaluationOptions
