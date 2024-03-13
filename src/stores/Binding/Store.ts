@@ -307,6 +307,13 @@ const getInitialState = (
             produce((state: BindingState) => {
                 state.bindings = {};
                 state.restrictedDiscoveredCollections = [];
+
+                state.rediscoveryRequired = false;
+                state.collectionsRequiringRediscovery = [];
+
+                state.backfilledBindings = [];
+                state.backfillAllBindings = false;
+
                 state.resourceConfigs = {};
 
                 const discoveredBindings =
