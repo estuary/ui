@@ -49,6 +49,7 @@ import JsonRefs from 'json-refs';
 import {
     ADVANCED,
     CONTAINS_REQUIRED_FIELDS,
+    NULLABLE_FIELD,
     SHOW_INFO_SSH_ENDPOINT,
 } from './shared';
 
@@ -140,6 +141,15 @@ const containsSshEndpoint = (schema: any): boolean => {
 const isAdvancedConfig = (schema: JsonSchema): boolean => {
     // eslint-disable-next-line @typescript-eslint/dot-notation
     return schema[ADVANCED] === true;
+};
+
+const isNullableConfig = (schema: JsonSchema): boolean => {
+    if (schema.anyOf) {
+        const types = schema.anyOf.map(({ type }) => type);
+        return types.includes('null') && types.length === 2;
+    }
+
+    return false;
 };
 
 const isOAuthConfig = (schema: JsonSchema): boolean => {
@@ -662,7 +672,7 @@ export const derefSchema = async (schema: any) => {
             ? null
             : await JsonRefs.resolveRefs(schema, {
                   includeInvalid: true, // Gives us errors in response - does not allow invalid ones through
-                  filter: 'relative', // We do not want to go fetch remote ones just to be safe (2024 Q1)
+                  // filter: 'relative', // We do not want to go fetch remote ones just to be safe (2024 Q1)
               });
 
         // Go through the refs and see if any errored out
