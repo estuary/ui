@@ -48,6 +48,7 @@ import { Annotations, CustomTypes, Formats, Options } from 'types/jsonforms';
 import JsonRefs from 'json-refs';
 import {
     ADVANCED,
+    allowedNullableTypes,
     CONTAINS_REQUIRED_FIELDS,
     SHOW_INFO_SSH_ENDPOINT,
 } from './shared';
@@ -142,13 +143,36 @@ const isAdvancedConfig = (schema: JsonSchema): boolean => {
     return schema[ADVANCED] === true;
 };
 
-const isNullableConfig = (schema: JsonSchema): boolean => {
-    if (schema.anyOf) {
-        const types = schema.anyOf.map(({ type }) => type);
-        return types.includes('null') && types.length === 2;
+// Nullsable is only supported for anyOf and oneOf. This is manually checked
+//  because allOf will also return true for a combinator check. After that we only
+//  support when there is exactly two types. This is mainly here to help render
+//  pydantic inputs better.
+const getNullableType = (schema: JsonSchema): null | string => {
+    const combinatorVal = schema.anyOf ?? schema.oneOf ?? null;
+
+    if (combinatorVal === null) {
+        return null;
     }
 
-    return false;
+    const types = combinatorVal.map(({ type }) => type);
+
+    if (types.length === 2 && types.includes('null')) {
+        const response = types.filter((val) => {
+            if (!val || Array.isArray(val)) {
+                return false;
+            }
+
+            // TODO (typing) - for some reason an array of specific strings
+            //  cannot have includes pass any string.
+            return (allowedNullableTypes as unknown as string[]).includes(val);
+        })[0];
+
+        if (typeof response === 'string') {
+            return response;
+        }
+    }
+
+    return null;
 };
 
 const isOAuthConfig = (schema: JsonSchema): boolean => {
@@ -181,9 +205,12 @@ const addInfoSshEndpoint = (elem: Layout | ControlElement | GroupLayout) => {
     }
 };
 
-const addNullableField = (elem: Layout | ControlElement | GroupLayout) => {
+const addNullableField = (
+    elem: Layout | ControlElement | GroupLayout,
+    val: string
+) => {
     if (!Object.hasOwn(elem.options ?? {}, Options.nullable)) {
-        addOption(elem, Options.nullable, true);
+        addOption(elem, Options.nullable, val);
     }
 };
 
@@ -439,8 +466,12 @@ const generateUISchema = (
                 controlObject.label = jsonSchema.title;
             }
 
-            if (isNullableConfig(jsonSchema)) {
-                addNullableField(controlObject);
+            // Checking if the combinator is a "nullable" field from Pydantic
+            //  forms. Needed so we can render them as normal fields and not
+            //  actual combinators (tabs).
+            const nullableType = getNullableType(jsonSchema);
+            if (nullableType) {
+                addNullableField(controlObject, nullableType);
             }
 
             schemaElements.push(controlObject);

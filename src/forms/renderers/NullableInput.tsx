@@ -1,42 +1,55 @@
-import { optionIs, RankedTester, rankWith } from '@jsonforms/core';
+import { RankedTester, rankWith } from '@jsonforms/core';
 import {
     MaterialInputControl,
+    MuiInputInteger,
+    MuiInputNumber,
     MuiInputText,
 } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { Box, Button, Stack } from '@mui/material';
-import { useCallback } from 'react';
+import { useMemo } from 'react';
+import { AllowedNullable } from 'services/jsonforms/shared';
 import { Options } from 'types/jsonforms';
+import { optionExists } from './Overrides/testers/testers';
 
 export const nullableControlTester: RankedTester = rankWith(
-    10,
-    optionIs(Options.nullable, true)
+    1000,
+    optionExists(Options.nullable)
 );
 
 // This is blank on purpose. For right now we can just show null settings are nothing
 const NullableRenderer = (props: any) => {
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    const { handleChange, path, enabled } = props;
+    const { uischema } = props;
+    const { options } = uischema;
 
-    const nullField = useCallback(() => {
-        console.log('null out the field', { handleChange, path });
-    }, [handleChange, path]);
+    const InputComponent = useMemo(() => {
+        const providerVal: AllowedNullable = options
+            ? options[Options.nullable]
+            : null;
 
-    return (
-        <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-            <MaterialInputControl {...props} input={MuiInputText} />
+        switch (providerVal) {
+            case 'array':
+                return null;
+            case 'number':
+                return MuiInputNumber;
+            case 'integer':
+                return MuiInputInteger;
+            default:
+                return MuiInputText;
+        }
+    }, [options]);
 
-            <Box>
-                <Button
-                    disabled={!enabled}
-                    onClick={nullField}
-                    sx={{ whiteSpace: 'nowrap' }}
-                >
-                    Null
-                </Button>
-            </Box>
-        </Stack>
-    );
+    if (InputComponent === null) {
+        // return <MaterialArrayControlRenderer {...props} />;
+        return (
+            <>
+                Need to get Arrays rendering correctly. Probably need two
+                different nullable renderers
+            </>
+        );
+    }
+
+    return <MaterialInputControl {...props} input={InputComponent} />;
 };
 
 export const NullableControl = withJsonFormsControlProps(NullableRenderer);
