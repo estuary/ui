@@ -91,4 +91,25 @@ const getConnectors_detailsForm = async (connectorId: string) => {
     return data;
 };
 
-export { getConnectors, getConnectors_detailsForm };
+const getConnectors_withTags = async (protocol: string | null) => {
+    const data = await supabaseRetry(() => {
+        const query = supabaseClient
+            .from(TABLES.CONNECTORS)
+            .select(CONNECTOR_WITH_TAG_QUERY);
+
+        return requiredConnectorColumnsExist<ConnectorWithTagDetailQuery>(
+            query,
+            'connector_tags'
+        )
+            .eq('connector_tags.protocol', protocol as string)
+            .order(CONNECTOR_RECOMMENDED, { ascending: false })
+            .order(CONNECTOR_NAME);
+    }, 'getConnectors_detailsForm').then(
+        handleSuccess<ConnectorsQuery_DetailsForm[]>,
+        handleFailure
+    );
+
+    return data;
+};
+
+export { getConnectors, getConnectors_detailsForm, getConnectors_withTags };

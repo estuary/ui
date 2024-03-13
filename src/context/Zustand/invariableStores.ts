@@ -2,6 +2,7 @@ import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create'
 import { createEditorStore } from 'components/editor/Store/create';
 import { createExistingEntityStore } from 'components/shared/Entity/ExistingEntityCards/Store/create';
 import { billingStore } from 'stores/Billing/Store';
+import { createConnectorsStore } from 'stores/Connectors/Store';
 import {
     captureDetailsForm,
     collectionDetailsForm,
@@ -173,6 +174,9 @@ const invariableStores = {
     ),
 
     // Global App Stores
+    [GlobalStoreNames.CONNECTORS]: createConnectorsStore(
+        GlobalStoreNames.CONNECTORS
+    ),
     [GlobalStoreNames.ENTITIES]: createEntitiesStore(GlobalStoreNames.ENTITIES),
     [GlobalStoreNames.SIDE_PANEL_DOCS]: createSidePanelDocsStore(
         GlobalStoreNames.SIDE_PANEL_DOCS
