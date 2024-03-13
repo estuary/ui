@@ -119,5 +119,5 @@ export interface BindingState
         rehydrating?: boolean
     ) => Promise<LiveSpecsExt_MaterializeCapture[] | null>;
 
-    resetState: (keepCollections?: boolean) => void;
+    resetState: (keepCollections?: boolean, resetActive?: boolean) => void;
 }

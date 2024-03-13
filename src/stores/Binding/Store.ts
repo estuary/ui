@@ -172,7 +172,7 @@ const getInitialBindingData = (): Pick<
     currentBinding: null,
 });
 
-const getInitialStateData = (): Pick<
+const getInitialMiscData = (): Pick<
     BindingState,
     | 'backfillAllBindings'
     | 'backfilledBindings'
@@ -203,7 +203,7 @@ const getInitialStoreData = () => ({
     ...getInitialBindingData(),
     ...getInitialFieldSelectionData(),
     ...getInitialHydrationData(),
-    ...getInitialStateData(),
+    ...getInitialMiscData(),
     ...getInitialTimeTravelData(),
 });
 
@@ -366,8 +366,8 @@ const getInitialState = (
         const materializationRehydrating =
             materializationHydrating && rehydrating;
 
-        const { setHydrationErrorsExist } = get();
-        // resetState(materializationRehydrating);
+        const { resetState, setHydrationErrorsExist } = get();
+        resetState(materializationRehydrating);
 
         if (connectorTagId && connectorTagId.length > 0) {
             const { data, error } = await getSchema_Resource(connectorTagId);
@@ -799,16 +799,25 @@ const getInitialState = (
         );
     },
 
-    resetState: (keepCollections) => {
-        const currentState = get();
+    // The `hydrated` state property can only be set when the `active` state property is true.
+    // An external, hydration component is responsible for setting the `active` state property
+    // to true when hydration is initiated and false once completed. Consequently, this property
+    // value should be preserved by default when the `resetState` action is called.
+    resetState: (keepCollections, resetActive) => {
+        const { active, ...currentState } = get();
 
         const initState = keepCollections
-            ? getInitialStateData()
+            ? {
+                  ...getInitialFieldSelectionData(),
+                  ...getInitialMiscData(),
+                  ...getInitialTimeTravelData(),
+              }
             : getInitialStoreData();
 
         const newState = {
             ...currentState,
             ...initState,
+            active: resetActive ? false : active,
         };
 
         set(newState, false, 'Binding State Reset');

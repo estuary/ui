@@ -78,7 +78,7 @@ function useEntityWorkflowHelpers() {
         resetFormState();
         resetEndpointConfigState();
         resetDetailsFormState();
-        resetBindingState();
+        resetBindingState(undefined, true);
         resetEditorStore();
         resetBindingsEditorStore();
         resetSchemaEvolutionState();
