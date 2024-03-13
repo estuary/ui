@@ -37,3 +37,7 @@ export enum Annotations {
     defaultResourceConfigName = 'x-collection-name',
     inferSchema = 'x-infer-schema',
 }
+
+export enum CustomTypes {
+    nullable = 'NullType',
+}

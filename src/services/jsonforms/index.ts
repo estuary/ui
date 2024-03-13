@@ -44,7 +44,7 @@ import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import { Annotations, Formats, Options } from 'types/jsonforms';
+import { Annotations, CustomTypes, Formats, Options } from 'types/jsonforms';
 import JsonRefs from 'json-refs';
 import {
     ADVANCED,
@@ -467,12 +467,16 @@ const generateUISchema = (
 
     const types = deriveTypes(jsonSchema);
     if (types.length === 0) {
-        // TODO (jsonforms)
-        // This happens when there is a type "null" INSIDE of a combinator
-        // need more work but this keeps the form from blowing up at least.
-        console.error(`Likely invalid schema at ${currentRef}`, jsonSchema);
+        // jsonforms - nullable
+        // Usually this happens when there is a type "null" INSIDE of a combinator
+        //  the null renderer will not display anything if the currentRef is #
+        logRocketEvent(CustomEvents.JSON_SCHEMA_NULLABLE);
+        logRocketConsole(`${CustomTypes.nullable} renderer found`, {
+            currentRef,
+            jsonSchema,
+        });
         return {
-            type: 'NullType',
+            type: CustomTypes.nullable,
             options: {
                 ref: currentRef,
             },

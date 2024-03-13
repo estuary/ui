@@ -27,6 +27,7 @@ export enum CustomEvents {
     JOURNAL_DATA_STATUS = 'JournalData:Status',
     JOURNAL_DATA_MAX_BYTES_NOT_ENOUGH = 'JournalData:MaxBytesNotEnough',
     JSON_SCHEMA_DEREF = 'JsonSchema:Deref',
+    JSON_SCHEMA_NULLABLE = 'JsonSchema:Nullable',
     MARKETPLACE_VERIFY = 'Marketplace:Verify',
     MATERIALIZATION_CREATE = 'Materialization_Create',
     MATERIALIZATION_CREATE_CONFIG_CREATE = 'Materialization_Create_Config_Create',
