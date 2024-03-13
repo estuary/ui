@@ -12,6 +12,10 @@ import {
     MultiLineSecret,
     multiLineSecretTester,
 } from 'forms/renderers/MultiLineSecret';
+import {
+    NullableControl,
+    nullableControlTester,
+} from 'forms/renderers/NullableInput';
 import { NullType, nullTypeTester } from 'forms/renderers/NullType';
 import { oAuthProviderTester, OAuthType } from 'forms/renderers/OAuth';
 import MaterialOneOfRenderer_Discriminator, {
@@ -56,6 +60,7 @@ const defaultRenderers = [
     { renderer: ConnectorType, tester: connectorTypeTester },
     { renderer: CatalogName, tester: catalogNameTypeTester },
     { renderer: MultiLineSecret, tester: multiLineSecretTester },
+    { renderer: NullableControl, tester: nullableControlTester },
 ];
 
 export default defaultRenderers;

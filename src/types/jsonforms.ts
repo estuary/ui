@@ -5,6 +5,7 @@
 
 export enum Options {
     multi = 'multi',
+    nullable = 'nullable',
     format = 'format',
     oauthProvider = 'oauth_provider',
     oauthFields = 'oauth_fields',

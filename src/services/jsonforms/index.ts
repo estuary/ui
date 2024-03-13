@@ -49,7 +49,6 @@ import JsonRefs from 'json-refs';
 import {
     ADVANCED,
     CONTAINS_REQUIRED_FIELDS,
-    NULLABLE_FIELD,
     SHOW_INFO_SSH_ENDPOINT,
 } from './shared';
 
@@ -183,8 +182,8 @@ const addInfoSshEndpoint = (elem: Layout | ControlElement | GroupLayout) => {
 };
 
 const addNullableField = (elem: Layout | ControlElement | GroupLayout) => {
-    if (!Object.hasOwn(elem.options ?? {}, NULLABLE_FIELD)) {
-        addOption(elem, NULLABLE_FIELD, true);
+    if (!Object.hasOwn(elem.options ?? {}, Options.nullable)) {
+        addOption(elem, Options.nullable, true);
     }
 };
 
