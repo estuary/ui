@@ -35,11 +35,17 @@ export interface BindingState
         StoreWithFieldSelection,
         StoreWithTimeTravel {
     bindings: Bindings;
+
+    // The combination of resource config store actions, `prefillResourceConfig` and `prefillBackfilledCollections`,
+    // with expanded scope that initializes the time travel-related state in materialization workflows.
+    // Formerly, the latter was done in `useInitializeTaskDraft`.
     prefillBindingDependentState: (
         entityType: Entity,
         liveBindings: Schema[],
         draftedBindings?: Schema[]
     ) => void;
+
+    // The analog of resource config store action, `preFillEmptyCollections`.
     addEmptyBindings: (
         data: LiveSpecsExt_MaterializeCapture[] | null,
         rehydrating?: boolean
@@ -87,10 +93,18 @@ export interface BindingState
 
     // Resource Config
     resourceConfigs: ResourceConfigDictionary;
+
+    // The partition of the second half of resource config store action, `setResourceConfig`,
+    // which updated the resource config dictionary when a capture is linked to a materialization
+    // and bindings are added to the specification via the collection selector.
     prefillResourceConfigs: (
         targetCollections: string[],
         disableOmit?: boolean
     ) => void;
+
+    // The combination of resource config store actions, `updateResourceConfig` and
+    // the partition of the first half of `setResourceConfig`, which updated
+    // the resource config dictionary when editing a binding's resource config form.
     updateResourceConfig: (
         key: string,
         targetBindingUUID: string,
@@ -105,7 +119,12 @@ export interface BindingState
     serverUpdateRequired: boolean;
     setServerUpdateRequired: (value: boolean) => void;
 
+    // The analog of resource config store action, `evaluateDiscoveredBindings`,
+    // which encapsulates the functionality of `setDiscoveredCollections`
+    // and `resetConfigAndCollections`.
     evaluateDiscoveredBindings: (response: CallSupabaseResponse<any>) => void;
+
+    // The analog of resource config store action, `resetResourceConfigAndCollections`.
     removeDiscoveredBindings: () => void;
 
     // Computed Values
