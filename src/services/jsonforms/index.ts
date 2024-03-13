@@ -172,6 +172,12 @@ const addInfoSshEndpoint = (elem: Layout | ControlElement | GroupLayout) => {
     }
 };
 
+const addNullableField = (elem: Layout | ControlElement | GroupLayout) => {
+    if (!Object.hasOwn(elem.options ?? {}, NULLABLE_FIELD)) {
+        addOption(elem, NULLABLE_FIELD, true);
+    }
+};
+
 const copyRequiredOption = (
     isRequired: boolean,
     elem: Layout | ControlElement | GroupLayout
@@ -422,6 +428,10 @@ const generateUISchema = (
 
             if (jsonSchema.title) {
                 controlObject.label = jsonSchema.title;
+            }
+
+            if (isNullableConfig(jsonSchema)) {
+                addNullableField(controlObject);
             }
 
             schemaElements.push(controlObject);
