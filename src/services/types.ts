@@ -26,6 +26,7 @@ export enum CustomEvents {
     LOGS_DOCUMENT_COUNT = 'Logs:Document:Count',
     JOURNAL_DATA_STATUS = 'JournalData:Status',
     JOURNAL_DATA_MAX_BYTES_NOT_ENOUGH = 'JournalData:MaxBytesNotEnough',
+    JSON_FORMS_NULLABLE_UNSOPPORTED = 'JsonForms:Nullable:Unsupported',
     JSON_SCHEMA_DEREF = 'JsonSchema:Deref',
     JSON_SCHEMA_NULLABLE = 'JsonSchema:Nullable',
     MARKETPLACE_VERIFY = 'Marketplace:Verify',

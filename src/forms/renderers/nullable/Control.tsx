@@ -8,48 +8,48 @@ import {
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { useMemo } from 'react';
 import { AllowedNullable } from 'services/jsonforms/shared';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { Options } from 'types/jsonforms';
-import { optionExists } from './Overrides/testers/testers';
+import { optionExists } from '../Overrides/testers/testers';
+import { nullableRank } from './shared';
 
 export const nullableControlTester: RankedTester = rankWith(
-    1000,
+    nullableRank,
     optionExists(Options.nullable)
 );
 
-// This is blank on purpose. For right now we can just show null settings are nothing
-const NullableRenderer = (props: any) => {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+const NullableControlRenderer = (props: any) => {
     const { uischema } = props;
     const { options } = uischema;
 
     const InputComponent = useMemo(() => {
-        const providerVal: AllowedNullable = options
+        const nullableType: AllowedNullable = options
             ? options[Options.nullable]
             : null;
 
-        switch (providerVal) {
-            case 'array':
-                return null;
+        switch (nullableType) {
+            case 'string':
+                return MuiInputText;
             case 'number':
                 return MuiInputNumber;
             case 'integer':
                 return MuiInputInteger;
             default:
-                return MuiInputText;
+                logRocketEvent(CustomEvents.JSON_FORMS_NULLABLE_UNSOPPORTED, {
+                    nullableType,
+                });
+                return null;
         }
     }, [options]);
 
     if (InputComponent === null) {
-        // return <MaterialArrayControlRenderer {...props} />;
-        return (
-            <>
-                Need to get Arrays rendering correctly. Probably need two
-                different nullable renderers
-            </>
-        );
+        return null;
     }
 
     return <MaterialInputControl {...props} input={InputComponent} />;
 };
 
-export const NullableControl = withJsonFormsControlProps(NullableRenderer);
+export const NullableControl = withJsonFormsControlProps(
+    NullableControlRenderer
+);

@@ -14,9 +14,13 @@ import {
     multiLineSecretTester,
 } from 'forms/renderers/MultiLineSecret';
 import {
+    NullableArrayControl,
+    nullableArrayTester,
+} from 'forms/renderers/nullable/Array';
+import {
     NullableControl,
     nullableControlTester,
-} from 'forms/renderers/NullableInput';
+} from 'forms/renderers/nullable/Control';
 import { oAuthProviderTester, OAuthType } from 'forms/renderers/OAuth';
 import MaterialOneOfRenderer_Discriminator, {
     materialOneOfControlTester_Discriminator,
@@ -60,6 +64,7 @@ const defaultRenderers = [
     { renderer: ConnectorType, tester: connectorTypeTester },
     { renderer: CatalogName, tester: catalogNameTypeTester },
     { renderer: MultiLineSecret, tester: multiLineSecretTester },
+    { renderer: NullableArrayControl, tester: nullableArrayTester },
     { renderer: NullableControl, tester: nullableControlTester },
 ];
 
