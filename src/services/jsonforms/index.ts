@@ -143,7 +143,7 @@ const isAdvancedConfig = (schema: JsonSchema): boolean => {
     return schema[ADVANCED] === true;
 };
 
-// Nullsable is only supported for anyOf and oneOf. This is manually checked
+// Nullable is only supported for anyOf and oneOf. This is manually checked
 //  because allOf will also return true for a combinator check. After that we only
 //  support when there is exactly two types. This is mainly here to help render
 //  pydantic inputs better.
