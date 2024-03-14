@@ -521,12 +521,12 @@ const generateUISchema = (
         // Usually this happens when there is a type "null" INSIDE of a combinator
         //  the null renderer will not display anything if the currentRef is #
         logRocketEvent(CustomEvents.JSON_SCHEMA_NULLABLE);
-        logRocketConsole(`${CustomTypes.nullable} renderer found`, {
+        logRocketConsole(`${CustomTypes.missingType} renderer found`, {
             currentRef,
             jsonSchema,
         });
         return {
-            type: CustomTypes.nullable,
+            type: CustomTypes.missingType,
             options: {
                 ref: currentRef,
             },

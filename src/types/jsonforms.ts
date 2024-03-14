@@ -40,5 +40,5 @@ export enum Annotations {
 }
 
 export enum CustomTypes {
-    nullable = 'NullType',
+    missingType = 'MissingType',
 }

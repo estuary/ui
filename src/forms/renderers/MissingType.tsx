@@ -3,13 +3,13 @@ import { withJsonFormsLayoutProps } from '@jsonforms/react';
 import { Alert, Hidden } from '@mui/material';
 import { CustomTypes } from 'types/jsonforms';
 
-export const nullTypeTester: RankedTester = rankWith(
+export const missingTypeTester: RankedTester = rankWith(
     9999,
-    uiTypeIs(CustomTypes.nullable)
+    uiTypeIs(CustomTypes.missingType)
 );
 
 // This is blank on purpose. For right now we can just show null settings are nothing
-const NullTypeRenderer = (props: LayoutProps) => {
+const MissingTypeRenderer = (props: LayoutProps) => {
     const {
         visible,
         path,
@@ -40,4 +40,4 @@ const NullTypeRenderer = (props: LayoutProps) => {
     );
 };
 
-export const NullType = withJsonFormsLayoutProps(NullTypeRenderer);
+export const MissingType = withJsonFormsLayoutProps(MissingTypeRenderer);
