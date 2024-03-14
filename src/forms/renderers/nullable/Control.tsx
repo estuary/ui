@@ -1,10 +1,5 @@
 import { RankedTester, rankWith } from '@jsonforms/core';
-import {
-    MaterialInputControl,
-    MuiInputInteger,
-    MuiInputNumber,
-    MuiInputText,
-} from '@jsonforms/material-renderers';
+import { Unwrapped } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { useMemo } from 'react';
 import { AllowedNullable } from 'services/jsonforms/shared';
@@ -13,6 +8,9 @@ import { CustomEvents } from 'services/types';
 import { Options } from 'types/jsonforms';
 import { optionExists } from '../Overrides/testers/testers';
 import { nullableRank } from './shared';
+
+const { MaterialNumberControl, MaterialIntegerControl, MaterialTextControl } =
+    Unwrapped;
 
 export const nullableControlTester: RankedTester = rankWith(
     nullableRank,
@@ -30,11 +28,11 @@ const NullableControlRenderer = (props: any) => {
 
         switch (nullableType) {
             case 'string':
-                return MuiInputText;
+                return MaterialTextControl;
             case 'number':
-                return MuiInputNumber;
+                return MaterialNumberControl;
             case 'integer':
-                return MuiInputInteger;
+                return MaterialIntegerControl;
             default:
                 logRocketEvent(CustomEvents.JSON_FORMS_NULLABLE_UNSOPPORTED, {
                     nullableType,
@@ -47,7 +45,7 @@ const NullableControlRenderer = (props: any) => {
         return null;
     }
 
-    return <MaterialInputControl {...props} input={InputComponent} />;
+    return <InputComponent {...props} />;
 };
 
 export const NullableControl = withJsonFormsControlProps(
