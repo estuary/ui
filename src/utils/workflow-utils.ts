@@ -186,7 +186,9 @@ export const generateTaskSpec = (
                           collectionName,
                           iteratedIndex
                       )
-                    : bindingIndex;
+                    : hasLength(draftSpec.bindings)
+                    ? bindingIndex
+                    : -1;
 
                 if (existingBindingIndex > -1) {
                     // Include disable otherwise totally remove it
