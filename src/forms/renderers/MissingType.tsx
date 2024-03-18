@@ -16,7 +16,7 @@ const MissingTypeRenderer = (props: LayoutProps) => {
         uischema: { options: schemaOptions },
     } = props;
 
-    // jsonforms - nullable
+    // jsonforms - missing type
     // This is here so when connectors like Google Sheets have an Authentication
     //  that only has discriminator, title, and oneOf.
     // After we render the oneOf there is nothing left but the title and discriminator.

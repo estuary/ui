@@ -517,10 +517,10 @@ const generateUISchema = (
 
     const types = deriveTypes(jsonSchema);
     if (types.length === 0) {
-        // jsonforms - nullable
+        // jsonforms - missing type
         // Usually this happens when there is a type "null" INSIDE of a combinator
         //  the null renderer will not display anything if the currentRef is #
-        logRocketEvent(CustomEvents.JSON_SCHEMA_NULLABLE);
+        logRocketEvent(CustomEvents.JSON_FORMS_TYPE_MISSING);
         logRocketConsole(`${CustomTypes.missingType} renderer found`, {
             currentRef,
             jsonSchema,
