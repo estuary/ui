@@ -104,7 +104,6 @@ const getResourceConfig = (
     };
 };
 
-// TODO (optimization): Use this function in the ported over resource config store action, evaluateDiscoveredCollections.
 const initializeResourceConfig = (
     state: BindingState,
     binding: any,
