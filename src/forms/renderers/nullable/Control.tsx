@@ -34,7 +34,7 @@ const NullableControlRenderer = (props: any) => {
             case 'integer':
                 return MaterialIntegerControl;
             default:
-                logRocketEvent(CustomEvents.JSON_FORMS_NULLABLE_UNSOPPORTED, {
+                logRocketEvent(CustomEvents.JSON_FORMS_NULLABLE_UNSUPPORTED, {
                     nullableType,
                 });
                 return null;
