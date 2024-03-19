@@ -6,7 +6,7 @@ import {
     useBinding_resourceConfigs,
     useBinding_setServerUpdateRequired,
 } from 'stores/Binding/hooks';
-import { getBindingIndex, getDisableProps } from 'utils/workflow-utils';
+import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
 
 const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     const bindings = useBinding_bindings();
@@ -24,26 +24,16 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                 return Object.entries(bindings).some(
                     ([collection, bindingUUIDs]) => {
                         return bindingUUIDs.some((bindingUUID) => {
-                            const targetBindingIndex = Object.hasOwn(
-                                bindings,
-                                collection
-                            )
-                                ? bindings[collection].findIndex(
-                                      (uuid) => uuid === bindingUUID
-                                  )
-                                : -1;
+                            const expectedBindingIndex =
+                                resourceConfigs[bindingUUID].meta.bindingIndex;
 
-                            const existingBindingIndex = getBindingIndex(
-                                draftSpecs[0]?.spec.bindings,
-                                collection,
-                                targetBindingIndex
-                            );
-
-                            if (existingBindingIndex > -1) {
-                                const { resource, disable } =
+                            if (expectedBindingIndex > -1) {
+                                const binding =
                                     draftSpecs[0].spec.bindings[
-                                        existingBindingIndex
+                                        expectedBindingIndex
                                     ];
+
+                                const { resource, disable } = binding;
 
                                 // Do a quick simple disabled check before comparing the entire object
                                 if (
@@ -52,6 +42,11 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                                         .disable !==
                                     getDisableProps(disable).disable
                                 ) {
+                                    return true;
+                                }
+
+                                // Ensure the associated collection matches before comparing binding resources.
+                                if (collection !== getCollectionName(binding)) {
                                     return true;
                                 }
 
