@@ -61,12 +61,11 @@ const initializeBinding = (
     collection: string,
     bindingUUID: string
 ) => {
-    const existingBindingUUIDs: string[] = Object.hasOwn(
-        state.bindings,
-        collection
-    )
-        ? state.bindings[collection]
-        : [];
+    let existingBindingUUIDs: string[] = [];
+
+    if (Object.hasOwn(state.bindings, collection)) {
+        existingBindingUUIDs = state.bindings[collection];
+    }
 
     state.bindings[collection] = existingBindingUUIDs.concat(bindingUUID);
 };
