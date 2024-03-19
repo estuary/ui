@@ -48,6 +48,7 @@ export class CombinatorProperties extends React.Component<
             schema,
             combinatorKeyword
         ) as JsonSchema;
+
         const foundUISchema: UISchemaElement = Generate.uiSchema(
             otherProps,
             'VerticalLayout'

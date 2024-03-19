@@ -26,7 +26,7 @@ import {
 import { ResourceConfigStoreNames } from 'stores/names';
 import { populateErrors } from 'stores/utils';
 import { Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
+import { getDereffedSchema, hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import {
     getBackfillCounter,
@@ -710,10 +710,16 @@ const getInitialState = (
         );
     },
 
-    setResourceSchema: (val) => {
+    setResourceSchema: async (val) => {
+        const resolved = await getDereffedSchema(val);
         set(
             produce((state: ResourceConfigState) => {
-                state.resourceSchema = val;
+                if (!resolved) {
+                    state.setHydrationErrorsExist(true);
+                    return;
+                }
+
+                state.resourceSchema = resolved;
             }),
             false,
             'Resource Schema Set'

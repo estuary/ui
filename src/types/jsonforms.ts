@@ -5,6 +5,7 @@
 
 export enum Options {
     multi = 'multi',
+    nullable = 'nullable',
     format = 'format',
     oauthProvider = 'oauth_provider',
     oauthFields = 'oauth_fields',
@@ -36,4 +37,8 @@ export enum Annotations {
     secret = 'secret',
     defaultResourceConfigName = 'x-collection-name',
     inferSchema = 'x-infer-schema',
+}
+
+export enum CustomTypes {
+    missingType = 'MissingType',
 }

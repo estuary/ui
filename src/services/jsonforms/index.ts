@@ -42,9 +42,13 @@ import { concat, includes, isPlainObject, orderBy } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
-import { Annotations, Formats, Options } from 'types/jsonforms';
+import { logRocketConsole, logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
+import { Annotations, CustomTypes, Formats, Options } from 'types/jsonforms';
+import JsonRefs from 'json-refs';
 import {
     ADVANCED,
+    allowedNullableTypes,
     CONTAINS_REQUIRED_FIELDS,
     SHOW_INFO_SSH_ENDPOINT,
 } from './shared';
@@ -139,6 +143,38 @@ const isAdvancedConfig = (schema: JsonSchema): boolean => {
     return schema[ADVANCED] === true;
 };
 
+// Nullable is only supported for anyOf and oneOf. This is manually checked
+//  because allOf will also return true for a combinator check. After that we only
+//  support when there is exactly two types. This is mainly here to help render
+//  pydantic inputs better.
+const getNullableType = (schema: JsonSchema): null | string => {
+    const combinatorVal = schema.anyOf ?? schema.oneOf ?? null;
+
+    if (combinatorVal === null) {
+        return null;
+    }
+
+    const types = combinatorVal.map(({ type }) => type);
+
+    if (types.length === 2 && types.includes('null')) {
+        const response = types.filter((val) => {
+            if (!val || Array.isArray(val)) {
+                return false;
+            }
+
+            // TODO (typing) - for some reason an array of specific strings
+            //  cannot have includes pass any string.
+            return (allowedNullableTypes as unknown as string[]).includes(val);
+        })[0];
+
+        if (typeof response === 'string') {
+            return response;
+        }
+    }
+
+    return null;
+};
+
 const isOAuthConfig = (schema: JsonSchema): boolean => {
     return Object.hasOwn(schema, Annotations.oAuthProvider);
 };
@@ -166,6 +202,15 @@ const addRequiredGroupOptions = (
 const addInfoSshEndpoint = (elem: Layout | ControlElement | GroupLayout) => {
     if (!Object.hasOwn(elem.options ?? {}, SHOW_INFO_SSH_ENDPOINT)) {
         addOption(elem, SHOW_INFO_SSH_ENDPOINT, true);
+    }
+};
+
+const addNullableField = (
+    elem: Layout | ControlElement | GroupLayout,
+    val: string
+) => {
+    if (!Object.hasOwn(elem.options ?? {}, Options.nullable)) {
+        addOption(elem, Options.nullable, val);
     }
 };
 
@@ -421,6 +466,14 @@ const generateUISchema = (
                 controlObject.label = jsonSchema.title;
             }
 
+            // Checking if the combinator is a "nullable" field from Pydantic
+            //  forms. Needed so we can render them as normal fields and not
+            //  actual combinators (tabs).
+            const nullableType = getNullableType(jsonSchema);
+            if (nullableType) {
+                addNullableField(controlObject, nullableType);
+            }
+
             schemaElements.push(controlObject);
 
             copyRequiredOption(isRequired, controlObject);
@@ -464,12 +517,16 @@ const generateUISchema = (
 
     const types = deriveTypes(jsonSchema);
     if (types.length === 0) {
-        // TODO (jsonforms)
-        // This happens when there is a type "null" INSIDE of a combinator
-        // need more work but this keeps the form from blowing up at least.
-        console.error(`Likely invalid schema at ${currentRef}`, jsonSchema);
+        // jsonforms - missing type
+        // Usually this happens when there is a type "null" INSIDE of a combinator
+        //  the null renderer will not display anything if the currentRef is #
+        logRocketEvent(CustomEvents.JSON_FORMS_TYPE_MISSING);
+        logRocketConsole(`${CustomTypes.missingType} renderer found`, {
+            currentRef,
+            jsonSchema,
+        });
         return {
-            type: 'NullType',
+            type: CustomTypes.missingType,
             options: {
                 ref: currentRef,
             },
@@ -631,6 +688,64 @@ export const custom_generateDefaultUISchema = (
     }
 
     return response;
+};
+
+export const derefSchema = async (schema: any) => {
+    try {
+        // If there is no root ref then skip as handling nested
+        //  refs are handled in generateUISchema
+        if (!schema.$ref) {
+            return schema;
+        }
+
+        const resolveResponse = !schema
+            ? null
+            : await JsonRefs.resolveRefs(schema, {
+                  includeInvalid: true, // Gives us errors in response - does not allow invalid ones through
+                  // filter: 'relative', // We do not want to go fetch remote ones just to be safe (2024 Q1)
+              });
+
+        // Go through the refs and see if any errored out
+        if (
+            resolveResponse?.refs &&
+            Object.values(resolveResponse.refs).some((ref) => {
+                if (Boolean(ref.missing || ref.error)) {
+                    logRocketEvent(CustomEvents.JSON_SCHEMA_DEREF, {
+                        status: ref.missing ? 'missing' : 'error',
+                    });
+                    logRocketConsole(CustomEvents.JSON_SCHEMA_DEREF, {
+                        missing: ref.missing,
+                        error: ref.error,
+                    });
+                    return true;
+                }
+                return false;
+            })
+        ) {
+            return null;
+        }
+
+        // If the response is null we did not get anything
+        // The root ref may have failed but other refs worked
+        //  so need to make sure we no longer have the ref in the root
+        const response = resolveResponse?.resolved ?? null;
+        if (response === null || JsonRefs.isRef(response)) {
+            logRocketEvent(CustomEvents.JSON_SCHEMA_DEREF, {
+                status: 'empty',
+            });
+            return null;
+        }
+
+        return response;
+    } catch (error: unknown) {
+        logRocketEvent(CustomEvents.JSON_SCHEMA_DEREF, {
+            status: 'error',
+        });
+        logRocketConsole(CustomEvents.JSON_SCHEMA_DEREF, {
+            error,
+        });
+        return null;
+    }
 };
 
 Generate.uiSchema = custom_generateDefaultUISchema;

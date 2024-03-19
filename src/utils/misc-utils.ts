@@ -1,5 +1,7 @@
 import { SortDirection } from '@mui/material';
+import { isEmpty } from 'lodash';
 import { createSearchParams } from 'react-router-dom';
+import { derefSchema } from 'services/jsonforms';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 
@@ -178,4 +180,13 @@ export const basicSort_string = (
 
     // descending means to flip the comparison order
     return b.localeCompare(a);
+};
+
+export const getDereffedSchema = async (val: any) => {
+    const response = val ? await derefSchema(val) : val;
+    return response;
+};
+
+export const configCanBeEmpty = (schema: any) => {
+    return Boolean(!schema.properties || isEmpty(schema.properties));
 };

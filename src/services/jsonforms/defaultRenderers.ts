@@ -8,11 +8,19 @@ import {
     collapsibleGroupTester,
 } from 'forms/renderers/CollapsibleGroup';
 import { ConnectorType, connectorTypeTester } from 'forms/renderers/Connectors';
+import { MissingType, missingTypeTester } from 'forms/renderers/MissingType';
 import {
     MultiLineSecret,
     multiLineSecretTester,
 } from 'forms/renderers/MultiLineSecret';
-import { NullType, nullTypeTester } from 'forms/renderers/NullType';
+import {
+    NullableArrayControl,
+    nullableArrayTester,
+} from 'forms/renderers/nullable/Array';
+import {
+    NullableControl,
+    nullableControlTester,
+} from 'forms/renderers/nullable/Control';
 import { oAuthProviderTester, OAuthType } from 'forms/renderers/OAuth';
 import MaterialOneOfRenderer_Discriminator, {
     materialOneOfControlTester_Discriminator,
@@ -52,10 +60,12 @@ const defaultRenderers = [
     { renderer: CollapsibleGroup, tester: collapsibleGroupTester },
 
     // Custom controls
-    { renderer: NullType, tester: nullTypeTester },
+    { renderer: MissingType, tester: missingTypeTester },
     { renderer: ConnectorType, tester: connectorTypeTester },
     { renderer: CatalogName, tester: catalogNameTypeTester },
     { renderer: MultiLineSecret, tester: multiLineSecretTester },
+    { renderer: NullableArrayControl, tester: nullableArrayTester },
+    { renderer: NullableControl, tester: nullableControlTester },
 ];
 
 export default defaultRenderers;
