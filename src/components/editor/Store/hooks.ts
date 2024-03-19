@@ -11,6 +11,7 @@ import { EditorStoreNames } from 'stores/names';
 import { Entity } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getBindingIndex } from 'utils/workflow-utils';
+import { useShallow } from 'zustand/react/shallow';
 import { EditorStoreState } from './types';
 
 interface SelectorParams {
@@ -533,20 +534,13 @@ export const useEditorStore_queryResponse_mutate = (
 
 export const useEditorStore_queryResponse_draftedBindingIndex = (
     collection: string | null,
-    targetBindingIndex: number,
-    params?: SelectorParams | undefined
+    targetBindingIndex: number
 ) => {
-    const localScope = params?.localScope;
-
-    const useZustandStore = localScope
-        ? useLocalZustandStore
-        : useGlobalZustandStore;
-
     const entityType = useEntityType();
 
-    return useZustandStore<EditorStoreState<DraftSpecQuery>, number>(
-        storeName(entityType, localScope),
-        (state) =>
+    return useGlobalZustandStore<EditorStoreState<DraftSpecQuery>, number>(
+        storeName(entityType),
+        useShallow((state) =>
             collection && hasLength(state.queryResponse.draftSpecs)
                 ? getBindingIndex(
                       state.queryResponse.draftSpecs[0].spec.bindings,
@@ -554,6 +548,7 @@ export const useEditorStore_queryResponse_draftedBindingIndex = (
                       targetBindingIndex
                   )
                 : -1
+        )
     );
 };
 
