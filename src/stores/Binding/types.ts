@@ -89,7 +89,7 @@ export interface BindingState
 
     // Resource Schema
     resourceSchema: Schema;
-    setResourceSchema: (val: BindingState['resourceSchema']) => void;
+    setResourceSchema: (val: BindingState['resourceSchema']) => Promise<void>;
 
     // Resource Config
     resourceConfigs: ResourceConfigDictionary;

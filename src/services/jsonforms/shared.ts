@@ -17,3 +17,12 @@ export const showValidation = (_val?: any): ValidationMode => {
 export const hideValidation = (_val?: any): ValidationMode => {
     return 'ValidateAndHide';
 };
+
+export const allowedNullableTypes = [
+    'array',
+    'integer',
+    'number',
+    'string',
+] as const;
+export type AllowedNullables = typeof allowedNullableTypes;
+export type AllowedNullable = AllowedNullables[number];

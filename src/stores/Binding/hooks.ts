@@ -74,13 +74,6 @@ export const useBinding_resourceSchema = () => {
     );
 };
 
-export const useBinding_setResourceSchema = () => {
-    return useZustandStore<BindingState, BindingState['setResourceSchema']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.setResourceSchema
-    );
-};
-
 export const useBinding_resourceConfig = (bindingUUID: string) => {
     return useZustandStore<BindingState, ResourceConfig | undefined>(
         BindingStoreNames.GENERAL,

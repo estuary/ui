@@ -17,7 +17,11 @@ import {
 } from 'stores/extensions/Hydration';
 import { EndpointConfigStoreNames } from 'stores/names';
 import { JsonFormsData, Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
+import {
+    configCanBeEmpty,
+    getDereffedSchema,
+    hasLength,
+} from 'utils/misc-utils';
 import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { StoreApi, create } from 'zustand';
@@ -94,10 +98,16 @@ const getInitialState = (
         );
     },
 
-    setEndpointSchema: (val) => {
+    setEndpointSchema: async (val) => {
+        const resolved = await getDereffedSchema(val);
         set(
             produce((state: EndpointConfigState) => {
-                state.endpointSchema = val;
+                if (!resolved) {
+                    state.setHydrationErrorsExist(true);
+                    return;
+                }
+                state.endpointSchema = resolved;
+                state.endpointCanBeEmpty = configCanBeEmpty(resolved);
 
                 const { endpointConfig, customErrors } = get();
 
