@@ -18,11 +18,6 @@ describe('getBindingIndex', () => {
     });
 
     describe('returns -1 when', () => {
-        test('bindings are missing', () => {
-            expect(getBindingIndex(undefined, '', -1)).toBe(defaultResponse);
-            expect(getBindingIndex(null, '', -1)).toBe(defaultResponse);
-        });
-
         test('bindings are empty', () => {
             expect(getBindingIndex([], '', -1)).toBe(defaultResponse);
             expect(getBindingIndex([null], '', -1)).toBe(defaultResponse);

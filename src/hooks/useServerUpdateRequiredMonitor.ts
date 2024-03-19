@@ -14,6 +14,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     const setServerUpdateRequired = useBinding_setServerUpdateRequired();
 
     const resourceConfigUpdated = useMemo(() => {
+        console.log('here');
         if (draftSpecs.length > 0) {
             if (
                 draftSpecs[0].spec.bindings.length ===

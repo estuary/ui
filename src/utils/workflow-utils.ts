@@ -54,16 +54,19 @@ export const getCollectionName = (binding: any) => {
 };
 
 export const getBindingIndex = (
-    existingBindings: any[] | null | undefined,
+    existingBindings: any[],
     collectionName: string,
     stagedBindingIndex: number
 ) => {
-    const matchedCollectionIndices =
-        existingBindings
-            ?.map((binding: any, index) =>
-                getCollectionName(binding) === collectionName ? index : -1
-            )
-            .filter((bindingIndex) => bindingIndex > -1) ?? [];
+    const matchedCollectionIndices = existingBindings
+        .map((binding: any, index) => {
+            if (getCollectionName(binding) === collectionName) {
+                return index;
+            } else {
+                return -1;
+            }
+        })
+        .filter((bindingIndex) => bindingIndex > -1);
 
     if (matchedCollectionIndices.length === 1) {
         return matchedCollectionIndices[0];
