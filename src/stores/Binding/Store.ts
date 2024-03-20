@@ -400,7 +400,7 @@ const getInitialState = (
                         prefillBindingDependentState(
                             entityType,
                             liveSpecs[0].spec.bindings,
-                            draftSpecs[0].spec.bindings
+                            sortBindings(draftSpecs[0].spec.bindings)
                         );
                     }
                 } else {
